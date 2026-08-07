@@ -94,8 +94,8 @@ app/(press)/press/            Route segments, kebab-case
 | Rule | Enforcement |
 |---|---|
 | LCP ≤2.0s, INP ≤200ms, CLS ≤0.05 | LHCI blocks merge |
-| Marketing routes JS ≤110KB gz | size-limit |
-| `/press/path-finder` JS ≤140KB gz | size-limit |
+| Marketing routes JS ≤110KB gz | `check-bundle-size` |
+| `/press/path-finder` JS ≤140KB gz | `check-bundle-size` |
 | Book covers: AVIF, fixed aspect, `sizes` tuned | Manual review |
 | Every image explicit dimensions | ESLint |
 

@@ -88,9 +88,9 @@ redirects/legacy.json       generated, version-controlled
 |---|---|
 | Homepage Lighthouse performance ≥98 | LHCI blocks merge |
 | LCP ≤1.8s, INP ≤200ms, CLS ≤0.03 | LHCI |
-| Master routes JS ≤110KB gz **including the consent banner** | size-limit |
-| `/work` with filters ≤150KB gz | size-limit |
-| Consent banner ≤8KB gz | size-limit |
+| Master routes JS ≤110KB gz **including the consent banner** | `check-bundle-size` |
+| `/work` with filters ≤150KB gz | `check-bundle-size` |
+| Consent banner ≤8KB gz | `check-bundle-size` |
 | No hero video, no third-party embeds | Manual review |
 
 ## 9. Motion rules

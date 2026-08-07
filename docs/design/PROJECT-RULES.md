@@ -74,7 +74,7 @@ app/(design)/design/       route segments, kebab-case
 | Rule | Enforcement |
 |---|---|
 | LCP ≤2.0s, INP ≤200ms, CLS ≤0.05 | Lighthouse CI blocks merge |
-| Marketing route JS ≤120KB gz | size-limit blocks merge |
+| Marketing route JS ≤120KB gz | `check-bundle-size` blocks merge |
 | Max 2 font families, 4 weights | Manual review |
 | Every image has explicit dimensions | ESLint rule |
 | Hero media ≤120KB, `priority` | Manual review |

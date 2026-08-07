@@ -23,7 +23,7 @@ Task IDs are stable — Phases 1–6 below and the division plans reference them
 
 | # | Task | Output | DoD |
 |---|---|---|---|
-| 0.1 | Next.js 15 + TS strict + Tailwind v4 scaffold | Repo, CI, preview deploys | `main` deploys green to Vercel |
+| 0.1 | Next.js 15 (pinned) + React 19 + TS strict + Tailwind v4 scaffold | Repo, CI, preview deploys | `main` deploys green to Vercel |
 | 0.2 | Token layer + **four** theme files (master + three divisions) | `tokens.css`, `themes/*.css` | All four themes render the kitchen sink correctly |
 | 0.3 | Route groups + `data-division` layout switching | `app/(marketing|design|digital|press)` | Navigating between groups swaps theme with zero flash |
 | 0.4 | **24 shared primitives** + `/_kitchen-sink` | `components/primitives/*` | Zero hardcoded colours; **Epic A exit gate** — see below |
@@ -31,7 +31,7 @@ Task IDs are stable — Phases 1–6 below and the division plans reference them
 | 0.6 | Supabase project, `leads` + RLS + indexes | DB live | Anon can insert, cannot select — verified by test |
 | 0.7 | Lead pipeline: Server Action → DB → Resend → Slack | `api/lead` | End-to-end notify measured **under 60s** |
 | 0.8 | Analytics: GA4 + PostHog + AI-referral detection | `lib/analytics` | **Depends on 0.11.** No GA4/PostHog request exists pre-consent; `is_ai_referral` flags a test Perplexity referrer |
-| 0.9a | CI gates — TS strict, ESLint, `no-hardcoded-colors`, service-role grep, size-limit | `.github/workflows` | A deliberate hex fails the build |
+| 0.9a | CI gates — TS strict, ESLint, `no-hardcoded-colors`, service-role grep, `check-bundle-size` | `.github/workflows` | A deliberate hex fails the build |
 | 0.9b | CI gates — Lighthouse CI + axe | `.github/workflows` | Runs against `/_kitchen-sink`; a deliberate regression is blocked |
 | 0.10 | Legal pages + trust footer with company number | `/legal/*` | Companies Act disclosure verified present. **Blocked on Q-M1** |
 | 0.11 | **Consent management** — banner, Consent Mode v2, script gating | `lib/consent`, `components/chrome` | No non-essential cookie fires before consent; verified in devtools |
@@ -57,7 +57,7 @@ from `.claude/agents/` **in a fresh context**, both with zero findings.
 
 | # | Task | Depends on | DoD |
 |---|---|---|---|
-| 1.1 | Master theme; `--accent` = ink; division accents as variables | 0.2 | Amber constraint documented and lint-checked |
+| 1.1 | Master theme; `--accent` = ink; division accents as variables | 0.2 | Amber constraint documented. **Partly mechanised:** a lint rule can ban `--accent-design` in `color`/`fill`/`stroke`; it cannot detect a badge whose only state signal is an amber border. That half is manual review — do not record the gate as fully automated |
 | 1.2 | Root layout with `data-division` set server-side | 0.3 | Zero theme flash between route groups |
 | 1.3 | **Header** with per-division navigation switching | 0.4 | Wordmark always returns to `/` |
 | 1.4 | **Footer** with division switcher and statutory block | 1.3 | Renders from `companyDetails` singleton |

@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* Token layer and the four themes arrive with A-02 and A-03.
+   No colour is declared anywhere in this file — see scripts/check-no-hardcoded-colors.mjs. */

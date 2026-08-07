@@ -13,8 +13,8 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 
 | # | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|---|
-| 1 | A-01 | Next.js + TS strict + Tailwind v4 scaffold | P0 | 0.5d | — | DONE | Dev | |
-| 1 | A-10a | ⚑ CI gates — TS, ESLint, `no-hardcoded-colors`, service-role grep, size-limit | P0 | 0.5d | A-01 | DONE | Dev | Ships with A-01. Deliberate hex fails the build |
+| 1 | A-01 | Next.js **15 (pinned)** + React 19 + TS strict + Tailwind v4 scaffold | P0 | 0.5d | — | DONE | Dev | Next 16 measured at +29KB gz — breaks every budget. See FOUNDATION §2 |
+| 1 | A-10a | ⚑ CI gates — TS, ESLint, `no-hardcoded-colors`, service-role grep, `check-bundle-size` | P0 | 0.5d | A-01 | DONE | Dev | Ships with A-01. Deliberate hex fails the build. size-limit dropped — measured the wrong quantity |
 | 2 | A-02 | Token layer `tokens.css` | P0 | 1d | A-01 | TODO | Dev | |
 | 3 | A-03 | ⚑ Four theme files — **incl. master (was M-01)** | P0 | 1.5d | A-02 | TODO | Dev | Master proves the token contract for a theme with no colour |
 | 4 | A-04 | Four route groups + `data-division` | P0 | 1d | A-03 | TODO | Dev | Zero theme flash; server-set |
@@ -158,6 +158,7 @@ that just wrote 24 primitives is the worst available reviewer of them.
 | ID | Item | Needed from | Blocks |
 |---|---|---|---|
 | Q-M1 | Company number and registered office — **requested at kickoff, received as the literal placeholder `[company number + registered office]`. Still open. Not to be guessed** | Atik | M-05, L-05, 0.10 |
+| Q-M12 | **Digital's 90KB gz JS budget cannot be met.** The Next 15 App Router floor measured at A-01 is 100.2KB gz on an empty page — 10.2KB over, before a single line of Digital's code. Not an engineering problem; no amount of optimisation removes the framework runtime. Options: raise the budget to ~115KB and keep 100/100/100 (Lighthouse scores it on metrics, not raw KB, so this is likely still achievable); or move Digital's marketing routes off App Router. **A P0 budget in `digital/PROJECT-RULES.md` §1.1 is currently unsatisfiable and needs your decision** | Atik | Digital launch, `digital/PROJECT-RULES.md` §8 |
 | Q-M10 | Font licences — are Neue Haas Grotesk Display / GT America Mono / Freight Text held, or do we build on the open fallbacks (Inter / JetBrains Mono / Source Serif 4)? Blocks nothing before A-03; a later swap is a one-line `--font-display` change | Atik | A-03 |
 | Q-M11 | **Gridsmith Press is already live and trading.** Stage 5 is a cutover of a revenue-generating site, not a launch. Cutover plan to be written into `master/IMPLEMENTATION-PLAN.md` before Stage 3 work begins | Atik | G-01, G-02, Stage 5 |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |

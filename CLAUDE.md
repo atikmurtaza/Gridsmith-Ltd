@@ -51,7 +51,7 @@ Soft shadows, rounded-everything, gradient meshes, glassmorphism, floating 3D sh
 
 ## Stack
 
-Next.js 15 App Router · TypeScript strict · Tailwind v4 + CSS custom properties · Sanity CMS · Supabase (Postgres) · Resend · Vercel · GA4 + PostHog (consent-gated) · Zod + Server Actions.
+Next.js 15 App Router (**pinned — Next 16 adds ~29KB gz to the JS floor and breaks every budget below**) · React 19 · Node 22 · TypeScript strict · Tailwind v4 + CSS custom properties · Sanity CMS · Supabase (Postgres) · Resend · Vercel · GA4 + PostHog (consent-gated) · Zod + Server Actions.
 
 Rejected and not to be reintroduced: any UI component library (shadcn, MUI, Chakra), any third-party consent platform, any charting or animation library, any page builder. The primitives are hand-built because this site *is* the case study — 67% of B2B buyers judge vendor trustworthiness by site UX.
 
@@ -100,7 +100,7 @@ Read the workstream's own files before touching its code.
 
 - **One tracker task per session or PR.** `C-02: Drawing matrix component` is a unit of work. "Build the Track B page" is nine tasks and context will drift.
 - **Server Components by default.** `'use client'` needs a one-line comment saying why. "Easier" is not a reason.
-- **CI is the arbiter.** TypeScript, ESLint, Lighthouse CI, size-limit and axe all block merge. Never add a bypass.
+- **CI is the arbiter.** TypeScript, ESLint, `no-hardcoded-colors`, `check-service-role-key`, `check-bundle-size`, Lighthouse CI and axe all block merge. Never add a bypass.
 - **Conventional commits**, scoped by workstream: `feat(press): add platform compliance table`.
 - **Update the spec in the same commit** as any deviation. A spec that has silently drifted is worse than none — the next session will follow it.
 - **Any PR touching `styles/tokens.css`, `components/primitives/` or `lib/estimate/` needs review.** These affect all four route groups or determine what the business quotes.
@@ -133,6 +133,16 @@ Not done until all of these are true:
 | Press | ≥95 perf | ≤2.0s | ≤110KB (path-finder: 140) |
 
 All: INP ≤200ms (Digital 150), CLS ≤0.05 (Digital 0.02, Master 0.03).
+
+**Measured floor, A-01:** an empty Next 15 App Router page ships **100.2KB gz** before any
+token, primitive or content. Remaining headroom: Master **9.8KB**, Press 9.8KB, Design
+19.8KB. The consent banner alone is budgeted at ≤8KB, so Master has under 2KB of slack for
+everything else. **Digital's 90KB budget is 10.2KB below the framework floor and cannot be
+met at any amount of engineering effort** — see `Q-M12`, unresolved.
+
+Budgets are measured by `scripts/check-bundle-size.mjs` as per-route gzipped module
+scripts, excluding `noModule` legacy polyfills. Do not measure with a chunk-directory
+glob; it double-counts polyfills and other routes.
 
 ## When to stop and ask
 

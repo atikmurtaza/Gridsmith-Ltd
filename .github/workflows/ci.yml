@@ -1,0 +1,42 @@
+name: CI
+
+# A-10a. Lighthouse CI and axe are A-10b — they need /_kitchen-sink to measure
+# against, so they land with A-05a. Do not add a bypass to any step here.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: TypeScript
+        run: npm run typecheck
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: No hardcoded colours
+        run: npm run lint:colors
+
+      - name: No service-role key on the client
+        run: npm run lint:secrets
+
+      - name: Build
+        run: npm run build
+
+      - name: Bundle size
+        # Per-route gzipped module scripts vs the budgets in master/PROJECT-RULES.md §8.
+        # Must run after build — it measures the prerendered output, not the source.
+        run: npm run size

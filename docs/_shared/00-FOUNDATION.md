@@ -50,7 +50,7 @@ Theming is applied by a `data-division` attribute on `<body>`, set by the route 
 
 | Layer | Choice | Reason |
 |---|---|---|
-| Framework | **Next.js 15+, App Router, TypeScript strict** | SSG/ISR is non-negotiable for the SEO surface (R1, R3) |
+| Framework | **Next.js 15, App Router, TypeScript strict** — pinned, not `15+` | SSG/ISR is non-negotiable for the SEO surface (R1, R3). See the version note below |
 | Styling | **Tailwind CSS v4 + CSS custom properties** | Token-driven theming without a JS runtime |
 | CMS | **Sanity** | Structured content, portable text, real relations |
 | Lead store | **Supabase** (Postgres) | Already in the stack; RLS; direct SQL for reporting |
@@ -59,6 +59,25 @@ Theming is applied by a `data-division` attribute on `<body>`, set by the route 
 | Analytics | **GA4 + PostHog** | PostHog for funnels/session replay; GA4 for channel attribution |
 | Forms | Server Actions + Zod | No client-side form library; less JS (R5 MX) |
 | Motion | **CSS transitions and animations only** | JS budget discipline |
+
+**Next.js version — pinned to 15, measured at A-01.** The original `15+` allowed Next 16,
+which npm resolves by default. Measured on an empty App Router page rendering a single
+element, gzipped, module scripts only (`noModule` legacy polyfills excluded):
+
+| Build | First Load JS |
+|---|---|
+| Next 15 + React 18 | **100.2KB gz** |
+| Next 15 + React 19 | **100.2KB gz** |
+| Next 16 + React 19 | **129.5KB gz** |
+
+React 19 costs nothing; **Next 16 adds ~29KB gz to the floor**, which puts an empty page
+over every budget in `CLAUDE.md` §Performance budgets before a token or primitive exists.
+Verified against both build backends — webpack measured 127.0KB on Next 16, so it is not
+a Turbopack artifact.
+
+Consequence: **do not upgrade to Next 16 without re-measuring.** The budgets were written
+against a ~100KB floor and Next 16 removes it. Node 22 is the target runtime; Node 20 is
+past end-of-life as of April 2026.
 
 **Explicitly rejected:** Vite SPA (no SSG — fatal for the organic-search strategy); WordPress (performance ceiling, security surface); any page-builder (defeats the premium-craft positioning per R4.6); **any animation library, Framer Motion included** — every motion spec in the four `DESIGN.md` files is reachable with CSS plus, at most, an `IntersectionObserver`, and a JS animation runtime does not survive Digital's 90KB budget or its 100/100/100 gate; any UI component library; any third-party CMP.
 
