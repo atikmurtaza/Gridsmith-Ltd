@@ -1,0 +1,234 @@
+# Master Services Agreement (Business Clients) — DRAFT for solicitor review
+
+**Status: DRAFT. Not for use until reviewed and adopted by a qualified UK solicitor.**
+
+For **business clients only**. Consumers — including most individual authors and memoir clients — are covered by `CONSUMER-TERMS.md`. Using this agreement with a consumer would breach the Consumer Rights Act 2015.
+
+Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR-DG06, `press/PRD.md` FR-P04), so renumbering requires a version bump and anchor redirects.
+
+---
+
+## 1. Parties and structure
+
+1.1 This agreement is between **Gridsmith Ltd** (company number `[TK]`, registered office `[TK]`) and the client named in the Scope.
+
+1.2 Gridsmith Ltd trades as Gridsmith Design, Gridsmith Digital and Gridsmith Press. These are **trading divisions of one company**, not separate legal entities. Whichever division delivers the work, the contracting party is Gridsmith Ltd.
+
+1.3 Gridsmith may use affiliated production teams and subcontractors to deliver. **Gridsmith remains responsible to the client for all work**, and remains the client's sole point of contract.
+
+## 2. Structure of the agreement
+
+2.1 The agreement comprises: this MSA · the Division Schedule for the relevant service · the signed Scope · any signed Change Order.
+
+2.2 Order of precedence where terms conflict: signed Change Order → signed Scope → Division Schedule → this MSA.
+
+## 3. The Scope
+
+3.1 No work begins until a written Scope is agreed and the initial payment received (canonical process stage 3).
+
+3.2 The Scope states: deliverables · timeline · price and payment schedule · revision rounds included · client responsibilities and time commitment · assumptions · **exclusions**.
+
+3.3 **Anything not stated in the Scope is not included.** Exclusions are listed for clarity and the absence of an item from the exclusions list does not imply inclusion.
+
+## 4. Changes
+
+4.1 Changes to scope require a written Change Order stating the change, the price effect and the timeline effect.
+
+4.2 Gridsmith is not obliged to perform work outside the Scope. Where it agrees to, the Change Order governs.
+
+4.3 Where a client delay or a change to client-supplied materials causes rework, that rework is chargeable.
+
+## 5. Client responsibilities
+
+5.1 The client will provide materials, information, access, approvals and feedback within the timescales in the Scope.
+
+5.2 The client warrants that materials it supplies do not infringe third-party rights, and indemnifies Gridsmith against claims that they do.
+
+5.3 **Where the client does not meet its time commitments, timelines extend accordingly.** Gridsmith will notify the client where a delay affects the schedule.
+
+5.4 Where a project is suspended by client inaction for more than 30 days, Gridsmith may invoice work completed to date and reschedule remaining work subject to availability.
+
+## 6. Fees and payment
+
+6.1 Fees are as stated in the Scope, exclusive of VAT.
+
+6.2 Standard payment structure: an initial payment before work begins, staged payments at agreed milestones, and the balance on delivery. The Scope states the actual split.
+
+6.3 Invoices are payable within **14 days** unless the Scope states otherwise.
+
+6.4 **Late payment.** Gridsmith may charge statutory interest and compensation under the Late Payment of Commercial Debts (Interest) Act 1998 — interest at 8% above the Bank of England base rate, plus the fixed statutory recovery sum.
+
+6.5 Gridsmith may suspend work where an invoice is more than 14 days overdue, having given 7 days' written notice.
+
+6.6 Expenses (stock imagery, fonts, third-party licences, print, ISBNs, hosting) are charged at cost where identified in the Scope, and require written approval where not.
+
+## 7. Delivery and acceptance
+
+7.1 Gridsmith will deliver in accordance with the Scope.
+
+7.2 The client has **10 working days** from delivery to notify Gridsmith in writing of any respect in which deliverables do not conform to the Scope.
+
+7.3 Where a valid non-conformity is notified, Gridsmith will correct it at no charge.
+
+7.4 If no notice is given within 10 working days, or the client puts the deliverables into use, they are deemed accepted.
+
+7.5 Revisions beyond the number stated in the Scope are chargeable at the rate stated in the Scope.
+
+## 8. Intellectual property
+
+8.1 **Client materials** remain the client's property throughout.
+
+8.2 **Background IP** — tools, frameworks, methods and components Gridsmith owned before the engagement or developed independently — remains Gridsmith's. Gridsmith grants a perpetual, non-exclusive, royalty-free licence to use it as embedded in the deliverables.
+
+8.3 **Deliverables.** On payment in full, Gridsmith **assigns to the client, with full title guarantee, all copyright and other intellectual property rights in the final approved deliverables.** This assignment is made in writing and signed, and takes effect on receipt of final payment. It satisfies section 90(3) of the Copyright, Designs and Patents Act 1988.
+
+8.4 **Until payment in full**, the client has a licence to use the deliverables for review and approval only.
+
+8.5 Division-specific IP terms are in the relevant Division Schedule and **prevail over this clause 8 where they differ**.
+
+8.6 **Portfolio licence.** Gridsmith may display the work in its portfolio and marketing, and may name the client, unless the Scope records that the client has opted out. Gridsmith will not disclose confidential information in doing so. The client may withdraw this permission on written notice, and Gridsmith will remove the work within 30 days.
+
+## 9. Confidentiality
+
+9.1 Each party will keep the other's confidential information confidential, use it only for the purposes of the agreement, and protect it with at least reasonable care.
+
+9.2 This does not apply to information that is public, already known, independently developed, or required to be disclosed by law.
+
+9.3 These obligations continue for 3 years after the agreement ends.
+
+## 10. Data protection
+
+10.1 Where Gridsmith processes personal data on the client's behalf, the client is controller and Gridsmith is processor, and the parties will enter a data processing agreement in the form at Schedule DP.
+
+10.2 Each party will comply with applicable data protection law.
+
+## 11. Liability
+
+11.1 Nothing limits liability for death or personal injury caused by negligence, fraud, or anything else that cannot lawfully be limited.
+
+11.2 Subject to 11.1, **neither party is liable for indirect or consequential loss, loss of profit, revenue, business, anticipated savings, data or goodwill.**
+
+11.3 Subject to 11.1, Gridsmith's total aggregate liability under the agreement is limited to **the greater of (a) the total fees paid under the relevant Scope and (b) £`[TK]`**.
+
+11.4 Gridsmith maintains professional indemnity insurance of £`[TK]`. Evidence available on request.
+
+11.5 Claims must be notified within 12 months of the client becoming aware of the circumstances giving rise to them.
+
+> **For solicitor review:** 11.3 must satisfy the UCTA 1977 reasonableness test. A cap at fees paid may be unreasonable for a high-consequence deliverable such as an engineering drawing set used in construction. A differentiated cap by division may be more defensible than a single figure.
+
+## 12. Warranties
+
+12.1 Gridsmith warrants it will perform with reasonable care and skill, in accordance with good industry practice.
+
+12.2 Gridsmith warrants the deliverables will conform to the Scope in all material respects for 30 days from acceptance.
+
+12.3 Except as stated, all warranties implied by law are excluded to the extent permitted.
+
+12.4 Gridsmith does not warrant any commercial outcome. **No representation is made about sales, revenue, rankings, traffic, audience or any other result.**
+
+## 13. Term and termination
+
+13.1 The agreement runs until the Scope is completed, or until terminated.
+
+13.2 Either party may terminate on 30 days' written notice.
+
+13.3 Either party may terminate immediately on material breach not remedied within 14 days of notice, or on insolvency.
+
+13.4 On termination, the client pays for all work completed and all committed third-party costs. Deliverables paid for in full are assigned under clause 8.3. Work not paid for is not licensed.
+
+13.5 **Retainer and recurring services** may be terminated on the notice period stated in the relevant Schedule.
+
+## 14. General
+
+14.1 Neither party is liable for failure caused by events beyond its reasonable control.
+
+14.2 Neither party may assign without the other's written consent, except to a successor of its business.
+
+14.3 Nothing creates a partnership, joint venture or employment relationship.
+
+14.4 No third party may enforce this agreement under the Contracts (Rights of Third Parties) Act 1999.
+
+14.5 The agreement is the entire agreement between the parties on its subject matter.
+
+14.6 Variations must be in writing and signed.
+
+14.7 Governed by the law of England and Wales, with exclusive jurisdiction of the courts of England and Wales.
+
+---
+
+# Schedule A — Gridsmith Design
+
+**A1 Deliverables.** As stated in the Scope, itemised by asset or by drawing sheet.
+
+**A2 Standards.** Technical work is produced to the standards named in the Scope (for example BS 8888, BS EN ISO 128, relevant Eurocodes, RIBA Plan of Work stages). Where no standard is named, Gridsmith works to good industry practice.
+
+**A3 Checking.** Technical deliverables are subject to Gridsmith's internal checking process before issue. **This does not replace the client's own design check, verification, or professional sign-off.** The client remains responsible for verifying that deliverables are fit for its intended purpose.
+
+**A4 IP.** On payment in full, final approved deliverables are assigned under clause 8.3. Working files, rejected concepts and source assets remain Gridsmith's unless the Scope provides for their transfer.
+
+**A5 Revisions.** The Scope states the number of revision rounds. Further revisions are chargeable.
+
+**A6 Design Desk retainer.** Monthly fee, stated hours, stated turnaround SLA, stated rollover policy. Minimum term and notice period as stated. Unused hours do not carry beyond the stated rollover.
+
+> **For solicitor review:** A3 is important. Gridsmith produces drawings; it is not taking on design liability for the client's engineering decisions. This distinction must be watertight and the PI insurance must match it.
+
+# Schedule B — Gridsmith Digital
+
+**B1 Ownership.** On payment in full, the client owns:
+- (a) the source code written for the project, assigned under clause 8.3;
+- (b) all data in the systems built;
+- (c) the accounts and infrastructure, or full administrative access to them.
+
+**B2 Handover.** On final payment Gridsmith transfers repository ownership, infrastructure access, environment variables (excluding Gridsmith's own credentials), and documentation.
+
+**B3 Third-party components.** Deliverables include open-source and third-party components licensed under their own terms. Ownership under B1 does not extend to these. The Scope lists material third-party dependencies and any recurring licence costs.
+
+**B4 Background IP.** Gridsmith's reusable frameworks and components are licensed under clause 8.2, not assigned. The Scope identifies where they are used.
+
+**B5 Warranty.** Gridsmith will correct defects notified within **90 days** of acceptance at no charge, where the defect is a failure to conform to the Scope. This does not cover changes in third-party services, changes made by others, or new requirements.
+
+**B6 Care Plan.** Monthly fee, stated response and resolution SLAs, stated included hours, stated exclusions. Minimum term and notice period as stated.
+
+**B7 No outcome warranty.** Gridsmith does not warrant search rankings, traffic, conversion rates or commercial performance.
+
+> **For solicitor review:** B1 is quoted on the website as an ownership guarantee. The website must not claim more than this clause gives. B3 in particular is a real limit on "you own everything" and the site must reflect it honestly.
+
+# Schedule C — Gridsmith Press
+
+**C1 Rights.** **The author retains 100% of the copyright in the work at all times.** Gridsmith acquires no ownership interest in the manuscript, the finished book, or any derivative.
+
+**C2 Royalties.** **The author receives 100% of royalties and sales income.** Gridsmith takes no royalty, no commission on sales, and no share of income. Gridsmith is paid only the fees stated in the Scope.
+
+**C3 Licence.** The author grants Gridsmith a limited, non-exclusive, revocable licence to reproduce and adapt the work solely to produce the deliverables. It terminates on delivery, except for the portfolio licence at C7.
+
+**C4 Deliverables.** Cover design, interior design and typesetting produced by Gridsmith are assigned to the author on payment in full under clause 8.3.
+
+**C5 Distribution.** Where the Scope includes distribution setup, Gridsmith will prepare and submit the title to the platforms named in the Scope, to each platform's current technical and content specifications. **All publishing and retail accounts are established in the author's name and under the author's sole control.** Gridsmith does not hold, operate or receive income through any account in its own name on the author's behalf.
+
+**C6 ISBN.** **The author is the publisher of record.** The ISBN is registered to the author, not to Gridsmith, and Gridsmith operates no imprint. Where the Scope includes it, Gridsmith will assist the author in obtaining their own ISBN from the relevant national agency and in completing the associated metadata registration. The ISBN, and the publisher record attached to it, belong to the author permanently and are unaffected by the end of this agreement.
+
+**C6.1 Platform compliance.** Where the Scope names distribution platforms, Gridsmith will produce files meeting each platform's published specification at the time of submission (trim sizes, bleed, spine calculation, cover template, colour profile, file format, metadata fields, category and keyword requirements). Platform specifications change; Gridsmith warrants compliance at the date of submission, not indefinitely.
+
+**C6.2 Marketing.** Book marketing is a **separate service** with its own Scope and fee. It is not included in any publishing package unless expressly stated. Clause C10 applies to it in full.
+
+**C7 Portfolio.** Gridsmith may display the published title in its portfolio and link to retail listings. **Written author consent is obtained before any title is displayed** and may be withdrawn on notice.
+
+**C8 Editorial.** Gridsmith advises; the author decides. Final content is the author's, and the author is responsible for the accuracy and legality of the text.
+
+**C9 Author warranties.** The author warrants that the work is original, does not infringe copyright, is not defamatory, does not breach confidence or privacy, and does not contain unlawful material — and indemnifies Gridsmith accordingly.
+
+**C10 No outcome warranty.** Gridsmith makes **no representation about sales, rankings, reviews, bestseller status or income** — in respect of publishing services or marketing services. Services are supplied; commercial outcomes are not promised. This applies to marketing engagements without exception.
+
+**C11 Revisions.** The Scope states the revision rounds included. Further rounds are chargeable at the rate stated.
+
+**C12 Content Programme.** Monthly fee, stated output, stated turnaround, stated revision rounds, stated exclusions, minimum term and notice period.
+
+> **For solicitor review:** C1, C2 and C6 are the clauses the website's rights page cites. The page must say exactly what these say and nothing more. Note that Gridsmith operates **no imprint and takes no publisher record** — this is a service-only model and the terms should not contain any residual language implying otherwise. Please confirm C9 (author warranties and indemnity) is enforceable against a consumer author, since the equivalent in `CONSUMER-TERMS.md` §9.3 is softer.
+
+# Schedule DP — Data Processing
+
+To be drafted where Gridsmith processes personal data on the client's behalf. Must cover: subject matter and duration · nature and purpose · types of data and categories of data subject · controller instructions · confidentiality · security measures · sub-processors and authorisation · assistance with data subject rights · breach notification · deletion or return on termination · audit rights · international transfers and the mechanism relied on.
+
+---
+
+**`[TK]` items:** company number, registered office, liability cap figure, PI insurance limit.

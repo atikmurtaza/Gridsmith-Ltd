@@ -1,0 +1,299 @@
+# Shared Foundation — Architecture & Design Tokens
+
+Read this before any division file. The three division sites are **three themed sections of one application**, not three codebases.
+
+---
+
+## 1. Architectural decision
+
+**One domain. One Next.js application. Four route groups. One deployment.**
+
+`gridsmith.co.uk` is the only site. The divisions are sections of it, not separate
+websites:
+
+```
+gridsmith.co.uk/            → master layer (homepage, about, approach, work, insights)
+gridsmith.co.uk/design/     → Gridsmith Design
+gridsmith.co.uk/digital/    → Gridsmith Digital
+gridsmith.co.uk/press/      → Gridsmith Press
+```
+
+Division domains (`gridsmithdesign.co.uk` and equivalents) are registered defensively
+and **301 to their path**. They are never hosted separately.
+
+Rationale: the group structure decision is a single legal entity with a master brand. Three separate codebases would triple maintenance, split SEO authority, and make cross-division case studies impossible to render. Route groups give each division a fully distinct visual identity while sharing primitives, the portfolio database, the lead pipeline and the deployment.
+
+```
+app/
+  (marketing)/
+    page.tsx                     → gridsmith.co.uk
+    about/  approach/  work/  insights/  contact/
+  (design)/design/               → Gridsmith Design
+  (digital)/digital/               → Gridsmith Digital
+  (press)/press/                 → Gridsmith Press
+  api/
+    lead/route.ts
+    revalidate/route.ts
+components/
+  primitives/                    ← shared, theme-agnostic
+  divisions/design|digital|press/ ← division-specific compositions
+lib/
+  cms/  analytics/  leads/  schema/
+styles/
+  tokens.css                     ← base layer
+  themes/design.css|digital.css|press.css
+```
+
+Theming is applied by a `data-division` attribute on `<body>`, set by the route group layout. Division themes override CSS custom properties only — never component logic.
+
+## 2. Stack (fixed for all three)
+
+| Layer | Choice | Reason |
+|---|---|---|
+| Framework | **Next.js 15+, App Router, TypeScript strict** | SSG/ISR is non-negotiable for the SEO surface (R1, R3) |
+| Styling | **Tailwind CSS v4 + CSS custom properties** | Token-driven theming without a JS runtime |
+| CMS | **Sanity** (or Payload if self-hosting preferred) | Structured content, portable text, real relations |
+| Lead store | **Supabase** (Postgres) | Already in the stack; RLS; direct SQL for reporting |
+| Email | **Resend** | Transactional + notification |
+| Hosting | **Vercel** | ISR, edge, preview deployments |
+| Analytics | **GA4 + Vercel Analytics + PostHog** | PostHog for funnels/session replay; GA4 for channel attribution |
+| Forms | Server Actions + Zod | No client-side form library; less JS (R5 MX) |
+| Motion | **CSS transitions + `motion` (Framer) only where CSS cannot** | JS budget discipline |
+
+**Explicitly rejected:** Vite SPA (no SSG — fatal for the organic-search strategy); WordPress (performance ceiling, security surface); any page-builder (defeats the premium-craft positioning per R4.6).
+
+## 3. Base design tokens
+
+```css
+/* styles/tokens.css — base layer, division-agnostic */
+:root {
+  /* Spacing — 4px base, geometric */
+  --space-1: 0.25rem;  --space-2: 0.5rem;   --space-3: 0.75rem;
+  --space-4: 1rem;     --space-6: 1.5rem;   --space-8: 2rem;
+  --space-12: 3rem;    --space-16: 4rem;    --space-24: 6rem;
+  --space-32: 8rem;    --space-48: 12rem;
+
+  /* Type scale — 1.25 major third, fluid */
+  --text-xs:   clamp(0.75rem, 0.73rem + 0.1vw, 0.8125rem);
+  --text-sm:   clamp(0.875rem, 0.85rem + 0.12vw, 0.9375rem);
+  --text-base: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  --text-lg:   clamp(1.25rem, 1.18rem + 0.35vw, 1.5rem);
+  --text-xl:   clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+  --text-2xl:  clamp(2rem, 1.7rem + 1.5vw, 3rem);
+  --text-3xl:  clamp(2.5rem, 2rem + 2.5vw, 4.5rem);
+  --text-4xl:  clamp(3rem, 2.2rem + 4vw, 6.5rem);
+
+  --leading-tight: 1.05;  --leading-snug: 1.25;
+  --leading-normal: 1.55; --leading-relaxed: 1.7;
+  --measure: 68ch;        --measure-narrow: 52ch;
+
+  /* Structure — R5: hairlines, not shadows */
+  --border-hairline: 1px;
+  --radius-none: 0;  --radius-sm: 2px;  --radius-md: 4px;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-2: 0 2px 8px rgb(0 0 0 / 0.06);
+  /* No --shadow-3. If a design needs it, the design is wrong. */
+
+  /* Motion — opacity and transform only */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;  --dur-base: 250ms;  --dur-slow: 400ms;
+
+  --container: 1280px;
+  --container-narrow: 800px;
+  --grid-cols: 12;
+  --gutter: var(--space-6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+Every division theme must define exactly these, and only these:
+
+```css
+--canvas  --canvas-raised  --canvas-sunken
+--ink  --ink-muted  --ink-subtle
+--accent  --accent-hover  --accent-ink
+--line  --line-strong
+--font-display  --font-body  --font-mono
+--radius-default
+```
+
+## 4. Division theme summary
+
+| Token | Design | Digital | Press |
+|---|---|---|---|
+| Character | Precision instrument | Engineered clarity | Editorial authority |
+| `--canvas` | `#0C0C0D` (dark) | `#FAFAF9` (light) | `#FBF9F4` (warm paper) |
+| `--ink` | `#F5F5F4` | `#0A0A0A` | `#1A1815` |
+| `--accent` | `#E8A33D` amber | `#1B5FFF` electric blue | `#2E4A3A` deep green |
+| `--font-display` | Neue Haas Grotesk Display / Inter Display | GT America Mono / JetBrains Mono | Freight Text / Source Serif 4 |
+| `--font-body` | Inter | Inter | Source Serif 4 |
+| `--radius-default` | `0` | `2px` | `2px` |
+| Motif | Drawing-sheet grid, title blocks, revision marks | Terminal blocks, monospace data, 1px rules | Book object, margin notes, drop caps |
+
+All three inherit the same spacing, type scale, grid and motion tokens. **A user moving between divisions should feel the same hand, different voice.**
+
+## 5. Shared primitives (build once)
+
+`Button` · `Link` · `Container` · `Grid` · `Section` · `Eyebrow` · `Heading` · `Prose` · `Card` · `Media` (watermarked, right-click disabled) · `Accordion` · `Tabs` · `Field` · `Select` · `RadioGroup` · `Stepper` · `Table` · `Badge` · `Marquee` · `RevealOnScroll` · `StickyCta` · `Breadcrumb` · `Pagination` · `EmptyState` · `ErrorState`
+
+All primitives consume tokens only. **No primitive may contain a hardcoded colour.** CI lint rule enforces this.
+
+## 6. Shared systems
+
+### Lead pipeline (identical across divisions)
+```
+Form (Server Action + Zod)
+  → Supabase `leads` insert
+  → Resend: internal notification (<60s) + applicant auto-reply
+  → Slack webhook #gridsmith-leads
+  → CRM sync (division, service, budget_band tags)
+```
+**Response commitment (set by the founder, August 2026):** as soon as possible,
+and **always by the end of the next business day.** The 60-second *notification*
+requirement stands and is a launch gate. The 5-minute *human response* is not
+committed to and the site must never imply it.
+
+Trade-off accepted knowingly: R2 finds a 5-minute response makes a lead 21x more
+likely to qualify. Committing to next business day forfeits most of that. The
+correct response is not to promise more than the business can hold — a broken
+response promise costs more than a slower honest one. Revisit when there is
+capacity to staff a faster rota.
+
+### Portfolio
+Single Sanity `project` document type, `divisions[]` as a multi-select. Queried three ways: master `/work`, division `/[division]/work`, and auto-pulled by tag onto service pages.
+
+### Consent management (UK GDPR / PECR) — **added at validation**
+
+GA4, PostHog and the Design division's `gs_design_track` cookie are all non-essential
+storage under PECR. They require prior consent.
+
+```
+Consent Mode v2 (Google) + a self-hosted banner
+  · Default state: analytics_storage=denied, ad_storage=denied
+  · No GA4, PostHog or preference cookie fires before an affirmative choice
+  · Reject must be as easy as Accept — one click, equal prominence
+  · Choice stored in a strictly-necessary first-party cookie, 12-month expiry
+  · A persistent footer link reopens preferences
+  · Server-side lead capture is a legitimate-interest/contract basis and is
+    unaffected — forms work regardless of consent state
+```
+
+Implementation note: use a lightweight self-hosted banner (≤8KB), not a third-party
+CMP. Commercial CMPs typically add 60–100KB and render-blocking scripts, which
+breaks the performance budgets in §7 and, on Digital, the 100/100/100 launch gate.
+
+Consequence for `is_ai_referral` tracking (R1): referrer classification for
+consented sessions only. Expect a measurement gap and do not treat consented
+volume as total volume.
+
+### Migration & redirects — **added at validation**
+
+Before any division goes live:
+1. Crawl the existing Gridsmith site; export every indexed URL.
+2. Map each to its new destination. Unmappable URLs go to the nearest division hub,
+   never to the homepage and never to a 404.
+3. Implement as 301s in `next.config.js`, version-controlled.
+4. Preserve existing inbound-link equity — verify in Search Console post-launch.
+5. Defensive domains (`gridsmithdesign.co.uk`, etc.) 301 to their path, not hosted.
+
+A missing redirect map is the most common cause of an organic-traffic collapse
+after a rebuild, and it is invisible until the rankings have already gone.
+
+### Analytics events (shared taxonomy)
+`page_view` · `division_view` · `service_view` · `case_study_view` · `estimator_start` · `estimator_complete` · `cta_click` · `form_step` · `form_submit` · `form_error` · `sample_request` · `outbound_click`
+
+Every event carries `division`, `service_slug`, `traffic_source`, `is_ai_referral`.
+
+### AI-referral detection
+Referrer or UTM matching `chatgpt.com|perplexity.ai|gemini.google|claude.ai|copilot.microsoft` → flag `is_ai_referral=true`. Required by R1 (22% conversion premium — must be measured, not assumed).
+
+## 7. Seed content policy — **added at revision**
+
+Real portfolio and real pricing arrive after the build. The sites are therefore built
+and validated against **seed content**: structurally realistic, visibly fake.
+
+### Rules
+
+1. **Seed content must be structurally complete.** Every field a real record would
+   populate is populated. A seed project with no metric, no client display name and
+   one image does not exercise the template and will hide layout defects that surface
+   the day real content lands.
+2. **Seed content must be visibly identifiable as placeholder.** Every seed record
+   carries `isSeed: true`. The CMS lists seed records with a marker. Client names use
+   an obviously fictional convention (`Northfield Engineering`, `Halcyon Press`) — never
+   a real company name, never a plausible-but-unverifiable one.
+3. **A `?seed=hide` query param and an env flag hide all seed content**, so the site can
+   be demonstrated to a real prospect without placeholder work in it.
+4. **Seed content cannot ship to production with `NEXT_PUBLIC_ENV=production`.**
+   A build-time check fails the deploy if any `isSeed: true` record is published while
+   the environment is production. This is the mechanism that stops fake case studies
+   going live by accident — the single most damaging content failure available here.
+5. **Seed prices use a distinct format** — every figure rendered with a visible
+   `INDICATIVE` badge and a footnote. No seed price may appear without it.
+6. **Images are abstract or clearly generic.** No fabricated engineering drawings, no
+   fabricated book covers, no fabricated screenshots of software that does not exist.
+   Use neutral geometric placeholders at correct aspect ratios.
+
+### Seed volume required to validate UI/UX
+
+| Content type | Seed count | Why this number |
+|---|---|---|
+| Projects (across all divisions) | 24 | Exercises grid pagination, filter combinations, and the empty state |
+| — with 1 metric | 8 | Minimum-content case study layout |
+| — with 4+ metrics, 8+ images | 4 | Maximum-content case study layout |
+| — cross-division (2+ divisions) | 3 | The multi-division badge and master `/work` grouping |
+| — confidential (no client name) | 3 | The `clientDisplay` fallback path |
+| Services | 10 per division | Realistic nav and cross-link density |
+| Books (Press) | 12 | Shelf grid, filters, LCP under image load |
+| Drawing types (Design) | 20 | Matrix scroll, sticky header, mobile pinned column |
+| Stack items (Digital) | 15 | Category grouping on the stack page |
+| FAQs | 12–18 per division | Accordion behaviour and schema output |
+| Testimonials | 6 | |
+
+Anything less and the templates are being validated against conditions that will not
+occur in production.
+
+### Scaling to real content
+
+The portfolio is designed to grow without structural change:
+
+- **No hardcoded counts anywhere.** Grids paginate at 24 with URL-state pagination.
+- **Filters derive their options from the data**, not from a hardcoded list. Adding a
+  new industry or discipline to a project makes it appear as a filter option
+  automatically.
+- **Adding a project requires no deploy** — Sanity publish triggers ISR revalidation.
+- **Bulk import path:** a documented CSV/JSON → Sanity migration script lives in
+  `scripts/import-projects.ts`, so 100 historical projects can be loaded in one pass
+  rather than typed into the CMS one at a time. Build this before content entry starts,
+  not after; it is two days of work that saves several weeks.
+- **Image ingest is scripted too** — watermarking, resizing and AVIF conversion run at
+  upload, so a bulk import does not require manual asset preparation.
+
+### Replacing seed content
+
+Seed records are deleted, not edited into real ones. Editing a seed record risks
+carrying `isSeed: true` into production or leaving fragments of placeholder copy in a
+real case study. The import script and the seed script are separate paths.
+
+## 8. Universal launch gates
+
+No division ships without all of these green:
+
+1. Lighthouse ≥95 performance / ≥100 accessibility / ≥100 SEO on every template
+2. LCP ≤2.0s, INP ≤200ms, CLS ≤0.05 on 4G throttle
+3. WCAG 2.2 AA verified — axe clean + manual keyboard pass + screen reader pass
+4. Lead notification measured under 60 seconds end to end; confirmation copy states the next-business-day commitment and nothing faster
+5. All structured data validating in Google Rich Results Test
+6. Minimum 4 published case studies with at least one quantified metric each
+7. Pricing published on 100% of service pages
+8. `Gridsmith Ltd` legal disclosure present in footer with company number
+9. 404 / 500 / empty / loading states designed and implemented
+10. Zero TypeScript errors, zero ESLint warnings, zero console errors in production
+11. Consent banner live; no non-essential cookie fires before an affirmative choice
+12. Redirect map complete and tested; zero unmapped indexed URLs from the previous site
