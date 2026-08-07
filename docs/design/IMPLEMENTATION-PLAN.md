@@ -1,27 +1,21 @@
 # Implementation Plan — Gridsmith Design
 
-Design is built **first** and therefore carries the shared foundation (Phase 0). Digital and Press inherit it and start at their own Phase 1. This is why Design's plan is longer than the other two — the extra weeks are group infrastructure, not division work.
+Design is built **third**, after Foundation + Master and after Press, per
+`_shared/02-BUILD-SEQUENCE.md`. It starts at its own Phase 1 and inherits a settled
+foundation.
+
+An earlier revision of this file had Design going first and carrying the shared
+foundation. That is no longer true and the Phase 0 table has moved to
+`master/IMPLEMENTATION-PLAN.md`, which owns it. Task IDs `0.1`–`0.12` are unchanged, so
+existing references still resolve.
 
 Estimates assume one full-time developer plus part-time design and content input. Multiply by 1.6 if part-time.
 
 ---
 
-## Phase 0 — Shared foundation (Week 1–2) · *group cost, built once*
+## Phase 0 — Shared foundation · *moved*
 
-| # | Task | Output | DoD |
-|---|---|---|---|
-| 0.1 | Next.js 15 + TS strict + Tailwind v4 scaffold | Repo, CI, preview deploys | `main` deploys green to Vercel |
-| 0.2 | Token layer + three theme files | `tokens.css`, `themes/*.css` | All three themes render a demo page correctly |
-| 0.3 | Route groups + `data-division` layout switching | `app/(design|digital|press)` | Navigating between groups swaps theme with zero flash |
-| 0.4 | Shared primitives (21 components) | `components/primitives/*` | Storybook or a `/_kitchen-sink` route; zero hardcoded colours |
-| 0.5 | Sanity project, core schemas, Studio deploy | CMS live | Core types from `SCHEMA-CORE.md` editable |
-| 0.6 | Supabase project, `leads` + RLS + indexes | DB live | Anon can insert, cannot select — verified by test |
-| 0.7 | Lead pipeline: Server Action → DB → Resend → Slack | `api/lead` | End-to-end notify measured **under 60s** |
-| 0.8 | Analytics: GA4 + PostHog + AI-referral detection | `lib/analytics` | `is_ai_referral` correctly flags a test Perplexity referrer |
-| 0.9 | CI gates: TS, ESLint, Lighthouse CI, size-limit, axe | `.github/workflows` | A deliberate regression is blocked by CI |
-| 0.10 | Legal pages + trust footer with company number | `/legal/*` | Companies Act disclosure verified present |
-
-**Phase 0 exit gate:** a themed placeholder page in each division, a working form that lands in Supabase and Slack in under 60 seconds, and CI that blocks a deliberate performance regression.
+See `master/IMPLEMENTATION-PLAN.md` Phase 0. It is complete before Design starts.
 
 ## Phase 1 — Design skeleton (Week 3–4)
 

@@ -52,15 +52,15 @@ Theming is applied by a `data-division` attribute on `<body>`, set by the route 
 |---|---|---|
 | Framework | **Next.js 15+, App Router, TypeScript strict** | SSG/ISR is non-negotiable for the SEO surface (R1, R3) |
 | Styling | **Tailwind CSS v4 + CSS custom properties** | Token-driven theming without a JS runtime |
-| CMS | **Sanity** (or Payload if self-hosting preferred) | Structured content, portable text, real relations |
+| CMS | **Sanity** | Structured content, portable text, real relations |
 | Lead store | **Supabase** (Postgres) | Already in the stack; RLS; direct SQL for reporting |
 | Email | **Resend** | Transactional + notification |
 | Hosting | **Vercel** | ISR, edge, preview deployments |
-| Analytics | **GA4 + Vercel Analytics + PostHog** | PostHog for funnels/session replay; GA4 for channel attribution |
+| Analytics | **GA4 + PostHog** | PostHog for funnels/session replay; GA4 for channel attribution |
 | Forms | Server Actions + Zod | No client-side form library; less JS (R5 MX) |
-| Motion | **CSS transitions + `motion` (Framer) only where CSS cannot** | JS budget discipline |
+| Motion | **CSS transitions and animations only** | JS budget discipline |
 
-**Explicitly rejected:** Vite SPA (no SSG — fatal for the organic-search strategy); WordPress (performance ceiling, security surface); any page-builder (defeats the premium-craft positioning per R4.6).
+**Explicitly rejected:** Vite SPA (no SSG — fatal for the organic-search strategy); WordPress (performance ceiling, security surface); any page-builder (defeats the premium-craft positioning per R4.6); **any animation library, Framer Motion included** — every motion spec in the four `DESIGN.md` files is reachable with CSS plus, at most, an `IntersectionObserver`, and a JS animation runtime does not survive Digital's 90KB budget or its 100/100/100 gate; any UI component library; any third-party CMP.
 
 ## 3. Base design tokens
 
@@ -112,7 +112,8 @@ Theming is applied by a `data-division` attribute on `<body>`, set by the route 
 }
 ```
 
-Every division theme must define exactly these, and only these:
+Every theme — the three divisions and master — must define exactly these, and only
+these:
 
 ```css
 --canvas  --canvas-raised  --canvas-sunken
@@ -122,6 +123,13 @@ Every division theme must define exactly these, and only these:
 --font-display  --font-body  --font-mono
 --radius-default
 ```
+
+**One exception, master only.** `themes/master.css` additionally defines
+`--accent-design`, `--accent-digital` and `--accent-press`. The master layer has no
+colour of its own, so it needs the division accents to render the three elements that
+reference a division: routing cards, division badges, and the footer switcher
+(`master/DESIGN.md` §2). No other theme defines them, and no division theme may
+reference another division's accent.
 
 ## 4. Division theme summary
 
@@ -138,11 +146,17 @@ Every division theme must define exactly these, and only these:
 
 All three inherit the same spacing, type scale, grid and motion tokens. **A user moving between divisions should feel the same hand, different voice.**
 
-## 5. Shared primitives (build once)
+## 5. Shared primitives (build once) — **24**
 
-`Button` · `Link` · `Container` · `Grid` · `Section` · `Eyebrow` · `Heading` · `Prose` · `Card` · `Media` (watermarked, right-click disabled) · `Accordion` · `Tabs` · `Field` · `Select` · `RadioGroup` · `Stepper` · `Table` · `Badge` · `Marquee` · `RevealOnScroll` · `StickyCta` · `Breadcrumb` · `Pagination` · `EmptyState` · `ErrorState`
+`Button` · `Link` · `Container` · `Grid` · `Section` · `Eyebrow` · `Heading` · `Prose` · `Card` · `Media` (watermarked, right-click disabled) · `Accordion` · `Tabs` · `Field` · `Select` · `RadioGroup` · `Stepper` · `Table` · `Badge` · `RevealOnScroll` · `StickyCta` · `Breadcrumb` · `Pagination` · `EmptyState` · `ErrorState`
 
 All primitives consume tokens only. **No primitive may contain a hardcoded colour.** CI lint rule enforces this.
+
+**The list above is authoritative; the count follows it.** Where an older file says
+21, that number predates the addition of `Breadcrumb`, `Pagination`, `EmptyState` and
+`ErrorState` and is wrong. `Marquee` was removed at kickoff — `design/PROJECT-RULES.md`
+already prohibits marquee text on content sections, so the primitive had no compliant
+caller in any of the four route groups.
 
 ## 6. Shared systems
 
@@ -152,8 +166,13 @@ Form (Server Action + Zod)
   → Supabase `leads` insert
   → Resend: internal notification (<60s) + applicant auto-reply
   → Slack webhook #gridsmith-leads
-  → CRM sync (division, service, budget_band tags)
 ```
+
+**CRM sync is deferred, not dropped.** No CRM is named anywhere in the specification,
+so no adapter is built — inventing an integration target is exactly the kind of
+speculative work that rots. The `leads.crm_synced_at` column stays in the schema so
+that adding a sync later is a migration-free change. Name the CRM and it becomes a
+one-task addition.
 **Response commitment (set by the founder, August 2026):** as soon as possible,
 and **always by the end of the next business day.** The 60-second *notification*
 requirement stands and is a launch gate. The 5-minute *human response* is not
@@ -175,7 +194,8 @@ storage under PECR. They require prior consent.
 
 ```
 Consent Mode v2 (Google) + a self-hosted banner
-  · Default state: analytics_storage=denied, ad_storage=denied
+  · Default state: analytics_storage=denied, ad_storage=denied,
+    functionality_storage=denied
   · No GA4, PostHog or preference cookie fires before an affirmative choice
   · Reject must be as easy as Accept — one click, equal prominence
   · Choice stored in a strictly-necessary first-party cookie, 12-month expiry
@@ -236,7 +256,17 @@ and validated against **seed content**: structurally realistic, visibly fake.
    going live by accident — the single most damaging content failure available here.
 5. **Seed prices use a distinct format** — every figure rendered with a visible
    `INDICATIVE` badge and a footnote. No seed price may appear without it.
-6. **Images are abstract or clearly generic.** No fabricated engineering drawings, no
+6. **Seed metrics render as visibly fake, not as plausible numbers.** `project.metrics`
+   requires at least one quantified metric, so every seed case study necessarily carries
+   invented figures. They render with a `[SEED]` prefix and zeroed digits — `[SEED] 00%`,
+   `[SEED] 00 days` — never a number a reader could mistake for a real outcome.
+
+   Two mechanisms, doing two different jobs. The `isSeed` exemption stops the
+   `content-integrity` agent flagging its own seed data every week until someone learns
+   to ignore it. The visible marker is for the human reading staging, who has no access
+   to the `isSeed` flag and would otherwise have no way to tell an invented metric from a
+   real one. Neither substitutes for the other.
+7. **Images are abstract or clearly generic.** No fabricated engineering drawings, no
    fabricated book covers, no fabricated screenshots of software that does not exist.
    Use neutral geometric placeholders at correct aspect ratios.
 

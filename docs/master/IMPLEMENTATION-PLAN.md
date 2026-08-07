@@ -2,18 +2,56 @@
 
 The master layer is built **alongside the shared foundation, before the first division**. It cannot be added afterwards without rework: the header, footer, consent banner, case study canonical route, statutory disclosure and seed-enforcement all sit at this level, and every division depends on them.
 
-**Revised group build order:** Foundation + Master → Design → Digital → Press.
+**Group build order:** Foundation + Master → **Press** → Design → Digital.
+
+Per `_shared/02-BUILD-SEQUENCE.md` and the validation report §5 O-03. An earlier
+revision of this file said *Design → Digital → Press* and `design/IMPLEMENTATION-PLAN.md`
+said Design carried the foundation; both predate the decision to launch Master + Press
+first and were corrected at kickoff.
 
 ---
 
-## Phase 0 — Shared foundation (Week 1–2) · *unchanged from the Design plan, now owned here*
+## Phase 0 — Shared foundation (Week 1–2) · *owned here; moved from the Design plan*
 
-Tasks 0.1–0.10 as specified in `design/IMPLEMENTATION-PLAN.md`, plus two additions:
+Task IDs are stable — Phases 1–6 below and the division plans reference them by number.
+**The IDs are not the build order.** Build order is:
 
-| # | Task | DoD |
-|---|---|---|
-| 0.11 | **Consent management** — banner, Consent Mode v2, script gating | No non-essential cookie fires before consent; verified in devtools |
-| 0.12 | **Seed enforcement** — `isSeed` field, seed script, production build check | Deliberately publishing a seed record fails the production build |
+```
+0.1 + 0.9a  →  0.2  →  0.3  →  0.4 + exit gate  →  0.5  →  0.6  →  0.7
+            →  0.11 →  0.8  →  0.12 →  0.10
+```
+
+| # | Task | Output | DoD |
+|---|---|---|---|
+| 0.1 | Next.js 15 + TS strict + Tailwind v4 scaffold | Repo, CI, preview deploys | `main` deploys green to Vercel |
+| 0.2 | Token layer + **four** theme files (master + three divisions) | `tokens.css`, `themes/*.css` | All four themes render the kitchen sink correctly |
+| 0.3 | Route groups + `data-division` layout switching | `app/(marketing|design|digital|press)` | Navigating between groups swaps theme with zero flash |
+| 0.4 | **24 shared primitives** + `/_kitchen-sink` | `components/primitives/*` | Zero hardcoded colours; **Epic A exit gate** — see below |
+| 0.5 | Sanity project, core schemas, Studio deploy | CMS live | Core types from `SCHEMA-CORE.md` editable |
+| 0.6 | Supabase project, `leads` + RLS + indexes | DB live | Anon can insert, cannot select — verified by test |
+| 0.7 | Lead pipeline: Server Action → DB → Resend → Slack | `api/lead` | End-to-end notify measured **under 60s** |
+| 0.8 | Analytics: GA4 + PostHog + AI-referral detection | `lib/analytics` | **Depends on 0.11.** No GA4/PostHog request exists pre-consent; `is_ai_referral` flags a test Perplexity referrer |
+| 0.9a | CI gates — TS strict, ESLint, `no-hardcoded-colors`, service-role grep, size-limit | `.github/workflows` | A deliberate hex fails the build |
+| 0.9b | CI gates — Lighthouse CI + axe | `.github/workflows` | Runs against `/_kitchen-sink`; a deliberate regression is blocked |
+| 0.10 | Legal pages + trust footer with company number | `/legal/*` | Companies Act disclosure verified present. **Blocked on Q-M1** |
+| 0.11 | **Consent management** — banner, Consent Mode v2, script gating | `lib/consent`, `components/chrome` | No non-essential cookie fires before consent; verified in devtools |
+| 0.12 | **Seed enforcement** — `isSeed`, seed script, production build check | `scripts/` | Deliberately publishing a seed record fails the production build |
+
+**Why 0.9a is first and 0.11 precedes 0.8** — the two ordering decisions that are not
+obvious from the dependency graph:
+
+- `no-hardcoded-colors` has to exist before the first primitive, not after 24 of them.
+  On day one it is free; retrofitted it is a 24-file cleanup. LHCI and axe (0.9b) need
+  a page to measure, so they follow the kitchen sink.
+- Consent is the substrate that *injects* GA4 and PostHog, so it cannot be retrofitted
+  under analytics that already load. `master/PROJECT-RULES.md` §1.6 is explicit — *not
+  loaded-and-suppressed, not injected*. Built in this order, 0.8's DoD is provable:
+  zero network requests to GA4 before an affirmative choice.
+
+**Phase 0 exit gate** — a themed placeholder page in each of the four route groups, a
+working form landing in Supabase and Slack in under 60 seconds, CI blocking a deliberate
+regression, and `/_kitchen-sink` clearing `rules-compliance` and `accessibility-audit`
+from `.claude/agents/` **in a fresh context**, both with zero findings.
 
 ## Phase 1 — Master shell (Week 3)
 

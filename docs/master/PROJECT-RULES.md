@@ -56,6 +56,12 @@ redirects/legacy.json       generated, version-controlled
 - **Seed client names use an obviously fictional convention.** Never a real company, never a plausible-but-unverifiable one.
 - **No fabricated engineering drawings, book covers, or software screenshots.** Abstract geometric placeholders at correct aspect ratios.
 - Every seed price renders with a visible `INDICATIVE` badge.
+- **Every seed metric renders with a `[SEED]` prefix and zeroed digits** — `[SEED] 00%`,
+  `[SEED] 00 days`. Never a plausible figure. `project.metrics` requires at least one
+  quantified metric, so seed case studies necessarily carry invented numbers; the marker
+  is what stops a human reading staging mistaking one for a real outcome. The `isSeed`
+  exemption in the `content-integrity` agent is a separate mechanism serving a separate
+  purpose, and neither replaces the other.
 - Seed records are **deleted and replaced**, never edited into real content.
 - If the production build check fails, fix the content. Do not disable the check.
 

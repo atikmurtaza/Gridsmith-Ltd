@@ -79,7 +79,6 @@ When `confidential` is true, `clientName` is never returned by any public GROQ q
 
 ```ts
 deliverable   { label: string, detail: text, included: boolean }
-processStep   { number: number, title: string, description: text, duration: string }
 metric        { label: string, value: string, context: string }
 ctaBlock      { label: string, href: string, style: 'primary'|'secondary', prefill: object }
 seoBlock      { metaTitle, metaDescription, ogImage, canonical, noIndex: boolean }
@@ -103,6 +102,11 @@ protectedImage {
   displayMaxWidth: number (default 1600)
 }
 ```
+
+**`processStep` is not defined here.** It lives in `master/SCHEMA.md` §1, which adds
+`divisionDetail`, `clientTime` and the canonical-six validator. It previously appeared
+in both files; the duplicate was deleted at kickoff so that no session implements the
+weaker version by reading this file first.
 
 ## 3. Supabase — core tables
 

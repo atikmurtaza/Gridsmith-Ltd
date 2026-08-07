@@ -2,7 +2,8 @@
 
 **Status:** `TODO` · `WIP` · `BLOCKED` · `REVIEW` · `DONE` · **Priority:** P0 blocks launch · P1 desirable · P2 post-launch
 
-Assumes the shared foundation (Design Epic A) is `DONE`.
+Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, including
+`A-GATE`.
 
 ---
 

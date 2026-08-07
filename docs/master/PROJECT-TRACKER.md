@@ -8,26 +8,74 @@ The master layer owns the shared foundation (Epic A, previously in the Design tr
 
 ## Epic A — Shared foundation *(moved here from Design)*
 
-| ID | Task | P | Est | Depends | Status | Owner | Notes |
-|---|---|---|---|---|---|---|---|
-| A-01 | Next.js + TS strict + Tailwind v4 scaffold | P0 | 0.5d | — | TODO | Dev | |
-| A-02 | Token layer `tokens.css` | P0 | 1d | A-01 | TODO | Dev | |
-| A-03 | Four theme files (master + 3 divisions) | P0 | 1.5d | A-02 | TODO | Dev | |
-| A-04 | Four route groups + `data-division` | P0 | 1d | A-03 | TODO | Dev | Zero theme flash |
-| A-05 | 21 shared primitives | P0 | 4d | A-02 | TODO | Dev | No hardcoded colours |
-| A-06 | Sanity project + core schemas | P0 | 2d | — | TODO | Dev | Incl. `isSeed` on all types |
-| A-07 | Supabase + `leads` + RLS | P0 | 1d | — | TODO | Dev | |
-| A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | Notify <60s |
-| A-09 | Analytics + AI-referral detection | P0 | 1d | A-01 | TODO | Dev | Gated on consent |
-| A-10 | CI gates (TS/lint/LHCI/size/axe) | P0 | 1d | A-01 | TODO | Dev | |
-| A-11 | **Consent management + script gating** | P0 | 2d | A-01 | TODO | Dev | No cookie before consent |
-| A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | TODO | Dev | Seed publish fails prod build |
+Build order agreed at kickoff and binding — the `#` column, not the ID order. Six
+deviations from the original numbering are marked ⚑ and explained below the table.
+
+| # | ID | Task | P | Est | Depends | Status | Owner | Notes |
+|---|---|---|---|---|---|---|---|---|
+| 1 | A-01 | Next.js + TS strict + Tailwind v4 scaffold | P0 | 0.5d | — | DONE | Dev | |
+| 1 | A-10a | ⚑ CI gates — TS, ESLint, `no-hardcoded-colors`, service-role grep, size-limit | P0 | 0.5d | A-01 | DONE | Dev | Ships with A-01. Deliberate hex fails the build |
+| 2 | A-02 | Token layer `tokens.css` | P0 | 1d | A-01 | TODO | Dev | |
+| 3 | A-03 | ⚑ Four theme files — **incl. master (was M-01)** | P0 | 1.5d | A-02 | TODO | Dev | Master proves the token contract for a theme with no colour |
+| 4 | A-04 | Four route groups + `data-division` | P0 | 1d | A-03 | TODO | Dev | Zero theme flash; server-set |
+| 5 | A-05 | ⚑ **24** shared primitives | P0 | 4d | ⚑ **A-04** | TODO | Dev | Was "21 / depends A-02". `Marquee` deleted |
+| 5 | A-05a | ⚑ `/_kitchen-sink` route | P0 | 0.5d | A-05 | TODO | Dev | All 24 × 4 themes. `noindex`, excluded from prod build |
+| 6 | **A-GATE** | ⚑ **Epic A exit gate** | P0 | 0.5d | A-05a, A-10b | TODO | Dev | **Nothing downstream starts until green** — see below |
+| 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe | P0 | 0.5d | A-05a | TODO | Dev | Needs a page to measure |
+| 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | REVIEW | Dev | Schemas written; **awaiting Sanity org (B4)** |
+| 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | REVIEW | Dev | Migrations written; **awaiting Supabase project (B4)** |
+| 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | Notify <60s. No CRM adapter — deferred, see D1 |
+| 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | TODO | Dev | **Precedes A-09.** No cookie before consent |
+| 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | TODO | Dev | Built on the consent layer, not gated afterwards |
+| 12 | A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | TODO | Dev | Seed publish fails prod build |
+
+**The six deviations, and why:**
+
+1. **A-10 split, A-10a moved to first.** `no-hardcoded-colors` must exist before the
+   first primitive — free on day one, a 24-file cleanup after. LHCI and axe need a page,
+   so they become A-10b behind the kitchen sink.
+2. **M-01 folded into A-03.** A theme file is ~20 lines, and master is the theme that
+   proves the "only these tokens" contract holds when a theme has no colour of its own.
+   A-04's zero-flash DoD also needs four groups to test against, not three.
+3. **A-05 depends on A-04, not A-02.** Its DoD is "renders correctly in all four themes",
+   which is untestable before the themes and route groups exist.
+4. **A-05a added.** `02-BUILD-SEQUENCE.md` calls the kitchen sink the highest-leverage
+   discipline in the build and gates every page on it; it had no tracker task.
+5. **A-11 before A-09 — canonical.** Consent is the substrate that *injects* GA4 and
+   PostHog. Building analytics first and gating it afterwards is how a non-essential
+   cookie ships firing before consent, against `PROJECT-RULES.md` §1.6 and a PECR ceiling
+   of 4% of turnover. This order also makes A-09's DoD provable: zero GA4 requests
+   pre-consent, demonstrated in devtools.
+6. **A-GATE added** as an explicit task rather than a convention.
+
+**A-GATE pass criteria** — all six, no partial credit:
+
+- [ ] `/_kitchen-sink` renders all 24 primitives correctly in all four themes
+- [ ] Correct at 375px, 768px, 1440px
+- [ ] Keyboard navigable end to end
+- [ ] Zero hardcoded colours (A-10a green)
+- [ ] `rules-compliance` — **fresh context**, zero findings
+- [ ] `accessibility-audit` — **fresh context**, zero findings
+
+Both subagents run from `.claude/agents/`. The fresh context is the point: the model
+that just wrote 24 primitives is the worst available reviewer of them.
+
+**Internal order within A-05** — each tier depends only on the one above, and
+`'use client'` first appears in the last tier, so it stays isolated and auditable:
+
+| Tier | Primitives |
+|---|---|
+| Structure | `Container` `Grid` `Section` `Prose` `Heading` `Eyebrow` |
+| Content | `Card` `Badge` `Table` `Media` `Breadcrumb` `Pagination` |
+| Interactive | `Button` `Link` `Field` `Select` `RadioGroup` `Accordion` `Tabs` `Stepper` |
+| States | `EmptyState` `ErrorState` |
+| Motion / chrome | `RevealOnScroll` `StickyCta` |
 
 ## Epic M — Master shell
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| M-01 | Master theme; accent = ink | P0 | 0.5d | A-03 | TODO | Dev | Amber 2.0:1 constraint |
+| M-01 | ~~Master theme; accent = ink~~ | P0 | — | — | MOVED | Dev | **Folded into A-03.** Amber 2.0:1 constraint enforced there |
 | M-02 | Root layout, server-set `data-division` | P0 | 1d | A-04 | TODO | Dev | |
 | M-03 | Header with per-division nav | P0 | 1.5d | A-05 | TODO | Dev | Wordmark → `/` |
 | M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03 | TODO | Dev | From `companyDetails` |
@@ -85,6 +133,7 @@ The master layer owns the shared foundation (Epic A, previously in the Design tr
 | S-01 | Seed script, all volumes | P0 | 2d | A-12 | TODO | Dev | Per FOUNDATION §7 |
 | S-02 | 24 seed projects incl. 3 cross-division, 3 confidential | P0 | 1d | S-01 | TODO | Content | |
 | S-03 | Seed pricing with `INDICATIVE` badges | P0 | 0.5d | S-01 | TODO | Dev | No unbadged figure |
+| S-03a | **Seed metrics render `[SEED] 00%`** | P0 | 0.5d | S-01 | TODO | Dev | Zeroed digits, never a plausible figure. Per FOUNDATION §7.6 |
 | S-04 | Abstract placeholder imagery | P0 | 1d | S-01 | TODO | Design | **No fabricated drawings/covers/screenshots** |
 | S-05 | `?seed=hide` + env flag | P1 | 0.5d | S-01 | TODO | Dev | Demo mode |
 | S-06 | Production seed check verified | P0 | 0.5d | A-12 | TODO | Dev | Deliberate failure test |
@@ -108,7 +157,9 @@ The master layer owns the shared foundation (Epic A, previously in the Design tr
 
 | ID | Item | Needed from | Blocks |
 |---|---|---|---|
-| Q-M1 | Company number and registered office | Atik | M-05, L-05 |
+| Q-M1 | Company number and registered office — **requested at kickoff, received as the literal placeholder `[company number + registered office]`. Still open. Not to be guessed** | Atik | M-05, L-05, 0.10 |
+| Q-M10 | Font licences — are Neue Haas Grotesk Display / GT America Mono / Freight Text held, or do we build on the open fallbacks (Inter / JetBrains Mono / Source Serif 4)? Blocks nothing before A-03; a later swap is a one-line `--font-display` change | Atik | A-03 |
+| Q-M11 | **Gridsmith Press is already live and trading.** Stage 5 is a cutover of a revenue-generating site, not a launch. Cutover plan to be written into `master/IMPLEMENTATION-PLAN.md` before Stage 3 work begins | Atik | G-01, G-02, Stage 5 |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |

@@ -66,7 +66,7 @@ Build order within the stage:
 1. Scaffold, TypeScript strict, Tailwind v4, CI gates — **set the CI gates on day one**, not at the end. Claude Code respects a failing build; it does not respect a comment saying "we'll optimise later"
 2. Token layer, then all four themes
 3. Four route groups with server-set `data-division`
-4. All 21 primitives, with a `/_kitchen-sink` route
+4. All 24 primitives, with a `/_kitchen-sink` route
 5. Sanity project, core schemas, `isSeed` on everything
 6. Supabase, `leads`, RLS
 7. Lead pipeline end to end
@@ -75,6 +75,17 @@ Build order within the stage:
 10. Header, footer, statutory block, `companyDetails`
 
 **Do not start a page until the kitchen-sink route renders every primitive correctly in all four themes.** This is the single highest-leverage discipline in the whole build. A primitive fixed in week 2 costs an hour; the same fix in week 12 touches forty files.
+
+**Epic A exit gate.** Beyond the visual pass, `/_kitchen-sink` must clear both of these
+in a **fresh context**, run from `.claude/agents/`:
+
+- `rules-compliance` — zero violations of `master/PROJECT-RULES.md` and the `CLAUDE.md`
+  non-negotiables
+- `accessibility-audit` — zero WCAG 2.2 AA violations
+
+A fresh context is the point: the model that just wrote 24 primitives is the worst
+available reviewer of them. Nothing downstream of Epic A starts until both come back
+clean.
 
 ### Stage 2 — Seed data and import tooling · **Week 4**
 

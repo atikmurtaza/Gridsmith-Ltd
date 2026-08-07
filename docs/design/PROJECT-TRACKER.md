@@ -7,21 +7,17 @@ Update `Status` and `Notes` in place. Do not delete rows — move them to `DONE`
 
 ---
 
-## Epic A — Shared foundation *(group-level, Design carries it)*
+## Epic A — Shared foundation · *moved to `master/PROJECT-TRACKER.md`*
 
-| ID | Task | P | Est | Depends | Status | Owner | Notes |
-|---|---|---|---|---|---|---|---|
-| A-01 | Next.js + TS strict + Tailwind v4 scaffold | P0 | 0.5d | — | TODO | Dev | |
-| A-02 | Token layer `tokens.css` | P0 | 1d | A-01 | TODO | Dev | |
-| A-03 | Three theme files | P0 | 1d | A-02 | TODO | Dev | |
-| A-04 | Route groups + division theming | P0 | 1d | A-03 | TODO | Dev | Zero theme flash required |
-| A-05 | 21 shared primitives | P0 | 4d | A-02 | TODO | Dev | No hardcoded colours |
-| A-06 | Sanity project + core schemas | P0 | 2d | — | TODO | Dev | Per `SCHEMA-CORE.md` |
-| A-07 | Supabase + `leads` + RLS + indexes | P0 | 1d | — | TODO | Dev | Verify anon cannot SELECT |
-| A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | **Under 60s notify** |
-| A-09 | Analytics + AI-referral detection | P0 | 1d | A-01 | TODO | Dev | |
-| A-10 | CI gates (TS/lint/LHCI/size/axe) | P0 | 1d | A-01 | TODO | Dev | |
-| A-11 | Legal pages + trust footer | P0 | 0.5d | A-05 | TODO | Dev | Company number required |
+**Do not use the copy that used to live here.** It had drifted from master's and the two
+had genuinely conflicting definitions — three theme files rather than four, and `A-11`
+meaning *legal pages + trust footer* here while `A-11` means *consent management* in
+master. A commit citing `A-11` would have been ambiguous, and a session reading this file
+first would have built the wrong task.
+
+`master/PROJECT-TRACKER.md` Epic A is the only version. Design's `B-*` rows that depend
+on `A-03` resolve against it correctly — master's `A-03` builds all four themes,
+including Design's.
 
 ## Epic B — Design shell
 
