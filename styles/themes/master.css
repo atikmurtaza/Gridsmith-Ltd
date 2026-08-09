@@ -1,0 +1,45 @@
+/**
+ * Master theme — the neutral frame.
+ * docs/master/DESIGN.md §2.
+ *
+ * The master layer has no colour of its own: --accent is ink. If the master brand
+ * claimed a fourth colour, the three divisions would become sub-brands of a fourth
+ * brand. Ink as the accent means the divisions supply the colour and master supplies
+ * the structure, which is the actual commercial relationship.
+ */
+
+[data-division="master"] {
+  --canvas:         #FFFFFF;
+  --canvas-raised:  #FAFAF9;
+  --canvas-sunken:  #F4F4F2;
+
+  --ink:            #0F0F0F;
+  --ink-muted:      #52525B;
+  --ink-subtle:     #71717A;
+
+  --accent:         #0F0F0F;   /* the master accent is ink — deliberate */
+  --accent-hover:   #2A2A2A;
+  --accent-ink:     #FFFFFF;
+
+  --line:           #E7E5E4;
+  --line-strong:    #C7C4C1;
+
+  --font-display:   var(--font-inter), system-ui, sans-serif;
+  --font-body:      var(--font-inter), system-ui, sans-serif;
+  --font-mono:      var(--font-jetbrains), ui-monospace, monospace;
+
+  --radius-default: 2px;
+
+  /**
+   * Division accents — the one permitted exception to the 15-token contract
+   * (FOUNDATION §3). Used ONLY on division routing cards, division badges and the
+   * footer switcher.
+   *
+   * --accent-design is 2.0:1 on this canvas. It may be a rule or a badge border and
+   * nothing else: never text, never a link, never the sole indicator of a state.
+   * Enforced by scripts/check-no-hardcoded-colors.mjs.
+   */
+  --accent-design:  #E8A33D;
+  --accent-digital: #1B5FFF;
+  --accent-press:   #2E4A3A;
+}

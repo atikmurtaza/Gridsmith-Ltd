@@ -25,7 +25,7 @@ Dark canvas. Work is the light source. This is the only one of the three divisio
 
   --ink:            #F5F5F4;
   --ink-muted:      #A1A1A0;
-  --ink-subtle:     #6B6B6A;
+  --ink-subtle:     #7A7A79;   /* was #6B6B6A — 3.67:1, failed AA. See below */
 
   --accent:         #E8A33D;   /* amber — drafting pencil, warning tape */
   --accent-hover:   #F2B75C;
@@ -44,15 +44,28 @@ Dark canvas. Work is the light source. This is the only one of the three divisio
 
 **Contrast verification (WCAG 2.2 AA):**
 
-| Pair | Ratio | Pass |
+| Pair | Measured | Pass |
 |---|---|---|
-| `--ink` on `--canvas` | 17.8:1 | AAA |
-| `--ink-muted` on `--canvas` | 8.1:1 | AAA |
-| `--ink-subtle` on `--canvas` | 4.6:1 | AA — **body text only at ≥16px; never for small print** |
-| `--accent` on `--canvas` | 8.9:1 | AAA |
-| `--accent` on `--canvas-raised` | 7.6:1 | AAA |
-| `--accent-ink` on `--accent` | 8.9:1 | AAA |
-| `--line-strong` on `--canvas` | 3.1:1 | AA for UI borders |
+| `--ink` on `--canvas` | 17.92:1 | AAA |
+| `--ink-muted` on `--canvas` | 7.56:1 | AAA |
+| `--ink-subtle` on `--canvas` | 4.55:1 | AA — **body text only at ≥16px; never for small print** |
+| `--accent` on `--canvas` | 9.07:1 | AAA |
+| `--accent` on `--canvas-raised` | 8.46:1 | AAA |
+| `--accent-ink` on `--accent` | 9.07:1 | AAA |
+| `--line-strong` on `--canvas` | 1.72:1 | **Decorative only — never a component boundary or a state** |
+
+**Two corrections made at A-03, both from measurement.** This table previously carried
+figures that were not achievable with these colours.
+
+- **`--ink-subtle` was `#6B6B6A`, published as 4.6:1. It measured 3.67:1** — below the
+  4.5:1 AA floor for the body text this table permits it on. Lightened to `#7A7A79`, the
+  minimum that clears AA at 4.55:1, preserving the neutral character. Accessibility wins
+  the conflict per CLAUDE.md non-negotiable #10; the conflict is raised as `Q-M13`.
+- **`--line-strong` was published as 3.1:1 "AA for UI borders". It measures 1.72:1** and
+  never met 3:1. Reclassified as decorative, consistent with the other three themes, whose
+  equivalents sit at 1.59–1.74. **A component boundary or state indicator needs 3:1 under
+  WCAG 1.4.11 and must use `--ink-subtle` (4.55:1) instead** — this constrains input
+  outlines, selected states and focus rings on the Design theme.
 
 ## 3. Typography
 

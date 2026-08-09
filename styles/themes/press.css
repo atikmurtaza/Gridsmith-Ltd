@@ -1,0 +1,30 @@
+/**
+ * Press theme — the well-made book.
+ * docs/press/DESIGN.md §2.
+ *
+ * The warm canvas costs roughly two points of contrast against pure white. The
+ * --ink-subtle 17px floor is the consequence of that and is not negotiable.
+ */
+
+[data-division="press"] {
+  --canvas:         #FBF9F4;   /* warm paper */
+  --canvas-raised:  #FFFFFF;
+  --canvas-sunken:  #F2EFE7;
+
+  --ink:            #1A1815;
+  --ink-muted:      #57534E;
+  --ink-subtle:     #78716C;
+
+  --accent:         #2E4A3A;   /* deep green — cloth binding, not celebratory */
+  --accent-hover:   #1F3428;
+  --accent-ink:     #FBF9F4;
+
+  --line:           #E3DFD4;
+  --line-strong:    #C8C2B2;
+
+  --font-display:   var(--font-source-serif), Georgia, serif;
+  --font-body:      var(--font-source-serif), Georgia, serif;
+  --font-mono:      var(--font-jetbrains), ui-monospace, monospace;
+
+  --radius-default: 2px;
+}

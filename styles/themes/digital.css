@@ -1,0 +1,30 @@
+/**
+ * Digital theme — engineered clarity, a spec sheet.
+ * docs/digital/DESIGN.md §2.
+ *
+ * The display face is monospace: on this division the mono-marks-facts convention
+ * extends to the headings themselves.
+ */
+
+[data-division="digital"] {
+  --canvas:         #FAFAF9;
+  --canvas-raised:  #FFFFFF;
+  --canvas-sunken:  #F0F0EE;
+
+  --ink:            #0A0A0A;
+  --ink-muted:      #52525B;
+  --ink-subtle:     #71717A;
+
+  --accent:         #1B5FFF;
+  --accent-hover:   #0E4BE0;
+  --accent-ink:     #FFFFFF;
+
+  --line:           #E4E4E2;
+  --line-strong:    #C9C9C6;
+
+  --font-display:   var(--font-jetbrains), ui-monospace, monospace;
+  --font-body:      var(--font-inter), system-ui, sans-serif;
+  --font-mono:      var(--font-jetbrains), ui-monospace, monospace;
+
+  --radius-default: 2px;
+}

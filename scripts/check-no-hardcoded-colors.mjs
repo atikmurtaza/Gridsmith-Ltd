@@ -45,6 +45,30 @@ const RULES = [
   },
 ];
 
+/**
+ * The amber constraint — master/PROJECT-RULES.md §1.2.
+ *
+ * `--accent-design` is 2.16:1 on master's white canvas. It may be a rule or a badge
+ * border and nothing else: never text, never a link colour, never the sole indicator of
+ * a state. This catches the half a rule can catch — the token used in a property that
+ * paints glyphs.
+ *
+ * It cannot catch a badge whose only state signal is an amber border. That half is
+ * manual review, recorded in master/IMPLEMENTATION-PLAN.md 1.1. Do not treat a green
+ * run here as the constraint being fully enforced.
+ */
+/**
+ * The lookbehind is load-bearing. `\b` matches between the hyphen and the `c` of
+ * `border-color`, so a word-boundary pattern flags `border-color: var(--accent-design)`
+ * — which is one of the two uses the spec explicitly permits. `(?<![-\w])` restricts
+ * the match to the standalone property, leaving `border-color`, `background-color` and
+ * `outline-color` alone.
+ */
+const AMBER_AS_TEXT = {
+  id: 'amber-as-text',
+  re: /(?<![-\w])(?:color|fill|stroke|caret-color|text-decoration-color)\s*:\s*var\(\s*--accent-design\s*\)/gi,
+};
+
 /** Named CSS colours, checked in stylesheets only — too many false positives in TS. */
 const CSS_NAMED = {
   id: 'named',
@@ -68,9 +92,16 @@ function sourceFiles() {
 const violations = [];
 
 for (const file of sourceFiles()) {
-  if (ALLOWED.some((re) => re.test(file))) continue;
+  // The token layer is exempt from the colour-literal rules — that is where colour is
+  // declared. It is NOT exempt from the amber rule: the token may be defined in
+  // master.css, but painting glyphs with it is wrong wherever it happens.
+  const isTokenLayer = ALLOWED.some((re) => re.test(file));
 
-  const rules = file.endsWith('.css') ? [...RULES, CSS_NAMED] : RULES;
+  const rules = isTokenLayer
+    ? [AMBER_AS_TEXT]
+    : file.endsWith('.css')
+      ? [...RULES, CSS_NAMED, AMBER_AS_TEXT]
+      : [...RULES, AMBER_AS_TEXT];
   const lines = readFileSync(file, 'utf8').split(/\r?\n/);
 
   lines.forEach((line, i) => {

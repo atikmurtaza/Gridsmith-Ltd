@@ -1,13 +1,17 @@
 @import "tailwindcss";
 @import "./tokens.css";
+@import "./themes/master.css";
+@import "./themes/design.css";
+@import "./themes/digital.css";
+@import "./themes/press.css";
 
 /**
  * Tailwind v4 ships its own `--text-*`, `--leading-*`, `--radius-*` and `--ease-*`
  * theme variables, and those names collide with FOUNDATION §3 exactly. Both sets were
  * being emitted to :root, and ours only won because tokens.css imports second —
- * reordering these two lines would have silently reverted the entire type scale,
- * radius scale and easing curve to Tailwind's defaults, with no error and nothing
- * failing loudly.
+ * reordering these lines would have silently reverted the entire type scale, radius
+ * scale and easing curve to Tailwind's defaults, with no error and nothing failing
+ * loudly.
  *
  * Clearing the four colliding namespaces leaves tokens.css as the single definition.
  * The matching Tailwind utilities (`text-3xl`, `rounded-md`, `leading-snug`, `ease-out`)
@@ -24,5 +28,12 @@
   --ease-*: initial;
 }
 
-/* Themes land at A-03: styles/themes/{master,design,digital,press}.css,
-   each scoped to [data-division="..."] and overriding values only. */
+/* All four themes are always present in the stylesheet — they are ~20 lines each and
+   selector-scoped, so only the one matching [data-division] applies. Shipping four
+   costs less than the machinery to ship one. */
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: var(--leading-normal);
+}

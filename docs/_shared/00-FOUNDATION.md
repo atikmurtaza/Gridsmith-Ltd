@@ -216,10 +216,26 @@ reference another division's accent.
 | `--canvas` | `#0C0C0D` (dark) | `#FAFAF9` (light) | `#FBF9F4` (warm paper) |
 | `--ink` | `#F5F5F4` | `#0A0A0A` | `#1A1815` |
 | `--accent` | `#E8A33D` amber | `#1B5FFF` electric blue | `#2E4A3A` deep green |
-| `--font-display` | Neue Haas Grotesk Display / Inter Display | GT America Mono / JetBrains Mono | Freight Text / Source Serif 4 |
+| `--font-display` | Inter | JetBrains Mono | Source Serif 4 |
 | `--font-body` | Inter | Inter | Source Serif 4 |
 | `--radius-default` | `0` | `2px` | `2px` |
 | Motif | Drawing-sheet grid, title blocks, revision marks | Terminal blocks, monospace data, 1px rules | Book object, margin notes, drop caps |
+
+**Typefaces, decided at A-03 (`Q-M10`).** The originally specified display faces — Neue
+Haas Grotesk Display, GT America Mono and Freight Text — are all commercially licensed and
+no licence is held. The open equivalents already named as fallbacks in the specification
+are used instead: **Inter**, **JetBrains Mono** and **Source Serif 4**, self-hosted through
+`next/font`.
+
+The licensed names are **not** left in the font stacks. Naming an unlicensed face means it
+renders for the minority of visitors who happen to have it installed locally and not for
+anyone else, which is worse than not naming it. Buying a licence later is a change to one
+module in `styles/fonts/` — the theme files reference a CSS variable, not a family name.
+
+Loading is scoped per route group, one module per typeface in `styles/fonts/`, so a layout
+imports only the faces its division uses. Source Serif never reaches Design or Digital;
+JetBrains Mono reaches all four because monospace marks verifiable facts everywhere. Each
+division stays within the two-family limit in `design/PROJECT-RULES.md` §8.
 
 All three inherit the same spacing, type scale, grid and motion tokens. **A user moving between divisions should feel the same hand, different voice.**
 

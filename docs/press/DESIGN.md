@@ -44,15 +44,20 @@ This division has an additional design constraint the others do not: **it must l
 
 **Contrast verification (WCAG 2.2 AA):**
 
-| Pair | Ratio | Pass |
+| Pair | Measured | Pass |
 |---|---|---|
-| `--ink` on `--canvas` | 15.6:1 | AAA |
-| `--ink-muted` on `--canvas` | 7.1:1 | AAA |
-| `--ink-subtle` on `--canvas` | 4.9:1 | AA — **17px minimum, never below** |
-| `--accent` on `--canvas` | 8.4:1 | AAA |
-| `--accent-ink` on `--accent` | 8.4:1 | AAA |
-| `--ink` on `--canvas-sunken` | 14.1:1 | AAA |
-| `--line-strong` on `--canvas` | 2.3:1 | **Decorative only — never a sole information carrier** |
+| `--ink` on `--canvas` | 16.84:1 | AAA |
+| `--ink-muted` on `--canvas` | 7.25:1 | AAA |
+| `--ink-subtle` on `--canvas` | 4.56:1 | AA — **17px minimum, never below** |
+| `--accent` on `--canvas` | 9.25:1 | AAA |
+| `--accent-ink` on `--accent` | 9.25:1 | AAA |
+| `--ink` on `--canvas-sunken` | 15.42:1 | AAA |
+| `--line-strong` on `--canvas` | 1.69:1 | **Decorative only — never a sole information carrier** |
+
+Measured at A-03. Most figures were slightly conservative rather than optimistic, but
+`--ink-subtle` is the exception: 4.56:1 rather than 4.9:1, which clears AA by 0.06. The
+17px floor below is therefore doing more work than the original number suggested and is
+genuinely not negotiable.
 
 The warm canvas costs roughly 2 points of contrast versus pure white. The `--ink-subtle` 17px floor is the consequence and is not negotiable.
 

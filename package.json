@@ -16,7 +16,8 @@
     "lint:secrets": "node scripts/check-service-role-key.mjs",
     "size": "node scripts/check-bundle-size.mjs",
     "check:tokens": "node scripts/check-tokens.mjs",
-    "verify": "npm run typecheck && npm run lint && npm run lint:colors && npm run lint:secrets"
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "verify": "npm run typecheck && npm run lint && npm run lint:colors && npm run lint:secrets && npm run check:contrast"
   },
   "dependencies": {
     "next": "^15.5.23",

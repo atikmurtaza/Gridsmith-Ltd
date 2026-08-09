@@ -62,3 +62,61 @@ if (missing.length > 0) {
 }
 
 console.log(`check-tokens: ${declared.length} base tokens present in the built CSS`);
+
+/* ---------------------------------------------------------------------------------
+ * Theme parity — master/PROJECT-RULES.md §3.
+ * "Adding a token means adding it to all four themes, or to the base layer. A token
+ * defined in one theme only is a bug." A missing token does not error at runtime; it
+ * silently resolves to nothing, so nothing catches it but this.
+ * ------------------------------------------------------------------------------- */
+
+const THEMES = ['master', 'design', 'digital', 'press'];
+
+/** The 15-token theme contract — FOUNDATION §3. */
+const CONTRACT = [
+  '--canvas', '--canvas-raised', '--canvas-sunken',
+  '--ink', '--ink-muted', '--ink-subtle',
+  '--accent', '--accent-hover', '--accent-ink',
+  '--line', '--line-strong',
+  '--font-display', '--font-body', '--font-mono',
+  '--radius-default',
+];
+
+/** The one documented exception: master carries the division-reference accents. */
+const MASTER_EXTRAS = ['--accent-design', '--accent-digital', '--accent-press'];
+
+const themeProblems = [];
+
+for (const theme of THEMES) {
+  const src = readFileSync(`styles/themes/${theme}.css`, 'utf8');
+  const defined = new Set([...src.matchAll(/(--[a-z0-9-]+)\s*:/gi)].map((m) => m[1]));
+
+  for (const token of CONTRACT) {
+    if (!defined.has(token)) themeProblems.push(`${theme}: missing ${token}`);
+  }
+
+  const allowed = new Set([...CONTRACT, ...(theme === 'master' ? MASTER_EXTRAS : [])]);
+  for (const token of defined) {
+    if (!allowed.has(token)) {
+      themeProblems.push(`${theme}: declares ${token}, which is not in the theme contract`);
+    }
+  }
+
+  // Selector must survive minification — Lightning CSS drops the quotes.
+  const selector = new RegExp(`\\[data-division=["']?${theme}["']?\\]`);
+  if (!selector.test(css)) {
+    themeProblems.push(`${theme}: [data-division="${theme}"] is absent from the built CSS`);
+  }
+}
+
+if (themeProblems.length > 0) {
+  console.error(`\ncheck-tokens: ${themeProblems.length} theme contract problem(s)\n`);
+  for (const p of themeProblems) console.error(`  ${p}`);
+  console.error('');
+  process.exit(1);
+}
+
+console.log(
+  `check-tokens: ${THEMES.length} themes each define the ${CONTRACT.length}-token contract ` +
+    `(master +${MASTER_EXTRAS.length} division accents), all present in the built CSS`,
+);

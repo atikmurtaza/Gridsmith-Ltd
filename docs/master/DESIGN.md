@@ -55,16 +55,21 @@ Division accents appear at master level in only three places: division routing c
 
 **Contrast verification:**
 
-| Pair | Ratio | Pass |
+| Pair | Measured | Pass |
 |---|---|---|
-| `--ink` on `--canvas` | 19.5:1 | AAA |
-| `--ink-muted` on `--canvas` | 7.6:1 | AAA |
-| `--ink-subtle` on `--canvas` | 5.1:1 | AA |
-| `--accent-ink` on `--accent` | 19.5:1 | AAA |
-| `--accent-design` on `--canvas` | 2.0:1 | **Decorative rules and badges only. Never text, never a sole state indicator** |
-| `--accent-digital` on `--canvas` | 6.5:1 | AA |
-| `--accent-press` on `--canvas` | 8.7:1 | AAA |
-| `--line-strong` on `--canvas` | 2.4:1 | Decorative borders only |
+| `--ink` on `--canvas` | 19.17:1 | AAA |
+| `--ink-muted` on `--canvas` | 7.73:1 | AAA |
+| `--ink-subtle` on `--canvas` | 4.83:1 | AA |
+| `--accent-ink` on `--accent` | 19.17:1 | AAA |
+| `--accent-design` on `--canvas` | 2.16:1 | **Decorative rules and badges only. Never text, never a sole state indicator** |
+| `--accent-digital` on `--canvas` | 5.09:1 | AA |
+| `--accent-press` on `--canvas` | 9.74:1 | AAA |
+| `--line-strong` on `--canvas` | 1.74:1 | Decorative borders only |
+
+Measured at A-03 by `scripts/check-contrast.mjs`, which recomputes these from the theme
+files on every CI run. Six of the eight figures above were wrong in the original table —
+none changed a verdict. `--accent-digital` is the one worth noting: 5.09:1 rather than the
+6.5:1 published, still AA but with less headroom than the number implied.
 
 The amber row is a real constraint. Design's accent works on its own dark canvas and fails on the master's white one. On master pages it may be a 2–3px rule or a badge background (with `--ink` text on it), never coloured text and never the only signal of a state.
 

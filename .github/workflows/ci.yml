@@ -36,6 +36,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Contrast ratios meet WCAG 2.2 AA and match DESIGN.md
+        run: npm run check:contrast
+
       - name: Design tokens reach the build
         run: npm run check:tokens
 
