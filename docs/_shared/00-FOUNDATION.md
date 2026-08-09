@@ -8,25 +8,35 @@ Read this before any division file. The three division sites are **three themed 
 
 **One domain. One Next.js application. Four route groups. One deployment.**
 
-`gridsmith.co.uk` is the only site. The divisions are sections of it, not separate
+`gridsmith.uk` is the only site. The divisions are sections of it, not separate
 websites:
 
 ```
-gridsmith.co.uk/            → master layer (homepage, about, approach, work, insights)
-gridsmith.co.uk/design/     → Gridsmith Design
-gridsmith.co.uk/digital/    → Gridsmith Digital
-gridsmith.co.uk/press/      → Gridsmith Press
+gridsmith.uk/            → master layer (homepage, about, approach, work, insights)
+gridsmith.uk/design/     → Gridsmith Design
+gridsmith.uk/digital/    → Gridsmith Digital
+gridsmith.uk/press/      → Gridsmith Press
 ```
 
-Division domains (`gridsmithdesign.co.uk` and equivalents) are registered defensively
-and **301 to their path**. They are never hosted separately.
+Division domains are registered defensively and **301 to their path**. They are never
+hosted separately:
+
+```
+gridsmithdesign.uk   → gridsmith.uk/design/
+gridsmithdigital.uk  → gridsmith.uk/digital/
+gridsmithpress.uk    → gridsmith.uk/press/
+```
+
+The specification previously said "`gridsmithdesign.uk` and equivalents" and never named
+the other two. All three are enumerated here so that the redirect implementation has a
+complete list rather than an inference.
 
 Rationale: the group structure decision is a single legal entity with a master brand. Three separate codebases would triple maintenance, split SEO authority, and make cross-division case studies impossible to render. Route groups give each division a fully distinct visual identity while sharing primitives, the portfolio database, the lead pipeline and the deployment.
 
 ```
 app/
   (marketing)/
-    page.tsx                     → gridsmith.co.uk
+    page.tsx                     → gridsmith.uk
     about/  approach/  work/  insights/  contact/
   (design)/design/               → Gridsmith Design
   (digital)/digital/               → Gridsmith Digital
@@ -287,7 +297,7 @@ Before any division goes live:
    never to the homepage and never to a 404.
 3. Implement as 301s in `next.config.js`, version-controlled.
 4. Preserve existing inbound-link equity — verify in Search Console post-launch.
-5. Defensive domains (`gridsmithdesign.co.uk`, etc.) 301 to their path, not hosted.
+5. Defensive domains (`gridsmithdesign.uk`, etc.) 301 to their path, not hosted.
 
 A missing redirect map is the most common cause of an organic-traffic collapse
 after a rebuild, and it is invisible until the rankings have already gone.

@@ -74,7 +74,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| O-01 | **Obtain author consent for ≥12 titles** | P0 | — | — | TODO | Atik | **MOVED TO STAGE 0.** Press is already trading, so the shelf must be complete at the week-12 cutover, and consent has a multi-week external lead time |
+| O-01 | **Obtain author consent for ≥12 titles** | P0 | — | — | TODO | Atik | **Start week 1 — blocks the shelf** |
 | O-02 | Publish 12 books with retailer links | P0 | 2d | R-01, O-01 | TODO | Content | Every link verified |
 | O-03 | 10 service pages | P0 | 5d | P-07 | TODO | Content | |
 | O-04 | 8 case studies, each linked to a title | P0 | 5d | P-08 | TODO | Content | |

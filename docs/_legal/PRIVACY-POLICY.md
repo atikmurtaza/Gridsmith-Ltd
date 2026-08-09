@@ -11,7 +11,7 @@ Drafted against UK GDPR and the Data Protection Act 2018 as amended by the Data 
 
 ## 1. Who we are
 
-Gridsmith Ltd is the data controller for personal data collected through gridsmith.co.uk. We operate three trading divisions — Gridsmith Design, Gridsmith Digital and Gridsmith Press. All three are part of the same company, and personal data is held once by Gridsmith Ltd rather than separately by each division.
+Gridsmith Ltd is the data controller for personal data collected through gridsmith.uk. We operate three trading divisions — Gridsmith Design, Gridsmith Digital and Gridsmith Press. All three are part of the same company, and personal data is held once by Gridsmith Ltd rather than separately by each division.
 
 ## 2. What we collect
 

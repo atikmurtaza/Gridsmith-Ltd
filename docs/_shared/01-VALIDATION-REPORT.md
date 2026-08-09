@@ -36,19 +36,19 @@
 **One domain. One application. One deployment.**
 
 ```
-gridsmith.co.uk/            master layer
-gridsmith.co.uk/design/     Gridsmith Design
-gridsmith.co.uk/digital/    Gridsmith Digital
-gridsmith.co.uk/press/      Gridsmith Press
+gridsmith.uk/            master layer
+gridsmith.uk/design/     Gridsmith Design
+gridsmith.uk/digital/    Gridsmith Digital
+gridsmith.uk/press/      Gridsmith Press
 ```
 
 Not separate websites, not subdomains. Four route groups in one Next.js application, each with its own theme applied by a `data-division` attribute set server-side.
 
 **Why not separate sites:** three codebases triple maintenance, split SEO authority three ways, make cross-division case studies impossible to render, and give the group no coherent centre. Every argument for the master brand is an argument against separate sites.
 
-**Why not subdomains:** `design.gridsmith.co.uk` is treated by search engines as a substantially separate property. You would build domain authority three times instead of once. Path-based keeps one authority pool while still allowing each division a completely distinct visual identity — which the design specs demonstrate is achievable.
+**Why not subdomains:** `design.gridsmith.uk` is treated by search engines as a substantially separate property. You would build domain authority three times instead of once. Path-based keeps one authority pool while still allowing each division a completely distinct visual identity — which the design specs demonstrate is achievable.
 
-Division domains (`gridsmithdesign.co.uk` and equivalents) are registered defensively and 301 to their path. Never hosted separately.
+Division domains (`gridsmithdesign.uk` and equivalents) are registered defensively and 301 to their path. Never hosted separately.
 
 ## 4. Decisions recorded, with their costs
 
@@ -172,3 +172,29 @@ Gates `T-04` (Digital) and `R-07` (Press) already exist for this. They are now t
 | 12 | Decide: trade body for Press, or none (§4.2) | Atik | Press positioning |
 
 Items 1, 4, 6, 9 and 10 all have external lead times and all sit on critical paths. Starting them this week is the highest-leverage scheduling decision available.
+
+Item 10 is superseded — see §10 below. There is no existing site to crawl.
+
+## 10. Greenfield confirmed — six cutover findings closed as not applicable
+
+During A-01 the build was briefly told that Gridsmith Press was already live and trading.
+That is **not the case**: the whole programme is greenfield. Every site launches new,
+there is no existing property, and nothing is migrated.
+
+The six findings raised under the cutover assumption are recorded here **closed as not
+applicable**, rather than deleted, so that a later session re-reading the specs does not
+rediscover them and re-litigate a settled question. If a cutover of any kind is ever
+contemplated, this is the checklist to reopen — every item was a real consequence of a
+live site, correctly derived, and would apply again.
+
+| # | Finding under the cutover assumption | Status |
+|---|---|---|
+| 1 | Stage 8 real-content load (week 21) contradicts a week-12 cutover: the production seed check blocks `isSeed` publishing and launch gates 6–7 need real content, so a trading site could not ship on seed | **N/A — greenfield.** Seed content ships at launch as originally specified; real content loads at Stage 8 |
+| 2 | Defensive-domain 301s are described as a wildcard (`gridsmithdesign.uk/* → /design/*`); against a live property that would send every earning deep page to a path that does not exist, so a per-URL map would be required | **N/A — the division domains are parked, not trading.** The wildcard is correct for parked domains |
+| 3 | `G-01` says "crawl existing site" (singular), as does launch gate 12's "the previous site" | **N/A — nothing to crawl.** `G-01`/`G-02` are `BLOCKED` pending a separate decision; `redirects/legacy.json` ships empty so the mechanism exists and is testable |
+| 4 | No rollback plan exists anywhere, and a cutover inverts the risk — it can lose traffic and revenue that already exist | **N/A — a first launch has no traffic to lose.** Worth revisiting only if a migration is ever planned |
+| 5 | `L-03`/`L-04` assume first publication of terms; a trading entity has terms already in force and in-flight consumer engagements, and CRA/CCR 14-day rights would reach people already in the pipeline | **Partly retained.** The greenfield case removes the in-flight problem, but the question was already sent to the solicitor as `_legal/00-LEGAL-BASIS.md` §6 Q9. Left in place — it costs nothing to have answered and becomes live the moment there is a second version of the terms |
+| 6 | `press/IMPLEMENTATION-PLAN.md` 6.4 "soft launch to past clients" assumes those clients are not already using the live site | **N/A — reads correctly as written** for a first launch |
+
+`O-01` (author consent for ≥12 titles) returns to Stage 4 / Press Epic O, started week 1
+for its external lead time, rather than being a Stage 0 blocker.

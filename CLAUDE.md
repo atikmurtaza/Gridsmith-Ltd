@@ -9,10 +9,10 @@ Loaded every session. Keep it accurate; update it in the same commit as any devi
 One Next.js application serving **four themed sections of one website** for Gridsmith Ltd, a UK company trading as three divisions.
 
 ```
-gridsmith.co.uk/            master layer  — the company
-gridsmith.co.uk/design/     Gridsmith Design   — brand, visual, CAD, engineering drawings
-gridsmith.co.uk/digital/    Gridsmith Digital  — websites, software, products, AI
-gridsmith.co.uk/press/      Gridsmith Press    — book publishing, ghostwriting, content
+gridsmith.uk/            master layer  — the company
+gridsmith.uk/design/     Gridsmith Design   — brand, visual, CAD, engineering drawings
+gridsmith.uk/digital/    Gridsmith Digital  — websites, software, products, AI
+gridsmith.uk/press/      Gridsmith Press    — book publishing, ghostwriting, content
 ```
 
 **One domain. One codebase. One deployment. Four route groups.** Not four sites, not subdomains. The divisions are trading divisions of a single legal entity — Gridsmith Ltd — and every contract, invoice and footer says so.

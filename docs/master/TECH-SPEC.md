@@ -68,7 +68,7 @@ Explicitly rejected: any third-party CMP. Typical CMPs add 60–100KB and render
 async redirects() {
   return [
     ...legacyRedirects,      // from redirects/legacy.json — generated from a crawl
-    ...defensiveDomains,     // gridsmithdesign.co.uk/* → /design/*
+    ...defensiveDomains,     // gridsmithdesign.uk/* → /design/*
   ];
 }
 ```

@@ -65,7 +65,7 @@ Result persistence: `/digital/estimate/[id]` renders from `digital_estimates`, e
 ## 3. Live performance badge (FR-DG19)
 
 ```
-Vercel Cron (daily) → CrUX API for gridsmith.co.uk
+Vercel Cron (daily) → CrUX API for gridsmith.uk
   → write to Supabase `site_vitals`
   → /digital/stack and the /digital hub render latest values, SSG-revalidated
 ```

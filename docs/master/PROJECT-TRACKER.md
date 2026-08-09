@@ -118,9 +118,9 @@ that just wrote 24 primitives is the worst available reviewer of them.
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| G-01 | Crawl existing site, export URLs | P0 | 0.5d | — | TODO | Dev | |
-| G-02 | Build `redirects/legacy.json` | P0 | 1d | G-01 | TODO | Dev | Zero unmapped |
-| G-03 | Implement + test redirects | P0 | 0.5d | G-02 | TODO | Dev | None to `/` or 404 |
+| G-01 | Crawl existing site, export URLs | P0 | 0.5d | — | **BLOCKED** | Dev | **Deferred — greenfield, no existing site.** Unblocks only on a separate cutover decision |
+| G-02 | Build `redirects/legacy.json` | P0 | 1d | G-01 | **BLOCKED** | Dev | **Deferred with G-01.** File committed empty (`[]`) and wired into `next.config.ts` so the mechanism is testable now |
+| G-03 | Implement + test redirects | P0 | 0.5d | — | REVIEW | Dev | Mechanism wired against the empty map; defensive-domain 301s still to add. None to `/` or 404 |
 | G-04 | Sitemap, robots, `llms.txt` | P0 | 1d | N-* | TODO | Dev | All four groups |
 | G-05 | Structured data pass | P0 | 1d | N-* | TODO | Dev | `department`, not four orgs |
 | G-06 | **Bulk import script** | P0 | 1.5d | A-06 | TODO | Dev | 100 records in one pass |
@@ -157,10 +157,10 @@ that just wrote 24 primitives is the worst available reviewer of them.
 
 | ID | Item | Needed from | Blocks |
 |---|---|---|---|
-| ~~Q-M1~~ | **RESOLVED.** Company number `17050842`; registered office `30 Briarfield Road, Farnworth, Bolton, BL4 0HD`; place of registration England & Wales. Populate `companyDetails` at M-05 — these render the statutory block, never hardcoded in a component | Atik | ~~M-05, L-05, 0.10~~ unblocked |
+| Q-M1 | **Company number — still outstanding.** Registered office is confirmed: `30 Briarfield Road, Farnworth, Bolton, BL4 0HD`, England & Wales. Load into `companyDetails` at M-05. The number is the only missing field and it is statutory — `[TK]`, never guessed | Atik | M-05, L-05, 0.10 (number only) |
 | ~~Q-M12~~ | **RESOLVED — the metric changed, not the numbers.** JS is now budgeted on the delta above the framework floor, not the total: Master ≤15KB, Digital ≤15KB, Press ≤20KB, Design ≤25KB, estimator/path-finder ≤40KB. The floor (100.2KB) is reported separately so a dependency upgrade shows as a floor change rather than silently consuming feature allowance. **Digital's 100/100/100 gate is unchanged** — Lighthouse scores measured experience, and the 90KB figure was a badly-set proxy for it | Atik | ~~Digital launch~~ unblocked |
 | Q-M10 | Font licences — are Neue Haas Grotesk Display / GT America Mono / Freight Text held, or do we build on the open fallbacks (Inter / JetBrains Mono / Source Serif 4)? Blocks nothing before A-03; a later swap is a one-line `--font-display` change | Atik | A-03 |
-| Q-M11 | **Gridsmith Press is already live and trading.** Stage 5 is a cutover of a revenue-generating site, not a launch. Cutover plan to be written into `master/IMPLEMENTATION-PLAN.md` before Stage 3 work begins | Atik | G-01, G-02, Stage 5 |
+| ~~Q-M11~~ | **WITHDRAWN — the programme is greenfield.** No existing site, no cutover, nothing to migrate. The six findings raised under that assumption are recorded closed-not-applicable in `_shared/01-VALIDATION-REPORT.md` §10 rather than deleted | — | — |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |

@@ -1,7 +1,7 @@
 # PRD — Gridsmith Press
 
 **Division:** Gridsmith Press (trading division of Gridsmith Ltd)
-**Scope:** `gridsmith.co.uk/press/*`
+**Scope:** `gridsmith.uk/press/*`
 **Sells:** book publishing services, ghostwriting, editorial, content programmes
 **Traces to:** `_shared/00-MARKET-RESEARCH-BASIS.md`, `_shared/00-FOUNDATION.md`
 

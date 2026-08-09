@@ -4,27 +4,8 @@ Press inherits the shared foundation from `master/IMPLEMENTATION-PLAN.md` Phase 
 starts at its own Phase 1. It is built **first of the three divisions**, per
 `_shared/02-BUILD-SEQUENCE.md`.
 
-> ## Press is already live and trading — this is a cutover
->
-> Everything below was written as a launch plan. It is not one. Gridsmith Press is a
-> live, revenue-generating site, and Phase 6 moves it onto the new application. Three
-> corrections apply until the cutover plan is written:
->
-> 1. **Seed content cannot ship at cutover.** The production seed check blocks any
->    `isSeed` record from publishing, and the launch gates require real case studies with
->    metrics and pricing on every service page. Press's real content — books, packages,
->    pricing, client names — is a **week-12 blocker**, not a Stage-8 content-load task.
->    A live site cannot go backwards to less content than it has today.
-> 2. **`O-01` (author consent, ≥12 titles) has moved to Stage 0.** It gates the books
->    shelf, the shelf carries most of Press's credibility, and consent has an external
->    lead time of weeks. Starting it at Phase 4 is too late.
-> 3. **Phase 6 needs a rollback plan.** There isn't one anywhere in the specs. "Soft
->    launch to past clients" (6.4) also assumes past clients are not already using the
->    live site — they are.
->
-> **The cutover plan is not written yet** and is pending the inventory of what is
-> currently live. Do not infer it from this file, and do not treat Phase 6 as complete
-> guidance for moving a trading site.
+**Greenfield.** Press launches as a new site. There is no cutover, no migration and no
+existing property to redirect from — see `_shared/01-VALIDATION-REPORT.md` §10.
 
 ---
 
@@ -107,7 +88,7 @@ This ordering is deliberate. Press's conversion mechanism *is* the trust archite
 | 5.7 | Cross-browser + device | |
 | 5.8 | PostHog funnels + honesty dashboard | `v_path_finder_honesty` visible |
 
-## Phase 6 — Cutover (Week 10) · *not a launch — see the note at the top of this file*
+## Phase 6 — Launch (Week 10)
 
 | # | Task | DoD |
 |---|---|---|
