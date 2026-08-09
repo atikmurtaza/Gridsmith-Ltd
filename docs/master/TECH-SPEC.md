@@ -28,17 +28,44 @@ This resolves a defect latent in the division specs, where each division implied
 
 ## 3. Header, footer and division switching
 
-```tsx
-// app/layout.tsx — root
-// data-division is set by each route group's layout; the master layer uses "master"
-<body data-division={division}>
-  <SkipLink />
-  <Header division={division} />
-  {children}
-  <Footer />          {/* division switcher lives here */}
-  <ConsentBanner />
-</body>
+**Four root layouts, not one — corrected at A-04.** This section previously showed a
+single `app/layout.tsx` receiving a `division` prop. App Router cannot do that: only a
+root layout may render `<html>`/`<body>`, and a root layout has no access to the pathname.
+Deriving it from `headers()` via middleware would opt every route out of static rendering
+and destroy the SSG requirement in §1.
+
+The supported shape is multiple root layouts — no `app/layout.tsx`, and one per route
+group:
+
 ```
+app/
+  (marketing)/layout.tsx   → <body data-division="master">   + page.tsx      → /
+  (design)/layout.tsx      → <body data-division="design">   + design/       → /design
+  (digital)/layout.tsx     → <body data-division="digital">  + digital/      → /digital
+  (press)/layout.tsx       → <body data-division="press">    + press/        → /press
+```
+
+```tsx
+// app/(design)/layout.tsx — one of four roots
+export default function DesignLayout({ children }: { children: ReactNode }) {
+  return (
+    <RootShell division="design" fontVariables={`${inter.variable} ${jetbrainsMono.variable}`}>
+      {children}
+    </RootShell>
+  );
+}
+```
+
+`components/chrome/RootShell.tsx` holds the shared document shell so the skip link,
+header, footer and consent banner are added once rather than four times.
+
+Two consequences, both of which the specs already wanted:
+
+- **Navigation between route groups is a full document load.** That satisfies §9's
+  "no page transition between route groups — the theme change *is* the transition", and
+  it removes any window in which a client-side theme swap could occur.
+- **Fonts scope naturally.** Each root layout imports only its own faces, so Source Serif
+  never reaches Design or Digital.
 
 **Division switcher placement rule:** footer only. A header-level division switcher pulls buyers sideways mid-funnel. The header shows the *current* division's navigation plus a wordmark link back to `/`.
 

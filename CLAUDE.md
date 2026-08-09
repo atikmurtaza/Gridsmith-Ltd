@@ -32,7 +32,7 @@ A visitor moving from Design to Press should register a change of *voice* and ne
 
 Across all four: **monospace marks anything verifiable** — prices, dates, standards, ISBNs, dimensions, revision numbers. That single convention does more identity work than any logo placement.
 
-The register is **tactile brutalism, not soft UI**: 1px hairline borders, near-zero radius, high contrast, stark typography, generous whitespace with tight internal density. Depth comes from borders and background steps, never from shadows. Motion is opacity and transform only, and barely noticeable.
+The register is **tactile brutalism, not soft UI**: 1px hairline borders, near-zero radius, high contrast, stark typography, generous whitespace with tight internal density. Depth comes primarily from 1px borders and background steps. `--shadow-2` is a hard ceiling; nothing beyond it. Motion is opacity and transform only, and barely noticeable.
 
 Soft shadows, rounded-everything, gradient meshes, glassmorphism, floating 3D shapes and stock photography all read as templated in 2026 and are prohibited. If something "looks harsh" during implementation, that is correct — fix it with spacing or contrast, never with radius.
 
@@ -103,6 +103,15 @@ Read the workstream's own files before touching its code.
 - **CI is the arbiter.** TypeScript, ESLint, `no-hardcoded-colors`, `check-service-role-key`, `check-bundle-size`, Lighthouse CI and axe all block merge. Never add a bypass.
 - **Conventional commits**, scoped by workstream: `feat(press): add platform compliance table`.
 - **Update the spec in the same commit** as any deviation. A spec that has silently drifted is worse than none — the next session will follow it.
+- **A measurable number in the specs is unverified until a gate measures it.** Where a
+  gate and the prose disagree, **the gate is the source of truth** and the prose gets
+  corrected. The two existing examples are `check:contrast` (the 29 contrast ratios in
+  the four `DESIGN.md` §2 tables) and `check-bundle-size.mjs` (the JS budgets). This rule
+  exists because it was learned the hard way: of 29 published contrast ratios, 25 were
+  wrong and 2 were hiding WCAG AA failures that the published figures said were passes. A
+  specific-looking number is worse than no number, because it stops anyone re-deriving it.
+  **If you meet an asserted number that no gate covers, treat it as unverified and say
+  so** rather than building on it.
 - **Any PR touching `styles/tokens.css`, `components/primitives/` or `lib/estimate/` needs review.** These affect all four route groups or determine what the business quotes.
 
 ## Definition of Done

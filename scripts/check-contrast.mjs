@@ -44,7 +44,7 @@ const PAIRS = {
   design: [
     ['--ink', '--canvas', 'text', 17.92],
     ['--ink-muted', '--canvas', 'text', 7.56],
-    ['--ink-subtle', '--canvas', 'text', 4.55],
+    ['--ink-subtle', '--canvas', 'text', 5.01],
     ['--accent', '--canvas', 'text', 9.07],
     ['--accent', '--canvas-raised', 'text', 8.46],
     ['--accent-ink', '--accent', 'text', 9.07],

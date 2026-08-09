@@ -17,7 +17,7 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 1 | A-10a | ⚑ CI gates — TS, ESLint, `no-hardcoded-colors`, service-role grep, `check-bundle-size` | P0 | 0.5d | A-01 | DONE | Dev | Ships with A-01. Deliberate hex fails the build. size-limit dropped — measured the wrong quantity |
 | 2 | A-02 | Token layer `tokens.css` | P0 | 1d | A-01 | DONE | Dev | 39 base tokens, FOUNDATION §3. Tailwind namespace collision cleared; `check:tokens` gate added |
 | 3 | A-03 | ⚑ Four theme files — **incl. master (was M-01)** | P0 | 1.5d | A-02 | DONE | Dev | 29 contrast pairs measured; 2 AA failures in Design fixed, 25 published ratios corrected. Fonts scoped per route group. `check:contrast` gate added |
-| 4 | A-04 | Four route groups + `data-division` | P0 | 1d | A-03 | TODO | Dev | Zero theme flash; server-set |
+| 4 | A-04 | Four route groups + `data-division` | P0 | 1d | A-03 | DONE | Dev | Four **root** layouts (no `app/layout.tsx`) — the only way to set `data-division` on `<body>` per group without forcing dynamic rendering. `check:theme` gate |
 | 5 | A-05 | ⚑ **24** shared primitives | P0 | 4d | ⚑ **A-04** | TODO | Dev | Was "21 / depends A-02". `Marquee` deleted |
 | 5 | A-05a | ⚑ `/_kitchen-sink` route | P0 | 0.5d | A-05 | TODO | Dev | All 24 × 4 themes. `noindex`, excluded from prod build |
 | 6 | **A-GATE** | ⚑ **Epic A exit gate** | P0 | 0.5d | A-05a, A-10b | TODO | Dev | **Nothing downstream starts until green** — see below |
@@ -76,7 +76,7 @@ that just wrote 24 primitives is the worst available reviewer of them.
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
 | M-01 | ~~Master theme; accent = ink~~ | P0 | — | — | MOVED | Dev | **Folded into A-03.** Amber 2.0:1 constraint enforced there |
-| M-02 | Root layout, server-set `data-division` | P0 | 1d | A-04 | TODO | Dev | |
+| M-02 | Root layout, server-set `data-division` | P0 | 0.5d | A-04 | REVIEW | Dev | Shell built at A-04 (`components/chrome/RootShell.tsx`); remaining scope is skip link, header, footer, consent banner |
 | M-03 | Header with per-division nav | P0 | 1.5d | A-05 | TODO | Dev | Wordmark → `/` |
 | M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03 | TODO | Dev | From `companyDetails` |
 | M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | TODO | Dev | Response commitment stored once |
@@ -160,8 +160,8 @@ that just wrote 24 primitives is the worst available reviewer of them.
 | Q-M1 | **Company number — still outstanding.** Registered office is confirmed: `30 Briarfield Road, Farnworth, Bolton, BL4 0HD`, England & Wales. Load into `companyDetails` at M-05. The number is the only missing field and it is statutory — `[TK]`, never guessed | Atik | M-05, L-05, 0.10 (number only) |
 | ~~Q-M12~~ | **RESOLVED — the metric changed, not the numbers.** JS is now budgeted on the delta above the framework floor, not the total: Master ≤15KB, Digital ≤15KB, Press ≤20KB, Design ≤25KB, estimator/path-finder ≤40KB. The floor (100.2KB) is reported separately so a dependency upgrade shows as a floor change rather than silently consuming feature allowance. **Digital's 100/100/100 gate is unchanged** — Lighthouse scores measured experience, and the 90KB figure was a badly-set proxy for it | Atik | ~~Digital launch~~ unblocked |
 | ~~Q-M10~~ | **RESOLVED by default at A-03** — no licence held, so Inter / JetBrains Mono / Source Serif 4 are used, self-hosted via `next/font`. Licensed names deliberately left out of the font stacks. Buying a licence later changes one module in `styles/fonts/` | Atik | ~~A-03~~ |
-| Q-M13 | **Design `--ink-subtle` changed without your sign-off.** `#6B6B6A` measured 3.67:1 on the Design canvas, below the 4.5:1 AA floor for the body text `design/DESIGN.md` §2 permits it on — the published 4.6:1 was wrong. Lightened to `#7A7A79` (4.55:1), the minimum that clears AA. Accessibility wins the conflict per non-negotiable #10, and this is the raise. **Confirm the new value or supply your own ≥4.5:1** | Atik | Design theme (already applied) |
-| Q-M14 | **`--shadow-1` / `--shadow-2` contradict CLAUDE.md.** "Depth comes from borders and background steps, never from shadows", yet FOUNDATION §3 defines two shadow tokens and A-02 implemented them. Either delete the tokens or soften the CLAUDE.md line — otherwise a primitive will legitimately use one and fail design conformance | Atik | A-05 |
+| ~~Q-M13~~ | **RESOLVED.** Design `--ink-subtle` is `#818180` at **5.01:1** — the first value on the theme's neutral ramp clearing 5.0:1, chosen over the 4.55:1 minimum so a later `--canvas` adjustment cannot push it back under AA. `--line-strong` recorded as decorative-only in `design/DESIGN.md` §5; Button (secondary) moved to `--ink-subtle` because its resting border is what identifies it as a button | Atik | ~~Design theme~~ applied |
+| ~~Q-M14~~ | **RESOLVED — CLAUDE.md was the file at fault, not FOUNDATION.** Both shadow tokens stay. The line now reads *"Depth comes primarily from 1px borders and background steps. `--shadow-2` is a hard ceiling; nothing beyond it."* Press book cards use `--shadow-1` by spec, and the Design and Digital rules already cap at `--shadow-2` | Atik | ~~A-05~~ |
 | ~~Q-M11~~ | **WITHDRAWN — the programme is greenfield.** No existing site, no cutover, nothing to migrate. The six findings raised under that assumption are recorded closed-not-applicable in `_shared/01-VALIDATION-REPORT.md` §10 rather than deleted | — | — |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |

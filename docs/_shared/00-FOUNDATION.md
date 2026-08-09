@@ -56,6 +56,15 @@ styles/
 
 Theming is applied by a `data-division` attribute on `<body>`, set by the route group layout. Division themes override CSS custom properties only — never component logic.
 
+**Implemented at A-04 as four root layouts** — there is no `app/layout.tsx`. Only a root
+layout may render `<html>`/`<body>`, and a single one has no way to know which division it
+is serving without opting out of static rendering. See `master/TECH-SPEC.md` §3.
+
+Verified rather than asserted, by `scripts/check-theme-flash.mjs`: `data-division` is
+present and correct in each route's prerendered HTML, the stylesheet is render-blocking
+ahead of `<body>`, and **no client chunk references `data-division` at all** — so no code
+path exists that could set it late. A flash is impossible rather than merely unobserved.
+
 ## 2. Stack (fixed for all three)
 
 | Layer | Choice | Reason |
