@@ -1,0 +1,59 @@
+/**
+ * Base token layer — division-agnostic.
+ * docs/_shared/00-FOUNDATION.md §3.
+ *
+ * Identical under every theme. This layer is what makes four visual identities read as
+ * one hand: same grid, same spacing rhythm, same type scale, same motion. Themes in
+ * styles/themes/ override colour and typeface values only — never anything here.
+ *
+ * This file and styles/themes/*.css are the only places a colour may be declared.
+ * Enforced by scripts/check-no-hardcoded-colors.mjs.
+ */
+
+:root {
+  /* Spacing — 4px base, geometric */
+  --space-1: 0.25rem;  --space-2: 0.5rem;   --space-3: 0.75rem;
+  --space-4: 1rem;     --space-6: 1.5rem;   --space-8: 2rem;
+  --space-12: 3rem;    --space-16: 4rem;    --space-24: 6rem;
+  --space-32: 8rem;    --space-48: 12rem;
+
+  /* Type scale — 1.25 major third, fluid */
+  --text-xs:   clamp(0.75rem, 0.73rem + 0.1vw, 0.8125rem);
+  --text-sm:   clamp(0.875rem, 0.85rem + 0.12vw, 0.9375rem);
+  --text-base: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  --text-lg:   clamp(1.25rem, 1.18rem + 0.35vw, 1.5rem);
+  --text-xl:   clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+  --text-2xl:  clamp(2rem, 1.7rem + 1.5vw, 3rem);
+  --text-3xl:  clamp(2.5rem, 2rem + 2.5vw, 4.5rem);
+  --text-4xl:  clamp(3rem, 2.2rem + 4vw, 6.5rem);
+
+  --leading-tight: 1.05;  --leading-snug: 1.25;
+  --leading-normal: 1.55; --leading-relaxed: 1.7;
+  --measure: 68ch;        --measure-narrow: 52ch;
+
+  /* Structure — R5: hairlines, not shadows */
+  --border-hairline: 1px;
+  --radius-none: 0;  --radius-sm: 2px;  --radius-md: 4px;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-2: 0 2px 8px rgb(0 0 0 / 0.06);
+  /* No --shadow-3. If a design needs it, the design is wrong. */
+
+  /* Motion — opacity and transform only */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 150ms;  --dur-base: 250ms;  --dur-slow: 400ms;
+
+  --container: 1280px;
+  --container-narrow: 800px;
+  --grid-cols: 12;
+  --gutter: var(--space-6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    /* Without this, an infinite animation still loops — just very fast. */
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

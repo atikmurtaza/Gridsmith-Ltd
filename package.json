@@ -15,6 +15,7 @@
     "lint:colors": "node scripts/check-no-hardcoded-colors.mjs",
     "lint:secrets": "node scripts/check-service-role-key.mjs",
     "size": "node scripts/check-bundle-size.mjs",
+    "check:tokens": "node scripts/check-tokens.mjs",
     "verify": "npm run typecheck && npm run lint && npm run lint:colors && npm run lint:secrets"
   },
   "dependencies": {

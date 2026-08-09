@@ -36,6 +36,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Design tokens reach the build
+        run: npm run check:tokens
+
       - name: Bundle size
         # Per-route gzipped module scripts vs the budgets in master/PROJECT-RULES.md §8.
         # Must run after build — it measures the prerendered output, not the source.

@@ -147,10 +147,37 @@ overruns instead of one framework fact.
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;   /* added at A-02 */
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;          /* added at A-02 */
   }
 }
 ```
+
+**Two additions to the reduced-motion block, made at A-02.** `animation-duration` alone
+does not stop an infinite animation — it loops, just very fast, which is worse than the
+animation it replaced. `animation-iteration-count: 1` is what actually stops it.
+`scroll-behavior: auto` cancels smooth scrolling, which is motion the original block
+missed. Accessibility is non-negotiable #10, so this is a correction rather than an
+embellishment.
+
+**Tailwind namespace collision — resolved at A-02.** Tailwind v4 defines its own
+`--text-*`, `--leading-*`, `--radius-*` and `--ease-*` theme variables, and all fifteen
+names collide with the scale above. Both sets were emitted to `:root`, and ours won only
+because `tokens.css` is imported second — reordering two lines in `styles/globals.css`
+would have silently reverted the type scale, radius scale and easing curve to Tailwind's
+defaults, with nothing failing.
+
+`styles/globals.css` therefore clears those four namespaces from Tailwind's theme, making
+`tokens.css` the single definition. The corresponding Tailwind utilities (`text-3xl`,
+`rounded-md`, `leading-snug`, `ease-out`) disappear with them, which is intended — a
+utility silently carrying a different value from the token of the same name is precisely
+the hazard. Primitives read `var(--text-3xl)`. Tailwind's spacing and layout utilities are
+untouched.
+
+`scripts/check-tokens.mjs` asserts all 39 base tokens survive into the built CSS. The
+failure it exists for is silent: a broken import chain leaves every `var()` resolving to
+nothing while the build still succeeds.
 
 Every theme — the three divisions and master — must define exactly these, and only
 these:
