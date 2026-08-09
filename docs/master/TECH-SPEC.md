@@ -94,8 +94,8 @@ This is a deploy-blocking check. Fabricated case studies reaching production is 
 | LCP | ≤1.8s |
 | INP | ≤200ms |
 | CLS | ≤0.03 |
-| JS, master routes | ≤110KB gz (consent banner included) |
-| `/work` with filters | ≤150KB gz |
+| Framework floor (reported, not budgeted) | 100.2KB gz — Next 15 + React 19 |
+| **JS delta, master routes** | **≤15KB gz** above the floor, consent banner included (~115KB total) |
 
 ## 8. SEO & machine readability
 

@@ -75,9 +75,30 @@ over every budget in `CLAUDE.md` §Performance budgets before a token or primiti
 Verified against both build backends — webpack measured 127.0KB on Next 16, so it is not
 a Turbopack artifact.
 
-Consequence: **do not upgrade to Next 16 without re-measuring.** The budgets were written
-against a ~100KB floor and Next 16 removes it. Node 22 is the target runtime; Node 20 is
-past end-of-life as of April 2026.
+Consequence: **do not upgrade to Next 16 without re-measuring.** Node 22 LTS is the target
+runtime; Node 20 passed end-of-life in April 2026.
+
+### Budgeting on the delta, not the total
+
+The floor above is a constant the project does not control. Budgets are therefore set on
+**JS added above the floor**:
+
+| Route group | Delta | ≈ total | What it buys |
+|---|---|---|---|
+| Master | ≤15KB gz | ~115KB | Consent banner 8KB + chrome |
+| Digital | ≤15KB gz | ~115KB | Deliberately the tightest in the programme |
+| Press | ≤20KB gz | ~120KB | Books shelf + filters |
+| Design | ≤25KB gz | ~125KB | Work grid + drawing matrix + filters |
+| Estimator / path-finder routes | ≤40KB gz | ~140KB | The interactive islands |
+
+`scripts/check-bundle-size.mjs` reports floor, delta and total per route, and fails on
+the **delta**. The floor is a declared constant in that script; re-baselining it is a
+deliberate act and belongs in its own commit with the measurement in the message. If
+every route fails at once by a similar amount, the floor moved — that is the signal the
+separation exists to produce.
+
+Budgeting on the total would have hidden the Next 16 regression as four unrelated feature
+overruns instead of one framework fact.
 
 **Explicitly rejected:** Vite SPA (no SSG — fatal for the organic-search strategy); WordPress (performance ceiling, security surface); any page-builder (defeats the premium-craft positioning per R4.6); **any animation library, Framer Motion included** — every motion spec in the four `DESIGN.md` files is reachable with CSS plus, at most, an `IntersectionObserver`, and a JS animation runtime does not survive Digital's 90KB budget or its 100/100/100 gate; any UI component library; any third-party CMP.
 

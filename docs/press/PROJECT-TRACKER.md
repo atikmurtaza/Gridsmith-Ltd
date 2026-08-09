@@ -52,7 +52,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | N-03 | `recommend.ts` pure function | P0 | 2d | N-01 | TODO | Dev | All 6 outcomes reachable, unit tested |
 | N-04 | **ETH-04 verification run** | P0 | 0.5d | N-03 | TODO | Dev | **HARD GATE — 3 scenarios** |
 | N-05 | Static SSR decision table | P0 | 1d | N-01 | TODO | Dev | Works with JS off |
-| N-06 | Path Finder island, 5 steps | P0 | 3d | N-03 | TODO | Dev | ≤140KB gz; fieldsets |
+| N-06 | Path Finder island, 5 steps | P0 | 3d | N-03 | TODO | Dev | JS delta ≤40KB gz; fieldsets |
 | N-07 | Result view; CTA suppressed on honest outcomes | P0 | 1d | N-06 | TODO | Dev | No button on E/F |
 | N-08 | `press_path_results` + audit column | P0 | 0.5d | A-07 | TODO | Dev | `is_gridsmith_outcome` |
 | N-09 | `/press/assessment` page | P0 | 1.5d | P-07 | TODO | Dev | Priced, sample linked |
@@ -74,7 +74,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| O-01 | **Obtain author consent for ≥12 titles** | P0 | — | — | TODO | Atik | **Start week 1 — blocks the shelf** |
+| O-01 | **Obtain author consent for ≥12 titles** | P0 | — | — | TODO | Atik | **MOVED TO STAGE 0.** Press is already trading, so the shelf must be complete at the week-12 cutover, and consent has a multi-week external lead time |
 | O-02 | Publish 12 books with retailer links | P0 | 2d | R-01, O-01 | TODO | Content | Every link verified |
 | O-03 | 10 service pages | P0 | 5d | P-07 | TODO | Content | |
 | O-04 | 8 case studies, each linked to a title | P0 | 5d | P-08 | TODO | Content | |

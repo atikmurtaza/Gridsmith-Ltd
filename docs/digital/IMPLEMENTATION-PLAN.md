@@ -43,7 +43,7 @@ Built before the estimator, deliberately. The estimator only converts if the sur
 | 3.2 | `calculate.ts` pure function | 3.1 | 100% branch coverage in unit tests |
 | 3.3 | **Calibration against 10 historical projects** | 3.2 | **Range contains actual price in ≥8/10 — HARD GATE** |
 | 3.4 | Static SSR pricing bands (no-JS fallback) | 1.5 | Full pricing readable with JS disabled |
-| 3.5 | Estimator island, 6 steps | 3.2 | ≤150KB gz; keyboard operable; `aria-live` progress |
+| 3.5 | Estimator island, 6 steps | 3.2 | JS delta ≤40KB gz; keyboard operable; `aria-live` progress |
 | 3.6 | Selected-state, three cues | 3.5 | Border + glyph + background — not colour alone |
 | 3.7 | Result view: range, breakdown, confidence, exclusions | 3.5 | Exclusions at equal visual weight to price |
 | 3.8 | Persistence + server-side recalculation | 3.2 | Client-tampered input cannot alter the stored price |

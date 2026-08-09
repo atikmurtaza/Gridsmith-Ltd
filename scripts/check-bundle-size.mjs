@@ -2,19 +2,19 @@
 /**
  * check-bundle-size
  *
- * CLAUDE.md §Performance budgets · master/PROJECT-RULES.md §8 · master/TECH-SPEC.md §7
+ * CLAUDE.md §Performance budgets · master/PROJECT-RULES.md §8 · FOUNDATION §2
  *
- * The budgets are per route group — "Master routes JS <=110KB gz", "/work with filters
- * <=150KB gz". This measures exactly that: for each prerendered route, the gzipped
- * bytes of the scripts a modern browser actually downloads.
+ * Budgets are on JS added ABOVE the framework floor, not on the total.
  *
- * Replaces size-limit, which globs `.next/static/chunks/**` and so sums every chunk in
- * the build — including `noModule` legacy polyfills no modern browser fetches, and
- * chunks belonging to other routes. On this project that reported 172KB for a page
- * whose real cost is 100KB. A budget measured against the wrong number gets raised
- * until it passes, and a raised budget is a deleted gate.
+ * The floor is a constant we do not control — it is whatever an empty App Router page
+ * costs. Budgeting on the total means a framework upgrade silently eats the allowance
+ * that features were supposed to have, and the first symptom is a feature getting cut
+ * for a reason that has nothing to do with the feature. Budgeting on the delta keeps
+ * the two separable: the floor is reported as its own number, and a dependency upgrade
+ * shows up as the floor moving rather than as everyone's budget shrinking.
  *
- * Budgets are matched longest-prefix-first, so a specific route overrides its group.
+ * Measured per route as the gzipped bytes of the scripts a modern browser downloads —
+ * `noModule` legacy polyfills excluded, since no modern browser fetches them.
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, relative, posix, sep } from 'node:path';
@@ -22,10 +22,31 @@ import { gzipSync } from 'node:zlib';
 
 const KB = 1024;
 
-/** route prefix -> budget in KB gz. Longest matching prefix wins. */
+/**
+ * Framework floor, gzipped KB. Measured at A-01 against Next 15.5.23 + React 19 on an
+ * empty App Router page rendering a single element.
+ *
+ * To re-baseline: scaffold a bare Next app at the new version with the same layout and
+ * page, build it, and sum the gzipped module scripts of `/`. Changing this number is a
+ * deliberate act and belongs in its own commit with the measurement in the message.
+ */
+const FLOOR_KB = 100.2;
+
+/** How far below the floor a route may measure before the floor is treated as stale. */
+const FLOOR_TOLERANCE_KB = 1.0;
+
+/**
+ * Route prefix -> delta budget in KB gz. Longest matching prefix wins, so a specific
+ * route overrides its group.
+ */
 const BUDGETS = [
-  ['/work', 150],
-  ['/', 110],
+  ['/design/estimate', 40],
+  ['/digital/estimate', 40],
+  ['/press/path-finder', 40],
+  ['/design', 25],
+  ['/press', 20],
+  ['/digital', 15],
+  ['/', 15],
 ];
 
 const APP_DIR = '.next/server/app';
@@ -52,8 +73,9 @@ function routes() {
 }
 
 function budgetFor(url) {
-  const match = BUDGETS.filter(([prefix]) => url === prefix || url.startsWith(prefix === '/' ? '/' : prefix + '/'))
-    .sort((a, b) => b[0].length - a[0].length)[0];
+  const match = BUDGETS.filter(
+    ([prefix]) => url === prefix || url.startsWith(prefix === '/' ? '/' : prefix + '/'),
+  ).sort((a, b) => b[0].length - a[0].length)[0];
   return match ? match[1] : null;
 }
 
@@ -65,7 +87,6 @@ function moduleScripts(html) {
     .filter((src) => src.startsWith('/_next/'));
 }
 
-let failed = 0;
 const rows = [];
 
 for (const { url, file } of routes()) {
@@ -80,10 +101,8 @@ for (const { url, file } of routes()) {
     bytes += gzipSync(readFileSync(onDisk), { level: 9 }).length;
   }
 
-  const kb = bytes / KB;
-  const over = kb > budget;
-  if (over) failed++;
-  rows.push({ url, kb, budget, over });
+  const total = bytes / KB;
+  rows.push({ url, total, delta: total - FLOOR_KB, budget });
 }
 
 // Measuring nothing is not the same as passing. A build that emits no budgeted route
@@ -94,21 +113,45 @@ if (rows.length === 0) {
   process.exit(1);
 }
 
-const width = Math.max(...rows.map((r) => r.url.length), 5);
-console.log('\nroute'.padEnd(width + 3) + 'JS (gz)   budget');
+const w = Math.max(...rows.map((r) => r.url.length), 5);
+const n = (v) => (v < 0 ? '-' : '') + Math.abs(v).toFixed(1);
+
+console.log(`\nframework floor  ${FLOOR_KB.toFixed(1)}KB gz  (declared; Next 15 + React 19, measured at A-01)\n`);
+console.log('route'.padEnd(w + 2) + '    total     delta    budget');
+
+const over = [];
 for (const r of rows) {
-  const status = r.over ? 'OVER' : 'ok';
+  const bad = r.delta > r.budget;
+  if (bad) over.push(r);
   console.log(
-    `${r.url.padEnd(width + 2)} ${r.kb.toFixed(1).padStart(7)}KB ${String(r.budget).padStart(6)}KB  ${status}`,
+    `${r.url.padEnd(w + 2)}${n(r.total).padStart(8)}KB${n(r.delta).padStart(9)}KB${String(r.budget).padStart(8)}KB  ${bad ? 'OVER' : 'ok'}`,
   );
 }
 
-if (failed > 0) {
+// A route measuring below the declared floor means the floor itself moved down — the
+// constant is stale and every delta above is overstated.
+const stale = rows.filter((r) => r.total < FLOOR_KB - FLOOR_TOLERANCE_KB);
+if (stale.length > 0) {
   console.error(
-    `\ncheck-bundle-size: ${failed} route(s) over budget.` +
-      '\nThe feature changes or is cut — the budget does not move (CLAUDE.md non-negotiable #8).\n',
+    `\ncheck-bundle-size: ${stale.length} route(s) measured below the declared floor of ${FLOOR_KB}KB.` +
+      '\nThe framework got smaller. Re-measure and update FLOOR_KB — do not leave it overstated.\n',
   );
   process.exit(1);
 }
 
-console.log('\ncheck-bundle-size: all routes within budget\n');
+if (over.length > 0) {
+  console.error(`\ncheck-bundle-size: ${over.length} route(s) over their delta budget.`);
+  if (over.length === rows.length && rows.length > 1) {
+    console.error(
+      'Every route failed. That usually means the framework floor moved up, not that every\n' +
+        'feature grew at once — re-measure the floor and update FLOOR_KB in its own commit.',
+    );
+  }
+  console.error(
+    '\nOtherwise the feature changes or is cut. The budget does not move\n' +
+      '(CLAUDE.md non-negotiable #8).\n',
+  );
+  process.exit(1);
+}
+
+console.log('\ncheck-bundle-size: all routes within their delta budget\n');

@@ -49,7 +49,7 @@ Not a build stage. Do these in parallel with nothing else blocking them, because
 | Send `_legal/` drafts to your solicitor | Longest lead time in the programme. Gates every legal page |
 | Register with the ICO | Needed for the privacy policy |
 | Confirm PI insurance covers engineering drawings | Design cannot launch without it |
-| Request author consent for 12+ titles | Press's entire trust architecture depends on it |
+| **`O-01` — request author consent for 12+ titles** | Press's entire trust architecture depends on it, **and Press is already trading**, so the books shelf must be complete at the week-12 cutover. Moved here from Stage 4 |
 | Crawl the existing site, export URLs | Redirect map |
 | Book a chartered engineer for the drawing matrix | Design gate |
 | Pull 10 past Digital projects with final prices | Digital estimator gate |
@@ -113,7 +113,28 @@ Order within the stage matters here more than anywhere: **trust architecture bef
 
 **Gates:** rights wording matches the contract · author user test ("does this feel like a vanity press?") · all retailer links live · ETH-04 verification.
 
-### Stage 5 — **First public launch** · **Week 12**
+### Stage 5 — **Press cutover** · **Week 12**
+
+> **This is a cutover of a live, revenue-generating site — not a launch.**
+>
+> Gridsmith Press is already trading. Stage 5 moves an earning property onto the new
+> application. That inverts the risk: a launch risks getting no traffic, a cutover risks
+> losing traffic and revenue that already exists. Three consequences, all of which change
+> earlier stages:
+>
+> 1. **Press's real content is a week-12 blocker, not a Stage-8 task.** The production
+>    seed check blocks any `isSeed` record from publishing, and launch gates 6 and 7
+>    require real case studies with metrics and pricing on every service page. **Seed
+>    content cannot ship at cutover.** A live site cannot go backwards to less content
+>    than it has today. Stage 8 below is written as though nothing is live before it; for
+>    Press that is wrong.
+> 2. **`O-01` (author consent for ≥12 titles) moves to Stage 0.** It gates the books
+>    shelf, the books shelf is most of Press's credibility, and consent requests have an
+>    external lead time measured in weeks. It cannot start at Stage 4.
+> 3. **A rollback plan is required and does not exist yet.** No stage below describes one.
+>
+> The cutover plan itself is not written yet — it is pending the inventory of what is
+> currently live. Do not infer it from this file.
 
 Ship Master + Press. Design and Digital exist as routes but are not yet linked from the division routing block, or are shown as "opening shortly" with a contact path.
 

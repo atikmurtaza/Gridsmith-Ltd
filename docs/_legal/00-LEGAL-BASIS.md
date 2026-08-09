@@ -111,3 +111,19 @@ Send these with the drafts rather than waiting for them to come back:
 6. Do the Press packages need to be presented differently to consumers given CRA 2015 price transparency expectations?
 7. Is a separate data processing agreement needed where Gridsmith processes client customer data (Digital builds, mailing lists)?
 8. What is your view on the professional indemnity position for engineering drawings specifically?
+9. **Transition of terms for in-flight engagements — Gridsmith Press is already trading.**
+   The new site publishes new terms, but there are live client relationships governed by
+   whatever is in force today, and consumer engagements part-way through delivery at the
+   moment of cutover. Specifically:
+   - New terms cannot be imposed retroactively on an existing contract. What is the
+     correct mechanism — express agreement to varied terms, run-off on the old terms
+     until each engagement completes, or something else?
+   - The CRA 2015 / CCR 2013 14-day cancellation position at §3 and
+     `CONSUMER-TERMS.md` §6 was drafted for new consumers. **Does it apply to consumers
+     already in the pipeline at cutover**, and if so does the express-early-start request
+     need to be obtained retrospectively from them?
+   - Does publishing new terms on the site create any implication that they govern
+     existing work, and how should the site avoid that?
+
+   This was identified during the build, not in the original drafting pass. It is a
+   consequence of Press being a live trading site rather than a new one.

@@ -1,8 +1,30 @@
 # Implementation Plan — Gridsmith Press
 
-Press inherits the shared foundation built during Design's Phase 0 and starts at its own Phase 1.
+Press inherits the shared foundation from `master/IMPLEMENTATION-PLAN.md` Phase 0 and
+starts at its own Phase 1. It is built **first of the three divisions**, per
+`_shared/02-BUILD-SEQUENCE.md`.
 
-**Build order note:** Press is recommended third, but it is the division with the most existing revenue and the most existing proof (published books, real clients). If launch speed matters more than sequencing logic, Press is the strongest candidate to go first — it is the only division whose content requirements are largely already satisfied by work already done.
+> ## Press is already live and trading — this is a cutover
+>
+> Everything below was written as a launch plan. It is not one. Gridsmith Press is a
+> live, revenue-generating site, and Phase 6 moves it onto the new application. Three
+> corrections apply until the cutover plan is written:
+>
+> 1. **Seed content cannot ship at cutover.** The production seed check blocks any
+>    `isSeed` record from publishing, and the launch gates require real case studies with
+>    metrics and pricing on every service page. Press's real content — books, packages,
+>    pricing, client names — is a **week-12 blocker**, not a Stage-8 content-load task.
+>    A live site cannot go backwards to less content than it has today.
+> 2. **`O-01` (author consent, ≥12 titles) has moved to Stage 0.** It gates the books
+>    shelf, the shelf carries most of Press's credibility, and consent has an external
+>    lead time of weeks. Starting it at Phase 4 is too late.
+> 3. **Phase 6 needs a rollback plan.** There isn't one anywhere in the specs. "Soft
+>    launch to past clients" (6.4) also assumes past clients are not already using the
+>    live site — they are.
+>
+> **The cutover plan is not written yet** and is pending the inventory of what is
+> currently live. Do not infer it from this file, and do not treat Phase 6 as complete
+> guidance for moving a trading site.
 
 ---
 
@@ -46,7 +68,7 @@ This ordering is deliberate. Press's conversion mechanism *is* the trust archite
 | 3.2 | `recommend.ts` pure function | 3.1 | Unit tested; all 6 outcomes reachable |
 | 3.3 | **ETH-04 verification run** | 3.2 | 3 scenarios that must return self-service / not-ready do so — **HARD GATE** |
 | 3.4 | Static SSR decision table (no-JS) | 3.1 | All 6 outcomes + criteria readable without JS |
-| 3.5 | Path Finder island, 5 steps | 3.2 | ≤140KB gz; fieldsets; `aria-live` |
+| 3.5 | Path Finder island, 5 steps | 3.2 | JS delta ≤40KB gz; fieldsets; `aria-live` |
 | 3.6 | Result view, CTA suppressed on honest outcomes | 3.5 | No CTA button on self-service or not-ready |
 | 3.7 | `press_path_results` + honesty audit column | Foundation | `is_gridsmith_outcome` written correctly |
 | 3.8 | `/press/assessment` entry offer page | 1.7 | Priced; sample report linked |
@@ -85,7 +107,7 @@ This ordering is deliberate. Press's conversion mechanism *is* the trust archite
 | 5.7 | Cross-browser + device | |
 | 5.8 | PostHog funnels + honesty dashboard | `v_path_finder_honesty` visible |
 
-## Phase 6 — Launch (Week 10)
+## Phase 6 — Cutover (Week 10) · *not a launch — see the note at the top of this file*
 
 | # | Task | DoD |
 |---|---|---|

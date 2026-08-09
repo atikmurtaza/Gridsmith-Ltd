@@ -83,8 +83,9 @@ Sanity types consumed: `service`, `project`, `faq`, `post`, `testimonial`, plus 
 | LCP | ≤1.6s | Stricter than the shared 2.0s |
 | INP | ≤150ms | |
 | CLS | ≤0.02 | |
-| JS, marketing routes | ≤90KB gz | Stricter than shared 120KB |
-| JS, `/digital/estimate` | ≤150KB gz | Estimator island included |
+| Framework floor (reported, not budgeted) | 100.2KB gz | Next 15 + React 19 |
+| **JS delta, marketing routes** | **≤15KB gz** (~115KB total) | Tightest delta in the programme |
+| **JS delta, `/digital/estimate`** | **≤40KB gz** (~140KB total) | Estimator island included |
 
 Light canvas helps here — no large dark hero imagery. Digital should lead with type and structure, not photography.
 

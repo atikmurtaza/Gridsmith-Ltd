@@ -53,7 +53,7 @@ including Design's.
 | C-13 | Design Desk page + tiers | P0 | 1.5d | A-06 | TODO | Dev | `excludes` visible |
 | C-14 | **Drawing estimator** config schema | P0 | 0.5d | A-06 | TODO | Dev | Mirrors Digital `estimatorConfig` |
 | C-15 | Drawing estimator calculation function | P0 | 1d | C-14 | TODO | Dev | Pure, unit tested |
-| C-16 | Drawing estimator UI + result | P0 | 1.5d | C-15 | TODO | Dev | No email gate; ≤150KB gz |
+| C-16 | Drawing estimator UI + result | P0 | 1.5d | C-15 | TODO | Dev | No email gate; JS delta ≤40KB gz |
 | C-17 | Estimator calibration vs 8 past jobs | P0 | 0.5d | C-15 | TODO | Dev | **GATE — range contains actual in ≥6/8** |
 
 ## Epic D — Portfolio & media

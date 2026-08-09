@@ -69,8 +69,9 @@ Sanity types consumed: `service`, `project`, `faq`, `post`, `testimonial`, plus 
 | LCP | ≤2.0s | Books shelf is image-dense — this is the risk route |
 | INP | ≤200ms | |
 | CLS | ≤0.05 | Book covers need explicit aspect ratios |
-| JS, marketing routes | ≤110KB gz | |
-| JS, `/press/path-finder` | ≤140KB gz | |
+| Framework floor (reported, not budgeted) | 100.2KB gz | Next 15 + React 19 |
+| **JS delta, marketing routes** | **≤20KB gz** (~120KB total) | Books shelf + filters |
+| **JS delta, `/press/path-finder`** | **≤40KB gz** (~140KB total) | Path Finder island |
 | Books shelf | first 12 covers eager+priority, rest lazy with `IntersectionObserver` | |
 
 Book covers: AVIF, fixed 2:3 aspect ratio container, `sizes` attribute tuned per breakpoint. Never let a cover shift layout.

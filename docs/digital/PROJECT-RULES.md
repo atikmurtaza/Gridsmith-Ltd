@@ -90,8 +90,8 @@ These are specific and non-negotiable because this component carries the divisio
 |---|---|
 | Lighthouse 100/100/100 | LHCI blocks merge |
 | LCP ≤1.6s, INP ≤150ms, CLS ≤0.02 | LHCI blocks merge |
-| Marketing routes JS ≤90KB gz — **unachievable, floor is 100.2KB. See Q-M12** | `check-bundle-size` blocks merge |
-| `/digital/estimate` JS ≤150KB gz | `check-bundle-size` blocks merge |
+| Digital route JS **delta ≤15KB gz** above the framework floor — the tightest in the programme | `check-bundle-size` blocks merge |
+| `/digital/estimate` JS **delta ≤40KB gz** | `check-bundle-size` blocks merge |
 | No client-side fetch on first paint | Manual review |
 | No third-party embeds | Manual review — booking is a link, not an iframe |
 | Every image explicit dimensions | ESLint |

@@ -46,7 +46,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | V-04 | Gather 10 historical projects with final prices | P0 | — | — | TODO | Atik | **Start week 1** |
 | V-05 | **Calibration run** | P0 | 1d | V-03, V-04 | TODO | Dev | **HARD GATE — ≥8/10 in range** |
 | V-06 | Static SSR pricing bands | P0 | 1d | S-07 | TODO | Dev | Works with JS off |
-| V-07 | Estimator island, 6 steps | P0 | 4d | V-03 | TODO | Dev | ≤150KB gz |
+| V-07 | Estimator island, 6 steps | P0 | 4d | V-03 | TODO | Dev | JS delta ≤40KB gz |
 | V-08 | Three-cue selected state | P0 | 0.5d | V-07 | TODO | Dev | Not colour alone |
 | V-09 | Result view | P0 | 2d | V-07 | TODO | Dev | Exclusions at equal weight |
 | V-10 | Confidence indicator | P0 | 0.5d | V-09 | TODO | Dev | Words, never percentages |
