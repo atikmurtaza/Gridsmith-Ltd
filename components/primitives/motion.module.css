@@ -1,0 +1,41 @@
+/* Tier 5 — motion and chrome. Tokens only; no colour literals.
+   transform and opacity only — master/PROJECT-RULES.md §9. The global reduced-motion
+   block in tokens.css neutralises the durations, and both components below also check
+   the preference in JS so they skip straight to their final state rather than animating
+   imperceptibly fast. */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 450ms var(--ease-out), transform 450ms var(--ease-out);
+}
+.revealVisible { opacity: 1; transform: none; }
+
+/* No-JS fallback: without the client component running, content must still be visible.
+   Hiding by default and revealing with JS would leave the page blank for anyone whose
+   script fails, which is a content failure, not a motion one. */
+@media (scripting: none) {
+  .reveal { opacity: 1; transform: none; }
+}
+
+.stickyCta {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 20;
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--gutter);
+  padding-block-end: max(var(--space-3), env(safe-area-inset-bottom));
+  background: var(--canvas-raised);
+  border-block-start: var(--border-hairline) solid var(--line-strong);
+  transform: translateY(100%);
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.stickyVisible { transform: none; }
+
+/* Desktop has room for the CTA in the page; this bar is a mobile affordance. */
+@media (min-width: 768px) {
+  .stickyCta { display: none; }
+}
+

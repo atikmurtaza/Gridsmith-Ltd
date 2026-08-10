@@ -1,0 +1,31 @@
+/* Tier 4 — states. Tokens only; no colour literals.
+   Deliberately plain. An empty or failed state that has been designed hard reads as
+   decoration; these are prose on a surface, matching the "sunken-plain" treatment the
+   specs use for the limits block and the expectations statement. */
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-12) var(--space-6);
+  background: var(--canvas-sunken);
+  border: var(--border-hairline) solid var(--line);
+  border-radius: var(--radius-default);
+}
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--ink);
+}
+.body {
+  max-width: var(--measure-narrow);
+  color: var(--ink-muted);
+}
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+/* Mono marks the machine-readable part of an error — a reference someone will quote. */
+.reference {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-subtle);
+}

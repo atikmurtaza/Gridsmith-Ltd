@@ -18,8 +18,8 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 2 | A-02 | Token layer `tokens.css` | P0 | 1d | A-01 | DONE | Dev | 39 base tokens, FOUNDATION §3. Tailwind namespace collision cleared; `check:tokens` gate added |
 | 3 | A-03 | ⚑ Four theme files — **incl. master (was M-01)** | P0 | 1.5d | A-02 | DONE | Dev | 29 contrast pairs measured; 2 AA failures in Design fixed, 25 published ratios corrected. Fonts scoped per route group. `check:contrast` gate added |
 | 4 | A-04 | Four route groups + `data-division` | P0 | 1d | A-03 | DONE | Dev | Four **root** layouts (no `app/layout.tsx`) — the only way to set `data-division` on `<body>` per group without forcing dynamic rendering. `check:theme` gate |
-| 5 | A-05 | ⚑ **24** shared primitives | P0 | 4d | ⚑ **A-04** | TODO | Dev | Was "21 / depends A-02". `Marquee` deleted |
-| 5 | A-05a | ⚑ `/_kitchen-sink` route | P0 | 0.5d | A-05 | TODO | Dev | All 24 × 4 themes. `noindex`, excluded from prod build |
+| 5 | A-05 | ⚑ **24** shared primitives | P0 | 4d | ⚑ **A-04** | DONE | Dev | 21 Server, 3 Client (`Tabs`, `RevealOnScroll`, `StickyCta`). `Accordion` is native `<details>` |
+| 5 | A-05a | ⚑ `/_kitchen-sink` route | P0 | 0.5d | A-05 | DONE | Dev | All 24 × 4 themes; 5.6KB gz delta. `noindex`. Directory is `%5Fkitchen-sink` — a literal `_` prefix is a Next private folder and produces no route. Prod exclusion at A-12 |
 | 6 | **A-GATE** | ⚑ **Epic A exit gate** | P0 | 0.5d | A-05a, A-10b | TODO | Dev | **Nothing downstream starts until green** — see below |
 | 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe | P0 | 0.5d | A-05a | TODO | Dev | Needs a page to measure |
 | 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | REVIEW | Dev | Schemas written; **awaiting Sanity org (B4)** |
@@ -60,8 +60,12 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 Both subagents run from `.claude/agents/`. The fresh context is the point: the model
 that just wrote 24 primitives is the worst available reviewer of them.
 
-**Internal order within A-05** — each tier depends only on the one above, and
-`'use client'` first appears in the last tier, so it stays isolated and auditable:
+**Internal order within A-05** — each tier depends only on the one above.
+
+Built in this order. The prediction that `'use client'` would first appear in the States
+tier was wrong in both directions — States needs none, and `Tabs` in the Interactive tier
+does. Recorded rather than reshuffled, because the tier order was about dependencies and
+that part held.
 
 | Tier | Primitives |
 |---|---|

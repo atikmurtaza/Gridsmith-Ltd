@@ -72,6 +72,19 @@ const PAIRS = {
 
 const MIN = { text: 4.5, large: 3.0, ui: 3.0, decor: 0 };
 
+/**
+ * The control-border invariant — FOUNDATION §3.
+ *
+ * Neither line token clears 3:1 anywhere (swept at A-05: --line 1.12–1.34, --line-strong
+ * 1.45–1.79), so --ink-subtle is the nominated token for any border that identifies a
+ * control or one of its states. That nomination is only sound while it actually measures
+ * ≥3:1 on every surface of every theme, which is what this checks. If a theme darkens
+ * --ink-subtle or lightens a canvas, the whole primitive layer needs revisiting and this
+ * is what says so.
+ */
+const CONTROL_BORDER = '--ink-subtle';
+const SURFACES = ['--canvas', '--canvas-raised', '--canvas-sunken'];
+
 const srgb = (v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
 
 function luminance(hex) {
@@ -154,6 +167,34 @@ if (failures.length > 0) {
   console.error('');
 }
 
-if (failures.length > 0 || drift.length > 0) process.exit(1);
+// Control-border invariant, swept rather than enumerated per DESIGN.md.
+const borderProblems = [];
+let borderWorst = Infinity;
 
-console.log(`check-contrast: ${rows.length} pairs across ${THEMES.length} themes, all within role minima and matching DESIGN.md\n`);
+for (const theme of THEMES) {
+  const t = tokens(theme);
+  for (const surface of SURFACES) {
+    const measured = ratio(t[CONTROL_BORDER], t[surface]);
+    borderWorst = Math.min(borderWorst, measured);
+    if (measured < MIN.ui) {
+      borderProblems.push(
+        `${theme}: ${CONTROL_BORDER} on ${surface} = ${measured.toFixed(2)}:1, needs ${MIN.ui}:1 ` +
+          'to serve as a control border',
+      );
+    }
+  }
+}
+
+if (borderProblems.length > 0) {
+  console.error(`check-contrast: ${CONTROL_BORDER} is not fit to carry control borders\n`);
+  for (const p of borderProblems) console.error(`  ${p}`);
+  console.error('\nFOUNDATION §3 nominates it for every border that identifies a control.\n');
+}
+
+if (failures.length > 0 || drift.length > 0 || borderProblems.length > 0) process.exit(1);
+
+console.log(`check-contrast: ${rows.length} pairs across ${THEMES.length} themes, all within role minima and matching DESIGN.md`);
+console.log(
+  `check-contrast: ${CONTROL_BORDER} clears ${MIN.ui}:1 on all ${THEMES.length * SURFACES.length} ` +
+    `theme/surface combinations (worst ${borderWorst.toFixed(2)}:1)\n`,
+);

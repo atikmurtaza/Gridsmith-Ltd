@@ -65,8 +65,6 @@ function routes() {
     if (!entry.isFile() || !entry.name.endsWith('.html')) continue;
     const file = join(entry.parentPath ?? APP_DIR, entry.name);
     const rel = toPosix(relative(APP_DIR, file)).replace(/\.html$/, '');
-    // Internal Next templates, not real routes.
-    if (rel.startsWith('_')) continue;
     out.push({ url: '/' + (rel === 'index' ? '' : rel), file });
   }
   return out.sort((a, b) => a.url.localeCompare(b.url));
@@ -90,19 +88,29 @@ function moduleScripts(html) {
 const rows = [];
 
 for (const { url, file } of routes()) {
-  const budget = budgetFor(url);
-  if (budget === null) continue;
-
   const html = readFileSync(file, 'utf8');
   let bytes = 0;
   for (const src of moduleScripts(html)) {
-    const onDisk = join('.next', src.replace('/_next/', ''));
-    if (!existsSync(onDisk)) continue;
+    // Script URLs are percent-encoded, and a route segment that already contains a
+    // percent sign is encoded twice — /_kitchen-sink lives at `%5Fkitchen-sink` on disk
+    // and is referenced as `%255Fkitchen-sink` in the HTML. Decoding once resolves it.
+    const onDisk = join('.next', decodeURIComponent(src.replace('/_next/', '')));
+
+    // A referenced script that cannot be found is a measurement failure, not a zero.
+    // Skipping it silently is how a route's entire page chunk escapes its budget while
+    // the gate still reports green — which is exactly what happened when this route was
+    // first added.
+    if (!existsSync(onDisk)) {
+      console.error(`\ncheck-bundle-size: ${url} references ${src}, which is not on disk.`);
+      console.error('Cannot measure this route. Fix the path resolution rather than ignoring it.\n');
+      process.exit(1);
+    }
+
     bytes += gzipSync(readFileSync(onDisk), { level: 9 }).length;
   }
 
   const total = bytes / KB;
-  rows.push({ url, total, delta: total - FLOOR_KB, budget });
+  rows.push({ url, total, delta: total - FLOOR_KB, budget: budgetFor(url) });
 }
 
 // Measuring nothing is not the same as passing. A build that emits no budgeted route
@@ -116,11 +124,26 @@ if (rows.length === 0) {
 const w = Math.max(...rows.map((r) => r.url.length), 5);
 const n = (v) => (v < 0 ? '-' : '') + Math.abs(v).toFixed(1);
 
+// Internal routes are reported but not budgeted. They are listed rather than filtered
+// out: a route silently missing from this table reads as "within budget" when it was
+// never measured, which is how /_kitchen-sink went unnoticed when it was first added.
+const UNBUDGETED_NOTE = {
+  '/_kitchen-sink': 'internal, excluded from production at A-12',
+  '/_not-found': 'Next 404 template',
+};
+
 console.log(`\nframework floor  ${FLOOR_KB.toFixed(1)}KB gz  (declared; Next 15 + React 19, measured at A-01)\n`);
 console.log('route'.padEnd(w + 2) + '    total     delta    budget');
 
 const over = [];
 for (const r of rows) {
+  const note = UNBUDGETED_NOTE[r.url];
+  if (r.budget === null || note) {
+    console.log(
+      `${r.url.padEnd(w + 2)}${n(r.total).padStart(8)}KB${n(r.delta).padStart(9)}KB${'—'.padStart(8)}    not budgeted — ${note ?? 'no budget matches this prefix'}`,
+    );
+    continue;
+  }
   const bad = r.delta > r.budget;
   if (bad) over.push(r);
   console.log(
@@ -130,7 +153,7 @@ for (const r of rows) {
 
 // A route measuring below the declared floor means the floor itself moved down — the
 // constant is stale and every delta above is overstated.
-const stale = rows.filter((r) => r.total < FLOOR_KB - FLOOR_TOLERANCE_KB);
+const stale = rows.filter((r) => r.budget !== null && r.total < FLOOR_KB - FLOOR_TOLERANCE_KB);
 if (stale.length > 0) {
   console.error(
     `\ncheck-bundle-size: ${stale.length} route(s) measured below the declared floor of ${FLOOR_KB}KB.` +

@@ -217,6 +217,41 @@ reference a division: routing cards, division badges, and the footer switcher
 (`master/DESIGN.md` §2). No other theme defines them, and no division theme may
 reference another division's accent.
 
+### `--line` and `--line-strong` are decorative in every theme
+
+Swept at A-05 across all four themes and all three surfaces (`--canvas`,
+`--canvas-raised`, `--canvas-sunken`) — twelve combinations per token:
+
+| Token | Measured range | WCAG 1.4.11 (3:1) |
+|---|---|---|
+| `--line` | 1.12 – 1.34:1 | fails everywhere |
+| `--line-strong` | **1.45 – 1.79:1** | **fails everywhere** |
+| `--ink-subtle` | 4.18 – 5.19:1 | passes everywhere |
+| `--ink-muted` | 6.64 – 7.83:1 | passes everywhere |
+| `--accent` | 4.46 – 19.17:1 | passes everywhere |
+
+This was first found as a Design-theme defect. It is not division-specific, so the rule
+lives here rather than in one division's `DESIGN.md`.
+
+**The rule.** WCAG 1.4.11 requires 3:1 for anything that identifies a user interface
+component or one of its states. Neither line token can carry that anywhere.
+
+| Job | Token |
+|---|---|
+| Border that identifies a control, or marks one of its states | **`--ink-subtle`** — the lightest token clearing 3:1 on every surface, so it reads as a hairline without failing |
+| A state that needs more weight than a hairline | `--accent` or `--ink` |
+| Separators, card edges, table rules, decorative hairlines | `--line` / `--line-strong` — unrestricted, they carry no information |
+
+**Colour is never the only signal.** WCAG 1.4.1 is separate from 1.4.11 and a compliant
+contrast ratio does not satisfy it. Every state must carry **at least one non-colour
+cue** alongside any colour change — a border-width step, a background step, a glyph or
+shape change, a text label, or the corresponding ARIA state. Digital's "three-cue
+selected state" is this rule stated locally; it applies to all four divisions.
+
+`scripts/check-contrast.mjs` gates the load-bearing half of this: `--ink-subtle` must
+measure ≥3:1 against all three surfaces in all four themes, or the token nominated for
+control borders is not fit for the job.
+
 ## 4. Division theme summary
 
 | Token | Design | Digital | Press |
@@ -253,6 +288,25 @@ All three inherit the same spacing, type scale, grid and motion tokens. **A user
 `Button` · `Link` · `Container` · `Grid` · `Section` · `Eyebrow` · `Heading` · `Prose` · `Card` · `Media` (watermarked, right-click disabled) · `Accordion` · `Tabs` · `Field` · `Select` · `RadioGroup` · `Stepper` · `Table` · `Badge` · `RevealOnScroll` · `StickyCta` · `Breadcrumb` · `Pagination` · `EmptyState` · `ErrorState`
 
 All primitives consume tokens only. **No primitive may contain a hardcoded colour.** CI lint rule enforces this.
+
+**Three are Client Components; twenty-one are not.** Built at A-05, and the split did not
+land where the build order predicted:
+
+| Client | Why no server or CSS construction exists |
+|---|---|
+| `Tabs` | The WAI-ARIA tabs pattern needs roving `tabindex` and arrow-key selection |
+| `RevealOnScroll` | `IntersectionObserver` |
+| `StickyCta` | Scroll depth against document height |
+
+`EmptyState` and `ErrorState` were expected to need client code and do not — they are
+presentational. Where the platform had a native equivalent it was used instead of a
+widget: **`Accordion` is `<details>`/`<summary>`**, `Select` is a native `<select>`, and
+`RadioGroup` is a `<fieldset>` of real radios. Those three ship no JavaScript at all and
+get their keyboard behaviour, state and announcements from the browser.
+
+Measured on `/_kitchen-sink`, which renders every primitive four times: **5.6KB gz above
+the framework floor**. That is the whole client cost of the primitive layer, against
+Master's 15KB delta budget of which the consent banner already claims 8KB.
 
 **The list above is authoritative; the count follows it.** Where an older file says
 21, that number predates the addition of `Breadcrumb`, `Pagination`, `EmptyState` and

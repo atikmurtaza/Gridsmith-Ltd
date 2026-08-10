@@ -116,23 +116,19 @@ Small, `--ink-subtle`, mono, uppercase. Repeated consistently, this does more id
 | **Sticky mobile CTA** | Full-width, `--canvas-raised`, 1px top `--line-strong`, safe-area inset padding. Appears after 40% scroll depth |
 | **Media** | 0 radius, 1px `--line` border, watermark baked in, `user-select: none`, context menu suppressed |
 
-**`--line-strong` is decorative-only in this theme.** At 1.72:1 on `--canvas` it cannot
-carry information. Anything that identifies a control or one of its states needs 3:1 under
-WCAG 1.4.11 and must use **`--ink-subtle` (5.01:1)** instead. That covers input and select
-borders, and any resting border that is the only thing marking a control as a control.
+**`--line-strong` is decorative-only — and so is `--line`, in every theme.** This was
+first found here, but the A-05 sweep showed neither line token clears 3:1 in any theme on
+any surface. The rule and the replacement pattern now live in `_shared/00-FOUNDATION.md`
+§3 and are gated by `scripts/check-contrast.mjs`; this file does not restate them.
 
-Two clarifications on what this does *not* change:
+For Design specifically: any border identifying a control or one of its states uses
+**`--ink-subtle` (5.01:1)**. Button focus is unaffected — it already specifies a 2px
+`--ink` outline at 2px offset, 17.92:1. Genuinely decorative rules stay on `--line-strong`:
+the track-fork divider, the sticky-CTA top rule, card and media borders.
 
-- **Button focus is unaffected** — it already specifies a 2px `--ink` outline at 2px
-  offset, which is 17.92:1.
-- **Genuinely decorative rules stay on `--line-strong`**: the track-fork divider, the
-  sticky-CTA top rule, and card and media borders. None of them is the sole signal that
-  something is interactive.
-
-One component in the table above did need changing rather than just noting: **Button
-(secondary)** specified a 1px `--line-strong` border as its resting state, and that border
-is the only thing identifying it as a button. Moved to `--ink-subtle`. Raised rather than
-applied silently, since it is a visible change to a component spec.
+One component in the table above needed changing rather than noting: **Button (secondary)**
+specified a 1px `--line-strong` resting border, and that border is the only thing
+identifying it as a button. Moved to `--ink-subtle`.
 
 ## 6. Motion
 
