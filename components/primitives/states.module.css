@@ -23,9 +23,12 @@
   color: var(--ink-muted);
 }
 .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-/* Mono marks the machine-readable part of an error — a reference someone will quote. */
+/* Mono marks the machine-readable part of an error — a reference someone will quote.
+   --ink-muted, not --ink-subtle: this sits on --canvas-sunken, where --ink-subtle
+   measures 4.18–4.39:1 in three of the four themes and fails the 4.5:1 text floor.
+   FOUNDATION §3 records the restriction. */
 .reference {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--ink-subtle);
+  color: var(--ink-muted);
 }

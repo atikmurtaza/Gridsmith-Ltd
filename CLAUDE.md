@@ -112,6 +112,13 @@ Read the workstream's own files before touching its code.
   specific-looking number is worse than no number, because it stops anyone re-deriving it.
   **If you meet an asserted number that no gate covers, treat it as unverified and say
   so** rather than building on it.
+- **Every gate must be proven by deliberate failure before it is trusted, and the proof
+  recorded.** A gate that can skip its subject silently must treat that skip as a hard
+  failure, never a pass. A green result from a check that measured nothing is worse than
+  no check: it buys unearned confidence and is never re-examined. Three defects of exactly
+  this shape have already shipped and been caught — a `_`-prefix filter that swallowed a
+  whole route, a double-encoded chunk path that resolved to nothing, and a line-anchored
+  regex that counted a third of what it claimed.
 - **Any PR touching `styles/tokens.css`, `components/primitives/` or `lib/estimate/` needs review.** These affect all four route groups or determine what the business quotes.
 
 ## Definition of Done

@@ -85,6 +85,22 @@ const MIN = { text: 4.5, large: 3.0, ui: 3.0, decor: 0 };
 const CONTROL_BORDER = '--ink-subtle';
 const SURFACES = ['--canvas', '--canvas-raised', '--canvas-sunken'];
 
+/**
+ * Which ink tokens are safe as body text on which surfaces — FOUNDATION §3.
+ *
+ * Added after axe caught `--ink-subtle` used for the ErrorState reference line on
+ * `--canvas-sunken`, where it measures 4.18–4.39:1 in three of the four themes. The
+ * A-05 sweep had already produced those numbers; nothing was checking that a token was
+ * only used where its own measurement allows. This closes that gap: the surfaces listed
+ * per token must clear 4.5:1, and `--canvas-sunken` is deliberately absent from
+ * `--ink-subtle` because it does not.
+ */
+const TEXT_ON_SURFACE = {
+  '--ink': SURFACES,
+  '--ink-muted': SURFACES,
+  '--ink-subtle': ['--canvas', '--canvas-raised'],
+};
+
 const srgb = (v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
 
 function luminance(hex) {
@@ -191,10 +207,43 @@ if (borderProblems.length > 0) {
   console.error('\nFOUNDATION §3 nominates it for every border that identifies a control.\n');
 }
 
-if (failures.length > 0 || drift.length > 0 || borderProblems.length > 0) process.exit(1);
+// Text-on-surface invariant.
+const textProblems = [];
+let textWorst = Infinity;
+let textChecks = 0;
+
+for (const theme of THEMES) {
+  const t = tokens(theme);
+  for (const [token, surfaces] of Object.entries(TEXT_ON_SURFACE)) {
+    for (const surface of surfaces) {
+      const measured = ratio(t[token], t[surface]);
+      textWorst = Math.min(textWorst, measured);
+      textChecks += 1;
+      if (measured < MIN.text) {
+        textProblems.push(
+          `${theme}: ${token} on ${surface} = ${measured.toFixed(2)}:1, needs ${MIN.text}:1 as body text`,
+        );
+      }
+    }
+  }
+}
+
+if (textProblems.length > 0) {
+  console.error('check-contrast: text token(s) below the 4.5:1 floor on a surface they are permitted on\n');
+  for (const p of textProblems) console.error(`  ${p}`);
+  console.error('\nEither restrict the token to fewer surfaces in TEXT_ON_SURFACE, or change the value.\n');
+}
+
+if (failures.length > 0 || drift.length > 0 || borderProblems.length > 0 || textProblems.length > 0) {
+  process.exit(1);
+}
 
 console.log(`check-contrast: ${rows.length} pairs across ${THEMES.length} themes, all within role minima and matching DESIGN.md`);
 console.log(
   `check-contrast: ${CONTROL_BORDER} clears ${MIN.ui}:1 on all ${THEMES.length * SURFACES.length} ` +
-    `theme/surface combinations (worst ${borderWorst.toFixed(2)}:1)\n`,
+    `theme/surface combinations (worst ${borderWorst.toFixed(2)}:1)`,
+);
+console.log(
+  `check-contrast: ${textChecks} permitted text/surface combinations clear ${MIN.text}:1 ` +
+    `(worst ${textWorst.toFixed(2)}:1). --ink-subtle is excluded from --canvas-sunken by measurement.\n`,
 );

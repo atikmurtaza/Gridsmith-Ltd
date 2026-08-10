@@ -77,7 +77,7 @@ function Specimen({ name, children }: { name: string; children: React.ReactNode 
   );
 }
 
-function AllPrimitives() {
+function AllPrimitives({ division }: { division: string }) {
   return (
     <>
       <Specimen name="Heading × 4 · Eyebrow">
@@ -151,7 +151,7 @@ function AllPrimitives() {
       </Specimen>
 
       <Specimen name="Table — sticky header, numeric cells">
-        <Table caption="Specimen table with a visible caption">
+        <Table caption={`Specimen table (${division})`}>
           <thead>
             <tr><th scope="col">Item</th><th scope="col">Revision</th><th scope="col">Price</th></tr>
           </thead>
@@ -163,8 +163,8 @@ function AllPrimitives() {
       </Specimen>
 
       <Specimen name="Breadcrumb · Pagination">
-        <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Work', href: '/work' }, { label: 'Current page' }]} />
-        <Pagination current={3} total={9} hrefFor={(p) => `?page=${p}`} />
+        <Breadcrumb label={`Breadcrumb (${division})`} items={[{ label: 'Home', href: '/' }, { label: 'Work', href: '/work' }, { label: 'Current page' }]} />
+        <Pagination label={`Pagination (${division})`} current={3} total={9} hrefFor={(p) => `?page=${p}`} />
       </Specimen>
 
       <Specimen name="Field — default, hint, error, textarea">
@@ -215,7 +215,7 @@ function AllPrimitives() {
 
       <Specimen name="Tabs — arrow keys, roving tabindex">
         <Tabs
-          label="Specimen tabs"
+          label={`Specimen tabs (${division})`}
           tabs={[
             { id: 't1', label: 'First', panel: <p>First panel.</p> },
             { id: 't2', label: 'Second', panel: <p>Second panel.</p> },
@@ -225,7 +225,7 @@ function AllPrimitives() {
       </Specimen>
 
       <Specimen name="Stepper — canonical six, step 3 current">
-        <Stepper steps={STEPS} current={3} label="Specimen process" />
+        <Stepper steps={STEPS} current={3} label={`Specimen process (${division})`} />
       </Specimen>
 
       <Specimen name="EmptyState">
@@ -276,7 +276,7 @@ export default function KitchenSinkPage() {
             <Section rhythm="tight">
               <h2 className={styles.frameTitle}>{division}</h2>
               <div className={styles.stack}>
-                <AllPrimitives />
+                <AllPrimitives division={division} />
               </div>
             </Section>
           </Container>

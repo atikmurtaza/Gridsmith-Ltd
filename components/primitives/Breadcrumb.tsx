@@ -8,9 +8,18 @@ export type Crumb = { label: string; href?: string };
  * `aria-current="page"`. The separators are CSS `::before` content so they are not
  * announced as list items.
  */
-export function Breadcrumb({ items, className }: { items: Crumb[]; className?: string }) {
+export function Breadcrumb({
+  items,
+  label = 'Breadcrumb',
+  className,
+}: {
+  items: Crumb[];
+  /** Overridable because two navigation landmarks on one page must be told apart. */
+  label?: string;
+  className?: string;
+}) {
   return (
-    <nav aria-label="Breadcrumb" className={[styles.breadcrumb, className].filter(Boolean).join(' ')}>
+    <nav aria-label={label} className={[styles.breadcrumb, className].filter(Boolean).join(' ')}>
       <ol className={styles.breadcrumbList}>
         {items.map((item, i) => {
           const isLast = i === items.length - 1;

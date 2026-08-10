@@ -14,3 +14,4 @@ next-env.d.ts
 
 # Machine-local Claude Code permissions, not shared config.
 .claude/settings.local.json
+.lighthouseci/

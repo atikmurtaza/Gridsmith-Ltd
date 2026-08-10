@@ -35,7 +35,7 @@
    * (FOUNDATION §3). Used ONLY on division routing cards, division badges and the
    * footer switcher.
    *
-   * --accent-design is 2.0:1 on this canvas. It may be a rule or a badge border and
+   * --accent-design is 2.16:1 on this canvas (measured). It may be a rule or a badge border and
    * nothing else: never text, never a link, never the sole indicator of a state.
    * Enforced by scripts/check-no-hardcoded-colors.mjs.
    */

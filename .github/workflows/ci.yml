@@ -1,7 +1,10 @@
 name: CI
 
-# A-10a. Lighthouse CI and axe are A-10b — they need /_kitchen-sink to measure
-# against, so they land with A-05a. Do not add a bypass to any step here.
+# A-10a + A-10b. Do not add a bypass to any step here.
+#
+# Every gate below has been proven by deliberate failure and the proof is recorded in
+# the commit that added it — CLAUDE.md "How to work". A gate nobody has watched fail is
+# not known to work.
 
 on:
   push:
@@ -49,3 +52,13 @@ jobs:
         # Per-route gzipped module scripts vs the budgets in master/PROJECT-RULES.md §8.
         # Must run after build — it measures the prerendered output, not the source.
         run: npm run size
+
+      # A-10b. Both need a running server; each starts and stops its own.
+      - name: Lighthouse CI
+        run: npm run check:lhci
+
+      - name: axe — full ruleset, all routes
+        run: |
+          npm run start -- -p 3000 &
+          npx --yes wait-on http://127.0.0.1:3000/_kitchen-sink -t 60000
+          npm run check:axe

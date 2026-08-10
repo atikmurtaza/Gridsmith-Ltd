@@ -1,4 +1,12 @@
+import { Heading } from '@/components/primitives/Heading';
+
 // Placeholder. Real content is Epic N and comes from Sanity.
+// The h1 is not decoration: a page without one fails axe `page-has-heading-one` and
+// leaves screen reader users with no document title in the heading outline.
 export default function Page() {
-  return <main>Gridsmith Ltd</main>;
+  return (
+    <main>
+      <Heading level={1}>Gridsmith Ltd</Heading>
+    </main>
+  );
 }

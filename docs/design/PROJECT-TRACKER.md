@@ -60,11 +60,24 @@ including Design's.
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| D-01 | `/design/work` grid | P0 | 1.5d | B-10 | TODO | Dev | |
+| D-01 | `/design/work` grid | P0 | 1.5d | B-10 | TODO | Dev | **First real exercise of the `Media` primitive** — see DoD below |
 | D-02 | Filters with URL state | P0 | 1.5d | D-01 | TODO | Dev | Canonical to unfiltered |
 | D-03 | Watermark baked at CMS ingest | P0 | 1d | A-06 | TODO | Dev | Not CSS overlay |
 | D-04 | Context-menu + selection suppression | P1 | 0.5d | D-01 | TODO | Dev | Deterrence only |
 | D-05 | Empty/loading states for grid | P0 | 0.5d | D-02 | TODO | Dev | |
+
+**D-01 Definition of Done — additions.** `Media` was built at A-05 but is the one
+primitive `/_kitchen-sink` does not render: exercising it needs real assets, and
+fabricating placeholder imagery to fill the gap would have put invented visual content in
+the repo (CLAUDE.md non-negotiable #2). `A-GATE` therefore passes without covering it, by
+design. D-01 is where that debt is settled, so its DoD explicitly includes:
+
+- [ ] Correct at 375px, 768px and 1440px
+- [ ] Meaningful `alt` text on every image — never empty, never the filename
+- [ ] Watermark present **in the asset itself**, baked at ingest, not a CSS overlay
+- [ ] Context-menu suppression working (the client-side half deferred from A-05, D-04)
+- [ ] Explicit `width`/`height` on every image
+- [ ] Zero CLS measured on the grid under image load
 
 ## Epic E — Content
 

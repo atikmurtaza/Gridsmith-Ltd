@@ -21,7 +21,7 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 5 | A-05 | ⚑ **24** shared primitives | P0 | 4d | ⚑ **A-04** | DONE | Dev | 21 Server, 3 Client (`Tabs`, `RevealOnScroll`, `StickyCta`). `Accordion` is native `<details>` |
 | 5 | A-05a | ⚑ `/_kitchen-sink` route | P0 | 0.5d | A-05 | DONE | Dev | All 24 × 4 themes; 5.6KB gz delta. `noindex`. Directory is `%5Fkitchen-sink` — a literal `_` prefix is a Next private folder and produces no route. Prod exclusion at A-12 |
 | 6 | **A-GATE** | ⚑ **Epic A exit gate** | P0 | 0.5d | A-05a, A-10b | TODO | Dev | **Nothing downstream starts until green** — see below |
-| 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe | P0 | 0.5d | A-05a | TODO | Dev | Needs a page to measure |
+| 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe | P0 | 0.5d | A-05a | DONE | Dev | Both proven by deliberate failure. axe found 4 real defects. SEO/best-practices ratcheted — see below |
 | 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | REVIEW | Dev | Schemas written; **awaiting Sanity org (B4)** |
 | 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | REVIEW | Dev | Migrations written; **awaiting Supabase project (B4)** |
 | 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | Notify <60s. No CRM adapter — deferred, see D1 |
@@ -60,6 +60,26 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 Both subagents run from `.claude/agents/`. The fresh context is the point: the model
 that just wrote 24 primitives is the worst available reviewer of them.
 
+**A-10b — two assertions are ratcheted, with owners.** Lighthouse accessibility and
+performance are asserted at their final spec values now and pass. Two are pinned below
+1.0 because reaching 1.0 requires something that must not be invented:
+
+| Category | Now | Blocked on | Raises at |
+|---|---|---|---|
+| SEO | 0.90 | `meta-description` on every page. Comes from `seoBlock.metaDescription`; writing placeholder copy to go green would be fabricated content | `N-01` |
+| Best practices | 0.96 | `errors-in-console` — `/favicon.ico` 404s on every route. Needs a real brand mark | `Q-M15` |
+
+Both still catch regressions below today's level, which is different from a gate that
+measures nothing. Neither may be lowered further.
+
+**`Media` is out of scope for this gate, deliberately.** It is the one primitive
+`/_kitchen-sink` does not render. Exercising it needs real assets, and fabricating
+placeholder imagery to fill the gap would put invented visual content in the repo —
+CLAUDE.md non-negotiable #2 outranks gate coverage. A-GATE therefore passes without
+covering it, and that is the correct outcome rather than a hole to paper over. The debt is
+settled at Design `D-01`, whose Definition of Done now carries the responsive, alt-text,
+watermark, context-menu, explicit-dimensions and zero-CLS checks in full.
+
 **Internal order within A-05** — each tier depends only on the one above.
 
 Built in this order. The prediction that `'use client'` would first appear in the States
@@ -84,8 +104,20 @@ that part held.
 | M-03 | Header with per-division nav | P0 | 1.5d | A-05 | TODO | Dev | Wordmark → `/` |
 | M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03 | TODO | Dev | From `companyDetails` |
 | M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | TODO | Dev | Response commitment stored once |
-| M-06 | Consent banner UI | P0 | 1.5d | A-11 | TODO | Dev | Accept/Reject identical |
+| M-06 | Consent banner UI | P0 | 1.5d | A-11 | TODO | Dev | Accept/Reject identical. **Measure the Master route delta here, not at H-01** — see below |
 | M-07 | 404 + 500 pages | P0 | 1d | M-03 | TODO | Dev | 500 works without JS |
+
+**M-06 also measures the Master delta.** Budget is 15KB. Known consumers: the consent
+banner at ≤8KB spec'd, and the client primitive layer measured at 5.6KB on
+`/_kitchen-sink`. That is 13.6KB of 15KB before the header and footer exist.
+
+Header and footer are expected to be Server Components costing nothing, so the arithmetic
+should hold — but expected is not measured. Taking the reading at M-06, the moment the
+banner lands, means a surprise surfaces while the chrome is the only thing built. Waiting
+until `H-01` would surface it after the whole of Stage 3 had been built on the assumption,
+and the fix then is cutting a page feature to pay for a chrome overrun.
+
+If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into Epic N.
 
 ## Epic N — Master pages
 
@@ -147,7 +179,7 @@ that part held.
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| H-01 | Homepage performance ≥98 | P0 | 1.5d | N-01 | TODO | Dev | Banner in budget |
+| H-01 | Homepage performance ≥98 | P0 | 1.5d | N-01 | TODO | Dev | Lighthouse only — the JS delta is measured at M-06, before Stage 3 pages are built on it |
 | H-02 | Accessibility pass incl. consent banner | P0 | 2d | M-06 | TODO | Dev | |
 | H-03 | All states | P0 | 1d | N-* | TODO | Dev | Incl. seed-hidden |
 | H-04 | Cross-browser + device | P0 | 1d | H-01 | TODO | Dev | |
@@ -162,6 +194,7 @@ that part held.
 | ID | Item | Needed from | Blocks |
 |---|---|---|---|
 | Q-M1 | **Company number — still outstanding.** Registered office is confirmed: `30 Briarfield Road, Farnworth, Bolton, BL4 0HD`, England & Wales. Load into `companyDetails` at M-05. The number is the only missing field and it is statutory — `[TK]`, never guessed | Atik | M-05, L-05, 0.10 (number only) |
+| Q-M15 | **No favicon or brand mark exists.** `/favicon.ico` 404s on every route; Lighthouse reports it as a console error and it holds best-practices at 0.96. A mark is a brand decision and is not being invented (`master/PROJECT-RULES.md` §11). Supply one — or confirm shipping without a favicon is acceptable and the assertion stays at 0.96 permanently | Atik | Lighthouse best-practices 1.0 |
 | ~~Q-M12~~ | **RESOLVED — the metric changed, not the numbers.** JS is now budgeted on the delta above the framework floor, not the total: Master ≤15KB, Digital ≤15KB, Press ≤20KB, Design ≤25KB, estimator/path-finder ≤40KB. The floor (100.2KB) is reported separately so a dependency upgrade shows as a floor change rather than silently consuming feature allowance. **Digital's 100/100/100 gate is unchanged** — Lighthouse scores measured experience, and the 90KB figure was a badly-set proxy for it | Atik | ~~Digital launch~~ unblocked |
 | ~~Q-M10~~ | **RESOLVED by default at A-03** — no licence held, so Inter / JetBrains Mono / Source Serif 4 are used, self-hosted via `next/font`. Licensed names deliberately left out of the font stacks. Buying a licence later changes one module in `styles/fonts/` | Atik | ~~A-03~~ |
 | ~~Q-M13~~ | **RESOLVED.** Design `--ink-subtle` is `#818180` at **5.01:1** — the first value on the theme's neutral ramp clearing 5.0:1, chosen over the 4.55:1 minimum so a later `--canvas` adjustment cannot push it back under AA. `--line-strong` recorded as decorative-only in `design/DESIGN.md` §5; Button (secondary) moved to `--ink-subtle` because its resting border is what identifies it as a button | Atik | ~~Design theme~~ applied |

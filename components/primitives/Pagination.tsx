@@ -13,11 +13,14 @@ export function Pagination({
   current,
   total,
   hrefFor,
+  label = 'Pagination',
   className,
 }: {
   current: number;
   total: number;
   hrefFor: (page: number) => string;
+  /** Overridable — a grid paginated at both top and bottom needs two distinct names. */
+  label?: string;
   className?: string;
 }) {
   if (total <= 1) return null;
@@ -27,7 +30,7 @@ export function Pagination({
   const pages = [...window].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
 
   return (
-    <nav aria-label="Pagination" className={[styles.pagination, className].filter(Boolean).join(' ')}>
+    <nav aria-label={label} className={[styles.pagination, className].filter(Boolean).join(' ')}>
       <ol className={styles.paginationList}>
         {pages.map((page, i) => {
           const gap = i > 0 && page - pages[i - 1]! > 1;
