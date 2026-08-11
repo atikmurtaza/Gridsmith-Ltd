@@ -290,10 +290,65 @@ renders for the minority of visitors who happen to have it installed locally and
 anyone else, which is worse than not naming it. Buying a licence later is a change to one
 module in `styles/fonts/` — the theme files reference a CSS variable, not a family name.
 
-Loading is scoped per route group, one module per typeface in `styles/fonts/`, so a layout
-imports only the faces its division uses. Source Serif never reaches Design or Digital;
-JetBrains Mono reaches all four because monospace marks verifiable facts everywhere. Each
-division stays within the two-family limit in `design/PROJECT-RULES.md` §8.
+**Font *files* are scoped per route group; `@font-face` *declarations* are not.** One
+module per typeface in `styles/fonts/`, and a layout imports only the modules its division
+uses, so the only `.woff2` a visitor downloads is the one its division renders — Press
+fetches Source Serif and JetBrains Mono and never Inter. That part is real and measured:
+`/digital` requests exactly one font file.
+
+But every `@font-face` block lands in the shared stylesheet, because `styles/globals.css`
+is imported by all four root layouts. So every route ships the CSS declarations for all
+three families — 22 blocks, of which a given division uses at most 8 — and `/digital`
+downloads Source Serif declarations it will never use. Roughly 29KB of CSS across three
+render-blocking files, where the useful fraction is about a third.
+
+The earlier wording here said loading was scoped and left the CSS implied. It overstated
+what is true. Tracked at `M-08` (P2) — it is bytes on the critical path, not a correctness
+problem, and the fix is per-route-group CSS entry points rather than one shared import.
+
+JetBrains Mono reaches all four route groups deliberately, because monospace marks
+verifiable facts everywhere. Each division stays within the two-family limit in
+`design/PROJECT-RULES.md` §8.
+
+### ⚠ `next/font`'s fallback metrics are load-bearing for **both** LCP and CLS
+
+`next/font` generates a metric-matched fallback for each family and emits it alongside the
+real face:
+
+```css
+@font-face{font-family:Inter Fallback;src:local("Arial");
+  ascent-override:90.44%;descent-override:22.52%;line-gap-override:0.00%;size-adjust:107.12%}
+```
+
+With `font-display: swap` **and** those overrides, the fallback paint is already the final
+layout. Two consequences, and they are the same mechanism seen from two directions:
+
+- **CLS stays 0.000.** The swap changes glyph shapes, not metrics, so nothing moves.
+- **LCP equals FCP.** Because the element's box does not change, the swap produces no new
+  LCP candidate — the browser paints the heading once and never re-reports it. Measured on
+  `/digital` under real 4G: FCP 1441ms, LCP 1441ms.
+
+**Changing `font-display` away from `swap`, or dropping `next/font`'s fallback metric
+generation, breaks both at once.** `block` gives invisible text until the font arrives and
+moves LCP out by the font fetch; `optional` or a hand-written `@font-face` without
+`size-adjust` reintroduces the metric mismatch and CLS with it. The two failures look
+unrelated in a report and have one cause.
+
+**No current gate catches this.** `check:contrast` and `check:tokens` do not read
+`@font-face`; the mobile Lighthouse axis would catch the *consequence* on the routes it
+visits, but only after the fact and only on those four URLs. Treat any change to
+`styles/fonts/*` as **requiring both Lighthouse axes to be re-measured**, and say so in the
+commit. `_shared/01-VALIDATION-REPORT.md` §12 is the reason this warning is written out
+rather than assumed.
+
+**Preload: deliberately absent, and conditionally fine.** Next emits no
+`<link rel="preload" as="font">` for these faces, so the `.woff2` is discovered only after
+CSS parse, behind three render-blocking stylesheets. That costs nothing *while* `swap` and
+the fallback metrics hold, because the text is painted and final before the font arrives —
+it is a later swap of glyph shapes, not a delayed paint. **It becomes load-bearing the
+moment `font-display` changes**: under `block` or `optional` the font is on the critical
+path and its late discovery goes straight into LCP. If that change is ever made, add the
+preload in the same commit.
 
 All three inherit the same spacing, type scale, grid and motion tokens. **A user moving between divisions should feel the same hand, different voice.**
 

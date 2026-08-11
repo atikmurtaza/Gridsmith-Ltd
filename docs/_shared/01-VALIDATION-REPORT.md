@@ -251,3 +251,79 @@ make the fallback paint the final layout, which is why CLS is 0 and why real Chr
 re-reports LCP. Had this not been checked, the gate would have failed builds for a delay no
 visitor experiences and someone would have spent a day optimising it. **Verify what a
 measurement is modelling before treating its output as a fact about the site.**
+
+## 12. A fifth defect class — the gate is right and the number is wrong
+
+§11 lists four defects of one class: **the gate did not do what its specification said.**
+Every one of them is findable by reading the spec next to the code. That is a comparison
+between two documents, and it has a blind spot.
+
+**A gate can measure correctly, faithfully, exactly as specified — and still produce a
+number that is not true of the site,** because the *model* generating the number is wrong.
+No amount of gate-versus-spec checking finds this. The gate matches its spec perfectly.
+Only **number-versus-reality** finds it, and that means measuring the same quantity a
+second time by an independent method.
+
+### The rule
+
+> **When a measurement is surprising, verify it by a second, independent method before
+> acting on it.** A number that does not match your mental model of the system is either a
+> real defect or a broken measurement, and the two are indistinguishable from inside the
+> measurement. Acting on the first reading is how a team spends a week optimising an
+> artefact.
+
+"Surprising" is the trigger, and it is a low bar on purpose: a figure that seems too good,
+a gap between two metrics that should be identical, a result that changes when nothing
+changed, a budget that fails on an empty page.
+
+### The worked example — Lantern vs devtools throttling
+
+The Epic A audit found `/digital` reporting FCP 1363ms and LCP 1896ms. The page's only
+content is one `h1`. Those should be the same paint, and a 533ms gap on a page with nothing
+in it is exactly the kind of number that should stop someone.
+
+It was investigated as a site defect — the working hypothesis was that the framework floor
+plus webfont loading was pushing LCP out, and the instruction given was to treat the gap as
+real. Both the hypothesis and the instruction were wrong, and everything about the gate was
+correct: right URL, right throttle profile, right metric, right assertion, median of three.
+
+The model was wrong. Lighthouse's default mobile throttling is `simulate` (Lantern), which
+estimates timings from a dependency graph rather than observing them. Lantern treats the
+LCP text node as depending on its webfont and adds the font fetch to the LCP estimate —
+even though `font-display: swap` means the text has already painted in the fallback face
+and the visitor is reading it.
+
+Re-measured with `throttlingMethod: 'devtools'` — real Chrome, real throttling, same 4G
+profile, same page, median of 3:
+
+| Method | FCP | LCP | Gap | Performance |
+|---|---|---|---|---|
+| `simulate` (Lantern) | 1363ms | 1896ms | 533ms | 0.99 |
+| `devtools` (observed) | 1441ms | **1441ms** | **0ms** | **1.00** |
+
+The gap does not exist. Digital holds 100 under real mobile 4G. Two independent signals in
+the original run already pointed at the model rather than the site, and neither was read
+that way at the time: **Speed Index was identical to FCP** (nothing changed visually after
+first paint, so nothing painted late), and **CLS was exactly 0.000** (the fallback paint
+was already the final layout, so the swap could not have produced a new LCP candidate).
+
+### What this costs when it is missed
+
+Had this gone unverified: a CI gate failing on a delay no visitor experiences; a
+performance budget lowered or a P0 feature cut to satisfy it; and an engineer spending days
+preloading fonts and inlining CSS to move a number that was never measuring the site. The
+budget change would have been recorded as a measured decision and inherited by all four
+route groups.
+
+### How to apply it
+
+- Treat `simulate` and `devtools` as two instruments, not one with a flag. Where a lab
+  number drives a decision, take it on both.
+- Prefer the observed method when a metric feeds an assertion, and say why in the config —
+  `lighthouserc.mobile.cjs` does.
+- Cross-read metrics that constrain each other. FCP vs Speed Index vs LCP, or CLS vs a
+  claimed layout shift, will often disagree with a broken model before a human does.
+- A number nobody can explain is not evidence. Explain it or re-measure it.
+
+This class is distinct from the four in §11 and is listed separately so it is not filed as
+another instance of "the gate did not match the spec". It did.

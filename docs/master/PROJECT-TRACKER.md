@@ -122,6 +122,7 @@ numbers and is unvalidated until a page with real content has been measured. FOU
 | M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | TODO | Dev | Response commitment stored once |
 | M-06 | Consent banner UI | P0 | 1.5d | A-11 | TODO | Dev | Accept/Reject identical. **Measure the Master route delta here, not at H-01** — see below |
 | M-07 | 404 + 500 pages | P0 | 1d | M-03 | TODO | Dev | 500 works without JS |
+| M-08 | Scope `@font-face` CSS per route group | **P2** | 0.5d | — | TODO | Dev | Font **files** are already scoped — `/digital` fetches one `.woff2`. The **declarations** are not: `styles/globals.css` is imported by all four root layouts, so every route ships all three families' `@font-face` blocks (22, of which a division uses ≤8). ~29KB of render-blocking CSS at roughly a third useful. Not a correctness problem, but it is bytes on the critical path and FOUNDATION §4 overstated the scoping until it was corrected. Fix is per-route-group CSS entry points instead of one shared import. **Re-measure both Lighthouse axes** — it touches the font layer, see FOUNDATION §4 |
 
 **M-06 also measures the Master delta.** Budget is 15KB. Known consumers: the consent
 banner at ≤8KB spec'd, and the client primitive layer measured at 5.6KB on
