@@ -376,6 +376,7 @@ Prompted by the above, and covering more than the browser sandbox.
 | E7 | **Environment variables** | Three are read — `AXE_BASE_URL` (×2) and `VERIFY_PORT` — and all three have defaults. No gate requires a variable that exists on a developer machine and not on a runner | **Clean** |
 | E8 | **Number formatting** | Only `toFixed`, which is locale-independent. No `toLocaleString`, no `Intl` | **Clean** |
 | E9 | **Working directory** | `with-server.mjs` spawns `node_modules/next/dist/bin/next` by relative path, so it assumes the repo root. npm scripts and the CI step both guarantee that; it would break only if invoked from elsewhere | **Noted, not fixed** — no caller can currently do it |
+| E10 | **The runtime assertion itself** | E1's fix was `engine-strict`, and it is not enough. It fires only during an install — `npm run <anything>` never checks — so once `node_modules` exists every gate runs unchecked, which is exactly how the audit happened. Worse, **`engines` is a floor and `.nvmrc` is a pin**: `>=22.11.0` is satisfied by Node 24 and 26, so a machine on 24 while CI is on 22 passes `engine-strict` silently and diverges by a major with every check green | **Fixed** — `scripts/check-node-version.mjs` matches the running major against `.nvmrc`, wired as `preinstall` **and** into `verify:static` so it fires with or without an install |
 
 ### What this costs when it is missed
 

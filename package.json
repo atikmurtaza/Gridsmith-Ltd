@@ -7,6 +7,7 @@
     "node": ">=22.11.0"
   },
   "scripts": {
+    "preinstall": "node scripts/check-node-version.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -22,10 +23,11 @@
     "check:responsive": "node scripts/check-responsive.mjs",
     "check:lhci:desktop": "lhci autorun --config=lighthouserc.desktop.cjs",
     "check:lhci:mobile": "lhci autorun --config=lighthouserc.mobile.cjs",
-    "verify:static": "npm run typecheck && npm run lint && npm run lint:colors && npm run lint:secrets && npm run check:contrast",
+    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run lint:colors && npm run lint:secrets && npm run check:contrast",
     "verify:build": "npm run build && npm run check:tokens && npm run check:theme && npm run size",
     "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:responsive\" \"npm run check:lhci:desktop\" \"npm run check:lhci:mobile\"",
-    "verify": "npm run verify:static && npm run verify:build && npm run verify:served"
+    "verify": "npm run verify:static && npm run verify:build && npm run verify:served",
+    "check:node": "node scripts/check-node-version.mjs"
   },
   "dependencies": {
     "next": "^15.5.23",
