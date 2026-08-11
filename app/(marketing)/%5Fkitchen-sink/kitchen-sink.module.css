@@ -34,3 +34,13 @@
 .specimenBody { display: flex; flex-direction: column; gap: var(--space-4); }
 
 .row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4); }
+
+/* Pins the StickyCta specimen in flow so all four theme frames can render one without
+   four fixed bars stacking. Doubled class rather than !important: it has to beat
+   `.stickyCta` and the `min-width: 768px` display:none in motion.module.css regardless of
+   which module the bundler emits first. Demo-only, and confined to this file. */
+.stickyStatic.stickyStatic {
+  position: static;
+  transform: none;
+  display: flex;
+}

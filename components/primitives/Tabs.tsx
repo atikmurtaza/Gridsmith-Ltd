@@ -5,7 +5,7 @@
 // where the platform had a native equivalent it was used instead (Accordion is
 // <details>, Select is <select>, RadioGroup is a <fieldset> of radios).
 
-import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import styles from './interactive.module.css';
 
 export type Tab = { id: string; label: string; panel: ReactNode };
@@ -23,6 +23,20 @@ export function Tabs({
   const base = useId();
   const [selected, setSelected] = useState(0);
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * APG makes a tabpanel focusable only when it holds nothing else focusable. Setting
+   * tabIndex unconditionally adds a tab stop in front of every panel's own controls.
+   */
+  const [panelFocusable, setPanelFocusable] = useState(false);
+  useEffect(() => {
+    const el = panelRef.current;
+    if (!el) return;
+    setPanelFocusable(
+      el.querySelector('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])') === null,
+    );
+  }, [selected]);
 
   const move = (to: number) => {
     const next = (to + tabs.length) % tabs.length;
@@ -73,11 +87,12 @@ export function Tabs({
       {tabs.map((tab, i) => (
         <div
           key={tab.id}
+          ref={i === selected ? panelRef : undefined}
           role="tabpanel"
           id={`${base}-panel-${tab.id}`}
           aria-labelledby={`${base}-tab-${tab.id}`}
           hidden={i !== selected}
-          tabIndex={0}
+          tabIndex={i === selected && panelFocusable ? 0 : undefined}
           className={styles.tabpanel}
         >
           {tab.panel}

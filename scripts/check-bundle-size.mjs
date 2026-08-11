@@ -46,8 +46,26 @@ const BUDGETS = [
   ['/design', 25],
   ['/press', 20],
   ['/digital', 15],
+  // Master's 15KB, minus the 8KB the consent banner reserves (master/PROJECT-RULES.md §8).
+  // FOUNDATION §5 and tracker M-06 both build arithmetic on the primitive layer costing
+  // 5.6KB; 7KB is the ceiling that arithmetic actually requires. It was previously
+  // reported and not enforced, which is how a load-bearing number drifts unnoticed.
+  ['/_kitchen-sink', 7],
   ['/', 15],
 ];
+
+/**
+ * Routes that MUST appear in the build. A prefix table says what a route is allowed to
+ * cost; it cannot say that a route was measured at all.
+ *
+ * This exists because the gate previously enumerated whatever HTML the build happened to
+ * emit. One `cookies()` call in a route tree makes it dynamic, no HTML is written, the
+ * route silently leaves the table, and the gate reports "all routes within their delta
+ * budget" having never measured it — verified by deleting `digital.html` and watching it
+ * pass. `check-theme-flash` already held a required list; this is the same pattern applied
+ * to every gate that enumerates its own subjects.
+ */
+const REQUIRED = ['/', '/design', '/digital', '/press', '/_kitchen-sink'];
 
 const APP_DIR = '.next/server/app';
 
@@ -113,11 +131,16 @@ for (const { url, file } of routes()) {
   rows.push({ url, total, delta: total - FLOOR_KB, budget: budgetFor(url) });
 }
 
-// Measuring nothing is not the same as passing. A build that emits no budgeted route
-// means the glob, the build or the budget table is wrong — fail loudly rather than
-// report a green gate that checked nothing.
-if (rows.length === 0) {
-  console.error('\ncheck-bundle-size: no budgeted routes found in the build. Nothing was measured.\n');
+// Measuring nothing is not the same as passing, and measuring less than everything is
+// the same failure in a quieter form.
+const absent = REQUIRED.filter((url) => !rows.some((r) => r.url === url));
+if (absent.length > 0) {
+  console.error(`\ncheck-bundle-size: ${absent.length} required route(s) produced no prerendered HTML:\n`);
+  for (const url of absent) console.error(`  ${url}`);
+  console.error(
+    '\nThe route is dynamic, renamed or gone. Either way it was not measured, and an\n' +
+      'unmeasured route is a failure — not an absence from the table.\n',
+  );
   process.exit(1);
 }
 
@@ -128,7 +151,6 @@ const n = (v) => (v < 0 ? '-' : '') + Math.abs(v).toFixed(1);
 // out: a route silently missing from this table reads as "within budget" when it was
 // never measured, which is how /_kitchen-sink went unnoticed when it was first added.
 const UNBUDGETED_NOTE = {
-  '/_kitchen-sink': 'internal, excluded from production at A-12',
   '/_not-found': 'Next 404 template',
 };
 

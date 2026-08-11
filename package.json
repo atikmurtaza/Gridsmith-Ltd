@@ -19,8 +19,12 @@
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:theme": "node scripts/check-theme-flash.mjs",
     "check:axe": "node scripts/check-axe.mjs",
+    "check:responsive": "node scripts/check-responsive.mjs",
     "check:lhci": "lhci autorun --config=lighthouserc.cjs",
-    "verify": "npm run typecheck && npm run lint && npm run lint:colors && npm run lint:secrets && npm run check:contrast"
+    "verify:static": "npm run typecheck && npm run lint && npm run lint:colors && npm run lint:secrets && npm run check:contrast",
+    "verify:build": "npm run build && npm run check:tokens && npm run check:theme && npm run size",
+    "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:responsive\" \"npm run check:lhci\"",
+    "verify": "npm run verify:static && npm run verify:build && npm run verify:served"
   },
   "dependencies": {
     "next": "^15.5.23",

@@ -53,12 +53,11 @@ jobs:
         # Must run after build — it measures the prerendered output, not the source.
         run: npm run size
 
-      # A-10b. Both need a running server; each starts and stops its own.
-      - name: Lighthouse CI
+      # A-10b. Lighthouse starts and stops its own server on 3200.
+      - name: Lighthouse CI — mobile, 4G throttle, median of 3, Core Web Vitals asserted
         run: npm run check:lhci
 
-      - name: axe — full ruleset, all routes
-        run: |
-          npm run start -- -p 3000 &
-          npx --yes wait-on http://127.0.0.1:3000/_kitchen-sink -t 60000
-          npm run check:axe
+      # axe and the responsive sweep share one server on 3000, started and stopped by
+      # with-server so neither can run against a server that never came up.
+      - name: axe + no horizontal overflow at 375/768/1440
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:responsive"

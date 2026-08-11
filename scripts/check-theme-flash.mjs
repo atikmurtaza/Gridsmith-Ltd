@@ -76,14 +76,25 @@ for (const [route, division] of EXPECTED) {
   }
 }
 
-// 3. nothing in the client bundle touches the attribute
-if (existsSync(CHUNK_DIR)) {
+// 3. nothing in the client bundle touches the attribute.
+//
+// This is the load-bearing check, and it used to be wrapped in `if (existsSync(...))` —
+// so a renamed or missing chunk directory skipped it in silence and the gate still passed
+// on the other two. A check that can be skipped is a check that will be.
+if (!existsSync(CHUNK_DIR)) {
+  problems.push(`${CHUNK_DIR} does not exist — the client-chunk sweep could not run`);
+} else {
+  let scanned = 0;
   for (const entry of readdirSync(CHUNK_DIR, { recursive: true, withFileTypes: true })) {
     if (!entry.isFile() || !entry.name.endsWith('.js')) continue;
+    scanned += 1;
     const file = join(entry.parentPath ?? CHUNK_DIR, entry.name);
     if (readFileSync(file, 'utf8').includes('data-division')) {
       problems.push(`${entry.name}: client chunk references data-division — it must never be set on the client`);
     }
+  }
+  if (scanned === 0) {
+    problems.push(`${CHUNK_DIR} contains no .js files — nothing was swept for data-division`);
   }
 }
 

@@ -14,7 +14,16 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, relative, posix, sep } from 'node:path';
 
-const ROOTS = ['app', 'components', 'lib', 'styles', 'scripts'];
+const ROOTS = ['app', 'components', 'styles', 'scripts'];
+
+/**
+ * Trees the repository shape declares (CLAUDE.md, master/PROJECT-RULES.md §2) that do not
+ * exist yet, with the task that creates each. Naming them keeps the omission deliberate:
+ * the gate fails if one appears without being promoted into ROOTS, so a new tree cannot
+ * arrive unscanned.
+ */
+const PENDING_ROOTS = { lib: 'A-07 — Supabase client, lead pipeline, consent' };
+
 const SOURCE = /\.(?:ts|tsx|js|jsx|mjs|cjs|css)$/;
 
 /** The token layer — the one place colour is allowed to exist. */
@@ -77,10 +86,27 @@ const CSS_NAMED = {
 
 const toPosix = (p) => p.split(sep).join(posix.sep);
 
+/**
+ * A missing root used to `continue`, so renaming `components/` would have narrowed the
+ * sweep to whatever was left and still reported "clean". A gate that enumerates its own
+ * subjects must fail when one is missing, not quietly scan fewer.
+ */
 function sourceFiles() {
+  for (const [root, when] of Object.entries(PENDING_ROOTS)) {
+    if (existsSync(root)) {
+      console.error(`\nno-hardcoded-colors: "${root}/" now exists (${when}) but is not in ROOTS.`);
+      console.error('Promote it, or every colour in it ships unchecked.\n');
+      process.exit(1);
+    }
+  }
+
   const out = [];
   for (const root of ROOTS) {
-    if (!existsSync(root)) continue;
+    if (!existsSync(root)) {
+      console.error(`\nno-hardcoded-colors: root "${root}/" does not exist — it was not scanned.`);
+      console.error('Remove it from ROOTS deliberately, or fix the path. Skipping it silently is not an option.\n');
+      process.exit(1);
+    }
     for (const entry of readdirSync(root, { recursive: true, withFileTypes: true })) {
       if (!entry.isFile() || !SOURCE.test(entry.name)) continue;
       out.push(toPosix(relative('.', join(entry.parentPath ?? root, entry.name))));

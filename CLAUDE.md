@@ -119,6 +119,10 @@ Read the workstream's own files before touching its code.
   this shape have already shipped and been caught — a `_`-prefix filter that swallowed a
   whole route, a double-encoded chunk path that resolved to nothing, and a line-anchored
   regex that counted a third of what it claimed.
+- **Fix the class, not the instance.** When a defect is found, ask what category it
+  belongs to and sweep every place that category can occur. A per-instance fix leaves the
+  same defect live everywhere else and guarantees it recurs. Three of the four Epic A
+  blockers were repeats of already-fixed defects.
 - **Any PR touching `styles/tokens.css`, `components/primitives/` or `lib/estimate/` needs review.** These affect all four route groups or determine what the business quotes.
 
 ## Definition of Done

@@ -248,9 +248,23 @@ cue** alongside any colour change — a border-width step, a background step, a 
 shape change, a text label, or the corresponding ARIA state. Digital's "three-cue
 selected state" is this rule stated locally; it applies to all four divisions.
 
-`scripts/check-contrast.mjs` gates the load-bearing half of this: `--ink-subtle` must
-measure ≥3:1 against all three surfaces in all four themes, or the token nominated for
-control borders is not fit for the job.
+`scripts/check-contrast.mjs` gates this as a **permission matrix**: every foreground token
+against every surface in every theme — 101 combinations — with the role each may carry
+derived from its own measured ratio. A token that claims a stronger job than its
+measurement supports fails the build, and a deliberate downgrade has to be recorded with
+its reason rather than omitted.
+
+It was previously a three-token list covering `--ink`, `--ink-muted` and `--ink-subtle`.
+The sweep above measured nine tokens; the gate checked three. `--accent` was one of the
+six left out, and the range published two paragraphs up — 4.46:1 at its worst — is Digital's
+`--accent` on `--canvas-sunken`, below the 4.5:1 body-text floor, reachable through any
+`Prose` link in a sunken `Section` or a hovered secondary button inside `EmptyState`. The
+measurement existed and was simply not applied, which is the same defect as the
+`--ink-subtle` restriction it sits next to. Digital's `--canvas-sunken` moved from
+`#F0F0EE` to `#F3F3F1` (4.58:1) under the Q-M13 rule that the buffer is the point.
+
+A per-token list is what produces that class of defect. The matrix is the fix; the token
+value was only the instance.
 
 ## 4. Division theme summary
 
@@ -304,9 +318,15 @@ widget: **`Accordion` is `<details>`/`<summary>`**, `Select` is a native `<selec
 `RadioGroup` is a `<fieldset>` of real radios. Those three ship no JavaScript at all and
 get their keyboard behaviour, state and announcements from the browser.
 
-Measured on `/_kitchen-sink`, which renders every primitive four times: **5.6KB gz above
+Measured on `/_kitchen-sink`, which renders every primitive four times: **5.7KB gz above
 the framework floor**. That is the whole client cost of the primitive layer, against
 Master's 15KB delta budget of which the consent banner already claims 8KB.
+
+**That figure is now budgeted, not just printed.** `/_kitchen-sink` carries a 7KB delta
+budget in `check-bundle-size.mjs` — Master's 15KB minus the banner's reserved 8KB, which
+is the ceiling the M-06 arithmetic actually depends on. It was previously exempted from
+budgeting, so the number every later stage builds on was measured, reported and enforced
+by nothing.
 
 **The list above is authoritative; the count follows it.** Where an older file says
 21, that number predates the addition of `Breadcrumb`, `Pagination`, `EmptyState` and

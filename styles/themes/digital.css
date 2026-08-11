@@ -9,7 +9,18 @@
 [data-division="digital"] {
   --canvas:         #FAFAF9;
   --canvas-raised:  #FFFFFF;
-  --canvas-sunken:  #F0F0EE;
+  /**
+   * Was #F0F0EE, on which --accent measured 4.46:1 — below the 4.5:1 AA floor for the
+   * body text a link or a hovered secondary button puts there. The A-05 sweep had already
+   * produced that number (FOUNDATION §3 publishes the --accent range as 4.46–19.17:1);
+   * nothing was checking it, which is the same defect class as Q-M13.
+   *
+   * #F3F3F1 measures 4.58:1 — chosen over the first passing value (#F1F1EF at 4.50:1) for
+   * the same reason as Q-M13: clearing AA by a rounding error means any later adjustment
+   * puts it back under. The sunken step against --canvas is reduced, not removed.
+   * Enforced for every token on every surface by scripts/check-contrast.mjs.
+   */
+  --canvas-sunken:  #F3F3F1;
 
   --ink:            #0A0A0A;
   --ink-muted:      #52525B;

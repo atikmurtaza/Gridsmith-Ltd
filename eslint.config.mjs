@@ -13,8 +13,12 @@ const config = [
     rules: {
       // design/PROJECT-RULES.md §2 — `any` is banned, not discouraged.
       '@typescript-eslint/no-explicit-any': 'error',
-      // CLAUDE.md Definition of Done — zero production console output.
-      'no-console': ['error', { allow: ['warn', 'error'] }],
+      // CLAUDE.md Definition of Done — "zero production console output", with no
+      // exceptions listed. `warn` and `error` were allowed here, which is a quieter
+      // deviation than it looks: a console.error in a Server Component runs on every
+      // request and lands in production logs. Errors belong in ErrorState and the
+      // observability layer, not in the console.
+      'no-console': 'error',
     },
   },
   {

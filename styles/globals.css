@@ -38,6 +38,19 @@ body {
   line-height: var(--leading-normal);
 }
 
+/* WCAG 2.2 SC 2.4.11 Focus Not Obscured (Minimum).
+   StickyCta is position: fixed against the bottom edge below 768px, which is exactly the
+   width where it renders. Without this, tabbing to a control near the bottom of the
+   document scrolls it under the bar and the focus ring is invisible. The reserve is the
+   bar's own height — a 2.75rem control plus var(--space-3) top and bottom — and the same
+   safe-area inset the bar itself adds. master/PROJECT-RULES.md §7 states the rule for the
+   consent banner; a fixed bar is a fixed bar. */
+@media (max-width: 767px) {
+  html {
+    scroll-padding-block-end: calc(2.75rem + var(--space-6) + env(safe-area-inset-bottom));
+  }
+}
+
 /* Visually hidden, still announced. Used for the "Step 3:" prefixes, the external-link
    suffix, and table captions the design hides but a screen reader needs. */
 .sr-only {

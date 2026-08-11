@@ -19,9 +19,9 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 3 | A-03 | ⚑ Four theme files — **incl. master (was M-01)** | P0 | 1.5d | A-02 | DONE | Dev | 29 contrast pairs measured; 2 AA failures in Design fixed, 25 published ratios corrected. Fonts scoped per route group. `check:contrast` gate added |
 | 4 | A-04 | Four route groups + `data-division` | P0 | 1d | A-03 | DONE | Dev | Four **root** layouts (no `app/layout.tsx`) — the only way to set `data-division` on `<body>` per group without forcing dynamic rendering. `check:theme` gate |
 | 5 | A-05 | ⚑ **24** shared primitives | P0 | 4d | ⚑ **A-04** | DONE | Dev | 21 Server, 3 Client (`Tabs`, `RevealOnScroll`, `StickyCta`). `Accordion` is native `<details>` |
-| 5 | A-05a | ⚑ `/_kitchen-sink` route | P0 | 0.5d | A-05 | DONE | Dev | All 24 × 4 themes; 5.6KB gz delta. `noindex`. Directory is `%5Fkitchen-sink` — a literal `_` prefix is a Next private folder and produces no route. Prod exclusion at A-12 |
+| 5 | A-05a | ⚑ `/_kitchen-sink` route | P0 | 0.5d | A-05 | DONE | Dev | 23 primitives × 4 themes (`Media` excluded — see below); 5.7KB gz delta, budgeted at 7KB. Ids scoped per theme frame. `noindex`. Directory is `%5Fkitchen-sink` — a literal `_` prefix is a Next private folder and produces no route. Prod exclusion at A-12 |
 | 6 | **A-GATE** | ⚑ **Epic A exit gate** | P0 | 0.5d | A-05a, A-10b | TODO | Dev | **Nothing downstream starts until green** — see below |
-| 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe | P0 | 0.5d | A-05a | DONE | Dev | Both proven by deliberate failure. axe found 4 real defects. SEO/best-practices ratcheted — see below |
+| 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe + responsive | P0 | 0.5d | A-05a | **BLOCKED** | Dev | Re-based to mobile/4G with Core Web Vitals asserted; **now fails on Digital — `Q-M16`**. axe extended with DOM-integrity assertions axe-core cannot make. `check:responsive` added |
 | 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | REVIEW | Dev | Schemas written; **awaiting Sanity org (B4)** |
 | 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | REVIEW | Dev | Migrations written; **awaiting Supabase project (B4)** |
 | 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | Notify <60s. No CRM adapter — deferred, see D1 |
@@ -51,7 +51,7 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 **A-GATE pass criteria** — all six, no partial credit:
 
 - [ ] `/_kitchen-sink` renders all 24 primitives correctly in all four themes
-- [ ] Correct at 375px, 768px, 1440px
+- [ ] Correct at 375px, 768px, 1440px — **gated by `check:responsive`**, not by eye
 - [ ] Keyboard navigable end to end
 - [ ] Zero hardcoded colours (A-10a green)
 - [ ] `rules-compliance` — **fresh context**, zero findings
@@ -60,9 +60,20 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 Both subagents run from `.claude/agents/`. The fresh context is the point: the model
 that just wrote 24 primitives is the worst available reviewer of them.
 
-**A-10b — two assertions are ratcheted, with owners.** Lighthouse accessibility and
-performance are asserted at their final spec values now and pass. Two are pinned below
-1.0 because reaching 1.0 requires something that must not be invented:
+**Criterion 2 used to be a manual check, which made it a claim.** At the audit it could
+only be recorded as "not established" — neither passed nor failed, the least useful state
+a gate criterion can occupy. `scripts/check-responsive.mjs` now asserts no horizontal
+overflow across 5 routes × 3 widths, and a route that fails to load is a measurement
+failure rather than a pass.
+
+**Ten gates, and `npm run verify` runs all ten.** It ran five and said nothing about the
+other five — the three needing a build and the two needing a server. CI ran everything, so
+merges were safe; a developer running the script named "verify" got half the coverage with
+no indication of it, which is the same unearned confidence as a gate that measures nothing.
+
+**A-10b — two assertions are ratcheted, with owners.** Lighthouse accessibility is
+asserted at its final spec value now and passes. Two are pinned below 1.0 because
+reaching 1.0 requires something that must not be invented:
 
 | Category | Now | Blocked on | Raises at |
 |---|---|---|---|
@@ -70,10 +81,42 @@ performance are asserted at their final spec values now and pass. Two are pinned
 | Best practices | 0.96 | `errors-in-console` — `/favicon.ico` 404s on every route. Needs a real brand mark | `Q-M15` |
 
 Both still catch regressions below today's level, which is different from a gate that
-measures nothing. Neither may be lowered further.
+measures nothing — re-confirmed at the Epic A audit, where every route measured exactly
+0.90 and exactly 0.96 with one weight-1 audit failing in each category. Neither may be
+lowered further.
+
+**A-10b was re-based at the Epic A audit, and it now fails.** Three defects, all the same
+class — a gate that was not measuring what its specification said it measured:
+
+| Was | Now | Why |
+|---|---|---|
+| `preset: 'desktop'` — no CPU throttle, 10Mbps | mobile, 4G simulate, 4× CPU | FOUNDATION §8 gate 2 specifies 4G throttling. Desktop measured the easy case |
+| No metric assertions at all | LCP, CLS and TBT asserted per route | `PROJECT-RULES.md` §8 named LHCI as the enforcement for LCP/INP/CLS. Lighthouse was collecting all three and nothing read them |
+| `numberOfRuns: 1` | 3, asserting the median | Assertions pinned to an exact measured value with one cold run and no median |
+
+**INP cannot be asserted in a lab run** — it is a field metric. Total Blocking Time is the
+lab proxy and each route's TBT ceiling is set to its own INP budget (200ms, 150ms on
+Digital). Real INP still has to be read from field data once there is traffic; nothing in
+CI can stand in for that, and it should not be recorded as if it could.
+
+Measured result, median of 3, mobile + 4G — see `Q-M16`. Master straddles its LCP
+budget: two runs of the gate put the median at 1903ms and 1660ms respectively, so it
+fails intermittently rather than cleanly, which is worse to diagnose later than a
+consistent failure now:
+
+| Route | Perf | LCP | Budget | CLS | TBT |
+|---|---|---|---|---|---|
+| `/` | 0.99 ✅ | **1660–1908ms** ⚠️ | 1800 | 0.000 ✅ | 41ms ✅ |
+| `/design` | 0.99 ✅ | 1906ms ✅ | 2000 | 0.000 ✅ | 49ms ✅ |
+| `/digital` | **0.99** ❌ | **1895ms** ❌ | 1600 | 0.000 ✅ | 37ms ✅ |
+| `/press` | 0.99 ✅ | 1660ms ✅ | 2000 | 0.000 ✅ | 32ms ✅ |
 
 **`Media` is out of scope for this gate, deliberately.** It is the one primitive
-`/_kitchen-sink` does not render. Exercising it needs real assets, and fabricating
+`/_kitchen-sink` does not render. `StickyCta` was the second — rendered once, outside the
+four theme frames, so its colours were unverified on three of the four canvases and axe
+never saw it there. It now renders in every frame, pinned in flow, with the live fixed
+instance still at the foot of the page. "All 24 × 4" was the claim; 22 × 4 plus 1 × 1 plus
+1 × 0 was the fact. Exercising it needs real assets, and fabricating
 placeholder imagery to fill the gap would put invented visual content in the repo —
 CLAUDE.md non-negotiable #2 outranks gate coverage. A-GATE therefore passes without
 covering it, and that is the correct outcome rather than a hole to paper over. The debt is
@@ -193,6 +236,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 
 | ID | Item | Needed from | Blocks |
 |---|---|---|---|
+| Q-M16 | **Digital's 100 performance gate and two LCP budgets do not hold under the conditions the specs require.** Measured mobile + 4G, median of 3: Digital performance 0.99 against a 1.0 gate (all three runs); Digital LCP 1895ms against 1600ms; Master LCP oscillates either side of its 1800ms budget across runs. Design and Press pass. **These pages are empty** — one heading, 425 B of route JS — so this is the floor, not a feature overrun: FCP is 1.36s and the LCP element is the `<h1>`, which means the gap is the 100.2KB framework floor plus webfont loading, before a single block of real content exists. The budgets were set against desktop numbers that were never the specified measurement. Three options, all of them the founder's: (a) accept and fund the optimisation at `H-01` — font preloading and `size-adjust` are the obvious first moves and neither is invented content; (b) re-set Digital to 0.99 and the LCP budgets to what an empty page can actually reach, recording the reason as `Q-M12` did for the KB proxy; (c) keep the budgets and accept that CI is red until `N-01`. **No threshold has been lowered pending this decision** — CI fails today, deliberately | Atik | `H-01`, `N-01`, Digital launch |
 | Q-M1 | **Company number — still outstanding.** Registered office is confirmed: `30 Briarfield Road, Farnworth, Bolton, BL4 0HD`, England & Wales. Load into `companyDetails` at M-05. The number is the only missing field and it is statutory — `[TK]`, never guessed | Atik | M-05, L-05, 0.10 (number only) |
 | Q-M15 | **No favicon or brand mark exists.** `/favicon.ico` 404s on every route; Lighthouse reports it as a console error and it holds best-practices at 0.96. A mark is a brand decision and is not being invented (`master/PROJECT-RULES.md` §11). Supply one — or confirm shipping without a favicon is acceptable and the assertion stays at 0.96 permanently | Atik | Lighthouse best-practices 1.0 |
 | ~~Q-M12~~ | **RESOLVED — the metric changed, not the numbers.** JS is now budgeted on the delta above the framework floor, not the total: Master ≤15KB, Digital ≤15KB, Press ≤20KB, Design ≤25KB, estimator/path-finder ≤40KB. The floor (100.2KB) is reported separately so a dependency upgrade shows as a floor change rather than silently consuming feature allowance. **Digital's 100/100/100 gate is unchanged** — Lighthouse scores measured experience, and the 90KB figure was a badly-set proxy for it | Atik | ~~Digital launch~~ unblocked |

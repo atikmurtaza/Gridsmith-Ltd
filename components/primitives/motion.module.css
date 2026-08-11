@@ -4,16 +4,18 @@
    the preference in JS so they skip straight to their final state rather than animating
    imperceptibly fast. */
 
+/* --dur-slow, not a literal. A fourth duration means adding it to tokens.css first;
+   check-tokens fails on any duration literal in a CSS module. */
 .reveal {
   opacity: 0;
   transform: translateY(12px);
-  transition: opacity 450ms var(--ease-out), transform 450ms var(--ease-out);
+  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
 }
 .revealVisible { opacity: 1; transform: none; }
 
-/* No-JS fallback: without the client component running, content must still be visible.
-   Hiding by default and revealing with JS would leave the page blank for anyone whose
-   script fails, which is a content failure, not a motion one. */
+/* Belt to RevealOnScroll's braces. The component only arms the hidden state for content
+   below the fold and therefore certain to be scrolled to; this covers the case where no
+   script runs at all. Between them there is no path that ends at opacity 0. */
 @media (scripting: none) {
   .reveal { opacity: 1; transform: none; }
 }

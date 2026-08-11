@@ -86,8 +86,9 @@ redirects/legacy.json       generated, version-controlled
 
 | Rule | Enforcement |
 |---|---|
-| Homepage Lighthouse performance ≥98 | LHCI blocks merge |
-| LCP ≤1.8s, INP ≤200ms, CLS ≤0.03 | LHCI |
+| Homepage Lighthouse performance ≥98 | LHCI blocks merge — mobile, 4G throttle, median of 3 |
+| LCP ≤1.8s, CLS ≤0.03 | LHCI, asserted per route. Both were named here and asserted nowhere until the Epic A audit |
+| INP ≤200ms | **Not assertable in CI** — INP is a field metric and a Lighthouse navigation run does not produce one. TBT ≤200ms is the lab proxy LHCI asserts; real INP comes from field data once there is traffic |
 | Master routes JS **delta ≤15KB gz** above the framework floor, **including the consent banner** | `check-bundle-size` |
 | Consent banner ≤8KB gz | `check-bundle-size` |
 | Framework floor reported separately; re-baselining it is its own commit | `check-bundle-size` |
@@ -101,7 +102,7 @@ redirects/legacy.json       generated, version-controlled
 
 ## 10. Definition of Done
 
-- [ ] Works at 375px, 768px, 1440px
+- [ ] Works at 375px, 768px, 1440px — `npm run check:responsive`, not a manual look
 - [ ] Keyboard navigable end to end
 - [ ] Screen reader tested for any interactive component
 - [ ] axe zero violations

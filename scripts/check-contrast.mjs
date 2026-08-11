@@ -72,34 +72,62 @@ const PAIRS = {
 
 const MIN = { text: 4.5, large: 3.0, ui: 3.0, decor: 0 };
 
-/**
- * The control-border invariant — FOUNDATION §3.
- *
- * Neither line token clears 3:1 anywhere (swept at A-05: --line 1.12–1.34, --line-strong
- * 1.45–1.79), so --ink-subtle is the nominated token for any border that identifies a
- * control or one of its states. That nomination is only sound while it actually measures
- * ≥3:1 on every surface of every theme, which is what this checks. If a theme darkens
- * --ink-subtle or lightens a canvas, the whole primitive layer needs revisiting and this
- * is what says so.
- */
-const CONTROL_BORDER = '--ink-subtle';
 const SURFACES = ['--canvas', '--canvas-raised', '--canvas-sunken'];
 
 /**
- * Which ink tokens are safe as body text on which surfaces — FOUNDATION §3.
+ * The permission matrix — FOUNDATION §3.
  *
- * Added after axe caught `--ink-subtle` used for the ErrorState reference line on
- * `--canvas-sunken`, where it measures 4.18–4.39:1 in three of the four themes. The
- * A-05 sweep had already produced those numbers; nothing was checking that a token was
- * only used where its own measurement allows. This closes that gap: the surfaces listed
- * per token must clear 4.5:1, and `--canvas-sunken` is deliberately absent from
- * `--ink-subtle` because it does not.
+ * EVERY foreground token is measured against EVERY surface in EVERY theme, and the role
+ * each combination may carry is derived from that measurement. Nothing is exempt because
+ * nobody has been burned by it yet.
+ *
+ * This replaces a three-token list that covered `--ink`, `--ink-muted` and `--ink-subtle`
+ * and left `--accent` unchecked — while the A-05 sweep had already measured `--accent` at
+ * 4.46:1 on Digital's `--canvas-sunken`, below the 4.5:1 body-text floor, and FOUNDATION
+ * §3 published that very number. The measurement existed; the gate covered three tokens
+ * out of nine. That is the class of defect, and a per-token list is what produces it.
+ *
+ * `role` is the strongest job the design gives a token. `except` records a surface where
+ * that job is deliberately not claimed, with the reason — a downgrade must be a decision
+ * someone wrote down, never a silent omission.
  */
-const TEXT_ON_SURFACE = {
-  '--ink': SURFACES,
-  '--ink-muted': SURFACES,
-  '--ink-subtle': ['--canvas', '--canvas-raised'],
+const ROLE_OF = { body: 'body text', large: 'large text', ui: 'UI boundary or state', decor: 'decorative only' };
+
+const USE = {
+  '--ink': { role: 'body' },
+  '--ink-muted': { role: 'body' },
+  '--ink-subtle': {
+    role: 'body',
+    except: {
+      '--canvas-sunken':
+        'ui — measures 4.18–4.43:1 on sunken across the four themes, short of the 4.5:1 body floor. ' +
+        'It stays the nominated control-border token there (>=3:1). States use --ink-muted for text on sunken.',
+    },
+  },
+  '--accent': { role: 'body' },
+  '--accent-hover': { role: 'body' },
+  '--line': { role: 'decor' },
+  '--line-strong': { role: 'decor' },
+  // Master only. 2.16:1 on white — rules and badge borders, never text, never a state
+  // (master/PROJECT-RULES.md §1.2). A badge is static content, so WCAG 1.4.11 does not
+  // apply to its border; that is why decorative is the honest role rather than a failure.
+  '--accent-design': { role: 'decor' },
+  '--accent-digital': { role: 'body' },
+  '--accent-press': { role: 'body' },
 };
+
+/**
+ * Foregrounds that sit on an accent fill rather than a canvas — the filled button, the
+ * current pagination page, the current stepper marker.
+ */
+const ON_ACCENT = { '--accent-ink': { role: 'body', over: ['--accent', '--accent-hover'] } };
+
+/**
+ * The control-border invariant — FOUNDATION §3. Neither line token clears 3:1 anywhere,
+ * so `--ink-subtle` is nominated for every border that identifies a control or a state.
+ * The nomination is only sound while it measures >=3:1 on every surface of every theme.
+ */
+const CONTROL_BORDER = '--ink-subtle';
 
 const srgb = (v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
 
@@ -183,67 +211,106 @@ if (failures.length > 0) {
   console.error('');
 }
 
-// Control-border invariant, swept rather than enumerated per DESIGN.md.
-const borderProblems = [];
-let borderWorst = Infinity;
+/* ---------------------------------------------------------------------------------
+ * The permission matrix. Every foreground token against every surface, in every theme.
+ * ------------------------------------------------------------------------------- */
+
+/** Strongest role a measured ratio can carry. */
+const roleFor = (r) => (r >= MIN.text ? 'body' : r >= MIN.ui ? 'ui' : 'decor');
+const RANK = { decor: 0, ui: 1, large: 1, body: 2 };
+
+const matrix = [];
+const matrixProblems = [];
 
 for (const theme of THEMES) {
   const t = tokens(theme);
-  for (const surface of SURFACES) {
-    const measured = ratio(t[CONTROL_BORDER], t[surface]);
-    borderWorst = Math.min(borderWorst, measured);
-    if (measured < MIN.ui) {
-      borderProblems.push(
-        `${theme}: ${CONTROL_BORDER} on ${surface} = ${measured.toFixed(2)}:1, needs ${MIN.ui}:1 ` +
-          'to serve as a control border',
-      );
+
+  for (const [token, use] of Object.entries(USE)) {
+    // Master alone carries the division accents; the other themes must not declare them,
+    // which check-tokens enforces. Absent here means "not part of this theme", not "skip".
+    if (!t[token]) {
+      if (theme === 'master' || !token.startsWith('--accent-')) {
+        matrixProblems.push(`${theme}: ${token} is in the permission matrix but not defined in the theme`);
+      }
+      continue;
+    }
+
+    for (const surface of SURFACES) {
+      const measured = ratio(t[token], t[surface]);
+      const permitted = roleFor(measured);
+      const claimed = use.except?.[surface] ? use.except[surface].split(' ')[0] : use.role;
+
+      matrix.push({ theme, token, surface, measured, claimed, permitted });
+
+      if (RANK[claimed] > RANK[permitted]) {
+        matrixProblems.push(
+          `${theme}: ${token} on ${surface} = ${measured.toFixed(2)}:1 — claimed "${ROLE_OF[claimed]}", ` +
+            `measurement only supports "${ROLE_OF[permitted]}"`,
+        );
+      }
     }
   }
-}
 
-if (borderProblems.length > 0) {
-  console.error(`check-contrast: ${CONTROL_BORDER} is not fit to carry control borders\n`);
-  for (const p of borderProblems) console.error(`  ${p}`);
-  console.error('\nFOUNDATION §3 nominates it for every border that identifies a control.\n');
-}
-
-// Text-on-surface invariant.
-const textProblems = [];
-let textWorst = Infinity;
-let textChecks = 0;
-
-for (const theme of THEMES) {
-  const t = tokens(theme);
-  for (const [token, surfaces] of Object.entries(TEXT_ON_SURFACE)) {
-    for (const surface of surfaces) {
-      const measured = ratio(t[token], t[surface]);
-      textWorst = Math.min(textWorst, measured);
-      textChecks += 1;
-      if (measured < MIN.text) {
-        textProblems.push(
-          `${theme}: ${token} on ${surface} = ${measured.toFixed(2)}:1, needs ${MIN.text}:1 as body text`,
+  for (const [token, use] of Object.entries(ON_ACCENT)) {
+    for (const over of use.over) {
+      const measured = ratio(t[token], t[over]);
+      const permitted = roleFor(measured);
+      matrix.push({ theme, token, surface: over, measured, claimed: use.role, permitted });
+      if (RANK[use.role] > RANK[permitted]) {
+        matrixProblems.push(
+          `${theme}: ${token} on ${over} = ${measured.toFixed(2)}:1 — claimed "${ROLE_OF[use.role]}", ` +
+            `measurement only supports "${ROLE_OF[permitted]}"`,
         );
       }
     }
   }
 }
 
-if (textProblems.length > 0) {
-  console.error('check-contrast: text token(s) below the 4.5:1 floor on a surface they are permitted on\n');
-  for (const p of textProblems) console.error(`  ${p}`);
-  console.error('\nEither restrict the token to fewer surfaces in TEXT_ON_SURFACE, or change the value.\n');
+// A matrix that measured nothing is not a matrix that passed.
+const EXPECTED_CELLS =
+  THEMES.length * (Object.keys(USE).length - 3) * SURFACES.length + // shared tokens
+  1 * 3 * SURFACES.length + // master's three division accents
+  THEMES.length * 2; // --accent-ink over --accent and --accent-hover
+
+if (matrix.length !== EXPECTED_CELLS) {
+  matrixProblems.push(
+    `matrix evaluated ${matrix.length} cells, expected ${EXPECTED_CELLS}. Something was skipped.`,
+  );
 }
 
-if (failures.length > 0 || drift.length > 0 || borderProblems.length > 0 || textProblems.length > 0) {
+const worstBorder = Math.min(
+  ...matrix.filter((m) => m.token === CONTROL_BORDER).map((m) => m.measured),
+);
+if (worstBorder < MIN.ui) {
+  matrixProblems.push(
+    `${CONTROL_BORDER} measures ${worstBorder.toFixed(2)}:1 at worst — FOUNDATION §3 nominates it for ` +
+      `every border that identifies a control, which needs ${MIN.ui}:1`,
+  );
+}
+
+if (matrixProblems.length > 0) {
+  console.error(`check-contrast: ${matrixProblems.length} permission-matrix problem(s)\n`);
+  for (const p of matrixProblems) console.error(`  ${p}`);
+  console.error(
+    '\nEither change the value, or record the restriction in USE.except with its reason.' +
+      '\nA token may not carry a job its measurement does not support.\n',
+  );
+}
+
+if (failures.length > 0 || drift.length > 0 || matrixProblems.length > 0) {
   process.exit(1);
 }
 
 console.log(`check-contrast: ${rows.length} pairs across ${THEMES.length} themes, all within role minima and matching DESIGN.md`);
 console.log(
-  `check-contrast: ${CONTROL_BORDER} clears ${MIN.ui}:1 on all ${THEMES.length * SURFACES.length} ` +
-    `theme/surface combinations (worst ${borderWorst.toFixed(2)}:1)`,
+  `check-contrast: permission matrix — ${matrix.length} token/surface combinations across ` +
+    `${THEMES.length} themes, every one measured, every claimed role supported`,
 );
-console.log(
-  `check-contrast: ${textChecks} permitted text/surface combinations clear ${MIN.text}:1 ` +
-    `(worst ${textWorst.toFixed(2)}:1). --ink-subtle is excluded from --canvas-sunken by measurement.\n`,
-);
+for (const [token, use] of Object.entries(USE)) {
+  const cells = matrix.filter((m) => m.token === token);
+  if (cells.length === 0) continue;
+  const worst = Math.min(...cells.map((c) => c.measured));
+  const note = use.except ? `  (restricted on ${Object.keys(use.except).join(', ')})` : '';
+  console.log(`    ${token.padEnd(17)} ${ROLE_OF[use.role].padEnd(22)} worst ${worst.toFixed(2)}:1${note}`);
+}
+console.log('');

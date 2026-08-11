@@ -53,10 +53,24 @@ export const metadata: Metadata = {
 
 const DIVISIONS = ['master', 'design', 'digital', 'press'] as const;
 
+/**
+ * Every id, form `name` and exclusive-accordion `name` on this page is scoped to its
+ * theme frame. Rendering the same specimen four times with the same literals produced 20
+ * duplicated ids × 4, one radio group spanning all four frames (choosing in Digital
+ * cleared Master, and only the last of four `checked` radios survived), and one exclusive
+ * `<details>` group across all four frames, so three of the four themes rendered their
+ * accordion closed.
+ *
+ * axe reported zero violations throughout: axe-core keeps `duplicate-id` behind its
+ * `deprecated` tag, so no WCAG tag set can reach it. `check-axe` now asserts this
+ * directly against the served DOM rather than hoping a rule exists for it.
+ */
+const scope = (division: string, key: string) => `${division}-${key}`;
+
 const FAQS = [
-  { id: 'ks-a1', question: 'A question that is open by default', answer: 'The answer, in muted body copy.' },
-  { id: 'ks-a2', question: 'A second question', answer: 'Native details/summary — no JavaScript.' },
-  { id: 'ks-a3', question: 'A third question', answer: 'Keyboard operable because the browser makes it so.' },
+  { key: 'a1', question: 'A question that is open by default', answer: 'The answer, in muted body copy.' },
+  { key: 'a2', question: 'A second question', answer: 'Native details/summary — no JavaScript.' },
+  { key: 'a3', question: 'A third question', answer: 'Keyboard operable because the browser makes it so.' },
 ];
 
 const STEPS = [
@@ -80,12 +94,16 @@ function Specimen({ name, children }: { name: string; children: React.ReactNode 
 function AllPrimitives({ division }: { division: string }) {
   return (
     <>
-      <Specimen name="Heading × 4 · Eyebrow">
+      {/* All four sizes at one level. The page already has its h1 and each frame its h2,
+          so the specimen sits at h3 — Heading separates level from size precisely so a
+          large heading does not have to be a high one, and this is that demonstration.
+          Four <h1>s inside four frames under an <h2> was the previous shape. */}
+      <Specimen name="Heading × 4 sizes at one level · Eyebrow">
         <Eyebrow>Eyebrow — mono, uppercase</Eyebrow>
-        <Heading level={1} size="display">Display heading</Heading>
-        <Heading level={2}>Level two heading</Heading>
-        <Heading level={3}>Level three heading</Heading>
-        <Heading level={4}>Level four heading</Heading>
+        <Heading level={3} size="display">Display size</Heading>
+        <Heading level={3} size="d2">d2 size</Heading>
+        <Heading level={3} size="d3">d3 size</Heading>
+        <Heading level={3} size="d4">d4 size</Heading>
       </Specimen>
 
       <Specimen name="Prose">
@@ -136,14 +154,14 @@ function AllPrimitives({ division }: { division: string }) {
       <Specimen name="Card — canvas, raised, linked">
         <Grid>
           <div style={{ gridColumn: 'span 4' }}>
-            <Card><Heading level={3} size="d4">Card</Heading><p>On canvas.</p></Card>
+            <Card><Heading level={4}>Card</Heading><p>On canvas.</p></Card>
           </div>
           <div style={{ gridColumn: 'span 4' }}>
-            <Card surface="raised"><Heading level={3} size="d4">Raised</Heading><p>On canvas-raised.</p></Card>
+            <Card surface="raised"><Heading level={4}>Raised</Heading><p>On canvas-raised.</p></Card>
           </div>
           <div style={{ gridColumn: 'span 4' }}>
             <Card linked>
-              <Heading level={3} size="d4"><Link href="#ks" tone="quiet">Linked card</Link></Heading>
+              <Heading level={4}><Link href="#ks" tone="quiet">Linked card</Link></Heading>
               <p>Whole card is the target; focus lands on the link.</p>
             </Card>
           </div>
@@ -168,21 +186,21 @@ function AllPrimitives({ division }: { division: string }) {
       </Specimen>
 
       <Specimen name="Field — default, hint, error, textarea">
-        <Field name="ks-name" label="Full name" required autoComplete="name" />
-        <Field name="ks-email" label="Email" type="email" hint="We reply by the end of the next business day." />
-        <Field name="ks-broken" label="Field with an error" error="Enter a valid email address." />
-        <Field name="ks-message" label="Message" multiline />
+        <Field name={scope(division, 'name')} label="Full name" required autoComplete="name" />
+        <Field name={scope(division, 'email')} label="Email" type="email" hint="We reply by the end of the next business day." />
+        <Field name={scope(division, 'broken')} label="Field with an error" error="Enter a valid email address." />
+        <Field name={scope(division, 'message')} label="Message" multiline />
       </Specimen>
 
       <Specimen name="Select — placeholder, error">
         <Select
-          name="ks-budget"
+          name={scope(division, 'budget')}
           label="Budget band"
           placeholder="Select a band"
           options={[{ value: 'a', label: 'Under £5,000' }, { value: 'b', label: '£5,000 – £15,000' }]}
         />
         <Select
-          name="ks-broken-select"
+          name={scope(division, 'broken-select')}
           label="Select with an error"
           error="Choose one option."
           options={[{ value: 'a', label: 'Option A' }]}
@@ -191,7 +209,7 @@ function AllPrimitives({ division }: { division: string }) {
 
       <Specimen name="RadioGroup — with hints, and an error">
         <RadioGroup
-          name="ks-division"
+          name={scope(division, 'division')}
           legend="Which division do you need?"
           hint="More than one is a first-class answer."
           defaultValue="unsure"
@@ -202,7 +220,7 @@ function AllPrimitives({ division }: { division: string }) {
           ]}
         />
         <RadioGroup
-          name="ks-radio-error"
+          name={scope(division, 'radio-error')}
           legend="Group with an error"
           error="Select one option."
           options={[{ value: 'y', label: 'Yes' }, { value: 'n', label: 'No' }]}
@@ -210,16 +228,16 @@ function AllPrimitives({ division }: { division: string }) {
       </Specimen>
 
       <Specimen name="Accordion — native details, one open">
-        <Accordion items={FAQS} exclusiveName="ks-faq" defaultOpenId="ks-a1" />
+        <Accordion items={FAQS.map((f) => ({ ...f, id: scope(division, f.key) }))} exclusiveName={scope(division, 'faq')} defaultOpenId={scope(division, 'a1')} />
       </Specimen>
 
       <Specimen name="Tabs — arrow keys, roving tabindex">
         <Tabs
           label={`Specimen tabs (${division})`}
           tabs={[
-            { id: 't1', label: 'First', panel: <p>First panel.</p> },
-            { id: 't2', label: 'Second', panel: <p>Second panel.</p> },
-            { id: 't3', label: 'Third', panel: <p>Third panel.</p> },
+            { id: scope(division, 't1'), label: 'First', panel: <p>First panel.</p> },
+            { id: scope(division, 't2'), label: 'Second', panel: <p>Second panel.</p> },
+            { id: scope(division, 't3'), label: 'Third', panel: <p>Third panel.</p> },
           ]}
         />
       </Specimen>
@@ -249,6 +267,18 @@ function AllPrimitives({ division }: { division: string }) {
         <RevealOnScroll>
           <Card><p>Fades and lifts once, on first intersection.</p></Card>
         </RevealOnScroll>
+      </Specimen>
+
+      {/* StickyCta was rendered once, outside the theme frames, so it only ever appeared
+          in master — its colours were unverified on Design's near-black canvas and axe
+          never evaluated it in three of four themes. Four `position: fixed` bars would
+          stack on top of each other, so the specimen is pinned in flow; the live fixed
+          instance at the foot of the page still demonstrates the real behaviour. */}
+      <Specimen name="StickyCta — in flow here; the live fixed bar is at the foot of the page">
+        <StickyCta label={`Specimen sticky call to action (${division})`} className={styles.stickyStatic}>
+          <Button href="#ks">Primary action</Button>
+          <Button href="#ks" variant="secondary">Secondary</Button>
+        </StickyCta>
       </Specimen>
     </>
   );
