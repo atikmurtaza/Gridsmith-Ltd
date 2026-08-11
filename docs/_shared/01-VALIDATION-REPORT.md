@@ -378,6 +378,7 @@ Prompted by the above, and covering more than the browser sandbox.
 | E9 | **Working directory** | `with-server.mjs` spawns `node_modules/next/dist/bin/next` by relative path, so it assumes the repo root. npm scripts and the CI step both guarantee that; it would break only if invoked from elsewhere | **Noted, not fixed** — no caller can currently do it |
 | E10 | **The runtime assertion itself** | E1's fix was `engine-strict`, and it is not enough. It fires only during an install — `npm run <anything>` never checks — so once `node_modules` exists every gate runs unchecked, which is exactly how the audit happened. Worse, **`engines` is a floor and `.nvmrc` is a pin**: `>=22.11.0` is satisfied by Node 24 and 26, so a machine on 24 while CI is on 22 passes `engine-strict` silently and diverges by a major with every check green | **Fixed** — `scripts/check-node-version.mjs` matches the running major against `.nvmrc`, wired as `preinstall` **and** into `verify:static` so it fires with or without an install. **A fix that does not cover its own originating case is a pattern worth checking for: `engine-strict` was adopted to close E1 and would not have caught the E1 scenario. When adopting a fix, verify it would have caught the specific defect that prompted it.** |
 | E11 | **Orphaned MSI record** | Windows' installed-programs database carries a `Node.js 24.15.0` entry with an empty `InstallLocation` and no payload — `C:\Program Files\nodejs` does not exist. It is what makes the Node 22 MSI refuse ("a later version is already installed"), and it is unrelated to what actually runs, since PATH resolves solely to nvm's symlink | **Left alone, deliberately** — cosmetic, and `MsiExec /I` against a GUID whose payload is gone is risk for no gain. Recorded so the next person who meets the refusal does not spend an afternoon on it |
+| E12 | **A gate that cannot run locally at all** | After the move to Node 24, both Lighthouse axes fail on Windows: every audit completes, then `chrome-launcher`'s `destroyTmp` races Node 24's `fs.rmSync` cleaning up the temp Chrome profile and the process exits 1 with `EPERM`. **Deterministic across three consecutive runs, with an unchanged lockfile** — `npm ci` reinstalled the identical dependency tree, so the runtime is the only variable, and the same command passed repeatedly on Node 20 on the same machine. Not a site defect: the measurements are taken, only the cleanup fails, and `ubuntu-latest` is unaffected | **Made explicitly unavailable, not left failing** — `scripts/check-lhci.mjs` prints a loud `SKIPPED` and exits 0 on local Windows, and `with-server` repeats it in the run summary rather than leaving it in the scrollback. **The skip is guarded in both directions**: reaching it with `CI` truthy, or off Windows, is a hard failure, so it can never spread to the runner or become permanent by accident. Remove it when a `chrome-launcher` release fixes the race, and re-verify locally |
 
 ### What this costs when it is missed
 
@@ -391,3 +392,23 @@ numbers from the wrong machine.
 **Consequence, deliberately accepted:** `npm ci` now fails on any machine not running Node
 ≥22.11.0, including the one this audit was performed on. That is the rule working. Install
 Node 22 (`.nvmrc` names it) before running the gates again.
+
+### Why E12 was skipped rather than left red
+
+A check that is known to fail for a reason unrelated to the code is worse than one that
+does not exist. It teaches everyone that red is sometimes fine, and the next failure —
+the one that is about the code — inherits that permission. "Oh, that's just the EPERM
+thing" is a sentence that eventually gets said about something real.
+
+Explicit unavailability is the safer shape: the gate states that it did not run, names why,
+names the condition under which it should be restored, and makes the summary say so out
+loud. What it must never do is decay into a permanent exemption, which is why reaching the
+skip path on CI or on a non-Windows platform is a hard failure rather than a no-op. A skip
+that can spread is not a skip; it is a hole with a comment on it.
+
+**Upstream, for whoever removes this:** the fault is in `chrome-launcher`'s `destroyTmp`
+(`chrome-launcher.js:367`) calling `fs.rmSync` on the temp profile directory before Windows
+has released Chrome's handles. It is not Lighthouse's own code and not this repository's.
+Watch for a `chrome-launcher` release that adds retry/`maxRetries` handling there; when one
+lands, delete `scripts/lhci-availability.mjs`'s Windows branch, run both axes locally, and
+record the result here.

@@ -15,6 +15,7 @@
  * An npm wrapper leaves the server orphaned on Windows when the parent is killed.
  */
 import { spawn, spawnSync } from 'node:child_process';
+import { lhciSkipped, UNAVAILABLE_ON_WINDOWS } from './lhci-availability.mjs';
 
 const PORT = process.env.VERIFY_PORT ?? '3000';
 const BASE = `http://127.0.0.1:${PORT}`;
@@ -67,6 +68,20 @@ for (const command of commands) {
 }
 
 stop();
+
+// The skip is reported in the summary rather than left in the scrollback. A gate that did
+// not run is a fact about this verification, and burying it three hundred lines up is how
+// "all green" comes to mean "all green except the two nobody mentions".
+if (lhciSkipped) {
+  console.log(
+    '\n' + '─'.repeat(78) +
+      '\n  ⚠  NOT ALL GATES RAN — Lighthouse desktop and mobile were SKIPPED on Windows.' +
+      `\n     ${UNAVAILABLE_ON_WINDOWS.reason}` +
+      `\n     ${UNAVAILABLE_ON_WINDOWS.where}` +
+      '\n     A local pass here is not evidence for those two — CI is (VALIDATION §13).' +
+      '\n' + '─'.repeat(78) + '\n',
+  );
+}
 
 if (failed > 0) {
   console.error(`\nwith-server: ${failed} of ${commands.length} command(s) failed.\n`);
