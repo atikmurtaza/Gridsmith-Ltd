@@ -327,3 +327,65 @@ route groups.
 
 This class is distinct from the four in §11 and is listed separately so it is not filed as
 another instance of "the gate did not match the spec". It did.
+
+## 13. A sixth defect class — the gate cannot run where it matters
+
+§11 is *gate ≠ spec*, found by reading two documents together. §12 is *number ≠ reality*,
+found by measuring twice by different methods. This one is neither.
+
+**A gate can be correct, match its specification exactly, produce true numbers — and be
+structurally unrunnable in the environment that actually decides.** It passes locally
+because the developer's machine grants a capability the runner does not, and it reports
+nothing at all when the runner denies it. Reading the gate will not find this. Re-measuring
+will not find this. Only running the gate in the target environment finds it.
+
+### The rule
+
+> **CI is the source of truth for gate results. A local pass is a smoke test, not
+> evidence.** Any gate that depends on an environment capability must assert that
+> capability explicitly and fail loudly when it is absent — never assume it, and never let
+> its absence read as a skip.
+
+### The worked example
+
+`check-axe` and `check-responsive` called `puppeteer.launch({ headless: true })` with no
+arguments. Chrome's sandbox needs user namespaces that GitHub's runners do not grant, so
+Chrome aborted on launch with a register dump instead of a readable error.
+
+**Eleven of eleven gates were green on Windows. Two of them could never have executed on
+`ubuntu-latest`.** The two Lighthouse configs already passed `--no-sandbox` as
+`chromeFlags`, so of the four browser launch sites in the repository, exactly the two
+without the flag were the two that failed — and the split was invisible until CI ran.
+
+The audit that produced §11 and §12 was conducted entirely on a developer machine and
+reported eleven green gates. That report was wrong about two of them, and no amount of
+further local work would have revealed it.
+
+### The sweep — every gate audited for environment assumptions
+
+Prompted by the above, and covering more than the browser sandbox.
+
+| # | Assumption | Finding | Status |
+|---|---|---|---|
+| E1 | **Node major** | Local runs were on **v20.20.2** while `.nvmrc`, `engines` and CI all say 22, and §2 of FOUNDATION records Node 20 as end-of-life since April 2026. `engines` is advisory — npm ignores it without `engine-strict`. Every gate in the Epic A audit ran on a forbidden runtime and nothing said so | **Fixed** — `.npmrc` sets `engine-strict=true`; `npm ci` now refuses with `Required: {"node":">=22.11.0"} Actual: v20.20.2` |
+| E2 | **Chrome sandbox** | 2 of 4 browser launch sites lacked `--no-sandbox` | **Fixed** — both Puppeteer gates now pass `--no-sandbox --disable-dev-shm-usage` |
+| E3 | **Locale-dependent ordering** | `check-bundle-size` sorted routes with `localeCompare`, whose result depends on `LC_ALL` and on whether the Node build carries full ICU. Display order only — the over-budget test is order-independent — but a gate whose output shifts with the machine's locale makes laptop-vs-runner log diffs noisy | **Fixed** — codepoint comparison |
+| E4 | **Line endings** | No `.gitattributes`. The repo relied on each machine's `core.autocrlf`; a contributor configured differently could commit CRLF, after which the same file differs by platform. All four scanning gates already split on `/\r?\n/` and would survive, which is why this had not bitten yet | **Fixed** — `.gitattributes` pins `* text=auto eol=lf` plus binary types |
+| E5 | **Filesystem case sensitivity** | The highest-risk candidate, given this repo's `%5F` handling. Verified end to end: on disk `%5Fkitchen-sink`, referenced in HTML as `%255Fkitchen-sink`, and `decodeURIComponent` yields `%5Fkitchen-sink` with the hex digits' case preserved as literal characters. Exact match on a case-sensitive filesystem, and empirically confirmed — CI run #2 passed the bundle-size step on `ubuntu-latest` | **Clean** |
+| E6 | **Path separators** | `check-bundle-size`, `check-no-hardcoded-colors` and `check-service-role-key` all normalise through a `toPosix` helper before matching; `check-tokens` uses `sep` for display only. No gate compares a raw platform path against a literal | **Clean** |
+| E7 | **Environment variables** | Three are read — `AXE_BASE_URL` (×2) and `VERIFY_PORT` — and all three have defaults. No gate requires a variable that exists on a developer machine and not on a runner | **Clean** |
+| E8 | **Number formatting** | Only `toFixed`, which is locale-independent. No `toLocaleString`, no `Intl` | **Clean** |
+| E9 | **Working directory** | `with-server.mjs` spawns `node_modules/next/dist/bin/next` by relative path, so it assumes the repo root. npm scripts and the CI step both guarantee that; it would break only if invoked from elsewhere | **Noted, not fixed** — no caller can currently do it |
+
+### What this costs when it is missed
+
+The Chrome instance cost one red CI run and an hour. **E1 is the expensive one.** Had it
+gone unnoticed, every measurement in §11 and §12 — the bundle floor, the 5.7KB primitive
+delta, every contrast ratio, both Lighthouse tables — would have been taken on a Node major
+the project forbids, and the first person to notice would have had to decide whether to
+re-derive all of them. A runtime mismatch does not announce itself; it produces plausible
+numbers from the wrong machine.
+
+**Consequence, deliberately accepted:** `npm ci` now fails on any machine not running Node
+≥22.11.0, including the one this audit was performed on. That is the rule working. Install
+Node 22 (`.nvmrc` names it) before running the gates again.

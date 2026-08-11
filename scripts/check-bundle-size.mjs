@@ -85,7 +85,11 @@ function routes() {
     const rel = toPosix(relative(APP_DIR, file)).replace(/\.html$/, '');
     out.push({ url: '/' + (rel === 'index' ? '' : rel), file });
   }
-  return out.sort((a, b) => a.url.localeCompare(b.url));
+  // Codepoint order, not localeCompare: that is locale-dependent, so the route table
+  // ordered differently under a different LC_ALL or an ICU-less Node build. It only moved
+  // rows around, but a gate whose output depends on the machine's locale makes log diffs
+  // between a laptop and a runner noisy for no reason.
+  return out.sort((a, b) => (a.url < b.url ? -1 : a.url > b.url ? 1 : 0));
 }
 
 function budgetFor(url) {
