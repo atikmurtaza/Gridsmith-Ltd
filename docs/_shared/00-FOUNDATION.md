@@ -94,8 +94,23 @@ over every budget in `CLAUDE.md` §Performance budgets before a token or primiti
 Verified against both build backends — webpack measured 127.0KB on Next 16, so it is not
 a Turbopack artifact.
 
-Consequence: **do not upgrade to Next 16 without re-measuring.** Node 22 LTS is the target
-runtime; Node 20 passed end-of-life in April 2026.
+Consequence: **do not upgrade to Next 16 without re-measuring.**
+
+### Runtime: Node 24 LTS
+
+**Node 24 is the target runtime**, pinned by major in three places that must move together
+— `.nvmrc`, `package.json` `engines` (`>=24.15.0 <25`, a pin rather than a floor that 26
+would also satisfy), and `.github/workflows/ci.yml`.
+
+Raised from 22 at Epic A. **Node 22 enters maintenance and reaches end-of-life in April
+2027, inside this site's first year of operation** — so the choice was between moving now,
+while the codebase is four pages and a primitive layer, or moving during Stage 3 with four
+route groups and a lead pipeline on top of it. Node 20 had already passed end-of-life in
+April 2026 and was never permitted.
+
+`scripts/check-node-version.mjs` asserts the running major against `.nvmrc` on every
+install *and* every gate run, because `engines` alone is a floor checked only at install
+time — `_shared/01-VALIDATION-REPORT.md` §13, E1 and E10.
 
 ### Budgeting on the delta, not the total
 

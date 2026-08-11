@@ -51,7 +51,7 @@ Soft shadows, rounded-everything, gradient meshes, glassmorphism, floating 3D sh
 
 ## Stack
 
-Next.js 15 App Router (**pinned — Next 16 adds ~29KB gz to the JS floor and breaks every budget below**) · React 19 · Node 22 · TypeScript strict · Tailwind v4 + CSS custom properties · Sanity CMS · Supabase (Postgres) · Resend · Vercel · GA4 + PostHog (consent-gated) · Zod + Server Actions.
+Next.js 15 App Router (**pinned — Next 16 adds ~29KB gz to the JS floor and breaks every budget below**) · React 19 · Node 24 · TypeScript strict · Tailwind v4 + CSS custom properties · Sanity CMS · Supabase (Postgres) · Resend · Vercel · GA4 + PostHog (consent-gated) · Zod + Server Actions.
 
 Rejected and not to be reintroduced: any UI component library (shadcn, MUI, Chakra), any third-party consent platform, any charting or animation library, any page builder. The primitives are hand-built because this site *is* the case study — 67% of B2B buyers judge vendor trustworthiness by site UX.
 

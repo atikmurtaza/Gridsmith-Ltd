@@ -12,13 +12,13 @@
  *    whole Epic A audit.
  *
  * 2. **`engines` is a floor and `.nvmrc` is a pin, and nothing reconciles them.**
- *    `engines: ">=22.11.0"` is satisfied by Node 24 and by Node 26. So a machine running
- *    24 while `.nvmrc` and CI say 22 passes `engine-strict` silently, and local and CI
+ *    A floor like `">=22.11.0"` is satisfied by Node 24 and by Node 26. So a machine
+ *    running 24 while `.nvmrc` and CI say 22 passes `engine-strict` silently, and local and CI
  *    diverge by a major version with every check green. A floor cannot catch that; only a
  *    match can.
  *
  * The `.nvmrc` value is the single source of truth: CI reads it in spirit
- * (`node-version: '22'`), nvm reads it literally, and this makes the running process agree
+ * (`node-version: '24'`), nvm reads it literally, and this makes the running process agree
  * with both or stop.
  *
  * Wired as `preinstall` so it fires before dependencies are fetched, and into
