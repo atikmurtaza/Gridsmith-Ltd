@@ -13,14 +13,14 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 
 | # | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|---|
-| 1 | A-01 | Next.js **15 (pinned)** + React 19 + TS strict + Tailwind v4 scaffold | P0 | 0.5d | — | DONE | Dev | Next 16 measured at +29KB gz — breaks every budget. See FOUNDATION §2 |
-| 1 | A-10a | ⚑ CI gates — TS, ESLint, `no-hardcoded-colors`, service-role grep, `check-bundle-size` | P0 | 0.5d | A-01 | DONE | Dev | Ships with A-01. Deliberate hex fails the build. size-limit dropped — measured the wrong quantity |
+| 1 | A-01 | Next.js **15 (pinned)** + React 19 + **Node 24** + TS strict + Tailwind v4 scaffold | P0 | 0.5d | — | DONE | Dev | Next 16 measured at +29KB gz — breaks every budget. Runtime raised 22→24 during the audit (22 EOLs April 2027); pinned by major in `.nvmrc`, `engines` and CI, asserted by `check:node`. Framework floor re-measured on 24 and **byte-identical** (matching content hashes). FOUNDATION §2 |
+| 1 | A-10a | ⚑ CI gates — TS, ESLint, `no-hardcoded-colors`, service-role grep, `check-bundle-size` | P0 | 0.5d | A-01 | DONE | Dev | Ships with A-01. Deliberate hex fails the build. size-limit dropped — measured the wrong quantity. Hardened at the audit: required-route list, roots that cannot be silently skipped, `scripts/` added to the secret scan |
 | 2 | A-02 | Token layer `tokens.css` | P0 | 1d | A-01 | DONE | Dev | 39 base tokens, FOUNDATION §3. Tailwind namespace collision cleared; `check:tokens` gate added |
-| 3 | A-03 | ⚑ Four theme files — **incl. master (was M-01)** | P0 | 1.5d | A-02 | DONE | Dev | 29 contrast pairs measured; 2 AA failures in Design fixed, 25 published ratios corrected. Fonts scoped per route group. `check:contrast` gate added |
+| 3 | A-03 | ⚑ Four theme files — **incl. master (was M-01)** | P0 | 1.5d | A-02 | DONE | Dev | 29 contrast pairs measured; 2 AA failures in Design fixed, 25 published ratios corrected. `check:contrast` is now a **101-cell permission matrix** — every token against every surface. Digital `--canvas-sunken` `#F0F0EE`→`#F3F3F1` (accent measured 4.46:1 as body text). Font **files** scoped per route group; `@font-face` declarations are not — `M-08` |
 | 4 | A-04 | Four route groups + `data-division` | P0 | 1d | A-03 | DONE | Dev | Four **root** layouts (no `app/layout.tsx`) — the only way to set `data-division` on `<body>` per group without forcing dynamic rendering. `check:theme` gate |
-| 5 | A-05 | ⚑ **24** shared primitives | P0 | 4d | ⚑ **A-04** | DONE | Dev | 21 Server, 3 Client (`Tabs`, `RevealOnScroll`, `StickyCta`). `Accordion` is native `<details>` |
+| 5 | A-05 | ⚑ **24** shared primitives | P0 | 4d | ⚑ **A-04** | DONE | Dev | 21 Server, 3 Client (`Tabs`, `RevealOnScroll`, `StickyCta`). `Accordion` is native `<details>`. Audit fixes: `RevealOnScroll` can no longer end at `opacity: 0`, `Tabs` panel focusable only when empty, `scroll-padding` for SC 2.4.11, motion on the token scale |
 | 5 | A-05a | ⚑ `/_kitchen-sink` route | P0 | 0.5d | A-05 | DONE | Dev | 23 primitives × 4 themes (`Media` excluded — see below); 5.7KB gz delta, budgeted at 7KB. Ids scoped per theme frame. `noindex`. Directory is `%5Fkitchen-sink` — a literal `_` prefix is a Next private folder and produces no route. Prod exclusion at A-12 |
-| 6 | **A-GATE** | ⚑ **Epic A exit gate** | P0 | 0.5d | A-05a, A-10b | TODO | Dev | **Nothing downstream starts until green** — see below |
+| 6 | **A-GATE** | ⚑ **Epic A exit gate** | P0 | 0.5d | A-05a, A-10b | **OPEN — NEXT TASK** | Dev | **Criteria 1–4 met or provisionally met; 5 and 6 have never run.** Five agents died on a session limit at the audit. **This is the next actionable task in the programme:** run `rules-compliance` and `accessibility-audit` from `.claude/agents/` in a **fresh session** on Node 24. Nothing downstream starts until both are clean — see below |
 | 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe + responsive | P0 | 0.5d | A-05a | **BLOCKED** | Dev | Re-based to mobile/4G with Core Web Vitals asserted; **now fails on Digital — `Q-M16`**. axe extended with DOM-integrity assertions axe-core cannot make. `check:responsive` added |
 | 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | REVIEW | Dev | Schemas written; **awaiting Sanity org (B4)** |
 | 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | REVIEW | Dev | Migrations written; **awaiting Supabase project (B4)** |
@@ -48,17 +48,30 @@ deviations from the original numbering are marked ⚑ and explained below the ta
    pre-consent, demonstrated in devtools.
 6. **A-GATE added** as an explicit task rather than a convention.
 
-**A-GATE pass criteria** — all six, no partial credit:
+**A-GATE pass criteria** — all six, no partial credit. **Status: OPEN.**
 
-- [ ] `/_kitchen-sink` renders all 24 primitives correctly in all four themes
-- [ ] Correct at 375px, 768px, 1440px — **gated by `check:responsive`**, not by eye
-- [ ] Keyboard navigable end to end
-- [ ] Zero hardcoded colours (A-10a green)
-- [ ] `rules-compliance` — **fresh context**, zero findings
-- [ ] `accessibility-audit` — **fresh context**, zero findings
+| # | Criterion | Status |
+|---|---|---|
+| 1 | `/_kitchen-sink` renders all 24 primitives correctly in all four themes | **Provisionally met.** Failed the audit — 80 duplicate ids, one radio group spanning four theme frames, one exclusive `<details>` group doing the same, `StickyCta` rendered once instead of four times, five `<h1>`. All fixed and green on CI. **Not independently re-verified**, so it rests on the same context that wrote the fix |
+| 2 | Correct at 375 / 768 / 1440px | **MET.** `check:responsive`, 15 combinations, green on `ubuntu-latest` |
+| 3 | Keyboard navigable end to end | **Provisionally met.** The blocking defect — duplicate ids sending every label in frames 2–4 to the control in frame 1 — is fixed; axe is clean on 5 routes. Not re-verified by a fresh context |
+| 4 | Zero hardcoded colours | **MET.** `lint:colors` green, 62 files |
+| 5 | `rules-compliance` — **fresh context**, zero findings | **NOT RUN** |
+| 6 | `accessibility-audit` — **fresh context**, zero findings | **NOT RUN** |
 
-Both subagents run from `.claude/agents/`. The fresh context is the point: the model
-that just wrote 24 primitives is the worst available reviewer of them.
+**Criteria 5 and 6 have never been executed.** Five agents were launched at the Epic A
+audit — `spec-compliance`, `rules-compliance`, `accessibility-audit`, `design-conformance`,
+`content-integrity` — and **all five died on a session limit before returning anything**.
+The audit that followed was performed by a single context reading the code directly. It
+found four blockers, six majors and thirteen environment findings, all fixed — but it is
+explicitly *not* what criteria 5 and 6 ask for, and substituting it would defeat the reason
+those criteria are worded the way they are.
+
+Both subagents run from `.claude/agents/`. The fresh context is the point: the model that
+just wrote 24 primitives is the worst available reviewer of them — and by the same logic,
+the model that just fixed the audit findings is the worst available reviewer of the fixes.
+
+**Nothing downstream of Epic A starts until 5 and 6 come back clean.**
 
 **Criterion 2 used to be a manual check, which made it a claim.** At the audit it could
 only be recorded as "not established" — neither passed nor failed, the least useful state

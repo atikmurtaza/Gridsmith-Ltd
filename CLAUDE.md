@@ -91,6 +91,7 @@ Read the workstream's own files before touching its code.
 | `docs/_shared/01-VALIDATION-REPORT.md` | Known gaps and recorded decisions |
 | `docs/_shared/02-BUILD-SEQUENCE.md` | Stage order and rationale |
 | `docs/_shared/04-AGENT-STRATEGY.md` | How to parallelise and verify |
+| `docs/_shared/05-HANDOVER.md` | **Read first in a fresh session.** Live state, open questions, in-flight work, and the findings that must not be rediscovered |
 | `docs/{master,design,digital,press}/` | 8 files each: PRD · TECH-SPEC · APP-FLOW · DESIGN · SCHEMA · IMPLEMENTATION-PLAN · PROJECT-TRACKER · PROJECT-RULES |
 | `docs/_legal/` | Solicitor-ready drafts. **Do not draft or amend clauses.** |
 

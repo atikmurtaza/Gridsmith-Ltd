@@ -1,9 +1,12 @@
 # Implementation Plan — Gridsmith Press
 
 Press inherits the shared foundation from `master/IMPLEMENTATION-PLAN.md` Phase 0 and
-starts at its own Phase 1. Build position is **proposed last of the three divisions**
-pending confirmation — `_shared/02-BUILD-SEQUENCE.md` §2. It was first under the old
-staged-launch plan; that plan is withdrawn.
+starts at its own Phase 1. Build position is **second of the three divisions** (Stage 6, after Digital) —
+`_shared/02-BUILD-SEQUENCE.md` §2, decided. It was first under the old staged-launch plan;
+that plan is withdrawn. Press sits third overall rather than last **because it is the
+section with real customers**, and the tail of a programme is where schedule slack
+disappears — not because of its launch-readiness advantages, which no longer bear on the
+order.
 
 **There is no Press launch.** Everything goes live at once, after Stage 8, when real
 content is loaded. Press does not ship separately, is not linked separately, and has no
