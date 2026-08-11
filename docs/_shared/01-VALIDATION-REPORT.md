@@ -178,8 +178,17 @@ Item 10 is superseded — see §10 below. There is no existing site to crawl.
 ## 10. Greenfield confirmed — six cutover findings closed as not applicable
 
 During A-01 the build was briefly told that Gridsmith Press was already live and trading.
-That is **not the case**: the whole programme is greenfield. Every site launches new,
-there is no existing property, and nothing is migrated.
+
+**That was right, and this section was over-broad — corrected.** The *build* is greenfield:
+nothing migrates, no content, no functionality, no database, and there is no cutover in the
+sense of moving a running system. But **Gridsmith Press does have a live site, it trades
+throughout the build, and it is switched off at launch.** It therefore has indexed URLs
+that 404 on day one unless they are mapped.
+
+Five of the six findings below stand. **Finding #3 does not** — there is something to
+crawl, and it is tracked as `G-08` (P1) in the master tracker. The correction is recorded
+here rather than by rewriting the row, because the row is the reason the question looked
+settled and a later session needs to see why it was reopened.
 
 The six findings raised under the cutover assumption are recorded here **closed as not
 applicable**, rather than deleted, so that a later session re-reading the specs does not
@@ -191,7 +200,7 @@ live site, correctly derived, and would apply again.
 |---|---|---|
 | 1 | Stage 8 real-content load (week 21) contradicts a week-12 cutover: the production seed check blocks `isSeed` publishing and launch gates 6–7 need real content, so a trading site could not ship on seed | **N/A — greenfield.** Seed content ships at launch as originally specified; real content loads at Stage 8 |
 | 2 | Defensive-domain 301s are described as a wildcard (`gridsmithdesign.uk/* → /design/*`); against a live property that would send every earning deep page to a path that does not exist, so a per-URL map would be required | **N/A — the division domains are parked, not trading.** The wildcard is correct for parked domains |
-| 3 | `G-01` says "crawl existing site" (singular), as does launch gate 12's "the previous site" | **N/A — nothing to crawl.** `G-01`/`G-02` are `BLOCKED` pending a separate decision; `redirects/legacy.json` ships empty so the mechanism exists and is testable |
+| 3 | `G-01` says "crawl existing site" (singular), as does launch gate 12's "the previous site" | **~~N/A~~ — WRONG, corrected.** There *is* one site to crawl: the existing Press property, which comes down at launch. `redirects/legacy.json` shipping empty and wired was the right call and makes this data rather than architecture. Tracked as `G-08`; inventory supplied by the founder before Stage 8 (`Q-M8`) |
 | 4 | No rollback plan exists anywhere, and a cutover inverts the risk — it can lose traffic and revenue that already exist | **N/A — a first launch has no traffic to lose.** Worth revisiting only if a migration is ever planned |
 | 5 | `L-03`/`L-04` assume first publication of terms; a trading entity has terms already in force and in-flight consumer engagements, and CRA/CCR 14-day rights would reach people already in the pipeline | **Partly retained.** The greenfield case removes the in-flight problem, but the question was already sent to the solicitor as `_legal/00-LEGAL-BASIS.md` §6 Q9. Left in place — it costs nothing to have answered and becomes live the moment there is a second version of the terms |
 | 6 | `press/IMPLEMENTATION-PLAN.md` 6.4 "soft launch to past clients" assumes those clients are not already using the live site | **N/A — reads correctly as written** for a first launch |
@@ -476,3 +485,28 @@ whether enough points exist to see that. Before attributing a change to a cause,
 variables that were *not* held constant — here, the runner — rather than only the ones that
 were. A confident causal story from three points is the analytic form of a gate that passes
 without measuring.
+
+### The launch model, and what it changed
+
+**Decided:** everything goes live at once, after Stage 8, when real content is loaded.
+Nothing ships partially. The existing Press site trades until launch and is switched off at
+it.
+
+This retires the staged-exposure plan (`02-BUILD-SEQUENCE.md` §1) and with it the entire
+basis of the original build order, which sequenced Press first because Press was the most
+*launchable*. With launch sequencing gone, order is proposed by **risk** instead — highest
+unknowns and tightest gates earliest, so failures surface with time to absorb them. Proposed
+order Master → Digital → Design → Press, pending confirmation.
+
+**The one thing it does not change is Epic A**, which is why this was recorded rather than
+acted on: Epic A's exit gate is unaffected by anything downstream of it, and A-GATE
+criteria 5 and 6 are still outstanding.
+
+Worth noting for the record that this is the second time a stated premise about the Press
+site has moved — first "already live and trading", then "greenfield, no existing property",
+now "greenfield build, live site that retires at launch". None of the three was a mistake by
+the person stating it; the premise genuinely refined. The lesson is narrower and worth
+keeping: **a premise recorded as settled should say what it is settled *about*.** §10
+originally closed a question about migration and phrased the answer as a fact about the
+world ("there is no existing property"), which is what made it wrong later. Scope the claim
+to the decision it supports.

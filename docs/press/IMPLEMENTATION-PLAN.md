@@ -1,11 +1,21 @@
 # Implementation Plan — Gridsmith Press
 
 Press inherits the shared foundation from `master/IMPLEMENTATION-PLAN.md` Phase 0 and
-starts at its own Phase 1. It is built **first of the three divisions**, per
-`_shared/02-BUILD-SEQUENCE.md`.
+starts at its own Phase 1. Build position is **proposed last of the three divisions**
+pending confirmation — `_shared/02-BUILD-SEQUENCE.md` §2. It was first under the old
+staged-launch plan; that plan is withdrawn.
 
-**Greenfield.** Press launches as a new site. There is no cutover, no migration and no
-existing property to redirect from — see `_shared/01-VALIDATION-REPORT.md` §10.
+**There is no Press launch.** Everything goes live at once, after Stage 8, when real
+content is loaded. Press does not ship separately, is not linked separately, and has no
+"opening shortly" state. Phase 6 below is a **readiness** phase, not a launch event.
+
+**Greenfield for the build; not greenfield for the URLs.** Nothing migrates — no content,
+no functionality, no database. But **the existing Press site is live and trading, and comes
+down at launch**, so its indexed URLs must be mapped or they 404 on day one. That is
+tracked at `G-08` in the master tracker and is data, not architecture:
+`redirects/legacy.json` already exists, empty and wired. The URL inventory arrives before
+Stage 8. See `_shared/01-VALIDATION-REPORT.md` §10, which was over-broad on this point and
+is corrected there.
 
 ---
 
@@ -88,15 +98,19 @@ This ordering is deliberate. Press's conversion mechanism *is* the trust archite
 | 5.7 | Cross-browser + device | |
 | 5.8 | PostHog funnels + honesty dashboard | `v_path_finder_honesty` visible |
 
-## Phase 6 — Launch (Week 10)
+## Phase 6 — Launch readiness (Week 10)
+
+**Not a launch.** These are the checks that must be green before Press is considered
+complete; the site goes live with the other three sections after Stage 8.
 
 | # | Task | DoD |
 |---|---|---|
-| 6.1 | Author user test, 6 participants incl. 2 first-time authors | Ask directly: "does this feel like a vanity press?" — **any yes blocks launch until addressed** |
+| 6.1 | Author user test, 6 participants incl. 2 first-time authors | Ask directly: "does this feel like a vanity press?" — **any yes blocks launch until addressed**. Run this **early**, not at the end of the phase: with the staged launch gone it is one of only three pieces of pre-launch evidence the programme has |
 | 6.2 | Speed-to-lead drill | Notification <60s; reply by end of next business day |
 | 6.3 | Analytics verification | `retailer_click` and return-tracking working |
-| 6.4 | Soft launch to past clients | They are the best credibility check |
-| 6.5 | Public launch | |
+| 6.4 | Review with past clients | They are the best credibility check. Was "soft launch to past clients" — there is no soft launch, but the review is worth as much and can happen on staging |
+| 6.5 | ~~Public launch~~ | **Removed.** Single launch after Stage 8 |
+| 6.6 | **Existing Press site retirement checked** | Every indexed URL from the inventory maps to a destination in `redirects/legacy.json`, or is a deliberate 410. Zero unmapped. `G-08` |
 
 ## Phase 7 — Post-launch
 

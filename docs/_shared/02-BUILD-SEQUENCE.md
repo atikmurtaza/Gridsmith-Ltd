@@ -6,11 +6,26 @@ That last point changes the sequencing meaningfully. You are not building a site
 
 ---
 
-## 1. The recommendation, in one line
+## 1. The launch model — decided
 
-**Build the whole application shell first, launch with Master + Press, then add Design and Digital as content becomes available.**
+**Everything goes live at once, when all four sections are complete.** Nothing ships
+partially. The single launch is after Stage 8, when real content is loaded.
 
-Not four sequential projects. One application, staged public exposure.
+The existing Press site stays up and trading throughout the build and comes down at launch.
+
+This replaces the earlier staged-exposure plan ("launch with Master + Press, add Design and
+Digital later"), and the replacement is not cosmetic — it removes the constraint that
+shaped the entire build order. Three consequences follow.
+
+**Stage 5 is no longer a launch milestone.** There is no first public launch, no partially
+linked division routing block, no "opening shortly" state.
+
+**Build order is now unconstrained by launch sequencing**, so it is ordered by **risk**
+instead of revenue — see §2.
+
+**Seed content carries all four sections right up to Stage 8.** No division needs real
+content early. `O-01` (author consent) stays at Stage 4 because it gates real content, not
+a cutover.
 
 ## 2. Why this order
 
@@ -20,8 +35,59 @@ Route groups, tokens, primitives, CMS schemas, the lead pipeline, consent and CI
 - Claude Code works far better against a settled foundation than a shifting one — every subsequent session inherits stable conventions from `PROJECT-RULES.md`
 - The seed data and import scripts exist before you need them, not after
 
-### Why Press launches first
-Press has the least invented content and the most real proof:
+### Ordering by risk — **PROPOSED, pending confirmation**
+
+With launch sequencing gone, the ordering question changes from *what can we ship soonest*
+to *what could fail, and how much time do we want left when it does*. Highest-unknown and
+tightest-gated work goes earliest so failures surface with room to absorb them.
+
+**Proposed: Master → Digital → Design → Press.**
+
+**Master stays first, but not on risk grounds** — it is a structural dependency. Epics N, L
+and G own the canonical `/work/[slug]`, the header, footer, consent layer and legal pages
+that all three divisions link into. Within Master, front-load the risky items rather than
+the visible ones: consent (`A-11`), the legal chain (`L-01`–`L-04`), and the division
+routing user test (`H-05`, ≥70% one click) — that last one can invalidate the homepage's
+central argument, and it is cheap to run early.
+
+**Digital second, reversing the old order.** It carries the two hardest gates in the
+programme: estimator calibration ≥8/10 against ten historical projects with clean final
+prices — a gate that fails the *whole feature* if the data does not exist — and
+**100/100/100**, the tightest performance requirement anywhere in the build.
+
+The old sequence put Digital last on the reasoning that 100/100/100 is *easiest to hit on a
+codebase already performance-tuned twice*. Under risk ordering that argument inverts: the
+goal is not to make the gate easy to pass but to find out early whether it can be passed at
+all. And there is now a measured reason to treat it as live rather than theoretical —
+Epic A established that an **empty** Digital page measures 1520ms LCP against a 1600ms
+ceiling on CI. Seventy-eight milliseconds of headroom, before the stack page, the estimator
+island and the diagnostic exist. If that budget is unreachable, it is a specification
+renegotiation, and the difference between discovering it in week 9 and week 18 is whether
+there is time to renegotiate or only time to cut.
+
+Building Digital's estimator first also de-risks Design's, which shares the 40KB
+estimator-route budget and most of the interaction pattern.
+
+**Design third.** Its hard gate — chartered engineer sign-off on the drawing matrix — is
+external and can bounce, sending twenty rows of standards content back for revision. But it
+is a review of content, not a discovery of whether the feature is buildable.
+
+**Press last, and this is the real reversal.** Press was first under the old order because
+it was the most *launchable*: least invented content, real published books, highest
+existing revenue. Every one of those is a launch-readiness argument, and launch readiness
+no longer sets the order. On risk, Press is the safest of the three — its gates (author
+consents, the vanity-press user test, retailer links, ETH-04) are largely within the
+founder's control, and its content already exists.
+
+**The counter-argument, stated plainly:** Press carries the existing revenue and building it
+last means its replacement is the last thing finished. Under a single launch that costs
+nothing in trading terms — the current Press site keeps trading throughout — but it does
+mean the section with real customers gets the least schedule slack if the programme
+overruns. If that is the wrong trade, the alternative is Master → Digital → Press → Design,
+which keeps the highest-risk work early while pulling Press out of the tail.
+
+The original comparison that drove the old order, retained because the underlying facts
+have not changed — only their relevance has:
 
 | | Press | Design | Digital |
 |---|---|---|---|
@@ -33,10 +99,15 @@ Press has the least invented content and the most real proof:
 
 Press's launch gate is *asking people you already work with for permission*. Design's is *booking a chartered engineer*. Digital's is *having ten historical projects with clean final prices*. The first is entirely within your control; the other two are not.
 
-### Why Digital is last despite being the flagship
-Two reasons. The estimator carries a hard calibration gate that fails the whole feature if the data isn't there, and Digital's Lighthouse 100/100/100 requirement is easiest to hit on a codebase that has already been performance-tuned twice.
+Read that table now as a **risk** table rather than a readiness one. The rows that matter
+under the new model are "external gate before launch" and "conversion machinery risk", and
+both put Digital first and Press last — the exact inverse of what the same table said when
+the question was what to ship soonest.
 
-There is a counter-argument worth stating: Digital is the division you most want to be selling, and shipping it last delays that by months. If you decide to move it up, move it to second — never first, because the estimator against an unsettled foundation is the highest-risk combination available.
+One caveat from the old order survives and still binds: **the estimator against an
+unsettled foundation is the highest-risk combination available.** That is why Digital moves
+to second and not to first. Epic A is complete and gated, but Master's chrome, consent
+layer and canonical case-study route are not, and the estimator sits on top of all three.
 
 ## 3. The sequence
 
@@ -113,11 +184,24 @@ Order within the stage matters here more than anywhere: **trust architecture bef
 
 **Gates:** rights wording matches the contract · author user test ("does this feel like a vanity press?") · all retailer links live · ETH-04 verification.
 
-### Stage 5 — **First public launch** · **Week 12**
+### Stage 5 — ~~First public launch~~ · **REMOVED**
 
-Ship Master + Press. Design and Digital exist as routes but are not yet linked from the division routing block, or are shown as "opening shortly" with a contact path.
+There is no first launch. Everything goes live at once after Stage 8.
 
-**Why launch here rather than waiting:** you get real traffic, real conversion data and real feedback on the master brand argument three to five months earlier than a big-bang launch. The specs contain a lot of hypotheses (the ecosystem argument, the Path Finder, the pricing transparency bet) and every week they stay untested is a week of building on unvalidated assumptions.
+**The stage number is retained deliberately.** Stages 6–9 are not renumbered, because
+"Stage 8" and "Stage 4" are referenced from `CLAUDE.md`, `00-FOUNDATION.md`, both
+`PROJECT-TRACKER` files and this document's own timeline. Renumbering to close a gap would
+silently invalidate every one of those references — a five-minute tidy that costs an
+afternoon of stale cross-references later.
+
+**What was lost, honestly.** The staged launch bought early validation of genuine
+hypotheses — the ecosystem argument, the Path Finder, the pricing-transparency bet — three
+to five months sooner. Under a single launch those stay untested until everything ships,
+and the first real signal arrives at the end rather than the middle. The compensating
+controls are the ones already specified and now carry more weight than they did:
+the division routing user test (`H-05`, ten people), the Press author user test, and the
+track fork test. **Run them earlier rather than later** — they are the only pre-launch
+evidence the programme now has, and they cost an afternoon each.
 
 ### Stage 6 — Design · **Weeks 13–16**
 
@@ -147,19 +231,28 @@ Per each workstream's Phase 7.
 
 ## 4. Realistic timeline
 
-| Stage | Weeks | Cumulative |
-|---|---|---|
-| 0 Decisions | 0 | — |
-| 1 Foundation | 3 | 3 |
-| 2 Seed + import tooling | 1 | 4 |
-| 3 Master | 3 | 7 |
-| 4 Press | 4 | 11 |
-| **5 First launch** | 1 | **12** |
-| 6 Design | 4 | 16 |
-| 7 Digital | 4 | 20 |
-| 8 Content load | 1 | 21 |
+Under the proposed risk order, with Stage 5 removed:
 
-**~21 weeks, about five months**, at a genuine full-time pace with Claude Code doing the implementation and you doing direction, review and content.
+| Stage | Work | Weeks | Cumulative |
+|---|---|---|---|
+| 0 | Decisions | 0 | — |
+| 1 | Foundation | 3 | 3 |
+| 2 | Seed + import tooling | 1 | 4 |
+| 3 | Master | 3 | 7 |
+| 4 | **Digital** | 4 | 11 |
+| 5 | ~~First launch~~ removed | — | — |
+| 6 | **Design** | 4 | 15 |
+| 7 | **Press** | 4 | 19 |
+| 8 | Real content load + **single launch** | 1 | **20** |
+
+**~20 weeks, about five months.** One week shorter than the staged plan, because the launch
+week itself is absorbed into Stage 8 rather than spent separately.
+
+The division names now sit under stage numbers that no longer match their old order —
+Stage 4 is Digital, not Press. **`O-01` (author consent) stays at Stage 4 by calendar, not
+by stage label**: it is a long-lead external request that gates real content at Stage 8, so
+it is raised in week 8 regardless of which division is being built then. Confirm the order
+before these labels are relied on anywhere.
 
 Two honest caveats:
 - **Content is the variable that slips.** The build estimates assume copy and case studies arrive when the tracker says. They usually do not. If anything overruns, it will be Epics E, O and X.

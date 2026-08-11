@@ -215,6 +215,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | G-05 | Structured data pass | P0 | 1d | N-* | TODO | Dev | `department`, not four orgs |
 | G-06 | **Bulk import script** | P0 | 1.5d | A-06 | TODO | Dev | 100 records in one pass |
 | G-07 | **Image ingest pipeline** | P0 | 1d | G-06 | TODO | Dev | Watermark, resize, AVIF |
+| G-08 | **Map the existing Press site's URLs before it comes down** | **P1** | 1d | — | TODO | Dev | The one migration obligation that survives the greenfield decision. The existing Press site trades throughout the build and **is switched off at launch**, so every indexed URL 404s on day one unless mapped. **Data, not architecture** — `redirects/legacy.json` is committed empty and wired into `next.config.ts`, so this is populating a file the mechanism already reads. **Do not crawl or plan yet**: the founder supplies the URL inventory before Stage 8 (`Q-M8`). Unmappable URLs go to the nearest Press hub, never to `/` and never to a 404 (FOUNDATION §6). Verified at press `6.6` |
 
 ## Epic S — Seed content
 
@@ -254,14 +255,14 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | ~~Q-M10~~ | **RESOLVED by default at A-03** — no licence held, so Inter / JetBrains Mono / Source Serif 4 are used, self-hosted via `next/font`. Licensed names deliberately left out of the font stacks. Buying a licence later changes one module in `styles/fonts/` | Atik | ~~A-03~~ |
 | ~~Q-M13~~ | **RESOLVED.** Design `--ink-subtle` is `#818180` at **5.01:1** — the first value on the theme's neutral ramp clearing 5.0:1, chosen over the 4.55:1 minimum so a later `--canvas` adjustment cannot push it back under AA. `--line-strong` recorded as decorative-only in `design/DESIGN.md` §5; Button (secondary) moved to `--ink-subtle` because its resting border is what identifies it as a button | Atik | ~~Design theme~~ applied |
 | ~~Q-M14~~ | **RESOLVED — CLAUDE.md was the file at fault, not FOUNDATION.** Both shadow tokens stay. The line now reads *"Depth comes primarily from 1px borders and background steps. `--shadow-2` is a hard ceiling; nothing beyond it."* Press book cards use `--shadow-1` by spec, and the Design and Digital rules already cap at `--shadow-2` | Atik | ~~A-05~~ |
-| ~~Q-M11~~ | **WITHDRAWN — the programme is greenfield.** No existing site, no cutover, nothing to migrate. The six findings raised under that assumption are recorded closed-not-applicable in `_shared/01-VALIDATION-REPORT.md` §10 rather than deleted | — | — |
+| ~~Q-M11~~ | **PARTLY REOPENED — the greenfield decision was over-broad.** The build is greenfield: nothing migrates, no content, no functionality, no database, and there is no cutover. But **the existing Press site is live and trading and comes down at launch**, so it has indexed URLs that 404 on day one unless mapped. Five of the six findings in `_shared/01-VALIDATION-REPORT.md` §10 stand; finding #3 ("nothing to crawl") is wrong for Press and is corrected there. Tracked as `G-08` (P1) | Atik | `G-08` |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |
 | Q-M5 | Business hours and phone number for the confirmation screen | Atik | N-12 |
 | Q-M6 | A real continuity example — a client served across divisions or over time | Atik | N-05 |
 | Q-M7 | The honest limits — when should someone use a specialist instead? | Atik | N-04 |
-| Q-M8 | Existing site URL inventory / access to crawl | Atik | G-01 |
+| Q-M8 | **Existing Press site URL inventory** — the indexed URLs that must be mapped before the site is switched off at launch. Founder supplies before Stage 8; no crawl or planning until then | Atik | `G-08` |
 | Q-M9 | Public-facing team members | Atik | N-07 |
 
 ## Metrics dashboard
