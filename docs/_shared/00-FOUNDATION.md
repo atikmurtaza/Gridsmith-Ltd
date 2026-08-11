@@ -614,12 +614,35 @@ covers, every one of which produces a larger and later LCP element than a text n
 **Re-measure at the first Stage 3 route, not at `H-01`.** By `H-01` the remedy is cutting a
 page feature to pay for a floor.
 
-**Open observation — TBT under Node 24.** Total Blocking Time rose 3–15ms on every route
-when the runtime moved from 22 to 24 (83–86ms → 87–98ms), consistently in one direction, on
-**byte-identical pages** — matching content hashes, so it is a runtime characteristic rather
-than run-to-run noise. Not a defect: every route is well inside its ceiling. But Digital's
-52ms of TBT headroom is measured on an empty page, so it is checked again when Epic M lands
-real components rather than assumed to hold. `Q-M16`.
+**TBT is runner variance, not a trend — corrected.** Five CI runs on byte-identical pages:
+
+| Run | Node | TBT across the four routes |
+|---|---|---|
+| #3 | 22 | 85 · 86 · 83 · 84ms |
+| #7 | 24 | 96 · 95 · 98 · 87ms |
+| #8 | 24 | 107 · 104 · 106ms |
+| #9 | 24 | 86 · 86 · 83 · **81ms** |
+| #10 | 24 | 88 · 92 · 90 · 93ms |
+
+The first three ascend and were reported as a monotonic Node 24 regression. **They are not
+a trend.** Run #9 came in at 81–86ms — below the Node 22 baseline — and #10 at 88–93ms. The
+Node 24 spread is 81–107ms and it contains the Node 22 band entirely, so there is no
+runtime effect to attribute.
+
+The mechanism is straightforward once the fourth point exists: under `devtools` throttling
+at 4× CPU, **TBT is CPU-bound and LCP is network-bound** (1638kbps, 150ms RTT). GitHub's
+shared runners vary in CPU; the network shaping does not. That is exactly the observed
+signature — TBT moving ±13ms around ~90 while LCP holds within 11ms across every run.
+
+**LCP is the stable number and the budgets rest on it**: 1519–1530ms across all five runs.
+
+Lighthouse was 12.6.1 in every run, so no version drift was involved. `scripts/lhci-report.mjs`
+now prints the host `benchmarkIndex` and Chrome user agent beside the metrics, so the next
+TBT movement can be checked against the machine rather than guessed at.
+
+**Do not read a TBT change as a code change without comparing `benchmarkIndex`.** Digital's
+real headroom is roughly 150 − 95 ≈ 55ms against a ±13ms measurement band, on a page
+containing one `h1`. Re-measure at Epic M. `Q-M16`.
 
 ---
 

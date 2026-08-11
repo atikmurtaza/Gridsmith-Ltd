@@ -73,6 +73,28 @@ console.log(
   `\nform factor ${first.configSettings.formFactor} · throttlingMethod ${first.configSettings.throttlingMethod} · ` +
     `${t.throughputKbps}kbps · ${t.rttMs}ms RTT · ${t.cpuSlowdownMultiplier}× CPU · Lighthouse ${first.lighthouseVersion}`,
 );
+
+/**
+ * The environment the number came out of, printed alongside the number.
+ *
+ * Added after four CI runs produced mobile TBT of 83–86, 87–98, 104–107 and 81–93ms on
+ * byte-identical pages. The first three looked like a monotonic trend and were reported as
+ * one; the fourth returned to baseline and showed it was runner variance all along. The
+ * question "did the machine change, or did the site?" could not be answered from the logs,
+ * because nothing recorded the machine.
+ *
+ * `benchmarkIndex` is Lighthouse's own CPU benchmark of the host. Under 4× throttling TBT
+ * is CPU-bound and LCP is network-bound, so a TBT move with a stable LCP should be
+ * checkable against this number rather than guessed at. `hostUserAgent` carries the Chrome
+ * version, which is the other thing that can move underneath a run without notice.
+ */
+const benchmarks = manifest.map((e) => JSON.parse(readFileSync(e.jsonPath, 'utf8')).environment.benchmarkIndex);
 console.log(
-  'Budgets in lighthouse/routes.cjs are PROVISIONAL — Q-M16. These are the CI numbers they get set from.\n',
+  `host benchmarkIndex ${Math.round(median(benchmarks))} ` +
+    `(range ${Math.round(Math.min(...benchmarks))}–${Math.round(Math.max(...benchmarks))} across ${benchmarks.length} runs) · ` +
+    `${first.environment.hostUserAgent}`,
+);
+console.log(
+  'LCP ceilings in lighthouse/routes.cjs are MEASURED (CI run #7, Node 24). TBT varies with\n' +
+    'runner CPU — compare benchmarkIndex before reading a TBT change as a code change. Q-M16.\n',
 );

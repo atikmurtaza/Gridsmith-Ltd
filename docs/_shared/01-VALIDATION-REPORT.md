@@ -442,3 +442,37 @@ without telling the founder first and listing what it contains. Inside the repo,
 and `node_modules/` are regenerable and fine to remove without ceremony. Outside it — home
 directories, tool installs, version-manager trees, anything under `AppData` or `Program
 Files` — enumerate, report, and ask.
+
+### §12 applied to the analyst — the TBT non-trend
+
+§12 says a surprising measurement must be verified by a second, independent method before
+being acted on. It was written about a tool. It applies at least as much to the person
+reading the tool, and it was broken here by the person who wrote it.
+
+Mobile TBT across CI runs on byte-identical pages: **83–86 → 87–98 → 104–107 → 81–86 →
+88–93ms**. The first three were reported as "consistently in one direction… a Node 24
+runtime characteristic rather than noise", which prompted an escalation from observation to
+finding. The fourth and fifth points returned to and below baseline. The Node 24 spread
+(81–107ms) **contains the Node 22 band entirely**. There was never a trend.
+
+Three points ascending is not a trend; it is three points. The claim that it could not be
+noise rested on "byte-identical pages", which rules out the *site* as the cause and says
+nothing about the *machine* — and the machine was the variable nobody had recorded.
+
+**What the data actually shows.** Under `devtools` throttling at 4× CPU, TBT is CPU-bound
+and LCP is network-bound (fixed 1638kbps / 150ms RTT shaping). Shared CI runners vary in
+CPU; the network shaping does not. TBT moving ±13ms around ~90ms while LCP holds within
+11ms across five runs is the signature of runner variance, and it was visible in the
+existing numbers before any new instrumentation.
+
+**What was missing.** Nothing in the logs recorded the machine, so "did the host change or
+did the site?" was unanswerable from the evidence — which is why a guess filled the gap.
+`scripts/lhci-report.mjs` now prints Lighthouse's own host `benchmarkIndex` and the Chrome
+user agent beside every metric table. A future TBT movement gets checked against the host's
+measured speed instead of narrated.
+
+**The rule, sharpened.** Before calling a sequence a trend, ask what would falsify it and
+whether enough points exist to see that. Before attributing a change to a cause, name the
+variables that were *not* held constant — here, the runner — rather than only the ones that
+were. A confident causal story from three points is the analytic form of a gate that passes
+without measuring.
