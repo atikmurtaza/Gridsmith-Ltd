@@ -107,9 +107,44 @@ model attributes the webfont fetch to a `font-display: swap` text LCP and report
 delay that does not exist. Under real throttling `/digital` measures FCP 1441ms = LCP
 1441ms, performance 1.00. Verify what a measurement models before treating it as a fact.
 
-**⚠ Open risk, recorded against Stage 3.** An empty page measures 1441ms LCP under real 4G
-against Digital's 1600ms ceiling. Every LCP budget in the programme was set against desktop
-numbers and is unvalidated until a page with real content has been measured. FOUNDATION §8.
+**⚠ Open risk, recorded against Stage 3.** FOUNDATION §8.
+
+### Measured on `ubuntu-latest` — CI run #3, median of 3, both axes green
+
+These supersede the developer-machine figures, which were indicative only. **These are the
+numbers the Stage 3 LCP budgets get set from.**
+
+**Desktop** — `preset: 'desktop'`, simulate, 10240kbps / 40ms RTT / 1× CPU, Lighthouse 12.6.1
+
+| route | perf | a11y | best-pr. | seo | LCP | CLS | TBT | FCP |
+|---|---|---|---|---|---|---|---|---|
+| `/` | **1.00** | 1.00 | 0.96 | 0.90 | 512ms | 0.000 | 0ms | 268ms |
+| `/design` | **1.00** | 1.00 | 0.96 | 0.90 | 501ms | 0.000 | 0ms | 265ms |
+| `/digital` | **1.00** | 1.00 | 0.96 | 0.90 | 441ms | 0.000 | 0ms | 267ms |
+| `/press` | **1.00** | 1.00 | 0.96 | 0.90 | 503ms | 0.000 | 0ms | 265ms |
+
+**Mobile** — 4G, devtools throttling, 1638.4kbps / 150ms RTT / 4× CPU, Lighthouse 12.6.1
+
+| route | perf | a11y | best-pr. | seo | LCP | budget | CLS | TBT | FCP |
+|---|---|---|---|---|---|---|---|---|---|
+| `/` | 0.99 | 1.00 | 0.96 | 0.90 | **1524ms** | 1800 | 0.000 | 85ms | 1524ms |
+| `/design` | 0.99 | 1.00 | 0.96 | 0.90 | **1523ms** | 2000 | 0.000 | 86ms | 1523ms |
+| `/digital` | 0.99 | 1.00 | 0.96 | 0.90 | **1520ms** | 1600 | 0.000 | 83ms | 1520ms |
+| `/press` | 0.99 | 1.00 | 0.96 | 0.90 | **1526ms** | 2000 | 0.000 | 84ms | 1526ms |
+
+Three things this run settles.
+
+1. **LCP equals FCP exactly on all four mobile routes.** The Lantern artefact is confirmed
+   independently on CI hardware, not just on one laptop. Under real throttling there is no
+   FCP→LCP gap at all — see `_shared/01-VALIDATION-REPORT.md` §12.
+2. **Mobile performance is 0.99 on every route, Digital included.** Had the mobile axis
+   asserted the performance category, CI would be red right now on a page with one heading
+   in it. The split was load-bearing rather than tidy-minded: the category score is a
+   weighted curve, and the Vitals underneath it all pass comfortably.
+3. **Digital's headroom is ~80ms, not ~160ms.** CI is roughly 75ms slower than the dev
+   machine, so the empty-page floor is 1520ms against a 1600ms ceiling. Every mobile LCP
+   figure across all four route groups sits within 6ms of the others, which is the signature
+   of a fixed floor rather than of per-route content.
 
 ## Epic M — Master shell
 
@@ -210,7 +245,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 
 | ID | Item | Needed from | Blocks |
 |---|---|---|---|
-| Q-M16 | **The mobile LCP budgets are unvalidated, and one measurement method was lying.** Diagnosing the FCP→LCP gap found two separate things. (1) **The gap was an artefact.** Lighthouse's default `simulate` throttling models LCP as gated on the webfont fetch even though `font-display: swap` means the text has already painted; measured on `/digital` at the same 4G profile, `simulate` gives FCP 1363ms / LCP 1896ms / perf 0.99, and `devtools` real throttling gives **FCP 1441ms / LCP 1441ms / perf 1.00** — zero gap. Digital *does* hold 100 under real mobile 4G. The mobile axis now uses `devtools`. (2) **The real floor is still thin and it is programme-wide.** An empty page — one `h1`, 425 B of route JS, no image — measures 1441ms against Digital's 1600ms ceiling, leaving ~160ms before any content exists. That floor is TTFB plus three render-blocking stylesheets plus first paint; it is structural, not a feature overrun, and Master's 1800ms and Design's and Press's 2000ms sit on the same floor. Every LCP budget in `CLAUDE.md` was set against desktop numbers that were never the specified measurement. **Decision needed: the mobile LCP ceilings, set from CI numbers on `ubuntu-latest` rather than a dev machine.** Nothing has been lowered; the ceilings in `lighthouse/routes.cjs` are provisional and flagged as such. Raise at the first Stage 3 route, not at `H-01` — by `H-01` the fix is cutting a page feature to pay for a floor | Atik | `N-01`, Stage 3, `H-01` |
+| Q-M16 | **The mobile LCP budgets are unvalidated, and one measurement method was lying.** Diagnosing the FCP→LCP gap found two separate things. (1) **The gap was an artefact.** Lighthouse's default `simulate` throttling models LCP as gated on the webfont fetch even though `font-display: swap` means the text has already painted; measured on `/digital` at the same 4G profile, `simulate` gives FCP 1363ms / LCP 1896ms / perf 0.99, and `devtools` real throttling gives **FCP 1441ms / LCP 1441ms / perf 1.00** — zero gap. Digital *does* hold 100 under real mobile 4G. The mobile axis now uses `devtools`. (2) **The real floor is still thin and it is programme-wide.** An empty page — one `h1`, 425 B of route JS, no image — measures 1520ms on CI against Digital's 1600ms ceiling, leaving ~80ms before any content exists. That floor is TTFB plus three render-blocking stylesheets plus first paint; it is structural, not a feature overrun, and Master's 1800ms and Design's and Press's 2000ms sit on the same floor. Every LCP budget in `CLAUDE.md` was set against desktop numbers that were never the specified measurement. **Decision needed: the mobile LCP ceilings, set from CI numbers on `ubuntu-latest` rather than a dev machine.** Nothing has been lowered; the ceilings in `lighthouse/routes.cjs` are provisional and flagged as such. Raise at the first Stage 3 route, not at `H-01` — by `H-01` the fix is cutting a page feature to pay for a floor | Atik | `N-01`, Stage 3, `H-01` |
 | Q-M1 | **Company number — still outstanding.** Registered office is confirmed: `30 Briarfield Road, Farnworth, Bolton, BL4 0HD`, England & Wales. Load into `companyDetails` at M-05. The number is the only missing field and it is statutory — `[TK]`, never guessed | Atik | M-05, L-05, 0.10 (number only) |
 | Q-M15 | **No favicon or brand mark exists.** `/favicon.ico` 404s on every route; Lighthouse reports it as a console error and it holds best-practices at 0.96. A mark is a brand decision and is not being invented (`master/PROJECT-RULES.md` §11). Supply one — or confirm shipping without a favicon is acceptable and the assertion stays at 0.96 permanently | Atik | Lighthouse best-practices 1.0 |
 | ~~Q-M12~~ | **RESOLVED — the metric changed, not the numbers.** JS is now budgeted on the delta above the framework floor, not the total: Master ≤15KB, Digital ≤15KB, Press ≤20KB, Design ≤25KB, estimator/path-finder ≤40KB. The floor (100.2KB) is reported separately so a dependency upgrade shows as a floor change rather than silently consuming feature allowance. **Digital's 100/100/100 gate is unchanged** — Lighthouse scores measured experience, and the 90KB figure was a badly-set proxy for it | Atik | ~~Digital launch~~ unblocked |

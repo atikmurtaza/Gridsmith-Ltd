@@ -578,8 +578,9 @@ builds for a delay no visitor experiences and send someone optimising an artefac
 
 ### ⚠ Open risk against Stage 3 — every LCP budget in the programme is suspect
 
-An **empty** page — one `h1`, 425 B of route JS, no image — measures **1441ms LCP** under
-real 4G throttling. Digital's budget is 1600ms. That leaves roughly 160ms of headroom
+An **empty** page — one `h1`, 425 B of route JS, no image — measures **1520ms LCP** on
+`ubuntu-latest` under real 4G throttling (1441ms on a dev machine; CI is the number that
+counts). Digital's budget is 1600ms. That leaves roughly **80ms** of headroom
 before any real content exists, and Stage 3 pages carry hero imagery, work grids and book
 covers, all of which produce a larger and later LCP element than a text node.
 

@@ -178,8 +178,8 @@ not produce one. Three spec files named LHCI as its enforcement, which was never
 TBT is the lab proxy at the same ceiling, and real INP has to come from field data.
 
 **⚠ Every LCP budget below is provisional.** An empty page — one `h1`, no image — measures
-1441ms under real 4G. Digital's budget is 1600ms, so the headroom before real content is
-about 160ms, and this is a structural floor rather than a feature overrun. Raise it at the
+1520ms on `ubuntu-latest` under real 4G. Digital's budget is 1600ms, so the headroom before
+real content is about 80ms, and this is a structural floor rather than a feature overrun. Raise it at the
 first Stage 3 route, not at `H-01`. `Q-M16`.
 
 **Digital's 100/100/100 gate is unchanged.** Lighthouse scores measured experience, not
