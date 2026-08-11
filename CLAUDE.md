@@ -162,7 +162,25 @@ dependency upgrade shows up as *the floor moving*, not as everyone's budget shri
 | Press | ≥95 perf | ≤2.0s | **≤20KB** — books shelf + filters | ~120KB |
 | Estimator / path-finder routes | — | — | **≤40KB** | ~140KB |
 
-All: INP ≤200ms (Digital 150), CLS ≤0.05 (Digital 0.02, Master 0.03).
+All: CLS ≤0.05 (Digital 0.02, Master 0.03). INP ≤200ms (Digital 150) — a **field** target,
+proxied in CI by TBT at the same ceiling; see below.
+
+**Lighthouse runs on two axes.** One gate was doing two jobs. Nothing was lowered when
+they were split; a second axis was added — FOUNDATION §8.
+
+| Axis | Conditions | Asserts |
+|---|---|---|
+| **Desktop** | `preset: 'desktop'`, median of 3 | Category scores. Digital's 100/100/100 lives here — it is the craft claim a prospect runs on their own laptop |
+| **Mobile** | 4G throttle, 4× CPU, `devtools` throttling, median of 3 | LCP, CLS and TBT directly. **Not** the performance score — it is a weighted curve that moves between Lighthouse versions, so pinning it fails builds for reasons users never experience |
+
+**INP cannot be asserted in CI.** It is a field metric; a Lighthouse navigation run does
+not produce one. Three spec files named LHCI as its enforcement, which was never possible.
+TBT is the lab proxy at the same ceiling, and real INP has to come from field data.
+
+**⚠ Every LCP budget below is provisional.** An empty page — one `h1`, no image — measures
+1441ms under real 4G. Digital's budget is 1600ms, so the headroom before real content is
+about 160ms, and this is a structural floor rather than a feature overrun. Raise it at the
+first Stage 3 route, not at `H-01`. `Q-M16`.
 
 **Digital's 100/100/100 gate is unchanged.** Lighthouse scores measured experience, not
 kilobytes; the old 90KB figure was a badly-set proxy for it and has been replaced, not

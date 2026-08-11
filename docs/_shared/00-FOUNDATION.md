@@ -489,10 +489,66 @@ real case study. The import script and the seed script are separate paths.
 
 ## 8. Universal launch gates
 
+### Lighthouse runs on two axes, and they answer different questions
+
+One gate was doing two jobs and doing neither properly. It is split, and nothing is
+lowered — a second axis is added.
+
+| | Conditions | Asserts | Question it answers |
+|---|---|---|---|
+| **Desktop** | `preset: 'desktop'`, median of 3 | **Category scores.** Digital 100 performance, 100 accessibility, 100 SEO | *Is the craft claim honest?* A prospect deciding whether we can build their site runs Lighthouse on their own laptop. The score is the claim, so the score is the assertion |
+| **Mobile** | 4G throttle, 4× CPU, median of 3 | **Core Web Vitals directly** — LCP, CLS, TBT. **Not** the performance category | *Does it hold on the device most people use?* Mobile carries most traffic at roughly half the conversion rate |
+
+**The mobile axis does not assert the performance category on purpose.** It is a weighted
+curve whose control points move between Lighthouse versions, so pinning it fails builds
+for reasons no user experiences — a dependency bump re-scoring an unchanged page is not a
+regression. The Vitals are the quantities these gates actually name, they are stable
+across versions, and a failure in one points at a specific thing to fix.
+
+**Throttling method is load-bearing on the mobile axis.** It uses `devtools` (real
+throttling), not Lighthouse's default `simulate` (Lantern). Lantern estimates LCP as gated
+on the resources the LCP element depends on, and for text with `font-display: swap` it
+adds the webfont fetch to the estimate even though swap means the text has already
+painted. Measured on `/digital`, median of 3, identical 4G profile:
+
+| Method | FCP | LCP | Gap | Performance |
+|---|---|---|---|---|
+| `simulate` (Lantern) | 1363ms | 1896ms | 533ms | 0.99 |
+| `devtools` (real) | 1441ms | **1441ms** | **0ms** | **1.00** |
+
+The gap does not exist. Real Chrome paints the `h1` once and never re-reports, because
+`next/font`'s fallback metrics (`size-adjust`, `ascent-override`) make the fallback paint
+the final layout — which is also why CLS is 0. Asserting the simulated number would fail
+builds for a delay no visitor experiences and send someone optimising an artefact.
+
+### ⚠ Open risk against Stage 3 — every LCP budget in the programme is suspect
+
+An **empty** page — one `h1`, 425 B of route JS, no image — measures **1441ms LCP** under
+real 4G throttling. Digital's budget is 1600ms. That leaves roughly 160ms of headroom
+before any real content exists, and Stage 3 pages carry hero imagery, work grids and book
+covers, all of which produce a larger and later LCP element than a text node.
+
+The floor is structural: TTFB plus three render-blocking stylesheets plus first paint. It
+is not a feature overrun and it will not be optimised away by cutting a component.
+
+**This is not Digital's problem alone.** Master's 1800ms and Design's and Press's 2000ms
+sit on the same floor and were set, like Digital's, against desktop numbers that were
+never the measurement these gates specify. Treat every LCP budget in `CLAUDE.md` as
+unvalidated until a page with real content has been measured on the mobile axis. Raise it
+at the first Stage 3 route rather than at `H-01`, when the fix would be cutting a page
+feature to pay for a floor.
+
+Recorded as `Q-M16`. The ceilings in `lighthouse/routes.cjs` are provisional.
+
+---
+
 No division ships without all of these green:
 
-1. Lighthouse ≥95 performance / ≥100 accessibility / ≥100 SEO on every template
-2. LCP ≤2.0s, INP ≤200ms, CLS ≤0.05 on 4G throttle
+1. Lighthouse ≥95 performance / ≥100 accessibility / ≥100 SEO on every template — **desktop axis**
+2. LCP ≤2.0s, CLS ≤0.05 on 4G throttle — **mobile axis**, asserted directly.
+   **INP is not assertable in CI**: it is a field metric and a Lighthouse navigation run
+   does not produce one. TBT is the lab proxy, set to each route's INP budget. Real INP
+   comes from field data once there is traffic — `01-VALIDATION-REPORT.md` §11
 3. WCAG 2.2 AA verified — axe clean + manual keyboard pass + screen reader pass
 4. Lead notification measured under 60 seconds end to end; confirmation copy states the next-business-day commitment and nothing faster
 5. All structured data validating in Google Rich Results Test

@@ -53,9 +53,18 @@ jobs:
         # Must run after build — it measures the prerendered output, not the source.
         run: npm run size
 
-      # A-10b. Lighthouse starts and stops its own server on 3200.
-      - name: Lighthouse CI — mobile, 4G throttle, median of 3, Core Web Vitals asserted
-        run: npm run check:lhci
+      # A-10b, two axes. Each Lighthouse run starts and stops its own server — desktop on
+      # 3200, mobile on 3201 — so they cannot collide.
+      #
+      # Desktop asserts the category scores: that is the craft claim a prospect runs.
+      # Mobile asserts the Core Web Vitals and NOT the performance category: the score is a
+      # weighted curve that moves between Lighthouse versions, and pinning it fails builds
+      # for reasons users never experience. See both config files.
+      - name: Lighthouse CI — desktop, category scores (Digital 100/100/100)
+        run: npm run check:lhci:desktop
+
+      - name: Lighthouse CI — mobile 4G, Core Web Vitals asserted directly
+        run: npm run check:lhci:mobile
 
       # axe and the responsive sweep share one server on 3000, started and stopped by
       # with-server so neither can run against a server that never came up.

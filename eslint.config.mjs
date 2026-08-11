@@ -26,6 +26,13 @@ const config = [
     files: ['scripts/**'],
     rules: { 'no-console': 'off' },
   },
+  {
+    // Lighthouse CI reads its config with `require`, so these files are CommonJS by
+    // necessity rather than by choice. Scoped to them alone — `require()` stays banned
+    // everywhere it is avoidable.
+    files: ['*.cjs', 'lighthouse/**/*.cjs'],
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
+  },
 ];
 
 export default config;

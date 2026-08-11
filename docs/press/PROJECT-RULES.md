@@ -93,7 +93,21 @@ app/(press)/press/            Route segments, kebab-case
 
 | Rule | Enforcement |
 |---|---|
-| LCP ≤2.0s, INP ≤200ms, CLS ≤0.05 | LHCI blocks merge |
+| LCP ≤2.0s, CLS ≤0.05 | LHCI **mobile axis**, asserted directly. Both were named here and asserted nowhere until the Epic A audit |
+| INP ≤200ms | **Not assertable in CI** — field metric. TBT ≤200ms is the lab proxy |
+**Lighthouse runs on two axes — FOUNDATION §8.** Desktop asserts the category scores (the
+craft claim a prospect runs); mobile asserts Core Web Vitals directly on a 4G throttle and
+deliberately does **not** assert the performance score, because that score is a weighted
+curve that moves between Lighthouse versions. Nothing was lowered when the two were split.
+
+**INP is not assertable in CI.** It is a field metric and a Lighthouse navigation run does
+not produce one; this file previously named LHCI as its enforcement, which was never
+possible. TBT at the same ceiling is the lab proxy. See `_shared/01-VALIDATION-REPORT.md` §11.
+
+**⚠ The LCP ceiling here is provisional.** An empty page measures 1441ms under real 4G;
+every LCP budget in the programme was set against desktop numbers and is unvalidated until
+a page with real content has been measured. `Q-M16`.
+
 | Press route JS **delta ≤20KB gz** above the framework floor — covers books shelf and filters | `check-bundle-size` |
 | `/press/path-finder` JS **delta ≤40KB gz** | `check-bundle-size` |
 | Book covers: AVIF, fixed aspect, `sizes` tuned | Manual review |

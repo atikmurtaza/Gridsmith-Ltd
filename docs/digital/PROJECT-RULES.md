@@ -88,8 +88,22 @@ These are specific and non-negotiable because this component carries the divisio
 
 | Rule | Enforcement |
 |---|---|
-| Lighthouse 100/100/100 | LHCI blocks merge |
-| LCP ≤1.6s, INP ≤150ms, CLS ≤0.02 | LHCI blocks merge |
+| Lighthouse 100/100/100 | LHCI **desktop axis** blocks merge. Unchanged — it is the craft claim, measured on the conditions that claim describes |
+| LCP ≤1.6s, CLS ≤0.02 | LHCI **mobile axis**, asserted directly on a 4G throttle |
+| INP ≤150ms | **Not assertable in CI** — field metric. TBT ≤150ms is the lab proxy |
+**Lighthouse runs on two axes — FOUNDATION §8.** Desktop asserts the category scores (the
+craft claim a prospect runs); mobile asserts Core Web Vitals directly on a 4G throttle and
+deliberately does **not** assert the performance score, because that score is a weighted
+curve that moves between Lighthouse versions. Nothing was lowered when the two were split.
+
+**INP is not assertable in CI.** It is a field metric and a Lighthouse navigation run does
+not produce one; this file previously named LHCI as its enforcement, which was never
+possible. TBT at the same ceiling is the lab proxy. See `_shared/01-VALIDATION-REPORT.md` §11.
+
+**⚠ The LCP ceiling here is provisional.** An empty page measures 1441ms under real 4G;
+every LCP budget in the programme was set against desktop numbers and is unvalidated until
+a page with real content has been measured. `Q-M16`.
+
 | Digital route JS **delta ≤15KB gz** above the framework floor — the tightest in the programme | `check-bundle-size` blocks merge |
 | `/digital/estimate` JS **delta ≤40KB gz** | `check-bundle-size` blocks merge |
 | No client-side fetch on first paint | Manual review |

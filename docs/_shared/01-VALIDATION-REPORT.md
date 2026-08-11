@@ -198,3 +198,56 @@ live site, correctly derived, and would apply again.
 
 `O-01` (author consent for ≥12 titles) returns to Stage 4 / Press Epic O, started week 1
 for its external lead time, rather than being a Stage 0 blocker.
+
+## 11. Epic A audit — gates that were not measuring their subject
+
+Five findings, one class: **a gate whose specification named an enforcement the
+implementation did not perform.** Four were fixed at the audit; the fifth cannot be fixed
+and is recorded so nobody tries.
+
+| # | Spec said | Gate did | Resolution |
+|---|---|---|---|
+| B1 | `check-bundle-size` enforces every route group's JS delta | Enumerated whatever HTML the build emitted. Deleting `digital.html` dropped the tightest-budgeted route and it reported "all routes within their delta budget", exit 0 | Required-route list. Swept all ten gates — **four** could measure less than they claimed |
+| B2 | `check-contrast` gates the token/surface rules from FOUNDATION §3 | Covered three tokens; the A-05 sweep had measured nine. `--accent` measured 4.46:1 on Digital's `--canvas-sunken`, below the AA body floor, and the number was published in FOUNDATION §3 itself | Permission matrix — 101 cells, every token against every surface |
+| B3 | "axe zero violations" covers the kitchen sink | axe-core keeps `duplicate-id` behind its `deprecated` tag, so no WCAG tag set reaches it. 80 duplicate ids, a radio group spanning four theme frames and an exclusive `details` group doing the same — all green | Ids scoped per frame; `check-axe` asserts the three conditions against the served DOM |
+| B4 | `PROJECT-RULES.md` §8 (×4), `CLAUDE.md` and FOUNDATION §8 all name LHCI as the enforcement for LCP, INP and CLS | Asserted four category scores and no metric at all, on a desktop preset with no throttling, where the specs say 4G | Split into desktop and mobile axes; Vitals asserted directly on mobile — FOUNDATION §8 |
+| **B4b** | **The same three files named LHCI as the enforcement for INP** | **No gate can do this and none ever could** | **See below** |
+
+### INP cannot be asserted in lab conditions
+
+INP is a **field** metric. It measures the latency of real interactions by real users
+across a session. A Lighthouse *navigation* run loads a page and does not interact with it,
+so it produces no INP value — there is nothing for an assertion to read. This is a property
+of the metric, not a gap in the tooling, and no amount of configuration changes it.
+
+**Total Blocking Time is the lab proxy** and is what CI asserts, with each route's TBT
+ceiling set to that route's own INP budget: 200ms everywhere, 150ms on Digital. TBT
+correlates with INP but is not the same quantity — it measures main-thread blocking during
+load, not the responsiveness of a tap three minutes later.
+
+**Real INP has to come from field data.** Nothing in CI stands in for that, and it must not
+be recorded as if it did. Once there is traffic, INP comes from CrUX or from
+PostHog/Vercel Analytics, consent permitting — which is itself a constraint worth noting,
+because a consent-gated measurement covers consented sessions only (`_shared/00-FOUNDATION.md`
+§6 makes the same point about `is_ai_referral`).
+
+This entry exists because "the spec names an enforcement that does not exist" is the same
+defect as B1–B4, and listing four of five would repeat the error the class describes.
+
+### A sixth, found while diagnosing B4: the measurement method was mis-attributing
+
+Lighthouse's default mobile throttling is `simulate` (Lantern), which models LCP as gated
+on the resources the LCP element depends on. For text with `font-display: swap` it adds
+the webfont fetch to the estimate, even though swap means the text has already painted in
+the fallback face. Measured on `/digital`, median of 3, identical 4G profile:
+
+| Method | FCP | LCP | Gap | Performance |
+|---|---|---|---|---|
+| `simulate` | 1363ms | 1896ms | 533ms | 0.99 |
+| `devtools` | 1441ms | **1441ms** | **0ms** | **1.00** |
+
+The gap is an artefact. `next/font`'s fallback metrics (`size-adjust`, `ascent-override`)
+make the fallback paint the final layout, which is why CLS is 0 and why real Chrome never
+re-reports LCP. Had this not been checked, the gate would have failed builds for a delay no
+visitor experiences and someone would have spent a day optimising it. **Verify what a
+measurement is modelling before treating its output as a fact about the site.**
