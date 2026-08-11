@@ -119,6 +119,14 @@ Read the workstream's own files before touching its code.
   this shape have already shipped and been caught — a `_`-prefix filter that swallowed a
   whole route, a double-encoded chunk path that resolved to nothing, and a line-anchored
   regex that counted a third of what it claimed.
+- **Never recursively delete outside the repository working tree without asking.** Inside
+  the repo, `.next/` and `node_modules/` are regenerable — remove them freely. Outside it —
+  home directories, tool installs, version-manager trees, anything under `AppData` or
+  `Program Files` — **enumerate the full contents first, report what is there, and ask.** A
+  top-level listing is not an inspection: `node_modules` shows as one entry and can hold a
+  global tool install. This rule exists because a recursive delete of a Node version
+  directory destroyed a global CLI install that a one-level look had not revealed
+  (`_shared/01-VALIDATION-REPORT.md` §13, E13).
 - **Fix the class, not the instance.** When a defect is found, ask what category it
   belongs to and sweep every place that category can occur. A per-instance fix leaves the
   same defect live everywhere else and guarantees it recurs. Three of the four Epic A

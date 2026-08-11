@@ -591,25 +591,35 @@ The gap does not exist. Real Chrome paints the `h1` once and never re-reports, b
 the final layout — which is also why CLS is 0. Asserting the simulated number would fail
 builds for a delay no visitor experiences and send someone optimising an artefact.
 
-### ⚠ Open risk against Stage 3 — every LCP budget in the programme is suspect
+### Mobile budgets: measured, and the headroom that remains
 
-An **empty** page — one `h1`, 425 B of route JS, no image — measures **1520ms LCP** on
-`ubuntu-latest` under real 4G throttling (1441ms on a dev machine; CI is the number that
-counts). Digital's budget is 1600ms. That leaves roughly **80ms** of headroom
-before any real content exists, and Stage 3 pages carry hero imagery, work grids and book
-covers, all of which produce a larger and later LCP element than a text node.
+**Confirmed against CI, not a laptop.** Run #7 on `ubuntu-latest`, Node 24, median of 3,
+devtools throttling:
 
-The floor is structural: TTFB plus three render-blocking stylesheets plus first paint. It
-is not a feature overrun and it will not be optimised away by cutting a component.
+| route | LCP | budget | CLS | TBT | ceiling |
+|---|---|---|---|---|---|
+| `/` | 1522ms | 1800 | 0.000 | 96ms | 200 |
+| `/design` | 1521ms | 2000 | 0.000 | 95ms | 200 |
+| `/digital` | **1522ms** | **1600** | 0.000 | **98ms** | **150** |
+| `/press` | 1526ms | 2000 | 0.000 | 87ms | 200 |
 
-**This is not Digital's problem alone.** Master's 1800ms and Design's and Press's 2000ms
-sit on the same floor and were set, like Digital's, against desktop numbers that were
-never the measurement these gates specify. Treat every LCP budget in `CLAUDE.md` as
-unvalidated until a page with real content has been measured on the mobile axis. Raise it
-at the first Stage 3 route rather than at `H-01`, when the fix would be cutting a page
-feature to pay for a floor.
+The LCP ceilings in `lighthouse/routes.cjs` are **measured** and no longer provisional.
 
-Recorded as `Q-M16`. The ceilings in `lighthouse/routes.cjs` are provisional.
+**⚠ The headroom is thin and that risk stands.** All four routes land within 6ms of each
+other on pages whose only content is an `h1` — the signature of a fixed floor (TTFB plus
+three render-blocking stylesheets plus first paint), not of per-route content. Digital has
+**78ms** before its 1600ms ceiling. Stage 3 pages carry hero imagery, work grids and book
+covers, every one of which produces a larger and later LCP element than a text node.
+
+**Re-measure at the first Stage 3 route, not at `H-01`.** By `H-01` the remedy is cutting a
+page feature to pay for a floor.
+
+**Open observation — TBT under Node 24.** Total Blocking Time rose 3–15ms on every route
+when the runtime moved from 22 to 24 (83–86ms → 87–98ms), consistently in one direction, on
+**byte-identical pages** — matching content hashes, so it is a runtime characteristic rather
+than run-to-run noise. Not a defect: every route is well inside its ceiling. But Digital's
+52ms of TBT headroom is measured on an empty page, so it is checked again when Epic M lands
+real components rather than assumed to hold. `Q-M16`.
 
 ---
 

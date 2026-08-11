@@ -7,9 +7,15 @@
  * configs would have made that two ways to drift instead of one, so the table lives here
  * and both derive from it.
  *
- * `lcp` and `tbt` are the mobile ceilings from CLAUDE.md §Performance budgets. They are
- * PROVISIONAL — see Q-M16 and FOUNDATION §8. The budgets were originally set against
- * desktop numbers, which was never the measurement the specs asked for.
+ * `lcp` and `tbt` are the mobile ceilings from CLAUDE.md §Performance budgets.
+ *
+ * **MEASURED, not provisional.** Confirmed against CI run #7 on ubuntu-latest, Node 24,
+ * median of 3, devtools throttling: the empty-page LCP floor is ~1520ms on every route
+ * (1520–1526ms across all four, a 6ms spread — the signature of a fixed floor rather than
+ * of per-route content), leaving Digital 78ms of headroom against its 1600ms ceiling.
+ *
+ * What remains open is not the number but its durability: 78ms is the headroom on a page
+ * containing one heading. Re-measure once Epic M lands real components — FOUNDATION §8.
  */
 const ORIGIN_DESKTOP = 'http://127.0.0.1:3200';
 const ORIGIN_MOBILE = 'http://127.0.0.1:3201';

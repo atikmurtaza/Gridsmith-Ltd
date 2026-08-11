@@ -379,6 +379,7 @@ Prompted by the above, and covering more than the browser sandbox.
 | E10 | **The runtime assertion itself** | E1's fix was `engine-strict`, and it is not enough. It fires only during an install — `npm run <anything>` never checks — so once `node_modules` exists every gate runs unchecked, which is exactly how the audit happened. Worse, **`engines` is a floor and `.nvmrc` is a pin**: `>=22.11.0` is satisfied by Node 24 and 26, so a machine on 24 while CI is on 22 passes `engine-strict` silently and diverges by a major with every check green | **Fixed** — `scripts/check-node-version.mjs` matches the running major against `.nvmrc`, wired as `preinstall` **and** into `verify:static` so it fires with or without an install. **A fix that does not cover its own originating case is a pattern worth checking for: `engine-strict` was adopted to close E1 and would not have caught the E1 scenario. When adopting a fix, verify it would have caught the specific defect that prompted it.** |
 | E11 | **Orphaned MSI record** | Windows' installed-programs database carries a `Node.js 24.15.0` entry with an empty `InstallLocation` and no payload — `C:\Program Files\nodejs` does not exist. It is what makes the Node 22 MSI refuse ("a later version is already installed"), and it is unrelated to what actually runs, since PATH resolves solely to nvm's symlink | **Left alone, deliberately** — cosmetic, and `MsiExec /I` against a GUID whose payload is gone is risk for no gain. Recorded so the next person who meets the refusal does not spend an afternoon on it |
 | E12 | **A gate that cannot run locally at all** | After the move to Node 24, both Lighthouse axes fail on Windows: every audit completes, then `chrome-launcher`'s `destroyTmp` races Node 24's `fs.rmSync` cleaning up the temp Chrome profile and the process exits 1 with `EPERM`. **Deterministic across three consecutive runs, with an unchanged lockfile** — `npm ci` reinstalled the identical dependency tree, so the runtime is the only variable, and the same command passed repeatedly on Node 20 on the same machine. Not a site defect: the measurements are taken, only the cleanup fails, and `ubuntu-latest` is unaffected | **Made explicitly unavailable, not left failing** — `scripts/check-lhci.mjs` prints a loud `SKIPPED` and exits 0 on local Windows, and `with-server` repeats it in the run summary rather than leaving it in the scrollback. **The skip is guarded in both directions**: reaching it with `CI` truthy, or off Windows, is a hard failure, so it can never spread to the runner or become permanent by accident. Remove it when a `chrome-launcher` release fixes the race, and re-verify locally |
+| E13 | **A destructive operation that inspected only its top level** | Removing Node 20 after the runtime move, `nvm uninstall` failed and I ran `Remove-Item -Recurse -Force` on the version directory. A top-level look had shown `node.exe` and `node_modules`, and that was treated as having looked at the subject. Inside `node_modules` was a global `@anthropic-ai/claude-code` install, which the recursive delete destroyed before erroring on a locked file | **Rule adopted** — see below. Damage was confined to a superseded npm-global copy already off PATH; the CLI in use is desktop-app managed and was untouched. Restored with `npm install -g @anthropic-ai/claude-code` under Node 24 |
 
 ### What this costs when it is missed
 
@@ -412,3 +413,32 @@ has released Chrome's handles. It is not Lighthouse's own code and not this repo
 Watch for a `chrome-launcher` release that adds retry/`maxRetries` handling there; when one
 lands, delete `scripts/lhci-availability.mjs`'s Windows branch, run both axes locally, and
 record the result here.
+
+### E13 as a class — inspect the whole subject, not its top level
+
+**A destructive operation must inspect its full subject, not its top level.**
+`Remove-Item -Recurse -Force` after checking one directory level is the destructive
+analogue of a gate that passes without measuring: the check ran, and the subject was never
+examined. The recursion reaches everything; the inspection reached one level.
+
+Before any recursive delete, **enumerate what is actually inside**. Global npm packages,
+tool installs, credentials and lockfiles live *inside* `node_modules`, not beside it — a
+directory listing that shows `node_modules` as a single entry has told you nothing about
+330MB of content under it.
+
+**Worked example.** Node 20's nvm directory listed as two entries: `node.exe` and
+`node_modules`. That looked like an empty runtime. `node_modules` contained a global
+`@anthropic-ai/claude-code` install — a 258MB binary — which the delete destroyed. The
+damage was survivable because the CLI actually in use is managed by the desktop app and
+lives elsewhere, but that was luck rather than diligence.
+
+**The tell**: the same command run with the same flags is safe or catastrophic depending
+entirely on what is underneath, and the operator cannot know which without looking. Any
+step whose blast radius is invisible from where you are standing needs the enumeration
+first.
+
+**Standing rule for this project.** No recursive delete outside the repository working tree
+without telling the founder first and listing what it contains. Inside the repo, `.next/`
+and `node_modules/` are regenerable and fine to remove without ceremony. Outside it — home
+directories, tool installs, version-manager trees, anything under `AppData` or `Program
+Files` — enumerate, report, and ask.
