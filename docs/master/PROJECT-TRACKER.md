@@ -66,10 +66,12 @@ a gate criterion can occupy. `scripts/check-responsive.mjs` now asserts no horiz
 overflow across 5 routes × 3 widths, and a route that fails to load is a measurement
 failure rather than a pass.
 
-**Ten gates, and `npm run verify` runs all ten.** It ran five and said nothing about the
-other five — the three needing a build and the two needing a server. CI ran everything, so
-merges were safe; a developer running the script named "verify" got half the coverage with
-no indication of it, which is the same unearned confidence as a gate that measures nothing.
+**Thirteen checks, and `npm run verify` runs all of them.** It once ran five and said
+nothing about the other five — the three needing a build and the two needing a server. CI
+ran everything, so merges were safe; a developer running the script named "verify" got half
+the coverage with no indication of it, which is the same unearned confidence as a gate that
+measures nothing. The two Lighthouse axes cannot run on Windows (VALIDATION §13 E12) and
+say so loudly in the summary rather than failing quietly — CI runs them.
 
 **A-10b — two assertions are ratcheted, with owners.** Lighthouse accessibility is
 asserted at its final spec value now and passes. Two are pinned below 1.0 because
