@@ -28,7 +28,11 @@ const ROUTES = ['/', '/design', '/digital', '/press', '/_kitchen-sink'];
 /** The three widths the Definition of Done names, and nothing else. */
 const WIDTHS = [375, 768, 1440];
 
-const browser = await puppeteer.launch({ headless: true });
+/** CI-safe flags — see the note in check-axe.mjs. Same launch, same requirement. */
+const browser = await puppeteer.launch({
+  headless: true,
+  args: ['--no-sandbox', '--disable-dev-shm-usage'],
+});
 const problems = [];
 let checks = 0;
 

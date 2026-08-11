@@ -63,8 +63,18 @@ jobs:
       - name: Lighthouse CI — desktop, category scores (Digital 100/100/100)
         run: npm run check:lhci:desktop
 
+      # lhci prints nothing when it passes, so a green log carries no measurements.
+      # `always()` because the numbers matter most on the run that failed.
+      - name: Desktop numbers
+        if: always()
+        run: node scripts/lhci-report.mjs desktop
+
       - name: Lighthouse CI — mobile 4G, Core Web Vitals asserted directly
         run: npm run check:lhci:mobile
+
+      - name: Mobile numbers — these set the Stage 3 LCP budgets (Q-M16)
+        if: always()
+        run: node scripts/lhci-report.mjs mobile
 
       # axe and the responsive sweep share one server on 3000, started and stopped by
       # with-server so neither can run against a server that never came up.

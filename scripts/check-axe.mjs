@@ -91,7 +91,20 @@ async function domIntegrity(page, route) {
   return found.length;
 }
 
-const browser = await puppeteer.launch({ headless: true });
+/**
+ * `--no-sandbox` is required on GitHub's runners: the Chrome sandbox needs user
+ * namespaces the container does not grant, and without it Chrome aborts on launch with a
+ * stack trace rather than a readable error. `--disable-dev-shm-usage` avoids the 64MB
+ * /dev/shm that makes it crash again later, under load rather than at startup.
+ *
+ * Both Lighthouse configs already passed these as `chromeFlags`; the two Puppeteer gates
+ * did not, so they were the only two of the four browser launch sites that failed in CI —
+ * and they failed 3 seconds into a step that passes in 20 locally.
+ */
+const browser = await puppeteer.launch({
+  headless: true,
+  args: ['--no-sandbox', '--disable-dev-shm-usage'],
+});
 let total = 0;
 let checked = 0;
 
