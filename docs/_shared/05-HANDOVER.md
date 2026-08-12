@@ -351,20 +351,23 @@ place in the repository before, an exemption. Nine gates changed in total.
 
 15 findings, none of them re-reports of §9. All fixed. The ones that change how you work:
 
-### ⚠ None of this has been verified by CI
+### ✔ Verified by CI — run #16, commit `ecf37b02`, all 18 steps green
 
-**Everything in §9 and §10 is in the working tree, uncommitted.** `HEAD` is `668a76ff`,
-which still has the five-route `check-responsive`. So:
+Both Lighthouse axes ran against these changes, including the `http-status-code`
+assertion added to each. Medians of 3, `ubuntu-latest`, Node 24:
 
-- Every "green" in §9 and §10 is a **local Windows** result.
-- **The two Lighthouse axes have never executed against these changes at all** — they do
-  not run on Windows. That includes the `http-status-code` assertion added to both configs,
-  which has therefore never run anywhere.
-- `check-node-version.mjs` reading `ci.yml` has likewise only run locally.
+| Axis | Digital | All four routes |
+|---|---|---|
+| Desktop | **perf 1.00 · a11y 1.00** · bp 0.96 · seo 0.90 | LCP 436–513ms, CLS 0.000, TBT 0ms |
+| Mobile 4G | LCP **1520ms** against a 1600ms ceiling — **80ms headroom** | LCP 1518–1522ms, CLS 0.000, TBT 85–89ms |
 
-`01-VALIDATION-REPORT.md` §13 and CLAUDE.md both say CI is the arbiter. **Commit, push, and
-read the CI run before treating any of this as done.** Committing was deliberately left to
-the repository owner rather than done unilaterally.
+Both in the bands §6 already records (LCP 1519–1530ms, TBT ~90ms ±13). `benchmarkIndex`
+2179 mobile / 2202 desktop, inside the 1259–2216 range across 12 runs — so nothing here is
+a runner artefact.
+
+**Run #14 was red first, on TypeScript**, and the cause is worth keeping: see the note in
+§5 about local typecheck not being equivalent to CI. One defect in this work was only ever
+observable on Linux.
 
 ### The blockers
 
