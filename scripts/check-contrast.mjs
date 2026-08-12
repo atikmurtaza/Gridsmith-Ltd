@@ -25,6 +25,26 @@ const THEMES = ['master', 'design', 'digital', 'press'];
 const TOLERANCE = 0.02; // DESIGN.md now carries measured values to 2dp
 
 /**
+ * How much this gate must measure. **Literals, deliberately** — both numbers are
+ * published (FOUNDATION §3, tracker A-03) and both were previously unenforced or
+ * self-enforced:
+ *
+ *  - `EXPECTED_PAIRS` did not exist. PAIRS is the half of this gate that exists because
+ *    25 of the 29 figures in the four DESIGN.md §2 tables were wrong and two were hiding
+ *    real WCAG AA failures. Emptying a theme's array reported fewer pairs and exited 0.
+ *  - `EXPECTED_CELLS` was computed as `THEMES.length * (Object.keys(USE).length - 3) *
+ *    SURFACES.length + …` — from the same USE table the loop iterates. Remove a token
+ *    from USE and the measured count and the expected count fell together, green, having
+ *    measured less. It caught only an in-loop `continue`, the one failure the loop was
+ *    already structurally safe from. The `- 3` and `1 * 3 *` were hand-maintained and
+ *    tied to MASTER_EXTRAS by nothing but a comment.
+ *
+ * An expectation derived from its own subject is not an expectation.
+ */
+const EXPECTED_PAIRS = 29;
+const EXPECTED_CELLS = 101;
+
+/**
  * Pairs as named in each DESIGN.md §2 table, with the ratio each table publishes.
  * These are measured values as of A-03, not the original estimates — 25 of the 29
  * figures originally published were wrong, two of them hiding a real AA failure.
@@ -211,6 +231,16 @@ if (failures.length > 0) {
   console.error('');
 }
 
+// Ratios measured is not the same as ratios measured. An emptied PAIRS array reports
+// fewer pairs and every one of them passing.
+if (rows.length !== EXPECTED_PAIRS) {
+  failures.push(
+    `measured ${rows.length} DESIGN.md pairs, expected ${EXPECTED_PAIRS}. A published figure ` +
+      'left the tables without leaving this gate.',
+  );
+  console.error(`check-contrast: ${failures[failures.length - 1]}\n`);
+}
+
 /* ---------------------------------------------------------------------------------
  * The permission matrix. Every foreground token against every surface, in every theme.
  * ------------------------------------------------------------------------------- */
@@ -267,11 +297,6 @@ for (const theme of THEMES) {
 }
 
 // A matrix that measured nothing is not a matrix that passed.
-const EXPECTED_CELLS =
-  THEMES.length * (Object.keys(USE).length - 3) * SURFACES.length + // shared tokens
-  1 * 3 * SURFACES.length + // master's three division accents
-  THEMES.length * 2; // --accent-ink over --accent and --accent-hover
-
 if (matrix.length !== EXPECTED_CELLS) {
   matrixProblems.push(
     `matrix evaluated ${matrix.length} cells, expected ${EXPECTED_CELLS}. Something was skipped.`,

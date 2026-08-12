@@ -104,9 +104,16 @@ curve that moves between Lighthouse versions. Nothing was lowered when the two w
 not produce one; this file previously named LHCI as its enforcement, which was never
 possible. TBT at the same ceiling is the lab proxy. See `_shared/01-VALIDATION-REPORT.md` §11.
 
-**⚠ The LCP ceiling here is provisional.** An empty page measures 1441ms under real 4G;
-every LCP budget in the programme was set against desktop numbers and is unvalidated until
-a page with real content has been measured. `Q-M16`.
+**The LCP ceilings here are measured, not provisional.** CI run #7, `ubuntu-latest`, Node 24,
+median of 3, devtools throttling: 1519–1530ms across the four routes. The 1441ms figure this
+paragraph used to quote was the superseded dev-machine number, and the sentence stayed after
+`Q-M16` was closed and `_shared/00-FOUNDATION.md` §8 and `05-HANDOVER.md` took the budgets
+off provisional.
+
+**What remains open is durability, not the number.** Every figure above is what an empty
+page costs — one `h1`, 425 B of route JS. Hero imagery, work grids and book covers all
+produce a larger and later LCP element. Re-measure at the first Stage 3 route, not at
+`H-01`, by which point the remedy is cutting a page feature to pay for a floor. `Q-M16`.
 
 | Press route JS **delta ≤20KB gz** above the framework floor — covers books shelf and filters | `check-bundle-size` |
 | `/press/path-finder` JS **delta ≤40KB gz** | `check-bundle-size` |

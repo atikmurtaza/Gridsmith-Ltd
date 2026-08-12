@@ -156,6 +156,6 @@ Divisions cannot start Phase 1 until master Phase 1 is complete — they inherit
 | Ecosystem argument reads as corporate filler | Medium | High | The continuity example must be real and specific; the limits section must be honest. Both are content problems, not design ones |
 | No real cross-division projects exist yet | **High** | High | Seed 3 for launch; treat winning one as a business priority — it is the proof the whole model rests on |
 | Master layer gets skipped to ship divisions faster | Medium | **Severe** | Header, footer, consent and canonical case study routes all live here. Skipping it means rebuilding all three divisions |
-| Division accents used as text on white | Medium | Medium | Amber is 2.0:1. Lint rule + documented in DESIGN.md §2 |
+| Division accents used as text on white | Medium | Medium | Amber is 2.16:1 (check:contrast). Lint rule + documented in DESIGN.md §2 |
 | Response commitment drifts on some template | Medium | Medium | Single source of truth in `companyDetails`; audit task 6.7 |
 | Redirect map incomplete | Medium | High | 4.1–4.3 with a zero-unmapped DoD |

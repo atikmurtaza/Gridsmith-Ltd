@@ -4,8 +4,13 @@
    (1.45–1.79:1). FOUNDATION §3.
    Every state carries a non-colour cue as well as any colour change — WCAG 1.4.1. */
 
-/* One focus treatment for the whole system. 17.9:1 minimum against every canvas, and
-   independent of --accent so it survives on Digital where the accent has no headroom. */
+/* One focus treatment for the whole system, and independent of --accent so it survives on
+   Digital where the accent has no headroom.
+   --ink measures 15.42:1 at its worst cell across all four themes and all three surfaces —
+   check:contrast, permission matrix. This comment claimed "17.9:1 minimum", which is
+   Design's --ink-on-canvas figure, not the minimum of anything. Every value clears AAA
+   either way, so nothing about the treatment changes; an asserted number no gate supports
+   does not belong in the shared primitive layer. */
 .focusable:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
@@ -153,6 +158,11 @@
 /* Current step: filled marker + heavier title + aria-current. Three cues. */
 .stepCurrent .stepMarker { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .stepCurrent .stepTitle { font-weight: 600; color: var(--ink); }
-.stepDone .stepMarker { border-color: var(--ink-muted); color: var(--ink); }
+/* Completed step: heavier border + a "completed" prefix read out by the sr-only span in
+   Stepper.tsx. This carried border-color and color and nothing else — two colour changes,
+   which is the one thing WCAG 1.4.1 forbids, in the primitive that renders the canonical
+   six process stages on every division. The border-width step is the non-colour cue the
+   component's own docstring already claimed it had. */
+.stepDone .stepMarker { border-width: 2px; border-color: var(--ink-muted); color: var(--ink); }
 .stepTitle { font-family: var(--font-display); font-size: var(--text-lg); color: var(--ink-muted); }
 .stepBody { color: var(--ink-muted); }

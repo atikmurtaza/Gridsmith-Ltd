@@ -33,6 +33,23 @@ const config = [
     files: ['*.cjs', 'lighthouse/**/*.cjs'],
     rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
+  {
+    // The 404 uses a plain <a>, and the rule that forbids it is measurably wrong here.
+    //
+    // `no-html-link-for-pages` exists to stop a full document load where client-side
+    // navigation would do. But Next puts the ROOT not-found boundary into every route's
+    // script list, so importing the Link primitive — which wraps next/link, a Client
+    // Component — put 4.3KB gz on every page in the site. Measured on both sides:
+    // check-bundle-size read 104.5KB per route with it and exactly 100.2KB, the framework
+    // floor, without. That is 29% of Digital's entire 15KB delta budget spent on a page
+    // almost nobody reaches, permanently, to save one document load from a dead URL.
+    //
+    // CLAUDE.md non-negotiable #8: the budget does not move, the feature changes. This is
+    // the feature changing. Scoped to the one file, with the numbers, rather than an
+    // inline disable someone later reads as noise.
+    files: ['app/not-found.tsx'],
+    rules: { '@next/next/no-html-link-for-pages': 'off' },
+  },
 ];
 
 export default config;

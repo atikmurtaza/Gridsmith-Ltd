@@ -3,6 +3,18 @@
 **Date:** 12 August 2026 · **Branch:** `feat/a-01-a-10a-scaffold-ci` · **Runtime:** Node
 v24.15.0 (matches `.nvmrc`) · **Scope:** Epic A entire — A-01 to A-12, A-05a, A-10b
 
+> **RESOLVED — 12 August 2026.** Every finding below is fixed. The three blockers, the
+> three gate holes, the majors, the minors and all seven documentation contradictions.
+> **This file is left as written**, as the record of what was found and how; do not edit
+> the findings to match the current tree. What was done about each, with every
+> deliberate-failure proof, is `01-VALIDATION-REPORT.md` §14, and the operational summary
+> is `05-HANDOVER.md` §9.
+>
+> **The verdict in §7 still stands.** Criteria 5 and 6 failed and remain open: they ask
+> for a fresh-context run returning zero, and the context that fixed these findings is the
+> worst available reviewer of the fixes — the same reasoning that put those criteria there.
+> Re-run `rules-compliance` and `accessibility-audit`, **two agents, alone** (§0).
+
 This is the fresh-context audit that A-GATE criteria 5 and 6 require. It supersedes
 nothing in `01-VALIDATION-REPORT.md`; it tests whether what that report records as closed
 is actually present in the repository, and looks for what it missed.

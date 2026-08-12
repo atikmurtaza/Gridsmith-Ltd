@@ -5,11 +5,14 @@
  * Starts the production server, runs each command given to it, stops the server, and
  * exits non-zero if any command failed.
  *
- * This exists so `npm run verify` can run every gate. It used to run five of the ten and
- * say nothing about the other five — the three that need a build and the two that need a
- * running server. CI ran all ten, so merges were safe, but a developer running the script
- * named "verify" got half the coverage with no indication of it, which is the same
- * unearned confidence as a gate that measures nothing.
+ * This exists so `npm run verify` can run every gate. There are **fourteen** — this
+ * comment said ten, which was the count before `check:contrast`, `check:responsive` and
+ * the Lighthouse split. `verify` used to run five of them and say nothing about the rest:
+ * the three that need a build and the two that need a running server. CI ran everything,
+ * so merges were safe, but a developer running the script named "verify" got a third of
+ * the coverage with no indication of it, which is the same unearned confidence as a gate
+ * that measures nothing. `check-node-version.mjs` now asserts that this list and the CI
+ * step list are the same set.
  *
  * `next` is spawned directly rather than through npm so there is one process to stop.
  * An npm wrapper leaves the server orphaned on Windows when the parent is killed.

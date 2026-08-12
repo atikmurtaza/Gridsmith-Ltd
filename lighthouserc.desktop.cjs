@@ -50,6 +50,13 @@ module.exports = {
         matchingUrlPattern: pattern(ORIGIN, r.path),
         aggregationMethod: 'median',
         assertions: {
+          // Neither axis asserted that the page it measured actually loaded. A route that
+          // 404s is still collected, and a themeless Next 404 page scores 1.0 on
+          // accessibility and clears every LCP, CLS and TBT ceiling — so a renamed route
+          // would have turned this gate green by measuring nothing. check-axe and
+          // check-responsive do guard status, but they run in a later CI step.
+          'http-status-code': ['error', { minScore: 1 }],
+
           'categories:performance': ['error', { minScore: r.perf }],
           'categories:accessibility': ['error', { minScore: 1 }],
           'categories:seo': ['error', { minScore: 0.9 }],

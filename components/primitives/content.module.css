@@ -16,13 +16,20 @@
 .cardRaised { background: var(--canvas-raised); }
 .cardFlush { padding: 0; }
 
-/* Whole-card link: the <a> inside is the affordance and stays the focus target; the
-   card is only the visual frame. Focus is mirrored onto the frame so the ring is not
-   drawn around a text fragment in the middle of a large card. */
+/* Whole-card link: the <a> in the card's heading is the affordance and stays the focus
+   target; the card is only the visual frame. Focus is mirrored onto the frame so the ring
+   is not drawn around a text fragment in the middle of a large card.
+
+   Scoped to the heading link, not to every descendant <a>. `.cardLinked a::after` gave a
+   full-card overlay to EVERY link in the card, and since they all share `inset: 0` on one
+   containing block the last one in DOM order silently won every click — so a card with a
+   title link and a "read the case study" link sent the whole card to the second one. The
+   heading link is where this pattern puts the target, and a card with no heading link now
+   gets no overlay: a failure someone can see, rather than one that quietly retargets. */
 .cardLinked { position: relative; transition: border-color var(--dur-base) var(--ease-out); }
 .cardLinked:hover { border-color: var(--line-strong); }
-.cardLinked:has(a:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
-.cardLinked a::after { content: ''; position: absolute; inset: 0; }
+.cardLinked:has(:is(h1, h2, h3, h4, h5, h6) a:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+.cardLinked :is(h1, h2, h3, h4, h5, h6) a::after { content: ''; position: absolute; inset: 0; }
 
 .badge {
   display: inline-flex;
@@ -58,9 +65,13 @@
   border-block-end: var(--border-hairline) solid var(--line);
   vertical-align: top;
 }
+/* No `position: sticky` here. It was declared with `inset-block-start: 0` and could never
+   take effect: .tableWrap constrains the inline axis only (`overflow-x: auto`), so the
+   header's scroll container is the viewport and there is nothing for it to stick within.
+   Dead CSS that reads as a feature — the docstring on Table.tsx claimed a sticky header.
+   It comes back with a `max-block-size` on the wrapper at C-02, where the drawing matrix
+   is tall enough to need one. */
 .table thead th {
-  position: sticky;
-  inset-block-start: 0;
   background: var(--canvas-raised);
   font-family: var(--font-mono);
   font-size: var(--text-xs);

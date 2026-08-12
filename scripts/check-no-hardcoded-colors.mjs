@@ -11,19 +11,19 @@
  * Deliberately a script rather than an ESLint rule: ESLint does not parse CSS, and
  * the CSS files are exactly where a stray hex is most likely to appear.
  */
-import { readdirSync, readFileSync, existsSync } from 'node:fs';
-import { join, relative, posix, sep } from 'node:path';
-
-const ROOTS = ['app', 'components', 'styles', 'scripts'];
+import { readFileSync } from 'node:fs';
+import { sourceFiles } from './source-files.mjs';
 
 /**
- * Trees the repository shape declares (CLAUDE.md, master/PROJECT-RULES.md §2) that do not
- * exist yet, with the task that creates each. Naming them keeps the omission deliberate:
- * the gate fails if one appears without being promoted into ROOTS, so a new tree cannot
- * arrive unscanned.
+ * Which trees are scanned, and the guarantee that a new one cannot arrive unscanned,
+ * live in scripts/source-files.mjs — shared with check-service-role-key, because the
+ * two gates were drifting apart on the same invariant.
+ *
+ * `.svg` is deliberately NOT source here. A brand mark is an asset and legitimately
+ * carries its own colour (Q-M15); the rule is about stylesheets and components, which is
+ * where a stray hex breaks theming. `.svg` IS worth adding the day an inline SVG icon
+ * set arrives in components/, since those must inherit `currentColor`.
  */
-const PENDING_ROOTS = { lib: 'A-07 — Supabase client, lead pipeline, consent' };
-
 const SOURCE = /\.(?:ts|tsx|js|jsx|mjs|cjs|css)$/;
 
 /** The token layer — the one place colour is allowed to exist. */
@@ -40,8 +40,11 @@ const RULES = [
     re: /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{4}|[0-9a-fA-F]{3})\b/g,
   },
   {
+    // `color-mix` was absent, and it is precisely how someone tints a token without
+    // writing a literal: `color-mix(in srgb, var(--accent), white 20%)` is a new colour
+    // that no theme declares and no contrast gate measures.
     id: 'color-fn',
-    re: /\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\s*\(/g,
+    re: /\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color-mix)\s*\(/g,
   },
   {
     id: 'tailwind',
@@ -78,59 +81,74 @@ const AMBER_AS_TEXT = {
   re: /(?<![-\w])(?:color|fill|stroke|caret-color|text-decoration-color)\s*:\s*var\(\s*--accent-design\s*\)/gi,
 };
 
-/** Named CSS colours, checked in stylesheets only — too many false positives in TS. */
-const CSS_NAMED = {
-  id: 'named',
-  re: /:\s*(?:red|blue|green|black|white|gray|grey|orange|yellow|purple|pink|brown|cyan|magenta|silver|gold|navy|teal|olive|maroon|lime|aqua|fuchsia|crimson|coral|salmon|khaki|violet|indigo|turquoise|tan|beige|ivory)\b/gi,
-};
-
-const toPosix = (p) => p.split(sep).join(posix.sep);
+/**
+ * Named CSS colours, checked in stylesheets only — too many false positives in TS.
+ *
+ * **This used to be `/:\s*(?:red|blue|…)/` — the colour word had to sit IMMEDIATELY after
+ * a colon.** Run against realistic input, that rule caught `color: red` and missed every
+ * one of these:
+ *
+ *     border: 1px solid red;
+ *     outline: 2px dashed black;
+ *     box-shadow: 0 0 0 1px navy;
+ *     background: var(--canvas) no-repeat white;
+ *     background: linear-gradient(to right, teal, gold);
+ *
+ * The first of those is not a hypothetical shape. The entire design language is 1px
+ * borders and the shorthand is already idiomatic here — `interactive.module.css` writes
+ * `border-block-end: 2px solid transparent`. A named colour in that position shipped
+ * unflagged, under a gate reporting "clean", enforcing CLAUDE.md non-negotiable #1.
+ *
+ * Whatever deliberate-failure proof this gate originally had must have used `color:` or a
+ * hex, both of which it caught. A proof that exercises only the forms a check already
+ * catches has not proven anything. The proof for this version uses
+ * `border: 1px solid red`, and is recorded in 01-VALIDATION-REPORT §14.
+ *
+ * The fix is a declaration mask, not a longer regex: the word is flagged anywhere inside
+ * a declaration value, and nowhere else. Doing it with a lookbehind alone would flag
+ * `.gold`, `#silver` and prose in comments.
+ */
+const NAMED = /(?<![\w-])(?:red|blue|green|black|white|gray|grey|orange|yellow|purple|pink|brown|cyan|magenta|silver|gold|navy|teal|olive|maroon|lime|aqua|fuchsia|crimson|coral|salmon|khaki|violet|indigo|turquoise|tan|beige|ivory)(?![\w-])/gi;
 
 /**
- * A missing root used to `continue`, so renaming `components/` would have narrowed the
- * sweep to whatever was left and still reported "clean". A gate that enumerates its own
- * subjects must fail when one is missing, not quietly scan fewer.
+ * Blanks everything that is not a declaration value, preserving offsets so line and
+ * column numbers stay true. Comments and quoted strings go first — a comment explaining
+ * why a literal was removed contains the literal, and `--font-body: 'Silver Sans'` is a
+ * typeface, not a colour.
+ *
+ * A value runs from `:` to the next `;`, `{` or `}`. That admits the `:` in `a:hover`
+ * until the `{` closes it, which costs nothing: no pseudo-class is a colour name.
+ * Crucially it spans newlines, so a multi-line `transition:` or `background:` value —
+ * which this codebase writes — is covered. A per-line rule would not have been.
  */
-function sourceFiles() {
-  for (const [root, when] of Object.entries(PENDING_ROOTS)) {
-    if (existsSync(root)) {
-      console.error(`\nno-hardcoded-colors: "${root}/" now exists (${when}) but is not in ROOTS.`);
-      console.error('Promote it, or every colour in it ships unchecked.\n');
-      process.exit(1);
-    }
+function declarationValues(css) {
+  const blanked = css.replace(/\/\*[\s\S]*?\*\/|'[^'\n]*'|"[^"\n]*"/g, (m) =>
+    m.replace(/[^\n]/g, ' '),
+  );
+  const out = [...blanked].map((ch) => (ch === '\n' ? '\n' : ' '));
+  let inValue = false;
+  for (let i = 0; i < blanked.length; i += 1) {
+    const ch = blanked[i];
+    if (ch === ':') inValue = true;
+    else if (ch === ';' || ch === '{' || ch === '}') inValue = false;
+    else if (inValue) out[i] = ch;
   }
-
-  const out = [];
-  for (const root of ROOTS) {
-    if (!existsSync(root)) {
-      console.error(`\nno-hardcoded-colors: root "${root}/" does not exist — it was not scanned.`);
-      console.error('Remove it from ROOTS deliberately, or fix the path. Skipping it silently is not an option.\n');
-      process.exit(1);
-    }
-    for (const entry of readdirSync(root, { recursive: true, withFileTypes: true })) {
-      if (!entry.isFile() || !SOURCE.test(entry.name)) continue;
-      out.push(toPosix(relative('.', join(entry.parentPath ?? root, entry.name))));
-    }
-  }
-  return out.sort();
+  return out.join('');
 }
 
 const violations = [];
+const files = sourceFiles('no-hardcoded-colors', SOURCE);
 
-for (const file of sourceFiles()) {
+for (const file of files) {
   // The token layer is exempt from the colour-literal rules — that is where colour is
   // declared. It is NOT exempt from the amber rule: the token may be defined in
   // master.css, but painting glyphs with it is wrong wherever it happens.
   const isTokenLayer = ALLOWED.some((re) => re.test(file));
 
-  const rules = isTokenLayer
-    ? [AMBER_AS_TEXT]
-    : file.endsWith('.css')
-      ? [...RULES, CSS_NAMED, AMBER_AS_TEXT]
-      : [...RULES, AMBER_AS_TEXT];
-  const lines = readFileSync(file, 'utf8').split(/\r?\n/);
+  const rules = isTokenLayer ? [AMBER_AS_TEXT] : [...RULES, AMBER_AS_TEXT];
+  const source = readFileSync(file, 'utf8');
 
-  lines.forEach((line, i) => {
+  source.split(/\r?\n/).forEach((line, i) => {
     for (const { id, re } of rules) {
       re.lastIndex = 0;
       let m;
@@ -139,10 +157,29 @@ for (const file of sourceFiles()) {
       }
     }
   });
+
+  // Named colours run over the whole file rather than line by line, because the mask that
+  // decides what is a declaration value has to span newlines to cover a multi-line value.
+  if (!isTokenLayer && file.endsWith('.css')) {
+    const masked = declarationValues(source);
+    NAMED.lastIndex = 0;
+    let m;
+    while ((m = NAMED.exec(masked)) !== null) {
+      const before = masked.slice(0, m.index);
+      const line = before.split('\n').length;
+      violations.push({
+        file,
+        line,
+        col: m.index - before.lastIndexOf('\n'),
+        id: 'named',
+        text: m[0],
+      });
+    }
+  }
 }
 
 if (violations.length === 0) {
-  console.log(`no-hardcoded-colors: clean (${sourceFiles().length} files)`);
+  console.log(`no-hardcoded-colors: clean (${files.length} files)`);
   process.exit(0);
 }
 

@@ -26,6 +26,45 @@ if (!existsSync(BUILD_DIR)) {
   process.exit(1);
 }
 
+/**
+ * The 39 base tokens — FOUNDATION §3. **Hardcoded, exactly as the 15-token theme
+ * CONTRACT below already is.**
+ *
+ * This list did not exist. `declared` was scraped out of tokens.css and then checked
+ * against the build, so the gate's expectation and the gate's subject were the same file
+ * and the only floor was `length === 0`. Proven at the Epic A audit: `--text-3xl`,
+ * `--measure`, `--measure-narrow` and `--shadow-2` were deleted from tokens.css and the
+ * gate printed "35 base tokens, each declared exactly once" and exited 0.
+ *
+ * The tokens that proof used were not chosen at random. `--text-3xl` is the exact token
+ * FOUNDATION §3 names as the Tailwind namespace-collision hazard, and `--shadow-2` is the
+ * hard shadow ceiling in CLAUDE.md. The gate written to protect them could not notice
+ * them leaving.
+ *
+ * The asymmetry was the tell: the theme contract was hardcoded and correctly protected,
+ * while the base layer all four themes build on had no required list at all. Both halves
+ * now work the same way. Adding a token means adding it here — that is the point, not an
+ * inconvenience: a required list nobody has to update is a required list of nothing.
+ */
+const REQUIRED = [
+  // Spacing — 4px base, geometric
+  '--space-1', '--space-2', '--space-3', '--space-4', '--space-6', '--space-8',
+  '--space-12', '--space-16', '--space-24', '--space-32', '--space-48',
+  // Type scale — 1.25 major third, fluid
+  '--text-xs', '--text-sm', '--text-base', '--text-lg',
+  '--text-xl', '--text-2xl', '--text-3xl', '--text-4xl',
+  '--leading-tight', '--leading-snug', '--leading-normal', '--leading-relaxed',
+  '--measure', '--measure-narrow',
+  // Structure — hairlines, not shadows. No --shadow-3, deliberately.
+  '--border-hairline',
+  '--radius-none', '--radius-sm', '--radius-md',
+  '--shadow-1', '--shadow-2',
+  // Motion — opacity and transform only
+  '--ease-out', '--dur-fast', '--dur-base', '--dur-slow',
+  // Layout
+  '--container', '--container-narrow', '--grid-cols', '--gutter',
+];
+
 // Not line-anchored: tokens.css packs several declarations onto one line, and an
 // anchored pattern silently reports only the first of each — a gate understating its
 // own coverage. A trailing colon is what distinguishes a declaration from a var() use.
@@ -35,8 +74,21 @@ const declared = [
   ),
 ];
 
-if (declared.length === 0) {
-  console.error(`check-tokens: no tokens found in ${SOURCE}. That is almost certainly wrong.`);
+// Both directions. Missing means the base layer shrank without anyone saying so; extra
+// means a token was added and FOUNDATION §3's published count is now wrong — and an
+// undeclared token is one nothing in this file has ever checked reaches the build.
+const missing = REQUIRED.filter((t) => !declared.includes(t));
+const extra = declared.filter((t) => !REQUIRED.includes(t));
+
+if (missing.length > 0 || extra.length > 0) {
+  console.error(`\ncheck-tokens: ${SOURCE} does not match the required base-token list\n`);
+  for (const t of missing) console.error(`  ${t.padEnd(20)} required by FOUNDATION §3, absent from ${SOURCE}`);
+  for (const t of extra) console.error(`  ${t.padEnd(20)} declared in ${SOURCE}, not in the required list`);
+  console.error(
+    `\nThe list in this file is the specification; ${SOURCE} is the subject. If the token` +
+      '\nlayer is genuinely changing, change REQUIRED here and the count in FOUNDATION §3 in' +
+      '\nthe same commit — they are two statements of one fact.\n',
+  );
   process.exit(1);
 }
 
@@ -159,7 +211,17 @@ console.log(
  * class, so it gets the same treatment rather than a code review note.
  * ------------------------------------------------------------------------------- */
 
-const STYLE_ROOTS = ['app', 'components'];
+// `styles/` was missing, which is where globals.css and the four theme files live. A raw
+// `450ms` in any of them was outside the sweep, in the gate that asserts motion is on the
+// token scale. Same class as the narrowed subjects in the two lint gates.
+const STYLE_ROOTS = ['app', 'components', 'styles'];
+
+// tokens.css is where the duration scale is DECLARED, and the reduced-motion block that
+// collapses it lives there too. Exempting the declaration site is the same shape as
+// check-no-hardcoded-colors exempting the token layer from the colour rules: the point of
+// a token file is to be the one place a literal is allowed. Nothing else in styles/ is
+// exempt, which is what makes adding the root worth anything.
+const DURATION_SOURCE = 'styles/tokens.css';
 const DURATION = /(?<![\w.-])\d+(?:\.\d+)?m?s(?![\w-])/g;
 
 const durationProblems = [];
@@ -172,8 +234,9 @@ for (const root of STYLE_ROOTS) {
   }
   for (const entry of readdirSync(root, { recursive: true, withFileTypes: true })) {
     if (!entry.isFile() || !entry.name.endsWith('.css')) continue;
-    cssFilesScanned += 1;
     const file = join(entry.parentPath ?? root, entry.name);
+    if (file.split(sep).join('/') === DURATION_SOURCE) continue;
+    cssFilesScanned += 1;
     readFileSync(file, 'utf8')
       // Blank out comments, preserving line count. A comment explaining why a literal was
       // removed contains the literal, and flagging that is a gate arguing with its own
@@ -191,7 +254,10 @@ for (const root of STYLE_ROOTS) {
 }
 
 if (cssFilesScanned === 0) {
-  console.error('\ncheck-tokens: no CSS modules found under app/ or components/. Nothing was scanned.\n');
+  console.error(
+    `\ncheck-tokens: no CSS files found under ${STYLE_ROOTS.map((r) => r + '/').join(', ')}` +
+      ` (excluding ${DURATION_SOURCE}). Nothing was scanned.\n`,
+  );
   process.exit(1);
 }
 

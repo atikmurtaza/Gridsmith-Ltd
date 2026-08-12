@@ -81,6 +81,16 @@ for (const [route, division] of EXPECTED) {
 // This is the load-bearing check, and it used to be wrapped in `if (existsSync(...))` —
 // so a renamed or missing chunk directory skipped it in silence and the gate still passed
 // on the other two. A check that can be skipped is a check that will be.
+//
+// Two spellings, because the literal string was evadable and the gate's own comment calls
+// this the load-bearing check. `el.setAttribute('data-division', …)` contains the string
+// and was caught; `el.dataset.division = 'press'` sets the same attribute and never emits
+// it. Minifiers keep property names, so the second pattern survives into the chunk.
+const TOUCHES_ATTRIBUTE = [
+  { re: /data-division/, how: 'references data-division' },
+  { re: /\bdataset\s*\.\s*division\b/, how: 'sets el.dataset.division — the same attribute, spelled so a string search misses it' },
+];
+
 if (!existsSync(CHUNK_DIR)) {
   problems.push(`${CHUNK_DIR} does not exist — the client-chunk sweep could not run`);
 } else {
@@ -89,8 +99,11 @@ if (!existsSync(CHUNK_DIR)) {
     if (!entry.isFile() || !entry.name.endsWith('.js')) continue;
     scanned += 1;
     const file = join(entry.parentPath ?? CHUNK_DIR, entry.name);
-    if (readFileSync(file, 'utf8').includes('data-division')) {
-      problems.push(`${entry.name}: client chunk references data-division — it must never be set on the client`);
+    const source = readFileSync(file, 'utf8');
+    for (const { re, how } of TOUCHES_ATTRIBUTE) {
+      if (re.test(source)) {
+        problems.push(`${entry.name}: client chunk ${how} — the theme must never be set on the client`);
+      }
     }
   }
   if (scanned === 0) {

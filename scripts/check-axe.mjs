@@ -34,7 +34,56 @@ const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
 
-const ROUTES = ['/', '/design', '/digital', '/press', '/_kitchen-sink'];
+/**
+ * `status` is asserted, not assumed. The 404 is a route like any other: `M-07` puts real
+ * content there and `M-04`/`L-05` put the statutory company disclosure on *every* page,
+ * which is a legal requirement rather than a footer decoration. Until now `_not-found`
+ * appeared in exactly one place in the entire repository — an exemption in
+ * check-bundle-size — so the one route that ships a legal obligation was the one route no
+ * gate measured. A 404 has to be requested by fetching something that does not exist, and
+ * a gate that treats every non-200 as a measurement failure cannot audit it; hence the
+ * expected status rather than a blanket `>= 400`.
+ */
+const ROUTES = [
+  { path: '/', status: 200 },
+  { path: '/design', status: 200 },
+  { path: '/digital', status: 200 },
+  { path: '/press', status: 200 },
+  { path: '/_kitchen-sink', status: 200 },
+  { path: '/_gridsmith-404-probe', status: 404 },
+];
+
+/**
+ * **The gate used to audit one state of one viewport, and call it the page.**
+ *
+ * 1280×900, scrolled to the document foot. The scroll was deliberate and correct — it
+ * reaches StickyCta and RevealOnScroll, and auditing the top of a page is auditing less
+ * of it. What nobody noticed is that it also means *no route is ever audited in the state
+ * a visitor first meets*, and that the one width it used is the width where StickyCta is
+ * `display: none`. So the bar was never evaluated in its real `position: fixed` form, at
+ * any width, in any state.
+ *
+ * A Level A failure lived in that blind spot: four painted StickyCta specimens carrying
+ * eight visible links that were simultaneously `inert` and `aria-hidden`. `inert` is
+ * exactly what axe is built to skip, and scrolling to the foot flipped them live before
+ * axe looked. **`check-axe` reporting `/_kitchen-sink` clean was a green result from a
+ * check that did not measure the failing state** — the gate-blindness class, occurring
+ * inside the gate written to close it.
+ *
+ * Both axes are now real: 375px is the width the Definition of Done names first and where
+ * the mobile-only chrome exists at all, and scroll 0 is where every visitor starts.
+ * Viewport-dependent WCAG 2.2 rules — `target-size` (2.5.8) most obviously — were being
+ * evaluated at desktop width only.
+ */
+const VIEWPORTS = [
+  { label: '375px', width: 375, height: 812 },
+  { label: '1280px', width: 1280, height: 900 },
+];
+
+const PHASES = [
+  { label: 'initial', scrollToFoot: false },
+  { label: 'scrolled', scrollToFoot: true },
+];
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
@@ -80,6 +129,15 @@ async function domIntegrity(page, route) {
     spread('input[type="radio"]', 'name', 'radio group');
     spread('details[name]', 'name', 'exclusive details group');
 
+    // Every route must be themed. check-theme-flash asserts this from the prerendered
+    // HTML for the four route groups, which is the right place for it — but it reads the
+    // raw file, and the 404's raw file is a streaming shell that the parser resolves.
+    // Reading the parsed DOM here is what covers the routes that gate cannot see, and it
+    // is how a themeless page would be caught at all.
+    if (!document.body.dataset.division) {
+      problems.push('<body> carries no data-division — this page renders with no theme');
+    }
+
     return problems;
   });
 
@@ -106,64 +164,74 @@ const browser = await puppeteer.launch({
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
 });
 let total = 0;
-let checked = 0;
+let analyses = 0;
 
 try {
   for (const route of ROUTES) {
-    const page = await browser.newPage();
-    await page.setViewport({ width: 1280, height: 900 });
+    for (const viewport of VIEWPORTS) {
+      const page = await browser.newPage();
+      await page.setViewport({ width: viewport.width, height: viewport.height });
 
-    const response = await page.goto(`${BASE_URL}${route}`, { waitUntil: 'networkidle0' });
+      const response = await page.goto(`${BASE_URL}${route.path}`, { waitUntil: 'networkidle0' });
 
-    // A route that did not load is a measurement failure, not zero violations. Reporting
-    // "0 violations" for a 404 is precisely the unearned-confidence failure the gate
-    // rules in CLAUDE.md exist to prevent.
-    // 304 is a load, not a failure: puppeteer reuses its cache across pages in one
-    // browser, so a revisited route legitimately returns Not Modified.
-    if (!response || response.status() >= 400) {
-      console.error(`\ncheck-axe: ${route} returned ${response ? response.status() : 'no response'}.`);
-      console.error('Cannot audit this route. Fix the route or the base URL.\n');
-      process.exit(1);
-    }
-
-    // Scroll to the foot before analysing. StickyCta only un-hides itself past 40% scroll
-    // depth and RevealOnScroll only reveals on intersection, so an audit taken at scroll
-    // position zero skips both — aria-hidden and inert subtrees are exactly what axe is
-    // designed not to look at. Auditing the top of the page is auditing less of it.
-    await page.evaluate(async () => {
-      window.scrollTo(0, document.body.scrollHeight);
-      await new Promise((r) => setTimeout(r, 400));
-    });
-
-    const { violations } = await new AxePuppeteer(page, axeSource).withTags(TAGS).analyze();
-    checked += 1;
-
-    const domProblems = await domIntegrity(page, route);
-    total += domProblems;
-
-    if (violations.length === 0) {
-      if (domProblems === 0) console.log(`  ${route.padEnd(16)} clean`);
-    } else {
-      const count = violations.reduce((n, v) => n + v.nodes.length, 0);
-      total += count;
-      console.error(`  ${route.padEnd(16)} ${count} violation(s) across ${violations.length} rule(s)`);
-      for (const v of violations) {
-        console.error(`      [${v.impact ?? 'n/a'}] ${v.id} — ${v.help}`);
-        for (const node of v.nodes.slice(0, 3)) {
-          console.error(`        ${node.target.join(' ')}`);
-        }
-        if (v.nodes.length > 3) console.error(`        …and ${v.nodes.length - 3} more`);
+      // A route that did not load as expected is a measurement failure, not zero
+      // violations. Reporting "0 violations" for a page that never rendered is precisely
+      // the unearned-confidence failure the gate rules in CLAUDE.md exist to prevent.
+      // 304 is a load, not a failure: puppeteer reuses its cache across pages in one
+      // browser, so a revisited route legitimately returns Not Modified.
+      const status = response ? response.status() : 0;
+      const ok = status === route.status || (route.status === 200 && status === 304);
+      if (!ok) {
+        console.error(`\ncheck-axe: ${route.path} returned ${status || 'no response'}, expected ${route.status}.`);
+        console.error('Cannot audit this route. Fix the route or the base URL.\n');
+        process.exit(1);
       }
-    }
 
-    await page.close();
+      for (const phase of PHASES) {
+        if (phase.scrollToFoot) {
+          // StickyCta only un-hides itself past 40% scroll depth and RevealOnScroll only
+          // reveals on intersection, so an audit taken at scroll position zero never sees
+          // either. The `initial` phase before this one is what sees everything else.
+          await page.evaluate(async () => {
+            window.scrollTo(0, document.body.scrollHeight);
+            await new Promise((r) => setTimeout(r, 400));
+          });
+        }
+
+        const where = `${route.path} @ ${viewport.label} ${phase.label}`;
+        const { violations } = await new AxePuppeteer(page, axeSource).withTags(TAGS).analyze();
+        analyses += 1;
+
+        if (violations.length === 0) {
+          console.log(`  ${where.padEnd(40)} clean`);
+        } else {
+          const count = violations.reduce((n, v) => n + v.nodes.length, 0);
+          total += count;
+          console.error(`  ${where.padEnd(40)} ${count} violation(s) across ${violations.length} rule(s)`);
+          for (const v of violations) {
+            console.error(`      [${v.impact ?? 'n/a'}] ${v.id} — ${v.help}`);
+            for (const node of v.nodes.slice(0, 3)) {
+              console.error(`        ${node.target.join(' ')}`);
+            }
+            if (v.nodes.length > 3) console.error(`        …and ${v.nodes.length - 3} more`);
+          }
+        }
+      }
+
+      // Ids and grouping attributes are properties of the served markup, not of scroll
+      // position, so once per page load is the honest amount.
+      total += await domIntegrity(page, `${route.path} @ ${viewport.label}`);
+
+      await page.close();
+    }
   }
 } finally {
   await browser.close();
 }
 
-if (checked !== ROUTES.length) {
-  console.error(`\ncheck-axe: audited ${checked} of ${ROUTES.length} routes. Nothing may be skipped.\n`);
+const EXPECTED = ROUTES.length * VIEWPORTS.length * PHASES.length;
+if (analyses !== EXPECTED) {
+  console.error(`\ncheck-axe: ran ${analyses} of ${EXPECTED} analyses. Nothing may be skipped.\n`);
   process.exit(1);
 }
 
@@ -172,5 +240,9 @@ if (total > 0) {
   process.exit(1);
 }
 
-console.log(`\ncheck-axe: ${checked} routes, zero violations (${TAGS.join(', ')})`);
+console.log(
+  `\ncheck-axe: ${analyses} analyses — ${ROUTES.length} routes × ` +
+    `${VIEWPORTS.map((v) => v.label).join('/')} × ${PHASES.map((p) => p.label).join('/')} — ` +
+    `zero violations (${TAGS.join(', ')})`,
+);
 console.log('check-axe: no duplicate ids, no radio or exclusive-details group spanning theme frames\n');

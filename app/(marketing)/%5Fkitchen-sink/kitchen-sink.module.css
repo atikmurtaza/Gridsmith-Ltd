@@ -38,9 +38,17 @@
 /* Pins the StickyCta specimen in flow so all four theme frames can render one without
    four fixed bars stacking. Doubled class rather than !important: it has to beat
    `.stickyCta` and the `min-width: 768px` display:none in motion.module.css regardless of
-   which module the bundler emits first. Demo-only, and confined to this file. */
+   which module the bundler emits first. Demo-only, and confined to this file.
+
+   `visibility` is in this rule, and that is the whole point of the StickyCta change.
+   Presentation and semantics are now one mechanism, so an override that paints the bar
+   also puts it back in the accessibility tree and the tab order. Previously the bar's
+   position was CSS and its `aria-hidden`/`inert` were React props, this rule could only
+   reach the CSS half, and the result was eight visible links that no keyboard could
+   reach and no screen reader could see. */
 .stickyStatic.stickyStatic {
   position: static;
   transform: none;
   display: flex;
+  visibility: visible;
 }

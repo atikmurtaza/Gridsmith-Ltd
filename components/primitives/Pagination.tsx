@@ -8,6 +8,11 @@ import styles from './content.module.css';
  * The current page carries three cues, not colour alone: filled background,
  * `aria-current="page"`, and an underline. FOUNDATION §3 / WCAG 1.4.1.
  * Targets are 2.75rem to clear the 24×24 minimum in WCAG 2.2 SC 2.5.8 comfortably.
+ *
+ * The gap marker is its own <li> rather than a second child of the page's <li>. That
+ * arrangement needed `display: contents` on the <li> to keep the two side by side, and
+ * `display: contents` removes the element's box — with it, the `listitem` role, so
+ * several browsers announced an <ol> of nothing. One item per <li>, no override needed.
  */
 export function Pagination({
   current,
@@ -32,11 +37,15 @@ export function Pagination({
   return (
     <nav aria-label={label} className={[styles.pagination, className].filter(Boolean).join(' ')}>
       <ol className={styles.paginationList}>
-        {pages.map((page, i) => {
+        {pages.flatMap((page, i) => {
           const gap = i > 0 && page - pages[i - 1]! > 1;
-          return (
-            <li key={page} style={{ display: 'contents' }}>
-              {gap ? <span className={styles.pageEllipsis} aria-hidden="true">…</span> : null}
+          return [
+            gap ? (
+              <li key={`gap-${page}`} className={styles.pageEllipsis} aria-hidden="true">
+                …
+              </li>
+            ) : null,
+            <li key={page}>
               {page === current ? (
                 <span className={`${styles.page} ${styles.pageCurrent}`} aria-current="page">
                   {page}
@@ -46,8 +55,8 @@ export function Pagination({
                   {page}
                 </Link>
               )}
-            </li>
-          );
+            </li>,
+          ].filter(Boolean);
         })}
       </ol>
     </nav>

@@ -41,13 +41,23 @@ body {
 /* WCAG 2.2 SC 2.4.11 Focus Not Obscured (Minimum).
    StickyCta is position: fixed against the bottom edge below 768px, which is exactly the
    width where it renders. Without this, tabbing to a control near the bottom of the
-   document scrolls it under the bar and the focus ring is invisible. The reserve is the
-   bar's own height — a 2.75rem control plus var(--space-3) top and bottom — and the same
-   safe-area inset the bar itself adds. master/PROJECT-RULES.md §7 states the rule for the
-   consent banner; a fixed bar is a fixed bar. */
+   document scrolls it under the bar and the focus ring is invisible.
+   master/PROJECT-RULES.md §7 states the rule for the consent banner; a fixed bar is a
+   fixed bar.
+
+   The reserve is MEASURED, not modelled. It used to be
+   `calc(2.75rem + var(--space-6) + …)` = 68px, derived from "a 2.75rem control plus
+   var(--space-3) top and bottom" — which is the bar's height only while its labels fit on
+   one line. At 375px they wrap and the bar is 95px, so the reserve was 27px short. The
+   component publishes its own rendered height into --sticky-cta-block-size and
+   check-responsive asserts this value against the bar it is reserving for, at every width
+   below 768px.
+
+   The 0px fallback is correct rather than defensive: the bar is visibility:hidden until
+   the same script shows it, so no script means no bar and nothing to reserve for. */
 @media (max-width: 767px) {
   html {
-    scroll-padding-block-end: calc(2.75rem + var(--space-6) + env(safe-area-inset-bottom));
+    scroll-padding-block-end: calc(var(--sticky-cta-block-size, 0px) + env(safe-area-inset-bottom));
   }
 }
 

@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import styles from './interactive.module.css';
 import { FieldError } from './Field';
 
@@ -7,6 +8,8 @@ export type SelectOption = { value: string; label: string };
  * A native <select>. A custom listbox would be several kilobytes of JavaScript to
  * reimplement behaviour the platform already gets right on touch, with a keyboard and
  * with a screen reader — and Digital's delta budget is 15KB for everything.
+ *
+ * The DOM id is generated, never derived from `name` — see the note in Field.tsx.
  */
 export function Select({
   name,
@@ -29,13 +32,14 @@ export function Select({
   placeholder?: string;
   className?: string;
 }) {
-  const hintId = hint ? `${name}-hint` : undefined;
-  const errorId = error ? `${name}-error` : undefined;
+  const id = useId();
+  const hintId = hint ? `${id}-hint` : undefined;
+  const errorId = error ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;
 
   return (
     <div className={[styles.field, className].filter(Boolean).join(' ')}>
-      <label className={styles.label} htmlFor={name}>
+      <label className={styles.label} htmlFor={id}>
         {label}
         {required ? <span className={styles.required} aria-hidden="true"> *</span> : null}
       </label>
@@ -47,7 +51,7 @@ export function Select({
       ) : null}
 
       <select
-        id={name}
+        id={id}
         name={name}
         required={required}
         defaultValue={defaultValue ?? ''}

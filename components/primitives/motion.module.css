@@ -1,23 +1,33 @@
 /* Tier 5 — motion and chrome. Tokens only; no colour literals.
    transform and opacity only — master/PROJECT-RULES.md §9. The global reduced-motion
-   block in tokens.css neutralises the durations, and both components below also check
-   the preference in JS so they skip straight to their final state rather than animating
-   imperceptibly fast. */
+   block in tokens.css neutralises the durations for both components below. RevealOnScroll
+   additionally checks the preference in JS, so it skips the animation entirely rather
+   than running it imperceptibly fast; StickyCta does not, and does not need to — it has
+   one 250ms transform and nothing to skip past. (This comment previously said "both
+   components also check the preference in JS". StickyCta contains no matchMedia call and
+   never has.) */
 
 /* --dur-slow, not a literal. A fourth duration means adding it to tokens.css first;
    check-tokens fails on any duration literal in a CSS module. */
+/* `visibility` alongside opacity, for the same reason as .stickyCta below: content at
+   opacity 0 is still in the tab order, so a keyboard user could focus an invisible card
+   in the moment between arming and intersecting. One declaration removes it from the tab
+   order and the accessibility tree while it is not there to be seen. */
 .reveal {
   opacity: 0;
+  visibility: hidden;
   transform: translateY(12px);
-  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+  transition: opacity var(--dur-slow) var(--ease-out),
+              transform var(--dur-slow) var(--ease-out),
+              visibility var(--dur-slow) var(--ease-out);
 }
-.revealVisible { opacity: 1; transform: none; }
+.revealVisible { opacity: 1; visibility: visible; transform: none; }
 
 /* Belt to RevealOnScroll's braces. The component only arms the hidden state for content
    below the fold and therefore certain to be scrolled to; this covers the case where no
    script runs at all. Between them there is no path that ends at opacity 0. */
 @media (scripting: none) {
-  .reveal { opacity: 1; transform: none; }
+  .reveal { opacity: 1; visibility: visible; transform: none; }
 }
 
 .stickyCta {
@@ -32,9 +42,16 @@
   background: var(--canvas-raised);
   border-block-start: var(--border-hairline) solid var(--line-strong);
   transform: translateY(100%);
-  transition: transform var(--dur-base) var(--ease-out);
+  /* `visibility` is the single mechanism for "is this bar active" — it takes the subtree
+     out of the accessibility tree AND out of the tab order, which is what aria-hidden and
+     inert were doing as React props alongside this CSS. Two mechanisms desync; one
+     cannot. See the note in StickyCta.tsx. Transitioning it keeps the bar visible for the
+     length of the slide-out instead of vanishing at the first frame. */
+  visibility: hidden;
+  transition: transform var(--dur-base) var(--ease-out),
+              visibility var(--dur-base) var(--ease-out);
 }
-.stickyVisible { transform: none; }
+.stickyVisible { transform: none; visibility: visible; }
 
 /* Desktop has room for the CTA in the page; this bar is a mobile affordance. */
 @media (min-width: 768px) {

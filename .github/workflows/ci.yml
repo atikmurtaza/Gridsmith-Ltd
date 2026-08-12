@@ -33,14 +33,17 @@ jobs:
       - name: No hardcoded colours
         run: npm run lint:colors
 
-      - name: No service-role key on the client
-        run: npm run lint:secrets
+      - name: Contrast ratios meet WCAG 2.2 AA and match DESIGN.md
+        run: npm run check:contrast
 
       - name: Build
         run: npm run build
 
-      - name: Contrast ratios meet WCAG 2.2 AA and match DESIGN.md
-        run: npm run check:contrast
+      # After the build, not before. A leaked service-role key is a property of the
+      # emitted bundle, not a shape in the source: this greps .next/static/chunks for the
+      # key string, which the source-only checks it also runs cannot see past.
+      - name: No service-role key on the client
+        run: npm run lint:secrets
 
       - name: Design tokens reach the build
         run: npm run check:tokens

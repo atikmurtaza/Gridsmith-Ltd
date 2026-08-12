@@ -54,18 +54,28 @@ export const metadata: Metadata = {
 const DIVISIONS = ['master', 'design', 'digital', 'press'] as const;
 
 /**
- * Every id, form `name` and exclusive-accordion `name` on this page is scoped to its
- * theme frame. Rendering the same specimen four times with the same literals produced 20
- * duplicated ids × 4, one radio group spanning all four frames (choosing in Digital
- * cleared Master, and only the last of four `checked` radios survived), and one exclusive
- * `<details>` group across all four frames, so three of the four themes rendered their
- * accordion closed.
+ * Rendering the same specimen four times with the same literals produced 20 duplicated
+ * ids × 4, one radio group spanning all four frames (choosing in Digital cleared Master,
+ * and only the last of four `checked` radios survived), and one exclusive `<details>`
+ * group across all four frames, so three of the four themes rendered their accordion
+ * closed. axe reported zero violations throughout: axe-core keeps `duplicate-id` behind
+ * its `deprecated` tag, so no WCAG tag set can reach it. `check-axe` asserts it directly
+ * against the served DOM instead.
  *
- * axe reported zero violations throughout: axe-core keeps `duplicate-id` behind its
- * `deprecated` tag, so no WCAG tag set can reach it. `check-axe` now asserts this
- * directly against the served DOM rather than hoping a rule exists for it.
+ * That was first fixed here, by scoping every id and name to its frame — which left the
+ * primitives still generating colliding ids for every other caller. The fix is now in the
+ * primitives: `Field`, `Select`, `RadioGroup` and `Accordion` derive their DOM ids from
+ * `useId()`, and `Accordion` generates its own exclusive-group name. This page no longer
+ * scopes anything, and `check-axe` still reports zero duplicate ids — which is the test
+ * of whether the primitive fix is real.
+ *
+ * `name` on a radio is the one exception and it stays scoped. It is simultaneously the
+ * form contract a Server Action reads and the attribute that makes the options one group,
+ * so a primitive cannot generate it without breaking submission. Four frames sharing
+ * `name="division"` genuinely ARE one radio group; that is a fact about this page
+ * rendering the same form four times, not a defect in RadioGroup.
  */
-const scope = (division: string, key: string) => `${division}-${key}`;
+const frameScoped = (division: string, name: string) => `${division}-${name}`;
 
 const FAQS = [
   { key: 'a1', question: 'A question that is open by default', answer: 'The answer, in muted body copy.' },
@@ -174,8 +184,16 @@ function AllPrimitives({ division }: { division: string }) {
             <tr><th scope="col">Item</th><th scope="col">Revision</th><th scope="col">Price</th></tr>
           </thead>
           <tbody>
-            <tr><th scope="row">First row</th><td><Numeric>REV-02</Numeric></td><td><Numeric>£1,250</Numeric></td></tr>
-            <tr><th scope="row">Second row</th><td><Numeric>REV-11</Numeric></td><td><Numeric>£980</Numeric></td></tr>
+            {/* Zeroed digits, not plausible figures. `£1,250` / `£980` / `REV-02` were
+                fabricated prices and revision numbers rendered into prerendered HTML —
+                CLAUDE.md non-negotiable #2 bans invented prices outright, and
+                master/PROJECT-RULES.md §5 says "never a plausible figure". This file
+                already applied that rule correctly to imagery (Media is excluded) and to
+                the error reference (`KS-0000`), then broke it two specimens above. Zeroed
+                digits demonstrate the monospace treatment and tabular alignment without
+                asserting anything. */}
+            <tr><th scope="row">First row</th><td><Numeric>REV-00</Numeric></td><td><Numeric>£0,000</Numeric></td></tr>
+            <tr><th scope="row">Second row</th><td><Numeric>REV-00</Numeric></td><td><Numeric>£000</Numeric></td></tr>
           </tbody>
         </Table>
       </Specimen>
@@ -186,21 +204,27 @@ function AllPrimitives({ division }: { division: string }) {
       </Specimen>
 
       <Specimen name="Field — default, hint, error, textarea">
-        <Field name={scope(division, 'name')} label="Full name" required autoComplete="name" />
-        <Field name={scope(division, 'email')} label="Email" type="email" hint="We reply by the end of the next business day." />
-        <Field name={scope(division, 'broken')} label="Field with an error" error="Enter a valid email address." />
-        <Field name={scope(division, 'message')} label="Message" multiline />
+        <Field name="name" label="Full name" required autoComplete="name" />
+        {/* Not the response commitment. This read "We reply by the end of the next business
+            day." — a hardcoded paraphrase of it, and master/PROJECT-RULES.md §1.8 says that
+            string renders from `companyDetails.responseCommitment`, "never hardcoded, never
+            paraphrased". `lib/company/` does not exist yet (A-07), so the specimen needs a
+            hint that is not a promise at all rather than a copy someone will paste into the
+            first real contact form. */}
+        <Field name="email" label="Email" type="email" hint="Used only to reply to this enquiry." />
+        <Field name="broken" label="Field with an error" error="Enter a valid email address." />
+        <Field name="message" label="Message" multiline />
       </Specimen>
 
       <Specimen name="Select — placeholder, error">
         <Select
-          name={scope(division, 'budget')}
+          name="budget"
           label="Budget band"
           placeholder="Select a band"
           options={[{ value: 'a', label: 'Under £5,000' }, { value: 'b', label: '£5,000 – £15,000' }]}
         />
         <Select
-          name={scope(division, 'broken-select')}
+          name="broken-select"
           label="Select with an error"
           error="Choose one option."
           options={[{ value: 'a', label: 'Option A' }]}
@@ -209,7 +233,7 @@ function AllPrimitives({ division }: { division: string }) {
 
       <Specimen name="RadioGroup — with hints, and an error">
         <RadioGroup
-          name={scope(division, 'division')}
+          name={frameScoped(division, 'division')}
           legend="Which division do you need?"
           hint="More than one is a first-class answer."
           defaultValue="unsure"
@@ -220,7 +244,7 @@ function AllPrimitives({ division }: { division: string }) {
           ]}
         />
         <RadioGroup
-          name={scope(division, 'radio-error')}
+          name={frameScoped(division, 'radio-error')}
           legend="Group with an error"
           error="Select one option."
           options={[{ value: 'y', label: 'Yes' }, { value: 'n', label: 'No' }]}
@@ -228,16 +252,16 @@ function AllPrimitives({ division }: { division: string }) {
       </Specimen>
 
       <Specimen name="Accordion — native details, one open">
-        <Accordion items={FAQS.map((f) => ({ ...f, id: scope(division, f.key) }))} exclusiveName={scope(division, 'faq')} defaultOpenId={scope(division, 'a1')} />
+        <Accordion items={FAQS.map((f) => ({ ...f, id: f.key }))} exclusive defaultOpenId="a1" />
       </Specimen>
 
       <Specimen name="Tabs — arrow keys, roving tabindex">
         <Tabs
           label={`Specimen tabs (${division})`}
           tabs={[
-            { id: scope(division, 't1'), label: 'First', panel: <p>First panel.</p> },
-            { id: scope(division, 't2'), label: 'Second', panel: <p>Second panel.</p> },
-            { id: scope(division, 't3'), label: 'Third', panel: <p>Third panel.</p> },
+            { id: 't1', label: 'First', panel: <p>First panel.</p> },
+            { id: 't2', label: 'Second', panel: <p>Second panel.</p> },
+            { id: 't3', label: 'Third', panel: <p>Third panel.</p> },
           ]}
         />
       </Specimen>
@@ -293,8 +317,10 @@ export default function KitchenSinkPage() {
           <Heading level={1} size="d2">Kitchen sink</Heading>
           <Prose>
             <p>
-              All 24 primitives, rendered once per theme. Not linked from anywhere and
-              <code> noindex</code>.
+              23 of the 24 primitives, rendered once per theme. <code>Media</code> is not
+              shown: it renders real assets, and fabricating placeholder imagery here would
+              put invented visual content in the repository. It is exercised at D-01. Not
+              linked from anywhere and <code>noindex</code>.
             </p>
           </Prose>
         </Section>

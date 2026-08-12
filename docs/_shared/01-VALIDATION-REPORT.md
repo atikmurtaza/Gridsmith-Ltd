@@ -400,8 +400,12 @@ re-derive all of them. A runtime mismatch does not announce itself; it produces 
 numbers from the wrong machine.
 
 **Consequence, deliberately accepted:** `npm ci` now fails on any machine not running Node
-≥22.11.0, including the one this audit was performed on. That is the rule working. Install
-Node 22 (`.nvmrc` names it) before running the gates again.
+≥24.15.0, including the one this audit was performed on. That is the rule working. Install
+Node 24 (`.nvmrc` names it, `engines` says `>=24.15.0 <25`, and CI runs 24) before running
+the gates again. **This paragraph said "Node 22" until 12 August 2026** — the runtime was
+raised to 24 mid-audit and this instruction was not, so anyone following it broke the
+build. A floor in `engines` cannot catch that, which is why `scripts/check-node-version.mjs`
+now asserts that `.nvmrc`, `engines` and `ci.yml` name the same major.
 
 ### Why E12 was skipped rather than left red
 
@@ -498,6 +502,12 @@ basis of the original build order, which sequenced Press first because Press was
 unknowns and tightest gates earliest, so failures surface with time to absorb them. Proposed
 order Master → Digital → Design → Press, pending confirmation.
 
+**Confirmed differently, and the order in that sentence is superseded.** The founder
+confirmed **Master → Digital → Press → Design** — `02-BUILD-SEQUENCE.md` §1 and
+`05-HANDOVER.md` §8 both record it, and BUILD-SEQUENCE marks it "Confirmed by the founder".
+Press is third so the section with real existing customers is not left in the tail. The
+proposal is kept for the reasoning that produced it; **it is not the build order.**
+
 **The one thing it does not change is Epic A**, which is why this was recorded rather than
 acted on: Epic A's exit gate is unaffected by anything downstream of it, and A-GATE
 criteria 5 and 6 are still outstanding.
@@ -510,3 +520,92 @@ keeping: **a premise recorded as settled should say what it is settled *about*.*
 originally closed a question about migration and phrased the answer as a fact about the
 world ("there is no existing property"), which is what made it wrong later. Scope the claim
 to the decision it supports.
+
+---
+
+## 14. Gates whose subject could slip out from under them — the second sweep
+
+**Date:** 12 August 2026 · **Runtime:** Node v24.15.0 · **Trigger:** `06-EPIC-A-AUDIT.md`
+
+§11 named this class and recorded four instances closed. The Epic A audit found three
+more, one of them *inside `check-axe`* — the gate written to close the class. So it is not
+a defect list that was worked through once. **Treat it as a standing property of this gate
+suite:** every gate is either given a required list it does not derive from its own
+subject, or it is a gate that can pass having measured less than it claims.
+
+All fourteen gates were swept against two questions: *does it derive its expectation from
+the thing it is checking?* and *does it narrow its own subject?* Nine needed a change.
+
+### What was wrong, and what it is now
+
+| Gate | Defect | Fix |
+|---|---|---|
+| `lint:colors` | Named colours matched only **immediately after a colon**. `border: 1px solid red` — the codebase's own idiom — passed. `color-mix()` was absent from the colour-function list | Declaration-value mask spanning newlines; the word is flagged anywhere in a value and nowhere in a selector or comment. `color-mix` added |
+| `lint:colors`, `lint:secrets` | `PENDING_ROOTS` named one absent tree (`lib`) while the docstring claimed "a new tree cannot arrive unscanned". `public/`, `lighthouse/` and every root-level config file were outside both sweeps | Inverted. `scripts/source-files.mjs` enumerates what is on disk and **fails on any top-level directory that is neither scanned nor excluded with a reason**. Root-level files are enumerated, not listed. 62 → 72 files |
+| `check:tokens` | `declared` was scraped from `tokens.css` and checked against the build — expectation and subject were the same file, floor `length === 0`. Four tokens deleted, exit 0 | Hardcoded 39-token `REQUIRED` list, checked both directions, exactly as the 15-token theme `CONTRACT` already was |
+| `check:tokens` | The duration-literal sweep read `app/` and `components/` but **not `styles/`** — the layer it protects | `styles/` added; `styles/tokens.css` exempted as the declaration site, same shape as the colour gate's token-layer exemption. 6 → 11 files |
+| `check:contrast` | `EXPECTED_CELLS` computed from the `USE` table the loop iterates. `PAIRS` — the 29 published DESIGN.md figures — had **no count assertion at all** | Both are literals: `EXPECTED_PAIRS = 29`, `EXPECTED_CELLS = 101` |
+| `check:axe` | One viewport (1280px), one state (scrolled to the foot). **No route was ever audited in the state a visitor first meets**, and 1280px is where `StickyCta` is `display: none` | 375/1280 × initial/scrolled. 5 → 24 analyses |
+| `check:axe`, `check:responsive`, `size` | `/_not-found` appeared in **exactly one place in the repository** — an exemption in `check-bundle-size` | In all three route lists, with an expected HTTP status per route. Exemption deleted |
+| `check:theme` | Matched the literal `data-division`. `el.dataset.division = 'press'` never emits that string, and the gate's own comment calls this check the load-bearing one | Both spellings |
+| `lint:secrets` | Fired only when the file itself opened with `'use client'`. A plain module imported by a client component ships in the bundle unflagged; `next.config.ts` was outside the scanned trees, and its `env:` key inlines into every client bundle | Greps `.next/static/chunks` for the key — a leak is a property of the bundle, not a shape in the source. Moved to `verify:build`; a missing build directory is a hard failure |
+| `check:node` | Its own message ends *"they are three statements of one fact and a split between them is what this check exists to prevent"*. It read `.nvmrc` and nothing else | Asserts `.nvmrc`, `package.json` engines and `ci.yml` name the same major |
+| both Lighthouse axes | Neither asserted that the page **loaded**. A themeless Next 404 scores 1.0 accessibility and clears every LCP/CLS/TBT ceiling | `http-status-code` asserted on both |
+| `size` | Downward floor drift caught at ±1KB; upward drift caught only once growth exceeded the *smallest budget* | Symmetric: the cheapest route in the build is the empirical floor. It does **not** diagnose the cause, because two different causes give an identical measurement |
+
+### Proven by deliberate failure — every one, this session
+
+CLAUDE.md: *"Every gate must be proven by deliberate failure before it is trusted, and the
+proof recorded."* The audit's sharpest observation is that this had been satisfied
+*formally*: `lint:colors` had a proof, and that proof used `color:` and a hex — **both of
+which it already caught**. A proof that exercises only the forms a check catches proves
+nothing. Each proof below uses a shape that previously escaped.
+
+| Fix | Deliberate failure | Result |
+|---|---|---|
+| `lint:colors` value mask | `border: 1px solid red`, `outline: 2px dashed black`, `box-shadow: 0 0 0 1px navy`, `linear-gradient(to right, teal, gold)`, `color-mix(… white 20%)`, and `crimson` on the **continuation line** of a multi-line `transition:` | 8 violations, exit 1. `.gold { }` as a selector not flagged — no false positive |
+| `check:tokens` required list | Deleted `--text-3xl` and `--shadow-2` from `tokens.css` — the two the audit used, chosen because one is FOUNDATION §3's named Tailwind-collision hazard and the other is CLAUDE.md's shadow ceiling | Named both, exit 1. Previously: "35 base tokens", exit 0 |
+| `check:tokens` `styles/` root | `transition: opacity 450ms ease` in `styles/themes/press.css` | Flagged, exit 1. Previously outside the sweep entirely |
+| `check:contrast` counts | Removed one published `PAIRS` row and one `USE` token | "measured 28 … expected 29" and "89 cells, expected 101", exit 1. Previously both counts fell together and it exited 0 |
+| `check:axe` initial state | `aria-hidden={!visible}` restored on `StickyCta` with its links still focusable — the A-1 shape minus `inert` | `aria-hidden-focus` at **375px initial and 1280px initial only**. The old gate ran *scrolled* alone and would have been green |
+| `check:axe` 375px | A contrast failure inside `@media (max-width: 767px)` | `color-contrast` at **375px only**. The old gate ran 1280px alone |
+| `check:axe` route list | *(No injection needed.)* Adding `/_not-found` for the first time | 4 violations × 4 — `html-has-lang` (**Level A, WCAG 3.1.1**), `landmark-one-main`, `region`. See below |
+| `check:responsive` reserve | Restored the modelled `calc(2.75rem + var(--space-6) + …)` | "a **95px** fixed bottom bar is covered by only **68px** of scroll-padding-block-end" — the exact discrepancy the audit found by hand, now measured by a gate |
+| `check:node` three-way | `ci.yml` changed to `node-version: '22'` | "the runtime is declared in three places and they disagree", exit 1 |
+| `size` upward drift | *(No injection needed.)* A root `not-found.tsx` importing the `Link` primitive | Every route 100.2 → 104.5KB, exit 1. See below |
+
+Every temporary edit was made by copying the file aside and copying it back — never
+`git checkout --`, which cost three files' worth of work last session (§13). The working
+tree was verified clean against `git status` after each.
+
+### Two live defects the fixes found immediately
+
+**1. The 404 shipped without a `lang` attribute.** `/_not-found` had never been audited by
+anything. The first axe run against it returned `html-has-lang` — **WCAG 3.1.1, Level A** —
+plus no `main` landmark. With no `app/layout.tsx` (A-04: four root layouts), an unmatched
+URL fell outside all four and got Next's default bare document. `app/not-found.tsx` now
+renders the master shell itself; verified in a real browser as a single `<html lang="en-GB">`
+carrying `data-division="master"`, one `<main>`, status 404. Two other arrangements were
+built and measured first and are recorded in that file so nobody re-tries them.
+
+**2. That fix then cost 4.3KB gz on every route in the site, and only the new symmetric
+floor check said so.** The 404 imported the `Link` primitive, which wraps `next/link`, a
+Client Component — and Next puts the root not-found boundary in **every** route's script
+list. Every route went from 100.2KB to 104.5KB: **29% of Digital's entire 15KB delta
+budget**, permanently, for a page almost nobody reaches. Every per-route budget still
+passed, because 4.3KB is inside all of them. Replaced with a plain `<a>` (measured back to
+exactly 100.2KB) and the ESLint rule scoped off for that one file, with the numbers, in
+`eslint.config.mjs`.
+
+Both are the same lesson from opposite ends: **a gate you have not run is not measuring
+zero, it is measuring nothing.**
+
+### One place the fix is deliberately partial
+
+`RadioGroup` generates its DOM ids but **not** its `name`. On a radio, `name` is
+simultaneously the form contract a Server Action reads and the attribute that makes the
+options one group — generating it would break both. So `/_kitchen-sink` still scopes that
+one prop per theme frame, and only that one. It is not a leftover workaround for a
+primitive defect: four frames sharing `name="division"` genuinely *are* one radio group,
+which is a fact about a page that renders the same form four times. `check-axe` asserts no
+radio group spans more than one frame, which is what keeps the distinction honest.

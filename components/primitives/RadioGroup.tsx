@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import styles from './interactive.module.css';
 import { FieldError } from './Field';
 
@@ -10,6 +11,12 @@ export type RadioOption = { value: string; label: string; hint?: string };
  * Selection state comes from the native control, so it carries the platform's own
  * non-colour cue (the filled dot) rather than a colour swap we would have to justify.
  * `accent-color` tints it to the theme without replacing it.
+ *
+ * Every DOM id is generated — see the note in Field.tsx. `name` is deliberately NOT:
+ * on a radio it is both the form contract the Server Action reads *and* the thing that
+ * makes the options one group, so generating it would silently break both. Two
+ * RadioGroups sharing a `name` really are one group; that is a page-level decision, and
+ * `check-axe` asserts no radio group spans more than one theme frame.
  */
 export function RadioGroup({
   name,
@@ -30,8 +37,9 @@ export function RadioGroup({
   defaultValue?: string;
   className?: string;
 }) {
-  const hintId = hint ? `${name}-hint` : undefined;
-  const errorId = error ? `${name}-error` : undefined;
+  const uid = useId();
+  const hintId = hint ? `${uid}-hint` : undefined;
+  const errorId = error ? `${uid}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;
 
   return (
@@ -53,7 +61,7 @@ export function RadioGroup({
 
       <div className={styles.options}>
         {options.map((o) => {
-          const id = `${name}-${o.value}`;
+          const id = `${uid}-${o.value}`;
           return (
             <div className={styles.option} key={o.value}>
               <input

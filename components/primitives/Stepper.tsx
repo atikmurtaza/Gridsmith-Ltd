@@ -11,7 +11,14 @@ export type Step = { id: string; title: string; body?: ReactNode };
  * progress, which is why numbering is zero-padded mono: `01`–`06`.
  *
  * The current step carries three cues — a filled marker, a heavier title, and
- * `aria-current="step"`. Completed steps differ in border weight, not colour alone.
+ * `aria-current="step"`. Completed steps differ in border weight, not colour alone, and
+ * say so in the sr-only prefix: the marker is `aria-hidden`, so without that a screen
+ * reader user hears "Step 2:" for a done step and "Step 2:" for a pending one.
+ *
+ * That sentence about border weight was in this docstring while `.stepDone` changed
+ * border-*colour* and text colour and nothing else — WCAG 1.4.1 failed in the shared
+ * primitive layer and two comments asserted it did not. The code was changed to match
+ * the claim rather than the claim to match the code; the cue is worth having.
  */
 export function Stepper({
   steps,
@@ -42,7 +49,7 @@ export function Stepper({
               </span>
               <div>
                 <p className={styles.stepTitle}>
-                  <span className="sr-only">{`Step ${n}: `}</span>
+                  <span className="sr-only">{n < current ? `Step ${n}, completed: ` : `Step ${n}: `}</span>
                   {step.title}
                 </p>
                 {step.body ? <div className={styles.stepBody}>{step.body}</div> : null}

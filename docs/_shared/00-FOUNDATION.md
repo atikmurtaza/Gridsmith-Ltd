@@ -243,7 +243,15 @@ Swept at A-05 across all four themes and all three surfaces (`--canvas`,
 | `--line-strong` | **1.45 – 1.79:1** | **fails everywhere** |
 | `--ink-subtle` | 4.18 – 5.19:1 | passes everywhere |
 | `--ink-muted` | 6.64 – 7.83:1 | passes everywhere |
-| `--accent` | 4.46 – 19.17:1 | passes everywhere |
+| `--accent` | **4.58 – 9.25:1** | passes everywhere |
+
+The `--accent` row read `4.46 – 19.17:1 | passes everywhere` and was self-contradictory:
+4.46 fails the 4.5:1 body floor this same table asserts. It was also superseded — 4.46:1
+was `--accent` on Digital's old `--canvas-sunken`, which moved to `#F3F3F1` precisely
+because of that failure. The prose below explains the history; the table was never
+corrected, so the published range stayed the pre-fix one. **The figures above now come from
+`npm run check:contrast`, which is the source of truth**, and 19.17:1 was never an
+`--accent` value at all — it is master's `--ink` on `--canvas`.
 
 This was first found as a Design-theme defect. It is not division-specific, so the rule
 lives here rather than in one division's `DESIGN.md`.
@@ -369,9 +377,28 @@ All three inherit the same spacing, type scale, grid and motion tokens. **A user
 
 ## 5. Shared primitives (build once) — **24**
 
-`Button` · `Link` · `Container` · `Grid` · `Section` · `Eyebrow` · `Heading` · `Prose` · `Card` · `Media` (watermarked, right-click disabled) · `Accordion` · `Tabs` · `Field` · `Select` · `RadioGroup` · `Stepper` · `Table` · `Badge` · `RevealOnScroll` · `StickyCta` · `Breadcrumb` · `Pagination` · `EmptyState` · `ErrorState`
+`Button` · `Link` · `Container` · `Grid` · `Section` · `Eyebrow` · `Heading` · `Prose` · `Card` · `Media` (`next/image` in a `<figure>`; see note below) · `Accordion` · `Tabs` · `Field` · `Select` · `RadioGroup` · `Stepper` · `Table` · `Badge` · `RevealOnScroll` · `StickyCta` · `Breadcrumb` · `Pagination` · `EmptyState` · `ErrorState`
 
 All primitives consume tokens only. **No primitive may contain a hardcoded colour.** CI lint rule enforces this.
+
+**`Media` — correcting what this section used to claim.** It read *"`Media` (watermarked,
+right-click disabled)"*, and the primitive does neither.
+
+- **Watermarking is not a component behaviour.** It is baked into the asset at CMS ingest
+  (`D-03`), which is the only place it cannot be stripped by turning off JavaScript.
+- **Right-click suppression is not going to be built, and the specification is corrected
+  rather than the code.** A `contextmenu` handler breaks Shift+F10 and the Menu key, which
+  are keyboard operations (WCAG 2.1.1), plus long-press and assistive "right click" — so
+  it costs real users real access. It deters nobody: the asset is in the DOM and on the
+  network either way. `D-04` no longer carries it.
+
+**`Media` is the one primitive no gate has ever evaluated.** It is deliberately excluded
+from `/_kitchen-sink` — rendering it needs real imagery, and fabricating placeholders would
+put invented visual content in the repository (CLAUDE.md non-negotiable #2). The exclusion
+is right and the consequence is real: axe has never seen it, `check:responsive` has never
+laid it out, no Lighthouse run has measured it, and it is the primitive that carries the
+site's primary evidence. It is exercised at `D-01` against real seed assets, and that is
+the first point at which any of those gates apply to it.
 
 **Three are Client Components; twenty-one are not.** Built at A-05, and the split did not
 land where the build order predicted:
@@ -388,9 +415,14 @@ widget: **`Accordion` is `<details>`/`<summary>`**, `Select` is a native `<selec
 `RadioGroup` is a `<fieldset>` of real radios. Those three ship no JavaScript at all and
 get their keyboard behaviour, state and announcements from the browser.
 
-Measured on `/_kitchen-sink`, which renders every primitive four times: **5.7KB gz above
-the framework floor**. That is the whole client cost of the primitive layer, against
-Master's 15KB delta budget of which the consent banner already claims 8KB.
+Measured on `/_kitchen-sink`, which renders every primitive four times: **6.2KB gz above
+the framework floor**, of which **0.4KB is the `global-error` boundary that every route in
+the build carries** — so the primitive layer itself is **5.8KB**. Against Master's 15KB
+delta budget, of which the consent banner already claims 8KB.
+
+**That arithmetic is tighter than it reads.** 8KB + 5.8KB + 0.4KB = 14.2KB of 15KB, before
+a header or footer exists. `M-06` is the checkpoint; if the delta exceeds 15KB there, stop
+and raise it rather than proceeding into Epic N.
 
 **That figure is now budgeted, not just printed.** `/_kitchen-sink` carries a 7KB delta
 budget in `check-bundle-size.mjs` — Master's 15KB minus the banner's reserved 8KB, which

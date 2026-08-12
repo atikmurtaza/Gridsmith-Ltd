@@ -34,7 +34,12 @@
  * median of three is for. If CI proves too noisy, the answer is more runs, not a return to
  * a model that mis-attributes swap.
  *
- * See Q-M16. The ceilings in lighthouse/routes.cjs are provisional pending real CI numbers.
+ * See Q-M16. The ceilings in lighthouse/routes.cjs are **measured, not provisional** — CI
+ * run #7, median of 3, 1519–1530ms across the four routes. This file said the opposite
+ * while routes.cjs, FOUNDATION §8 and the tracker all said measured, and this is the file
+ * that *is* the gate; a reader checking whether a number could be trusted found the gate
+ * itself disowning it. What is still open is durability, not the figure: the headroom is
+ * measured on an empty page. See the note in lighthouse/routes.cjs.
  */
 const { ORIGIN_MOBILE: ORIGIN, ROUTES, pattern } = require('./lighthouse/routes.cjs');
 
@@ -68,6 +73,10 @@ module.exports = {
         matchingUrlPattern: pattern(ORIGIN, r.path),
         aggregationMethod: 'median',
         assertions: {
+          // The page has to have loaded before any number below means anything. See the
+          // note on the same assertion in lighthouserc.desktop.cjs.
+          'http-status-code': ['error', { minScore: 1 }],
+
           // Accessibility is not a weighted curve — it is a pass/fail rule count, and it
           // is non-negotiable #10. It is asserted on both axes.
           'categories:accessibility': ['error', { minScore: 1 }],
