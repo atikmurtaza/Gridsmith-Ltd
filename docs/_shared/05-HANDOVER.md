@@ -21,7 +21,7 @@ touching anything; delete the sections that go stale as they are resolved.
 | A-05 | DONE | 24 primitives, 21 Server / 3 Client. Every primitive that emits a DOM id now generates it with `useId()` — which works in Server Components, so this cost no client JS. `Accordion` also generates its own exclusive-group name and no longer emits an unread `id` |
 | A-05a | DONE | `/_kitchen-sink`, 23 primitives × 4 themes (`Media` deliberately excluded — the page now says 23, not 24), **6.2KB gz delta, budgeted at 7KB**, of which 0.4KB is the global-error boundary every route carries. The `scope()` workaround is gone: the primitives generate their own ids and `check-axe` still reports zero duplicates |
 | A-10b | DONE | Lighthouse split into **two axes** — desktop asserts category scores, mobile asserts Core Web Vitals on 4G. Both green on CI |
-| **A-GATE** | **OPEN — this is the next task** | Criteria 1–4 now MET and re-verified. 5 and 6 need a fresh-context run that returns clean. See §2 — **and read the agent-budget note there before launching anything** |
+| **A-GATE** | **OPEN — this is the next task** | Criteria 1–4 now MET and re-verified. 5 and 6 need a fresh-context run that returns clean. See §2 — **one agent per session**. Criterion 6 is the only one outstanding |
 | A-06, A-07 | **TODO**, not REVIEW | **No code artefacts exist** — no `sanity/`, no `supabase/`, no `lib/`, nothing in `git ls-files`. What exists is prose in `docs/*/SCHEMA.md`, which is the spec, not the work. `REVIEW` means awaiting review and there was nothing to review. Blocked on `Q-M17` / `Q-M18` (the old `(B4)` reference resolved to nothing) |
 | A-08, A-09, A-11, A-12 | TODO | Not started |
 
@@ -60,11 +60,11 @@ fresh context — the model that wrote the code is the worst reviewer of it, and
 that fixed the findings is the worst reviewer of the fixes. Two rounds of that have now
 produced findings both times.
 
-**The next actionable task in the programme:** run `rules-compliance` and
-`accessibility-audit` from `.claude/agents/` in a fresh session, on Node 24. Nothing
-downstream of Epic A starts until both return clean. `design-conformance`,
-`spec-compliance` and `content-integrity` are not A-GATE criteria but have still never run;
-worth running while the context is fresh, one at a time.
+**The next actionable task in the programme:** run `accessibility-audit` from
+`.claude/agents/` **alone, in a fresh session**, on Node 24 — criterion 6. Nothing
+downstream of Epic A starts until it returns clean. `design-conformance`,
+`spec-compliance` and `content-integrity` are not A-GATE criteria and have still never run;
+they are worth running eventually, one per session, and they are not blocking.
 
 ### ⚠ Agent budget — read this before launching anything
 
@@ -82,11 +82,13 @@ shape — and:
 - `accessibility-audit` **died on the session limit** partway through, while writing the
   browser sweep for the probes axe structurally cannot make. It returned nothing.
 
-So the rule is sharper than "launch two": **`rules-compliance` on this repository costs
-roughly a fifth of a session on its own.** If both A-GATE agents are needed and the session
-is not fresh, run them in *separate sessions* rather than as a pair. Give each a brief
-naming what is already fixed and what is on the do-not-report list — that is what got them
-through at all; the unbriefed runs died.
+**The rule is now one agent per session for A-GATE.** Not five, not two. `rules-compliance`
+costs roughly a fifth of a session on its own on this repository, and a pair does not fit
+alongside the work of acting on what the first one returns. Launch one, act on its report,
+start a fresh session for the next.
+
+Give each a brief naming what is already fixed and what is on the do-not-report list. That
+is what got them through at all — every unbriefed run has died.
 
 ### Where criteria 5 and 6 actually stand
 
@@ -95,8 +97,12 @@ through at all; the unbriefed runs died.
 | **5** | `rules-compliance` | **RAN — NOT MET.** 4 blockers, 4 majors, 7 minors, none of them re-reports of the earlier audit. All fixed in the same session; see §9 |
 | **6** | `accessibility-audit` | **DID NOT RUN.** Died on the session limit. Its findings from the earlier audit round are fixed, but the criterion itself has still never returned a clean pass |
 
-**Criterion 6 is the outstanding item in Epic A.** Run it alone, in a fresh session, and
-expect it to be expensive.
+**Criterion 6 is the outstanding item in Epic A.** Run `accessibility-audit` alone, in a
+fresh session, and expect it to consume most of it.
+
+**Nothing else in Epic A is open.** A-06 and A-07 are blocked on Atik (`Q-M17`, `Q-M18`),
+and A-08 to A-12 are Stage-2 work. **After criterion 6 returns clean, the next task is
+Epic M** — do not reopen Epic A to improve anything.
 
 **Criterion 5 needs re-running too**, for the same reason it was re-run this time: the
 findings it produced were fixed by the context that received them. A criterion worded "zero
@@ -168,6 +174,21 @@ uncommitted work — it cost three files' worth of edits in the 11 August sessio
 12 August session ran ten deliberate-failure proofs this way with nothing lost; check
 `git status` after each, because a proof you forgot to revert is a defect you just
 committed.
+
+**A local `npm run typecheck` is not equivalent to CI, and one defect only ever appeared
+there.** `declare module '*.css' {}` typechecked clean on Windows and produced 100+ TS2339
+errors on `ubuntu-latest`. Same TypeScript (6.0.3, same lockfile), same tsconfig. `*.css`
+and `*.module.css` both have a zero-length prefix before the `*`, so TypeScript's
+longest-prefix tie-break cannot separate them and the winner follows filesystem iteration
+order — which differs between the two platforms. **Deleting `.next` and
+`tsconfig.tsbuildinfo` first does not reproduce it.** There is no local test for this class;
+CI is the only instrument. `css.d.ts` now gives the module a real type so it no longer
+matters which pattern wins.
+
+**`npm run verify` refuses to run if anything is already on port 3000.** That is
+deliberate — it used to test whatever answered, including another project’s dev server, and
+worse, a stale `next start` of this app serving the previous build. Use
+`VERIFY_PORT=3100 npm run verify` rather than killing a process that may not be yours.
 
 **Recursive deletes outside the repo require asking first** — CLAUDE.md "How to work". A
 top-level listing is not an inspection; `node_modules` shows as one entry and held a 258MB

@@ -29,6 +29,37 @@ if (commands.length === 0) {
   process.exit(1);
 }
 
+/**
+ * Refuse to share the port.
+ *
+ * `ready()` below polls until something answers 200 at BASE. If anything is *already*
+ * listening there, that something is what every served gate then measures. This is not
+ * hypothetical: it happened on 12 August. Another project's `next dev` was on 3000, and
+ * `check-axe` dutifully reported two `label` violations and a missing `data-division` on
+ * "/" — a critical failure, against an application that is not this one.
+ *
+ * A false red is the harmless direction. **The dangerous one is a stale `next start` of
+ * THIS app**, left over from an earlier run: it answers 200 on every route, serves the
+ * previous build, and every gate goes green against code that is no longer in the tree.
+ * Nothing in the output would say so.
+ *
+ * So the port is a precondition, checked before spawning, rather than something to sniff
+ * afterwards.
+ */
+try {
+  await fetch(BASE + '/', { signal: AbortSignal.timeout(2000) });
+  console.error(
+    `\nwith-server: something is already listening on ${BASE}.` +
+      '\n\nIt was not started by this script, so the served gates would measure it instead of' +
+      '\nthis build — a stale server of this app answers every route and turns them all green' +
+      '\nagainst the previous build.' +
+      '\n\nStop it, or run on another port: VERIFY_PORT=3100 npm run verify\n',
+  );
+  process.exit(1);
+} catch {
+  // Nothing listening. That is the only acceptable starting state.
+}
+
 const server = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', PORT], {
   stdio: 'ignore',
 });
@@ -48,7 +79,9 @@ async function ready(timeoutMs = 90_000) {
     if (server.exitCode !== null) return false;
     try {
       const res = await fetch(BASE + '/');
-      if (res.ok) return true;
+      // 200 is not enough — it has to be *this* application. Closes the race between the
+      // pre-flight check above and the moment our own server binds.
+      if (res.ok && (await res.text()).includes('data-division=')) return true;
     } catch {
       /* not up yet */
     }

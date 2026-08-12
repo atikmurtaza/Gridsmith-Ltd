@@ -609,3 +609,23 @@ one prop per theme frame, and only that one. It is not a leftover workaround for
 primitive defect: four frames sharing `name="division"` genuinely *are* one radio group,
 which is a fact about a page that renders the same form four times. `check-axe` asserts no
 radio group spans more than one frame, which is what keeps the distinction honest.
+
+### A fifteenth instance, found while pushing the fourteen
+
+`with-server.mjs` polled until *something* answered 200 on port 3000 and then ran every
+served gate against it. Another project’s dev server was on that port, and `check-axe`
+reported two critical `label` violations and a missing `data-division` on `/` — against
+an application that is not this one. A false red, which is the harmless direction.
+
+**The dangerous direction is a stale `next start` of this app.** It answers 200 on every
+route, serves the previous build, and turns all four served gates green against code that
+is no longer in the tree. Nothing in the output would have said so.
+
+The port is now a precondition checked before spawning, and `ready()` additionally
+requires the response to contain `data-division=` — 200 is not enough, it has to be this
+application. Proven by deliberate failure: with the foreign server up, the gate refuses to
+run and names the port; on `VERIFY_PORT=3100` the same commands pass.
+
+This is the same class as the other fourteen, and it was found by the class being fresh in
+mind rather than by any check. That is the argument for treating it as a standing property
+of the suite rather than a list that was worked through.
