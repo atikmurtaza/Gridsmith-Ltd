@@ -56,6 +56,31 @@ returned **4 blockers, 4 majors and 7 minors, none of them re-reports**. All fix
 limit again, having reached the `global-error` render path. Nothing returned. See the
 agent-budget note below: the problem was the session, not the shape.
 
+**Round four — 13 August, and the first that returned.** Two narrow runs instead of one
+wide one: the 24 primitives, then the five served routes and render paths, each launched
+alone as the first action with the other explicitly out of scope. **Both completed.** The
+split is what worked — four attempts had died on scope, and neither narrow run came close
+to the limit. Findings and the fixes are `07-A11Y-AUDIT.md`; the backlog is
+`master/PROJECT-TRACKER.md` § Epic A11Y.
+
+**Criterion 6 is still open.** Round four returned findings, not zero. Six groups were
+fixed the same day, four Majors were deliberately left (`A11Y-1`–`A11Y-4`, P1), and the
+session that fixed them is the worst available reviewer of them — the same reasoning that
+put the criterion there. **Run 5 is two narrow runs again, fresh session, first action.**
+
+Two things from round four that a fresh session must not rediscover:
+
+- **`/_not-found` had been rendering with no theme at all**, and `check-axe` was green on
+  it throughout, because the assertion was that `body[data-division]` existed rather than
+  that it computed to anything. The attribute was written correctly server-side; the
+  stylesheet giving it meaning was never linked. Fourth defect of that shape, and the
+  first inside a gate written to catch the third. Both fixed — the gate now reads four
+  tokens back off `body` and compares the background to `--canvas` through a probe.
+- **`global-error` can only be verified with a *client-side* error.** A page that throws
+  during SSR never reaches it; production serves Next's static `__next_error__` shell
+  instead. That is how it shipped with no `<title>`. The probe must also not live in a
+  `_`-prefixed folder — Next drops those from routing and you will be measuring the 404.
+
 The criteria are worded "zero findings" / "zero violations" with no partial credit. Round
 two is the important lesson: **the tree that had just been audited and fixed still had four
 blockers in it**, including a Level A accessibility hole that was the untouched half of a
@@ -65,8 +90,9 @@ that fixed the findings is the worst reviewer of the fixes. Two rounds of that h
 produced findings both times.
 
 **The next actionable task in the programme:** run `accessibility-audit` from
-`.claude/agents/` **alone, as the first action of a fresh session**, on Node 24 —
-criterion 6. Nothing
+`.claude/agents/` **alone, as the first action of a fresh session**, on Node 24, **as two
+narrow runs — primitives, then routes** (round four proved the split; a single wide run
+has failed four times) — criterion 6. Nothing
 downstream of Epic A starts until it returns clean. `design-conformance`,
 `spec-compliance` and `content-integrity` are not A-GATE criteria and have still never run;
 they are worth running eventually, one per session, and they are not blocking.

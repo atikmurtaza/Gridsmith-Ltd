@@ -55,28 +55,44 @@ Next.js 15 App Router (**pinned — Next 16 adds ~29KB gz to the JS floor and br
 
 Rejected and not to be reintroduced: any UI component library (shadcn, MUI, Chakra), any third-party consent platform, any charting or animation library, any page builder. The primitives are hand-built because this site *is* the case study — 67% of B2B buyers judge vendor trustworthiness by site UX.
 
-## Repository shape
+## Repository shape — **the target, not a description of the tree**
+
+**Read this as where things go when they are built, not as what is there now.** An
+accessibility audit was written against it on 13 Aug 2026 and had to correct itself
+mid-run: it looked for `components/divisions/` and `app/layout.tsx`, and neither exists.
+`✗` marks what has not been built yet. Check the tree before relying on a path.
 
 ```
 app/
-  (marketing)/          master layer
-  (design)/design/
+  (marketing)/          master layer      — each route group owns a ROOT layout;
+  (design)/design/                          there is deliberately no app/layout.tsx
   (digital)/digital/
   (press)/press/
-  api/
+  global-not-found.tsx  the 404 — owns its <html>/<body>, needs
+                        experimental.globalNotFound (see the file)
+  global-error.tsx      uncaught-error boundary — same reason, 'use client'
+✗ api/
 components/
-  primitives/           shared, theme-agnostic, ZERO hardcoded colours
-  chrome/               header, footer, consent, division switcher
-  divisions/{design,digital,press}/
-lib/
-  cms/ leads/ analytics/ consent/ estimate/ path/ company/
+  primitives/           shared, theme-agnostic, ZERO hardcoded colours — 24 of them
+  chrome/               header, footer, consent, division switcher — RootShell only so far
+✗ divisions/{design,digital,press}/
+✗ lib/
+✗   cms/ leads/ analytics/ consent/ estimate/ path/ company/
 styles/
   tokens.css            base layer
+  globals.css           body, .sr-only, reduced-motion reset
   themes/{master,design,digital,press}.css
+  fonts/
 scripts/                seed, import, image ingest, prod checks
 redirects/legacy.json
 docs/                   the specs — see below
 ```
+
+**There is no `app/layout.tsx` and there must not be.** Four root layouts is what gives
+each division its own `<html>`/`<body data-division>` in the first paint. The cost is that
+anything falling outside all four — the 404, the error boundary — inherits nothing and has
+to supply its own document, which is why those two files sit at the app root and why they
+are the `global-*` conventions rather than `not-found.tsx`/`error.tsx`.
 
 ## Where the specs are
 

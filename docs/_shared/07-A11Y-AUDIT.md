@@ -8,9 +8,23 @@ rather than one wide one, because four previous attempts died on scope rather th
 session budget: run 1 is the primitive layer, run 2 is the served routes and render
 paths. Neither run may audit the other's subject.
 
-**Nothing here is fixed.** The agent was instructed not to propose diffs. This file is
-the record of what was found; what is done about each finding belongs in
-`01-VALIDATION-REPORT.md`, as with `06-EPIC-A-AUDIT.md`.
+**The findings below are left as written.** The agent was instructed not to propose diffs,
+and this file stays the record of what was found — do not edit the findings to match the
+current tree.
+
+> **PARTLY RESOLVED — 13 August 2026, same day.** Six groups were fixed in six commits:
+> the `/_not-found` token layer and the `check-axe` assertion that could not see it, the
+> untitled `global-error` document, the three `--ink-subtle` text uses, the tabpanel focus
+> ring, a stable `id` on `Field`/`Select`/`RadioGroup`, and Press's button typography.
+>
+> **Four Majors from run 1 were not in that scope and remain open** — breadcrumb link
+> focus, the `EmptyState`/`ErrorState` pseudo-headings, `Container`'s un-nameable
+> landmarks, and the Press card overlay. They are `A11Y-1` to `A11Y-4` in
+> `master/PROJECT-TRACKER.md`, at P1 rather than P2 because they are AA failures. The
+> minors, the info rows and three gate-coverage observations found while fixing are
+> `A11Y-5` to `A11Y-24` in the same section.
+>
+> **Criterion 6 is still not met.** Run 3 is a fresh session, split the same way.
 
 ---
 
