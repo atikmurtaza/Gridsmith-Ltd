@@ -93,4 +93,111 @@ A-GATE criterion 6 is not met by this run.
 
 ## Run 2 — the served routes and render paths
 
-Pending.
+**Scope:** `/`, `/design`, `/digital`, `/press`, `/_not-found` and `app/global-error.tsx`
+only — landmarks, headings, `lang`, focus order, skip link, keyboard operability, plus
+2.4.11, 3.2.6 and 2.1.4 where applicable. The primitives were explicitly excluded; where a
+route defect originates inside a primitive it is left to run 1.
+
+### Render chains — enumerated, not assumed
+
+There is **no `app/layout.tsx`**. Each route group owns a root layout; `not-found` and
+`global-error` supply their own document. `components/chrome/` contains exactly one file.
+**`components/divisions/` does not exist.** No header, nav, footer, consent banner or
+division switcher exists yet — the repository shape in CLAUDE.md describes the target, not
+the tree.
+
+| Route | Chain |
+|---|---|
+| `/` | `app/(marketing)/layout.tsx` → `components/chrome/RootShell.tsx` (`<html>`/`<body>`) → `app/(marketing)/page.tsx` → `components/primitives/Heading.tsx` |
+| `/design` | `app/(design)/layout.tsx` → `RootShell.tsx` → `app/(design)/design/page.tsx` → `Heading` |
+| `/digital` | `app/(digital)/layout.tsx` → `RootShell.tsx` → `app/(digital)/digital/page.tsx` → `Heading` |
+| `/press` | `app/(press)/layout.tsx` → `RootShell.tsx` → `app/(press)/press/page.tsx` → `Heading` |
+| `/_not-found` | `app/not-found.tsx` (own root, no group layout) → `RootShell.tsx` → `Container` / `Section` / `Heading` / `Prose` |
+| error state | `app/global-error.tsx` — standalone, own `<html lang>`/`<body>`, raw elements, no stylesheet |
+
+No `middleware.ts`, no `template.tsx`, no `error.tsx`, no `loading.tsx`, no `default.tsx`.
+`next.config.ts` adds only redirects.
+
+### axe — raw output
+
+Run against the **prerendered HTML** in `.next/server/app/*.html` over `file://` with
+`/_next/*` rewritten to disk so the real built CSS applied. No server. `global-error` has
+no prerendered HTML (client boundary), so its markup was transcribed verbatim from source
+and is labelled as such.
+
+```
+ROUTE: /          axe passes: 24 | incomplete: 1 | VIOLATIONS: 0    INCOMPLETE: color-contrast (1 nodes) h1
+ROUTE: /design    axe passes: 24 | incomplete: 1 | VIOLATIONS: 0    INCOMPLETE: color-contrast (1 nodes) h1
+ROUTE: /digital   axe passes: 24 | incomplete: 1 | VIOLATIONS: 0    INCOMPLETE: color-contrast (1 nodes) h1
+ROUTE: /press     axe passes: 24 | incomplete: 1 | VIOLATIONS: 0    INCOMPLETE: color-contrast (1 nodes) h1
+ROUTE: /_not-found                    axe passes: 28 | incomplete: 0 | VIOLATIONS: 0
+ROUTE: app/global-error.tsx (TRANSCRIBED from source, not build output)
+  axe passes: 15 | incomplete: 0 | VIOLATIONS: 1
+  [serious] document-title - Documents must have <title> element to aid in navigation (wcag2a,wcag242)
+      html :: Fix any of the following: |   Document does not have a non-empty <title> element
+
+=== TOTAL AXE VIOLATIONS ACROSS ALL SURFACES: 1 ===
+```
+
+DOM facts confirmed on every surface: `htmlElementCount: 1`, `lang: "en-GB"`,
+`mainCount: 1`, exactly one `h1`, `headingOrder: ["H1"]`, `landmarks: ["MAIN"]`,
+`positiveTabindex: 0`, `textOutsideLandmark: []`. `/_not-found` merges its two raw
+`<html>`/`<body>` start tags to one element as its source comment claims — verified,
+`division: "master"`, `title: "Page not found — Gridsmith Ltd"`.
+
+### Findings
+
+| Severity | WCAG SC | file:line | Spec requires | Code does |
+|---|---|---|---|---|
+| Major | 2.4.2 Page Titled (A) | `app/global-error.tsx:41` | The error document, which replaces the root layout, carries a title describing its topic or purpose | Renders `<html lang="en-GB"><body>` with no `<title>`, and `'use client'` (line 1) forbids a `metadata` export, so the file has no way to set one. axe: `document-title`, serious. Best case Next leaves the crashed route's stale title, which does not describe "Something went wrong" |
+| Major | 2.4.7 Focus Visible (AA) | `app/not-found.tsx:9` | `import '@/styles/globals.css'` puts tokens, all four themes and the global rules on `/_not-found`; the file's own comment (lines 26–29) states it "imports RootShell, the fonts and globals.css directly instead of inheriting them" | The build emits **one** stylesheet link for that route — `540c4a…css`, the CSS-modules chunk. `7c37b5…css` (tokens + themes + globals) and `081a0af…css` (fonts) are absent from the file entirely (grep count 0, including the flight payload). `--ink` is therefore undefined, so `outline: 2px solid var(--ink)` is invalid at computed-value time and resolves to `initial`. Measured on a probe element: `/` → `outlineStyle: "solid", 2px, rgb(15,15,15)`; `/_not-found` → **`outlineStyle: "none"`** — the invalid declaration also destroys the UA default ring. No SC fails on today's two paragraphs; any primitive placed there loses its focus indicator outright, and `M-07` is slated to add content |
+| Minor | 2.2.2 support / 1.3.1 (A) | `styles/tokens.css:51`, `styles/globals.css:66` | The global `@media (prefers-reduced-motion: reduce)` reset and the `.sr-only` utility apply on every served route | Both live in `7c37b5…css`, which `/_not-found` does not load. Same root cause as the row above. Nothing animates and nothing uses `.sr-only` there today, so no current failure — but the site's only reduced-motion implementation and its only visually-hidden-text utility are silently off on a served route |
+| Minor | 1.4.3 (AA) / 1.3.1 (A) presentation | `app/not-found.tsx:55` | `Heading level={1}` renders at `--text-2xl` (52px measured on `/`) | Renders at **16px**, identical to body text, because `--text-2xl` is undefined. `Section`/`Container` padding collapses to 0. Semantics are intact so no SC fails; the visual heading cue is gone. Same root cause |
+| Info | 2.4.7 Focus Visible (AA) | `app/not-found.tsx:70` | — | The raw `<a href="/">` carries no author focus style (`.prose a`, in a primitive stylesheet, sets colour and underline only). It passes on the UA ring — measured `outlineStyle: "auto", rgb(16,16,16)`. Given the row above, that UA ring is the only thing keeping 2.4.7 alive on this route |
+| Info | 3.1.1 Language of Page (A) | `app/not-found.tsx:33-37` | — | `lang="en-GB"` is correct, but only because Next's outer error shell emits `<html>` with **no** `lang`, letting the parser merge the inner attributes on. If Next ever emits `lang` on that shell, the merge keeps Next's value and the route silently loses `en-GB`. Verified correct today (`documentElement.lang === "en-GB"`) |
+| Info | 2.4.1 Bypass Blocks (A) | `components/chrome/RootShell.tsx:25-26` | A skip link, per the brief | None exists (only reference is the "Epic M adds the skip link" comment at line 12). **Not a failure**: no header, nav or footer exists, so there is no repeated block to bypass. Becomes a Blocker the moment chrome lands |
+
+### Coverage grid
+
+```
+/            — landmarks ✓ / headings ✓ / lang ✓ / focus order ✓ (0 tabbables) / skip link n/a / keyboard n/a
+/design      — landmarks ✓ / headings ✓ / lang ✓ / focus order ✓ (0 tabbables) / skip link n/a / keyboard n/a
+/digital     — landmarks ✓ / headings ✓ / lang ✓ / focus order ✓ (0 tabbables) / skip link n/a / keyboard n/a
+/press       — landmarks ✓ / headings ✓ / lang ✓ / focus order ✓ (0 tabbables) / skip link n/a / keyboard n/a
+/_not-found  — landmarks ✓ / headings ✓ / lang ✓ (Info row) / focus order ✓ (1 tabbable) / skip link n/a / keyboard ✓ (Major row: focus indicator)
+global-error — landmarks ✓ / headings ✓ / lang ✓ / focus order ✓ (1 tabbable) / skip link n/a / keyboard ✓
+```
+
+`n/a` for skip link and keyboard means no repeated block and no interactive chrome exists
+yet — **not** that the check was skipped. 2.4.11 Focus Not Obscured: n/a, no fixed or
+sticky element renders on any of the six. 3.2.6 Consistent Help: n/a, no help affordance.
+2.1.4 Character Key Shortcuts: n/a, no key handlers in any render path.
+
+### Unverified
+
+- **Whether Next injects a `<title>` when `global-error` renders server-side.** Confirm by
+  forcing a throw in a route-group layout, running `next build && next start`, and reading
+  `document.title` at the error document. If it inherits the crashed route's title the row
+  stays Major (wrong title, 2.4.2); if it is empty it is a Blocker.
+- **`color-contrast` incomplete on the `h1` of all four themed routes.** axe could not
+  resolve a background. Confirm by running `check:contrast`, or by sampling the rendered
+  pixel — out of this run's scope, and `check:contrast` covers the token pairs.
+
+### Why the stylesheet defect is invisible to the gate
+
+`scripts/check-axe.mjs:137-138` asserts `document.body.dataset.division` and, when it is
+missing, reports *"this page renders with no theme"*. On `/_not-found` the attribute **is**
+present — `RootShell.tsx:26` writes it — so the gate is green while the page renders with
+no theme, because the stylesheet that gives `[data-division]` any meaning is never linked.
+The assertion tests the attribute, not the computed style.
+
+That is exactly the "green result from a check that measured nothing" pattern CLAUDE.md
+names, and it is the fourth of that class. The source comment at `app/not-found.tsx:33-37`
+records the four checks that pass straight through it.
+
+### Result
+
+**Not zero violations.** One axe violation (2.4.2 on the error boundary) plus one
+demonstrated render-path defect that removes the focus ring, the reduced-motion reset,
+`.sr-only` and the type scale from a served route. A-GATE criterion 6 is not met by this
+run either.
