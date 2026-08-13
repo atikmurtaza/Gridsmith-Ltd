@@ -9,7 +9,8 @@ export type SelectOption = { value: string; label: string };
  * reimplement behaviour the platform already gets right on touch, with a keyboard and
  * with a screen reader — and Digital's delta budget is 15KB for everything.
  *
- * The DOM id is generated, never derived from `name` — see the note in Field.tsx.
+ * The DOM id is generated, never derived from `name`, and `id` overrides it so an error
+ * summary can link to this control — see the note in Field.tsx.
  */
 export function Select({
   name,
@@ -21,6 +22,7 @@ export function Select({
   defaultValue,
   placeholder,
   className,
+  id: idOverride,
 }: {
   name: string;
   label: string;
@@ -31,8 +33,11 @@ export function Select({
   defaultValue?: string;
   placeholder?: string;
   className?: string;
+  /** Stable DOM id, so an error summary can link to this field. Generated when omitted. */
+  id?: string;
 }) {
-  const id = useId();
+  const generatedId = useId();
+  const id = idOverride ?? generatedId;
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;

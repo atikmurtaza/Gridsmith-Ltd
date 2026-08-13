@@ -17,6 +17,12 @@ export type RadioOption = { value: string; label: string; hint?: string };
  * makes the options one group, so generating it would silently break both. Two
  * RadioGroups sharing a `name` really are one group; that is a page-level decision, and
  * `check-axe` asserts no radio group spans more than one theme frame.
+ *
+ * `id` overrides the generated base — see the note in Field.tsx for why the override
+ * exists. A radio group has no single control to link to, so an error summary targets the
+ * first option, whose id is `${id}-${options[0].value}` and is only predictable to the
+ * caller once the base is. That is the whole reason this prop is the base rather than an
+ * id applied to the fieldset.
  */
 export function RadioGroup({
   name,
@@ -27,6 +33,7 @@ export function RadioGroup({
   error,
   defaultValue,
   className,
+  id: idOverride,
 }: {
   name: string;
   legend: string;
@@ -36,8 +43,11 @@ export function RadioGroup({
   error?: string;
   defaultValue?: string;
   className?: string;
+  /** Stable id base; the first option becomes `${id}-${options[0].value}`. Generated when omitted. */
+  id?: string;
 }) {
-  const uid = useId();
+  const generatedId = useId();
+  const uid = idOverride ?? generatedId;
   const hintId = hint ? `${uid}-hint` : undefined;
   const errorId = error ? `${uid}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;

@@ -18,6 +18,17 @@ import styles from './interactive.module.css';
  * that was fixed at the call site and left live here, which is the "fix the instance, not
  * the class" failure CLAUDE.md names. `useId()` is supported in Server Components
  * (React 19 Flight dispatcher) so this costs no client JavaScript.
+ *
+ * **`id` overrides the generated one, and that is deliberate.** Generating it internally
+ * with no way out meant the id existed only inside this component: an error summary could
+ * not render `<a href="#…">` to the field it names, and nothing could call `.focus()` on
+ * the first invalid control (WCAG 3.3.1, and 2.4.3 for the focus move). `FieldError` was
+ * already exported and already took an `id`, so the summary half of the pattern shipped
+ * without the half it points at. The generated id remains the default — passing one is
+ * for the case that needs a stable target, not the common case.
+ *
+ * Passing `id={name}` reintroduces exactly the collision described above. `check-axe`
+ * asserts no duplicate ids on every audited route, which is what catches it.
  */
 export function Field({
   name,
@@ -30,6 +41,7 @@ export function Field({
   autoComplete,
   multiline = false,
   className,
+  id: idOverride,
 }: {
   name: string;
   label: string;
@@ -41,8 +53,11 @@ export function Field({
   autoComplete?: string;
   multiline?: boolean;
   className?: string;
+  /** Stable DOM id, so an error summary can link to this field. Generated when omitted. */
+  id?: string;
 }) {
-  const id = useId();
+  const generatedId = useId();
+  const id = idOverride ?? generatedId;
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined;
