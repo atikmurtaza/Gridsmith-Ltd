@@ -26,7 +26,11 @@
   font-size: var(--text-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-subtle);
+  /* --ink-muted, not --ink-subtle. At --text-xs (12px) this is body text, and the
+     permission matrix restricts --ink-subtle to UI on --canvas-sunken in master, design
+     and digital (4.18-4.43:1). --ink-muted is what the matrix nominates for text there
+     and measures 6.64:1 at worst. check:contrast's size pass enforces this now. */
+  color: var(--ink-muted);
   padding-block-end: var(--space-2);
   border-block-end: var(--border-hairline) solid var(--line);
 }

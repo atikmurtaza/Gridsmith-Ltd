@@ -19,7 +19,7 @@
  *   ui        3.0:1   component boundaries and state indicators
  *   decor     none    purely decorative — reported, never enforced
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, globSync } from 'node:fs';
 
 const THEMES = ['master', 'design', 'digital', 'press'];
 const TOLERANCE = 0.02; // DESIGN.md now carries measured values to 2dp
@@ -82,7 +82,7 @@ const PAIRS = {
   press: [
     ['--ink', '--canvas', 'text', 16.84],
     ['--ink-muted', '--canvas', 'text', 7.25],
-    ['--ink-subtle', '--canvas', 'text', 4.56],
+    ['--ink-subtle', '--canvas', 'text', 5.44],
     ['--accent', '--canvas', 'text', 9.25],
     ['--accent-ink', '--accent', 'text', 9.25],
     ['--ink', '--canvas-sunken', 'text', 15.42],
@@ -120,8 +120,11 @@ const USE = {
     role: 'body',
     except: {
       '--canvas-sunken':
-        'ui — measures 4.18–4.43:1 on sunken across the four themes, short of the 4.5:1 body floor. ' +
-        'It stays the nominated control-border token there (>=3:1). States use --ink-muted for text on sunken.',
+        'ui — measures 4.18–4.43:1 on sunken in master, design and digital, short of the 4.5:1 body ' +
+        'floor. It stays the nominated control-border token there (>=3:1). States use --ink-muted for ' +
+        'text on sunken. Press was in this set at its old value (4.18:1) and left it at the run-3 fixes: ' +
+        'press now measures 4.98:1 on sunken and carries no restriction. The exception is kept because ' +
+        'three themes still need it — closing it for the other three is A11Y-22, not swept here.',
     },
   },
   '--accent': { role: 'body' },
@@ -322,11 +325,131 @@ if (matrixProblems.length > 0) {
   );
 }
 
-if (failures.length > 0 || drift.length > 0 || matrixProblems.length > 0) {
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Pass 3 — the size pass. Does every declaration OBEY the matrix?
+ *
+ * Passes 1 and 2 measure token-on-surface pairs. Neither can see the *size* of the
+ * text a declaration paints, and WCAG's body floor is a function of size: 4.5:1 under
+ * 18.66px bold / 24px regular, 3:1 at or above it. So a token measured and permitted as
+ * "body text" can still be used at a size its measurement does not support, and the
+ * matrix stays green — A11Y-22, recorded and unenforced until now.
+ *
+ * That gap shipped. `.specimenName` on /_kitchen-sink set `color: var(--ink-subtle)` at
+ * `--text-xs` (12.06px), rendered 23x inside the press frame, against a press DESIGN.md
+ * rule reading "17px minimum, never below". Every gate was green. The rule was prose,
+ * and prose is not a gate.
+ *
+ * **What this pass can and cannot see.** It reads *declared* sizes, not rendered ones:
+ * a rule block that sets both `color` and `font-size` is measured, in every theme, on
+ * every surface the token is permitted on. It therefore cannot catch a colour and a size
+ * that arrive from two different rules on the same element — that needs a browser, and
+ * this gate runs in `verify:static`, before the build, so it has no served page to read.
+ * The rendered version belongs in the served tier alongside `check-axe`. This pass is
+ * the cheap 90%, and the limit is stated here rather than left for someone to discover.
+ */
+const SIZE_SOURCES = [
+  'styles/globals.css',
+  ...globSync('components/primitives/*.module.css'),
+  ...globSync('app/**/*.module.css'),
+];
+
+/** `--text-*` resolved to the SMALLEST px a clamp() can produce — the worst case. */
+const TEXT_PX = Object.fromEntries(
+  [...readFileSync('styles/tokens.css', 'utf8').matchAll(
+    /(--text-[a-z0-9]+):\s*clamp\(\s*([\d.]+)rem/g,
+  )].map((m) => [m[1], parseFloat(m[2]) * 16]),
+);
+
+/** WCAG 2.2 1.4.3: "large" is >=24px, or >=18.66px when bold (>=700). */
+const isLarge = (px, weight) => px >= 24 || (px >= 18.66 && weight >= 700);
+
+const sizeProblems = [];
+let declarationsMeasured = 0;
+
+for (const file of SIZE_SOURCES) {
+  const css = readFileSync(file, 'utf8');
+  // Rule blocks: everything between `{` and the next `}`. Nested at-rules are flat here
+  // because these files use no nesting beyond @media, whose inner blocks match the same way.
+  for (const block of css.matchAll(/\{([^{}]*)\}/g)) {
+    const body = block[1];
+    const colour = body.match(/(?:^|[;\s])color:\s*var\((--[a-z0-9-]+)\)/);
+    const size = body.match(/font-size:\s*var\((--text-[a-z0-9]+)\)/);
+    if (!colour || !size) continue;
+
+    const token = colour[1];
+    const use = USE[token];
+    if (!use || use.role === 'decor') continue; // decorative text is not a thing; skip non-foregrounds
+    const px = TEXT_PX[size[1]];
+    if (px === undefined) continue;
+
+    const weightMatch = body.match(/font-weight:\s*(\d+)/);
+    const weight = weightMatch ? Number(weightMatch[1]) : 400;
+    const needed = isLarge(px, weight) ? MIN.large : MIN.text;
+
+    for (const theme of THEMES) {
+      const t = tokens(theme);
+      if (!t[token]) continue;
+      for (const surface of SURFACES) {
+        if (!t[surface]) continue;
+        declarationsMeasured += 1;
+        const r = ratio(t[token], t[surface]);
+
+        // A `USE.except` entry is the matrix recording that this token may NOT carry text
+        // on this surface. That restriction has never been enforced against the
+        // stylesheets — this is the half of A11Y-22 the matrix cannot see. A declaration
+        // painting text with a restricted token is a violation even when the matrix is
+        // green, because the matrix granted the downgrade and the stylesheet ignored it.
+        //
+        // Skipping restricted surfaces here instead would make this whole pass incapable
+        // of failing: every non-restricted body token already clears 4.5:1 by the matrix,
+        // so there would be nothing left for it to catch.
+        if (use.except?.[surface] && r + TOLERANCE < needed) {
+          sizeProblems.push(
+            `${file} — ${token} paints text at ${size[1]} (${px.toFixed(2)}px, weight ${weight}) ` +
+              `on ${surface} in ${theme}: ${r.toFixed(2)}:1, needs ${needed}:1. ` +
+              `The matrix restricts this token here: ${use.except[surface]}`,
+          );
+          continue;
+        }
+        if (!use.except?.[surface] && r + TOLERANCE < needed) {
+          sizeProblems.push(
+            `${file} — ${token} at ${size[1]} (${px.toFixed(2)}px, weight ${weight}) on ` +
+              `${surface} in ${theme}: ${r.toFixed(2)}:1, needs ${needed}:1`,
+          );
+        }
+      }
+    }
+  }
+}
+
+// A pass that measured nothing is not a pass. If the primitives stop pairing colour and
+// size in one rule, this must say so rather than print a green line over an empty loop.
+if (declarationsMeasured === 0) {
+  sizeProblems.push(
+    'the size pass measured 0 declarations. Either no stylesheet pairs `color: var(--token)` ' +
+      'with `font-size: var(--text-*)` any more, or SIZE_SOURCES no longer resolves. ' +
+      'Both mean this pass is measuring nothing — fix it or delete it deliberately.',
+  );
+}
+
+if (sizeProblems.length > 0) {
+  console.error(`\ncheck-contrast: ${sizeProblems.length} size/contrast problem(s)\n`);
+  for (const p of sizeProblems) console.error(`  ${p}`);
+  console.error(
+    '\nWCAG 1.4.3 needs 4.5:1 below 24px (18.66px bold) and 3:1 at or above it.' +
+      '\nRaise the size, darken the token, or use a token whose measurement supports the size.\n',
+  );
+}
+
+if (failures.length > 0 || drift.length > 0 || matrixProblems.length > 0 || sizeProblems.length > 0) {
   process.exit(1);
 }
 
 console.log(`check-contrast: ${rows.length} pairs across ${THEMES.length} themes, all within role minima and matching DESIGN.md`);
+console.log(
+  `check-contrast: size pass — ${declarationsMeasured} declaration/surface combinations across ` +
+    `${THEMES.length} themes, every declared font-size checked against its token's measured ratio`,
+);
 console.log(
   `check-contrast: permission matrix — ${matrix.length} token/surface combinations across ` +
     `${THEMES.length} themes, every one measured, every claimed role supported`,

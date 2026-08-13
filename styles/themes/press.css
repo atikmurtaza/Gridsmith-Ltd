@@ -2,8 +2,26 @@
  * Press theme — the well-made book.
  * docs/press/DESIGN.md §2.
  *
- * The warm canvas costs roughly two points of contrast against pure white. The
- * --ink-subtle 17px floor is the consequence of that and is not negotiable.
+ * The warm canvas costs roughly two points of contrast against pure white, which is why
+ * --ink-subtle needs a darker value here than a white-canvas theme would need.
+ *
+ * **--ink-subtle was #78716C and is now #6C6560, and the 17px floor went with it.**
+ * At #78716C it measured 4.56:1 on --canvas — clearing the AA body floor by 0.06 — and
+ * DESIGN.md §2 carried a "17px minimum, never below" rule to compensate. That floor was
+ * prose no gate could enforce: the permission matrix measures token-on-surface pairs and
+ * cannot see the size of the declarations that use them (A11Y-22). The run-3 audit found
+ * it breached 23 times per press frame on /_kitchen-sink by a single 12px declaration,
+ * and every gate was green.
+ *
+ * A colour that needs a size rule to be legible is the wrong colour. #6C6560 measures
+ * 5.44 / 5.73 / 4.98:1 on --canvas / --canvas-raised / --canvas-sunken, so it clears the
+ * body floor on every press surface with roughly half a point of buffer and needs no
+ * size rule at all. It stays clearly lighter than --ink-muted (7.25:1), so the three-step
+ * ink hierarchy is intact.
+ *
+ * This is a press-only change. --ink-subtle is still restricted to UI on --canvas-sunken
+ * in the other three themes, where it measures 4.18–4.43:1 — that is A11Y-22 and is not
+ * swept here.
  */
 
 [data-division="press"] {
@@ -13,7 +31,7 @@
 
   --ink:            #1A1815;
   --ink-muted:      #57534E;
-  --ink-subtle:     #78716C;
+  --ink-subtle:     #6C6560;
 
   --accent:         #2E4A3A;   /* deep green — cloth binding, not celebratory */
   --accent-hover:   #1F3428;
