@@ -354,6 +354,8 @@ day in one commit; the rows stay as the record of what was wrong.
 | ~~A11Y-27~~ | **CI never fired on this branch except through an open PR.** Sixth instance, and a shape above the other five — see below. **Fixed 13 Aug**: `push: branches: ['**']` |
 | ~~A11Y-28~~ | `check-node-version` matched `npm run <gate>` anywhere in `ci.yml`'s raw text, so **a comment counted as a step**. The comment explaining A11Y-27 registered `verify` as a CI gate and failed the build at `npm ci` on a commit that changed no gate. Every workflow file here carries long explanatory comments by house style, so it would have recurred. **Fixed 13 Aug**: full-line comments stripped before matching; trailing `#` after a real `run:` still works. Proven three ways — a real extra step is caught, a removed gate is caught, prose is ignored |
 | A11Y-26 | `/_kitchen-sink` has no linked-card specimen carrying a second link, so nothing in CI exercised A11Y-4 and nothing catches a regression of it. The fix was proven by injecting a sibling link at runtime. A specimen with a title link *and* a retailer link is what would gate it |
+| A11Y-29 | **Seventh instance of the gate class** — `check:contrast`'s size pass shipped, briefly, with a predicate narrowed to the already-passing set. Caught by its own deliberate-failure proof one commit after the rule requiring that proof was written. See below |
+| A11Y-30 | **`check:contrast`'s size pass reads *declared* sizes, not rendered ones.** A rule block pairing `color: var(--token)` with `font-size: var(--text-*)` is measured; a colour and a size arriving from two different rules on the same element are not. Catching that needs a browser, and this gate runs in `verify:static` before the build, so it has no served page to read. **Deliberate deferral, not an oversight:** the rendered version belongs in the served tier beside `check-axe`, and it moves there during **Epic M**, when there are real pages with real chrome for it to measure. Today's only subject is `/_kitchen-sink`, where the declared-size pass already covers every case |
 
 ### P2 — A11Y-25, in full: the fifth attribute-vs-result gate defect
 
@@ -413,6 +415,44 @@ each push would run the full suite twice, Lighthouse included.
 being applied to what a gate asserts, never to whether it is reached. Both halves need the
 proof. A gate that cannot be observed failing on the branch you are working on is not
 known to run there.
+
+### A11Y-29, in full: the seventh instance — and the first the discipline caught itself
+
+`check:contrast`'s new size pass (G1, run-3 fixes) shipped in a first version that
+**skipped every surface where `USE.except` restricts a token**. The reasoning looked
+right — a restricted surface is one the matrix says the token may not carry text on, so
+why measure it. The consequence is that the pass only ever examined surfaces where the
+matrix *already* enforces 4.5:1 for body-role tokens. **There was no input that could make
+it fail.** It ran, printed a confident summary line, and checked nothing the existing
+matrix did not already check.
+
+Same family as the six before it, and a new sub-shape: the previous six were gates that
+could skip their subject. This one measured its subject correctly and had its *predicate*
+narrowed to the set that already passed.
+
+1. `_`-prefix filter that swallowed a whole route
+2. double-encoded chunk path that resolved to nothing
+3. line-anchored regex that counted a third of what it claimed
+4. `check-axe` asserting `body[data-division]` existed rather than that it computed
+5. `check:lhci` exiting 0 when it skips (A11Y-25, still open)
+6. `ci.yml` never firing on the working branch (A11Y-27)
+7. **this one** — the predicate narrowed to the already-passing set
+
+**What is worth keeping is when it was caught.** The standing rule requiring a permanent
+committed subject and a deliberate-failure proof was written into `CLAUDE.md` *one commit
+earlier*, in response to A11Y-4 and `global-error`. Writing the proof for the very next
+gate is what exposed it: the attempt to make the pass fail found that no input could.
+Without that step it would have been committed green, and the seventh instance would have
+been discovered by whichever audit eventually re-derived it — the same way the first six
+were.
+
+**This is the first time the discipline paid for itself inside the session that introduced
+it**, and it is the argument for the rule that no amount of restating it would have made.
+
+The corrected pass flags a text declaration using a token the matrix restricts on that
+surface — which is the enforcement half of A11Y-22, and it immediately found
+`.specimenName` still failing on `--canvas-sunken` in master and digital *after* the Press
+token fix. The token change alone would not have closed the defect.
 
 ## Blocked / decisions needed
 
