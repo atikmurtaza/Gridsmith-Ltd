@@ -35,10 +35,33 @@
  * that are allowed to set the theme on the client" — which is the assertion inverted.
  *
  * `reset()` re-renders the tree; it is the only recovery Next offers here.
+ *
+ * **Verifying this file needs a client-side error, and that is not obvious.** A page that
+ * throws during SSR never reaches this boundary — production serves Next's static
+ * `<html id="__next_error__">` shell instead, which is how the untitled document was
+ * missed. What renders this file is a throw *after* hydration. The probe was a temporary
+ * `'use client'` page setting state in an effect and throwing on the re-render; measured
+ * in the served DOM at that point: `document.title` "Something went wrong — Gridsmith
+ * Ltd", the `<title>` hoisted into `<head>`, `lang="en-GB"`, one `<h1>`, one `<main>`,
+ * and axe zero violations against wcag2a/2aa/21a/21aa/22aa/best-practice.
+ *
+ * Note also that the probe must not sit in a `_`-prefixed folder: Next treats those as
+ * private and excludes them from routing, so the first attempt silently served the 404
+ * instead — the same `_`-prefix trap recorded in CLAUDE.md.
  */
 export default function GlobalError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
     <html lang="en-GB">
+      {/* WCAG 2.2 SC 2.4.2 Page Titled. This boundary replaces the root layout, so it
+          gets no title from one, and `'use client'` forbids a `metadata` export — the
+          two facts together are why this document shipped untitled and axe flagged it
+          `document-title`, serious. Without it the tab keeps the crashed route's title,
+          which describes the page the user did not get.
+
+          React 19 hoists a `<title>` rendered anywhere in the tree into `<head>`, which
+          is what makes this reachable from a Client Component at all. Verified in the
+          served DOM, not assumed — see the note below. */}
+      <title>Something went wrong — Gridsmith Ltd</title>
       <body>
         <main>
           <h1>Something went wrong</h1>
