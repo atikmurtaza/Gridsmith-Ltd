@@ -151,6 +151,17 @@ Read the workstream's own files before touching its code.
   **`global-error`** — its Level A `lang`/`<title>` fix was proven by a temporary throwing
   probe route that was then deleted. No gate referenced the file at all, and the only
   surviving evidence of the fix was a docstring.
+
+  **This rule is load-bearing, not ceremonial. Do not treat the proof as paperwork to file
+  after the work is done — it is the step that finds the defect.** It has now caught a
+  broken gate in three consecutive sessions, and two of those gates were written in the
+  same session as the proof that caught them:
+  `check:contrast`'s size pass shipped green with its predicate narrowed to the set that
+  already passed (`A11Y-29`), and `check-axe`'s linked-card assertion reported *clean*
+  against a deliberately broken selector because `elementFromPoint` hit-tests the viewport
+  and the subject sat below the fold (`A11Y-32`). Both were written by someone who had just
+  read this rule, and neither was caught by reading the code. Writing a gate and believing
+  it works is the normal outcome; the proof is what makes the difference observable.
 - **Never recursively delete outside the repository working tree without asking.** Inside
   the repo, `.next/` and `node_modules/` are regenerable — remove them freely. Outside it —
   home directories, tool installs, version-manager trees, anything under `AppData` or

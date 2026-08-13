@@ -355,6 +355,7 @@ day in one commit; the rows stay as the record of what was wrong.
 | ~~A11Y-28~~ | `check-node-version` matched `npm run <gate>` anywhere in `ci.yml`'s raw text, so **a comment counted as a step**. The comment explaining A11Y-27 registered `verify` as a CI gate and failed the build at `npm ci` on a commit that changed no gate. Every workflow file here carries long explanatory comments by house style, so it would have recurred. **Fixed 13 Aug**: full-line comments stripped before matching; trailing `#` after a real `run:` still works. Proven three ways — a real extra step is caught, a removed gate is caught, prose is ignored |
 | ~~A11Y-26~~ | `/_kitchen-sink` has no linked-card specimen carrying a second link, so nothing in CI exercised A11Y-4 and nothing catches a regression of it. The fix was proven by injecting a sibling link at runtime. **CLOSED at the run-3 fixes.** A permanent specimen — title link plus a second link, a button and a checkbox — is committed to the kitchen sink and marked as a gate subject, and `check-axe`'s DOM pass now hit-tests every interactive descendant of a `.cardLinked` against `elementFromPoint`. The lift selector also grew beyond `a, button` to `input, select, textarea, summary, [tabindex]` — it had been a per-instance fix of the class it was fixing |
 | A11Y-29 | **Seventh instance of the gate class** — `check:contrast`'s size pass shipped, briefly, with a predicate narrowed to the already-passing set. Caught by its own deliberate-failure proof one commit after the rule requiring that proof was written. See below |
+| A11Y-32 | **Eighth instance.** `check-axe`'s linked-card assertion reported clean against a deliberately broken selector — `elementFromPoint` hit-tests the viewport and the subject was below the fold. Caught by its own proof. The deliberate-failure rule has now caught a broken gate in three consecutive sessions, two of them gates written in the same session as the rule — see below |
 | A11Y-31 | **A rule whose stated justification was never checked against its own subject.** `--ink-subtle`'s `--canvas-sunken` restriction was justified as "4.18–4.43:1 across the four themes"; Design measured 5.19:1 there and was never in the failing set. A restriction that is too strict emits no failing output and cannot be found by reading gate results. Own class, not the gate class — see below |
 | A11Y-30 | **`check:contrast`'s size pass reads *declared* sizes, not rendered ones.** A rule block pairing `color: var(--token)` with `font-size: var(--text-*)` is measured; a colour and a size arriving from two different rules on the same element are not. Catching that needs a browser, and this gate runs in `verify:static` before the build, so it has no served page to read. **Deliberate deferral, not an oversight:** the rendered version belongs in the served tier beside `check-axe`, and it moves there during **Epic M**, when there are real pages with real chrome for it to measure. Today's only subject is `/_kitchen-sink`, where the declared-size pass already covers every case |
 
@@ -454,6 +455,30 @@ The corrected pass flags a text declaration using a token the matrix restricts o
 surface — which is the enforcement half of A11Y-22, and it immediately found
 `.specimenName` still failing on `--canvas-sunken` in master and digital *after* the Press
 token fix. The token change alone would not have closed the defect.
+
+### A11Y-32, the eighth instance — and the case that the rule is load-bearing
+
+`check-axe`'s new linked-card assertion (G3) reported **clean** against a deliberately
+broken lift selector. `document.elementFromPoint` hit-tests the **viewport**, not the
+document, and the specimen it was written to inspect sits far below the fold on
+`/_kitchen-sink`. It returned `null`, the loop skipped, and the gate printed a green line
+having hit-tested nothing. Fixed by scrolling each candidate into view first; the trap is
+written into the comment beside it.
+
+**The count is now eight. What matters more is the hit rate of the proof.**
+
+| Session | Gate | What the proof found |
+|---|---|---|
+| 12 Aug | `lint:colors` | its existing proof used `color:` and a hex — both forms it already caught. A proof that exercises only what a check catches proves nothing |
+| Run 3, this session | `check:contrast` size pass | predicate narrowed to the already-passing set; no input could fail it (`A11Y-29`) |
+| Run 3, this session | `check-axe` linked-card | clean against a broken selector; viewport-only hit test (`A11Y-32`) |
+
+Three consecutive sessions in which the deliberate-failure step caught a gate that reading
+the code did not, and **two of the three gates were written in the same session as the rule
+requiring the proof** — by an author who had just read it. That is the argument that the
+rule is load-bearing rather than ceremonial, and it is now in `CLAUDE.md` beside the rule
+itself. Writing a gate and believing it works is the normal outcome. The proof is the only
+step that makes the difference observable.
 
 ### A11Y-31, in full: a rule whose justification was never checked against its own subject
 
