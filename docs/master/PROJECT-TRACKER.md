@@ -350,6 +350,38 @@ day in one commit; the rows stay as the record of what was wrong.
 | A11Y-22 | `check-contrast` measures token-on-surface pairs, so it knew `--ink-subtle` was UI-only on `--canvas-sunken` and could not see three stylesheets using it as text. The permission matrix is right; nothing checks the declarations obey it |
 | A11Y-23 | `/_kitchen-sink` renders its Press specimens under the master layout, which never loads Source Serif, so `--font-display` falls back to Inter there. Press typography cannot be judged on the kitchen sink at all — the Press button defect was invisible on the one page built to show it |
 | A11Y-24 | Button typography is Design's specification hardcoded in the shared `.button` rule. Press now has a `:global([data-division='press'])` override, the first in the primitive layer. A second theme needing to differ (A11Y-20) should replace both with per-theme tokens |
+| A11Y-25 | **`check:lhci` exits 0 when it skips.** See below — the fifth instance of the gate class, and the only one still open |
+| A11Y-26 | `/_kitchen-sink` has no linked-card specimen carrying a second link, so nothing in CI exercised A11Y-4 and nothing catches a regression of it. The fix was proven by injecting a sibling link at runtime. A specimen with a title link *and* a retailer link is what would gate it |
+
+### P2 — A11Y-25, in full: the fifth attribute-vs-result gate defect
+
+`scripts/check-lhci.mjs` cannot run on Windows — `chrome-launcher`'s `destroyTmp` races
+Node 24's `fs.rmSync`, every audit completes and then cleanup fails `EPERM` and the process
+exits 1 (VALIDATION §13 E12). The skip itself is correct and well documented. **What is
+not correct is that it exits 0.**
+
+So `npm run verify` reports success on a machine where **neither Lighthouse axis measured
+anything**, and Digital's `100/100/100` — the craft claim a prospect runs on their own
+laptop — is among the assertions that did not run. The banner is loud (`⚠ NOT ALL GATES
+RAN`), which is why this is P2 and not P1: a human reading the output is told. A script,
+a hook or a pre-push check reading the exit code is not.
+
+This is the same shape as the four before it, and CLAUDE.md already states the rule it
+breaks: *"A gate that can skip its subject silently must treat that skip as a hard failure,
+never a pass."*
+
+1. `_`-prefix filter that swallowed a whole route
+2. double-encoded chunk path that resolved to nothing
+3. line-anchored regex that counted a third of what it claimed
+4. `check-axe` asserting `body[data-division]` existed rather than that it computed —
+   **fixed 13 Aug**, and it had been green on a themeless route the whole time
+5. **this one**
+
+**Not fixed this session, deliberately.** CI runs on `ubuntu-latest` where the skip never
+triggers, so the real risk is covered today and the change is its own piece of work: it
+needs the same treatment `check-axe` got — fail loudly when it measures nothing — plus a
+decision about the local developer experience on Windows, where a hard failure would make
+`npm run verify` unrunnable. Do not simply flip the exit code without that second half.
 
 ## Blocked / decisions needed
 
