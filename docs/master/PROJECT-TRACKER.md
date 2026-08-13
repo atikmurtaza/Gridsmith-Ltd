@@ -355,6 +355,7 @@ day in one commit; the rows stay as the record of what was wrong.
 | ~~A11Y-28~~ | `check-node-version` matched `npm run <gate>` anywhere in `ci.yml`'s raw text, so **a comment counted as a step**. The comment explaining A11Y-27 registered `verify` as a CI gate and failed the build at `npm ci` on a commit that changed no gate. Every workflow file here carries long explanatory comments by house style, so it would have recurred. **Fixed 13 Aug**: full-line comments stripped before matching; trailing `#` after a real `run:` still works. Proven three ways — a real extra step is caught, a removed gate is caught, prose is ignored |
 | A11Y-26 | `/_kitchen-sink` has no linked-card specimen carrying a second link, so nothing in CI exercised A11Y-4 and nothing catches a regression of it. The fix was proven by injecting a sibling link at runtime. A specimen with a title link *and* a retailer link is what would gate it |
 | A11Y-29 | **Seventh instance of the gate class** — `check:contrast`'s size pass shipped, briefly, with a predicate narrowed to the already-passing set. Caught by its own deliberate-failure proof one commit after the rule requiring that proof was written. See below |
+| A11Y-31 | **A rule whose stated justification was never checked against its own subject.** `--ink-subtle`'s `--canvas-sunken` restriction was justified as "4.18–4.43:1 across the four themes"; Design measured 5.19:1 there and was never in the failing set. A restriction that is too strict emits no failing output and cannot be found by reading gate results. Own class, not the gate class — see below |
 | A11Y-30 | **`check:contrast`'s size pass reads *declared* sizes, not rendered ones.** A rule block pairing `color: var(--token)` with `font-size: var(--text-*)` is measured; a colour and a size arriving from two different rules on the same element are not. Catching that needs a browser, and this gate runs in `verify:static` before the build, so it has no served page to read. **Deliberate deferral, not an oversight:** the rendered version belongs in the served tier beside `check-axe`, and it moves there during **Epic M**, when there are real pages with real chrome for it to measure. Today's only subject is `/_kitchen-sink`, where the declared-size pass already covers every case |
 
 ### P2 — A11Y-25, in full: the fifth attribute-vs-result gate defect
@@ -453,6 +454,49 @@ The corrected pass flags a text declaration using a token the matrix restricts o
 surface — which is the enforcement half of A11Y-22, and it immediately found
 `.specimenName` still failing on `--canvas-sunken` in master and digital *after* the Press
 token fix. The token change alone would not have closed the defect.
+
+### A11Y-31, in full: a rule whose justification was never checked against its own subject
+
+**This is not the gate class and should not be filed under it.** Every one of the seven
+gate-class instances produces, or fails to produce, an *output* — a green line over an
+unmeasured subject, an empty Actions tab, a summary that counts less than it claims. They
+are all found by eventually reading something.
+
+This one emits nothing at all.
+
+`check:contrast`'s permission matrix carried
+`--ink-subtle: except { '--canvas-sunken': 'ui' }`, justified as *"measures 4.18–4.43:1 on
+sunken across the four themes, short of the 4.5:1 body floor"*. The restriction was
+documented, it named its reason, it was enforced by the matrix, and it was **untrue about
+one of the three themes it covered**: Design measured **5.19:1** on `--canvas-sunken` — not
+merely passing, but the highest of the three surfaces in that theme. Design had also grown
+a floor rule of its own in `design/DESIGN.md` §2 — *"body text only at ≥16px; never for
+small print"* — that its own measurement never required.
+
+Nothing was ever going to report this. The restriction was a *downgrade*: it asked less of
+the token than the measurement supported, so no assertion could fail, no gate could go red,
+and no output could look wrong. A restriction that is too strict is invisible by
+construction. It was found only because G1b re-derived all four values and the arithmetic
+had to be redone from the surfaces up.
+
+**The shape, stated generally:** *a rule that constrains something is only as good as the
+last time its justification was checked against its actual subject.* A justification is a
+factual claim and ages exactly like a published number — CLAUDE.md already says a
+measurable number is unverified until a gate measures it, and the same is true of the
+sentence explaining why a rule exists. Where the two disagree, the measurement wins and the
+rule gets re-derived, not trimmed.
+
+**And the remedy, which is the part worth carrying forward:**
+
+> **A token that needs a restriction to be safe has the wrong value. Fix the value, do not
+> narrow the restriction.**
+
+Narrowing would have been the natural move here — amend the reason to say "master and
+digital" and leave Design out. That keeps a restriction alive, keeps a rule whose
+justification has to stay true about a shrinking set, and leaves Design as the one theme
+whose `--ink-subtle` behaves differently from the other three in a system whose entire
+argument is that they read as one. G1b deleted the `except` outright instead and re-derived
+all four values so no restriction is needed by any of them.
 
 ## Blocked / decisions needed
 
