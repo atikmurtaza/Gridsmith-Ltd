@@ -19,7 +19,36 @@ if (!Array.isArray(legacyRedirects)) {
   throw new Error('redirects/legacy.json must contain an array');
 }
 
+/**
+ * Gate-subject routes are built everywhere except a production deploy.
+ *
+ * `app/(marketing)/gridsmith-error-probe/page.probe.tsx` deliberately throws — it is the
+ * committed subject that lets `check-axe` reach `app/global-error.tsx`, which otherwise
+ * has no gate at all. It must not be reachable on the live site.
+ *
+ * **The mechanism is `pageExtensions`, so the route is genuinely absent from the build**
+ * rather than present-and-redirected. A rewrite or a `notFound()` would still compile the
+ * page, ship its chunk, and leave it one config edit away from being live.
+ *
+ * **The flag excludes rather than includes, deliberately.** The gates run against a real
+ * production build (`next build && next start`), so a flag that had to be *set* to include
+ * probes would have to be set by `verify`, by CI, and by anyone debugging locally — and
+ * the first person to forget it would get a green run against a build with no subject in
+ * it, which is the hollow-subject failure this route exists to prevent. Defaulting to
+ * present means the only way to lose the subject is to opt out explicitly.
+ *
+ * `VERCEL_ENV` is set by the platform on production deploys; `GRIDSMITH_EXCLUDE_PROBES`
+ * is the manual equivalent for any other host. Neither is set locally or on CI.
+ *
+ * `A-12` formalises production exclusions (it owns the seed check and `/_kitchen-sink`,
+ * which is still built everywhere). When it lands it inherits this flag rather than
+ * inventing a second one.
+ */
+const excludeProbes =
+  process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
+
 const nextConfig: NextConfig = {
+  pageExtensions: excludeProbes ? ['tsx', 'ts'] : ['tsx', 'ts', 'probe.tsx'],
   /**
    * `globalNotFound` is what makes the 404 load the token layer at all.
    *
