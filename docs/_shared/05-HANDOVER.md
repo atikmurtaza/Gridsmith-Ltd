@@ -90,10 +90,21 @@ changes how much you should trust everything else in this file:
   stylesheet giving it meaning was never linked. Fourth defect of that shape, and the
   first inside a gate written to catch the third. Both fixed — the gate now reads four
   tokens back off `body` and compares the background to `--canvas` through a probe.
-- **`global-error` can only be verified with a *client-side* error.** A page that throws
-  during SSR never reaches it; production serves Next's static `__next_error__` shell
-  instead. That is how it shipped with no `<title>`. The probe must also not live in a
+- **`global-error` is verified on the client-effect path, and that path only.** A throw
+  after hydration reaches it, and `app/(marketing)/gridsmith-error-probe/page.probe.tsx`
+  is now a permanent committed subject that `check-axe` visits every run — title, `h1` and
+  `lang` asserted, so the probe cannot go hollow. The probe must not live in a
   `_`-prefixed folder — Next drops those from routing and you will be measuring the 404.
+
+  **The SSR path is unknown and must not be asserted either way.** This bullet, and
+  `global-error.tsx`'s own docstring, used to state as fact that a throw during SSR never
+  reaches the boundary and that production serves Next's `__next_error__` shell with no
+  `lang` and no `<title>` — a live Level A failure on every server-side crash, if true.
+  **Struck at the run-3 fixes.** It cannot be induced without editing a file, no gate
+  covers it, and an unverifiable claim does not get asserted in either direction
+  (CLAUDE.md). Do not read the probe's success as covering it: the probe exercises one of
+  the two ways this boundary can be reached. Establishing the other needs a route that
+  throws during render, `next build && next start`, and a read of the response.
 
 The criteria are worded "zero findings" / "zero violations" with no partial credit. Round
 two is the important lesson: **the tree that had just been audited and fixed still had four
@@ -405,6 +416,30 @@ place in the repository before, an exemption. Nine gates changed in total.
   client chunks, which is where a leak actually is. It hard-fails if there is no build.
 
 ## 10. Round two — what `rules-compliance` found against the fixed tree
+
+> **⚠ This section's "15 findings, all fixed" is UNRECONSTRUCTABLE, and is now CLOSED as
+> superseded. Do not attempt to reconstruct it.**
+>
+> The count is recorded here and in the tracker as **4 blockers, 4 majors, 7 minors**. What
+> is actually written down is roughly **eleven** items: three blockers, two gate fixes and
+> six corrected numbers, all in the prose below. **The four majors and seven minors are
+> itemized nowhere in the repository** — there is no round-two audit file the way
+> `06-EPIC-A-AUDIT.md` and `07-A11Y-AUDIT.md` exist for the other rounds. A fresh reader
+> asked to "confirm each from the repo" cannot, because the list does not exist. Run 3
+> reported this as a finding in its own right: a claim of "all fixed" against a set that
+> cannot be enumerated is unfalsifiable by construction, which is the documentary form of a
+> gate that measures nothing.
+>
+> **Why it is nevertheless safe to close.** Round 3 audited **the same scope from a fresh
+> context** — the whole of Epic A, in three passes (`accessibility-audit` over the
+> primitives and over the routes, plus `rules-compliance`) — and it re-found things that
+> were genuinely still live, including two instances of a class round two had itself fixed
+> in the same file. An audit that re-finds live defects would have re-found any of the
+> unlisted eleven that still mattered. What round 3 returned is the current defect list;
+> what round 2 returned is superseded by it.
+>
+> The prose below is kept because the parts that *are* written down changed how the work is
+> done. It is a record, not a checklist — nothing here is outstanding.
 
 15 findings, none of them re-reports of §9. All fixed. The ones that change how you work:
 

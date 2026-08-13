@@ -36,14 +36,27 @@
  *
  * `reset()` re-renders the tree; it is the only recovery Next offers here.
  *
- * **Verifying this file needs a client-side error, and that is not obvious.** A page that
- * throws during SSR never reaches this boundary — production serves Next's static
- * `<html id="__next_error__">` shell instead, which is how the untitled document was
- * missed. What renders this file is a throw *after* hydration. The probe was a temporary
- * `'use client'` page setting state in an effect and throwing on the re-render; measured
- * in the served DOM at that point: `document.title` "Something went wrong — Gridsmith
- * Ltd", the `<title>` hoisted into `<head>`, `lang="en-GB"`, one `<h1>`, one `<main>`,
- * and axe zero violations against wcag2a/2aa/21a/21aa/22aa/best-practice.
+ * **Verifying this file needs a client-side error, and that is not obvious.** What renders
+ * this file is a throw *after* hydration. The permanent subject is
+ * `app/(marketing)/gridsmith-error-probe/page.probe.tsx`, which mounts, sets state in an
+ * effect and throws on the re-render; `check-axe` visits it every run and asserts the
+ * boundary identifies itself. Measured in the served DOM: `document.title` "Something went
+ * wrong — Gridsmith Ltd", the `<title>` hoisted into `<head>`, `lang="en-GB"`, one `<h1>`,
+ * one `<main>`, and axe zero violations against wcag2a/2aa/21a/21aa/22aa/best-practice.
+ *
+ * **What is verified is the client-effect path, and only that.** This docstring used to
+ * assert that a throw during SSR never reaches this boundary and that production serves
+ * Next's static `<html id="__next_error__">` shell instead — with no `lang` and no
+ * `<title>`, i.e. a live Level A failure on every server-side crash. **That claim is
+ * struck.** It could not be induced without editing a file, no gate covers it, and it was
+ * written as settled fact. CLAUDE.md: an asserted claim no gate covers is unverified, and
+ * unverifiable in both directions does not get asserted in either.
+ *
+ * So: the SSR path is **unknown**, not "known bad" and not "known good". Do not read the
+ * probe's success as covering it — the probe exercises one of the two ways this boundary
+ * can be reached. Establishing the other needs a route that throws during render, a
+ * `next build && next start`, and a read of the response; if it turns out the shell is
+ * served, that is a Level A failure needing its own fix and its own subject.
  *
  * Note also that the probe must not sit in a `_`-prefixed folder: Next treats those as
  * private and excludes them from routing, so the first attempt silently served the 404
