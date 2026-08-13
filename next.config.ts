@@ -20,6 +20,30 @@ if (!Array.isArray(legacyRedirects)) {
 }
 
 const nextConfig: NextConfig = {
+  /**
+   * `globalNotFound` is what makes the 404 load the token layer at all.
+   *
+   * With four root layouts and no `app/layout.tsx`, an unmatched URL falls outside all of
+   * them, so Next has no layout to attach the route's global CSS to. `app/not-found.tsx`
+   * imported `globals.css` and the fonts directly and the build silently dropped both:
+   * the served 404 linked the CSS-modules chunk and nothing else, leaving every token
+   * undefined. `outline: 2px solid var(--ink)` is then invalid at computed-value time,
+   * which also discards the UA focus ring — measured `outlineStyle: "none"` against
+   * `"solid 2px"` on `/`. CSS *modules* were collected, which is why it looked styled.
+   *
+   * This flag switches on the `app/global-not-found.tsx` convention, whose whole purpose
+   * is a 404 that owns its own `<html>`/`<body>` because there is no root layout to
+   * inherit — precisely this app's shape (`next-app-loader/index.js:341` drops the layout
+   * for that route). Its CSS is collected like any page's.
+   *
+   * Experimental in 15.5.x, so it is Next that must be pinned, not this line. What proves
+   * it still works is `check-axe`, which now asserts the *computed* theme on every route
+   * and fails if the tokens are not loaded. If a Next upgrade renames or stabilises the
+   * flag, that gate is what will tell you, on the 404 specifically.
+   */
+  experimental: {
+    globalNotFound: true,
+  },
   async redirects() {
     return legacyRedirects;
   },

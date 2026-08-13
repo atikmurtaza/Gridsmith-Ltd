@@ -134,8 +134,47 @@ async function domIntegrity(page, route) {
     // raw file, and the 404's raw file is a streaming shell that the parser resolves.
     // Reading the parsed DOM here is what covers the routes that gate cannot see, and it
     // is how a themeless page would be caught at all.
+    //
+    // **This assertion used to be `if (!document.body.dataset.division)` and nothing
+    // else, and it was green while /_not-found rendered with no theme at all.** The
+    // attribute was present — RootShell writes it server-side — but the stylesheet that
+    // gives `[data-division]` any meaning was never linked on that route, so every token
+    // was undefined. `outline: 2px solid var(--ink)` became invalid at computed-value
+    // time, which discards the UA focus ring too: measured `outlineStyle: "none"`.
+    //
+    // Asserting the attribute tests the input to theming. Only a computed value tests the
+    // result. That distinction is the fourth defect of this shape in this programme, and
+    // the first to occur in a gate written to catch the third.
     if (!document.body.dataset.division) {
       problems.push('<body> carries no data-division — this page renders with no theme');
+    }
+
+    const bodyStyle = getComputedStyle(document.body);
+
+    // An unlinked stylesheet makes every custom property resolve to the empty string.
+    // This is the check that would have caught it: it needs no colour table and no
+    // per-theme expectation, so it cannot drift from the tokens it is guarding.
+    for (const token of ['--canvas', '--ink', '--line', '--accent']) {
+      if (!bodyStyle.getPropertyValue(token).trim()) {
+        problems.push(`${token} resolves to nothing — the token layer is not loaded on this route`);
+      }
+    }
+
+    // And this is the check that catches the tokens being present but not reaching the
+    // page. `--canvas` is read back through a probe so both sides are serialised by the
+    // same engine — comparing a hex token to an rgb() computed value otherwise needs a
+    // colour parser in the gate, which is a second thing to get wrong.
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--canvas)';
+    document.body.append(probe);
+    const canvas = getComputedStyle(probe).color;
+    probe.remove();
+
+    if (bodyStyle.backgroundColor !== canvas) {
+      problems.push(
+        `body background is ${bodyStyle.backgroundColor} but --canvas is ${canvas} — ` +
+          'the theme is declared and not applied',
+      );
     }
 
     return problems;
