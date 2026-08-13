@@ -21,7 +21,7 @@ touching anything; delete the sections that go stale as they are resolved.
 | A-05 | DONE | 24 primitives, 21 Server / 3 Client. Every primitive that emits a DOM id now generates it with `useId()` — which works in Server Components, so this cost no client JS. `Accordion` also generates its own exclusive-group name and no longer emits an unread `id` |
 | A-05a | DONE | `/_kitchen-sink`, 23 primitives × 4 themes (`Media` deliberately excluded — the page now says 23, not 24), **6.2KB gz delta, budgeted at 7KB**, of which 0.4KB is the global-error boundary every route carries. The `scope()` workaround is gone: the primitives generate their own ids and `check-axe` still reports zero duplicates |
 | A-10b | DONE | Lighthouse split into **two axes** — desktop asserts category scores, mobile asserts Core Web Vitals on 4G. Both green on CI |
-| **A-GATE** | **OPEN — this is the next task** | Criteria 1–4 now MET and re-verified. 5 and 6 need a fresh-context run that returns clean. See §2 — **one agent per session**. Criterion 6 is the only one outstanding |
+| **A-GATE** | **OPEN — this is the next task** | Criteria 1–4 now MET and re-verified. 5 and 6 need a fresh-context run that returns clean. See §2. **Criterion 6 is the only thing outstanding** — launch `accessibility-audit` alone, as the FIRST action of a fresh session. Three attempts have died on the session limit |
 | A-06, A-07 | **TODO**, not REVIEW | **No code artefacts exist** — no `sanity/`, no `supabase/`, no `lib/`, nothing in `git ls-files`. What exists is prose in `docs/*/SCHEMA.md`, which is the spec, not the work. `REVIEW` means awaiting review and there was nothing to review. Blocked on `Q-M17` / `Q-M18` (the old `(B4)` reference resolved to nothing) |
 | A-08, A-09, A-11, A-12 | TODO | Not started |
 
@@ -42,7 +42,7 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 Criteria 1–4 are **met and independently re-verified**. **Criteria 5 and 6 have still
 never returned a clean run.**
 
-There have been **two rounds** on 12 August, and neither closed either criterion.
+There have been **three rounds** on 12 August, and none closed either criterion.
 
 **Round one — the audit** (`06-EPIC-A-AUDIT.md`). Both agents got through on a second
 attempt with tightened prompts and both **returned findings**: 1 blocker + 5 major + 3
@@ -51,6 +51,10 @@ minor, and 2 Level A blockers + 1 AA failure. All fixed — §9.
 **Round two — after those fixes.** `rules-compliance` ran again against the fixed tree and
 returned **4 blockers, 4 majors and 7 minors, none of them re-reports**. All fixed — §10.
 `accessibility-audit` died on the session limit and returned nothing.
+
+**Round three — `accessibility-audit` alone, after CI went green.** Died on the session
+limit again, having reached the `global-error` render path. Nothing returned. See the
+agent-budget note below: the problem was the session, not the shape.
 
 The criteria are worded "zero findings" / "zero violations" with no partial credit. Round
 two is the important lesson: **the tree that had just been audited and fixed still had four
@@ -61,52 +65,65 @@ that fixed the findings is the worst reviewer of the fixes. Two rounds of that h
 produced findings both times.
 
 **The next actionable task in the programme:** run `accessibility-audit` from
-`.claude/agents/` **alone, in a fresh session**, on Node 24 — criterion 6. Nothing
+`.claude/agents/` **alone, as the first action of a fresh session**, on Node 24 —
+criterion 6. Nothing
 downstream of Epic A starts until it returns clean. `design-conformance`,
 `spec-compliance` and `content-integrity` are not A-GATE criteria and have still never run;
 they are worth running eventually, one per session, and they are not blocking.
 
-### ⚠ Agent budget — read this before launching anything
+### ⚠ Agent budget — read this BEFORE doing anything else in the session
 
-**Five concurrent agents exhaust the session budget before any of them reports.** Not one
-returns partial findings; all five die having produced nothing. It happened at the first
-Epic A audit and again on 12 August, identically. Both times the two gate-closing agents
-were then relaunched alone and got through.
+**Criterion 6 has now failed to complete three times.** Not because the agent is wrong, and
+not because the brief is wrong — the third attempt had the tightest brief yet and got
+furthest. It ran out of session.
 
-**Two is not automatically safe either, and that is new.** On the 12 August fix session
-`rules-compliance` and `accessibility-audit` were launched as a pair — the prescribed
-shape — and:
+| Attempt | Shape | Outcome |
+|---|---|---|
+| 1 | Five agents at once, unbriefed | All five died before returning anything |
+| 2 | Five at once again, then the two gate-closers relaunched alone with tightened briefs | Both completed and returned findings |
+| 3 | Two as a pair (`rules-compliance` + `accessibility-audit`) | `rules-compliance` completed at ~210k tokens / 58 tool calls. `accessibility-audit` died mid-run |
+| 4 | **One agent alone**, best brief so far, launched at the **end** of a working session | Died. Got as far as the `global-error` render path — most of the audit done, nothing returned |
 
-- `rules-compliance` **completed**, consuming ~210k tokens across 58 tool calls in about
-  13 minutes. It built the tree and executed all ten gates that run on Windows.
-- `accessibility-audit` **died on the session limit** partway through, while writing the
-  browser sweep for the probes axe structurally cannot make. It returned nothing.
+**The binding constraint is not the number of agents. It is how much session is left when
+the agent starts.** Attempt 4 was launched after that session had already committed 46
+files, fixed a red CI run, pushed twice, polled CI to completion and downloaded two log
+archives. One agent was the right shape and it still had nothing to run on.
 
-**The rule is now one agent per session for A-GATE.** Not five, not two. `rules-compliance`
-costs roughly a fifth of a session on its own on this repository, and a pair does not fit
-alongside the work of acting on what the first one returns. Launch one, act on its report,
-start a fresh session for the next.
+**So the rule is: launch the A-GATE agent as the FIRST action of a fresh session.** Before
+reading files, before running gates, before any commit. Then act on its report in that same
+session if there is room, or in the next one. `accessibility-audit` on this repository needs
+most of a session to itself — it drives a real browser, builds, and probes render paths that
+axe cannot reach.
 
-Give each a brief naming what is already fixed and what is on the do-not-report list. That
-is what got them through at all — every unbriefed run has died.
+Everything an agent needs in order to be worth launching is already written down: §9 and
+§10 list what is fixed, and the do-not-report list is what has got every completed run
+through. An unbriefed agent has never survived.
 
 ### Where criteria 5 and 6 actually stand
 
-| Criterion | Agent | 12 Aug result |
+| Criterion | Agent | Status |
 |---|---|---|
-| **5** | `rules-compliance` | **RAN — NOT MET.** 4 blockers, 4 majors, 7 minors, none of them re-reports of the earlier audit. All fixed in the same session; see §9 |
-| **6** | `accessibility-audit` | **DID NOT RUN.** Died on the session limit. Its findings from the earlier audit round are fixed, but the criterion itself has still never returned a clean pass |
+| **5** | `rules-compliance` | **RAN TWICE, FAILED TWICE.** Round one: 1 blocker, 5 major, 3 minor. Round two, against the fixed tree: 4 blockers, 4 majors, 7 minors, none of them re-reports. All fixed — §9, §10. Needs a third run that returns zero |
+| **6** | `accessibility-audit` | **NEVER COMPLETED.** Round one returned findings (all fixed). Rounds two and three died on the session limit. **This is the only thing standing between Epic A and Epic M** |
 
-**Criterion 6 is the outstanding item in Epic A.** Run `accessibility-audit` alone, in a
-fresh session, and expect it to consume most of it.
+**Criterion 6 is the outstanding item in Epic A, and it is the next thing to do.** Launch
+`accessibility-audit` alone, first thing, in a session you have not otherwise spent.
 
 **Nothing else in Epic A is open.** A-06 and A-07 are blocked on Atik (`Q-M17`, `Q-M18`),
 and A-08 to A-12 are Stage-2 work. **After criterion 6 returns clean, the next task is
 Epic M** — do not reopen Epic A to improve anything.
 
-**Criterion 5 needs re-running too**, for the same reason it was re-run this time: the
-findings it produced were fixed by the context that received them. A criterion worded "zero
-findings" is only met by a run that returns zero.
+**Criterion 5 needs re-running too**, for the same reason it was re-run before: the findings
+it produced were fixed by the context that received them. A criterion worded "zero findings"
+is only met by a run that returns zero. It is not blocking Epic M in the way criterion 6 is,
+but it is not met either.
+
+### If an agent dies mid-run, check the working tree
+
+`accessibility-audit` creates probe routes to observe render paths it cannot otherwise
+reach — attempt 4 left `app/(marketing)/%5Fa11y-boom/page.tsx`, a route that throws, in
+order to see what `global-error` renders. A probe left behind is a deliberately broken route
+committed by accident. `git status` after any agent run.
 
 ## 3. Open questions, and who they wait on
 
