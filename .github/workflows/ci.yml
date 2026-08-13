@@ -56,6 +56,9 @@ jobs:
       - name: No element styled as a heading without being one
         run: npm run check:headings
 
+      - name: No invented prices, codes or ISBNs in rendering files
+        run: npm run check:content
+
       - name: Build
         run: npm run build
 

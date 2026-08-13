@@ -138,7 +138,7 @@ function AllPrimitives({ division }: { division: string }) {
         <Prose>
           <p>
             Body copy at the default measure. Monospace marks anything verifiable, like{' '}
-            <code>REV-04</code>. An <a href="#ks">inline link</a> sits in the accent.
+            <code>REV-00</code>. An <a href="#ks">inline link</a> sits in the accent.
           </p>
           <ul>
             <li>First item</li>
@@ -264,11 +264,17 @@ function AllPrimitives({ division }: { division: string }) {
       </Specimen>
 
       <Specimen name="Select — placeholder, error">
+        {/* Zeroed, like every other figure on this page. These read as real budget bands
+            and asserted a price structure nobody has agreed — non-negotiable #2 — and
+            they contradicted the only bands defined anywhere in the repo
+            (press/APP-FLOW.md §128). A Select specimen needs option shapes, not
+            commercial claims. Third instance of this class in this one file; the gate
+            that now catches it is scripts/check-invented-content.mjs. */}
         <Select
           name="budget"
           label="Budget band"
           placeholder="Select a band"
-          options={[{ value: 'a', label: 'Under £5,000' }, { value: 'b', label: '£5,000 – £15,000' }]}
+          options={[{ value: 'a', label: 'Under £0,000' }, { value: 'b', label: '£0,000 – £00,000' }]}
         />
         <Select
           name="broken-select"
