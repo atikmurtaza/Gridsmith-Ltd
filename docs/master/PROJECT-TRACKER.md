@@ -347,7 +347,7 @@ day in one commit; the rows stay as the record of what was wrong.
 
 | ID | Item |
 |---|---|
-| A11Y-22 | `check-contrast` measures token-on-surface pairs, so it knew `--ink-subtle` was UI-only on `--canvas-sunken` and could not see three stylesheets using it as text. The permission matrix is right; nothing checks the declarations obey it |
+| ~~A11Y-22~~ | `check-contrast` measures token-on-surface pairs, so it knew `--ink-subtle` was UI-only on `--canvas-sunken` and could not see three stylesheets using it as text. The permission matrix is right; nothing checks the declarations obey it. **CLOSED at the run-3 fixes, from both ends:** `check:contrast` gained a size pass that holds declarations to the matrix, and all four `--ink-subtle` values were re-derived so no restriction is needed at all — worst cell per theme now 4.96–5.01:1. A token that needs a restriction to be safe has the wrong value. FOUNDATION §3 |
 | A11Y-23 | `/_kitchen-sink` renders its Press specimens under the master layout, which never loads Source Serif, so `--font-display` falls back to Inter there. Press typography cannot be judged on the kitchen sink at all — the Press button defect was invisible on the one page built to show it |
 | A11Y-24 | Button typography is Design's specification hardcoded in the shared `.button` rule. Press now has a `:global([data-division='press'])` override, the first in the primitive layer. A second theme needing to differ (A11Y-20) should replace both with per-theme tokens |
 | A11Y-25 | **`check:lhci` exits 0 when it skips.** See below — the fifth instance of the gate class, and the only one still open |

@@ -54,7 +54,7 @@ const PAIRS = {
   master: [
     ['--ink', '--canvas', 'text', 19.17],
     ['--ink-muted', '--canvas', 'text', 7.73],
-    ['--ink-subtle', '--canvas', 'text', 4.83],
+    ['--ink-subtle', '--canvas', 'text', 5.52],
     ['--accent-ink', '--accent', 'text', 19.17],
     ['--accent-design', '--canvas', 'decor', 2.16],
     ['--accent-digital', '--canvas', 'text', 5.09],
@@ -64,7 +64,7 @@ const PAIRS = {
   design: [
     ['--ink', '--canvas', 'text', 17.92],
     ['--ink-muted', '--canvas', 'text', 7.56],
-    ['--ink-subtle', '--canvas', 'text', 5.01],
+    ['--ink-subtle', '--canvas', 'text', 5.37],
     ['--accent', '--canvas', 'text', 9.07],
     ['--accent', '--canvas-raised', 'text', 8.46],
     ['--accent-ink', '--accent', 'text', 9.07],
@@ -73,7 +73,7 @@ const PAIRS = {
   digital: [
     ['--ink', '--canvas', 'text', 18.96],
     ['--ink-muted', '--canvas', 'text', 7.40],
-    ['--ink-subtle', '--canvas', 'text', 4.63],
+    ['--ink-subtle', '--canvas', 'text', 5.28],
     ['--accent', '--canvas', 'text', 4.87],
     ['--accent', '--canvas-raised', 'text', 5.09],
     ['--accent-ink', '--accent', 'text', 5.09],
@@ -116,17 +116,28 @@ const ROLE_OF = { body: 'body text', large: 'large text', ui: 'UI boundary or st
 const USE = {
   '--ink': { role: 'body' },
   '--ink-muted': { role: 'body' },
-  '--ink-subtle': {
-    role: 'body',
-    except: {
-      '--canvas-sunken':
-        'ui — measures 4.18–4.43:1 on sunken in master, design and digital, short of the 4.5:1 body ' +
-        'floor. It stays the nominated control-border token there (>=3:1). States use --ink-muted for ' +
-        'text on sunken. Press was in this set at its old value (4.18:1) and left it at the run-3 fixes: ' +
-        'press now measures 4.98:1 on sunken and carries no restriction. The exception is kept because ' +
-        'three themes still need it — closing it for the other three is A11Y-22, not swept here.',
-    },
-  },
+  // **A11Y-22 is closed here, and the `except` entry is gone rather than narrowed.**
+  //
+  // --ink-subtle used to carry `except: { '--canvas-sunken': 'ui' }` because it measured
+  // 4.18–4.43:1 there in three of the four themes, below the 4.5:1 body floor. That
+  // downgrade was recorded honestly and enforced nowhere: the matrix granted it and no
+  // gate checked that the stylesheets obeyed it, which is exactly what A11Y-22 named.
+  //
+  // Rather than enforce a restriction, the run-3 fixes removed the need for one. All four
+  // --ink-subtle values were re-derived to clear the body floor on every surface, with the
+  // worst cell in each theme landing in a 4.96–5.01:1 band:
+  //
+  //   master   5.52 / 5.28 / 5.01     design   5.37 / 5.00 / 5.56
+  //   digital  5.28 / 5.52 / 4.96     press    5.44 / 5.73 / 4.98
+  //
+  // Design never actually failed — it measured 5.01 / 4.68 / 5.19 and had been swept into
+  // the restriction blanket without meeting its stated range. It was re-derived anyway so
+  // the four themes read as one system, which is the whole argument for a shared scale.
+  //
+  // A token that needs a restriction to be safe is a token whose value is wrong. There is
+  // now no restricted token anywhere in USE — see the note in the size pass about what
+  // that means for the branch that enforces restrictions.
+  '--ink-subtle': { role: 'body' },
   '--accent': { role: 'body' },
   '--accent-hover': { role: 'body' },
   '--line': { role: 'decor' },
@@ -395,14 +406,23 @@ for (const file of SIZE_SOURCES) {
         const r = ratio(t[token], t[surface]);
 
         // A `USE.except` entry is the matrix recording that this token may NOT carry text
-        // on this surface. That restriction has never been enforced against the
-        // stylesheets — this is the half of A11Y-22 the matrix cannot see. A declaration
-        // painting text with a restricted token is a violation even when the matrix is
-        // green, because the matrix granted the downgrade and the stylesheet ignored it.
+        // on this surface. A declaration painting text with a restricted token is a
+        // violation even when the matrix is green, because the matrix granted the
+        // downgrade and the stylesheet ignored it. That is the half of A11Y-22 the matrix
+        // cannot see.
         //
         // Skipping restricted surfaces here instead would make this whole pass incapable
         // of failing: every non-restricted body token already clears 4.5:1 by the matrix,
-        // so there would be nothing left for it to catch.
+        // so there would be nothing left for it to catch. That was the shipped-and-caught
+        // seventh instance of the gate class — A11Y-29.
+        //
+        // **This branch currently has no subject: USE carries no `except` entry at all
+        // since A11Y-22 was closed by re-deriving the tokens.** That is deliberate and is
+        // not the "gate with no subject" failure CLAUDE.md names, because the branch's
+        // subject is conditional on a restriction existing — no restriction, nothing to
+        // enforce. It is here so that the moment someone adds an `except` back, the
+        // stylesheets are held to it. Do not delete it as dead code; deleting it is how
+        // A11Y-22 comes back.
         if (use.except?.[surface] && r + TOLERANCE < needed) {
           sizeProblems.push(
             `${file} — ${token} paints text at ${size[1]} (${px.toFixed(2)}px, weight ${weight}) ` +

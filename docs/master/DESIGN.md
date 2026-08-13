@@ -27,7 +27,7 @@ The founder's brief for the brand is "innovative and institutionally trustworthy
 
   --ink:            #0F0F0F;
   --ink-muted:      #52525B;
-  --ink-subtle:     #71717A;
+  --ink-subtle:     #686871;   /* was #71717A — see §2 */
 
   --accent:         #0F0F0F;   /* the master accent is ink — deliberate */
   --accent-hover:   #2A2A2A;
@@ -59,7 +59,7 @@ Division accents appear at master level in only three places: division routing c
 |---|---|---|
 | `--ink` on `--canvas` | 19.17:1 | AAA |
 | `--ink-muted` on `--canvas` | 7.73:1 | AAA |
-| `--ink-subtle` on `--canvas` | 4.83:1 | AA |
+| `--ink-subtle` on `--canvas` | 5.52:1 | AA at any size |
 | `--accent-ink` on `--accent` | 19.17:1 | AAA |
 | `--accent-design` on `--canvas` | 2.16:1 | **Decorative rules and badges only. Never text, never a sole state indicator** |
 | `--accent-digital` on `--canvas` | 5.09:1 | AA |

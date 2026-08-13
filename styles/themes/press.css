@@ -19,9 +19,11 @@
  * size rule at all. It stays clearly lighter than --ink-muted (7.25:1), so the three-step
  * ink hierarchy is intact.
  *
- * This is a press-only change. --ink-subtle is still restricted to UI on --canvas-sunken
- * in the other three themes, where it measures 4.18–4.43:1 — that is A11Y-22 and is not
- * swept here.
+ * Press was fixed first and the other three followed one commit later, for the reason
+ * that makes this a system and not four themes: press had become the only theme whose
+ * --ink-subtle needed no size rule. All four are now re-derived to clear the body floor on
+ * every surface, the --canvas-sunken restriction is gone from the matrix entirely, and
+ * A11Y-22 is closed. FOUNDATION §3 carries the full table.
  */
 
 [data-division="press"] {

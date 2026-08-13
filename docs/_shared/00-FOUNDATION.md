@@ -241,7 +241,7 @@ Swept at A-05 across all four themes and all three surfaces (`--canvas`,
 |---|---|---|
 | `--line` | 1.12 – 1.34:1 | fails everywhere |
 | `--line-strong` | **1.45 – 1.79:1** | **fails everywhere** |
-| `--ink-subtle` | 4.18 – 5.19:1 | passes everywhere |
+| `--ink-subtle` | **4.96 – 5.73:1** | passes everywhere |
 | `--ink-muted` | 6.64 – 7.83:1 | passes everywhere |
 | `--accent` | **4.58 – 9.25:1** | passes everywhere |
 
@@ -288,6 +288,33 @@ measurement existed and was simply not applied, which is the same defect as the
 
 A per-token list is what produces that class of defect. The matrix is the fix; the token
 value was only the instance.
+
+**The `--ink-subtle` restriction referred to above no longer exists.** It read
+`except: { '--canvas-sunken': 'ui' }`, because the token measured 4.18–4.43:1 there in
+three of the four themes. The downgrade was recorded honestly and enforced nowhere — the
+matrix granted it and nothing checked that the stylesheets obeyed it, which is what
+`A11Y-22` named and what let a 12px `--ink-subtle` declaration ship on `/_kitchen-sink`.
+
+The run-3 fixes removed the need for the restriction rather than enforcing it. All four
+values were re-derived so every theme clears the body floor on every surface, with the
+worst cell in each landing in a 4.96–5.01:1 band:
+
+| Theme | `--canvas` | `--canvas-raised` | `--canvas-sunken` |
+|---|---|---|---|
+| Master | 5.52:1 | 5.28:1 | 5.01:1 |
+| Design | 5.37:1 | 5.00:1 | 5.56:1 |
+| Digital | 5.28:1 | 5.52:1 | 4.96:1 |
+| Press | 5.44:1 | 5.73:1 | 4.98:1 |
+
+Design never actually failed — it measured 5.01 / 4.68 / 5.19 and had been swept into the
+restriction blanket without ever meeting its stated range. It was re-derived anyway,
+because the four themes are meant to read as one system and a token that differs
+structurally in one theme is how that stops being true.
+
+**A token that needs a restriction to be safe is a token whose value is wrong.** There is
+now no restricted token anywhere in the matrix. `check:contrast` keeps the branch that
+enforces restrictions against the stylesheets, so that adding an `except` back cannot
+reintroduce `A11Y-22` unenforced.
 
 ## 4. Division theme summary
 

@@ -25,7 +25,7 @@ The site is the primary case study (R4.6, persona P4). Every decision optimises 
 
   --ink:            #0A0A0A;
   --ink-muted:      #52525B;
-  --ink-subtle:     #71717A;
+  --ink-subtle:     #686871;   /* was #71717A — see §2 */
 
   --accent:         #1B5FFF;
   --accent-hover:   #0E4BE0;
@@ -48,7 +48,7 @@ The site is the primary case study (R4.6, persona P4). Every decision optimises 
 |---|---|---|
 | `--ink` on `--canvas` | 18.96:1 | AAA |
 | `--ink-muted` on `--canvas` | 7.40:1 | AAA |
-| `--ink-subtle` on `--canvas` | 4.63:1 | AA |
+| `--ink-subtle` on `--canvas` | 5.28:1 | AA at any size |
 | `--accent` on `--canvas` | 4.87:1 | AA (AAA for large) |
 | `--accent` on `--canvas-raised` | 5.09:1 | AA |
 | `--accent-ink` on `--accent` | 5.09:1 | AA |

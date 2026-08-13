@@ -23,7 +23,7 @@
    * the first value on this theme's neutral ramp (R=G=x, B=x-1, as --ink #F5F5F4 and
    * --ink-muted #A1A1A0) to clear 5.0:1. Approved under Q-M13.
    */
-  --ink-subtle:     #818180;
+  --ink-subtle:     #868685;
 
   --accent:         #E8A33D;   /* amber — drafting pencil, warning tape */
   --accent-hover:   #F2B75C;
@@ -33,7 +33,7 @@
   /**
    * 1.72:1 — decorative only, matching the other three themes. DESIGN.md previously
    * claimed "AA for UI borders", which it never met. A component boundary or state
-   * indicator needs 3:1 under WCAG 1.4.11 and must use --ink-subtle (5.01:1) instead.
+   * indicator needs 3:1 under WCAG 1.4.11 and must use --ink-subtle (5.37:1) instead.
    */
   --line-strong:    #3A3A3D;
 

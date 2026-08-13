@@ -25,7 +25,7 @@ Dark canvas. Work is the light source. This is the only one of the three divisio
 
   --ink:            #F5F5F4;
   --ink-muted:      #A1A1A0;
-  --ink-subtle:     #818180;   /* was #6B6B6A — 3.67:1, failed AA. See below */
+  --ink-subtle:     #868685;   /* was #6B6B6A (3.67:1, failed AA) then #818180. See §2 */
 
   --accent:         #E8A33D;   /* amber — drafting pencil, warning tape */
   --accent-hover:   #F2B75C;
@@ -48,7 +48,7 @@ Dark canvas. Work is the light source. This is the only one of the three divisio
 |---|---|---|
 | `--ink` on `--canvas` | 17.92:1 | AAA |
 | `--ink-muted` on `--canvas` | 7.56:1 | AAA |
-| `--ink-subtle` on `--canvas` | 5.01:1 | AA — **body text only at ≥16px; never for small print** |
+| `--ink-subtle` on `--canvas` | 5.37:1 | AA at any size |
 | `--accent` on `--canvas` | 9.07:1 | AAA |
 | `--accent` on `--canvas-raised` | 8.46:1 | AAA |
 | `--accent-ink` on `--accent` | 9.07:1 | AAA |
@@ -66,7 +66,7 @@ figures that were not achievable with these colours.
 - **`--line-strong` was published as 3.1:1 "AA for UI borders". It measures 1.72:1** and
   never met 3:1. Reclassified as decorative, consistent with the other three themes, whose
   equivalents sit at 1.59–1.74. **A component boundary or state indicator needs 3:1 under
-  WCAG 1.4.11 and must use `--ink-subtle` (4.55:1) instead** — this constrains input
+  WCAG 1.4.11 and must use `--ink-subtle` (5.37:1) instead** — this constrains input
   outlines, selected states and focus rings on the Design theme.
 
 ## 3. Typography
@@ -122,7 +122,7 @@ any surface. The rule and the replacement pattern now live in `_shared/00-FOUNDA
 §3 and are gated by `scripts/check-contrast.mjs`; this file does not restate them.
 
 For Design specifically: any border identifying a control or one of its states uses
-**`--ink-subtle` (5.01:1)**. Button focus is unaffected — it already specifies a 2px
+**`--ink-subtle` (5.37:1)**. Button focus is unaffected — it already specifies a 2px
 `--ink` outline at 2px offset, 17.92:1. Genuinely decorative rules stay on `--line-strong`:
 the track-fork divider, the sticky-CTA top rule, card and media borders.
 

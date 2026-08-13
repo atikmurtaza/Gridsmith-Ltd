@@ -24,9 +24,12 @@
 }
 .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 /* Mono marks the machine-readable part of an error — a reference someone will quote.
-   --ink-muted, not --ink-subtle: this sits on --canvas-sunken, where --ink-subtle
-   measures 4.18–4.39:1 in three of the four themes and fails the 4.5:1 text floor.
-   FOUNDATION §3 records the restriction. */
+   --ink-muted rather than --ink-subtle is now a hierarchy choice, not a contrast one.
+   It used to be a contrast one: --ink-subtle measured 4.18–4.43:1 on --canvas-sunken in
+   three of the four themes and was restricted to UI there. All four --ink-subtle values
+   were re-derived at the run-3 fixes and the restriction is gone (A11Y-22 closed), so
+   either token would pass here. --ink-muted stays because a quoted reference should read
+   as secondary, not tertiary. */
 .reference {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
