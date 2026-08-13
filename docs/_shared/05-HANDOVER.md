@@ -19,7 +19,7 @@ touching anything; delete the sections that go stale as they are resolved.
 | A-03 | DONE | Four themes, 15-token contract each (master +3). `check:contrast` is a **101-cell permission matrix**: every foreground token against every surface in every theme |
 | A-04 | DONE | Four root layouts, no `app/layout.tsx`. `check:theme` verifies server-set `data-division`, render-blocking CSS, and zero client references |
 | A-05 | DONE | 24 primitives, 21 Server / 3 Client. Every primitive that emits a DOM id now generates it with `useId()` — which works in Server Components, so this cost no client JS. `Accordion` also generates its own exclusive-group name and no longer emits an unread `id` |
-| A-05a | DONE | `/_kitchen-sink`, 23 primitives × 4 themes (`Media` deliberately excluded — the page now says 23, not 24), **6.2KB gz delta, budgeted at 7KB**, of which 0.4KB is the global-error boundary every route carries. The `scope()` workaround is gone: the primitives generate their own ids and `check-axe` still reports zero duplicates |
+| A-05a | DONE | `/_kitchen-sink`, 23 primitives × 4 themes (`Media` deliberately excluded — the page now says 23, not 24), **6.2KB gz delta, budgeted at 7KB**, of which **0.5KB** (measured) is the global-error boundary every route carries. The `scope()` workaround is gone: the primitives generate their own ids and `check-axe` still reports zero duplicates |
 | A-10b | DONE | Lighthouse split into **two axes** — desktop asserts category scores, mobile asserts Core Web Vitals on 4G. Both green on CI |
 | **A-GATE** | **OPEN — this is the next task** | Criteria 1–4 now MET and re-verified. 5 and 6 need a fresh-context run that returns clean. See §2. **Criterion 6 is the only thing outstanding** — launch `accessibility-audit` alone, as the FIRST action of a fresh session. Three attempts have died on the session limit |
 | A-06, A-07 | **TODO**, not REVIEW | **No code artefacts exist** — no `sanity/`, no `supabase/`, no `lib/`, nothing in `git ls-files`. What exists is prose in `docs/*/SCHEMA.md`, which is the spec, not the work. `REVIEW` means awaiting review and there was nothing to review. Blocked on `Q-M17` / `Q-M18` (the old `(B4)` reference resolved to nothing) |
@@ -257,7 +257,7 @@ global CLI install.
 |---|---|---|
 | Framework floor | **100.2KB gz** (102,635 bytes) | `check-bundle-size` |
 | `/_kitchen-sink` delta | **6.2KB gz**, budgeted 7KB | `check-bundle-size` |
-| — of which primitives | **5.8KB gz** | the remaining 0.4KB is the global-error boundary, carried by every route |
+| — of which primitives | **5.8KB gz** | the remaining **0.5KB** is the global-error boundary, carried by every route — both halves are now measured and asserted by `check-bundle-size`, not derived by hand |
 | Master JS delta budget | **15KB**, of which the consent banner reserves 8KB | `PROJECT-RULES` §8 |
 | Mobile LCP floor | **1519–1530ms** across five CI runs | mobile axis |
 | Digital LCP headroom | **~78ms** against a 1600ms ceiling | run #7 |
@@ -275,7 +275,7 @@ global CLI install.
    beside every metric table — before reading a TBT movement as a regression.
 
 **M-06 is the next budget checkpoint, and it is tighter than it was.** Consent banner 8KB
-+ primitives 5.8KB + the global-error boundary 0.4KB = **14.2KB of Master's 15KB**, before
++ primitives 5.8KB + the global-error boundary **0.5KB** = **14.2KB of Master's 15KB**, before
 header and footer exist — 0.8KB of headroom, not the 1.3KB this line said before the error
 boundary landed. If the delta exceeds 15KB there, stop and
 raise it rather than proceeding into Epic N.
@@ -436,7 +436,7 @@ observable on Linux.
   **A fix session closed a class it had itself named, on one instance.** Proven by
   deliberate failure: a temporary throwing route returned 500 with one
   `<html lang="en-GB">`, `data-division="master"`, one `<main>` and an `<h1>`.
-  It costs **0.4KB gz on every route** — unavoidable, since Next puts the boundary in every
+  It costs **0.5KB gz on every route** (measured; this line said 0.4KB) — unavoidable, since Next puts the boundary in every
   route's client bundle. Raw elements, no primitives, no `next/font`, for exactly the reason
   the 404 taught: one convenience import there cost 4.3KB everywhere.
 - **`/_kitchen-sink` rendered fabricated prices** — `£1,250` and `£980`, with `REV-02` and
@@ -468,9 +468,9 @@ Six published figures disagreed with a gate. `--accent-design` is **2.16:1**, no
 `design-conformance` agent's own brief). `--accent`'s range is **4.58–9.25:1**, not
 `4.46–19.17:1` — a row that was internally contradictory, since 4.46 fails the 4.5 floor
 the same table asserts. The focus treatment is **15.42:1** at worst, not "17.9:1 minimum".
-The primitive delta is **6.2KB** as the gate prints it, of which 0.4KB is the new error
+The primitive delta is **6.2KB** as the gate prints it, of which **0.5KB** is the new error
 boundary.
 
-**M-06 got tighter.** Consent banner 8KB + primitives 5.8KB + error boundary 0.4KB =
+**M-06 got tighter.** Consent banner 8KB + primitives 5.8KB + error boundary **0.5KB** =
 **14.2KB of Master's 15KB**. 0.8KB of headroom before the header and footer exist, not the
 1.3KB the arithmetic in §6 assumed.

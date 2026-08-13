@@ -443,11 +443,11 @@ widget: **`Accordion` is `<details>`/`<summary>`**, `Select` is a native `<selec
 get their keyboard behaviour, state and announcements from the browser.
 
 Measured on `/_kitchen-sink`, which renders every primitive four times: **6.2KB gz above
-the framework floor**, of which **0.4KB is the `global-error` boundary that every route in
+the framework floor**, of which **0.5KB (measured) is the `global-error` boundary that every route in
 the build carries** — so the primitive layer itself is **5.8KB**. Against Master's 15KB
 delta budget, of which the consent banner already claims 8KB.
 
-**That arithmetic is tighter than it reads.** 8KB + 5.8KB + 0.4KB = 14.2KB of 15KB, before
+**That arithmetic is tighter than it reads.** 8KB + 5.8KB + 0.5KB = 14.2KB of 15KB, before
 a header or footer exists. `M-06` is the checkpoint; if the delta exceeds 15KB there, stop
 and raise it rather than proceeding into Epic N.
 

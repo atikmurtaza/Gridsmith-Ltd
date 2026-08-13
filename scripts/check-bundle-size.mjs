@@ -246,4 +246,80 @@ if (over.length > 0) {
   process.exit(1);
 }
 
+/**
+ * The delta decomposition — `M-06`'s headroom depends on it and nothing measured it.
+ *
+ * `/_kitchen-sink`'s 6.2KB delta is two different costs added together, and only the sum
+ * was ever measured. The docs split it as "5.8KB primitives + 0.4KB global-error
+ * boundary" and no gate produced either number. `M-06` then budgets on that split —
+ * consent 8KB + primitives + boundary against Master's 15KB — so the checkpoint that
+ * decides whether Epic M can proceed rested on an arithmetic nobody could re-derive.
+ * CLAUDE.md: an asserted number no gate covers is unverified.
+ *
+ * Both halves are already in the table above; they just were not read out of it.
+ *
+ *   The **shared baseline** is what a route with no features of its own still pays. The
+ *   four placeholder pages and the 404 render one `h1` and nothing else, so their delta is
+ *   the cost every route carries — today that is the `global-error` boundary, which Next
+ *   puts in every route's client bundle. Taking the minimum across them means one route
+ *   growing its own JS cannot inflate the figure.
+ *
+ *   The **primitive layer** is then the kitchen sink's delta minus that baseline.
+ *
+ * Both are asserted, not just printed. A number that is only printed is a number nobody
+ * notices moving.
+ */
+const BASELINE_ROUTES = ['/', '/design', '/digital', '/press', '/_not-found'];
+const SHARED_BASELINE_BUDGET_KB = 1.0;
+const PRIMITIVES_BUDGET_KB = 6.0;
+
+const baselineRows = rows.filter((r) => BASELINE_ROUTES.includes(r.url));
+const kitchen = rows.find((r) => r.url === '/_kitchen-sink');
+
+const decomposition = [];
+if (baselineRows.length !== BASELINE_ROUTES.length) {
+  decomposition.push(
+    `expected ${BASELINE_ROUTES.length} baseline routes, measured ${baselineRows.length}. ` +
+      'The shared-cost figure would be derived from a partial set — measured nothing usable.',
+  );
+} else if (!kitchen) {
+  decomposition.push('/_kitchen-sink is absent, so the primitive-layer delta cannot be derived.');
+} else {
+  const shared = Math.min(...baselineRows.map((r) => r.delta));
+  const primitives = kitchen.delta - shared;
+
+  console.log('\ndelta decomposition — M-06 budgets on these, so they are asserted, not just printed\n');
+  console.log(`  shared baseline    ${shared.toFixed(1)}KB gz   every route pays this (global-error boundary)`);
+  console.log(`  primitive layer    ${primitives.toFixed(1)}KB gz   /_kitchen-sink delta minus the baseline`);
+  console.log(`  consent banner     8.0KB gz   reserved, not yet built — PROJECT-RULES §8`);
+  console.log(
+    `  M-06 projection    ${(shared + primitives + 8).toFixed(1)}KB of Master's 15KB ` +
+      `— ${(15 - shared - primitives - 8).toFixed(1)}KB headroom before header and footer exist`,
+  );
+
+  if (shared > SHARED_BASELINE_BUDGET_KB) {
+    decomposition.push(
+      `shared baseline is ${shared.toFixed(1)}KB, over its ${SHARED_BASELINE_BUDGET_KB}KB budget. ` +
+        'Something new ships on every route. This is the cost that cannot be attributed to any ' +
+        'feature, so it comes straight out of every budget at once.',
+    );
+  }
+  if (primitives > PRIMITIVES_BUDGET_KB) {
+    decomposition.push(
+      `primitive layer is ${primitives.toFixed(1)}KB, over its ${PRIMITIVES_BUDGET_KB}KB budget. ` +
+        'Every route group pays this, so it is the most expensive kilobyte in the programme.',
+    );
+  }
+}
+
+if (decomposition.length > 0) {
+  console.error(`\ncheck-bundle-size: ${decomposition.length} delta-decomposition problem(s)\n`);
+  for (const d of decomposition) console.error(`  ${d}`);
+  console.error(
+    '\nM-06 is the checkpoint these feed. If the projection exceeds 15KB, stop and raise it\n' +
+      'rather than proceeding into Epic N (CLAUDE.md non-negotiable #8, 05-HANDOVER §6).\n',
+  );
+  process.exit(1);
+}
+
 console.log('\ncheck-bundle-size: all routes within their delta budget\n');
