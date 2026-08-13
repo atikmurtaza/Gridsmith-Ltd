@@ -53,6 +53,9 @@ jobs:
       - name: Contrast ratios meet WCAG 2.2 AA and match DESIGN.md
         run: npm run check:contrast
 
+      - name: No element styled as a heading without being one
+        run: npm run check:headings
+
       - name: Build
         run: npm run build
 

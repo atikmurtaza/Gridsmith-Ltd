@@ -92,10 +92,28 @@ const STEPS = [
   { id: 's6', title: 'Support' },
 ];
 
+/**
+ * The specimen name is an `<h3>`, not a `<p>` — WCAG 1.3.1, F2.
+ *
+ * It was a `<p>`, and it is the heading of every one of the 23 specimen blocks in each of
+ * the four theme frames: the only way to reach a named specimen by heading navigation.
+ * The document went h1 -> 4x h2 -> nothing. Third instance of the A11Y-2 class, on the
+ * page built to exercise the primitives, found by the run-3 audit.
+ *
+ * h3 because the page h1 is the title and each theme frame owns an h2. Specimen contents
+ * render their own h3/h4 demos, which sit as siblings or below — axe `heading-order` is
+ * satisfied and stays asserted across all 24 analyses.
+ *
+ * `check:headings` does NOT catch this one, and that is worth knowing rather than
+ * assuming: it identifies a pseudo-heading by the display face, and `.specimenName` is
+ * mono uppercase — visually identical to `Eyebrow`, which is correctly not a heading.
+ * No static rule separates those two; only the structural judgement does. See the gate's
+ * docstring.
+ */
 function Specimen({ name, children }: { name: string; children: React.ReactNode }) {
   return (
     <div className={styles.specimen}>
-      <p className={styles.specimenName}>{name}</p>
+      <h3 className={styles.specimenName}>{name}</h3>
       <div className={styles.specimenBody}>{children}</div>
     </div>
   );

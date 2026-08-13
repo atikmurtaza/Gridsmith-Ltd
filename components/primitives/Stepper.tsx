@@ -24,14 +24,23 @@ export function Stepper({
   steps,
   current,
   label,
+  headingLevel = 3,
   className,
 }: {
   steps: Step[];
   /** 1-based index of the active step. */
   current: number;
   label: string;
+  /**
+   * Step titles are real headings — WCAG 1.3.1, and the same fix `EmptyState` and
+   * `ErrorState` took at A11Y-2. A step title sits in the display face above `step.body`,
+   * so it heads content and a reader navigating by heading should reach it. `Heading`
+   * separates level from size for exactly this reason, so the visual result is unchanged.
+   */
+  headingLevel?: 2 | 3 | 4 | 5 | 6;
   className?: string;
 }) {
+  const Title = `h${headingLevel}` as const;
   return (
     <nav aria-label={label}>
       <ol className={[styles.stepper, className].filter(Boolean).join(' ')}>
@@ -48,10 +57,10 @@ export function Stepper({
                 {String(n).padStart(2, '0')}
               </span>
               <div>
-                <p className={styles.stepTitle}>
+                <Title className={styles.stepTitle}>
                   <span className="sr-only">{n < current ? `Step ${n}, completed: ` : `Step ${n}: `}</span>
                   {step.title}
-                </p>
+                </Title>
                 {step.body ? <div className={styles.stepBody}>{step.body}</div> : null}
               </div>
             </li>
