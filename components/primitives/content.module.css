@@ -46,7 +46,14 @@
   inset: 0;
   z-index: 0;
 }
-.cardLinked :is(a, button):not(:is(h1, h2, h3, h4, h5, h6) a) {
+/* Every interactive descendant, not just links and buttons.
+   This read `:is(a, button)` and left `input`, `select`, `textarea`, `summary` and
+   anything carrying `[tabindex]` underneath the overlay: tabbable, focusable, and
+   unclickable by pointer. Identical failure mode to the one the overlay fix closed, one
+   element-type list away — a per-instance fix of the same class it was fixing.
+   `summary` matters concretely: `Accordion` renders one, and a card containing a nested
+   accordion is an ordinary thing to build. */
+.cardLinked :is(a, button, input, select, textarea, summary, [tabindex]):not(:is(h1, h2, h3, h4, h5, h6) a) {
   position: relative;
   z-index: 1;
 }

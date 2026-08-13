@@ -196,6 +196,35 @@ function AllPrimitives({ division }: { division: string }) {
         </Grid>
       </Specimen>
 
+      {/* **This specimen is a gate subject, not a demonstration. Do not delete it.**
+          A11Y-4: the title link's `::after` overlay is `position: absolute; inset: 0`, so
+          it paints over every non-positioned interactive sibling in the card. The fix
+          lifts those siblings to `z-index: 1`. That fix was proven by injecting a sibling
+          link at runtime — and the injection was thrown away, leaving the working half of
+          the selector matching nothing on the only page CI renders. Deleting the rule
+          outright would have left every gate green (A11Y-26).
+          CLAUDE.md now requires a permanent committed subject for a gate to reach. This
+          is it: a title link plus a second link, a button, and a checkbox, which is the
+          shape press/DESIGN.md §5:100 describes for a book card with retailer links.
+          If you remove this, A11Y-4 stops being gated. */}
+      <Specimen name="Card linked — second link, button and input under the title overlay">
+        <Grid>
+          <div style={{ gridColumn: 'span 6' }}>
+            <Card linked>
+              <Heading level={4}><Link href="#ks" tone="quiet">Book title as the card link</Link></Heading>
+              <p>The overlay covers the card. Everything below must stay clickable.</p>
+              <div className={styles.row}>
+                <Link href="#ks">Retailer link</Link>
+                <Button variant="secondary">Sample chapter</Button>
+                <label>
+                  <input type="checkbox" name="ks-compare" /> Compare
+                </label>
+              </div>
+            </Card>
+          </div>
+        </Grid>
+      </Specimen>
+
       <Specimen name="Table — sticky header, numeric cells">
         <Table caption={`Specimen table (${division})`}>
           <thead>

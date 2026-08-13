@@ -129,6 +129,44 @@ async function domIntegrity(page, route) {
     spread('input[type="radio"]', 'name', 'radio group');
     spread('details[name]', 'name', 'exclusive details group');
 
+    // A11Y-4 / A11Y-26 — the linked-card overlay must not cover its siblings.
+    //
+    // `.cardLinked`'s heading link paints an `::after` at `inset: 0` so the whole card is
+    // one target. Every OTHER interactive element in the card has to be lifted above it,
+    // or it is tabbable and focusable but cannot be clicked. axe cannot see this: it is
+    // a paint-order fact, not a semantic one, and 24 green analyses coexisted with it.
+    //
+    // The overlay is on a pseudo-element, which `elementFromPoint` returns as its
+    // originating element — so a covered control reports the TITLE LINK at its own centre.
+    // That is the test, and it needs no knowledge of z-index values or stacking rules.
+    //
+    // **This has a permanent subject on /_kitchen-sink** — the "second link, button and
+    // input" specimen — committed for exactly this reason. Before it existed the fix was
+    // proven by a runtime injection that was then discarded, so the selector matched
+    // nothing in CI and deleting it would have kept every gate green.
+    for (const card of document.querySelectorAll('[class*="cardLinked"]')) {
+      const titleLink = card.querySelector(':is(h1,h2,h3,h4,h5,h6) a');
+      if (!titleLink) continue;
+      for (const el of card.querySelectorAll('a, button, input, select, textarea, summary, [tabindex]')) {
+        if (el === titleLink || titleLink.contains(el)) continue;
+        // `elementFromPoint` hit-tests the VIEWPORT, not the document: an element below
+        // the fold returns null and the check silently passes. That is how the first
+        // version of this assertion reported clean against a deliberately broken
+        // selector — the specimen sits far down /_kitchen-sink and was never in view.
+        el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' });
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
+        const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        if (!top) continue;
+        if (top && top !== el && !el.contains(top) && titleLink.contains(top)) {
+          problems.push(
+            `linked-card overlay covers <${el.tagName.toLowerCase()}> in the ${frameOf(el)} frame — ` +
+              'it is focusable but not clickable (A11Y-4)',
+          );
+        }
+      }
+    }
+
     // Every route must be themed. check-theme-flash asserts this from the prerendered
     // HTML for the four route groups, which is the right place for it — but it reads the
     // raw file, and the 404's raw file is a streaming shell that the parser resolves.
