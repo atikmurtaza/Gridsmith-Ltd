@@ -35,6 +35,29 @@
   transition: background-color var(--dur-fast) var(--ease-out),
               border-color var(--dur-fast) var(--ease-out);
 }
+/* Press sets its own button typography — press/DESIGN.md §5: "serif --text-base weight
+   500, sentence case. **Not uppercase** — uppercase buttons read as sales pressure in
+   this context". The rule above is Design's specification (mono uppercase --text-sm
+   0.08em) and was being applied to all four themes, so every Press button rendered
+   against the one line in its spec that is stated as a prohibition.
+
+   Letter-spacing goes back to normal with it: 0.08em exists to open up uppercase mono and
+   does the opposite to sentence-case serif. The spec states no tracking for this button,
+   so the default is the honest reading.
+
+   **First theme-specific override in the primitive layer.** The systematic version is
+   button typography on tokens set per theme, which is also what Digital's 0.06em tracking
+   needs (digital §5) — that is one declaration away from here and is logged at P2 rather
+   than swept in now. If a third theme needs to differ, do the tokens instead of a third
+   block. Radius and weight are already correct through --radius-default and the rule
+   above. */
+:global([data-division='press']) .button {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
 .primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
 /* Resting border is the only thing identifying this as a button, so it needs 3:1. */
