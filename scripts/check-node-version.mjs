@@ -134,7 +134,22 @@ if (!/check-node-version/.test(pkg.scripts?.preinstall ?? '')) {
 }
 reachable.delete('check:node');
 
-const workflow = read('.github/workflows/ci.yml');
+/**
+ * Comment lines are stripped before this looks for gates.
+ *
+ * It matched `npm run <name>` anywhere in the file text, so **prose counted as a step**.
+ * A comment added to `ci.yml` explaining that "`npm run verify` still passes locally"
+ * registered `verify` as a CI gate missing from `verify`, and CI failed at `npm ci` on a
+ * commit that changed no gate at all. Every workflow file in this repository carries long
+ * explanatory comments by house style, so the trap was going to be stepped on again.
+ *
+ * Full-line comments only. A trailing `# not a gate` after a real `run:` keeps working,
+ * and the `#` inside a quoted string on a step line is left alone.
+ */
+const workflow = read('.github/workflows/ci.yml')
+  .split('\n')
+  .filter((line) => !line.trimStart().startsWith('#'))
+  .join('\n');
 const inCI = new Set([...workflow.matchAll(/npm run ([\w:]+)/g)].map((m) => m[1]));
 inCI.delete('start'); // the Lighthouse configs' own startServerCommand, not a gate
 
