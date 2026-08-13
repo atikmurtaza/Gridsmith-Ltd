@@ -28,6 +28,12 @@ export function Tabs({
   /**
    * APG makes a tabpanel focusable only when it holds nothing else focusable. Setting
    * tabIndex unconditionally adds a tab stop in front of every panel's own controls.
+   *
+   * When it *is* focusable it carries `.focusable` too. `.tabpanel` sets padding and
+   * nothing else, so this was a tab stop with no visible focus indicator (WCAG 2.4.7) —
+   * the same defect Table's docstring claimed to have been the last of. The class is
+   * applied unconditionally because `:focus-visible` cannot match on the renders where
+   * tabIndex is undefined, which leaves no branch to keep in sync.
    */
   const [panelFocusable, setPanelFocusable] = useState(false);
   useEffect(() => {
@@ -93,7 +99,7 @@ export function Tabs({
           aria-labelledby={`${base}-tab-${tab.id}`}
           hidden={i !== selected}
           tabIndex={i === selected && panelFocusable ? 0 : undefined}
-          className={styles.tabpanel}
+          className={`${styles.tabpanel} ${styles.focusable}`}
         >
           {tab.panel}
         </div>

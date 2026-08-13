@@ -9,9 +9,13 @@ import interactive from './interactive.module.css';
  * `caption` is required rather than optional: an uncaptioned data table gives a screen
  * reader user no way to know what they have landed in. The horizontal scroll container
  * is focusable so it can be reached and scrolled by keyboard, and carries the shared
- * `.focusable` treatment — it was the one focusable element in the primitive layer
- * drawing no focus ring, so keyboard users reached a tab stop with no visible indication
- * they were on it (WCAG 2.4.7).
+ * `.focusable` treatment, so keyboard users do not reach a tab stop with no visible
+ * indication they are on it (WCAG 2.4.7).
+ *
+ * This used to claim it was "the one focusable element in the primitive layer drawing no
+ * focus ring". It was not: Tabs' tabpanel had the identical defect and kept it through
+ * that fix. Per-instance fixes read like completed sweeps afterwards, which is what makes
+ * them expensive — the claim is removed rather than re-scoped.
  *
  * `tabIndex` is unconditional. Whether the table actually overflows is only knowable at
  * layout time, and a tab stop that is sometimes there is worse than one that always is.
