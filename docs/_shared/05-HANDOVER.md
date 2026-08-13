@@ -1,7 +1,7 @@
 # Handover — end of the Epic A audit session
 
-**Written:** 11 August 2026 · **Revised:** 12 August 2026, after the Epic A audit fixes
-· **Branch:** `feat/a-01-a-10a-scaffold-ci` · **Runtime:** Node 24.15.0
+**Written:** 11 August 2026 · **Revised:** 13 August 2026, after the **run-3 audit and the
+G1–G8 fixes** · **Branch:** `feat/a-01-a-10a-scaffold-ci` · **Runtime:** Node 24.15.0
 
 This file exists because a session ended with state that only that session knew. Everything
 here is either unrecorded elsewhere or scattered across five documents. Read it before
@@ -14,7 +14,7 @@ touching anything; delete the sections that go stale as they are resolved.
 | Task | Status | What a fresh session needs to know |
 |---|---|---|
 | A-01 | DONE | Next 15 pinned, React 19, **Node 24** (raised from 22 mid-audit). Framework floor **100.2KB gz / 102,635 bytes**, re-measured on Node 24 and byte-identical to the Node 22 build — proven by matching content hashes, not by similarity |
-| A-10a | DONE | **Fourteen gates.** All swept twice for the "passes without measuring" class — four instances closed in July, three more found on 12 Aug (one inside `check-axe`), nine gates changed. Every fix proven by deliberate failure: `01-VALIDATION-REPORT.md` §14 |
+| A-10a | DONE | **Sixteen gates** — fourteen through 13 Aug, plus `check:headings` and `check:content` at the run-3 fixes. All swept twice for the "passes without measuring" class — four instances closed in July, three more found on 12 Aug (one inside `check-axe`), nine gates changed. Every fix proven by deliberate failure: `01-VALIDATION-REPORT.md` §14 |
 | A-02 | DONE | 39 base tokens, now held in a **hardcoded required list** in `check-tokens.mjs` rather than scraped from the file being checked. It still counts **declarations**, not string occurrences — exactly once, which is what catches the Tailwind namespace collision |
 | A-03 | DONE | Four themes, 15-token contract each (master +3). `check:contrast` is a **101-cell permission matrix**: every foreground token against every surface in every theme |
 | A-04 | DONE | Four root layouts, no `app/layout.tsx`. `check:theme` verifies server-set `data-division`, render-blocking CSS, and zero client references |
@@ -25,11 +25,17 @@ touching anything; delete the sections that go stale as they are resolved.
 | A-06, A-07 | **TODO**, not REVIEW | **No code artefacts exist** — no `sanity/`, no `supabase/`, no `lib/`, nothing in `git ls-files`. What exists is prose in `docs/*/SCHEMA.md`, which is the spec, not the work. `REVIEW` means awaiting review and there was nothing to review. Blocked on `Q-M17` / `Q-M18` (the old `(B4)` reference resolved to nothing) |
 | A-08, A-09, A-11, A-12 | TODO | Not started |
 
-**Fourteen checks now run**, not the ten the older prose says and not the thirteen this
-line said until 12 August: `check:node`, typecheck, ESLint, `lint:colors`,
-**`check:contrast`**, build, `lint:secrets`, `check:tokens`, `check:theme`, `size`,
-`check:axe`, `check:responsive`, `check:lhci:desktop`, `check:lhci:mobile`.
-`npm run verify` runs all of them.
+**Sixteen checks now run**, and the count is machine-checked — `check-node-version` walks
+the `verify:*` chain, diffs it against `ci.yml` and prints the number, so this line cannot
+drift from reality again: `check:node`, typecheck, ESLint, `lint:colors`,
+**`check:contrast`**, **`check:headings`**, **`check:content`**, build, `lint:secrets`,
+`check:tokens`, `check:theme`, `size`, `check:axe`, `check:responsive`,
+`check:lhci:desktop`, `check:lhci:mobile`. `npm run verify` runs all of them.
+
+The two added at the run-3 fixes are both cases where a defect class had been fixed
+per-instance twice: `check:headings` fails on a `<p>`/`<span>`/`<div>` carrying a class
+that sets `--font-display` (WCAG 1.3.1 F2), and `check:content` fails on invented money,
+revision codes, standards codes or ISBNs in files that render.
 
 **The one missing from the old list was `check:contrast`** — the gate that exists because
 25 of 29 published contrast ratios were wrong and two were hiding real WCAG AA failures.
@@ -39,8 +45,33 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 
 ## 2. A-GATE — open, and exactly why
 
-Criteria 1–4 are **met and independently re-verified**. **Criteria 5 and 6 have still
-never returned a clean run.**
+> ### ⇢ START HERE: round 4 is the next action, and it is scoped
+>
+> **Round 3 completed all three passes** — the first time both criteria were audited to
+> completion in one session. It returned **nine findings** (`_shared/08-A-GATE-RUN-3.md`),
+> **all nine are now fixed** across `G1`–`G8`, and every fix has a committed subject and a
+> deliberate-failure proof.
+>
+> **Round 4 is a fresh session, first action, and it is scoped to re-verifying those nine
+> findings only.** It is not a fourth open-ended audit of Epic A. The scope is deliberately
+> narrow because the fixes were applied by the context that received the findings, which is
+> the reason both criteria are worded for a fresh context in the first place — but the
+> *rest* of Epic A was audited from a fresh context in round 3 and does not need re-doing.
+>
+> Two things round 4 must not spend its context on:
+> - **`G7` — the Epic identifier collisions — is deliberately still open.** `Epic S` means
+>   "Seed content" in the master tracker and "Digital shell" in digital's; `Epic N` means
+>   "Master pages" and "Path Finder & conversion". `app/(press)/press/page.tsx` cites
+>   `Epic R` where Press's shell epic is `P`. **Renumbering before round 4 would spend the
+>   audit's context reconciling references instead of confirming findings**, so it is
+>   sequenced after. Do not fix it first; do not report it as new.
+> - **Round 2's finding list** — see the notice at the head of §10. Closed as
+>   unreconstructable and superseded. Do not attempt to rebuild it.
+>
+> If round 4 returns clean, criteria 5 and 6 are met and **Epic M starts**.
+
+Criteria 1–4 are **met and independently re-verified**. Criteria 5 and 6 have been
+**audited to completion once** — round 3 — and neither has yet *returned* clean.
 
 There have been **three rounds** on 12 August, and none closed either criterion.
 
@@ -66,7 +97,35 @@ to the limit. Findings and the fixes are `07-A11Y-AUDIT.md`; the backlog is
 **Criterion 6 is still open.** Round four returned findings, not zero. Six groups were
 fixed the same day, four Majors were deliberately left (`A11Y-1`–`A11Y-4`, P1), and the
 session that fixed them is the worst available reviewer of them — the same reasoning that
-put the criterion there. **Run 5 is two narrow runs again, fresh session, first action.**
+put the criterion there.
+
+**Round three — 13 August, the first to complete both criteria.** Three passes:
+`accessibility-audit` over the primitives and `/_kitchen-sink`, `accessibility-audit` over
+the routes and render paths, and `rules-compliance`. All three returned.
+`rules-compliance` died once on an account session limit and completed on a retry. Full
+report: `_shared/08-A-GATE-RUN-3.md`.
+
+It confirmed **all six items rounds 1–2 recorded as fixed are genuinely fixed** — including
+`A11Y-1`–`A11Y-4`, independently re-verified — and returned **nine new findings**. Six of
+the nine were recurrences of classes this repository had already named, fixed elsewhere and
+written a rule about. Two of the three passes found things the other missed, which is the
+first direct evidence for the fresh-context wording.
+
+**All nine are fixed, in `G1`–`G8`.** What that produced, beyond the fixes:
+
+| Group | Fix | What it left behind |
+|---|---|---|
+| `G1`/`G1b` | `--ink-subtle` re-derived in all four themes; no theme needs a size rule | `check:contrast` size pass; **`A11Y-22` closed** |
+| `G2` | `Stepper` and `Specimen` render real headings | **`check:headings`** (gate 15) |
+| `G3` | lift selector covers every interactive descendant | permanent linked-card specimen; **`A11Y-26` closed** |
+| `G4` | `incomplete` no longer discarded; token probe reads every token | rule+route+target allowlist with written reasons |
+| `G5`/`G5b` | `global-error` has a gate at last | committed probe route, excluded from production and proven absent by building |
+| `G6` | three invented figures zeroed | **`check:content`** (gate 16) |
+| `G8` | — | the 6.2KB delta decomposed and asserted; `M-06`'s headroom is now measured |
+
+**Two gates written during those fixes shipped broken and were caught by their own
+deliberate-failure proofs** (`A11Y-29`, `A11Y-32`). That is why the proof rule is now
+recorded in `CLAUDE.md` as load-bearing rather than ceremonial.
 
 Three things from round four that a fresh session must not rediscover, the first of which
 changes how much you should trust everything else in this file:
@@ -154,11 +213,13 @@ through. An unbriefed agent has never survived.
 
 | Criterion | Agent | Status |
 |---|---|---|
-| **5** | `rules-compliance` | **RAN TWICE, FAILED TWICE.** Round one: 1 blocker, 5 major, 3 minor. Round two, against the fixed tree: 4 blockers, 4 majors, 7 minors, none of them re-reports. All fixed — §9, §10. Needs a third run that returns zero |
-| **6** | `accessibility-audit` | **NEVER COMPLETED.** Round one returned findings (all fixed). Rounds two and three died on the session limit. **This is the only thing standing between Epic A and Epic M** |
+| **5** | `rules-compliance` | **RAN THREE TIMES, FAILED THREE TIMES.** Round one: 1 blocker, 5 major, 3 minor. Round two: 4 blockers, 4 majors, 7 minors — **closed as unreconstructable, see §10**. Round three: 1 blocker, 2 majors, 3 minors, all fixed in `G5`/`G6`. Needs a run that returns zero |
+| **6** | `accessibility-audit` | **COMPLETED ONCE, in round three**, as two narrow runs. Rounds two and three of the earlier numbering died on the session limit; the split is what worked. Returned 1 Major + 2 Minor + 1 Info on the primitives and 2 Majors + 2 Minors on the routes and gates. All fixed in `G1`–`G8`. Needs a run that returns zero |
 
-**Criterion 6 is the outstanding item in Epic A, and it is the next thing to do.** Launch
-`accessibility-audit` alone, first thing, in a session you have not otherwise spent.
+**Both criteria now need one thing and it is the same thing: a fresh-context run that
+returns zero against the `G1`–`G8` tree.** That is round 4, it is scoped to the nine
+run-3 findings, and it is the first action of the next session — see the box at the head
+of this section.
 
 **Nothing else in Epic A is open.** A-06 and A-07 are blocked on Atik (`Q-M17`, `Q-M18`),
 and A-08 to A-12 are Stage-2 work. **After criterion 6 returns clean, the next task is

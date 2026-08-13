@@ -56,8 +56,8 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 2 | Correct at 375 / 768 / 1440px | **MET.** `check:responsive`, **18 combinations** (6 routes × 3 widths — `/_not-found` and a 404 probe were added on 12 Aug), green on `ubuntu-latest` |
 | 3 | Keyboard navigable end to end | **Re-verified, and the root cause is now fixed.** The symptom — duplicate ids sending every label in frames 2–4 to the control in frame 1 — was fixed at the call site in July; the 12 Aug audit found the cause still live in `Field`/`Select`, which derived the DOM `id` from the form `name`. Fixed in the primitives. `StickyCta` no longer drives `inert`/`aria-hidden` from JavaScript while CSS drives its position, which had put eight painted links outside the tab order. axe now runs 24 analyses — 6 routes × 375/1280px × initial/scrolled |
 | 4 | Zero hardcoded colours | **MET, and now actually protected.** `lint:colors` green across 72 files (was 62 — the sweep missed `lighthouse/`, every root-level config file, and any tree nobody had listed). The named-colour rule only fired immediately after a colon, so `border: 1px solid red` — the codebase's own border idiom — shipped unflagged; it now matches anywhere in a declaration value, plus `color-mix()`. Re-proven by deliberate failure with `border: 1px solid red` |
-| 5 | `rules-compliance` — **fresh context**, zero findings | **RAN TWICE, FAILED TWICE.** Round one: 1 blocker, 5 major, 3 minor. Round two, against the fixed tree: **4 blockers, 4 majors, 7 minors, none of them re-reports.** All fixed. Needs a third run that returns zero — the findings were fixed by the context that received them |
-| 6 | `accessibility-audit` — **fresh context**, zero findings | **NEVER COMPLETED — three attempts.** Round one returned 2 Level A blockers + 1 AA failure (all fixed). Rounds two and three died on the session limit and returned nothing; round three ran alone with the tightest brief yet and still ran out. **Launch it as the FIRST action of a fresh session** — the constraint is how much session is left when it starts, not how many agents. `_shared/05-HANDOVER.md` §2 |
+| 5 | `rules-compliance` — **fresh context**, zero findings | **RAN THREE TIMES, FAILED THREE TIMES.** Round 1: 1 blocker, 5 major, 3 minor. Round 2: 4 blockers, 4 majors, 7 minors — **closed as unreconstructable and superseded**, `_shared/05-HANDOVER.md` §10. Round 3 (13 Aug, completed): 1 blocker, 2 majors, 3 minors — the dead `eslint.config.mjs` override, invented prices, stale doc paths. All fixed in `G5`/`G6`. Needs a run that returns zero |
+| 6 | `accessibility-audit` — **fresh context**, zero findings | **COMPLETED ONCE — round 3, 13 Aug**, as two narrow runs (primitives + kitchen sink, then routes and render paths). Both returned. Confirmed `A11Y-1`–`A11Y-4` genuinely fixed; found 1 Major + 2 Minor + 1 Info on the primitives and 2 Majors + 2 Minors on the routes and gates, and confirmed the `A11Y-26` gap real. All fixed in `G1`–`G8`. Needs a run that returns zero — that is round 4, scoped to these nine findings only |
 
 **Criteria 5 and 6 have never been executed.** Five agents were launched at the Epic A
 audit — `spec-compliance`, `rules-compliance`, `accessibility-audit`, `design-conformance`,
@@ -73,16 +73,24 @@ the model that just fixed the audit findings is the worst available reviewer of 
 
 **Nothing downstream of Epic A starts until 5 and 6 come back clean.**
 
+**Round 4 is the next action and it is scoped.** Round 3 audited the whole of Epic A from a
+fresh context in three passes and returned nine findings; all nine are fixed across
+`G1`–`G8`, each with a committed subject and a deliberate-failure proof. Round 4 re-verifies
+**those nine only** — it is not a fourth open-ended audit. Two things it must not spend
+context on: `G7` (the Epic identifier collisions, deliberately deferred until after it) and
+round 2's finding list (closed as unreconstructable). `_shared/05-HANDOVER.md` §2.
+
 **Criterion 2 used to be a manual check, which made it a claim.** At the audit it could
 only be recorded as "not established" — neither passed nor failed, the least useful state
 a gate criterion can occupy. `scripts/check-responsive.mjs` now asserts no horizontal
 overflow across 5 routes × 3 widths, and a route that fails to load is a measurement
 failure rather than a pass.
 
-**Fourteen checks, and `npm run verify` runs all of them:** `check:node`, `typecheck`,
-`lint`, `lint:colors`, **`check:contrast`**, `build`, `lint:secrets`, `check:tokens`,
-`check:theme`, `size`, `check:axe`, `check:responsive`, `check:lhci:desktop`,
-`check:lhci:mobile`.
+**Sixteen checks, and `npm run verify` runs all of them:** `check:node`, `typecheck`,
+`lint`, `lint:colors`, **`check:contrast`**, **`check:headings`**, **`check:content`**,
+`build`, `lint:secrets`, `check:tokens`, `check:theme`, `size`, `check:axe`,
+`check:responsive`, `check:lhci:desktop`, `check:lhci:mobile`. The count is machine-checked
+by `check-node-version`, which walks the `verify:*` chain and diffs it against `ci.yml`.
 
 This paragraph said **thirteen** and the enumeration left out **`check:contrast`** — the
 gate that exists because 25 of 29 published contrast ratios were wrong and two were hiding
@@ -526,6 +534,46 @@ justification has to stay true about a shrinking set, and leaves Design as the o
 whose `--ink-subtle` behaves differently from the other three in a system whose entire
 argument is that they read as one. G1b deleted the `except` outright instead and re-derived
 all four values so no restriction is needed by any of them.
+
+### G7 — deferred, and what it still owes
+
+**Deliberately not done, and sequenced after round 4.** Renumbering touches every tracker
+and every cross-reference in the programme; doing it before the audit would spend round 4's
+context reconciling references instead of confirming findings. Do it once round 4 returns.
+
+Three things, all found by run 3:
+
+| | Owed |
+|---|---|
+| `Epic S` | means **"Seed content"** in `master/PROJECT-TRACKER.md` and **"Digital shell"** in `digital/PROJECT-TRACKER.md` |
+| `Epic N` | means **"Master pages"** in master's and **"Path Finder & conversion"** in press's |
+| `app/(press)/press/page.tsx:3` | cites **`Epic R`** (Press *Trust architecture*) where Press's shell epic is **`P`**. The other three placeholder pages each cite their correct shell epic |
+
+Why it matters rather than being cosmetic: CLAUDE.md makes the tracker task the unit of
+work — *"One tracker task per session or PR"* — so an identifier that resolves to two
+different epics defeats the mechanism. A commit message or a code comment saying "Epic S"
+cannot be resolved without knowing which tracker was meant.
+
+**Renumber so identifiers are unique across all four trackers, then fix every reference**,
+including the four placeholder page comments.
+
+### Defect classes logged this epic
+
+Eight instances of the gate class and two classes of its own. The list is the point: none
+of these was found by reading code, and six were found by the deliberate-failure step.
+
+| Class | Where | One line |
+|---|---|---|
+| **Gate measures nothing** — 8 instances | `A11Y-25`, `A11Y-27`, `A11Y-29`, `A11Y-32` + four earlier | a check that runs, reports a pass, and measured less than it claims |
+| **Justification never re-checked** | `A11Y-31` | a restriction that is *too strict* emits no failing output and cannot be found by reading gate results |
+| **Expectation derived from its own subject** | `CLAUDE.md` "How to work" | deleting the subject deletes the expectation; the gate stays green having measured less |
+| **Hollow subject** | `CLAUDE.md` "How to work" | a subject that stops being the subject leaves the gate auditing whatever is there |
+
+Two rules came out of them and are now in `CLAUDE.md`: **a fix is not fixed until a
+permanent committed subject exists for a gate to reach**, and **a gate subject must assert
+that it is still the subject**. The proof rule is recorded there as *load-bearing, not
+ceremonial* — it has caught a broken gate in three consecutive sessions, twice on gates
+written in the same session as the rule.
 
 ## Blocked / decisions needed
 
