@@ -88,6 +88,92 @@ const PHASES = [
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
 /**
+ * axe results come in three buckets, not two: `passes`, `violations`, and `incomplete` —
+ * checks axe ran and could not resolve. This gate read `violations` alone, so every
+ * `incomplete` was discarded without a word and the route printed `clean`.
+ *
+ * Eight of them were live: `color-contrast` on the `h1` of all four themed routes, at both
+ * viewports. "axe could not determine whether this text meets 1.4.3" was being reported
+ * as a pass. That is the same shape as a gate that measures nothing, one layer up — the
+ * measurement was taken, declined, and thrown away.
+ *
+ * **So an incomplete now fails, unless it is listed here with a reason.** An allowlist
+ * entry is a decision someone wrote down and can be re-examined; a silent discard is not.
+ * Entries match on rule + route + exact node target, so allowlisting the h1 of the
+ * placeholder pages cannot quietly cover a different element later.
+ */
+const INCOMPLETE_ALLOWED = [
+  {
+    rule: 'color-contrast',
+    routes: ['/', '/design', '/digital', '/press'],
+    target: 'h1',
+    why:
+      'These four routes are placeholders with no chrome: h1, main and body share one rect ' +
+      'flush to the viewport edge, so axe cannot resolve a background box and reports ' +
+      'elmPartiallyObscured with contrastRatio 0. Nothing obscures the h1 — elementsFromPoint ' +
+      'at its centre returns H1 > MAIN > BODY > HTML, all position:static, only body painting. ' +
+      'The token pairs are measured directly by check:contrast, which is the gate that owns ' +
+      'this question. REMOVE THIS ENTRY at the first route with real chrome (Epic M): the ' +
+      'condition that produces it disappears the moment a header exists.',
+  },
+];
+
+/**
+ * Every custom property the token layer declares, read off disk.
+ *
+ * Derived, not typed: a hardcoded list is an expectation that falls behind its subject,
+ * and this gate exists because four hardcoded names covered only the theme layer. Reading
+ * `styles/tokens.css` and the four theme files means a token added tomorrow is probed
+ * tomorrow. Font-family tokens are excluded — they resolve to a stack containing a
+ * `next/font` CSS variable that is empty until the font loads, which is a load-order fact
+ * rather than a missing stylesheet, and `check-theme-flash` owns that question.
+ *
+ * **What deriving the list costs, stated because the proof found it.** This list comes
+ * from the same files it is checking, so deleting `--text-2xl` from `tokens.css` deletes
+ * the expectation along with the token and this probe stays green. That is the
+ * expectation-derived-from-its-own-subject shape, and it is accepted here **because it is
+ * not this probe's question.** Whether the token layer declares the right tokens is
+ * `check:tokens`, which holds a hardcoded 39-token REQUIRED list for exactly that reason.
+ * This probe answers a different one: *is the token layer reaching this route at all* —
+ * the `/_not-found` defect, where every token was undefined because the stylesheet was
+ * never linked. Against that, a derived list is correct and a hardcoded one would rot.
+ *
+ * Proven by deliberate failure on the real question: removing `import '@/styles/globals.css'`
+ * from `app/(press)/layout.tsx` reports `--space-1`, `--text-xs`, `--text-2xl` and the rest
+ * of the base layer resolving to nothing. The four-name probe this replaced saw none of
+ * those — all four of its names lived in the theme layer.
+ */
+const declaredIn = (file) =>
+  [...new Set([...readFileSync(file, 'utf8').matchAll(/^\s*(--[a-z0-9-]+)\s*:/gm)].map((m) => m[1]))]
+    .filter((t) => !t.startsWith('--font-'));
+
+/**
+ * Base tokens apply everywhere; theme tokens are probed only on the division that
+ * declares them.
+ *
+ * The union across all four themes is NOT the right list, and probing it says so loudly:
+ * `--accent-design`, `--accent-digital` and `--accent-press` are declared by master alone
+ * (master/PROJECT-RULES.md §1.1 — division accents appear on division cards, badges and
+ * the footer switcher, all of which are master chrome). They correctly resolve to nothing
+ * on `/design`, and a probe that flags that is reporting the design, not a defect.
+ */
+const TOKEN_NAMES = {
+  base: declaredIn('styles/tokens.css'),
+  byDivision: Object.fromEntries(
+    ['master', 'design', 'digital', 'press'].map((d) => [d, declaredIn(`styles/themes/${d}.css`)]),
+  ),
+};
+
+const tokenCount =
+  TOKEN_NAMES.base.length +
+  Math.min(...Object.values(TOKEN_NAMES.byDivision).map((t) => t.length));
+
+if (TOKEN_NAMES.base.length === 0 || Object.values(TOKEN_NAMES.byDivision).some((t) => t.length === 0)) {
+  console.error('check-axe: derived 0 token names from the base layer or a theme — the probe would measure nothing.');
+  process.exit(1);
+}
+
+/**
  * Three structural assertions axe cannot make.
  *
  * axe-core keeps `duplicate-id` and `duplicate-id-active` behind its `deprecated` tag, so
@@ -100,7 +186,7 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  * moves here rather than waiting for axe to grow one back.
  */
 async function domIntegrity(page, route) {
-  const found = await page.evaluate(() => {
+  const found = await page.evaluate((tokenNames) => {
     const frameOf = (el) => el.closest('[data-division]')?.dataset.division ?? '(root)';
     const problems = [];
 
@@ -192,7 +278,24 @@ async function domIntegrity(page, route) {
     // An unlinked stylesheet makes every custom property resolve to the empty string.
     // This is the check that would have caught it: it needs no colour table and no
     // per-theme expectation, so it cannot drift from the tokens it is guarding.
-    for (const token of ['--canvas', '--ink', '--line', '--accent']) {
+    //
+    // **It used to probe four hardcoded names — --canvas, --ink, --line, --accent — all
+    // four of which live in styles/themes/*.css.** Nothing probed a value declared only in
+    // styles/tokens.css, and `--text-2xl` is one of those: it is the token whose absence
+    // rendered the 404's h1 at 16px in the original defect. The probe passed on the theme
+    // layer and would have said nothing about the base layer. It was adequate only because
+    // an @import bundles both into one emitted file — an accident of the build, not a
+    // property of the check. Split the CSS output and the original defect reopens silently.
+    //
+    // The list is now every token name read off disk from tokens.css and the theme files,
+    // passed in from Node. It cannot fall behind what exists, because it is derived from
+    // what exists rather than typed here.
+    const division = document.body.dataset.division;
+    const probeList = [...tokenNames.base, ...(tokenNames.byDivision[division] ?? [])];
+    if (probeList.length === tokenNames.base.length) {
+      problems.push(`no theme token list for division "${division}" — nothing theme-specific was probed`);
+    }
+    for (const token of probeList) {
       if (!bodyStyle.getPropertyValue(token).trim()) {
         problems.push(`${token} resolves to nothing — the token layer is not loaded on this route`);
       }
@@ -216,7 +319,7 @@ async function domIntegrity(page, route) {
     }
 
     return problems;
-  });
+  }, TOKEN_NAMES);
 
   if (found.length === 0) return 0;
 
@@ -242,6 +345,8 @@ const browser = await puppeteer.launch({
 });
 let total = 0;
 let analyses = 0;
+let incompleteAllowed = 0;
+const allowedSeen = new Set();
 
 try {
   for (const route of ROUTES) {
@@ -276,8 +381,38 @@ try {
         }
 
         const where = `${route.path} @ ${viewport.label} ${phase.label}`;
-        const { violations } = await new AxePuppeteer(page, axeSource).withTags(TAGS).analyze();
+        const { violations, incomplete } = await new AxePuppeteer(page, axeSource).withTags(TAGS).analyze();
         analyses += 1;
+
+        // `incomplete` is axe saying "I could not determine a result here" — not "this
+        // passed". It was destructured away and never printed, so eight unresolved
+        // 1.4.3 evaluations were being reported as `clean` on every run. A result the
+        // tool declined to give is not a pass, and discarding it silently is the same
+        // unearned confidence as a gate that measures nothing.
+        for (const inc of incomplete) {
+          for (const node of inc.nodes) {
+            const target = node.target.join(' ');
+            const allowed = INCOMPLETE_ALLOWED.find(
+              (a) => a.rule === inc.id && a.routes.includes(route.path) && a.target === target,
+            );
+            if (allowed) {
+              incompleteAllowed += 1;
+              // The reason is printed once at the end, not 24 times inline — a wall of
+              // repeated prose is how a reader learns to scroll past this gate's output,
+              // and the loud Lighthouse-skip banner has to stay readable.
+              allowedSeen.add(allowed);
+              console.log(`  ${where.padEnd(40)} incomplete ${inc.id} on ${target} — allowed`);
+            } else {
+              total += 1;
+              console.error(
+                `  ${where.padEnd(40)} UNRESOLVED ${inc.id} on ${target} — axe could not ` +
+                  'determine a result and this combination is not in INCOMPLETE_ALLOWED',
+              );
+              const reason = node.any?.[0]?.message ?? node.all?.[0]?.message ?? '(no message)';
+              console.error(`      ${reason}`);
+            }
+          }
+        }
 
         if (violations.length === 0) {
           console.log(`  ${where.padEnd(40)} clean`);
@@ -322,4 +457,13 @@ console.log(
     `${VIEWPORTS.map((v) => v.label).join('/')} × ${PHASES.map((p) => p.label).join('/')} — ` +
     `zero violations (${TAGS.join(', ')})`,
 );
-console.log('check-axe: no duplicate ids, no radio or exclusive-details group spanning theme frames\n');
+console.log('check-axe: no duplicate ids, no radio or exclusive-details group spanning theme frames');
+console.log(
+  `check-axe: ${tokenCount}+ tokens probed for a computed value on every route ` +
+    `(${TOKEN_NAMES.base.length} base + the division's own); ` +
+    `${incompleteAllowed} axe incomplete(s) allowed, 0 unresolved`,
+);
+for (const a of allowedSeen) {
+  console.log(`\n  ALLOWED INCOMPLETE — ${a.rule} on "${a.target}" at ${a.routes.join(', ')}\n    ${a.why}`);
+}
+console.log('');
