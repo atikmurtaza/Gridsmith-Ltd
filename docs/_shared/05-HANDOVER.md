@@ -68,7 +68,21 @@ fixed the same day, four Majors were deliberately left (`A11Y-1`–`A11Y-4`, P1)
 session that fixed them is the worst available reviewer of them — the same reasoning that
 put the criterion there. **Run 5 is two narrow runs again, fresh session, first action.**
 
-Two things from round four that a fresh session must not rediscover:
+Three things from round four that a fresh session must not rediscover, the first of which
+changes how much you should trust everything else in this file:
+
+- **CI had never fired on this branch except through an open PR, and nobody had checked.**
+  `ci.yml` triggered on `push: branches: [main]` and `pull_request:`. Nothing in Epic A was
+  ever pushed to `main`, so every run the programme has had — including the numbered runs
+  quoted in §6 and Q-M16 — arrived via `pull_request` and existed only because PR #1
+  happened to be open. Close it, or branch without one, and `git push` runs nothing: no
+  failure, no skip, an empty Actions tab, and `npm run verify` still green locally.
+  **`CLAUDE.md`'s "CI is the arbiter" was load-bearing for the whole of Epic A and was
+  resting on that assumption.** Fixed 13 Aug with `push: branches: ['**']`; recorded as
+  `A11Y-27`. The five gate defects before it were checks that measured nothing and reported
+  a pass — this one never ran and reported nothing at all, which is why it survived six
+  rounds of people reading gate output. **"Proven by deliberate failure" had only ever been
+  applied to what a gate asserts, never to whether it is reached.**
 
 - **`/_not-found` had been rendering with no theme at all**, and `check-axe` was green on
   it throughout, because the assertion was that `body[data-division]` existed rather than

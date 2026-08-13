@@ -6,10 +6,27 @@ name: CI
 # the commit that added it — CLAUDE.md "How to work". A gate nobody has watched fail is
 # not known to work.
 
+# **This fires on every branch, and that is the fix, not a convenience.**
+#
+# It was `push: branches: [main]` + `pull_request:`. Nothing in Epic A was ever pushed to
+# `main` — all of it landed on `feat/a-01-a-10a-scaffold-ci` — so every CI run this
+# programme has ever had came in through the `pull_request` trigger, and therefore existed
+# only because PR #1 happened to be open. Close that PR, or start a branch without one, and
+# `git push` runs nothing at all. No failure, no skip, no annotation: the Actions tab is
+# simply empty, and `npm run verify` still passes locally, so the tree reads green.
+#
+# "CI is the arbiter" (CLAUDE.md) was load-bearing for the whole of Epic A while resting on
+# that. `branches: ['**']` is what makes the claim true rather than conditional.
+#
+# `pull_request` is narrowed to opened/reopened so it no longer duplicates the push run on
+# every commit to an open PR — with both triggers unrestricted, each push to a PR branch
+# would run the whole suite twice, Lighthouse included. Opening a PR still gets its own run
+# for the case where the head commit predates the workflow.
 on:
   push:
-    branches: [main]
+    branches: ['**']
   pull_request:
+    types: [opened, reopened]
 
 jobs:
   verify:

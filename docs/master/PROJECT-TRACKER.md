@@ -351,6 +351,7 @@ day in one commit; the rows stay as the record of what was wrong.
 | A11Y-23 | `/_kitchen-sink` renders its Press specimens under the master layout, which never loads Source Serif, so `--font-display` falls back to Inter there. Press typography cannot be judged on the kitchen sink at all — the Press button defect was invisible on the one page built to show it |
 | A11Y-24 | Button typography is Design's specification hardcoded in the shared `.button` rule. Press now has a `:global([data-division='press'])` override, the first in the primitive layer. A second theme needing to differ (A11Y-20) should replace both with per-theme tokens |
 | A11Y-25 | **`check:lhci` exits 0 when it skips.** See below — the fifth instance of the gate class, and the only one still open |
+| ~~A11Y-27~~ | **CI never fired on this branch except through an open PR.** Sixth instance, and a shape above the other five — see below. **Fixed 13 Aug**: `push: branches: ['**']` |
 | A11Y-26 | `/_kitchen-sink` has no linked-card specimen carrying a second link, so nothing in CI exercised A11Y-4 and nothing catches a regression of it. The fix was proven by injecting a sibling link at runtime. A specimen with a title link *and* a retailer link is what would gate it |
 
 ### P2 — A11Y-25, in full: the fifth attribute-vs-result gate defect
@@ -382,6 +383,35 @@ triggers, so the real risk is covered today and the change is its own piece of w
 needs the same treatment `check-axe` got — fail loudly when it measures nothing — plus a
 decision about the local developer experience on Windows, where a hard failure would make
 `npm run verify` unrunnable. Do not simply flip the exit code without that second half.
+
+### A11Y-27, in full: the sixth instance, and it is a level above the other five
+
+`ci.yml` fired on `push: branches: [main]` and `pull_request:`. **Nothing in Epic A was
+ever pushed to `main`** — all of it landed on `feat/a-01-a-10a-scaffold-ci`. So every CI
+run this programme has ever had, including the numbered runs quoted throughout these docs,
+arrived through the `pull_request` trigger and existed only because PR #1 happened to be
+open. Close it, or start a branch without one, and `git push` runs nothing.
+
+**The other five are checks that measured nothing and reported a pass. This is a check
+that never ran and reported nothing at all** — no failure, no skip, no annotation, an empty
+Actions tab — while `npm run verify` still passed locally and the tree read green. The
+five earlier defects were caught because someone eventually read a gate's output. There was
+no output here to read.
+
+The consequence is not one gate: `CLAUDE.md` states *"CI is the arbiter. TypeScript,
+ESLint, `no-hardcoded-colors`, `check-service-role-key`, `check-bundle-size`, Lighthouse CI
+and axe all block merge."* That sentence was load-bearing for the whole of Epic A and was
+resting on an unexamined assumption about when the workflow fires. **The eleven commits of
+13 Aug were pushed believing CI would arbitrate them.**
+
+Fixed by `push: branches: ['**']`. `pull_request` is narrowed to `opened`/`reopened` so it
+no longer duplicates the push run on every commit to an open PR — with both unrestricted,
+each push would run the full suite twice, Lighthouse included.
+
+**The general lesson for the next gate someone adds:** "proven by deliberate failure" was
+being applied to what a gate asserts, never to whether it is reached. Both halves need the
+proof. A gate that cannot be observed failing on the branch you are working on is not
+known to run there.
 
 ## Blocked / decisions needed
 
