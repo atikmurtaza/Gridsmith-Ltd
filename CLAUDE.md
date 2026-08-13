@@ -162,6 +162,33 @@ Read the workstream's own files before touching its code.
   and the subject sat below the fold (`A11Y-32`). Both were written by someone who had just
   read this rule, and neither was caught by reading the code. Writing a gate and believing
   it works is the normal outcome; the proof is what makes the difference observable.
+
+  **A gate subject must assert that it is still the subject.** A subject that quietly stops
+  being one leaves the gate auditing whatever happens to be there and calling it clean —
+  the *hollow subject*, and the general form of how `global-error` went unmeasured. Its
+  probe route throws after hydration; if the throw ever stopped firing, axe would audit the
+  fallback paragraph and pass. So the route asserts that the boundary identifies itself —
+  title, `h1`, `lang` — and fails if it does not. Wherever a gate depends on its subject
+  being in a particular *state*, assert the state, not the subject's existence.
+- **An expectation derived from its own subject cannot fail when the subject is removed.**
+  If a check reads its expected values out of the same file it is checking, deleting an
+  entry deletes the expectation with it and the check stays green having measured less.
+  This is why `check:tokens` holds a **hardcoded** 39-token `REQUIRED` list rather than
+  scraping `tokens.css`, and why `check:contrast` carries literal `EXPECTED_PAIRS = 29` and
+  `EXPECTED_CELLS = 101`.
+
+  **It does not follow that derived lists are always wrong — it depends on the question.**
+  The two live examples divide cleanly and both are correct:
+
+  | Gate | Question | List | Why that way |
+  |---|---|---|---|
+  | `check:tokens` | does the token layer **declare** the right tokens? | **hardcoded** | the declarations *are* the subject, so the expectation must come from outside them |
+  | `check-axe`'s route probe | does the token layer **reach** this route? | **derived** from `tokens.css` + the theme files | the subject is the *served page*, not the source; a hardcoded list would rot as tokens are added, and any unlinked stylesheet makes every name resolve to nothing regardless of which names are on the list |
+
+  Deleting `--text-2xl` from `tokens.css` therefore fails `check:tokens` and not the route
+  probe, and that is the intended division. **State which question a gate answers before
+  choosing where its expectation comes from**, and write the answer next to the list —
+  the route probe carries that note because the proof is what surfaced the distinction.
 - **Never recursively delete outside the repository working tree without asking.** Inside
   the repo, `.next/` and `node_modules/` are regenerable — remove them freely. Outside it —
   home directories, tool installs, version-manager trees, anything under `AppData` or
