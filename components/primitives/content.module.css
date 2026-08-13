@@ -29,7 +29,27 @@
 .cardLinked { position: relative; transition: border-color var(--dur-base) var(--ease-out); }
 .cardLinked:hover { border-color: var(--line-strong); }
 .cardLinked:has(:is(h1, h2, h3, h4, h5, h6) a:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
-.cardLinked :is(h1, h2, h3, h4, h5, h6) a::after { content: ''; position: absolute; inset: 0; }
+/* The overlay is explicitly under every other control in the card, and the two z-indexes
+   below are the whole fix. A positioned pseudo-element with `z-index: auto` paints above
+   non-positioned inline siblings, so the full-card overlay covered every other link and
+   button in the card: they stayed in the tab order and stopped being clickable by pointer.
+   Press's book card is the case that matters — press/DESIGN.md §5 puts retailer links
+   directly below the title, inside the overlay.
+
+   `.cardLinked` is `position: relative` with `z-index: auto`, so it creates no stacking
+   context and both rules resolve against the same ancestor: 1 beats 0 regardless of DOM
+   order. Ordering them by source position instead would work only while the retailer
+   links happen to come after the title. */
+.cardLinked :is(h1, h2, h3, h4, h5, h6) a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.cardLinked :is(a, button):not(:is(h1, h2, h3, h4, h5, h6) a) {
+  position: relative;
+  z-index: 1;
+}
 
 .badge {
   display: inline-flex;
@@ -125,6 +145,12 @@
   content: '/';
   color: var(--ink-muted);
 }
+.breadcrumbLink {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.breadcrumbLink:hover { color: var(--accent); }
 .breadcrumbCurrent { color: var(--ink-muted); }
 
 .pagination { display: flex; align-items: center; gap: var(--space-2); }

@@ -309,17 +309,17 @@ non-negotiable #2. Two rows in this tracker phrased the kitchen sink's 23 as tho
 were the size of the layer; corrected in place. Criterion 1's "23 of the 24" wording is
 right and stays.
 
-### P1 — Majors, audited and unfixed
+### ~~P1 — Majors, audited and unfixed~~ — **all four fixed 13 Aug**
 
-Not in the 13 Aug fix scope. These are AA failures or spec violations with a11y impact,
-so they are not P2 with the rest of the backlog.
+These were AA failures, so they were never P2 with the rest of the backlog. Fixed the same
+day in one commit; the rows stay as the record of what was wrong.
 
-| ID | Item | WCAG | Where |
-|---|---|---|---|
-| A11Y-1 | Breadcrumb links carry no `className` and `content.module.css` declares no `.breadcrumb a` rule, so they are the only interactive elements in the tier whose colour and focus ring the tier does not define | 2.4.7, 1.4.3 | `Breadcrumb.tsx:33` |
-| A11Y-2 | `EmptyState` and `ErrorState` render their title as `<p>` in `--font-display` `--text-lg` above body prose. Neither takes a heading-level prop, so a caller cannot correct it and heading navigation skips the state entirely | 1.3.1 (F2) | `EmptyState.tsx:24`, `ErrorState.tsx:32` |
-| A11Y-3 | `Container` accepts `as="nav" \| "main" \| "header" \| "footer"` but takes no `aria-label`, `id` or rest spread, so a second `nav` on a page cannot be distinguished and a `main` cannot be a skip-link target. `Breadcrumb` and `Pagination` both take a `label` for exactly this reason | 1.3.1, 4.1.2 | `Container.tsx:12-22` |
-| A11Y-4 | `.cardLinked` heading-link overlay is `position: absolute; inset: 0` with `z-index: auto`, so it paints above non-positioned inline siblings — every other link or button in a linked card is unclickable by pointer while staying in the tab order. Press §5 puts retailer links in exactly that position | press §5:100 | `content.module.css:32` |
+| ID | Item | WCAG | Where | Fix |
+|---|---|---|---|---|
+| ~~A11Y-1~~ | Breadcrumb links carry no `className` and `content.module.css` declares no `.breadcrumb a` rule, so they are the only interactive elements in the tier whose colour and focus ring the tier does not define | 2.4.7, 1.4.3 | `Breadcrumb.tsx:33` | `.breadcrumbLink` + `interactive.focusable`. Links are `--ink` underlined, the current crumb stays `--ink-muted` and is not — measured distinct |
+| ~~A11Y-2~~ | `EmptyState` and `ErrorState` render their title as `<p>` in `--font-display` `--text-lg` above body prose. Neither takes a heading-level prop, so a caller cannot correct it and heading navigation skips the state entirely | 1.3.1 (F2) | `EmptyState.tsx:24`, `ErrorState.tsx:32` | `headingLevel` prop, default 3, `2–6` allowed. Tailwind preflight resets heading margin and size, so the element changed and the appearance did not |
+| ~~A11Y-3~~ | `Container` accepts `as="nav" \| "main" \| "header" \| "footer"` but takes no `aria-label`, `id` or rest spread, so a second `nav` on a page cannot be distinguished and a `main` cannot be a skip-link target. `Breadcrumb` and `Pagination` both take a `label` for exactly this reason | 1.3.1, 4.1.2 | `Container.tsx:12-22` | `id`, `ariaLabel`, `ariaLabelledBy` declared individually — not a rest spread, which would also admit `role` and `tabIndex` on the primitive four route groups build page structure from. Unblocks the Epic M skip-link target |
+| ~~A11Y-4~~ | `.cardLinked` heading-link overlay is `position: absolute; inset: 0` with `z-index: auto`, so it paints above non-positioned inline siblings — every other link or button in a linked card is unclickable by pointer while staying in the tab order. Press §5 puts retailer links in exactly that position | press §5:100 | `content.module.css:32` | Overlay pinned to `z-index: 0`, other controls in the card to `1`. `.cardLinked` makes no stacking context, so 1 beats 0 independent of DOM order — source order alone would have held only while retailer links came after the title |
 
 ### P2 — Minors and Info
 
