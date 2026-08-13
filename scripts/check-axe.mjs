@@ -162,7 +162,7 @@ async function domIntegrity(page, route) {
 
     // And this is the check that catches the tokens being present but not reaching the
     // page. `--canvas` is read back through a probe so both sides are serialised by the
-    // same engine — comparing a hex token to an rgb() computed value otherwise needs a
+    // same engine — comparing a hex token to a computed colour triplet otherwise needs a
     // colour parser in the gate, which is a second thing to get wrong.
     const probe = document.createElement('span');
     probe.style.color = 'var(--canvas)';

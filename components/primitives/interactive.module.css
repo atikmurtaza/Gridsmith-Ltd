@@ -66,7 +66,13 @@
   border: var(--border-hairline) solid var(--ink-subtle);
   border-radius: var(--radius-default);
 }
-.control::placeholder { color: var(--ink-subtle); }
+/* --ink-muted for a different reason than the two in content.module.css: `.control` pins
+   `background: var(--canvas)` above, so the placeholder never reaches sunken and cleared
+   4.5:1 on contrast alone. What it failed is Press's --ink-subtle 17px floor (press.css,
+   press/DESIGN.md §2) — --text-base is 16.08px at 375px and only reaches 17px at 1440px.
+   That floor exists because Press's warm canvas leaves --ink-subtle at 4.56:1, clearing
+   AA by 0.06. --ink-muted is 6.64:1 there and carries no size floor. */
+.control::placeholder { color: var(--ink-muted); }
 .control:disabled { opacity: 0.45; cursor: not-allowed; }
 /* Error: thicker border AND a message AND aria-invalid — three cues, no colour alone. */
 .controlInvalid { border-width: 2px; border-color: var(--ink); }
