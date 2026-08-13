@@ -47,7 +47,12 @@ const config = [
     // CLAUDE.md non-negotiable #8: the budget does not move, the feature changes. This is
     // the feature changing. Scoped to the one file, with the numbers, rather than an
     // inline disable someone later reads as noise.
-    files: ['app/not-found.tsx'],
+    // **This read `app/not-found.tsx`, which has not existed since the file was renamed
+    // for `experimental.globalNotFound`.** The override matched nothing and was dead; the
+    // rule was actually suppressed by an inline eslint-disable in the file — exactly the
+    // mechanism the paragraph above rejects. Confirmed rather than inferred:
+    // `npx eslint --print-config app/global-not-found.tsx` reported the rule at [2].
+    files: ['app/global-not-found.tsx'],
     rules: { '@next/next/no-html-link-for-pages': 'off' },
   },
 ];

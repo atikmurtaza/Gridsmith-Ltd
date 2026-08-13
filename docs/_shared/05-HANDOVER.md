@@ -379,7 +379,7 @@ place in the repository before, an exemption. Nine gates changed in total.
 
 ### Traps this session hit, so you do not
 
-- **`app/not-found.tsx` renders its own `<html>`/`<body>`, and that is correct.** With four
+- **`app/global-not-found.tsx` renders its own `<html>`/`<body>`, and that is correct.** With four
   root layouts and no `app/layout.tsx`, an unmatched URL falls outside all four. A raw grep
   of the prerendered file finds two `<html>` tags; the *parsed* DOM has one, because the
   HTML parser merges the attributes of a second `<html>` start tag onto the open element.
@@ -397,7 +397,7 @@ place in the repository before, an exemption. Nine gates changed in total.
   both the Server Action's form contract and the thing that groups the options, so a
   primitive cannot generate it. Four frames sharing `name="division"` genuinely *are* one
   radio group. Everything else the old `scope()` helper touched is gone.
-- **ESLint's `no-html-link-for-pages` is switched off for `app/not-found.tsx` alone**, in
+- **ESLint's `no-html-link-for-pages` is switched off for `app/global-not-found.tsx` alone**, in
   `eslint.config.mjs`, with the measurement in the comment. It is not a bypass of a CI
   gate; it is the rule being measurably wrong for one file, and CLAUDE.md non-negotiable #8
   says the feature changes rather than the budget.

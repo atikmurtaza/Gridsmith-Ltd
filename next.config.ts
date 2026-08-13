@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
    * `globalNotFound` is what makes the 404 load the token layer at all.
    *
    * With four root layouts and no `app/layout.tsx`, an unmatched URL falls outside all of
-   * them, so Next has no layout to attach the route's global CSS to. `app/not-found.tsx`
+   * them, so Next has no layout to attach the route's global CSS to. `app/global-not-found.tsx`'s predecessor `app/not-found.tsx`
    * imported `globals.css` and the fonts directly and the build silently dropped both:
    * the served 404 linked the CSS-modules chunk and nothing else, leaving every token
    * undefined. `outline: 2px solid var(--ink)` is then invalid at computed-value time,

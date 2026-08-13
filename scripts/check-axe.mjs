@@ -50,7 +50,31 @@ const ROUTES = [
   { path: '/digital', status: 200 },
   { path: '/press', status: 200 },
   { path: '/_kitchen-sink', status: 200 },
+  // `global-not-found`'s subject: an unmatched URL. It cannot be a committed route — a
+  // committed route would match and return 200 — so the path itself is the subject and
+  // the asserted 404 is what proves it reached the right document.
   { path: '/_gridsmith-404-probe', status: 404 },
+  // `global-error`'s subject: app/(marketing)/gridsmith-error-probe/page.tsx, a committed
+  // route that throws after hydration. Until it existed, no gate in this repository
+  // referenced global-error at all and its Level A fix was evidenced only by a docstring.
+  //
+  // `themed: false` because global-error is deliberately unthemed and deliberately
+  // carries no `data-division` — setting it would put the literal string into a client
+  // chunk and fail check-theme-flash's strongest assertion, which is that no client chunk
+  // can set the theme after hydration. The reasoning is in the boundary's own docstring.
+  // The HTML responds 200; the throw happens in the browser afterwards.
+  //
+  // `expect` is what stops this probe going hollow. Without it the gate would audit
+  // whatever the route renders — and if the throw ever stopped firing, axe would cheerfully
+  // report the fallback paragraph as clean while global-error went unmeasured again. A
+  // subject that silently stops being the subject is the failure this whole rule exists to
+  // prevent, so the boundary has to identify itself.
+  {
+    path: '/gridsmith-error-probe',
+    status: 200,
+    themed: false,
+    expect: { title: 'Something went wrong — Gridsmith Ltd', h1: 'Something went wrong', lang: 'en-GB' },
+  },
 ];
 
 /**
@@ -185,8 +209,8 @@ if (TOKEN_NAMES.base.length === 0 || Object.values(TOKEN_NAMES.byDivision).some(
  * "The gate has no rule for it" is not the same as "the page is fine", so the assertion
  * moves here rather than waiting for axe to grow one back.
  */
-async function domIntegrity(page, route) {
-  const found = await page.evaluate((tokenNames) => {
+async function domIntegrity(page, route, themed = true, expect = null) {
+  const found = await page.evaluate(({ tokenNames, themed, expect }) => {
     const frameOf = (el) => el.closest('[data-division]')?.dataset.division ?? '(root)';
     const problems = [];
 
@@ -269,9 +293,29 @@ async function domIntegrity(page, route) {
     // Asserting the attribute tests the input to theming. Only a computed value tests the
     // result. That distinction is the fourth defect of this shape in this programme, and
     // the first to occur in a gate written to catch the third.
-    if (!document.body.dataset.division) {
+    // `themed: false` is the global-error boundary, which is deliberately unthemed and
+    // carries no data-division by design. Everything above this line still applies to it —
+    // ids, groups, the linked-card overlay — and the document-level assertions below run
+    // for every route regardless.
+    if (themed && !document.body.dataset.division) {
       problems.push('<body> carries no data-division — this page renders with no theme');
     }
+    // The boundary must identify itself — see the ROUTES entry that sets this.
+    if (expect) {
+      if (document.title !== expect.title) {
+        problems.push(`expected document.title "${expect.title}", got "${document.title}" — the render path this route exists to reach did not render`);
+      }
+      const h1 = document.querySelector('h1')?.textContent?.trim();
+      if (h1 !== expect.h1) problems.push(`expected <h1> "${expect.h1}", got "${h1 ?? '(none)'}"`);
+      if (document.documentElement.lang !== expect.lang) {
+        problems.push(`expected lang "${expect.lang}", got "${document.documentElement.lang || '(none)'}" — WCAG 3.1.1, Level A`);
+      }
+      if (document.querySelectorAll('main').length !== 1) {
+        problems.push(`expected exactly one <main>, found ${document.querySelectorAll('main').length}`);
+      }
+    }
+
+    if (!themed) return problems;
 
     const bodyStyle = getComputedStyle(document.body);
 
@@ -319,7 +363,7 @@ async function domIntegrity(page, route) {
     }
 
     return problems;
-  }, TOKEN_NAMES);
+  }, { tokenNames: TOKEN_NAMES, themed, expect });
 
   if (found.length === 0) return 0;
 
@@ -432,7 +476,7 @@ try {
 
       // Ids and grouping attributes are properties of the served markup, not of scroll
       // position, so once per page load is the honest amount.
-      total += await domIntegrity(page, `${route.path} @ ${viewport.label}`);
+      total += await domIntegrity(page, `${route.path} @ ${viewport.label}`, route.themed !== false, route.expect ?? null);
 
       await page.close();
     }

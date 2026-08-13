@@ -93,7 +93,6 @@ export default function NotFound() {
                   `global-not-found.tsx` because that convention is a page. Nothing about
                   the trade-off changed with the filename. */}
               <p>
-                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                 <a href="/">Return to the home page</a>
               </p>
             </Prose>

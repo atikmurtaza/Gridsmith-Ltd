@@ -583,7 +583,7 @@ tree was verified clean against `git status` after each.
 **1. The 404 shipped without a `lang` attribute.** `/_not-found` had never been audited by
 anything. The first axe run against it returned `html-has-lang` — **WCAG 3.1.1, Level A** —
 plus no `main` landmark. With no `app/layout.tsx` (A-04: four root layouts), an unmatched
-URL fell outside all four and got Next's default bare document. `app/not-found.tsx` now
+URL fell outside all four and got Next's default bare document. `app/global-not-found.tsx` (then `app/not-found.tsx`) now
 renders the master shell itself; verified in a real browser as a single `<html lang="en-GB">`
 carrying `data-division="master"`, one `<main>`, status 404. Two other arrangements were
 built and measured first and are recorded in that file so nobody re-tries them.
