@@ -136,6 +136,21 @@ Read the workstream's own files before touching its code.
   this shape have already shipped and been caught — a `_`-prefix filter that swallowed a
   whole route, a double-encoded chunk path that resolved to nothing, and a line-anchored
   regex that counted a third of what it claimed.
+- **A fix is not fixed until a permanent committed subject exists for a gate to reach.**
+  Deliberate-failure proofs become **committed specimens or committed probe routes**. Proof
+  artefacts are never deleted after use. A gate with no subject is not green and not red —
+  it is silent, which is worse than either, because there is nothing to re-examine. This is
+  the rule above about proving a gate by deliberate failure, extended one step: that rule
+  covers *what a gate asserts*, and the round-3 audit added *whether it is reached* and now
+  *whether a subject exists for it to reach at all*. Two instances motivated it, both from
+  one fix session:
+  **`A11Y-4`** — the `.cardLinked` overlay fix was proven by injecting a sibling link at
+  runtime. The injection was discarded, the kitchen sink had no linked-card specimen with a
+  second link, and so the working half of the selector matched nothing in CI; deleting it
+  outright would have left every gate green.
+  **`global-error`** — its Level A `lang`/`<title>` fix was proven by a temporary throwing
+  probe route that was then deleted. No gate referenced the file at all, and the only
+  surviving evidence of the fix was a docstring.
 - **Never recursively delete outside the repository working tree without asking.** Inside
   the repo, `.next/` and `node_modules/` are regenerable — remove them freely. Outside it —
   home directories, tool installs, version-manager trees, anything under `AppData` or
