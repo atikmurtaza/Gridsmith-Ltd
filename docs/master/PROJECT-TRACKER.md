@@ -601,6 +601,36 @@ merely always-on).
 This matters beyond one gate: `M-06`'s headroom is 0.8KB, and the shared baseline is the half
 of the arithmetic that comes straight out of every route's budget at once.
 
+### A-GATE-4-11: `Specimen`'s heading is ungated, and that is accepted
+
+**Recorded here because it was documented everywhere except the tracker, which is the one
+place that decides whether a gap is accepted or outstanding.**
+
+`G2` fixed two instances of WCAG 1.3.1 F2 — text presented as a heading without being one.
+`Stepper`'s is gated: `check:headings` fires on revert, proven. **`Specimen`'s is not.**
+
+`check:headings` matches `font-family: var(--font-display)` and nothing else, deliberately
+(`scripts/check-headings.mjs:36-47`: *"covers the display-face shape completely and the mono
+shape not at all… Do not widen it to mono + uppercase"*). `.specimenName` is mono. So
+reverting `Specimen` from `<h3>` to `<p>` leaves every gate green, and axe cannot see F2
+either — it is a semantic judgement, not a machine-detectable violation.
+
+**This is accepted, not outstanding, for three reasons:**
+
+1. The limit is a deliberate scope decision with a written justification, not an oversight,
+   and it is restated at the call site (`%5Fkitchen-sink/page.tsx:107-112`).
+2. Widening the gate to mono + uppercase is what its own docstring argues against — it
+   would flag every legitimate mono label in the system, and a gate that cries wolf gets
+   suppressed rather than obeyed.
+3. The subject is `/_kitchen-sink`, which `A-12` removes from the production build anyway.
+
+**What makes it acceptable rather than hidden is that it is written down in three places
+now — the gate, the call site, and here.** CLAUDE.md's rule is that a fix is not fixed until
+a permanent committed subject exists for a gate to reach; the honest reading is that this
+half of `G2` does not meet that bar and is being carried knowingly. If `Specimen` is ever
+promoted out of the kitchen sink onto a production route, this stops being acceptable and
+needs either a real gate or a display-face heading.
+
 ### A-GATE-4-5: documentation outrunning the repo — the third occurrence
 
 `components/primitives/Tabs.tsx:2` asserted *"The only client component in this tier"* while

@@ -214,6 +214,21 @@ if (stale.length > 0) {
  * fails rather than warns. Earned its place immediately: a root `not-found.tsx` importing
  * the Link primitive put 4.3KB gz on all six routes, and since 4.3 is inside every budget
  * in the table, nothing else in this file would have said a word.
+ *
+ * **Its relationship to the shared-baseline assertion below — read both before changing
+ * either.** They measure the same quantity and answer different questions:
+ *
+ *   this check          "every route is carrying something no route declared" — cause
+ *                       unknown, could be the framework or could be us, needs a person
+ *   shared baseline     "the cost every route pays has outgrown what `M-06` budgets for
+ *                       it" — cause known to be ours, and it is 0.5KB of Master's 0.8KB
+ *                       of remaining headroom
+ *
+ * Because `cheapest = FLOOR_KB + shared`, this check's predicate is exactly
+ * `shared > FLOOR_TOLERANCE_KB`. The two are therefore only distinct while their
+ * thresholds are — set them equal and the one below becomes unreachable code, which is
+ * what shipped at `G8` and was found at `A-GATE-4-3`. This note lived only in commit
+ * `417e2661`'s body, where it read as reassurance rather than as the defect it described.
  */
 const cheapest = Math.min(...rows.map((r) => r.total));
 if (cheapest > FLOOR_KB + FLOOR_TOLERANCE_KB) {
@@ -268,6 +283,13 @@ if (over.length > 0) {
  *
  * Both are asserted, not just printed. A number that is only printed is a number nobody
  * notices moving.
+ *
+ * **This runs after the floor check above, and the two are not interchangeable.** The
+ * floor check asks whether every route is carrying something undeclared, without
+ * diagnosing what; this asks whether the shared cost has outgrown the specific budget
+ * `M-06` depends on. See the note on `SHARED_BASELINE_BUDGET_KB` for why its threshold
+ * must stay strictly below `FLOOR_TOLERANCE_KB` — equal thresholds make this block
+ * unreachable, since the floor check exits first.
  */
 const BASELINE_ROUTES = ['/', '/design', '/digital', '/press', '/_not-found'];
 
