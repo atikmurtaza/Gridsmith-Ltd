@@ -36,6 +36,66 @@ const FLOOR_KB = 100.2;
 const FLOOR_TOLERANCE_KB = 1.0;
 
 /**
+ * **This budget must stay strictly below `FLOOR_TOLERANCE_KB`, and that is the whole point
+ * of the number.**
+ *
+ * The baseline routes are the cheapest rows in the build, so `cheapest = FLOOR_KB + shared`.
+ * The floor check — further down this file, but running long before the decomposition —
+ * fires when `cheapest > FLOOR_KB + FLOOR_TOLERANCE_KB`, which is exactly
+ * `shared > FLOOR_TOLERANCE_KB`. Set this budget to the same 1.0 and the two predicates are
+ * *identical*, the floor check `process.exit(1)`s first, and this assertion becomes
+ * unreachable code that can never report anything. It shipped that way at `G8` and was found
+ * at A-GATE run 4 (`A-GATE-4-3`).
+ *
+ * **These constants sit up here, beside `FLOOR_TOLERANCE_KB`, so the guard below can compare
+ * them before any measurement runs.** Declared next to the decomposition, the guard would sit
+ * downstream of the floor check's `process.exit(1)` and could be skipped by the state of a
+ * particular build — a guard against unreachable code, itself unreachable.
+ *
+ * At 0.7 there is a real window — `0.7 < shared <= 1.0` — in which this fires and the floor
+ * check does not. That window is what makes it an independent assertion rather than a
+ * restatement, and it is what the deliberate-failure proof has to land in: a proof that
+ * pushes `shared` past 1.0 is being satisfied by the floor check, not by this.
+ *
+ * Measured today: 0.5KB. The 0.2KB of headroom is deliberately tight — this is the cost
+ * every route pays and cannot attribute to any feature.
+ */
+const SHARED_BASELINE_BUDGET_KB = 0.7;
+const PRIMITIVES_BUDGET_KB = 6.0;
+
+/**
+ * **The distinctness of those two constants is the entire A-GATE-4-3 fix, so it is asserted
+ * here rather than described.**
+ *
+ * `G8`'s shared-baseline assertion was unreachable because its budget equalled
+ * `FLOOR_TOLERANCE_KB`. Run 4 found it; `R1` fixed it by making them differ. Run 5 then found
+ * that **the fix had no gate**: setting the budget back to 1.0 restored the defect exactly and
+ * every gate stayed green, because the only thing holding the constants apart was a docstring
+ * (`A-GATE-5-1`). A repair defended by prose is defended by nothing — that is the same
+ * unearned confidence CLAUDE.md's gate rule exists to prevent, one level up from the gate.
+ *
+ * This runs before any measurement and before the floor check can exit, so it cannot be
+ * skipped by the state of a particular build.
+ */
+if (!(SHARED_BASELINE_BUDGET_KB < FLOOR_TOLERANCE_KB)) {
+  console.error(
+    `\ncheck-bundle-size: SHARED_BASELINE_BUDGET_KB (${SHARED_BASELINE_BUDGET_KB}) must be ` +
+      `strictly less than FLOOR_TOLERANCE_KB (${FLOOR_TOLERANCE_KB}).` +
+      '\n\nBecause cheapest = FLOOR_KB + shared, the floor check fires at' +
+      '\n  shared > FLOOR_TOLERANCE_KB' +
+      '\nand the shared-baseline assertion fires at' +
+      '\n  shared > SHARED_BASELINE_BUDGET_KB' +
+      '\n\nEqual thresholds make those predicates identical, and the floor check exits first,' +
+      '\nso the shared-baseline assertion becomes unreachable code that can never report.' +
+      '\nThat is exactly the defect A-GATE-4-3 recorded and R1 repaired.' +
+      '\n\nRaise FLOOR_TOLERANCE_KB or lower SHARED_BASELINE_BUDGET_KB so a window exists in' +
+      '\nwhich only the shared-baseline assertion fires — and land its proof inside that' +
+      '\nwindow, not above it.\n',
+  );
+  process.exit(1);
+}
+
+/**
  * Route prefix -> delta budget in KB gz. Longest matching prefix wins, so a specific
  * route overrides its group.
  */
@@ -221,8 +281,9 @@ if (stale.length > 0) {
  *   this check          "every route is carrying something no route declared" — cause
  *                       unknown, could be the framework or could be us, needs a person
  *   shared baseline     "the cost every route pays has outgrown what `M-06` budgets for
- *                       it" — cause known to be ours, and it is 0.5KB of Master's 0.8KB
- *                       of remaining headroom
+ *                       it" — cause known to be ours. It measures 0.5KB today, and
+ *                       `M-06`'s remaining headroom is the 0.8KB left after it, not a
+ *                       figure it forms part of
  *
  * Because `cheapest = FLOOR_KB + shared`, this check's predicate is exactly
  * `shared > FLOOR_TOLERANCE_KB`. The two are therefore only distinct while their
@@ -292,28 +353,6 @@ if (over.length > 0) {
  * unreachable, since the floor check exits first.
  */
 const BASELINE_ROUTES = ['/', '/design', '/digital', '/press', '/_not-found'];
-
-/**
- * **This budget must stay strictly below `FLOOR_TOLERANCE_KB`, and that is the whole point
- * of the number.**
- *
- * The baseline routes are the cheapest rows in the build, so `cheapest = FLOOR_KB + shared`.
- * The floor check above fires when `cheapest > FLOOR_KB + FLOOR_TOLERANCE_KB` — which is
- * exactly `shared > FLOOR_TOLERANCE_KB`. Set this budget to the same 1.0 and the two
- * predicates are *identical*, the floor check `process.exit(1)`s ~70 lines earlier, and this
- * assertion becomes unreachable code that can never report anything. It shipped that way at
- * `G8` and was found at A-GATE run 4 (`A-GATE-4-3`).
- *
- * At 0.7 there is a real window — `0.7 < shared <= 1.0` — in which this fires and the floor
- * check does not. That window is what makes it an independent assertion rather than a
- * restatement, and it is what the deliberate-failure proof has to land in: a proof that
- * pushes `shared` past 1.0 is being satisfied by the floor check, not by this.
- *
- * Measured today: 0.5KB. The 0.2KB of headroom is deliberately tight — this is the cost
- * every route pays and cannot attribute to any feature.
- */
-const SHARED_BASELINE_BUDGET_KB = 0.7;
-const PRIMITIVES_BUDGET_KB = 6.0;
 
 const baselineRows = rows.filter((r) => BASELINE_ROUTES.includes(r.url));
 const kitchen = rows.find((r) => r.url === '/_kitchen-sink');
