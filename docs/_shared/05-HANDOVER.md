@@ -49,8 +49,14 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 >
 > **Round 3 completed all three passes** — the first time both criteria were audited to
 > completion in one session. It returned **nine findings** (`_shared/08-A-GATE-RUN-3.md`),
-> **all nine are now fixed** across `G1`–`G8`, and every fix has a committed subject and a
-> deliberate-failure proof.
+> fixed across `G1`–`G8`.
+>
+> **This paragraph claimed "all nine are now fixed, and every fix has a committed subject
+> and a deliberate-failure proof". Round 4 found that neither half was true**
+> (`_shared/09-A-GATE-RUN-4.md`). The `Tabs.tsx:2` comment was never touched — its last
+> commit predates the whole `G1`–`G8` range — and `G8`'s shared-baseline assertion had a
+> proof that was being satisfied by a different gate firing. Both are fixed at `R1`/`R2`.
+> **Round 5 is scoped to `R1`–`R5` and is the next action.**
 >
 > **Round 4 is a fresh session, first action, and it is scoped to re-verifying those nine
 > findings only.** It is not a fourth open-ended audit of Epic A. The scope is deliberately

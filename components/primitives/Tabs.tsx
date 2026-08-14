@@ -1,9 +1,10 @@
 'use client';
-// The only client component in this tier. A conformant tab widget needs roving tabindex
-// and arrow-key selection (WAI-ARIA Tabs pattern) — there is no server-only or CSS-only
-// construction that provides them. Everything else in tier 3 is a Server Component;
-// where the platform had a native equivalent it was used instead (Accordion is
-// <details>, Select is <select>, RadioGroup is a <fieldset> of radios).
+// One of the three client components in this tier — with RevealOnScroll and StickyCta;
+// the other 21 primitives are Server Components. A conformant tab widget needs roving
+// tabindex and arrow-key selection (WAI-ARIA Tabs pattern) — there is no server-only or
+// CSS-only construction that provides them. Where the platform had a native equivalent it
+// was used instead (Accordion is <details>, Select is <select>, RadioGroup is a
+// <fieldset> of radios).
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import styles from './interactive.module.css';

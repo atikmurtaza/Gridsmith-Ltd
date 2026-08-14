@@ -56,7 +56,7 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 2 | Correct at 375 / 768 / 1440px | **MET.** `check:responsive`, **18 combinations** (6 routes × 3 widths — `/_not-found` and a 404 probe were added on 12 Aug), green on `ubuntu-latest` |
 | 3 | Keyboard navigable end to end | **Re-verified, and the root cause is now fixed.** The symptom — duplicate ids sending every label in frames 2–4 to the control in frame 1 — was fixed at the call site in July; the 12 Aug audit found the cause still live in `Field`/`Select`, which derived the DOM `id` from the form `name`. Fixed in the primitives. `StickyCta` no longer drives `inert`/`aria-hidden` from JavaScript while CSS drives its position, which had put eight painted links outside the tab order. axe now runs 24 analyses — 6 routes × 375/1280px × initial/scrolled |
 | 4 | Zero hardcoded colours | **MET, and now actually protected.** `lint:colors` green across 72 files (was 62 — the sweep missed `lighthouse/`, every root-level config file, and any tree nobody had listed). The named-colour rule only fired immediately after a colon, so `border: 1px solid red` — the codebase's own border idiom — shipped unflagged; it now matches anywhere in a declaration value, plus `color-mix()`. Re-proven by deliberate failure with `border: 1px solid red` |
-| 5 | `rules-compliance` — **fresh context**, zero findings | **RAN THREE TIMES, FAILED THREE TIMES.** Round 1: 1 blocker, 5 major, 3 minor. Round 2: 4 blockers, 4 majors, 7 minors — **closed as unreconstructable and superseded**, `_shared/05-HANDOVER.md` §10. Round 3 (13 Aug, completed): 1 blocker, 2 majors, 3 minors — the dead `eslint.config.mjs` override, invented prices, stale doc paths. All fixed in `G5`/`G6`. Needs a run that returns zero |
+| 5 | `rules-compliance` — **fresh context**, zero findings | **RAN THREE TIMES, FAILED THREE TIMES.** Round 1: 1 blocker, 5 major, 3 minor. Round 2: 4 blockers, 4 majors, 7 minors — **closed as unreconstructable and superseded**, `_shared/05-HANDOVER.md` §10. Round 3 (13 Aug, completed): 1 blocker, 2 majors, 3 minors — the dead `eslint.config.mjs` override, invented prices, stale doc paths. Recorded as "all fixed in `G5`/`G6`"; **round 4 found one of them — the `Tabs.tsx:2` comment — had never been touched**, and this row said otherwise for a day. Fixed at `R2`. Round 4 (14 Aug, completed): findings again, `_shared/09-A-GATE-RUN-4.md`. Needs a run that returns zero |
 | 6 | `accessibility-audit` — **fresh context**, zero findings | **COMPLETED ONCE — round 3, 13 Aug**, as two narrow runs (primitives + kitchen sink, then routes and render paths). Both returned. Confirmed `A11Y-1`–`A11Y-4` genuinely fixed; found 1 Major + 2 Minor + 1 Info on the primitives and 2 Majors + 2 Minors on the routes and gates, and confirmed the `A11Y-26` gap real. All fixed in `G1`–`G8`. Needs a run that returns zero — that is round 4, scoped to these nine findings only |
 
 **Criteria 5 and 6 have never been executed.** Five agents were launched at the Epic A
@@ -601,6 +601,34 @@ merely always-on).
 This matters beyond one gate: `M-06`'s headroom is 0.8KB, and the shared baseline is the half
 of the arithmetic that comes straight out of every route's budget at once.
 
+### A-GATE-4-5: documentation outrunning the repo — the third occurrence
+
+`components/primitives/Tabs.tsx:2` asserted *"The only client component in this tier"* while
+`RevealOnScroll` and `StickyCta` sat beside it, both `'use client'`. Round 3 reported it.
+`G5`/`G6` recorded it fixed. **`git log -- components/primitives/Tabs.tsx` shows the file's
+last touch predates the entire `G1`–`G8` range: it was never opened.** Two documents — this
+tracker's criterion-5 row and `_shared/05-HANDOVER.md` §2 — carried "all fixed" for a day
+against a tree in which it was not.
+
+**This is the third occurrence of one pattern, and it is worth naming as a pattern rather
+than as three unrelated slips:**
+
+| | What the documentation said | What the repo held |
+|---|---|---|
+| 1 | Round 2: **"4 blockers, 4 majors, 7 minors — all fixed"** | eleven items in prose; the four majors and seven minors itemized nowhere. Closed as unreconstructable, `05-HANDOVER.md` §10 |
+| 2 | `G8`: **"every fix has a deliberate-failure proof"** | the shared-baseline proof was satisfied by the floor check firing; the assertion had never executed (`A-GATE-4-3`, above) |
+| 3 | `G5`/`G6`: **"all nine fixed"** | `Tabs.tsx:2` untouched, its last commit pre-`G1` |
+
+All three share a mechanism: **the record of the work was written by the session that did
+the work, in the same pass, and nothing re-read the tree afterwards.** A fix list is a
+measurable claim, and CLAUDE.md's rule applies to it exactly as it applies to a contrast
+ratio — *unverified until something measures it*. The something, here, is a fresh context
+re-reading the files, which is what criteria 5 and 6 have been asking for all along and why
+every round has returned findings.
+
+**The cheap habit that would have caught all three:** before writing "fixed", `git log --`
+the file. It is one command and it is decisive — occurrence 3 was found by exactly that.
+
 ### Defect classes logged this epic
 
 Eight instances of the gate class and three classes of its own. The list is the point: none
@@ -610,6 +638,7 @@ of these was found by reading code, and seven were found by the deliberate-failu
 |---|---|---|
 | **Gate measures nothing** — 8 instances | `A11Y-25`, `A11Y-27`, `A11Y-29`, `A11Y-32` + four earlier | a check that runs, reports a pass, and measured less than it claims |
 | **Proof satisfied by a different gate** | `A-GATE-4-3` | two checks share a predicate; the proof observes a red *build* and credits the wrong one, so unreachable code ships recorded as proven |
+| **Documentation outrunning the repo** — 3 occurrences | round 2's list, `G8`'s proof claim, `A-GATE-4-5` | the session that did the work wrote the record of it in the same pass; nothing re-read the tree. `git log --` the file before writing "fixed" |
 | **Justification never re-checked** | `A11Y-31` | a restriction that is *too strict* emits no failing output and cannot be found by reading gate results |
 | **Expectation derived from its own subject** | `CLAUDE.md` "How to work" | deleting the subject deletes the expectation; the gate stays green having measured less |
 | **Hollow subject** | `CLAUDE.md` "How to work" | a subject that stops being the subject leaves the gate auditing whatever is there |
