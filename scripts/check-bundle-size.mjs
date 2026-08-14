@@ -64,6 +64,18 @@ const SHARED_BASELINE_BUDGET_KB = 0.7;
 const PRIMITIVES_BUDGET_KB = 6.0;
 
 /**
+ * How far the baseline routes may disagree with each other before that disagreement is
+ * itself the finding. See the decomposition block for the reasoning; in short, `shared` is a
+ * minimum and a minimum cannot see a cost paid by some baseline routes and not all.
+ *
+ * **0.1KB, not 0.** The measurement is gzipped bytes divided by 1024 and printed to one
+ * decimal, and the routes are not byte-identical — `/_not-found` renders a little more markup
+ * than the placeholder pages. Today all five measure 0.5KB and the spread is 0.0KB, so this
+ * has real room; it is set to absorb rounding, not to absorb a component.
+ */
+const BASELINE_SPREAD_TOLERANCE_KB = 0.1;
+
+/**
  * **The distinctness of those two constants is the entire A-GATE-4-3 fix, so it is asserted
  * here rather than described.**
  *
@@ -340,6 +352,25 @@ if (over.length > 0) {
  *   puts in every route's client bundle. Taking the minimum across them means one route
  *   growing its own JS cannot inflate the figure.
  *
+ *   **`min` alone is blind to a cost paid by some baseline routes and not all, and that
+ *   blindness is why the spread is asserted below.** If four of the five gain X, `min` does
+ *   not move and neither does `cheapest`, so at no size of X does any check here say a word
+ *   (`A-GATE-5-3`). That is not a hypothetical shape: `M-06` is the header and footer, which
+ *   three of the four route-group layouts import and `/_not-found` does not.
+ *
+ *   **Why not `max`.** It would catch that case and lose the property `min` was chosen for:
+ *   a single route growing its own JS would inflate a figure that is supposed to mean "what
+ *   *every* route pays", and `M-06` would then be budgeting against one route's feature. The
+ *   two statistics answer different questions and neither answers both.
+ *
+ *   **So: `min` remains the reported figure, and the spread carries the assertion.** What
+ *   makes a route a baseline route is having no features of its own, and the observable form
+ *   of that is that they all cost the same. When they stop agreeing, exactly one of two
+ *   things is true, and both need a person: something shipped on a subset of routes, or a
+ *   route grew a feature and should leave `BASELINE_ROUTES` deliberately. Asserting the
+ *   invariant catches the first and makes the second an explicit edit rather than a silent
+ *   drift — the same shape as `REQUIRED` above.
+ *
  *   The **primitive layer** is then the kitchen sink's delta minus that baseline.
  *
  * Both are asserted, not just printed. A number that is only printed is a number nobody
@@ -367,10 +398,16 @@ if (baselineRows.length !== BASELINE_ROUTES.length) {
   decomposition.push('/_kitchen-sink is absent, so the primitive-layer delta cannot be derived.');
 } else {
   const shared = Math.min(...baselineRows.map((r) => r.delta));
+  const dearest = Math.max(...baselineRows.map((r) => r.delta));
+  const spread = dearest - shared;
   const primitives = kitchen.delta - shared;
 
   console.log('\ndelta decomposition — M-06 budgets on these, so they are asserted, not just printed\n');
   console.log(`  shared baseline    ${shared.toFixed(1)}KB gz   every route pays this (global-error boundary)`);
+  console.log(
+    `  baseline spread    ${spread.toFixed(1)}KB gz   dearest minus cheapest across the ` +
+      `${baselineRows.length} baseline routes`,
+  );
   console.log(`  primitive layer    ${primitives.toFixed(1)}KB gz   /_kitchen-sink delta minus the baseline`);
   console.log(`  consent banner     8.0KB gz   reserved, not yet built — PROJECT-RULES §8`);
   console.log(
@@ -383,6 +420,26 @@ if (baselineRows.length !== BASELINE_ROUTES.length) {
       `shared baseline is ${shared.toFixed(1)}KB, over its ${SHARED_BASELINE_BUDGET_KB}KB budget. ` +
         'Something new ships on every route. This is the cost that cannot be attributed to any ' +
         'feature, so it comes straight out of every budget at once.',
+    );
+  }
+  if (spread > BASELINE_SPREAD_TOLERANCE_KB) {
+    const table = baselineRows
+      .slice()
+      .sort((a, b) => b.delta - a.delta)
+      .map((r) => `      ${r.url.padEnd(16)}${r.delta.toFixed(1)}KB`)
+      .join('\n');
+    decomposition.push(
+      `the baseline routes disagree by ${spread.toFixed(1)}KB, over the ` +
+        `${BASELINE_SPREAD_TOLERANCE_KB}KB tolerance:\n\n${table}\n\n` +
+        '    A baseline route is one with no features of its own, so they should all cost the\n' +
+        '    same. Something is on a SUBSET of routes — which `shared` (a minimum) cannot see at\n' +
+        '    any size, and neither can the floor check. Either:\n' +
+        '      - something shipped on some routes and not others (a shared layout import, a\n' +
+        '        route-group boundary). Decide whether every route should pay for it; or\n' +
+        '      - a route legitimately grew a feature, in which case remove it from\n' +
+        '        BASELINE_ROUTES deliberately, so the shared figure stops being derived from it.\n' +
+        '    Do not widen this tolerance to make the message go away — that restores the blind\n' +
+        '    spot A-GATE-5-3 recorded.',
     );
   }
   if (primitives > PRIMITIVES_BUDGET_KB) {
