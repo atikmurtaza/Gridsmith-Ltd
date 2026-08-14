@@ -376,9 +376,39 @@ const isLarge = (px, weight) => px >= 24 || (px >= 18.66 && weight >= 700);
 
 const sizeProblems = [];
 let declarationsMeasured = 0;
+let declarationsSeen = 0;
 
-for (const file of SIZE_SOURCES) {
-  const css = readFileSync(file, 'utf8');
+/**
+ * **What this pass owns that the permission matrix cannot: which token a declaration
+ * actually paints text with.**
+ *
+ * The matrix is a table of token/surface pairs. It answers *may this token carry text on
+ * this surface* and it is authoritative on that question. What it cannot see is the
+ * stylesheet — whether any declaration uses a token the table never granted a text role to
+ * at all.
+ *
+ * That distinction is the whole justification for this pass, and it was missing from the
+ * first two versions. `A11Y-29` narrowed the predicate to the already-passing set. The
+ * version after it kept a predicate — `r + TOLERANCE < needed` — that **every token in
+ * `USE` already satisfies by construction**: they are all `role: 'body'`, so the matrix
+ * enforces 4.5:1 on every surface, and a ratio below 4.5 cannot occur. Meanwhile
+ * `if (!use || use.role === 'decor') continue` skipped the only declarations the matrix
+ * genuinely cannot rule on. So the pass restated the matrix and was blind to the one class
+ * it uniquely could catch — `A-GATE-4-1`.
+ *
+ * It now flags, at the declaration level and independently of any ratio:
+ *
+ *   - a **decorative** token in `color:` — `--accent-design` is 2.16:1 on white and is
+ *     declared decor precisely because it must never be text. The matrix records the role;
+ *     only this pass can see the stylesheet disobeying it.
+ *   - a token **absent from the matrix entirely** in `color:` — an unruled foreground is
+ *     unmeasured, not permitted.
+ *
+ * Both are failures on sight. There is no ratio at which painting text with a token
+ * declared decorative becomes correct, and asking for one would re-import the mistake
+ * A11Y-31 named: a rule is not softened to fit its subject.
+ */
+function scanCss(file, css, problems) {
   // Rule blocks: everything between `{` and the next `}`. Nested at-rules are flat here
   // because these files use no nesting beyond @media, whose inner blocks match the same way.
   for (const block of css.matchAll(/\{([^{}]*)\}/g)) {
@@ -388,10 +418,33 @@ for (const file of SIZE_SOURCES) {
     if (!colour || !size) continue;
 
     const token = colour[1];
-    const use = USE[token];
-    if (!use || use.role === 'decor') continue; // decorative text is not a thing; skip non-foregrounds
     const px = TEXT_PX[size[1]];
     if (px === undefined) continue;
+
+    // Foregrounds that sit on an accent fill have their own pass with its own surfaces.
+    // Measuring them against canvases here would compare them to a background they never
+    // touch and report a failure that is not one.
+    if (ON_ACCENT[token]) continue;
+
+    declarationsSeen += 1;
+    const use = USE[token];
+
+    if (!use) {
+      problems.push(
+        `${file} — ${token} paints text at ${size[1]} (${px.toFixed(2)}px) and is not in the ` +
+          'permission matrix at all. An unruled foreground is unmeasured, not permitted: add it ' +
+          'to USE with a role, or stop painting text with it.',
+      );
+      continue;
+    }
+    if (use.role === 'decor') {
+      problems.push(
+        `${file} — ${token} paints text at ${size[1]} (${px.toFixed(2)}px) and is declared ` +
+          "role: 'decor'. A decorative token is one the matrix says must never carry text, at " +
+          'any size. Use a body token, or change the role and justify it with a measurement.',
+      );
+      continue;
+    }
 
     const weightMatch = body.match(/font-weight:\s*(\d+)/);
     const weight = weightMatch ? Number(weightMatch[1]) : 400;
@@ -424,7 +477,7 @@ for (const file of SIZE_SOURCES) {
         // stylesheets are held to it. Do not delete it as dead code; deleting it is how
         // A11Y-22 comes back.
         if (use.except?.[surface] && r + TOLERANCE < needed) {
-          sizeProblems.push(
+          problems.push(
             `${file} — ${token} paints text at ${size[1]} (${px.toFixed(2)}px, weight ${weight}) ` +
               `on ${surface} in ${theme}: ${r.toFixed(2)}:1, needs ${needed}:1. ` +
               `The matrix restricts this token here: ${use.except[surface]}`,
@@ -432,7 +485,7 @@ for (const file of SIZE_SOURCES) {
           continue;
         }
         if (!use.except?.[surface] && r + TOLERANCE < needed) {
-          sizeProblems.push(
+          problems.push(
             `${file} — ${token} at ${size[1]} (${px.toFixed(2)}px, weight ${weight}) on ` +
               `${surface} in ${theme}: ${r.toFixed(2)}:1, needs ${needed}:1`,
           );
@@ -442,9 +495,61 @@ for (const file of SIZE_SOURCES) {
   }
 }
 
+for (const file of SIZE_SOURCES) {
+  scanCss(file, readFileSync(file, 'utf8'), sizeProblems);
+}
+
+/**
+ * **The self-test — this is the permanent committed subject for the two branches above.**
+ *
+ * The decor and unruled branches are the only power this pass has that the matrix does not,
+ * and no shipped stylesheet triggers either: every `color:` declaration in the repo uses
+ * `--ink`, `--ink-muted`, `--accent` or `--accent-ink`, all correctly ruled. A branch whose
+ * only subject would be a real violation cannot have one committed — shipping a decorative
+ * token as 12px text to give the gate something to find would be shipping the failure.
+ *
+ * So the subject is a fixture rather than a page: two declarations the gate must catch,
+ * held here, scanned every run, and asserted by count. If someone widens the skip back to
+ * `if (!use || use.role === 'decor') continue`, this goes red immediately — which is
+ * exactly what did not happen the first two times this pass was narrowed.
+ *
+ * It asserts what it catches, not merely that it caught something: a count alone would
+ * survive one branch breaking while the other double-fired.
+ */
+const SELF_TEST_CSS = `
+  .selfTestDecorAsText { color: var(--accent-design); font-size: var(--text-xs); }
+  .selfTestUnruledAsText { color: var(--gridsmith-not-a-token); font-size: var(--text-xs); }
+`;
+// Captured BEFORE the self-test runs. The self-test scans two declarations of its own, so
+// reading the counter afterwards would mean the shipped stylesheets could stop pairing
+// colour and size entirely and the zero-measurement check would still see 2. That is the
+// hollow-subject failure in miniature — the guard would be measuring the fixture.
+const shippedDeclarations = declarationsSeen;
+
+const selfTestProblems = [];
+scanCss('<self-test>', SELF_TEST_CSS, selfTestProblems);
+
+const selfTestExpected = [/--accent-design .*role: 'decor'/, /--gridsmith-not-a-token .*not in the/];
+if (
+  selfTestProblems.length !== selfTestExpected.length ||
+  !selfTestExpected.every((re) => selfTestProblems.some((p) => re.test(p)))
+) {
+  console.error(
+    `\ncheck-contrast: the size pass failed its own self-test — expected ` +
+      `${selfTestExpected.length} problems (one decor, one unruled), got ${selfTestProblems.length}:\n`,
+  );
+  for (const p of selfTestProblems) console.error(`  ${p}`);
+  console.error(
+    '\nThe declaration-level branches are the only thing this pass does that the permission\n' +
+      'matrix does not. If they no longer fire, the pass restates the matrix and is worth\n' +
+      'nothing — see A-GATE-4-1 and A11Y-29. Fix the branches; do not relax this assertion.\n',
+  );
+  process.exit(1);
+}
+
 // A pass that measured nothing is not a pass. If the primitives stop pairing colour and
 // size in one rule, this must say so rather than print a green line over an empty loop.
-if (declarationsMeasured === 0) {
+if (shippedDeclarations === 0) {
   sizeProblems.push(
     'the size pass measured 0 declarations. Either no stylesheet pairs `color: var(--token)` ' +
       'with `font-size: var(--text-*)` any more, or SIZE_SOURCES no longer resolves. ' +
