@@ -515,9 +515,17 @@ for (const file of SIZE_SOURCES) {
  *
  * It asserts what it catches, not merely that it caught something: a count alone would
  * survive one branch breaking while the other double-fired.
+ *
+ * **Why `--line-strong` and not `--accent-design`.** Both are `role: 'decor'` and either
+ * exercises the branch. `--accent-design` cannot be used here because `lint:colors` carries
+ * an `amber-as-text` rule banning it from `color:` anywhere outside the token files — this
+ * fixture would trip that gate on itself. The two gates overlap on exactly that one token,
+ * by design: `lint:colors` bans the specific token everyone reaches for, this pass covers
+ * the general class, and the fixture has to sit in the part of the class the other gate does
+ * not police.
  */
 const SELF_TEST_CSS = `
-  .selfTestDecorAsText { color: var(--accent-design); font-size: var(--text-xs); }
+  .selfTestDecorAsText { color: var(--line-strong); font-size: var(--text-xs); }
   .selfTestUnruledAsText { color: var(--gridsmith-not-a-token); font-size: var(--text-xs); }
 `;
 // Captured BEFORE the self-test runs. The self-test scans two declarations of its own, so
@@ -529,7 +537,7 @@ const shippedDeclarations = declarationsSeen;
 const selfTestProblems = [];
 scanCss('<self-test>', SELF_TEST_CSS, selfTestProblems);
 
-const selfTestExpected = [/--accent-design .*role: 'decor'/, /--gridsmith-not-a-token .*not in the/];
+const selfTestExpected = [/--line-strong .*role: 'decor'/, /--gridsmith-not-a-token .*not in the/];
 if (
   selfTestProblems.length !== selfTestExpected.length ||
   !selfTestExpected.every((re) => selfTestProblems.some((p) => re.test(p)))
