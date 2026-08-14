@@ -557,14 +557,59 @@ cannot be resolved without knowing which tracker was meant.
 **Renumber so identifiers are unique across all four trackers, then fix every reference**,
 including the four placeholder page comments.
 
+### A-GATE-4-3, in full: a proof satisfied by a different gate — and it is its own class
+
+**This is not the ninth gate-class instance and must not be filed as one.** Every gate-class
+instance is a check that *runs and measures less than it claims*. This one measured its
+subject correctly, asserted the right thing about it, and **could never execute**, because a
+different check with an arithmetically identical predicate exits first.
+
+`check-bundle-size`'s `G8` shared-baseline assertion fired on `shared > SHARED_BASELINE_BUDGET_KB`
+where that constant was `1.0`. The baseline routes are the cheapest rows in the build, so
+`cheapest = FLOOR_KB + shared`, and the floor check's `cheapest > FLOOR_KB + FLOOR_TOLERANCE_KB`
+with `FLOOR_TOLERANCE_KB = 1.0` is **exactly the same predicate**. The floor check
+`process.exit(1)`s ~70 lines earlier. The assertion was unreachable code from the commit that
+introduced it.
+
+**What makes it a class of its own is how the proof passed.** `G8`'s deliberate-failure proof
+pushed the shared baseline past its budget and observed a red build — correctly, honestly, and
+with captured output. The build was red. It was red **because the floor check fired**. The
+proof never distinguished which gate produced the failure, so a gate that had never run once
+was recorded as proven by deliberate failure.
+
+> **The tell: `G8`'s own write-up described the relationship correctly and drew the wrong
+> conclusion from it.** Commit `417e2661`'s body reads *"Growth in the shared baseline is
+> caught first by the symmetric floor check, which fires before this code runs."* That
+> sentence is the defect, stated accurately, and filed as reassurance. "Another gate catches
+> this first" was read as defence in depth. It is the definition of unreachable.
+
+**The general shape:** *a deliberate-failure proof observes a red build, not a red gate.*
+Where two checks can fire on one input, the proof has to establish **which** one did — and
+the only reliable way is to make the input land where the other cannot reach, or disable the
+other and re-run.
+
+**The remedy, and it generalises:** two checks that can fire on the same input need
+**thresholds far enough apart that a window exists where only one of them fires**, and the
+proof must land in that window. `SHARED_BASELINE_BUDGET_KB` is now `0.7` against
+`FLOOR_TOLERANCE_KB` of `1.0`, opening the window `0.7 < shared <= 1.0`, and the constant
+carries a docstring saying it must stay strictly below the tolerance and why. Re-proven three
+ways: at budget 0.4 against a measured 0.5 with the floor check intact (**exit 1, floor check
+fired zero times**); the same with the floor check disabled (**exit 1**, so it does not depend
+on it); and at the shipped 0.7 with the floor check still disabled (**exit 0**, so it is not
+merely always-on).
+
+This matters beyond one gate: `M-06`'s headroom is 0.8KB, and the shared baseline is the half
+of the arithmetic that comes straight out of every route's budget at once.
+
 ### Defect classes logged this epic
 
-Eight instances of the gate class and two classes of its own. The list is the point: none
-of these was found by reading code, and six were found by the deliberate-failure step.
+Eight instances of the gate class and three classes of its own. The list is the point: none
+of these was found by reading code, and seven were found by the deliberate-failure step.
 
 | Class | Where | One line |
 |---|---|---|
 | **Gate measures nothing** — 8 instances | `A11Y-25`, `A11Y-27`, `A11Y-29`, `A11Y-32` + four earlier | a check that runs, reports a pass, and measured less than it claims |
+| **Proof satisfied by a different gate** | `A-GATE-4-3` | two checks share a predicate; the proof observes a red *build* and credits the wrong one, so unreachable code ships recorded as proven |
 | **Justification never re-checked** | `A11Y-31` | a restriction that is *too strict* emits no failing output and cannot be found by reading gate results |
 | **Expectation derived from its own subject** | `CLAUDE.md` "How to work" | deleting the subject deletes the expectation; the gate stays green having measured less |
 | **Hollow subject** | `CLAUDE.md` "How to work" | a subject that stops being the subject leaves the gate auditing whatever is there |

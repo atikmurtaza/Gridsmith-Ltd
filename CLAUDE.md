@@ -163,6 +163,17 @@ Read the workstream's own files before touching its code.
   read this rule, and neither was caught by reading the code. Writing a gate and believing
   it works is the normal outcome; the proof is what makes the difference observable.
 
+  **A deliberate-failure proof observes a red build, not a red gate — establish which gate
+  fired.** Where two checks can fire on the same input, a proof that only records "the build
+  went red" credits whichever one you had in mind. `G8`'s shared-baseline assertion was
+  recorded as proven this way and had in fact never executed: its predicate was
+  arithmetically identical to the floor check's, which exits ~70 lines earlier
+  (`A-GATE-4-3`). **Two checks that can fire on one input need thresholds far enough apart
+  that a window exists where only one of them fires, and the proof must land in that
+  window** — or disable the other check and re-run. The tell that this has happened is a
+  write-up saying *"caught first by X, which fires before this code runs"* and filing it as
+  defence in depth: that sentence is a description of unreachable code.
+
   **A gate subject must assert that it is still the subject.** A subject that quietly stops
   being one leaves the gate auditing whatever happens to be there and calling it clean —
   the *hollow subject*, and the general form of how `global-error` went unmeasured. Its

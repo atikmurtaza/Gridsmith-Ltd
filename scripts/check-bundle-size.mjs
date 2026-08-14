@@ -270,7 +270,27 @@ if (over.length > 0) {
  * notices moving.
  */
 const BASELINE_ROUTES = ['/', '/design', '/digital', '/press', '/_not-found'];
-const SHARED_BASELINE_BUDGET_KB = 1.0;
+
+/**
+ * **This budget must stay strictly below `FLOOR_TOLERANCE_KB`, and that is the whole point
+ * of the number.**
+ *
+ * The baseline routes are the cheapest rows in the build, so `cheapest = FLOOR_KB + shared`.
+ * The floor check above fires when `cheapest > FLOOR_KB + FLOOR_TOLERANCE_KB` — which is
+ * exactly `shared > FLOOR_TOLERANCE_KB`. Set this budget to the same 1.0 and the two
+ * predicates are *identical*, the floor check `process.exit(1)`s ~70 lines earlier, and this
+ * assertion becomes unreachable code that can never report anything. It shipped that way at
+ * `G8` and was found at A-GATE run 4 (`A-GATE-4-3`).
+ *
+ * At 0.7 there is a real window — `0.7 < shared <= 1.0` — in which this fires and the floor
+ * check does not. That window is what makes it an independent assertion rather than a
+ * restatement, and it is what the deliberate-failure proof has to land in: a proof that
+ * pushes `shared` past 1.0 is being satisfied by the floor check, not by this.
+ *
+ * Measured today: 0.5KB. The 0.2KB of headroom is deliberately tight — this is the cost
+ * every route pays and cannot attribute to any feature.
+ */
+const SHARED_BASELINE_BUDGET_KB = 0.7;
 const PRIMITIVES_BUDGET_KB = 6.0;
 
 const baselineRows = rows.filter((r) => BASELINE_ROUTES.includes(r.url));
