@@ -14,7 +14,7 @@ touching anything; delete the sections that go stale as they are resolved.
 | Task | Status | What a fresh session needs to know |
 |---|---|---|
 | A-01 | DONE | Next 15 pinned, React 19, **Node 24** (raised from 22 mid-audit). Framework floor **100.2KB gz / 102,635 bytes**, re-measured on Node 24 and byte-identical to the Node 22 build — proven by matching content hashes, not by similarity |
-| A-10a | DONE | **Sixteen gates** — fourteen through 13 Aug, plus `check:headings` and `check:content` at the run-3 fixes. All swept twice for the "passes without measuring" class — four instances closed in July, three more found on 12 Aug (one inside `check-axe`), nine gates changed. Every fix proven by deliberate failure: `01-VALIDATION-REPORT.md` §14 |
+| A-10a | DONE | **Seventeen gates** — fourteen through 13 Aug, plus `check:headings` and `check:content` at the run-3 fixes and `check:claims` after run 5. All swept twice for the "passes without measuring" class — four instances closed in July, three more found on 12 Aug (one inside `check-axe`), nine gates changed. Every fix proven by deliberate failure: `01-VALIDATION-REPORT.md` §14 |
 | A-02 | DONE | 39 base tokens, now held in a **hardcoded required list** in `check-tokens.mjs` rather than scraped from the file being checked. It still counts **declarations**, not string occurrences — exactly once, which is what catches the Tailwind namespace collision |
 | A-03 | DONE | Four themes, 15-token contract each (master +3). `check:contrast` is a **101-cell permission matrix**: every foreground token against every surface in every theme |
 | A-04 | DONE | Four root layouts, no `app/layout.tsx`. `check:theme` verifies server-set `data-division`, render-blocking CSS, and zero client references |
@@ -25,12 +25,12 @@ touching anything; delete the sections that go stale as they are resolved.
 | A-06, A-07 | **TODO**, not REVIEW | **No code artefacts exist** — no `sanity/`, no `supabase/`, no `lib/`, nothing in `git ls-files`. What exists is prose in `docs/*/SCHEMA.md`, which is the spec, not the work. `REVIEW` means awaiting review and there was nothing to review. Blocked on `Q-M17` / `Q-M18` (the old `(B4)` reference resolved to nothing) |
 | A-08, A-09, A-11, A-12 | TODO | Not started |
 
-**Sixteen checks now run**, and the count is machine-checked — `check-node-version` walks
+**Seventeen checks now run**, and the count is machine-checked — `check-node-version` walks
 the `verify:*` chain, diffs it against `ci.yml` and prints the number, so this line cannot
 drift from reality again: `check:node`, typecheck, ESLint, `lint:colors`,
 **`check:contrast`**, **`check:headings`**, **`check:content`**, build, `lint:secrets`,
 `check:tokens`, `check:theme`, `size`, `check:axe`, `check:responsive`,
-`check:lhci:desktop`, `check:lhci:mobile`. `npm run verify` runs all of them.
+`check:lhci:desktop`, `check:lhci:mobile`, **`check:claims`**. `npm run verify` runs all of them.
 
 The two added at the run-3 fixes are both cases where a defect class had been fixed
 per-instance twice: `check:headings` fails on a `<p>`/`<span>`/`<div>` carrying a class

@@ -86,10 +86,10 @@ a gate criterion can occupy. `scripts/check-responsive.mjs` now asserts no horiz
 overflow across 5 routes × 3 widths, and a route that fails to load is a measurement
 failure rather than a pass.
 
-**Sixteen checks, and `npm run verify` runs all of them:** `check:node`, `typecheck`,
+**Seventeen checks, and `npm run verify` runs all of them:** `check:node`, `typecheck`,
 `lint`, `lint:colors`, **`check:contrast`**, **`check:headings`**, **`check:content`**,
 `build`, `lint:secrets`, `check:tokens`, `check:theme`, `size`, `check:axe`,
-`check:responsive`, `check:lhci:desktop`, `check:lhci:mobile`. The count is machine-checked
+`check:responsive`, `check:lhci:desktop`, `check:lhci:mobile`, **`check:claims`**. The count is machine-checked
 by `check-node-version`, which walks the `verify:*` chain and diffs it against `ci.yml`.
 
 This paragraph said **thirteen** and the enumeration left out **`check:contrast`** — the
