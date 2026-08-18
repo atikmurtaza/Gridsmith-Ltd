@@ -17,8 +17,12 @@
  *      are now fixed" — a commit *group* and a *round*. The `Tabs.tsx` claim never mentioned
  *      `Tabs.tsx`. Extracting (claim → file) from that prose is natural-language inference,
  *      not parsing, and a gate built on it would be guessing.
- *   2. **"The claim's round" is not machine-readable.** Rounds are prose headings; there is
- *      no mapping from a round to a commit range or a date that a script can read.
+ *   2. ~~**"The claim's round" is not machine-readable.**~~ **This was false and it was the
+ *      load-bearing claim.** Every round has a committed report and the commit that added it
+ *      is the boundary — see `ROUND_BOUNDARIES`. Asserting it cost six lines and passed every
+ *      existing row unchanged, so the weaker gate bought nothing (`A-GATE-6-3`). Struck at
+ *      `U1` rather than deleted, because the wrong argument is the reason the gate shipped
+ *      weak and is worth more as a record than as a tidy paragraph.
  *   3. **A fix legitimately need not touch the file the finding names.** The stale
  *      `app/not-found.tsx` references were fixed by editing `eslint.config.mjs` and three
  *      documents; the file in the finding does not exist at all.
@@ -41,6 +45,20 @@
  * **It does not detect a commit that touched the file and got the fix wrong.** That is the
  * deliberate-failure proof's job. The two are complementary; neither substitutes for the
  * other, and this docstring says so rather than leaving it to be discovered.
+ *
+ * ## The ceiling — read this before trusting a green line from here
+ *
+ * Everything below narrows the set of *implausible* claims: a commit that does not exist, is
+ * not on this branch, predates the audit, never touched the file, or is documents alone.
+ * **None of it reaches whether the change did what it says**, because the ledger's status
+ * column is written by the same person the ledger exists to check. Promoting an `OPEN` row to
+ * `FIXED` against the current commit is accepted in one word and goes fully green
+ * (`A-GATE-7-6`). Tightening further chases an asymptote.
+ *
+ * **A `FIXED` row is evidence that a claim is well-formed, not that it is true.** What
+ * establishes that a fix occurred is the deliberate-failure proof. This is recorded in
+ * `CLAUDE.md` beside the standing rules because it bounds the whole verification approach
+ * rather than this script.
  */
 import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -89,6 +107,7 @@ const ROUND_BOUNDARIES = [
   ['A-GATE-4-', 'docs/_shared/09-A-GATE-RUN-4.md'],
   ['A-GATE-5-', 'docs/_shared/10-A-GATE-RUN-5.md'],
   ['A-GATE-6-', 'docs/_shared/11-A-GATE-RUN-6.md'],
+  ['A-GATE-7-', 'docs/_shared/12-A-GATE-RUN-7.md'],
   ['G', 'docs/_shared/07-A11Y-AUDIT.md'],
   ['R', 'docs/_shared/09-A-GATE-RUN-4.md'],
   ['T', 'docs/_shared/10-A-GATE-RUN-5.md'],
@@ -103,7 +122,7 @@ const ROUND_BOUNDARIES = [
  *
  * Raise it in the same commit that adds rows, with the finding in the message.
  */
-const EXPECTED_ROWS = 44;
+const EXPECTED_ROWS = 57;
 
 const problems = [];
 
@@ -172,7 +191,10 @@ for (const row of rows) {
     continue;
   }
 
-  if (row.status === 'OPEN' || row.status === 'DEFERRED') {
+  // CEILING is a recorded limit of the approach that will never be fixed — distinct from
+  // OPEN, which asserts that someone should. Labelling a structural boundary as OPEN would
+  // put permanent work on a backlog and imply the gate could one day close it.
+  if (row.status === 'OPEN' || row.status === 'DEFERRED' || row.status === 'CEILING') {
     if (row.commit || row.files.length > 0) {
       problems.push(
         `${row.id} is ${row.status} but names a commit or files. An unfixed finding must claim ` +
@@ -183,7 +205,9 @@ for (const row of rows) {
   }
 
   if (row.status !== 'FIXED') {
-    problems.push(`${row.id}: unknown status "${row.status}". Use FIXED, OPEN or DEFERRED.`);
+    problems.push(
+      `${row.id}: unknown status "${row.status}". Use FIXED, OPEN, DEFERRED or CEILING.`,
+    );
     continue;
   }
 

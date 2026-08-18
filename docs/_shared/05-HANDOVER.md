@@ -1,7 +1,7 @@
 # Handover — end of the Epic A audit session
 
-**Written:** 11 August 2026 · **Revised:** 13 August 2026, after the **run-3 audit and the
-G1–G8 fixes** · **Branch:** `feat/a-01-a-10a-scaffold-ci` · **Runtime:** Node 24.15.0
+**Written:** 11 August 2026 · **Revised:** 14 August 2026, at **A-GATE PASS** · **Branch:**
+`feat/a-01-a-10a-scaffold-ci` · **Runtime:** Node 24.15.0
 
 This file exists because a session ended with state that only that session knew. Everything
 here is either unrecorded elsewhere or scattered across five documents. Read it before
@@ -21,7 +21,7 @@ touching anything; delete the sections that go stale as they are resolved.
 | A-05 | DONE | 24 primitives, 21 Server / 3 Client. Every primitive that emits a DOM id now generates it with `useId()` — which works in Server Components, so this cost no client JS. `Accordion` also generates its own exclusive-group name and no longer emits an unread `id` |
 | A-05a | DONE | `/_kitchen-sink`, 23 primitives × 4 themes (`Media` deliberately excluded — the page now says 23, not 24), **6.2KB gz delta, budgeted at 7KB**, of which **0.5KB** (measured) is the global-error boundary every route carries. The `scope()` workaround is gone: the primitives generate their own ids and `check-axe` still reports zero duplicates |
 | A-10b | DONE | Lighthouse split into **two axes** — desktop asserts category scores, mobile asserts Core Web Vitals on 4G. Both green on CI |
-| **A-GATE** | **OPEN — this is the next task** | Criteria 1–4 now MET and re-verified. 5 and 6 need a fresh-context run that returns clean. See §2. **Criterion 6 is the only thing outstanding** — launch `accessibility-audit` alone, as the FIRST action of a fresh session. Three attempts have died on the session limit |
+| **A-GATE** | **PASSED — 14 Aug 2026** | All six criteria met after seven rounds. Rounds 4–7 were scoped re-verifications, not open audits (`_shared/09`–`12`). **Epic A is closed; do not reopen it to improve anything.** 22 items are logged as P2 with the epic — none an accessibility failure — plus one ceiling (`A-GATE-7-6`) and `G7` deferred. Backlog enumerated in `master/PROJECT-TRACKER.md` |
 | A-06, A-07 | **TODO**, not REVIEW | **No code artefacts exist** — no `sanity/`, no `supabase/`, no `lib/`, nothing in `git ls-files`. What exists is prose in `docs/*/SCHEMA.md`, which is the spec, not the work. `REVIEW` means awaiting review and there was nothing to review. Blocked on `Q-M17` / `Q-M18` (the old `(B4)` reference resolved to nothing) |
 | A-08, A-09, A-11, A-12 | TODO | Not started |
 
@@ -45,36 +45,36 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 
 ## 2. A-GATE — open, and exactly why
 
-> ### ⇢ START HERE: round 4 is the next action, and it is scoped
+> ### ⇢ START HERE: A-GATE PASSED. Epic A is closed. Next is Epic M, task `G7`.
 >
-> **Round 3 completed all three passes** — the first time both criteria were audited to
-> completion in one session. It returned **nine findings** (`_shared/08-A-GATE-RUN-3.md`),
-> fixed across `G1`–`G8`.
+> **Criteria 1–6 are met as of 14 August 2026.** Seven audit rounds — three open-ended, four
+> scoped. The scoped shape is what worked: rounds 4–7 each re-verified a named list rather than
+> re-auditing the epic, and each returned in a single session.
 >
-> **This paragraph claimed "all nine are now fixed, and every fix has a committed subject
-> and a deliberate-failure proof". Round 4 found that neither half was true**
-> (`_shared/09-A-GATE-RUN-4.md`). The `Tabs.tsx:2` comment was never touched — its last
-> commit predates the whole `G1`–`G8` range — and `G8`'s shared-baseline assertion had a
-> proof that was being satisfied by a different gate firing. Both are fixed at `R1`/`R2`.
-> **Round 5 is scoped to `R1`–`R5` and is the next action.**
+> **Do not reopen Epic A.** 22 P2 items are logged against it and **none is an accessibility
+> failure at any level** — every one is gate discipline or documentation. They are enumerated
+> in `master/PROJECT-TRACKER.md` § "The P2 backlog carried out of Epic A".
 >
-> **Round 4 is a fresh session, first action, and it is scoped to re-verifying those nine
-> findings only.** It is not a fourth open-ended audit of Epic A. The scope is deliberately
-> narrow because the fixes were applied by the context that received the findings, which is
-> the reason both criteria are worded for a fresh context in the first place — but the
-> *rest* of Epic A was audited from a fresh context in round 3 and does not need re-doing.
+> **Epic M's first task is `G7`** — the epic identifier renumber, deferred since round 4.
+> `Epic S` means "Seed content" in the master tracker and "Digital shell" in digital's;
+> `Epic N` means "Master pages" and "Path Finder & conversion"; `app/(press)/press/page.tsx`
+> cites `Epic R` where Press's shell epic is `P`. Every task after this one cites identifiers,
+> so renumber before building anything.
 >
-> Two things round 4 must not spend its context on:
-> - **`G7` — the Epic identifier collisions — is deliberately still open.** `Epic S` means
->   "Seed content" in the master tracker and "Digital shell" in digital's; `Epic N` means
->   "Master pages" and "Path Finder & conversion". `app/(press)/press/page.tsx` cites
->   `Epic R` where Press's shell epic is `P`. **Renumbering before round 4 would spend the
->   audit's context reconciling references instead of confirming findings**, so it is
->   sequenced after. Do not fix it first; do not report it as new.
-> - **Round 2's finding list** — see the notice at the head of §10. Closed as
->   unreconstructable and superseded. Do not attempt to rebuild it.
+> **Two things to carry, both load-bearing:**
+> - **`A-GATE-7-6` is the ceiling of the verification approach.** `check:claims` asserts that a
+>   plausible commit exists, never that a fix occurred — the ledger's status column is written
+>   by the person it exists to check. **A `FIXED` row means a claim is well-formed, not true.**
+>   `CLAUDE.md` carries the rule; do not let a green ledger stand in for running the thing.
+> - **`A-GATE-6-6` is worth closing early.** While `GOVERNED` omits the run reports, a finding
+>   written only in a report creates no obligation to row it — which is why `A-GATE-7-2` exists.
 >
-> If round 4 returns clean, criteria 5 and 6 are met and **Epic M starts**.
+> **`M-06` is the next budget checkpoint** and it is tight: consent 8KB + primitives 5.8KB +
+> error boundary 0.5KB = **14.2KB of Master's 15KB**, 0.8KB of headroom before the header and
+> footer exist. Both halves are now measured and asserted by `check-bundle-size`, and the
+> **baseline spread** assertion added at `T2` is what will see a header imported by three of the
+> four route groups — the shape `min` alone was blind to. If the delta exceeds 15KB, stop and
+> raise it rather than proceeding into Epic N.
 
 Criteria 1–4 are **met and independently re-verified**. Criteria 5 and 6 have been
 **audited to completion once** — round 3 — and neither has yet *returned* clean.
@@ -179,11 +179,11 @@ fresh context — the model that wrote the code is the worst reviewer of it, and
 that fixed the findings is the worst reviewer of the fixes. Two rounds of that have now
 produced findings both times.
 
-**The next actionable task in the programme:** run `accessibility-audit` from
-`.claude/agents/` **alone, as the first action of a fresh session**, on Node 24, **as two
-narrow runs — primitives, then routes** (round four proved the split; a single wide run
-has failed four times) — criterion 6. Nothing
-downstream of Epic A starts until it returns clean. `design-conformance`,
+**The next actionable task in the programme is `G7`, then Epic M.** A-GATE is passed and
+nothing in Epic A is blocking. The agent guidance below is kept because it is what made rounds
+4–7 return: launch one agent alone as the **first action** of a fresh session, scoped to a named
+list, never open-ended. Five runs died on the session limit before that shape was adopted, and
+none has since. `design-conformance`,
 `spec-compliance` and `content-integrity` are not A-GATE criteria and have still never run;
 they are worth running eventually, one per session, and they are not blocking.
 
@@ -215,26 +215,22 @@ Everything an agent needs in order to be worth launching is already written down
 §10 list what is fixed, and the do-not-report list is what has got every completed run
 through. An unbriefed agent has never survived.
 
-### Where criteria 5 and 6 actually stand
+### Where criteria 5 and 6 ended up
 
 | Criterion | Agent | Status |
 |---|---|---|
-| **5** | `rules-compliance` | **RAN THREE TIMES, FAILED THREE TIMES.** Round one: 1 blocker, 5 major, 3 minor. Round two: 4 blockers, 4 majors, 7 minors — **closed as unreconstructable, see §10**. Round three: 1 blocker, 2 majors, 3 minors, all fixed in `G5`/`G6`. Needs a run that returns zero |
-| **6** | `accessibility-audit` | **COMPLETED ONCE, in round three**, as two narrow runs. Rounds two and three of the earlier numbering died on the session limit; the split is what worked. Returned 1 Major + 2 Minor + 1 Info on the primitives and 2 Majors + 2 Minors on the routes and gates. All fixed in `G1`–`G8`. Needs a run that returns zero |
+| **5** | `rules-compliance` | **MET.** Seven rounds. Rounds 1–3 returned findings; round 2 is closed as unreconstructable and superseded (§10). Rounds 4–7 were scoped re-verifications and each returned in one session. Round 7 confirmed `U1`–`U3` present, subject-backed and proven red on their stated repro |
+| **6** | `accessibility-audit` | **MET.** Completed in round 3 as two narrow runs, and again in rounds 4 and 5. Round 4 re-confirmed `A11Y-1`–`A11Y-4` and found **no AA failure in any primitive**; round 5 returned **zero** on `R3`/`R4`/`R5`. **No open accessibility finding at any level** |
 
-**Both criteria now need one thing and it is the same thing: a fresh-context run that
-returns zero against the `G1`–`G8` tree.** That is round 4, it is scoped to the nine
-run-3 findings, and it is the first action of the next session — see the box at the head
-of this section.
+**What actually closed them was the shape of the run, not the content of the brief.** A single
+wide audit failed four times on the session limit. Two narrow runs, each launched alone as the
+first action, completed every time from round 3 onward — and rounds 4–7 narrowed further still,
+to a named list of findings rather than a scope.
 
-**Nothing else in Epic A is open.** A-06 and A-07 are blocked on Atik (`Q-M17`, `Q-M18`),
-and A-08 to A-12 are Stage-2 work. **After criterion 6 returns clean, the next task is
-Epic M** — do not reopen Epic A to improve anything.
-
-**Criterion 5 needs re-running too**, for the same reason it was re-run before: the findings
-it produced were fixed by the context that received them. A criterion worded "zero findings"
-is only met by a run that returns zero. It is not blocking Epic M in the way criterion 6 is,
-but it is not met either.
+**Nothing else in Epic A is open.** A-06 and A-07 are blocked on Atik (`Q-M17`, `Q-M18`), and
+A-08 to A-12 are Stage-2 work that Epic M and later stages pick up. **Do not reopen Epic A to
+improve anything** — the 22 P2 items are logged deliberately and none is an accessibility
+failure.
 
 ### If an agent dies mid-run, check the working tree
 

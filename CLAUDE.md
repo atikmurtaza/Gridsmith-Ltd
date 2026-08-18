@@ -200,6 +200,25 @@ Read the workstream's own files before touching its code.
   probe, and that is the intended division. **State which question a gate answers before
   choosing where its expectation comes from**, and write the answer next to the list —
   the route probe carries that note because the proof is what surfaced the distinction.
+- **A gate over a hand-maintained record asserts that a plausible claim exists, never that
+  the work happened. This is the boundary of the whole verification approach, not a defect
+  in one script.** `check:claims` reads `_shared/FIX-LEDGER.md` and verifies, against git,
+  that every fix claim names a commit which exists, is on this branch, postdates the audit
+  that raised the finding, touches the files named, and is not documents alone. Each of
+  those rejects a class of *implausible* claim. **None of them can reach whether the change
+  did what it says**, because the ledger's status column is written by the same person the
+  ledger exists to check: promoting an `OPEN` row to `FIXED` against the current commit is
+  accepted in one word and goes fully green (`A-GATE-7-6`).
+
+  Tightening further chases an asymptote — each increment removes another implausible claim
+  and leaves the plausible-but-false one untouched. **What establishes that a fix occurred
+  is the deliberate-failure proof: make the gate go red, then green.** The record and the
+  proof are complementary and neither substitutes for the other.
+
+  So: **read a `FIXED` row as evidence that a claim is well-formed, not that it is true**,
+  and never let a green ledger stand in for running the thing. The same reasoning applies to
+  any future gate that checks a human-written register — a tracker, a changelog, an
+  attestation. Verify the shape mechanically; verify the substance by making it fail.
 - **Never recursively delete outside the repository working tree without asking.** Inside
   the repo, `.next/` and `node_modules/` are regenerable — remove them freely. Outside it —
   home directories, tool installs, version-manager trees, anything under `AppData` or

@@ -13,14 +13,26 @@ The prose in the trackers and the handover says things like *"all nine are now f
 not name a **file**, which is why nobody noticed that `Tabs.tsx` had never been opened. This
 table supplies the missing column, and the gate checks it against git.
 
-**Status values.** `FIXED` requires a commit that exists, is an ancestor of `HEAD`, and
-touches **every** file listed. `DEFERRED` and `OPEN` require no commit and must list none —
+**Status values.** `FIXED` requires a commit that exists, is an ancestor of `HEAD`,
+**descends from the commit that added the report which raised the finding**, and touches
+**every** file listed. `OPEN`, `DEFERRED` and `CEILING` require no commit and must list none —
 they are here so that an identifier cannot be quietly absent.
+
+`CEILING` is distinct from `OPEN` and the distinction matters: it marks a **recorded limit of
+the approach that will never be fixed**, so it is not backlog. Filing a structural boundary as
+`OPEN` puts permanent work on a list and implies the gate could one day close it. There is one
+today — `A-GATE-7-6`.
 
 **Files must name where the fix's substance lives, never only the documents that describe
 it.** A docs-only commit satisfying a fix claim is the exact failure this gate exists to
 catch. **Asserted, not merely stated** — a `FIXED` row whose files are all under `docs/` fails
 (`A-GATE-6-5`, where this paragraph existed and enforced nothing).
+
+**What is asserted is path shape, not substance** (`A-GATE-7-4`). A file list cannot show which
+file carried the change, so a single incidental non-`docs/` entry disarms the check
+(`A-GATE-7-3`), documentation outside `docs/` is invisible to it, and a code path whose diff is
+comment-only reads as substance — `R5` is exactly that. Read the rule as a floor on the shape
+of a claim, never as confirmation that the substance is where it says.
 
 | ID | Status | Files | Commit |
 |---|---|---|---|
@@ -43,6 +55,9 @@ catch. **Asserted, not merely stated** — a `FIXED` row whose files are all und
 | `T2` | FIXED | scripts/check-bundle-size.mjs | 89029ffb |
 | `T3` | FIXED | scripts/check-fix-claims.mjs · docs/_shared/FIX-LEDGER.md | 8d94e6e2 |
 | `T4` | FIXED | scripts/check-bundle-size.mjs | 46204088 |
+| `U1` | FIXED | scripts/check-fix-claims.mjs | c5993d3a |
+| `U2` | FIXED | scripts/check-fix-claims.mjs · docs/_shared/FIX-LEDGER.md | c5993d3a |
+| `U3` | FIXED | scripts/check-fix-claims.mjs | c5993d3a |
 | `A-GATE-4-1` | FIXED | scripts/check-contrast.mjs | 1b96c4eb |
 | `A-GATE-4-3` | FIXED | scripts/check-bundle-size.mjs | c24e9b37 |
 | `A-GATE-4-4` | FIXED | scripts/check-bundle-size.mjs | 83adf631 |
@@ -67,7 +82,17 @@ catch. **Asserted, not merely stated** — a `FIXED` row whose files are all und
 | `A-GATE-6-1` | OPEN | — | — |
 | `A-GATE-6-2` | OPEN | — | — |
 | `A-GATE-6-6` | OPEN | — | — |
+| `A-GATE-6-3` | FIXED | scripts/check-fix-claims.mjs | c5993d3a |
+| `A-GATE-6-4` | FIXED | scripts/check-fix-claims.mjs | c5993d3a |
+| `A-GATE-6-5` | FIXED | scripts/check-fix-claims.mjs | c5993d3a |
+| `A-GATE-6-7` | FIXED | scripts/check-fix-claims.mjs · docs/_shared/FIX-LEDGER.md | c5993d3a |
 | `A-GATE-6-8` | OPEN | — | — |
+| `A-GATE-7-1` | OPEN | — | — |
+| `A-GATE-7-2` | OPEN | — | — |
+| `A-GATE-7-3` | OPEN | — | — |
+| `A-GATE-7-4` | OPEN | — | — |
+| `A-GATE-7-5` | OPEN | — | — |
+| `A-GATE-7-6` | CEILING | — | — |
 
 ## What this gate does not cover, stated rather than left to be discovered
 
@@ -95,8 +120,24 @@ catch. **Asserted, not merely stated** — a `FIXED` row whose files are all und
   handover names it again.
 
   **What is genuinely irreducible, stated so nobody re-derives it:** between a fix commit and
-  the commit that adds its row, that one identifier is unrowed. Today that applies to `U1`,
-  `U2` and `U3` and to the run-6 findings they close — `A-GATE-6-3`, `A-GATE-6-4`,
-  `A-GATE-6-5` and `A-GATE-6-7`. It is a one-commit window on a known list, not an open-ended
-  hole, and closing it would need the gate to read the working tree rather than history —
-  which is a different gate answering a different question.
+  the commit that adds its row, that one identifier is unrowed. `U1`, `U2`, `U3` and the run-6
+  findings they close were in that window and are now rowed against `c5993d3a`. It is a
+  one-commit window on a known list, not an open-ended hole; closing it would need the gate to
+  read the working tree rather than history, which is a different gate answering a different
+  question.
+
+- **The obligation to have a row is triggered spatially, not universally** (`A-GATE-7-2`).
+  Coverage fires on a backticked mention in one of the five `GOVERNED` documents. An identifier
+  that has never had a row and is discussed only elsewhere — a run report, this ledger —
+  creates no obligation and the gate stays green. For an identifier that *does* have a row the
+  escape is closed: deleting the row and the mention together still trips `EXPECTED_ROWS`.
+  Widening `GOVERNED` to the run reports is `A-GATE-6-6`, open.
+
+- **The ceiling, and it is the important one.** Everything above narrows the set of
+  *implausible* claims. **None of it reaches whether the change did what it says**, because the
+  status column is written by the person this ledger exists to check — promoting an `OPEN` row
+  to `FIXED` against the current commit is accepted in one word and goes fully green
+  (`A-GATE-7-6`). **A `FIXED` row is evidence that a claim is well-formed, not that it is
+  true.** What establishes that a fix occurred is the deliberate-failure proof. Recorded in
+  `CLAUDE.md` beside the standing rules, because it bounds the approach rather than this
+  script.
