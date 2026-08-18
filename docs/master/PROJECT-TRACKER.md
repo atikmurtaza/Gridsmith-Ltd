@@ -57,9 +57,9 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 > proven red on their stated repro, and returned three majors and two minors that are
 > **logged, not fixed** — see the backlog below.
 >
-> **The next session is Epic M, and its first task is `G7`** — the epic identifier renumber
-> deferred since round 4. Do it before anything else: `Epic S` and `Epic N` each mean two
-> different things across trackers, and every task after this one cites identifiers.
+> **`G7` is done — 18 August 2026.** Digital's shell epic is now `U` (was `S`), Press's Path
+> Finder epic is now `K` (was `N`), and `app/(press)/press/page.tsx` cites `Epic P`. Every epic
+> letter is unique across the four trackers. Epic M's first build task is `M-02`.
 >
 > **Read `A-GATE-7-6` before trusting `check:claims`.** It is not a defect and will not be
 > fixed.
@@ -549,7 +549,35 @@ whose `--ink-subtle` behaves differently from the other three in a system whose 
 argument is that they read as one. G1b deleted the `except` outright instead and re-derived
 all four values so no restriction is needed by any of them.
 
-### G7 — deferred, and what it still owes
+### G7 — DONE, 18 August 2026
+
+**Resolved as Epic M's first task.** Master's `S` and `N` were left alone — `Epic N` is cited
+by `00-FOUNDATION.md`, `05-HANDOVER.md` and `scripts/check-bundle-size.mjs` as the epic the
+budget rule guards, and moving it would have edited a gate to fix a documentation collision.
+The two division-side epics moved instead, into letters no tracker used:
+
+| Was | Now | Epic |
+|---|---|---|
+| `digital` `Epic S`, `S-01`–`S-09` | **`Epic U`, `U-01`–`U-09`** | Digital shell |
+| `press` `Epic N`, `N-01`–`N-22` | **`Epic K`, `K-01`–`K-22`** | Path Finder & conversion |
+| `app/(press)/press/page.tsx:3` `Epic R` | **`Epic P`** | Press shell |
+
+Cross-references followed: `01-VALIDATION-REPORT.md` §§ (press `N-04` → `K-04`, `N-16`–`N-20`
+→ `K-16`–`K-20`) and `app/(digital)/digital/page.tsx:3` (`Epic S` → `Epic U`). `05-HANDOVER.md`
+lines 250–254 cite master's `N-04`/`N-05`/`N-07`/`N-12` against `Q-M*` questions and are
+**correct unchanged** — the same string, a different epic, which is the whole reason this task
+existed. `08-A-GATE-RUN-3.md` is left as written: it is the report that raised the finding, and
+a report describing the state at the time it ran is not a stale reference.
+
+Epic letters now in use, all unique: `A` `M` `N` `L` `G` `S` `H` (master) · `B` `C` `D` `E` `F`
+(design) · `U` `T` `V` `W` `X` `Y` (digital) · `P` `R` `K` `O` `Z` (press). Free: `I` `J` `Q`.
+`Q` is spoken for by the `Q-M*` question IDs — do not take it for an epic.
+
+**No gate enforces uniqueness.** Logged as `M-P2-1` below rather than built now: adding an
+eighteenth gate means editing `check-node-version`'s machine-checked count and owing a
+deliberate-failure proof, which is a bigger change than the collision it prevents.
+
+### G7 — the original deferral, and what it owed
 
 **Deliberately not done, and sequenced after round 4.** Renumbering touches every tracker
 and every cross-reference in the programme; doing it before the audit would spend round 4's
@@ -700,7 +728,8 @@ documentation. That is why A-GATE passes with them open.
 | Round 7 | `A-GATE-7-1`, `7-2`, `7-3` | the three majors — the boundary constraint is one-sided; the mention-escape closes only for rowed identifiers; one incidental non-`docs/` entry disarms the docs-only check |
 | Round 7 | `A-GATE-7-4`, `7-5` | the ledger reads as though substance is checked when path shape is; `ROUND_BOUNDARIES` ordering is belt-and-braces, not load-bearing |
 | **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
-| **Deferred** | `G7` | the epic identifier renumber. **Epic M's first task** |
+| ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
+| Epic M | `M-P2-1` | **no gate asserts that epic letters are unique across the four trackers.** `G7` fixed the instance by hand; nothing stops the next tracker edit reintroducing it. ~20 lines parsing `^## Epic (\S+)` from the four trackers. Deferred to the Epic M sweep because it is an eighteenth gate — `check-node-version` counts them and a proof is owed |
 
 **`A-GATE-6-6` is worth doing early**, because it is the direct cause of `A-GATE-7-2`: while
 `GOVERNED` excludes the run reports, a finding written only in a report creates no obligation

@@ -1,6 +1,6 @@
 import { Heading } from '@/components/primitives/Heading';
 
-// Placeholder. Real content is Epic S and comes from Sanity.
+// Placeholder. Real content is Epic U and comes from Sanity.
 // The h1 is not decoration: a page without one fails axe `page-has-heading-one` and
 // leaves screen reader users with no document title in the heading outline.
 export default function Page() {

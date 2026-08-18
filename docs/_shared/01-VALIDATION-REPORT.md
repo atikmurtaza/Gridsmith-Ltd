@@ -68,7 +68,7 @@ ALLi is removed. R6-Press established that authors are explicitly taught to chec
 
 **Consequence:** Press now carries its **entire** credibility load on first-party evidence — the books shelf with live retailer links, named clients with recorded consent, published pricing, published exclusions, the rights page, and the honest Path Finder outcomes.
 
-Every one of those becomes load-bearing. There is no external badge compensating if one weakens. In practice this raises the priority of: `O-01` (author consent for 12+ titles), `R-04` (link checking), and `N-04` (the ETH-04 verification gate).
+Every one of those becomes load-bearing. There is no external badge compensating if one weakens. In practice this raises the priority of: `O-01` (author consent for 12+ titles), `R-04` (link checking), and `K-04` (the ETH-04 verification gate).
 
 **Open question for you:** was ALLi dropped because you do not want a trade body at all, or because you do not want that one? The Independent Publishers Guild is the obvious UK alternative. If the answer is "no trade body", the above stands and should be worked hard.
 
@@ -93,7 +93,7 @@ Individual authors and memoir clients are **consumers**. The Consumer Rights Act
 
 Most significantly: **a consumer has 14 days to cancel a distance contract.** Canonical process stage 3 starts work on receipt of initial payment, which will usually fall inside that window. Without an express request to start early, a consumer can cancel on day 13 with the work nearly done and be entitled to a full refund.
 
-**Resolved in this revision:** `FR-P24`–`FR-P26` added, `ETH-08` added, `consumer_consents` table added, tracker items `N-16`–`N-20` added, and `_legal/CONSUMER-TERMS.md` §6 drafts the mechanism. The checkbox must be separate, unbundled, never pre-ticked, and recorded with a timestamp.
+**Resolved in this revision:** `FR-P24`–`FR-P26` added, `ETH-08` added, `consumer_consents` table added, tracker items `K-16`–`K-20` added, and `_legal/CONSUMER-TERMS.md` §6 drafts the mechanism. The checkbox must be separate, unbundled, never pre-ticked, and recorded with a timestamp.
 
 This was the single most valuable finding of the legal pass and it would have been expensive to discover in a dispute.
 

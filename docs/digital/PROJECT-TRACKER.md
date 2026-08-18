@@ -7,33 +7,33 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 
 ---
 
-## Epic S — Digital shell
+## Epic U — Digital shell
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| S-01 | Apply Digital theme, verify contrast | P0 | 0.5d | A-03 | TODO | Dev | Note `--line-strong` 2.1:1 constraint |
-| S-02 | Mono display font loading | P0 | 0.5d | S-01 | TODO | Dev | ≤2 families, ≤4 weights total |
-| S-03 | **Data row component** | P0 | 1d | S-01 | TODO | Dev | Dominant primitive |
-| S-04 | Header, footer, mobile nav | P0 | 1d | A-05 | TODO | Dev | |
-| S-05 | Split sticky mobile CTA | P0 | 0.5d | S-04 | TODO | Dev | Estimate 60 / Talk 40 |
-| S-06 | `/digital/` hub, 11 blocks | P0 | 2d | S-04 | TODO | Dev | Lighthouse 100/100/100 |
-| S-07 | 4 service group landings | P0 | 2d | S-06 | TODO | Dev | Visible price band each |
-| S-08 | Service page template | P0 | 2d | A-06 | TODO | Dev | Pricing + client time commitment |
-| S-09 | Case study template, before/after | P0 | 1.5d | A-06 | TODO | Dev | Stack rendered |
+| U-01 | Apply Digital theme, verify contrast | P0 | 0.5d | A-03 | TODO | Dev | Note `--line-strong` 2.1:1 constraint |
+| U-02 | Mono display font loading | P0 | 0.5d | U-01 | TODO | Dev | ≤2 families, ≤4 weights total |
+| U-03 | **Data row component** | P0 | 1d | U-01 | TODO | Dev | Dominant primitive |
+| U-04 | Header, footer, mobile nav | P0 | 1d | A-05 | TODO | Dev | |
+| U-05 | Split sticky mobile CTA | P0 | 0.5d | U-04 | TODO | Dev | Estimate 60 / Talk 40 |
+| U-06 | `/digital/` hub, 11 blocks | P0 | 2d | U-04 | TODO | Dev | Lighthouse 100/100/100 |
+| U-07 | 4 service group landings | P0 | 2d | U-06 | TODO | Dev | Visible price band each |
+| U-08 | Service page template | P0 | 2d | A-06 | TODO | Dev | Pricing + client time commitment |
+| U-09 | Case study template, before/after | P0 | 1.5d | A-06 | TODO | Dev | Stack rendered |
 
 ## Epic T — Trust architecture
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
 | T-01 | `techStackItem` schema | P0 | 0.5d | A-06 | TODO | Dev | |
-| T-02 | `/digital/stack` page | P0 | 1.5d | T-01, S-03 | TODO | Dev | Grouped by category |
-| T-03 | **Ownership guarantee module** | P0 | 1d | S-03 | TODO | Dev | Cites contract clauses |
+| T-02 | `/digital/stack` page | P0 | 1.5d | T-01, U-03 | TODO | Dev | Grouped by category |
+| T-03 | **Ownership guarantee module** | P0 | 1d | U-03 | TODO | Dev | Cites contract clauses |
 | T-04 | Ownership wording legal check | P0 | — | T-03 | TODO | Atik | **GATE — must match contract** |
 | T-05 | `exclusion` schema + "What we don't do" | P0 | 1d | A-06 | TODO | Dev | Deliberately plain styling |
-| T-06 | Process module, 6 stages | P0 | 1d | S-03 | TODO | Dev | Ramp honesty (FR-DG12) |
+| T-06 | Process module, 6 stages | P0 | 1d | U-03 | TODO | Dev | Ramp honesty (FR-DG12) |
 | T-07 | CrUX cron + `site_vitals` | P1 | 1d | A-07 | TODO | Dev | Daily |
 | T-08 | Live vitals badge | P1 | 0.5d | T-07 | TODO | Dev | Hides on stale — test this |
-| T-09 | `/digital/diagnostic` page, 9 blocks | P0 | 1.5d | S-08 | TODO | Dev | |
+| T-09 | `/digital/diagnostic` page, 9 blocks | P0 | 1.5d | U-08 | TODO | Dev | |
 | T-10 | Sample Diagnostic deliverable, redacted | P0 | 1d | T-09 | TODO | Content | Real output, not a mockup |
 
 ## Epic V — Estimator *(highest risk)*
@@ -45,7 +45,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | V-03 | `calculate.ts` pure function | P0 | 2d | V-01 | TODO | Dev | 100% branch coverage |
 | V-04 | Gather 10 historical projects with final prices | P0 | — | — | TODO | Atik | **Start week 1** |
 | V-05 | **Calibration run** | P0 | 1d | V-03, V-04 | TODO | Dev | **HARD GATE — ≥8/10 in range** |
-| V-06 | Static SSR pricing bands | P0 | 1d | S-07 | TODO | Dev | Works with JS off |
+| V-06 | Static SSR pricing bands | P0 | 1d | U-07 | TODO | Dev | Works with JS off |
 | V-07 | Estimator island, 6 steps | P0 | 4d | V-03 | TODO | Dev | JS delta ≤40KB gz |
 | V-08 | Three-cue selected state | P0 | 0.5d | V-07 | TODO | Dev | Not colour alone |
 | V-09 | Result view | P0 | 2d | V-07 | TODO | Dev | Exclusions at equal weight |
@@ -61,7 +61,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| W-01 | `/digital/work` grid | P0 | 1.5d | S-09 | TODO | Dev | |
+| W-01 | `/digital/work` grid | P0 | 1.5d | U-09 | TODO | Dev | |
 | W-02 | Filters incl. **stack** filter | P0 | 1d | W-01 | TODO | Dev | Stack filter is for persona P4 |
 | W-03 | `carePlanTier` schema | P0 | 0.5d | A-06 | TODO | Dev | `excludes` min 3 |
 | W-04 | `/digital/care` page | P0 | 1.5d | W-03 | TODO | Dev | Equal columns |
@@ -71,8 +71,8 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| X-01 | 10 service pages | P0 | 5d | S-08 | TODO | Content | |
-| X-02 | 8 case studies, before/after | P0 | 5d | S-09 | TODO | Content | ≥1 metric each |
+| X-01 | 10 service pages | P0 | 5d | U-08 | TODO | Content | |
+| X-02 | 8 case studies, before/after | P0 | 5d | U-09 | TODO | Content | ≥1 metric each |
 | X-03 | Stack page content, ≥15 items | P0 | 2d | T-02 | TODO | Content | **≥3 non-`none` lock-in risks** |
 | X-04 | 15 FAQs | P0 | 1.5d | A-06 | TODO | Content | From real objections |
 | X-05 | 6+ exclusions with alternatives | P0 | 0.5d | T-05 | TODO | Content | Do not soften |

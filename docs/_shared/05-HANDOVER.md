@@ -55,11 +55,13 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > failure at any level** — every one is gate discipline or documentation. They are enumerated
 > in `master/PROJECT-TRACKER.md` § "The P2 backlog carried out of Epic A".
 >
-> **Epic M's first task is `G7`** — the epic identifier renumber, deferred since round 4.
-> `Epic S` means "Seed content" in the master tracker and "Digital shell" in digital's;
-> `Epic N` means "Master pages" and "Path Finder & conversion"; `app/(press)/press/page.tsx`
-> cites `Epic R` where Press's shell epic is `P`. Every task after this one cites identifiers,
-> so renumber before building anything.
+> **`G7` is done — 18 August 2026.** Digital's shell epic became `U` (`U-01`–`U-09`), Press's
+> Path Finder epic became `K` (`K-01`–`K-22`), and `app/(press)/press/page.tsx` now cites
+> `Epic P`. Master's `S` and `N` were deliberately left alone: `Epic N` is named by
+> `00-FOUNDATION.md`, this file and `scripts/check-bundle-size.mjs` as the epic the budget rule
+> guards. **Note lines 250–254 below: `N-04`/`N-05`/`N-07`/`N-12` there are master's and are
+> correct unchanged.** Full mapping and the free letters: `master/PROJECT-TRACKER.md` § `G7`.
+> Uniqueness is unenforced — logged as `M-P2-1`. **Epic M's first build task is `M-02`.**
 >
 > **Two things to carry, both load-bearing:**
 > - **`A-GATE-7-6` is the ceiling of the verification approach.** `check:claims` asserts that a
