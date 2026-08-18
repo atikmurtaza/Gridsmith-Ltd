@@ -74,7 +74,7 @@ Theme transition between route groups must be flash-free: `data-division` is set
 ## 4. Consent management (FR-M14)
 
 ```
-components/consent/ConsentBanner.tsx     <=8KB gz, self-hosted   # was ~6KB; see below
+components/consent/ConsentBanner.tsx     2.0KB gz MEASURED at A-11; budget 3KB, rule <=8KB
 lib/consent/                             state, Consent Mode v2 bridge
 ```
 

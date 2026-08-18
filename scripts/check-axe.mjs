@@ -139,6 +139,26 @@ const INCOMPLETE_ALLOWED = [
   // allowlist nobody re-reads, and the next incomplete on the same rule and route would land
   // inside it silently. The summary line prints the count, so an entry that stops being
   // exercised is visible rather than inferred.
+  //
+  // **One entry again from `A-11`, and it is a different question from the one above.**
+  {
+    rule: 'color-contrast',
+    routes: ['/', '/design', '/digital', '/press', '/_kitchen-sink', '/_gridsmith-404-probe'],
+    target: '#gs-consent-heading',
+    why:
+      'The consent banner is position:fixed at the bottom edge, so at 375px its text rect ' +
+      'intersects page content behind it and axe returns "background could not be determined ' +
+      'because it partially overlaps other elements". It resolves cleanly at 1280px, which is ' +
+      'the tell: this is axe declining on a fixed overlay, not a contrast problem. Three fixes ' +
+      'were tried and none changed it — an opaque background on .bar, on .inner, and on the ' +
+      'text element itself; all three compute opaque in the browser (the canvas-raised triplet) and ' +
+      'elementFromPoint at all four corners and the centre returns the text element, so ' +
+      'nothing is actually on top of it. The pair is --ink on --canvas-raised, which ' +
+      'check:contrast measures directly in its 101-cell permission matrix: --ink as body text ' +
+      'is 15.42:1 at its worst cell across all four themes and all three surfaces. That is the ' +
+      'gate that owns this question. REMOVE THIS ENTRY if axe-core learns to resolve fixed ' +
+      'overlays, or if the banner stops being position:fixed.',
+  },
 ];
 
 /**
@@ -439,6 +459,8 @@ const browser = await puppeteer.launch({
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
 });
 let total = 0;
+/** Cookies present after every route load, with no interaction. Filled before close. */
+let cookiesSeen = [];
 /** path → the routes that link to it. Filled per page load, resolved once at the end. */
 const linkedFrom = new Map();
 let analyses = 0;
@@ -551,6 +573,10 @@ try {
       await page.close();
     }
   }
+  // Collected while the browser is still open — `browser.close()` takes the profile with
+  // it, and reading cookies afterwards returns undefined rather than an empty list, which
+  // would have made this assertion measure nothing and pass.
+  cookiesSeen = await browser.cookies();
 } finally {
   await browser.close();
 }
@@ -586,6 +612,35 @@ if (linkProblems.length > 0) {
 check-axe: ${linkProblems.length} link(s) do not resolve:`);
   for (const p of linkProblems) console.error(`      ${p}`);
   total += linkProblems.length;
+}
+
+/**
+ * **No non-essential storage before consent — `A-11`, and it is a legal assertion.**
+ *
+ * PECR: no non-essential cookie, script or pixel may fire before an affirmative choice, and
+ * the penalty ceiling is 4% of turnover (CLAUDE.md non-negotiable #7). `PROJECT-RULES.md` §6
+ * says "not loaded-and-suppressed — not injected". Nothing gated that.
+ *
+ * The browser is the only place this is answerable. A source sweep can show that no GA4
+ * snippet is imported today; it cannot show that nothing *sets a cookie at runtime*, which is
+ * the thing the regulator cares about and the thing an added dependency changes silently.
+ *
+ * Every route was just loaded with a fresh browser and no interaction, so the only cookies
+ * present are ones something set unprompted. The allowlist is empty and should stay that way:
+ * `gs_consent` itself is strictly necessary but is only written on a click, so a run that
+ * never clicks must not see it either. **A cookie here is a finding, not a configuration.**
+ */
+const cookiesBeforeConsent = cookiesSeen;
+if (cookiesBeforeConsent.length > 0) {
+  total += cookiesBeforeConsent.length;
+  console.error(
+    `\ncheck-axe: ${cookiesBeforeConsent.length} cookie(s) set before any consent was given:`,
+  );
+  for (const c of cookiesBeforeConsent) console.error(`      ${c.name}=${c.value} (${c.domain})`);
+  console.error(
+    '      PECR requires prior consent for non-essential storage — PROJECT-RULES §6,' +
+      '\n      CLAUDE.md non-negotiable #7. Nothing may be set on load.',
+  );
 }
 
 /**
@@ -669,6 +724,10 @@ if (!process.exitCode) {
   // verified all four assertions, so there is no third outcome for this line to hide.
   console.log(
     `check-axe: ${linkedFrom.size} distinct same-origin link target(s) across ${ROUTES.length} routes — every one resolves`,
+  );
+  console.log(
+    'check-axe: zero cookies set across every route load with no interaction — ' +
+      'no non-essential storage before consent (PECR, PROJECT-RULES §6)',
   );
   console.log(
     `check-axe: ${SSR_CRASH} still serves the characterised crash shell ` +

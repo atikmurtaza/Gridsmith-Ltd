@@ -90,7 +90,7 @@ redirects/legacy.json       generated, version-controlled
 | LCP ≤1.8s, CLS ≤0.03 | LHCI **mobile axis**, asserted directly on a 4G throttle. Both were named here and asserted nowhere until the Epic A audit |
 | INP ≤200ms | **Not assertable in CI** — field metric. TBT ≤200ms is the lab proxy |
 | Master routes JS **delta ≤15KB gz** above the framework floor, **including the consent banner** | `check-bundle-size` |
-| Consent banner ≤8KB gz | `check-bundle-size` — **as a reservation, not a measurement.** No banner exists, so nothing can weigh one. What is asserted, from `M-06`, is that `/`'s measured delta plus this 8KB fits the 15KB budget. Until `M-06` this row named an enforcement that did not exist: the gate printed the literal `8.0KB` and checked nothing |
+| Consent banner ≤8KB gz | `check-bundle-size` — **measured at `A-11`: 2.0KB.** Enforced at **3.0KB**, deliberately stricter than this rule: the measurement plus room for real copy and the cookie-policy link. This rule is the ceiling, not the budget. Until `M-06` the row named an enforcement that did not exist — the gate printed the literal `8.0KB` and checked nothing |
 | Framework floor reported separately; re-baselining it is its own commit | `check-bundle-size` |
 | No hero video, no third-party embeds | Manual review |
 

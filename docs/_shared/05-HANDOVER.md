@@ -125,7 +125,31 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > hydration. The subject is the committed `gridsmith-ssr-throw-probe` route and `check-axe`
 > characterises it every run. **No app-level fix exists** — a segment `error.tsx` was tried.
 > The remedy is architectural and **is the owner's decision**, not a session's. `APP-FLOW.md`
-> §7 has been corrected. **Next is `A-11`**, which unblocks `M-06`'s UI.
+> §7 has been corrected.
+>
+> ### `A-11` and `M-06` are done — 18 August 2026
+>
+> **The consent banner is built and the 8KB reservation is finally measured: 2.0KB gz.**
+> `PROJECT-RULES.md` §8 said <=8KB, `TECH-SPEC.md` §4 said ~6KB, and nothing had ever weighed
+> either. The reservation is retired; the enforced budget is **3.0KB** and PROJECT-RULES' 8KB
+> stands as the ceiling. `/` measures **2.4KB of 15KB — 12.6KB spare**, which returns 5KB to
+> Epic N. `A-09` is unblocked.
+>
+> **`check-axe` now asserts that no cookie is set on any route load with no interaction** —
+> PECR, non-negotiable #7. That could not be a source sweep, and it is the one assertion here
+> with a 4%-of-turnover penalty behind it.
+>
+> **Epic M has no unblocked rows left.** What remains is `M-07`'s 404/500 content, which is
+> Epic N and CMS work, and `M-P1-1`, which is your decision. **The screen-reader checkpoint is
+> still PENDING** — `M-06` turned out to be a measurement plus this build rather than a chrome
+> pass, so `M-02`, `M-03`, `M-04` and now the banner all still need one human pass with NVDA
+> or VoiceOver. Do not mark `M-02` done until it happens.
+>
+> **Hosting is decided — Hostinger Business, Node app via GitHub.** Two constraints and three
+> consequences are in `master/PROJECT-TRACKER.md` § Hosting. The one to know now: `check:node`
+> runs on the host via `preinstall`, so **Hostinger's Node must be set to 24 or every deploy
+> fails at install**, and `NEXT_PUBLIC_SANITY_DATASET` must be set there or the site serves
+> seed content (`M-P2-5`).
 >
 > **Two things to carry, both load-bearing:**
 > - **`A-GATE-7-6` is the ceiling of the verification approach.** `check:claims` asserts that a

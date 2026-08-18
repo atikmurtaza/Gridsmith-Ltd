@@ -155,8 +155,17 @@
   line-height: var(--leading-relaxed);
   color: var(--ink-muted);
 }
+/* WCAG 2.5.8 target size. At --text-xs a bare inline link is ~16px tall, and the footer
+   now stacks two of them — the mailto and the consent reopen — so axe reported
+   `target-size` serious on every route. Padding takes each past 24px; they sit on their
+   own lines, so the horizontal axis is the container width. */
 .statutoryInner p { margin: 0; }
-.statutoryLink { color: var(--ink-muted); }
+.statutoryInner p + p { margin-block-start: var(--space-2); }
+.statutoryLink {
+  display: inline-block;
+  padding-block: var(--space-2);
+  color: var(--ink-muted);
+}
 .statutoryLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* The statutory block must not sit under a fixed bar. Below 768px `StickyCta` is

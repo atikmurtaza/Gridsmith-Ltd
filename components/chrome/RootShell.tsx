@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { ConsentBanner } from '@/components/consent/ConsentBanner';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import styles from './chrome.module.css';
@@ -42,6 +43,11 @@ export function RootShell({
         <a href="#main" className={styles.skipLink}>
           Skip to content
         </a>
+        {/* Early in the DOM, low on the screen. A screen reader meets it straight after
+            the skip link — "announced on appearance" — while `position: fixed` keeps it
+            off the top, where it would obscure the skip link, and out of the layout, where
+            it would shift it (master/PROJECT-RULES.md §7). */}
+        <ConsentBanner />
         <Header division={division} />
         {children}
         <Footer />

@@ -1,3 +1,4 @@
+import { ConsentReopen } from '@/components/consent/ConsentReopen';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
 import type { Division } from './RootShell';
 import styles from './chrome.module.css';
@@ -71,6 +72,9 @@ export async function Footer() {
             {c.tradingAddress?.trim() ? ` · trading address ${c.tradingAddress}` : ''}
             {c.vatNumber?.trim() ? ` · VAT number ${c.vatNumber}` : ''}
           </p>
+          {/* FOUNDATION requires a persistent way back into the choice. It is its own
+              tiny Client Component so the footer stays a Server Component. */}
+          <p><ConsentReopen /></p>
           {c.contactEmail?.trim() ? (
             <p>
               <a href={`mailto:${c.contactEmail}`} className={styles.statutoryLink}>

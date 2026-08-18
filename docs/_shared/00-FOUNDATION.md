@@ -456,6 +456,10 @@ widget: **`Accordion` is `<details>`/`<summary>`**, `Select` is a native `<selec
 `RadioGroup` is a `<fieldset>` of real radios. Those three ship no JavaScript at all and
 get their keyboard behaviour, state and announcements from the browser.
 
+**The consent banner was measured at `A-11`: 2.0KB gz, against an 8KB reservation nothing had
+ever weighed.** Every "of which the consent banner claims 8KB" below is superseded — the
+enforced budget is 3.0KB and `master/PROJECT-TRACKER.md` § `A-11 / M-06` has the decomposition.
+
 Measured on `/_kitchen-sink`, which renders every primitive four times: **6.2KB gz above
 the framework floor**, of which **0.5KB (measured) is the `global-error` boundary that every route in
 the build carries** — so the primitive layer itself is **5.8KB**. Against Master's 15KB

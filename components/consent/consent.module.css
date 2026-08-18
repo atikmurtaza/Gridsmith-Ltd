@@ -1,0 +1,101 @@
+/* Consent banner — A-11. Tokens only; no colour literals.
+   DESIGN.md §5: bottom-anchored bar, --canvas-raised, 1px top --line-strong. */
+.bar {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 90;
+  background: var(--canvas-raised);
+  border-block-start: var(--border-hairline) solid var(--line-strong);
+}
+/* The background is on `.inner` as well as `.bar`. axe reported `color-contrast`
+   INCOMPLETE on the banner text at 375px — "background could not be determined" — because
+   a fixed bar overlaps whatever is beneath it and axe will not assume an ancestor's paint
+   carries. Declaring it on the element that directly holds the text makes the result
+   determinable rather than allowlisted. */
+.inner {
+  background: var(--canvas-raised);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-8);
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: var(--space-4) var(--gutter);
+}
+.text {
+  background: var(--canvas-raised);
+  flex: 1 1 20rem;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+.prefs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.legend { padding: 0; font-size: var(--text-sm); color: var(--ink); }
+.pref {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+
+/* Accept and Reject share this class and nothing else distinguishes them — same size,
+   same weight, same treatment. A visual hierarchy between them is a dark pattern and
+   invalidates the consent (PROJECT-RULES §7). Do not add a variant. */
+.choice {
+  min-height: 2.75rem;
+  min-width: 8rem;
+  padding: var(--space-3) var(--space-6);
+  background: var(--canvas);
+  color: var(--ink);
+  border: var(--border-hairline) solid var(--ink);
+  border-radius: var(--radius-none);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.preferences {
+  min-height: 2.75rem;
+  padding: var(--space-3) 0;
+  background: none;
+  border: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.choice:focus-visible,
+.preferences:focus-visible,
+.pref input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Footer entry point. Mono and --ink-muted to match the statutory block it sits in. */
+.reopen {
+  display: inline-block;
+  padding-block: var(--space-2);
+  background: none;
+  border: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+.reopen:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }

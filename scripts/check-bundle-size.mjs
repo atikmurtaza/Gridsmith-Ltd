@@ -33,7 +33,7 @@ const KB = 1024;
 const FLOOR_KB = 100.2;
 
 /** How far below the floor a route may measure before the floor is treated as stale. */
-const FLOOR_TOLERANCE_KB = 1.0;
+const FLOOR_TOLERANCE_KB = 3.0;
 
 /**
  * **This budget must stay strictly below `FLOOR_TOLERANCE_KB`, and that is the whole point
@@ -52,42 +52,75 @@ const FLOOR_TOLERANCE_KB = 1.0;
  * downstream of the floor check's `process.exit(1)` and could be skipped by the state of a
  * particular build — a guard against unreachable code, itself unreachable.
  *
- * At 0.7 there is a real window — `0.7 < shared <= 1.0` — in which this fires and the floor
- * check does not. That window is what makes it an independent assertion rather than a
- * restatement, and it is what the deliberate-failure proof has to land in: a proof that
- * pushes `shared` past 1.0 is being satisfied by the floor check, not by this.
+ * At 2.6 against a tolerance of 3.0 there is a real window — `2.6 < shared <= 3.0` — in which
+ * this fires and the floor check does not. That window is what makes it an independent
+ * assertion rather than a restatement, and it is what the deliberate-failure proof has to land
+ * in: a proof that pushes `shared` past 3.0 is being satisfied by the floor check, not by this.
  *
- * Measured today: 0.5KB. The 0.2KB of headroom is deliberately tight — this is the cost
- * every route pays and cannot attribute to any feature.
+ * **Both numbers moved at `A-11` and the reason is deliberate, not drift.** They were 0.7 and
+ * 1.0 against a measured 0.5KB, which was the `global-error` boundary alone. The consent
+ * banner is a P0 compliance requirement that ships in the shared layout of every route, so the
+ * shared cost is now **2.3KB** — boundary 0.5 plus banner 1.8 — and a budget below it would
+ * fail on the commit that satisfies the law. The banner half is separately and more tightly
+ * capped by `CONSENT_BANNER_BUDGET_KB`, so raising this does not leave it unbounded.
+ *
+ * `FLOOR_TOLERANCE_KB` had to move with it to keep the window open; the floor itself is
+ * unchanged at 100.2 and the banner is not framework cost.
  */
-const SHARED_BASELINE_BUDGET_KB = 0.7;
+const SHARED_BASELINE_BUDGET_KB = 2.6;
 const PRIMITIVES_BUDGET_KB = 6.0;
+
+/**
+ * **The consent banner, measured at `A-11` — 1.8KB gz, against a reservation of 8.0.**
+ *
+ * `PROJECT-RULES.md` §8 says <=8KB and named this file as the enforcement; `TECH-SPEC.md` §4
+ * said ~6KB. **Neither was ever measured** and this file printed the literal `8.0` while
+ * asserting nothing about it. Built, the banner and its footer entry point come to **1.8KB
+ * gz** — the whole `chunks/app/**` cost of every route once `global-error` is taken out.
+ *
+ * So the reservation is retired rather than kept. 3.0KB is the budget: the measurement plus
+ * 1.2KB, which is room for the real copy and the cookie-policy link `L-xx` will add, and not
+ * room for a component. **PROJECT-RULES' <=8KB still holds — this is stricter, not looser**,
+ * and it returns 5KB of Master's delta to Epic N.
+ *
+ * Hardcoded, never derived from the build: an expectation read out of its own subject cannot
+ * fail when the subject changes.
+ */
+const CONSENT_BANNER_BUDGET_KB = 3.0;
 
 /**
  * How far the baseline routes may disagree with each other before that disagreement is
  * itself the finding. See the decomposition block for the reasoning; in short, `shared` is a
  * minimum and a minimum cannot see a cost paid by some baseline routes and not all.
  *
- * **0.1KB, not 0.** The measurement is gzipped bytes divided by 1024 and printed to one
- * decimal, and the routes are not byte-identical — `/_not-found` renders a little more markup
- * than the placeholder pages. Today all five measure 0.5KB and the spread is 0.0KB, so this
- * has real room; it is set to absorb rounding, not to absorb a component.
+ * **0.3KB at `A-11`, up from 0.1, and the increase is attributed rather than tolerated.**
+ * The distinction matters because this file's own guidance is *do not widen this tolerance to
+ * make the message go away*. That warns against absorbing an **unexplained** spread. This one
+ * was measured to its cause:
+ *
+ *   `/`           `chunks/app/(press)/layout-*.js`   **1.83KB**
+ *   `/_not-found` `chunks/app/_not-found/page-*.js`  **2.06KB**
+ *
+ * `global-not-found` is its own webpack entry, so it gets **its own copy of the shared
+ * layout's client boundary** — the same consent banner code, bundled a second time, 0.23KB
+ * dearer. It is not a feature the 404 has and the other routes do not; it is one component
+ * emitted twice.
+ *
+ * So `/_not-found` stays in `BASELINE_ROUTES` — dropping it is the other way to silence this,
+ * and it would cost the check a member for a route that genuinely has no features of its own.
+ * **`M-P2-6` is the real fix**: compare non-entry chunks so a duplicated boundary is
+ * attributed instead of absorbed. Until then this tolerance is 0.23 plus rounding, and if the
+ * spread grows past it something new is on a subset of routes.
  */
-const BASELINE_SPREAD_TOLERANCE_KB = 0.1;
+const BASELINE_SPREAD_TOLERANCE_KB = 0.3;
 
 /**
- * What the consent banner is allowed to cost, and Master's budget it comes out of.
+ * Master's JS delta budget — CLAUDE.md §Performance budgets.
  *
- * **8KB is a reservation, not a measurement, and nothing has ever measured it.**
- * `master/PROJECT-RULES.md` §8 names `check-bundle-size` as its enforcement, and until
- * `M-06` that was untrue — this file printed the literal `8.0KB` and asserted nothing about
- * it. It still cannot measure the banner, because no banner exists; what it can assert is
- * that the master route leaves room for one, which is the question `M-06` actually asks.
- *
- * `TECH-SPEC.md` §4 said `~6KB` for the same component. `PROJECT-RULES.md` is binding
- * (CLAUDE.md, "How to work"), so 8KB stands and TECH-SPEC was corrected to match.
+ * `M-06` asserted `masterDelta + 8` against this, because the banner was an unbuilt
+ * reservation. At `A-11` the banner shipped, so its cost is inside `masterDelta` and there is
+ * nothing left to add: the assertion is now simply that what master ships fits.
  */
-const CONSENT_RESERVE_KB = 8;
 const MASTER_BUDGET_KB = 15;
 
 /**
@@ -133,11 +166,17 @@ const BUDGETS = [
   ['/design', 25],
   ['/press', 20],
   ['/digital', 15],
-  // Master's 15KB, minus the 8KB the consent banner reserves (master/PROJECT-RULES.md §8).
-  // FOUNDATION §5 and tracker M-06 both build arithmetic on the primitive layer costing
-  // ~5.7KB; 7KB is the ceiling that arithmetic actually requires. It was previously
-  // reported and not enforced, which is how a load-bearing number drifts unnoticed.
-  ['/_kitchen-sink', 7],
+  // **The sum of the two hardcoded budgets this route's cost is made of**, not a number of
+  // its own: `SHARED_BASELINE_BUDGET_KB + PRIMITIVES_BUDGET_KB`. The kitchen sink is the
+  // baseline every route pays plus the primitive layer, and both halves are already capped
+  // and asserted separately and more tightly, so a third independent figure here could only
+  // ever disagree with them.
+  //
+  // It was 7 — "Master's 15KB minus the 8KB the consent banner reserves". At `A-11` the
+  // banner was built and measured at 1.8KB, so that derivation no longer describes
+  // anything. **This is not a relaxation:** the ceiling that binds the primitive layer is
+  // still `PRIMITIVES_BUDGET_KB`, unchanged at 6.0.
+  ['/_kitchen-sink', SHARED_BASELINE_BUDGET_KB + PRIMITIVES_BUDGET_KB],
   ['/', 15],
 ];
 
@@ -199,6 +238,7 @@ const rows = [];
 for (const { url, file } of routes()) {
   const html = readFileSync(file, 'utf8');
   let bytes = 0;
+  const appChunks = [];
   for (const src of moduleScripts(html)) {
     // Script URLs are percent-encoded, and a route segment that already contains a
     // percent sign is encoded twice — /_kitchen-sink lives at `%5Fkitchen-sink` on disk
@@ -215,11 +255,18 @@ for (const { url, file } of routes()) {
       process.exit(1);
     }
 
-    bytes += gzipSync(readFileSync(onDisk), { level: 9 }).length;
+    const gz = gzipSync(readFileSync(onDisk), { level: 9 }).length;
+    bytes += gz;
+
+    // `chunks/app/**` is App Router's own client output: one chunk per Client Component
+    // boundary the route loads. Splitting it out is what lets the consent banner be
+    // measured directly instead of inferred from a difference between builds — see the
+    // shared-client-chunk block below.
+    if (/\/chunks\/app\//.test(src)) appChunks.push({ src, gz: gz / KB });
   }
 
   const total = bytes / KB;
-  rows.push({ url, total, delta: total - FLOOR_KB, budget: budgetFor(url) });
+  rows.push({ url, total, delta: total - FLOOR_KB, budget: budgetFor(url), appChunks });
 }
 
 // Measuring nothing is not the same as passing, and measuring less than everything is
@@ -418,49 +465,72 @@ if (baselineRows.length !== BASELINE_ROUTES.length) {
   const primitives = kitchen.delta - shared;
   const masterDelta = baselineRows.find((r) => r.url === '/').delta;
 
+  // The shared layout's client cost: every `chunks/app/**` script `/` loads, minus the
+  // `global-error` boundary, which is counted separately as the shared baseline.
+  const masterAppChunks = baselineRows.find((r) => r.url === '/').appChunks;
+  const banner = masterAppChunks
+    .filter((c) => !/global-error/.test(c.src))
+    .reduce((n, c) => n + c.gz, 0);
+  if (masterAppChunks.length === 0) {
+    decomposition.push('/ loads no chunks/app/** script at all — the consent banner cost measured nothing.');
+  }
+
   console.log('\ndelta decomposition — M-06 budgets on these, so they are asserted, not just printed\n');
-  console.log(`  shared baseline    ${shared.toFixed(1)}KB gz   every route pays this (global-error boundary)`);
+  console.log(`  shared baseline    ${shared.toFixed(1)}KB gz   every route pays this (global-error boundary + shared layout)`);
   console.log(
     `  baseline spread    ${spread.toFixed(1)}KB gz   dearest minus cheapest across the ` +
       `${baselineRows.length} baseline routes`,
   );
   console.log(`  primitive layer    ${primitives.toFixed(1)}KB gz   /_kitchen-sink delta minus the baseline`);
-  console.log(`  consent banner     ${CONSENT_RESERVE_KB.toFixed(1)}KB gz   RESERVED, NOT MEASURED — no banner exists (PROJECT-RULES §8)`);
+  console.log(`  consent banner     ${banner.toFixed(1)}KB gz   MEASURED — app client chunks minus global-error, budget ${CONSENT_BANNER_BUDGET_KB}KB`);
   console.log(
-    `  master reservation ${(masterDelta + CONSENT_RESERVE_KB).toFixed(1)}KB of ${MASTER_BUDGET_KB}KB ` +
-      `— / measures ${masterDelta.toFixed(1)}KB today, so ${(MASTER_BUDGET_KB - masterDelta - CONSENT_RESERVE_KB).toFixed(1)}KB is spare after the banner's reservation`,
+    `  master total       ${masterDelta.toFixed(1)}KB of ${MASTER_BUDGET_KB}KB ` +
+      `— ${(MASTER_BUDGET_KB - masterDelta).toFixed(1)}KB spare, everything master ships is in that figure`,
   );
 
-  // **The `M-06` assertion, and it replaces a projection that was wrong in three ways.**
+  // **The consent banner, measured rather than reserved — `A-11`.**
   //
-  // What stood here printed `shared + primitives + 8` and called it "headroom before header
-  // and footer exist". Measured at `M-06`:
+  // Until the banner existed this printed the literal `8.0KB` and asserted nothing, while
+  // `PROJECT-RULES.md` §8 named this file as its enforcement. Built, it measures 1.8KB.
   //
-  //   1. The header and footer now exist and cost **0KB** — both are Server Components with
-  //      plain `<a>`, so the 3.3KB `next/link` term the tracker's arithmetic turned on never
-  //      happened.
-  //   2. `primitives` is a **`/_kitchen-sink`** figure. No master-layer route ships the
-  //      primitive layer; adding it into a master projection attributed one route's cost to
-  //      five that do not pay it.
-  //   3. It was a `console.log`. Nothing fired if it went negative, which is precisely the
-  //      "reported and enforced by nothing" shape this block's own docstring complains about.
+  // `chunks/app/**` is App Router's per-Client-Component-boundary output. On every route in
+  // this build those chunks are the shared layout boundary and `global-error`, so removing
+  // the boundary's own chunk leaves exactly the client cost the layout adds — today the
+  // consent banner and its footer entry point. **It is a direct measurement of a named
+  // artefact, not a difference between two builds**, which is what makes it assertable at
+  // all.
   //
-  // So it is an assertion over the route it is actually about. `/`'s measured delta plus the
-  // banner's reservation must fit Master's budget: the reservation is what makes the check
-  // fire while there is still room to act, rather than at the commit that overruns.
-  //
-  // The two thresholds are deliberately far apart — this fires above
-  // `MASTER_BUDGET_KB - CONSENT_RESERVE_KB` (7KB) and the per-route budget check above fires
-  // above 15KB — so a window exists in which only this one reports (`A-GATE-4-3`).
-  if (masterDelta + CONSENT_RESERVE_KB > MASTER_BUDGET_KB) {
+  // The name will stop being accurate the moment a second shared Client Component lands.
+  // That is a feature: this budget is the ceiling on *everything the shared layout puts in
+  // every route's bundle*, and the next thing to arrive has to fit under it or be argued
+  // for.
+  if (banner > CONSENT_BANNER_BUDGET_KB) {
     decomposition.push(
-      `/ measures ${masterDelta.toFixed(1)}KB and the consent banner reserves ` +
-        `${CONSENT_RESERVE_KB.toFixed(1)}KB, which is ` +
-        `${(masterDelta + CONSENT_RESERVE_KB - MASTER_BUDGET_KB).toFixed(1)}KB over Master's ` +
+      `the shared layout client chunk is ${banner.toFixed(1)}KB, over its ` +
+        `${CONSENT_BANNER_BUDGET_KB}KB budget. Today that chunk is the consent banner.` +
+        '\n\n    PROJECT-RULES §8 caps the banner at 8KB; this budget is the measured 1.8KB' +
+        '\n    plus headroom, and it is deliberately stricter. If something new legitimately' +
+        '\n    belongs in the shared layout, raise this constant in its own commit with the' +
+        '\n    measurement in the message — do not widen it as a side effect.',
+    );
+  }
+
+  // **The `M-06` assertion.** It replaced a `console.log` projection that was wrong three
+  // ways (the 3.3KB `next/link` term that never happened, a `/_kitchen-sink` primitive
+  // figure attributed to master routes, and being a print rather than a check). With the
+  // banner built and measured there is no reservation left to add: `masterDelta` now
+  // contains everything master ships, so the assertion is simply that it fits.
+  //
+  // Kept as its own line rather than folded into the per-route budget check above because
+  // it is the one that carries the M-06 instruction about what to do when it fires.
+  if (masterDelta > MASTER_BUDGET_KB) {
+    decomposition.push(
+      `/ measures ${masterDelta.toFixed(1)}KB, which is ` +
+        `${(masterDelta - MASTER_BUDGET_KB).toFixed(1)}KB over Master's ` +
         `${MASTER_BUDGET_KB}KB delta budget.` +
-        '\n\n    The banner is a P0 compliance requirement, so the question is not which' +
-        '\n    kilobytes to shave off it — it is which capability leaves the master layer.' +
-        '\n    Stop and raise it rather than proceeding into Epic N (non-negotiable #8).',
+        '\n\n    The consent banner is a P0 compliance requirement, so the question is not' +
+        '\n    which kilobytes to shave off it — it is which capability leaves the master' +
+        '\n    layer. Stop and raise it rather than proceeding (non-negotiable #8).',
     );
   }
 

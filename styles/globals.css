@@ -61,6 +61,19 @@ body {
   }
 }
 
+/* The consent banner is the second fixed bottom bar, and unlike StickyCta it is fixed at
+   EVERY width, so its reserve is not inside a media query. It publishes its own measured
+   height for the same reason StickyCta does — it grows when the text wraps and again when
+   Preferences opens — and check-responsive asserts the reserve against the rendered bar.
+
+   Declared after the block above so it wins below 768px, where both could apply. The two
+   bars cannot be visible at once: StickyCta only shows past 40% scroll depth, and the
+   banner is dismissed by any choice. If that ever stops being true this needs to be a sum,
+   not a replacement. */
+html {
+  scroll-padding-block-end: calc(var(--consent-block-size, 0px) + env(safe-area-inset-bottom));
+}
+
 /* Visually hidden, still announced. Used for the "Step 3:" prefixes, the external-link
    suffix, and table captions the design hides but a screen reader needs. */
 .sr-only {
