@@ -160,6 +160,16 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > grant path itself is **proven once by hand and gated by nothing** — 0 requests before Accept,
 > 1 after, with a test id — and needs a permanent subject when the real ids arrive.
 >
+> **`A-06` is done — 18 August 2026.** The core schema layer: 8 object types, 6 core document
+> types, `isSeed` group-wide, and the canonical-six validator. `processStep` is the **master**
+> version, per `SCHEMA-CORE.md`'s own instruction. **19 gates now** — `check:schemas` exists
+> because `next build` never compiles `sanity/schemas/`, so a broken schema failed for an
+> editor and for nothing in CI. It imports the registry and *runs* the validation functions,
+> which is how it establishes that `service.pricingModel` is genuinely required — CLAUDE.md
+> non-negotiable #3 had been asserted by nothing until now. **`A-12` is unblocked.**
+> Two spec gaps filled conservatively and logged: `M-P2-9` (`protectedVideo` is referenced and
+> never defined) and `M-P2-10` (`post.author`/`readingTime` untyped).
+>
 > **And read the tracker's standing instruction before Epic N:** every unmeasured number in
 > Epic M was wrong and all three were pessimistic — `M-08`'s font waste did not exist, `M-06`
 > projected 11.7KB against an actual 0.5KB, `A-11` reserved 8.0KB against an actual 2.0KB. A
