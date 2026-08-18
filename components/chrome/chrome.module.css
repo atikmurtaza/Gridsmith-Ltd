@@ -54,8 +54,18 @@
   margin-inline: auto;
   padding: var(--space-4) var(--gutter);
 }
+/* **The wordmark is the one element that must be identical in all four themes**, so it does
+   NOT use --font-display, which is a different face per division by design: neo-grotesque on
+   master and Design, mono on Digital, serif on Press. The company mark reading as four
+   different marks is the opposite of what shared structure is for.
+
+   --font-mono, and the choice is constrained rather than aesthetic. It resolves to JetBrains
+   Mono in all four themes and all four route groups already load it, so this costs zero bytes.
+   Locking to Inter instead would mean loading a fourth family on /press for one word, on the
+   critical path, against a 2.0s LCP budget with a ~1.52s empty-page floor. If the brand later
+   wants the wordmark in a specific face, that is a Press font-budget decision, not a CSS one. */
 .wordmark {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: var(--text-lg);
   line-height: var(--leading-tight);
   color: var(--ink);

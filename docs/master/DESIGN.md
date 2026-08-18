@@ -62,8 +62,8 @@ Division accents appear at master level in only three places: division routing c
 | `--ink-subtle` on `--canvas` | 5.52:1 | AA at any size |
 | `--accent-ink` on `--accent` | 19.17:1 | AAA |
 | `--accent-design` on `--canvas` | 2.16:1 | **Decorative rules and badges only. Never text, never a sole state indicator** |
-| `--accent-digital` on `--canvas` | 5.09:1 | AA |
-| `--accent-press` on `--canvas` | 9.74:1 | AAA |
+| `--accent-digital` on `--canvas` | 5.09:1 | AA **as a ratio; the role is decorative.** Division colour appears as a rule or a 1px badge border, never as text — §5, and the same constraint as the amber. All three accents are declared by every theme from V3, and two of them do not clear AA on Design's near-black canvas |
+| `--accent-press` on `--canvas` | 9.74:1 | AAA **as a ratio; the role is decorative** — see the row above |
 | `--line-strong` on `--canvas` | 1.74:1 | Decorative borders only |
 
 Measured at A-03 by `scripts/check-contrast.mjs`, which recomputes these from the theme

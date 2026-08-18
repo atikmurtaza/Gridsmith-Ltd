@@ -463,6 +463,61 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
 
+### V1-V3 — three visual items, and one distinction worth keeping
+
+**V1 — the state of the unmade choice was ungated, and that is a different question from
+storage.** Every existing consent assertion is about what is *stored or requested*: zero
+cookies, zero analytics requests, on every route with no interaction. **None said anything
+about what the consent state IS while the choice is unmade.** A banner could apply `granted`
+defaults, set no cookie and issue no request — every gate green, and PECR breached the moment
+a tag is added, because Consent Mode's default is what a later tag reads.
+
+`check-axe` now reads `dataLayer` on first render, with no consent cookie present, and
+requires every non-essential category to be `denied`. **Proof:** `DENIED.analytics_storage`
+flipped to `true` fired `first render applied analytics_storage=granted with no consent cookie
+present` on all 12 themed route/viewport combinations — **while the cookie and request
+assertions stayed green**, which is the distinction demonstrated rather than argued.
+
+**The reject affordance was already correct and nothing was changed.** Measured on a
+first-visit banner at 375px: Accept and Reject are the same component with the same class,
+**128×48 each**, identical background, identical 1px border, identical weight and size, side
+by side, Accept first. Preferences is a text button, third, no border, no fill — a third
+route, not a third answer. EDPB guidance requires refusing to be as easy as accepting; it is
+the same click at the same size.
+
+**V2 — the wordmark is locked to one face.** It used `--font-display`, which is a different
+face per division by design — neo-grotesque on master and Design, mono on Digital, serif on
+Press. The company mark reading as four different marks is the opposite of what shared
+structure is for. It is now `--font-mono`, and that choice is constrained rather than
+aesthetic: `--font-mono` resolves to JetBrains Mono in all four themes and **all four route
+groups already load it**, so it costs zero bytes. Locking to Inter instead would load a fourth
+family on `/press` for one word, on the critical path, against a 2.0s LCP budget with a ~1.52s
+empty-page floor. If the brand later wants a specific face, that is a Press font-budget
+decision. Verified: all four served routes render the same `chrome_wordmark` class and
+`/`, `/design`, `/digital` and `/press` all compute `"JetBrains Mono"`.
+
+**V3 — the division accents are on every theme now, not master alone.** The footer switcher's
+three 3px rules were falling back to `--line-strong` on Design, Digital and Press. Two gates
+moved with it:
+
+- `check:tokens` — `MASTER_EXTRAS` became `SHARED_ACCENTS`, required of all four themes.
+  **Proof:** deleting `--accent-press` from `press.css` fired `press: missing --accent-press`.
+- `check:contrast` — the matrix grew from **101 to 128 cells** (three accents × three surfaces
+  × the three themes that gained them).
+
+**And the matrix caught an overstatement immediately.** `--accent-digital` and `--accent-press`
+were claimed `role: 'body'` — true of the only surface they had ever existed on, master's
+white canvas, where they measure 5.09:1 and 9.74:1. It was never true of their *use*:
+`DESIGN.md` §5 puts division colour in a badge's 1px border with `--ink` text inside, and §2
+forbids coloured text for the amber. On Design's near-black canvas `--accent-press` measures
+**2.01:1**, so the claim became a failure the moment the token existed there. Corrected to
+`decor` — what the design system actually does with them — and `master/DESIGN.md` §2's two
+rows now say the ratio is AA/AAA *as a ratio* while the role is decorative.
+
+The `var(--accent-design, var(--line-strong))` fallbacks in the footer stay. `check:tokens`
+now makes them unreachable, and they cost nothing; the failure they guard — an invalid
+longhand at computed-value time discarding the shorthand's colour — is severe and silent.
+
 ### A-12 — the spec's seed query counted almost nothing
 
 **Premise check, and it failed.** `TECH-SPEC.md` §6 sketches the deploy-blocking check as:

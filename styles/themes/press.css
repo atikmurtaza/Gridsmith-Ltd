@@ -47,4 +47,14 @@
   --font-mono:      var(--font-jetbrains), ui-monospace, monospace;
 
   --radius-default: 2px;
+
+  /* **The division accents are declared by every theme, not master alone** (V3).
+     Same three colours, same position — the footer division switcher's 3px top rules — on
+     all four. That is the cheapest thing that makes four themes read as one system, and it
+     removes a real hazard: these names used to resolve to nothing off master, which made
+     `border-block-start-color: var(--accent-design)` invalid at computed-value time and
+     discarded the shorthand's colour with it. `check:tokens` now holds all four. */
+  --accent-design:  #E8A33D;
+  --accent-digital: #1B5FFF;
+  --accent-press:   #2E4A3A;
 }

@@ -42,7 +42,7 @@ const TOLERANCE = 0.02; // DESIGN.md now carries measured values to 2dp
  * An expectation derived from its own subject is not an expectation.
  */
 const EXPECTED_PAIRS = 29;
-const EXPECTED_CELLS = 101;
+const EXPECTED_CELLS = 128;
 
 /**
  * Pairs as named in each DESIGN.md §2 table, with the ratio each table publishes.
@@ -142,12 +142,22 @@ const USE = {
   '--accent-hover': { role: 'body' },
   '--line': { role: 'decor' },
   '--line-strong': { role: 'decor' },
-  // Master only. 2.16:1 on white — rules and badge borders, never text, never a state
-  // (master/PROJECT-RULES.md §1.2). A badge is static content, so WCAG 1.4.11 does not
-  // apply to its border; that is why decorative is the honest role rather than a failure.
+  // **All three are decorative, and all three are on every theme from V3.**
+  //
+  // 2.16:1 on white for amber — rules and badge borders, never text, never a state
+  // (master/PROJECT-RULES.md §1.2). A badge is static content, so WCAG 1.4.11 does not apply
+  // to its border; that is why decorative is the honest role rather than a failure.
+  //
+  // `--accent-digital` and `--accent-press` were claimed `body` here, which was true of the
+  // only surfaces they existed on — master's, where they measure 5.09:1 and 9.74:1 and the
+  // PAIRS table below still publishes those figures. It was never true of their *use*:
+  // DESIGN.md §5 puts division colour in a badge's 1px border with `--ink` text inside, and
+  // §2 forbids coloured text for the amber. The moment V3 put all three on the near-black
+  // Design canvas the overstatement became a failure — `--accent-press` measures 2.01:1
+  // there. Corrected to what the design system actually does with them.
   '--accent-design': { role: 'decor' },
-  '--accent-digital': { role: 'body' },
-  '--accent-press': { role: 'body' },
+  '--accent-digital': { role: 'decor' },
+  '--accent-press': { role: 'decor' },
 };
 
 /**

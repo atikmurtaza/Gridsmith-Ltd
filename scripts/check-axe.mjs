@@ -154,7 +154,7 @@ const INCOMPLETE_ALLOWED = [
       'text element itself; all three compute opaque in the browser (the canvas-raised triplet) and ' +
       'elementFromPoint at all four corners and the centre returns the text element, so ' +
       'nothing is actually on top of it. The pair is --ink on --canvas-raised, which ' +
-      'check:contrast measures directly in its 101-cell permission matrix: --ink as body text ' +
+      'check:contrast measures directly in its 128-cell permission matrix: --ink as body text ' +
       'is 15.42:1 at its worst cell across all four themes and all three surfaces. That is the ' +
       'gate that owns this question. REMOVE THIS ENTRY if axe-core learns to resolve fixed ' +
       'overlays, or if the banner stops being position:fixed.',
@@ -331,6 +331,39 @@ async function domIntegrity(page, route, themed = true, expect = null) {
       }
       if (document.querySelectorAll('main').length !== 1) {
         problems.push(`expected exactly one <main>, found ${document.querySelectorAll('main').length}`);
+      }
+    }
+
+    // **The state of the unmade choice — V1.**
+    //
+    // The existing gates assert that nothing is *stored* before a choice: zero cookies and
+    // zero analytics requests on every route load. **Neither says anything about what the
+    // consent state IS while the choice is unmade**, and those are different questions. A
+    // banner could apply `granted` defaults, set no cookie and issue no request — every
+    // gate green, PECR breached the moment a tag is added, because Consent Mode's default
+    // is what a later tag reads.
+    //
+    // The browser here has no consent cookie (nothing writes one without a click, which is
+    // asserted separately), so this is a first render. Every non-essential category must be
+    // denied.
+    if (themed) {
+      const updates = (window.dataLayer ?? []).filter(
+        (e) => Array.isArray(e) && e[0] === 'consent' && e[1] === 'update',
+      );
+      if (updates.length === 0) {
+        problems.push(
+          'no consent state was applied on first render — Consent Mode v2 requires the denied ' +
+            'default to be queued before any tag runs (A-11)',
+        );
+      } else {
+        for (const [category, signal] of Object.entries(updates.at(-1)[2] ?? {})) {
+          if (signal !== 'denied') {
+            problems.push(
+              `first render applied ${category}=${signal} with no consent cookie present — ` +
+                'every non-essential category defaults to denied (PROJECT-RULES §6)',
+            );
+          }
+        }
       }
     }
 
@@ -753,6 +786,11 @@ if (!process.exitCode) {
   // verified all four assertions, so there is no third outcome for this line to hide.
   console.log(
     `check-axe: ${linkedFrom.size} distinct same-origin link target(s) across ${ROUTES.length} routes — every one resolves`,
+  );
+  console.log(
+    `check-axe: first render applied a denied default for every non-essential category on ` +
+      `${ROUTES.filter((r) => r.themed !== false).length} themed route(s) × ${VIEWPORTS.length} ` +
+      'viewport(s) — the STATE of the unmade choice, which the two assertions below do not cover',
   );
   console.log(
     'check-axe: zero cookies set and zero requests to ' +

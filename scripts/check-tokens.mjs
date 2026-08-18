@@ -163,8 +163,19 @@ const CONTRACT = [
   '--radius-default',
 ];
 
-/** The one documented exception: master carries the division-reference accents. */
-const MASTER_EXTRAS = ['--accent-design', '--accent-digital', '--accent-press'];
+/**
+ * The division-reference accents. **Every theme, not master alone — changed at V3.**
+ *
+ * They used to be master's exception, which meant `var(--accent-design)` resolved to nothing
+ * on the other three. Shared chrome that uses them — the footer division switcher — then had
+ * an invalid longhand at computed-value time, which discards the shorthand's colour with it.
+ * The same three accents in the same position on every theme is also what makes four themes
+ * read as one system.
+ *
+ * Kept separate from `CONTRACT` so the split stays legible: `CONTRACT` is what a theme needs
+ * to *be* a theme, this is what every theme carries to refer to the others.
+ */
+const SHARED_ACCENTS = ['--accent-design', '--accent-digital', '--accent-press'];
 
 const themeProblems = [];
 
@@ -172,11 +183,11 @@ for (const theme of THEMES) {
   const src = readFileSync(`styles/themes/${theme}.css`, 'utf8');
   const defined = new Set([...src.matchAll(/(--[a-z0-9-]+)\s*:/gi)].map((m) => m[1]));
 
-  for (const token of CONTRACT) {
+  for (const token of [...CONTRACT, ...SHARED_ACCENTS]) {
     if (!defined.has(token)) themeProblems.push(`${theme}: missing ${token}`);
   }
 
-  const allowed = new Set([...CONTRACT, ...(theme === 'master' ? MASTER_EXTRAS : [])]);
+  const allowed = new Set([...CONTRACT, ...SHARED_ACCENTS]);
   for (const token of defined) {
     if (!allowed.has(token)) {
       themeProblems.push(`${theme}: declares ${token}, which is not in the theme contract`);
@@ -199,7 +210,8 @@ if (themeProblems.length > 0) {
 
 console.log(
   `check-tokens: ${THEMES.length} themes each define the ${CONTRACT.length}-token contract ` +
-    `(master +${MASTER_EXTRAS.length} division accents), all present in the built CSS`,
+    `plus the ${SHARED_ACCENTS.length} division accents every theme now carries (V3), ` +
+    'all present in the built CSS',
 );
 
 /* ---------------------------------------------------------------------------------

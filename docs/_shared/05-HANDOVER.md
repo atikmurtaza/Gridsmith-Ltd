@@ -182,6 +182,21 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > and `A-09`'s grant path needs `Q-M19`, both with the owner. Epic M has no unblocked rows.
 > **The next epic is N**, and the standing instruction above applies to every row in it.
 >
+> **Three visual items landed after A-12 (V1–V3).** The wordmark is locked to `--font-mono` —
+> the one element that must be identical in all four themes, and the only face all four route
+> groups already load. The three division accents are declared by **every** theme now, not
+> master alone, so the footer switcher's rules no longer fall back to `--line-strong` off
+> master; `check:tokens` requires all four and the contrast matrix grew 101 → 128 cells. That
+> growth immediately caught an overstatement: `--accent-digital`/`--accent-press` were claimed
+> as text-capable, which was true only of master's white canvas and was never their use — both
+> are `decor` now, and `DESIGN.md` §2 says so.
+>
+> **And `check-axe` now asserts the STATE of the unmade consent choice, not only that nothing
+> is stored.** Those are different questions: a banner could apply `granted` defaults, store
+> nothing, request nothing, and pass every prior assertion. The reject affordance was checked
+> and is already correct — Accept and Reject are 128×48, same class, same treatment — so
+> nothing was changed there.
+>
 > **And read the tracker's standing instruction before Epic N:** every unmeasured number in
 > Epic M was wrong and all three were pessimistic — `M-08`'s font waste did not exist, `M-06`
 > projected 11.7KB against an actual 0.5KB, `A-11` reserved 8.0KB against an actual 2.0KB. A
