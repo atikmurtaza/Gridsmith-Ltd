@@ -201,7 +201,7 @@ Three things this run settles.
 | M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03, M-05 | **DONE** 18 Aug | Dev | Renders from `companyDetails`; nothing hardcoded. **The row's summary of the legal requirement was incomplete and the VAT line's basis is a different instrument** — see below. Division switcher footer-only per TECH-SPEC §3. 0KB: deltas unchanged at 0.5KB |
 | M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | **DONE** 18 Aug | Dev | Schema, standalone Studio, read client, fetch layer, dataset env var, `development` seeded. `production` deliberately empty. New gate `check:launch` — **18 gates now**. One operator step outstanding: the Studio CORS origin, `SETUP.md` |
 | M-06 | Consent banner UI | P0 | 1.5d | **A-11** | **MEASURED** 18 Aug; build BLOCKED | Dev | **The budget checkpoint is done and the ⚑ projection was false — `/` measures 0.5KB, not 11.7KB, and 6.5KB is spare after the banner's 8KB reservation.** No capability leaves the master layer. The banner itself is blocked on `A-11` (consent management + script gating), which is TODO. See below |
-| M-07 | 404 + 500 pages | P0 | 1d | M-03 | TODO | Dev | 500 works without JS |
+| M-07 | 404 + 500 pages | P0 | 1d | M-03 | **PART DONE** 18 Aug; rest BLOCKED | Dev | **The row's premise is false: the 500 does NOT work without JS.** Established with a committed SSR-throw probe and now characterised by `check-axe`. Level A, raised as `M-P1-1` — **a decision, not a fix I can take**. The 404's remaining content (search box, division routing block, top 6 services) is Epic N; the 500's phone number is `Q-M5` |
 | M-08 | ~~Scope `@font-face` CSS per route group~~ → **assert it** | **P2** | 0.5d | — | **DONE** 18 Aug | Dev | **The row's premise was false.** `globals.css` contains no `@font-face`; `next/font` emits into the importing layout's CSS, so the declarations were already scoped. Measured, `FOUNDATION` §4 corrected, and `check:theme` now asserts it. No refactor, no re-measure of the Lighthouse axes — nothing on the critical path changed |
 
 ### M-02, in full: where the skip-link target lives, and why not in the shell
@@ -462,6 +462,53 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 **No re-measure of the Lighthouse axes.** `FOUNDATION` §4 requires it for changes to
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
+
+### M-07 — the 500 does not work without JS, and that is now measured
+
+**`APP-FLOW.md` §7 says the 500 is "static, no JS dependency". It is not.** Both
+`app/global-error.tsx` and `gridsmith-error-probe` recorded the server-render path as
+**unknown** and refused to assert it — correctly, because it could not be induced without
+editing a file. `M-07` depends on the answer, so the file now exists:
+`app/(marketing)/gridsmith-ssr-throw-probe/page.probe.tsx`, `force-dynamic`, throwing during
+server render, excluded from production by the same `pageExtensions` mechanism as its sibling.
+
+**Measured, reading the response with no JavaScript executed:**
+
+| | |
+|---|---|
+| status | 500 |
+| document | `<html id="__next_error__">` |
+| `lang` | **absent — WCAG 3.1.1, Level A** |
+| `<h1>` / `<main>` | absent |
+| `<title>` | "Gridsmith Ltd", leaked from route metadata, not the boundary's |
+
+`global-error`'s chunk is preloaded, but the boundary renders only after hydration. **A
+visitor with JavaScript disabled gets the bare shell**, on every server-side crash.
+
+**A segment-level `app/(marketing)/error.tsx` was tried and changes nothing** — the served
+HTML is still the shell. There is no app-level fix: Next requires `global-error` to be a
+Client Component, and the layout that would supply the document is the thing that crashed.
+
+**So this is raised, not fixed — `M-P1-1`.** CLAUDE.md: *"Accessibility wins every conflict…
+Then raise the conflict."* The remedy is architectural (an edge/middleware-served static error
+document, or accepting the gap and recording it) and it is a decision for the owner.
+
+**What was shipped is the measurement holding still.** `check-axe` characterises the five
+facts above and **fails when any of them changes**. It is written to be deleted: if `lang`
+appears because a Next upgrade starts server-rendering the boundary, the characterisation
+comes out and the Level A requirement gets asserted directly.
+
+**Deliberate-failure proof, isolated.** `lang` flipped to `true` in `CHARACTERISED`:
+*"`/gridsmith-ssr-throw-probe` served lang=false, characterised as true"*, with **zero axe
+violations across all 28 analyses** — no other check could fire, because no other check
+requests that route.
+
+**The rest of `M-07` is blocked.** `APP-FLOW.md` §7 also wants the 404 to carry a search box,
+the division routing block and the top six services: search does not exist, the routing block
+is `N-02` and the services are CMS content. The 500 is to show email and phone; `contactEmail`
+is a `[SEED]` placeholder and the phone number is `Q-M5`, still open. The 404 itself is master
+themed, owns its document, and now inherits the header, footer and statutory block — audited
+every run at `/_gridsmith-404-probe`.
 
 ### M-06 — the measurement, 18 August 2026. The projection was false.
 
@@ -1025,6 +1072,14 @@ prints the live count; do not re-derive it by hand.
 
 **None is an accessibility failure at any level.** Every item is gate discipline or
 documentation. That is why A-GATE passes with them open.
+
+**That remains true of the Epic A backlog. It is not true of Epic M's.** `M-P1-1`, below, is
+a live WCAG Level A failure — the first in the programme — and it is P1, not P2. It is a
+decision awaiting the owner, not work awaiting a session.
+
+| From | Item | |
+|---|---|---|
+| Epic M | **`M-P1-1`** | **P1, accessibility, Level A.** A server-render crash serves `<html id="__next_error__">` with no `lang`, no `<h1>` and no `<main>`; `global-error` renders only after hydration, so a visitor without JS gets the bare shell. Measured at `M-07` against a committed probe and characterised by `check-axe`. **No app-level fix exists** — Next requires `global-error` to be a Client Component and a segment `error.tsx` was tried and does not change the served HTML. The remedy is architectural: an edge- or platform-served static error document, or a recorded acceptance. **Owner's decision — see `M-07` above** |
 
 | From | Items | Theme |
 |---|---|---|

@@ -102,8 +102,30 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > exist on the master theme only and need a fallback anywhere shared chrome uses them;
 > `cache: 'no-store'` on a Sanity read turns every route dynamic and breaks SSG — the seed
 > script clears `.next/cache/fetch-cache` instead; and `StickyCta` overlaps the footer below
-> 768px, which the statutory block reserves for. **Next is `M-06`, the consent banner, and it
-> is the budget checkpoint.** `INCOMPLETE_ALLOWED` in `check-axe` is now empty.
+> 768px, which the statutory block reserves for. `INCOMPLETE_ALLOWED` in `check-axe` is now
+> empty.
+>
+> **`M-06`'s measurement is done and the ⚑ projection was false — 18 August 2026.** `/`
+> measures **0.5KB** of its 15KB delta; with the consent banner's 8KB reservation that is
+> 8.5KB, **6.5KB spare**. Nothing is breached, no capability leaves the master layer. The
+> projection's 3.3KB `next/link` term never happened (plain `<a>`), and its 5.8KB primitive
+> term is a `/_kitchen-sink` figure no master route pays. `check-bundle-size` now asserts the
+> reservation instead of printing it. **The banner itself is blocked on `A-11`, which is
+> TODO.**
+>
+> **The screen-reader checkpoint is still PENDING.** It was placed at "the `M-06` chrome
+> checkpoint"; `M-06` turned out to be a measurement, not chrome, so the pass over `M-02`,
+> `M-03` and `M-04` has not happened and was deliberately not folded in early.
+>
+> ### ⚠ `M-P1-1` — the first live accessibility failure in the programme
+>
+> **`M-07` established that the 500 does not work without JS.** A server-render crash serves
+> `<html id="__next_error__">` with **no `lang`** (WCAG 3.1.1, Level A), no `<h1>`, no
+> `<main>`, and a `<title>` leaked from route metadata; `global-error` renders only after
+> hydration. The subject is the committed `gridsmith-ssr-throw-probe` route and `check-axe`
+> characterises it every run. **No app-level fix exists** — a segment `error.tsx` was tried.
+> The remedy is architectural and **is the owner's decision**, not a session's. `APP-FLOW.md`
+> §7 has been corrected. **Next is `A-11`**, which unblocks `M-06`'s UI.
 >
 > **Two things to carry, both load-bearing:**
 > - **`A-GATE-7-6` is the ceiling of the verification approach.** `check:claims` asserts that a

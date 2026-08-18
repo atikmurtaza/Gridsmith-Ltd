@@ -52,11 +52,16 @@
  * written as settled fact. CLAUDE.md: an asserted claim no gate covers is unverified, and
  * unverifiable in both directions does not get asserted in either.
  *
- * So: the SSR path is **unknown**, not "known bad" and not "known good". Do not read the
- * probe's success as covering it — the probe exercises one of the two ways this boundary
- * can be reached. Establishing the other needs a route that throws during render, a
- * `next build && next start`, and a read of the response; if it turns out the shell is
- * served, that is a Level A failure needing its own fix and its own subject.
+ * **The SSR path is no longer unknown. It was established at `M-07` and the shell IS
+ * served.** `app/(marketing)/gridsmith-ssr-throw-probe/page.probe.tsx` is the subject, and
+ * `check-axe` reads the response every run. Measured: status 500,
+ * `<html id="__next_error__">`, **no `lang`**, no `<h1>`, no `<main>`, `<title>` "Gridsmith
+ * Ltd" leaked from route metadata. This file's chunk is preloaded but the boundary renders
+ * only after hydration, so a visitor with JavaScript disabled gets the bare shell.
+ *
+ * That is WCAG 3.1.1 **Level A**, on every server-side crash, and it makes `APP-FLOW.md`
+ * §7's *"500 works without JS"* false. A segment-level `app/(marketing)/error.tsx` was
+ * tried and changes nothing. There is no app-level fix — raised as `M-P1-1`.
  *
  * Note also that the probe must not sit in a `_`-prefixed folder: Next treats those as
  * private and excludes them from routing, so the first attempt silently served the 404

@@ -144,7 +144,7 @@ Rules:
 | Form error | Field-level, `aria-describedby`, focus to first error |
 | Submit failure | Preserve input, retry, direct email fallback |
 | 404 | Master-themed, search box, division routing block repeated, top 6 services |
-| 500 | Static, no JS dependency, email and phone visible |
+| 500 | ~~Static, no JS dependency, email and phone visible~~ — **measured false at `M-07`, `M-P1-1`.** Next serves `<html id="__next_error__">` with no `lang`, no `<h1>` and no `<main>`; `global-error` renders only after hydration, so with JS disabled the visitor gets the bare shell. WCAG 3.1.1 Level A. No app-level fix exists — a segment `error.tsx` was tried. Email and phone are separately blocked: `contactEmail` is a placeholder and the phone number is `Q-M5` |
 | Seed content in production | Build fails — see TECH-SPEC §6 |
 
 ## 8. Navigation

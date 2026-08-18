@@ -588,6 +588,60 @@ check-axe: ${linkProblems.length} link(s) do not resolve:`);
   total += linkProblems.length;
 }
 
+/**
+ * **What a server-render crash actually serves, characterised — `M-07`.**
+ *
+ * `app/global-error.tsx` and `gridsmith-error-probe` both recorded the SSR path as
+ * **unknown** and refused to assert it in either direction, because it could not be induced
+ * without editing a file. `app/(marketing)/gridsmith-ssr-throw-probe/page.probe.tsx` is now
+ * that file, committed, and the answer is measured:
+ *
+ *   status 500 · `<html id="__next_error__">` · **no `lang`** · no `<h1>` · no `<main>` ·
+ *   `<title>` "Gridsmith Ltd", leaked from route metadata rather than the boundary's own
+ *
+ * The `global-error` chunk is preloaded but the boundary renders only after hydration, so
+ * **a visitor with JavaScript disabled gets the bare shell.** `APP-FLOW.md` §7 says the 500
+ * "works without JS". It does not. Missing `lang` is WCAG 3.1.1, **Level A**.
+ *
+ * A segment-level `app/(marketing)/error.tsx` was tried and does not change any of it — the
+ * shell is still what the HTML contains. There is no app-level fix; the remedy is
+ * architectural and is raised as `M-P1-1`, not decided here.
+ *
+ * **So this is a characterisation, not an approval.** It asserts today's behaviour so the
+ * behaviour cannot drift in silence — most importantly so that a Next upgrade which starts
+ * server-rendering the boundary is *noticed*. **When this fires because `lang` appeared,
+ * the fix is to delete the characterisation and assert the Level A requirement directly.**
+ * It is written to be deleted.
+ */
+const SSR_CRASH = '/gridsmith-ssr-throw-probe';
+const crashRes = await fetch(`${BASE_URL}${SSR_CRASH}`);
+const crashHtml = await crashRes.text();
+const crashFacts = {
+  status: crashRes.status,
+  shell: /<html[^>]*id="__next_error__"/.test(crashHtml),
+  lang: /<html[^>]*lang="/.test(crashHtml),
+  h1: /<h1[\s>]/.test(crashHtml),
+  main: /<main[\s>]/.test(crashHtml),
+};
+const CHARACTERISED = { status: 500, shell: true, lang: false, h1: false, main: false };
+for (const [key, expected] of Object.entries(CHARACTERISED)) {
+  if (crashFacts[key] !== expected) {
+    total += 1;
+    console.error(
+      `
+check-axe: ${SSR_CRASH} served ${key}=${crashFacts[key]}, characterised as ${expected}.` +
+        `
+      The server-render crash path has CHANGED. If lang is now present, Next is` +
+        `
+      server-rendering global-error: delete this characterisation and assert the` +
+        `
+      Level A requirement instead (M-P1-1). If it moved the other way, it is a` +
+        `
+      regression. Either way this is not a pass.`,
+    );
+  }
+}
+
 // `process.exitCode`, not `process.exit()`, from here down. The link pass above leaves
 // undici's connection pool open, and exiting through it aborts the process on Windows —
 // `Assertion failed: !(handle->flags & UV_HANDLE_CLOSING)`, which was observed on this gate
@@ -615,6 +669,10 @@ if (!process.exitCode) {
   // verified all four assertions, so there is no third outcome for this line to hide.
   console.log(
     `check-axe: ${linkedFrom.size} distinct same-origin link target(s) across ${ROUTES.length} routes — every one resolves`,
+  );
+  console.log(
+    `check-axe: ${SSR_CRASH} still serves the characterised crash shell ` +
+      '(500, __next_error__, no lang/h1/main) — a KNOWN Level A gap, M-P1-1, not an approval',
   );
   console.log(
     `check-axe: skip link verified on ${ROUTES.filter((r) => r.themed !== false).length} themed route(s) ` +
