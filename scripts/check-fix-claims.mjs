@@ -64,7 +64,36 @@ const GOVERNED = [
  * produce a false identifier. `A11Y-\d+` is deliberately NOT here — see the ledger's closing
  * section — and that exclusion is asserted below rather than merely documented.
  */
-const ID_RE = /`(G\d+b?|R\d+|T\d+|A-GATE-\d+-\d+)`/g;
+const ID_RE = /`(G\d+b?|R\d+|T\d+|U\d+|A-GATE-\d+-\d+)`/g;
+
+/**
+ * **The round each identifier belongs to, and the committed report that opens it.**
+ *
+ * `A-GATE-6-3`: the first version of this gate argued that "the claim's round is not
+ * machine-readable — rounds are prose headings with no mapping to a commit range or a date".
+ * **That was wrong, and it was the load-bearing claim.** Every round has a committed report
+ * document, and the commit that ADDED that document is the round's boundary:
+ * `git log --diff-filter=A -- <report>`. The round is readable from the identifier's prefix;
+ * the boundary is readable from git. Nothing about the documents had to change.
+ *
+ * Getting that wrong bought a weaker gate. Without the constraint below, this file asserted
+ * only *"the named file was touched at some point in history"* while its own docstring
+ * claimed *"a commit that genuinely touched the named files"*. It accepted `R2` attributed to
+ * the July commit that **created** `Tabs.tsx` — the natural misattribution for the very case
+ * the gate was built on — and `T1` attributed to a different fix in the same file
+ * (`A-GATE-6-4`).
+ *
+ * Order matters: longest prefix first, so `A-GATE-4-` is tested before any shorter key.
+ */
+const ROUND_BOUNDARIES = [
+  ['A-GATE-4-', 'docs/_shared/09-A-GATE-RUN-4.md'],
+  ['A-GATE-5-', 'docs/_shared/10-A-GATE-RUN-5.md'],
+  ['A-GATE-6-', 'docs/_shared/11-A-GATE-RUN-6.md'],
+  ['G', 'docs/_shared/07-A11Y-AUDIT.md'],
+  ['R', 'docs/_shared/09-A-GATE-RUN-4.md'],
+  ['T', 'docs/_shared/10-A-GATE-RUN-5.md'],
+  ['U', 'docs/_shared/11-A-GATE-RUN-6.md'],
+];
 
 /**
  * How many rows the ledger must hold. **Hardcoded, deliberately.** Derived from the ledger
@@ -74,7 +103,7 @@ const ID_RE = /`(G\d+b?|R\d+|T\d+|A-GATE-\d+-\d+)`/g;
  *
  * Raise it in the same commit that adds rows, with the finding in the message.
  */
-const EXPECTED_ROWS = 39;
+const EXPECTED_ROWS = 44;
 
 const problems = [];
 
@@ -99,6 +128,36 @@ if (rows.length !== EXPECTED_ROWS) {
 }
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' });
+
+/**
+ * The commit that added a round's report. Cached, because `git log` over the same handful of
+ * paths once per row is pure waste.
+ *
+ * **A boundary that cannot be resolved is a hard failure, never a skipped assertion.** If the
+ * report is renamed or its adding commit is unreachable, the temporal check silently stops
+ * applying to every row of that round — a gate reporting a pass over an assertion it no longer
+ * makes, which is the class this repository has recorded nine times.
+ */
+const boundaryCache = new Map();
+function boundaryCommit(id) {
+  const entry = ROUND_BOUNDARIES.find(([prefix]) => id.startsWith(prefix));
+  if (!entry) return { error: `no round boundary is defined for the identifier prefix of ${id}` };
+  const report = entry[1];
+  if (boundaryCache.has(report)) return boundaryCache.get(report);
+
+  let result;
+  try {
+    const raw = git('log', '--diff-filter=A', '--format=%H', '--', report).trim();
+    const sha = raw.split(String.fromCharCode(10))[0].trim();
+    result = sha
+      ? { sha, report }
+      : { error: `${report} has no adding commit in this history, so the round it opens has no boundary` };
+  } catch {
+    result = { error: `could not read the adding commit of ${report}` };
+  }
+  boundaryCache.set(report, result);
+  return result;
+}
 
 const known = new Set();
 for (const row of rows) {
@@ -144,6 +203,37 @@ for (const row of rows) {
     problems.push(
       `${row.id} cites commit ${row.commit}, which is not an ancestor of HEAD. It does not ` +
         'exist, or it is not on this branch.',
+    );
+    continue;
+  }
+
+  // A fix claim satisfied entirely by the documents that describe it is the failure this
+  // ledger exists to catch, and FIX-LEDGER.md said so in prose while asserting nothing
+  // (`A-GATE-6-5`). Documents may accompany a fix; they may not BE it.
+  if (row.files.every((f) => f.startsWith('docs/'))) {
+    problems.push(
+      `${row.id} is FIXED but every file it names is under docs/. A fix claim must name where ` +
+        "the substance lives — the gate, component or stylesheet that changed. Documents may " +
+        'accompany a fix; they cannot be the whole of it.',
+    );
+    continue;
+  }
+
+  // The fix must POSTDATE the report that raised the finding. Without this the check below
+  // asks only "was this file ever touched by that commit", which any commit that happens to
+  // touch the file satisfies — including the one that created it (`A-GATE-6-4`).
+  const boundary = boundaryCommit(row.id);
+  if (boundary.error) {
+    problems.push(`${row.id}: ${boundary.error}. The temporal check cannot run, so it fails.`);
+    continue;
+  }
+  try {
+    git('merge-base', '--is-ancestor', boundary.sha, row.commit);
+  } catch {
+    problems.push(
+      `${row.id} cites commit ${row.commit}, which does not descend from ${boundary.sha.slice(0, 8)} — ` +
+        `the commit that added ${boundary.report}, i.e. the report that raised this finding. ` +
+        'A fix cannot predate the audit that found it; this is a misattribution, not a fix.',
     );
     continue;
   }

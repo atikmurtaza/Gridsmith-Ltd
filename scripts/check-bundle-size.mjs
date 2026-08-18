@@ -436,8 +436,13 @@ if (baselineRows.length !== BASELINE_ROUTES.length) {
         '    any size, and neither can the floor check. Either:\n' +
         '      - something shipped on some routes and not others (a shared layout import, a\n' +
         '        route-group boundary). Decide whether every route should pay for it; or\n' +
-        '      - a route legitimately grew a feature, in which case remove it from\n' +
-        '        BASELINE_ROUTES deliberately, so the shared figure stops being derived from it.\n' +
+        '      - a route legitimately grew a feature of its own. Removing it from\n' +
+        '        BASELINE_ROUTES is then correct — but note this is ALSO how the message is\n' +
+        '        silenced: drop the routes that gained the cost and the spread goes to zero on\n' +
+        '        the same build, with no gate objecting. So do it only when the route really\n' +
+        '        has a feature, say which in the commit, and never to go green (A-GATE-6-1).\n' +
+        '        At one member the spread is zero by construction and both decomposition\n' +
+        '        assertions go vacuous.\n' +
         '    Do not widen this tolerance to make the message go away — that restores the blind\n' +
         '    spot A-GATE-5-3 recorded.',
     );
