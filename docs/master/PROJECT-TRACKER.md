@@ -1095,6 +1095,7 @@ decision awaiting the owner, not work awaiting a session.
 | Round 7 | `A-GATE-7-4`, `7-5` | the ledger reads as though substance is checked when path shape is; `ROUND_BOUNDARIES` ordering is belt-and-braces, not load-bearing |
 | **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
+| Epic M | `M-P2-5` | **`NEXT_PUBLIC_SANITY_DATASET` must be set on the Hostinger deployment.** It defaults to `development`; an unset variable on the host serves seed content with a `[SEED]` VAT number to the public. `check:launch` runs in CI against CI's environment and cannot see the host's. Needs either a deploy-time assertion or a platform env var that cannot be omitted — `A-12` |
 | Epic M | `M-P2-3` | **every price field must carry whether its figure is net or gross of VAT, and each division's display rule follows from its audience.** Gridsmith is VAT registered at launch: consumer-facing prices must display VAT-inclusive, B2B prices must state their treatment explicitly. Press sells to individual authors — consumers under the Consumer Contracts Regulations 2013; Design and Digital sell largely B2B. **This is a schema constraint on the pricing rows and belongs to the division epics, not to `companyDetails`** — but it is cheaper to build in than to retrofit across three divisions at Stage 8. Raise it at the first pricing schema |
 | Epic M | `M-P2-4` | `npm audit` reports 13 high in the dev tree. All pre-existing (`@lhci/cli`, `puppeteer`, `next`/`postcss`) except `sharp`, which arrived transitively with the `sanity` devDependency at `M-05`. None is in the production dependency tree. Sweep at the Epic M sweep |
 | Epic M | `M-P2-2` | **a focusable element with a transition on `transform` can take focus while off screen** — the class behind the skip link's own first defect (`M-02`). Grepped, not swept: `motion.module.css:51` `.stickyCta` translates `100%` off screen over `--dur-base` and holds two buttons, so focus arriving mid-slide is the same shape; `visibility: hidden` makes it untabbable while hidden, which narrows the window but does not close it. `interactive.module.css:144` `.marker` rotates in place, is not focusable, and is not an instance. Nothing else transitions `transform`. Sweep at the Epic M sweep |
@@ -1146,6 +1147,45 @@ permanent committed subject exists for a gate to reach**, and **a gate subject m
 that it is still the subject**. The proof rule is recorded there as *load-bearing, not
 ceremonial* — it has caught a broken gate in three consecutive sessions, twice on gates
 written in the same session as the rule.
+
+## Hosting — Hostinger Business, Node app via GitHub integration
+
+**Decided 18 August 2026.** The Node runtime this build assumes is available. Nothing already
+built needs revisiting and there is no static export.
+
+**Two constraints, both load-bearing for later rows.**
+
+**1. Managed hosting, not a VPS. No root, no nginx or Apache configuration.** `M-P1-1`'s
+preferred remedy — a platform-served static error document for the `__next_error__` shell —
+**may not be available**. The alternatives are an edge layer in front of the host, or a
+recorded acceptance of the Level A gap. **Not chosen and not built now: this is `A-12` work,
+once the deployment exists** and it can be established what the platform actually serves on a
+5xx.
+
+**2. `npm` cannot be run over SSH on this plan.** Build commands run automatically on deploy.
+**CI is therefore the sole enforcement point for every gate**, and that was checked rather
+than assumed.
+
+| Runs on the host at deploy | Runs in CI only |
+|---|---|
+| `preinstall` → `check:node`; `build` → `next build` | all 18 gates; `verify:*` is referenced by nothing the host invokes |
+
+Three things follow, and each is recorded rather than fixed:
+
+- **`check:node` does run on the host**, because it is wired to `preinstall` as well as to
+  `verify:static`. That is the one gate that is not CI-only. It is **correct that it runs
+  there** — a build on the wrong Node major is not this project's build — but it means
+  **Hostinger's Node version must be set to 24 or every deploy fails at install**, loudly,
+  with the message in `scripts/check-node-version.mjs`. `.nvmrc` is the source of truth.
+- **The build now makes an outbound request.** `M-05` made static generation read
+  `companyDetails` from Sanity, so the host needs network access to `api.sanity.io` at build
+  time. A host that blocks egress produces a build failure, not a silent empty footer —
+  `getCompanyDetails()` throws.
+- **⚠ `NEXT_PUBLIC_SANITY_DATASET` must be set on the host.** It defaults to `development`,
+  which is correct for a missing variable in CI and **wrong on a live deployment** — the
+  deploy would serve seed content with a `[SEED]` VAT number. `check:launch` cannot catch it
+  because it runs in CI against the CI environment, not against the host's. Logged as
+  `M-P2-5`; it belongs with `A-12`'s production exclusions.
 
 ## Blocked / decisions needed
 
