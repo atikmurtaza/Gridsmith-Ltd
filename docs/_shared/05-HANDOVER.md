@@ -1,11 +1,54 @@
-# Handover — end of the Epic A audit session
+# Handover — Epic M closed
 
-**Written:** 11 August 2026 · **Revised:** 14 August 2026, at **A-GATE PASS** · **Branch:**
+**Written:** 11 August 2026 · **Revised:** 18 August 2026, at **EPIC M CLOSE** · **Branch:**
 `feat/a-01-a-10a-scaffold-ci` · **Runtime:** Node 24.15.0
 
 This file exists because a session ended with state that only that session knew. Everything
 here is either unrecorded elsewhere or scattered across five documents. Read it before
 touching anything; delete the sections that go stale as they are resolved.
+
+---
+
+## ⇢ START HERE — Epic M is closed. Epic N is next. Read this box and then the two named files.
+
+**Nothing in Epic M is waiting for work.** Every row is done or blocked on the owner. The full
+close-out — what is done, what is blocked and on whom, the backlog, and the defect classes — is
+`master/PROJECT-TRACKER.md` § **"Epic M — CLOSED"**. This box is the short version.
+
+**Done:** `M-02`–`M-08`, plus the Epic A rows Epic M unblocked or needed — `A-06` (core
+schemas), `A-09` (analytics, built and **not enabled**), `A-11` (consent), `A-12` (seed
+enforcement). `G7` closed the epic-identifier collisions. **Gates went 17 → 19.**
+
+**Blocked, all on Atik:**
+
+| | On |
+|---|---|
+| `A-07`, `A-08` | **`Q-M18`** — a Supabase project |
+| `A-09`'s grant path | **`Q-M19`** — a GA4 measurement id and a PostHog key. Nothing injects without them |
+| **`M-P1-1`** | **a decision.** The 500 serves Next's `__next_error__` shell with no `lang` — WCAG 3.1.1 **Level A**, on every server-side crash. No app-level fix exists; Hostinger being managed hosting may rule out the platform-served remedy |
+| The Studio's CORS origin | an interactive `npx sanity login` — `SETUP.md` has the command |
+| **The screen-reader pass** | a human with NVDA or VoiceOver, over `M-02`, `M-03`, `M-04` and the consent banner. **It never happened** — it was placed at "the `M-06` chrome checkpoint" and `M-06` turned out to be a measurement plus a build. **`M-02` stays un-DONE until it does.** The gates cover focus order, target, paint, landmarks and roles; they do not cover announcement, and no lab check does |
+
+`M-07`'s remaining content is Epic N and `Q-M5`. **Do not start Epic N without reading the
+close-out's last section**, which carries the one instruction that applies to every row in it:
+
+> **A number that was projected rather than measured is not evidence, and reserving against it
+> costs real budget. Measure first, then decide.**
+
+Three rows this epic carried a figure nobody had measured — `M-08`'s font waste, `M-06`'s
+11.7KB projection, `A-11`'s 8KB reservation — and **all three were wrong in the same
+direction**, because nobody projects a number for something they expect to be cheap. The same
+applies to a row's summary of anything external: **check the source, not the summary.**
+
+**Backlog: 33 open, 1 P1, 1 ceiling.** Hand-counted, and that is a stated limitation —
+`check:claims` covers the ledger's identifier space and `M-P*` is outside it, so the figure is
+a hand-maintained claim about a hand-maintained list. Enumerated in the close-out.
+
+**Also read `master/PROJECT-TRACKER.md` § Hosting before deploying anything.** Two facts bite
+immediately: `check:node` runs on the host via `preinstall`, so **Hostinger's Node must be set
+to 24** or every deploy fails at install; and **`NEXT_PUBLIC_SANITY_DATASET` must be set in the
+platform environment** — it has no default, so an unset variable is now a build error rather
+than a site serving seed content.
 
 ---
 
@@ -16,14 +59,23 @@ touching anything; delete the sections that go stale as they are resolved.
 | A-01 | DONE | Next 15 pinned, React 19, **Node 24** (raised from 22 mid-audit). Framework floor **100.2KB gz / 102,635 bytes**, re-measured on Node 24 and byte-identical to the Node 22 build — proven by matching content hashes, not by similarity |
 | A-10a | DONE | **Seventeen gates** — fourteen through 13 Aug, plus `check:headings` and `check:content` at the run-3 fixes and `check:claims` at `T3`. All swept twice for the "passes without measuring" class — four instances closed in July, three more found on 12 Aug (one inside `check-axe`), nine gates changed. Every fix proven by deliberate failure: `01-VALIDATION-REPORT.md` §14 |
 | A-02 | DONE | 39 base tokens, now held in a **hardcoded required list** in `check-tokens.mjs` rather than scraped from the file being checked. It still counts **declarations**, not string occurrences — exactly once, which is what catches the Tailwind namespace collision |
-| A-03 | DONE | Four themes, 15-token contract each (master +3). `check:contrast` is a **101-cell permission matrix**: every foreground token against every surface in every theme |
+| A-03 | DONE | Four themes, 15-token contract each — **plus the three division accents, which every theme carries from V3, not master alone**. `check:contrast` is a **128-cell permission matrix** (was 101): every foreground token against every surface in every theme |
 | A-04 | DONE | Four root layouts, no `app/layout.tsx`. `check:theme` verifies server-set `data-division`, render-blocking CSS, and zero client references |
 | A-05 | DONE | 24 primitives, 21 Server / 3 Client. Every primitive that emits a DOM id now generates it with `useId()` — which works in Server Components, so this cost no client JS. `Accordion` also generates its own exclusive-group name and no longer emits an unread `id` |
 | A-05a | DONE | `/_kitchen-sink`, 23 primitives × 4 themes (`Media` deliberately excluded — the page now says 23, not 24), **6.2KB gz delta, budgeted at 7KB**, of which **0.5KB** (measured) is the global-error boundary every route carries. The `scope()` workaround is gone: the primitives generate their own ids and `check-axe` still reports zero duplicates |
 | A-10b | DONE | Lighthouse split into **two axes** — desktop asserts category scores, mobile asserts Core Web Vitals on 4G. Both green on CI |
 | **A-GATE** | **PASSED — 14 Aug 2026** | All six criteria met after seven rounds. Rounds 4–7 were scoped re-verifications, not open audits (`_shared/09`–`12`). **Epic A is closed; do not reopen it to improve anything.** 22 items are logged as P2 with the epic — none an accessibility failure — plus one ceiling (`A-GATE-7-6`) and `G7` deferred. Backlog enumerated in `master/PROJECT-TRACKER.md` |
-| A-06, A-07 | **TODO**, not REVIEW | **No code artefacts exist** — no `sanity/`, no `supabase/`, no `lib/`, nothing in `git ls-files`. What exists is prose in `docs/*/SCHEMA.md`, which is the spec, not the work. `REVIEW` means awaiting review and there was nothing to review. Blocked on `Q-M17` / `Q-M18` (the old `(B4)` reference resolved to nothing) |
-| A-08, A-09, A-11, A-12 | TODO | Not started |
+| A-06 | **DONE 18 Aug** | Core schemas: 8 object types, 6 core document types, `isSeed` group-wide, the canonical-six validator. `check:schemas` is the gate — `next build` never compiles this tree. The note below was true when written and is kept for the reasoning about `REVIEW` |
+| A-07 | **TODO**, blocked on `Q-M18` | **No code artefacts exist** — no `sanity/`, no `supabase/`, no `lib/`, nothing in `git ls-files`. What exists is prose in `docs/*/SCHEMA.md`, which is the spec, not the work. `REVIEW` means awaiting review and there was nothing to review. Blocked on `Q-M17` / `Q-M18` (the old `(B4)` reference resolved to nothing) |
+| A-08 | TODO | Blocked on `A-07`, so on `Q-M18` |
+| A-09 | **BUILT, not enabled** 18 Aug | Taxonomy, AI-referral classifier, consent-gated loader. `Q-M19` blocks the ids; the grant path is proven once by hand and gated by nothing |
+| A-11 | **DONE 18 Aug** | Consent state, Consent Mode v2 bridge, banner, footer reopen. **Measured 2.0KB gz against an 8KB reservation** |
+| A-12 | **DONE 18 Aug** | Seed enforcement folded into `check:launch` — the spec's query counted almost nothing. Closes `M-P1-2`. `/_kitchen-sink` now inherits the probe exclusion |
+
+**⚠ The paragraph below is the Epic A state and says seventeen. Nineteen checks now run** —
+`check:launch` was added at `M-05` and `check:schemas` at `A-06`, and both are in `ci.yml` and
+the `verify:*` chain, which `check-node-version` still machine-checks. The list that follows is
+otherwise accurate.
 
 **Seventeen checks now run**, and the count is machine-checked — `check-node-version` walks
 the `verify:*` chain, diffs it against `ci.yml` and prints the number, so this line cannot
@@ -45,7 +97,7 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 
 ## 2. A-GATE — open, and exactly why
 
-> ### ⇢ START HERE: A-GATE PASSED. Epic A is closed. Next is Epic M, task `G7`.
+> ### ~~⇢ START HERE~~: A-GATE PASSED. Epic A is closed. **Superseded 18 Aug — the START HERE box is now at the top of this file, and Epic M is closed too.** Kept because the A-GATE record is the reasoning behind the gate discipline everything since has relied on.
 >
 > **Criteria 1–6 are met as of 14 August 2026.** Seven audit rounds — three open-ended, four
 > scoped. The scoped shape is what worked: rounds 4–7 each re-verified a named list rather than

@@ -204,6 +204,98 @@ Three things this run settles.
 | M-07 | 404 + 500 pages | P0 | 1d | M-03 | **PART DONE** 18 Aug; rest BLOCKED | Dev | **The row's premise is false: the 500 does NOT work without JS.** Established with a committed SSR-throw probe and now characterised by `check-axe`. Level A, raised as `M-P1-1` — **a decision, not a fix I can take**. The 404's remaining content (search box, division routing block, top 6 services) is Epic N; the 500's phone number is `Q-M5` |
 | M-08 | ~~Scope `@font-face` CSS per route group~~ → **assert it** | **P2** | 0.5d | — | **DONE** 18 Aug | Dev | **The row's premise was false.** `globals.css` contains no `@font-face`; `next/font` emits into the importing layout's CSS, so the declarations were already scoped. Measured, `FOUNDATION` §4 corrected, and `check:theme` now asserts it. No refactor, no re-measure of the Lighthouse axes — nothing on the critical path changed |
 
+## Epic M — CLOSED, 18 August 2026
+
+**Every row is done or blocked on someone other than a session. Nothing in Epic M is waiting
+for work.**
+
+### What is done
+
+| Row | |
+|---|---|
+| `M-01` | folded into `A-03` at Epic A |
+| `M-02` | skip link, closing `A11Y-21` before the chrome that would have made it a Blocker. **Not marked DONE** — see the screen-reader checkpoint below |
+| `M-03` | header, per-division nav, wordmark → `/`. **0KB** |
+| `M-04` | footer, division switcher, statutory block, all from the CMS. **0KB** |
+| `M-05` | `companyDetails` singleton, two datasets, one schema folder, `check:launch` |
+| `M-06` | consent banner UI, built with `A-11`. The ⚑ projection was false — `/` measures **2.5KB of 15KB** |
+| `M-07` | **part done.** The 500's premise was measured and is false — see `M-P1-1` |
+| `M-08` | **premise was false.** The font waste did not exist; the deliverable became the assertion |
+
+Epic A rows completed alongside it because Epic M unblocked or needed them: **`A-06`** (core
+schemas), **`A-09`** (analytics, built not enabled), **`A-11`** (consent), **`A-12`** (seed
+enforcement). `G7` closed the epic-identifier collisions.
+
+**Gates went 17 → 19**: `check:launch` at `M-05` and `check:schemas` at `A-06`. Both exist
+because nothing else could see their subject.
+
+### What is blocked, and on whom
+
+| | Blocked on | Owner |
+|---|---|---|
+| `A-07`, `A-08` — Supabase, `leads`, RLS, the lead pipeline | **`Q-M18`** — a Supabase project. Only Atik can create one | **Atik** |
+| `A-09`'s grant path — a permanent gate subject for tag injection | **`Q-M19`** — a GA4 measurement id and a PostHog key. Nothing injects without them, and a placeholder would send real visitor data to a property nobody owns | **Atik** |
+| **`M-P1-1`** — the 500 serves Next's `__next_error__` shell with no `lang`. WCAG 3.1.1 Level A on every server-side crash | **a decision.** No app-level fix exists; a segment `error.tsx` was tried. The remedy is an edge layer or a recorded acceptance, and Hostinger being managed hosting may rule out the platform-served option | **Atik** |
+| `M-07`'s remaining content — the 404's search box, division routing block and top six services; the 500's phone number | Epic N and `Q-M5` | — |
+| The Studio's CORS origin | an interactive `npx sanity login`. `SETUP.md` has the command | **Atik** |
+| **The screen-reader pass over `M-02`, `M-03`, `M-04` and the consent banner** | a human with NVDA or VoiceOver. It was placed at "the `M-06` chrome checkpoint"; `M-06` turned out to be a measurement plus a build, so **the checkpoint never happened and was deliberately not folded in early** | **Atik** |
+
+**`M-02` stays un-DONE until that pass happens.** The gates cover focus order, target, paint,
+landmarks and roles. They do not cover announcement, and no lab check does.
+
+### The P2 backlog, in one place
+
+**33 open, 1 P1 open, 1 ceiling.** Counted by hand and that is a limitation worth stating:
+`check:claims` prints a live count for the **ledger**, which covers `A-GATE-*`, `G*`, `R*`,
+`T*` and `U*` identifiers only. `M-P*` is outside `ID_RE`, so **this count is a hand-maintained
+claim about a hand-maintained list** — the `A-GATE-7-6` ceiling, one level up. Read it as
+"roughly this many, enumerated below", not as a verified figure.
+
+| Source | Open | Where |
+|---|---|---|
+| Epic A | **22** | § "The P2 backlog carried out of Epic A" — unchanged this epic. None is an accessibility failure at any level |
+| Epic M | **11** | `M-P2-1`, `2`, `3`, `4`, `6`, `7`, `8`, `9`, `10`, `11` and the `A-GATE-6-6` carry-over that was never chased |
+| **P1** | **1** | `M-P1-1` — the first live accessibility failure in the programme, and a decision |
+| **Ceiling** | **1** | `A-GATE-7-6` — not backlog, will not be fixed |
+| Fixed this epic | — | `M-P1-2` (unset dataset publishing a `[SEED]` VAT number, closed at `A-12` by removing the default), `G7`, `A11Y-21` |
+
+`M-P2-2` and `A-GATE-6-6` were deferred by standing instruction all epic and remain so.
+
+### Defect classes logged this epic
+
+Epic A's list was about gates that measure nothing. **Epic M's is about claims that were true
+once, or true somewhere, and were never re-checked when that changed.**
+
+| Class | Instances | One line |
+|---|---|---|
+| **Projected number treated as evidence — and always pessimistic** | `M-08` (~29KB of font waste that did not exist), `M-06` (11.7KB projected, 0.5KB actual), `A-11` (8.0KB reserved, 2.0KB actual) | nobody projects a number for something they expect to be cheap, so the errors accumulate one way — and each was *spent* before anyone checked it. **The standing instruction below** |
+| **True only of its current scope** | `V3` — `--accent-digital`/`--accent-press` claimed `role: 'body'` | the claim was true of the only surface the token existed on (master's white canvas, 5.09:1) and was never true of its *use*. It became a failure the moment the token existed on a dark canvas — 2.01:1 — **and widening the scope is what surfaced it, not review**. A role is a claim about every context a token can appear in, not about the ones it happens to appear in today |
+| **Two adjacent properties, one gated** | `V1` — storage asserted, state unasserted | zero cookies and zero requests said nothing about what the consent state *is* while the choice is unmade. A banner could apply `granted` defaults, store nothing, request nothing, and pass every prior assertion |
+| **A row's summary of an external requirement is not the requirement** | `M-04` | the row said "Companies Act". The VAT line's basis is the E-Commerce Regs 2002 reg. 6(1)(g); reg. 25(2)(a)'s place-of-registration was omitted entirely; and reg. 6(1)(c)'s rapid-contact route was in no row at all |
+| **A spec query that measures almost nothing** | `A-12` | `TECH-SPEC` §6's `published == true` — only `service` has that field, so five of six seedable types were invisible. **Epic A's gate-blindness class, occurring in a spec rather than a script**, on what the spec itself calls the most damaging content failure available to this project |
+| **A silent fallback defeating a gate through an environment CI cannot see** | `M-P1-2` | `NEXT_PUBLIC_SANITY_DATASET` defaulting to `development` was right in CI and would have published a `[SEED]` VAT number from a host. Fixed by removing the default: unset is now a build error |
+| **An identifier that resolves to two things** | `G7` | `Epic S` and `Epic N` each meant two epics; a tracker task is the unit of work, so an ambiguous id defeats the mechanism |
+
+Two of these were found by **widening a scope rather than by reviewing** — the accent role and
+the dataset fallback — which is the practical lesson: a claim is not re-checked by re-reading
+it, it is re-checked by putting it somewhere new.
+
+### Next: Epic N, and the instruction that applies to every row in it
+
+> **A number that was projected rather than measured is not evidence, and reserving against it
+> costs real budget. Measure first, then decide.**
+
+Three rows this epic carried a figure nobody had measured, and all three were wrong in the
+same direction. Before starting any Epic N row that carries a number — a budget, a size, a
+duration, a count — **establish whether anything ever measured it, and say which in the
+commit.** If nothing did, the row's deliverable is the measurement plus an assertion, as
+`M-08`, `M-06` and `A-11` each became.
+
+The same applies to a row's summary of anything external: a legal requirement, a framework
+behaviour, a spec in another file. **Check the source, not the summary.**
+
+**Do not start Epic N without reading this section and the Hosting section below.**
+
 ### M-02, in full: where the skip-link target lives, and why not in the shell
 
 **The link is in `RootShell`; `<main id="main">` is not.** Wrapping `children` in a `<main>`
@@ -1438,6 +1530,7 @@ decision awaiting the owner, not work awaiting a session.
 | Round 7 | `A-GATE-7-4`, `7-5` | the ledger reads as though substance is checked when path shape is; `ROUND_BOUNDARIES` ordering is belt-and-braces, not load-bearing |
 | **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
+| Epic M | `M-P2-11` | **the wordmark's face is constrained, not chosen.** It is `--font-mono` because that is the only family all four route groups already load, so it costs zero bytes — not because JetBrains Mono is the right face for the company mark. **Revisit at Press's shell epic (`P-xx`) when its font budget is set.** The question is whether one word justifies a fourth family on `/press`, on the critical path, against a 2.0s LCP budget with a ~1.52s empty-page floor. **It must be answered with a measured cost, not a preference** — build with Inter added to the Press layout, measure the LCP and the delta on both Lighthouse axes, then decide |
 | Epic M | `M-P2-9` | **`protectedVideo`'s shape is derived, not specified.** `SCHEMA-CORE.md` §1 references it from `project.media` and defines it nowhere. It mirrors `protectedImage` with a `file` asset. A poster frame, a duration and a captions track (WCAG 1.2.2, Level A for prerecorded video with audio) are all plausible additions and none is specified. Settle it at `D-01`, the first row that renders one |
 | Epic M | `M-P2-10` | **`post.author` and `post.readingTime` are untyped in the spec.** Listed as bare field names. Implemented as a string and a stored number; `author` could reasonably be a reference to `teamMember` and `readingTime` could reasonably be computed from `body` at query time. Settle at `N-13` |
 | Epic M | `M-P2-8` | **the AI-referral classifier's self-check is not in the verify chain.** `node lib/analytics/referral.ts` runs 11 assertions covering the substring and lookalike-host cases, and nothing runs it in CI. Folding it in means a nineteenth gate — `check-node-version` counts them and `ci.yml` has to agree — which is more than the logic currently warrants. Revisit when `lib/analytics/` grows, or when `Q-M19` resolves and the grant path needs a subject anyway |
