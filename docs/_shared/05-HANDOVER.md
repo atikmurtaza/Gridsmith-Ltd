@@ -149,7 +149,14 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > consequences are in `master/PROJECT-TRACKER.md` § Hosting. The one to know now: `check:node`
 > runs on the host via `preinstall`, so **Hostinger's Node must be set to 24 or every deploy
 > fails at install**, and `NEXT_PUBLIC_SANITY_DATASET` must be set there or the site serves
-> seed content (`M-P2-5`).
+> seed content — **`M-P1-2`, P1**, because the published value is a `[SEED]` VAT number and
+> that is a false VAT statement on a public website. `A-12` owns the remedy; the preferred one
+> is removing the default so an unset variable is a build error.
+>
+> **And read the tracker's standing instruction before Epic N:** every unmeasured number in
+> Epic M was wrong and all three were pessimistic — `M-08`'s font waste did not exist, `M-06`
+> projected 11.7KB against an actual 0.5KB, `A-11` reserved 8.0KB against an actual 2.0KB. A
+> projected number is not evidence, and reserving against it spends real budget.
 >
 > **Two things to carry, both load-bearing:**
 > - **`A-GATE-7-6` is the ceiling of the verification approach.** `check:claims` asserts that a

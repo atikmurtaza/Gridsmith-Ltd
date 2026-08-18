@@ -463,6 +463,39 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
 
+### Every unmeasured number in Epic M has been wrong, and always pessimistic
+
+**Three rows, three projections, three overstatements. Recorded once as one finding rather
+than three, because the pattern is the finding.**
+
+| Row | Projected | Measured | Error |
+|---|---|---|---|
+| `M-08` | ~29KB of render-blocking CSS, "a third useful"; 22 `@font-face` blocks per route | **the waste did not exist** — declarations were already scoped, `/press` ships no Inter | the whole premise |
+| `M-06` | 11.7KB committed before the header and footer contain any code | **0.5KB** | 11.2KB |
+| `A-11` | 8.0KB consent banner reservation | **2.0KB** | 6.0KB |
+
+**All three were pessimistic, and that direction is not a coincidence.** A projection is
+written when someone is worried about a cost; nobody projects a number for something they
+expect to be cheap. So the errors accumulate one way, and each one is *spent* — `M-06`'s
+projection reserved 11.7KB of a 15KB budget and produced a written expectation that Epic M
+would fail its budget, which shaped two sessions of planning. `M-08` produced a rowed refactor
+that had nothing to refactor. `A-11`'s reservation was still being subtracted from
+`/_kitchen-sink`'s ceiling months after it was invented.
+
+**Standing instruction for Epic N and everything after:**
+
+> **A number that was projected rather than measured is not evidence, and reserving against it
+> costs real budget.** Measure first, then decide. Where a row carries a figure, establish
+> whether anything ever measured it before building to it — and if nothing did, say so in the
+> commit and convert the row's deliverable into the measurement plus an assertion, as `M-08`,
+> `M-06` and `A-11` each did.
+
+This is the same rule CLAUDE.md already states for *published* numbers — the 29 contrast
+ratios, of which 25 were wrong. What Epic M adds is that it applies just as much to numbers
+nobody published: a figure in a tracker note or a spec sentence is exactly as unverified as one
+in a table, and it does more damage, because a budget reservation is acted on before anyone
+thinks to check it.
+
 ### A-11 / M-06 — the banner, and the 8KB reservation measured at last
 
 **Built and measured: 2.0KB gz. The reservation was 8.0KB.** `PROJECT-RULES.md` §8 said <=8KB
@@ -1155,6 +1188,7 @@ decision awaiting the owner, not work awaiting a session.
 
 | From | Item | |
 |---|---|---|
+| Epic M | **`M-P1-2`** | **P1. An unset `NEXT_PUBLIC_SANITY_DATASET` on Hostinger publishes a `[SEED]` VAT number.** The variable defaults to `development`, which is right for a missing variable in CI and wrong on a live host: the deploy would serve `[SEED] GB000000000` as the company's VAT registration number on every page. **That is a false VAT statement on a public website** — the precise failure `check:launch`'s production tier exists to prevent, defeated by an environment CI cannot see. Filed P2 first on the reading that it is deployment configuration; the failure mode is a legal statement, so it is P1. **Remedy is `A-12`'s, not this session's**, and the options are: (a) **remove the default entirely**, so an unset variable is a build error rather than a silent fallback — the strongest, and it makes the platform's env config a hard dependency of the build; (b) fail the build when a deployed host (`VERCEL_ENV`, or Hostinger's equivalent marker) is detected and the dataset is not explicitly set, keeping the local default; (c) a post-deploy check that fetches the live site and fails on a `[SEED]` marker. (a) is preferred: it is the only one with no environment it cannot see. **Do not build now** |
 | Epic M | **`M-P1-1`** | **P1, accessibility, Level A.** A server-render crash serves `<html id="__next_error__">` with no `lang`, no `<h1>` and no `<main>`; `global-error` renders only after hydration, so a visitor without JS gets the bare shell. Measured at `M-07` against a committed probe and characterised by `check-axe`. **No app-level fix exists** — Next requires `global-error` to be a Client Component and a segment `error.tsx` was tried and does not change the served HTML. The remedy is architectural: an edge- or platform-served static error document, or a recorded acceptance. **Owner's decision — see `M-07` above** |
 
 | From | Items | Theme |
@@ -1173,7 +1207,7 @@ decision awaiting the owner, not work awaiting a session.
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
 | Epic M | `M-P2-6` | **the baseline spread absorbs a duplicated chunk instead of attributing it.** `/_not-found` measures 0.2KB dearer than the other baseline routes because `global-not-found` is its own webpack entry and gets a second copy of the shared layout's client boundary — the same consent banner code, bundled twice. The tolerance was raised from 0.1 to 0.3 with the cause measured rather than guessed, which is the distinction the gate's own warning turns on. The fix is to compare non-entry chunks so a duplicate is attributed |
 | Epic M | `M-P2-7` | **`check-responsive` only measures fixed bottom bars below 768px.** That was right when `StickyCta` was the only one — it is `display: none` above 768px. The consent banner is fixed at **every** width, so its 2.4.11 reserve is asserted at 375px and unmeasured at 1440px. Widen the sweep to all three widths |
-| Epic M | `M-P2-5` | **`NEXT_PUBLIC_SANITY_DATASET` must be set on the Hostinger deployment.** It defaults to `development`; an unset variable on the host serves seed content with a `[SEED]` VAT number to the public. `check:launch` runs in CI against CI's environment and cannot see the host's. Needs either a deploy-time assertion or a platform env var that cannot be omitted — `A-12` |
+| Epic M | ~~`M-P2-5`~~ | **Reclassified P1 as `M-P1-2` — see the P1 table above.** It was filed P2 on the reading that it is a deployment-configuration gap. It is not: the failure mode is a false VAT statement on a public website |
 | Epic M | `M-P2-3` | **every price field must carry whether its figure is net or gross of VAT, and each division's display rule follows from its audience.** Gridsmith is VAT registered at launch: consumer-facing prices must display VAT-inclusive, B2B prices must state their treatment explicitly. Press sells to individual authors — consumers under the Consumer Contracts Regulations 2013; Design and Digital sell largely B2B. **This is a schema constraint on the pricing rows and belongs to the division epics, not to `companyDetails`** — but it is cheaper to build in than to retrofit across three divisions at Stage 8. Raise it at the first pricing schema |
 | Epic M | `M-P2-4` | `npm audit` reports 13 high in the dev tree. All pre-existing (`@lhci/cli`, `puppeteer`, `next`/`postcss`) except `sharp`, which arrived transitively with the `sanity` devDependency at `M-05`. None is in the production dependency tree. Sweep at the Epic M sweep |
 | Epic M | `M-P2-2` | **a focusable element with a transition on `transform` can take focus while off screen** — the class behind the skip link's own first defect (`M-02`). Grepped, not swept: `motion.module.css:51` `.stickyCta` translates `100%` off screen over `--dur-base` and holds two buttons, so focus arriving mid-slide is the same shape; `visibility: hidden` makes it untabbable while hidden, which narrows the window but does not close it. `interactive.module.css:144` `.marker` rotates in place, is not focusable, and is not an instance. Nothing else transitions `transform`. Sweep at the Epic M sweep |
@@ -1263,7 +1297,9 @@ Three things follow, and each is recorded rather than fixed:
   which is correct for a missing variable in CI and **wrong on a live deployment** — the
   deploy would serve seed content with a `[SEED]` VAT number. `check:launch` cannot catch it
   because it runs in CI against the CI environment, not against the host's. Logged as
-  `M-P2-5`; it belongs with `A-12`'s production exclusions.
+  **`M-P1-2`** — P1, not P2: the published value would be a false VAT statement. It belongs
+  with `A-12`'s production exclusions, and the preferred remedy is to remove the default
+  entirely so an unset variable is a build error rather than a silent fallback.
 
 ## Blocked / decisions needed
 
