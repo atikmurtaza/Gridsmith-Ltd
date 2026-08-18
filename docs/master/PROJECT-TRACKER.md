@@ -27,7 +27,7 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | Notify <60s. No CRM adapter — deferred, see D1 |
 | 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | **DONE** 18 Aug | Dev | **Precedes A-09.** No cookie before consent — now asserted in the browser, not just stated. State, Consent Mode v2 bridge, banner, footer reopen. **Measured 2.0KB gz against an 8KB reservation.** `A-09` is unblocked |
 | 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | **BUILT, not enabled** 18 Aug | Dev | Taxonomy, referral classifier, consent-gated loader. **No measurement ids exist — `Q-M19`** — so nothing is injected even after a grant, which is correct rather than a workaround. Zero requests before consent is now asserted; the grant path is proven once, ungated |
-| 12 | A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | TODO | Dev | Seed publish fails prod build |
+| 12 | A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | **DONE** 18 Aug | Dev | Seed publish fails a live build. **The spec's query counted almost nothing** — see below. Also closes **`M-P1-2`**: the dataset variable has no default and an unset one is a build error. `/_kitchen-sink` now inherits the probe exclusion rather than getting a second mechanism |
 
 **The six deviations, and why:**
 
@@ -462,6 +462,61 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 **No re-measure of the Lighthouse axes.** `FOUNDATION` §4 requires it for changes to
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
+
+### A-12 — the spec's seed query counted almost nothing
+
+**Premise check, and it failed.** `TECH-SPEC.md` §6 sketches the deploy-blocking check as:
+
+```ts
+count(*[isSeed == true && published == true])
+```
+
+**Only `service` has a `published` field.** `project`, `faq`, `testimonial`, `post` and
+`teamMember` — five of the six seedable types, including the case studies the check exists to
+stop — do not. For those the predicate is `undefined == true`, so the count comes back **zero
+from a dataset full of published seed records**, and the gate reports clean. In Sanity,
+"published" means the document id carries no `drafts.` prefix, which is a different concept
+entirely. The query is now `count(*[isSeed == true && !(_id in path("drafts.**"))])`.
+
+That is the same defect class this programme keeps finding, this time sitting in a spec rather
+than in a script — and on *"the most damaging content failure available to this project"*.
+
+**It also proposed a third environment variable**, `NEXT_PUBLIC_ENV`. Three variables meaning
+overlapping things is how `M-P1-2` happened. The dataset is already the single fact that says
+"live", so the check keys off the same `PRODUCTION_DATASET` as everything else.
+
+**Folded into `check:launch` rather than given its own gate.** Same subject, same dataset, same
+two-tier shape — a twentieth gate would have duplicated the fetch and the env plumbing to ask
+one more question about the same document set.
+
+**The count is asserted to be a number in every dataset**, not merely compared to zero on
+production. Anything else — a null, an object, an error status — makes `> 0` false and reports
+clean.
+
+**`M-P1-2` is closed here, by the preferred remedy.** `NEXT_PUBLIC_SANITY_DATASET` has no
+default: an unset variable throws at module load. Local reads `.env.local`, CI sets it in
+`ci.yml`, and the host must set it before the first deploy. The gates that touch Sanity run
+with `--env-file-if-exists=.env.local`, so they behave the same way in both places.
+
+**`/_kitchen-sink` now inherits the probe exclusion.** Its page was renamed `page.tsx` ->
+`page.probe.tsx` and that is the entire change: the route path is unaltered, every gate that
+measures it still does, and a production build drops it from the route table for the same
+reason it drops the probes. `next.config.ts` asked for exactly this — *"when it lands it
+inherits this flag rather than inventing a second one"*. A rewrite or a `notFound()` would have
+compiled the page and shipped its chunk, and that chunk is 5.8KB of primitives, the largest
+single artefact in the build.
+
+**Deliberate-failure proof, four breaks:**
+
+| Broken | Fired |
+|---|---|
+| a published `isSeed: true` document, with the company record temporarily cleaned of `[SEED]` markers so nothing else could report | `1 published seed document(s) in the live dataset` — **alone** |
+| the seed query replaced with one returning a document instead of a count | `returned {...}, not a number — anything but a number makes the comparison below false and reports clean` |
+| the seed query given a GROQ typo | `the seed count query returned HTTP 400 — seed enforcement measured nothing` |
+| `NEXT_PUBLIC_SANITY_DATASET` unset | the build fails at module load with the three-line remedy, on every route |
+
+`GRIDSMITH_EXCLUDE_PROBES=1 npm run build` produces no `/_kitchen-sink` and no probe routes;
+the default build still produces all three, which is what keeps the gates' subjects present.
 
 ### A-06 — the schema layer, and the gate that can see it
 
@@ -1311,7 +1366,7 @@ decision awaiting the owner, not work awaiting a session.
 
 | From | Item | |
 |---|---|---|
-| Epic M | **`M-P1-2`** | **P1. An unset `NEXT_PUBLIC_SANITY_DATASET` on Hostinger publishes a `[SEED]` VAT number.** The variable defaults to `development`, which is right for a missing variable in CI and wrong on a live host: the deploy would serve `[SEED] GB000000000` as the company's VAT registration number on every page. **That is a false VAT statement on a public website** — the precise failure `check:launch`'s production tier exists to prevent, defeated by an environment CI cannot see. Filed P2 first on the reading that it is deployment configuration; the failure mode is a legal statement, so it is P1. **Remedy is `A-12`'s, not this session's**, and the options are: (a) **remove the default entirely**, so an unset variable is a build error rather than a silent fallback — the strongest, and it makes the platform's env config a hard dependency of the build; (b) fail the build when a deployed host (`VERCEL_ENV`, or Hostinger's equivalent marker) is detected and the dataset is not explicitly set, keeping the local default; (c) a post-deploy check that fetches the live site and fails on a `[SEED]` marker. (a) is preferred: it is the only one with no environment it cannot see. **Do not build now** |
+| Epic M | ~~**`M-P1-2`**~~ | **FIXED 18 Aug at `A-12`, by remedy (a) — the preferred one.** `NEXT_PUBLIC_SANITY_DATASET` has no default; an unset variable throws at module load, so it is a build error rather than a silent fallback to `development`. That is the only remedy with no environment it cannot see. `.env.example`, `ci.yml` and `SETUP.md` all set it explicitly, and **it must be set in the Hostinger environment before the first deploy** |
 | Epic M | **`M-P1-1`** | **P1, accessibility, Level A.** A server-render crash serves `<html id="__next_error__">` with no `lang`, no `<h1>` and no `<main>`; `global-error` renders only after hydration, so a visitor without JS gets the bare shell. Measured at `M-07` against a committed probe and characterised by `check-axe`. **No app-level fix exists** — Next requires `global-error` to be a Client Component and a segment `error.tsx` was tried and does not change the served HTML. The remedy is architectural: an edge- or platform-served static error document, or a recorded acceptance. **Owner's decision — see `M-07` above** |
 
 | From | Items | Theme |

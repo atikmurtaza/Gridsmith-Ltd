@@ -28,6 +28,12 @@ on:
   pull_request:
     types: [opened, reopened]
 
+# `NEXT_PUBLIC_SANITY_DATASET` has no default (M-P1-2): an unset variable is a build error
+# rather than a silent fallback to `development`, because on a live host that fallback would
+# publish a [SEED] VAT number. CI builds against `development` and says so here.
+env:
+  NEXT_PUBLIC_SANITY_DATASET: development
+
 jobs:
   verify:
     runs-on: ubuntu-latest

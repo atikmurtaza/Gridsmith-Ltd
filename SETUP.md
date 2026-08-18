@@ -49,8 +49,10 @@ npm run seed:company           # writes companyDetails to `development` only
 npm run studio                 # Studio on localhost:3333
 ```
 
-`NEXT_PUBLIC_SANITY_DATASET` selects the dataset at build time and defaults to
-`development`. Do not set it to `production` before Stage 8.
+`NEXT_PUBLIC_SANITY_DATASET` selects the dataset at build time and **has no default** — an
+unset variable is a build error, not a fallback (`M-P1-2`). That is deliberate: on a live host
+a fallback to `development` would publish a `[SEED]` VAT number. Do not set it to `production`
+before Stage 8, and **set it in the Hostinger environment before the first deploy**.
 
 **One manual step remains and it needs an interactive login:** the Studio's dev origin has
 to be allowed on the project.

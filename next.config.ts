@@ -40,9 +40,12 @@ if (!Array.isArray(legacyRedirects)) {
  * `VERCEL_ENV` is set by the platform on production deploys; `GRIDSMITH_EXCLUDE_PROBES`
  * is the manual equivalent for any other host. Neither is set locally or on CI.
  *
- * `A-12` formalises production exclusions (it owns the seed check and `/_kitchen-sink`,
- * which is still built everywhere). When it lands it inherits this flag rather than
- * inventing a second one.
+ * **`A-12` landed and `/_kitchen-sink` now inherits this flag rather than getting a second
+ * mechanism.** Its page was renamed `page.tsx` -> `page.probe.tsx`, which is the whole change:
+ * the route path is unaltered, every gate that measures it still does, and in a production
+ * build it is absent from the route table for exactly the same reason the probes are. A
+ * rewrite or a `notFound()` would have compiled the page and shipped its chunk — and the
+ * kitchen sink's chunk is 5.8KB of primitives, the largest single artefact in the build.
  */
 const excludeProbes =
   process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';

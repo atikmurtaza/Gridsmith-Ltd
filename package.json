@@ -33,7 +33,7 @@
     "check:node": "node scripts/check-node-version.mjs",
     "studio": "sanity dev --port 3333",
     "seed:company": "node --env-file=.env.local scripts/seed-company-details.mjs",
-    "check:launch": "node scripts/check-launch-content.mjs",
+    "check:launch": "node --env-file-if-exists=.env.local scripts/check-launch-content.mjs",
     "check:schemas": "node scripts/check-schemas.mjs"
   },
   "dependencies": {

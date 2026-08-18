@@ -19,6 +19,25 @@
  * skip — the whole class of defect this repository keeps finding is a check that measured
  * nothing and reported clean.
  *
+ * ## Seed enforcement — `A-12`, folded in here rather than given its own gate
+ *
+ * `TECH-SPEC.md` §6 sketches `scripts/check-no-seed-in-prod.ts`, and **its query counts almost
+ * nothing**: `count(*[isSeed == true && published == true])`. Only `service` has a `published`
+ * field — `project`, `faq`, `testimonial`, `post` and `teamMember` do not — so for five of the
+ * six seedable types the predicate is `undefined == true` and the count comes back zero from a
+ * dataset full of published seed records. In Sanity, "published" means the document id carries
+ * no `drafts.` prefix, which is a different thing entirely. Hence
+ * `!(_id in path("drafts.**"))`.
+ *
+ * It also keyed off a third environment variable, `NEXT_PUBLIC_ENV`. Three variables meaning
+ * overlapping things is how `M-P1-2` happened. The dataset is already the single fact that
+ * says "live", so this keys off the same `PRODUCTION_DATASET` as everything else here.
+ *
+ * **The count is asserted to be a number in every dataset**, not merely compared to zero on
+ * production. A query that returns anything else — a null, an object, an error status — would
+ * make `> 0` false and report clean, on the one check whose entire purpose is to stop
+ * fabricated case studies reaching production.
+ *
  * **`process.exitCode`, never `process.exit()`.** Calling `process.exit()` while undici's
  * connection pool is still open aborts the process on Windows — `Assertion failed:
  * !(handle->flags & UV_HANDLE_CLOSING)` — and an abort's exit status is not the 1 this gate
@@ -66,6 +85,10 @@ const url =
   `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}` +
   `?query=${encodeURIComponent('*[_type == "companyDetails"][0]')}`;
 
+const seedUrl =
+  `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}` +
+  `?query=${encodeURIComponent('count(*[isSeed == true && !(_id in path("drafts.**"))])')}`;
+
 const res = await fetch(url);
 let result = null;
 if (!res.ok) {
@@ -99,6 +122,27 @@ if (result) {
   }
 }
 
+const seedRes = await fetch(seedUrl);
+let publishedSeeds = null;
+if (!seedRes.ok) {
+  problems.push(`the seed count query returned HTTP ${seedRes.status} — seed enforcement measured nothing`);
+} else {
+  ({ result: publishedSeeds } = await seedRes.json());
+  if (typeof publishedSeeds !== 'number') {
+    problems.push(
+      `the seed count query returned ${JSON.stringify(publishedSeeds)}, not a number — ` +
+        'anything but a number makes the comparison below false and reports clean',
+    );
+  } else if (isLive && publishedSeeds > 0) {
+    problems.push(
+      `${publishedSeeds} published seed document(s) in the live dataset. Fabricated case ` +
+        'studies reaching production is the most damaging content failure available to this ' +
+        'project (TECH-SPEC §6). Delete and replace them — seed records are never edited into ' +
+        'real content (PROJECT-RULES §5)',
+    );
+  }
+}
+
 if (problems.length > 0) {
   console.error(`
 check-launch-content: ${problems.length} problem(s) in dataset "${SANITY_DATASET}"
@@ -113,4 +157,11 @@ check-launch-content: ${problems.length} problem(s) in dataset "${SANITY_DATASET
         ? `, ${LIVE_REQUIRED.map(([f]) => f).join(' and ')} supplied, no [SEED] markers`
         : `; the live-only assertions (${LIVE_REQUIRED.map(([f]) => f).join(', ')}, no [SEED] markers) do not apply to "${SANITY_DATASET}"`),
   );
+  console.log(
+    `check-launch-content: ${publishedSeeds} published seed document(s) counted` +
+      (isLive
+        ? ' — must be 0 on a live dataset, and is'
+        : `; the zero-tolerance rule applies to "${PRODUCTION_DATASET}" only`),
+  );
+
 }

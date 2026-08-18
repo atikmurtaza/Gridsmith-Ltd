@@ -170,6 +170,18 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > Two spec gaps filled conservatively and logged: `M-P2-9` (`protectedVideo` is referenced and
 > never defined) and `M-P2-10` (`post.author`/`readingTime` untyped).
 >
+> **`A-12` is done — and `M-P1-2` is closed with it.** `NEXT_PUBLIC_SANITY_DATASET` now has
+> **no default**: an unset variable is a build error, not a fallback. **Set it in the Hostinger
+> environment before the first deploy** or the deploy fails at build — which is the intended
+> behaviour and much better than the alternative it replaces. `TECH-SPEC.md` §6's seed query
+> counted almost nothing (`published == true` exists on `service` alone, so five of six
+> seedable types were invisible); it now counts by draft-id path and is folded into
+> `check:launch`. `/_kitchen-sink` inherits the probe exclusion via a file rename.
+>
+> **Still 19 gates.** Remaining unblocked work in Epic A: none — `A-07`/`A-08` need `Q-M18`
+> and `A-09`'s grant path needs `Q-M19`, both with the owner. Epic M has no unblocked rows.
+> **The next epic is N**, and the standing instruction above applies to every row in it.
+>
 > **And read the tracker's standing instruction before Epic N:** every unmeasured number in
 > Epic M was wrong and all three were pessimistic — `M-08`'s font waste did not exist, `M-06`
 > projected 11.7KB against an actual 0.5KB, `A-11` reserved 8.0KB against an actual 2.0KB. A
