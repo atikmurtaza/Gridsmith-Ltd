@@ -71,9 +71,8 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > table. Route deltas are unchanged at 0.5KB. **Next is `M-03`, the header — and that is the
 > commit where `next/link` becomes a shared 3.3KB cost, so read the `M-06` note first.**
 >
-> **`M-03` and `M-08` are done — 18 August 2026. `M-04` is BLOCKED**, on `M-05`/`Q-M17`
-> (no Sanity project, so no `companyDetails`) and `Q-M1` (company number). Its `Depends`
-> column has been corrected to say so.
+> **`M-03` and `M-08` are done — 18 August 2026.** `M-04` was blocked on `M-05`/`Q-M17` and
+> `Q-M1`; both are now resolved.
 >
 > **Two spec claims were measured and found false this session, both in the same shape as
 > the 29 contrast ratios.** `APP-FLOW` §8's header names four routes that do not exist —
@@ -82,6 +81,15 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > scoped per route group; they always were, `globals.css` has none, and `check:theme` now
 > asserts the per-division face list. **`M-08`'s deliverable turned out to be the
 > assertion, not the refactor.** Still 17 gates — both went into existing ones.
+>
+> **`M-05` is done — 18 August 2026, and `Q-M1`/`Q-M17` are resolved.** Sanity project
+> `spzu6y31`; `development` and `production` share one schema folder;
+> `NEXT_PUBLIC_SANITY_DATASET` defaults to `development` and must not be set to `production`
+> before Stage 8. The Studio is standalone on `localhost:3333`, never a Next route — an
+> embedded `/studio` would need a `check-bundle-size` exemption. **18 gates now**:
+> `check:launch` asserts the statutory record in every dataset and, on `production` only, a
+> non-empty VAT number with no `[SEED]` markers. **One operator step is outstanding and needs
+> an interactive login** — the Studio CORS origin; `SETUP.md` has the command.
 >
 > **Two things to carry, both load-bearing:**
 > - **`A-GATE-7-6` is the ceiling of the verification approach.** `check:claims` asserts that a

@@ -589,39 +589,45 @@ check-axe: ${linkProblems.length} link(s) do not resolve:`);
   total += linkProblems.length;
 }
 
+// `process.exitCode`, not `process.exit()`, from here down. The link pass above leaves
+// undici's connection pool open, and exiting through it aborts the process on Windows —
+// `Assertion failed: !(handle->flags & UV_HANDLE_CLOSING)`, which was observed on this gate
+// and measured returning 127 on its sibling. An abort's status is not the 1 the gate meant.
 const EXPECTED = ROUTES.length * VIEWPORTS.length * PHASES.length;
 if (analyses !== EXPECTED) {
   console.error(`\ncheck-axe: ran ${analyses} of ${EXPECTED} analyses. Nothing may be skipped.\n`);
-  process.exit(1);
+  process.exitCode = 1;
 }
 
 if (total > 0) {
   console.error(`\ncheck-axe: ${total} problem(s). WCAG 2.2 AA is the floor, not a target.\n`);
-  process.exit(1);
+  process.exitCode = 1;
 }
 
-console.log(
-  `\ncheck-axe: ${analyses} analyses — ${ROUTES.length} routes × ` +
-    `${VIEWPORTS.map((v) => v.label).join('/')} × ${PHASES.map((p) => p.label).join('/')} — ` +
-    `zero violations (${TAGS.join(', ')})`,
-);
-console.log('check-axe: no duplicate ids, no radio or exclusive-details group spanning theme frames');
-// The count comes from the same predicate the browser branched on (`route.themed !== false`),
-// not from the pages themselves — a themed route either reports a skip-link problem or
-// verified all four assertions, so there is no third outcome for this line to hide.
-console.log(
-  `check-axe: ${linkedFrom.size} distinct same-origin link target(s) across ${ROUTES.length} routes — every one resolves`,
-);
-console.log(
-  `check-axe: skip link verified on ${ROUTES.filter((r) => r.themed !== false).length} themed route(s) ` +
-    `× ${VIEWPORTS.length} viewport(s) — first focusable, target present, focusable, on screen when focused`,
-);
-console.log(
-  `check-axe: ${tokenCount}+ tokens probed for a computed value on every route ` +
-    `(${TOKEN_NAMES.base.length} base + the division's own); ` +
-    `${incompleteAllowed} axe incomplete(s) allowed, 0 unresolved`,
-);
-for (const a of allowedSeen) {
-  console.log(`\n  ALLOWED INCOMPLETE — ${a.rule} on "${a.target}" at ${a.routes.join(', ')}\n    ${a.why}`);
+if (!process.exitCode) {
+  console.log(
+    `\ncheck-axe: ${analyses} analyses — ${ROUTES.length} routes × ` +
+      `${VIEWPORTS.map((v) => v.label).join('/')} × ${PHASES.map((p) => p.label).join('/')} — ` +
+      `zero violations (${TAGS.join(', ')})`,
+  );
+  console.log('check-axe: no duplicate ids, no radio or exclusive-details group spanning theme frames');
+  // The count comes from the same predicate the browser branched on (`route.themed !== false`),
+  // not from the pages themselves — a themed route either reports a skip-link problem or
+  // verified all four assertions, so there is no third outcome for this line to hide.
+  console.log(
+    `check-axe: ${linkedFrom.size} distinct same-origin link target(s) across ${ROUTES.length} routes — every one resolves`,
+  );
+  console.log(
+    `check-axe: skip link verified on ${ROUTES.filter((r) => r.themed !== false).length} themed route(s) ` +
+      `× ${VIEWPORTS.length} viewport(s) — first focusable, target present, focusable, on screen when focused`,
+  );
+  console.log(
+    `check-axe: ${tokenCount}+ tokens probed for a computed value on every route ` +
+      `(${TOKEN_NAMES.base.length} base + the division's own); ` +
+      `${incompleteAllowed} axe incomplete(s) allowed, 0 unresolved`,
+  );
+  for (const a of allowedSeen) {
+    console.log(`\n  ALLOWED INCOMPLETE — ${a.rule} on "${a.target}" at ${a.routes.join(', ')}\n    ${a.why}`);
+  }
+  console.log('');
 }
-console.log('');

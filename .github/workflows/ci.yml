@@ -62,6 +62,12 @@ jobs:
       - name: Every recorded fix claim corresponds to a real commit
         run: npm run check:claims
 
+      # Before the build, because the build reads the same dataset: a missing or
+      # incomplete companyDetails singleton should fail with a sentence about the
+      # statutory record, not with a fetch error inside static generation.
+      - name: Statutory record complete for the dataset being built
+        run: npm run check:launch
+
       - name: Build
         run: npm run build
 

@@ -199,7 +199,7 @@ Three things this run settles.
 | M-02 | Root layout, server-set `data-division` | P0 | 0.5d | A-04 | **DONE** 18 Aug | Dev | Shell built at A-04; **skip link added and gated 18 Aug, closing `A11Y-21`**. Header, footer and consent banner were never M-02's — they are `M-03`, `M-04`, `M-06`. See below |
 | M-03 | Header with per-division nav | P0 | 1.5d | A-05 | **DONE** 18 Aug | Dev | Wordmark → `/`. Plain `<a>`, **not** the `Link` primitive — 0KB, and route-group navigation must be a document load. Only routes that exist are linked; new gate holds that. See below |
 | M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03, **M-05** | **BLOCKED** | Dev | From `companyDetails` — which is `M-05`, blocked on `Q-M17` (no Sanity project). The statutory block also needs the company number, `Q-M1`, still outstanding. Hardcoding either would break DoD *"content from the CMS"* and non-negotiable #2. `Depends` corrected: the row said `M-03` alone and the note said `companyDetails`, which is not a dependency you can read off the row |
-| M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | TODO | Dev | Response commitment stored once |
+| M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | **DONE** 18 Aug | Dev | Schema, standalone Studio, read client, fetch layer, dataset env var, `development` seeded. `production` deliberately empty. New gate `check:launch` — **18 gates now**. One operator step outstanding: the Studio CORS origin, `SETUP.md` |
 | M-06 | Consent banner UI | P0 | 1.5d | A-11 | TODO | Dev | Accept/Reject identical. **Measure the Master route delta here, not at H-01.** ⚑ **The 15KB delta budget is expected to FAIL here, not merely at risk** — 8.4KB is already committed before any chrome exists and the remedy will be architectural. See below; do not pre-solve it |
 | M-07 | 404 + 500 pages | P0 | 1d | M-03 | TODO | Dev | 500 works without JS |
 | M-08 | ~~Scope `@font-face` CSS per route group~~ → **assert it** | **P2** | 0.5d | — | **DONE** 18 Aug | Dev | **The row's premise was false.** `globals.css` contains no `@font-face`; `next/font` emits into the importing layout's CSS, so the declarations were already scoped. Measured, `FOUNDATION` §4 corrected, and `check:theme` now asserts it. No refactor, no re-measure of the Lighthouse axes — nothing on the critical path changed |
@@ -240,6 +240,62 @@ unchanged at 0.5KB.
 
 **Not covered:** screen-reader testing. The Definition of Done names it and it has not been
 done for this component — the gate tests focus order, target and paint, not announcement.
+
+### M-05, in full: the singleton, the dataset split, and the VAT branch
+
+Sanity project `spzu6y31`, two datasets — `development` (seed, placeholder, test) and
+`production` (live only) — sharing **one** schema folder. The project id is a committed
+constant rather than an env var: it is public by construction, so a variable would add a
+build-time failure mode and hide nothing. **The dataset is the variable, and it defaults to
+`development`** — a missing variable must not silently select live content.
+
+The Studio is standalone on `localhost:3333` (`npm run studio`), **not mounted at a Next
+route**. An embedded `/studio` is a multi-megabyte client bundle inside an application whose
+premise is a JS delta measured in kilobytes, and `check-bundle-size` would have needed an
+exemption for it. Route deltas are unchanged.
+
+**`vatNumber` is a required field with a known-empty value, not an absent one.** Registration
+is in progress and the number arrives before launch, so the registered case is what is built:
+the footer renders the line whenever the field is non-empty and omits it when empty, and
+supplying the number is a content edit — no schema change, no code change, no deploy. It
+carries no Sanity `required` rule, which would block every save until registration completes.
+The constraint lives at the launch boundary instead.
+
+`check:launch` (the eighteenth gate) is **two tiers, and the split is the point**:
+
+| Tier | Asserts | Why |
+|---|---|---|
+| Every dataset | the singleton exists; `legalName`, `companyNumber`, `placeOfRegistration`, `registeredOffice`, `responseCommitment` non-empty | every page renders the statutory footer, so this tier has teeth today rather than waiting for Stage 8 |
+| `production` only | `vatNumber` non-empty; no field carries `[SEED]` | the state that must not reach live |
+
+A gate that only fired on `production` would sit green and unexercised until the one build
+where it matters, which is a gate nobody has run.
+
+**Deliberate-failure proof, three runs, each firing alone:**
+
+| Broken | Fired |
+|---|---|
+| `NEXT_PUBLIC_SANITY_DATASET=production` (the dataset is empty) | `no companyDetails document in dataset "production"` |
+| `PRODUCTION_DATASET` temporarily `'development'`, seed's `[SEED] GB000000000` in place | `vatNumber carries a [SEED] marker and the dataset is live` — everything else populated, so nothing else fired |
+| same, with `vatNumber` re-seeded empty | `vatNumber is empty and the dataset is live` |
+
+The second and third are the isolation: every other assertion had a real value to check and
+stayed green, so the live-only tier is what went red.
+
+**A defect the proof found, in the gate rather than the subject.** The failing path exited
+**127, not 1**. `process.exit()` while undici's connection pool is open aborts on Windows —
+`Assertion failed: !(handle->flags & UV_HANDLE_CLOSING)` — and an abort's status is not the
+code the gate meant to return. Both this gate and `check-axe`, which grew a `fetch` at `M-03`
+and had shown the same abort, now set `process.exitCode` and let the loop drain. Re-measured:
+1 on failure, 0 on success.
+
+`check:launch` runs **before** the build in `ci.yml`, because the build reads the same dataset
+— a missing singleton should fail with a sentence about the statutory record, not with a fetch
+error inside static generation.
+
+`lint:colors` also refused the two new trees on sight (*"`lib/` and `sanity/` are neither
+scanned nor excluded"*) — the inverted-guard design from `A-GATE` working exactly as intended.
+Both added to `ROOTS`.
 
 ### M-03, in full: what the header links to, and the gate that holds it there
 
@@ -857,6 +913,8 @@ documentation. That is why A-GATE passes with them open.
 | Round 7 | `A-GATE-7-4`, `7-5` | the ledger reads as though substance is checked when path shape is; `ROUND_BOUNDARIES` ordering is belt-and-braces, not load-bearing |
 | **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
+| Epic M | `M-P2-3` | **every price field must carry whether its figure is net or gross of VAT, and each division's display rule follows from its audience.** Gridsmith is VAT registered at launch: consumer-facing prices must display VAT-inclusive, B2B prices must state their treatment explicitly. Press sells to individual authors — consumers under the Consumer Contracts Regulations 2013; Design and Digital sell largely B2B. **This is a schema constraint on the pricing rows and belongs to the division epics, not to `companyDetails`** — but it is cheaper to build in than to retrofit across three divisions at Stage 8. Raise it at the first pricing schema |
+| Epic M | `M-P2-4` | `npm audit` reports 13 high in the dev tree. All pre-existing (`@lhci/cli`, `puppeteer`, `next`/`postcss`) except `sharp`, which arrived transitively with the `sanity` devDependency at `M-05`. None is in the production dependency tree. Sweep at the Epic M sweep |
 | Epic M | `M-P2-2` | **a focusable element with a transition on `transform` can take focus while off screen** — the class behind the skip link's own first defect (`M-02`). Grepped, not swept: `motion.module.css:51` `.stickyCta` translates `100%` off screen over `--dur-base` and holds two buttons, so focus arriving mid-slide is the same shape; `visibility: hidden` makes it untabbable while hidden, which narrows the window but does not close it. `interactive.module.css:144` `.marker` rotates in place, is not focusable, and is not an instance. Nothing else transitions `transform`. Sweep at the Epic M sweep |
 | Epic M | `M-P2-1` | **no gate asserts that epic letters are unique across the four trackers.** `G7` fixed the instance by hand; nothing stops the next tracker edit reintroducing it. ~20 lines parsing `^## Epic (\S+)` from the four trackers. Deferred to the Epic M sweep because it is an eighteenth gate — `check-node-version` counts them and a proof is owed |
 
@@ -912,8 +970,8 @@ written in the same session as the rule.
 | ID | Item | Needed from | Blocks |
 |---|---|---|---|
 | ~~Q-M16~~ | **RESOLVED for the budgets; one observation stays open.** The mobile LCP ceilings are **measured, not provisional** — CI run #7 on `ubuntu-latest`, Node 24, median of 3, devtools throttling: 1522 / 1521 / 1522 / 1526ms across `/`, `/design`, `/digital`, `/press`. A 6ms spread on byte-identical empty pages is a fixed floor, not per-route content. **Digital has 78ms of headroom against its 1600ms ceiling.** The Lantern artefact that produced the original 533ms FCP→LCP gap is settled (VALIDATION §12) and LCP now equals FCP exactly on all four routes. **Still open, and carried into Stage 3:** (a) 78ms of LCP headroom is measured on a page containing one `h1` — hero imagery, work grids and book covers all produce a larger and later LCP element, so re-measure at the first Stage 3 route rather than at `H-01`, when the remedy would be cutting a page feature to pay for a floor; (b) **TBT is runner variance, not a Node 24 regression — corrected.** It was reported as a monotonic rise (83–86 → 87–98 → 104–107ms) on three runs; runs #9 and #10 came in at 81–86ms and 88–93ms, so the Node 24 spread (81–107ms) contains the Node 22 band entirely and there is no runtime effect. Under 4× CPU throttling TBT is CPU-bound and LCP is network-bound, which is why TBT moves ±13ms while LCP holds within 11ms. Lighthouse was 12.6.1 throughout, so no version drift. Digital's real headroom is ~55ms against a ±13ms band, on an empty page — re-measure at Epic M, and compare `benchmarkIndex` before reading any future TBT move as a code change | Atik | Stage 3 re-measure |
-| Q-M1 | **Company number — still outstanding.** Registered office is confirmed: `30 Briarfield Road, Farnworth, Bolton, BL4 0HD`, England & Wales. Load into `companyDetails` at M-05. The number is the only missing field and it is statutory — `[TK]`, never guessed | Atik | M-05, L-05, 0.10 (number only) |
-| Q-M17 | **A Sanity organisation and project.** Only Atik can create one. Blocks A-06, which has no code artefacts until it exists. Replaces the dangling `(B4)` reference on that row — `B4` matched no entry in this table and the only `B4` in `_shared/` is an LHCI defect ID | Atik | A-06 |
+| ~~Q-M1~~ | **RESOLVED 18 Aug 2026.** Company number `17050842`; registered office `30 Briarfield Road, Farnworth, Bolton, BL4 0HD`; trading address the same; VAT registration in progress, number before launch. All in the `companyDetails` singleton and nowhere else — nothing hardcodes them in a component. VAT is a **required field with a known-empty value**, gated by `check:launch` |
+| ~~Q-M17~~ | **RESOLVED 18 Aug 2026.** Sanity project `Gridsmith`, id `spzu6y31`, org `oJsbdLBrN`. Datasets `production` and `development`, both public, one shared schema folder. `A-06` is unblocked |
 | Q-M18 | **A Supabase project.** Only Atik can create one. Blocks A-07, same as above | Atik | A-07 |
 | Q-M15 | **No favicon or brand mark exists.** `/favicon.ico` 404s on every route; Lighthouse reports it as a console error and it holds best-practices at 0.96. A mark is a brand decision and is not being invented (`master/PROJECT-RULES.md` §11). Supply one — or confirm shipping without a favicon is acceptable and the assertion stays at 0.96 permanently | Atik | Lighthouse best-practices 1.0 |
 | ~~Q-M12~~ | **RESOLVED — the metric changed, not the numbers.** JS is now budgeted on the delta above the framework floor, not the total: Master ≤15KB, Digital ≤15KB, Press ≤20KB, Design ≤25KB, estimator/path-finder ≤40KB. The floor (100.2KB) is reported separately so a dependency upgrade shows as a floor change rather than silently consuming feature allowance. **Digital's 100/100/100 gate is unchanged** — Lighthouse scores measured experience, and the 90KB figure was a badly-set proxy for it | Atik | ~~Digital launch~~ unblocked |

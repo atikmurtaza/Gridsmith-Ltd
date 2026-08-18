@@ -37,6 +37,31 @@ the five verification agents live in there.
 3. Start Claude Code in the repo and paste the bootstrap prompt from
    `docs/_shared/03-CLAUDE-CODE-KICKOFF.md` §1.
 
+## Sanity (`M-05`)
+
+Project **Gridsmith**, id `spzu6y31`. Two datasets sharing **one** schema folder
+(`sanity/schemas/`, never two): `development` for seed and placeholder content,
+`production` for live website content. Both public, so the build reads them with no token.
+
+```bash
+cp .env.example .env.local     # then paste the write token into .env.local
+npm run seed:company           # writes companyDetails to `development` only
+npm run studio                 # Studio on localhost:3333
+```
+
+`NEXT_PUBLIC_SANITY_DATASET` selects the dataset at build time and defaults to
+`development`. Do not set it to `production` before Stage 8.
+
+**One manual step remains and it needs an interactive login:** the Studio's dev origin has
+to be allowed on the project.
+
+```bash
+npx sanity login && npx sanity cors add http://localhost:3333 --no-credentials
+```
+
+Attempted here and refused with *"You must login first"*, so it is recorded rather than
+claimed done.
+
 ## Reading order, first time
 
 | Order | File | Why |

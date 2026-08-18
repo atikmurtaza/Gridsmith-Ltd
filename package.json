@@ -26,13 +26,17 @@
     "check:responsive": "node scripts/check-responsive.mjs",
     "check:lhci:desktop": "node scripts/check-lhci.mjs desktop",
     "check:lhci:mobile": "node scripts/check-lhci.mjs mobile",
-    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run lint:colors && npm run check:contrast && npm run check:headings && npm run check:content && npm run check:claims",
+    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run lint:colors && npm run check:contrast && npm run check:headings && npm run check:content && npm run check:claims && npm run check:launch",
     "verify:build": "npm run build && npm run lint:secrets && npm run check:tokens && npm run check:theme && npm run size",
     "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:responsive\" \"npm run check:lhci:desktop\" \"npm run check:lhci:mobile\"",
     "verify": "npm run verify:static && npm run verify:build && npm run verify:served",
-    "check:node": "node scripts/check-node-version.mjs"
+    "check:node": "node scripts/check-node-version.mjs",
+    "studio": "sanity dev --port 3333",
+    "seed:company": "node --env-file=.env.local scripts/seed-company-details.mjs",
+    "check:launch": "node scripts/check-launch-content.mjs"
   },
   "dependencies": {
+    "@sanity/client": "^8.1.0",
     "next": "^15.5.23",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
@@ -50,6 +54,7 @@
     "eslint-config-next": "^15.5.23",
     "postcss": "^8.5.26",
     "puppeteer": "^24.43.1",
+    "sanity": "^6.9.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
   }
