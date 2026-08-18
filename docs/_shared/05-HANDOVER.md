@@ -91,6 +91,20 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > non-empty VAT number with no `[SEED]` markers. **One operator step is outstanding and needs
 > an interactive login** — the Studio CORS origin; `SETUP.md` has the command.
 >
+> **`M-04` is done — 18 August 2026.** Footer, division switcher and statutory block, all from
+> `companyDetails`, deltas unchanged at 0.5KB. **Read the tracker's `M-04` section before
+> touching the statutory block:** the VAT line's basis is the Electronic Commerce (EC
+> Directive) Regulations 2002 reg. 6(1)(g), **not** the Companies Act, reg. 25(2)(a) requires
+> the place of registration which the row's summary omitted, and reg. 6(1)(c) requires a rapid
+> contact route — so `contactEmail` is in `check:launch`'s live tier alongside `vatNumber`.
+>
+> **Three traps recorded there, all still live for the next session:** the division accents
+> exist on the master theme only and need a fallback anywhere shared chrome uses them;
+> `cache: 'no-store'` on a Sanity read turns every route dynamic and breaks SSG — the seed
+> script clears `.next/cache/fetch-cache` instead; and `StickyCta` overlaps the footer below
+> 768px, which the statutory block reserves for. **Next is `M-06`, the consent banner, and it
+> is the budget checkpoint.** `INCOMPLETE_ALLOWED` in `check-axe` is now empty.
+>
 > **Two things to carry, both load-bearing:**
 > - **`A-GATE-7-6` is the ceiling of the verification approach.** `check:claims` asserts that a
 >   plausible commit exists, never that a fix occurred — the ledger's status column is written

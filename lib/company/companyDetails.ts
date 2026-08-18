@@ -34,6 +34,17 @@ export const COMPANY_DETAILS_QUERY = `*[_type == "companyDetails"][0]{
  * Companies Act disclosure.
  */
 export async function getCompanyDetails(): Promise<CompanyDetails> {
+  // **No `cache: 'no-store'` here, and that was measured rather than assumed.** Next patches
+  // global `fetch` with its Data Cache during `next build`, and the cache persists in
+  // `.next/cache` between local builds — adding `contactEmail` to the seed and rebuilding
+  // produced the old response and no contact line, silently. `no-store` fixes the staleness
+  // and turns all seven routes from static to server-rendered-on-demand (`○` to `ƒ`), which
+  // breaks the SSG requirement in `TECH-SPEC.md` §1 and every LCP budget with it. A data
+  // freshness problem is not worth a rendering-mode change.
+  //
+  // The staleness is local-only — CI runs `npm ci` into a clean tree — and the remedy is at
+  // the point content changes: `npm run seed:company` clears `.next/cache/fetch-cache` after
+  // writing. Prerendering stays static and a rebuild after a seed shows the new content.
   const details = await sanityClient.fetch<CompanyDetails | null>(COMPANY_DETAILS_QUERY);
   if (!details) {
     throw new Error(

@@ -92,3 +92,86 @@
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
+
+/* Footer — M-04. */
+.footer {
+  border-block-start: var(--border-hairline) solid var(--line);
+  background: var(--canvas);
+}
+.footerInner {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: var(--space-12) var(--gutter);
+}
+.switcherList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6) var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* The one place at master level where the division accents appear as a rule rather than a
+   text colour — DESIGN.md §2 forbids coloured text for Design's amber, which is 2.16:1
+   against canvas and could never carry a label. A 3px top rule is not text, so it is not
+   subject to 1.4.3, and the label itself stays --ink.
+
+   **--accent-design/digital/press are declared by the MASTER theme only** — the token
+   contract is 15 per theme plus those three on master (check:tokens asserts exactly that).
+   The footer renders on all four route groups, so on a division route those names resolve
+   to nothing. Without the fallback the longhand would be invalid at computed-value time and
+   discard the shorthand's colour with it: the same mechanism that made `outline: 2px solid
+   var(--undefined)` erase the focus ring, which this programme has already shipped once.
+   The fallback degrades to the neutral rule, which is what DESIGN.md §2 describes when it
+   says the accents appear *at master level*. */
+.switcherLink {
+  display: block;
+  min-height: 2.75rem;
+  padding-block: var(--space-3);
+  border-block-start: 3px solid var(--line-strong);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--ink);
+  text-decoration: none;
+}
+.switcherLink[data-division-accent='design'] { border-block-start-color: var(--accent-design, var(--line-strong)); }
+.switcherLink[data-division-accent='digital'] { border-block-start-color: var(--accent-digital, var(--line-strong)); }
+.switcherLink[data-division-accent='press'] { border-block-start-color: var(--accent-press, var(--line-strong)); }
+.switcherLink:hover,
+.switcherLink:focus-visible { text-decoration: underline; text-underline-offset: 0.2em; }
+.switcherLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.statutory {
+  border-block-start: var(--border-hairline) solid var(--line);
+}
+.statutoryInner {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: var(--space-6) var(--gutter);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-relaxed);
+  color: var(--ink-muted);
+}
+.statutoryInner p { margin: 0; }
+.statutoryLink { color: var(--ink-muted); }
+.statutoryLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* The statutory block must not sit under a fixed bar. Below 768px `StickyCta` is
+   `position: fixed` against the bottom edge, and with a real footer in the document it
+   overlapped the disclosure — axe reported `color-contrast` UNRESOLVED on the bar's own
+   button at 375px scrolled, "background could not be determined because it partially
+   overlaps other elements", which is the tell rather than the problem.
+
+   The problem is that e-commerce regs reg. 6 require the particulars to be "easily,
+   directly and permanently accessible", and a bar covering them at the one width where it
+   exists is none of those. Reserving the bar's height here is the same mechanism
+   globals.css already uses for scroll-padding, reading the height the component publishes
+   and check-responsive asserts — not a second, remodelled figure. */
+@media (max-width: 767px) {
+  .statutoryInner {
+    padding-block-end: calc(var(--space-6) + var(--sticky-cta-block-size, 0px));
+  }
+}

@@ -127,19 +127,18 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  * placeholder pages cannot quietly cover a different element later.
  */
 const INCOMPLETE_ALLOWED = [
-  {
-    rule: 'color-contrast',
-    routes: ['/', '/design', '/digital', '/press'],
-    target: 'h1',
-    why:
-      'These four routes are placeholders with no chrome: h1, main and body share one rect ' +
-      'flush to the viewport edge, so axe cannot resolve a background box and reports ' +
-      'elmPartiallyObscured with contrastRatio 0. Nothing obscures the h1 — elementsFromPoint ' +
-      'at its centre returns H1 > MAIN > BODY > HTML, all position:static, only body painting. ' +
-      'The token pairs are measured directly by check:contrast, which is the gate that owns ' +
-      'this question. REMOVE THIS ENTRY at the first route with real chrome (Epic M): the ' +
-      'condition that produces it disappears the moment a header exists.',
-  },
+  // **Empty, and emptied on purpose at `M-04`.** The one entry here allowlisted
+  // `color-contrast` incomplete on the `h1` of the four placeholder routes, and carried its
+  // own removal condition: *"REMOVE THIS ENTRY at the first route with real chrome (Epic M):
+  // the condition that produces it disappears the moment a header exists."* It did. With a
+  // header and footer on every route the h1 no longer shares one rect with `main` and `body`
+  // flush to the viewport edge, axe resolves a background box, and the run reports
+  // `0 axe incomplete(s) allowed, 0 unresolved`.
+  //
+  // Leaving a spent entry behind is not harmless: an allowlist nobody can trip is an
+  // allowlist nobody re-reads, and the next incomplete on the same rule and route would land
+  // inside it silently. The summary line prints the count, so an entry that stops being
+  // exercised is visible rather than inferred.
 ];
 
 /**

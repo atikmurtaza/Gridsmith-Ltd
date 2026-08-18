@@ -15,6 +15,7 @@
  * line has to be exercised now rather than first seen at launch. `[SEED]` marks it as
  * unusable to any human reading it, per FOUNDATION §7.6.
  */
+import { rmSync } from 'node:fs';
 import { createClient } from '@sanity/client';
 import { SANITY_API_VERSION, SANITY_PROJECT_ID } from '../sanity/env.ts';
 
@@ -40,6 +41,11 @@ const doc = {
   // Same as the registered office, so the field stays empty and the footer says it once.
   tradingAddress: '',
   vatNumber: '[SEED] GB000000000',
+  // Same treatment as vatNumber, and for the same reason. The footer's contact line is a
+  // conditional render path — e-commerce regs reg. 6(1)(c) — and a path first exercised at
+  // launch is a path nobody has run. `.invalid` is reserved by RFC 2606 and can never
+  // resolve, so this cannot be mistaken for a working address.
+  contactEmail: '[SEED] nobody@gridsmith.invalid',
   tradingNames: ['Gridsmith Design', 'Gridsmith Digital', 'Gridsmith Press'],
   responseCommitment:
     "We'll reply as soon as we can, and always by the end of the next business day.",
@@ -55,4 +61,13 @@ const client = createClient({
 
 const written = await client.createOrReplace(doc);
 console.log(`seed-company-details: wrote ${written._id} to dataset "${DATASET}"`);
-console.log(`  companyNumber ${doc.companyNumber} · vatNumber "${doc.vatNumber}" (placeholder)`);
+console.log(`  companyNumber ${doc.companyNumber}`);
+console.log(`  vatNumber "${doc.vatNumber}" and contactEmail "${doc.contactEmail}" — both placeholders`);
+
+// Next's Data Cache persists across local builds, so a rebuild after a content change can
+// prerender the previous response with nothing reporting it — measured, by adding
+// contactEmail and getting a footer without it. Clearing it here fixes the staleness where
+// the content changes, rather than at the fetch, where `cache: 'no-store'` would have turned
+// every route from static to server-rendered-on-demand. CI is unaffected: it builds clean.
+rmSync('.next/cache/fetch-cache', { recursive: true, force: true });
+console.log('  cleared .next/cache/fetch-cache so the next build re-reads the dataset');

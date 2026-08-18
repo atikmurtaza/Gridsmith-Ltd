@@ -10,10 +10,10 @@
  * on `production` would sit green and unexercised until the one build where it matters, and
  * a gate first exercised at launch is a gate nobody has run.
  *
- * *Only when the dataset is `production`*: `vatNumber` is non-empty and no field carries a
- * `[SEED]` marker. Registration is in progress, so the field is legitimately empty today —
- * it is a required field with a known-empty value, not an absent one, and the footer omits
- * its line while it is empty. What must not happen is that state reaching live.
+ * *Only when the dataset is `production`*: every field in `LIVE_REQUIRED` is non-empty and
+ * no field carries a `[SEED]` marker. Each of those is legitimately empty today — a required
+ * field with a known-empty value, not an absent one, and the footer omits its line while it
+ * is empty. What must not happen is that state reaching live.
  *
  * No token: both datasets are public. A fetch that fails is a hard failure rather than a
  * skip — the whole class of defect this repository keeps finding is a check that measured
@@ -27,13 +27,36 @@
  */
 import { SANITY_API_VERSION, SANITY_DATASET, SANITY_PROJECT_ID, PRODUCTION_DATASET } from '../sanity/env.ts';
 
-/** Companies Act 2006 s.82 / SI 2015/17 reg. 25 — the fields a website must disclose. */
+/**
+ * **Checked against the legislation, not against the tracker row's summary of it.**
+ *
+ * `reg. 24(2)` of the Companies (Trading Disclosures) Regulations 2015 requires the
+ * registered name on a company's websites; `reg. 25(2)` requires the part of the UK in which
+ * it is registered, its registered number and its registered office address. The row
+ * summarised this as "registered name, registered number, registered office" and dropped the
+ * place of registration.
+ */
 const ALWAYS_REQUIRED = [
   'legalName',
   'companyNumber',
   'placeOfRegistration',
   'registeredOffice',
   'responseCommitment',
+];
+
+/**
+ * Fields that may be empty today and must not be on a live dataset.
+ *
+ * **`contactEmail` is here because verifying `M-04`'s premise turned it up, and it was in no
+ * tracker row.** The VAT number's basis is not the Companies Act at all — it is reg. 6(1)(g)
+ * of the Electronic Commerce (EC Directive) Regulations 2002, which binds while the activity
+ * is VAT-subject. reg. 6(1)(c) of the same instrument requires contact details including an
+ * email address that make it possible to reach the provider rapidly, and that is a launch
+ * obligation of exactly the same shape: legitimately empty now, unacceptable live.
+ */
+const LIVE_REQUIRED = [
+  ['vatNumber', 'e-commerce regs reg. 6(1)(g)'],
+  ['contactEmail', 'e-commerce regs reg. 6(1)(c)'],
 ];
 
 const isLive = SANITY_DATASET === PRODUCTION_DATASET;
@@ -60,11 +83,13 @@ if (result) {
     if (!String(result[field] ?? '').trim()) problems.push(`${field} is empty`);
   }
   if (isLive) {
-    if (!String(result.vatNumber ?? '').trim()) {
-      problems.push(
-        'vatNumber is empty and the dataset is live. Supplying it is a content edit — no ' +
-          'schema change, no code change, no deploy',
-      );
+    for (const [field, why] of LIVE_REQUIRED) {
+      if (!String(result[field] ?? '').trim()) {
+        problems.push(
+          `${field} is empty and the dataset is live (${why}). Supplying it is a content ` +
+            'edit — no schema change, no code change, no deploy',
+        );
+      }
     }
     for (const [field, value] of Object.entries(result)) {
       if (typeof value === 'string' && value.includes('[SEED]')) {
@@ -85,7 +110,7 @@ check-launch-content: ${problems.length} problem(s) in dataset "${SANITY_DATASET
   console.log(
     `check-launch-content: dataset "${SANITY_DATASET}" — ${ALWAYS_REQUIRED.length} statutory field(s) present` +
       (isLive
-        ? ', VAT number supplied, no [SEED] markers'
-        : `; the live-only assertions (VAT number, no [SEED] markers) do not apply to "${SANITY_DATASET}"`),
+        ? `, ${LIVE_REQUIRED.map(([f]) => f).join(' and ')} supplied, no [SEED] markers`
+        : `; the live-only assertions (${LIVE_REQUIRED.map(([f]) => f).join(', ')}, no [SEED] markers) do not apply to "${SANITY_DATASET}"`),
   );
 }

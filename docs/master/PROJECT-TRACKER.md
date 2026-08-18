@@ -198,7 +198,7 @@ Three things this run settles.
 | M-01 | ~~Master theme; accent = ink~~ | P0 | — | — | MOVED | Dev | **Folded into A-03.** Amber 2.16:1 constraint enforced there |
 | M-02 | Root layout, server-set `data-division` | P0 | 0.5d | A-04 | **DONE** 18 Aug | Dev | Shell built at A-04; **skip link added and gated 18 Aug, closing `A11Y-21`**. Header, footer and consent banner were never M-02's — they are `M-03`, `M-04`, `M-06`. See below |
 | M-03 | Header with per-division nav | P0 | 1.5d | A-05 | **DONE** 18 Aug | Dev | Wordmark → `/`. Plain `<a>`, **not** the `Link` primitive — 0KB, and route-group navigation must be a document load. Only routes that exist are linked; new gate holds that. See below |
-| M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03, **M-05** | **BLOCKED** | Dev | From `companyDetails` — which is `M-05`, blocked on `Q-M17` (no Sanity project). The statutory block also needs the company number, `Q-M1`, still outstanding. Hardcoding either would break DoD *"content from the CMS"* and non-negotiable #2. `Depends` corrected: the row said `M-03` alone and the note said `companyDetails`, which is not a dependency you can read off the row |
+| M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03, M-05 | **DONE** 18 Aug | Dev | Renders from `companyDetails`; nothing hardcoded. **The row's summary of the legal requirement was incomplete and the VAT line's basis is a different instrument** — see below. Division switcher footer-only per TECH-SPEC §3. 0KB: deltas unchanged at 0.5KB |
 | M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | **DONE** 18 Aug | Dev | Schema, standalone Studio, read client, fetch layer, dataset env var, `development` seeded. `production` deliberately empty. New gate `check:launch` — **18 gates now**. One operator step outstanding: the Studio CORS origin, `SETUP.md` |
 | M-06 | Consent banner UI | P0 | 1.5d | A-11 | TODO | Dev | Accept/Reject identical. **Measure the Master route delta here, not at H-01.** ⚑ **The 15KB delta budget is expected to FAIL here, not merely at risk** — 8.4KB is already committed before any chrome exists and the remedy will be architectural. See below; do not pre-solve it |
 | M-07 | 404 + 500 pages | P0 | 1d | M-03 | TODO | Dev | 500 works without JS |
@@ -240,6 +240,81 @@ unchanged at 0.5KB.
 
 **Not covered:** screen-reader testing. The Definition of Done names it and it has not been
 done for this component — the gate tests focus order, target and paint, not announcement.
+
+### M-04, in full: the premise checked against the legislation, not the row
+
+**The row said "statutory block per Companies Act 2006: registered name, registered number,
+registered office, plus the VAT line". Two things in that are wrong.**
+
+| Particular | Actual source |
+|---|---|
+| Registered name | Companies (Trading Disclosures) Regulations 2015 (SI 2015/17) **reg. 24(2)** |
+| **The part of the UK in which the company is registered** | **reg. 25(2)(a)** — *absent from the row's summary* |
+| Registered number | reg. 25(2)(b) |
+| Registered office address | reg. 25(2)(c) |
+| **VAT identification number** | **Electronic Commerce (EC Directive) Regulations 2002 reg. 6(1)(g)** — *not the Companies Act at all*, and it binds only while the activity is VAT-subject |
+| Name, geographic address, and contact details incl. an email address enabling rapid contact | e-commerce regs **reg. 6(1)(a)–(c)** |
+
+The schema already carried `placeOfRegistration`, so the footer renders it and the gate
+requires it — but nothing in the tracker would have told anyone to.
+
+**reg. 6(1)(c) was in no row at all**, and it is a launch obligation of exactly the same shape
+as the VAT number: legitimately empty today, unacceptable live. So `contactEmail` joins
+`vatNumber` in `check:launch`'s live-only tier, and the footer renders it on the same rule —
+non-empty renders, empty omits.
+
+reg. 6 also requires the particulars to be *"easily, directly and permanently accessible"*,
+which decided a second question below.
+
+**Both conditional branches proved, in the built HTML:**
+
+| Seeded | `.next/server/app/index.html` |
+|---|---|
+| `vatNumber` and `contactEmail` set to `[SEED]` placeholders | `… · registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD · VAT number [SEED] GB000000000` followed by `<a href="mailto:…">` |
+| both re-seeded empty | `… · registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD` and no second `<p>` |
+
+`contactEmail`'s placeholder uses `.invalid`, reserved by RFC 2606 and unable to resolve, for
+the same reason `vatNumber`'s is `[SEED]`-marked: a conditional path first exercised at launch
+is a path nobody has run.
+
+**Live-tier proof for `contactEmail`, isolated:** `PRODUCTION_DATASET` temporarily
+`'development'` with a valid-format VAT number seeded and no `[SEED]` marker anywhere — only
+`contactEmail is empty and the dataset is live (e-commerce regs reg. 6(1)(c))` fired.
+
+**Three defects this task surfaced, none of them in the footer.**
+
+1. **The division accents are declared by the master theme only** (15 + 3; `check:tokens`
+   asserts exactly that), and the footer renders on all four route groups. Without a fallback
+   `border-block-start-color: var(--accent-design)` is invalid at computed-value time on a
+   division route and **discards the shorthand's colour with it** — the identical mechanism
+   that erased a focus ring earlier in this programme. Measured after the fix: on `/` the
+   three rules compute `rgb(232,163,61)`, `rgb(27,95,255)`, `rgb(46,74,58)`; on `/design` all
+   three fall back to `--line-strong` `#3A3A3D`, which is what DESIGN.md §2 means by the
+   accents appearing *at master level*.
+2. **`cache: 'no-store'` would have cost static rendering.** Next patches global `fetch`
+   during `next build` and the Data Cache persists in `.next/cache`: adding `contactEmail` to
+   the seed and rebuilding silently prerendered the previous response. `no-store` fixes it and
+   turns all seven routes from `○` static to `ƒ` server-rendered-on-demand, breaking
+   `TECH-SPEC.md` §1 and every LCP budget. **A data-freshness problem is not worth a
+   rendering-mode change.** The staleness is local-only — CI builds clean — so
+   `npm run seed:company` clears `.next/cache/fetch-cache` after writing, at the point content
+   changes. Re-measured: all seven routes `○`.
+3. **`StickyCta` overlapped the statutory block at 375px.** With a real footer in the document
+   the fixed bar sat over the disclosure, and `check-axe` reported `color-contrast`
+   UNRESOLVED on the bar's own button — the tell, not the problem. The problem is reg. 6's
+   *"permanently accessible"*. The block now reserves the bar's height below 768px, reading
+   `--sticky-cta-block-size`, the figure the component publishes and `check-responsive`
+   already asserts, rather than a second remodelled number. **This is `M-P2-2` territory but
+   is not that item** — the bar is not the focusable-mid-transform case, and `M-P2-2` stays
+   deferred.
+
+**`INCOMPLETE_ALLOWED` is now empty.** Its one entry allowlisted `color-contrast` incomplete
+on the four placeholder `h1`s and carried its own removal condition — *"REMOVE THIS ENTRY at
+the first route with real chrome (Epic M)"*. With a header and footer the h1 no longer shares
+one rect with `main` and `body` flush to the viewport edge, axe resolves a background box, and
+the gate reports `0 axe incomplete(s) allowed, 0 unresolved`. A spent allowlist entry is one
+nobody re-reads, and the next incomplete on that rule and route would have landed inside it
+silently.
 
 ### M-05, in full: the singleton, the dataset split, and the VAT branch
 
