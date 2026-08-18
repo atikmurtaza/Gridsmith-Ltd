@@ -202,7 +202,7 @@ Three things this run settles.
 | M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | TODO | Dev | Response commitment stored once |
 | M-06 | Consent banner UI | P0 | 1.5d | A-11 | TODO | Dev | Accept/Reject identical. **Measure the Master route delta here, not at H-01.** ⚑ **The 15KB delta budget is expected to FAIL here, not merely at risk** — 8.4KB is already committed before any chrome exists and the remedy will be architectural. See below; do not pre-solve it |
 | M-07 | 404 + 500 pages | P0 | 1d | M-03 | TODO | Dev | 500 works without JS |
-| M-08 | Scope `@font-face` CSS per route group | **P2** | 0.5d | — | TODO | Dev | Font **files** are already scoped — `/digital` fetches one `.woff2`. The **declarations** are not: `styles/globals.css` is imported by all four root layouts, so every route ships all three families' `@font-face` blocks (22, of which a division uses ≤8). ~29KB of render-blocking CSS at roughly a third useful. Not a correctness problem, but it is bytes on the critical path and FOUNDATION §4 overstated the scoping until it was corrected. Fix is per-route-group CSS entry points instead of one shared import. **Re-measure both Lighthouse axes** — it touches the font layer, see FOUNDATION §4 |
+| M-08 | ~~Scope `@font-face` CSS per route group~~ → **assert it** | **P2** | 0.5d | — | **DONE** 18 Aug | Dev | **The row's premise was false.** `globals.css` contains no `@font-face`; `next/font` emits into the importing layout's CSS, so the declarations were already scoped. Measured, `FOUNDATION` §4 corrected, and `check:theme` now asserts it. No refactor, no re-measure of the Lighthouse axes — nothing on the critical path changed |
 
 ### M-02, in full: where the skip-link target lives, and why not in the shell
 
@@ -291,6 +291,46 @@ worse than recording the gap — it produces a claim of testing that did not hap
 the failure `A-GATE-7-6` names. **It needs a human with NVDA or VoiceOver**, and the natural
 point is the `M-06` chrome checkpoint when the header, footer and consent banner can be walked
 in one pass rather than three.
+
+### M-08, in full: the row was wrong, and nothing could have told us
+
+**`M-08` claimed that `styles/globals.css` is imported by all four root layouts and therefore
+every route ships all three families' `@font-face` blocks — "22, of which a division uses ≤8",
+"~29KB of render-blocking CSS at roughly a third useful". Measured: false.** `globals.css`
+contains no `@font-face` at all. `next/font` emits its declarations into the CSS of the layout
+that imports the module, so the one-module-per-typeface split in `styles/fonts/` scopes the
+declarations exactly as it scopes the files.
+
+| Route | Sheets | Bytes | `@font-face` | Families |
+|---|---|---|---|---|
+| `/`, `/design`, `/digital` | 3 | 33,411 | 15 | Inter, JetBrains Mono |
+| `/press` | 3 | 33,369 | 14 | Source Serif 4, JetBrains Mono |
+
+The 42-byte difference between `/press` and the rest is the whole tell, and it was available
+from the first build.
+
+**This is the `check:contrast` lesson in a different layer.** A specific-looking number — 22
+blocks, 29KB, one third useful — is worse than no number, because it stops anyone re-deriving
+it. It sat in `FOUNDATION` §4 and a tracker row for two epics, in a paragraph that opened by
+correcting an *earlier* error in the same sentence, and the correction was itself wrong.
+
+So the row's work is the assertion, not the refactor. `check:theme` now holds a **hardcoded**
+per-division face list — the question is whether the built CSS declares the right faces, so
+the expectation must come from outside the layouts that produce it — and fails both ways.
+
+**Deliberate-failure proof, both directions, each fired alone:**
+
+| Broken | Fired |
+|---|---|
+| `sourceSerif` imported into `app/(marketing)/layout.tsx` | `index: declares @font-face for "Source Serif 4", which is not one of Inter, JetBrains Mono` |
+| `inter` removed from the same layout | `index: declares no @font-face for "Inter", which it needs` |
+
+A route linking no `/_next/static/css` sheet, or a linked sheet missing from disk, is a hard
+failure rather than an empty set — the sweep must not be able to measure nothing and pass.
+
+**No re-measure of the Lighthouse axes.** `FOUNDATION` §4 requires it for changes to
+`styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
+change is a gate reading the build it already reads.
 
 ### ⚑ M-06 is expected to fail, not at risk
 

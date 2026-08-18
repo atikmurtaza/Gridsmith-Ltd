@@ -340,21 +340,34 @@ renders for the minority of visitors who happen to have it installed locally and
 anyone else, which is worse than not naming it. Buying a licence later is a change to one
 module in `styles/fonts/` — the theme files reference a CSS variable, not a family name.
 
-**Font *files* are scoped per route group; `@font-face` *declarations* are not.** One
+**Font files *and* `@font-face` declarations are scoped per route group — measured 18 Aug
+2026, and this section previously said the opposite.** One
 module per typeface in `styles/fonts/`, and a layout imports only the modules its division
 uses, so the only `.woff2` a visitor downloads is the one its division renders — Press
 fetches Source Serif and JetBrains Mono and never Inter. That part is real and measured:
 `/digital` requests exactly one font file.
 
-But every `@font-face` block lands in the shared stylesheet, because `styles/globals.css`
-is imported by all four root layouts. So every route ships the CSS declarations for all
-three families — 22 blocks, of which a given division uses at most 8 — and `/digital`
-downloads Source Serif declarations it will never use. Roughly 29KB of CSS across three
-render-blocking files, where the useful fraction is about a third.
+**The declarations are scoped too, and the paragraph that used to sit here was wrong.** It
+said every `@font-face` block lands in the shared stylesheet because `styles/globals.css` is
+imported by all four root layouts — "22 blocks, of which a given division uses at most 8",
+"roughly 29KB of CSS where the useful fraction is about a third" — and rowed the remedy as
+`M-08`. `globals.css` contains no `@font-face` at all. `next/font` emits its declarations
+into the CSS of the layout that imports the module, so the scoping the module split was for
+already holds end to end.
 
-The earlier wording here said loading was scoped and left the CSS implied. It overstated
-what is true. Tracked at `M-08` (P2) — it is bytes on the critical path, not a correctness
-problem, and the fix is per-route-group CSS entry points rather than one shared import.
+Measured on the served sheets:
+
+| Route | Sheets | Bytes | `@font-face` | Families |
+|---|---|---|---|---|
+| `/`, `/design`, `/digital` | 3 | 33,411 | 15 | Inter, JetBrains Mono (+ their metric fallbacks) |
+| `/press` | 3 | 33,369 | 14 | Source Serif 4, JetBrains Mono (+ fallbacks) |
+
+No route ships all three families. `/press` ships no Inter.
+
+**Nothing asserted this, which is why a false claim about it stood for two epics.** It does
+now: `check:theme` holds a hardcoded per-division face list and fails on a family that should
+not be there or one that should. `M-08`'s work turned out to be the assertion, not the
+refactor — `master/PROJECT-TRACKER.md` § `M-08`.
 
 JetBrains Mono reaches all four route groups deliberately, because monospace marks
 verifiable facts everywhere. Each division stays within the two-family limit in
@@ -384,8 +397,9 @@ moves LCP out by the font fetch; `optional` or a hand-written `@font-face` witho
 `size-adjust` reintroduces the metric mismatch and CLS with it. The two failures look
 unrelated in a report and have one cause.
 
-**No current gate catches this.** `check:contrast` and `check:tokens` do not read
-`@font-face`; the mobile Lighthouse axis would catch the *consequence* on the routes it
+**No current gate catches this.** `check:theme` now reads `@font-face` for *which families*
+a route declares, which is a different question and does not touch `font-display` or the
+metric overrides; `check:contrast` and `check:tokens` do not read `@font-face` at all; the mobile Lighthouse axis would catch the *consequence* on the routes it
 visits, but only after the fact and only on those four URLs. Treat any change to
 `styles/fonts/*` as **requiring both Lighthouse axes to be re-measured**, and say so in the
 commit. `_shared/01-VALIDATION-REPORT.md` §12 is the reason this warning is written out

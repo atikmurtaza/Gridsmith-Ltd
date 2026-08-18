@@ -71,6 +71,18 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > table. Route deltas are unchanged at 0.5KB. **Next is `M-03`, the header — and that is the
 > commit where `next/link` becomes a shared 3.3KB cost, so read the `M-06` note first.**
 >
+> **`M-03` and `M-08` are done — 18 August 2026. `M-04` is BLOCKED**, on `M-05`/`Q-M17`
+> (no Sanity project, so no `companyDetails`) and `Q-M1` (company number). Its `Depends`
+> column has been corrected to say so.
+>
+> **Two spec claims were measured and found false this session, both in the same shape as
+> the 29 contrast ratios.** `APP-FLOW` §8's header names four routes that do not exist —
+> the header ships the three that resolve, and `check-axe` now resolves every same-origin
+> link on every audited route. `FOUNDATION` §4 said `@font-face` declarations were not
+> scoped per route group; they always were, `globals.css` has none, and `check:theme` now
+> asserts the per-division face list. **`M-08`'s deliverable turned out to be the
+> assertion, not the refactor.** Still 17 gates — both went into existing ones.
+>
 > **Two things to carry, both load-bearing:**
 > - **`A-GATE-7-6` is the ceiling of the verification approach.** `check:claims` asserts that a
 >   plausible commit exists, never that a fix occurred — the ledger's status column is written

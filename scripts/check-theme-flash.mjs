@@ -31,7 +31,35 @@ const EXPECTED = [
   ['press', 'press'],
 ];
 
+/**
+ * **The typefaces each route group is allowed to ship, hardcoded.**
+ *
+ * `M-08` was rowed on the claim that `styles/globals.css` is imported by all four root
+ * layouts and therefore every route ships all three families' `@font-face` blocks — "22, of
+ * which a division uses ≤8, ~29KB of render-blocking CSS at roughly a third useful". **That
+ * was measured and it is false.** `next/font` emits its declarations into the importing
+ * layout's own CSS, not into `globals.css`, so the served sheets already scope: 15
+ * `@font-face` rules and 33,411 B on `/`, `/design` and `/digital`; 14 and 33,369 B on
+ * `/press`, which ships Source Serif and no Inter. No route ships all three.
+ *
+ * So the row's work is not a refactor — it is this list. Nothing asserted the scoping, which
+ * is why a claim that it had been lost could stand unchallenged for two epics, and one shared
+ * import in `globals.css` would still silently undo it.
+ *
+ * **Hardcoded, not derived from the layouts** (CLAUDE.md, the `check:tokens` division): the
+ * question is whether the built CSS *declares* the right faces, and an expectation read off
+ * the same layouts would move with any mistake made there. `next/font`'s metric-override
+ * companions — `Inter Fallback` and so on — are the same family and are folded in.
+ */
+const FACES = {
+  index: ['Inter', 'JetBrains Mono'],
+  design: ['Inter', 'JetBrains Mono'],
+  digital: ['Inter', 'JetBrains Mono'],
+  press: ['Source Serif 4', 'JetBrains Mono'],
+};
+
 const APP_DIR = '.next/server/app';
+const CSS_DIR = '.next/static/css';
 const CHUNK_DIR = '.next/static/chunks';
 
 if (!existsSync(APP_DIR)) {
@@ -73,6 +101,38 @@ for (const [route, division] of EXPECTED) {
     problems.push(`${route}: no stylesheet link — theme CSS is not render-blocking`);
   } else if (headEnd !== -1 && firstSheet > headEnd) {
     problems.push(`${route}: stylesheet link appears after </head>, so it does not block paint`);
+  }
+
+  // 2b. only this division's typefaces are declared — M-08.
+  const sheets = [...html.matchAll(/href="\/_next\/static\/css\/([^"]+)"/g)].map((m) => m[1]);
+  if (sheets.length === 0) {
+    problems.push(`${route}: no /_next/static/css sheet to read — the @font-face sweep measured nothing`);
+    continue;
+  }
+  const faces = new Set();
+  for (const sheet of sheets) {
+    const cssFile = join(CSS_DIR, sheet);
+    if (!existsSync(cssFile)) {
+      problems.push(`${route}: links ${sheet}, which is not in ${CSS_DIR} — cannot read its @font-face rules`);
+      continue;
+    }
+    for (const block of readFileSync(cssFile, 'utf8').matchAll(/@font-face\s*\{[^}]*\}/g)) {
+      const family = /font-family:\s*'?"?([^;'"}]+)/.exec(block[0]);
+      if (family) faces.add(family[1].trim().replace(/ Fallback$/, ''));
+    }
+  }
+  if (faces.size === 0) {
+    problems.push(`${route}: no @font-face rule in any linked sheet — no typeface is declared at all`);
+  }
+  for (const face of faces) {
+    if (!FACES[route].includes(face)) {
+      problems.push(`${route}: declares @font-face for "${face}", which is not one of ${FACES[route].join(', ')} — the route group ships a typeface it does not use`);
+    }
+  }
+  for (const face of FACES[route]) {
+    if (!faces.has(face)) {
+      problems.push(`${route}: declares no @font-face for "${face}", which it needs`);
+    }
   }
 }
 
@@ -121,4 +181,8 @@ if (problems.length > 0) {
 console.log(
   `check-theme-flash: ${EXPECTED.length} route groups — data-division server-rendered and correct, ` +
     'CSS render-blocking, zero client references',
+);
+console.log(
+  `check-theme-flash: @font-face scoped per route group — ` +
+    Object.entries(FACES).map(([r, f]) => `${r}: ${f.join(' + ')}`).join('; '),
 );
