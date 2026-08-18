@@ -246,7 +246,7 @@ function AllPrimitives({ division }: { division: string }) {
       </Specimen>
 
       <Specimen name="Breadcrumb · Pagination">
-        <Breadcrumb label={`Breadcrumb (${division})`} items={[{ label: 'Home', href: '/' }, { label: 'Work', href: '/work' }, { label: 'Current page' }]} />
+        <Breadcrumb label={`Breadcrumb (${division})`} items={[{ label: 'Home', href: '/' }, { label: 'Design', href: '/design' }, { label: 'Current page' }]} />
         <Pagination label={`Pagination (${division})`} current={3} total={9} hrefFor={(p) => `?page=${p}`} />
       </Specimen>
 

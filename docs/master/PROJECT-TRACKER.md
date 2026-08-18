@@ -197,8 +197,8 @@ Three things this run settles.
 |---|---|---|---|---|---|---|---|
 | M-01 | ~~Master theme; accent = ink~~ | P0 | — | — | MOVED | Dev | **Folded into A-03.** Amber 2.16:1 constraint enforced there |
 | M-02 | Root layout, server-set `data-division` | P0 | 0.5d | A-04 | **DONE** 18 Aug | Dev | Shell built at A-04; **skip link added and gated 18 Aug, closing `A11Y-21`**. Header, footer and consent banner were never M-02's — they are `M-03`, `M-04`, `M-06`. See below |
-| M-03 | Header with per-division nav | P0 | 1.5d | A-05 | TODO | Dev | Wordmark → `/` |
-| M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03 | TODO | Dev | From `companyDetails` |
+| M-03 | Header with per-division nav | P0 | 1.5d | A-05 | **DONE** 18 Aug | Dev | Wordmark → `/`. Plain `<a>`, **not** the `Link` primitive — 0KB, and route-group navigation must be a document load. Only routes that exist are linked; new gate holds that. See below |
+| M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03, **M-05** | **BLOCKED** | Dev | From `companyDetails` — which is `M-05`, blocked on `Q-M17` (no Sanity project). The statutory block also needs the company number, `Q-M1`, still outstanding. Hardcoding either would break DoD *"content from the CMS"* and non-negotiable #2. `Depends` corrected: the row said `M-03` alone and the note said `companyDetails`, which is not a dependency you can read off the row |
 | M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | TODO | Dev | Response commitment stored once |
 | M-06 | Consent banner UI | P0 | 1.5d | A-11 | TODO | Dev | Accept/Reject identical. **Measure the Master route delta here, not at H-01.** ⚑ **The 15KB delta budget is expected to FAIL here, not merely at risk** — 8.4KB is already committed before any chrome exists and the remedy will be architectural. See below; do not pre-solve it |
 | M-07 | 404 + 500 pages | P0 | 1d | M-03 | TODO | Dev | 500 works without JS |
@@ -240,6 +240,57 @@ unchanged at 0.5KB.
 
 **Not covered:** screen-reader testing. The Definition of Done names it and it has not been
 done for this component — the gate tests focus order, target and paint, not announcement.
+
+### M-03, in full: what the header links to, and the gate that holds it there
+
+`APP-FLOW.md` §8 specifies the master header as `Design · Digital · Press · Work · Approach ·
+About · [Tell us what you need]`. **Four of those routes are Epic N and do not exist.** Built
+literally, `M-03` puts four 404s into the chrome of every page on the site — the one place a
+dead link is multiplied by the whole route table rather than appearing once.
+
+So the header ships the three that resolve, and `components/chrome/nav.ts` carries the policy.
+The three division lists are **empty rather than absent**: each division's own navigation is
+its shell epic's (`B-04`, `U-04`, `P-04`), and master inventing entries would be deciding a
+division's information architecture. A division header today is the wordmark alone.
+
+**A decision like that survives exactly as long as something checks it**, and nothing did.
+axe has no rule for a link that 404s. `check-axe` now collects every same-origin link from the
+served DOM of every audited route and resolves it — **from the markup, not from `nav.ts`**, so
+a config-derived list cannot pass while the page points elsewhere, and links in content are
+covered too. Adding `Approach` back before `N-04` exists fails the build.
+
+It found two dead links on its first run, one of them pre-existing:
+
+| Found | Was |
+|---|---|
+| `/work → 404, linked from /_kitchen-sink` | the `Breadcrumb` specimen, shipped since `A-05a`. Now points at `/design` |
+| `/_gridsmith-404-probe` linked from itself | **the gate's own defect** — a bare `#main` resolves against the current URL, so the skip link read as a self-link. Fragment hrefs are now excluded |
+
+**Deliberate-failure proof, isolated.** `{ href: '/approach' }` added to the master nav:
+`check-axe: 1 link(s) do not resolve — /approach → 404, linked from /, /_gridsmith-404-probe,
+/_kitchen-sink`, with **zero axe violations across all 28 analyses**, so this check and no
+other fired. The three routes named in one line is the point: one header entry, three pages.
+
+`next/link` is deliberately not used. `TECH-SPEC.md` §3 requires route-group navigation to be
+a full document load — it is what makes the theme change flash-free — and the primitive in a
+shared layout would have put the 3.3KB client runtime in every route's chunk. **Every route's
+delta is still 0.5KB.** The header costs nothing.
+
+### Screen-reader testing — what is untested on `M-02` and `M-03`, specifically
+
+**Named by the Definition of Done and not done for either row.** Recorded rather than left as
+an unqualified tick, because both rows would otherwise read as complete.
+
+| Untested | Covered mechanically by | Gap |
+|---|---|---|
+| The skip link's announcement — that "Skip to content" is read as a link, and that following it lands the reading cursor in `<main>` rather than only moving the viewport | `check-axe` asserts focus order, target existence, focus acceptance and on-screen paint; `tabIndex={-1}` makes the target focusable | Whether the virtual cursor follows the DOM focus is an AT behaviour no lab check observes |
+| The `Primary` nav landmark and the wordmark's accessible name | axe `landmark-unique`, `link-name` | Announcement order and verbosity |
+
+**Why not done:** no screen reader is available in this environment, and simulating one is
+worse than recording the gap — it produces a claim of testing that did not happen, which is
+the failure `A-GATE-7-6` names. **It needs a human with NVDA or VoiceOver**, and the natural
+point is the `M-06` chrome checkpoint when the header, footer and consent banner can be walked
+in one pass rather than three.
 
 ### ⚑ M-06 is expected to fail, not at risk
 
@@ -766,6 +817,7 @@ documentation. That is why A-GATE passes with them open.
 | Round 7 | `A-GATE-7-4`, `7-5` | the ledger reads as though substance is checked when path shape is; `ROUND_BOUNDARIES` ordering is belt-and-braces, not load-bearing |
 | **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
+| Epic M | `M-P2-2` | **a focusable element with a transition on `transform` can take focus while off screen** — the class behind the skip link's own first defect (`M-02`). Grepped, not swept: `motion.module.css:51` `.stickyCta` translates `100%` off screen over `--dur-base` and holds two buttons, so focus arriving mid-slide is the same shape; `visibility: hidden` makes it untabbable while hidden, which narrows the window but does not close it. `interactive.module.css:144` `.marker` rotates in place, is not focusable, and is not an instance. Nothing else transitions `transform`. Sweep at the Epic M sweep |
 | Epic M | `M-P2-1` | **no gate asserts that epic letters are unique across the four trackers.** `G7` fixed the instance by hand; nothing stops the next tracker edit reintroducing it. ~20 lines parsing `^## Epic (\S+)` from the four trackers. Deferred to the Epic M sweep because it is an eighteenth gate — `check-node-version` counts them and a proof is owed |
 
 **`A-GATE-6-6` is worth doing early**, because it is the direct cause of `A-GATE-7-2`: while

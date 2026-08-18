@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Header } from './Header';
 import styles from './chrome.module.css';
 
 export type Division = 'master' | 'design' | 'digital' | 'press';
@@ -40,6 +41,7 @@ export function RootShell({
         <a href="#main" className={styles.skipLink}>
           Skip to content
         </a>
+        <Header division={division} />
         {children}
       </body>
     </html>

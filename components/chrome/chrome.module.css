@@ -31,4 +31,64 @@
 }
 .skipLink:focus {
   transform: translateY(0);
+  /* The UA ring is what painted here first and it is not theme-aware — Design's canvas is
+     near-black. Same treatment as `.focusable` in the primitive layer. */
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Header — M-03. Hairline rule, no shadow: depth comes from 1px borders (CLAUDE.md
+   "the feel"). Not sticky — a sticky header costs viewport height at 375px and there is
+   nothing here yet that a reader needs while scrolled. */
+.header {
+  border-block-end: var(--border-hairline) solid var(--line);
+  background: var(--canvas);
+}
+.headerInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-8);
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: var(--space-4) var(--gutter);
+}
+.wordmark {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: var(--leading-tight);
+  color: var(--ink);
+  text-decoration: none;
+}
+.navList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Undecorated at rest, unlike the `Link` primitive. Nav links are not prose links: they
+   sit in a `<nav>` landmark in a list, which is the non-colour cue WCAG 1.4.1 asks for,
+   and 1.4.1 applies to links *within a block of text*. The underline returns on hover
+   and focus so the affordance is never only colour when the pointer is on it. */
+.navLink {
+  display: inline-block;
+  min-height: 2.75rem;
+  padding-block: calc((2.75rem - 1.55em) / 2);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--ink);
+  text-decoration: none;
+}
+.navLink:hover,
+.navLink:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.wordmark:focus-visible,
+.navLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }

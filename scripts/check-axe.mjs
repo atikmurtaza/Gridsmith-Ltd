@@ -440,6 +440,8 @@ const browser = await puppeteer.launch({
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
 });
 let total = 0;
+/** path → the routes that link to it. Filled per page load, resolved once at the end. */
+const linkedFrom = new Map();
 let analyses = 0;
 let incompleteAllowed = 0;
 const allowedSeen = new Set();
@@ -530,11 +532,61 @@ try {
       // position, so once per page load is the honest amount.
       total += await domIntegrity(page, `${route.path} @ ${viewport.label}`, route.themed !== false, route.expect ?? null);
 
+      // Every same-origin link the page actually renders, collected for the resolve pass
+      // below. Collected from the DOM rather than from a nav config, because the question
+      // is whether the SERVED page links somewhere real — a config-derived list would pass
+      // while the markup pointed elsewhere, and would say nothing about links in content.
+      for (const href of await page.evaluate(() =>
+        [...document.querySelectorAll('a[href]')]
+          // A bare fragment resolves against the current URL, so `#main` would otherwise
+          // report the page as linking to itself — which is how the 404 probe first
+          // appeared here. The skip link is asserted separately in domIntegrity.
+          .filter((a) => !a.getAttribute('href').startsWith('#'))
+          .map((a) => a.href)
+          .filter((h) => h.startsWith(location.origin))
+          .map((h) => new URL(h).pathname),
+      )) {
+        (linkedFrom.get(href) ?? linkedFrom.set(href, new Set()).get(href)).add(route.path);
+      }
+
       await page.close();
     }
   }
 } finally {
   await browser.close();
+}
+
+/**
+ * **Every same-origin link on every audited route resolves.**
+ *
+ * `M-03` is what made this necessary. `APP-FLOW.md` §8 specifies a header carrying `Work`,
+ * `Approach`, `About` and a contact CTA, none of which have routes until Epic N — so the
+ * spec, followed literally, puts four 404s in the chrome of every page on the site. The
+ * decision was to ship only the links whose routes exist, and a decision like that survives
+ * exactly as long as something checks it. Nothing did: axe has no rule for a link that
+ * 404s, `check-responsive` never requests one, and a header is the one component where a
+ * dead link is on every page rather than one.
+ *
+ * The 404 probe's path is excluded by name — it is the one route in ROUTES that MUST 404,
+ * and it is never linked from anywhere, so its presence here would mean something linked
+ * to it.
+ */
+const linkProblems = [];
+for (const [path, from] of [...linkedFrom].sort()) {
+  if (path === '/_gridsmith-404-probe') {
+    linkProblems.push(`${path} is linked from ${[...from].join(', ')} — that path exists to 404`);
+    continue;
+  }
+  const res = await fetch(`${BASE_URL}${path}`, { redirect: 'manual' });
+  if (res.status >= 400) {
+    linkProblems.push(`${path} → ${res.status}, linked from ${[...from].sort().join(', ')}`);
+  }
+}
+if (linkProblems.length > 0) {
+  console.error(`
+check-axe: ${linkProblems.length} link(s) do not resolve:`);
+  for (const p of linkProblems) console.error(`      ${p}`);
+  total += linkProblems.length;
 }
 
 const EXPECTED = ROUTES.length * VIEWPORTS.length * PHASES.length;
@@ -557,6 +609,9 @@ console.log('check-axe: no duplicate ids, no radio or exclusive-details group sp
 // The count comes from the same predicate the browser branched on (`route.themed !== false`),
 // not from the pages themselves — a themed route either reports a skip-link problem or
 // verified all four assertions, so there is no third outcome for this line to hide.
+console.log(
+  `check-axe: ${linkedFrom.size} distinct same-origin link target(s) across ${ROUTES.length} routes — every one resolves`,
+);
 console.log(
   `check-axe: skip link verified on ${ROUTES.filter((r) => r.themed !== false).length} themed route(s) ` +
     `× ${VIEWPORTS.length} viewport(s) — first focusable, target present, focusable, on screen when focused`,
