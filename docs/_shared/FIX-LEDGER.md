@@ -44,7 +44,7 @@ of a claim, never as confirmation that the substance is where it says.
 | `G5` | FIXED | app/(marketing)/gridsmith-error-probe/page.tsx · eslint.config.mjs | 980c4406 |
 | `G5b` | FIXED | app/(marketing)/gridsmith-error-probe/page.probe.tsx · next.config.ts | c3e9ec17 |
 | `G6` | FIXED | scripts/check-invented-content.mjs · app/(marketing)/%5Fkitchen-sink/page.tsx | 37838a29 |
-| `G7` | DEFERRED | — | — |
+| `G7` | FIXED | app/(digital)/digital/page.tsx · app/(press)/press/page.tsx · docs/digital/PROJECT-TRACKER.md · docs/press/PROJECT-TRACKER.md · docs/_shared/01-VALIDATION-REPORT.md | 3fee1602 |
 | `G8` | FIXED | scripts/check-bundle-size.mjs | 417e2661 |
 | `R1` | FIXED | scripts/check-bundle-size.mjs | c24e9b37 |
 | `R2` | FIXED | components/primitives/Tabs.tsx | 3d5157a0 |
