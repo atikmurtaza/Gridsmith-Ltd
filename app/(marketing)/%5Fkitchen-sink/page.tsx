@@ -138,7 +138,7 @@ function AllPrimitives({ division }: { division: string }) {
         <Prose>
           <p>
             Body copy at the default measure. Monospace marks anything verifiable, like{' '}
-            <code>REV-00</code>. An <a href="#ks">inline link</a> sits in the accent.
+            <code>REV-00</code>. An <a href="#main">inline link</a> sits in the accent.
           </p>
           <ul>
             <li>First item</li>
@@ -160,14 +160,14 @@ function AllPrimitives({ division }: { division: string }) {
           <Button>Primary</Button>
           <Button variant="secondary">Secondary</Button>
           <Button disabled>Disabled</Button>
-          <Button href="#ks" variant="secondary">Link button</Button>
+          <Button href="#main" variant="secondary">Link button</Button>
         </div>
       </Specimen>
 
       <Specimen name="Link — accent, quiet, external">
         <div className={styles.row}>
-          <Link href="#ks">Accent link</Link>
-          <Link href="#ks" tone="quiet">Quiet link</Link>
+          <Link href="#main">Accent link</Link>
+          <Link href="#main" tone="quiet">Quiet link</Link>
           <Link href="https://example.com" external>External link</Link>
         </div>
       </Specimen>
@@ -189,7 +189,7 @@ function AllPrimitives({ division }: { division: string }) {
           </div>
           <div style={{ gridColumn: 'span 4' }}>
             <Card linked>
-              <Heading level={4}><Link href="#ks" tone="quiet">Linked card</Link></Heading>
+              <Heading level={4}><Link href="#main" tone="quiet">Linked card</Link></Heading>
               <p>Whole card is the target; focus lands on the link.</p>
             </Card>
           </div>
@@ -211,10 +211,10 @@ function AllPrimitives({ division }: { division: string }) {
         <Grid>
           <div style={{ gridColumn: 'span 6' }}>
             <Card linked>
-              <Heading level={4}><Link href="#ks" tone="quiet">Book title as the card link</Link></Heading>
+              <Heading level={4}><Link href="#main" tone="quiet">Book title as the card link</Link></Heading>
               <p>The overlay covers the card. Everything below must stay clickable.</p>
               <div className={styles.row}>
-                <Link href="#ks">Retailer link</Link>
+                <Link href="#main">Retailer link</Link>
                 <Button variant="secondary">Sample chapter</Button>
                 <label>
                   <input type="checkbox" name="ks-compare" /> Compare
@@ -324,7 +324,7 @@ function AllPrimitives({ division }: { division: string }) {
       </Specimen>
 
       <Specimen name="EmptyState">
-        <EmptyState title="No results for these filters" actions={<Button variant="secondary" href="#ks">Clear filters</Button>}>
+        <EmptyState title="No results for these filters" actions={<Button variant="secondary" href="#main">Clear filters</Button>}>
           <p>Nothing matched. Widening the discipline filter usually helps.</p>
         </EmptyState>
       </Specimen>
@@ -334,7 +334,7 @@ function AllPrimitives({ division }: { division: string }) {
           title="That did not send"
           reference="KS-0000"
           announce={false}
-          actions={<Button href="#ks">Try again</Button>}
+          actions={<Button href="#main">Try again</Button>}
         >
           <p>Something failed on our side. Nothing you entered has been lost.</p>
         </ErrorState>
@@ -353,8 +353,8 @@ function AllPrimitives({ division }: { division: string }) {
           instance at the foot of the page still demonstrates the real behaviour. */}
       <Specimen name="StickyCta — in flow here; the live fixed bar is at the foot of the page">
         <StickyCta label={`Specimen sticky call to action (${division})`} className={styles.stickyStatic}>
-          <Button href="#ks">Primary action</Button>
-          <Button href="#ks" variant="secondary">Secondary</Button>
+          <Button href="#main">Primary action</Button>
+          <Button href="#main" variant="secondary">Secondary</Button>
         </StickyCta>
       </Specimen>
     </>
@@ -363,7 +363,7 @@ function AllPrimitives({ division }: { division: string }) {
 
 export default function KitchenSinkPage() {
   return (
-    <main id="ks">
+    <main id="main" tabIndex={-1}>
       <Container>
         <Section rhythm="tight">
           <Eyebrow>A-05a</Eyebrow>
@@ -393,8 +393,8 @@ export default function KitchenSinkPage() {
       ))}
 
       <StickyCta label="Specimen sticky call to action">
-        <Button href="#ks">Primary action</Button>
-        <Button href="#ks" variant="secondary">Secondary</Button>
+        <Button href="#main">Primary action</Button>
+        <Button href="#main" variant="secondary">Secondary</Button>
       </StickyCta>
     </main>
   );

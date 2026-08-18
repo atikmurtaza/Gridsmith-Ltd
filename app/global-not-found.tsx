@@ -70,7 +70,7 @@ export const metadata: Metadata = { title: 'Page not found — Gridsmith Ltd' };
 export default function NotFound() {
   return (
     <RootShell division="master" fontVariables={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <main>
+      <main id="main" tabIndex={-1}>
         <Container>
           <Section>
             <Heading level={1}>Page not found</Heading>

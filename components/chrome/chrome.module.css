@@ -1,0 +1,34 @@
+/* Chrome — shared across all four route groups. Tokens only; no colour literals. */
+
+/* WCAG 2.4.1 Bypass Blocks. The first focusable thing in the document, off-screen until
+   focused rather than `display: none` — a hidden element is not focusable, and a skip
+   link that cannot be reached is not a bypass mechanism.
+
+   `:focus`, deliberately not `:focus-visible`. The link has no visible resting state, so
+   a focus that does not paint leaves the user with no indication of where they are; and
+   the only way to reach it is a keypress, so the heuristic `:focus-visible` implements
+   would resolve the same way for every real user. It also makes the gate's programmatic
+   `.focus()` observe what a keyboard user observes.
+
+   Transform, not `top`, so it is composited — motion is opacity and transform only. There
+   is deliberately NO transition: at 150ms the link is still off-screen when focus lands, and
+   the gate measured exactly that (`8,-56 134×48`) on the first run. A control whose whole job
+   is to appear the instant it is focused should not animate into place. */
+.skipLink {
+  position: fixed;
+  z-index: 100;
+  inset-block-start: var(--space-2);
+  inset-inline-start: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--canvas);
+  color: var(--ink);
+  border: var(--border-hairline) solid var(--ink);
+  border-radius: var(--radius-none);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--space-4)));
+}
+.skipLink:focus {
+  transform: translateY(0);
+}

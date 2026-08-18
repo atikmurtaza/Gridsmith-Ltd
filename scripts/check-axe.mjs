@@ -315,6 +315,58 @@ async function domIntegrity(page, route, themed = true, expect = null) {
       }
     }
 
+    // M-02 / A11Y-21 — the skip link, and it is four assertions because it fails four ways.
+    //
+    // **axe overlaps on exactly one of the four, and the proof establishes which check
+    // fires** (`A-GATE-4-3`'s class). `best-practice` is in TAGS, so axe's `skip-link` rule
+    // does run and does catch a missing target — deleting `id="main"` from `/design` fired
+    // both, and crediting that run to this code alone would have been the mistake. The other
+    // three assertions are outside anything axe evaluates, and each was proven alone:
+    //
+    //   · **not first.** A `<button>` inserted before the link in RootShell fired this and
+    //     axe reported `/` clean at both viewports. A skip link that is not first is not a
+    //     bypass — the blocks it exists to skip are already behind it.
+    //   · **off screen while focused.** The link's first version carried
+    //     `transition: transform 150ms`, so focus landed while it was still translated out
+    //     of view. Measured at `(8,-56) 134×48` on all six themed routes with axe clean
+    //     everywhere. That is the state this design deliberately creates and therefore the
+    //     one that can break: anything that stops `:focus` winning leaves a bypass mechanism
+    //     the user can reach and cannot see (2.4.7, 2.4.11 in effect). The transition was
+    //     removed rather than the assertion relaxed.
+    //   · **cannot take focus.** Unproven in isolation — no cheap subject produces it without
+    //     also tripping one of the above. Recorded rather than claimed.
+    if (themed) {
+      const FOCUSABLE = 'a[href], button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])';
+      const onScreen = (el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth;
+      };
+      const first = document.body.querySelector(FOCUSABLE);
+      const href = first?.getAttribute('href') ?? '';
+      if (!first || first.tagName !== 'A' || !href.startsWith('#')) {
+        problems.push(
+          `the first focusable element in <body> is ${first ? `<${first.tagName.toLowerCase()}> "${first.textContent.trim().slice(0, 40)}"` : '(none)'}, ` +
+            'not a same-page skip link — WCAG 2.4.1',
+        );
+      } else if (!document.getElementById(href.slice(1))) {
+        problems.push(`the skip link targets "${href}", which no element on this page has — WCAG 2.4.1`);
+      } else {
+        const active = document.activeElement;
+        first.focus();
+        if (document.activeElement !== first) {
+          problems.push('the skip link did not take focus — it cannot be reached by keyboard');
+        } else if (!onScreen(first)) {
+          const r = first.getBoundingClientRect();
+          problems.push(
+            `the skip link is off-screen while focused (${Math.round(r.left)},${Math.round(r.top)} ${Math.round(r.width)}×${Math.round(r.height)}) — ` +
+              'a bypass mechanism the user can reach and cannot see. WCAG 2.4.7',
+          );
+        }
+        if (active instanceof HTMLElement) active.focus();
+        else first.blur();
+      }
+    }
+
     if (!themed) return problems;
 
     const bodyStyle = getComputedStyle(document.body);
@@ -502,6 +554,13 @@ console.log(
     `zero violations (${TAGS.join(', ')})`,
 );
 console.log('check-axe: no duplicate ids, no radio or exclusive-details group spanning theme frames');
+// The count comes from the same predicate the browser branched on (`route.themed !== false`),
+// not from the pages themselves — a themed route either reports a skip-link problem or
+// verified all four assertions, so there is no third outcome for this line to hide.
+console.log(
+  `check-axe: skip link verified on ${ROUTES.filter((r) => r.themed !== false).length} themed route(s) ` +
+    `× ${VIEWPORTS.length} viewport(s) — first focusable, target present, focusable, on screen when focused`,
+);
 console.log(
   `check-axe: ${tokenCount}+ tokens probed for a computed value on every route ` +
     `(${TOKEN_NAMES.base.length} base + the division's own); ` +

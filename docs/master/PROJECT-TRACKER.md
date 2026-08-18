@@ -196,13 +196,50 @@ Three things this run settles.
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
 | M-01 | ~~Master theme; accent = ink~~ | P0 | — | — | MOVED | Dev | **Folded into A-03.** Amber 2.16:1 constraint enforced there |
-| M-02 | Root layout, server-set `data-division` | P0 | 0.5d | A-04 | REVIEW | Dev | Shell built at A-04 (`components/chrome/RootShell.tsx`); remaining scope is skip link, header, footer, consent banner |
+| M-02 | Root layout, server-set `data-division` | P0 | 0.5d | A-04 | **DONE** 18 Aug | Dev | Shell built at A-04; **skip link added and gated 18 Aug, closing `A11Y-21`**. Header, footer and consent banner were never M-02's — they are `M-03`, `M-04`, `M-06`. See below |
 | M-03 | Header with per-division nav | P0 | 1.5d | A-05 | TODO | Dev | Wordmark → `/` |
 | M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03 | TODO | Dev | From `companyDetails` |
 | M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | TODO | Dev | Response commitment stored once |
 | M-06 | Consent banner UI | P0 | 1.5d | A-11 | TODO | Dev | Accept/Reject identical. **Measure the Master route delta here, not at H-01.** ⚑ **The 15KB delta budget is expected to FAIL here, not merely at risk** — 8.4KB is already committed before any chrome exists and the remedy will be architectural. See below; do not pre-solve it |
 | M-07 | 404 + 500 pages | P0 | 1d | M-03 | TODO | Dev | 500 works without JS |
 | M-08 | Scope `@font-face` CSS per route group | **P2** | 0.5d | — | TODO | Dev | Font **files** are already scoped — `/digital` fetches one `.woff2`. The **declarations** are not: `styles/globals.css` is imported by all four root layouts, so every route ships all three families' `@font-face` blocks (22, of which a division uses ≤8). ~29KB of render-blocking CSS at roughly a third useful. Not a correctness problem, but it is bytes on the critical path and FOUNDATION §4 overstated the scoping until it was corrected. Fix is per-route-group CSS entry points instead of one shared import. **Re-measure both Lighthouse axes** — it touches the font layer, see FOUNDATION §4 |
+
+### M-02, in full: where the skip-link target lives, and why not in the shell
+
+**The link is in `RootShell`; `<main id="main">` is not.** Wrapping `children` in a `<main>`
+there is the obvious move — one target, no per-page obligation — and it is wrong.
+`global-not-found` renders **inside** the shell: its own `<html>`/`<body>` are dropped as
+nested tags and its `<main>` survives, so the 404 served two `main` landmarks, one inside the
+other. `check-axe` failed it on the committed 404 probe with `landmark-no-duplicate-main`,
+`landmark-main-is-top-level` and `landmark-unique` across all four route/viewport
+combinations. That is what the probe is for, and it is the second time a boundary document
+has behaved unlike the four route groups.
+
+So the target stays with the document that owns the landmark, and the obligation is carried by
+a gate instead of by memory. `check-axe`'s `domIntegrity` now asserts, on every themed route ×
+viewport, that the first focusable element in `<body>` is a same-page link, that its target
+exists, that it takes focus, and that it is **on screen once focused**.
+
+**Proven by deliberate failure, and which check fired is established rather than assumed**
+(`A-GATE-4-3`'s class):
+
+| Broken | Fired | Isolated? |
+|---|---|---|
+| `id="main"` deleted from `/design` | this assertion **and** axe's `skip-link` rule — `best-practice` is in `TAGS` | **No.** Recorded as overlap, not credited to this code |
+| a `<button>` inserted before the link in `RootShell` | this assertion only; axe reported `/` clean at both viewports | **Yes** |
+| the link's original `transition: transform 150ms` | this assertion only, `(8,-56) 134×48` on all six themed routes, axe clean everywhere | **Yes** |
+| link cannot take focus | — | **Unproven.** No cheap subject produces it without tripping one of the above. Recorded, not claimed |
+
+The third row is a real defect the gate found in the same session that wrote it: focus landed
+while the link was still translated out of view, so the bypass was reachable and invisible.
+**The transition was removed, not the assertion relaxed** — a control whose only job is to
+appear the instant it is focused should not animate into place.
+
+Cost: **0KB.** The link is server-rendered and the CSS is a module; every route's JS delta is
+unchanged at 0.5KB.
+
+**Not covered:** screen-reader testing. The Definition of Done names it and it has not been
+done for this component — the gate tests focus order, target and paint, not announcement.
 
 ### ⚑ M-06 is expected to fail, not at risk
 
@@ -363,7 +400,7 @@ day in one commit; the rows stay as the record of what was wrong.
 | A11Y-18 | The 404's raw `<a>` carries no author focus style and passes on the UA ring. Harmless now the token layer loads there, but it is the one link in the tier outside the system treatment | `global-not-found.tsx:70` |
 | A11Y-19 | `lang="en-GB"` on the 404 survives only because Next's outer shell emits `<html>` with no `lang` and the parser merges. If Next ever emits one, the route silently loses `en-GB` | `global-not-found.tsx:33-37` |
 | A11Y-20 | Digital's secondary-button and press's secondary-button §5 rows still specify a `--line-strong` border; only design's table was updated when the token moved to `--ink-subtle` for 1.4.11. Digital §5:107 also asks for `0.06em` tracking that the shared `.button` does not give it | `digital/DESIGN.md §5:107`, `press/DESIGN.md §5:99` |
-| A11Y-21 | No skip link exists. **Not a failure today** — no header, nav or footer exists, so there is no repeated block to bypass. Becomes a Blocker the moment Epic M chrome lands | `RootShell.tsx:25-26` |
+| ~~A11Y-21~~ | **FIXED 18 Aug at `M-02`**, before the chrome that would have made it a Blocker. ~~No skip link exists. **Not a failure today** — no header, nav or footer exists, so there is no repeated block to bypass. Becomes a Blocker the moment Epic M chrome lands~~ | `RootShell.tsx`, `chrome.module.css` |
 
 ### P2 — gate coverage found while fixing, not swept
 

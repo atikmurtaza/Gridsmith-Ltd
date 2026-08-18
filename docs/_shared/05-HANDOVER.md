@@ -61,7 +61,15 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > `00-FOUNDATION.md`, this file and `scripts/check-bundle-size.mjs` as the epic the budget rule
 > guards. **Note lines 250–254 below: `N-04`/`N-05`/`N-07`/`N-12` there are master's and are
 > correct unchanged.** Full mapping and the free letters: `master/PROJECT-TRACKER.md` § `G7`.
-> Uniqueness is unenforced — logged as `M-P2-1`. **Epic M's first build task is `M-02`.**
+> Uniqueness is unenforced — logged as `M-P2-1`.
+>
+> **`M-02` is done — 18 August 2026.** The skip link is in `RootShell`, `A11Y-21` is closed
+> before the chrome that would have made it a Blocker, and `check-axe` asserts four things
+> about it on every themed route × viewport. **`<main id="main">` is deliberately NOT in the
+> shell** — `global-not-found` renders inside it and the 404 served two nested `main`
+> landmarks; the tracker's `M-02` section has the full reasoning and the deliberate-failure
+> table. Route deltas are unchanged at 0.5KB. **Next is `M-03`, the header — and that is the
+> commit where `next/link` becomes a shared 3.3KB cost, so read the `M-06` note first.**
 >
 > **Two things to carry, both load-bearing:**
 > - **`A-GATE-7-6` is the ceiling of the verification approach.** `check:claims` asserts that a
