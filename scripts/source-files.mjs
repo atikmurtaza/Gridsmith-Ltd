@@ -37,6 +37,7 @@ const NOT_SOURCE = {
   '.github': 'workflow YAML — no colours, no keys',
   '.lighthouseci': 'gate output',
   '.next': 'build output — swept separately, by the gates that measure the bundle',
+  '.sanity': 'Sanity CLI runtime cache — generated, gitignored, never edited',
   docs: 'the specs. Prose, and their numbers are enforced by check-contrast, not here',
   node_modules: 'dependencies',
   redirects: 'URL mapping data (JSON)',

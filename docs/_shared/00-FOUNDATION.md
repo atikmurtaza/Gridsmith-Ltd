@@ -461,9 +461,17 @@ the framework floor**, of which **0.5KB (measured) is the `global-error` boundar
 the build carries** — so the primitive layer itself is **5.8KB**. Against Master's 15KB
 delta budget, of which the consent banner already claims 8KB.
 
-**That arithmetic is tighter than it reads.** 8KB + 5.8KB + 0.5KB = 14.2KB of 15KB, before
-a header or footer exists. `M-06` is the checkpoint; if the delta exceeds 15KB there, stop
-and raise it rather than proceeding into Epic N.
+**That arithmetic was wrong, and `M-06` measured it.** It read *"8KB + 5.8KB + 0.5KB =
+14.2KB of 15KB, before a header or footer exists"*. The header and footer now exist and cost
+**0KB** — both are Server Components using plain `<a>`, so the 3.3KB `next/link` term the
+projection turned on never happened. And **`5.8KB` is a `/_kitchen-sink` figure**: no
+master-layer route ships the primitive layer, so adding it into a master projection charged
+five routes for a cost only one pays.
+
+Measured at `M-06`, with the full chrome shipped: **`/` carries a 0.5KB delta**, the same as
+before the header and footer existed. Master's reservation is therefore **0.5 + 8 = 8.5KB of
+15KB, with 6.5KB spare.** `check-bundle-size` asserts that sum rather than printing a
+projection — see `master/PROJECT-TRACKER.md` § `M-06`.
 
 **That figure is now budgeted, not just printed.** `/_kitchen-sink` carries a 7KB delta
 budget in `check-bundle-size.mjs` — Master's 15KB minus the banner's reserved 8KB, which

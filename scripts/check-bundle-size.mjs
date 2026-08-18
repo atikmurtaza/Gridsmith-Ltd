@@ -76,6 +76,21 @@ const PRIMITIVES_BUDGET_KB = 6.0;
 const BASELINE_SPREAD_TOLERANCE_KB = 0.1;
 
 /**
+ * What the consent banner is allowed to cost, and Master's budget it comes out of.
+ *
+ * **8KB is a reservation, not a measurement, and nothing has ever measured it.**
+ * `master/PROJECT-RULES.md` §8 names `check-bundle-size` as its enforcement, and until
+ * `M-06` that was untrue — this file printed the literal `8.0KB` and asserted nothing about
+ * it. It still cannot measure the banner, because no banner exists; what it can assert is
+ * that the master route leaves room for one, which is the question `M-06` actually asks.
+ *
+ * `TECH-SPEC.md` §4 said `~6KB` for the same component. `PROJECT-RULES.md` is binding
+ * (CLAUDE.md, "How to work"), so 8KB stands and TECH-SPEC was corrected to match.
+ */
+const CONSENT_RESERVE_KB = 8;
+const MASTER_BUDGET_KB = 15;
+
+/**
  * **The distinctness of those two constants is the entire A-GATE-4-3 fix, so it is asserted
  * here rather than described.**
  *
@@ -401,6 +416,7 @@ if (baselineRows.length !== BASELINE_ROUTES.length) {
   const dearest = Math.max(...baselineRows.map((r) => r.delta));
   const spread = dearest - shared;
   const primitives = kitchen.delta - shared;
+  const masterDelta = baselineRows.find((r) => r.url === '/').delta;
 
   console.log('\ndelta decomposition — M-06 budgets on these, so they are asserted, not just printed\n');
   console.log(`  shared baseline    ${shared.toFixed(1)}KB gz   every route pays this (global-error boundary)`);
@@ -409,11 +425,44 @@ if (baselineRows.length !== BASELINE_ROUTES.length) {
       `${baselineRows.length} baseline routes`,
   );
   console.log(`  primitive layer    ${primitives.toFixed(1)}KB gz   /_kitchen-sink delta minus the baseline`);
-  console.log(`  consent banner     8.0KB gz   reserved, not yet built — PROJECT-RULES §8`);
+  console.log(`  consent banner     ${CONSENT_RESERVE_KB.toFixed(1)}KB gz   RESERVED, NOT MEASURED — no banner exists (PROJECT-RULES §8)`);
   console.log(
-    `  M-06 projection    ${(shared + primitives + 8).toFixed(1)}KB of Master's 15KB ` +
-      `— ${(15 - shared - primitives - 8).toFixed(1)}KB headroom before header and footer exist`,
+    `  master reservation ${(masterDelta + CONSENT_RESERVE_KB).toFixed(1)}KB of ${MASTER_BUDGET_KB}KB ` +
+      `— / measures ${masterDelta.toFixed(1)}KB today, so ${(MASTER_BUDGET_KB - masterDelta - CONSENT_RESERVE_KB).toFixed(1)}KB is spare after the banner's reservation`,
   );
+
+  // **The `M-06` assertion, and it replaces a projection that was wrong in three ways.**
+  //
+  // What stood here printed `shared + primitives + 8` and called it "headroom before header
+  // and footer exist". Measured at `M-06`:
+  //
+  //   1. The header and footer now exist and cost **0KB** — both are Server Components with
+  //      plain `<a>`, so the 3.3KB `next/link` term the tracker's arithmetic turned on never
+  //      happened.
+  //   2. `primitives` is a **`/_kitchen-sink`** figure. No master-layer route ships the
+  //      primitive layer; adding it into a master projection attributed one route's cost to
+  //      five that do not pay it.
+  //   3. It was a `console.log`. Nothing fired if it went negative, which is precisely the
+  //      "reported and enforced by nothing" shape this block's own docstring complains about.
+  //
+  // So it is an assertion over the route it is actually about. `/`'s measured delta plus the
+  // banner's reservation must fit Master's budget: the reservation is what makes the check
+  // fire while there is still room to act, rather than at the commit that overruns.
+  //
+  // The two thresholds are deliberately far apart — this fires above
+  // `MASTER_BUDGET_KB - CONSENT_RESERVE_KB` (7KB) and the per-route budget check above fires
+  // above 15KB — so a window exists in which only this one reports (`A-GATE-4-3`).
+  if (masterDelta + CONSENT_RESERVE_KB > MASTER_BUDGET_KB) {
+    decomposition.push(
+      `/ measures ${masterDelta.toFixed(1)}KB and the consent banner reserves ` +
+        `${CONSENT_RESERVE_KB.toFixed(1)}KB, which is ` +
+        `${(masterDelta + CONSENT_RESERVE_KB - MASTER_BUDGET_KB).toFixed(1)}KB over Master's ` +
+        `${MASTER_BUDGET_KB}KB delta budget.` +
+        '\n\n    The banner is a P0 compliance requirement, so the question is not which' +
+        '\n    kilobytes to shave off it — it is which capability leaves the master layer.' +
+        '\n    Stop and raise it rather than proceeding into Epic N (non-negotiable #8).',
+    );
+  }
 
   if (shared > SHARED_BASELINE_BUDGET_KB) {
     decomposition.push(

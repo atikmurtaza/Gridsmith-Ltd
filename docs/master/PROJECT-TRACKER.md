@@ -200,7 +200,7 @@ Three things this run settles.
 | M-03 | Header with per-division nav | P0 | 1.5d | A-05 | **DONE** 18 Aug | Dev | Wordmark → `/`. Plain `<a>`, **not** the `Link` primitive — 0KB, and route-group navigation must be a document load. Only routes that exist are linked; new gate holds that. See below |
 | M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03, M-05 | **DONE** 18 Aug | Dev | Renders from `companyDetails`; nothing hardcoded. **The row's summary of the legal requirement was incomplete and the VAT line's basis is a different instrument** — see below. Division switcher footer-only per TECH-SPEC §3. 0KB: deltas unchanged at 0.5KB |
 | M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | **DONE** 18 Aug | Dev | Schema, standalone Studio, read client, fetch layer, dataset env var, `development` seeded. `production` deliberately empty. New gate `check:launch` — **18 gates now**. One operator step outstanding: the Studio CORS origin, `SETUP.md` |
-| M-06 | Consent banner UI | P0 | 1.5d | A-11 | TODO | Dev | Accept/Reject identical. **Measure the Master route delta here, not at H-01.** ⚑ **The 15KB delta budget is expected to FAIL here, not merely at risk** — 8.4KB is already committed before any chrome exists and the remedy will be architectural. See below; do not pre-solve it |
+| M-06 | Consent banner UI | P0 | 1.5d | **A-11** | **MEASURED** 18 Aug; build BLOCKED | Dev | **The budget checkpoint is done and the ⚑ projection was false — `/` measures 0.5KB, not 11.7KB, and 6.5KB is spare after the banner's 8KB reservation.** No capability leaves the master layer. The banner itself is blocked on `A-11` (consent management + script gating), which is TODO. See below |
 | M-07 | 404 + 500 pages | P0 | 1d | M-03 | TODO | Dev | 500 works without JS |
 | M-08 | ~~Scope `@font-face` CSS per route group~~ → **assert it** | **P2** | 0.5d | — | **DONE** 18 Aug | Dev | **The row's premise was false.** `globals.css` contains no `@font-face`; `next/font` emits into the importing layout's CSS, so the declarations were already scoped. Measured, `FOUNDATION` §4 corrected, and `check:theme` now asserts it. No refactor, no re-measure of the Lighthouse axes — nothing on the critical path changed |
 
@@ -463,7 +463,59 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
 
-### ⚑ M-06 is expected to fail, not at risk
+### M-06 — the measurement, 18 August 2026. The projection was false.
+
+**Measured, with the full chrome shipped:**
+
+| | KB gz |
+|---|---|
+| `/` delta above the framework floor | **0.5** |
+| Consent banner reservation (`PROJECT-RULES` §8) | 8.0 |
+| **Master reservation** | **8.5 of 15** |
+| **Spare** | **6.5** |
+
+**Nothing is breached and nothing needs to leave the master layer.** The ⚑ block below
+projected 11.7KB committed before the header and footer contained any code. It was wrong in
+three ways, each verifiable:
+
+1. **The 3.3KB `next/link` term never happened.** It assumed a shared layout would use the
+   `Link` primitive. `M-03` and `M-04` use plain `<a>`, because `TECH-SPEC.md` §3 requires
+   route-group navigation to be a document load. **The header, footer, division switcher,
+   skip link and statutory block together cost 0KB** — every route's delta was 0.5KB before
+   them and is 0.5KB after.
+2. **The 5.8KB primitive layer is a `/_kitchen-sink` figure.** No master-layer route ships
+   it. `FOUNDATION` §5's *"8 + 5.8 + 0.5 = 14.2 of 15"* charged five routes for a cost one
+   pays. It may become true at `N-01` — the homepage's nine blocks — and that is Epic N's
+   checkpoint, not this one.
+3. **8.0KB has never been measured.** `PROJECT-RULES` §8 named `check-bundle-size` as its
+   enforcement and the gate printed the literal `8.0KB` and asserted nothing.
+   `TECH-SPEC.md` §4 said `~6KB` for the same component — two specs, two numbers, no gate.
+   `PROJECT-RULES` is binding, so 8KB stands and TECH-SPEC was corrected to match. **It
+   remains a reservation, not a weight.**
+
+**So the deliverable became the assertion, as at `M-08`.** `check-bundle-size` now asserts
+`masterDelta + CONSENT_RESERVE_KB <= 15` instead of printing a projection that could go
+negative in silence. The reservation is what makes it fire while there is still room to act.
+
+**Deliberate-failure proof, isolated.** `CONSENT_RESERVE_KB` temporarily 14.6: *"/ measures
+0.5KB and the consent banner reserves 14.6KB, which is 0.1KB over Master's 15KB delta
+budget."* `/`'s own delta is 0.5KB against a 15KB per-route budget, so the per-route check
+could not fire — the window between the two thresholds is 7KB wide and the proof landed
+inside it (`A-GATE-4-3`). Exit 1 on failure, 0 on pass.
+
+**The banner is not built and cannot be here.** `M-06` depends on `A-11` — consent management
+and script gating — which is `TODO`. The row is the measurement; the UI follows `A-11`.
+
+**The screen-reader checkpoint stays pending.** It was placed at "the `M-06` chrome
+checkpoint" so `M-02`, `M-03` and `M-04` could be walked in one pass. `M-06` turned out to be
+a measurement, not chrome, so the pass has not happened and is **not** folded in early. It
+still needs a human with NVDA or VoiceOver over the skip link, header and footer together.
+
+### ⚑ The original M-06 projection — kept as written, and wrong
+
+**Superseded by the measurement above. Kept because the reasoning is the record of how a
+projection outran its evidence, and because two of its figures — 0.5KB and 4.3KB — are real
+measurements that stay useful.** Read it as history, not as a plan.
 
 **Do not treat this as a watch item.** Master's 15KB delta budget is already committed
 before a single piece of chrome exists, and the remedy when it fails will be

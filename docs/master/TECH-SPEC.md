@@ -74,7 +74,7 @@ Theme transition between route groups must be flash-free: `data-division` is set
 ## 4. Consent management (FR-M14)
 
 ```
-components/consent/ConsentBanner.tsx     ~6KB gz, self-hosted
+components/consent/ConsentBanner.tsx     <=8KB gz, self-hosted   # was ~6KB; see below
 lib/consent/                             state, Consent Mode v2 bridge
 ```
 
@@ -84,6 +84,12 @@ lib/consent/                             state, Consent Mode v2 bridge
 - Accept and Reject are equally prominent, both one click, no dark patterns
 - Choice stored in `gs_consent` (strictly necessary, 12 months, `SameSite=Lax`)
 - A footer link reopens preferences at any time
+**The size figure here said `~6KB` and `PROJECT-RULES.md` §8 and `FOUNDATION` §5 both say
+8KB.** `PROJECT-RULES.md` is binding (CLAUDE.md, "How to work"), so 8KB stands and this line
+was corrected to match at `M-06`. **Neither number has ever been measured** — no banner
+exists. 8KB is a *reservation*, and `check-bundle-size` now asserts that the master route
+leaves room for it rather than printing it as though it had been weighed.
+
 - **Server-side lead capture is unaffected** — forms work fully regardless of consent state, because processing an enquiry someone submitted is contract/legitimate interest, not analytics
 
 Explicitly rejected: any third-party CMP. Typical CMPs add 60–100KB and render-blocking scripts, which breaks Digital's 100/100/100 gate.
