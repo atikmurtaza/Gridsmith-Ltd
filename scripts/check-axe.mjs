@@ -461,6 +461,19 @@ const browser = await puppeteer.launch({
 let total = 0;
 /** Cookies present after every route load, with no interaction. Filled before close. */
 let cookiesSeen = [];
+/**
+ * Requests to third-party analytics hosts, across every route load with no interaction.
+ *
+ * **The cookie check and this one answer different questions and neither implies the other.**
+ * A tag can make its request and set nothing (PostHog's array.js does exactly that until it
+ * initialises), and a cookie can be set by first-party code with no request at all. PECR is
+ * about storage; `PROJECT-RULES.md` §6 is stricter and says the scripts must not be
+ * *injected* — "not loaded-and-suppressed". Only the network answers that.
+ *
+ * Hosts rather than a keyword: `googletagmanager.com` in a page's own text is not a request.
+ */
+const ANALYTICS_HOSTS = ['googletagmanager.com', 'google-analytics.com', 'posthog.com', 'i.posthog.com'];
+const analyticsRequests = [];
 /** path → the routes that link to it. Filled per page load, resolved once at the end. */
 const linkedFrom = new Map();
 let analyses = 0;
@@ -471,6 +484,12 @@ try {
   for (const route of ROUTES) {
     for (const viewport of VIEWPORTS) {
       const page = await browser.newPage();
+      page.on('request', (req) => {
+        const host = new URL(req.url()).hostname;
+        if (ANALYTICS_HOSTS.some((h) => host === h || host.endsWith(`.${h}`))) {
+          analyticsRequests.push(`${route.path} → ${req.url()}`);
+        }
+      });
       await page.setViewport({ width: viewport.width, height: viewport.height });
 
       const response = await page.goto(`${BASE_URL}${route.path}`, { waitUntil: 'networkidle0' });
@@ -630,6 +649,16 @@ check-axe: ${linkProblems.length} link(s) do not resolve:`);
  * `gs_consent` itself is strictly necessary but is only written on a click, so a run that
  * never clicks must not see it either. **A cookie here is a finding, not a configuration.**
  */
+if (analyticsRequests.length > 0) {
+  total += analyticsRequests.length;
+  console.error(`\ncheck-axe: ${analyticsRequests.length} analytics request(s) before any consent:`);
+  for (const r of analyticsRequests) console.error(`      ${r}`);
+  console.error(
+    '      PROJECT-RULES §6: the scripts are not injected until consent is granted —' +
+      '\n      not loaded-and-suppressed. A-09 loads them from the consent layer only.',
+  );
+}
+
 const cookiesBeforeConsent = cookiesSeen;
 if (cookiesBeforeConsent.length > 0) {
   total += cookiesBeforeConsent.length;
@@ -726,8 +755,9 @@ if (!process.exitCode) {
     `check-axe: ${linkedFrom.size} distinct same-origin link target(s) across ${ROUTES.length} routes — every one resolves`,
   );
   console.log(
-    'check-axe: zero cookies set across every route load with no interaction — ' +
-      'no non-essential storage before consent (PECR, PROJECT-RULES §6)',
+    'check-axe: zero cookies set and zero requests to ' +
+      `${ANALYTICS_HOSTS.length} analytics host(s) across every route load with no ` +
+      'interaction — nothing stored and nothing injected before consent (PECR, PROJECT-RULES §6)',
   );
   console.log(
     `check-axe: ${SSR_CRASH} still serves the characterised crash shell ` +

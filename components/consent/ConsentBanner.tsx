@@ -4,6 +4,7 @@
 // static rendering — the same trade rejected at M-04 for `cache: 'no-store'`.
 
 import { useEffect, useRef, useState } from 'react';
+import type { Division } from '@/components/chrome/RootShell';
 import { CATEGORIES, DENIED, applyConsent, readConsent, type Consent } from '@/lib/consent/state';
 import styles from './consent.module.css';
 
@@ -15,6 +16,25 @@ const LABELS: Record<(typeof CATEGORIES)[number], string> = {
 
 /** Published to CSS so the focus reserve is the bar's real height — see the effect below. */
 const RESERVE_VAR = '--consent-block-size';
+
+/**
+ * **The gate on `A-09`, and it is a `return` before an `import`.**
+ *
+ * Statically importing `lib/analytics/load` put its 0.8KB in the shared layout chunk of
+ * every route — `check-bundle-size` reported the cheapest route at 103.4KB against a
+ * 100.2KB floor and asked whether every route should pay for it. The answer is no: a
+ * visitor who has not granted `analytics_storage` should not download analytics code, and
+ * with no measurement ids configured (`Q-M19`) nobody downloads it at all today.
+ *
+ * The early return is before the dynamic import rather than inside the loader, so the
+ * module is not fetched on the denied path — which is also the PECR-honest shape: not
+ * loaded-and-suppressed, not loaded.
+ */
+async function maybeLoadAnalytics(consent: Consent, division: Division): Promise<void> {
+  if (!consent.analytics_storage) return;
+  const { loadAnalytics } = await import('@/lib/analytics/load');
+  loadAnalytics(consent, division);
+}
 
 const ALL_GRANTED: Consent = {
   analytics_storage: true,
@@ -49,7 +69,7 @@ const ALL_GRANTED: Consent = {
  * back in. It listens for a plain custom event rather than exporting a setter, so the
  * footer stays a Server Component and costs nothing.
  */
-export function ConsentBanner() {
+export function ConsentBanner({ division }: { division: Division }) {
   const ref = useRef<HTMLDivElement>(null);
   const [show, setShow] = useState(false);
   const [prefs, setPrefs] = useState<Consent | null>(null);
@@ -61,8 +81,12 @@ export function ConsentBanner() {
 
   useEffect(() => {
     const stored = readConsent();
-    if (stored) applyConsent(stored);
-    else applyConsent(DENIED);
+    // `A-09` hangs off this line and no other. The analytics loader is called with whatever
+    // the state is — including the denied default — so there is exactly one place in the
+    // codebase where a tag can be injected, and it is downstream of consent by construction
+    // rather than by discipline.
+    applyConsent(stored ?? DENIED);
+    void maybeLoadAnalytics(stored ?? DENIED, division);
     setShow(!stored);
 
     const reopen = () => {
@@ -71,7 +95,7 @@ export function ConsentBanner() {
     };
     window.addEventListener('gs:consent-reopen', reopen);
     return () => window.removeEventListener('gs:consent-reopen', reopen);
-  }, []);
+  }, [division]);
 
   /**
    * WCAG 2.2 SC 2.4.11 Focus Not Obscured. The bar is `position: fixed` against the bottom
@@ -105,6 +129,7 @@ export function ConsentBanner() {
   const choose = async (consent: Consent) => {
     const { writeConsent } = await import('@/lib/consent/state');
     writeConsent(consent);
+    void maybeLoadAnalytics(consent, division);
     setShow(false);
     setPrefs(null);
   };

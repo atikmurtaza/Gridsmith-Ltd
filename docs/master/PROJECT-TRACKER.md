@@ -26,7 +26,7 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | TODO | Dev | **No code artefacts exist** — no `supabase/` tree, no `lib/`, no migration in `git ls-files`. Same correction as A-06: prose in `docs/_shared/SCHEMA-CORE.md` is the specification. Blocked on **`Q-M18`** — a Supabase project, which only Atik can create |
 | 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | Notify <60s. No CRM adapter — deferred, see D1 |
 | 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | **DONE** 18 Aug | Dev | **Precedes A-09.** No cookie before consent — now asserted in the browser, not just stated. State, Consent Mode v2 bridge, banner, footer reopen. **Measured 2.0KB gz against an 8KB reservation.** `A-09` is unblocked |
-| 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | TODO | Dev | Built on the consent layer, not gated afterwards |
+| 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | **BUILT, not enabled** 18 Aug | Dev | Taxonomy, referral classifier, consent-gated loader. **No measurement ids exist — `Q-M19`** — so nothing is injected even after a grant, which is correct rather than a workaround. Zero requests before consent is now asserted; the grant path is proven once, ungated |
 | 12 | A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | TODO | Dev | Seed publish fails prod build |
 
 **The six deviations, and why:**
@@ -462,6 +462,58 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 **No re-measure of the Lighthouse axes.** `FOUNDATION` §4 requires it for changes to
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
+
+### A-09 — built and provable, but not enabled, and the difference matters
+
+**Premise check first.** The only number the row rests on is `R1`'s **22% conversion premium**
+for AI-referred traffic. `FOUNDATION` §"AI-referral detection" already says it "must be
+measured, not assumed", so nothing here is built to it — the classifier flags traffic and makes
+no claim about what the flag is worth. Consistent with the standing instruction above: it is a
+projected figure, and it is treated as one.
+
+**What was built.** `lib/analytics/events.ts` (the eleven-name taxonomy as a closed union, so a
+typo is a build error rather than an event that silently never appears in a report),
+`lib/analytics/referral.ts` (the classifier), and `lib/analytics/load.ts` (the consent-gated
+loader). The banner calls it on every state change including the initial denied default, so
+there is exactly **one place in the codebase where a tag can be injected**, and it is
+downstream of consent by construction rather than by discipline.
+
+**The classifier matches on the registrable host, not a substring**, and its self-check
+carries the two cases that distinguishes: `https://example.com/?next=https://chatgpt.com` is
+not a ChatGPT referral, and `notchatgpt.com` is not a subdomain of one. `node
+lib/analytics/referral.ts` runs 11 assertions. **It is not in the verify chain** — that would
+be a nineteenth gate — so it is logged as `M-P2-8`.
+
+**`check-bundle-size` caught the loader before it shipped.** Statically imported, it put 0.8KB
+into the shared layout chunk of every route and the cheapest route measured 103.4KB against a
+100.2KB floor: *"something now ships on every route — decide whether every route should pay for
+it."* The answer is no. The early return moved **before** the dynamic import rather than inside
+the loader, so a visitor who has not granted `analytics_storage` never fetches analytics code
+at all — which is also the PECR-honest shape, not loaded-and-suppressed but not loaded. Shared
+cost with the loader deferred: **+0.1KB**. `/` measures **2.5KB of 15KB**.
+
+**A second assertion, and it is not a duplicate of the cookie one.** `check-axe` now records
+every request to `googletagmanager.com`, `google-analytics.com`, `posthog.com` and
+`i.posthog.com` across every route load with no interaction. A tag can make its request and
+store nothing, and a cookie can be set with no request; PECR is about the storage and
+`PROJECT-RULES.md` §6 is stricter — the scripts must not be *injected*. Only the network
+answers that one.
+
+| Broken | Fired |
+|---|---|
+| a `googletagmanager.com` script appended in the banner's mount effect | `15 analytics request(s) before any consent` — one per page load, with zero axe violations and zero cookies, so nothing else could have reported it |
+
+**⚠ The grant path is proven once and is not gated.** With `NEXT_PUBLIC_GA4_ID=G-PROOF0000`
+set on a build and Accept clicked in a real browser: **0 analytics requests before the click, 1
+after** — `https://www.googletagmanager.com/gtag/js?id=G-PROOF0000` — and the cookie recorded
+all three categories granted. That measurement was taken by hand and thrown away, which is
+exactly the shape CLAUDE.md warns about. It is recorded as unfinished rather than counted:
+**when the real ids land, the grant path needs a permanent committed subject**, and that is
+part of `Q-M19`'s resolution, not a separate row.
+
+**Nothing is injected today even after a grant, because no ids exist.** Inventing a placeholder
+measurement id would send real visitor data to a property nobody owns. `Q-M19` is the blocker;
+the site is analytics-ready and not analytics-enabled, and those are different claims.
 
 ### Every unmeasured number in Epic M has been wrong, and always pessimistic
 
@@ -1205,6 +1257,7 @@ decision awaiting the owner, not work awaiting a session.
 | Round 7 | `A-GATE-7-4`, `7-5` | the ledger reads as though substance is checked when path shape is; `ROUND_BOUNDARIES` ordering is belt-and-braces, not load-bearing |
 | **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
+| Epic M | `M-P2-8` | **the AI-referral classifier's self-check is not in the verify chain.** `node lib/analytics/referral.ts` runs 11 assertions covering the substring and lookalike-host cases, and nothing runs it in CI. Folding it in means a nineteenth gate — `check-node-version` counts them and `ci.yml` has to agree — which is more than the logic currently warrants. Revisit when `lib/analytics/` grows, or when `Q-M19` resolves and the grant path needs a subject anyway |
 | Epic M | `M-P2-6` | **the baseline spread absorbs a duplicated chunk instead of attributing it.** `/_not-found` measures 0.2KB dearer than the other baseline routes because `global-not-found` is its own webpack entry and gets a second copy of the shared layout's client boundary — the same consent banner code, bundled twice. The tolerance was raised from 0.1 to 0.3 with the cause measured rather than guessed, which is the distinction the gate's own warning turns on. The fix is to compare non-entry chunks so a duplicate is attributed |
 | Epic M | `M-P2-7` | **`check-responsive` only measures fixed bottom bars below 768px.** That was right when `StickyCta` was the only one — it is `display: none` above 768px. The consent banner is fixed at **every** width, so its 2.4.11 reserve is asserted at 375px and unmeasured at 1440px. Widen the sweep to all three widths |
 | Epic M | ~~`M-P2-5`~~ | **Reclassified P1 as `M-P1-2` — see the P1 table above.** It was filed P2 on the reading that it is a deployment-configuration gap. It is not: the failure mode is a false VAT statement on a public website |
@@ -1315,6 +1368,7 @@ Three things follow, and each is recorded rather than fixed:
 | ~~Q-M13~~ | **RESOLVED.** Design `--ink-subtle` is `#818180` at **5.01:1** — the first value on the theme's neutral ramp clearing 5.0:1, chosen over the 4.55:1 minimum so a later `--canvas` adjustment cannot push it back under AA. `--line-strong` recorded as decorative-only in `design/DESIGN.md` §5; Button (secondary) moved to `--ink-subtle` because its resting border is what identifies it as a button | Atik | ~~Design theme~~ applied |
 | ~~Q-M14~~ | **RESOLVED — CLAUDE.md was the file at fault, not FOUNDATION.** Both shadow tokens stay. The line now reads *"Depth comes primarily from 1px borders and background steps. `--shadow-2` is a hard ceiling; nothing beyond it."* Press book cards use `--shadow-1` by spec, and the Design and Digital rules already cap at `--shadow-2` | Atik | ~~A-05~~ |
 | ~~Q-M11~~ | **PARTLY REOPENED — the greenfield decision was over-broad.** The build is greenfield: nothing migrates, no content, no functionality, no database, and there is no cutover. But **the existing Press site is live and trading and comes down at launch**, so it has indexed URLs that 404 on day one unless mapped. Five of the six findings in `_shared/01-VALIDATION-REPORT.md` §10 stand; finding #3 ("nothing to crawl") is wrong for Press and is corrected there. Tracked as `G-08` (P1) | Atik | `G-08` |
+| **Q-M19** | **A GA4 measurement id and a PostHog project key.** `A-09` is built and gated but injects nothing without them, and a placeholder id would send real visitor data to a property nobody owns. Both are free to create. When they land: set `NEXT_PUBLIC_GA4_ID` and `NEXT_PUBLIC_POSTHOG_KEY`, **and give the grant path a permanent gate subject** — it is proven once by hand today and by nothing in CI | Atik | A-09, A-12 |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |

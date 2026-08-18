@@ -153,6 +153,13 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > that is a false VAT statement on a public website. `A-12` owns the remedy; the preferred one
 > is removing the default so an unset variable is a build error.
 >
+> **`A-09` is built and NOT enabled — 18 August 2026.** Taxonomy, AI-referral classifier and a
+> consent-gated loader; `check-axe` asserts zero requests to four analytics hosts before
+> consent, alongside the cookie assertion — they answer different questions. **`Q-M19` is the
+> blocker: no GA4 measurement id, no PostHog key**, so nothing injects even after a grant. The
+> grant path itself is **proven once by hand and gated by nothing** — 0 requests before Accept,
+> 1 after, with a test id — and needs a permanent subject when the real ids arrive.
+>
 > **And read the tracker's standing instruction before Epic N:** every unmeasured number in
 > Epic M was wrong and all three were pessimistic — `M-08`'s font waste did not exist, `M-06`
 > projected 11.7KB against an actual 0.5KB, `A-11` reserved 8.0KB against an actual 2.0KB. A
