@@ -24,7 +24,7 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe + responsive | P0 | 0.5d | A-05a | **DONE** | Dev | Split into **two axes** — desktop asserts category scores, mobile asserts Core Web Vitals on 4G. **Both green on CI**; commit `ad299847`. `Q-M16` is resolved for the budgets. This row read `BLOCKED` / "now fails on Digital" until 12 August 2026 while the handover and the commit log both said DONE — and **A-GATE depends on A-10b**, so the exit gate was recorded as depending on a task its own tracker called blocked. axe extended with DOM-integrity assertions axe-core cannot make, and now runs 375px/1280px × initial/scrolled. `check:responsive` added |
 | 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | **DONE** 18 Aug | Dev | Project and datasets at `M-05`; the core schemas here — 8 object types, 7 document types, `isSeed` group-wide, the canonical-six validator. **New gate `check:schemas` — 19 gates now** — because `next build` never compiles this tree, so nothing else could see a break. `A-12` unblocked |
 | 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | **DONE** 19 Aug | Dev | `Q-M18` resolved. Two migrations applied and verified against the live database. **The spec's own §4 view was an RLS bypass** — found by querying as `anon`, not by reading the SQL. New gate `check:rls` — **20 gates now**. `A-08` unblocked |
-| 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | **DONE — insert leg; notifications blocked** 19 Aug | Dev | Zod at the boundary, insert as **`anon`** so RLS is exercised rather than bypassed. Verified live through the runtime, not by import. **Resend and Slack are blocked on `Q-M20`.** `<60s` is a target nothing measures — `M-P2-13`. No CRM adapter, per D1 |
+| 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | **DONE** 19 Aug | Dev | Both halves verified live. Insert as `anon`; notification in `after()` so the send never blocks the response — **measured 56ms vs 224ms**. `Q-M20` resolved for development. **A dev `sent` is not deliverability** and **the SPF include must be MERGED at deployment** — both recorded in the gate, not just in prose |
 | 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | **DONE** 18 Aug | Dev | **Precedes A-09.** No cookie before consent — now asserted in the browser, not just stated. State, Consent Mode v2 bridge, banner, footer reopen. **Measured 2.0KB gz against an 8KB reservation.** `A-09` is unblocked |
 | 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | **DONE — enabled in dev** 19 Aug | Dev | `Q-M19` resolved. The grant path has a permanent gate subject: nothing before a choice, a request to each provider after Accept, **PostHog on an EU host**, nothing after Reject. Live ids go in the platform environment at launch |
 | 12 | A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | **DONE** 18 Aug | Dev | Seed publish fails a live build. **The spec's query counted almost nothing** — see below. Also closes **`M-P1-2`**: the dataset variable has no default and an unset one is a build error. `/_kitchen-sink` now inherits the probe exclusion rather than getting a second mechanism |
@@ -554,6 +554,56 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 **No re-measure of the Lighthouse axes.** `FOUNDATION` §4 requires it for changes to
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
+
+### A-08's notification half — a real email, and the limits of what that proves
+
+**Verified live.** A submission through the served app produced a real send: Resend accepted
+it, `contactEmail` in the `development` dataset is now `contact@gridsmith.uk` rather than a
+`[SEED]` placeholder, and that is what satisfies **e-commerce regs reg. 6(1)(c)** — a contact
+route that can actually receive mail. The `[SEED]` VAT number stays until registration
+completes; separate obligations, separate instruments.
+
+**⚠ Two limits are recorded in the gate's own output, not left in a docstring**, because a
+passing dev test is exactly the thing that gets read as a verified production path:
+
+1. **A `sent` proves the pipeline, not deliverability.** Development sends from
+   `onboarding@resend.dev`, Resend's shared sender, which needs no DNS verification and
+   **only delivers to the Resend account owner's own address**. It demonstrates that the
+   pipeline composes, authenticates and is accepted. It says nothing about delivery to an
+   arbitrary recipient.
+2. **At deployment the SPF `include:` must be MERGED into the existing record.**
+   `gridsmith.uk` already has an SPF record serving the live site's mail and it is deliberately
+   untouched until then. A domain may have exactly one: a second is a `permerror` under RFC
+   7208 §4.5, receivers treat that as *no SPF at all*, and **the existing mail starts failing
+   authentication**. Nothing bounces locally, so the failure is silent from the sending side.
+
+**The send does not block the response, and that is measured rather than asserted.** It runs in
+`after()`. Median of five, same payload, same server: **56ms with `after()`, 224ms awaited.**
+Awaiting would put a third-party API's latency *and its outages* on the critical path of a form
+submission — and a timeout would look to the visitor like a failed submission for a lead that
+is already saved.
+
+**Every branch proven separately.**
+
+| Branch | Proof |
+|---|---|
+| unset key **skips** | server built with the three variables cleared: `asserted "skipped (unconfigured)"` |
+| broken key **fails** | `RESEND_API_KEY=re_broken`: `Resend is configured so its outcome must be "sent", and it was "failed" (HTTP 401)` |
+| **a notification failure does not roll back the insert** | with the broken key, a valid submission still returned `201`, and the row `dd0de363…` was then read straight out of Postgres — present, `notified_at` null |
+| a successful send does not block the response | the timing A/B above, and the gate fails if the production path ever returns notification outcomes, which would mean it awaited |
+
+The third is the one that matters and it is proven against the database rather than the
+response: a lead in the database with no email sent is recoverable, a lost lead is not.
+
+**A gate defect found while proving, and fixed as a class.** The gate decided "configured" from
+its **own** `process.env` while asserting against the **server's** behaviour — two processes,
+one assumption. During the broken-key proof it reported *"Resend is not configured"* about a
+server that was configured and failing: a confidently wrong message. The probe route now
+reports `configured` from the server's own view and the gate compares against that. A gate that
+infers the state of a system it does not run in is asserting against something it cannot see.
+
+**`notified_at` is still not stamped**, deliberately — `anon` has no UPDATE policy, correctly.
+`M-P2-13`.
 
 ### A-08 — the pipeline, and what verifying it live actually required
 
@@ -1893,7 +1943,7 @@ Three things follow, and each is recorded rather than fixed:
 | ~~Q-M14~~ | **RESOLVED — CLAUDE.md was the file at fault, not FOUNDATION.** Both shadow tokens stay. The line now reads *"Depth comes primarily from 1px borders and background steps. `--shadow-2` is a hard ceiling; nothing beyond it."* Press book cards use `--shadow-1` by spec, and the Design and Digital rules already cap at `--shadow-2` | Atik | ~~A-05~~ |
 | ~~Q-M11~~ | **PARTLY REOPENED — the greenfield decision was over-broad.** The build is greenfield: nothing migrates, no content, no functionality, no database, and there is no cutover. But **the existing Press site is live and trading and comes down at launch**, so it has indexed URLs that 404 on day one unless mapped. Five of the six findings in `_shared/01-VALIDATION-REPORT.md` §10 stand; finding #3 ("nothing to crawl") is wrong for Press and is corrected there. Tracked as `G-08` (P1) | Atik | `G-08` |
 | ~~**Q-M19**~~ | **RESOLVED 19 Aug 2026.** Development GA4 and PostHog ids in `.env.local`; PostHog on **EU cloud**, asserted rather than defaulted. Live ids go in the Hostinger environment at launch — same variable names, different values per environment, the pattern `NEXT_PUBLIC_SANITY_DATASET` already uses. CI uses shaped placeholders, so the grant path is exercised there with no credential in the repository |
-| **Q-M20** | **A Resend API key, a lead-notification recipient address, a verified sender domain, and a Slack incoming webhook.** `A-08`'s insert leg is done and verified; the notification leg is written and **skipped**, because none of the four exists. Unset is a skip, set-but-broken is a failure — a provider nobody has configured must not fail a build, and one that has been configured and does not work must not pass silently. The recipient cannot be guessed: `companyDetails.contactEmail` is still a `[SEED]` placeholder | Atik | A-08, L-xx |
+| ~~**Q-M20**~~ | **RESOLVED for development, 19 Aug 2026.** `RESEND_API_KEY` in `.env.local`; sender `onboarding@resend.dev`, recipient `contact@gridsmith.uk`. Slack deliberately unused. **Two constraints carried to deployment, both recorded as constraints rather than gaps:** the sender becomes `notifications@gridsmith.uk` when DNS is done, and Resend's SPF `include:` must be **merged into the existing record** — `gridsmith.uk` already has one serving the live site's mail, and a second is a `permerror` under RFC 7208 §4.5 that silently breaks it | Atik | deployment |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |

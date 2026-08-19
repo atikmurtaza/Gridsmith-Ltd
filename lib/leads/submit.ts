@@ -1,7 +1,8 @@
 'use server';
 import 'server-only';
 import { randomUUID } from 'node:crypto';
-import { notifyLead, type NotifyOutcome } from './notify.ts';
+import { after } from 'next/server';
+import { notifyLead } from './notify.ts';
 import { leadSchema } from './schema.ts';
 
 /**
@@ -31,17 +32,27 @@ import { leadSchema } from './schema.ts';
  *
  * ## Order, and what a partial failure means
  *
- * The insert is the commitment. A notification failure does **not** roll it back and does not
- * fail the submission: a lead in the database with no email sent is recoverable, a lost lead
- * is not. The outcomes are returned so the caller can log or surface them, and `status` is
- * `'ok'` only when the row landed.
+ * The insert is the commitment. **A notification failure does not roll it back, does not fail
+ * the submission, and cannot reach the visitor** — a lead in the database with no email sent
+ * is recoverable, a lost lead is not. `status` is `'ok'` exactly when the row landed.
+ *
+ * **The send does not block the response.** `after()` runs the fan-out once the response has
+ * been sent, so a slow or failing provider costs the person filling in the form nothing.
+ * Awaiting it would put a third-party API's latency — and its outages — on the critical path
+ * of a form submission, which is the wrong trade in both directions: the visitor waits, and a
+ * timeout would look to them like a failed submission for a lead that is already saved.
+ *
+ * That also means the outcomes are **not** in the return value. Nothing can be, once the
+ * response has gone. `notifyLead` is exported and the probe route calls it directly so the
+ * branches stay observable — and the gate says which path it is exercising, rather than
+ * letting a testing mode read as the production one.
  *
  * **Consent is not consulted anywhere in this file, and that is deliberate.**
  * `PROJECT-RULES.md` §6: processing an enquiry someone submitted is contract/legitimate
  * interest, not analytics. Never block a form on consent.
  */
 export type SubmitResult =
-  | { status: 'ok'; id: string; notifications: NotifyOutcome[] }
+  | { status: 'ok'; id: string }
   | { status: 'invalid'; errors: Record<string, string[]> }
   | { status: 'error'; detail: string };
 
@@ -84,5 +95,6 @@ export async function submitLead(input: unknown): Promise<SubmitResult> {
     return { status: 'error', detail: `insert failed: HTTP ${response.status}` };
   }
 
-  return { status: 'ok', id, notifications: await notifyLead(parsed.data, id) };
+  after(() => notifyLead(parsed.data, id));
+  return { status: 'ok', id };
 }

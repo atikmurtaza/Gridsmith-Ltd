@@ -738,6 +738,7 @@ const REJECTED = [
 ];
 
 const leadProblems = [];
+let notifyBranch = 'not run';
 const postLead = async (body) => {
   const res = await fetch(LEAD_PROBE, {
     method: 'POST',
@@ -746,6 +747,52 @@ const postLead = async (body) => {
   });
   return { status: res.status, json: await res.json().catch(() => null) };
 };
+
+/**
+ * **The notification half — and the gate states the limit of its own green result.**
+ *
+ * Which branch runs depends on the environment, and **both are real assertions rather than a
+ * skip**: with no `RESEND_API_KEY` the outcome must be `skipped`, with one it must be `sent`.
+ * A configured provider that returns anything else is a failure. There is no path where this
+ * measures nothing.
+ *
+ * ⚠ **A `sent` here does not mean the mail is deliverable.** Development sends from
+ * `onboarding@resend.dev`, Resend's shared sender, which **only delivers to the account
+ * owner's own address**. This proves the pipeline composes, authenticates and is accepted. It
+ * proves nothing about delivery to an arbitrary recipient, and it must not be read as a
+ * verified production path — `gridsmith.uk` is not verified in Resend and will not be until
+ * deployment, when Resend's `include:` has to be **merged into the existing SPF record**. A
+ * second SPF record is a `permerror` under RFC 7208 §4.5 and silently breaks the live site's
+ * mail.
+ */
+{
+  const notifyRes = await fetch(`${LEAD_PROBE}?mode=notify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(VALID_LEAD),
+  });
+  const notifyJson = await notifyRes.json().catch(() => null);
+  const outcomes = notifyJson?.notifications ?? [];
+  const resend = outcomes.find((o) => o.channel === 'resend-internal');
+  // **The SERVER's configuration, not this process's.** The gate and the app are separate
+  // processes; deciding "configured" from `process.env` here asserts against a state this
+  // process does not observe, and during A-08's proof that produced a confidently wrong
+  // message — "not configured" about a server that was configured and failing.
+  const configured = notifyJson?.configured === true;
+  const wanted = configured ? 'sent' : 'skipped';
+
+  if (!resend) {
+    leadProblems.push('the notify path returned no resend-internal outcome — the fan-out did not run');
+  } else if (resend.status !== wanted) {
+    leadProblems.push(
+      `Resend is ${configured ? 'configured' : 'not configured'} so its outcome must be ` +
+        `"${wanted}", and it was "${resend.status}"${resend.detail ? ` (${resend.detail})` : ''}. ` +
+        'Unset is a skip; set-but-broken is a failure, because a provider that silently stops ' +
+        'working is how a pipeline is found to have been dropping notifications for a month',
+    );
+  }
+  notifyBranch = `${wanted} (${configured ? 'configured' : 'unconfigured'})`;
+}
 
 {
   const ok = await postLead(VALID_LEAD);
@@ -757,6 +804,15 @@ const postLead = async (body) => {
     );
   } else if (!ok.json.id) {
     leadProblems.push('a valid lead returned no id — nothing can read the row back, so the action must generate it');
+  } else if ('notifications' in ok.json) {
+    // The response carrying outcomes means the send was awaited. Measured: 56ms median with
+    // `after()`, 224ms awaited — a third-party API's latency and its outages would otherwise
+    // sit on the critical path of a form submission, and a timeout would look to the visitor
+    // like a failed submission for a lead that is already saved.
+    leadProblems.push(
+      'the production path returned notification outcomes, so the send was awaited. It must ' +
+        'run in after(): the response cannot wait on a third-party API',
+    );
   }
 
   for (const [label, body] of REJECTED) {
@@ -983,8 +1039,16 @@ if (!process.exitCode) {
       'viewport(s) — the STATE of the unmade choice, which the two assertions below do not cover',
   );
   console.log(
-    `check-axe: lead pipeline — a valid submission returns 201 with an id, and ` +
-      `${REJECTED.length} validation boundaries are refused without reaching the database`,
+    `check-axe: lead pipeline — a valid submission returns 201 with an id and no notification ` +
+      `outcomes (the send is in after()), and ${REJECTED.length} validation boundaries are ` +
+      'refused without reaching the database',
+  );
+  console.log(
+    `check-axe: lead notification — asserted "${notifyBranch}". ` +
+      'A "sent" proves the pipeline composes and is accepted, NOT deliverability: development ' +
+      "sends from Resend's shared onboarding@resend.dev, which only delivers to the account " +
+      'owner. gridsmith.uk is unverified until deployment, when the SPF include must be MERGED ' +
+      'into the existing record — a second record is a permerror and breaks the live mail',
   );
   console.log(
     `check-axe: grant path — ${configured.length} provider(s) configured; nothing before a ` +

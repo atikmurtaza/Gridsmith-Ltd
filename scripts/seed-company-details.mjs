@@ -41,11 +41,12 @@ const doc = {
   // Same as the registered office, so the field stays empty and the footer says it once.
   tradingAddress: '',
   vatNumber: '[SEED] GB000000000',
-  // Same treatment as vatNumber, and for the same reason. The footer's contact line is a
-  // conditional render path — e-commerce regs reg. 6(1)(c) — and a path first exercised at
-  // launch is a path nobody has run. `.invalid` is reserved by RFC 2606 and can never
-  // resolve, so this cannot be mistaken for a working address.
-  contactEmail: '[SEED] nobody@gridsmith.invalid',
+  // **Real, and no longer a placeholder.** The footer's contact line is what satisfies
+  // e-commerce regs reg. 6(1)(c) — contact details including an email address that make it
+  // possible to reach the provider rapidly — so a `[SEED]` value there was a legal
+  // requirement met by a string that cannot receive mail. `vatNumber` stays marked until
+  // registration completes; these are separate obligations under separate instruments.
+  contactEmail: 'contact@gridsmith.uk',
   tradingNames: ['Gridsmith Design', 'Gridsmith Digital', 'Gridsmith Press'],
   responseCommitment:
     "We'll reply as soon as we can, and always by the end of the next business day.",
@@ -62,7 +63,7 @@ const client = createClient({
 const written = await client.createOrReplace(doc);
 console.log(`seed-company-details: wrote ${written._id} to dataset "${DATASET}"`);
 console.log(`  companyNumber ${doc.companyNumber}`);
-console.log(`  vatNumber "${doc.vatNumber}" and contactEmail "${doc.contactEmail}" — both placeholders`);
+console.log(`  vatNumber "${doc.vatNumber}" — placeholder; contactEmail "${doc.contactEmail}" — real`);
 
 // Next's Data Cache persists across local builds, so a rebuild after a content change can
 // prerender the previous response with nothing reporting it — measured, by adding

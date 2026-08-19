@@ -1,3 +1,5 @@
+import { notifyConfigured, notifyLead } from '@/lib/leads/notify';
+import { leadSchema } from '@/lib/leads/schema';
 import { submitLead } from '@/lib/leads/submit';
 
 /**
@@ -18,13 +20,35 @@ import { submitLead } from '@/lib/leads/submit';
  *
  * **One row per valid POST, and they accumulate.** Invalid payloads never reach the database,
  * so only the gate's single valid case inserts. Pruning probe rows needs a privileged
- * connection, which CI must not hold — it belongs to the same job as `M-P2-12`'s drift check,
+ * connection, which CI must not hold — it belongs to the same job as `M-P1-3`'s drift check,
  * which already has the credential.
+ *
+ * ## Two modes, and the difference is stated rather than hidden
+ *
+ * `POST /gridsmith-lead-probe` runs the **production path**: validate, insert, return. The
+ * notification is scheduled with `after()` and is deliberately not awaited, so its outcome
+ * cannot appear in the response — that is the behaviour being asserted, not a limitation.
+ *
+ * `POST /gridsmith-lead-probe?mode=notify` calls `notifyLead` directly and returns its
+ * outcomes. **This is not the production path** and the gate labels it as such. It exists
+ * because the branches — configured, unset, broken — are otherwise unobservable from outside,
+ * and an unobservable branch is one nobody proves.
  */
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request): Promise<Response> {
   const body: unknown = await request.json().catch(() => null);
+
+  if (new URL(request.url).searchParams.get('mode') === 'notify') {
+    const parsed = leadSchema.safeParse(body);
+    if (!parsed.success) return Response.json({ status: 'invalid' }, { status: 200 });
+    return Response.json(
+      // `configured` is the SERVER's view, not the caller's — see notifyConfigured().
+      { configured: notifyConfigured(), notifications: await notifyLead(parsed.data, 'probe-no-insert') },
+      { status: 200 },
+    );
+  }
+
   const result = await submitLead(body);
   return Response.json(result, { status: result.status === 'ok' ? 201 : 200 });
 }
