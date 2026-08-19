@@ -1,5 +1,5 @@
 import { CANONICAL_PROCESS, validateStageDetail, type StageDetail } from '@/lib/process/canonical';
-import { Numeric } from '@/components/primitives/Table';
+import { Numeric } from '@/components/primitives/Numeric';
 import styles from './master.module.css';
 
 /**

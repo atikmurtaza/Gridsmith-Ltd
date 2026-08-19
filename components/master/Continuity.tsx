@@ -40,7 +40,7 @@ export function Continuity() {
   return (
     <Section surface="sunken">
       <Container>
-        <div className={styles.oneCompany}>
+        <div className={styles.blockIntro}>
           <Heading level={2} size="d2">
             You shouldn’t have to introduce your business from scratch every time you need a
             different kind of expertise.

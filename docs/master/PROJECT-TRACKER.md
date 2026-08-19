@@ -703,6 +703,73 @@ describe the effect, and none supplies words. Inventing the most-read sentence o
 the clearest possible case of non-negotiable #2. **And there is no schema for homepage content
 either** — `groupPage` is closed to `approach` and `about` by design. `Q-M21` covers both.
 
+### N-01 block 5 — the six-stage process, and a 5,591 B import nobody was carrying on purpose
+
+**Premise check, and block 4 is skipped rather than approximated.** `APP-FLOW.md` §2 puts
+*"Selected work — 6, mixed, at least 1 cross-division"* before this block. There is no
+`caseStudy` schema and no real client work to cite. Building it means inventing client names
+and outcomes, which non-negotiable #2 forbids outright, so it is raised (`M-P2-25`) and the
+page is built past it. Block 5 asserts no figure: the stages, their descriptions and the
+"(if applicable)" qualifier all come from `_shared/00-PROCESS.md`, which is FIXED, and
+`check:schemas` already matches the constant against that file every run.
+
+**`APP-FLOW.md` §2 gives this block `→ /approach`. That route does not exist, so it ships with
+no link** — `M-03`, the same rule as blocks 2 and 3.
+
+**Measured, clean build each side (`rm -rf .next`), same server, `/`:**
+
+| | Blocks 1–3 | With block 5 | Delta |
+|---|---|---|---|
+| JS above the framework floor | 2.5KB | **2.5KB** | **0.0KB** |
+| HTML | 18,694 B | 25,557 B | +6,863 B |
+| CSS | 35,542 B | 35,626 B | **+84 B** |
+| Elements in `<body>` | 74 | 113 | +39 |
+
+Element counts here are opening tags in the served `<body>`, which is not the method the block
+1–3 entries used — do not compare the absolute figures across entries, only the deltas.
+
+**The +84 B was +5,675 B on the first measurement, and the difference is the finding.** The
+first clean build of this block served **four** stylesheets where blocks 1–3 serve three. The
+new one was `interactive.module.css`, 5,591 B, on a page with no interactive primitive on it at
+all. The cause: `ProcessStages` renders the stage numbers with `Numeric`, `Numeric` lived in
+`Table.tsx`, and `Table` imports `interactive.module.css` for its scroll region's focus ring.
+Next emits CSS per module file, so a two-declaration mono rule opened a closed file.
+
+**This is block 3's mechanism from the other side.** That entry established that the step is per
+CSS *module file*, not per primitive, and read it as good news — reusing an already-open file is
+free. The same rule says a trivial component can be the reason a closed file opens, and nothing
+about the call site shows it. `Numeric` now lives in `components/primitives/Numeric.tsx` and
+imports `content.module.css` only, which `/` already had for `Card`. `Table` keeps both imports
+because it genuinely uses both. Re-measured on a third clean build: three stylesheets, +84 B.
+
+**The four data points, and the model now predicts rather than describes:**
+
+| Block | CSS | What it was |
+|---|---|---|
+| 1 hero | +1,608 B | first use of `structure.module.css` on this route |
+| 2 routing | +1,593 B | its own rules |
+| 3 argument | +105 B | its own rules, nothing new opened |
+| 5 process | **+84 B** | its own rules — after removing an unrelated file the import graph opened |
+
+**+6,863 B of HTML is the largest of the four and it is all content**, not markup overhead: six
+stage titles and six canonical descriptions, plus the RSC payload's copy of them. Nothing is
+rendered twice.
+
+**`Numeric`'s extraction has no gate, and that is stated rather than left implied.** Nothing
+measures CSS per route — `check-bundle-size` measures JS — so the identical regression can
+recur on the next route that reaches for a primitive with luggage, and no build will say so.
+`M-P2-24`.
+
+**Copy status.** `Q-M21` is resolved for blocks 1–2 only; this block's heading and its one lede
+sentence are **not founder-approved**. They introduce no claim — the sentence restates
+`00-PROCESS.md`'s own argument for publishing one process across three divisions — but they are
+flagged with blocks 4–9's copy rather than counted as approved.
+
+**Verified live:** axe 32 analyses zero violations, 5 link targets all resolving, responsive 21
+combinations clean, 8 routes within budget. **Lighthouse could not be run** — it hard-skips on
+Windows (`M-P2-18`), and `/` is the route with the least LCP headroom in the programme
+(`Q-M16`). Master unchanged at **2.5KB of 15KB**.
+
 ### N-01 block 3 — the one-company argument, and what the CSS curve actually tracks
 
 **Premise check.** `APP-FLOW.md` §2 gives block 3 the primary action `→ /approach`. That route
@@ -2036,7 +2103,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
 | N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | **DONE** 19 Aug | Dev | `verified` hard-true, **run against values rather than counted**. **No seed example can exist** — a placeholder would have to claim it was verified, so the component renders an empty state and `Q-M6` blocks a real one. Zero client JS |
 | N-06 | Canonical process component + validator | P0 | 1d | A-06 | **DONE** 19 Aug | Dev | **Stage names never travel through the CMS** — the constant renders, the CMS supplies only `divisionDetail`/`duration`/`clientTime`. `check:schemas` asserts the constant against `00-PROCESS.md`, the source of truth. `N-01` is next |
-| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **3 of 9 blocks** 19 Aug | Dev | Blocks 1–3 shipped for **0.0KB of JS between them** — Master 2.5KB of 15KB. Block 2 used `next/link` first, measured 4.8KB of JS and 33,531 B of prefetch discarded by the document load `TECH-SPEC` §3 requires, and went to plain `<a>`. Block 3 cost +105 B of CSS, which showed the first-use step is per module **file**, not per primitive. `Q-M21` **resolved** — homepage is hardcoded, no schema. Blocks 4–9 pending, one per commit |
+| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **4 of 9 blocks** 19 Aug | Dev | Blocks 1–3 shipped for **0.0KB of JS between them** — Master 2.5KB of 15KB. Block 2 used `next/link` first, measured 4.8KB of JS and 33,531 B of prefetch discarded by the document load `TECH-SPEC` §3 requires, and went to plain `<a>`. Block 3 cost +105 B of CSS, which showed the first-use step is per module **file**, not per primitive. `Q-M21` **resolved** — homepage is hardcoded, no schema. **Block 5 shipped for 0.0KB of JS and +84 B of CSS**, after the first measurement caught `Numeric` dragging `interactive.module.css` (5,591 B) onto a page with no interactive primitive — `Numeric` moved to its own file, ungated (`M-P2-24`). **Block 4 is blocked on real client work** (`M-P2-25`) and was skipped, not deferred. Blocks 6–9 pending, one per commit |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
 | N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | TODO | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |
 | N-07 | `/about` + structure disclosure | P0 | 1.5d | **M-05, N-03** | TODO | Dev | `Depends` corrected: `/about` is a `groupPage` slug, so it needs `N-03`'s schema as well as `companyDetails` |
@@ -2527,6 +2594,8 @@ decision awaiting the owner, not work awaiting a session.
 | Epic M | `M-P2-17` | **`check-axe`'s `"40+ tokens probed"` is derived from the token files, not the probe loop.** Disabling the probe leaves the number unchanged. Not an unguarded check — the computed-value assertion beside it does fail when starved, so the probe's purpose is covered — but the count is misleading and should be a loop counter like the rest |
 | Epic M | ~~`M-P2-19`~~ | **DONE 19 Aug — and it was a live WCAG AA failure, not just an unmeasured one.** `--ink-muted` at `opacity: 0.6` measures 2.90:1. The dim is now 80% (4.57:1), `DESIGN.md` §5 is corrected, and `check:contrast` grew an opacity pass covering every fade in every CSS module. Three branches proven. The exemption for `:disabled` did not work when written — a literal U+0008 where `\b` was intended, the `check:rls` defect verbatim |
 | Epic M | `M-P2-20` | **The consent-banner filter in `check-bundle-size` has no subject.** Excluding `/`'s own `page-*.js` is correct and was proven against `dcd391e3`, but block 2's revert to plain `<a>` removed the page chunk, so the filter now excludes nothing. Re-run the proof when `/` gains its first client boundary. Do not delete the filter — that re-arms the misattribution | Dev | N-01 | **The division cards' 60% sibling dim is unmeasured for contrast.** `DESIGN.md` §5 requires non-hovered cards to drop to `opacity: 0.6` on hover or focus. axe does not evaluate hover states and `check:contrast` works from tokens on surfaces, so nothing measures `--ink-muted` at 0.6 over `--canvas`. It is a transient state on a pointer interaction, which is why it shipped, but "nobody measured it" is the finding rather than "it is fine". `N-01` |
+| Epic M | `M-P2-24` | **Nothing measures CSS per route.** `check-bundle-size` measures JS only, so `N-01` block 5's +5,591 B of render-blocking CSS — an unrelated module file opened by importing `Numeric` out of `Table.tsx` — was found by reading a stylesheet count in a hand-run measurement and would not have failed any build. The fix (`components/primitives/Numeric.tsx`) is **ungated**: the identical regression recurs the next time a route reaches for a primitive that carries luggage. The class is "a trivial component is the reason a closed CSS module file opens", and it is invisible at the call site. Wants a per-route CSS figure in `check-bundle-size` with a budget, which is a budget nobody has set — raise the budget question before writing the assertion |
+| Epic M | `M-P2-25` | **`N-01` block 4 is blocked on content, not on build.** `APP-FLOW.md` §2 wants *"Selected work — 6, mixed, at least 1 cross-division"*. There is no `caseStudy` schema and no real client work to cite; six invented projects is exactly non-negotiable #2. Needs real project records from the founder — names, what was done, what was delivered — before a schema is worth designing. The homepage is being built past it, so block 4 is a hole in the middle of the page, not the end of it |
 | Epic M | `M-P2-23` | **The U+0008 class reached four instances, and it is the clearest case in this build for a mechanical guard over a documented habit.** `check:rls` (twice over, in the capture and then in its fix), `check:contrast`'s `:disabled` exemption, `check-axe:988`, and one written into `check:control`'s own docstring **while the gate that caught it was being committed**. Three were live and passing green. None was preventable by care: all four render identically to the intended `\b` in `sed`, the terminal, the editor and the diff, so the only reviewer who could ever have caught one is a reviewer already running `od -c`. The habit was documented after instance one and instance two arrived hours later. **`check-axe:988` is the sharpest of the four** — a gate written specifically to detect a *future improvement* (Next beginning to server-render `global-error`, at which point `lang` appears and the characterisation must be deleted) was structurally incapable of detecting it, and agreed with its hardcoded expectation for the wrong reason. A gate that cannot fail is indistinguishable from a gate that passes, and this one was built to fail exactly once, later |
 | Epic M | `M-P2-21` | **Logged against `M-P2-20`, not acted on: block 2 shipped against a rule stated in two neighbouring files and enforced nowhere.** `Footer` and `Header` both carry the `TECH-SPEC` §3 comment on the plain-`<a>` convention. A convention documented at every call site and covered by no gate is the `M-P2-20` shape one level up — there the subject vanished, here the subject never existed. Whether it is gateable at all (a lint rule against `next/link` in chrome? an assertion on the served markup?) is a question for the sweep, not for now |
 | Epic M | `M-P2-22` | **The U+0008 class is now a gate: `check:control`.** `scripts/check-control-chars.mjs` rejects U+0000-U+0008, U+000B, U+000C, U+000E-U+001F across every tree `sourceFiles` enumerates; tab, newline and CR excepted. Wired into `verify:static`. Proven both directions: two codepoints inserted into `check-tokens.mjs` reported `2` naming file, line, column and codepoint; starving the file regex made the run exit non-zero with *"matched zero files"* rather than printing a clean `0`. **It found a third live instance on its first run** — `check-axe`'s `M-07` `lang` probe, written `[^>]*lang="` with a literal backspace, so that branch of the SSR-crash characterisation had never executed and agreed with its expectation for the wrong reason. Repaired to `\s`, re-measured against a real `next build && next start` (shell unchanged: no `lang`), and the branch proven to distinguish. Awareness had already been recorded twice and did not prevent the third |

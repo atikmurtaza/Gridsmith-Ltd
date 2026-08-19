@@ -46,7 +46,5 @@ export function Table({
   );
 }
 
-/** Wrap any verifiable figure — price, date, dimension, revision — in monospace. */
-export function Numeric({ children }: { children: ReactNode }) {
-  return <span className={styles.numeric}>{children}</span>;
-}
+/* `Numeric` moved to its own file — see `Numeric.tsx`. Importing it from here pulled
+   `interactive.module.css` in with it, +5,591 B of CSS measured on a route with no table. */

@@ -1,5 +1,6 @@
 import { EmptyState } from '@/components/primitives/EmptyState';
-import { Numeric, Table } from '@/components/primitives/Table';
+import { Numeric } from '@/components/primitives/Numeric';
+import { Table } from '@/components/primitives/Table';
 import styles from './master.module.css';
 
 /**

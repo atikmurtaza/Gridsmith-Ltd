@@ -151,9 +151,20 @@
 /* The one-company argument — N-01 block 3. Asymmetric, per DESIGN.md §4: prose blocks are
    anchored, not centred. The heading is the argument and takes the narrow measure so it
    breaks where a sentence should; the paragraph gets Prose’s own measure. */
-.oneCompany {
+/* Shared by blocks 3 and 5: the heading-plus-prose stack that opens a prose block.
+   Named for what it is rather than for block 3, which is what it was called when only
+   block 3 used it. */
+.blockIntro {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
   max-width: var(--measure);
+}
+
+/* Block 5's lede. Not Prose: one sentence with no internal structure, and Prose's
+   descendant rules would be styling nothing. --measure so it wraps with the heading. */
+.processLede {
+  margin: 0;
+  max-width: var(--measure);
+  color: var(--ink-muted);
 }

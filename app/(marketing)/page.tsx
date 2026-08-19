@@ -1,6 +1,7 @@
 import { DivisionRouting } from '@/components/master/DivisionRouting';
 import { Continuity } from '@/components/master/Continuity';
 import { Hero } from '@/components/master/Hero';
+import { Process } from '@/components/master/Process';
 
 /**
  * The homepage — `N-01`, block 1 of 9 (`APP-FLOW.md` §2).
@@ -28,6 +29,7 @@ export default function Page() {
       />
       <DivisionRouting />
       <Continuity />
+      <Process />
     </main>
   );
 }

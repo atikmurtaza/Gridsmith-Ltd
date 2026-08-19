@@ -20,7 +20,8 @@ import { Section } from '@/components/primitives/Section';
 import { Select } from '@/components/primitives/Select';
 import { Stepper } from '@/components/primitives/Stepper';
 import { StickyCta } from '@/components/primitives/StickyCta';
-import { Numeric, Table } from '@/components/primitives/Table';
+import { Numeric } from '@/components/primitives/Numeric';
+import { Table } from '@/components/primitives/Table';
 import { Tabs } from '@/components/primitives/Tabs';
 import styles from './kitchen-sink.module.css';
 
