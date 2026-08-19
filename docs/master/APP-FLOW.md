@@ -47,7 +47,7 @@ No conversion event. Pure verification. Must be completable in under 90 seconds.
 |---|---|---|---|
 | 1 | Hero — one sentence on what Gridsmith is. **Not a services list.** | Orient | scroll |
 | 2 | **Division routing — three cards** | Route (M-J3) | → division hub |
-| 3 | The one-company argument, condensed (3 short points) | Frame (M-J2) | → `/approach` |
+| 3 | The one-company argument, condensed. **Built at `N-01` as a heading and one paragraph, not "3 short points"** — the approved copy is sentences, and splitting an approved paragraph into three bullets would be rewriting it into a claim about what the three things are | Frame (M-J2) | → `/approach` **once it exists**; no link until then (`M-03`) |
 | 4 | Selected work — 6, mixed, **at least 1 cross-division** | Proof | → `/work/[slug]` |
 | 5 | The six-stage process, condensed | Reduce risk | → `/approach` |
 | 6 | Clients and testimonial | Proof | — |

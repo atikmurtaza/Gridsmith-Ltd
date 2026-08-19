@@ -703,6 +703,56 @@ describe the effect, and none supplies words. Inventing the most-read sentence o
 the clearest possible case of non-negotiable #2. **And there is no schema for homepage content
 either** — `groupPage` is closed to `approach` and `about` by design. `Q-M21` covers both.
 
+### N-01 block 3 — the one-company argument, and what the CSS curve actually tracks
+
+**Premise check.** `APP-FLOW.md` §2 gives block 3 the primary action `→ /approach`. That route
+does not exist, so the block ships with no link — `M-03`'s rule, the same one that governs
+block 2's "not sure" line. No figure is asserted anywhere for this block.
+
+**Measured, clean build, same server, `/`:**
+
+| | Blocks 1–2 | With block 3 | Delta |
+|---|---|---|---|
+| JS above the framework floor | 2.5KB | **2.5KB** | **0.0KB** |
+| HTML | 17,027 B | 18,682 B | +1,655 B |
+| CSS | 35,437 B | 35,542 B | **+105 B** |
+| DOM elements | 90 | 97 | +7 |
+
+**+105 B of CSS, and that number corrects the model in the block 1 entry.** That entry said a
+block introducing a new primitive adds another first-use step. Block 3 introduces `Prose` and
+`Section surface="sunken"`, both new to this route, and adds **one rule's worth of bytes**.
+
+**The step is per CSS *module file*, not per primitive.** `Prose` and `Section` both live in
+`structure.module.css`, which `/` already loaded for `Container` and `Heading` in block 1 —
+so the marginal cost of using more of it is zero. Block 1's +1,608 B and block 2's inheritance
+of `interactive.module.css` were both **file** first-use, not primitive first-use. **A block
+that reaches into a module file no route has loaded yet is the only kind that steps**, and
+there are four such files in `components/primitives/`.
+
+Three data points, and the shape now has a mechanism rather than a trend line:
+
+| Block | CSS | What it was |
+|---|---|---|
+| 1 hero | +1,608 B | first use of `structure.module.css` on this route |
+| 2 routing | +1,593 B | its own rules (`interactive.module.css` came and went with `next/link`) |
+| 3 argument | **+105 B** | its own rules, nothing new opened |
+
+**Deviation from `APP-FLOW.md` §2, corrected there in this commit.** The table says *"condensed
+(3 short points)"*; the approved copy is a heading and one paragraph. Splitting an approved
+paragraph into three bullets is rewriting it — a three-point list asserts what the three points
+are, which is structure nobody approved. Non-negotiable #2 covers invented structure for the
+same reason it covers invented figures.
+
+**Asymmetric, not centred** — `DESIGN.md` §4 reserves centring for the hero and CTA bands, and
+blocks 1 and 9 are the two exceptions on this page.
+
+**The copy states the relationship and stops there.** The studios share the client context; the
+same people do not execute across all three. That is `Q-M21`'s note for the record, written
+into the component rather than left as an implication of the word "together".
+
+**Verified live:** axe 32 analyses zero violations, 5 link targets all resolving, responsive 21
+combinations clean, 8 routes within budget. Master unchanged at **2.5KB of 15KB**.
+
 ### N-01 block 2, revised — the 4.8KB bought nothing, and the measurement said so
 
 **Premise check, and it does not hold.** The previous entry recorded +4.8KB gz of JS for
@@ -1986,7 +2036,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
 | N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | **DONE** 19 Aug | Dev | `verified` hard-true, **run against values rather than counted**. **No seed example can exist** — a placeholder would have to claim it was verified, so the component renders an empty state and `Q-M6` blocks a real one. Zero client JS |
 | N-06 | Canonical process component + validator | P0 | 1d | A-06 | **DONE** 19 Aug | Dev | **Stage names never travel through the CMS** — the constant renders, the CMS supplies only `divisionDetail`/`duration`/`clientTime`. `check:schemas` asserts the constant against `00-PROCESS.md`, the source of truth. `N-01` is next |
-| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **2 of 9 blocks** 19 Aug | Dev | Blocks 1–2 shipped for **0.0KB of JS between them** — Master 2.5KB of 15KB. Block 2 used `next/link` first, measured 4.8KB of JS and 33,531 B of prefetch discarded by the document load `TECH-SPEC` §3 requires, and went to plain `<a>`. `Q-M21` **resolved** — homepage is hardcoded, no schema. Blocks 3–9 pending, one per commit |
+| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **3 of 9 blocks** 19 Aug | Dev | Blocks 1–3 shipped for **0.0KB of JS between them** — Master 2.5KB of 15KB. Block 2 used `next/link` first, measured 4.8KB of JS and 33,531 B of prefetch discarded by the document load `TECH-SPEC` §3 requires, and went to plain `<a>`. Block 3 cost +105 B of CSS, which showed the first-use step is per module **file**, not per primitive. `Q-M21` **resolved** — homepage is hardcoded, no schema. Blocks 4–9 pending, one per commit |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
 | N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | TODO | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |
 | N-07 | `/about` + structure disclosure | P0 | 1.5d | **M-05, N-03** | TODO | Dev | `Depends` corrected: `/about` is a `groupPage` slug, so it needs `N-03`'s schema as well as `companyDetails` |

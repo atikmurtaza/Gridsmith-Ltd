@@ -1,4 +1,5 @@
 import { DivisionRouting } from '@/components/master/DivisionRouting';
+import { Continuity } from '@/components/master/Continuity';
 import { Hero } from '@/components/master/Hero';
 
 /**
@@ -26,6 +27,7 @@ export default function Page() {
         intro="Design, digital and publishing expertise under one roof. Start with what you need today — and keep the context when you need something else."
       />
       <DivisionRouting />
+      <Continuity />
     </main>
   );
 }

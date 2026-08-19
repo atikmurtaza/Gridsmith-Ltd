@@ -147,3 +147,13 @@
 .divisionLink:hover,
 .divisionLink:focus-visible { text-decoration: underline; text-underline-offset: 0.2em; }
 .divisionLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* The one-company argument — N-01 block 3. Asymmetric, per DESIGN.md §4: prose blocks are
+   anchored, not centred. The heading is the argument and takes the narrow measure so it
+   breaks where a sentence should; the paragraph gets Prose’s own measure. */
+.oneCompany {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--measure);
+}
