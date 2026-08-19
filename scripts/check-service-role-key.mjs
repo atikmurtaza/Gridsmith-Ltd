@@ -31,8 +31,32 @@ import { sourceFiles } from './source-files.mjs';
 
 const SOURCE = /\.(?:ts|tsx|js|jsx|mjs|cjs)$/;
 const KEY = ['SUPABASE', 'SERVICE', 'ROLE', 'KEY'].join('_');
-const PUBLIC_PREFIXED = /NEXT_PUBLIC_[A-Z0-9_]*SERVICE_ROLE[A-Z0-9_]*/g;
 const CHUNK_DIR = '.next/static/chunks';
+
+/**
+ * **Every secret-bearing variable, not just the service-role key** — widened at `A-07`.
+ *
+ * `DIRECT_CONNECTION_STRING` carries the database password. `SANITY_API_WRITE_TOKEN` can
+ * rewrite the CMS. Both are server-only and neither existed when this gate was written, so
+ * the gate that exists to stop a credential reaching the browser could not see either.
+ *
+ * **`PUBLISHABLE_KEY` and `PROJECT_URL` are deliberately absent.** The publishable key is the
+ * one Supabase key that may be client-side, and only because row-level security is what
+ * actually guards the data — the key identifies the project, RLS decides what it can do.
+ * Listing it here would assert a rule that is not true and would have to be suppressed the
+ * first time it was used correctly, which is how a gate becomes noise. **`A-07` is where RLS
+ * has to be right**; this gate protects the credentials RLS does not cover.
+ *
+ * `NEXT_PUBLIC_GA4_ID` and `NEXT_PUBLIC_POSTHOG_KEY` are also absent, and that is not an
+ * oversight: a GA4 measurement id and a PostHog *project* key are public by construction —
+ * they ship in the client bundle on every site that uses them and are useless for reading
+ * data. Treating them as secrets would say something false about how they work.
+ */
+const SECRETS = [KEY, 'DIRECT_CONNECTION_STRING', 'SANITY_API_WRITE_TOKEN'];
+const PUBLIC_PREFIXED = new RegExp(
+  `NEXT_PUBLIC_[A-Z0-9_]*(?:SERVICE_ROLE|DIRECT_CONNECTION|API_WRITE_TOKEN)[A-Z0-9_]*`,
+  'g',
+);
 
 /** True if the file opens with a 'use client' directive, ignoring comments and blanks. */
 function isClientComponent(source) {
@@ -82,11 +106,46 @@ if (!existsSync(CHUNK_DIR)) {
   console.error('Run `npm run build` first. This gate runs in verify:build, after the build, for that reason.\n');
   process.exit(1);
 }
+/**
+ * **The names are half of it. The values are the other half, and they are what actually
+ * leaks.** A bundler inlines the *value* of a variable, not its name, so a chunk can carry a
+ * database password with no recognisable identifier anywhere near it. Searching for names
+ * alone is searching for the label on a box that is no longer around the thing.
+ *
+ * Values come from the environment (`--env-file-if-exists=.env.local`) and **are never
+ * printed** — a hit reports the variable name and the chunk, because a gate that echoes the
+ * credential into a CI log has published it more effectively than the leak it caught.
+ *
+ * Short values are skipped: below 20 characters a match is more likely to be a coincidence
+ * than a leak, and a false positive here trains people to ignore this gate. **The skip is
+ * reported**, so a secret that goes unchecked is visible rather than assumed covered.
+ */
+const values = [];
+const unavailable = [];
+for (const secret of SECRETS) {
+  const value = process.env[secret];
+  if (!value) unavailable.push(`${secret} (not set in this environment)`);
+  else if (value.length < 20) unavailable.push(`${secret} (value under 20 chars — too short to match safely)`);
+  else values.push({ secret, value });
+}
+
 for (const entry of readdirSync(CHUNK_DIR, { recursive: true, withFileTypes: true })) {
   if (!entry.isFile() || !entry.name.endsWith('.js')) continue;
   chunks += 1;
-  if (readFileSync(join(entry.parentPath ?? CHUNK_DIR, entry.name), 'utf8').includes(KEY)) {
-    violations.push({ file: `${CHUNK_DIR}/${entry.name}`, line: 0, why: `${KEY} is present in a client chunk — it shipped` });
+  const chunk = readFileSync(join(entry.parentPath ?? CHUNK_DIR, entry.name), 'utf8');
+  for (const secret of SECRETS) {
+    if (chunk.includes(secret)) {
+      violations.push({ file: `${CHUNK_DIR}/${entry.name}`, line: 0, why: `${secret} is named in a client chunk — it shipped` });
+    }
+  }
+  for (const { secret, value } of values) {
+    if (chunk.includes(value)) {
+      violations.push({
+        file: `${CHUNK_DIR}/${entry.name}`,
+        line: 0,
+        why: `the VALUE of ${secret} is present in a client chunk — it shipped. Rotate it`,
+      });
+    }
   }
 }
 if (chunks === 0) {
@@ -95,7 +154,11 @@ if (chunks === 0) {
 }
 
 if (violations.length === 0) {
-  console.log(`check-service-role-key: clean (${files.length} source files, ${chunks} client chunks)`);
+  console.log(
+    `check-service-role-key: clean — ${SECRETS.length} secret-bearing variable(s) across ` +
+      `${files.length} source files and ${chunks} client chunks; ${values.length} checked by value`,
+  );
+  for (const note of unavailable) console.log(`  value not checked: ${note}`);
   process.exit(0);
 }
 

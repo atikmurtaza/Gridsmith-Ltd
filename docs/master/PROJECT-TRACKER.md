@@ -26,7 +26,7 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | TODO | Dev | **No code artefacts exist** — no `supabase/` tree, no `lib/`, no migration in `git ls-files`. Same correction as A-06: prose in `docs/_shared/SCHEMA-CORE.md` is the specification. Blocked on **`Q-M18`** — a Supabase project, which only Atik can create |
 | 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | Notify <60s. No CRM adapter — deferred, see D1 |
 | 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | **DONE** 18 Aug | Dev | **Precedes A-09.** No cookie before consent — now asserted in the browser, not just stated. State, Consent Mode v2 bridge, banner, footer reopen. **Measured 2.0KB gz against an 8KB reservation.** `A-09` is unblocked |
-| 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | **BUILT, not enabled** 18 Aug | Dev | Taxonomy, referral classifier, consent-gated loader. **No measurement ids exist — `Q-M19`** — so nothing is injected even after a grant, which is correct rather than a workaround. Zero requests before consent is now asserted; the grant path is proven once, ungated |
+| 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | **DONE — enabled in dev** 19 Aug | Dev | `Q-M19` resolved. The grant path has a permanent gate subject: nothing before a choice, a request to each provider after Accept, **PostHog on an EU host**, nothing after Reject. Live ids go in the platform environment at launch |
 | 12 | A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | **DONE** 18 Aug | Dev | Seed publish fails a live build. **The spec's query counted almost nothing** — see below. Also closes **`M-P1-2`**: the dataset variable has no default and an unset one is a build error. `/_kitchen-sink` now inherits the probe exclusion rather than getting a second mechanism |
 
 **The six deviations, and why:**
@@ -554,6 +554,79 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 **No re-measure of the Lighthouse axes.** `FOUNDATION` §4 requires it for changes to
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
+
+### A-09's grant path — a permanent subject, and the region is part of it
+
+**The grant path had been proven once by hand and the measurement was thrown away.** The
+surviving evidence was a commit message, which is the shape CLAUDE.md names: a fix with no
+subject. It now runs every CI run, against the committed banner:
+
+| Step | Asserts |
+|---|---|
+| fresh context, no cookie | zero analytics requests |
+| Accept | a request to **each configured provider**, and PostHog's to an **EU host** |
+| fresh context, Reject | **still zero** |
+
+**Step 3 is not step 1 repeated.** Step 1 is "before a choice"; step 3 is "after an explicit
+no". A banner that fires tags on any interaction rather than on consent passes the first and
+fails the third — which is exactly what the proof below produced.
+
+**The region is asserted twice, at two different levels, because they are different claims.**
+`NEXT_PUBLIC_POSTHOG_HOST` must match an EU endpoint *as configured*, and the request that
+actually goes out must reach one. PostHog's documented default is `us.i.posthog.com`, so the
+failure mode is silent: everything works and only the jurisdiction is wrong — UK GDPR Chapter
+V. The loader now throws rather than degrading, because loading US PostHog "for now" is the
+version of this that ships. The predicate lives in `lib/analytics/posthog-region.ts` so the
+gate asserts **the same predicate the loader uses**, not a copy that can drift.
+
+**CI configures shaped placeholders, not real ids.** The assertions are about which host was
+contacted, never about a response, so a fake id exercises the whole path with no credential in
+the repository. **If no id is configured the gate fails rather than skipping** — an
+unconfigured environment is precisely where this would go hollow.
+
+**Deliberate-failure proof, four branches:**
+
+| Broken | Fired |
+|---|---|
+| no id configured at all | `the grant path cannot be exercised… Skipping here is how this assertion goes hollow` |
+| `NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com` | `is not an EU endpoint… a UK site must not post behavioural data there` — alone |
+| both consent guards removed | `reject: 2 analytics request(s) AFTER an explicit reject — www.googletagmanager.com, eu.i.posthog.com` |
+| a provider configured but injecting nothing | `accept: GA4 is configured but made no request after the grant` |
+
+**And the assertion caught a defect in its own harness before any of that.** The first version
+reused one browser context, so the Reject step inherited the Accept step's `gs_consent` cookie:
+no banner, tags loaded on page load, and it reported `2 analytics request(s) before the click`
+and `no "Reject" button`. "A fresh context, no cookie" has to actually be one — **a page is not
+a context.**
+
+### Secrets: the gate now checks values, not only names
+
+`check-service-role-key` was written for one variable that no longer exists alone.
+`DIRECT_CONNECTION_STRING` carries the database password and `SANITY_API_WRITE_TOKEN` can
+rewrite the CMS; neither existed when the gate was written, so **the gate that exists to stop a
+credential reaching the browser could not see either of them.**
+
+**The names were half of it.** A bundler inlines the *value* of a variable, not its name, so a
+chunk can carry a database password with no recognisable identifier anywhere near it. Values
+now come from the environment and are **never printed** — a hit reports the variable and the
+chunk, because a gate that echoes the credential into a CI log has published it more
+effectively than the leak it caught. Values under 20 characters are skipped and **the skip is
+reported**, so an unchecked secret is visible rather than assumed covered.
+
+`PUBLISHABLE_KEY` and `PROJECT_URL` are deliberately **not** on the list: the publishable key
+is the one Supabase key that may be client-side, and row-level security is what actually guards
+the data. Listing it would assert something untrue and would have to be suppressed the first
+time it was used correctly, which is how a gate becomes noise. `NEXT_PUBLIC_GA4_ID` and the
+PostHog project key are absent for the same reason — both are public by construction.
+
+**Proof, both halves:**
+
+| Broken | Fired |
+|---|---|
+| `DIRECT_CONNECTION_STRING` referenced in a client component | `is named in a client chunk — it shipped`, on two chunks |
+| its **value** inlined via a `NEXT_PUBLIC_` variable, with the name nowhere in the bundle | `the VALUE of DIRECT_CONNECTION_STRING is present in a client chunk — it shipped. Rotate it` |
+
+The second is the case the original gate could never have caught.
 
 ### V1-V3 — three visual items, and one distinction worth keeping
 
@@ -1644,7 +1717,7 @@ Three things follow, and each is recorded rather than fixed:
 | ~~Q-M13~~ | **RESOLVED.** Design `--ink-subtle` is `#818180` at **5.01:1** — the first value on the theme's neutral ramp clearing 5.0:1, chosen over the 4.55:1 minimum so a later `--canvas` adjustment cannot push it back under AA. `--line-strong` recorded as decorative-only in `design/DESIGN.md` §5; Button (secondary) moved to `--ink-subtle` because its resting border is what identifies it as a button | Atik | ~~Design theme~~ applied |
 | ~~Q-M14~~ | **RESOLVED — CLAUDE.md was the file at fault, not FOUNDATION.** Both shadow tokens stay. The line now reads *"Depth comes primarily from 1px borders and background steps. `--shadow-2` is a hard ceiling; nothing beyond it."* Press book cards use `--shadow-1` by spec, and the Design and Digital rules already cap at `--shadow-2` | Atik | ~~A-05~~ |
 | ~~Q-M11~~ | **PARTLY REOPENED — the greenfield decision was over-broad.** The build is greenfield: nothing migrates, no content, no functionality, no database, and there is no cutover. But **the existing Press site is live and trading and comes down at launch**, so it has indexed URLs that 404 on day one unless mapped. Five of the six findings in `_shared/01-VALIDATION-REPORT.md` §10 stand; finding #3 ("nothing to crawl") is wrong for Press and is corrected there. Tracked as `G-08` (P1) | Atik | `G-08` |
-| **Q-M19** | **A GA4 measurement id and a PostHog project key.** `A-09` is built and gated but injects nothing without them, and a placeholder id would send real visitor data to a property nobody owns. Both are free to create. When they land: set `NEXT_PUBLIC_GA4_ID` and `NEXT_PUBLIC_POSTHOG_KEY`, **and give the grant path a permanent gate subject** — it is proven once by hand today and by nothing in CI | Atik | A-09, A-12 |
+| ~~**Q-M19**~~ | **RESOLVED 19 Aug 2026.** Development GA4 and PostHog ids in `.env.local`; PostHog on **EU cloud**, asserted rather than defaulted. Live ids go in the Hostinger environment at launch — same variable names, different values per environment, the pattern `NEXT_PUBLIC_SANITY_DATASET` already uses. CI uses shaped placeholders, so the grant path is exercised there with no credential in the repository |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |

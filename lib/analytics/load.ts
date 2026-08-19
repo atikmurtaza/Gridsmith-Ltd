@@ -1,5 +1,6 @@
 import type { Consent } from '@/lib/consent/state';
 import { isAiReferral, trafficSource } from './referral';
+import { isEuPostHogHost } from './posthog-region';
 import type { EventContext, EventName, EventProps } from './events';
 
 /**
@@ -15,16 +16,28 @@ import type { EventContext, EventName, EventProps } from './events';
  * state; this file only reacts to it. `check-axe` asserts zero requests to any analytics
  * host across every route with no interaction, and one after a grant.
  *
- * ## The IDs are missing and that is recorded, not worked around
+ * ## The ids, and the region
  *
- * `NEXT_PUBLIC_GA4_ID` and `NEXT_PUBLIC_POSTHOG_KEY` are unset. With no id, this injects
- * nothing after a grant either, which is correct and honest — inventing a placeholder
- * measurement id would send real visitor data to a property nobody owns. Tracked as
- * `Q-M19`; the site is analytics-ready and not yet analytics-enabled.
+ * `Q-M19` resolved: development ids exist in `.env.local`, live ids go in the platform
+ * environment at launch. **Same variable names, different values per environment** — the
+ * pattern `NEXT_PUBLIC_SANITY_DATASET` already uses.
+ *
+ * **`NEXT_PUBLIC_POSTHOG_HOST` must be an EU endpoint and that is asserted, not defaulted.**
+ * PostHog's documented default is `https://us.i.posthog.com`. A UK site posting behavioural
+ * data to a US endpoint is a data-transfer question — UK GDPR Chapter V — not a
+ * misconfiguration to notice later, and the failure is silent: everything works, the data is
+ * just in the wrong jurisdiction. `check-axe` asserts the configured value **and** the host
+ * of the request that actually goes out, because a correct constant and a correct request are
+ * different claims.
+ *
+ * The fallback below is the EU host rather than PostHog's default, so an unset variable
+ * cannot select the US by omission. `assertEuHost` then rejects anything non-EU outright,
+ * including an explicit US value.
  */
 const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID ?? '';
 const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY ?? '';
 const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com';
+
 
 let loaded = false;
 
@@ -59,7 +72,17 @@ export function loadAnalytics(consent: Consent, division: EventContext['division
   window.dataLayer.push(['gs_context', ctx]);
 
   if (GA4_ID) inject(`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`, 'gs-ga4');
-  if (POSTHOG_KEY) inject(`${POSTHOG_HOST}/static/array.js`, 'gs-posthog');
+  if (POSTHOG_KEY) {
+    if (!isEuPostHogHost(POSTHOG_HOST)) {
+      // Refuse rather than degrade. Loading US PostHog "for now" is the version of this
+      // mistake that ships, because nothing about it looks broken.
+      throw new Error(
+        `NEXT_PUBLIC_POSTHOG_HOST is "${POSTHOG_HOST}", which is not an EU endpoint. ` +
+          'A UK site must not post behavioural data to the US default (UK GDPR Chapter V).',
+      );
+    }
+    inject(`${POSTHOG_HOST}/static/array.js`, 'gs-posthog');
+  }
 }
 
 /**

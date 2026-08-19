@@ -54,15 +54,14 @@ unset variable is a build error, not a fallback (`M-P1-2`). That is deliberate: 
 a fallback to `development` would publish a `[SEED]` VAT number. Do not set it to `production`
 before Stage 8, and **set it in the Hostinger environment before the first deploy**.
 
-**One manual step remains and it needs an interactive login:** the Studio's dev origin has
-to be allowed on the project.
+**Done — 19 August 2026.** The Studio's dev origin is allowed on the project:
 
 ```bash
-npx sanity login && npx sanity cors add http://localhost:3333 --no-credentials
+npx sanity login && npx sanity cors add http://localhost:3333 --credentials
 ```
 
-Attempted here and refused with *"You must login first"*, so it is recorded rather than
-claimed done.
+`--credentials`, not `--no-credentials`. This file said the latter until it was corrected: the
+Studio authenticates with a cookie, so an origin added without credentials cannot log in.
 
 ## Reading order, first time
 

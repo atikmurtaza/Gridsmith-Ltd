@@ -33,6 +33,18 @@ on:
 # publish a [SEED] VAT number. CI builds against `development` and says so here.
 env:
   NEXT_PUBLIC_SANITY_DATASET: development
+  # **Shaped placeholders, not the real ids.** `check-axe`'s grant-path assertions are about
+  # which host was contacted, never about a response, so a fake id exercises the whole path
+  # with no credential in the repository. Real dev ids live in `.env.local`; live ids go in
+  # the platform environment at launch — same variable names, different values per
+  # environment, the pattern NEXT_PUBLIC_SANITY_DATASET already uses.
+  #
+  # The gate FAILS if none is configured rather than skipping: an unconfigured environment is
+  # exactly where this assertion would go quietly hollow.
+  NEXT_PUBLIC_GA4_ID: G-CIPLACEHOLDER
+  NEXT_PUBLIC_POSTHOG_KEY: phc_ci_placeholder_not_a_real_project_key
+  # EU, asserted rather than defaulted. PostHog's documented default is us.i.posthog.com.
+  NEXT_PUBLIC_POSTHOG_HOST: https://eu.i.posthog.com
 
 jobs:
   verify:

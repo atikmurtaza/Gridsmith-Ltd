@@ -20,6 +20,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import puppeteer from 'puppeteer';
+import { isEuPostHogHost } from '../lib/analytics/posthog-region.ts';
 
 /**
  * The axe source is read and passed in explicitly rather than left to the adapter.
@@ -706,6 +707,123 @@ if (cookiesBeforeConsent.length > 0) {
 }
 
 /**
+ * **The grant path — `A-09`, and it exists because the alternative was a measurement nobody
+ * kept.**
+ *
+ * The no-interaction sweep above proves the denied half: zero cookies, zero analytics
+ * requests, denied defaults, on every route. **It cannot prove the other half**, and for a
+ * while nothing did — the grant path was verified once by hand with a throwaway env var and
+ * the result was written into a commit message. That is the shape CLAUDE.md calls a fix with
+ * no subject: the only surviving evidence was prose.
+ *
+ * So the subject is the committed banner and this sequence, run every CI run:
+ *
+ *   1. a fresh context, no cookie   -> zero analytics requests
+ *   2. Accept                       -> a request to each configured provider, and PostHog's
+ *                                      to an EU host
+ *   3. a fresh context, Reject      -> still zero
+ *
+ * **Step 3 is not step 1 repeated.** Step 1 is "before a choice"; step 3 is "after an
+ * explicit no", and a banner that fires tags on any interaction rather than on consent passes
+ * step 1 and fails step 3.
+ *
+ * **CI configures placeholder ids, not the real ones.** The ids are read from the environment
+ * and the assertions are about *which host was contacted*, never about a response — so a
+ * shaped-but-fake id exercises the whole path with no credential in the repository. If no id
+ * is configured the gate fails rather than skipping: an unconfigured environment is exactly
+ * where this would go quietly hollow.
+ */
+const PROVIDERS = [
+  { name: 'GA4', env: 'NEXT_PUBLIC_GA4_ID', host: 'googletagmanager.com' },
+  { name: 'PostHog', env: 'NEXT_PUBLIC_POSTHOG_KEY', host: 'posthog' },
+];
+
+const grantProblems = [];
+const configured = PROVIDERS.filter((p) => process.env[p.env]);
+if (configured.length === 0) {
+  grantProblems.push(
+    'no analytics id is configured, so the grant path cannot be exercised. Set ' +
+      `${PROVIDERS.map((p) => p.env).join(' and ')} — CI uses shaped placeholders, not real ids. ` +
+      'Skipping here is how this assertion goes hollow in the one environment that matters.',
+  );
+} else {
+  const posthogHost = (process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com').replace(/\/$/, '');
+  if (!isEuPostHogHost(posthogHost)) {
+    grantProblems.push(
+      `NEXT_PUBLIC_POSTHOG_HOST is "${posthogHost}", which is not an EU endpoint. PostHog's ` +
+        'documented default is us.i.posthog.com; a UK site must not post behavioural data ' +
+        'there (UK GDPR Chapter V).',
+    );
+  }
+
+  const browser2 = await puppeteer.launch();
+  try {
+    for (const [label, button, expectRequests] of [
+      ['accept', 'Accept', true],
+      ['reject', 'Reject', false],
+    ]) {
+      // **A fresh browser context per step, not just a fresh page.** The first version
+      // reused one context, so the Reject step inherited the Accept step's `gs_consent`
+      // cookie: no banner was shown, the tags loaded on page load, and the gate reported
+      // `2 analytics request(s) before the click` and `no "Reject" button`. That is the
+      // assertion catching its own harness — "a fresh context, no cookie" has to actually be
+      // one, and a page is not a context.
+      const context = await browser2.createBrowserContext();
+      const page = await context.newPage();
+      const seen = [];
+      page.on('request', (req) => {
+        const host = new URL(req.url()).hostname;
+        if (PROVIDERS.some((p) => host.includes(p.host))) seen.push({ host, url: req.url() });
+      });
+      await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
+
+      if (seen.length > 0) {
+        grantProblems.push(`${label}: ${seen.length} analytics request(s) before the click`);
+      }
+
+      const clicked = await page.evaluate((text) => {
+        const b = [...document.querySelectorAll('button')].find((el) => el.textContent.trim() === text);
+        if (!b) return false;
+        b.click();
+        return true;
+      }, button);
+      if (!clicked) {
+        grantProblems.push(`${label}: no "${button}" button on the first-visit banner — the subject is not there`);
+        await context.close();
+        continue;
+      }
+      await new Promise((r) => setTimeout(r, 1500));
+
+      if (expectRequests) {
+        for (const provider of configured) {
+          const hit = seen.find((s) => s.host.includes(provider.host));
+          if (!hit) {
+            grantProblems.push(`accept: ${provider.name} is configured but made no request after the grant`);
+          } else if (provider.name === 'PostHog' && !isEuPostHogHost(`https://${hit.host}`)) {
+            grantProblems.push(`accept: PostHog contacted ${hit.host}, which is not an EU endpoint`);
+          }
+        }
+      } else if (seen.length > 0) {
+        grantProblems.push(
+          `reject: ${seen.length} analytics request(s) AFTER an explicit reject — ` +
+            `${seen.map((s) => s.host).join(', ')}. Tags fire on consent, not on interaction`,
+        );
+      }
+      await context.close();
+    }
+  } finally {
+    await browser2.close();
+  }
+}
+
+if (grantProblems.length > 0) {
+  total += grantProblems.length;
+  console.error(`
+check-axe: ${grantProblems.length} problem(s) on the consent grant path (A-09):`);
+  for (const p of grantProblems) console.error(`      ${p}`);
+}
+
+/**
  * **What a server-render crash actually serves, characterised — `M-07`.**
  *
  * `app/global-error.tsx` and `gridsmith-error-probe` both recorded the SSR path as
@@ -791,6 +909,10 @@ if (!process.exitCode) {
     `check-axe: first render applied a denied default for every non-essential category on ` +
       `${ROUTES.filter((r) => r.themed !== false).length} themed route(s) × ${VIEWPORTS.length} ` +
       'viewport(s) — the STATE of the unmade choice, which the two assertions below do not cover',
+  );
+  console.log(
+    `check-axe: grant path — ${configured.length} provider(s) configured; nothing before a ` +
+      'choice, a request to each after Accept, PostHog on an EU host, nothing after Reject',
   );
   console.log(
     'check-axe: zero cookies set and zero requests to ' +
