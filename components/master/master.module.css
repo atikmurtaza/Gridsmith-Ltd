@@ -69,3 +69,73 @@
   font-size: var(--text-lg);
   color: var(--ink-muted);
 }
+
+/* Division routing — N-01 block 2, DESIGN.md §5 and APP-FLOW.md §3.
+   Equal thirds rather than spans of the 12-column Grid: three equal cards is the whole
+   layout, and `repeat(3, 1fr)` says it in one line. Stacked full width below 768px. */
+.divisionCards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gutter);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (max-width: 767px) {
+  .divisionCards { grid-template-columns: 1fr; }
+}
+
+/* The 3px accent rule. It is the one place the master layer carries a division colour
+   (DESIGN.md §2) and it is a rule, never text — --accent-design is 2.16:1 on this canvas
+   and would fail as a foreground. Padding is on the card; the rule sits inside its border. */
+.divisionCards > li { position: relative; border-block-start-width: 3px; }
+.cardDesign  { border-block-start-color: var(--accent-design); }
+.cardDigital { border-block-start-color: var(--accent-digital); }
+.cardPress   { border-block-start-color: var(--accent-press); }
+
+/* The wipe. A second bar over the accent rule, scaled from the left on hover or focus —
+   DESIGN.md §6's "top rule animates left→right". --ink is the master accent, so this
+   introduces no colour; the rule visibly runs from the division's colour to ink. */
+.divisionCards > li::after {
+  content: '';
+  position: absolute;
+  inset-block-start: -3px;
+  inset-inline: -1px;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.divisionCards > li:hover::after,
+.divisionCards > li:focus-within::after { transform: scaleX(1); }
+
+.divisionCards > li:hover,
+.divisionCards > li:focus-within { background: var(--canvas-raised); }
+
+/* Siblings to 60% — DESIGN.md §5. Keyed off the list so the dim is the non-hovered
+   cards, not a state each card knows about. */
+.divisionCards:hover > li:not(:hover),
+.divisionCards:focus-within > li:not(:focus-within) {
+  opacity: 0.6;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+/* No motion reset in globals.css — there is none to inherit; RevealOnScroll carries its
+   own. Both animated properties are killed here, not slowed. */
+@media (prefers-reduced-motion: reduce) {
+  .divisionCards > li::after,
+  .divisionCards:hover > li:not(:hover),
+  .divisionCards:focus-within > li:not(:focus-within) { transition: none; }
+}
+
+.divisionServices { margin: 0; color: var(--ink); }
+.divisionCharacter { margin: 0; color: var(--ink-muted); }
+
+/* Not styled as a fallback despite the class name: --text-lg and --ink, the same weight
+   as the cards. DESIGN.md §8 — "give 'not sure / more than one' equal weight". */
+.divisionFallback {
+  margin: var(--space-8) 0 0;
+  font-size: var(--text-lg);
+  color: var(--ink);
+}

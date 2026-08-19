@@ -703,6 +703,97 @@ describe the effect, and none supplies words. Inventing the most-read sentence o
 the clearest possible case of non-negotiable #2. **And there is no schema for homepage content
 either** — `groupPage` is closed to `approach` and `about` by design. `Q-M21` covers both.
 
+### N-01 block 2 — division routing, and the first block that costs JS
+
+**Premise check.** Block 1 measured **0.0KB of JS** and the entry above concluded that a
+Server Component with no client boundary costs nothing, so eight more of the same shape cost
+nothing. **Block 2 is not that shape and the projection does not survive it.** Three real
+`<a>`s go through the `Link` primitive, which is `next/link`, which is a Client Component.
+
+**Measured, clean build, same server, `/`:**
+
+| | Block 1 only | With block 2 | Delta |
+|---|---|---|---|
+| JS above the framework floor | 2.5KB | **7.3KB** | **+4.8KB** |
+| HTML | 12,713 B | 17,839 B | **+5,126 B** |
+| CSS | 39,150 B | 40,743 B | **+1,593 B** |
+| DOM elements | 69 | 94 | **+25** |
+
+**Master's delta is now 7.3KB of 15KB.** Nothing is over budget and no budget was touched.
+
+#### The CSS answer the previous entry asked for
+
+Block 1 predicted that its **+5,591 B of `interactive.module.css` would be paid one block
+early, not added**, because block 2's cards are real links. **Confirmed:** `interactive_link`
+and `interactive_focusable` now appear in the served HTML of `/`, and block 2's own CSS cost is
+**+1,593 B** — the routing rules in `master.module.css` and nothing else. Against block 1's
+structural +1,608 B, this is the first evidence for the shape of the curve: **a block that
+reuses the primitives already on the route costs its own rules, not another first-use step.**
+Two data points is not a curve, and blocks 4 and 8 pull images.
+
+#### +4.8KB of JS for three links, and it was a decision rather than an oversight
+
+A plain `<a href>` costs zero. `next/link` buys client-side navigation and prefetch, and this
+is the block where prefetch is worth most: `M-J3` is *"division hub within one click"* and this
+is the click. Master has 7.7KB spare, so nothing is being broken to afford it.
+
+**What is not yet known is whether it is paid once.** The 4.8KB is `/`'s own
+`chunks/app/(marketing)/page-*.js` plus what it pulls; the expectation is that block 4's work
+cards and block 8's insight links add nothing further, exactly as the CSS did. **That is a
+projection, and it is recorded as one.** Block 4 is the test.
+
+#### The measurement broke two assertions in `check-bundle-size`, and both were real
+
+Neither was a false alarm and neither was silenced. **Both fired on the same run and printed
+different messages**, so which was which was never in doubt.
+
+**1. `/` is no longer a baseline route.** The spread across the five went to 4.8KB against a
+0.3KB tolerance. The gate's own note says this shape means one of two things and names them:
+something shipped on a subset of routes, or **a route grew a feature and should leave
+`BASELINE_ROUTES` deliberately.** This is the second, so `/` left the list, and the note's
+warning against using that edit to go green is why this paragraph exists. Four featureless
+routes remain — three division placeholders and the 404 — so the invariant still has teeth.
+`masterDelta` now reads `/` from `rows` rather than from the baseline set.
+
+**2. The consent-banner figure had stopped being the consent banner.** It is defined as `/`'s
+`chunks/app/**` scripts minus `global-error`, and until this commit those were the shared
+layout boundary and nothing else. Block 2 gave `/` a page chunk of its own, the sum absorbed
+it, and the gate failed reporting that **the consent banner** had grown from 1.8KB to 3.5KB.
+The banner had not changed by a byte. **This is the hollow-subject class in the direction that
+fails loudly and wrongly** — the check kept measuring, the thing it measured stopped being what
+its name said, and the message accused the wrong component. The filter now excludes the route's
+own `page-*.js`; the banner measures **2.0KB** against its 3KB budget.
+
+**Both branches proven separately after the fix, each firing alone:**
+
+| Broken | Fired | Other branch |
+|---|---|---|
+| `/` put back into `BASELINE_ROUTES` | `baseline spread 4.8KB gz`, 1 problem | banner green at 2.0KB |
+| the `page-*.js` exclusion removed | `the shared layout client chunk is 3.5KB, over its 3KB budget`, 1 problem | spread green at 0.2KB |
+
+#### Two deviations from `DESIGN.md` §5, both corrected in the specification in this commit
+
+1. **The card body is prose, not "three example services in mono".** The approved copy supplies
+   two sentences; splitting them on commas gives three items for Design, four for Digital and a
+   broken phrase for Press. Mono would be wrong anyway — it marks what is **verifiable**, and a
+   services description is not.
+2. **The "not sure / need more than one" line ships as text.** `/contact` does not exist and
+   `M-03`'s rule is that only links with routes are shipped; `check-axe` fails on a same-origin
+   404. `DESIGN.md`'s requirement that it not be visually subordinate is met now — `--text-lg`,
+   `--ink`, full weight — and the href arrives with the route.
+
+`300ms` in §5 and §6 was also not on the duration scale, so it could not be honoured exactly.
+`--dur-base` (250ms) is used and both rows now name the token.
+
+**Verified live:** `check-axe` 32 analyses across 8 routes × 2 viewports × 2 phases, zero
+violations; 5 same-origin link targets, every one resolving; `check-responsive` 21 combinations,
+no overflow at 375/768/1440. **LHCI is skipped on Windows** — the `0.98` threshold on `/`, and
+whether 4.8KB of router JS moves TBT, are CI's reading.
+
+**Not covered by any gate: the 60% sibling dim.** `DESIGN.md` §5 requires it, axe does not
+evaluate hover states, and `--ink-muted` at 0.6 opacity is a contrast question nobody has
+measured. Logged as `M-P2-19`.
+
 ### N-01 block 1, second commit — the approved copy, and a 5,591 B chunk merge
 
 **Q-M21 resolved.** The hero is the approved wording and the **homepage is hardcoded, not
@@ -1797,7 +1888,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
 | N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | **DONE** 19 Aug | Dev | `verified` hard-true, **run against values rather than counted**. **No seed example can exist** — a placeholder would have to claim it was verified, so the component renders an empty state and `Q-M6` blocks a real one. Zero client JS |
 | N-06 | Canonical process component + validator | P0 | 1d | A-06 | **DONE** 19 Aug | Dev | **Stage names never travel through the CMS** — the constant renders, the CMS supplies only `divisionDetail`/`duration`/`clientTime`. `check:schemas` asserts the constant against `00-PROCESS.md`, the source of truth. `N-01` is next |
-| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **1 of 9 blocks** 19 Aug | Dev | Block 1 (hero) shipped, then its approved copy: **0.0KB JS** across both. Structure +1,608B CSS; copy +5,591B CSS, all of it `interactive.module.css` pulled in by a chunk merge and unused until block 2. `Q-M21` **resolved** — homepage is hardcoded, no schema. Blocks 2–9 pending, one per commit |
+| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **2 of 9 blocks** 19 Aug | Dev | Block 1 (hero) 0.0KB JS. **Block 2 (division routing) +4.8KB JS** — `next/link` is a Client Component — putting Master at **7.3KB of 15KB**, and +1,593B CSS, which confirms block 1's prediction that its 5,591B was paid early rather than added. `/` left `BASELINE_ROUTES` and the consent-banner figure was un-hollowed. `Q-M21` **resolved** — homepage is hardcoded, no schema. Blocks 3–9 pending, one per commit |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
 | N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | TODO | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |
 | N-07 | `/about` + structure disclosure | P0 | 1.5d | **M-05, N-03** | TODO | Dev | `Depends` corrected: `/about` is a `groupPage` slug, so it needs `N-03`'s schema as well as `companyDetails` |
@@ -2286,6 +2377,7 @@ decision awaiting the owner, not work awaiting a session.
 | Epic M | `M-P2-13` | **nothing measures the `<60s` notification target.** `FOUNDATION` §6 and `SCHEMA-CORE.md` §3 both state it; neither has ever been measured, and `notified_at` — the column the measurement needs — cannot be written by the only role the pipeline uses. `anon` has no UPDATE policy, correctly. Stamping it needs a service-role writer, and the alert needs production traffic and a destination. Until then the figure is a target, not a budget |
 | Epic M | ~~`M-P2-15`~~ | **Reclassified P1 as `M-P1-4` — see the P1 table above.** Filed P2 as a coverage gap. It is not one: the fault is invisible by construction |
 | Epic M | `M-P2-17` | **`check-axe`'s `"40+ tokens probed"` is derived from the token files, not the probe loop.** Disabling the probe leaves the number unchanged. Not an unguarded check — the computed-value assertion beside it does fail when starved, so the probe's purpose is covered — but the count is misleading and should be a loop counter like the rest |
+| Epic M | `M-P2-19` | **The division cards' 60% sibling dim is unmeasured for contrast.** `DESIGN.md` §5 requires non-hovered cards to drop to `opacity: 0.6` on hover or focus. axe does not evaluate hover states and `check:contrast` works from tokens on surfaces, so nothing measures `--ink-muted` at 0.6 over `--canvas`. It is a transient state on a pointer interaction, which is why it shipped, but "nobody measured it" is the finding rather than "it is fine". `N-01` |
 | Epic M | `M-P2-18` | **`check:lhci:desktop` and `check:lhci:mobile` were not audited by `M-P1-4`.** Both hard-skip on Windows and their assertions live in `lighthouserc.*.cjs`, evaluated by LHCI rather than by our code, so neither the zero test nor the made-to-fail test could be applied locally. **They are the only two of the 20 gates left unverified in both directions.** Audit them on a Linux runner, or from CI |
 | Epic M | `M-P2-16` | **the research findings R1-R6 and the fix ledger's repair rows R1-R5 share an identifier namespace.** (Written unbackticked here deliberately: backticking them trips the very gate this row is about, which is how it was found.) `check:claims` covers `R\d+` inside backticks in the five governed documents, so writing about research finding R6 in a tracker fails the gate — which it did, correctly, at `N-06`. This is `G7`'s class in a namespace `G7` did not sweep: an identifier that resolves to two different things. Today's workaround is not to backtick research references, which is a convention nobody will remember. Rename one side — `RF-1`…`RF-6` for the research findings is the cheaper half, since the ledger's are load-bearing in a gate |
 | Epic M | `M-P2-14` | **`gridsmith-lead-probe` inserts one row per CI run and nothing prunes them.** Invalid payloads never reach the database, so only the valid case writes. Pruning needs a privileged connection CI must not hold — it belongs to the same job as `M-P2-12`'s drift check, which already has the credential |

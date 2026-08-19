@@ -452,7 +452,21 @@ if (over.length > 0) {
  * must stay strictly below `FLOOR_TOLERANCE_KB` — equal thresholds make this block
  * unreachable, since the floor check exits first.
  */
-const BASELINE_ROUTES = ['/', '/design', '/digital', '/press', '/_not-found'];
+/**
+ * **`/` left this list at `N-01` block 2, and this is the deliberate edit the note above
+ * describes rather than a way to go green.** The division routing block ships three real
+ * `<a>`s through the `Link` primitive, which is `next/link`, which is a Client Component —
+ * so `/` gained its own `chunks/app/(marketing)/page-*.js` and went from 2.5KB to 7.3KB
+ * while the other four stayed at 2.5KB. That is a route with a feature, which is precisely
+ * what disqualifies it from being a baseline route. Its 15KB budget still covers it in the
+ * table above, and `masterDelta` below still reads it — from `rows`, not from this list.
+ *
+ * The four that remain are still genuinely featureless, so the invariant still has teeth:
+ * `/design`, `/digital` and `/press` are placeholders and `/_not-found` is the 404.
+ * **When the first of those gains a feature, do not repeat this edit without checking that
+ * two members remain** — at one member the spread is zero by construction.
+ */
+const BASELINE_ROUTES = ['/design', '/digital', '/press', '/_not-found'];
 
 const baselineRows = rows.filter((r) => BASELINE_ROUTES.includes(r.url));
 const kitchen = rows.find((r) => r.url === '/_kitchen-sink');
@@ -470,13 +484,27 @@ if (baselineRows.length !== BASELINE_ROUTES.length) {
   const dearest = Math.max(...baselineRows.map((r) => r.delta));
   const spread = dearest - shared;
   const primitives = kitchen.delta - shared;
-  const masterDelta = baselineRows.find((r) => r.url === '/').delta;
+  // `/` is no longer a baseline route (see BASELINE_ROUTES), so both of these read the
+  // full row set. Master's total is a fact about `/` whether or not it is a baseline.
+  const masterRow = rows.find((r) => r.url === '/');
+  const masterDelta = masterRow.delta;
 
   // The shared layout's client cost: every `chunks/app/**` script `/` loads, minus the
   // `global-error` boundary, which is counted separately as the shared baseline.
-  const masterAppChunks = baselineRows.find((r) => r.url === '/').appChunks;
+  //
+  // **The route's own page chunk is excluded, and that exclusion is the whole point.** This
+  // figure is named for a specific thing — the shared layout's client boundary, today the
+  // consent banner — and until `N-01` block 2 the only `chunks/app/**` scripts on `/` were
+  // that boundary and `global-error`. Block 2's `next/link` gave `/` a
+  // `chunks/app/(marketing)/page-*.js` of its own, and this sum silently absorbed it:
+  // 1.8KB became 3.5KB and the gate failed reporting that *the consent banner* had grown
+  // past its budget. It had not changed at all. A subject that quietly stops being the
+  // subject leaves the check auditing whatever is there and naming it something else —
+  // CLAUDE.md's hollow-subject rule, in the direction where it fails loudly and wrongly
+  // rather than passing.
+  const masterAppChunks = rows.find((r) => r.url === '/').appChunks;
   const banner = masterAppChunks
-    .filter((c) => !/global-error/.test(c.src))
+    .filter((c) => !/global-error/.test(c.src) && !/\/page-[^/]*\.js$/.test(c.src))
     .reduce((n, c) => n + c.gz, 0);
   if (masterAppChunks.length === 0) {
     decomposition.push('/ loads no chunks/app/** script at all — the consent banner cost measured nothing.');

@@ -1,3 +1,4 @@
+import { DivisionRouting } from '@/components/master/DivisionRouting';
 import { Hero } from '@/components/master/Hero';
 
 /**
@@ -24,6 +25,7 @@ export default function Page() {
         headline="One company. Three specialist studios. Built to work together."
         intro="Design, digital and publishing expertise under one roof. Start with what you need today — and keep the context when you need something else."
       />
+      <DivisionRouting />
     </main>
   );
 }

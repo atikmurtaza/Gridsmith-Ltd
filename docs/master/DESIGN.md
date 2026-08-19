@@ -102,8 +102,8 @@ The mono-for-facts convention holds across all four layers. It is the strongest 
 
 | Component | Specification |
 |---|---|
-| **Division card** | Equal thirds. 1px `--line` border. 3px top rule in that division's accent. Name in display, descriptor in `--ink-muted`, three example services in mono. Hover/focus: `--canvas-raised` background, top rule animates left→right 300ms, siblings to 60% opacity |
-| **"Not sure" link** | Directly below the cards, `--text-lg`, underlined, `--ink`. **Not styled as secondary** — it is the highest-value path |
+| **Division card** | Equal thirds. 1px `--line` border. 3px top rule in that division's accent. Name in display, then **the approved services sentence in `--ink` and the character sentence in `--ink-muted`**. Hover/focus: `--canvas-raised` background, top rule animates left→right over `--dur-base`, siblings to 60% opacity. **Corrected at `N-01` block 2**, in two places. This row said *"descriptor in `--ink-muted`, three example services in mono"*: the approved copy supplies two sentences, and splitting them on commas yields three items for Design, four for Digital and a broken phrase for Press. Mono would be wrong regardless — the cross-theme convention is that monospace marks anything **verifiable**, and a services description is not. It also said `300ms`, which is not a token; `--dur-base` is 250ms and `--dur-slow` is 400ms, so the literal could not be honoured exactly by anything using the scale |
+| **"Not sure" link** | Directly below the cards, `--text-lg`, `--ink`. **Not styled as secondary** — it is the highest-value path. **Ships as text, not a link, until `/contact` exists** (`N-01` block 2): `M-03` set the rule that only links whose routes exist are shipped, and `check-axe` fails the build on a same-origin link that 404s. The underline returns with the href, in the commit that adds `/contact` |
 | **Work card** | Cover image, division badge(s), title, one-line summary. Multi-division projects show two or three badges — this is the proof, so make it visible |
 | **Division badge** | Small mono uppercase label, 1px border in the division accent, `--ink` text on `--canvas`. Never coloured text (see §2 amber constraint) |
 | **Process stage** | Numbered `01`–`06` mono, connected by a 1px `--line` vertical rule, stage title in display, canonical description in body, division detail in `--ink-muted` |
@@ -120,7 +120,7 @@ The consent banner specification is a compliance requirement, not an aesthetic c
 | Interaction | Spec |
 |---|---|
 | Scroll reveal | `opacity` + `translateY 12px`, 450ms `--ease-out`, 50ms stagger, once |
-| Division card hover | 300ms — background, top-rule wipe, sibling dim |
+| Division card hover | `--dur-base` — background, top-rule wipe, sibling dim. Was `300ms`, which is not on the duration scale; see §5 |
 | Route change between divisions | **No transition.** The theme change is the transition. Adding a fade on top makes it feel slow |
 | Button hover | 150ms colour |
 
