@@ -174,6 +174,21 @@ Read the workstream's own files before touching its code.
   write-up saying *"caught first by X, which fires before this code runs"* and filing it as
   defence in depth: that sentence is a description of unreachable code.
 
+  **Every branch of a multi-branch assertion gets its own deliberate-failure proof. One
+  branch firing is not evidence for the others — and a partially-firing gate is more
+  dangerous than a silent one**, because it produces green results that look earned.
+  `check:rls` accepted an `anon` SELECT policy **twice**: first because an unbounded role
+  capture read `to anon using (true)` as the role `"anon using"`, which matches no role
+  name; then because the fix for that was written with a literal backspace (U+0008) where
+  `\b` was intended, making the lookahead `(?:using|with)\x08`, which can never match. All
+  the while the DELETE branch — which ends in `;` and takes the other side of the
+  alternation — fired correctly, and reading that output was indistinguishable from reading
+  the output of a gate that worked. **Reading the line found neither bug. Proving each
+  branch separately found both.** A half-working alternation, a `||` where one side is
+  unreachable, a loop whose predicate is true for one shape of input and inert for another:
+  all of these report success from the branch you happened to exercise. Enumerate the
+  branches, break each one, and record which message each produced.
+
   **A gate subject must assert that it is still the subject.** A subject that quietly stops
   being one leaves the gate auditing whatever happens to be there and calling it clean —
   the *hollow subject*, and the general form of how `global-error` went unmeasured. Its

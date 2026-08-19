@@ -1189,6 +1189,38 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 
 ## Epic N — Master pages
 
+> ### ⚠ Read before the first row
+>
+> **1. The spec is not a safe source for anything with a security or legal consequence.**
+>
+> `_shared/SCHEMA-CORE.md` §4 specified a reporting view. Implemented exactly as written, it
+> **leaked lead data to `anon`** — weekly volume, qualification rate, AI-referral share — to
+> anyone holding the publishable key, which is designed to be public. The SQL was correct. The
+> leak was in a Postgres default the spec did not mention and a Supabase grant it did not know
+> about, and `SCHEMA-CORE.md` §3's own comment, *"reads are service-role only"*, was true of
+> the table and false of the database.
+>
+> **Nothing in the file could have told you.** It was found by querying the deployed system
+> with the public key and comparing what came back — `GET /leads` returned `[]`, `GET
+> /v_lead_funnel` returned the aggregate of those same rows.
+>
+> So for any row touching auth, RLS, consent, personal data, payments, or a statutory or
+> contractual claim: **verify against the live system the way a hostile client would, not
+> against the source you wrote it from.** Send the request. Read the response. A spec review
+> and a code review both pass a system that is leaking.
+>
+> This extends the standing "check the source, not the summary" rule by one step: **sometimes
+> the source is wrong too, and only the running thing is authoritative.**
+>
+> **2. A number that was projected rather than measured is not evidence**, and reserving
+> against it costs real budget. Three rows in Epic M carried a figure nobody had measured —
+> `M-08`'s font waste, `M-06`'s 11.7KB, `A-11`'s 8KB — and all three were wrong in the same
+> direction. Establish whether anything ever measured a row's figure before building to it, and
+> say which in the commit. If nothing did, the row's deliverable is the measurement plus an
+> assertion.
+>
+> Both rules and their full reasoning: § **"Epic M — CLOSED"**.
+
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
 | N-01 | Homepage, 9 blocks | P0 | 2.5d | M-03 | TODO | Dev | Lighthouse ≥98 |
