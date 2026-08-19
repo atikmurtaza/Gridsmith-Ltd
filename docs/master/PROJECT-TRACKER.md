@@ -1357,7 +1357,20 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 > This extends the standing "check the source, not the summary" rule by one step: **sometimes
 > the source is wrong too, and only the running thing is authoritative.**
 >
-> **2. A number that was projected rather than measured is not evidence**, and reserving
+> **2. Pages are built one block at a time, measured against the Lighthouse gate after each.**
+>
+> The `0.98` performance threshold on `/` is **measured and gated** — `lighthouse/routes.cjs`,
+> asserted at `error` severity, median of 3, passing today. **That nine blocks fit under it is
+> a projection nobody has tested**: every green run to date is against an `h1`, a header and a
+> footer, and `Q-M16` says the same about the LCP headroom.
+>
+> So a page arrives in as many commits as it has blocks, each one run through the gate. **A
+> page delivered in one commit cannot attribute a regression to any one block** — nine
+> candidates, one number, and the only way back is to remove them one at a time, which is the
+> work you avoided doing in order. The first block that moves the score is the one worth
+> arguing about, and you only find it if you were watching.
+>
+> **3. A number that was projected rather than measured is not evidence**, and reserving
 > against it costs real budget. Three rows in Epic M carried a figure nobody had measured —
 > `M-08`'s font waste, `M-06`'s 11.7KB, `A-11`'s 8KB — and all three were wrong in the same
 > direction. Establish whether anything ever measured a row's figure before building to it, and
@@ -1368,18 +1381,18 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| N-01 | Homepage, 9 blocks | P0 | 2.5d | M-03 | TODO — **premise checked, not started** | Dev | Lighthouse ≥98. **The 0.98 is measured and gated; the claim that nine blocks fit under it is a projection.** See below before building |
-| N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | TODO | Dev | |
-| N-04 | `/approach`, 8 blocks | P0 | 2d | N-03 | TODO | Dev | Incl. limits section |
 | N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | TODO | Dev | `verified` hard-true |
 | N-06 | Canonical process component + validator | P0 | 1d | A-06 | TODO | Dev | Six canonical titles only |
-| N-07 | `/about` + structure disclosure | P0 | 1.5d | M-05 | TODO | Dev | |
+| N-01 | Homepage, 9 blocks | P0 | 2.5d | **N-03, N-05, N-06** | TODO — **premise checked, not started** | Dev | `Depends` corrected: it read `M-03`, which is the chrome, and the DoD requires content from the CMS — the blocks' schemas are `N-03`, `N-05` and `N-06`. **Lighthouse ≥98 is measured and gated; that nine blocks fit under it is not.** One block per commit, measured after each |
+| N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
+| N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | TODO | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |
+| N-07 | `/about` + structure disclosure | P0 | 1.5d | **M-05, N-03** | TODO | Dev | `Depends` corrected: `/about` is a `groupPage` slug, so it needs `N-03`'s schema as well as `companyDetails` |
 | N-08 | `/work` master grid | P0 | 2d | A-06 | TODO | Dev | Cross-division sorted first |
 | N-09 | **Canonical `/work/[slug]`** | P0 | 1.5d | N-08 | TODO | Dev | Divisions link here |
 | N-10 | Division work routes → canonical links | P0 | 0.5d | N-09 | TODO | Dev | Removes duplicate-content risk |
 | N-11 | `/contact` master flow | P0 | 2d | A-08 | TODO | Dev | "More than one" first-class |
-| N-12 | Confirmation screen + commitment | P0 | 0.5d | M-05, N-11 | TODO | Dev | |
+| N-12 | Confirmation screen + commitment | P0 | 0.5d | M-05, N-11 | TODO | Dev | Renders `companyDetails.responseCommitment` |
 | N-13 | `/insights` hub | P1 | 1d | A-06 | TODO | Dev | |
 
 ## Epic L — Legal & compliance

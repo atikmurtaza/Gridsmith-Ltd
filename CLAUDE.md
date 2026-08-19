@@ -189,6 +189,23 @@ Read the workstream's own files before touching its code.
   all of these report success from the branch you happened to exercise. Enumerate the
   branches, break each one, and record which message each produced.
 
+  **A gate that infers the state of a system it does not run in is asserting against something
+  it cannot see.** The gate and the thing it measures are usually separate processes, and any
+  premise the gate reads from its *own* environment is a guess about the other one. `check-axe`
+  decided whether Resend was "configured" from the runner's `process.env` while asserting the
+  *server's* behaviour; during a deliberate-failure proof it reported *"Resend is not
+  configured"* about a server that was configured and failing — a confidently wrong message
+  from a gate that was otherwise working. The fix is not a better guess: **ask the system.** The
+  probe route now reports its own configuration and the gate compares against that.
+
+  **This shape recurs wherever the subject is remote**, and two open items have it by
+  construction. `M-P1-3` must read the **live database**, not the migrations — `A-07`'s leak
+  existed in the running system while the migration read correctly, so a source check cannot
+  see the class that matters. And anything CI eventually asserts about the Hostinger
+  deployment — env vars set, dataset selected, mail authenticated — is an assertion about a
+  machine CI does not run on, and must be answered by that machine rather than inferred from
+  the workflow file.
+
   **A gate subject must assert that it is still the subject.** A subject that quietly stops
   being one leaves the gate auditing whatever happens to be there and calling it clean —
   the *hollow subject*, and the general form of how `global-error` went unmeasured. Its
