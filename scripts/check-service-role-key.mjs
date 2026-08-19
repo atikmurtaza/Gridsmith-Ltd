@@ -72,8 +72,12 @@ function isClientComponent(source) {
 
 const violations = [];
 const files = sourceFiles('check-service-role-key', SOURCE);
+// Counted inside the loop below — `files.length` is the enumeration. The audit disabled the
+// source scan and the gate still reported "101 source files". `M-P1-4`.
+let scanned = 0;
 
 for (const file of files) {
+  scanned += 1;
   const source = readFileSync(file, 'utf8');
   // A Next config that names the key is a leak with no directive anywhere: `env:` inlines
   // it into every client bundle.
@@ -153,10 +157,15 @@ if (chunks === 0) {
   process.exit(1);
 }
 
+if (scanned === 0) {
+  console.error('\ncheck-service-role-key: scanned zero source files — the sweep did not run.\n');
+  process.exit(1);
+}
+
 if (violations.length === 0) {
   console.log(
     `check-service-role-key: clean — ${SECRETS.length} secret-bearing variable(s) across ` +
-      `${files.length} source files and ${chunks} client chunks; ${values.length} checked by value`,
+      `${scanned} source files scanned and ${chunks} client chunks; ${values.length} checked by value`,
   );
   for (const note of unavailable) console.log(`  value not checked: ${note}`);
   process.exit(0);

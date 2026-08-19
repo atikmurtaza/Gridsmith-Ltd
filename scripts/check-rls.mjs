@@ -51,6 +51,14 @@ const sql = files
 const problems = [];
 const lower = sql.toLowerCase();
 
+/**
+ * **Counted inside each loop, not taken from the parse.** `tables.length` and `views.length`
+ * describe the SQL; they say nothing about whether the loop that checks them ran. The audit
+ * disabled all three loops here and the summary line did not change by one character —
+ * "RLS on all 3 table(s) … security_invoker on all 1 view(s)" with nothing checked. `M-P1-4`.
+ */
+const counted = { tables: 0, policies: 0, views: 0 };
+
 const tables = [...lower.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?([a-z0-9_]+)/g)].map((m) => m[1]);
 const views = [...lower.matchAll(/create\s+(?:or\s+replace\s+)?view\s+([a-z0-9_]+)/g)].map((m) => m[1]);
 const rlsEnabled = new Set(
@@ -60,7 +68,8 @@ const rlsEnabled = new Set(
 // 1. Every table has RLS. Without it PostgREST serves the table to anon by default, so a
 //    table nobody remembered to guard is a table anybody can read.
 for (const table of tables) {
-  if (table.startsWith('_')) continue; // migration bookkeeping, created by scripts/migrate.mjs
+  if (table.startsWith('_')) continue;
+  counted.tables += 1; // migration bookkeeping, created by scripts/migrate.mjs
   if (!rlsEnabled.has(table)) {
     problems.push(`table "${table}" never gets "enable row level security" — PostgREST serves it to anon by default`);
   }
@@ -82,6 +91,7 @@ for (const m of sql.matchAll(
   //      one from the one case you happen to test.
   /create\s+policy\s+("[^"]+"|[a-z0-9_]+)\s+on\s+([a-z0-9_]+)\s+for\s+([a-z]+)\s+to\s+([a-z0-9_,\s]+?)(?=\s+(?:using|with)|\s*;)/gi,
 )) {
+  counted.policies += 1;
   const [, name, table, cmd, roles] = m;
   const to = roles.toLowerCase().split(',').map((r) => r.trim());
   if (!to.some((r) => r === 'anon' || r === 'public')) continue;
@@ -95,6 +105,7 @@ for (const m of sql.matchAll(
 
 // 3. Every view sets security_invoker. See the docstring: this is the defect that shipped.
 for (const view of views) {
+  counted.views += 1;
   const declared = new RegExp(
     `(?:create\\s+(?:or\\s+replace\\s+)?view\\s+${view}\\s+with\\s*\\([^)]*security_invoker` +
       `|alter\\s+view\\s+${view}\\s+set\\s*\\([^)]*security_invoker\\s*=\\s*true)`,
@@ -108,6 +119,12 @@ for (const view of views) {
   }
 }
 
+for (const [what, n] of Object.entries(counted)) {
+  // Policies legitimately can be zero only if there are no policies at all, which for this
+  // schema would itself be the finding: `anon insert only` is the one policy that must exist.
+  if (n === 0) problems.push(`the ${what} check iterated zero times — it did not run`);
+}
+
 if (problems.length > 0) {
   console.error(`\ncheck-rls: ${problems.length} problem(s) across ${files.length} migration(s)\n`);
   for (const p of problems) console.error(`  ${p}`);
@@ -117,7 +134,8 @@ if (problems.length > 0) {
 }
 
 console.log(
-  `check-rls: ${files.length} migration(s) — RLS on all ${tables.length} table(s), ` +
-    `no anon read/write policy, security_invoker on all ${views.length} view(s). ` +
+  `check-rls: ${files.length} migration(s) — RLS checked on ${counted.tables} table(s), ` +
+    `${counted.policies} policy(ies) checked for anon read/write, security_invoker checked on ` +
+    `${counted.views} view(s). ` +
     'Declared, not live — see M-P2-12',
 );

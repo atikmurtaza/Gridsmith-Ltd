@@ -178,12 +178,17 @@ const CONTRACT = [
 const SHARED_ACCENTS = ['--accent-design', '--accent-digital', '--accent-press'];
 
 const themeProblems = [];
+// Counted inside the loop: `THEMES.length` and `CONTRACT.length` are both constants and print
+// the same sentence whether anything was compared or not. The audit disabled this loop and the
+// output was identical. `M-P1-4`.
+let contractChecks = 0;
 
 for (const theme of THEMES) {
   const src = readFileSync(`styles/themes/${theme}.css`, 'utf8');
   const defined = new Set([...src.matchAll(/(--[a-z0-9-]+)\s*:/gi)].map((m) => m[1]));
 
   for (const token of [...CONTRACT, ...SHARED_ACCENTS]) {
+    contractChecks += 1;
     if (!defined.has(token)) themeProblems.push(`${theme}: missing ${token}`);
   }
 
@@ -208,8 +213,13 @@ if (themeProblems.length > 0) {
   process.exit(1);
 }
 
+if (contractChecks === 0) {
+  console.error('\ncheck-tokens: checked zero token/theme combinations — the contract loop did not run.\n');
+  process.exit(1);
+}
 console.log(
-  `check-tokens: ${THEMES.length} themes each define the ${CONTRACT.length}-token contract ` +
+  `check-tokens: ${contractChecks} token/theme combination(s) checked — ${THEMES.length} themes ` +
+    `× the ${CONTRACT.length}-token contract ` +
     `plus the ${SHARED_ACCENTS.length} division accents every theme now carries (V3), ` +
     'all present in the built CSS',
 );

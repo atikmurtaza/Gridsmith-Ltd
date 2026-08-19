@@ -311,7 +311,11 @@ console.log(`\nframework floor  ${FLOOR_KB.toFixed(1)}KB gz  (declared; Next 15 
 console.log('route'.padEnd(w + 2) + '    total     delta    budget');
 
 const over = [];
+// Counted inside the loop — "all routes within their delta budget" printed unchanged when the
+// audit disabled this comparison. `M-P1-4`.
+let budgetsCompared = 0;
 for (const r of rows) {
+  budgetsCompared += 1;
   if (r.budget === null) {
     console.log(
       `${r.url.padEnd(w + 2)}${n(r.total).padStart(8)}KB${n(r.delta).padStart(9)}KB${'—'.padStart(8)}    not budgeted — no budget matches this prefix`,
@@ -587,4 +591,8 @@ if (decomposition.length > 0) {
   process.exit(1);
 }
 
-console.log('\ncheck-bundle-size: all routes within their delta budget\n');
+if (budgetsCompared === 0) {
+  console.error('\ncheck-bundle-size: compared zero routes against a budget — the check did not run.\n');
+  process.exit(1);
+}
+console.log(`\ncheck-bundle-size: ${budgetsCompared} route(s) compared, all within their delta budget\n`);

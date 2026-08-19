@@ -139,7 +139,11 @@ function declarationValues(css) {
 const violations = [];
 const files = sourceFiles('no-hardcoded-colors', SOURCE);
 
+// Counted inside the loop: `files.length` is what was enumerated, not what was read. The
+// audit disabled this loop and the gate still reported "clean (116 files)". `M-P1-4`.
+let scanned = 0;
 for (const file of files) {
+  scanned += 1;
   // The token layer is exempt from the colour-literal rules — that is where colour is
   // declared. It is NOT exempt from the amber rule: the token may be defined in
   // master.css, but painting glyphs with it is wrong wherever it happens.
@@ -179,7 +183,11 @@ for (const file of files) {
 }
 
 if (violations.length === 0) {
-  console.log(`no-hardcoded-colors: clean (${files.length} files)`);
+  if (scanned === 0) {
+    console.error('\nno-hardcoded-colors: scanned zero files — the sweep did not run.\n');
+    process.exit(1);
+  }
+console.log(`no-hardcoded-colors: clean (${scanned} files scanned)`);
   process.exit(0);
 }
 

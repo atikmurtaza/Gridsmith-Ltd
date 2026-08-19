@@ -555,6 +555,81 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
 
+### M-P1-4 — the sweep, run early because content blocked the alternative
+
+**Brought forward.** The task said *do this last, pages first*; `Q-M21` blocks every remaining
+`N-01` block behind copy that does not exist, so the reason for deferring it stopped applying.
+
+Two questions per check, across all 20 gates: **can it be made to report zero**, and **has it
+ever been made to fail with the proof committed.**
+
+#### Result — six checks across five gates failed the zero test
+
+| Gate | Check | Zero? | What the output did when the loop was disabled |
+|---|---|---|---|
+| `check:rls` | tables have RLS | **✗** | *"RLS on all 3 table(s)"* — unchanged |
+| `check:rls` | no anon read/write policy | **✗** | *"no anon read/write policy"* — unchanged |
+| `check:rls` | views set `security_invoker` | **✗** | *"security_invoker on all 1 view(s)"* — unchanged |
+| `lint:colors` | source sweep | **✗** | *"clean (116 files)"* — unchanged |
+| `lint:secrets` | source sweep | **✗** | *"101 source files"* — unchanged |
+| `check:tokens` | theme contract | **✗** | *"4 themes each define the 15-token contract"* — unchanged |
+| `size` | budget comparison | **✗** | *"all routes within their delta budget"* — unchanged |
+
+Seven rows, six checks — `check:rls` had three. **Every one is the same fault**: the number came
+from the parse or the enumeration, not from the loop. `tables.length` describes the SQL,
+`files.length` describes the glob, `THEMES.length` is a constant. All true statements, none of
+them evidence.
+
+**Passed the zero test** — the count moves or the gate fails loudly when starved:
+`check:node`, `check:contrast` (both passes plus the matrix), `check:headings`, `check:content`,
+`check:claims` (rows and mentions), `check:schemas` (all six, fixed last session), `check:launch`,
+`check:theme`, `size`'s route measurement, `check:axe`'s analysis loop, `check:responsive`.
+
+**One partial:** `check-axe`'s `"40+ tokens probed"` still prints when the probe loop is
+disabled — `tokenCount` is derived from the token files. Left as-is and logged (`M-P2-17`): the
+route probe's *purpose* is asserted by the computed-value check beside it, which does fail when
+starved, so this is a misleading count rather than an unguarded check.
+
+#### The three tool gates are a different kind of subject
+
+`typecheck`, `lint` and `build` are third-party tools with no count of ours to zero. They fail
+loudly and often — every session in this log has been red on at least one of them — so "has it
+been made to fail" is answered continuously rather than by a proof. Recorded so the next
+audit does not go looking for a counter that should not exist.
+
+#### `check:lhci:desktop` / `check:lhci:mobile` — **not audited here, and that is a gap**
+
+Both are hard-skipped on Windows and run only on `ubuntu-latest`. Neither half of this sweep
+could be applied locally: the assertions live in `lighthouserc.*.cjs` and are evaluated by LHCI,
+not by our code. **They are the only two of the 20 that leave this audit unverified in both
+directions.** `M-P2-18`.
+
+#### The fix, and the re-proof
+
+Every failing check now increments a counter **inside its own loop**, prints that counter, and
+**fails on zero**. Re-proved individually — deleting each counter's increment produces:
+
+    the tables check iterated zero times — it did not run
+    the policies check iterated zero times — it did not run
+    the views check iterated zero times — it did not run
+    no-hardcoded-colors: scanned zero files — the sweep did not run.
+    check-service-role-key: scanned zero source files — the sweep did not run.
+    check-tokens: checked zero token/theme combinations — the contract loop did not run.
+    check-bundle-size: compared zero routes against a budget — the check did not run.
+
+Summary lines changed to say what was *checked* rather than what exists: `check:rls` now reports
+*"RLS checked on 3 table(s), 1 policy(ies) checked… security_invoker checked on 1 view(s)"*, and
+`check:tokens` reports *"72 token/theme combination(s) checked"* rather than restating two
+constants.
+
+#### On the second half — has each been made to fail
+
+**Every assertion in the 20 gates has a committed deliberate-failure proof in this log except
+the two LHCI axes**, and the per-branch discipline has been applied since `check:rls` showed a
+half-firing alternation. What this sweep adds is that *passing that test was never sufficient*:
+the six checks above all reject bad inputs correctly and could not be shown to have run. **A
+gate can pass one half and fail the other, and five of twenty did.**
+
 ### ⇢ END OF EPIC N — one task, two sweeps, and neither is to be re-derived
 
 **Do this last, before Epic N closes. It is a session of its own and Epic N should produce
@@ -2136,7 +2211,7 @@ decision awaiting the owner, not work awaiting a session.
 | From | Item | |
 |---|---|---|
 | Epic M | ~~**`M-P1-2`**~~ | **FIXED 18 Aug at `A-12`, by remedy (a) — the preferred one.** `NEXT_PUBLIC_SANITY_DATASET` has no default; an unset variable throws at module load, so it is a build error rather than a silent fallback to `development`. That is the only remedy with no environment it cannot see. `.env.example`, `ci.yml` and `SETUP.md` all set it explicitly, and **it must be set in the Hostinger environment before the first deploy** |
-| Epic M | **`M-P1-4`** | **P1. Nineteen gates have never had the zero-input audit, and the fault it finds is invisible by construction.** `check:schemas` had six checks; **three printed a count derived from the subject rather than from their own loop** — a real number, correctly measuring the registry, that says nothing about whether the check ran. Emptying their input changed no output at all. That is not a check reporting the wrong thing; it is a check whose evidence comes from somewhere else, and no amount of reading finds it because the number is true. Every other gate was written the same way by the same hands. **Scheduled, not open work — see the end-of-epic task below** |
+| Epic M | ~~**`M-P1-4`**~~ | **DONE 19 Aug — brought forward because `Q-M21` blocks Epic N.** All 20 gates audited. **Six checks across five gates could not be made to report zero**; all six fixed and re-proved. Full table below |
 | Epic M | **`M-P1-3`** | **P1. Nothing checks the live database's RLS posture.** `check:rls` reads the committed migrations and says so itself — it asserts what the repository declares. **`A-07` is the reason this is P1 rather than P2: the leak existed in the running system while the migration read correctly.** `v_lead_funnel` was written exactly as `SCHEMA-CORE.md` §4 specifies and served lead aggregates to `anon`, because the cause was a Postgres default and a Supabase grant, neither of which appears in SQL a reviewer reads. A source check cannot see that class at all, and it is the class that matters: drift added in the dashboard, a grant restored, a view recreated. **The shape is already proven by hand** — query as `anon` with the publishable key, assert `leads` returns `[]` and every view 401s. It needs a credential CI must not hold, so it belongs after deploy, in the environment that already has one. **The same job should prune `gridsmith-lead-probe`'s rows (`M-P2-14`).** |
 | Epic M | **`M-P1-1`** | **P1, accessibility, Level A.** A server-render crash serves `<html id="__next_error__">` with no `lang`, no `<h1>` and no `<main>`; `global-error` renders only after hydration, so a visitor without JS gets the bare shell. Measured at `M-07` against a committed probe and characterised by `check-axe`. **No app-level fix exists** — Next requires `global-error` to be a Client Component and a segment `error.tsx` was tried and does not change the served HTML. The remedy is architectural: an edge- or platform-served static error document, or a recorded acceptance. **Owner's decision — see `M-07` above** |
 
@@ -2156,6 +2231,8 @@ decision awaiting the owner, not work awaiting a session.
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
 | Epic M | `M-P2-13` | **nothing measures the `<60s` notification target.** `FOUNDATION` §6 and `SCHEMA-CORE.md` §3 both state it; neither has ever been measured, and `notified_at` — the column the measurement needs — cannot be written by the only role the pipeline uses. `anon` has no UPDATE policy, correctly. Stamping it needs a service-role writer, and the alert needs production traffic and a destination. Until then the figure is a target, not a budget |
 | Epic M | ~~`M-P2-15`~~ | **Reclassified P1 as `M-P1-4` — see the P1 table above.** Filed P2 as a coverage gap. It is not one: the fault is invisible by construction |
+| Epic M | `M-P2-17` | **`check-axe`'s `"40+ tokens probed"` is derived from the token files, not the probe loop.** Disabling the probe leaves the number unchanged. Not an unguarded check — the computed-value assertion beside it does fail when starved, so the probe's purpose is covered — but the count is misleading and should be a loop counter like the rest |
+| Epic M | `M-P2-18` | **`check:lhci:desktop` and `check:lhci:mobile` were not audited by `M-P1-4`.** Both hard-skip on Windows and their assertions live in `lighthouserc.*.cjs`, evaluated by LHCI rather than by our code, so neither the zero test nor the made-to-fail test could be applied locally. **They are the only two of the 20 gates left unverified in both directions.** Audit them on a Linux runner, or from CI |
 | Epic M | `M-P2-16` | **the research findings R1-R6 and the fix ledger's repair rows R1-R5 share an identifier namespace.** (Written unbackticked here deliberately: backticking them trips the very gate this row is about, which is how it was found.) `check:claims` covers `R\d+` inside backticks in the five governed documents, so writing about research finding R6 in a tracker fails the gate — which it did, correctly, at `N-06`. This is `G7`'s class in a namespace `G7` did not sweep: an identifier that resolves to two different things. Today's workaround is not to backtick research references, which is a convention nobody will remember. Rename one side — `RF-1`…`RF-6` for the research findings is the cheaper half, since the ledger's are load-bearing in a gate |
 | Epic M | `M-P2-14` | **`gridsmith-lead-probe` inserts one row per CI run and nothing prunes them.** Invalid payloads never reach the database, so only the valid case writes. Pruning needs a privileged connection CI must not hold — it belongs to the same job as `M-P2-12`'s drift check, which already has the credential |
 | Epic M | ~~`M-P2-12`~~ | **Promoted to `M-P1-3` — see the P1 table above.** Filed P2 as a coverage gap. `A-07` showed it is not one: the leak existed **live** while the migration read correctly |
