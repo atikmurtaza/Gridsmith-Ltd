@@ -587,11 +587,53 @@ checks rejected bad inputs correctly and could not be shown to have run.
 **Output:** a table, gate by gate and check by check, with the message each break produced.
 Anything that cannot be made to fail or cannot be made to report zero is a finding, not a pass.
 
+### N-01 block 1 of 9 — the hero, and the number nobody had
+
+**Premise check, and it splits as recorded.** Lighthouse `>= 0.98` on `/` is **measured and
+gated** — `lighthouse/routes.cjs`, `error` severity, median of 3, passing today. **That nine
+blocks fit under it is a projection nobody has tested.** This block is the first datum.
+
+**Measured, A/B against the placeholder on the same build and server:**
+
+| | Placeholder | With block 1 | Delta |
+|---|---|---|---|
+| JS above the framework floor | 2.5KB | **2.5KB** | **0.0KB** |
+| HTML | 11,558 B | 12,235 B | **+677 B** |
+| CSS | 31,951 B | 33,559 B | **+1,608 B** |
+| DOM elements | 57 | 59 | **+2** |
+
+**What it implies for the remaining eight, and the honest limits of that.**
+
+The JS figure is the strong one: a Server Component with no client boundary costs **nothing**,
+so eight more of the same shape also cost nothing, and Master's 15KB delta is not the constraint
+on this page. That was the projection everybody was worried about, and it is now measured as
+irrelevant *for blocks of this kind*. Blocks 2, 4 and 8 — division routing cards, selected work,
+latest insights — pull real content and images; **block 1 says nothing about those.**
+
+The CSS figure is the one to watch and it does not extrapolate linearly. **+1,608 B is mostly
+first-use cost**: the hero pulled `Section`, `Container` and `Heading`'s display sizes into the
+route's stylesheet for the first time. Later blocks reusing those primitives add far less, and a
+block introducing a new primitive adds another step. **Naive extrapolation gives 9 × 1,608 B ≈
+14.5KB of CSS; the real figure will be well under it, and the only way to know is to keep
+measuring after each.**
+
+**None of this is the Lighthouse score.** LHCI is skipped on Windows and runs on
+`ubuntu-latest`, so what CI reports for this commit is the first real reading of the gate with
+a block on the page — and the `0.98` threshold, LCP, CLS and TBT are what actually decide
+whether nine blocks fit. **The bytes above are a proxy and are reported as one.**
+
+**The copy is `[TK]` and was not drafted.** No approved positioning line exists anywhere in the
+specifications: `APP-FLOW.md` §2 names the slot and describes the job, `PRD.md` and `DESIGN.md`
+describe the effect, and none supplies words. Inventing the most-read sentence on the site is
+the clearest possible case of non-negotiable #2. **And there is no schema for homepage content
+either** — `groupPage` is closed to `approach` and `about` by design. `Q-M21` covers both.
+
 ### N-06 — the strongest way to fix a name is to not accept one
 
 **Premise check: no measured or projected figure.** `_shared/00-PROCESS.md` opens *"FIXED — not
-a draft… not open for revision, rewording or 'improvement' by a later session"*, and `R6` is
-cited there with no number attached. The only quantity is *six*, which counts a thing rather
+a draft… not open for revision, rewording or 'improvement' by a later session"*, and research finding R6 is
+cited there with no number attached (the ledger's identifier space also uses `R\d+`, which
+is why that mention is not backticked — see `M-P2-16`). The only quantity is *six*, which counts a thing rather
 than measures one.
 
 **Rule 1 is "stage names are fixed", and the implementation is that an editor never supplies
@@ -1626,7 +1668,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
 | N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | **DONE** 19 Aug | Dev | `verified` hard-true, **run against values rather than counted**. **No seed example can exist** — a placeholder would have to claim it was verified, so the component renders an empty state and `Q-M6` blocks a real one. Zero client JS |
 | N-06 | Canonical process component + validator | P0 | 1d | A-06 | **DONE** 19 Aug | Dev | **Stage names never travel through the CMS** — the constant renders, the CMS supplies only `divisionDetail`/`duration`/`clientTime`. `check:schemas` asserts the constant against `00-PROCESS.md`, the source of truth. `N-01` is next |
-| N-01 | Homepage, 9 blocks | P0 | 2.5d | **N-03, N-05, N-06** | TODO — **premise checked, not started** | Dev | `Depends` corrected: it read `M-03`, which is the chrome, and the DoD requires content from the CMS — the blocks' schemas are `N-03`, `N-05` and `N-06`. **Lighthouse ≥98 is measured and gated; that nine blocks fit under it is not.** One block per commit, measured after each |
+| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **1 of 9 blocks** 19 Aug | Dev | Block 1 (hero) shipped and measured: **0.0KB JS, +677B HTML, +1,608B CSS, +2 elements**. The copy is `[TK]` — no approved sentence exists (`Q-M21`). Blocks 2–9 pending, one per commit |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
 | N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | TODO | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |
 | N-07 | `/about` + structure disclosure | P0 | 1.5d | **M-05, N-03** | TODO | Dev | `Depends` corrected: `/about` is a `groupPage` slug, so it needs `N-03`'s schema as well as `companyDetails` |
@@ -2114,6 +2156,7 @@ decision awaiting the owner, not work awaiting a session.
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
 | Epic M | `M-P2-13` | **nothing measures the `<60s` notification target.** `FOUNDATION` §6 and `SCHEMA-CORE.md` §3 both state it; neither has ever been measured, and `notified_at` — the column the measurement needs — cannot be written by the only role the pipeline uses. `anon` has no UPDATE policy, correctly. Stamping it needs a service-role writer, and the alert needs production traffic and a destination. Until then the figure is a target, not a budget |
 | Epic M | ~~`M-P2-15`~~ | **Reclassified P1 as `M-P1-4` — see the P1 table above.** Filed P2 as a coverage gap. It is not one: the fault is invisible by construction |
+| Epic M | `M-P2-16` | **the research findings R1-R6 and the fix ledger's repair rows R1-R5 share an identifier namespace.** (Written unbackticked here deliberately: backticking them trips the very gate this row is about, which is how it was found.) `check:claims` covers `R\d+` inside backticks in the five governed documents, so writing about research finding R6 in a tracker fails the gate — which it did, correctly, at `N-06`. This is `G7`'s class in a namespace `G7` did not sweep: an identifier that resolves to two different things. Today's workaround is not to backtick research references, which is a convention nobody will remember. Rename one side — `RF-1`…`RF-6` for the research findings is the cheaper half, since the ledger's are load-bearing in a gate |
 | Epic M | `M-P2-14` | **`gridsmith-lead-probe` inserts one row per CI run and nothing prunes them.** Invalid payloads never reach the database, so only the valid case writes. Pruning needs a privileged connection CI must not hold — it belongs to the same job as `M-P2-12`'s drift check, which already has the credential |
 | Epic M | ~~`M-P2-12`~~ | **Promoted to `M-P1-3` — see the P1 table above.** Filed P2 as a coverage gap. `A-07` showed it is not one: the leak existed **live** while the migration read correctly |
 | Epic M | `M-P2-11` | **the wordmark's face is constrained, not chosen.** It is `--font-mono` because that is the only family all four route groups already load, so it costs zero bytes — not because JetBrains Mono is the right face for the company mark. **Revisit at Press's shell epic (`P-xx`) when its font budget is set.** The question is whether one word justifies a fourth family on `/press`, on the critical path, against a 2.0s LCP budget with a ~1.52s empty-page floor. **It must be answered with a measured cost, not a preference** — build with Inter added to the Press layout, measure the LCP and the delta on both Lighthouse axes, then decide |
@@ -2232,6 +2275,7 @@ Three things follow, and each is recorded rather than fixed:
 | ~~Q-M11~~ | **PARTLY REOPENED — the greenfield decision was over-broad.** The build is greenfield: nothing migrates, no content, no functionality, no database, and there is no cutover. But **the existing Press site is live and trading and comes down at launch**, so it has indexed URLs that 404 on day one unless mapped. Five of the six findings in `_shared/01-VALIDATION-REPORT.md` §10 stand; finding #3 ("nothing to crawl") is wrong for Press and is corrected there. Tracked as `G-08` (P1) | Atik | `G-08` |
 | ~~**Q-M19**~~ | **RESOLVED 19 Aug 2026.** Development GA4 and PostHog ids in `.env.local`; PostHog on **EU cloud**, asserted rather than defaulted. Live ids go in the Hostinger environment at launch — same variable names, different values per environment, the pattern `NEXT_PUBLIC_SANITY_DATASET` already uses. CI uses shaped placeholders, so the grant path is exercised there with no credential in the repository |
 | ~~**Q-M20**~~ | **RESOLVED for development, 19 Aug 2026.** `RESEND_API_KEY` in `.env.local`; sender `onboarding@resend.dev`, recipient `contact@gridsmith.uk`. Slack deliberately unused. **Two constraints carried to deployment, both recorded as constraints rather than gaps:** the sender becomes `notifications@gridsmith.uk` when DNS is done, and Resend's SPF `include:` must be **merged into the existing record** — `gridsmith.uk` already has one serving the live site's mail, and a second is a `permerror` under RFC 7208 §4.5 that silently breaks it | Atik | deployment |
+| **Q-M21** | **The homepage hero sentence, and where homepage copy lives.** `APP-FLOW.md` §2 names the slot — *"one sentence on what Gridsmith is, not a services list"* — and no specification supplies the words. It is the most-read sentence on the site and the one a founder will have opinions about, so it is marked `[TK]` rather than drafted (non-negotiable #2). **Also unresolved: there is no schema for homepage content.** `groupPage` is deliberately closed to `approach` and `about`, and widening it is what `check:schemas` exists to refuse. Either a `homePage` singleton or a third `groupPage` slug — a decision, not a guess | Atik | N-01 |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |

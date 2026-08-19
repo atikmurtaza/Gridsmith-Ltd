@@ -58,3 +58,14 @@
   font-size: var(--text-sm);
   color: var(--ink);
 }
+
+/* Hero — N-01 block 1. Centred is DESIGN.md §4's exception for the hero and CTA bands;
+   everything else on the master layer is asymmetrically anchored. */
+.hero { text-align: center; }
+.heroHeadline { margin: 0; }
+.heroIntro {
+  margin: var(--space-6) auto 0;
+  max-width: var(--measure-narrow);
+  font-size: var(--text-lg);
+  color: var(--ink-muted);
+}
