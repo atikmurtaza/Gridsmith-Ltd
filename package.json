@@ -26,7 +26,7 @@
     "check:responsive": "node scripts/check-responsive.mjs",
     "check:lhci:desktop": "node scripts/check-lhci.mjs desktop",
     "check:lhci:mobile": "node scripts/check-lhci.mjs mobile",
-    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run lint:colors && npm run check:contrast && npm run check:headings && npm run check:content && npm run check:claims && npm run check:schemas && npm run check:launch",
+    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run lint:colors && npm run check:contrast && npm run check:headings && npm run check:content && npm run check:claims && npm run check:schemas && npm run check:rls && npm run check:launch",
     "verify:build": "npm run build && npm run lint:secrets && npm run check:tokens && npm run check:theme && npm run size",
     "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:responsive\" \"npm run check:lhci:desktop\" \"npm run check:lhci:mobile\"",
     "verify": "npm run verify:static && npm run verify:build && npm run verify:served",
@@ -34,7 +34,9 @@
     "studio": "sanity dev --port 3333",
     "seed:company": "node --env-file=.env.local scripts/seed-company-details.mjs",
     "check:launch": "node --env-file-if-exists=.env.local scripts/check-launch-content.mjs",
-    "check:schemas": "node scripts/check-schemas.mjs"
+    "check:schemas": "node scripts/check-schemas.mjs",
+    "migrate": "node --env-file=.env.local scripts/migrate.mjs",
+    "check:rls": "node scripts/check-rls.mjs"
   },
   "dependencies": {
     "@sanity/client": "^8.1.0",
@@ -53,6 +55,7 @@
     "axe-core": "^4.13.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "^15.5.23",
+    "pg": "^8.23.0",
     "postcss": "^8.5.26",
     "puppeteer": "^24.43.1",
     "sanity": "^6.9.2",

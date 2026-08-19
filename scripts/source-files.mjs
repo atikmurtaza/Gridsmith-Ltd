@@ -41,6 +41,7 @@ const NOT_SOURCE = {
   docs: 'the specs. Prose, and their numbers are enforced by check-contrast, not here',
   node_modules: 'dependencies',
   redirects: 'URL mapping data (JSON)',
+  supabase: 'SQL migrations — no colours, and check-rls is the gate that reads them',
 };
 
 const toPosix = (p) => p.split(sep).join(posix.sep);

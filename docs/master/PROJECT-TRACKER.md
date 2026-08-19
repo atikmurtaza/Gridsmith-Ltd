@@ -23,7 +23,7 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 6 | **A-GATE** | ⚑ **Epic A exit gate** | P0 | 0.5d | A-05a, A-10b | **OPEN — NEXT TASK** | Dev | **Criteria 1–4 MET and independently re-verified. 5 ran twice and failed twice. 6 has still never completed.** **The next actionable task is criterion 6:** run `accessibility-audit` from `.claude/agents/` **alone, one agent per session**, on Node 24. Three attempts have now died on the session limit, including one agent alone with a full brief. **Launch it as the first action of a fresh session, before any other work** — `rules-compliance` alone costs ~210k tokens and `accessibility-audit` needs most of a session. Nothing downstream starts until it returns clean — see below and `_shared/05-HANDOVER.md` §2 |
 | 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe + responsive | P0 | 0.5d | A-05a | **DONE** | Dev | Split into **two axes** — desktop asserts category scores, mobile asserts Core Web Vitals on 4G. **Both green on CI**; commit `ad299847`. `Q-M16` is resolved for the budgets. This row read `BLOCKED` / "now fails on Digital" until 12 August 2026 while the handover and the commit log both said DONE — and **A-GATE depends on A-10b**, so the exit gate was recorded as depending on a task its own tracker called blocked. axe extended with DOM-integrity assertions axe-core cannot make, and now runs 375px/1280px × initial/scrolled. `check:responsive` added |
 | 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | **DONE** 18 Aug | Dev | Project and datasets at `M-05`; the core schemas here — 8 object types, 7 document types, `isSeed` group-wide, the canonical-six validator. **New gate `check:schemas` — 19 gates now** — because `next build` never compiles this tree, so nothing else could see a break. `A-12` unblocked |
-| 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | TODO | Dev | **No code artefacts exist** — no `supabase/` tree, no `lib/`, no migration in `git ls-files`. Same correction as A-06: prose in `docs/_shared/SCHEMA-CORE.md` is the specification. Blocked on **`Q-M18`** — a Supabase project, which only Atik can create |
+| 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | **DONE** 19 Aug | Dev | `Q-M18` resolved. Two migrations applied and verified against the live database. **The spec's own §4 view was an RLS bypass** — found by querying as `anon`, not by reading the SQL. New gate `check:rls` — **20 gates now**. `A-08` unblocked |
 | 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | Notify <60s. No CRM adapter — deferred, see D1 |
 | 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | **DONE** 18 Aug | Dev | **Precedes A-09.** No cookie before consent — now asserted in the browser, not just stated. State, Consent Mode v2 bridge, banner, footer reopen. **Measured 2.0KB gz against an 8KB reservation.** `A-09` is unblocked |
 | 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | **DONE — enabled in dev** 19 Aug | Dev | `Q-M19` resolved. The grant path has a permanent gate subject: nothing before a choice, a request to each provider after Accept, **PostHog on an EU host**, nothing after Reject. Live ids go in the platform environment at launch |
@@ -554,6 +554,81 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 **No re-measure of the Lighthouse axes.** `FOUNDATION` §4 requires it for changes to
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
+
+### A-07 — and the spec's own reporting view was an RLS bypass
+
+**Premise check first.** `SCHEMA-CORE.md` §3–§4 carry two figures and neither is built to.
+`is_ai_referral` is commented *"R1: 22% conversion premium"* — already flagged unmeasured in
+FOUNDATION, which says it must be measured rather than assumed; the column exists so that it
+**can** be, and nothing treats it as known. `notified_at - created_at` carries *"alert if p95
+exceeds 60 seconds"* — a target, not a measurement. The column exists, the alert does not, and
+`A-08` owns it. Both are recorded in the migration itself rather than in a commit message.
+
+Two migrations, applied with `npm run migrate` and verified against the live database.
+
+**The finding, and it was in the specification rather than in the implementation.** `0001`
+created `v_lead_funnel` exactly as §4 writes it. **A Postgres view runs with its owner's
+privileges unless `security_invoker` is set**, the owner is `postgres`, and Supabase grants
+`anon` SELECT on everything in `public` by default. So the view read `leads` as a superuser
+and handed the result to anyone holding the publishable key — which is designed to be public.
+
+Measured with one qualified lead in the table, the publishable key as the only credential:
+
+| Request | Before `0002` | After |
+|---|---|---|
+| `GET /rest/v1/leads?select=full_name,email` | `200 []` — RLS working | `200 []` |
+| `GET /rest/v1/v_lead_funnel?select=*` | `200 [{division, leads: 1, qualified: 1, …}]` — **RLS bypassed** | `401 permission denied` |
+
+Aggregates rather than names, but weekly lead volume, qualification rate and AI-referral share
+is commercially sensitive, and the *mechanism* would leak whatever a future view selects.
+`SCHEMA-CORE.md` §3's comment *"reads are service-role only"* was true of the table and false
+of the database. **This is the "check the source, not the summary" rule pointing at a spec that
+is itself the source** — the answer was in Postgres's behaviour, not in the SQL.
+
+`0002` fixes it two ways, because either alone leaves a hole: `security_invoker = true` makes
+the view obey the caller's RLS, and revoking the default grants means it is not reachable from
+the browser at all.
+
+**Three more things the live check established, none of them visible in the SQL:**
+
+- **RLS on `sample_grants` and `events` too.** §3 only writes `alter table leads enable row
+  level security`. A table without RLS is readable by anon through PostgREST by default, and
+  `sample_grants.token` is a bearer credential with a 72h expiry. The omission was not a
+  decision to leave them open.
+- **`insert … returning=representation` fails for anon** — 401. PostgREST's default `Prefer`
+  makes every insert a read as well, and there is deliberately no select policy. Measured:
+  `return=minimal` returns 201. **`A-08` must insert with `returning=minimal`**, and that
+  constraint is written in `0001` where it is created rather than left to be discovered.
+- **`insert into events` as anon is refused** — 401, no policy. Correct.
+
+### `check:rls` — the twentieth gate, and the proof found two bugs in it
+
+It reads the **committed migrations**, and the limitation is stated in the gate itself rather
+than implied: it asserts what the repository declares, not what the database currently is. A
+live check needs the connection string, which is a secret that must not be in CI. `M-P2-12` is
+the drift check and belongs where the credential already exists.
+
+Three rules: every table gets RLS; no policy grants anything but INSERT to `anon` or `public`;
+**every view sets `security_invoker`**. The last is stated for every view rather than for the
+one that leaked, because the cause is a Postgres default — the next view inherits it, and the
+next author will be reading the same spec that produced the first one.
+
+| Broken | Fired |
+|---|---|
+| `enable row level security` removed from `events` | `never gets "enable row level security" — PostgREST serves it to anon by default` |
+| `for select to anon using (true)` | `grants SELECT to anon — anon may insert a lead and nothing else` |
+| `for update to public with check (true)` | `grants UPDATE to public` |
+| `0002` deleted | `view "v_lead_funnel" never sets security_invoker` |
+| no `supabase/migrations` directory, or no `.sql` in it | hard failure — the gate must not report clean having read nothing |
+
+**Two bugs lived in one line of this gate and the proof found both; reading it found neither.**
+The role capture `([a-z0-9_,\s]+?)` first ran without a boundary, so `to anon using (true)`
+captured the role as `"anon using"`, which matches no role name — **a deliberate anon SELECT
+policy went green**. The fix was then written with a literal backspace (U+0008) where `\b` was
+meant, making the lookahead `(?:using|with)\x08`, which can never match — so the SELECT case
+**still** went green while the DELETE case, which ends in `;` and takes the other branch, fired
+correctly and looked like proof that the line worked. A half-working alternation is
+indistinguishable from a working one if you only test the branch that works.
 
 ### A-09's grant path — a permanent subject, and the region is part of it
 
@@ -1603,6 +1678,7 @@ decision awaiting the owner, not work awaiting a session.
 | Round 7 | `A-GATE-7-4`, `7-5` | the ledger reads as though substance is checked when path shape is; `ROUND_BOUNDARIES` ordering is belt-and-braces, not load-bearing |
 | **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
+| Epic M | `M-P2-12` | **`check:rls` reads the migrations, not the live database.** It asserts what the repository declares; drift — a policy added in the Supabase dashboard, a grant restored, a view recreated without `security_invoker` — is invisible to it. A live check needs `DIRECT_CONNECTION_STRING` or the service role, which must not be in CI, so it belongs **after deploy, in the environment that already holds the credential**. `A-07` proved the shape by hand: query as `anon` with the publishable key and assert `leads` returns `[]` and every view 401s |
 | Epic M | `M-P2-11` | **the wordmark's face is constrained, not chosen.** It is `--font-mono` because that is the only family all four route groups already load, so it costs zero bytes — not because JetBrains Mono is the right face for the company mark. **Revisit at Press's shell epic (`P-xx`) when its font budget is set.** The question is whether one word justifies a fourth family on `/press`, on the critical path, against a 2.0s LCP budget with a ~1.52s empty-page floor. **It must be answered with a measured cost, not a preference** — build with Inter added to the Press layout, measure the LCP and the delta on both Lighthouse axes, then decide |
 | Epic M | `M-P2-9` | **`protectedVideo`'s shape is derived, not specified.** `SCHEMA-CORE.md` §1 references it from `project.media` and defines it nowhere. It mirrors `protectedImage` with a `file` asset. A poster frame, a duration and a captions track (WCAG 1.2.2, Level A for prerecorded video with audio) are all plausible additions and none is specified. Settle it at `D-01`, the first row that renders one |
 | Epic M | `M-P2-10` | **`post.author` and `post.readingTime` are untyped in the spec.** Listed as bare field names. Implemented as a string and a stored number; `author` could reasonably be a reference to `teamMember` and `readingTime` could reasonably be computed from `body` at query time. Settle at `N-13` |
@@ -1710,7 +1786,7 @@ Three things follow, and each is recorded rather than fixed:
 | ~~Q-M16~~ | **RESOLVED for the budgets; one observation stays open.** The mobile LCP ceilings are **measured, not provisional** — CI run #7 on `ubuntu-latest`, Node 24, median of 3, devtools throttling: 1522 / 1521 / 1522 / 1526ms across `/`, `/design`, `/digital`, `/press`. A 6ms spread on byte-identical empty pages is a fixed floor, not per-route content. **Digital has 78ms of headroom against its 1600ms ceiling.** The Lantern artefact that produced the original 533ms FCP→LCP gap is settled (VALIDATION §12) and LCP now equals FCP exactly on all four routes. **Still open, and carried into Stage 3:** (a) 78ms of LCP headroom is measured on a page containing one `h1` — hero imagery, work grids and book covers all produce a larger and later LCP element, so re-measure at the first Stage 3 route rather than at `H-01`, when the remedy would be cutting a page feature to pay for a floor; (b) **TBT is runner variance, not a Node 24 regression — corrected.** It was reported as a monotonic rise (83–86 → 87–98 → 104–107ms) on three runs; runs #9 and #10 came in at 81–86ms and 88–93ms, so the Node 24 spread (81–107ms) contains the Node 22 band entirely and there is no runtime effect. Under 4× CPU throttling TBT is CPU-bound and LCP is network-bound, which is why TBT moves ±13ms while LCP holds within 11ms. Lighthouse was 12.6.1 throughout, so no version drift. Digital's real headroom is ~55ms against a ±13ms band, on an empty page — re-measure at Epic M, and compare `benchmarkIndex` before reading any future TBT move as a code change | Atik | Stage 3 re-measure |
 | ~~Q-M1~~ | **RESOLVED 18 Aug 2026.** Company number `17050842`; registered office `30 Briarfield Road, Farnworth, Bolton, BL4 0HD`; trading address the same; VAT registration in progress, number before launch. All in the `companyDetails` singleton and nowhere else — nothing hardcodes them in a component. VAT is a **required field with a known-empty value**, gated by `check:launch` |
 | ~~Q-M17~~ | **RESOLVED 18 Aug 2026.** Sanity project `Gridsmith`, id `spzu6y31`, org `oJsbdLBrN`. Datasets `production` and `development`, both public, one shared schema folder. `A-06` is unblocked |
-| Q-M18 | **A Supabase project.** Only Atik can create one. Blocks A-07, same as above | Atik | A-07 |
+| ~~Q-M18~~ | **RESOLVED 19 Aug 2026.** Supabase project `dqiutgmxillhsbzgnlsx`. `PROJECT_URL`, `PUBLISHABLE_KEY` and `DIRECT_CONNECTION_STRING` in `.env.local`, all server-side. `A-07` done, `A-08` unblocked |
 | Q-M15 | **No favicon or brand mark exists.** `/favicon.ico` 404s on every route; Lighthouse reports it as a console error and it holds best-practices at 0.96. A mark is a brand decision and is not being invented (`master/PROJECT-RULES.md` §11). Supply one — or confirm shipping without a favicon is acceptable and the assertion stays at 0.96 permanently | Atik | Lighthouse best-practices 1.0 |
 | ~~Q-M12~~ | **RESOLVED — the metric changed, not the numbers.** JS is now budgeted on the delta above the framework floor, not the total: Master ≤15KB, Digital ≤15KB, Press ≤20KB, Design ≤25KB, estimator/path-finder ≤40KB. The floor (100.2KB) is reported separately so a dependency upgrade shows as a floor change rather than silently consuming feature allowance. **Digital's 100/100/100 gate is unchanged** — Lighthouse scores measured experience, and the 90KB figure was a badly-set proxy for it | Atik | ~~Digital launch~~ unblocked |
 | ~~Q-M10~~ | **RESOLVED by default at A-03** — no licence held, so Inter / JetBrains Mono / Source Serif 4 are used, self-hosted via `next/font`. Licensed names deliberately left out of the font stacks. Buying a licence later changes one module in `styles/fonts/` | Atik | ~~A-03~~ |

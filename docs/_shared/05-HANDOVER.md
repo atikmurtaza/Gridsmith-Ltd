@@ -17,14 +17,14 @@ close-out — what is done, what is blocked and on whom, the backlog, and the de
 
 **Done:** `M-02`–`M-08`, plus the Epic A rows Epic M unblocked or needed — `A-06` (core
 schemas), `A-09` (analytics, built and **not enabled**), `A-11` (consent), `A-12` (seed
-enforcement). `G7` closed the epic-identifier collisions. **Gates went 17 → 19.**
+enforcement). `G7` closed the epic-identifier collisions. **Gates went 17 → 20.**
 
 **Blocked, all on Atik:**
 
 | | On |
 |---|---|
-| `A-07`, `A-08` | **`Q-M18`** — a Supabase project |
-| `A-09`'s grant path | **`Q-M19`** — a GA4 measurement id and a PostHog key. Nothing injects without them |
+| ~~`A-07`~~ | **Done 19 Aug.** `Q-M18` resolved. Two migrations, `check:rls` is the gate — **and the spec's own §4 reporting view was an RLS bypass**, found by querying as `anon` rather than by reading the SQL. `A-08` is unblocked and is the next row |
+| ~~`A-09`'s grant path~~ | **Done 19 Aug.** `Q-M19` resolved. Permanent subject: nothing before a choice, a request to each provider after Accept, **PostHog on an EU host**, nothing after Reject |
 | **`M-P1-1`** | **a decision.** The 500 serves Next's `__next_error__` shell with no `lang` — WCAG 3.1.1 **Level A**, on every server-side crash. No app-level fix exists; Hostinger being managed hosting may rule out the platform-served remedy |
 | The Studio's CORS origin | an interactive `npx sanity login` — `SETUP.md` has the command |
 | **The screen-reader pass** | a human with NVDA or VoiceOver, over `M-02`, `M-03`, `M-04` and the consent banner. **It never happened** — it was placed at "the `M-06` chrome checkpoint" and `M-06` turned out to be a measurement plus a build. **`M-02` stays un-DONE until it does.** The gates cover focus order, target, paint, landmarks and roles; they do not cover announcement, and no lab check does |

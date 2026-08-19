@@ -85,6 +85,11 @@ jobs:
       - name: CMS schema resolves, and its structural rules are actually enforced
         run: npm run check:schemas
 
+      # RLS is the only thing between a publishable key and every lead in the database.
+      # Reads the committed migrations, not the live database — see the script's docstring.
+      - name: Row-level security is declared on every table, view and policy
+        run: npm run check:rls
+
       # Before the build, because the build reads the same dataset: a missing or
       # incomplete companyDetails singleton should fail with a sentence about the
       # statutory record, not with a fetch error inside static generation.
