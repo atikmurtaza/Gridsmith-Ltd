@@ -555,6 +555,38 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
 
+### ⇢ END OF EPIC N — one task, two sweeps, and neither is to be re-derived
+
+**Do this last, before Epic N closes. It is a session of its own and Epic N should produce
+pages first.** Both halves are recorded here together because they are the same job on the same
+subjects, and splitting them guarantees the second is reconstructed from scratch.
+
+**Sweep 1 — the zero-input audit (`M-P1-4`).** For every check in all 20 gates: empty its input
+and confirm the count moves. A check whose summary is unchanged when given nothing to check has
+never been shown to reach its input, and the count-from-subject fault is invisible on the page —
+`"10 object type(s) and 9 document type(s)"` is a true statement about the registry and no
+statement at all about the check. Three of `check:schemas`' six were like this. The fix is
+always the same: increment a counter inside the loop, print that counter, and fail on zero.
+
+Candidates already visible from here: `check:contrast`'s `EXPECTED_CELLS` and `EXPECTED_PAIRS`,
+`check:tokens`' `REQUIRED` list, `check-axe`'s analysis count, `check-rls`'s table and view
+counts, `check-bundle-size`'s route table. Some are already list-driven and will pass in a line;
+the point is that nobody knows which.
+
+**Sweep 2 — the never-made-to-fail sweep.** For every assertion in all 20 gates: has it ever
+been made to fail? Where a gate has multiple branches, has *each* branch? The rule in CLAUDE.md
+is that a passing gate never made to fail is not yet a gate, and it was written after three
+consecutive sessions found broken gates that way — including two written in the same session as
+the rule, and one alternation where the working branch made the broken branch look proven.
+
+**They are one task because they answer two halves of one question.** Sweep 2 asks *does this
+assertion reject a bad input*; sweep 1 asks *did it reach the input at all*. A gate can pass
+either and fail the other, and `check:schemas` did exactly that: its three subject-counted
+checks rejected bad inputs correctly and could not be shown to have run.
+
+**Output:** a table, gate by gate and check by check, with the message each break produced.
+Anything that cannot be made to fail or cannot be made to report zero is a finding, not a pass.
+
 ### N-06 — the strongest way to fix a name is to not accept one
 
 **Premise check: no measured or projected figure.** `_shared/00-PROCESS.md` opens *"FIXED — not
@@ -2062,6 +2094,7 @@ decision awaiting the owner, not work awaiting a session.
 | From | Item | |
 |---|---|---|
 | Epic M | ~~**`M-P1-2`**~~ | **FIXED 18 Aug at `A-12`, by remedy (a) — the preferred one.** `NEXT_PUBLIC_SANITY_DATASET` has no default; an unset variable throws at module load, so it is a build error rather than a silent fallback to `development`. That is the only remedy with no environment it cannot see. `.env.example`, `ci.yml` and `SETUP.md` all set it explicitly, and **it must be set in the Hostinger environment before the first deploy** |
+| Epic M | **`M-P1-4`** | **P1. Nineteen gates have never had the zero-input audit, and the fault it finds is invisible by construction.** `check:schemas` had six checks; **three printed a count derived from the subject rather than from their own loop** — a real number, correctly measuring the registry, that says nothing about whether the check ran. Emptying their input changed no output at all. That is not a check reporting the wrong thing; it is a check whose evidence comes from somewhere else, and no amount of reading finds it because the number is true. Every other gate was written the same way by the same hands. **Scheduled, not open work — see the end-of-epic task below** |
 | Epic M | **`M-P1-3`** | **P1. Nothing checks the live database's RLS posture.** `check:rls` reads the committed migrations and says so itself — it asserts what the repository declares. **`A-07` is the reason this is P1 rather than P2: the leak existed in the running system while the migration read correctly.** `v_lead_funnel` was written exactly as `SCHEMA-CORE.md` §4 specifies and served lead aggregates to `anon`, because the cause was a Postgres default and a Supabase grant, neither of which appears in SQL a reviewer reads. A source check cannot see that class at all, and it is the class that matters: drift added in the dashboard, a grant restored, a view recreated. **The shape is already proven by hand** — query as `anon` with the publishable key, assert `leads` returns `[]` and every view 401s. It needs a credential CI must not hold, so it belongs after deploy, in the environment that already has one. **The same job should prune `gridsmith-lead-probe`'s rows (`M-P2-14`).** |
 | Epic M | **`M-P1-1`** | **P1, accessibility, Level A.** A server-render crash serves `<html id="__next_error__">` with no `lang`, no `<h1>` and no `<main>`; `global-error` renders only after hydration, so a visitor without JS gets the bare shell. Measured at `M-07` against a committed probe and characterised by `check-axe`. **No app-level fix exists** — Next requires `global-error` to be a Client Component and a segment `error.tsx` was tried and does not change the served HTML. The remedy is architectural: an edge- or platform-served static error document, or a recorded acceptance. **Owner's decision — see `M-07` above** |
 
@@ -2080,7 +2113,7 @@ decision awaiting the owner, not work awaiting a session.
 | **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
 | Epic M | `M-P2-13` | **nothing measures the `<60s` notification target.** `FOUNDATION` §6 and `SCHEMA-CORE.md` §3 both state it; neither has ever been measured, and `notified_at` — the column the measurement needs — cannot be written by the only role the pipeline uses. `anon` has no UPDATE policy, correctly. Stamping it needs a service-role writer, and the alert needs production traffic and a destination. Until then the figure is a target, not a budget |
-| Epic M | `M-P2-15` | **the other 19 gates have not had the zero-input audit `check:schemas` just had.** Six checks were tested there and three could not be made to report zero — every one because its count came from the subject rather than from its own loop. That pattern is not specific to this file: `check:contrast`'s `EXPECTED_CELLS`, `check:tokens`' `REQUIRED` list and `check-axe`'s analysis count are all plausible candidates, and some are already list-driven. Audit them the same way — empty each check's input, confirm the count moves |
+| Epic M | ~~`M-P2-15`~~ | **Reclassified P1 as `M-P1-4` — see the P1 table above.** Filed P2 as a coverage gap. It is not one: the fault is invisible by construction |
 | Epic M | `M-P2-14` | **`gridsmith-lead-probe` inserts one row per CI run and nothing prunes them.** Invalid payloads never reach the database, so only the valid case writes. Pruning needs a privileged connection CI must not hold — it belongs to the same job as `M-P2-12`'s drift check, which already has the credential |
 | Epic M | ~~`M-P2-12`~~ | **Promoted to `M-P1-3` — see the P1 table above.** Filed P2 as a coverage gap. `A-07` showed it is not one: the leak existed **live** while the migration read correctly |
 | Epic M | `M-P2-11` | **the wordmark's face is constrained, not chosen.** It is `--font-mono` because that is the only family all four route groups already load, so it costs zero bytes — not because JetBrains Mono is the right face for the company mark. **Revisit at Press's shell epic (`P-xx`) when its font budget is set.** The question is whether one word justifies a fourth family on `/press`, on the critical path, against a 2.0s LCP budget with a ~1.52s empty-page floor. **It must be answered with a measured cost, not a preference** — build with Inter added to the Press layout, measure the LCP and the delta on both Lighthouse axes, then decide |
