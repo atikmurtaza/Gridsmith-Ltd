@@ -703,6 +703,60 @@ describe the effect, and none supplies words. Inventing the most-read sentence o
 the clearest possible case of non-negotiable #2. **And there is no schema for homepage content
 either** — `groupPage` is closed to `approach` and `about` by design. `Q-M21` covers both.
 
+### N-01 block 1, second commit — the approved copy, and a 5,591 B chunk merge
+
+**Q-M21 resolved.** The hero is the approved wording and the **homepage is hardcoded, not
+CMS-driven** — it changes rarely, every block is bespoke, and `groupPage` being closed to
+`approach` and `about` is correct. **No homepage schema is to be built.** Recorded here because
+the reason is the durable part: a schema for content with one instance that changes yearly is
+cost with no reader.
+
+**Measured, A/B on two clean builds** (`rm -rf .next` before each — see the caveat below), same
+server, `/`:
+
+| | `[TK]` placeholder | Approved copy | Delta |
+|---|---|---|---|
+| JS above the framework floor | 2.5KB | **2.5KB** | **0.0KB** |
+| HTML | 12,235 B | 12,713 B | **+478 B** |
+| CSS | 33,559 B | 39,150 B | **+5,591 B** |
+| DOM elements | 67 | 69 | **+2** |
+
+**The DOM figure is on a different basis from block 1's first commit** (57/59 there). That count
+was taken from the served HTML; this one is `document.querySelectorAll('*')` after hydration, so
+it includes `<html>`, `<head>` and the injected script and link elements. Deltas are comparable,
+absolutes are not.
+
+**+478 B of HTML is the sentence twice** — once in the markup, once in the RSC flight payload —
+plus the wrapper. That is what any hardcoded copy costs and it does not compound.
+
+#### The +5,591 B of CSS is not the paragraph, and it is not 5,591 B of new rules
+
+Nothing was added to `master.module.css`; `.heroIntro` was already there. **The figure is
+`interactive.module.css` — 5,591 B, byte for byte — which `/` did not previously download at
+all.** Adding the `<p>` merged two emitted stylesheets into one 21,827 B chunk (16,236 + 5,591)
+and `/` now fetches both.
+
+**`/` uses none of it.** `interactive_*` class names do not appear in the served HTML before or
+after: the header's nav links were dropped at `M-03` because their routes do not exist, so the
+route genuinely had no interactive primitive on it.
+
+**Reproduced three times, and the first two readings were wrong for a different reason.** The
+first A/B ran against an incremental `.next` and produced a build that silently did not rebuild
+— identical chunk hashes and timestamps to the previous one. `.next` then corrupted outright
+(`Cannot find module './vendor-chunks/@sanity.js'`, HTTP 500 on every route, `with-server`
+correctly refusing to proceed). **Both measurements were discarded and both builds redone
+clean.** The isolation run — approved headline, intro prop removed — returns exactly 33,559 B,
+which is what identifies the `<p>` as the trigger rather than the copy or the docstring.
+
+**No action, and the reason is block 2 rather than the mechanism.** The bundler heuristic that
+merges the two chunks is not explained here and chasing it would be speculative. It does not
+need explaining: **block 2 is the division routing cards, which are real `<a>`s, so `/` starts
+using `interactive.module.css` in the very next commit.** The cost is paid one block early, not
+added. If block 2's measurement shows the CSS total unchanged from 39,150 B, that confirms it.
+
+**What this does not measure** is Lighthouse. CSS is render-blocking, the `0.98` threshold on `/`
+is the gate that decides, and LHCI is skipped on Windows — CI is the reading.
+
 ### N-06 — the strongest way to fix a name is to not accept one
 
 **Premise check: no measured or projected figure.** `_shared/00-PROCESS.md` opens *"FIXED — not
@@ -1743,7 +1797,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
 | N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | **DONE** 19 Aug | Dev | `verified` hard-true, **run against values rather than counted**. **No seed example can exist** — a placeholder would have to claim it was verified, so the component renders an empty state and `Q-M6` blocks a real one. Zero client JS |
 | N-06 | Canonical process component + validator | P0 | 1d | A-06 | **DONE** 19 Aug | Dev | **Stage names never travel through the CMS** — the constant renders, the CMS supplies only `divisionDetail`/`duration`/`clientTime`. `check:schemas` asserts the constant against `00-PROCESS.md`, the source of truth. `N-01` is next |
-| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **1 of 9 blocks** 19 Aug | Dev | Block 1 (hero) shipped and measured: **0.0KB JS, +677B HTML, +1,608B CSS, +2 elements**. The copy is `[TK]` — no approved sentence exists (`Q-M21`). Blocks 2–9 pending, one per commit |
+| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **1 of 9 blocks** 19 Aug | Dev | Block 1 (hero) shipped, then its approved copy: **0.0KB JS** across both. Structure +1,608B CSS; copy +5,591B CSS, all of it `interactive.module.css` pulled in by a chunk merge and unused until block 2. `Q-M21` **resolved** — homepage is hardcoded, no schema. Blocks 2–9 pending, one per commit |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
 | N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | TODO | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |
 | N-07 | `/about` + structure disclosure | P0 | 1.5d | **M-05, N-03** | TODO | Dev | `Depends` corrected: `/about` is a `groupPage` slug, so it needs `N-03`'s schema as well as `companyDetails` |
@@ -2352,7 +2406,7 @@ Three things follow, and each is recorded rather than fixed:
 | ~~Q-M11~~ | **PARTLY REOPENED — the greenfield decision was over-broad.** The build is greenfield: nothing migrates, no content, no functionality, no database, and there is no cutover. But **the existing Press site is live and trading and comes down at launch**, so it has indexed URLs that 404 on day one unless mapped. Five of the six findings in `_shared/01-VALIDATION-REPORT.md` §10 stand; finding #3 ("nothing to crawl") is wrong for Press and is corrected there. Tracked as `G-08` (P1) | Atik | `G-08` |
 | ~~**Q-M19**~~ | **RESOLVED 19 Aug 2026.** Development GA4 and PostHog ids in `.env.local`; PostHog on **EU cloud**, asserted rather than defaulted. Live ids go in the Hostinger environment at launch — same variable names, different values per environment, the pattern `NEXT_PUBLIC_SANITY_DATASET` already uses. CI uses shaped placeholders, so the grant path is exercised there with no credential in the repository |
 | ~~**Q-M20**~~ | **RESOLVED for development, 19 Aug 2026.** `RESEND_API_KEY` in `.env.local`; sender `onboarding@resend.dev`, recipient `contact@gridsmith.uk`. Slack deliberately unused. **Two constraints carried to deployment, both recorded as constraints rather than gaps:** the sender becomes `notifications@gridsmith.uk` when DNS is done, and Resend's SPF `include:` must be **merged into the existing record** — `gridsmith.uk` already has one serving the live site's mail, and a second is a `permerror` under RFC 7208 §4.5 that silently breaks it | Atik | deployment |
-| **Q-M21** | **The homepage hero sentence, and where homepage copy lives.** `APP-FLOW.md` §2 names the slot — *"one sentence on what Gridsmith is, not a services list"* — and no specification supplies the words. It is the most-read sentence on the site and the one a founder will have opinions about, so it is marked `[TK]` rather than drafted (non-negotiable #2). **Also unresolved: there is no schema for homepage content.** `groupPage` is deliberately closed to `approach` and `about`, and widening it is what `check:schemas` exists to refuse. Either a `homePage` singleton or a third `groupPage` slug — a decision, not a guess | Atik | N-01 |
+| ~~**Q-M21**~~ | **RESOLVED 19 Aug, for blocks 1–2.** Copy approved by the founder and recorded in `N-01 block 1` below. **And the homepage is hardcoded, not CMS-driven** — it changes rarely, every block is bespoke, and `groupPage` staying closed to `approach` and `about` is correct rather than a gap. **No homepage schema is to be built.** Blocks 3–9 still need approved copy, which is a copy question, not a schema one | Atik | N-01 |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |

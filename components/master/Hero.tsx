@@ -18,17 +18,17 @@ import styles from './master.module.css';
  * hero and CTA bands"*. `--text-4xl` display at 500/-0.03em/1.02 is §3's display-hero row,
  * carried by `Heading size="display"` rather than re-declared here.
  *
- * ## The sentence does not exist, and it is not being written here
+ * ## The copy is approved, and the homepage is hardcoded
  *
- * No approved positioning line appears in any specification — `APP-FLOW.md` §2 names the slot,
- * `PRD.md` and `DESIGN.md` describe the job it does, and none of them supplies the words.
- * CLAUDE.md non-negotiable #2: *never invent content… mark `[TK]` and stop.* A hero sentence is
- * the single most-read piece of copy on the site and the one a founder will have opinions
- * about; drafting it here would put a plausible invention in the place hardest to notice it
- * later. `Q-M21`.
+ * `Q-M21` is resolved for blocks 1–2. The headline and intro are the approved words, passed in
+ * by the route rather than fetched: **the homepage is deliberately not CMS-driven**. It changes
+ * rarely, every block is bespoke, and `groupPage` is correctly closed to `approach` and `about`
+ * — there is no homepage schema and none is to be built. Non-negotiable #2 is satisfied by the
+ * copy being approved rather than by it being marked, which is the only other way to satisfy it.
  *
- * The structure is built and measured anyway, because the measurement does not depend on the
- * wording — which is the whole argument for building this page one block at a time.
+ * The intro is optional because block 1 is the only caller and the shape is the hero's, not a
+ * general one; if a second caller ever needs it the prop is already here.
+ *
  */
 export function Hero({ headline, intro }: { headline: string; intro?: string }) {
   return (
