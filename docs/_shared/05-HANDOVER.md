@@ -236,6 +236,18 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > and `A-09`'s grant path needs `Q-M19`, both with the owner. Epic M has no unblocked rows.
 > **The next epic is N**, and the standing instruction above applies to every row in it.
 >
+> **`N-01`'s premise was checked and it is half measured, half projected.** The Lighthouse
+> `0.98` is real — gated in `lighthouse/routes.cjs`, asserted at `error` severity, passing
+> today. **What nobody has measured is whether nine content blocks fit under it**: every green
+> run to date is against an `h1`, a header and a footer, and `Q-M16` says the same about the
+> LCP headroom. Build `N-01` incrementally against the gate rather than authoring it whole —
+> the first block that moves the score is the one worth arguing about.
+>
+> **And `N-03` is the honest first row, not `N-01`.** The DoD requires content from the CMS and
+> the homepage's blocks have no schema: `groupPage` is `N-03`, `continuityExample` `N-05`, the
+> canonical process component `N-06`. `N-01` depends on `M-03` in the table and on three schema
+> rows in practice.
+>
 > **Three visual items landed after A-12 (V1–V3).** The wordmark is locked to `--font-mono` —
 > the one element that must be identical in all four themes, and the only face all four route
 > groups already load. The three division accents are declared by **every** theme now, not

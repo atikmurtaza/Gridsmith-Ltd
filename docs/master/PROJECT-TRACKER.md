@@ -555,6 +555,37 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
 
+### N-01's premise — half measured, half projected, and the halves are not the same claim
+
+**Checked before building, per the standing instruction. Not started — see the note at the
+end.**
+
+| The figure | Status |
+|---|---|
+| **Lighthouse performance ≥ 0.98 on `/`** | **Measured and gated.** `lighthouse/routes.cjs` carries `{ path: '/', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 }`, and `lighthouserc.desktop.cjs` asserts `categories:performance` at that value with `error` severity, median of 3, on `ubuntu-latest`. It runs today and passes. This is not a projection |
+| **That the homepage can carry nine content blocks and still clear it** | **A projection, and nobody has measured it.** Every green run to date is against a page containing an `h1`, a header and a footer. `Q-M16` says the same thing about LCP in as many words: the 78ms of headroom was measured on a page with one `h1`, and hero imagery, work grids and book covers all produce a larger and later LCP element |
+
+**The distinction matters because the two figures fail differently.** If `0.98` were wrong, the
+gate would be wrong and the fix would be the gate. What is actually unknown is the *budget*:
+how much of the 0.98 nine blocks consume. That is not knowable from the specification and it is
+not knowable from the current build — **it is knowable only by building a block and measuring
+what it costs**, which is what the standing instruction means by converting a row's deliverable
+into the measurement.
+
+So `N-01` should be built **incrementally against the gate**, not authored whole and measured at
+the end: the first block that moves the score is the one worth arguing about, and a homepage
+assembled in one commit gives no way to attribute a regression to any of nine candidates. The
+same applies to the LCP ceiling, which `Q-M16` explicitly defers to "the first Stage 3 route" —
+`N-01` is that route.
+
+**One dependency the row does not name.** The Definition of Done requires content from the CMS,
+and the homepage's blocks have no schema: `groupPage` is `N-03`, `continuityExample` is `N-05`,
+the canonical process component is `N-06`. `N-01` depends on `M-03` in the table and on three
+schema rows in practice. **`N-03` is the honest first row of Epic N**, not `N-01`.
+
+**Not started.** The premise check is the deliverable here; the build is the next session's, and
+it should begin at `N-03`.
+
 ### A-08's notification half — a real email, and the limits of what that proves
 
 **Verified live.** A submission through the served app produced a real send: Resend accepted
@@ -1337,7 +1368,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| N-01 | Homepage, 9 blocks | P0 | 2.5d | M-03 | TODO | Dev | Lighthouse ≥98 |
+| N-01 | Homepage, 9 blocks | P0 | 2.5d | M-03 | TODO — **premise checked, not started** | Dev | Lighthouse ≥98. **The 0.98 is measured and gated; the claim that nine blocks fit under it is a projection.** See below before building |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | TODO | Dev | |
 | N-04 | `/approach`, 8 blocks | P0 | 2d | N-03 | TODO | Dev | Incl. limits section |
