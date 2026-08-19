@@ -555,6 +555,53 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
 
+### N-05 — a hard-true constraint that makes seed content impossible, on purpose
+
+**Premise check: every figure is a structural minimum, none measured or projected.**
+`rows.min(4)` and `divisionsInvolved.min(2)` are completeness rules — a two-row table does not
+show continuity and one division is not cross-division. `relationshipMonths` is a data field
+with no asserted value. **`DESIGN.md` §5's "Month 1 / Month 18" is an illustration of the
+two-column shape, not a constant**: the component reads the real span and hardcodes nothing,
+because 18 would be a duration nobody measured about a client nobody named.
+
+**`verified` is hard-true, and the collision with the seed policy is the finding.**
+`FOUNDATION` §7 requires seed records to be structurally complete; completeness here means
+`verified: true`; and a seed record claiming to have been verified against real project records
+is precisely the lie `master/SCHEMA.md` §2 calls "the most damaging possible piece of content
+on the site". **The two rules do not both apply — the honesty rule wins and the type has no
+placeholder variant.** So `/approach` is built to stand without the document: the component
+returns an empty state, and `Q-M6` is the blocker for a real one.
+
+`isSeed` stays on the type because the group-wide rule and `A-12` require it, and nothing will
+ever set it.
+
+**The component re-checks `verified` as well as the schema, and that is not redundancy.** The
+schema governs what an editor can save; the component governs what a page can render. A
+document written through the API, restored from a backup or migrated between datasets bypasses
+Studio validation entirely, and the component is the last thing between it and a commercial
+claim on the site.
+
+A real `<table>` with `scope="row"` — the comparison is the point, and a grid of divs gives a
+screen reader no row/column association. Zero client JS. **axe caught the first version's empty
+corner `<th>`** (`empty-table-header`): a header with no text is a promise of a label that is
+not kept, so the corner is a `<td>`.
+
+**Every branch of the new assertion proven, including the count.**
+
+| Broken | Fired |
+|---|---|
+| `verified`'s rule made permissive — `r.custom(() => true)` | `accepts false — the rule is present and permissive, which a presence check cannot see` |
+| the `custom` rule replaced with `required()` | `never .custom() — required() alone would accept false` |
+| `rows.min(4)` replaced with `required()` | `never .min() — at least four rows` |
+| the `HARD_VALUES` entry removed | `0 hard-valued rule(s) run against 0 value(s)` — **the count moves**, per the rule added this session |
+
+**⚠ And the check-that-does-not-exist class recurred, in the same file, in the same session.**
+`HARD_VALUES` was declared, the summary printed *"1 hard-valued rule(s) run against 4
+value(s)"*, and **no loop iterated** — the second silent insertion failure in `check:schemas`.
+It was caught only because the permissive-rule branch was proved rather than assumed, which is
+exactly the obligation CLAUDE.md now carries. The insertion is verified by an assertion in the
+edit itself; a summary line remains no evidence at all.
+
 ### N-03 — a row with no figure in it, and two structural claims made real
 
 **Premise check, per the standing instruction: `N-03` carries no measured or projected figure,
@@ -1428,7 +1475,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
-| N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | TODO | Dev | `verified` hard-true |
+| N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | **DONE** 19 Aug | Dev | `verified` hard-true, **run against values rather than counted**. **No seed example can exist** — a placeholder would have to claim it was verified, so the component renders an empty state and `Q-M6` blocks a real one. Zero client JS |
 | N-06 | Canonical process component + validator | P0 | 1d | A-06 | TODO | Dev | Six canonical titles only |
 | N-01 | Homepage, 9 blocks | P0 | 2.5d | **N-03, N-05, N-06** | TODO — **premise checked, not started** | Dev | `Depends` corrected: it read `M-03`, which is the chrome, and the DoD requires content from the CMS — the blocks' schemas are `N-03`, `N-05` and `N-06`. **Lighthouse ≥98 is measured and gated; that nine blocks fit under it is not.** One block per commit, measured after each |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |

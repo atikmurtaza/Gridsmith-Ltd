@@ -36,6 +36,7 @@ const EXPECTED_OBJECTS = [
   'protectedVideo',
   'processStep',
   'groupSection',
+  'continuityRow',
 ];
 const EXPECTED_DOCUMENTS = [
   'service',
@@ -45,6 +46,7 @@ const EXPECTED_DOCUMENTS = [
   'post',
   'teamMember',
   'groupPage',
+  'continuityExample',
   'companyDetails',
 ];
 
@@ -223,6 +225,21 @@ const REQUIRED_FIELDS = [
   ['protectedVideo', 'alt', 'required', 'WCAG 1.1.1'],
   ['pricingBlock', 'variables', 'min', 'SCHEMA-CORE §2 — "what moves this number", min 2'],
   ['processStep', 'title', 'custom', 'the canonical six — _shared/00-PROCESS.md'],
+  ['continuityExample', 'rows', 'min', 'master/SCHEMA.md §2 — at least four rows; two do not show continuity'],
+  ['continuityExample', 'divisionsInvolved', 'min', 'at least two divisions, or it is not cross-division'],
+  ['continuityExample', 'verified', 'custom', 'hard-true — required() alone would accept false'],
+];
+
+/**
+ * **Rules that must accept one value and refuse another, run rather than counted** (`N-05`).
+ *
+ * `r.custom(v => v === true || 'message')` and `r.custom(() => true)` both *call* `.custom()`,
+ * so the presence check above passes a rule that permits everything. `master/SCHEMA.md` §2
+ * calls an invented continuity example "the most damaging possible piece of content on the
+ * site", which is not a claim to leave resting on whether a function was invoked.
+ */
+const HARD_VALUES = [
+  ['continuityExample', 'verified', [true], [false, undefined, 'true']],
 ];
 for (const [typeName, fieldName, expected, why] of REQUIRED_FIELDS) {
   const calls = rulesFor(typeName, fieldName);
@@ -337,6 +354,43 @@ for (const [typeName, fieldName, expected, shape] of CLOSED_LISTS) {
   }
 }
 
+/**
+ * 6. Hard-valued rules are RUN against values, not counted.
+ *
+ * **This block failed to insert twice before it ran** — the constant was declared, the summary
+ * printed "1 hard-valued rule(s) run against 4 value(s)", and nothing iterated. Second
+ * occurrence of that in this file in one session. It was found by proving the permissive-rule
+ * branch, which is the argument for the rule in CLAUDE.md: a count is not evidence anything
+ * counted, and this count is provable to report zero.
+ */
+for (const [typeName, fieldName, mustAccept, mustRefuse] of HARD_VALUES) {
+  const field = byName.get(typeName)?.fields?.find((f) => f.name === fieldName);
+  if (typeof field?.validation !== 'function') {
+    problems.push(`${typeName}.${fieldName} has no validation — its hard value is not enforced`);
+    continue;
+  }
+  const { rule, customFns } = recordingRule();
+  field.validation(rule);
+  if (customFns.length === 0) {
+    problems.push(`${typeName}.${fieldName} never calls .custom() — required() alone accepts a falsy value`);
+    continue;
+  }
+  const run = (value) => customFns.map((fn) => fn(value, {}));
+  for (const value of mustAccept) {
+    if (!run(value).every((r) => r === true)) {
+      problems.push(`${typeName}.${fieldName} refuses ${JSON.stringify(value)}, which it must accept`);
+    }
+  }
+  for (const value of mustRefuse) {
+    if (run(value).every((r) => r === true)) {
+      problems.push(
+        `${typeName}.${fieldName} accepts ${JSON.stringify(value)} — the rule is present and ` +
+          'permissive, which a presence check cannot see',
+      );
+    }
+  }
+}
+
 if (problems.length > 0) {
   console.error(`\ncheck-schemas: ${problems.length} problem(s)\n`);
   for (const p of problems) console.error(`  ${p}`);
@@ -347,6 +401,10 @@ if (problems.length > 0) {
 console.log(
   `check-schemas: ${objects.length} object type(s) and ${documents.length} document type(s), ` +
     'every field type resolved, every reference points at a document',
+);
+console.log(
+  `check-schemas: ${HARD_VALUES.length} hard-valued rule(s) run against ` +
+    `${HARD_VALUES.reduce((n, [, , a, r]) => n + a.length + r.length, 0)} value(s) — accepted and refused, not merely present`,
 );
 console.log(
   `check-schemas: ${CLOSED_LISTS.length} closed list(s) intact and enforced by a custom rule, ` +

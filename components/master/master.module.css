@@ -1,0 +1,16 @@
+/* Master-layer composed components. Tokens only; no colour literals. */
+
+.continuity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Mono, because it carries the verifiable facts — division count and relationship length.
+   --ink-muted rather than --ink: it is context for the table, not a heading. */
+.continuityMeta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
