@@ -117,7 +117,7 @@
    cards, not a state each card knows about. */
 .divisionCards:hover > li:not(:hover),
 .divisionCards:focus-within > li:not(:focus-within) {
-  opacity: 0.6;
+  opacity: 0.8;
   transition: opacity var(--dur-base) var(--ease-out);
 }
 
@@ -139,3 +139,11 @@
   font-size: var(--text-lg);
   color: var(--ink);
 }
+
+/* The card's link. Plain <a> — TECH-SPEC §3, see DivisionRouting.tsx — so it carries its own
+   focus ring and underline rather than the Link primitive's. Same shape as .switcherLink,
+   which is the footer's answer to the same constraint. */
+.divisionLink { color: var(--ink); text-decoration: none; }
+.divisionLink:hover,
+.divisionLink:focus-visible { text-decoration: underline; text-underline-offset: 0.2em; }
+.divisionLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }

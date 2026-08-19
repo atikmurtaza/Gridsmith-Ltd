@@ -1,7 +1,6 @@
 import { Card } from '@/components/primitives/Card';
 import { Container } from '@/components/primitives/Container';
 import { Heading } from '@/components/primitives/Heading';
-import { Link } from '@/components/primitives/Link';
 import { Section } from '@/components/primitives/Section';
 import styles from './master.module.css';
 
@@ -24,6 +23,22 @@ import styles from './master.module.css';
  * **They deliberately do not imply that the same people execute across all three studios.**
  * Specialist teams stay specialist; Gridsmith holds the relationship and the client context.
  * No copy in any division may contradict that.
+ *
+ * ## Plain `<a>`, not the `Link` primitive — the same rule the header and footer already follow
+ *
+ * `TECH-SPEC.md` §3: **navigation between route groups is a full document load.** The four root
+ * layouts have no shared ancestor, so a client-side transition across the boundary cannot
+ * happen — and §9 wants it that way, because the theme change *is* the transition.
+ *
+ * `next/link` therefore buys nothing here, and this was measured rather than argued. With the
+ * primitive in place, `/` prefetched **three RSC payloads totalling 33,531 B** on load, and the
+ * click was still a `document` request that discarded all three. The cost was **4.8KB gz of
+ * JS** on the route with the strictest Lighthouse target in the programme.
+ *
+ * The `Link` primitive stays correct for within-group navigation, where its underline rule and
+ * external-link handling matter. Across the boundary it is the wrong component, which `Footer`
+ * and `Header` both say in the same words — **block 2 shipped against a convention that was
+ * already written down in two files.**
  *
  * ## Two deviations from `DESIGN.md` §5, both recorded there in this commit
  *
@@ -72,7 +87,9 @@ export function DivisionRouting() {
           {DIVISIONS.map((d) => (
             <Card as="li" key={d.href} linked className={styles[d.className]}>
               <Heading level={2} size="d4">
-                <Link href={d.href}>{d.name}</Link>
+                <a href={d.href} className={styles.divisionLink}>
+                  {d.name}
+                </a>
               </Heading>
               <p className={styles.divisionServices}>{d.services}</p>
               <p className={styles.divisionCharacter}>{d.character}</p>

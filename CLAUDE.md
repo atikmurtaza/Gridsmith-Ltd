@@ -129,6 +129,17 @@ Read the workstream's own files before touching its code.
   specific-looking number is worse than no number, because it stops anyone re-deriving it.
   **If you meet an asserted number that no gate covers, treat it as unverified and say
   so** rather than building on it.
+- **Every A/B measurement runs on clean builds — `rm -rf .next` before each side.** An
+  incremental build that decides nothing changed does not say so: it exits 0, prints the same
+  route table, and leaves the previous artefact in place. Two readings in the `N-01` block 1
+  session were real measurements of an unrebuilt tree — identical chunk hashes and identical
+  file timestamps to the build before them — and one of them was reported as a +5,591 B
+  regression before the timestamps were noticed. **A stale build does not error, it reports.**
+  The tell is that the numbers do not move when they should, or move when nothing should have
+  changed them; the fix is not to look for the tell but to remove the possibility. The same
+  session's `.next` then corrupted outright and served HTTP 500 on every route, which is the
+  loud version of the same fault and the harmless one.
+
 - **Every gate must be proven by deliberate failure before it is trusted, and the proof
   recorded.** A gate that can skip its subject silently must treat that skip as a hard
   failure, never a pass. A green result from a check that measured nothing is worse than

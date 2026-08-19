@@ -20,6 +20,7 @@
  *   decor     none    purely decorative — reported, never enforced
  */
 import { readFileSync, globSync } from 'node:fs';
+import { sep } from 'node:path';
 
 const THEMES = ['master', 'design', 'digital', 'press'];
 const TOLERANCE = 0.02; // DESIGN.md now carries measured values to 2dp
@@ -584,7 +585,101 @@ if (sizeProblems.length > 0) {
   );
 }
 
-if (failures.length > 0 || drift.length > 0 || matrixProblems.length > 0 || sizeProblems.length > 0) {
+/**
+ * ## The opacity pass — `M-P2-19`
+ *
+ * Every check above measures a token against a surface at full strength. **A rule that fades
+ * an element is invisible to all of them**, and `DESIGN.md` §5 requires exactly that: the
+ * division cards drop non-hovered siblings to `opacity: 0.6`. axe does not evaluate hover
+ * states either, so the faded text was measured by nothing at all.
+ *
+ * The threshold comes from WCAG, not from the stylesheet; only the alpha is read from the
+ * subject, because the alpha *is* the subject. Compositing is a straight per-channel blend in
+ * sRGB — which is what the compositor does for `opacity`, and the reason a faded element
+ * cannot be modelled by picking a lighter token.
+ *
+ * **This finds the class, not the instance.** Any `opacity` on a rule that has text under it
+ * is the same defect, so the scan is every `opacity:` declaration below 1 in the CSS modules,
+ * not the one this was written for. A future fade is caught the day it lands.
+ */
+const OPACITY_MIN = 4.5; // WCAG 2.2 AA, body text. External to the subject by construction.
+const opacityProblems = [];
+let opacityRules = 0;
+let opacityComposites = 0;
+
+// Faded text takes the colour of what it fades into. Both cards sit on --canvas.
+const composite = (fg, bg, a) => {
+  const parse = (h) => {
+    const x = h.replace('#', '');
+    const f = x.length === 3 ? [...x].map((c) => c + c).join('') : x;
+    return [0, 2, 4].map((i) => parseInt(f.slice(i, i + 2), 16));
+  };
+  const [f, b] = [parse(fg), parse(bg)];
+  return '#' + f.map((c, i) => Math.round(a * c + (1 - a) * b[i]).toString(16).padStart(2, '0')).join('');
+};
+
+// The tokens a faded block can put text in. --ink-muted is the one that matters: it starts
+// closest to the floor, so it is the first to cross it.
+const FADED_TEXT = ['--ink', '--ink-muted'];
+
+for (const file of globSync('{components,app}/**/*.module.css')) {
+  const css = readFileSync(file, 'utf8');
+  // Matched as `selector { … }` rather than as a bare declaration, because the selector is
+  // what says whether the fade is exempt — see the :disabled case below.
+  for (const m of css.matchAll(/([^{}]+)\{([^{}]*?)opacity:\s*(0?\.\d+|0)\s*;/g)) {
+    const selector = m[1].trim();
+    // WCAG 2.2 SC 1.4.3 exempts inactive user interface components by name. The disabled
+    // Button and the disabled Field control are the two, and they fade to 0.45 deliberately —
+    // that fade IS the disabled affordance. Exempting them is the specification's own carve-out,
+    // not a threshold being lowered to go green.
+    if (selector.includes(':disabled')) continue;
+    const alpha = Number(m[3]);
+    if (alpha >= 1) continue;
+    // `opacity: 0` is not faded text, it is absent text — RevealOnScroll's pre-reveal state,
+    // which no user reads and which animates to 1. Compositing it gives 1.00:1 against every
+    // token on every theme, which is arithmetic about invisibility rather than a finding.
+    if (alpha === 0) continue;
+    opacityRules += 1;
+    // A component under components/<division>/ renders on that theme and no other, so
+    // measuring it against the other three canvases invents failures nobody can reach. The
+    // shared layers — primitives, chrome, app — genuinely run on all four.
+    // `sep`, not a regex: a character class holding a backslash is the shape that produced
+    // the U+0008 defect above, and this comparison needs no escaping at all.
+    const scoped = THEMES.find((d) => file.includes(`components${sep}${d}${sep}`));
+    for (const theme of scoped ? [scoped] : THEMES) {
+      const t = tokens(theme);
+      for (const token of FADED_TEXT) {
+        if (!t[token] || !t['--canvas']) continue;
+        opacityComposites += 1;
+        const faded = composite(t[token], t['--canvas'], alpha);
+        const r = ratio(faded, t['--canvas']);
+        if (r < OPACITY_MIN) {
+          opacityProblems.push(
+            `${file} fades to ${m[3]} — ${token} on ${theme}'s --canvas measures ${r.toFixed(2)}:1 ` +
+              `at that opacity, under ${OPACITY_MIN}:1`,
+          );
+        }
+      }
+    }
+  }
+}
+
+// Zero rules is not a pass. The scan finding nothing means the glob missed, not that the
+// stylesheets are clean — DESIGN.md §5 requires at least one fade to exist.
+if (opacityRules === 0) {
+  opacityProblems.push(
+    'no opacity declaration below 1 was found in any CSS module. DESIGN.md §5 requires the ' +
+      'division cards to fade their siblings, so this scan measured nothing.',
+  );
+}
+
+if (opacityProblems.length > 0) {
+  console.error(`\ncheck-contrast: ${opacityProblems.length} faded-text problem(s):\n`);
+  for (const p of opacityProblems) console.error(`  ${p}`);
+  console.error('\nRaise the opacity, or use --ink where the fade applies.\n');
+}
+
+if (failures.length > 0 || drift.length > 0 || matrixProblems.length > 0 || sizeProblems.length > 0 || opacityProblems.length > 0) {
   process.exit(1);
 }
 
@@ -604,4 +699,8 @@ for (const [token, use] of Object.entries(USE)) {
   const note = use.except ? `  (restricted on ${Object.keys(use.except).join(', ')})` : '';
   console.log(`    ${token.padEnd(17)} ${ROLE_OF[use.role].padEnd(22)} worst ${worst.toFixed(2)}:1${note}`);
 }
+console.log(
+  `check-contrast: opacity pass — ${opacityRules} fade rule(s), ${opacityComposites} composite(s) ` +
+    `measured against their own canvas, every result over ${OPACITY_MIN}:1`,
+);
 console.log('');

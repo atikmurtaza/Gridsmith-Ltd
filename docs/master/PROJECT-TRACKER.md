@@ -703,6 +703,104 @@ describe the effect, and none supplies words. Inventing the most-read sentence o
 the clearest possible case of non-negotiable #2. **And there is no schema for homepage content
 either** — `groupPage` is closed to `approach` and `about` by design. `Q-M21` covers both.
 
+### N-01 block 2, revised — the 4.8KB bought nothing, and the measurement said so
+
+**Premise check, and it does not hold.** The previous entry recorded +4.8KB gz of JS for
+`next/link` and justified it as prefetch on the highest-value click. **`TECH-SPEC.md` §3:
+navigation between route groups is a full document load** — the four root layouts share no
+ancestor, so a client transition across the boundary cannot occur, and §9 wants it that way.
+
+**Measured rather than argued**, same server, both sides on clean builds:
+
+| | `next/link` | plain `<a>` | Delta |
+|---|---|---|---|
+| JS above the framework floor | 7.3KB | **2.5KB** | **−4.8KB** |
+| HTML | 17,839 B | 17,027 B | −812 B |
+| CSS | 40,743 B | 35,437 B | **−5,306 B** |
+| DOM elements | 94 | 90 | −4 |
+| RSC prefetches on load | **3, totalling 33,531 B** | **0** | −33,531 B |
+| Requests before the click | 20 | 13 | −7 |
+| M-J3's click | `document` request | `document` request | **identical** |
+
+**The click is the finding.** With the primitive in place the browser fetched
+`/design?_rsc=…`, `/digital?_rsc=…` and `/press?_rsc=…` at load — 33,531 B of RSC payload —
+and then navigated by `document` request anyway, discarding all three. Not "prefetch that
+gains little": **prefetch that is thrown away in full**, plus 4.8KB of JS to arrange it.
+
+Master is back to **2.5KB of 15KB**. The CSS drop is the block 1 anomaly closing: `/` no
+longer loads `interactive.module.css` at all, so the 5,591 B that entry treated as paid early
+is not paid at all.
+
+**And the convention was already written down, in two files.** `Footer` and `Header` both
+carry the comment *"Plain `<a>`, not the `Link` primitive… `TECH-SPEC.md` §3 requires
+route-group navigation to be a document load"*, and the footer's division switcher — the same
+three destinations — has always been plain `<a>`. **Block 2 shipped against a rule that two
+neighbouring components state explicitly.** No gate covered it, and the budget did not catch it
+because 7.3KB is inside 15KB. What caught it was being asked to measure the thing rather than
+reason about it.
+
+**`/` is a baseline route again.** The gate's spread assertion fired correctly last commit and
+the diagnosis — *a route grew a feature* — was correct on the evidence. It was still the wrong
+outcome, because a gate cannot ask whether the feature should exist. The note in
+`check-bundle-size.mjs` now says so: drop a route from `BASELINE_ROUTES` only after that
+question has been answered.
+
+**The consent-banner filter's subject left the tree with it.** Excluding `/`'s own
+`page-*.js` was right and stays, but with no page chunk on `/` it now removes nothing. It is
+a definition rather than an assertion, its proof stands against `dcd391e3` where the subject
+existed, and re-running it is `M-P2-20`.
+
+### `M-P2-19` — the 60% dim was not merely unmeasured, it was a WCAG failure
+
+Raised at P2 last commit as *"nobody measured it"*. Task 1 touched the component, so it was
+gated rather than deferred — and the gate failed on the first run.
+
+`--ink-muted` composited on `--canvas` at `opacity: 0.6` measures **2.90:1** against a
+4.5:1 floor. `DESIGN.md` §5 specified that 60%. **0.8 measures 4.57:1** and is the lowest
+step on the scale that clears AA, so the dim is 80% and §5 is corrected. `--ink` was never at
+risk — 5.02:1 even at 0.6 — which is why only the character sentence was failing and why
+nothing looked obviously wrong.
+
+**The new pass in `check:contrast` fixes the class, not the instance.** Every check in that
+file measured a token against a surface at full strength; **an `opacity` rule is invisible to
+all of them**, and axe does not evaluate hover states, so any fade anywhere was unmeasured.
+The pass composites every `opacity` below 1 in every CSS module against its own canvas.
+
+| Decision | Why |
+|---|---|
+| `opacity: 0` skipped | `RevealOnScroll`'s pre-reveal state. Absent text, not faded text; compositing it returns 1.00:1 against everything, which is arithmetic about invisibility |
+| `:disabled` skipped | WCAG 2.2 SC 1.4.3 exempts inactive components by name. The 0.45 on `Button` and `Field` **is** the disabled affordance |
+| `components/<division>/` scoped to that theme | A master component does not render on Press's canvas. Measuring it there invents failures nobody can reach |
+| threshold hardcoded, alpha read from the subject | The 4.5 is WCAG's and comes from outside; the alpha *is* what is being checked |
+
+**Three branches, three proofs, each fired alone:**
+
+| Broken | Fired |
+|---|---|
+| the dim put back to the spec's 0.6 | `fades to 0.6 — --ink-muted on master's --canvas measures 2.90:1` |
+| the only fade rule deleted | `no opacity declaration below 1 was found in any CSS module… this scan measured nothing` — the count reports zero |
+| the `:disabled` exemption removed | 16 problems across both disabled rules × 4 themes |
+
+#### The exemption did not work when it was written, and the reason is on the wall of this file
+
+`if (/:disabled\b/.test(selector))` was written with a **literal backspace, U+0008**, where
+`\b` was intended — so the pattern was `:disabled` followed by a control character, which
+matches nothing. **This is the `check:rls` defect, verbatim, in a different file, written by
+someone who had read the paragraph describing it that morning.** It survived reading the line
+three times: `sed` prints U+0008 as a backspace and the terminal renders `/:disabled\b/` and
+`/:disabled/` identically. `od -c` is what showed it.
+
+What found it was not inspection. The exemption was *supposed* to make 16 problems disappear
+and they did not, so the loop was instrumented, printed the selectors it was skipping —
+`".button:disabled"`, correctly — and the problems remained anyway. **A skip that logs the
+right thing and does not skip is only visible if you check the output, not the code.** The
+comparison is now `selector.includes(':disabled')`, which has no escape to get wrong, and the
+neighbouring path test was rewritten to use `path.sep` for the same reason.
+
+**Also corrected: the pass's own summary line.** It first read *"composited against 2 text
+token(s) × 4 themes"* — a product of two constants, printed whether or not the loop ran, and
+wrong the moment theme scoping landed. It now reports the composites actually performed.
+
 ### N-01 block 2 — division routing, and the first block that costs JS
 
 **Premise check.** Block 1 measured **0.0KB of JS** and the entry above concluded that a
@@ -1888,7 +1986,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
 | N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | **DONE** 19 Aug | Dev | `verified` hard-true, **run against values rather than counted**. **No seed example can exist** — a placeholder would have to claim it was verified, so the component renders an empty state and `Q-M6` blocks a real one. Zero client JS |
 | N-06 | Canonical process component + validator | P0 | 1d | A-06 | **DONE** 19 Aug | Dev | **Stage names never travel through the CMS** — the constant renders, the CMS supplies only `divisionDetail`/`duration`/`clientTime`. `check:schemas` asserts the constant against `00-PROCESS.md`, the source of truth. `N-01` is next |
-| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **2 of 9 blocks** 19 Aug | Dev | Block 1 (hero) 0.0KB JS. **Block 2 (division routing) +4.8KB JS** — `next/link` is a Client Component — putting Master at **7.3KB of 15KB**, and +1,593B CSS, which confirms block 1's prediction that its 5,591B was paid early rather than added. `/` left `BASELINE_ROUTES` and the consent-banner figure was un-hollowed. `Q-M21` **resolved** — homepage is hardcoded, no schema. Blocks 3–9 pending, one per commit |
+| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **2 of 9 blocks** 19 Aug | Dev | Blocks 1–2 shipped for **0.0KB of JS between them** — Master 2.5KB of 15KB. Block 2 used `next/link` first, measured 4.8KB of JS and 33,531 B of prefetch discarded by the document load `TECH-SPEC` §3 requires, and went to plain `<a>`. `Q-M21` **resolved** — homepage is hardcoded, no schema. Blocks 3–9 pending, one per commit |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
 | N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | TODO | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |
 | N-07 | `/about` + structure disclosure | P0 | 1.5d | **M-05, N-03** | TODO | Dev | `Depends` corrected: `/about` is a `groupPage` slug, so it needs `N-03`'s schema as well as `companyDetails` |
@@ -2377,7 +2475,8 @@ decision awaiting the owner, not work awaiting a session.
 | Epic M | `M-P2-13` | **nothing measures the `<60s` notification target.** `FOUNDATION` §6 and `SCHEMA-CORE.md` §3 both state it; neither has ever been measured, and `notified_at` — the column the measurement needs — cannot be written by the only role the pipeline uses. `anon` has no UPDATE policy, correctly. Stamping it needs a service-role writer, and the alert needs production traffic and a destination. Until then the figure is a target, not a budget |
 | Epic M | ~~`M-P2-15`~~ | **Reclassified P1 as `M-P1-4` — see the P1 table above.** Filed P2 as a coverage gap. It is not one: the fault is invisible by construction |
 | Epic M | `M-P2-17` | **`check-axe`'s `"40+ tokens probed"` is derived from the token files, not the probe loop.** Disabling the probe leaves the number unchanged. Not an unguarded check — the computed-value assertion beside it does fail when starved, so the probe's purpose is covered — but the count is misleading and should be a loop counter like the rest |
-| Epic M | `M-P2-19` | **The division cards' 60% sibling dim is unmeasured for contrast.** `DESIGN.md` §5 requires non-hovered cards to drop to `opacity: 0.6` on hover or focus. axe does not evaluate hover states and `check:contrast` works from tokens on surfaces, so nothing measures `--ink-muted` at 0.6 over `--canvas`. It is a transient state on a pointer interaction, which is why it shipped, but "nobody measured it" is the finding rather than "it is fine". `N-01` |
+| Epic M | ~~`M-P2-19`~~ | **DONE 19 Aug — and it was a live WCAG AA failure, not just an unmeasured one.** `--ink-muted` at `opacity: 0.6` measures 2.90:1. The dim is now 80% (4.57:1), `DESIGN.md` §5 is corrected, and `check:contrast` grew an opacity pass covering every fade in every CSS module. Three branches proven. The exemption for `:disabled` did not work when written — a literal U+0008 where `\b` was intended, the `check:rls` defect verbatim |
+| Epic M | `M-P2-20` | **The consent-banner filter in `check-bundle-size` has no subject.** Excluding `/`'s own `page-*.js` is correct and was proven against `dcd391e3`, but block 2's revert to plain `<a>` removed the page chunk, so the filter now excludes nothing. Re-run the proof when `/` gains its first client boundary. Do not delete the filter — that re-arms the misattribution | Dev | N-01 | **The division cards' 60% sibling dim is unmeasured for contrast.** `DESIGN.md` §5 requires non-hovered cards to drop to `opacity: 0.6` on hover or focus. axe does not evaluate hover states and `check:contrast` works from tokens on surfaces, so nothing measures `--ink-muted` at 0.6 over `--canvas`. It is a transient state on a pointer interaction, which is why it shipped, but "nobody measured it" is the finding rather than "it is fine". `N-01` |
 | Epic M | `M-P2-18` | **`check:lhci:desktop` and `check:lhci:mobile` were not audited by `M-P1-4`.** Both hard-skip on Windows and their assertions live in `lighthouserc.*.cjs`, evaluated by LHCI rather than by our code, so neither the zero test nor the made-to-fail test could be applied locally. **They are the only two of the 20 gates left unverified in both directions.** Audit them on a Linux runner, or from CI |
 | Epic M | `M-P2-16` | **the research findings R1-R6 and the fix ledger's repair rows R1-R5 share an identifier namespace.** (Written unbackticked here deliberately: backticking them trips the very gate this row is about, which is how it was found.) `check:claims` covers `R\d+` inside backticks in the five governed documents, so writing about research finding R6 in a tracker fails the gate — which it did, correctly, at `N-06`. This is `G7`'s class in a namespace `G7` did not sweep: an identifier that resolves to two different things. Today's workaround is not to backtick research references, which is a convention nobody will remember. Rename one side — `RF-1`…`RF-6` for the research findings is the cheaper half, since the ledger's are load-bearing in a gate |
 | Epic M | `M-P2-14` | **`gridsmith-lead-probe` inserts one row per CI run and nothing prunes them.** Invalid payloads never reach the database, so only the valid case writes. Pruning needs a privileged connection CI must not hold — it belongs to the same job as `M-P2-12`'s drift check, which already has the credential |

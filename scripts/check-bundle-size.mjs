@@ -453,20 +453,24 @@ if (over.length > 0) {
  * unreachable, since the floor check exits first.
  */
 /**
- * **`/` left this list at `N-01` block 2, and this is the deliberate edit the note above
- * describes rather than a way to go green.** The division routing block ships three real
- * `<a>`s through the `Link` primitive, which is `next/link`, which is a Client Component —
- * so `/` gained its own `chunks/app/(marketing)/page-*.js` and went from 2.5KB to 7.3KB
- * while the other four stayed at 2.5KB. That is a route with a feature, which is precisely
- * what disqualifies it from being a baseline route. Its 15KB budget still covers it in the
- * table above, and `masterDelta` below still reads it — from `rows`, not from this list.
+ * **`/` left this list at `N-01` block 2 and came back in the next commit, and the round
+ * trip is worth more than either state.** Block 2 shipped its cards through the `Link`
+ * primitive — `next/link`, a Client Component — so `/` gained its own
+ * `chunks/app/(marketing)/page-*.js` and went 2.5KB → 7.3KB while the other four stayed at
+ * 2.5KB. The spread assertion fired, and the honest reading of it at the time was the second
+ * of the two causes the note above names: a route grew a feature. It had.
  *
- * The four that remain are still genuinely featureless, so the invariant still has teeth:
- * `/design`, `/digital` and `/press` are placeholders and `/_not-found` is the 404.
- * **When the first of those gains a feature, do not repeat this edit without checking that
- * two members remain** — at one member the spread is zero by construction.
+ * **Then the feature turned out to be one nothing wanted.** `TECH-SPEC.md` §3 makes
+ * route-group navigation a document load, so the prefetch was measured being thrown away —
+ * three RSC payloads, 33,531 B, discarded by a `document` request. Block 2 went to plain
+ * `<a>`, `/` returned to 2.5KB, and it is a baseline route again.
+ *
+ * **So "a route grew a feature, drop it from the baseline" was the correct call on the
+ * evidence and still the wrong outcome.** The gate did its job by making a person look; what
+ * it cannot do is ask whether the feature should exist. Drop a route from this list only
+ * after that question has been answered, not as the first move.
  */
-const BASELINE_ROUTES = ['/design', '/digital', '/press', '/_not-found'];
+const BASELINE_ROUTES = ['/', '/design', '/digital', '/press', '/_not-found'];
 
 const baselineRows = rows.filter((r) => BASELINE_ROUTES.includes(r.url));
 const kitchen = rows.find((r) => r.url === '/_kitchen-sink');
@@ -502,6 +506,13 @@ if (baselineRows.length !== BASELINE_ROUTES.length) {
   // subject leaves the check auditing whatever is there and naming it something else —
   // CLAUDE.md's hollow-subject rule, in the direction where it fails loudly and wrongly
   // rather than passing.
+  //
+  // **Its subject left the tree in the very next commit and the exclusion stays.** Block 2
+  // reverted to plain `<a>`, so `/` has no page chunk of its own again and this filter
+  // currently removes nothing — it is a definition, not an assertion, and deleting it would
+  // re-arm the misattribution for whatever gives `/` its first client boundary. The
+  // deliberate-failure proof stands against dcd391e3, where the subject existed. Re-run it
+  // then: `M-P2-20`.
   const masterAppChunks = rows.find((r) => r.url === '/').appChunks;
   const banner = masterAppChunks
     .filter((c) => !/global-error/.test(c.src) && !/\/page-[^/]*\.js$/.test(c.src))
