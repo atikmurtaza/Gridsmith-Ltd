@@ -189,6 +189,26 @@ Read the workstream's own files before touching its code.
   all of these report success from the branch you happened to exercise. Enumerate the
   branches, break each one, and record which message each produced.
 
+  **A check that does not exist while reporting that it ran, and this is its own class.**
+  Every other gate defect in this repository *executed something* and measured the wrong thing:
+  a predicate that could not match, a subject below the fold, a filter that swallowed a route,
+  an expectation read from its own subject. This one executed nothing. `check:schemas` declared
+  a `CLOSED_LISTS` constant, printed **"2 closed list(s) intact and enforced by a custom rule"**,
+  and contained no loop over it — an insertion that silently failed, leaving a summary line as
+  the only evidence anyone would ever have had. **It produced its own evidence.** A reviewer
+  reading the output saw a specific, plausible count of a thing that had never been counted,
+  and a reviewer reading the file would have had to notice an absence rather than an error.
+
+  So: **a summary line is not evidence a check ran. Only a proof that makes it fail is.**
+  Wording that sounds measured — a count, a total, a list of what passed — is the easiest
+  output to produce without measuring anything, and this repository's gates are full of exactly
+  that wording because it is genuinely useful when true.
+
+  **Any gate whose output is a count must be provable to report zero**, or to report a
+  different number. If you cannot make the count move, you have not established that anything
+  is counting. This is a distinct obligation from proving the assertion: the assertion proof
+  shows the check *rejects* a bad input, and this shows the check *reached* the input at all.
+
   **A gate that infers the state of a system it does not run in is asserting against something
   it cannot see.** The gate and the thing it measures are usually separate processes, and any
   premise the gate reads from its *own* environment is a guess about the other one. `check-axe`
