@@ -89,15 +89,33 @@ const BUILT_IN = new Set([
 
 const problems = [];
 
+/**
+ * **Every check counts its own iterations, and the summary prints those counters.**
+ *
+ * This file shipped the silent-insertion defect twice in one session, and an audit of all six
+ * checks found the reason the second one survived: **three of the six printed a count derived
+ * from the subject rather than from their own loop.** Emptying their input changed nothing in
+ * the output — the type census still said "10 object type(s) and 9 document type(s)", the
+ * `isSeed` line still said "all 8", and the field walk still claimed "every field type
+ * resolved" — so the output could not distinguish *ran and passed* from *did not run*.
+ *
+ * A counter incremented inside the loop can only be non-zero if the loop executed. That is the
+ * difference between a summary that reports and a summary that asserts, and it is what makes
+ * `npm run check:schemas` output evidence rather than decoration.
+ */
+const counted = { expectations: 0, fields: 0, seedable: 0 };
+
 const byName = new Map(schemaTypes.map((t) => [t.name, t]));
 const documents = schemaTypes.filter((t) => t.type === 'document').map((t) => t.name);
 const objects = schemaTypes.filter((t) => t.type === 'object').map((t) => t.name);
 
 /** 1. The registry declares exactly the expected types — no more, no fewer. */
 for (const name of EXPECTED_OBJECTS) {
+  counted.expectations += 1;
   if (!objects.includes(name)) problems.push(`object type "${name}" is not registered`);
 }
 for (const name of EXPECTED_DOCUMENTS) {
+  counted.expectations += 1;
   if (!documents.includes(name)) problems.push(`document type "${name}" is not registered`);
 }
 for (const name of [...objects, ...documents]) {
@@ -119,6 +137,7 @@ for (const name of [...objects, ...documents]) {
  */
 function walkFields(typeName, fields, path = '') {
   for (const field of fields ?? []) {
+    counted.fields += 1;
     const where = `${typeName}${path}.${field.name ?? '(unnamed)'}`;
     if (!field.type) {
       problems.push(`${where} declares no type`);
@@ -169,6 +188,7 @@ for (const type of schemaTypes) walkFields(type.name, type.fields);
  */
 for (const name of documents) {
   if (name === 'companyDetails') continue;
+  counted.seedable += 1;
   const type = byName.get(name);
   if (!type.fields?.some((f) => f.name === 'isSeed')) {
     problems.push(`document type "${name}" has no isSeed field — A-12's production check cannot see it`);
@@ -391,6 +411,17 @@ for (const [typeName, fieldName, mustAccept, mustRefuse] of HARD_VALUES) {
   }
 }
 
+/**
+ * **A zero here means a check did not run, and that is a failure, not a clean result.**
+ *
+ * The three counters above are the ones that could previously not be made to report zero. If
+ * any is zero the gate has measured nothing in that dimension, which is the state this file has
+ * twice shipped while printing a confident summary.
+ */
+for (const [what, n] of Object.entries(counted)) {
+  if (n === 0) problems.push(`the ${what} check iterated zero times — it did not run`);
+}
+
 if (problems.length > 0) {
   console.error(`\ncheck-schemas: ${problems.length} problem(s)\n`);
   for (const p of problems) console.error(`  ${p}`);
@@ -399,8 +430,9 @@ if (problems.length > 0) {
 }
 
 console.log(
-  `check-schemas: ${objects.length} object type(s) and ${documents.length} document type(s), ` +
-    'every field type resolved, every reference points at a document',
+  `check-schemas: ${counted.expectations} expected type(s) confirmed registered across ` +
+    `${objects.length} object and ${documents.length} document type(s); ` +
+    `${counted.fields} field(s) walked — every type resolved, every reference points at a document`,
 );
 console.log(
   `check-schemas: ${HARD_VALUES.length} hard-valued rule(s) run against ` +
@@ -411,6 +443,6 @@ console.log(
     'not only by the Studio affordance',
 );
 console.log(
-  `check-schemas: isSeed on all ${documents.length - 1} seedable document type(s); ` +
+  `check-schemas: isSeed on all ${counted.seedable} seedable document type(s); ` +
     `${REQUIRED_FIELDS.length} validation rule(s) asserted by running them, including SC-6`,
 );

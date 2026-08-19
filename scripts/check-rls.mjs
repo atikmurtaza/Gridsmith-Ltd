@@ -75,8 +75,8 @@ for (const m of sql.matchAll(
   //   1. Without the boundary the greedy class swallowed the next keyword — `to anon using
   //      (true)` captured the role as "anon using", which matched no role name, so a
   //      deliberate anon SELECT policy went green.
-  //   2. The fix for (1) was written with a literal backspace (U+0008) in place of ``. The
-  //      lookahead became `(?:using|with)`, which can never match, so the SELECT case
+  //   2. The fix for (1) was written with a literal backspace (U+0008) where a word boundary
+  //      was intended, so the lookahead could never match and the SELECT case
   //      STILL went green while the DELETE case — which ends in `;` and takes the other
   //      branch — fired correctly. A half-working alternation looks exactly like a working
   //      one from the one case you happen to test.

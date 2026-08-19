@@ -555,6 +555,74 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
 
+### The `check:schemas` audit — three of six checks could not be made to report zero
+
+**Ordered because the silent-insertion class recurred in this file after being recorded as a
+named class.** Awareness did not prevent recurrence, so the file was treated as suspect and
+every check was tested rather than the two known instances.
+
+Each of the six was given nothing to check and run. **The result splits cleanly, and the split
+is the finding.**
+
+| Check | Made to report zero? |
+|---|---|
+| 1. expected types are registered | **No** — emptying both expectation lists changed *nothing* in the output |
+| 2. every field type resolves, references point at documents | **No** — running the walk over an empty list changed nothing; there was no count for it at all |
+| 3. `isSeed` on every document type | **No** — emptying the loop still printed *"isSeed on all 8 seedable document type(s)"* |
+| 4. `REQUIRED_FIELDS` rules | Yes — `0 validation rule(s)` |
+| 5. `CLOSED_LISTS` | Yes — `0 closed list(s)` |
+| 6. `HARD_VALUES` | Yes — `0 hard-valued rule(s)` |
+
+**None of the three "No" checks existed only as a declaration — all six execute, and all six
+had already been proven to reject a bad input.** What they lacked is subtler and is the reason
+the second silent insertion survived: **their counts were derived from the subject, not from
+their own execution.** "10 object type(s) and 9 document type(s)" is a census of the registry;
+"all 8 seedable" is `documents.length - 1`, arithmetic computed independently of the loop. Both
+print the same confident number whether the loop ran or not, so **the output could not
+distinguish *ran and passed* from *did not run*** — which is precisely the state this gate
+shipped in, twice.
+
+Checks 4–6 were provable to zero for one reason: each iterates a list that is also what its
+summary counts. That is the property, and it is now general — every check increments its own
+counter inside its loop, the summary prints those counters, and **a counter of zero is a
+failure**: `the fields check iterated zero times — it did not run`.
+
+Re-proved after the fix: emptying check 1, 2 or 3's input now fails the build with that
+message, and 4, 5 and 6 still report `0`.
+
+### Why insertions into this file dropped silently — the mechanism, not the carelessness
+
+**Two in one session is a mechanism.** It is not file size directly, and it is not that the
+file is hard to read.
+
+Every edit to this file was applied as a script performing **several independent
+`str.replace(old, new)` calls with no assertion that `old` was found**. `replace` on a missing
+anchor is not an error — it returns the string unchanged. So a script with five hunks where one
+anchor has drifted writes the file back with four applied, exits 0, and reports nothing.
+
+**The specific failure shape follows from that.** The constant, the loop and the summary line
+were three separate hunks. The constant's anchor and the summary's anchor still matched; the
+loop's anchor did not, because an earlier edit had changed the surrounding whitespace. The
+result was the worst possible subset: **a declared constant and a summary line claiming a count,
+with no loop between them.** Had they been one hunk, partial application would have been
+impossible.
+
+Size is the aggravator rather than the cause. A file accumulates edits; anchors drift; the more
+history, the likelier any given anchor no longer matches exactly. `check-schemas.mjs` is 400+
+lines and has been edited in four sessions, and it is the first file in this repository to
+reach that combination — **which is why the next file to reach it will do the same thing.**
+
+Two rules follow, and the first is already in force:
+
+1. **Assert every hunk, and write nothing unless all of them matched.** The audit script for
+   this very fix caught its own drifted anchor and wrote no file — a loud failure where the
+   previous method produced a silent partial one.
+2. **Keep a check's declaration, its loop and its summary in one hunk** where possible, so that
+   partial application cannot produce a plausible-looking result.
+
+Neither is a substitute for the proof. Both reduce how often the proof has to be the thing that
+catches it.
+
 ### N-05 — a hard-true constraint that makes seed content impossible, on purpose
 
 **Premise check: every figure is a structural minimum, none measured or projected.**
@@ -1963,6 +2031,7 @@ decision awaiting the owner, not work awaiting a session.
 | **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
 | Epic M | `M-P2-13` | **nothing measures the `<60s` notification target.** `FOUNDATION` §6 and `SCHEMA-CORE.md` §3 both state it; neither has ever been measured, and `notified_at` — the column the measurement needs — cannot be written by the only role the pipeline uses. `anon` has no UPDATE policy, correctly. Stamping it needs a service-role writer, and the alert needs production traffic and a destination. Until then the figure is a target, not a budget |
+| Epic M | `M-P2-15` | **the other 19 gates have not had the zero-input audit `check:schemas` just had.** Six checks were tested there and three could not be made to report zero — every one because its count came from the subject rather than from its own loop. That pattern is not specific to this file: `check:contrast`'s `EXPECTED_CELLS`, `check:tokens`' `REQUIRED` list and `check-axe`'s analysis count are all plausible candidates, and some are already list-driven. Audit them the same way — empty each check's input, confirm the count moves |
 | Epic M | `M-P2-14` | **`gridsmith-lead-probe` inserts one row per CI run and nothing prunes them.** Invalid payloads never reach the database, so only the valid case writes. Pruning needs a privileged connection CI must not hold — it belongs to the same job as `M-P2-12`'s drift check, which already has the credential |
 | Epic M | ~~`M-P2-12`~~ | **Promoted to `M-P1-3` — see the P1 table above.** Filed P2 as a coverage gap. `A-07` showed it is not one: the leak existed **live** while the migration read correctly |
 | Epic M | `M-P2-11` | **the wordmark's face is constrained, not chosen.** It is `--font-mono` because that is the only family all four route groups already load, so it costs zero bytes — not because JetBrains Mono is the right face for the company mark. **Revisit at Press's shell epic (`P-xx`) when its font budget is set.** The question is whether one word justifies a fourth family on `/press`, on the critical path, against a 2.0s LCP budget with a ~1.52s empty-page floor. **It must be answered with a measured cost, not a preference** — build with Inter added to the Press layout, measure the LCP and the delta on both Lighthouse axes, then decide |
