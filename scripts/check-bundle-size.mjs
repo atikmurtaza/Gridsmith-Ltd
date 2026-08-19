@@ -177,6 +177,9 @@ const BUDGETS = [
   // anything. **This is not a relaxation:** the ceiling that binds the primitive layer is
   // still `PRIMITIVES_BUDGET_KB`, unchanged at 6.0.
   ['/_kitchen-sink', SHARED_BASELINE_BUDGET_KB + PRIMITIVES_BUDGET_KB],
+  // Master-layer composed components. Budgeted against Master's own delta rather than the
+  // primitive layer's, because that is what they are.
+  ['/_master-sink', MASTER_BUDGET_KB],
   ['/', 15],
 ];
 

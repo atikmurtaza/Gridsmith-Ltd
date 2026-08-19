@@ -51,6 +51,9 @@ const ROUTES = [
   { path: '/digital', status: 200 },
   { path: '/press', status: 200 },
   { path: '/_kitchen-sink', status: 200 },
+  // Composed master components. Separate from the kitchen sink so the primitive-layer
+  // measurement stays a measurement of primitives — see the page's own docstring.
+  { path: '/_master-sink', status: 200 },
   // `global-not-found`'s subject: an unmatched URL. It cannot be a committed route — a
   // committed route would match and return 200 — so the path itself is the subject and
   // the asserted 404 is what proves it reached the right document.
@@ -144,7 +147,7 @@ const INCOMPLETE_ALLOWED = [
   // **One entry again from `A-11`, and it is a different question from the one above.**
   {
     rule: 'color-contrast',
-    routes: ['/', '/design', '/digital', '/press', '/_kitchen-sink', '/_gridsmith-404-probe'],
+    routes: ['/', '/design', '/digital', '/press', '/_kitchen-sink', '/_master-sink', '/_gridsmith-404-probe'],
     target: '#gs-consent-heading',
     why:
       'The consent banner is position:fixed at the bottom edge, so at 375px its text rect ' +

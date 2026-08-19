@@ -555,6 +555,55 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
 
+### N-06 — the strongest way to fix a name is to not accept one
+
+**Premise check: no measured or projected figure.** `_shared/00-PROCESS.md` opens *"FIXED — not
+a draft… not open for revision, rewording or 'improvement' by a later session"*, and `R6` is
+cited there with no number attached. The only quantity is *six*, which counts a thing rather
+than measures one.
+
+**Rule 1 is "stage names are fixed", and the implementation is that an editor never supplies
+one.** Validating a typed name catches the typo and misses the point: the six stages are a
+public statement of how the company works, not content. So `lib/process/canonical.ts` renders,
+and the CMS supplies only what rule 3 allows — `divisionDetail`, `duration`, `clientTime`,
+keyed by stage. `processStep.title` keeps its validator for the reason `continuityExample.
+verified` is re-checked in its component: a document can arrive through the API.
+
+Rule 2's *"(if applicable)"* is a property of stage 6 rather than a string a caller appends, so
+a division cannot drop it. A non-canonical key is **rendered as a problem, not swallowed** —
+content that saved and silently did not appear is the hardest kind of bug for an editor to
+report.
+
+**The Sanity schema now imports the same constant** instead of transcribing it. It had a second
+copy of the six names; a copy with no check is a second source of truth waiting to disagree.
+
+**The gate compares the code against the specification, and they are genuinely different
+artefacts** — the document is the expectation, the constant is the subject — so this is not an
+expectation derived from what it checks. The document is parsed rather than transcribed, which
+is the point: transcribing it would have made the gate a third copy.
+
+| Broken | Fired |
+|---|---|
+| the code renames a stage | `stage 5 is "5 Delivery" in 00-PROCESS.md and "5 Handover" in lib/process/canonical.ts` |
+| **the document** renames a stage | the same comparison, the other way round |
+| the code drops stage 6 | `00-PROCESS.md has stage 6 "Support" and the code has no 6th stage` |
+| stage 6 loses `optional` | `the last canonical stage is not marked optional — 00-PROCESS.md rule 2` |
+| the gate points at a file with no stage table | `no stage table rows matched — the canonical list was compared against nothing` (the count goes to zero) |
+
+### `/_master-sink` — because putting these on the kitchen sink corrupted a measurement
+
+`check-bundle-size` derives the primitive layer as `/_kitchen-sink`'s delta minus the shared
+baseline. **Master-layer components on that page are therefore counted as primitives.** `N-05`
+moved the figure from 5.8KB to 6.0KB — exactly `PRIMITIVES_BUDGET_KB` — and `N-06` would have
+pushed it past, failing with a message blaming a primitive layer that had not grown at all.
+Quietly wrong first, loudly wrong for the wrong reason second.
+
+So composed master components get their own probe page, budgeted against Master's delta rather
+than the primitive layer's, because that is what they are. Measured after the split:
+**primitive layer back to 5.8KB**, `/_master-sink` at 2.5KB of 15KB. Both new specimens are
+also in `check-axe` (8 routes, 32 analyses) and `check-responsive` (7 routes, 21 combinations)
+— a table and a numbered list are the two shapes that overflow at 375px when built wrong.
+
 ### The `check:schemas` audit — three of six checks could not be made to report zero
 
 **Ordered because the silent-insertion class recurred in this file after being recorded as a
@@ -1544,7 +1593,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 |---|---|---|---|---|---|---|---|
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
 | N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | **DONE** 19 Aug | Dev | `verified` hard-true, **run against values rather than counted**. **No seed example can exist** — a placeholder would have to claim it was verified, so the component renders an empty state and `Q-M6` blocks a real one. Zero client JS |
-| N-06 | Canonical process component + validator | P0 | 1d | A-06 | TODO | Dev | Six canonical titles only |
+| N-06 | Canonical process component + validator | P0 | 1d | A-06 | **DONE** 19 Aug | Dev | **Stage names never travel through the CMS** — the constant renders, the CMS supplies only `divisionDetail`/`duration`/`clientTime`. `check:schemas` asserts the constant against `00-PROCESS.md`, the source of truth. `N-01` is next |
 | N-01 | Homepage, 9 blocks | P0 | 2.5d | **N-03, N-05, N-06** | TODO — **premise checked, not started** | Dev | `Depends` corrected: it read `M-03`, which is the chrome, and the DoD requires content from the CMS — the blocks' schemas are `N-03`, `N-05` and `N-06`. **Lighthouse ≥98 is measured and gated; that nine blocks fit under it is not.** One block per commit, measured after each |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
 | N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | TODO | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |

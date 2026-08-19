@@ -15,6 +15,8 @@
  * `Rule` is the only way to establish that `service.pricingModel` is actually required rather
  * than merely documented as required.
  */
+import { readFileSync } from 'node:fs';
+import { CANONICAL_PROCESS } from '../lib/process/canonical.ts';
 import { schemaTypes } from '../sanity/schemas/index.ts';
 
 /**
@@ -103,7 +105,7 @@ const problems = [];
  * difference between a summary that reports and a summary that asserts, and it is what makes
  * `npm run check:schemas` output evidence rather than decoration.
  */
-const counted = { expectations: 0, fields: 0, seedable: 0 };
+const counted = { expectations: 0, fields: 0, seedable: 0, stages: 0 };
 
 const byName = new Map(schemaTypes.map((t) => [t.name, t]));
 const documents = schemaTypes.filter((t) => t.type === 'document').map((t) => t.name);
@@ -418,6 +420,55 @@ for (const [typeName, fieldName, mustAccept, mustRefuse] of HARD_VALUES) {
  * any is zero the gate has measured nothing in that dimension, which is the state this file has
  * twice shipped while printing a confident summary.
  */
+/**
+ * 7. **The canonical six match `_shared/00-PROCESS.md`, which is the source of truth** (`N-06`).
+ *
+ * `lib/process/canonical.ts` is what renders and what the Sanity validator accepts. That file
+ * is a *copy* of a table in a specification whose own header says the stages are FIXED and "not
+ * open for revision, rewording or improvement by a later session". A copy with no check is a
+ * second source of truth waiting to disagree with the first.
+ *
+ * **The expectation is the document and the subject is the code** — two different artefacts, so
+ * this is not an expectation derived from its own subject. The document is parsed rather than
+ * transcribed here for exactly that reason: transcribing it would make this file a third copy.
+ *
+ * Declaration, loop and counter are deliberately one hunk. The two silent insertions in this
+ * file were both a loop whose anchor drifted while its constant and its summary line applied.
+ */
+const PROCESS_DOC = 'docs/_shared/00-PROCESS.md';
+const docStages = [...readFileSync(PROCESS_DOC, 'utf8').matchAll(/^\|\s*(\d)\s*\|\s*\*\*([^*]+)\*\*/gm)].map(
+  (m) => ({ number: Number(m[1]), title: m[2].trim() }),
+);
+counted.stages = 0;
+if (docStages.length === 0) {
+  problems.push(`${PROCESS_DOC}: no stage table rows matched — the canonical list was compared against nothing`);
+}
+for (const [i, stage] of docStages.entries()) {
+  counted.stages += 1;
+  const code = CANONICAL_PROCESS[i];
+  if (!code) {
+    problems.push(`${PROCESS_DOC} has stage ${stage.number} "${stage.title}" and the code has no ${i + 1}th stage`);
+    continue;
+  }
+  if (code.title !== stage.title || code.number !== stage.number) {
+    problems.push(
+      `stage ${i + 1} is "${stage.number} ${stage.title}" in ${PROCESS_DOC} and ` +
+        `"${code.number} ${code.title}" in lib/process/canonical.ts`,
+    );
+  }
+}
+if (CANONICAL_PROCESS.length !== docStages.length && docStages.length > 0) {
+  problems.push(
+    `lib/process/canonical.ts has ${CANONICAL_PROCESS.length} stages and ${PROCESS_DOC} has ` +
+      `${docStages.length}`,
+  );
+}
+// Rule 2: stage 6 always carries the qualifier, and it is a property rather than a formatting
+// choice so a caller cannot drop it.
+if (CANONICAL_PROCESS.at(-1)?.optional !== true) {
+  problems.push('the last canonical stage is not marked optional — 00-PROCESS.md rule 2');
+}
+
 for (const [what, n] of Object.entries(counted)) {
   if (n === 0) problems.push(`the ${what} check iterated zero times — it did not run`);
 }
@@ -437,6 +488,10 @@ console.log(
 console.log(
   `check-schemas: ${HARD_VALUES.length} hard-valued rule(s) run against ` +
     `${HARD_VALUES.reduce((n, [, , a, r]) => n + a.length + r.length, 0)} value(s) — accepted and refused, not merely present`,
+);
+console.log(
+  `check-schemas: ${counted.stages} canonical process stage(s) matched against ${PROCESS_DOC}, ` +
+    'the source of truth — names never travel through the CMS',
 );
 console.log(
   `check-schemas: ${CLOSED_LISTS.length} closed list(s) intact and enforced by a custom rule, ` +

@@ -10,7 +10,6 @@ import { ErrorState } from '@/components/primitives/ErrorState';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Field } from '@/components/primitives/Field';
 import { Grid } from '@/components/primitives/Grid';
-import { ContinuityExample } from '@/components/master/ContinuityExample';
 import { Heading } from '@/components/primitives/Heading';
 import { Link } from '@/components/primitives/Link';
 import { Pagination } from '@/components/primitives/Pagination';
@@ -392,34 +391,6 @@ export default function KitchenSinkPage() {
           </Container>
         </div>
       ))}
-
-      <Container>
-        <Section rhythm="tight">
-          {/* `N-05`. Not a primitive — a master-layer composed component — and it is here
-              because this is the only page a gate can measure it on until `/approach` exists
-              at `N-04`. Both states are rendered: the empty one is what the site shows today,
-              since `verified` is hard-true and no real example exists (`Q-M6`). */}
-          <Specimen name="ContinuityExample — empty (no verified example)">
-            <ContinuityExample example={null} />
-          </Specimen>
-          <Specimen name="ContinuityExample — populated">
-            <ContinuityExample
-              example={{
-                clientDisplay: '[SEED] A UK M&E contractor',
-                relationshipMonths: 0,
-                divisionsInvolved: ['design', 'digital'],
-                verified: true,
-                rows: [
-                  { label: 'Drawings issued', monthOne: '[SEED] 00', monthLater: '[SEED] 00' },
-                  { label: 'Revision turnaround', monthOne: '[SEED] 00 days', monthLater: '[SEED] 00 days' },
-                  { label: 'Systems integrated', monthOne: '[SEED] 00', monthLater: '[SEED] 00' },
-                  { label: 'Named contact', monthOne: '[SEED]', monthLater: '[SEED]' },
-                ],
-              }}
-            />
-          </Specimen>
-        </Section>
-      </Container>
 
       <StickyCta label="Specimen sticky call to action">
         <Button href="#main">Primary action</Button>

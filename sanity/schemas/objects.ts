@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
+import { CANONICAL_TITLES } from '../../lib/process/canonical.ts';
 
 /** `SCHEMA-CORE.md` §2. One definition, shared by every division — never duplicated. */
 
@@ -160,14 +161,11 @@ export const protectedVideo = defineType({
  * stage names are a shared promise to the client, not per-division copy; `divisionDetail` is
  * where a division says what its version of the stage involves.
  */
-export const CANONICAL_STAGES = [
-  'Consultation',
-  'Planning & Scope',
-  'Approval & Start',
-  'Design, Development & Updates',
-  'Delivery',
-  'Support',
-] as const;
+// **One constant, imported.** This was a second transcription of the same six names; a copy
+// with no check is a second source of truth waiting to disagree. `check:schemas` asserts the
+// one in `lib/process/` against `_shared/00-PROCESS.md`, so importing it puts the schema behind
+// that same assertion instead of beside it.
+export const CANONICAL_STAGES = CANONICAL_TITLES;
 
 export const processStep = defineType({
   name: 'processStep',

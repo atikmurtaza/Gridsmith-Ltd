@@ -30,6 +30,9 @@ const ROUTES = [
   { path: '/digital', status: 200 },
   { path: '/press', status: 200 },
   { path: '/_kitchen-sink', status: 200 },
+  // Composed master components — a table and a numbered list, both of which are the shapes
+  // that overflow at 375px if they are built wrong.
+  { path: '/_master-sink', status: 200 },
   { path: '/_gridsmith-404-probe', status: 404 },
 ];
 

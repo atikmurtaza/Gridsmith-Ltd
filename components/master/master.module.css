@@ -14,3 +14,47 @@
   font-size: var(--text-sm);
   color: var(--ink-muted);
 }
+
+/* Process stages — N-06. DESIGN.md §5: numbered 01–06 mono, connected by a 1px --line
+   vertical rule, title in display, canonical description in body, division detail muted. */
+.process { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.processList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.processStage {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-4);
+  padding-block-end: var(--space-8);
+  /* The connecting rule. On the last stage there is nothing to connect to, so it stops. */
+  border-inline-start: var(--border-hairline) solid var(--line);
+  padding-inline-start: var(--space-4);
+  margin-inline-start: var(--space-2);
+}
+.processStage:last-child { border-inline-start-color: transparent; padding-block-end: 0; }
+
+.processBody { display: flex; flex-direction: column; gap: var(--space-2); }
+.processTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: var(--ink);
+}
+/* Not italic, not smaller, not parenthetical styling — it is part of the offer, and
+   de-emphasising it would be the misrepresentation 00-PROCESS.md rule 2 forbids. */
+.processQualifier { font-family: var(--font-body); color: var(--ink-muted); }
+.processDescription { margin: 0; color: var(--ink); }
+.processDetail { margin: 0; color: var(--ink-muted); }
+.processMeta { margin: 0; font-size: var(--text-sm); color: var(--ink-muted); }
+.processProblem {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-hairline) solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
