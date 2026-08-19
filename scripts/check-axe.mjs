@@ -977,6 +977,18 @@ check-axe: ${grantProblems.length} problem(s) on the consent grant path (A-09):`
  * behaviour cannot drift in silence — most importantly so that a Next upgrade which starts
  * server-rendering the boundary is *noticed*. **When this fires because `lang` appeared,
  * the fix is to delete the characterisation and assert the Level A requirement directly.**
+ * **The `lang` branch of this characterisation had never executed.** Its regex was
+ * written `/<html[^>]*\blang="/` with a literal U+0008 where the two characters `\b`
+ * were meant — the same defect as `check:rls`, a third instance, and invisible in every
+ * rendering. The lookahead could not match, so `lang` was `false` unconditionally and
+ * agreed with `CHARACTERISED` for the wrong reason: the one branch whose whole purpose is
+ * to fire when Next starts server-rendering the boundary could never have fired. Found by
+ * `scripts/check-control-chars.mjs` on its first run, not by reading. Repaired to `\s`
+ * and re-measured against a real `next build && next start`: the served shell is
+ * `<html id="__next_error__">` with a leaked `<title>Gridsmith Ltd` and no `lang`, so the
+ * characterisation above is unchanged — but it is now measured rather than assumed. The
+ * branch was proven to distinguish: it returns `false` on the served shell and `true` on
+ * the same shell with `lang="en-GB"` added, where the old regex returned `false` on both.
  * It is written to be deleted.
  */
 const SSR_CRASH = '/gridsmith-ssr-throw-probe';
@@ -985,7 +997,7 @@ const crashHtml = await crashRes.text();
 const crashFacts = {
   status: crashRes.status,
   shell: /<html[^>]*id="__next_error__"/.test(crashHtml),
-  lang: /<html[^>]*lang="/.test(crashHtml),
+  lang: /<html[^>]*\slang="/.test(crashHtml),
   h1: /<h1[\s>]/.test(crashHtml),
   main: /<main[\s>]/.test(crashHtml),
 };

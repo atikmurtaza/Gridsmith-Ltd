@@ -80,6 +80,12 @@ jobs:
       - name: Every recorded fix claim corresponds to a real commit
         run: npm run check:claims
 
+      # A literal U+0008 renders exactly like the two characters  in sed, the terminal,
+      # the editor and the diff, so a regex that can never match reads as correct in
+      # every review. It has happened three times; only od -c and this gate can see it.
+      - name: No control characters in source
+        run: npm run check:control
+
       # Nothing else can see this layer: next build never compiles sanity/schemas, so a
       # broken schema fails for an editor and for no other gate.
       - name: CMS schema resolves, and its structural rules are actually enforced
