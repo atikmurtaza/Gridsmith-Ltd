@@ -1,5 +1,6 @@
 import { companyDetails } from './companyDetails.ts';
 import { coreDocumentTypes } from './documents.ts';
+import { groupPage, groupSection } from './groupPage.ts';
 import { objectTypes } from './objects.ts';
 
 /**
@@ -15,4 +16,4 @@ import { objectTypes } from './objects.ts';
  * document type that does not exist, a missing `isSeed` — fails for an editor and for no
  * gate. `scripts/check-schemas.mjs` is what closes that.
  */
-export const schemaTypes = [...objectTypes, ...coreDocumentTypes, companyDetails];
+export const schemaTypes = [...objectTypes, groupSection, ...coreDocumentTypes, groupPage, companyDetails];

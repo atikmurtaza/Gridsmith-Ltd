@@ -35,8 +35,41 @@ const EXPECTED_OBJECTS = [
   'protectedImage',
   'protectedVideo',
   'processStep',
+  'groupSection',
 ];
-const EXPECTED_DOCUMENTS = ['service', 'project', 'faq', 'testimonial', 'post', 'teamMember', 'companyDetails'];
+const EXPECTED_DOCUMENTS = [
+  'service',
+  'project',
+  'faq',
+  'testimonial',
+  'post',
+  'teamMember',
+  'groupPage',
+  'companyDetails',
+];
+
+/**
+ * **Closed lists whose closure is the guarantee, not a convenience** (`N-03`).
+ *
+ * `groupPage.slug` is *singleton-per-slug*: exactly two documents may exist, because a third
+ * slug is a route that no code renders — and the failure is silent, a published document with
+ * no page.
+ *
+ * `groupSection.layout` is closed because `master/SCHEMA.md` §2 says `sunken-plain` "is a
+ * layout value rather than a styling decision so it cannot be prettified by a later content
+ * edit". The limits block is deliberately undesigned as an honesty device; a free-text field
+ * lets a content edit choose a prettier treatment, which is the outcome being guarded against.
+ *
+ * Both are asserted here rather than trusted to the field's `options.list`, which Sanity treats
+ * as a Studio affordance and does **not** enforce on write.
+ */
+const CLOSED_LISTS = [
+  // Every closed field declares `options.list` — on a slug it renders nothing and exists so
+  // this gate has a subject to compare against. Asserting only that a custom rule *exists*
+  // proved the rule was there, not what it accepted, and widening the slug set passed silently.
+  ['groupPage', 'slug', ['approach', 'about'], (v) => ({ current: v })],
+  ['groupSection', 'layout', ['prose', 'two-column', 'sunken-plain', 'process', 'continuity'], (v) => v],
+];
 
 /**
  * Sanity's built-in types. A field may name one of these without the registry defining it.
@@ -150,6 +183,7 @@ for (const name of documents) {
  */
 function recordingRule() {
   const calls = [];
+  const customFns = [];
   const rule = new Proxy(
     {},
     {
@@ -157,13 +191,13 @@ function recordingRule() {
         if (prop === Symbol.toPrimitive || typeof prop === 'symbol') return undefined;
         return (...args) => {
           calls.push(String(prop));
-          if (String(prop) === 'custom' && typeof args[0] === 'function') calls.push('custom:fn');
+          if (String(prop) === 'custom' && typeof args[0] === 'function') customFns.push(args[0]);
           return rule;
         };
       },
     },
   );
-  return { rule, calls };
+  return { rule, calls, customFns };
 }
 
 function rulesFor(typeName, fieldName) {
@@ -199,6 +233,110 @@ for (const [typeName, fieldName, expected, why] of REQUIRED_FIELDS) {
   }
 }
 
+/**
+ * 5. The closed lists are still closed, still hold the values they should, and are actually
+ *    ENFORCED.
+ *
+ * Checked in both directions - a value added that is not expected, and an expected value that
+ * has been dropped. A one-directional check passes a field someone widened, which is the
+ * likelier accident.
+ *
+ * **`options.list` alone proves nothing.** Sanity treats it as a Studio affordance: it shapes
+ * the dropdown and does not refuse a value written through the API. So the custom rule has to
+ * be there too, and it is asserted by running the validation, the same way SC-6 is.
+ *
+ * **This block was written once and never inserted.** The constant was declared, the summary
+ * line said "2 closed list(s) intact and enforced", and nothing iterated - a green result from
+ * a check that did not exist. Found by proving the branch, not by reading the file.
+ */
+for (const [typeName, fieldName, expected, shape] of CLOSED_LISTS) {
+  const field = byName.get(typeName)?.fields?.find((f) => f.name === fieldName);
+  if (!field) {
+    problems.push(`${typeName}.${fieldName} does not exist - its closed list cannot be checked`);
+    continue;
+  }
+  const list = field.options?.list;
+  if (!Array.isArray(list) && field.type !== 'slug') {
+    problems.push(
+      `${typeName}.${fieldName} has no options.list - the value set is open, and closure is ` +
+        'the guarantee this field exists to provide',
+    );
+  } else if (Array.isArray(list)) {
+    const actual = list.map((entry) => (typeof entry === 'string' ? entry : entry.value));
+    for (const value of actual) {
+      if (!expected.includes(value)) {
+        problems.push(`${typeName}.${fieldName} allows "${value}", which is not in this gate's expected list`);
+      }
+    }
+    for (const value of expected) {
+      if (!actual.includes(value)) {
+        problems.push(`${typeName}.${fieldName} no longer allows "${value}"`);
+      }
+    }
+  }
+  if (typeof field.validation !== 'function') {
+    problems.push(`${typeName}.${fieldName} has no validation - options.list is not enforced on write`);
+  } else {
+    const { rule, calls, customFns } = recordingRule();
+    field.validation(rule);
+    if (!calls.includes('custom')) {
+      problems.push(
+        `${typeName}.${fieldName} never calls .custom() - options.list is a Studio affordance ` +
+          'and does not refuse a value written through the API',
+      );
+    } else {
+      /**
+       * **The rule is run against values, not merely counted.**
+       *
+       * Asserting that `.custom()` is *called* proves a rule exists, not what it accepts —
+       * and for a field with no `options.list` that was the entire closure claim. Widening
+       * `GROUP_PAGE_SLUGS` from two entries to three passed silently until this ran, which
+       * the branch proof found and reading the check did not.
+       */
+      const accepts = (value) => customFns.every((fn) => fn(shape(value), {}) === true);
+      for (const value of expected) {
+        if (!accepts(value)) problems.push(`${typeName}.${fieldName} refuses "${value}", which it must accept`);
+      }
+      const OUTSIDE = '__not-in-the-closed-list__';
+      const refusals = customFns.map((fn) => fn(shape(OUTSIDE), {})).filter((r) => r !== true);
+      if (refusals.length === 0) {
+        problems.push(
+          `${typeName}.${fieldName} accepts a value outside its list - the custom rule exists ` +
+            'but does not close anything',
+        );
+      } else if (!Array.isArray(list)) {
+        /**
+         * **A field with no `options.list` states its accepted set in the rejection message,
+         * and that message is the subject this compares against.**
+         *
+         * Sanity's `SlugOptions` has no `list` key, so there is nowhere else to read it from.
+         * Asserting only that a custom rule *exists* proved the rule was there and not what it
+         * allowed: widening `GROUP_PAGE_SLUGS` from two entries to three passed silently, which
+         * the branch proof found and reading the check did not.
+         */
+        const message = String(refusals[0]);
+        const enumerated = message.split('one of:')[1];
+        if (!enumerated) {
+          problems.push(
+            `${typeName}.${fieldName} has no options.list, so its rejection message must ` +
+              `enumerate the accepted set as "must be one of: a, b". Got: "${message}"`,
+          );
+        } else {
+          const actual = enumerated.split(',').map((v) => v.trim()).filter(Boolean);
+          for (const value of actual) {
+            if (!expected.includes(value)) {
+              problems.push(`${typeName}.${fieldName} accepts "${value}", which is not in this gate's expected list`);
+            }
+          }
+          for (const value of expected) {
+            if (!actual.includes(value)) problems.push(`${typeName}.${fieldName} no longer accepts "${value}"`);
+          }
+        }
+      }
+    }
+  }
+}
+
 if (problems.length > 0) {
   console.error(`\ncheck-schemas: ${problems.length} problem(s)\n`);
   for (const p of problems) console.error(`  ${p}`);
@@ -209,6 +347,10 @@ if (problems.length > 0) {
 console.log(
   `check-schemas: ${objects.length} object type(s) and ${documents.length} document type(s), ` +
     'every field type resolved, every reference points at a document',
+);
+console.log(
+  `check-schemas: ${CLOSED_LISTS.length} closed list(s) intact and enforced by a custom rule, ` +
+    'not only by the Studio affordance',
 );
 console.log(
   `check-schemas: isSeed on all ${documents.length - 1} seedable document type(s); ` +

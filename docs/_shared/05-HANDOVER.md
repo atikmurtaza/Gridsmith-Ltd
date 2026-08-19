@@ -243,7 +243,14 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > LCP headroom. Build `N-01` incrementally against the gate rather than authoring it whole —
 > the first block that moves the score is the one worth arguing about.
 >
-> **And `N-03` is the honest first row, not `N-01`.** The DoD requires content from the CMS and
+> **`N-03` is done — 19 August 2026.** `groupPage` and `groupSection`, with both of the spec's
+> structural claims enforced rather than restated: a closed slug set (singleton-per-slug) and a
+> closed layout set (so `sunken-plain` cannot be prettified by a content edit). `check:schemas`
+> runs the rules rather than trusting `options.list`, which Sanity does not enforce on write.
+> **Three defects found by proving branches, none by reading** — including a check that had
+> never been inserted while its summary line claimed it had run. **`N-05` is next.**
+>
+> **And `N-03` was the honest first row, not `N-01`.** The DoD requires content from the CMS and
 > the homepage's blocks have no schema: `groupPage` is `N-03`, `continuityExample` `N-05`, the
 > canonical process component `N-06`. `N-01` depends on `M-03` in the table and on three schema
 > rows in practice.

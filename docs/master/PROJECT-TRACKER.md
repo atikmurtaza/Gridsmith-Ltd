@@ -555,6 +555,52 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
 
+### N-03 — a row with no figure in it, and two structural claims made real
+
+**Premise check, per the standing instruction: `N-03` carries no measured or projected figure,
+because it carries no figure at all.** Its `Est` of 0.5d is an estimate of effort, not a
+property of the system. `master/SCHEMA.md` §2 states two *structural* claims instead, and
+structural claims are checkable in a way an unmeasured number is not:
+
+| Claim | Now enforced by |
+|---|---|
+| "singleton-per-slug for `/approach` and `/about`" | a closed slug set — a third `groupPage` is a published document no route renders, and the failure is silent |
+| `sunken-plain` "is a layout value rather than a styling decision **so it cannot be prettified by a later content edit**" | a closed layout set. The limits block is deliberately undesigned as an honesty device; polishing it would sell the limits, which is the point of leaving it plain |
+
+`check:schemas` asserts both — **and asserts that they are enforced on write**, not merely
+offered. Sanity treats `options.list` as a Studio affordance: it shapes the dropdown and does
+not refuse a value written through the API. So the gate runs each field's `custom` rule, the
+same technique that established SC-6.
+
+**Three defects, all found by proving branches, none by reading.**
+
+1. **The check did not exist.** The constant was declared, the summary line said *"2 closed
+   list(s) intact and enforced"*, and **nothing iterated** — an insertion that silently failed.
+   A green result from a check that was never in the file, and the summary was the only
+   evidence anyone would have had.
+2. **The check's own expectation was wrong.** Once it ran it immediately failed
+   `groupPage.slug has no options.list` — because a Sanity `slug` has no such key. The schema
+   was right and the check was wrong.
+3. **The fix for (2) left the gap open.** Exempting slug from the list comparison meant its
+   closure rested on *"a custom rule exists"* — which proves a rule is there, not what it
+   allows. **Widening `GROUP_PAGE_SLUGS` from two entries to three passed silently.**
+
+The last one had no clean answer: `SlugOptions` has no `list` key and TypeScript refuses one,
+so there is nowhere to declare the accepted set except the rejection message. The gate now
+parses it — `must be one of: a, b` — and compares that enumeration against its hardcoded
+expectation. **The message is not decoration; it is the field's only machine-readable statement
+of what it accepts**, and the schema says so where it is written.
+
+**Every branch proven separately:**
+
+| Broken | Fired |
+|---|---|
+| a value added to the layout list | `allows "hero-gradient", which is not in this gate's expected list` |
+| a value dropped from it | `no longer allows "sunken-plain"` |
+| `options.list` removed | `has no options.list — the value set is open` |
+| the `custom` rule removed | `never calls .custom() — options.list is a Studio affordance and does not refuse a value written through the API` |
+| the slug set widened to three | `accepts "manifesto", which is not in this gate's expected list` |
+
 ### N-01's premise — half measured, half projected, and the halves are not the same claim
 
 **Checked before building, per the standing instruction. Not started — see the note at the
@@ -1381,7 +1427,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| N-03 | `groupPage` schema | P0 | 0.5d | A-06 | TODO | Dev | |
+| N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
 | N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | TODO | Dev | `verified` hard-true |
 | N-06 | Canonical process component + validator | P0 | 1d | A-06 | TODO | Dev | Six canonical titles only |
 | N-01 | Homepage, 9 blocks | P0 | 2.5d | **N-03, N-05, N-06** | TODO — **premise checked, not started** | Dev | `Depends` corrected: it read `M-03`, which is the chrome, and the DoD requires content from the CMS — the blocks' schemas are `N-03`, `N-05` and `N-06`. **Lighthouse ≥98 is measured and gated; that nine blocks fit under it is not.** One block per commit, measured after each |
