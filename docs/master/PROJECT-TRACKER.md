@@ -24,7 +24,7 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe + responsive | P0 | 0.5d | A-05a | **DONE** | Dev | Split into **two axes** — desktop asserts category scores, mobile asserts Core Web Vitals on 4G. **Both green on CI**; commit `ad299847`. `Q-M16` is resolved for the budgets. This row read `BLOCKED` / "now fails on Digital" until 12 August 2026 while the handover and the commit log both said DONE — and **A-GATE depends on A-10b**, so the exit gate was recorded as depending on a task its own tracker called blocked. axe extended with DOM-integrity assertions axe-core cannot make, and now runs 375px/1280px × initial/scrolled. `check:responsive` added |
 | 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | **DONE** 18 Aug | Dev | Project and datasets at `M-05`; the core schemas here — 8 object types, 7 document types, `isSeed` group-wide, the canonical-six validator. **New gate `check:schemas` — 19 gates now** — because `next build` never compiles this tree, so nothing else could see a break. `A-12` unblocked |
 | 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | **DONE** 19 Aug | Dev | `Q-M18` resolved. Two migrations applied and verified against the live database. **The spec's own §4 view was an RLS bypass** — found by querying as `anon`, not by reading the SQL. New gate `check:rls` — **20 gates now**. `A-08` unblocked |
-| 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | Notify <60s. No CRM adapter — deferred, see D1 |
+| 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | **DONE — insert leg; notifications blocked** 19 Aug | Dev | Zod at the boundary, insert as **`anon`** so RLS is exercised rather than bypassed. Verified live through the runtime, not by import. **Resend and Slack are blocked on `Q-M20`.** `<60s` is a target nothing measures — `M-P2-13`. No CRM adapter, per D1 |
 | 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | **DONE** 18 Aug | Dev | **Precedes A-09.** No cookie before consent — now asserted in the browser, not just stated. State, Consent Mode v2 bridge, banner, footer reopen. **Measured 2.0KB gz against an 8KB reservation.** `A-09` is unblocked |
 | 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | **DONE — enabled in dev** 19 Aug | Dev | `Q-M19` resolved. The grant path has a permanent gate subject: nothing before a choice, a request to each provider after Accept, **PostHog on an EU host**, nothing after Reject. Live ids go in the platform environment at launch |
 | 12 | A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | **DONE** 18 Aug | Dev | Seed publish fails a live build. **The spec's query counted almost nothing** — see below. Also closes **`M-P1-2`**: the dataset variable has no default and an unset one is a build error. `/_kitchen-sink` now inherits the probe exclusion rather than getting a second mechanism |
@@ -554,6 +554,70 @@ failure rather than an empty set — the sweep must not be able to measure nothi
 **No re-measure of the Lighthouse axes.** `FOUNDATION` §4 requires it for changes to
 `styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
 change is a gate reading the build it already reads.
+
+### A-08 — the pipeline, and what verifying it live actually required
+
+**Premise check.** `FOUNDATION` §6 specifies `<60s` for the internal notification and
+`SCHEMA-CORE.md` §3 repeats it as a p95 alert threshold. **Neither has ever been measured**;
+both are targets. Nothing here is built to them. The column the measurement will use exists —
+and cannot yet be written, see below. `M-P2-13`. No CRM adapter, per D1: naming an integration
+target nobody has chosen is exactly the speculative work that rots.
+
+**It inserts as `anon`, not with a service role, and that is the whole point.** The publishable
+key runs as `anon`, so the insert is subject to the same RLS a browser would be. A service role
+would bypass RLS and make the `anon insert only` policy decorative — the database would be
+protected by this code remembering to behave, which is the arrangement `A-07` exists to
+replace.
+
+**Three constraints, all established at `A-07` by querying the live database:**
+
+1. **`Prefer: return=minimal` is required.** PostgREST's default reads the row back, and there
+   is deliberately no select policy for `anon`. Measured: `representation` **401**, `minimal`
+   **201**.
+2. **The id is generated in the action**, because nothing can read the row after writing it.
+3. **`notified_at` stays null and cannot be stamped yet.** It is meant to be set after the
+   notification is accepted, and `anon` has no UPDATE policy — correctly, since UPDATE from a
+   public form is precisely what RLS is keeping out. Stamping it needs a service-role writer,
+   which does not exist. **The column is real; the speed-to-lead measurement is not**, and
+   saying so is the point of `M-P2-13`.
+
+**Verification went through the runtime because it had to.** `lib/leads/submit.ts` carries
+`server-only`, which throws outside a bundler — correctly, since that import is what keeps its
+credentials out of a client bundle. So the subject is
+`app/(marketing)/gridsmith-lead-probe/route.probe.ts`, POSTed over HTTP against the real
+project. That is also the stronger form: `A-07` established that this system's RLS posture is
+**only observable from outside**, and a probe calling the function in-process would prove the
+function rather than the deployment.
+
+Confirmed in the database after a valid POST: one row, the action's own id, `lead_type`
+defaulting to `enquiry`, `status` `new`, `notified_at` null, `payload` `{}`.
+
+**Every branch proven separately, per the rule this session added to CLAUDE.md.** One branch
+firing is not evidence for the others:
+
+| Broken | Fired |
+|---|---|
+| `Prefer` flipped to `return=representation` | `a valid lead returned 200 {"status":"error","detail":"insert failed: HTTP 401"}` — and the message names the cause, because a 401 here reads as an auth problem and is an RLS one |
+| email validation weakened to `z.string()` | `a malformed email was not rejected — returned 201` |
+| `division` widened from the enum to `z.string()` | `a division outside the enum was not rejected — returned 200 … HTTP 400` (Postgres refused it, which is not the same as validating it) |
+| the 5000-character cap removed | `a body over the length cap was not rejected` |
+| `full_name`'s `.trim().min(1)` removed | `a blank required field was not rejected` |
+| the schema replaced with `z.any()` | two branches fired at once, which is what a missing boundary looks like |
+
+**The `Prefer` assertion is a status code, not a header grep**, deliberately: a grep passes a
+build where the header is set on the wrong request, and the status code is the behaviour.
+
+**Consent is not consulted anywhere in the pipeline.** `PROJECT-RULES.md` §6: processing an
+enquiry someone submitted is contract/legitimate interest, not analytics. Never block a form on
+consent.
+
+**Notifications are written and skipped.** `Q-M20` — no Resend key, no verified sender, no
+recipient, no Slack webhook. The recipient in particular cannot be guessed:
+`companyDetails.contactEmail` is still a `[SEED]` placeholder. **Unset is a skip; set-but-broken
+is a failure**, and that distinction is the design — a provider nobody has configured must not
+fail a build, and one that has been configured and silently stopped working is how a pipeline
+is found to have been dropping notifications for a month. A notification failure never rolls
+back the insert: a lead in the database with no email sent is recoverable; a lost lead is not.
 
 ### A-07 — and the spec's own reporting view was an RLS bypass
 
@@ -1710,6 +1774,8 @@ decision awaiting the owner, not work awaiting a session.
 | Round 7 | `A-GATE-7-4`, `7-5` | the ledger reads as though substance is checked when path shape is; `ROUND_BOUNDARIES` ordering is belt-and-braces, not load-bearing |
 | **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
 | ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
+| Epic M | `M-P2-13` | **nothing measures the `<60s` notification target.** `FOUNDATION` §6 and `SCHEMA-CORE.md` §3 both state it; neither has ever been measured, and `notified_at` — the column the measurement needs — cannot be written by the only role the pipeline uses. `anon` has no UPDATE policy, correctly. Stamping it needs a service-role writer, and the alert needs production traffic and a destination. Until then the figure is a target, not a budget |
+| Epic M | `M-P2-14` | **`gridsmith-lead-probe` inserts one row per CI run and nothing prunes them.** Invalid payloads never reach the database, so only the valid case writes. Pruning needs a privileged connection CI must not hold — it belongs to the same job as `M-P2-12`'s drift check, which already has the credential |
 | Epic M | `M-P2-12` | **`check:rls` reads the migrations, not the live database.** It asserts what the repository declares; drift — a policy added in the Supabase dashboard, a grant restored, a view recreated without `security_invoker` — is invisible to it. A live check needs `DIRECT_CONNECTION_STRING` or the service role, which must not be in CI, so it belongs **after deploy, in the environment that already holds the credential**. `A-07` proved the shape by hand: query as `anon` with the publishable key and assert `leads` returns `[]` and every view 401s |
 | Epic M | `M-P2-11` | **the wordmark's face is constrained, not chosen.** It is `--font-mono` because that is the only family all four route groups already load, so it costs zero bytes — not because JetBrains Mono is the right face for the company mark. **Revisit at Press's shell epic (`P-xx`) when its font budget is set.** The question is whether one word justifies a fourth family on `/press`, on the critical path, against a 2.0s LCP budget with a ~1.52s empty-page floor. **It must be answered with a measured cost, not a preference** — build with Inter added to the Press layout, measure the LCP and the delta on both Lighthouse axes, then decide |
 | Epic M | `M-P2-9` | **`protectedVideo`'s shape is derived, not specified.** `SCHEMA-CORE.md` §1 references it from `project.media` and defines it nowhere. It mirrors `protectedImage` with a `file` asset. A poster frame, a duration and a captions track (WCAG 1.2.2, Level A for prerecorded video with audio) are all plausible additions and none is specified. Settle it at `D-01`, the first row that renders one |
@@ -1826,6 +1892,7 @@ Three things follow, and each is recorded rather than fixed:
 | ~~Q-M14~~ | **RESOLVED — CLAUDE.md was the file at fault, not FOUNDATION.** Both shadow tokens stay. The line now reads *"Depth comes primarily from 1px borders and background steps. `--shadow-2` is a hard ceiling; nothing beyond it."* Press book cards use `--shadow-1` by spec, and the Design and Digital rules already cap at `--shadow-2` | Atik | ~~A-05~~ |
 | ~~Q-M11~~ | **PARTLY REOPENED — the greenfield decision was over-broad.** The build is greenfield: nothing migrates, no content, no functionality, no database, and there is no cutover. But **the existing Press site is live and trading and comes down at launch**, so it has indexed URLs that 404 on day one unless mapped. Five of the six findings in `_shared/01-VALIDATION-REPORT.md` §10 stand; finding #3 ("nothing to crawl") is wrong for Press and is corrected there. Tracked as `G-08` (P1) | Atik | `G-08` |
 | ~~**Q-M19**~~ | **RESOLVED 19 Aug 2026.** Development GA4 and PostHog ids in `.env.local`; PostHog on **EU cloud**, asserted rather than defaulted. Live ids go in the Hostinger environment at launch — same variable names, different values per environment, the pattern `NEXT_PUBLIC_SANITY_DATASET` already uses. CI uses shaped placeholders, so the grant path is exercised there with no credential in the repository |
+| **Q-M20** | **A Resend API key, a lead-notification recipient address, a verified sender domain, and a Slack incoming webhook.** `A-08`'s insert leg is done and verified; the notification leg is written and **skipped**, because none of the four exists. Unset is a skip, set-but-broken is a failure — a provider nobody has configured must not fail a build, and one that has been configured and does not work must not pass silently. The recipient cannot be guessed: `companyDetails.contactEmail` is still a `[SEED]` placeholder | Atik | A-08, L-xx |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |

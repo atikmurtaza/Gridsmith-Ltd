@@ -51,7 +51,7 @@ const excludeProbes =
   process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
 
 const nextConfig: NextConfig = {
-  pageExtensions: excludeProbes ? ['tsx', 'ts'] : ['tsx', 'ts', 'probe.tsx'],
+  pageExtensions: excludeProbes ? ['tsx', 'ts'] : ['tsx', 'ts', 'probe.tsx', 'probe.ts'],
   /**
    * `globalNotFound` is what makes the 404 load the token layer at all.
    *

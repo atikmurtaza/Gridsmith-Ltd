@@ -23,7 +23,8 @@ enforcement). `G7` closed the epic-identifier collisions. **Gates went 17 → 20
 
 | | On |
 |---|---|
-| ~~`A-07`~~ | **Done 19 Aug.** `Q-M18` resolved. Two migrations, `check:rls` is the gate — **and the spec's own §4 reporting view was an RLS bypass**, found by querying as `anon` rather than by reading the SQL. `A-08` is unblocked and is the next row |
+| ~~`A-07`~~ | **Done 19 Aug.** `Q-M18` resolved. Two migrations, `check:rls` is the gate — **and the spec's own §4 reporting view was an RLS bypass**, found by querying as `anon` rather than by reading the SQL. `A-08` is done |
+| ~~`A-08`~~ | **Insert leg done 19 Aug, verified live through the runtime.** Inserts as `anon` so RLS is exercised rather than bypassed; `Prefer: return=minimal` is mandatory and asserted by status code. **Notifications blocked on `Q-M20`** — no Resend key, sender, recipient or Slack webhook |
 | ~~`A-09`'s grant path~~ | **Done 19 Aug.** `Q-M19` resolved. Permanent subject: nothing before a choice, a request to each provider after Accept, **PostHog on an EU host**, nothing after Reject |
 | **`M-P1-1`** | **a decision.** The 500 serves Next's `__next_error__` shell with no `lang` — WCAG 3.1.1 **Level A**, on every server-side crash. No app-level fix exists; Hostinger being managed hosting may rule out the platform-served remedy |
 | The Studio's CORS origin | an interactive `npx sanity login` — `SETUP.md` has the command |

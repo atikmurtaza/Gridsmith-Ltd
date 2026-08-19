@@ -707,6 +707,78 @@ if (cookiesBeforeConsent.length > 0) {
 }
 
 /**
+ * **The lead pipeline's contract — `A-08`.**
+ *
+ * Exercised over HTTP against `app/(marketing)/gridsmith-lead-probe/route.probe.ts`, not by
+ * importing `submitLead`: that module carries `server-only` and throws outside a bundler,
+ * correctly, because the import is what keeps its credentials out of a client bundle. Going
+ * through the runtime is also the stronger form — `A-07` established that this system's RLS
+ * posture is only observable from outside.
+ *
+ * **The `Prefer: return=minimal` constraint is asserted by the valid case's status code, not
+ * by grepping for the header.** PostgREST's default is `return=representation`, which makes
+ * every insert a read as well, and `anon` has no select policy — so switching it back turns
+ * every submission into a 401 and this assertion into a failure. Measured at `A-07`:
+ * representation 401, minimal 201. A header grep would pass a build where the header was set
+ * on the wrong request.
+ *
+ * Every rejection case is a real validation boundary rather than a sample: a malformed email,
+ * a division outside the enum, a blank required field, a body over the length cap, and a
+ * request that is not an object at all. Each must be refused **without reaching the
+ * database** — `status: 'invalid'` and no row.
+ */
+const LEAD_PROBE = `${BASE_URL}/gridsmith-lead-probe`;
+const VALID_LEAD = { division: 'design', full_name: 'Pipeline Probe', email: 'pipeline@gridsmith.invalid' };
+const REJECTED = [
+  ['a malformed email', { ...VALID_LEAD, email: 'nope' }],
+  ['a division outside the enum', { ...VALID_LEAD, division: 'legal' }],
+  ['a blank required field', { ...VALID_LEAD, full_name: '   ' }],
+  ['a body over the length cap', { ...VALID_LEAD, message: 'x'.repeat(5001) }],
+  ['a request that is not an object', 'nonsense'],
+];
+
+const leadProblems = [];
+const postLead = async (body) => {
+  const res = await fetch(LEAD_PROBE, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  return { status: res.status, json: await res.json().catch(() => null) };
+};
+
+{
+  const ok = await postLead(VALID_LEAD);
+  if (ok.status !== 201 || ok.json?.status !== 'ok') {
+    leadProblems.push(
+      `a valid lead returned ${ok.status} ${JSON.stringify(ok.json)}. If this is a 401 the ` +
+        'insert used Prefer: return=representation — PostgREST reads the row back and anon has ' +
+        'no select policy (A-07)',
+    );
+  } else if (!ok.json.id) {
+    leadProblems.push('a valid lead returned no id — nothing can read the row back, so the action must generate it');
+  }
+
+  for (const [label, body] of REJECTED) {
+    const bad = await postLead(body);
+    if (bad.json?.status !== 'invalid') {
+      leadProblems.push(
+        `${label} was not rejected — returned ${bad.status} ${JSON.stringify(bad.json)}. ` +
+          'Zod at the boundary is the only thing between a public form and an anon INSERT policy ' +
+          'with `with check (true)`',
+      );
+    }
+  }
+}
+
+if (leadProblems.length > 0) {
+  total += leadProblems.length;
+  console.error(`
+check-axe: ${leadProblems.length} problem(s) on the lead pipeline (A-08):`);
+  for (const p of leadProblems) console.error(`      ${p}`);
+}
+
+/**
  * **The grant path — `A-09`, and it exists because the alternative was a measurement nobody
  * kept.**
  *
@@ -909,6 +981,10 @@ if (!process.exitCode) {
     `check-axe: first render applied a denied default for every non-essential category on ` +
       `${ROUTES.filter((r) => r.themed !== false).length} themed route(s) × ${VIEWPORTS.length} ` +
       'viewport(s) — the STATE of the unmade choice, which the two assertions below do not cover',
+  );
+  console.log(
+    `check-axe: lead pipeline — a valid submission returns 201 with an id, and ` +
+      `${REJECTED.length} validation boundaries are refused without reaching the database`,
   );
   console.log(
     `check-axe: grant path — ${configured.length} provider(s) configured; nothing before a ` +
