@@ -6,6 +6,25 @@ The master layer owns the shared foundation (Epic A, previously in the Design tr
 
 ---
 
+## ⚠ LAUNCH DEPENDENCY — the real VAT number blocks production
+
+**The site cannot be deployed to production until Gridsmith Ltd's VAT number exists as a real
+value in the `production` dataset.** This is a dependency on the critical path, not a
+background content task.
+
+`check:launch` refuses a `[SEED]` marker on a live dataset and refuses an empty
+`LIVE_REQUIRED` field, and both are correct — reg. 6(1)(g) of the Electronic Commerce (EC
+Directive) Regulations 2002 binds while the activity is VAT-subject. The development record
+carries `[SEED] GB000000000`; the `production` dataset carries no `companyDetails` document at
+all. Both states fail the gate on a production target, by design.
+
+**Two things are needed and neither is code:** the real VAT number, and a `companyDetails`
+singleton in the `production` dataset carrying it. `contactEmail` is already real
+(`contact@gridsmith.uk`). Nothing here can be worked around in the build, and inventing a
+number to clear the gate is non-negotiable #2. **Owner: Atik.** See `M-P1-8`.
+
+---
+
 ## ⚠ READ FIRST — `M-P1-5`: "CI is the arbiter" was false from 13 to 20 August 2026
 
 **No CI run completed between 13 Aug and 20 Aug.** Every push in that window created a run
