@@ -18,6 +18,16 @@ import { submitLead } from '@/lib/leads/submit';
  * `force-dynamic` because it writes. Excluded from production builds by the `pageExtensions`
  * mechanism in `next.config.ts`, like the other probes.
  *
+ * **It sits at the app root rather than inside `(marketing)`, and only a deployment showed
+ * why.** In the route group, `next build` succeeded locally and on Vercel's builder — the
+ * route table printed, the artefacts were written — and then Vercel's output collection failed
+ * with `ENOENT ... (marketing)/gridsmith-lead-probe/route_client-reference-manifest.js`. Next
+ * does not emit that manifest for a route handler, but a route group containing client
+ * components makes the collector expect one. Nothing local reaches this step: `next start`
+ * reads `.next` in place and never enumerates it. The URL is unchanged, so every gate that
+ * measures this route still does; a route handler takes nothing from a layout, so leaving the
+ * group costs it nothing.
+ *
  * **One row per valid POST, and they accumulate.** Invalid payloads never reach the database,
  * so only the gate's single valid case inserts. Pruning probe rows needs a privileged
  * connection, which CI must not hold — it belongs to the same job as `M-P1-3`'s drift check,
