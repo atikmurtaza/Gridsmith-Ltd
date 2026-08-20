@@ -34,10 +34,10 @@ import type { EventContext, EventName, EventProps } from './events';
  * cannot select the US by omission. `assertEuHost` then rejects anything non-EU outright,
  * including an explicit US value.
  */
-const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID ?? '';
-const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY ?? '';
-const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com';
+// The build's view of the ids, shared with `config.ts` so the page can report it before
+// a consent choice without pulling this module in. See that file and `M-P1-6`.
 
+import { GA4_ID, POSTHOG_KEY, POSTHOG_HOST } from './config';
 
 let loaded = false;
 

@@ -858,27 +858,61 @@ check-axe: ${leadProblems.length} problem(s) on the lead pipeline (A-08):`);
  * explicit no", and a banner that fires tags on any interaction rather than on consent passes
  * step 1 and fails step 3.
  *
- * **CI configures placeholder ids, not the real ones.** The ids are read from the environment
- * and the assertions are about *which host was contacted*, never about a response — so a
- * shaped-but-fake id exercises the whole path with no credential in the repository. If no id
- * is configured the gate fails rather than skipping: an unconfigured environment is exactly
- * where this would go quietly hollow.
+ * **CI configures placeholder ids, not the real ones.** The assertions are about *which host
+ * was contacted*, never about a response — so a shaped-but-fake id exercises the whole path
+ * with no credential in the repository. If no id is configured the gate fails rather than
+ * skipping: an unconfigured environment is exactly where this would go quietly hollow.
+ *
+ * **Which ids are configured is read from the PAGE, not from this process — `M-P1-6`.** It
+ * used to come from `process.env` here. The gate and the site are different processes and,
+ * once the site is a deployment, different machines: run against the Vercel preview without
+ * `.env.local` loaded, this gate reported *"no analytics id is configured"* about a build that
+ * had both. The failure is not a wrong value, it is a **premise read from the wrong system** —
+ * the second instance of the class, after Resend, and both were invisible on `localhost`
+ * because there the two processes are one. `lib/analytics/load.ts` publishes
+ * `window.__gsAnalyticsConfigured` with what the shipped bundle actually inlined, and that is
+ * what is read below. Ask the system, do not infer.
+ *
+ * The absence of that object is itself a failure, not a skip — a page that stopped publishing
+ * it would otherwise silently become an unconfigured environment.
  */
 const PROVIDERS = [
-  { name: 'GA4', env: 'NEXT_PUBLIC_GA4_ID', host: 'googletagmanager.com' },
-  { name: 'PostHog', env: 'NEXT_PUBLIC_POSTHOG_KEY', host: 'posthog' },
+  { name: 'GA4', key: 'ga4', env: 'NEXT_PUBLIC_GA4_ID', host: 'googletagmanager.com' },
+  { name: 'PostHog', key: 'posthog', env: 'NEXT_PUBLIC_POSTHOG_KEY', host: 'posthog' },
 ];
 
 const grantProblems = [];
-const configured = PROVIDERS.filter((p) => process.env[p.env]);
-if (configured.length === 0) {
+
+const reported = await (async () => {
+  const b = await puppeteer.launch();
+  try {
+    const page = await b.newPage();
+    await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
+    return await page.evaluate(() => window.__gsAnalyticsConfigured ?? null);
+  } finally {
+    await b.close();
+  }
+})();
+
+if (reported === null) {
   grantProblems.push(
-    'no analytics id is configured, so the grant path cannot be exercised. Set ' +
-      `${PROVIDERS.map((p) => p.env).join(' and ')} — CI uses shaped placeholders, not real ids. ` +
-      'Skipping here is how this assertion goes hollow in the one environment that matters.',
+    'the served page did not publish window.__gsAnalyticsConfigured, so this gate cannot ' +
+      'establish what the build inlined. lib/analytics/config.ts sets it and ConsentBanner calls it on mount; a page without it is ' +
+      'a subject that has stopped being one (M-P1-6). Failing rather than assuming unconfigured.',
   );
-} else {
-  const posthogHost = (process.env.NEXT_PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com').replace(/\/$/, '');
+}
+
+const configured = reported ? PROVIDERS.filter((p) => reported[p.key]) : [];
+if (reported !== null && configured.length === 0) {
+  grantProblems.push(
+    'the served build has no analytics id inlined, so the grant path cannot be exercised. Set ' +
+      `${PROVIDERS.map((p) => p.env).join(' and ')} in the environment THAT BUILDS THE SITE ` +
+      '— CI uses shaped placeholders, not real ids. Setting them where this gate runs does ' +
+      'nothing: they are inlined at build time. Skipping here is how this assertion goes ' +
+      'hollow in the one environment that matters.',
+  );
+} else if (reported !== null) {
+  const posthogHost = reported.posthogHost.replace(/\/$/, '');
   if (!isEuPostHogHost(posthogHost)) {
     grantProblems.push(
       `NEXT_PUBLIC_POSTHOG_HOST is "${posthogHost}", which is not an EU endpoint. PostHog's ` +

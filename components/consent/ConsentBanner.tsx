@@ -4,6 +4,7 @@
 // static rendering — the same trade rejected at M-04 for `cache: 'no-store'`.
 
 import { useEffect, useRef, useState } from 'react';
+import { publishAnalyticsConfig } from '@/lib/analytics/config';
 import type { Division } from '@/components/chrome/RootShell';
 import { CATEGORIES, DENIED, applyConsent, readConsent, type Consent } from '@/lib/consent/state';
 import styles from './consent.module.css';
@@ -80,6 +81,13 @@ export function ConsentBanner({ division }: { division: Division }) {
   const headingId = 'gs-consent-heading';
 
   useEffect(() => {
+    // The build's view of which analytics ids were inlined, published for `check-axe` to read
+    // off the page rather than guess from its own environment — `M-P1-6`. Here rather than in
+    // `load.ts` because that module is deliberately not fetched until a grant, and the gate
+    // needs this fact *before* a choice. Three booleans; no id is exposed that the bundle does
+    // not already carry.
+    publishAnalyticsConfig();
+
     const stored = readConsent();
     // `A-09` hangs off this line and no other. The analytics loader is called with whatever
     // the state is — including the denied default — so there is exactly one place in the

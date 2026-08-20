@@ -22,11 +22,20 @@ name: CI
 # every commit to an open PR — with both triggers unrestricted, each push to a PR branch
 # would run the whole suite twice, Lighthouse included. Opening a PR still gets its own run
 # for the case where the head commit predates the workflow.
+# `workflow_dispatch` was added on 20 Aug as a DIAGNOSTIC and kept as a capability. When every
+# push was failing at startup with zero jobs, a dispatch request was the thing that separated
+# "GitHub cannot parse this file" from "GitHub will not start a run": the API answered
+# `422 Workflow does not have 'workflow_dispatch' trigger`, which is a reply that can only come
+# from a workflow it had already parsed and whose triggers it had enumerated. That eliminated
+# the file — and the Actions UI's own message, "this run likely failed because of a workflow
+# file issue", was wrong. See `M-P1-5`. It stays so a run can be started without inventing a
+# commit to push.
 on:
   push:
     branches: ['**']
   pull_request:
     types: [opened, reopened]
+  workflow_dispatch:
 
 # `NEXT_PUBLIC_SANITY_DATASET` has no default (M-P1-2): an unset variable is a build error
 # rather than a silent fallback to `development`, because on a live host that fallback would
