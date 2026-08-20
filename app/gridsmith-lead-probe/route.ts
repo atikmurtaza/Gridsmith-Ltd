@@ -15,18 +15,51 @@ import { submitLead } from '@/lib/leads/submit';
  * from outside — a view that looked correct in SQL was serving lead data to `anon`. A probe
  * that called the function in-process would prove the function; this proves the deployment.
  *
- * `force-dynamic` because it writes. Excluded from production builds by the `pageExtensions`
- * mechanism in `next.config.ts`, like the other probes.
+ * `force-dynamic` because it writes.
  *
- * **It sits at the app root rather than inside `(marketing)`, and only a deployment showed
- * why.** In the route group, `next build` succeeded locally and on Vercel's builder — the
- * route table printed, the artefacts were written — and then Vercel's output collection failed
- * with `ENOENT ... (marketing)/gridsmith-lead-probe/route_client-reference-manifest.js`. Next
- * does not emit that manifest for a route handler, but a route group containing client
- * components makes the collector expect one. Nothing local reaches this step: `next start`
- * reads `.next` in place and never enumerates it. The URL is unchanged, so every gate that
- * measures this route still does; a route handler takes nothing from a layout, so leaving the
- * group costs it nothing.
+ * ## This probe is excluded from production at RUNTIME, and it is the only one that is
+ *
+ * The other probes are pages and are excluded by the `pageExtensions` rename in
+ * `next.config.ts` — the mechanism exists because a page kept in the build and 404'd at
+ * runtime still ships its client chunk, and `/_kitchen-sink`'s is 5.8KB of primitives.
+ *
+ * **That mechanism cannot be used on a route handler, and only a deployment showed why.**
+ * With the file named `route.probe.ts`, Next does not emit
+ * `route_client-reference-manifest.js` for it; with the file named `route.ts`, it does.
+ * Vercel's output collection expects that file for every app route entry either way, so the
+ * deployment failed with `ENOENT ... route_client-reference-manifest.js` while `next build`
+ * itself succeeded — locally, and on Vercel's own builder, printing a full route table
+ * immediately before the failure. Verified by building both ways and listing
+ * `.next/server/app/gridsmith-lead-probe/`. Page probes are unaffected:
+ * `gridsmith-error-probe` gets its `page_client-reference-manifest.js` under the custom
+ * extension without complaint.
+ *
+ * The runtime guard below costs nothing here for the same reason the rename was needed
+ * there: **a route handler has no client chunk to ship.** The trade the `pageExtensions`
+ * docstring rejected for pages does not apply to this file.
+ *
+ * `GRIDSMITH_EXCLUDE_PROBES` is honoured alongside `VERCEL_ENV` so the two exclusion
+ * mechanisms answer to the same switch.
+ */
+
+const EXCLUDED =
+  process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
+
+/** 404 rather than 403: an excluded probe should be indistinguishable from an absent one. */
+function excluded() {
+  return new Response(null, { status: 404 });
+}
+
+/**
+ * ## The rest of the original docstring
+ *
+ * **It also sits at the app root rather than inside `(marketing)`.** That move was made first,
+ * on the theory that the route group was the cause — the ENOENT named the grouped path. It was
+ * not the cause: the identical error came back at the ungrouped path, which is what sent the
+ * investigation to the file extension. The move is kept because a route handler takes nothing
+ * from a layout and the URL is unchanged, but **it fixed nothing and is recorded as such** —
+ * a plausible fix that is not the fix is exactly the kind of thing a later reader will
+ * otherwise credit.
  *
  * **One row per valid POST, and they accumulate.** Invalid payloads never reach the database,
  * so only the gate's single valid case inserts. Pruning probe rows needs a privileged
@@ -47,6 +80,8 @@ import { submitLead } from '@/lib/leads/submit';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request): Promise<Response> {
+  if (EXCLUDED) return excluded();
+
   const body: unknown = await request.json().catch(() => null);
 
   if (new URL(request.url).searchParams.get('mode') === 'notify') {

@@ -47,6 +47,14 @@ if (!Array.isArray(legacyRedirects)) {
  * rewrite or a `notFound()` would have compiled the page and shipped its chunk — and the
  * kitchen sink's chunk is 5.8KB of primitives, the largest single artefact in the build.
  */
+/**
+ * **This mechanism covers the page probes only.** `app/gridsmith-lead-probe/route.ts` is a
+ * route handler and is excluded at runtime instead: under a custom `pageExtensions` entry Next
+ * does not emit its `route_client-reference-manifest.js`, Vercel's output collection expects
+ * one regardless, and the deployment fails `ENOENT` after a successful build. Page probes are
+ * unaffected. The trade this docstring rejects below — keep it in the build, 404 it at runtime
+ * — is free for a route handler, which has no client chunk to ship. See that file.
+ */
 const excludeProbes =
   process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
 
