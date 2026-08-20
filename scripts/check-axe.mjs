@@ -1024,6 +1024,14 @@ check-axe: ${grantProblems.length} problem(s) on the consent grant path (A-09):`
  * branch was proven to distinguish: it returns `false` on the served shell and `true` on
  * the same shell with `lang="en-GB"` added, where the old regex returned `false` on both.
  * It is written to be deleted.
+ *
+ * **Not deleted on 21 Aug, and the attempt is recorded so it is not repeated blind.** The move
+ * to Vercel was recorded as making `M-P1-1`'s remedy available — a static error document
+ * served outside Next's render path — which would have made `lang` appear and retired this
+ * block. `public/500.html` was deployed and two failures induced on the preview: a real
+ * platform error (a killed invocation, 504) and this server-render crash (500). **Neither
+ * served it.** The characterisation below is therefore still exactly true, and is still the
+ * only thing standing between a silent change and a noticed one.
  */
 const SSR_CRASH = '/gridsmith-ssr-throw-probe';
 const crashRes = await fetch(`${BASE_URL}${SSR_CRASH}`);
