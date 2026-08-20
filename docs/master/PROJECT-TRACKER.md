@@ -6,6 +6,43 @@ The master layer owns the shared foundation (Epic A, previously in the Design tr
 
 ---
 
+## ✋ ACCEPTED RISK — `M-P1-1`, the Level A gap on server-side crashes
+
+**Status `ACCEPTED`, not `OPEN`. Accepted by Atik on 21 August 2026, on the reasoning below.
+This is not backlog and it is not a bug someone forgot. Do not reopen it as one.**
+
+**The defect.** WCAG 3.1.1 Level A fails **on server-side crashes only**: the served document
+is Next's `__next_error__` shell — no `lang`, no `<h1>`, no `<main>`, and a `<title>` leaked
+from route metadata rather than the boundary's own. Normal pages are unaffected.
+
+**Why it is accepted rather than fixed.**
+
+- **The recorded remedy was measured and does not work on this platform.** `public/500.html`
+  was written and deployed, and **both** failure classes were induced on the preview: a
+  genuine platform error (a hanging invocation the platform killed, 504) and the server-render
+  crash (500). **Neither served the document.**
+- **It is not established whether that is hobby-tier gating or the wrong error class.** Vercel
+  documents custom error pages as covering platform errors, and a Next function returning its
+  own 500 is not one; the docs page is also permission-gated and this team is on hobby. Because
+  the 504 case failed too, the gated explanation covers both observations and **one test cannot
+  separate them.** The attempt is recorded in `check-axe`'s docstring so it is not repeated
+  blind.
+- **The remaining route was declined on a cost the owner weighed.** An edge layer rewriting the
+  5xx body would add latency to **every** request on the route with the least LCP headroom in
+  the programme (`Q-M16`), permanently, to remedy a rare-crash defect. That trade was rejected.
+
+**What stays in place, and it is not nothing.** The characterisation gate in `check-axe`
+asserts the exact served shape on every run and **fails if it changes in either direction** —
+including the good direction, where `lang` appears and the characterisation must be replaced by
+a direct Level A assertion. `public/500.html` stays, in CSS system colours so it can never
+drift out of sync with the token layer, ready the moment the platform can use it.
+
+**Revisit only if** the team moves to Pro, **or** the characterisation gate fires. Not on
+review, not on a fresh reading of the Vercel docs, and not because it appears on an
+accessibility list — those readings have already been done and are recorded here.
+
+---
+
 ## ⚠ LAUNCH DEPENDENCY — the real VAT number blocks production
 
 **The site cannot be deployed to production until Gridsmith Ltd's VAT number exists as a real

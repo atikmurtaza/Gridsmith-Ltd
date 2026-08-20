@@ -122,7 +122,7 @@ const ROUND_BOUNDARIES = [
  *
  * Raise it in the same commit that adds rows, with the finding in the message.
  */
-const EXPECTED_ROWS = 57;
+const EXPECTED_ROWS = 58;
 
 const problems = [];
 
@@ -194,7 +194,16 @@ for (const row of rows) {
   // CEILING is a recorded limit of the approach that will never be fixed — distinct from
   // OPEN, which asserts that someone should. Labelling a structural boundary as OPEN would
   // put permanent work on a backlog and imply the gate could one day close it.
-  if (row.status === 'OPEN' || row.status === 'DEFERRED' || row.status === 'CEILING') {
+  // ACCEPTED is a risk the owner has decided to carry, with the reasoning recorded. Distinct
+  // from CEILING, which is a limit of the verification approach nobody chose, and from OPEN,
+  // which asserts someone should act. Filing an accepted risk as OPEN invites a later session
+  // to "fix" a thing that was weighed and declined; there is one today, M-P1-1.
+  if (
+    row.status === 'OPEN' ||
+    row.status === 'DEFERRED' ||
+    row.status === 'CEILING' ||
+    row.status === 'ACCEPTED'
+  ) {
     if (row.commit || row.files.length > 0) {
       problems.push(
         `${row.id} is ${row.status} but names a commit or files. An unfixed finding must claim ` +
@@ -206,7 +215,7 @@ for (const row of rows) {
 
   if (row.status !== 'FIXED') {
     problems.push(
-      `${row.id}: unknown status "${row.status}". Use FIXED, OPEN, DEFERRED or CEILING.`,
+      `${row.id}: unknown status "${row.status}". Use FIXED, OPEN, DEFERRED, CEILING or ACCEPTED.`,
     );
     continue;
   }

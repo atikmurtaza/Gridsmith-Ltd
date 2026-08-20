@@ -23,6 +23,13 @@ the approach that will never be fixed**, so it is not backlog. Filing a structur
 `OPEN` puts permanent work on a list and implies the gate could one day close it. There is one
 today — `A-GATE-7-6`.
 
+`ACCEPTED` is a fourth, and it is not `CEILING`. A ceiling is a limit nobody chose; an accepted
+risk is one **the owner weighed and decided to carry**, with the reasoning recorded and a named
+condition for revisiting it. The distinction exists so that a later session cannot reopen a
+decision as a bug: an accepted risk on an `OPEN` list looks like an oversight, and the next
+person to read it will helpfully "fix" the thing that was declined. There is one today —
+`M-P1-1`. An `ACCEPTED` row must carry no commit and no files, like the others.
+
 **Files must name where the fix's substance lives, never only the documents that describe
 it.** A docs-only commit satisfying a fix claim is the exact failure this gate exists to
 catch. **Asserted, not merely stated** — a `FIXED` row whose files are all under `docs/` fails
@@ -93,6 +100,7 @@ of a claim, never as confirmation that the substance is where it says.
 | `A-GATE-7-4` | OPEN | — | — |
 | `A-GATE-7-5` | OPEN | — | — |
 | `A-GATE-7-6` | CEILING | — | — |
+| `M-P1-1` | ACCEPTED | — | — |
 
 ## What this gate does not cover, stated rather than left to be discovered
 
