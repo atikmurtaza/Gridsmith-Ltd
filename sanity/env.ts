@@ -23,11 +23,10 @@
  * Both datasets are public, so nothing here reads a token. `SANITY_API_WRITE_TOKEN` exists
  * only for the seed script, only from `.env.local`, and never reaches the build.
  */
-export const SANITY_PROJECT_ID = 'spzu6y31';
-export const SANITY_API_VERSION = '2026-08-18';
-
-/** The dataset name that means "live". The launch gate keys off this. */
-export const PRODUCTION_DATASET = 'production';
+// The environment-free constants live in `project.ts` so that `check-launch-content` can read
+// them without triggering the throw below — it now takes the dataset from the served site and
+// must run on machines where this variable is unset. See that file and `M-P1-7`.
+export { SANITY_PROJECT_ID, SANITY_API_VERSION, PRODUCTION_DATASET } from './project';
 
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
 if (!dataset) {

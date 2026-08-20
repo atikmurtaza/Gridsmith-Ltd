@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import type { NextConfig } from 'next';
+import { SANITY_DATASET } from './sanity/env';
 
 type LegacyRedirect = { source: string; destination: string; permanent: boolean };
 
@@ -83,6 +84,30 @@ const nextConfig: NextConfig = {
    */
   experimental: {
     globalNotFound: true,
+  },
+  /**
+   * **The site reports which Sanity dataset it was built against — `M-P1-7`.**
+   *
+   * `check-launch-content` used to read `SANITY_DATASET` from its own environment while its
+   * headline claimed to report on *the dataset being built*. On Vercel those are different
+   * machines and, by design, different values: the Production target builds against
+   * `production` and everything else against `development`. Run from a `development` runner
+   * against a production deployment, the gate announced *"the live-only assertions do not
+   * apply"* and exited 0 — **the one gate whose purpose is stopping a `[SEED]` VAT number
+   * reaching a public page, unable to fire in the only situation it exists for.**
+   *
+   * A header rather than a probe route, for three reasons. Probe routes are excluded from
+   * production builds and this must work *especially* on production. It costs no page weight
+   * and no DOM. And it is present on every route, so the gate cannot be pointed at an
+   * unrepresentative one.
+   *
+   * The value is not a secret: `NEXT_PUBLIC_SANITY_DATASET` is inlined into the client bundle
+   * already, and both datasets are public. Importing `sanity/env` here also means an unset
+   * variable fails the build at config load, which is `M-P1-2`'s rule reaching one file
+   * earlier than before.
+   */
+  async headers() {
+    return [{ source: '/:path*', headers: [{ key: 'x-gridsmith-dataset', value: SANITY_DATASET }] }];
   },
   async redirects() {
     return legacyRedirects;

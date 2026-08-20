@@ -105,12 +105,6 @@ jobs:
       - name: Row-level security is declared on every table, view and policy
         run: npm run check:rls
 
-      # Before the build, because the build reads the same dataset: a missing or
-      # incomplete companyDetails singleton should fail with a sentence about the
-      # statutory record, not with a fetch error inside static generation.
-      - name: Statutory record complete for the dataset being built
-        run: npm run check:launch
-
       - name: Build
         run: npm run build
 
@@ -154,7 +148,15 @@ jobs:
         if: always()
         run: node scripts/lhci-report.mjs mobile
 
-      # axe and the responsive sweep share one server on 3000, started and stopped by
-      # with-server so neither can run against a server that never came up.
-      - name: axe + no horizontal overflow at 375/768/1440
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:responsive"
+      # axe, the statutory record and the responsive sweep share one server on 3000, started
+      # and stopped by with-server so none of them can run against a server that never came up.
+      #
+      # check:launch moved here from before the build at M-P1-7. It was placed pre-build so a
+      # missing companyDetails singleton would fail with a sentence about the statutory record
+      # rather than a fetch error inside static generation — a good reason for a gate that read
+      # its dataset from the environment. It no longer does: it asks the SERVED site which
+      # dataset it was built against, so it cannot run before there is a site to ask. The
+      # pre-build failure mode it was protecting against is now a build failure with a Sanity
+      # stack trace, which is worse output for the same defect and is the price of the fix.
+      - name: axe + statutory record + no horizontal overflow at 375/768/1440
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive"

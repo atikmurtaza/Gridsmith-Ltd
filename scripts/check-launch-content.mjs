@@ -44,7 +44,50 @@
  * meant to return. Measured: the failing path reported 127. Setting `exitCode` and letting
  * the loop drain returns 1 on every platform.
  */
-import { SANITY_API_VERSION, SANITY_DATASET, SANITY_PROJECT_ID, PRODUCTION_DATASET } from '../sanity/env.ts';
+import { SANITY_API_VERSION, SANITY_PROJECT_ID, PRODUCTION_DATASET } from '../sanity/project.ts';
+
+/**
+ * ## The dataset is read from the SITE, never from this process — `M-P1-7`
+ *
+ * This gate used to import `SANITY_DATASET` from `sanity/env.ts`, which resolves the runner's
+ * `NEXT_PUBLIC_SANITY_DATASET`. That is a premise about a machine this process is not running
+ * on, and on Vercel it is wrong by design: the Production target builds against `production`
+ * and every other target against `development`. A `development` runner pointed at a production
+ * deployment reported *"the live-only assertions do not apply"* and exited 0 — the gate that
+ * exists to stop a `[SEED]` VAT number going public, silent in the only case that matters.
+ *
+ * Third instance of the class, after Resend (`A-08`) and the analytics ids (`M-P1-6`), and the
+ * most consequential of the three. The remedy is the same each time: **ask the system.** The
+ * site emits `x-gridsmith-dataset` on every route (`next.config.ts`), and what this gate then
+ * measures is the dataset the site says it was built against.
+ *
+ * **A missing header is a hard failure, not a fall-back.** Falling back to this process's
+ * environment is precisely the defect; falling back to "assume development" would be worse,
+ * because it turns the live tier off. A site that has stopped reporting is a subject that has
+ * stopped being one.
+ *
+ * This is why the gate moved out of `verify:static` and into `verify:served`. It was never a
+ * source check — it asserts a deployment — and running it without a target is what made
+ * inferring the dataset feel reasonable.
+ */
+const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
+
+const headRes = await fetch(BASE_URL, { method: 'HEAD' }).catch((e) => ({ ok: false, error: e }));
+const reportedDataset = headRes.headers?.get?.('x-gridsmith-dataset') ?? null;
+
+if (!reportedDataset) {
+  console.error(
+    `\ncheck-launch-content: ${BASE_URL} did not report an x-gridsmith-dataset header, so this` +
+      '\ngate cannot establish which dataset the site was built against. next.config.ts sets it' +
+      '\non every route. Reading this process\u2019s NEXT_PUBLIC_SANITY_DATASET instead is the' +
+      '\ndefect M-P1-7 records, and assuming "development" would switch the live tier off.' +
+      '\nFailing rather than measuring the wrong dataset.\n',
+  );
+  process.exit(1);
+}
+
+/** What the SITE says it was built against. Never this process's environment. */
+const SANITY_DATASET = reportedDataset;
 
 /**
  * **Checked against the legislation, not against the tracker row's summary of it.**
@@ -145,17 +188,17 @@ if (!seedRes.ok) {
 
 if (problems.length > 0) {
   console.error(`
-check-launch-content: ${problems.length} problem(s) in dataset "${SANITY_DATASET}"
+check-launch-content: ${problems.length} problem(s) in dataset "${SANITY_DATASET}" (reported by ${BASE_URL})
 `);
   for (const p of problems) console.error(`  ${p}`);
   console.error('');
   process.exitCode = 1;
 } else {
   console.log(
-    `check-launch-content: dataset "${SANITY_DATASET}" — ${ALWAYS_REQUIRED.length} statutory field(s) present` +
+    `check-launch-content: ${BASE_URL} reports dataset "${SANITY_DATASET}" — ${ALWAYS_REQUIRED.length} statutory field(s) present` +
       (isLive
         ? `, ${LIVE_REQUIRED.map(([f]) => f).join(' and ')} supplied, no [SEED] markers`
-        : `; the live-only assertions (${LIVE_REQUIRED.map(([f]) => f).join(', ')}, no [SEED] markers) do not apply to "${SANITY_DATASET}"`),
+        : `; the live-only assertions (${LIVE_REQUIRED.map(([f]) => f).join(', ')}, no [SEED] markers) do not apply to "${SANITY_DATASET}" — the dataset the SITE reported, not one this gate assumed`),
   );
   console.log(
     `check-launch-content: ${publishedSeeds} published seed document(s) counted` +
