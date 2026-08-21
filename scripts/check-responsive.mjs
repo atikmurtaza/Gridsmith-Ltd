@@ -19,7 +19,7 @@
  *
  * Expects a server already running at BASE_URL (`npm run start`).
  */
-import puppeteer from 'puppeteer';
+import { launch } from './browser-launch.mjs';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
 
@@ -47,10 +47,7 @@ const WIDTHS = [375, 768, 1440];
 const FIXED_BAR_MAX_WIDTH = 767;
 
 /** CI-safe flags — see the note in check-axe.mjs. Same launch, same requirement. */
-const browser = await puppeteer.launch({
-  headless: true,
-  args: ['--no-sandbox', '--disable-dev-shm-usage'],
-});
+const browser = await launch();
 const problems = [];
 let checks = 0;
 /**

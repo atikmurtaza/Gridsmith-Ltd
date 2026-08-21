@@ -19,7 +19,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { AxePuppeteer } from '@axe-core/puppeteer';
-import puppeteer from 'puppeteer';
+import { launch } from './browser-launch.mjs';
 import { isEuPostHogHost } from '../lib/analytics/posthog-region.ts';
 
 /**
@@ -481,20 +481,8 @@ async function domIntegrity(page, route, themed = true, expect = null) {
   return found.length;
 }
 
-/**
- * `--no-sandbox` is required on GitHub's runners: the Chrome sandbox needs user
- * namespaces the container does not grant, and without it Chrome aborts on launch with a
- * stack trace rather than a readable error. `--disable-dev-shm-usage` avoids the 64MB
- * /dev/shm that makes it crash again later, under load rather than at startup.
- *
- * Both Lighthouse configs already passed these as `chromeFlags`; the two Puppeteer gates
- * did not, so they were the only two of the four browser launch sites that failed in CI —
- * and they failed 3 seconds into a step that passes in 20 locally.
- */
-const browser = await puppeteer.launch({
-  headless: true,
-  args: ['--no-sandbox', '--disable-dev-shm-usage'],
-});
+/** Every launch in this file goes through `browser-launch.mjs`. See its docstring — M-P2-33. */
+const browser = await launch();
 let total = 0;
 /** Cookies present after every route load, with no interaction. Filled before close. */
 let cookiesSeen = [];
@@ -884,7 +872,7 @@ const PROVIDERS = [
 const grantProblems = [];
 
 const reported = await (async () => {
-  const b = await puppeteer.launch();
+  const b = await launch();
   try {
     const page = await b.newPage();
     await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
@@ -921,7 +909,7 @@ if (reported !== null && configured.length === 0) {
     );
   }
 
-  const browser2 = await puppeteer.launch();
+  const browser2 = await launch();
   try {
     for (const [label, button, expectRequests] of [
       ['accept', 'Accept', true],

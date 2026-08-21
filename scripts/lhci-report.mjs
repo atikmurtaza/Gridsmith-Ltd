@@ -67,6 +67,32 @@ for (const [url, entries] of byUrl) {
   );
 }
 
+/**
+ * CLS attribution, printed for any route that shifted at all.
+ *
+ * A CLS number says a page moved; it does not say what moved, and the assertion output
+ * gives four decimal places and no nodes. `M-P2-31` was three failing routes with no
+ * candidate — and the gate that measures it hard-skips on Windows, so there is no local
+ * run to inspect. Lighthouse already collects `layout-shift-elements`; nothing was
+ * reading it.
+ *
+ * Printed from the median run, not the worst, so it describes the number asserted against.
+ */
+for (const [url, entries] of byUrl) {
+  const reports = entries.map((e) => JSON.parse(readFileSync(e.jsonPath, 'utf8')));
+  const cls = reports.map((r) => r.audits['cumulative-layout-shift'].numericValue);
+  const mid = reports[cls.indexOf(median(cls))];
+  if (median(cls) === 0) continue;
+  const items = mid.audits['layout-shift-elements']?.details?.items ?? [];
+  console.log(`
+${new URL(url).pathname} — CLS ${median(cls).toFixed(4)}, ${items.length} shifting element(s):`);
+  if (items.length === 0) console.log('  (Lighthouse attributed the shift to no element — see the trace)');
+  for (const it of items) {
+    console.log(`  ${String(it.score?.toFixed?.(4) ?? it.score).padStart(8)}  ${it.node?.nodeLabel ?? '?'}`);
+    console.log(`            ${it.node?.snippet ?? ''}`.slice(0, 160));
+  }
+}
+
 const first = JSON.parse(readFileSync(manifest[0].jsonPath, 'utf8'));
 const t = first.configSettings.throttling;
 console.log(
