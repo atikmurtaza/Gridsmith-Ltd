@@ -40,7 +40,7 @@ const blocks = (prefix, paragraphs) =>
 
 /** `[number, heading, basis, [paragraphs]]` */
 const doc = (slug, title, summary, clauses) => ({
-  _id: `seed.legal.${slug}`,
+  _id: `seed-legal-${slug}`,
   _type: 'legalDocument',
   slug: { _type: 'slug', current: slug },
   title,

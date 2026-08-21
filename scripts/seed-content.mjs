@@ -144,7 +144,7 @@ const SERVICES = {
 
 const serviceDocs = Object.entries(SERVICES).flatMap(([division, rows]) =>
   rows.map(([title, track, searchIntent, problem, deliverables, model, variables], i) => ({
-    _id: `seed.service.${division}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+    _id: `seed-service-${division}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
     _type: 'service',
     title: `${S} ${title}`,
     slug: slugOf(title.toLowerCase().replace(/[^a-z0-9]+/g, '-')),
@@ -223,7 +223,7 @@ const METRIC_LABELS = [
 const projectDocs = PROJECT_SPEC.map(([title, divisions, track, confidential, metricCount], i) => {
   const client = CLIENTS[i % CLIENTS.length];
   return {
-    _id: `seed.project.${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+    _id: `seed-project-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
     _type: 'project',
     title: `${S} ${title}`,
     slug: slugOf(title.toLowerCase().replace(/[^a-z0-9]+/g, '-')),
@@ -290,7 +290,7 @@ const REVIEWS = [
 ];
 
 const testimonialDocs = REVIEWS.map(([id, name, handle, projectTitle, division, quote]) => ({
-  _id: `testimonial.freelancer-${id}`,
+  _id: `testimonial-freelancer-${id}`,
   _type: 'testimonial',
   quote,
   authorName: handle ? `${name} (${handle})` : name,
@@ -319,7 +319,7 @@ const teamDocs = [
   ['digital-lead', 'Digital Lead', ['digital'], 'Web, software and AI integration.'],
   ['press-lead', 'Press Lead', ['press'], 'Editorial, production and author platforms.'],
 ].map(([id, role, divisions, bio], i) => ({
-  _id: `seed.team.${id}`,
+  _id: `seed-team-${id}`,
   _type: 'teamMember',
   name: `${S} Placeholder Name`,
   role,
@@ -355,7 +355,7 @@ const FAQ_TEMPLATES = [
 
 const faqDocs = ['design', 'digital', 'press'].flatMap((division) =>
   FAQ_TEMPLATES.map(([question, category], i) => ({
-    _id: `seed.faq.${division}-${i + 1}`,
+    _id: `seed-faq-${division}-${i + 1}`,
     _type: 'faq',
     question: `${S} ${question}`,
     answer: blocks(
@@ -386,7 +386,7 @@ const POSTS = [
 ];
 
 const postDocs = POSTS.map(([title, division, readingTime], i) => ({
-  _id: `seed.post.${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 60)}`,
+  _id: `seed-post-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 60)}`,
   _type: 'post',
   title: `${S} ${title}`,
   slug: slugOf(title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 60)),
@@ -418,7 +418,7 @@ const section = (i, key_, heading, layout, ...paragraphs) => ({
 
 const groupPageDocs = [
   {
-    _id: 'seed.groupPage.approach',
+    _id: 'seed-grouppage-approach',
     _type: 'groupPage',
     slug: slugOf('approach'),
     title: 'How we work',
@@ -436,7 +436,7 @@ const groupPageDocs = [
     isSeed: true,
   },
   {
-    _id: 'seed.groupPage.about',
+    _id: 'seed-grouppage-about',
     _type: 'groupPage',
     slug: slugOf('about'),
     title: 'About Gridsmith',
@@ -444,8 +444,13 @@ const groupPageDocs = [
     sections: [
       section(0, 'structure', 'How the company is structured', 'prose',
         `${S} Placeholder. Gridsmith Ltd is one registered company; Design, Digital and Press are trading divisions of it.`),
-      section(1, 'people', 'Who you will work with', 'two-column',
-        `${S} Placeholder. Public team listings are pending Q-M9.`),
+      // **No 'people' section here, and that is a fix rather than an omission.** `/about`
+      // renders the team roster itself, from `teamMember`, under the heading "Who you will
+      // work with". A groupPage section with the same heading produced two <section> landmarks
+      // with the same accessible name on one page — axe `landmark-unique`, moderate, and a
+      // screen reader user hearing "Who you will work with, region" twice with different
+      // content in each. Caught by check:axe at Epic N. The roster is code, so its heading is
+      // code's to own; the CMS supplies the prose around it.
       section(2, 'verify', 'How to check us', 'prose',
         `${S} Placeholder. Company number, registered office and VAT position are in the footer of every page.`),
     ],
@@ -475,6 +480,36 @@ const ALL = [
  * check standing between fabricated case studies and a live site. Failing here is cheap;
  * finding out at launch is not.
  */
+/**
+ * **No document id may contain a dot, and this is not a style rule.**
+ *
+ * Sanity treats an id containing `.` as a *private* document: readable with a token, invisible
+ * to an unauthenticated query. The `drafts.` prefix is the familiar case; the behaviour is
+ * general.
+ *
+ * The first version of this script used `seed.service.…` and `seed.legal.privacy`. All 125
+ * documents wrote successfully, the script printed a correct count, and **every one of them was
+ * invisible to the site** — which reads with no token, because both datasets are public. The
+ * symptom was `/about`, `/approach` and all five `/legal/*` routes prerendering as 404s while
+ * the build exited 0.
+ *
+ * It is worse than a broken page. `check:launch` counts published seed documents with an
+ * unauthenticated query, and that count is the gate standing between fabricated case studies and
+ * a live site. Dotted ids would have made it report **0 published seed document(s)** in a dataset
+ * holding 125 of them — a green result from a check that could not see its subject, on the one
+ * check whose entire purpose is to see it.
+ */
+const dotted = ALL.filter((d) => d._id.includes('.'));
+if (dotted.length > 0) {
+  console.error(
+    `\nseed-content: ${dotted.length} document id(s) contain a dot. Sanity treats those as` +
+      '\nprivate documents: readable with a token, invisible to the unauthenticated reads the' +
+      '\nsite and check:launch both use. Use dashes.\n',
+  );
+  for (const d of dotted) console.error(`  ${d._id}`);
+  process.exit(1);
+}
+
 const mismarked = ALL.filter((d) => d._type !== 'testimonial' && d.isSeed !== true);
 if (mismarked.length > 0) {
   console.error(`\nseed-content: ${mismarked.length} document(s) are not marked isSeed: true\n`);
@@ -505,6 +540,36 @@ for (const [type, n] of Object.entries(counts).sort()) console.log(`  ${String(n
 console.log(
   `\n  ${testimonialDocs.length} testimonial(s) are REAL — verbatim Freelancer reviews, isSeed: false, sourceUrl set.` +
     `\n  Everything else is isSeed: true and [SEED]-marked. continuityExample cannot be seeded (N-05).\n`,
+);
+
+/**
+ * **Read it back the way the site reads it - with no token.**
+ *
+ * The guard above catches the known cause. This catches the class: anything that makes a written
+ * document unreadable by an unauthenticated client. Asking this process whether the write
+ * succeeded answers a question about this process; the site is a different reader, and the only
+ * way to establish what it will see is to be it.
+ *
+ * Same rule as `check:launch` reading the dataset from the served site's header rather than from
+ * its own environment (`M-P1-7`), and as `check-axe` asking the probe route whether Resend is
+ * configured rather than reading its own `process.env` (`A-08`). Ask the system.
+ */
+const publicRes = await fetch(
+  `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${DATASET}` +
+    `?query=${encodeURIComponent('count(*[_id in $ids])')}` +
+    `&$ids=${encodeURIComponent(JSON.stringify(ALL.map((d) => d._id)))}`,
+);
+const visible = (await publicRes.json()).result;
+if (visible !== ALL.length) {
+  console.error(
+    `\nseed-content: wrote ${ALL.length} document(s); an unauthenticated read sees ${visible}.` +
+      '\nThe site reads with no token, so anything invisible here is invisible to every route' +
+      '\nand to check:launch. Hard failure, not a warning.\n',
+  );
+  process.exit(1);
+}
+console.log(
+  `  ${visible} of ${ALL.length} confirmed visible to an UNAUTHENTICATED read - the way the site reads`,
 );
 
 rmSync('.next/cache/fetch-cache', { recursive: true, force: true });

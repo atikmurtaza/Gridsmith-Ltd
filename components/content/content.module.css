@@ -1,0 +1,225 @@
+/* CMS-driven content components. Tokens only; no colour literals.
+
+   Shared by all four route groups, so every rule here has to read correctly in four themes.
+   That is why nothing below names an accent directly except where a theme's own --accent is
+   the intended meaning: --accent resolves per theme, --accent-design does not. */
+
+/* --- Placeholder — FOUNDATION §7.7 -------------------------------------- */
+
+/* A drawn box, not an image. No request, no LCP candidate, correct reserved space.
+   The hatch is --line over --canvas-sunken: visible enough to read as "nothing here yet",
+   quiet enough that a grid of them is not a texture. */
+.placeholder {
+  width: 100%;
+  background-color: var(--canvas-sunken);
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--line) 0 1px,
+    transparent 1px 12px
+  );
+  border-block-end: var(--border-hairline) solid var(--line);
+}
+
+/* --- Cards, shared ------------------------------------------------------ */
+
+/* Card sets the hit area; this removes the underline the Link primitive would add and
+   keeps the accessible name on the heading text. A11Y-4: the overlay is Card's job. */
+.cardLink {
+  color: inherit;
+  text-decoration: none;
+}
+.cardLink:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+
+/* --- Work grid ---------------------------------------------------------- */
+
+.projectGrid,
+.serviceList,
+.postList,
+.testimonials,
+.testimonialsTwo {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-6);
+}
+
+.projectGrid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); }
+.serviceList { grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
+.postList    { grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
+.testimonials    { grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); }
+.testimonialsTwo { grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr)); }
+
+.projectCard { display: flex; flex-direction: column; gap: 0; padding: 0; overflow: hidden; }
+.projectBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+.projectMeta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+/* The one badge given accent treatment. Cross-division work is the best evidence the group
+   structure is real, so it is the fact worth spending the accent on. */
+.crossDivision {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  background: var(--accent);
+  padding: 0 var(--space-2);
+}
+.projectSummary { margin: 0; color: var(--ink); }
+.projectClient { margin: 0; font-size: var(--text-sm); color: var(--ink-subtle); }
+
+/* --- Services ----------------------------------------------------------- */
+
+.serviceCard { display: flex; flex-direction: column; gap: var(--space-3); }
+.serviceProblem { margin: 0; color: var(--ink-muted); }
+
+/* --- Price -------------------------------------------------------------- */
+
+.price { display: flex; flex-direction: column; gap: var(--space-1); margin-block-start: auto; }
+.priceLine {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-lg);
+  color: var(--ink);
+}
+.priceLead { font-size: var(--text-sm); color: var(--ink-muted); }
+.priceUnit { font-size: var(--text-sm); color: var(--ink-muted); }
+.priceVariables,
+.priceNote {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--ink-subtle);
+}
+
+/* --- Testimonials ------------------------------------------------------- */
+
+.testimonialCard { display: flex; }
+.testimonialFigure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  justify-content: space-between;
+}
+/* No decorative quote glyph. DESIGN.md's register is tactile brutalism; a 6rem curly quote
+   is the soft-UI tell it exists to avoid, and it also reads to a screen reader as nothing. */
+.quote { margin: 0; }
+.quote p { margin: 0; color: var(--ink); }
+.attribution {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block-start: var(--space-3);
+  border-block-start: var(--border-hairline) solid var(--line);
+}
+.attributionName { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink); }
+.attributionRole,
+.attributionProject {
+  font-size: var(--text-xs);
+  color: var(--ink-subtle);
+}
+.attributionSource { font-size: var(--text-xs); }
+
+/* --- Insights ----------------------------------------------------------- */
+
+.postCard { display: flex; flex-direction: column; gap: var(--space-2); }
+.postExcerpt { margin: 0; color: var(--ink-muted); }
+.postMeta { margin: 0; font-size: var(--text-sm); color: var(--ink-subtle); }
+
+/* --- Case study --------------------------------------------------------- */
+
+.caseHeader { display: flex; flex-direction: column; gap: var(--space-4); }
+.caseMeta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+.caseSections { display: flex; flex-direction: column; gap: var(--space-12); }
+.metrics {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: var(--space-6);
+}
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block-start: var(--space-3);
+  border-block-start: var(--border-hairline) solid var(--line-strong);
+}
+.metricValue { font-size: var(--text-xl); color: var(--ink); }
+.metricLabel { font-size: var(--text-sm); color: var(--ink-muted); }
+.metricContext { font-size: var(--text-xs); color: var(--ink-subtle); }
+
+/* --- Legal -------------------------------------------------------------- */
+
+/* A draft is announced, never hidden. The unapproved state is the loudest thing on the page
+   because publishing a draft as though it were reviewed is the failure being guarded against. */
+.legalStatus {
+  margin: 0;
+  padding: var(--space-4);
+  border: var(--border-hairline) solid var(--line-strong);
+  background: var(--canvas-sunken);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+.legalMeta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+.legalToc { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
+.legalTocNumber { font-family: var(--font-mono); color: var(--ink-subtle); }
+.legalClauses { display: flex; flex-direction: column; gap: var(--space-12); }
+.legalClause { display: flex; flex-direction: column; gap: var(--space-3); scroll-margin-block-start: var(--space-12); }
+.legalClauseNumber { font-family: var(--font-mono); color: var(--ink-subtle); }
+.legalBasis {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-subtle);
+}
+
+/* Print: the whole point of a legal page is that it can be kept. Chrome and navigation are
+   noise on paper; clause anchors and the version block are not. */
+@media print {
+  .legalToc { display: none; }
+  .legalClause { break-inside: avoid; }
+}
+
+/* --- Team --------------------------------------------------------------- */
+
+.team { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-6);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); }
+.teamCard { display: flex; flex-direction: column; gap: var(--space-3); }
+.teamRole { margin: 0; font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink-muted); }
+.teamBio { margin: 0; color: var(--ink); }
+
+/* --- FAQ ---------------------------------------------------------------- */
+
+.faqList { display: flex; flex-direction: column; gap: var(--space-6); }
+
+/* --- CTA band ----------------------------------------------------------- */
+
+.ctaBand { display: flex; flex-direction: column; align-items: center; gap: var(--space-6); text-align: center; }
+.ctaLede { margin: 0; max-width: var(--measure-narrow); color: var(--ink-muted); font-size: var(--text-lg); }

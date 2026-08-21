@@ -29,6 +29,20 @@ const ROUTES = [
   { path: '/design', status: 200 },
   { path: '/digital', status: 200 },
   { path: '/press', status: 200 },
+  // Epic N routes. Seven of the eight new master pages, chosen to cover every distinct
+  // template rather than every URL: a grid, a canonical case study, both `groupPage` layouts,
+  // the insights hub, a legal document and the one route with a form. The per-slug routes are
+  // represented by one instance each - 24 case studies share one template, and auditing all of
+  // them would multiply the run without adding a subject.
+  { path: '/work', status: 200 },
+  { path: '/work/brand-website-and-launch-book', status: 200 },
+  { path: '/about', status: 200 },
+  { path: '/approach', status: 200 },
+  { path: '/insights', status: 200 },
+  // The draft-status banner and the clause anchors are both here, and nowhere else.
+  { path: '/legal/privacy', status: 200 },
+  // The only master route with a client boundary besides the consent banner.
+  { path: '/contact', status: 200 },
   { path: '/_kitchen-sink', status: 200 },
   // Composed master components — a table and a numbered list, both of which are the shapes
   // that overflow at 375px if they are built wrong.

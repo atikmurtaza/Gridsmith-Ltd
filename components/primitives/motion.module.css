@@ -36,6 +36,17 @@
   inset-block-end: 0;
   z-index: 20;
   display: flex;
+  /* Two buttons plus the gap and both gutters exceed 375px once the labels are real, and the
+     bar then pushes the document to 415px — a sideways scroll on the narrowest supported
+     width, which is a Definition-of-Done failure rather than a cosmetic one. Wrapping is the
+     fix at the element every caller routes through; the alternative (shortening a label, or
+     raising the breakpoint) fixes one instance and leaves the next one to rediscover it.
+
+     Found at Epic N by `check:responsive` and confirmed **pre-existing** at HEAD by stashing
+     the session's changes and re-running against a clean build. The same overflow is what made
+     axe report `color-contrast` UNRESOLVED on that button: an element hanging off the viewport
+     is "partially obscured", so it was two symptoms of one defect. */
+  flex-wrap: wrap;
   gap: var(--space-3);
   padding: var(--space-3) var(--gutter);
   padding-block-end: max(var(--space-3), env(safe-area-inset-bottom));

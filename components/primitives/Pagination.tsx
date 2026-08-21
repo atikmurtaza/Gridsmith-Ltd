@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import styles from './content.module.css';
 
 /**
@@ -13,6 +12,26 @@ import styles from './content.module.css';
  * arrangement needed `display: contents` on the <li> to keep the two side by side, and
  * `display: contents` removes the element's box — with it, the `listitem` role, so
  * several browsers announced an <ol> of nothing. One item per <li>, no override needed.
+ */
+/**
+ * **Plain `<a>`, not `next/link` — and this was measured, not assumed.**
+ *
+ * `TECH-SPEC.md` §3 and §9 already require a full document load for navigation between route
+ * groups, and `Header`, `Footer` and `DivisionRouting` all say so in their own docstrings.
+ * The primitive layer was the last place still importing `next/link`, and because the import is
+ * at module scope, **every consumer paid for it whether or not the branch that used it ran** —
+ * `Link`'s external branch already returned a plain anchor and still dragged the runtime in.
+ *
+ * Measured at Epic N: the runtime is a 3,389 B gz shared chunk. With eight new routes using
+ * breadcrumbs and links it became a *shared* chunk rather than a per-page one and pushed
+ * `/_kitchen-sink` 0.04KB over its 8.6KB budget — a gate failure caused by re-chunking rather
+ * than by anything being added. `DivisionRouting` had already measured the other half of the
+ * cost on `/`: 33,531 B of RSC payload prefetched and discarded by the document load that
+ * followed.
+ *
+ * The site is fully static and every route is a file on disk. A soft navigation buys a fraction
+ * of a document load and costs a runtime plus a prefetch, on a programme whose homepage has ~80ms
+ * of LCP headroom. So: no client-side router in the primitive layer.
  */
 export function Pagination({
   current,
@@ -51,9 +70,9 @@ export function Pagination({
                   {page}
                 </span>
               ) : (
-                <Link className={styles.page} href={hrefFor(page)} aria-label={`Page ${page}`}>
+                <a className={styles.page} href={hrefFor(page)} aria-label={`Page ${page}`}>
                   {page}
-                </Link>
+                </a>
               )}
             </li>,
           ].filter(Boolean);

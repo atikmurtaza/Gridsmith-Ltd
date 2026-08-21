@@ -50,6 +50,20 @@ const ROUTES = [
   { path: '/design', status: 200 },
   { path: '/digital', status: 200 },
   { path: '/press', status: 200 },
+  // Epic N routes. Seven of the eight new master pages, chosen to cover every distinct
+  // template rather than every URL: a grid, a canonical case study, both `groupPage` layouts,
+  // the insights hub, a legal document and the one route with a form. The per-slug routes are
+  // represented by one instance each - 24 case studies share one template, and auditing all of
+  // them would multiply the run without adding a subject.
+  { path: '/work', status: 200 },
+  { path: '/work/brand-website-and-launch-book', status: 200 },
+  { path: '/about', status: 200 },
+  { path: '/approach', status: 200 },
+  { path: '/insights', status: 200 },
+  // The draft-status banner and the clause anchors are both here, and nowhere else.
+  { path: '/legal/privacy', status: 200 },
+  // The only master route with a client boundary besides the consent banner.
+  { path: '/contact', status: 200 },
   { path: '/_kitchen-sink', status: 200 },
   // Composed master components. Separate from the kitchen sink so the primitive-layer
   // measurement stays a measurement of primitives — see the page's own docstring.
@@ -147,7 +161,17 @@ const INCOMPLETE_ALLOWED = [
   // **One entry again from `A-11`, and it is a different question from the one above.**
   {
     rule: 'color-contrast',
-    routes: ['/', '/design', '/digital', '/press', '/_kitchen-sink', '/_master-sink', '/_gridsmith-404-probe'],
+    // Epic N's seven routes are here for exactly the reason the entry already gives: the
+    // banner is `position: fixed` in the shared layout, so every themed route reproduces it
+    // and none of them is a new question. They are enumerated rather than the route filter
+    // being widened to "any route", because the entry's whole value is that it matches on
+    // rule + route + exact node — a wildcard would let a genuinely new incomplete on
+    // `#gs-consent-heading` land inside it unread.
+    routes: [
+      '/', '/design', '/digital', '/press', '/_kitchen-sink', '/_master-sink', '/_gridsmith-404-probe',
+      '/work', '/work/brand-website-and-launch-book', '/about', '/approach', '/insights',
+      '/legal/privacy', '/contact',
+    ],
     target: '#gs-consent-heading',
     why:
       'The consent banner is position:fixed at the bottom edge, so at 375px its text rect ' +

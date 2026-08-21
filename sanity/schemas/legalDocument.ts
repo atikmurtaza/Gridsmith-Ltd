@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
+import { LEGAL_DOCUMENT_SLUGS } from '../../lib/legal/slugs.ts';
 
 /**
  * `L-01` — `master/SCHEMA.md` §"legalDocument".
@@ -19,7 +20,9 @@ import { defineArrayMember, defineField, defineType } from 'sanity';
  * clause anchors, so renumbering is a version bump plus a redirect for the old anchor, never
  * an edit.
  */
-const LEGAL_SLUGS = ['privacy', 'cookies', 'terms', 'client-terms', 'accessibility'] as const;
+// One list, imported. `/legal/[slug]` reads the same constant and must not import this
+// file — see `lib/legal/slugs.ts` for what happens when it does.
+const LEGAL_SLUGS = LEGAL_DOCUMENT_SLUGS;
 
 export const legalClause = defineType({
   name: 'legalClause',
@@ -82,5 +85,3 @@ export const legalDocument = defineType({
   ],
   preview: { select: { title: 'title', subtitle: 'version' } },
 });
-
-export const LEGAL_DOCUMENT_SLUGS = LEGAL_SLUGS;
