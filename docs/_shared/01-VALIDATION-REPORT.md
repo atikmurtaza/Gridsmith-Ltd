@@ -811,3 +811,25 @@ The review itself: **when a gate is added, re-read every exclusion against it.**
 sentence is the whole of the control, and it is worth exactly as much as the next person's
 willingness to do it — which is the accurate valuation, and better than a green check that
 implies more.
+
+### §16 addendum — `M-P2-37` closed, and what the accident actually was
+
+The `public/` exclusion is fixed, and the fix is wider than the exclusion: it is not that
+one tree was missing from a list, it is that **`check-service-role-key` had no notion of a
+served static asset at all.** Its three checks covered source and bundled output. A leak
+reaches a browser by one of two routes — the bundler inlines it, or a file containing it is
+returned verbatim — and only the first had a sweep.
+
+That is why removing `public` from `NOT_SOURCE` would not have fixed it. The gate's `SOURCE`
+regex is `ts|tsx|js|jsx|mjs|cjs`; `public/500.html` would still not have matched. **Two
+independent narrowings, either of which alone hid the tree.** The correct-by-accident
+verdict in the table above understated it: there were two accidents, and the sweep found one.
+
+The new sweep therefore carries no extension filter. The chunk sweep filters to `.js`
+because only scripts execute in a chunk directory; nothing analogous is true of a directory
+whose entire contents are addressable by URL. Filtering there would have reproduced the
+second accident inside the fix for the first.
+
+Proven in all three directions the rule requires: a shaped key in `public/leak-probe.js`
+fired one violation and exit 1; removing it returned clean and exit 0; emptying `public/`
+and then deleting it both fail loudly rather than reporting a clean sweep of nothing.
