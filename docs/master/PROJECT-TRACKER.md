@@ -91,6 +91,69 @@ HTTP/2 multiplexes over a single connection and has no 6-request limit, so the c
 cannot arise on the deployed site. The gate is measuring a property
 of **the harness**, not of the site — while asserting a budget about the site.
 
+### OUTCOME — remedy 1 applied, and it worked
+
+**`scripts/h2-proxy.mjs` now serves the mobile axis over HTTP/2. Atik's decision, 21 Aug:
+remedy 1 is the only one that makes the measurement true, because Vercel negotiates h2 and a
+budget measured over HTTP/1.1 asserts against a condition no visitor will meet. Ceilings
+unchanged.**
+
+Proof condition set by Atik: the straggler pattern must disappear entirely and mobile LCP must
+be unimodal across at least four runs. Four runs on `13ec197d` — one push, three dispatched to
+land on independent runners:
+
+| run | `/` | `/design` | `/digital` | `/press` | protocol | stylesheet last | within-run spread |
+|---|---|---|---|---|---|---|---|
+| `32506641509` | 1602 | 1601 | 1600 | 1617 | `h2`×192 | **0/12** | **21ms** |
+| `32506646580` | 1614 | 1611 | 1634 | 1627 | `h2`×180 | **0/12** | **40ms** |
+| `32506654994` | 1595 | 1588 | 1592 | 1602 | `h2`×180 | **0/12** | **21ms** |
+| `32506663378` | 1618 | 1615 | 1610 | 1624 | `h2`×180 | **0/12** | **23ms** |
+
+**Both conditions met.** Sixteen route medians across four runners fall in a single band of
+**1588–1634ms — 46ms wide**, against 461ms and two clusters before. The straggler was a
+stylesheet in **0 of 48** individual runs; it was 5/12 and 6/12 under HTTP/1.1. Every one of
+the ~180 requests per run negotiated `h2`, asserted by `lhci-report` rather than assumed.
+**The diagnosis was complete.**
+
+### The proxy adds no measurable latency, and the level still moved
+
+Worth separating, because the new band sits ~80ms above the old *fast* mode (1508–1542ms) and
+that could be read as proxy overhead. It is not:
+
+- **Document timing is unchanged** — `1→662ms` under h2 against `1→663ms` under HTTP/1.1. TLS
+  termination and the proxy hop cost nothing measurable.
+- **The last stylesheet lands later** — 1488ms under h2 against 1354ms in the old fast mode.
+  Under HTTP/1.1 the scripts were themselves queued behind the 6-connection limit and did not
+  start until ~1270ms, so the stylesheets had the pipe largely to themselves. Under h2 all 14
+  resources are multiplexed from ~640ms and **share the throttled bandwidth**, so CSS finishes
+  later while the page overall is no slower. **Production does exactly this.** The old fast
+  mode was not a truer number; it was the other half of an artefact.
+
+### The new finding — `/digital` does not meet its 1600ms budget
+
+Not noise, and not to be confused with the bimodality that has just been removed. With a
+within-run spread of 21–40ms, these are numbers that can be trusted, and they say:
+
+| route | ceiling | medians | verdict |
+|---|---|---|---|
+| `/` | 1800 | 1595–1618 | passes |
+| `/design` | 2000 | 1588–1615 | passes |
+| **`/digital`** | **1600** | **1592 / 1600 / 1610 / 1634** | **exceeds in 2 of 4** |
+| `/press` | 2000 | 1602–1627 | passes |
+
+Digital's is the tightest ceiling in the programme and it now sits **inside** the measurement
+band. **This is a budget question, not a harness one, and it is open.** Nothing has been
+adjusted: per the standing instruction the number stays until Atik decides. The honest options
+are to make `/digital` faster against a now-trustworthy measurement, or to re-derive the
+ceiling from it — but the second is the thing that was refused when the measurement could not
+be trusted, and it should not be waved through now merely because it can be.
+
+### Why remedies 2 and 3 were rejected — Atik, 21 Aug
+
+- **2 (cut the render-critical count)** changes shipped code to satisfy a harness artefact, and
+  costs a visible font tradeoff.
+- **3 (more runs)** buys unearned green from a bimodal distribution.
+
 ### The remedies, none of which relax a budget
 
 Not applied. Each is a decision, and two have real tradeoffs.
@@ -107,6 +170,30 @@ Not applied. Each is a decision, and two have real tradeoffs.
 **Do not raise `lcp` in `lighthouse/routes.cjs`.** Content is not the problem: nine blocks
 measure 1508–1542ms in fast mode against the ~1520ms empty-page floor recorded at CI run #7.
 **`N-01`'s premise is settled and it passed** — desktop perf is 1.00 on all four routes.
+
+---
+
+## 🔎 Beside `M-P1-10` — the artifact step that was green and uploaded nothing
+
+Found while building the evidence for `M-P1-10`, and the same class as everything else in this
+build — this time in the **CI configuration layer**, which had not produced one before.
+
+`actions/upload-artifact` defaults **`include-hidden-files` to false**. `.lighthouseci` is a
+dotfile directory, so the glob matched nothing. The action **warns** on an empty match rather
+than failing, so the step went **green** and the only evidence was an empty download. Nothing
+in the log said the reports were missing; the step name said they had been kept.
+
+**Caught by checking the subject, not the status** — the download was empty. Fixed with
+`include-hidden-files: true` and `if-no-files-found: error`, so the skip is now a hard failure.
+The first version of the step could not have distinguished *"the reports are here"* from
+*"there are no reports"*, which is precisely the defect it was added to investigate.
+
+A second instance in the same session, in the proof rather than the gate: the first
+deliberate-failure run of the new `h2` assertion reported a clean **exit 0** having skipped the
+block entirely, because the guard is scoped to `axis === 'mobile'` and the proof ran an axis
+named `mobile-h1proof`. **The proof measured nothing and looked like a pass.** Re-run under the
+real axis name it exited 1 as intended, and forcing the specimen's protocol to `h2` exited 0 —
+both branches, and the count moved (`http/1.1×180` → `h2×180`).
 
 ---
 
