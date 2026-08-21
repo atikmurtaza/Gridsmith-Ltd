@@ -2,6 +2,7 @@ import { companyDetails } from './companyDetails.ts';
 import { continuityExample, continuityRow } from './continuityExample.ts';
 import { coreDocumentTypes } from './documents.ts';
 import { groupPage, groupSection } from './groupPage.ts';
+import { legalClause, legalDocument } from './legalDocument.ts';
 import { objectTypes } from './objects.ts';
 
 /**
@@ -21,8 +22,10 @@ export const schemaTypes = [
   ...objectTypes,
   groupSection,
   continuityRow,
+  legalClause,
   ...coreDocumentTypes,
   groupPage,
   continuityExample,
+  legalDocument,
   companyDetails,
 ];

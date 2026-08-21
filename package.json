@@ -37,7 +37,8 @@
     "check:launch": "node --env-file-if-exists=.env.local scripts/check-launch-content.mjs",
     "check:schemas": "node scripts/check-schemas.mjs",
     "migrate": "node --env-file=.env.local scripts/migrate.mjs",
-    "check:rls": "node scripts/check-rls.mjs"
+    "check:rls": "node scripts/check-rls.mjs",
+    "seed": "node --env-file=.env.local scripts/seed-content.mjs"
   },
   "dependencies": {
     "@sanity/client": "^8.1.0",

@@ -161,6 +161,19 @@ export const testimonial = defineType({
     defineField({ name: 'project', type: 'reference', to: [{ type: 'project' }] }),
     defineField({ name: 'division', type: 'string', options: { list: DIVISIONS } }),
     defineField({ name: 'verified', type: 'boolean', initialValue: false }),
+    /**
+     * **Where the reader can go and check it themselves.** `verified` is an editor's
+     * assertion; these two are the reader's. The six testimonials on the site today are
+     * public Freelancer reviews reproduced verbatim, and a quote a visitor cannot trace back
+     * to its source is indistinguishable from one that was written in-house — which is the
+     * failure mode `PROJECT-RULES.md` §5 treats the same as invention.
+     *
+     * Not `required`: a testimonial given directly to Gridsmith by email has no public URL,
+     * and forcing one would push an editor to invent a plausible link.
+     */
+    defineField({ name: 'sourceUrl', type: 'url', description: 'Public page where this review can be read.' }),
+    defineField({ name: 'sourceLabel', type: 'string', description: 'e.g. "Freelancer.com verified review".' }),
+    defineField({ name: 'projectTitle', type: 'string', description: 'The engagement, as the source names it.' }),
     isSeed,
   ],
   preview: { select: { title: 'authorName', subtitle: 'authorCompany' } },

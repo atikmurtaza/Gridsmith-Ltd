@@ -2249,7 +2249,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| L-01 | `legalDocument` schema + clause anchors | P0 | 1d | A-06 | TODO | Dev | `solicitorApproved` gate |
+| L-01 | `legalDocument` schema + clause anchors | P0 | 1d | A-06 | **DONE** 21 Aug | Dev | Five slugs, not the spec's four — `client-terms` split out because `anchorId` is contract-facing. `legalClause.basis` added. Closed list proven in four directions. `SCHEMA.md` corrected in the same commit |
 | L-02 | Legal page template, TOC, print CSS | P0 | 1d | L-01 | TODO | Dev | Stable `#anchor` per clause |
 | L-03 | Load four drafts from `_legal/` | P0 | 0.5d | L-02 | TODO | Content | To staging |
 | L-04 | **Solicitor review of all documents** | P0 | — | L-03 | TODO | Atik + solicitor | **HARD GATE — send week 1** |
@@ -2275,10 +2275,10 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| S-01 | Seed script, all volumes | P0 | 2d | A-12 | TODO | Dev | Per FOUNDATION §7 |
+| S-01 | Seed script, all volumes | P0 | 2d | A-12 | **DONE** 21 Aug | Dev | `scripts/seed-content.mjs` — 125 documents into `development`. 30 services, 24 projects to §7's distribution, 45 FAQs, 9 posts, 4 team, 2 groupPages, 5 legal docs. **6 testimonials are REAL** (verbatim Freelancer reviews, `isSeed: false`, `sourceUrl`). `continuityExample` cannot be seeded — `verified` is hard-true |
 | S-02 | 24 seed projects incl. 3 cross-division, 3 confidential | P0 | 1d | S-01 | TODO | Content | |
-| S-03 | Seed pricing with `INDICATIVE` badges | P0 | 0.5d | S-01 | TODO | Dev | No unbadged figure |
-| S-03a | **Seed metrics render `[SEED] 00%`** | P0 | 0.5d | S-01 | TODO | Dev | Zeroed digits, never a plausible figure. Per FOUNDATION §7.6 |
+| S-03 | Seed pricing with `INDICATIVE` badges | P0 | 0.5d | S-01 | **DONE (data)** 21 Aug | Dev | Every seed `pricingBlock` is `fromAmount: 0` with an `INDICATIVE` note. `fromAmount` is a **number** and cannot hold a `[SEED]` marker, so the zero carries the honesty and the note carries the marker. The render-side badge is the division pricing rows |
+| S-03a | **Seed metrics render `[SEED] 00%`** | P0 | 0.5d | S-01 | **DONE (data)** 21 Aug | Dev | Every seeded `metric.value` is the literal `[SEED] 00%`. `metric.value` is a string precisely so this is possible — SCHEMA-CORE §2 |
 | S-04 | Abstract placeholder imagery | P0 | 1d | S-01 | TODO | Design | **No fabricated drawings/covers/screenshots** |
 | S-05 | `?seed=hide` + env flag | P1 | 0.5d | S-01 | TODO | Dev | Demo mode |
 | S-06 | Production seed check verified | P0 | 0.5d | A-12 | TODO | Dev | Deliberate failure test |

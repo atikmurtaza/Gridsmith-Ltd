@@ -17,7 +17,7 @@
  */
 import { rmSync } from 'node:fs';
 import { createClient } from '@sanity/client';
-import { SANITY_API_VERSION, SANITY_PROJECT_ID } from '../sanity/env.ts';
+import { SANITY_API_VERSION, SANITY_PROJECT_ID } from '../sanity/project.ts';
 
 const DATASET = 'development';
 
@@ -40,7 +40,7 @@ const doc = {
   registeredOffice: '30 Briarfield Road, Farnworth, Bolton, BL4 0HD',
   // Same as the registered office, so the field stays empty and the footer says it once.
   tradingAddress: '',
-  vatNumber: '[SEED] GB000000000',
+  vatNumber: '[SEED] GB123456789',
   // **Real, and no longer a placeholder.** The footer's contact line is what satisfies
   // e-commerce regs reg. 6(1)(c) — contact details including an email address that make it
   // possible to reach the provider rapidly — so a `[SEED]` value there was a legal

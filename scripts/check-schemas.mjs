@@ -39,6 +39,7 @@ const EXPECTED_OBJECTS = [
   'processStep',
   'groupSection',
   'continuityRow',
+  'legalClause',
 ];
 const EXPECTED_DOCUMENTS = [
   'service',
@@ -49,6 +50,7 @@ const EXPECTED_DOCUMENTS = [
   'teamMember',
   'groupPage',
   'continuityExample',
+  'legalDocument',
   'companyDetails',
 ];
 
@@ -73,6 +75,9 @@ const CLOSED_LISTS = [
   // proved the rule was there, not what it accepted, and widening the slug set passed silently.
   ['groupPage', 'slug', ['approach', 'about'], (v) => ({ current: v })],
   ['groupSection', 'layout', ['prose', 'two-column', 'sunken-plain', 'process', 'continuity'], (v) => v],
+  // `L-01`. Same shape and same reason as `groupPage.slug`: a slug with no route is a
+  // published document that renders nowhere, silently.
+  ['legalDocument', 'slug', ['privacy', 'cookies', 'terms', 'client-terms', 'accessibility'], (v) => ({ current: v })],
 ];
 
 /**

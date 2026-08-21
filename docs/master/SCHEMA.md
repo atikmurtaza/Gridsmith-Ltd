@@ -125,6 +125,18 @@ legalClause {
 }
 ```
 
+**Deviation, recorded at `L-01`: the slug set is five, not four.** The spec listed `terms |
+privacy | cookies | accessibility`, and none of those is the contract a client signs. A fifth
+slug `client-terms` carries the engagement terms. They are separated rather than folded into
+`terms` because `anchorId` is contract-facing — the paragraph below requires a version bump and
+a redirect to renumber one — and a consumer-facing website notice sharing an anchor space with a
+B2B contract guarantees a collision. `check:schemas` holds the five as a closed list, proven in
+all four directions (widened, narrowed, permissive rule, absent rule).
+
+`legalClause` also gains a `basis` string: the instrument the clause implements. `CLAUDE.md` #2
+forbids invented clause references, and naming the instrument per clause makes it visible which
+clauses are required by law and which are there because someone liked them.
+
 `solicitorApproved` defaults false and gates publication in production: the build check treats an unapproved legal document the same way it treats seed content. Contracts and the site both cite `anchorId`, so clause numbering must not drift — renumbering requires a version bump and a redirect for the old anchor.
 
 ### `companyDetails` — singleton
