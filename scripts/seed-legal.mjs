@@ -29,6 +29,21 @@
 const S = '[SEED - SOLICITOR REVIEW REQUIRED]';
 const D = '[DECISION]';
 
+/**
+ * Vercel's serverless function region for this project, as a fact rather than an assumption.
+ *
+ * MEASURED, not read from Vercel's docs: `x-vercel-id` on a response served through a Vercel
+ * function reads `iad1:iad1::...` — edge and function both `iad1`, Washington D.C., USA. The
+ * *edge* is global and is not a single region: the same header reads `lhr1` (London) when the
+ * request originates in the UK, which is why the clause names the edge and the function region
+ * separately rather than collapsing them into one place name.
+ *
+ * This is the processor's LOCATION and nothing more. Whether an Art. 46 mechanism is needed
+ * and which one applies is a legal question for the L-01 review and is marked `[DECISION]` in
+ * 4.2. Do not infer the answer from this constant.
+ */
+const VERCEL_FUNCTION_REGION = 'iad1 (Washington, D.C., United States)';
+
 const blocks = (prefix, paragraphs) =>
   paragraphs.map((text, i) => ({
     _type: 'block',
@@ -99,13 +114,13 @@ const privacy = doc(
       'Sanity (content management) — stores the website content, and stores no enquiry data.',
       'Supabase (database) — stores enquiries submitted through the form.',
       'Resend (transactional email) — delivers the notification email that tells us an enquiry has arrived.',
-      `${D} Hosting — the site is deployed to a managed Node host. Two providers appear in this repository's configuration: Vercel and Hostinger. The tracker records Hostinger Business as the hosting decision; the final answer must be stated here before this policy is published, because it determines which processor and which region are named.`,
+      `Hosting — Vercel Inc. The site is built and served by Vercel. Static content is delivered from Vercel's global edge network, which serves each visitor from the nearest location; serverless functions for this project run in Vercel's ${VERCEL_FUNCTION_REGION} region. ${D} The Art. 46 transfer mechanism relied on for Vercel must be confirmed by the solicitor review at L-01 and named here before publication — see 4.2.`,
       'Google Analytics 4 (analytics) — only after you consent.',
       'PostHog (product analytics) — only after you consent, and configured against PostHog\'s EU host.',
       'Each is engaged under that provider\'s standard data processing terms. Article 28(3) requires a written contract; the review at L-04 should confirm each provider\'s terms have been accepted in Gridsmith\'s name and are on file.',
     ]],
     ['4.2', 'International transfers', 'UK GDPR Art. 44–46', [
-      `${D} Some of the providers above operate outside the UK. PostHog is configured against its EU host specifically so that product analytics data stays in the EU. For the remainder, the transfer mechanism is the provider's standard contractual clauses or the UK Addendum, and the specific mechanism relied on for each provider must be confirmed and stated here before publication.`,
+      `${D} Some of the providers above operate outside the UK. PostHog is configured against its EU host specifically so that product analytics data stays in the EU. Vercel serves this site from a global edge network and runs this project's serverless functions in the United States, so a transfer mechanism is required for it. For Vercel and for the remainder, the mechanism is the provider's standard contractual clauses or the UK Addendum, and the specific mechanism relied on for each provider must be confirmed and stated here before publication.`,
     ]],
     ['5.1', 'How long we keep it', 'UK GDPR Art. 5(1)(e) and Art. 13(2)(a)', [
       `${D} Enquiries that do not become work: kept for 24 months from the last contact, then deleted. Rationale: enquiries commonly return within a project cycle, and 24 months is short enough to be defensible and long enough to be useful.`,

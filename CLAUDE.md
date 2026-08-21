@@ -232,7 +232,7 @@ Read the workstream's own files before touching its code.
   **This shape recurs wherever the subject is remote**, and two open items have it by
   construction. `M-P1-3` must read the **live database**, not the migrations — `A-07`'s leak
   existed in the running system while the migration read correctly, so a source check cannot
-  see the class that matters. And anything CI eventually asserts about the Hostinger
+  see the class that matters. And anything CI eventually asserts about the Vercel
   deployment — env vars set, dataset selected, mail authenticated — is an assertion about a
   machine CI does not run on, and must be answered by that machine rather than inferred from
   the workflow file.

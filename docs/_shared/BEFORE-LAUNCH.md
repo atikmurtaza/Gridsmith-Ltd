@@ -41,7 +41,7 @@ it still lists them as blockers while the rows they block are marked DONE. Belie
 | | What changed |
 |---|---|
 | **Item 13** — `NEXT_PUBLIC_SANITY_DATASET` | **Set, and set too early.** Vercel's Production environment has it at `production`, and the production dataset is empty, so the first production deploy failed at build with *"No companyDetails document in dataset `production`"*. That is `check:launch`'s guard working correctly on the first occasion it could. This item's own warning is the fix: *"Do not set it to `production` until the production dataset actually has content in it."* **Either finish item 16 or set it back to `development`.** Do not point Production at `development` and then launch. |
-| **Item 11** — decide the host | **The facts moved underneath the decision.** The tracker records **Hostinger Business**, but every deployment in the programme is on **Vercel**, and Vercel is what built, failed and serves today. The privacy policy has to name the *actual* processor and region, so this is now a contradiction to settle rather than a preference to state. |
+| **Item 11** — decide the host | **Closed. It was already decided — this item was stale on the day it was written.** The tracker moved hosting to **Vercel on 20 August**, a day before this list restated Hostinger as the decision; item 11 summarised another document instead of reading it. The privacy policy now names **Vercel Inc.**, its global edge network, and the measured serverless region **`iad1` (Washington, D.C., US)**. **Not closed and not mine:** the Art. 46 transfer mechanism for a US processor, still `[DECISION]` in clause 4.2 and part of the solicitor review at item 1. |
 | **"All 21 gates are green"** in *What is already done* | **No longer true as written, and it never had been tested on `main`.** 21 gates is right. Today `/digital` exceeds its 1600ms mobile LCP ceiling in 2 runs of 4 — a real result against a measurement that can now be trusted, not flakiness. See `M-P1-10`; the decision is yours and nothing has been adjusted. |
 
 ### New — on no list before, and both block production
@@ -273,17 +273,27 @@ them then, not before.
 
 ## Deployment — do these on the day, in this order
 
-### 11. Decide the host, and say so in the privacy policy
+### 11. ~~Decide the host, and say so in the privacy policy~~ — CLOSED 21 Aug
 
-- **Status:** Blocks production
+- **Status:** ~~Blocks production~~ **Done, except the transfer mechanism — see below**
 - **Where:** clause 4.1 of the privacy policy
-- **Your time:** the decision you have already half made
 - **Tracker:** the tracker's Hosting section
 
-Two providers appear in this repository's configuration — Vercel and Hostinger — and the tracker
-records **Hostinger Business** as the decision. The privacy policy has to name the actual
-processor and its region, so this has to be settled before it is published. It is flagged
-`[DECISION]` in the draft.
+**This item was stale on the day it was written.** It said the tracker recorded **Hostinger
+Business**; the tracker had moved hosting to **Vercel on 20 August**, the day before. The item
+summarised another document rather than reading it — the same class the tracker logs under
+*"a row's summary of an external requirement is not the requirement"*.
+
+The host is **Vercel**, and it is not a preference: every deployment in the programme is on
+Vercel, the project is `gridsmith-ltd` under `atikmurtazas-projects`, and Vercel is what built,
+failed and serves today. Clause 4.1 now names **Vercel Inc.**, its global edge network, and the
+serverless region **`iad1` (Washington, D.C., United States)** — measured from `x-vercel-id`,
+not read from Vercel's documentation.
+
+**What is still yours, and is a solicitor question, not a hosting one:** Vercel runs this
+project's functions in the **United States**, so clause 4.2 needs an Art. 46 transfer mechanism
+named for it. That is still marked `[DECISION]` in the draft and belongs to the review at
+**item 1**. Naming the processor was a fact; choosing the mechanism is not.
 
 ### 12. Set Node to 24 on the host
 

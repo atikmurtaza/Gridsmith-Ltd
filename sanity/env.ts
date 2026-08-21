@@ -9,7 +9,7 @@
  *
  * **There is no default, and that is `M-P1-2`'s fix — `A-12`.** It used to fall back to
  * `development`, which is right in CI and wrong on a host: an unset variable on the
- * Hostinger deployment would have served `[SEED] GB000000000` as the company's VAT
+ * Vercel deployment would have served `[SEED] GB000000000` as the company's VAT
  * registration number on every page. A false VAT statement on a public website is precisely
  * what `check:launch`'s production tier exists to prevent, and a silent fallback defeated it
  * through an environment CI cannot see.

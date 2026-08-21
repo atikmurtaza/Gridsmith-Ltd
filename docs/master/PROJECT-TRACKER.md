@@ -142,7 +142,8 @@ within-run spread of 21–40ms, these are numbers that can be trusted, and they 
 | `/press` | 2000 | 1602–1627 | passes |
 
 Digital's is the tightest ceiling in the programme and it now sits **inside** the measurement
-band. **This is a budget question, not a harness one, and it is open.** Nothing has been
+band. **Resolved at `M-P1-11`:** 1600 turned out never to have been measured, and the ceiling
+has been re-derived to **1750** from these same runs. It remains the tightest in the programme. Nothing has been
 adjusted: per the standing instruction the number stays until Atik decides. The honest options
 are to make `/digital` faster against a now-trustworthy measurement, or to re-derive the
 ceiling from it — but the second is the thing that was refused when the measurement could not
@@ -170,6 +171,61 @@ Not applied. Each is a decision, and two have real tradeoffs.
 **Do not raise `lcp` in `lighthouse/routes.cjs`.** Content is not the problem: nine blocks
 measure 1508–1542ms in fast mode against the ~1520ms empty-page floor recorded at CI run #7.
 **`N-01`'s premise is settled and it passed** — desktop perf is 1.00 on all four routes.
+
+---
+
+## 📉 `M-P1-11` — `/digital`'s 1600ms LCP ceiling was never measured
+
+**Status: FIXED 21 August 2026 by re-derivation. The fifth false premise in the specs, and the
+first that was optimistic rather than pessimistic.**
+
+### It was a projection, and the evidence is a date
+
+`digital/TECH-SPEC.md` §5 gives the budget and its basis in one line: **`LCP ≤ 1.6s`,
+*"Stricter than the shared 2.0s"***. That is a relative choice against another number, not a
+measurement of anything.
+
+It entered the repository on **7 August 2026** in `7db41254`, the original specification
+bundle. The first Lighthouse configuration of any kind arrived on **11 August** in `839d3eb7`.
+**The number predates the ability to measure it by four days**, and predates the application it
+describes.
+
+**And it was later captioned as measured when it was not.** `lighthouse/routes.cjs` carried
+*"MEASURED, not provisional. Confirmed against CI run #7"* immediately above it. Run #7
+measured the **empty-page floor** at ~1520ms — it established what an empty page costs, not
+that 1600 was the right ceiling. The confirmation attached itself to the nearest number. Same
+shape as `A-12`: a claim true of something adjacent to what it appears to assert.
+
+### Why it belongs in the log, and the one correction it forces
+
+`M-08`, `M-06` and `A-11` were projections treated as evidence, and the log generalised that
+*"nobody projects a number for something they expect to be cheap, so the errors accumulate one
+way"* — all three were **pessimistic** and over-reserved.
+
+**1600 breaks that.** It was **optimistic**: it under-allowed, and the cost was not slack
+nobody spent but a gate that could not be met. The generalisation came from three instances
+that happened to share a direction. **The durable half is "projected, not measured"; the
+direction was never load-bearing** — and an optimistic projection is the harder of the two to
+catch, because it arrives as a failing build that looks like a regression in the code.
+
+### The re-derivation, and what it is not
+
+1600 → **1750**, derived in `lighthouse/routes.cjs` from 48 measurements over four runs on
+independent runners, all over HTTP/2. `/digital`'s worst observed **median** — the statistic
+the gate actually asserts — is 1634; the between-run spread of medians is 46ms; 1750 is
+1634 + ~2.5× that spread. It is a **variance allowance, not a content allowance**. The full
+basis, and its limits, sit next to the number so they can be checked rather than taken.
+
+**`/`, `/design` and `/press` were not touched and are still projections.** They pass with
+182–385ms of headroom against their worst observed medians, so nothing forces the question —
+but their passing is not evidence that they were derived, and this section is the standing
+reason to doubt them.
+
+**This is a re-derivation, not a relaxation, and `routes.cjs` records the distinction at length
+so it cannot be cited as precedent for the other.** The difference is the measurement, not the
+direction the number moved. The same session **refused** to move this ceiling twice while the
+measurement was bimodal, diagnosed and removed the artefact (`M-P1-10`), and only then
+recomputed. **Fix the measurement, then derive the number — never the reverse.**
 
 ---
 
@@ -609,7 +665,7 @@ once, or true somewhere, and were never re-checked when that changed.**
 
 | Class | Instances | One line |
 |---|---|---|
-| **Projected number treated as evidence — and always pessimistic** | `M-08` (~29KB of font waste that did not exist), `M-06` (11.7KB projected, 0.5KB actual), `A-11` (8.0KB reserved, 2.0KB actual) | nobody projects a number for something they expect to be cheap, so the errors accumulate one way — and each was *spent* before anyone checked it. **The standing instruction below** |
+| **Projected number treated as evidence** — ~~and always pessimistic~~ | `M-08` (~29KB of font waste that did not exist), `M-06` (11.7KB projected, 0.5KB actual), `A-11` (8.0KB reserved, 2.0KB actual), **`M-P1-11`** (`/digital`'s 1600ms LCP ceiling — written 7 Aug, four days before any Lighthouse config existed, then captioned *"MEASURED"* over a run that had measured the empty-page floor instead) | each was *spent* before anyone checked it. **"Always pessimistic" is withdrawn:** it generalised from three instances that shared a direction, and `M-P1-11` is **optimistic** — it under-allowed, so it arrived as a failing build rather than as slack nobody spends, which is harder to catch, not easier. The durable half is **projected, not measured**. **The standing instruction below** |
 | **True only of its current scope** | `V3` — `--accent-digital`/`--accent-press` claimed `role: 'body'` | the claim was true of the only surface the token existed on (master's white canvas, 5.09:1) and was never true of its *use*. It became a failure the moment the token existed on a dark canvas — 2.01:1 — **and widening the scope is what surfaced it, not review**. A role is a claim about every context a token can appear in, not about the ones it happens to appear in today |
 | **Two adjacent properties, one gated** | `V1` — storage asserted, state unasserted | zero cookies and zero requests said nothing about what the consent state *is* while the choice is unmade. A banner could apply `granted` defaults, store nothing, request nothing, and pass every prior assertion |
 | **A row's summary of an external requirement is not the requirement** | `M-04` | the row said "Companies Act". The VAT line's basis is the E-Commerce Regs 2002 reg. 6(1)(g); reg. 25(2)(a)'s place-of-registration was omitted entirely; and reg. 6(1)(c)'s rapid-contact route was in no row at all |
@@ -2920,7 +2976,7 @@ decision awaiting the owner, not work awaiting a session.
 | Epic M | ~~**`M-P2-33`**~~ | **FIXED 21 Aug, confirmed on CI (run `32434865630`): `check-axe` now runs to completion and reports a structured result instead of aborting.** **`check-axe` had three puppeteer launches, not one.** The `--no-sandbox` / `--disable-dev-shm-usage` flags were added to its main launch and to `check-responsive` when the runner first rejected them, and the docstring recording that said *"the four browser launch sites"* — counting the two Lighthouse configs and the two gates, and missing that one of those gates launches Chrome three times. The two analytics-grant launches were written later as bare `puppeteer.launch()` and inherited nothing. **That is the one-sentence difference between the two launches: the first was guarded, the later ones were added afterwards and were not.** It is why the 28 route/viewport audits all reported clean and the process then aborted seconds later in the same file — the clean results were evidence for the wrong conclusion. Fixed at the class: `scripts/browser-launch.mjs` is now the only place Chrome is launched from, and all four sites import it. Same shape as `M-P2-35` — a decision that was complete when it was made and silently incomplete once new call sites arrived |
 | Epic M | **`M-P2-33` (superseded)** | **`check-axe` crashes at a puppeteer launch on `ubuntu-latest`: `FATAL ... No usable sandbox!`.** Pure environment difference — the 28 route/viewport audits and the `_kitchen-sink`, `_master-sink`, `_gridsmith-404-probe` and `gridsmith-error-probe` specimens all ran and reported clean first; the crash is a **later** Chrome launch on a runner whose unprivileged user namespaces are restricted by AppArmor. Needs `--no-sandbox` for that launch, or a launch that reuses the first browser. Nothing about the site is implicated. `check:launch` and `check:responsive`, which run beside it under `with-server`, both passed |
 | Epic M | ~~**`M-P2-34`**~~ | **`actions/checkout@v5` defaults to `fetch-depth: 1`, and `check:claims` needs history.** All 34 ledger rows failed as *"not an ancestor of HEAD"* on CI's first real run — the gate asks git a question a shallow clone cannot answer. Environment difference, not a bad ledger; fixed by pinning `fetch-depth: 0`. Recorded because it is the general shape: **a gate that reads git is asserting about a repository CI only partially has** |
-| Epic M | ~~**`M-P1-2`**~~ | **FIXED 18 Aug at `A-12`, by remedy (a) — the preferred one.** `NEXT_PUBLIC_SANITY_DATASET` has no default; an unset variable throws at module load, so it is a build error rather than a silent fallback to `development`. That is the only remedy with no environment it cannot see. `.env.example`, `ci.yml` and `SETUP.md` all set it explicitly, and **it must be set in the Hostinger environment before the first deploy** |
+| Epic M | ~~**`M-P1-2`**~~ | **FIXED 18 Aug at `A-12`, by remedy (a) — the preferred one.** `NEXT_PUBLIC_SANITY_DATASET` has no default; an unset variable throws at module load, so it is a build error rather than a silent fallback to `development`. That is the only remedy with no environment it cannot see. `.env.example`, `ci.yml` and `SETUP.md` all set it explicitly, and **it must be set in the platform environment before the first deploy** (Vercel; set per target) |
 | Epic M | ~~**`M-P1-4`**~~ | **DONE 19 Aug — brought forward because `Q-M21` blocks Epic N.** All 20 gates audited. **Six checks across five gates could not be made to report zero**; all six fixed and re-proved. Full table below |
 | Epic M | **`M-P1-3`** | **P1. Nothing checks the live database's RLS posture.** `check:rls` reads the committed migrations and says so itself — it asserts what the repository declares. **`A-07` is the reason this is P1 rather than P2: the leak existed in the running system while the migration read correctly.** `v_lead_funnel` was written exactly as `SCHEMA-CORE.md` §4 specifies and served lead aggregates to `anon`, because the cause was a Postgres default and a Supabase grant, neither of which appears in SQL a reviewer reads. A source check cannot see that class at all, and it is the class that matters: drift added in the dashboard, a grant restored, a view recreated. **The shape is already proven by hand** — query as `anon` with the publishable key, assert `leads` returns `[]` and every view 401s. It needs a credential CI must not hold, so it belongs after deploy, in the environment that already has one. **The same job should prune `gridsmith-lead-probe`'s rows (`M-P2-14`).** |
 | Epic M | **`M-P1-1`** | **P1, accessibility, Level A.** A server-render crash serves `<html id="__next_error__">` with no `lang`, no `<h1>` and no `<main>`; `global-error` renders only after hydration, so a visitor without JS gets the bare shell. Measured at `M-07` against a committed probe and characterised by `check-axe`. **No app-level fix exists** — Next requires `global-error` to be a Client Component and a segment `error.tsx` was tried and does not change the served HTML. The remedy is architectural: an edge- or platform-served static error document, or a recorded acceptance. **Owner's decision — see `M-07` above** |
@@ -3113,7 +3169,7 @@ Three things follow, and each is recorded rather than fixed:
 | ~~Q-M13~~ | **RESOLVED.** Design `--ink-subtle` is `#818180` at **5.01:1** — the first value on the theme's neutral ramp clearing 5.0:1, chosen over the 4.55:1 minimum so a later `--canvas` adjustment cannot push it back under AA. `--line-strong` recorded as decorative-only in `design/DESIGN.md` §5; Button (secondary) moved to `--ink-subtle` because its resting border is what identifies it as a button | Atik | ~~Design theme~~ applied |
 | ~~Q-M14~~ | **RESOLVED — CLAUDE.md was the file at fault, not FOUNDATION.** Both shadow tokens stay. The line now reads *"Depth comes primarily from 1px borders and background steps. `--shadow-2` is a hard ceiling; nothing beyond it."* Press book cards use `--shadow-1` by spec, and the Design and Digital rules already cap at `--shadow-2` | Atik | ~~A-05~~ |
 | ~~Q-M11~~ | **PARTLY REOPENED — the greenfield decision was over-broad.** The build is greenfield: nothing migrates, no content, no functionality, no database, and there is no cutover. But **the existing Press site is live and trading and comes down at launch**, so it has indexed URLs that 404 on day one unless mapped. Five of the six findings in `_shared/01-VALIDATION-REPORT.md` §10 stand; finding #3 ("nothing to crawl") is wrong for Press and is corrected there. Tracked as `G-08` (P1) | Atik | `G-08` |
-| ~~**Q-M19**~~ | **RESOLVED 19 Aug 2026.** Development GA4 and PostHog ids in `.env.local`; PostHog on **EU cloud**, asserted rather than defaulted. Live ids go in the Hostinger environment at launch — same variable names, different values per environment, the pattern `NEXT_PUBLIC_SANITY_DATASET` already uses. CI uses shaped placeholders, so the grant path is exercised there with no credential in the repository |
+| ~~**Q-M19**~~ | **RESOLVED 19 Aug 2026.** Development GA4 and PostHog ids in `.env.local`; PostHog on **EU cloud**, asserted rather than defaulted. Live ids go in the Vercel environment at launch (`BEFORE-LAUNCH` item 22) — same variable names, different values per environment, the pattern `NEXT_PUBLIC_SANITY_DATASET` already uses. CI uses shaped placeholders, so the grant path is exercised there with no credential in the repository |
 | ~~**Q-M20**~~ | **RESOLVED for development, 19 Aug 2026.** `RESEND_API_KEY` in `.env.local`; sender `onboarding@resend.dev`, recipient `contact@gridsmith.uk`. Slack deliberately unused. **Two constraints carried to deployment, both recorded as constraints rather than gaps:** the sender becomes `notifications@gridsmith.uk` when DNS is done, and Resend's SPF `include:` must be **merged into the existing record** — `gridsmith.uk` already has one serving the live site's mail, and a second is a `permerror` under RFC 7208 §4.5 that silently breaks it | Atik | deployment |
 | ~~**Q-M21**~~ | **RESOLVED 19 Aug, for blocks 1–2.** Copy approved by the founder and recorded in `N-01 block 1` below. **And the homepage is hardcoded, not CMS-driven** — it changes rarely, every block is bespoke, and `groupPage` staying closed to `approach` and `about` is correct rather than a gap. **No homepage schema is to be built.** Blocks 3–9 still need approved copy, which is a copy question, not a schema one | Atik | N-01 |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |

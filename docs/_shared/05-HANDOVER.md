@@ -73,7 +73,7 @@ enforcement). `G7` closed the epic-identifier collisions. **Gates went 17 → 20
 | ~~`A-08`~~ | **Insert leg done 19 Aug, verified live through the runtime.** Inserts as `anon` so RLS is exercised rather than bypassed; `Prefer: return=minimal` is mandatory and asserted by status code. **Notifications done and verified live 19 Aug** — a real send, in `after()` so it never blocks the response (56ms vs 224ms measured). **Two deployment constraints:** the dev sender only delivers to the Resend account owner, so a green run is not deliverability; and the SPF `include:` must be **merged** into `gridsmith.uk`'s existing record — a second record is a `permerror` that breaks the live mail |
 | ~~`A-09`'s grant path~~ | **Done 19 Aug.** `Q-M19` resolved. Permanent subject: nothing before a choice, a request to each provider after Accept, **PostHog on an EU host**, nothing after Reject |
 | **`M-P1-3`** | **a post-deploy job.** Nothing checks the *live* RLS posture — `check:rls` reads migrations. Promoted from P2 because `A-07`'s leak existed live while the migration read correctly, so a source check cannot see the class that matters. The shape is proven by hand; it needs a credential CI must not hold |
-| **`M-P1-1`** | **a decision.** The 500 serves Next's `__next_error__` shell with no `lang` — WCAG 3.1.1 **Level A**, on every server-side crash. No app-level fix exists; Hostinger being managed hosting may rule out the platform-served remedy |
+| **`M-P1-1`** | **a decision.** The 500 serves Next's `__next_error__` shell with no `lang` — WCAG 3.1.1 **Level A**, on every server-side crash. No app-level fix exists. **The Hostinger framing here is superseded** — hosting moved to Vercel on 20 Aug, and the platform-served remedy was then tested on Vercel and did not work either (`M-P1-1`) |
 | The Studio's CORS origin | an interactive `npx sanity login` — `SETUP.md` has the command |
 | **The screen-reader pass** | a human with NVDA or VoiceOver, over `M-02`, `M-03`, `M-04` and the consent banner. **It never happened** — it was placed at "the `M-06` chrome checkpoint" and `M-06` turned out to be a measurement plus a build. **`M-02` stays un-DONE until it does.** The gates cover focus order, target, paint, landmarks and roles; they do not cover announcement, and no lab check does |
 
@@ -93,7 +93,7 @@ applies to a row's summary of anything external: **check the source, not the sum
 a hand-maintained claim about a hand-maintained list. Enumerated in the close-out.
 
 **Also read `master/PROJECT-TRACKER.md` § Hosting before deploying anything.** Two facts bite
-immediately: `check:node` runs on the host via `preinstall`, so **Hostinger's Node must be set
+immediately: `check:node` runs on the host via `preinstall`, so **the platform's Node must be set
 to 24** or every deploy fails at install; and **`NEXT_PUBLIC_SANITY_DATASET` must be set in the
 platform environment** — it has no default, so an unset variable is now a build error rather
 than a site serving seed content.
@@ -244,6 +244,11 @@ chunks, so it runs in `verify:build`, after the build, not in `verify:static`.
 > still PENDING** — `M-06` turned out to be a measurement plus this build rather than a chrome
 > pass, so `M-02`, `M-03`, `M-04` and now the banner all still need one human pass with NVDA
 > or VoiceOver. Do not mark `M-02` done until it happens.
+>
+> **⚠ SUPERSEDED 20 Aug — hosting is Vercel, not Hostinger. The paragraph below is the record
+> as written and is kept for why neighbouring rows say what they say; see
+> `master/PROJECT-TRACKER.md` § Hosting for what replaced it. On Vercel the project is already
+> on Node `24.x` and the dataset is set per target.**
 >
 > **Hosting is decided — Hostinger Business, Node app via GitHub.** Two constraints and three
 > consequences are in `master/PROJECT-TRACKER.md` § Hosting. The one to know now: `check:node`
