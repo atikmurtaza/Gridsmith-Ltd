@@ -83,13 +83,27 @@ for (const [url, entries] of byUrl) {
   const cls = reports.map((r) => r.audits['cumulative-layout-shift'].numericValue);
   const mid = reports[cls.indexOf(median(cls))];
   if (median(cls) === 0) continue;
-  const items = mid.audits['layout-shift-elements']?.details?.items ?? [];
-  console.log(`
-${new URL(url).pathname} — CLS ${median(cls).toFixed(4)}, ${items.length} shifting element(s):`);
+  // Lighthouse 12 replaced `layout-shift-elements` with `layout-shifts`, whose items carry
+  // `node` plus the `subItems` naming the root cause. Reading only the old id printed
+  // "0 shifting element(s)" for three routes that had plainly shifted — a reporter that
+  // measured nothing and said so in a plausible sentence. Both ids are read, and the id
+  // that produced the items is printed so the next version rename is visible rather than silent.
+  const shiftAudit = ['layout-shifts', 'layout-shift-elements'].find(
+    (id) => (mid.audits[id]?.details?.items ?? []).length > 0,
+  );
+  const items = mid.audits[shiftAudit ?? 'layout-shifts']?.details?.items ?? [];
+  console.log(
+    `
+${new URL(url).pathname} — CLS ${median(cls).toFixed(4)}, ${items.length} shift(s) ` +
+      `from audit "${shiftAudit ?? 'none — neither layout-shifts nor layout-shift-elements had items'}":`,
+  );
   if (items.length === 0) console.log('  (Lighthouse attributed the shift to no element — see the trace)');
   for (const it of items) {
     console.log(`  ${String(it.score?.toFixed?.(4) ?? it.score).padStart(8)}  ${it.node?.nodeLabel ?? '?'}`);
-    console.log(`            ${it.node?.snippet ?? ''}`.slice(0, 160));
+    console.log(`            ${(it.node?.snippet ?? '').slice(0, 150)}`);
+    for (const sub of it.subItems?.items ?? []) {
+      console.log(`            cause: ${sub.cause ?? sub.extra?.type ?? JSON.stringify(sub).slice(0, 120)}`);
+    }
   }
 }
 
