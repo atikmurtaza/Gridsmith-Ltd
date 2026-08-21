@@ -6,6 +6,7 @@ import { SelectedWork } from '@/components/master/SelectedWork';
 import { Testimonials } from '@/components/master/Testimonials';
 import { GroupStructure } from '@/components/master/GroupStructure';
 import { LatestInsights } from '@/components/master/LatestInsights';
+import { CtaBand } from '@/components/master/CtaBand';
 
 /**
  * The homepage — `N-01`, block 1 of 9 (`APP-FLOW.md` §2).
@@ -38,6 +39,7 @@ export default function Page() {
       <Testimonials />
       <GroupStructure />
       <LatestInsights />
+      <CtaBand />
     </main>
   );
 }
