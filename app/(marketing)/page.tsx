@@ -3,6 +3,7 @@ import { Continuity } from '@/components/master/Continuity';
 import { Hero } from '@/components/master/Hero';
 import { Process } from '@/components/master/Process';
 import { SelectedWork } from '@/components/master/SelectedWork';
+import { Testimonials } from '@/components/master/Testimonials';
 
 /**
  * The homepage — `N-01`, block 1 of 9 (`APP-FLOW.md` §2).
@@ -32,6 +33,7 @@ export default function Page() {
       <Continuity />
       <SelectedWork />
       <Process />
+      <Testimonials />
     </main>
   );
 }
