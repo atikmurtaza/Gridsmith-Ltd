@@ -176,6 +176,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lighthouseci-reports
+          # `.lighthouseci` is a DOTFILE directory. include-hidden-files defaults to false,
+          # so without it the step matches nothing, warns, and exits GREEN with no artifact —
+          # the silent-skip class. if-no-files-found: error makes that skip a hard failure
+          # instead, which is how it was caught: the step was green and the download was empty.
+          include-hidden-files: true
+          if-no-files-found: error
           path: .lighthouseci/
           retention-days: 14
 
