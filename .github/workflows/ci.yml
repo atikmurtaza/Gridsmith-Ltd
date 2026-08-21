@@ -145,8 +145,12 @@ jobs:
         # Must run after build — it measures the prerendered output, not the source.
         run: npm run size
 
-      # A-10b, two axes. Each Lighthouse run starts and stops its own server — desktop on
-      # 3200, mobile on 3201 — so they cannot collide.
+      # A-10b, two axes. Each Lighthouse run starts and stops its own server, on different
+      # ports, so they cannot collide. Desktop is `next start` on 3200. Mobile goes through
+      # scripts/h2-proxy.mjs — TLS on 3202, next behind it on 3203 — because Chrome only
+      # speaks HTTP/2 over TLS and Vercel negotiates h2. See M-P1-10: measured over HTTP/1.1
+      # the mobile LCP was bimodal from a 6-connection limit that no visitor ever meets.
+      # lhci-report asserts the protocol was h2 and fails the axis if it was not.
       #
       # Desktop asserts the category scores: that is the craft claim a prospect runs.
       # Mobile asserts the Core Web Vitals and NOT the performance category: the score is a

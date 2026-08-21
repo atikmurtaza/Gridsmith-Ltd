@@ -56,8 +56,9 @@ const throttling = {
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: 'npm run start -- -p 3201',
-      startServerReadyPattern: 'Ready in|started server',
+      // The proxy spawns `next start` itself and announces only once the upstream answers.
+      startServerCommand: 'node scripts/h2-proxy.mjs',
+      startServerReadyPattern: 'serving https',
       url: ROUTES.map((r) => ORIGIN + r.path),
       numberOfRuns: 3,
       settings: {
@@ -65,7 +66,9 @@ module.exports = {
         screenEmulation: { mobile: true, width: 412, height: 823, deviceScaleFactor: 1.75, disabled: false },
         throttlingMethod: 'devtools',
         throttling,
-        chromeFlags: '--no-sandbox --headless=new',
+        // The proxy's certificate is a throwaway generated per run for 127.0.0.1. The flag
+        // is scoped to this headless instance and is what lets it be self-signed at all.
+        chromeFlags: '--no-sandbox --headless=new --ignore-certificate-errors',
       },
     },
     assert: {

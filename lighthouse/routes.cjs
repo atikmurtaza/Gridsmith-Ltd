@@ -18,7 +18,10 @@
  * containing one heading. Re-measure once Epic M lands real components — FOUNDATION §8.
  */
 const ORIGIN_DESKTOP = 'http://127.0.0.1:3200';
-const ORIGIN_MOBILE = 'http://127.0.0.1:3201';
+// HTTPS, and port 3202, because the mobile run goes through `scripts/h2-proxy.mjs`.
+// Chrome only speaks HTTP/2 over TLS. See M-P1-10 and the docstring in that script:
+// the budget is asserted against the protocol Vercel actually negotiates, not HTTP/1.1.
+const ORIGIN_MOBILE = 'https://127.0.0.1:3202';
 
 const ROUTES = [
   { path: '/', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },

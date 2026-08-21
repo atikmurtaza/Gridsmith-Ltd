@@ -138,3 +138,62 @@ console.log(
   'LCP ceilings in lighthouse/routes.cjs are MEASURED (CI run #7, Node 24). TBT varies with\n' +
     'runner CPU — compare benchmarkIndex before reading a TBT change as a code change. Q-M16.\n',
 );
+
+/**
+ * `M-P1-10`: the mobile axis asserts that it measured HTTP/2, and prints the straggler.
+ *
+ * The mobile run goes through `scripts/h2-proxy.mjs` so the protocol matches what Vercel
+ * negotiates. If that proxy ever stopped serving h2 - or the config drifted back to a plain
+ * `next start` - every number above would still be produced, still look reasonable, and be a
+ * measurement of the wrong protocol. That is the hollow-subject shape: the gate keeps
+ * reporting while its premise quietly dies. So the premise is asserted, not assumed.
+ *
+ * The straggler line exists because the bimodality was invisible in the median. Seven
+ * render-critical requests against six HTTP/1.1 connections meant exactly one was queued per
+ * run, and whether it was a stylesheet (render-blocking, ~+450ms) or a font
+ * (`display: optional`, free) decided the mode - 12 times out of 12. Under h2 there is no
+ * queue and the spread should collapse. Printing it means the next person can see that
+ * rather than taking this docstring's word for it.
+ */
+if (axis === 'mobile') {
+  const protocols = new Map();
+  const stragglers = [];
+
+  for (const entry of manifest) {
+    const lhr = JSON.parse(readFileSync(entry.jsonPath, 'utf8'));
+    const items = lhr.audits['network-requests']?.details?.items ?? [];
+    for (const i of items) protocols.set(i.protocol, (protocols.get(i.protocol) ?? 0) + 1);
+
+    const critical = items.filter((i) => i.resourceType === 'Stylesheet' || i.resourceType === 'Font');
+    if (critical.length) {
+      const last = critical.reduce((a, b) => (b.networkEndTime > a.networkEndTime ? b : a));
+      stragglers.push({
+        lcp: Math.round(lhr.audits['largest-contentful-paint'].numericValue),
+        type: last.resourceType,
+        nCritical: critical.length,
+      });
+    }
+  }
+
+  const counts = [...protocols.entries()].map(([k, v]) => `${k}x${v}`).join(' ');
+  const cssLate = stragglers.filter((s) => s.type === 'Stylesheet').length;
+  const lcps = stragglers.map((s) => s.lcp);
+  const spread = lcps.length ? Math.max(...lcps) - Math.min(...lcps) : 0;
+
+  console.log(
+    `protocol ${counts} | render-critical ${stragglers[0]?.nCritical ?? 0} per run | ` +
+      `stylesheet was last in ${cssLate}/${stragglers.length} runs | LCP spread ${spread}ms`,
+  );
+
+  const nonH2 = [...protocols.keys()].filter((k) => k !== 'h2');
+  if (nonH2.length) {
+    console.error(
+      `\nlhci-report: the mobile axis measured ${nonH2.join(', ')}, not h2.\n` +
+        'The budget is asserted against the protocol Vercel negotiates. Measuring HTTP/1.1\n' +
+        'reintroduces the 6-connection limit and the bimodality of M-P1-10, and every number\n' +
+        'above would be a measurement of the wrong thing. Check scripts/h2-proxy.mjs and the\n' +
+        'origin in lighthouse/routes.cjs.',
+    );
+    process.exit(1);
+  }
+}
