@@ -6,9 +6,18 @@
  * client. It bypasses row-level security, so a single leak exposes every lead in the
  * database.
  *
- * Three checks: the key must not appear in a client component, it must never be given a
+ * Four checks: the key must not appear in a client component, it must never be given a
  * NEXT_PUBLIC_ prefix anywhere (which would inline it into the bundle), and — the one
  * that actually matters — the string must not be present in the built client chunks.
+ *
+ * **The chunk sweep and the served-asset sweep are the load-bearing pair, and for a long
+ * time there was only one of them.** A leak reaches a browser by one of two routes: the
+ * bundler puts it in a chunk, or a file containing it is served verbatim. `public/` is the
+ * second route and was excluded from this gate entirely, under the reason "served verbatim,
+ * never bundled" - the argument for scanning it, written as the argument against. It was
+ * clean by two accidents: the tree held one hand-written file, and SOURCE here is
+ * ts|tsx|js|jsx|mjs|cjs, so a .html would not have matched even had the tree been scanned.
+ * One .js under `public/` made it live. `M-P2-37`, `01-VALIDATION-REPORT.md` section 16.
  *
  * **A leak is a property of the bundle, not a shape in the source.** The first two checks
  * inspect source and can both be true while the key ships:
@@ -157,6 +166,55 @@ if (chunks === 0) {
   process.exit(1);
 }
 
+/**
+ * The served-asset sweep. `public/` is copied to the site root and returned byte for byte
+ * to anyone who asks, with no build step in between.
+ *
+ * **No extension filter, deliberately.** The chunk sweep above filters to `.js` because a
+ * chunk directory holds build output and only the scripts execute. Nothing analogous is
+ * true here: `public/robots.txt`, `public/config.json`, `public/500.html` and `public/sw.js`
+ * are all fetchable, and a key in any of them is equally readable. An extension filter was
+ * the second of the two accidents that kept this tree clean, and reproducing it would
+ * rebuild the defect inside its own fix.
+ *
+ * Binary files are read as text and simply do not match; at this size that is cheaper than
+ * maintaining a list of what counts as text.
+ *
+ * Names and values both, on the same terms as the chunk sweep. Values are never printed.
+ */
+const ASSET_DIR = 'public';
+let assets = 0;
+if (!existsSync(ASSET_DIR)) {
+  console.error(`\ncheck-service-role-key: ${ASSET_DIR}/ does not exist, so served assets were not swept.`);
+  console.error('If the tree has genuinely gone, remove this sweep deliberately. Skipping it silently is not an option.\n');
+  process.exit(1);
+}
+for (const entry of readdirSync(ASSET_DIR, { recursive: true, withFileTypes: true })) {
+  if (!entry.isFile()) continue;
+  assets += 1;
+  const path = join(entry.parentPath ?? ASSET_DIR, entry.name);
+  const asset = readFileSync(path, 'utf8');
+  for (const secret of SECRETS) {
+    if (asset.includes(secret)) {
+      violations.push({ file: path, line: 0, why: `${secret} is named in a served static asset, so it is public` });
+    }
+  }
+  for (const { secret, value } of values) {
+    if (asset.includes(value)) {
+      violations.push({
+        file: path,
+        line: 0,
+        why: `the VALUE of ${secret} is present in a served static asset, so it is public. Rotate it`,
+      });
+    }
+  }
+}
+if (assets === 0) {
+  console.error(`\ncheck-service-role-key: ${ASSET_DIR}/ contains no files, so nothing was swept.`);
+  console.error('An empty sweep and a clean sweep otherwise print the same thing. A count must be provable to report zero.\n');
+  process.exit(1);
+}
+
 if (scanned === 0) {
   console.error('\ncheck-service-role-key: scanned zero source files — the sweep did not run.\n');
   process.exit(1);
@@ -165,7 +223,7 @@ if (scanned === 0) {
 if (violations.length === 0) {
   console.log(
     `check-service-role-key: clean — ${SECRETS.length} secret-bearing variable(s) across ` +
-      `${scanned} source files scanned and ${chunks} client chunks; ${values.length} checked by value`,
+      `${scanned} source files scanned and ${chunks} client chunks and ${assets} served asset(s) in ${ASSET_DIR}/; ${values.length} checked by value`,
   );
   for (const note of unavailable) console.log(`  value not checked: ${note}`);
   process.exit(0);
