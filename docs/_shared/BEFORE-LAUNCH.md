@@ -17,6 +17,65 @@ seed documents in `development` today.
 
 ---
 
+## ↻ Refreshed 21 August 2026, against `main`
+
+**The list below was written on the branch, before CI had ever run on the default branch and
+before the first production-target deploy existed.** Both have now happened and moved several
+items. Read this block first; the numbered items keep their original numbering.
+
+### Closed since it was written
+
+| | What changed |
+|---|---|
+| **`Q-M18`** — a Supabase project | **Done.** `A-07` and `A-08` closed 19 Aug against the live database. The project's URL and publishable key are now GitHub repository **Variables** (`PROJECT_URL`, `PUBLISHABLE_KEY`) and reach CI. |
+| **`Q-M19`** — GA4 and PostHog | **Done for development.** `A-09` closed 19 Aug. **The live ids are still outstanding** — see new item **22**. |
+| **Item 21** — the 500 page | **Decided.** Recorded as `ACCEPTED` by you on 21 Aug; the accessibility statement discloses the gap. Not backlog, do not reopen it as one. |
+| **Item 12** — Node 24 on the host | **Satisfied on Vercel.** Every build has run Node 24 and `check:node` passes via `preinstall`. Still open if the host changes — see item 11. |
+| **CI itself** | Now runs on the default branch and `workflow_dispatch` is registered, closing the durability half of `M-P1-5`. This was the last thing standing between "the gates exist" and "the gates run". |
+
+**The tracker's "What is blocked, and on whom" table is stale on both `Q-M18` and `Q-M19`** —
+it still lists them as blockers while the rows they block are marked DONE. Believe the rows.
+
+### Changed, not closed
+
+| | What changed |
+|---|---|
+| **Item 13** — `NEXT_PUBLIC_SANITY_DATASET` | **Set, and set too early.** Vercel's Production environment has it at `production`, and the production dataset is empty, so the first production deploy failed at build with *"No companyDetails document in dataset `production`"*. That is `check:launch`'s guard working correctly on the first occasion it could. This item's own warning is the fix: *"Do not set it to `production` until the production dataset actually has content in it."* **Either finish item 16 or set it back to `development`.** Do not point Production at `development` and then launch. |
+| **Item 11** — decide the host | **The facts moved underneath the decision.** The tracker records **Hostinger Business**, but every deployment in the programme is on **Vercel**, and Vercel is what built, failed and serves today. The privacy policy has to name the *actual* processor and region, so this is now a contradiction to settle rather than a preference to state. |
+| **"All 21 gates are green"** in *What is already done* | **No longer true as written, and it never had been tested on `main`.** 21 gates is right. Today `/digital` exceeds its 1600ms mobile LCP ceiling in 2 runs of 4 — a real result against a measurement that can now be trusted, not flakiness. See `M-P1-10`; the decision is yours and nothing has been adjusted. |
+
+### New — on no list before, and both block production
+
+### 22. Set the live GA4 and PostHog ids in the platform environment
+
+- **Status:** Blocks production
+- **Where:** the hosting control panel
+- **Your time:** 5 minutes, once the properties exist
+- **Tracker:** `A-09`, `Q-M19`
+
+`Q-M19` was resolved for **development**. CI runs against deliberate placeholders
+(`G-CIPLACEHOLDER`, `phc_ci_placeholder_not_a_real_project_key`) and the row says in terms:
+*"Live ids go in the platform environment at launch."* Nothing injects without them, and a
+placeholder in production would send real visitor data to a property nobody owns. PostHog must
+stay on the **EU** host.
+
+### 23. Set `CRON_SECRET` and `SUPABASE_SERVICE_ROLE_KEY` in Vercel
+
+- **Status:** Blocks a gate, not the build
+- **Where:** the Vercel project's environment variables
+- **Your time:** 2 minutes
+- **Tracker:** `M-P1-3`
+
+Both are unset, so **the RLS drift cron does not run**. That check exists because `A-07`'s leak
+was visible only from outside, over HTTP, holding a public key — a migration read correctly
+while the running system was wrong, so no source check can see the class it covers. Until
+these are set, nothing is watching for that drift.
+
+`SUPABASE_SERVICE_ROLE_KEY` goes **only** here, never in CI: `check-service-role-key` sweeps
+the bundle *and* the served static assets to prove it never reaches a browser.
+
+---
+
 ## How to read the status column
 
 | | |
