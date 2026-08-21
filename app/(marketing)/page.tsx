@@ -2,6 +2,7 @@ import { DivisionRouting } from '@/components/master/DivisionRouting';
 import { Continuity } from '@/components/master/Continuity';
 import { Hero } from '@/components/master/Hero';
 import { Process } from '@/components/master/Process';
+import { SelectedWork } from '@/components/master/SelectedWork';
 
 /**
  * The homepage — `N-01`, block 1 of 9 (`APP-FLOW.md` §2).
@@ -29,6 +30,7 @@ export default function Page() {
       />
       <DivisionRouting />
       <Continuity />
+      <SelectedWork />
       <Process />
     </main>
   );
