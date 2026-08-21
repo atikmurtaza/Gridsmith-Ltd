@@ -28,6 +28,129 @@ preloaded and still arrive after first paint under 4G throttling.
 
 ---
 
+## 🔍 `M-P1-10` — mobile LCP is bimodal, and the cause is a connection race in the harness
+
+**Status `OPEN`, P1. Raised 21 August 2026 from the first CI runs on `main`. Diagnosed, cause
+proven, fix NOT applied — the remedies are a decision. Ceilings were NOT raised: Atik's
+call, 21 Aug, on the reasoning that raising a ceiling to absorb measurement noise makes the
+ceiling meaningless.**
+
+### The observation
+
+Mobile LCP takes one of exactly two values — **~1510–1540ms or ~1960–1975ms** — with nothing
+between. Four CI runs on trees that are byte-identical in every file the site is built from:
+
+| run | trigger | `/` ≤1800 | `/design` ≤2000 | `/digital` ≤1600 | `/press` ≤2000 | result |
+|---|---|---|---|---|---|---|
+| `32444229035` | branch push | 1945 ✗ | 1960 | 1963 ✗ | 1958 | **red** |
+| `32500776611` | merge to main | 1539 | 1540 | 1536 | 1542 | green |
+| `32501915404` | `workflow_dispatch` | 1529 | **1959** | 1508 | 1520 | green |
+| `32504343630` | `ci.yml` only | — | 1974 ✗ | 1961 ✗ | 1970 | **red** |
+
+`32504343630` changed nothing but a workflow comment, so **code is excluded as a variable.**
+`/design` at 1959 in the same job as `/digital` at 1508 excludes machine load. The slow mode
+appeared on the fastest runner of the four (benchmarkIndex 2950) and the fastest runner ran
+entirely clean (3273), so **CPU is excluded.** `LCP == FCP` to the millisecond in every one of
+the twelve mobile runs, in both modes.
+
+### The cause — 6 connections, 7 render-critical requests
+
+From the raw reports (`.lighthouseci/` is now kept as an artifact, see `ci.yml`). Every mobile
+run issues **15 requests, all `http/1.1`**, of which **7 are render-critical** — 5 stylesheets
+and 2 fonts — and all 7 are requested within 5ms of each other (635–640ms). Chrome's
+per-origin HTTP/1.1 connection limit is **6**. Exactly one of the seven is therefore queued,
+and **which one loses the race decides the mode**:
+
+| straggler | FCP/LCP | runs |
+|---|---|---|
+| a **Font** | ~1520ms | 6 of 12 |
+| a **Stylesheet** | ~1970ms | 6 of 12 |
+
+**12 of 12, no exceptions.** Stylesheets are render-blocking, so a queued stylesheet delays
+first paint by one connection slot (~525ms: the same file ends at 1354ms when it wins and
+1879ms when it loses). Fonts are `display: optional` (`M-P2-31`) and never block render, so a
+queued font costs nothing — which is also why CLS stays 0.000 in both modes.
+
+### Two candidates ruled out, and one of them on the wrong grounds first
+
+- **All four themes ship on every route** (`styles/globals.css:3-6`). Dismissed on *bytes*
+  — ~2KB gz, ~15ms — and that reasoning was incomplete: under a connection limit the cost of
+  a stylesheet is not its size but that it is **one more contender**. It is still not
+  established that the four themes are four separate files rather than one inlined bundle;
+  the five stylesheets have not been mapped to sources. **Do that before assuming this fix
+  reduces the count.**
+- **Font swap reflow.** Already fixed at `M-P2-31`; `display: optional` is why CLS is 0.000.
+
+### It does not affect real users, and that is the point
+
+Every request in CI is `http/1.1` because the subject is `npm run start` on localhost.
+**Vercel negotiates `h2`** — measured, not assumed: a TLS handshake against the preview host
+offering `ALPNProtocols: ['h2','http/1.1']` returns `h2`. (`curl --http2` is not the test here:
+the bundled libcurl lacks HTTP/2 and reports `1.1` regardless of what the server supports.)
+HTTP/2 multiplexes over a single connection and has no 6-request limit, so the contention
+cannot arise on the deployed site. The gate is measuring a property
+of **the harness**, not of the site — while asserting a budget about the site.
+
+### The remedies, none of which relax a budget
+
+Not applied. Each is a decision, and two have real tradeoffs.
+
+1. **Serve the LHCI run over HTTP/2.** Removes the limit, so the harness matches production.
+   Truest to what the budget is about, and changes no shipped code.
+2. **Drop the render-critical count to 6.** Either fewer stylesheets (see the caveat above) or
+   `preload: false` on the fonts — but with `display: optional` that makes the webfont *less*
+   likely to apply on a first visit, which is a visible design tradeoff and **Atik's call**.
+3. **More runs.** `numberOfRuns: 3` → 5+. Weakest of the three: the median of a 50/50 bimodal
+   distribution is still bimodal, it just needs a worse draw. It reduces the failure rate
+   without addressing the cause, and would be the option that buys unearned green.
+
+**Do not raise `lcp` in `lighthouse/routes.cjs`.** Content is not the problem: nine blocks
+measure 1508–1542ms in fast mode against the ~1520ms empty-page floor recorded at CI run #7.
+**`N-01`'s premise is settled and it passed** — desktop perf is 1.00 on all four routes.
+
+---
+
+## ✅ EXPECTED — the Vercel production deployment fails, and should
+
+**Status `EXPECTED`, not a defect and not backlog. Recorded 21 August 2026.**
+
+Merging to `main` triggered the **first production-target deployment** in the programme —
+every earlier deploy was a preview on `development`. It failed at build:
+
+> `No companyDetails document in dataset "production". Every page renders the statutory
+> footer, so the build cannot proceed without it.`
+
+This is the guard from `A-12`/`M-P1-2` working exactly as designed on the first occasion it
+could. The `production` dataset is empty and the site is not launching before VAT
+registration.
+
+**Do not point Production at `development`** — that publishes `[SEED]` records and is
+non-negotiable #4, `BEFORE-LAUNCH` item 16, and would defeat `check:launch`.
+
+**Clears when:** `BEFORE-LAUNCH` item 16 — the production dataset is populated. Item 13 warns
+in terms: *"Do not set it to `production` until the production dataset actually has content in
+it."* Until then this ERROR is the correct state. **Owner: Atik.**
+
+**The preview is READY** and is the one to look at: `dpl_DsN11711zEiQS9UvKJ6bGeDVym5g`
+(`baac2f7e`, app tree identical to `827ce037`), built against `development`, 24 `/work/[slug]`
+pages prerendered, behind Vercel Authentication. Note that **`main` produces no preview
+deployment of its own** — the production branch only ever deploys to production.
+
+---
+
+## `M-P2-38` — the homepage has no meta description
+
+`/` scores **seo 0.90** on both axes while `/design`, `/digital` and `/press` score 1.00.
+Consistent across all four CI runs, so it is a real difference and not noise. The failing
+audit is **`meta-description`**, and `/` is the only route that fails it.
+
+Not fixed here: all four root layouts declare `title` and no `description`, so the asymmetry
+is not in the layouts — and the homepage's description is **marketing copy, which the DoD
+requires to come from the CMS** rather than being written into a layout. Content task, not a
+config one.
+
+---
+
 ## ✋ ACCEPTED RISK — `M-P1-1`, the Level A gap on server-side crashes
 
 **Status `ACCEPTED`, not `OPEN`. Accepted by Atik on 21 August 2026, on the reasoning below.
@@ -376,7 +499,7 @@ landmarks and roles. They do not cover announcement, and no lab check does.
 
 ### The P2 backlog, in one place
 
-**33 open, 1 P1 open, 1 ceiling.** Counted by hand and that is a limitation worth stating:
+**34 open, 2 P1 open, 1 ceiling.** Counted by hand and that is a limitation worth stating:
 `check:claims` prints a live count for the **ledger**, which covers `A-GATE-*`, `G*`, `R*`,
 `T*` and `U*` identifiers only. `M-P*` is outside `ID_RE`, so **this count is a hand-maintained
 claim about a hand-maintained list** — the `A-GATE-7-6` ceiling, one level up. Read it as
@@ -386,7 +509,7 @@ claim about a hand-maintained list** — the `A-GATE-7-6` ceiling, one level up.
 |---|---|---|
 | Epic A | **22** | § "The P2 backlog carried out of Epic A" — unchanged this epic. None is an accessibility failure at any level |
 | Epic M | **11** | `M-P2-1`, `2`, `3`, `4`, `6`, `7`, `8`, `9`, `10`, `11` and the `A-GATE-6-6` carry-over that was never chased |
-| **P1** | **1** | `M-P1-1` — the first live accessibility failure in the programme, and a decision |
+| **P1** | **2** | `M-P1-1` — the first live accessibility failure in the programme, and a decision. `M-P1-10` — mobile LCP bimodal; cause proven (6 HTTP/1.1 connections, 7 render-critical requests), remedy is a decision |
 | **Ceiling** | **1** | `A-GATE-7-6` — not backlog, will not be fixed |
 | Fixed this epic | — | `M-P1-2` (unset dataset publishing a `[SEED]` VAT number, closed at `A-12` by removing the default), `G7`, `A11Y-21` |
 
