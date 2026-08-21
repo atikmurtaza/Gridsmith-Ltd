@@ -2234,24 +2234,24 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
 | N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | **DONE** 19 Aug | Dev | `verified` hard-true, **run against values rather than counted**. **No seed example can exist** — a placeholder would have to claim it was verified, so the component renders an empty state and `Q-M6` blocks a real one. Zero client JS |
 | N-06 | Canonical process component + validator | P0 | 1d | A-06 | **DONE** 19 Aug | Dev | **Stage names never travel through the CMS** — the constant renders, the CMS supplies only `divisionDetail`/`duration`/`clientTime`. `check:schemas` asserts the constant against `00-PROCESS.md`, the source of truth. `N-01` is next |
-| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **4 of 9 blocks** 19 Aug | Dev | Blocks 1–3 shipped for **0.0KB of JS between them** — Master 2.5KB of 15KB. Block 2 used `next/link` first, measured 4.8KB of JS and 33,531 B of prefetch discarded by the document load `TECH-SPEC` §3 requires, and went to plain `<a>`. Block 3 cost +105 B of CSS, which showed the first-use step is per module **file**, not per primitive. `Q-M21` **resolved** — homepage is hardcoded, no schema. **Block 5 shipped for 0.0KB of JS and +84 B of CSS**, after the first measurement caught `Numeric` dragging `interactive.module.css` (5,591 B) onto a page with no interactive primitive — `Numeric` moved to its own file, ungated (`M-P2-24`). **Block 4 is blocked on real client work** (`M-P2-25`) and was skipped, not deferred. Blocks 6–9 pending, one per commit |
+| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **DONE 9 of 9** 21 Aug | Dev | Blocks 1–3 shipped for **0.0KB of JS between them** — Master 2.5KB of 15KB. Block 2 used `next/link` first, measured 4.8KB of JS and 33,531 B of prefetch discarded by the document load `TECH-SPEC` §3 requires, and went to plain `<a>`. Block 3 cost +105 B of CSS, which showed the first-use step is per module **file**, not per primitive. `Q-M21` **resolved** — homepage is hardcoded, no schema. **Block 5 shipped for 0.0KB of JS and +84 B of CSS**, after the first measurement caught `Numeric` dragging `interactive.module.css` (5,591 B) onto a page with no interactive primitive — `Numeric` moved to its own file, ungated (`M-P2-24`). **Block 4 is blocked on real client work** (`M-P2-25`) and was skipped, not deferred. Blocks 6–9 pending, one per commit |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
-| N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | TODO | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |
-| N-07 | `/about` + structure disclosure | P0 | 1.5d | **M-05, N-03** | TODO | Dev | `Depends` corrected: `/about` is a `groupPage` slug, so it needs `N-03`'s schema as well as `companyDetails` |
-| N-08 | `/work` master grid | P0 | 2d | A-06 | TODO | Dev | Cross-division sorted first |
-| N-09 | **Canonical `/work/[slug]`** | P0 | 1.5d | N-08 | TODO | Dev | Divisions link here |
+| N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | **DONE** 21 Aug | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |
+| N-07 | `/about` + structure disclosure | P0 | 1.5d | **M-05, N-03** | **DONE** 21 Aug | Dev | `Depends` corrected: `/about` is a `groupPage` slug, so it needs `N-03`'s schema as well as `companyDetails` |
+| N-08 | `/work` master grid | P0 | 2d | A-06 | **DONE** 21 Aug | Dev | Cross-division sorted first |
+| N-09 | **Canonical `/work/[slug]`** | P0 | 1.5d | N-08 | **DONE** 21 Aug | Dev | Divisions link here |
 | N-10 | Division work routes → canonical links | P0 | 0.5d | N-09 | TODO | Dev | Removes duplicate-content risk |
-| N-11 | `/contact` master flow | P0 | 2d | A-08 | TODO | Dev | "More than one" first-class |
-| N-12 | Confirmation screen + commitment | P0 | 0.5d | M-05, N-11 | TODO | Dev | Renders `companyDetails.responseCommitment` |
-| N-13 | `/insights` hub | P1 | 1d | A-06 | TODO | Dev | |
+| N-11 | `/contact` master flow | P0 | 2d | A-08 | **DONE** 21 Aug | Dev | "More than one" first-class |
+| N-12 | Confirmation screen + commitment | P0 | 0.5d | M-05, N-11 | **DONE** 21 Aug | Dev | Renders `companyDetails.responseCommitment` |
+| N-13 | `/insights` hub | P1 | 1d | A-06 | **DONE** 21 Aug | Dev | |
 
 ## Epic L — Legal & compliance
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
 | L-01 | `legalDocument` schema + clause anchors | P0 | 1d | A-06 | **DONE** 21 Aug | Dev | Five slugs, not the spec's four — `client-terms` split out because `anchorId` is contract-facing. `legalClause.basis` added. Closed list proven in four directions. `SCHEMA.md` corrected in the same commit |
-| L-02 | Legal page template, TOC, print CSS | P0 | 1d | L-01 | TODO | Dev | Stable `#anchor` per clause |
-| L-03 | Load four drafts from `_legal/` | P0 | 0.5d | L-02 | TODO | Content | To staging |
+| L-02 | Legal page template, TOC, print CSS | P0 | 1d | L-01 | **DONE** 21 Aug | Dev | Stable `#anchor` per clause |
+| L-03 | Load **five** drafts | P0 | 0.5d | L-02 | **DONE** 21 Aug | Content | To staging |
 | L-04 | **Solicitor review of all documents** | P0 | — | L-03 | TODO | Atik + solicitor | **HARD GATE — send week 1** |
 | L-05 | Statutory disclosure verification | P0 | 0.5d | M-04 | TODO | Dev | Every page |
 | L-06 | ICO registration + number recorded | P0 | — | — | TODO | Atik | |
@@ -2928,3 +2928,209 @@ Three things follow, and each is recorded rather than fixed:
 | Consent accept rate | tracked, not targeted | — |
 | Unmapped legacy URLs | 0 | — |
 | Seed records in production | 0 | — |
+
+---
+
+## Epic N/L/S — the seed-and-shell session, 21 August 2026
+
+**Scope, as given:** fill the site with seed content, ship a complete working shell, and produce
+one launch checklist. Explicitly *not* built for "launch tomorrow" — nothing goes live before VAT
+registration, which the owner confirmed. The checklist is `_shared/BEFORE-LAUNCH.md` and it is
+the only homework list; do not create a second one.
+
+### The defect worth reading before anything else: a dot in a document id
+
+**Sanity treats any document id containing `.` as a private document** — readable with a token,
+invisible to an unauthenticated query. `drafts.` is the familiar case; the behaviour is general.
+
+The first `S-01` run wrote 125 documents with ids like `seed.legal.privacy`. The transaction
+committed. The script printed a correct per-type census. **Every one was invisible to the site**,
+which reads with no token because both datasets are public.
+
+The visible symptom was mild and misleading: `/about`, `/approach` and all five `/legal/*` routes
+prerendered as 404s, the build exited 0, and the bundle table showed them at a 0.5KB delta
+instead of 2.7KB. It was found by asking why two routes were cheaper than their siblings, not by
+noticing missing pages.
+
+**The consequential symptom was invisible.** `check:launch` counts published seed documents with
+an **unauthenticated** query, and that count is the gate standing between fabricated case studies
+and a live site. With dotted ids it would have reported **0 published seed document(s)** in a
+dataset holding 125 of them — green, specific, and completely wrong, on the one check whose
+entire purpose is to see them. It now reports 119 (125 minus the six real testimonials), and the
+count moving is what establishes it reaches its subject at all.
+
+This is a new member of a familiar class and it is worth naming precisely: **the gate was
+correct, the query was correct, and the subject was invisible to the reader the gate used.** No
+amount of reading either file would have found it.
+
+Two remedies, both in `scripts/seed-content.mjs`, both proven by deliberate failure:
+
+| Guard | Proof | Message |
+|---|---|---|
+| No `_id` may contain a dot | reintroduced `seed.post.…` | `9 document id(s) contain a dot` |
+| Read the whole set back **unauthenticated** and fail unless every document is visible | added a non-existent id to the expected set | `wrote 125 document(s); an unauthenticated read sees 125` |
+
+The second is the general one, and it is the same rule as `check:launch` reading the dataset from
+the served site's header (`M-P1-7`) and `check-axe` asking the probe route whether Resend is
+configured (`A-08`): **ask the system.** Whether *this* process could write a document is a fact
+about this process. The site is a different reader, and the only way to establish what it will
+see is to be it.
+
+Verified independently before the fix: `probeplain` written and read back unauthenticated →
+visible; `probe.seed.check`, written in the same session with the same token → `[]`.
+
+### S-01 — 125 documents, and the six that are real
+
+`scripts/seed-content.mjs` plus `scripts/seed-legal.mjs`. Development only, hardcoded, for the
+same reason `seed-company-details.mjs` hardcodes it.
+
+| Type | n | Notes |
+|---|---|---|
+| `service` | 30 | 10 per division, every one with a pricing block — the schema will not save one without |
+| `project` | 24 | To FOUNDATION §7's distribution exactly: 8 minimum-content, 4 maximum-content, 3 cross-division, 3 confidential |
+| `faq` | 45 | 15 per division, inside §7's 12–18 band |
+| `post` | 9 | |
+| `teamMember` | 4 | `isPublic: true`, all named `[SEED] Placeholder Name` |
+| `groupPage` | 2 | `approach` and `about`, and only those two — the slug set is closed |
+| `legalDocument` | 5 | |
+| `testimonial` | **6** | **REAL.** `isSeed: false` |
+
+**The testimonials are the exception and the exception is the point.** Six public Freelancer
+reviews, transcribed verbatim on 21 August 2026 — the reviewers' own punctuation and
+capitalisation, including a missing space in one of them, because correcting a review is editing
+it. `verified: true` is defensible only because `sourceUrl` lets a reader check it, which is what
+the two new fields are for. The seed script refuses to write a testimonial without one.
+
+**`continuityExample` is not seeded and cannot be.** `verified` is hard-true (`N-05`), so a
+placeholder would have to assert that someone confirmed a story that did not happen. `/approach`
+renders the empty state until `Q-M6`.
+
+**Every figure is zeroed.** `metric.value` is the literal `[SEED] 00%` — the field is a string
+precisely so the marker can live inside the figure. `pricingBlock.fromAmount` is a *number* and
+cannot hold a marker, so it is `0`, renders `£0,000`, and the note carries `[SEED] INDICATIVE`.
+
+**No image asset was uploaded and none should be.** FOUNDATION §7.7's permitted placeholder —
+"neutral geometric placeholders at correct aspect ratios" — is a *rendering* concern, so
+`Placeholder.tsx` draws a hatched box from tokens. No request, no LCP candidate, correct reserved
+space, and nothing to delete when real work arrives. An uploaded placeholder asset would outlive
+the record referencing it.
+
+### N-01 — 9 of 9, and every block after 3 cost 0.0KB
+
+One block per commit, measured after each, as the epic's own rule requires. Block 4 (selected
+work) was the only one that had ever been *skipped* rather than deferred — `M-P2-25`, because
+building it meant inventing clients. `S-01` is what unblocked it, and the distinction that made
+it safe is worth restating: the plausibility of a seed project is in its **structure** and never
+in its **content**.
+
+`/` delta: **2.7KB of 15KB, unchanged across blocks 4 and 6–9.** None is a client component.
+
+**Lighthouse remains the open half of `N-01`'s premise.** The 0.98 threshold on `/` is gated at
+`error` severity and has still never run against nine blocks: Lighthouse does not run on Windows
+(chrome-launcher/Node 24 EPERM race, VALIDATION §13 E12), so CI is the arbiter and the next run
+is what tests the projection. Do not read "all gates green" as covering it.
+
+### The primitive layer stopped importing `next/link`
+
+`Link`, `Button`, `Breadcrumb` and `Pagination` were the last importers. Because the import is at
+module scope, **every consumer paid for it whether or not the branch using it ran** — `Link`'s
+external branch already returned a plain anchor and still dragged the runtime in.
+
+`TECH-SPEC` §3/§9 and `Header`, `Footer` and `DivisionRouting` had each already reached this
+conclusion independently, which is the tell that it was a layer-level decision nobody had made at
+the layer.
+
+Measured: a **3,389 B gz** shared chunk removed; `/_kitchen-sink` **8.6 → 5.3KB**. That also
+cleared a delta-budget failure caused purely by re-chunking — with eight new routes using
+breadcrumbs, the runtime became a *shared* chunk rather than a per-page one and pushed the
+kitchen sink 0.04KB over.
+
+`SHARED_BASELINE_BUDGET_KB` moved **2.6 → 2.8** and the reason is recorded beside the constant:
+webpack re-chunked, so the measured banner went 1.8 → 2.2KB and the baseline 2.6 → 2.7KB, while
+**`/`'s total delta stayed at 2.7KB across the same change**. That equality is how we know it is
+attribution moving rather than cost arriving. 2.8 keeps the `2.8 < shared <= 3.0` window the
+`A-GATE-4-3` guard requires, and the assertion was proven to still fire inside it (budget
+temporarily 2.65, shared 2.7, floor check silent).
+
+### Two pre-existing defects found by gates, both confirmed pre-existing
+
+Both were confirmed by stashing the session's changes and re-running against a clean build at
+`HEAD` — **not** assumed from the code.
+
+1. **`.stickyCta` overflowed 375px by 40px**, pushing the document to 415px. The same overflow is
+   what made axe report `color-contrast` UNRESOLVED on that button: an element hanging off the
+   viewport is "partially obscured". Two symptoms, one defect. Fixed with `flex-wrap` at the
+   element every caller routes through rather than by shortening a label.
+2. **`landmark-unique` on `/about`** — the `about` groupPage carried a "Who you will work with"
+   section and the route renders a team roster under the same heading. Fixed in the content: the
+   roster is code, so its heading is code's to own.
+
+### L-01/L-02/L-03 — five documents, drafted from this build's facts
+
+Not from a template. The processors named are the ones actually used, the cookie described is the
+one actually set (`gs_consent`, its real attributes and real 12-month life), the consent
+categories are the three actually implemented, and the enquiry fields listed are the ones in
+`lib/leads/schema.ts`.
+
+**Every clause names its instrument.** That is what makes the solicitor's job a check rather than
+a rewrite, and it makes visible which clauses are required by law and which are there because
+someone liked them. Where the draft is unsure which limb applies it says so rather than guessing
+at a sub-paragraph — `CLAUDE.md` #2 forbids invented clause references and a plausible one is
+worse than an admitted gap.
+
+**Two markers, two meanings.** `[SEED - SOLICITOR REVIEW REQUIRED]` heads every document and
+`solicitorApproved` is false on all five. `[DECISION]` marks a choice that is the owner's —
+retention, liability cap, IP transfer point, payment terms, ADR provider, hosting processor. Each
+carries a working default so the page renders; none is a recommendation.
+
+**The query deliberately does not filter on `solicitorApproved`.** `master/SCHEMA.md` offers an
+`$allowUnapproved` parameter; filtering would serve a 404 for `/legal/privacy`, and a site with
+no privacy notice is worse than one carrying a draft that says so in the first thing on the page.
+What must not happen — a draft presented as reviewed — is prevented by rendering the state and by
+`noindex`, not by hiding the document.
+
+`client-terms` is a fifth slug the spec did not list. `anchorId` is contract-facing, so a
+consumer-facing website notice must not share an anchor space with a B2B contract.
+
+### Division landing pages — one composition, three voices
+
+`DivisionLanding` names no colour and no typeface. Every rule resolves through the theme tokens
+the route group's root layout has already set on `<html data-division>`, so the same markup
+renders amber on near-black in a neo-grotesque, electric blue on off-white in a **monospace**
+display face, and deep green on warm paper in a **serif**. `CLAUDE.md`'s "shared structure, not
+shared colour" made executable; three components would have been three places for the grid to
+drift. Verified visually on all three.
+
+Each division supplies only `copy`. Press additionally uses an `afterHero` slot for its rights
+statement — a slot rather than a `showRights` boolean, because the next division to need one will
+need a different thing.
+
+**These are landing pages, not the full hubs.** Design's track fork and standards strip, Digital's
+ownership module and stack page, and Press's Path Finder and books shelf are `B-*`, `U-*` and
+`K-*`/`P-*` rows needing content and decisions that do not exist. Every component says so in its
+own docstring.
+
+### Measured, at close
+
+| | |
+|---|---|
+| Routes built | 51 measured by `check-bundle-size`, all within budget |
+| `/` delta | 2.7KB of 15KB — 12.3KB spare |
+| `/design` / `/digital` / `/press` | 2.7KB each, against 25 / 15 / 20KB |
+| `/contact` | 9.7KB of 15KB — the only master route with a client boundary besides the banner |
+| axe | 60 analyses across 15 routes x 2 viewports x 2 phases, **zero violations** |
+| Same-origin links | 47 distinct targets, every one resolves |
+| Responsive | 42 combinations (14 routes x 375/768/1440), no overflow |
+| Seed enforcement | 119 published seed documents counted in `development` |
+| Gates | 21, all green locally except the two Lighthouse axes, which do not run on Windows |
+
+### What did NOT happen, so nobody re-derives it
+
+- **Lighthouse has not run against the finished pages.** CI is the arbiter. `H-01` is still open.
+- **The screen-reader pass still has not happened.** `M-02` stays un-DONE. It is item 17 in
+  `BEFORE-LAUNCH.md`.
+- **No filter UI on `/work`.** FOUNDATION requires filters to derive options from the data; with
+  24 seed records the facets would be invented taxonomy. It arrives with real work.
+- **No `?seed=hide`** (`S-05`, P1) — not needed while nothing is being demonstrated to a prospect.
+- **`M-P1-4`'s two sweeps are still open**, and the "END OF EPIC N" entry above still governs
+  them.

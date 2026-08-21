@@ -1,11 +1,57 @@
-# Handover — Epic M closed
+# Handover — Epic N built out, site complete as a shell
 
-**Written:** 11 August 2026 · **Revised:** 18 August 2026, at **EPIC M CLOSE** · **Branch:**
+**Written:** 11 August 2026 · **Revised:** 21 August 2026, at **EPIC N BUILD-OUT** · **Branch:**
 `feat/a-01-a-10a-scaffold-ci` · **Runtime:** Node 24.15.0
 
 This file exists because a session ended with state that only that session knew. Everything
 here is either unrecorded elsewhere or scattered across five documents. Read it before
 touching anything; delete the sections that go stale as they are resolved.
+
+---
+
+## ⇢ START HERE — Epic N is built out. The site is complete as a shell. Read this box, then `_shared/BEFORE-LAUNCH.md`.
+
+**Revised 21 August 2026.** The box below it is the Epic M close and is kept because its
+reasoning still governs; this supersedes its "Epic N is next" instruction.
+
+**The site is now a complete working shell.** Homepage (all nine `N-01` blocks), `/work` and 24
+case studies, `/about`, `/approach`, `/insights` and nine articles, `/contact` with a working
+enquiry pipeline, five legal pages, and real landing pages for all three divisions. 51 routes
+measured, all within budget. axe: 60 analyses, zero violations.
+
+**Nothing is live and nothing can go live by accident.** `NEXT_PUBLIC_SANITY_DATASET` has no
+default and `check:launch` refuses a production dataset carrying `[SEED]` markers or published
+seed documents. `development` holds 119 of them today.
+
+**`_shared/BEFORE-LAUNCH.md` is the only homework list. Do not create a second one.** Everything
+on it needs the owner. The full close-out — what was built, what was measured, what was found —
+is `master/PROJECT-TRACKER.md` § "Epic N/L/S — the seed-and-shell session".
+
+**The one finding to carry forward, because no amount of reading finds it again:**
+
+> **Sanity treats any document id containing a dot as a private document** — readable with a
+> token, invisible to an unauthenticated query. 125 seed documents wrote successfully, the script
+> printed a correct census, and every one was invisible to the site, which reads with no token.
+> Worse: `check:launch` counts published seed documents *unauthenticated*, so it would have
+> reported **0** in a dataset holding 125 — green, specific and wrong, on the one check standing
+> between fabricated case studies and a live site.
+>
+> The gate was correct. The query was correct. **The subject was invisible to the reader the gate
+> used.** The remedy is the standing one — *ask the system*: the seed script now reads the whole
+> set back with no token and fails unless every document is visible. Both guards proven by
+> deliberate failure.
+
+**Three things are still true and are not covered by "all gates green":**
+
+| | |
+|---|---|
+| **Lighthouse has never run against the finished pages.** It does not run on Windows (VALIDATION §13 E12), so **CI is the arbiter** and the next run tests `N-01`'s open premise — that nine blocks fit under 0.98 | `H-01` |
+| **The screen-reader pass still has not happened.** `M-02` stays un-DONE | item 17 in `BEFORE-LAUNCH.md` |
+| **`M-P1-4`'s two sweeps are still open** — the zero-input audit and the never-made-to-fail sweep, across all 21 gates | tracker § "END OF EPIC N" |
+
+**What is genuinely left for a developer:** division shell epics (`B-*`, `U-*`, `K-*`/`P-*`),
+`G-04`/`G-05` (sitemap, robots, structured data), `L-07` (`consent_events`), `N-02`/`N-10`, and
+Epic H. Everything else on the critical path is in `BEFORE-LAUNCH.md` and belongs to Atik.
 
 ---
 
