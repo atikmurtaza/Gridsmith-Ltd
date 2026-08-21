@@ -1,7 +1,7 @@
 # PRD — Gridsmith Digital
 
 **Division:** Gridsmith Digital (trading division of Gridsmith Ltd)
-**Scope:** `gridsmith.co.uk/digital/*`
+**Scope:** `gridsmith.uk/digital/*`
 **Sells:** websites, custom software, digital products, AI integration
 **Traces to:** `_shared/00-MARKET-RESEARCH-BASIS.md`, `_shared/00-FOUNDATION.md`
 

@@ -71,9 +71,9 @@ This is deterrence, not DRM. Documented as such so nobody assumes it is stronger
 | LCP | ≤2.0s (4G, Moto G4) | Lighthouse CI, blocks merge |
 | INP | ≤200ms | Lighthouse CI |
 | CLS | ≤0.05 | Lighthouse CI |
-| JS (marketing routes) | ≤120KB gz | `@next/bundle-analyzer` + size-limit CI |
-| JS (`/design/work` with filters) | ≤160KB gz | as above |
-| JS (`/design/estimate`) | ≤150KB gz | as above |
+| Framework floor (reported, not budgeted) | 100.2KB gz | Next 15 + React 19 |
+| **JS delta, Design routes** | **≤25KB gz** (~125KB total) | `scripts/check-bundle-size.mjs` in CI |
+| **JS delta, `/design/estimate`** | **≤40KB gz** (~140KB total) | as above |
 | Fonts | ≤2 families, ≤4 weights, `woff2`, `font-display: swap`, self-hosted, preloaded | manual review |
 | Images | AVIF with WebP fallback, explicit dimensions on 100% | lint rule |
 

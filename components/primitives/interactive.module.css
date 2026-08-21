@@ -1,0 +1,197 @@
+/* Tier 3 — interactive. Tokens only; no colour literals.
+   Every border in this file identifies a control or one of its states, so it uses
+   --ink-subtle (>=4.18:1 on every surface of every theme) and never --line-strong
+   (1.45–1.79:1). FOUNDATION §3.
+   Every state carries a non-colour cue as well as any colour change — WCAG 1.4.1. */
+
+/* One focus treatment for the whole system, and independent of --accent so it survives on
+   Digital where the accent has no headroom.
+   --ink measures 15.42:1 at its worst cell across all four themes and all three surfaces —
+   check:contrast, permission matrix. This comment claimed "17.9:1 minimum", which is
+   Design's --ink-on-canvas figure, not the minimum of anything. Every value clears AAA
+   either way, so nothing about the treatment changes; an asserted number no gate supports
+   does not belong in the shared primitive layer. */
+.focusable:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: var(--space-3) var(--space-8);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: var(--radius-default);
+  border: var(--border-hairline) solid transparent;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+/* Press sets its own button typography — press/DESIGN.md §5: "serif --text-base weight
+   500, sentence case. **Not uppercase** — uppercase buttons read as sales pressure in
+   this context". The rule above is Design's specification (mono uppercase --text-sm
+   0.08em) and was being applied to all four themes, so every Press button rendered
+   against the one line in its spec that is stated as a prohibition.
+
+   Letter-spacing goes back to normal with it: 0.08em exists to open up uppercase mono and
+   does the opposite to sentence-case serif. The spec states no tracking for this button,
+   so the default is the honest reading.
+
+   **First theme-specific override in the primitive layer.** The systematic version is
+   button typography on tokens set per theme, which is also what Digital's 0.06em tracking
+   needs (digital §5) — that is one declaration away from here and is logged at P2 rather
+   than swept in now. If a third theme needs to differ, do the tokens instead of a third
+   block. Radius and weight are already correct through --radius-default and the rule
+   above. */
+:global([data-division='press']) .button {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+/* Resting border is the only thing identifying this as a button, so it needs 3:1. */
+.secondary { background: transparent; color: var(--ink); border-color: var(--ink-subtle); }
+.secondary:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: from-font;
+}
+.link:hover { text-decoration-thickness: 2px; }
+/* Not styled as secondary — master/PROJECT-RULES.md §1.4. */
+.linkQuiet { color: var(--ink); }
+
+.field { display: flex; flex-direction: column; gap: var(--space-2); }
+.label { font-size: var(--text-sm); font-weight: 500; color: var(--ink); }
+.required { font-family: var(--font-mono); color: var(--ink-muted); }
+.hint { font-size: var(--text-sm); color: var(--ink-muted); }
+.control {
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  font-size: var(--text-base);
+  color: var(--ink);
+  background: var(--canvas);
+  border: var(--border-hairline) solid var(--ink-subtle);
+  border-radius: var(--radius-default);
+}
+/* --ink-muted for a different reason than the two in content.module.css: `.control` pins
+   `background: var(--canvas)` above, so the placeholder never reaches sunken and cleared
+   4.5:1 on contrast alone. What it failed is Press's --ink-subtle 17px floor (press.css,
+   press/DESIGN.md §2) — --text-base is 16.08px at 375px and only reaches 17px at 1440px.
+   That floor exists because Press's warm canvas leaves --ink-subtle at 4.56:1, clearing
+   AA by 0.06. --ink-muted is 6.64:1 there and carries no size floor. */
+.control::placeholder { color: var(--ink-muted); }
+.control:disabled { opacity: 0.45; cursor: not-allowed; }
+/* Error: thicker border AND a message AND aria-invalid — three cues, no colour alone. */
+.controlInvalid { border-width: 2px; border-color: var(--ink); }
+.error {
+  display: flex;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink);
+}
+.errorMark { font-family: var(--font-mono); }
+
+.textarea { min-height: 8rem; resize: vertical; }
+
+.fieldset { margin: 0; padding: 0; border: 0; }
+.legend { padding: 0; font-size: var(--text-sm); font-weight: 500; color: var(--ink); }
+.options { display: flex; flex-direction: column; gap: var(--space-3); margin-block-start: var(--space-3); }
+.option { display: flex; align-items: flex-start; gap: var(--space-3); min-height: 2.75rem; }
+.option input {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin-block-start: 0.15rem;
+  accent-color: var(--accent);
+  flex: none;
+}
+.optionLabel { font-size: var(--text-base); color: var(--ink); }
+.optionHint { display: block; font-size: var(--text-sm); color: var(--ink-muted); }
+
+.accordion { border-block-start: var(--border-hairline) solid var(--line); }
+.accordionItem { border-block-end: var(--border-hairline) solid var(--line); }
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 3.5rem;
+  padding-block: var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+.summary::-webkit-details-marker { display: none; }
+/* The glyph is the state cue and rotates on open — shape, not colour. */
+.marker { flex: none; font-family: var(--font-mono); color: var(--ink-muted); transition: transform var(--dur-fast) var(--ease-out); }
+.accordionItem[open] .marker { transform: rotate(45deg); }
+.panel { padding-block-end: var(--space-6); color: var(--ink-muted); }
+
+.tablist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  border-block-end: var(--border-hairline) solid var(--line);
+}
+.tab {
+  min-height: 2.75rem;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  background: none;
+  border: 0;
+  border-block-end: 2px solid transparent;
+  margin-block-end: -1px;
+  cursor: pointer;
+}
+/* Selected: accent rule + weight + colour + aria-selected. Never colour alone. */
+.tabSelected { color: var(--ink); font-weight: 600; border-block-end-color: var(--accent); }
+.tabpanel { padding-block-start: var(--space-6); }
+
+.stepper { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-4); }
+.step { display: flex; gap: var(--space-4); }
+.stepMarker {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  border: var(--border-hairline) solid var(--ink-subtle);
+  border-radius: var(--radius-default);
+}
+/* Current step: filled marker + heavier title + aria-current. Three cues. */
+.stepCurrent .stepMarker { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.stepCurrent .stepTitle { font-weight: 600; color: var(--ink); }
+/* Completed step: heavier border + a "completed" prefix read out by the sr-only span in
+   Stepper.tsx. This carried border-color and color and nothing else — two colour changes,
+   which is the one thing WCAG 1.4.1 forbids, in the primitive that renders the canonical
+   six process stages on every division. The border-width step is the non-colour cue the
+   component's own docstring already claimed it had. */
+.stepDone .stepMarker { border-width: 2px; border-color: var(--ink-muted); color: var(--ink); }
+.stepTitle { font-family: var(--font-display); font-size: var(--text-lg); color: var(--ink-muted); }
+.stepBody { color: var(--ink-muted); }

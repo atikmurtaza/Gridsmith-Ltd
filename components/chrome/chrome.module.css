@@ -1,0 +1,196 @@
+/* Chrome — shared across all four route groups. Tokens only; no colour literals. */
+
+/* WCAG 2.4.1 Bypass Blocks. The first focusable thing in the document, off-screen until
+   focused rather than `display: none` — a hidden element is not focusable, and a skip
+   link that cannot be reached is not a bypass mechanism.
+
+   `:focus`, deliberately not `:focus-visible`. The link has no visible resting state, so
+   a focus that does not paint leaves the user with no indication of where they are; and
+   the only way to reach it is a keypress, so the heuristic `:focus-visible` implements
+   would resolve the same way for every real user. It also makes the gate's programmatic
+   `.focus()` observe what a keyboard user observes.
+
+   Transform, not `top`, so it is composited — motion is opacity and transform only. There
+   is deliberately NO transition: at 150ms the link is still off-screen when focus lands, and
+   the gate measured exactly that (`8,-56 134×48`) on the first run. A control whose whole job
+   is to appear the instant it is focused should not animate into place. */
+.skipLink {
+  position: fixed;
+  z-index: 100;
+  inset-block-start: var(--space-2);
+  inset-inline-start: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--canvas);
+  color: var(--ink);
+  border: var(--border-hairline) solid var(--ink);
+  border-radius: var(--radius-none);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--space-4)));
+}
+.skipLink:focus {
+  transform: translateY(0);
+  /* The UA ring is what painted here first and it is not theme-aware — Design's canvas is
+     near-black. Same treatment as `.focusable` in the primitive layer. */
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Header — M-03. Hairline rule, no shadow: depth comes from 1px borders (CLAUDE.md
+   "the feel"). Not sticky — a sticky header costs viewport height at 375px and there is
+   nothing here yet that a reader needs while scrolled. */
+.header {
+  border-block-end: var(--border-hairline) solid var(--line);
+  background: var(--canvas);
+}
+.headerInner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-8);
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: var(--space-4) var(--gutter);
+}
+/* **The wordmark is the one element that must be identical in all four themes**, so it does
+   NOT use --font-display, which is a different face per division by design: neo-grotesque on
+   master and Design, mono on Digital, serif on Press. The company mark reading as four
+   different marks is the opposite of what shared structure is for.
+
+   --font-mono, and the choice is constrained rather than aesthetic. It resolves to JetBrains
+   Mono in all four themes and all four route groups already load it, so this costs zero bytes.
+   Locking to Inter instead would mean loading a fourth family on /press for one word, on the
+   critical path, against a 2.0s LCP budget with a ~1.52s empty-page floor. If the brand later
+   wants the wordmark in a specific face, that is a Press font-budget decision, not a CSS one. */
+.wordmark {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  line-height: var(--leading-tight);
+  color: var(--ink);
+  text-decoration: none;
+}
+.navList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Undecorated at rest, unlike the `Link` primitive. Nav links are not prose links: they
+   sit in a `<nav>` landmark in a list, which is the non-colour cue WCAG 1.4.1 asks for,
+   and 1.4.1 applies to links *within a block of text*. The underline returns on hover
+   and focus so the affordance is never only colour when the pointer is on it. */
+.navLink {
+  display: inline-block;
+  min-height: 2.75rem;
+  padding-block: calc((2.75rem - 1.55em) / 2);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--ink);
+  text-decoration: none;
+}
+.navLink:hover,
+.navLink:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.wordmark:focus-visible,
+.navLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Footer — M-04. */
+.footer {
+  border-block-start: var(--border-hairline) solid var(--line);
+  background: var(--canvas);
+}
+.footerInner {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: var(--space-12) var(--gutter);
+}
+.switcherList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6) var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* The one place at master level where the division accents appear as a rule rather than a
+   text colour — DESIGN.md §2 forbids coloured text for Design's amber, which is 2.16:1
+   against canvas and could never carry a label. A 3px top rule is not text, so it is not
+   subject to 1.4.3, and the label itself stays --ink.
+
+   **--accent-design/digital/press are declared by the MASTER theme only** — the token
+   contract is 15 per theme plus those three on master (check:tokens asserts exactly that).
+   The footer renders on all four route groups, so on a division route those names resolve
+   to nothing. Without the fallback the longhand would be invalid at computed-value time and
+   discard the shorthand's colour with it: the same mechanism that made `outline: 2px solid
+   var(--undefined)` erase the focus ring, which this programme has already shipped once.
+   The fallback degrades to the neutral rule, which is what DESIGN.md §2 describes when it
+   says the accents appear *at master level*. */
+.switcherLink {
+  display: block;
+  min-height: 2.75rem;
+  padding-block: var(--space-3);
+  border-block-start: 3px solid var(--line-strong);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--ink);
+  text-decoration: none;
+}
+.switcherLink[data-division-accent='design'] { border-block-start-color: var(--accent-design, var(--line-strong)); }
+.switcherLink[data-division-accent='digital'] { border-block-start-color: var(--accent-digital, var(--line-strong)); }
+.switcherLink[data-division-accent='press'] { border-block-start-color: var(--accent-press, var(--line-strong)); }
+.switcherLink:hover,
+.switcherLink:focus-visible { text-decoration: underline; text-underline-offset: 0.2em; }
+.switcherLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.statutory {
+  border-block-start: var(--border-hairline) solid var(--line);
+}
+.statutoryInner {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: var(--space-6) var(--gutter);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-relaxed);
+  color: var(--ink-muted);
+}
+/* WCAG 2.5.8 target size. At --text-xs a bare inline link is ~16px tall, and the footer
+   now stacks two of them — the mailto and the consent reopen — so axe reported
+   `target-size` serious on every route. Padding takes each past 24px; they sit on their
+   own lines, so the horizontal axis is the container width. */
+.statutoryInner p { margin: 0; }
+.statutoryInner p + p { margin-block-start: var(--space-2); }
+.statutoryLink {
+  display: inline-block;
+  padding-block: var(--space-2);
+  color: var(--ink-muted);
+}
+.statutoryLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* The statutory block must not sit under a fixed bar. Below 768px `StickyCta` is
+   `position: fixed` against the bottom edge, and with a real footer in the document it
+   overlapped the disclosure — axe reported `color-contrast` UNRESOLVED on the bar's own
+   button at 375px scrolled, "background could not be determined because it partially
+   overlaps other elements", which is the tell rather than the problem.
+
+   The problem is that e-commerce regs reg. 6 require the particulars to be "easily,
+   directly and permanently accessible", and a bar covering them at the one width where it
+   exists is none of those. Reserving the bar's height here is the same mechanism
+   globals.css already uses for scroll-padding, reading the height the component publishes
+   and check-responsive asserts — not a second, remodelled figure. */
+@media (max-width: 767px) {
+  .statutoryInner {
+    padding-block-end: calc(var(--space-6) + var(--sticky-cta-block-size, 0px));
+  }
+}

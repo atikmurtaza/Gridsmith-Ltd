@@ -53,18 +53,31 @@ including Design's.
 | C-13 | Design Desk page + tiers | P0 | 1.5d | A-06 | TODO | Dev | `excludes` visible |
 | C-14 | **Drawing estimator** config schema | P0 | 0.5d | A-06 | TODO | Dev | Mirrors Digital `estimatorConfig` |
 | C-15 | Drawing estimator calculation function | P0 | 1d | C-14 | TODO | Dev | Pure, unit tested |
-| C-16 | Drawing estimator UI + result | P0 | 1.5d | C-15 | TODO | Dev | No email gate; ≤150KB gz |
+| C-16 | Drawing estimator UI + result | P0 | 1.5d | C-15 | TODO | Dev | No email gate; JS delta ≤40KB gz |
 | C-17 | Estimator calibration vs 8 past jobs | P0 | 0.5d | C-15 | TODO | Dev | **GATE — range contains actual in ≥6/8** |
 
 ## Epic D — Portfolio & media
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| D-01 | `/design/work` grid | P0 | 1.5d | B-10 | TODO | Dev | |
+| D-01 | `/design/work` grid | P0 | 1.5d | B-10 | TODO | Dev | **First real exercise of the `Media` primitive** — see DoD below |
 | D-02 | Filters with URL state | P0 | 1.5d | D-01 | TODO | Dev | Canonical to unfiltered |
 | D-03 | Watermark baked at CMS ingest | P0 | 1d | A-06 | TODO | Dev | Not CSS overlay |
 | D-04 | Context-menu + selection suppression | P1 | 0.5d | D-01 | TODO | Dev | Deterrence only |
 | D-05 | Empty/loading states for grid | P0 | 0.5d | D-02 | TODO | Dev | |
+
+**D-01 Definition of Done — additions.** `Media` was built at A-05 but is the one
+primitive `/_kitchen-sink` does not render: exercising it needs real assets, and
+fabricating placeholder imagery to fill the gap would have put invented visual content in
+the repo (CLAUDE.md non-negotiable #2). `A-GATE` therefore passes without covering it, by
+design. D-01 is where that debt is settled, so its DoD explicitly includes:
+
+- [ ] Correct at 375px, 768px and 1440px
+- [ ] Meaningful `alt` text on every image — never empty, never the filename
+- [ ] Watermark present **in the asset itself**, baked at ingest, not a CSS overlay
+- [ ] Context-menu suppression working (the client-side half deferred from A-05, D-04)
+- [ ] Explicit `width`/`height` on every image
+- [ ] Zero CLS measured on the grid under image load
 
 ## Epic E — Content
 

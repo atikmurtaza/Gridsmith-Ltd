@@ -1,5 +1,10 @@
 # Canonical Process — all divisions
 
+**Status: FIXED — not a draft.** The six stages are already public and confirmed
+accurate. They are not open for revision, rewording or "improvement" by a later session.
+Treat this file the way you would treat a published legal page: if it needs to change,
+that is a business decision taken outside the build.
+
 **Source:** Gridsmith Ltd's actual working process, as stated by the founder. This supersedes every process module previously specified in the division files (Design's 5-step, Digital's 6-stage, Press's 8-stage). All three now express the **same six stages** with the same names.
 
 This matters beyond accuracy. A visitor who moves between divisions sees one company with one way of working, which is the entire argument for the master brand. Three different process diagrams would undermine it.

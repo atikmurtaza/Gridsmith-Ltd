@@ -6,7 +6,7 @@
 
 ## 1. Our commitment
 
-Gridsmith Ltd is committed to making gridsmith.co.uk usable by as many people as possible, including people using screen readers, keyboard-only navigation, magnification, or reduced-motion settings.
+Gridsmith Ltd is committed to making gridsmith.uk usable by as many people as possible, including people using screen readers, keyboard-only navigation, magnification, or reduced-motion settings.
 
 We treat accessibility as part of building the site properly, not as an adjustment made afterwards. Under the Equality Act 2010 we have a duty to make reasonable adjustments, and we take WCAG 2.2 Level AA as the benchmark for meeting it.
 

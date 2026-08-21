@@ -25,7 +25,7 @@ This division has an additional design constraint the others do not: **it must l
 
   --ink:            #1A1815;
   --ink-muted:      #57534E;
-  --ink-subtle:     #78716C;
+  --ink-subtle:     #6C6560;   /* was #78716C — see §2, the 17px floor went with it */
 
   --accent:         #2E4A3A;   /* deep green — cloth binding, not celebratory */
   --accent-hover:   #1F3428;
@@ -44,17 +44,36 @@ This division has an additional design constraint the others do not: **it must l
 
 **Contrast verification (WCAG 2.2 AA):**
 
-| Pair | Ratio | Pass |
+| Pair | Measured | Pass |
 |---|---|---|
-| `--ink` on `--canvas` | 15.6:1 | AAA |
-| `--ink-muted` on `--canvas` | 7.1:1 | AAA |
-| `--ink-subtle` on `--canvas` | 4.9:1 | AA — **17px minimum, never below** |
-| `--accent` on `--canvas` | 8.4:1 | AAA |
-| `--accent-ink` on `--accent` | 8.4:1 | AAA |
-| `--ink` on `--canvas-sunken` | 14.1:1 | AAA |
-| `--line-strong` on `--canvas` | 2.3:1 | **Decorative only — never a sole information carrier** |
+| `--ink` on `--canvas` | 16.84:1 | AAA |
+| `--ink-muted` on `--canvas` | 7.25:1 | AAA |
+| `--ink-subtle` on `--canvas` | 5.44:1 | AA at any size |
+| `--accent` on `--canvas` | 9.25:1 | AAA |
+| `--accent-ink` on `--accent` | 9.25:1 | AAA |
+| `--ink` on `--canvas-sunken` | 15.42:1 | AAA |
+| `--line-strong` on `--canvas` | 1.69:1 | **Decorative only — never a sole information carrier** |
 
-The warm canvas costs roughly 2 points of contrast versus pure white. The `--ink-subtle` 17px floor is the consequence and is not negotiable.
+Measured at A-03, and `--ink-subtle` re-measured at the run-3 fixes.
+
+**The `--ink-subtle` 17px floor is gone, and this is not a relaxation.** The token was
+`#78716C`, measuring 4.56:1 — clearing the AA body floor by 0.06 — and this table carried
+a "17px minimum, never below" rule to compensate for the missing headroom. That rule was
+prose no gate could enforce: `check:contrast` measures token-on-surface pairs and cannot
+see the size of the declarations that use them (A11Y-22). The run-3 audit found the floor
+breached 23 times per press frame on `/_kitchen-sink` by one 12px declaration, with every
+gate green throughout.
+
+A colour that needs a size rule to be legible is the wrong colour. `--ink-subtle` is now
+`#6C6560`, measuring **5.44 / 5.73 / 4.98:1** on `--canvas` / `--canvas-raised` /
+`--canvas-sunken`. It clears the body floor on every press surface with roughly half a
+point of buffer, so no size rule is required — and `check:contrast` now enforces the
+rendered-size rule directly rather than trusting this paragraph.
+
+The warm canvas still costs roughly 2 points of contrast versus pure white; that is why
+press needs a darker `--ink-subtle` than a white-canvas theme does. Body type remains
+17px+ / 1.7 for reading comfort (§3) — that is a typographic choice, no longer a contrast
+compensation, and the two must not be conflated again.
 
 ## 3. Typography
 

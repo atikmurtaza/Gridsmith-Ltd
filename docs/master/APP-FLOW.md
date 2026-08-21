@@ -47,9 +47,9 @@ No conversion event. Pure verification. Must be completable in under 90 seconds.
 |---|---|---|---|
 | 1 | Hero — one sentence on what Gridsmith is. **Not a services list.** | Orient | scroll |
 | 2 | **Division routing — three cards** | Route (M-J3) | → division hub |
-| 3 | The one-company argument, condensed (3 short points) | Frame (M-J2) | → `/approach` |
-| 4 | Selected work — 6, mixed, **at least 1 cross-division** | Proof | → `/work/[slug]` |
-| 5 | The six-stage process, condensed | Reduce risk | → `/approach` |
+| 3 | The one-company argument, condensed. **Built at `N-01` as a heading and one paragraph, not "3 short points"** — the approved copy is sentences, and splitting an approved paragraph into three bullets would be rewriting it into a claim about what the three things are | Frame (M-J2) | → `/approach` **once it exists**; no link until then (`M-03`) |
+| 4 | Selected work — 6, mixed, **at least 1 cross-division**. **Not built at `N-01`: blocked on real client work, `M-P2-25`.** The page was built past it | Proof | → `/work/[slug]` |
+| 5 | The six-stage process, condensed. **Built at `N-01`** as `ProcessStages` with no `detail` passed — "condensed" is the absence of `divisionDetail`/`duration`/`clientTime`, not a variant of the component; `/approach` §4 item 4 passes them and gets the full version | Reduce risk | → `/approach` **once it exists**; no link until then (`M-03`) |
 | 6 | Clients and testimonial | Proof | — |
 | 7 | Group structure statement — three divisions, one company, one contract | Honesty + legal | → `/about` |
 | 8 | Latest insights (3) | Authority | → `/insights` |
@@ -144,7 +144,7 @@ Rules:
 | Form error | Field-level, `aria-describedby`, focus to first error |
 | Submit failure | Preserve input, retry, direct email fallback |
 | 404 | Master-themed, search box, division routing block repeated, top 6 services |
-| 500 | Static, no JS dependency, email and phone visible |
+| 500 | ~~Static, no JS dependency, email and phone visible~~ — **measured false at `M-07`, `M-P1-1`.** Next serves `<html id="__next_error__">` with no `lang`, no `<h1>` and no `<main>`; `global-error` renders only after hydration, so with JS disabled the visitor gets the bare shell. WCAG 3.1.1 Level A. No app-level fix exists — a segment `error.tsx` was tried. Email and phone are separately blocked: `contactEmail` is a placeholder and the phone number is `Q-M5` |
 | Seed content in production | Build fails — see TECH-SPEC §6 |
 
 ## 8. Navigation

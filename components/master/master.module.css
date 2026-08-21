@@ -1,0 +1,207 @@
+/* Master-layer composed components. Tokens only; no colour literals. */
+
+.continuity {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Mono, because it carries the verifiable facts — division count and relationship length.
+   --ink-muted rather than --ink: it is context for the table, not a heading. */
+.continuityMeta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+/* Process stages — N-06. DESIGN.md §5: numbered 01–06 mono, connected by a 1px --line
+   vertical rule, title in display, canonical description in body, division detail muted. */
+.process { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.processList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.processStage {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-4);
+  padding-block-end: var(--space-8);
+  /* The connecting rule. On the last stage there is nothing to connect to, so it stops. */
+  border-inline-start: var(--border-hairline) solid var(--line);
+  padding-inline-start: var(--space-4);
+  margin-inline-start: var(--space-2);
+}
+.processStage:last-child { border-inline-start-color: transparent; padding-block-end: 0; }
+
+.processBody { display: flex; flex-direction: column; gap: var(--space-2); }
+.processTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: var(--ink);
+}
+/* Not italic, not smaller, not parenthetical styling — it is part of the offer, and
+   de-emphasising it would be the misrepresentation 00-PROCESS.md rule 2 forbids. */
+.processQualifier { font-family: var(--font-body); color: var(--ink-muted); }
+.processDescription { margin: 0; color: var(--ink); }
+.processDetail { margin: 0; color: var(--ink-muted); }
+.processMeta { margin: 0; font-size: var(--text-sm); color: var(--ink-muted); }
+.processProblem {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-hairline) solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+
+/* Hero — N-01 block 1. Centred is DESIGN.md §4's exception for the hero and CTA bands;
+   everything else on the master layer is asymmetrically anchored. */
+.hero { text-align: center; }
+.heroHeadline { margin: 0; }
+.heroIntro {
+  margin: var(--space-6) auto 0;
+  max-width: var(--measure-narrow);
+  font-size: var(--text-lg);
+  color: var(--ink-muted);
+}
+
+/* Division routing — N-01 block 2, DESIGN.md §5 and APP-FLOW.md §3.
+   Equal thirds rather than spans of the 12-column Grid: three equal cards is the whole
+   layout, and `repeat(3, 1fr)` says it in one line. Stacked full width below 768px. */
+.divisionCards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gutter);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (max-width: 767px) {
+  .divisionCards { grid-template-columns: 1fr; }
+}
+
+/* The 3px accent rule. It is the one place the master layer carries a division colour
+   (DESIGN.md §2) and it is a rule, never text — --accent-design is 2.16:1 on this canvas
+   and would fail as a foreground. Padding is on the card; the rule sits inside its border. */
+.divisionCards > li { position: relative; border-block-start-width: 3px; }
+.cardDesign  { border-block-start-color: var(--accent-design); }
+.cardDigital { border-block-start-color: var(--accent-digital); }
+.cardPress   { border-block-start-color: var(--accent-press); }
+
+/* The wipe. A second bar over the accent rule, scaled from the left on hover or focus —
+   DESIGN.md §6's "top rule animates left→right". --ink is the master accent, so this
+   introduces no colour; the rule visibly runs from the division's colour to ink. */
+.divisionCards > li::after {
+  content: '';
+  position: absolute;
+  inset-block-start: -3px;
+  inset-inline: -1px;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.divisionCards > li:hover::after,
+.divisionCards > li:focus-within::after { transform: scaleX(1); }
+
+.divisionCards > li:hover,
+.divisionCards > li:focus-within { background: var(--canvas-raised); }
+
+/* Siblings to 60% — DESIGN.md §5. Keyed off the list so the dim is the non-hovered
+   cards, not a state each card knows about. */
+.divisionCards:hover > li:not(:hover),
+.divisionCards:focus-within > li:not(:focus-within) {
+  opacity: 0.8;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+/* No motion reset in globals.css — there is none to inherit; RevealOnScroll carries its
+   own. Both animated properties are killed here, not slowed. */
+@media (prefers-reduced-motion: reduce) {
+  .divisionCards > li::after,
+  .divisionCards:hover > li:not(:hover),
+  .divisionCards:focus-within > li:not(:focus-within) { transition: none; }
+}
+
+.divisionServices { margin: 0; color: var(--ink); }
+.divisionCharacter { margin: 0; color: var(--ink-muted); }
+
+/* Not styled as a fallback despite the class name: --text-lg and --ink, the same weight
+   as the cards. DESIGN.md §8 — "give 'not sure / more than one' equal weight". */
+.divisionFallback {
+  margin: var(--space-8) 0 0;
+  font-size: var(--text-lg);
+  color: var(--ink);
+}
+
+/* The card's link. Plain <a> — TECH-SPEC §3, see DivisionRouting.tsx — so it carries its own
+   focus ring and underline rather than the Link primitive's. Same shape as .switcherLink,
+   which is the footer's answer to the same constraint. */
+.divisionLink { color: var(--ink); text-decoration: none; }
+.divisionLink:hover,
+.divisionLink:focus-visible { text-decoration: underline; text-underline-offset: 0.2em; }
+.divisionLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* The one-company argument — N-01 block 3. Asymmetric, per DESIGN.md §4: prose blocks are
+   anchored, not centred. The heading is the argument and takes the narrow measure so it
+   breaks where a sentence should; the paragraph gets Prose’s own measure. */
+/* Shared by blocks 3 and 5: the heading-plus-prose stack that opens a prose block.
+   Named for what it is rather than for block 3, which is what it was called when only
+   block 3 used it. */
+.blockIntro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--measure);
+}
+
+/* Block 5's lede. Not Prose: one sentence with no internal structure, and Prose's
+   descendant rules would be styling nothing. --measure so it wraps with the heading. */
+.processLede {
+  margin: 0;
+  max-width: var(--measure);
+  color: var(--ink-muted);
+}
+
+/* --- Epic N homepage blocks 4 and 6-9 ----------------------------------- */
+
+/* The "see all" line under a block. Not a button: it is a continuation of reading, and
+   DESIGN.md reserves button treatment for the conversion action. */
+.blockMore {
+  margin: var(--space-8) 0 0;
+  font-size: var(--text-lg);
+}
+
+/* Block 9. Centred is one of exactly two exceptions in DESIGN.md §4 — the hero and this. */
+.ctaBand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  text-align: center;
+}
+.ctaLede {
+  margin: 0;
+  max-width: var(--measure-narrow);
+  font-size: var(--text-lg);
+  color: var(--ink-muted);
+}
+/* The response commitment sits below the button, quiet. It is a promise, not a sales line —
+   overstating it typographically is how a promise turns into a claim. */
+.ctaCommitment {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+/* M-J2's entry point, made a link at N-11. Underlined, because weight alone is not a
+   non-colour cue (WCAG 1.4.1) and this line already carries the cards' weight by design. */
+.divisionFallbackLink { color: var(--ink); text-underline-offset: 0.2em; }
+.divisionFallbackLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }

@@ -1,0 +1,182 @@
+name: CI
+
+# A-10a + A-10b. Do not add a bypass to any step here.
+#
+# Every gate below has been proven by deliberate failure and the proof is recorded in
+# the commit that added it — CLAUDE.md "How to work". A gate nobody has watched fail is
+# not known to work.
+
+# **This fires on every branch, and that is the fix, not a convenience.**
+#
+# It was `push: branches: [main]` + `pull_request:`. Nothing in Epic A was ever pushed to
+# `main` — all of it landed on `feat/a-01-a-10a-scaffold-ci` — so every CI run this
+# programme has ever had came in through the `pull_request` trigger, and therefore existed
+# only because PR #1 happened to be open. Close that PR, or start a branch without one, and
+# `git push` runs nothing at all. No failure, no skip, no annotation: the Actions tab is
+# simply empty, and `npm run verify` still passes locally, so the tree reads green.
+#
+# "CI is the arbiter" (CLAUDE.md) was load-bearing for the whole of Epic A while resting on
+# that. `branches: ['**']` is what makes the claim true rather than conditional.
+#
+# `pull_request` is narrowed to opened/reopened so it no longer duplicates the push run on
+# every commit to an open PR — with both triggers unrestricted, each push to a PR branch
+# would run the whole suite twice, Lighthouse included. Opening a PR still gets its own run
+# for the case where the head commit predates the workflow.
+# `workflow_dispatch` was added on 20 Aug as a DIAGNOSTIC and kept as a capability. When every
+# push was failing at startup with zero jobs, a dispatch request was the thing that separated
+# "GitHub cannot parse this file" from "GitHub will not start a run": the API answered
+# `422 Workflow does not have 'workflow_dispatch' trigger`, which is a reply that can only come
+# from a workflow it had already parsed and whose triggers it had enumerated. That eliminated
+# the file — and the Actions UI's own message, "this run likely failed because of a workflow
+# file issue", was wrong. See `M-P1-5`. It stays so a run can be started without inventing a
+# commit to push.
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    types: [opened, reopened]
+  workflow_dispatch:
+
+# `NEXT_PUBLIC_SANITY_DATASET` has no default (M-P1-2): an unset variable is a build error
+# rather than a silent fallback to `development`, because on a live host that fallback would
+# publish a [SEED] VAT number. CI builds against `development` and says so here.
+env:
+  NEXT_PUBLIC_SANITY_DATASET: development
+  # **Shaped placeholders, not the real ids.** `check-axe`'s grant-path assertions are about
+  # which host was contacted, never about a response, so a fake id exercises the whole path
+  # with no credential in the repository. Real dev ids live in `.env.local`; live ids go in
+  # the platform environment at launch — same variable names, different values per
+  # environment, the pattern NEXT_PUBLIC_SANITY_DATASET already uses.
+  #
+  # The gate FAILS if none is configured rather than skipping: an unconfigured environment is
+  # exactly where this assertion would go quietly hollow.
+  NEXT_PUBLIC_GA4_ID: G-CIPLACEHOLDER
+  NEXT_PUBLIC_POSTHOG_KEY: phc_ci_placeholder_not_a_real_project_key
+  # EU, asserted rather than defaulted. PostHog's documented default is us.i.posthog.com.
+  NEXT_PUBLIC_POSTHOG_HOST: https://eu.i.posthog.com
+
+  # The lead pipeline (`A-08`). Both are PUBLISHABLE — `PUBLISHABLE_KEY` is the anon key,
+  # the one the browser already holds — so they are repository **variables**, not secrets,
+  # and a public repository is the reason that is fine rather than the reason it is not.
+  # `SUPABASE_SERVICE_ROLE_KEY` is the opposite and must never appear here; `lint:secrets`
+  # greps the built chunks for it after every build.
+  #
+  # Mapped unconditionally. An unset variable expands to the empty string, which is exactly
+  # the state `check-axe` already reports as `"PROJECT_URL or PUBLISHABLE_KEY is not set"` —
+  # so this cannot mask anything, and setting the variables is the only remaining step.
+  # `M-P2-32`.
+  PROJECT_URL: ${{ vars.PROJECT_URL }}
+  PUBLISHABLE_KEY: ${{ vars.PUBLISHABLE_KEY }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # check:claims asks git whether each commit a FIX-LEDGER row cites is an
+          # ancestor of HEAD. checkout's default fetch-depth: 1 is a shallow clone with
+          # no history, so every one of the 34 claims failed as "not on this branch" on
+          # CI's first real run — an environment difference, not a bad ledger. The gate
+          # needs the whole history to answer its question at all.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+
+      - run: npm ci
+
+      - name: TypeScript
+        run: npm run typecheck
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: No hardcoded colours
+        run: npm run lint:colors
+
+      - name: Contrast ratios meet WCAG 2.2 AA and match DESIGN.md
+        run: npm run check:contrast
+
+      - name: No element styled as a heading without being one
+        run: npm run check:headings
+
+      - name: No invented prices, codes or ISBNs in rendering files
+        run: npm run check:content
+
+      - name: Every recorded fix claim corresponds to a real commit
+        run: npm run check:claims
+
+      # A literal U+0008 renders exactly like the two-character escape in sed, the terminal,
+      # the editor and the diff, so a regex that can never match reads as correct in
+      # every review. It has happened three times; only od -c and this gate can see it.
+      - name: No control characters in source
+        run: npm run check:control
+
+      # Nothing else can see this layer: next build never compiles sanity/schemas, so a
+      # broken schema fails for an editor and for no other gate.
+      - name: CMS schema resolves, and its structural rules are actually enforced
+        run: npm run check:schemas
+
+      # RLS is the only thing between a publishable key and every lead in the database.
+      # Reads the committed migrations, not the live database — see the script's docstring.
+      - name: Row-level security is declared on every table, view and policy
+        run: npm run check:rls
+
+      - name: Build
+        run: npm run build
+
+      # After the build, not before. A leaked service-role key is a property of the
+      # emitted bundle, not a shape in the source: this greps .next/static/chunks for the
+      # key string, which the source-only checks it also runs cannot see past.
+      - name: No service-role key on the client
+        run: npm run lint:secrets
+
+      - name: Design tokens reach the build
+        run: npm run check:tokens
+
+      - name: Theme is server-rendered, no flash path
+        run: npm run check:theme
+
+      - name: Bundle size
+        # Per-route gzipped module scripts vs the budgets in master/PROJECT-RULES.md §8.
+        # Must run after build — it measures the prerendered output, not the source.
+        run: npm run size
+
+      # A-10b, two axes. Each Lighthouse run starts and stops its own server — desktop on
+      # 3200, mobile on 3201 — so they cannot collide.
+      #
+      # Desktop asserts the category scores: that is the craft claim a prospect runs.
+      # Mobile asserts the Core Web Vitals and NOT the performance category: the score is a
+      # weighted curve that moves between Lighthouse versions, and pinning it fails builds
+      # for reasons users never experience. See both config files.
+      - name: Lighthouse CI — desktop, category scores (Digital 100/100/100)
+        run: npm run check:lhci:desktop
+
+      # lhci prints nothing when it passes, so a green log carries no measurements.
+      # `always()` because the numbers matter most on the run that failed.
+      - name: Desktop numbers
+        if: always()
+        run: node scripts/lhci-report.mjs desktop
+
+      - name: Lighthouse CI — mobile 4G, Core Web Vitals asserted directly
+        run: npm run check:lhci:mobile
+
+      - name: Mobile numbers — these set the Stage 3 LCP budgets (Q-M16)
+        if: always()
+        run: node scripts/lhci-report.mjs mobile
+
+      # axe, the statutory record and the responsive sweep share one server on 3000, started
+      # and stopped by with-server so none of them can run against a server that never came up.
+      #
+      # check:launch moved here from before the build at M-P1-7. It was placed pre-build so a
+      # missing companyDetails singleton would fail with a sentence about the statutory record
+      # rather than a fetch error inside static generation — a good reason for a gate that read
+      # its dataset from the environment. It no longer does: it asks the SERVED site which
+      # dataset it was built against, so it cannot run before there is a site to ask. The
+      # pre-build failure mode it was protecting against is now a build failure with a Sanity
+      # stack trace, which is worse output for the same defect and is the price of the fix.
+      - name: axe + statutory record + no horizontal overflow at 375/768/1440
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive"

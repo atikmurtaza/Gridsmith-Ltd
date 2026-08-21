@@ -2,7 +2,7 @@
 
 **Version:** 1.0 · **Effective from:** `[TK]` · **Status: DRAFT**
 
-These terms govern use of gridsmith.co.uk. They do **not** govern services we provide — those are covered by the Master Services Agreement (business clients) or the Consumer Terms (individual clients).
+These terms govern use of gridsmith.uk. They do **not** govern services we provide — those are covered by the Master Services Agreement (business clients) or the Consumer Terms (individual clients).
 
 ---
 

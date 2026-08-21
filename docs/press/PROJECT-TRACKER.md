@@ -43,32 +43,32 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | R-18 | ISBN / publisher-of-record explainer | P0 | 0.5d | R-17 | TODO | Dev | Author is publisher; no imprint |
 | R-14 | Credentials strip | P0 | 0.5d | P-04 | TODO | Dev | Imprint, ISBN prefix, company no., titles count |
 
-## Epic N — Path Finder & conversion
+## Epic K — Path Finder & conversion
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| N-01 | `pathFinderConfig` schema | P0 | 1d | A-06 | TODO | Dev | |
-| N-02 | **ETH-04 schema validator** | P0 | 0.5d | N-01 | TODO | Dev | ≥2 honest outcomes, no CTA on them |
-| N-03 | `recommend.ts` pure function | P0 | 2d | N-01 | TODO | Dev | All 6 outcomes reachable, unit tested |
-| N-04 | **ETH-04 verification run** | P0 | 0.5d | N-03 | TODO | Dev | **HARD GATE — 3 scenarios** |
-| N-05 | Static SSR decision table | P0 | 1d | N-01 | TODO | Dev | Works with JS off |
-| N-06 | Path Finder island, 5 steps | P0 | 3d | N-03 | TODO | Dev | ≤140KB gz; fieldsets |
-| N-07 | Result view; CTA suppressed on honest outcomes | P0 | 1d | N-06 | TODO | Dev | No button on E/F |
-| N-08 | `press_path_results` + audit column | P0 | 0.5d | A-07 | TODO | Dev | `is_gridsmith_outcome` |
-| N-09 | `/press/assessment` page | P0 | 1.5d | P-07 | TODO | Dev | Priced, sample linked |
-| N-10 | Sample report, signed URL delivery | P0 | 1d | N-09 | TODO | Dev | 72h expiry |
-| N-11 | `/press/ghostwriting` w/ hours per stage | P0 | 1.5d | P-07 | TODO | Dev | Persona P2's decisive detail |
-| N-12 | `contentProgrammeTier` + page | P0 | 1.5d | A-06 | TODO | Dev | Excludes rendered |
-| N-21 | `marketingPackage` schema | P0 | 0.5d | A-06 | TODO | Dev | `outcomeStatement` required |
-| N-22 | `/press/book-marketing` page | P0 | 1.5d | N-21 | TODO | Dev | Never bundled; no-outcome prominent |
-| N-13 | Contact flow, 4 segments | P0 | 2.5d | A-08 | TODO | Dev | Memoir gate on acknowledgement |
-| N-16 | **Consumer vs business terms routing** | P0 | 1d | N-13 | TODO | Dev | Segment determines which terms apply |
-| N-17 | **14-day cancellation notice** in consumer flow | P0 | 0.5d | N-16 | TODO | Dev | Before pricing, plain language |
-| N-18 | **Early-start express request checkbox** | P0 | 1d | N-16 | TODO | Dev | Unbundled, never pre-ticked |
-| N-19 | `consumer_consents` table + timestamped record | P0 | 0.5d | N-18 | TODO | Dev | Evidence of the express request |
-| N-20 | Confirmation email repeats the notice verbatim | P0 | 0.5d | N-18 | TODO | Dev | |
-| N-14 | Path Finder → contact prefill | P1 | 0.5d | N-07, N-13 | TODO | Dev | |
-| N-15 | Cross-division prompt, confirmation only | P1 | 0.5d | N-13 | TODO | Dev | Never mid-funnel |
+| K-01 | `pathFinderConfig` schema | P0 | 1d | A-06 | TODO | Dev | |
+| K-02 | **ETH-04 schema validator** | P0 | 0.5d | K-01 | TODO | Dev | ≥2 honest outcomes, no CTA on them |
+| K-03 | `recommend.ts` pure function | P0 | 2d | K-01 | TODO | Dev | All 6 outcomes reachable, unit tested |
+| K-04 | **ETH-04 verification run** | P0 | 0.5d | K-03 | TODO | Dev | **HARD GATE — 3 scenarios** |
+| K-05 | Static SSR decision table | P0 | 1d | K-01 | TODO | Dev | Works with JS off |
+| K-06 | Path Finder island, 5 steps | P0 | 3d | K-03 | TODO | Dev | JS delta ≤40KB gz; fieldsets |
+| K-07 | Result view; CTA suppressed on honest outcomes | P0 | 1d | K-06 | TODO | Dev | No button on E/F |
+| K-08 | `press_path_results` + audit column | P0 | 0.5d | A-07 | TODO | Dev | `is_gridsmith_outcome` |
+| K-09 | `/press/assessment` page | P0 | 1.5d | P-07 | TODO | Dev | Priced, sample linked |
+| K-10 | Sample report, signed URL delivery | P0 | 1d | K-09 | TODO | Dev | 72h expiry |
+| K-11 | `/press/ghostwriting` w/ hours per stage | P0 | 1.5d | P-07 | TODO | Dev | Persona P2's decisive detail |
+| K-12 | `contentProgrammeTier` + page | P0 | 1.5d | A-06 | TODO | Dev | Excludes rendered |
+| K-21 | `marketingPackage` schema | P0 | 0.5d | A-06 | TODO | Dev | `outcomeStatement` required |
+| K-22 | `/press/book-marketing` page | P0 | 1.5d | K-21 | TODO | Dev | Never bundled; no-outcome prominent |
+| K-13 | Contact flow, 4 segments | P0 | 2.5d | A-08 | TODO | Dev | Memoir gate on acknowledgement |
+| K-16 | **Consumer vs business terms routing** | P0 | 1d | K-13 | TODO | Dev | Segment determines which terms apply |
+| K-17 | **14-day cancellation notice** in consumer flow | P0 | 0.5d | K-16 | TODO | Dev | Before pricing, plain language |
+| K-18 | **Early-start express request checkbox** | P0 | 1d | K-16 | TODO | Dev | Unbundled, never pre-ticked |
+| K-19 | `consumer_consents` table + timestamped record | P0 | 0.5d | K-18 | TODO | Dev | Evidence of the express request |
+| K-20 | Confirmation email repeats the notice verbatim | P0 | 0.5d | K-18 | TODO | Dev | |
+| K-14 | Path Finder → contact prefill | P1 | 0.5d | K-07, K-13 | TODO | Dev | |
+| K-15 | Cross-division prompt, confirmation only | P1 | 0.5d | K-13 | TODO | Dev | Never mid-funnel |
 
 ## Epic O — Content
 
@@ -80,7 +80,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | O-04 | 8 case studies, each linked to a title | P0 | 5d | P-08 | TODO | Content | |
 | O-05 | Package matrix populated | P0 | 2d | R-10 | TODO | Content | Every exclusion stated |
 | O-12 | Platform spec content, 5 platforms | P0 | 1.5d | R-15 | TODO | Content | Verified against live specs |
-| O-13 | Marketing package content | P0 | 1d | N-21 | TODO | Content | No-outcome statement on each |
+| O-13 | Marketing package content | P0 | 1d | K-21 | TODO | Content | No-outcome statement on each |
 | O-06 | 18 FAQs | P0 | 1.5d | A-06 | TODO | Content | Vanity-press Q first, open |
 | O-07 | **Vanity-press answer external review** | P0 | — | O-06 | TODO | External | Credibility check |
 | O-08 | Rights & royalties copy | P0 | 0.5d | R-07 | TODO | Content | Post legal sign-off |
@@ -95,7 +95,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | Z-01 | Structured data incl. `Book` | P0 | 1d | O-* | TODO | Dev | |
 | Z-02 | Performance — books shelf | P0 | 1.5d | O-02 | TODO | Dev | LCP ≤2.0s with 12 covers |
 | Z-03 | Accessibility full pass | P0 | 2d | O-* | TODO | Dev | Serif sizing, table, Path Finder |
-| Z-04 | JS-disabled verification | P0 | 0.5d | N-05 | TODO | Dev | Pricing + decision table readable |
+| Z-04 | JS-disabled verification | P0 | 0.5d | K-05 | TODO | Dev | Pricing + decision table readable |
 | Z-05 | All states | P0 | 1d | P-* | TODO | Dev | Incl. broken-link degradation |
 | Z-06 | Manual retailer link verification | P0 | 0.5d | O-02 | TODO | Content | In addition to cron |
 | Z-07 | Cross-browser + device | P0 | 1d | Z-02 | TODO | Dev | |
@@ -114,13 +114,13 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | Q-P2 | Author contract — rights & royalties clauses | Atik + solicitor | R-06, R-07 |
 | Q-P3 | Final package prices and inclusions | Atik | R-10, O-05 |
 | Q-P4 | Revision rounds per package + extra cost | Atik | R-10 |
-| Q-P5 | Manuscript Assessment price + deliverable | Atik | N-09 |
-| Q-P6 | Ghostwriting: real author hours per stage | Atik | N-11 |
-| Q-P7 | Content Programme tiers, SLAs, notice | Atik | N-12 |
+| Q-P5 | Manuscript Assessment price + deliverable | Atik | K-09 |
+| Q-P6 | Ghostwriting: real author hours per stage | Atik | K-11 |
+| Q-P7 | Content Programme tiers, SLAs, notice | Atik | K-12 |
 | Q-P8 | ~~Imprint / ISBN~~ **RESOLVED** — author's own ISBN, author is publisher of record, no Gridsmith imprint | — | — |
-| Q-P11 | Marketing package contents and prices | Atik | N-21, N-22 |
+| Q-P11 | Marketing package contents and prices | Atik | K-21, K-22 |
 | Q-P12 | Platform spec detail per platform — needs someone who has actually submitted to each | Atik | R-15, R-16 |
-| Q-P10 | Pro-rata calculation method for early-start cancellation | Atik + solicitor | N-18 |
+| Q-P10 | Pro-rata calculation method for early-start cancellation | Atik + solicitor | K-18 |
 
 ## Metrics dashboard
 

@@ -6,6 +6,138 @@ The master layer owns the shared foundation (Epic A, previously in the Design tr
 
 ---
 
+## ✋ ACCEPTED — `M-P2-36`, first-view typography under `display: 'optional'`
+
+**Status `ACCEPTED`, not `OPEN`. Accepted by Atik on 21 August 2026. This is not backlog and
+it is not a bug someone forgot. Do not reopen it as one. Revisit only if the fonts change.**
+
+**The trade.** `display: 'optional'` gives each face ~100ms and otherwise keeps the
+metric-matched fallback for the life of that page load. A first-time visitor on a slow
+connection therefore sees the fallback face for that one page view; the face is cached for
+every navigation after it.
+
+**Why it was taken.** It is what removes the swap, and the swap was the whole of `M-P2-31`:
+mobile CLS of 0.1017 on `/design` and 0.1231 on `/press` against a 0.05 ceiling, attributed
+by Lighthouse to a single shift with cause `"Web font loaded"`. With `optional` all four
+routes measure **0.000**.
+
+**The alternatives, and why neither.** Raising the CLS ceilings is forbidden outright —
+*"never break a performance budget to add a feature"*. Dropping a display face gives up the
+identity premise: four voices, one hand. No third option exists; the fonts are already
+preloaded and still arrive after first paint under 4G throttling.
+
+---
+
+## ✋ ACCEPTED RISK — `M-P1-1`, the Level A gap on server-side crashes
+
+**Status `ACCEPTED`, not `OPEN`. Accepted by Atik on 21 August 2026, on the reasoning below.
+This is not backlog and it is not a bug someone forgot. Do not reopen it as one.**
+
+**The defect.** WCAG 3.1.1 Level A fails **on server-side crashes only**: the served document
+is Next's `__next_error__` shell — no `lang`, no `<h1>`, no `<main>`, and a `<title>` leaked
+from route metadata rather than the boundary's own. Normal pages are unaffected.
+
+**Why it is accepted rather than fixed.**
+
+- **The recorded remedy was measured and does not work on this platform.** `public/500.html`
+  was written and deployed, and **both** failure classes were induced on the preview: a
+  genuine platform error (a hanging invocation the platform killed, 504) and the server-render
+  crash (500). **Neither served the document.**
+- **It is not established whether that is hobby-tier gating or the wrong error class.** Vercel
+  documents custom error pages as covering platform errors, and a Next function returning its
+  own 500 is not one; the docs page is also permission-gated and this team is on hobby. Because
+  the 504 case failed too, the gated explanation covers both observations and **one test cannot
+  separate them.** The attempt is recorded in `check-axe`'s docstring so it is not repeated
+  blind.
+- **The remaining route was declined on a cost the owner weighed.** An edge layer rewriting the
+  5xx body would add latency to **every** request on the route with the least LCP headroom in
+  the programme (`Q-M16`), permanently, to remedy a rare-crash defect. That trade was rejected.
+
+**What stays in place, and it is not nothing.** The characterisation gate in `check-axe`
+asserts the exact served shape on every run and **fails if it changes in either direction** —
+including the good direction, where `lang` appears and the characterisation must be replaced by
+a direct Level A assertion. `public/500.html` stays, in CSS system colours so it can never
+drift out of sync with the token layer, ready the moment the platform can use it.
+
+**Revisit only if** the team moves to Pro, **or** the characterisation gate fires. Not on
+review, not on a fresh reading of the Vercel docs, and not because it appears on an
+accessibility list — those readings have already been done and are recorded here.
+
+---
+
+## ⚠ LAUNCH DEPENDENCY — the real VAT number blocks production
+
+**The site cannot be deployed to production until Gridsmith Ltd's VAT number exists as a real
+value in the `production` dataset.** This is a dependency on the critical path, not a
+background content task.
+
+`check:launch` refuses a `[SEED]` marker on a live dataset and refuses an empty
+`LIVE_REQUIRED` field, and both are correct — reg. 6(1)(g) of the Electronic Commerce (EC
+Directive) Regulations 2002 binds while the activity is VAT-subject. The development record
+carries `[SEED] GB000000000`; the `production` dataset carries no `companyDetails` document at
+all. Both states fail the gate on a production target, by design.
+
+**Two things are needed and neither is code:** the real VAT number, and a `companyDetails`
+singleton in the `production` dataset carrying it. `contactEmail` is already real
+(`contact@gridsmith.uk`). Nothing here can be worked around in the build, and inventing a
+number to clear the gate is non-negotiable #2. **Owner: Atik.** See `M-P1-8`.
+
+---
+
+## ⚠ READ FIRST — `M-P1-5`: "CI is the arbiter" was false from 13 to 20 August 2026
+
+**No CI run completed between 13 Aug and 20 Aug.** Every push in that window created a run
+that died in 0 seconds with **zero jobs**, and the Actions UI labelled it *"this run likely
+failed because of a workflow file issue"*. **That label is wrong.** `ci.yml` parses, the
+workflow is `active`, Actions permissions are `allowed_actions: all`, and a `workflow_dispatch`
+API request returned `422 Workflow does not have 'workflow_dispatch' trigger` — a reply only a
+workflow GitHub has already parsed and whose triggers it has enumerated can produce. The file
+was eliminated as a cause by that request; the remaining explanation is that GitHub **would not
+start** the runs, which for a private repository on a personal account is a minutes or
+spending-limit block. Confirming it needs the `user` billing scope, which this session does not
+hold and did not take.
+
+**One nuance on that evidence, stated rather than smoothed over.** `main` carries **no workflow
+file at all** — the entire CI configuration has only ever existed on
+`feat/a-01-a-10a-scaffold-ci`. A dispatch request against a workflow the default branch does
+not contain would normally answer *not found*; this one answered *does not have that trigger*,
+so GitHub was reading a parsed, registered `ci.yml` and enumerating its triggers. The
+elimination holds. But it also means **CI's durability rests on a branch**, which is the same
+shape as the already-recorded finding that every run this programme ever had arrived through
+the `pull_request` trigger and only because PR #1 happened to be open. Merging to `main` is
+part of the remediation, not a separate tidy-up.
+
+**What this invalidates.** Every claim of the form *"skipped locally, CI covers it"* made since
+13 Aug is unsupported. Specifically, and these were each written as though the instrument
+existed:
+
+- **`check:lhci:desktop` and `check:lhci:mobile`.** Both hard-skip on Windows and print
+  *"Lighthouse runs on ubuntu-latest in CI, where this does not occur"* and *"A local pass here
+  is not evidence for those two — CI is"*. CI was not running. **Neither axis has executed
+  anywhere since 13 Aug**, and `M-P2-18` — audit them on a Linux runner — named the runner that
+  was down. See `M-P2-29`.
+- **Every gate added since 13 Aug has never run in CI.** `check:control` is the sharpest case:
+  it was wired into `ci.yml` in the same commit that created it, for a class with **four**
+  instances, three of them live and green at the time. It has only ever run on this machine.
+  `check:headings`, `check:content`, `check:claims`, `check:schemas`, `check:rls` and
+  `check:launch` are in the same position — all seven were added to `ci.yml` in that window.
+- **The `check:node` cross-check is not affected and is why the gap is knowable at all.** It
+  compares `verify` against `ci.yml` and fires when they diverge, which it did — but it asserts
+  that the two *lists* match, never that the workflow *ran*. A gate can be correctly listed in
+  a workflow that never executes, and nothing measured the difference.
+
+**The general form, and it belongs beside the other gate rules.** Every defect recorded in
+`CLAUDE.md` so far is a gate that ran and measured the wrong thing. This is a gate suite that
+did not run at all while every report cited it as the instrument. **A gate's presence in a
+workflow file is not evidence the workflow executes.** Nothing in this repository watches the
+arbiter; the failure surfaced only because a deployment made someone open the Actions tab for
+an unrelated reason.
+
+**Action required from the repository owner** — see the row in the P1 table for the exact
+click path. Until a run completes, treat CI as absent rather than as passing.
+
+---
+
 ## Epic A — Shared foundation *(moved here from Design)*
 
 Build order agreed at kickoff and binding — the `#` column, not the ID order. Six
@@ -13,21 +145,21 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 
 | # | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|---|
-| 1 | A-01 | Next.js + TS strict + Tailwind v4 scaffold | P0 | 0.5d | — | DONE | Dev | |
-| 1 | A-10a | ⚑ CI gates — TS, ESLint, `no-hardcoded-colors`, service-role grep, size-limit | P0 | 0.5d | A-01 | DONE | Dev | Ships with A-01. Deliberate hex fails the build |
-| 2 | A-02 | Token layer `tokens.css` | P0 | 1d | A-01 | TODO | Dev | |
-| 3 | A-03 | ⚑ Four theme files — **incl. master (was M-01)** | P0 | 1.5d | A-02 | TODO | Dev | Master proves the token contract for a theme with no colour |
-| 4 | A-04 | Four route groups + `data-division` | P0 | 1d | A-03 | TODO | Dev | Zero theme flash; server-set |
-| 5 | A-05 | ⚑ **24** shared primitives | P0 | 4d | ⚑ **A-04** | TODO | Dev | Was "21 / depends A-02". `Marquee` deleted |
-| 5 | A-05a | ⚑ `/_kitchen-sink` route | P0 | 0.5d | A-05 | TODO | Dev | All 24 × 4 themes. `noindex`, excluded from prod build |
-| 6 | **A-GATE** | ⚑ **Epic A exit gate** | P0 | 0.5d | A-05a, A-10b | TODO | Dev | **Nothing downstream starts until green** — see below |
-| 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe | P0 | 0.5d | A-05a | TODO | Dev | Needs a page to measure |
-| 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | REVIEW | Dev | Schemas written; **awaiting Sanity org (B4)** |
-| 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | REVIEW | Dev | Migrations written; **awaiting Supabase project (B4)** |
-| 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | TODO | Dev | Notify <60s. No CRM adapter — deferred, see D1 |
-| 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | TODO | Dev | **Precedes A-09.** No cookie before consent |
-| 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | TODO | Dev | Built on the consent layer, not gated afterwards |
-| 12 | A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | TODO | Dev | Seed publish fails prod build |
+| 1 | A-01 | Next.js **15 (pinned)** + React 19 + **Node 24** + TS strict + Tailwind v4 scaffold | P0 | 0.5d | — | DONE | Dev | Next 16 measured at +29KB gz — breaks every budget. Runtime raised 22→24 during the audit (22 EOLs April 2027); pinned by major in `.nvmrc`, `engines` and CI, asserted by `check:node`. Framework floor re-measured on 24 and **byte-identical** (matching content hashes). FOUNDATION §2 |
+| 1 | A-10a | ⚑ CI gates — TS, ESLint, `no-hardcoded-colors`, service-role grep, `check-bundle-size` | P0 | 0.5d | A-01 | DONE | Dev | Ships with A-01. Deliberate hex fails the build. size-limit dropped — measured the wrong quantity. Hardened at the audit: required-route list, roots that cannot be silently skipped, `scripts/` added to the secret scan |
+| 2 | A-02 | Token layer `tokens.css` | P0 | 1d | A-01 | DONE | Dev | 39 base tokens, FOUNDATION §3. Tailwind namespace collision cleared; `check:tokens` gate added |
+| 3 | A-03 | ⚑ Four theme files — **incl. master (was M-01)** | P0 | 1.5d | A-02 | DONE | Dev | 29 contrast pairs measured; 2 AA failures in Design fixed, 25 published ratios corrected. `check:contrast` is now a **101-cell permission matrix** — every token against every surface. Digital `--canvas-sunken` `#F0F0EE`→`#F3F3F1` (accent measured 4.46:1 as body text). Font **files** scoped per route group; `@font-face` declarations are not — `M-08` |
+| 4 | A-04 | Four route groups + `data-division` | P0 | 1d | A-03 | DONE | Dev | Four **root** layouts (no `app/layout.tsx`) — the only way to set `data-division` on `<body>` per group without forcing dynamic rendering. `check:theme` gate |
+| 5 | A-05 | ⚑ **24** shared primitives | P0 | 4d | ⚑ **A-04** | DONE | Dev | 21 Server, 3 Client (`Tabs`, `RevealOnScroll`, `StickyCta`). `Accordion` is native `<details>`. Audit fixes: `RevealOnScroll` can no longer end at `opacity: 0`, `Tabs` panel focusable only when empty, `scroll-padding` for SC 2.4.11, motion on the token scale |
+| 5 | A-05a | ⚑ `/_kitchen-sink` route | P0 | 0.5d | A-05 | DONE | Dev | 23 of the layer's 24 primitives × 4 themes (`Media` excluded — see below); **6.2KB gz delta, budgeted at 7KB** (of which **0.5KB measured** is the global-error boundary every route now carries, so the primitive layer itself is 5.8KB — `check-bundle-size` now derives and asserts both halves rather than leaving the split to prose). Ids are generated by the primitives themselves (`useId`), not scoped by the page. `noindex`. Directory is `%5Fkitchen-sink` — a literal `_` prefix is a Next private folder and produces no route. Prod exclusion at A-12 |
+| 6 | **A-GATE** | ⚑ **Epic A exit gate** | P0 | 0.5d | A-05a, A-10b | **OPEN — NEXT TASK** | Dev | **Criteria 1–4 MET and independently re-verified. 5 ran twice and failed twice. 6 has still never completed.** **The next actionable task is criterion 6:** run `accessibility-audit` from `.claude/agents/` **alone, one agent per session**, on Node 24. Three attempts have now died on the session limit, including one agent alone with a full brief. **Launch it as the first action of a fresh session, before any other work** — `rules-compliance` alone costs ~210k tokens and `accessibility-audit` needs most of a session. Nothing downstream starts until it returns clean — see below and `_shared/05-HANDOVER.md` §2 |
+| 6 | A-10b | ⚑ CI gates — Lighthouse CI + axe + responsive | P0 | 0.5d | A-05a | **DONE** | Dev | Split into **two axes** — desktop asserts category scores, mobile asserts Core Web Vitals on 4G. **Both green on CI**; commit `ad299847`. `Q-M16` is resolved for the budgets. This row read `BLOCKED` / "now fails on Digital" until 12 August 2026 while the handover and the commit log both said DONE — and **A-GATE depends on A-10b**, so the exit gate was recorded as depending on a task its own tracker called blocked. axe extended with DOM-integrity assertions axe-core cannot make, and now runs 375px/1280px × initial/scrolled. `check:responsive` added |
+| 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | **DONE** 18 Aug | Dev | Project and datasets at `M-05`; the core schemas here — 8 object types, 7 document types, `isSeed` group-wide, the canonical-six validator. **New gate `check:schemas` — 19 gates now** — because `next build` never compiles this tree, so nothing else could see a break. `A-12` unblocked |
+| 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | **DONE** 19 Aug | Dev | `Q-M18` resolved. Two migrations applied and verified against the live database. **The spec's own §4 view was an RLS bypass** — found by querying as `anon`, not by reading the SQL. New gate `check:rls` — **20 gates now**. `A-08` unblocked |
+| 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | **DONE** 19 Aug | Dev | Both halves verified live. Insert as `anon`; notification in `after()` so the send never blocks the response — **measured 56ms vs 224ms**. `Q-M20` resolved for development. **A dev `sent` is not deliverability** and **the SPF include must be MERGED at deployment** — both recorded in the gate, not just in prose |
+| 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | **DONE** 18 Aug | Dev | **Precedes A-09.** No cookie before consent — now asserted in the browser, not just stated. State, Consent Mode v2 bridge, banner, footer reopen. **Measured 2.0KB gz against an 8KB reservation.** `A-09` is unblocked |
+| 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | **DONE — enabled in dev** 19 Aug | Dev | `Q-M19` resolved. The grant path has a permanent gate subject: nothing before a choice, a request to each provider after Accept, **PostHog on an EU host**, nothing after Reject. Live ids go in the platform environment at launch |
+| 12 | A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | **DONE** 18 Aug | Dev | Seed publish fails a live build. **The spec's query counted almost nothing** — see below. Also closes **`M-P1-2`**: the dataset variable has no default and an unset one is a build error. `/_kitchen-sink` now inherits the probe exclusion rather than getting a second mechanism |
 
 **The six deviations, and why:**
 
@@ -48,66 +180,2078 @@ deviations from the original numbering are marked ⚑ and explained below the ta
    pre-consent, demonstrated in devtools.
 6. **A-GATE added** as an explicit task rather than a convention.
 
-**A-GATE pass criteria** — all six, no partial credit:
+**A-GATE pass criteria** — all six, no partial credit. **Status: PASSED, 14 August 2026.**
 
-- [ ] `/_kitchen-sink` renders all 24 primitives correctly in all four themes
-- [ ] Correct at 375px, 768px, 1440px
-- [ ] Keyboard navigable end to end
-- [ ] Zero hardcoded colours (A-10a green)
-- [ ] `rules-compliance` — **fresh context**, zero findings
-- [ ] `accessibility-audit` — **fresh context**, zero findings
+> ## ⇢ A-GATE PASSED. Epic A is CLOSED. Do not reopen it to improve anything.
+>
+> Criteria 1–6 are met. Seven audit rounds; the last four scoped rather than open-ended.
+> Round 7 (`_shared/12-A-GATE-RUN-7.md`) confirmed `U1`–`U3` present, subject-backed and
+> proven red on their stated repro, and returned three majors and two minors that are
+> **logged, not fixed** — see the backlog below.
+>
+> **`G7` is done — 18 August 2026.** Digital's shell epic is now `U` (was `S`), Press's Path
+> Finder epic is now `K` (was `N`), and `app/(press)/press/page.tsx` cites `Epic P`. Every epic
+> letter is unique across the four trackers. Epic M's first build task is `M-02`.
+>
+> **Read `A-GATE-7-6` before trusting `check:claims`.** It is not a defect and will not be
+> fixed.
 
-Both subagents run from `.claude/agents/`. The fresh context is the point: the model
-that just wrote 24 primitives is the worst available reviewer of them.
+| # | Criterion | Status |
+|---|---|---|
+| 1 | `/_kitchen-sink` renders **23 of the 24 primitives** correctly in all four themes; `Media` is excluded and is covered at `D-01` | **MET**, and re-verified independently at the 12 Aug audit. **The wording is corrected, not relaxed:** the page renders 23. `Media` needs real imagery and fabricating placeholders would breach non-negotiable #2, so the exclusion is right — but the criterion said 24 and its own subject failed it on a literal reading, while the page told the browser "All 24 primitives". Both now say 23. See FOUNDATION §5 for what excluding it costs. The four blocking defects are genuinely fixed: 80 duplicate ids, one radio group and one exclusive `<details>` group spanning four frames, `StickyCta` rendered once, five `<h1>`. **The duplicate-id root cause was in `Field`/`Select`, not the call site, and was still live until 12 Aug** — now fixed in the primitives with `useId()`, and the kitchen sink no longer scopes anything |
+| 2 | Correct at 375 / 768 / 1440px | **MET.** `check:responsive`, **18 combinations** (6 routes × 3 widths — `/_not-found` and a 404 probe were added on 12 Aug), green on `ubuntu-latest` |
+| 3 | Keyboard navigable end to end | **Re-verified, and the root cause is now fixed.** The symptom — duplicate ids sending every label in frames 2–4 to the control in frame 1 — was fixed at the call site in July; the 12 Aug audit found the cause still live in `Field`/`Select`, which derived the DOM `id` from the form `name`. Fixed in the primitives. `StickyCta` no longer drives `inert`/`aria-hidden` from JavaScript while CSS drives its position, which had put eight painted links outside the tab order. axe now runs 24 analyses — 6 routes × 375/1280px × initial/scrolled |
+| 4 | Zero hardcoded colours | **MET, and now actually protected.** `lint:colors` green across 72 files (was 62 — the sweep missed `lighthouse/`, every root-level config file, and any tree nobody had listed). The named-colour rule only fired immediately after a colon, so `border: 1px solid red` — the codebase's own border idiom — shipped unflagged; it now matches anywhere in a declaration value, plus `color-mix()`. Re-proven by deliberate failure with `border: 1px solid red` |
+| 5 | `rules-compliance` — **fresh context**, zero findings | **MET.** Seven rounds. Rounds 1–3 returned findings; round 2 closed as unreconstructable and superseded (`_shared/05-HANDOVER.md` §10). Round 3 recorded "all fixed in `G5`/`G6`" and **round 4 found the `Tabs.tsx:2` comment had never been touched** — this row said otherwise for a day; fixed at `R2`. Rounds 4–7 were scoped re-verifications (`_shared/09`–`12`). Round 7 confirmed `U1`–`U3`; its remaining findings are logged in the backlog below, not outstanding work against this criterion |
+| 6 | `accessibility-audit` — **fresh context**, zero findings | **MET.** Completed in round 3 as two narrow runs (a single wide run failed four times), and again in rounds 4 and 5. Round 4 confirmed `A11Y-1`–`A11Y-4` genuinely fixed and found no AA failure in any primitive; round 5 returned **zero** on `R3`/`R4`/`R5`, including a direct proof that `check:contrast`'s size pass now has power the permission matrix lacks. **No open accessibility finding at any level** — every remaining item is gate discipline or documentation |
 
-**Internal order within A-05** — each tier depends only on the one above, and
-`'use client'` first appears in the last tier, so it stays isolated and auditable:
+**Criteria 5 and 6 have never been executed.** Five agents were launched at the Epic A
+audit — `spec-compliance`, `rules-compliance`, `accessibility-audit`, `design-conformance`,
+`content-integrity` — and **all five died on a session limit before returning anything**.
+The audit that followed was performed by a single context reading the code directly. It
+found four blockers, six majors and thirteen environment findings, all fixed — but it is
+explicitly *not* what criteria 5 and 6 ask for, and substituting it would defeat the reason
+those criteria are worded the way they are.
 
-| Tier | Primitives |
-|---|---|
-| Structure | `Container` `Grid` `Section` `Prose` `Heading` `Eyebrow` |
-| Content | `Card` `Badge` `Table` `Media` `Breadcrumb` `Pagination` |
-| Interactive | `Button` `Link` `Field` `Select` `RadioGroup` `Accordion` `Tabs` `Stepper` |
-| States | `EmptyState` `ErrorState` |
-| Motion / chrome | `RevealOnScroll` `StickyCta` |
+Both subagents run from `.claude/agents/`. The fresh context is the point: the model that
+just wrote 24 primitives is the worst available reviewer of them — and by the same logic,
+the model that just fixed the audit findings is the worst available reviewer of the fixes.
+
+**Nothing downstream of Epic A starts until 5 and 6 come back clean.**
+
+**Round 4 is the next action and it is scoped.** Round 3 audited the whole of Epic A from a
+fresh context in three passes and returned nine findings; all nine are fixed across
+`G1`–`G8`, each with a committed subject and a deliberate-failure proof. Round 4 re-verifies
+**those nine only** — it is not a fourth open-ended audit. Two things it must not spend
+context on: `G7` (the Epic identifier collisions, deliberately deferred until after it) and
+round 2's finding list (closed as unreconstructable). `_shared/05-HANDOVER.md` §2.
+
+**Criterion 2 used to be a manual check, which made it a claim.** At the audit it could
+only be recorded as "not established" — neither passed nor failed, the least useful state
+a gate criterion can occupy. `scripts/check-responsive.mjs` now asserts no horizontal
+overflow across 5 routes × 3 widths, and a route that fails to load is a measurement
+failure rather than a pass.
+
+**Seventeen checks, and `npm run verify` runs all of them:** `check:node`, `typecheck`,
+`lint`, `lint:colors`, **`check:contrast`**, **`check:headings`**, **`check:content`**,
+`build`, `lint:secrets`, `check:tokens`, `check:theme`, `size`, `check:axe`,
+`check:responsive`, `check:lhci:desktop`, `check:lhci:mobile`, **`check:claims`**. The count is machine-checked
+by `check-node-version`, which walks the `verify:*` chain and diffs it against `ci.yml`.
+
+This paragraph said **thirteen** and the enumeration left out **`check:contrast`** — the
+gate that exists because 25 of 29 published contrast ratios were wrong and two were hiding
+real WCAG AA failures. The most consequential gate in the repository was missing from the
+list of gates, here and in `_shared/05-HANDOVER.md`. `verify` once ran five and said
+nothing about the other five — the three needing a build and the two needing a server. CI
+ran everything, so merges were safe; a developer running the script named "verify" got half
+the coverage with no indication of it, which is the same unearned confidence as a gate that
+measures nothing. The two Lighthouse axes cannot run on Windows (VALIDATION §13 E12) and
+say so loudly in the summary rather than failing quietly — CI runs them.
+
+**A-10b — two assertions are ratcheted, with owners.** Lighthouse accessibility is
+asserted at its final spec value now and passes. Two are pinned below 1.0 because
+reaching 1.0 requires something that must not be invented:
+
+| Category | Now | Blocked on | Raises at |
+|---|---|---|---|
+| SEO | 0.90 | `meta-description` on every page. Comes from `seoBlock.metaDescription`; writing placeholder copy to go green would be fabricated content | `N-01` |
+| Best practices | 0.96 | `errors-in-console` — `/favicon.ico` 404s on every route. Needs a real brand mark | `Q-M15` |
+
+Both still catch regressions below today's level, which is different from a gate that
+measures nothing — re-confirmed at the Epic A audit, where every route measured exactly
+0.90 and exactly 0.96 with one weight-1 audit failing in each category. Neither may be
+lowered further.
+
+**A-10b was re-based at the Epic A audit, and then split in two.** The original gate was
+doing two jobs and doing neither properly — it was a desktop-only run standing in for a
+specification that says "on 4G throttle", asserting four category scores and no metric at
+all while three spec files named it as the enforcement for LCP, INP and CLS.
+
+| Axis | Conditions | Asserts | Question |
+|---|---|---|---|
+| **Desktop** | `preset: 'desktop'`, median of 3 | Category scores. Digital 100/100/100 | Is the craft claim honest? |
+| **Mobile** | 4G, 4× CPU, `devtools` throttling, median of 3 | LCP, CLS, TBT directly. **Not** the performance score | Does it hold on a real phone? |
+
+**Nothing was lowered.** A second axis was added. The mobile axis omits the performance
+category on purpose: it is a weighted curve whose control points move between Lighthouse
+versions, so pinning it fails builds for reasons no user experiences.
+
+**INP is absent from both axes because no lab gate can produce it** — it is a field metric.
+TBT is the proxy at the same ceiling. `_shared/01-VALIDATION-REPORT.md` §11.
+
+**The throttling method was itself a defect.** See `Q-M16`: Lighthouse's default `simulate`
+model attributes the webfont fetch to a `font-display: swap` text LCP and reports a 533ms
+delay that does not exist. Under real throttling `/digital` measures FCP 1441ms = LCP
+1441ms, performance 1.00. Verify what a measurement models before treating it as a fact.
+
+**⚠ Open risk, recorded against Stage 3.** FOUNDATION §8.
+
+### Measured on `ubuntu-latest` — CI run #3, median of 3, both axes green
+
+These supersede the developer-machine figures, which were indicative only. **These are the
+numbers the Stage 3 LCP budgets get set from.**
+
+**Desktop** — `preset: 'desktop'`, simulate, 10240kbps / 40ms RTT / 1× CPU, Lighthouse 12.6.1
+
+| route | perf | a11y | best-pr. | seo | LCP | CLS | TBT | FCP |
+|---|---|---|---|---|---|---|---|---|
+| `/` | **1.00** | 1.00 | 0.96 | 0.90 | 512ms | 0.000 | 0ms | 268ms |
+| `/design` | **1.00** | 1.00 | 0.96 | 0.90 | 501ms | 0.000 | 0ms | 265ms |
+| `/digital` | **1.00** | 1.00 | 0.96 | 0.90 | 441ms | 0.000 | 0ms | 267ms |
+| `/press` | **1.00** | 1.00 | 0.96 | 0.90 | 503ms | 0.000 | 0ms | 265ms |
+
+**Mobile** — 4G, devtools throttling, 1638.4kbps / 150ms RTT / 4× CPU, Lighthouse 12.6.1
+
+| route | perf | a11y | best-pr. | seo | LCP | budget | CLS | TBT | FCP |
+|---|---|---|---|---|---|---|---|---|---|
+| `/` | 0.99 | 1.00 | 0.96 | 0.90 | **1524ms** | 1800 | 0.000 | 85ms | 1524ms |
+| `/design` | 0.99 | 1.00 | 0.96 | 0.90 | **1523ms** | 2000 | 0.000 | 86ms | 1523ms |
+| `/digital` | 0.99 | 1.00 | 0.96 | 0.90 | **1520ms** | 1600 | 0.000 | 83ms | 1520ms |
+| `/press` | 0.99 | 1.00 | 0.96 | 0.90 | **1526ms** | 2000 | 0.000 | 84ms | 1526ms |
+
+Three things this run settles.
+
+1. **LCP equals FCP exactly on all four mobile routes.** The Lantern artefact is confirmed
+   independently on CI hardware, not just on one laptop. Under real throttling there is no
+   FCP→LCP gap at all — see `_shared/01-VALIDATION-REPORT.md` §12.
+2. **Mobile performance is 0.99 on every route, Digital included.** Had the mobile axis
+   asserted the performance category, CI would be red right now on a page with one heading
+   in it. The split was load-bearing rather than tidy-minded: the category score is a
+   weighted curve, and the Vitals underneath it all pass comfortably.
+3. **Digital's headroom is ~80ms, not ~160ms.** CI is roughly 75ms slower than the dev
+   machine, so the empty-page floor is 1520ms against a 1600ms ceiling. Every mobile LCP
+   figure across all four route groups sits within 6ms of the others, which is the signature
+   of a fixed floor rather than of per-route content.
 
 ## Epic M — Master shell
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| M-01 | ~~Master theme; accent = ink~~ | P0 | — | — | MOVED | Dev | **Folded into A-03.** Amber 2.0:1 constraint enforced there |
-| M-02 | Root layout, server-set `data-division` | P0 | 1d | A-04 | TODO | Dev | |
-| M-03 | Header with per-division nav | P0 | 1.5d | A-05 | TODO | Dev | Wordmark → `/` |
-| M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03 | TODO | Dev | From `companyDetails` |
-| M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | TODO | Dev | Response commitment stored once |
-| M-06 | Consent banner UI | P0 | 1.5d | A-11 | TODO | Dev | Accept/Reject identical |
-| M-07 | 404 + 500 pages | P0 | 1d | M-03 | TODO | Dev | 500 works without JS |
+| M-01 | ~~Master theme; accent = ink~~ | P0 | — | — | MOVED | Dev | **Folded into A-03.** Amber 2.16:1 constraint enforced there |
+| M-02 | Root layout, server-set `data-division` | P0 | 0.5d | A-04 | **DONE** 18 Aug | Dev | Shell built at A-04; **skip link added and gated 18 Aug, closing `A11Y-21`**. Header, footer and consent banner were never M-02's — they are `M-03`, `M-04`, `M-06`. See below |
+| M-03 | Header with per-division nav | P0 | 1.5d | A-05 | **DONE** 18 Aug | Dev | Wordmark → `/`. Plain `<a>`, **not** the `Link` primitive — 0KB, and route-group navigation must be a document load. Only routes that exist are linked; new gate holds that. See below |
+| M-04 | Footer + division switcher + statutory block | P0 | 1d | M-03, M-05 | **DONE** 18 Aug | Dev | Renders from `companyDetails`; nothing hardcoded. **The row's summary of the legal requirement was incomplete and the VAT line's basis is a different instrument** — see below. Division switcher footer-only per TECH-SPEC §3. 0KB: deltas unchanged at 0.5KB |
+| M-05 | `companyDetails` singleton | P0 | 0.5d | A-06 | **DONE** 18 Aug | Dev | Schema, standalone Studio, read client, fetch layer, dataset env var, `development` seeded. `production` deliberately empty. New gate `check:launch` — **18 gates now**. One operator step outstanding: the Studio CORS origin, `SETUP.md` |
+| M-06 | Consent banner UI | P0 | 1.5d | A-11 | **DONE** 18 Aug | Dev | Built with `A-11`, which it depended on. Accept/Reject identical — same class, measured 128×49 both. **`/` delta 2.4KB of 15KB.** The `M-06` measurement above stands: the ⚑ projection was false |
+| M-07 | 404 + 500 pages | P0 | 1d | M-03 | **PART DONE** 18 Aug; rest BLOCKED | Dev | **The row's premise is false: the 500 does NOT work without JS.** Established with a committed SSR-throw probe and now characterised by `check-axe`. Level A, raised as `M-P1-1` — **a decision, not a fix I can take**. The 404's remaining content (search box, division routing block, top 6 services) is Epic N; the 500's phone number is `Q-M5` |
+| M-08 | ~~Scope `@font-face` CSS per route group~~ → **assert it** | **P2** | 0.5d | — | **DONE** 18 Aug | Dev | **The row's premise was false.** `globals.css` contains no `@font-face`; `next/font` emits into the importing layout's CSS, so the declarations were already scoped. Measured, `FOUNDATION` §4 corrected, and `check:theme` now asserts it. No refactor, no re-measure of the Lighthouse axes — nothing on the critical path changed |
+
+## Epic M — CLOSED, 18 August 2026
+
+**Every row is done or blocked on someone other than a session. Nothing in Epic M is waiting
+for work.**
+
+### What is done
+
+| Row | |
+|---|---|
+| `M-01` | folded into `A-03` at Epic A |
+| `M-02` | skip link, closing `A11Y-21` before the chrome that would have made it a Blocker. **Not marked DONE** — see the screen-reader checkpoint below |
+| `M-03` | header, per-division nav, wordmark → `/`. **0KB** |
+| `M-04` | footer, division switcher, statutory block, all from the CMS. **0KB** |
+| `M-05` | `companyDetails` singleton, two datasets, one schema folder, `check:launch` |
+| `M-06` | consent banner UI, built with `A-11`. The ⚑ projection was false — `/` measures **2.5KB of 15KB** |
+| `M-07` | **part done.** The 500's premise was measured and is false — see `M-P1-1` |
+| `M-08` | **premise was false.** The font waste did not exist; the deliverable became the assertion |
+
+Epic A rows completed alongside it because Epic M unblocked or needed them: **`A-06`** (core
+schemas), **`A-09`** (analytics, built not enabled), **`A-11`** (consent), **`A-12`** (seed
+enforcement). `G7` closed the epic-identifier collisions.
+
+**Gates went 17 → 19**: `check:launch` at `M-05` and `check:schemas` at `A-06`. Both exist
+because nothing else could see their subject.
+
+### What is blocked, and on whom
+
+| | Blocked on | Owner |
+|---|---|---|
+| `A-07`, `A-08` — Supabase, `leads`, RLS, the lead pipeline | **`Q-M18`** — a Supabase project. Only Atik can create one | **Atik** |
+| `A-09`'s grant path — a permanent gate subject for tag injection | **`Q-M19`** — a GA4 measurement id and a PostHog key. Nothing injects without them, and a placeholder would send real visitor data to a property nobody owns | **Atik** |
+| **`M-P1-1`** — the 500 serves Next's `__next_error__` shell with no `lang`. WCAG 3.1.1 Level A on every server-side crash | **still a decision, and the remedy recorded on the move to Vercel does not work — measured 21 Aug, not read.** The premise was *"Vercel serves a static error document outside Next's render path"*. `public/500.html` was written and deployed, then two failures were induced on the preview: a **genuine platform error** (`/gridsmith-timeout-probe`, a hanging invocation the platform killed — **504**) and the **server-render crash** (`/gridsmith-ssr-throw-probe` — **500**). **Neither served the document.** So the option is not "available but unbuilt", it is unavailable here. Two further facts bound what that proves: Vercel's own docs describe custom error pages as covering *platform* errors, and a Next function returning its own 500 is not one; and the docs page is marked **permission-gated**, while this team is on **hobby**. Because the 504 case failed too, **it is not established whether the feature would cover a Next-returned 500 on a paid plan** — the gated-off explanation covers both observations, so one test cannot separate them. The remaining routes are the same two as before, minus the one that was thought to have opened: an edge layer that can rewrite a 5xx response body, or a recorded acceptance. **Atik** | **Atik** || `M-07`'s remaining content — the 404's search box, division routing block and top six services; the 500's phone number | Epic N and `Q-M5` | — |
+| The Studio's CORS origin | an interactive `npx sanity login`. `SETUP.md` has the command | **Atik** |
+| **The screen-reader pass over `M-02`, `M-03`, `M-04` and the consent banner** | a human with NVDA or VoiceOver. It was placed at "the `M-06` chrome checkpoint"; `M-06` turned out to be a measurement plus a build, so **the checkpoint never happened and was deliberately not folded in early** | **Atik** |
+
+**`M-02` stays un-DONE until that pass happens.** The gates cover focus order, target, paint,
+landmarks and roles. They do not cover announcement, and no lab check does.
+
+### The P2 backlog, in one place
+
+**33 open, 1 P1 open, 1 ceiling.** Counted by hand and that is a limitation worth stating:
+`check:claims` prints a live count for the **ledger**, which covers `A-GATE-*`, `G*`, `R*`,
+`T*` and `U*` identifiers only. `M-P*` is outside `ID_RE`, so **this count is a hand-maintained
+claim about a hand-maintained list** — the `A-GATE-7-6` ceiling, one level up. Read it as
+"roughly this many, enumerated below", not as a verified figure.
+
+| Source | Open | Where |
+|---|---|---|
+| Epic A | **22** | § "The P2 backlog carried out of Epic A" — unchanged this epic. None is an accessibility failure at any level |
+| Epic M | **11** | `M-P2-1`, `2`, `3`, `4`, `6`, `7`, `8`, `9`, `10`, `11` and the `A-GATE-6-6` carry-over that was never chased |
+| **P1** | **1** | `M-P1-1` — the first live accessibility failure in the programme, and a decision |
+| **Ceiling** | **1** | `A-GATE-7-6` — not backlog, will not be fixed |
+| Fixed this epic | — | `M-P1-2` (unset dataset publishing a `[SEED]` VAT number, closed at `A-12` by removing the default), `G7`, `A11Y-21` |
+
+`M-P2-2` and `A-GATE-6-6` were deferred by standing instruction all epic and remain so.
+
+### Defect classes logged this epic
+
+Epic A's list was about gates that measure nothing. **Epic M's is about claims that were true
+once, or true somewhere, and were never re-checked when that changed.**
+
+| Class | Instances | One line |
+|---|---|---|
+| **Projected number treated as evidence — and always pessimistic** | `M-08` (~29KB of font waste that did not exist), `M-06` (11.7KB projected, 0.5KB actual), `A-11` (8.0KB reserved, 2.0KB actual) | nobody projects a number for something they expect to be cheap, so the errors accumulate one way — and each was *spent* before anyone checked it. **The standing instruction below** |
+| **True only of its current scope** | `V3` — `--accent-digital`/`--accent-press` claimed `role: 'body'` | the claim was true of the only surface the token existed on (master's white canvas, 5.09:1) and was never true of its *use*. It became a failure the moment the token existed on a dark canvas — 2.01:1 — **and widening the scope is what surfaced it, not review**. A role is a claim about every context a token can appear in, not about the ones it happens to appear in today |
+| **Two adjacent properties, one gated** | `V1` — storage asserted, state unasserted | zero cookies and zero requests said nothing about what the consent state *is* while the choice is unmade. A banner could apply `granted` defaults, store nothing, request nothing, and pass every prior assertion |
+| **A row's summary of an external requirement is not the requirement** | `M-04` | the row said "Companies Act". The VAT line's basis is the E-Commerce Regs 2002 reg. 6(1)(g); reg. 25(2)(a)'s place-of-registration was omitted entirely; and reg. 6(1)(c)'s rapid-contact route was in no row at all |
+| **A spec query that measures almost nothing** | `A-12` | `TECH-SPEC` §6's `published == true` — only `service` has that field, so five of six seedable types were invisible. **Epic A's gate-blindness class, occurring in a spec rather than a script**, on what the spec itself calls the most damaging content failure available to this project |
+| **A silent fallback defeating a gate through an environment CI cannot see** | `M-P1-2` | `NEXT_PUBLIC_SANITY_DATASET` defaulting to `development` was right in CI and would have published a `[SEED]` VAT number from a host. Fixed by removing the default: unset is now a build error |
+| **An identifier that resolves to two things** | `G7` | `Epic S` and `Epic N` each meant two epics; a tracker task is the unit of work, so an ambiguous id defeats the mechanism |
+
+Two of these were found by **widening a scope rather than by reviewing** — the accent role and
+the dataset fallback — which is the practical lesson: a claim is not re-checked by re-reading
+it, it is re-checked by putting it somewhere new.
+
+### Next: Epic N, and the instruction that applies to every row in it
+
+> **A number that was projected rather than measured is not evidence, and reserving against it
+> costs real budget. Measure first, then decide.**
+
+Three rows this epic carried a figure nobody had measured, and all three were wrong in the
+same direction. Before starting any Epic N row that carries a number — a budget, a size, a
+duration, a count — **establish whether anything ever measured it, and say which in the
+commit.** If nothing did, the row's deliverable is the measurement plus an assertion, as
+`M-08`, `M-06` and `A-11` each became.
+
+The same applies to a row's summary of anything external: a legal requirement, a framework
+behaviour, a spec in another file. **Check the source, not the summary.**
+
+**Do not start Epic N without reading this section and the Hosting section below.**
+
+### M-02, in full: where the skip-link target lives, and why not in the shell
+
+**The link is in `RootShell`; `<main id="main">` is not.** Wrapping `children` in a `<main>`
+there is the obvious move — one target, no per-page obligation — and it is wrong.
+`global-not-found` renders **inside** the shell: its own `<html>`/`<body>` are dropped as
+nested tags and its `<main>` survives, so the 404 served two `main` landmarks, one inside the
+other. `check-axe` failed it on the committed 404 probe with `landmark-no-duplicate-main`,
+`landmark-main-is-top-level` and `landmark-unique` across all four route/viewport
+combinations. That is what the probe is for, and it is the second time a boundary document
+has behaved unlike the four route groups.
+
+So the target stays with the document that owns the landmark, and the obligation is carried by
+a gate instead of by memory. `check-axe`'s `domIntegrity` now asserts, on every themed route ×
+viewport, that the first focusable element in `<body>` is a same-page link, that its target
+exists, that it takes focus, and that it is **on screen once focused**.
+
+**Proven by deliberate failure, and which check fired is established rather than assumed**
+(`A-GATE-4-3`'s class):
+
+| Broken | Fired | Isolated? |
+|---|---|---|
+| `id="main"` deleted from `/design` | this assertion **and** axe's `skip-link` rule — `best-practice` is in `TAGS` | **No.** Recorded as overlap, not credited to this code |
+| a `<button>` inserted before the link in `RootShell` | this assertion only; axe reported `/` clean at both viewports | **Yes** |
+| the link's original `transition: transform 150ms` | this assertion only, `(8,-56) 134×48` on all six themed routes, axe clean everywhere | **Yes** |
+| link cannot take focus | — | **Unproven.** No cheap subject produces it without tripping one of the above. Recorded, not claimed |
+
+The third row is a real defect the gate found in the same session that wrote it: focus landed
+while the link was still translated out of view, so the bypass was reachable and invisible.
+**The transition was removed, not the assertion relaxed** — a control whose only job is to
+appear the instant it is focused should not animate into place.
+
+Cost: **0KB.** The link is server-rendered and the CSS is a module; every route's JS delta is
+unchanged at 0.5KB.
+
+**Not covered:** screen-reader testing. The Definition of Done names it and it has not been
+done for this component — the gate tests focus order, target and paint, not announcement.
+
+### M-04, in full: the premise checked against the legislation, not the row
+
+**The row said "statutory block per Companies Act 2006: registered name, registered number,
+registered office, plus the VAT line". Two things in that are wrong.**
+
+| Particular | Actual source |
+|---|---|
+| Registered name | Companies (Trading Disclosures) Regulations 2015 (SI 2015/17) **reg. 24(2)** |
+| **The part of the UK in which the company is registered** | **reg. 25(2)(a)** — *absent from the row's summary* |
+| Registered number | reg. 25(2)(b) |
+| Registered office address | reg. 25(2)(c) |
+| **VAT identification number** | **Electronic Commerce (EC Directive) Regulations 2002 reg. 6(1)(g)** — *not the Companies Act at all*, and it binds only while the activity is VAT-subject |
+| Name, geographic address, and contact details incl. an email address enabling rapid contact | e-commerce regs **reg. 6(1)(a)–(c)** |
+
+The schema already carried `placeOfRegistration`, so the footer renders it and the gate
+requires it — but nothing in the tracker would have told anyone to.
+
+**reg. 6(1)(c) was in no row at all**, and it is a launch obligation of exactly the same shape
+as the VAT number: legitimately empty today, unacceptable live. So `contactEmail` joins
+`vatNumber` in `check:launch`'s live-only tier, and the footer renders it on the same rule —
+non-empty renders, empty omits.
+
+reg. 6 also requires the particulars to be *"easily, directly and permanently accessible"*,
+which decided a second question below.
+
+**Both conditional branches proved, in the built HTML:**
+
+| Seeded | `.next/server/app/index.html` |
+|---|---|
+| `vatNumber` and `contactEmail` set to `[SEED]` placeholders | `… · registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD · VAT number [SEED] GB000000000` followed by `<a href="mailto:…">` |
+| both re-seeded empty | `… · registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD` and no second `<p>` |
+
+`contactEmail`'s placeholder uses `.invalid`, reserved by RFC 2606 and unable to resolve, for
+the same reason `vatNumber`'s is `[SEED]`-marked: a conditional path first exercised at launch
+is a path nobody has run.
+
+**Live-tier proof for `contactEmail`, isolated:** `PRODUCTION_DATASET` temporarily
+`'development'` with a valid-format VAT number seeded and no `[SEED]` marker anywhere — only
+`contactEmail is empty and the dataset is live (e-commerce regs reg. 6(1)(c))` fired.
+
+**Three defects this task surfaced, none of them in the footer.**
+
+1. **The division accents are declared by the master theme only** (15 + 3; `check:tokens`
+   asserts exactly that), and the footer renders on all four route groups. Without a fallback
+   `border-block-start-color: var(--accent-design)` is invalid at computed-value time on a
+   division route and **discards the shorthand's colour with it** — the identical mechanism
+   that erased a focus ring earlier in this programme. Measured after the fix: on `/` the
+   three rules compute `rgb(232,163,61)`, `rgb(27,95,255)`, `rgb(46,74,58)`; on `/design` all
+   three fall back to `--line-strong` `#3A3A3D`, which is what DESIGN.md §2 means by the
+   accents appearing *at master level*.
+2. **`cache: 'no-store'` would have cost static rendering.** Next patches global `fetch`
+   during `next build` and the Data Cache persists in `.next/cache`: adding `contactEmail` to
+   the seed and rebuilding silently prerendered the previous response. `no-store` fixes it and
+   turns all seven routes from `○` static to `ƒ` server-rendered-on-demand, breaking
+   `TECH-SPEC.md` §1 and every LCP budget. **A data-freshness problem is not worth a
+   rendering-mode change.** The staleness is local-only — CI builds clean — so
+   `npm run seed:company` clears `.next/cache/fetch-cache` after writing, at the point content
+   changes. Re-measured: all seven routes `○`.
+3. **`StickyCta` overlapped the statutory block at 375px.** With a real footer in the document
+   the fixed bar sat over the disclosure, and `check-axe` reported `color-contrast`
+   UNRESOLVED on the bar's own button — the tell, not the problem. The problem is reg. 6's
+   *"permanently accessible"*. The block now reserves the bar's height below 768px, reading
+   `--sticky-cta-block-size`, the figure the component publishes and `check-responsive`
+   already asserts, rather than a second remodelled number. **This is `M-P2-2` territory but
+   is not that item** — the bar is not the focusable-mid-transform case, and `M-P2-2` stays
+   deferred.
+
+**`INCOMPLETE_ALLOWED` is now empty.** Its one entry allowlisted `color-contrast` incomplete
+on the four placeholder `h1`s and carried its own removal condition — *"REMOVE THIS ENTRY at
+the first route with real chrome (Epic M)"*. With a header and footer the h1 no longer shares
+one rect with `main` and `body` flush to the viewport edge, axe resolves a background box, and
+the gate reports `0 axe incomplete(s) allowed, 0 unresolved`. A spent allowlist entry is one
+nobody re-reads, and the next incomplete on that rule and route would have landed inside it
+silently.
+
+### M-05, in full: the singleton, the dataset split, and the VAT branch
+
+Sanity project `spzu6y31`, two datasets — `development` (seed, placeholder, test) and
+`production` (live only) — sharing **one** schema folder. The project id is a committed
+constant rather than an env var: it is public by construction, so a variable would add a
+build-time failure mode and hide nothing. **The dataset is the variable, and it defaults to
+`development`** — a missing variable must not silently select live content.
+
+The Studio is standalone on `localhost:3333` (`npm run studio`), **not mounted at a Next
+route**. An embedded `/studio` is a multi-megabyte client bundle inside an application whose
+premise is a JS delta measured in kilobytes, and `check-bundle-size` would have needed an
+exemption for it. Route deltas are unchanged.
+
+**`vatNumber` is a required field with a known-empty value, not an absent one.** Registration
+is in progress and the number arrives before launch, so the registered case is what is built:
+the footer renders the line whenever the field is non-empty and omits it when empty, and
+supplying the number is a content edit — no schema change, no code change, no deploy. It
+carries no Sanity `required` rule, which would block every save until registration completes.
+The constraint lives at the launch boundary instead.
+
+`check:launch` (the eighteenth gate) is **two tiers, and the split is the point**:
+
+| Tier | Asserts | Why |
+|---|---|---|
+| Every dataset | the singleton exists; `legalName`, `companyNumber`, `placeOfRegistration`, `registeredOffice`, `responseCommitment` non-empty | every page renders the statutory footer, so this tier has teeth today rather than waiting for Stage 8 |
+| `production` only | `vatNumber` non-empty; no field carries `[SEED]` | the state that must not reach live |
+
+A gate that only fired on `production` would sit green and unexercised until the one build
+where it matters, which is a gate nobody has run.
+
+**Deliberate-failure proof, three runs, each firing alone:**
+
+| Broken | Fired |
+|---|---|
+| `NEXT_PUBLIC_SANITY_DATASET=production` (the dataset is empty) | `no companyDetails document in dataset "production"` |
+| `PRODUCTION_DATASET` temporarily `'development'`, seed's `[SEED] GB000000000` in place | `vatNumber carries a [SEED] marker and the dataset is live` — everything else populated, so nothing else fired |
+| same, with `vatNumber` re-seeded empty | `vatNumber is empty and the dataset is live` |
+
+The second and third are the isolation: every other assertion had a real value to check and
+stayed green, so the live-only tier is what went red.
+
+**A defect the proof found, in the gate rather than the subject.** The failing path exited
+**127, not 1**. `process.exit()` while undici's connection pool is open aborts on Windows —
+`Assertion failed: !(handle->flags & UV_HANDLE_CLOSING)` — and an abort's status is not the
+code the gate meant to return. Both this gate and `check-axe`, which grew a `fetch` at `M-03`
+and had shown the same abort, now set `process.exitCode` and let the loop drain. Re-measured:
+1 on failure, 0 on success.
+
+`check:launch` runs **before** the build in `ci.yml`, because the build reads the same dataset
+— a missing singleton should fail with a sentence about the statutory record, not with a fetch
+error inside static generation.
+
+`lint:colors` also refused the two new trees on sight (*"`lib/` and `sanity/` are neither
+scanned nor excluded"*) — the inverted-guard design from `A-GATE` working exactly as intended.
+Both added to `ROOTS`.
+
+### M-03, in full: what the header links to, and the gate that holds it there
+
+`APP-FLOW.md` §8 specifies the master header as `Design · Digital · Press · Work · Approach ·
+About · [Tell us what you need]`. **Four of those routes are Epic N and do not exist.** Built
+literally, `M-03` puts four 404s into the chrome of every page on the site — the one place a
+dead link is multiplied by the whole route table rather than appearing once.
+
+So the header ships the three that resolve, and `components/chrome/nav.ts` carries the policy.
+The three division lists are **empty rather than absent**: each division's own navigation is
+its shell epic's (`B-04`, `U-04`, `P-04`), and master inventing entries would be deciding a
+division's information architecture. A division header today is the wordmark alone.
+
+**A decision like that survives exactly as long as something checks it**, and nothing did.
+axe has no rule for a link that 404s. `check-axe` now collects every same-origin link from the
+served DOM of every audited route and resolves it — **from the markup, not from `nav.ts`**, so
+a config-derived list cannot pass while the page points elsewhere, and links in content are
+covered too. Adding `Approach` back before `N-04` exists fails the build.
+
+It found two dead links on its first run, one of them pre-existing:
+
+| Found | Was |
+|---|---|
+| `/work → 404, linked from /_kitchen-sink` | the `Breadcrumb` specimen, shipped since `A-05a`. Now points at `/design` |
+| `/_gridsmith-404-probe` linked from itself | **the gate's own defect** — a bare `#main` resolves against the current URL, so the skip link read as a self-link. Fragment hrefs are now excluded |
+
+**Deliberate-failure proof, isolated.** `{ href: '/approach' }` added to the master nav:
+`check-axe: 1 link(s) do not resolve — /approach → 404, linked from /, /_gridsmith-404-probe,
+/_kitchen-sink`, with **zero axe violations across all 28 analyses**, so this check and no
+other fired. The three routes named in one line is the point: one header entry, three pages.
+
+`next/link` is deliberately not used. `TECH-SPEC.md` §3 requires route-group navigation to be
+a full document load — it is what makes the theme change flash-free — and the primitive in a
+shared layout would have put the 3.3KB client runtime in every route's chunk. **Every route's
+delta is still 0.5KB.** The header costs nothing.
+
+### Screen-reader testing — what is untested on `M-02` and `M-03`, specifically
+
+**Named by the Definition of Done and not done for either row.** Recorded rather than left as
+an unqualified tick, because both rows would otherwise read as complete.
+
+| Untested | Covered mechanically by | Gap |
+|---|---|---|
+| The skip link's announcement — that "Skip to content" is read as a link, and that following it lands the reading cursor in `<main>` rather than only moving the viewport | `check-axe` asserts focus order, target existence, focus acceptance and on-screen paint; `tabIndex={-1}` makes the target focusable | Whether the virtual cursor follows the DOM focus is an AT behaviour no lab check observes |
+| The `Primary` nav landmark and the wordmark's accessible name | axe `landmark-unique`, `link-name` | Announcement order and verbosity |
+
+**Why not done:** no screen reader is available in this environment, and simulating one is
+worse than recording the gap — it produces a claim of testing that did not happen, which is
+the failure `A-GATE-7-6` names. **It needs a human with NVDA or VoiceOver**, and the natural
+point is the `M-06` chrome checkpoint when the header, footer and consent banner can be walked
+in one pass rather than three.
+
+### M-08, in full: the row was wrong, and nothing could have told us
+
+**`M-08` claimed that `styles/globals.css` is imported by all four root layouts and therefore
+every route ships all three families' `@font-face` blocks — "22, of which a division uses ≤8",
+"~29KB of render-blocking CSS at roughly a third useful". Measured: false.** `globals.css`
+contains no `@font-face` at all. `next/font` emits its declarations into the CSS of the layout
+that imports the module, so the one-module-per-typeface split in `styles/fonts/` scopes the
+declarations exactly as it scopes the files.
+
+| Route | Sheets | Bytes | `@font-face` | Families |
+|---|---|---|---|---|
+| `/`, `/design`, `/digital` | 3 | 33,411 | 15 | Inter, JetBrains Mono |
+| `/press` | 3 | 33,369 | 14 | Source Serif 4, JetBrains Mono |
+
+The 42-byte difference between `/press` and the rest is the whole tell, and it was available
+from the first build.
+
+**This is the `check:contrast` lesson in a different layer.** A specific-looking number — 22
+blocks, 29KB, one third useful — is worse than no number, because it stops anyone re-deriving
+it. It sat in `FOUNDATION` §4 and a tracker row for two epics, in a paragraph that opened by
+correcting an *earlier* error in the same sentence, and the correction was itself wrong.
+
+So the row's work is the assertion, not the refactor. `check:theme` now holds a **hardcoded**
+per-division face list — the question is whether the built CSS declares the right faces, so
+the expectation must come from outside the layouts that produce it — and fails both ways.
+
+**Deliberate-failure proof, both directions, each fired alone:**
+
+| Broken | Fired |
+|---|---|
+| `sourceSerif` imported into `app/(marketing)/layout.tsx` | `index: declares @font-face for "Source Serif 4", which is not one of Inter, JetBrains Mono` |
+| `inter` removed from the same layout | `index: declares no @font-face for "Inter", which it needs` |
+
+A route linking no `/_next/static/css` sheet, or a linked sheet missing from disk, is a hard
+failure rather than an empty set — the sweep must not be able to measure nothing and pass.
+
+**No re-measure of the Lighthouse axes.** `FOUNDATION` §4 requires it for changes to
+`styles/fonts/*`; nothing there changed, and no byte on the critical path moved. The only
+change is a gate reading the build it already reads.
+
+### M-P1-4 — the sweep, run early because content blocked the alternative
+
+**Brought forward.** The task said *do this last, pages first*; `Q-M21` blocks every remaining
+`N-01` block behind copy that does not exist, so the reason for deferring it stopped applying.
+
+Two questions per check, across all 20 gates: **can it be made to report zero**, and **has it
+ever been made to fail with the proof committed.**
+
+#### Result — six checks across five gates failed the zero test
+
+| Gate | Check | Zero? | What the output did when the loop was disabled |
+|---|---|---|---|
+| `check:rls` | tables have RLS | **✗** | *"RLS on all 3 table(s)"* — unchanged |
+| `check:rls` | no anon read/write policy | **✗** | *"no anon read/write policy"* — unchanged |
+| `check:rls` | views set `security_invoker` | **✗** | *"security_invoker on all 1 view(s)"* — unchanged |
+| `lint:colors` | source sweep | **✗** | *"clean (116 files)"* — unchanged |
+| `lint:secrets` | source sweep | **✗** | *"101 source files"* — unchanged |
+| `check:tokens` | theme contract | **✗** | *"4 themes each define the 15-token contract"* — unchanged |
+| `size` | budget comparison | **✗** | *"all routes within their delta budget"* — unchanged |
+
+Seven rows, six checks — `check:rls` had three. **Every one is the same fault**: the number came
+from the parse or the enumeration, not from the loop. `tables.length` describes the SQL,
+`files.length` describes the glob, `THEMES.length` is a constant. All true statements, none of
+them evidence.
+
+**Passed the zero test** — the count moves or the gate fails loudly when starved:
+`check:node`, `check:contrast` (both passes plus the matrix), `check:headings`, `check:content`,
+`check:claims` (rows and mentions), `check:schemas` (all six, fixed last session), `check:launch`,
+`check:theme`, `size`'s route measurement, `check:axe`'s analysis loop, `check:responsive`.
+
+**One partial:** `check-axe`'s `"40+ tokens probed"` still prints when the probe loop is
+disabled — `tokenCount` is derived from the token files. Left as-is and logged (`M-P2-17`): the
+route probe's *purpose* is asserted by the computed-value check beside it, which does fail when
+starved, so this is a misleading count rather than an unguarded check.
+
+#### The three tool gates are a different kind of subject
+
+`typecheck`, `lint` and `build` are third-party tools with no count of ours to zero. They fail
+loudly and often — every session in this log has been red on at least one of them — so "has it
+been made to fail" is answered continuously rather than by a proof. Recorded so the next
+audit does not go looking for a counter that should not exist.
+
+#### `check:lhci:desktop` / `check:lhci:mobile` — **not audited here, and that is a gap**
+
+Both are hard-skipped on Windows and run only on `ubuntu-latest`. Neither half of this sweep
+could be applied locally: the assertions live in `lighthouserc.*.cjs` and are evaluated by LHCI,
+not by our code. **They are the only two of the 20 that leave this audit unverified in both
+directions.** `M-P2-18`.
+
+#### The fix, and the re-proof
+
+Every failing check now increments a counter **inside its own loop**, prints that counter, and
+**fails on zero**. Re-proved individually — deleting each counter's increment produces:
+
+    the tables check iterated zero times — it did not run
+    the policies check iterated zero times — it did not run
+    the views check iterated zero times — it did not run
+    no-hardcoded-colors: scanned zero files — the sweep did not run.
+    check-service-role-key: scanned zero source files — the sweep did not run.
+    check-tokens: checked zero token/theme combinations — the contract loop did not run.
+    check-bundle-size: compared zero routes against a budget — the check did not run.
+
+Summary lines changed to say what was *checked* rather than what exists: `check:rls` now reports
+*"RLS checked on 3 table(s), 1 policy(ies) checked… security_invoker checked on 1 view(s)"*, and
+`check:tokens` reports *"72 token/theme combination(s) checked"* rather than restating two
+constants.
+
+#### On the second half — has each been made to fail
+
+**Every assertion in the 20 gates has a committed deliberate-failure proof in this log except
+the two LHCI axes**, and the per-branch discipline has been applied since `check:rls` showed a
+half-firing alternation. What this sweep adds is that *passing that test was never sufficient*:
+the six checks above all reject bad inputs correctly and could not be shown to have run. **A
+gate can pass one half and fail the other, and five of twenty did.**
+
+### ⇢ END OF EPIC N — one task, two sweeps, and neither is to be re-derived
+
+**Do this last, before Epic N closes. It is a session of its own and Epic N should produce
+pages first.** Both halves are recorded here together because they are the same job on the same
+subjects, and splitting them guarantees the second is reconstructed from scratch.
+
+**Sweep 1 — the zero-input audit (`M-P1-4`).** For every check in all 20 gates: empty its input
+and confirm the count moves. A check whose summary is unchanged when given nothing to check has
+never been shown to reach its input, and the count-from-subject fault is invisible on the page —
+`"10 object type(s) and 9 document type(s)"` is a true statement about the registry and no
+statement at all about the check. Three of `check:schemas`' six were like this. The fix is
+always the same: increment a counter inside the loop, print that counter, and fail on zero.
+
+Candidates already visible from here: `check:contrast`'s `EXPECTED_CELLS` and `EXPECTED_PAIRS`,
+`check:tokens`' `REQUIRED` list, `check-axe`'s analysis count, `check-rls`'s table and view
+counts, `check-bundle-size`'s route table. Some are already list-driven and will pass in a line;
+the point is that nobody knows which.
+
+**Sweep 2 — the never-made-to-fail sweep.** For every assertion in all 20 gates: has it ever
+been made to fail? Where a gate has multiple branches, has *each* branch? The rule in CLAUDE.md
+is that a passing gate never made to fail is not yet a gate, and it was written after three
+consecutive sessions found broken gates that way — including two written in the same session as
+the rule, and one alternation where the working branch made the broken branch look proven.
+
+**They are one task because they answer two halves of one question.** Sweep 2 asks *does this
+assertion reject a bad input*; sweep 1 asks *did it reach the input at all*. A gate can pass
+either and fail the other, and `check:schemas` did exactly that: its three subject-counted
+checks rejected bad inputs correctly and could not be shown to have run.
+
+**Output:** a table, gate by gate and check by check, with the message each break produced.
+Anything that cannot be made to fail or cannot be made to report zero is a finding, not a pass.
+
+### N-01 block 1 of 9 — the hero, and the number nobody had
+
+**Premise check, and it splits as recorded.** Lighthouse `>= 0.98` on `/` is **measured and
+gated** — `lighthouse/routes.cjs`, `error` severity, median of 3, passing today. **That nine
+blocks fit under it is a projection nobody has tested.** This block is the first datum.
+
+**Measured, A/B against the placeholder on the same build and server:**
+
+| | Placeholder | With block 1 | Delta |
+|---|---|---|---|
+| JS above the framework floor | 2.5KB | **2.5KB** | **0.0KB** |
+| HTML | 11,558 B | 12,235 B | **+677 B** |
+| CSS | 31,951 B | 33,559 B | **+1,608 B** |
+| DOM elements | 57 | 59 | **+2** |
+
+**What it implies for the remaining eight, and the honest limits of that.**
+
+The JS figure is the strong one: a Server Component with no client boundary costs **nothing**,
+so eight more of the same shape also cost nothing, and Master's 15KB delta is not the constraint
+on this page. That was the projection everybody was worried about, and it is now measured as
+irrelevant *for blocks of this kind*. Blocks 2, 4 and 8 — division routing cards, selected work,
+latest insights — pull real content and images; **block 1 says nothing about those.**
+
+The CSS figure is the one to watch and it does not extrapolate linearly. **+1,608 B is mostly
+first-use cost**: the hero pulled `Section`, `Container` and `Heading`'s display sizes into the
+route's stylesheet for the first time. Later blocks reusing those primitives add far less, and a
+block introducing a new primitive adds another step. **Naive extrapolation gives 9 × 1,608 B ≈
+14.5KB of CSS; the real figure will be well under it, and the only way to know is to keep
+measuring after each.**
+
+**None of this is the Lighthouse score.** LHCI is skipped on Windows and runs on
+`ubuntu-latest`, so what CI reports for this commit is the first real reading of the gate with
+a block on the page — and the `0.98` threshold, LCP, CLS and TBT are what actually decide
+whether nine blocks fit. **The bytes above are a proxy and are reported as one.**
+
+**The copy is `[TK]` and was not drafted.** No approved positioning line exists anywhere in the
+specifications: `APP-FLOW.md` §2 names the slot and describes the job, `PRD.md` and `DESIGN.md`
+describe the effect, and none supplies words. Inventing the most-read sentence on the site is
+the clearest possible case of non-negotiable #2. **And there is no schema for homepage content
+either** — `groupPage` is closed to `approach` and `about` by design. `Q-M21` covers both.
+
+### N-01 block 5 — the six-stage process, and a 5,591 B import nobody was carrying on purpose
+
+**Premise check, and block 4 is skipped rather than approximated.** `APP-FLOW.md` §2 puts
+*"Selected work — 6, mixed, at least 1 cross-division"* before this block. There is no
+`caseStudy` schema and no real client work to cite. Building it means inventing client names
+and outcomes, which non-negotiable #2 forbids outright, so it is raised (`M-P2-25`) and the
+page is built past it. Block 5 asserts no figure: the stages, their descriptions and the
+"(if applicable)" qualifier all come from `_shared/00-PROCESS.md`, which is FIXED, and
+`check:schemas` already matches the constant against that file every run.
+
+**`APP-FLOW.md` §2 gives this block `→ /approach`. That route does not exist, so it ships with
+no link** — `M-03`, the same rule as blocks 2 and 3.
+
+**Measured, clean build each side (`rm -rf .next`), same server, `/`:**
+
+| | Blocks 1–3 | With block 5 | Delta |
+|---|---|---|---|
+| JS above the framework floor | 2.5KB | **2.5KB** | **0.0KB** |
+| HTML | 18,694 B | 25,557 B | +6,863 B |
+| CSS | 35,542 B | 35,626 B | **+84 B** |
+| Elements in `<body>` | 74 | 113 | +39 |
+
+Element counts here are opening tags in the served `<body>`, which is not the method the block
+1–3 entries used — do not compare the absolute figures across entries, only the deltas.
+
+**The +84 B was +5,675 B on the first measurement, and the difference is the finding.** The
+first clean build of this block served **four** stylesheets where blocks 1–3 serve three. The
+new one was `interactive.module.css`, 5,591 B, on a page with no interactive primitive on it at
+all. The cause: `ProcessStages` renders the stage numbers with `Numeric`, `Numeric` lived in
+`Table.tsx`, and `Table` imports `interactive.module.css` for its scroll region's focus ring.
+Next emits CSS per module file, so a two-declaration mono rule opened a closed file.
+
+**This is block 3's mechanism from the other side.** That entry established that the step is per
+CSS *module file*, not per primitive, and read it as good news — reusing an already-open file is
+free. The same rule says a trivial component can be the reason a closed file opens, and nothing
+about the call site shows it. `Numeric` now lives in `components/primitives/Numeric.tsx` and
+imports `content.module.css` only, which `/` already had for `Card`. `Table` keeps both imports
+because it genuinely uses both. Re-measured on a third clean build: three stylesheets, +84 B.
+
+**The four data points, and the model now predicts rather than describes:**
+
+| Block | CSS | What it was |
+|---|---|---|
+| 1 hero | +1,608 B | first use of `structure.module.css` on this route |
+| 2 routing | +1,593 B | its own rules |
+| 3 argument | +105 B | its own rules, nothing new opened |
+| 5 process | **+84 B** | its own rules — after removing an unrelated file the import graph opened |
+
+**+6,863 B of HTML is the largest of the four and it is all content**, not markup overhead: six
+stage titles and six canonical descriptions, plus the RSC payload's copy of them. Nothing is
+rendered twice.
+
+**`Numeric`'s extraction has no gate, and that is stated rather than left implied.** Nothing
+measures CSS per route — `check-bundle-size` measures JS — so the identical regression can
+recur on the next route that reaches for a primitive with luggage, and no build will say so.
+`M-P2-24`.
+
+**Copy status.** `Q-M21` is resolved for blocks 1–2 only; this block's heading and its one lede
+sentence are **not founder-approved**. They introduce no claim — the sentence restates
+`00-PROCESS.md`'s own argument for publishing one process across three divisions — but they are
+flagged with blocks 4–9's copy rather than counted as approved.
+
+**Verified live:** axe 32 analyses zero violations, 5 link targets all resolving, responsive 21
+combinations clean, 8 routes within budget. **Lighthouse could not be run** — it hard-skips on
+Windows (`M-P2-18`), and `/` is the route with the least LCP headroom in the programme
+(`Q-M16`). Master unchanged at **2.5KB of 15KB**.
+
+### N-01 block 3 — the one-company argument, and what the CSS curve actually tracks
+
+**Premise check.** `APP-FLOW.md` §2 gives block 3 the primary action `→ /approach`. That route
+does not exist, so the block ships with no link — `M-03`'s rule, the same one that governs
+block 2's "not sure" line. No figure is asserted anywhere for this block.
+
+**Measured, clean build, same server, `/`:**
+
+| | Blocks 1–2 | With block 3 | Delta |
+|---|---|---|---|
+| JS above the framework floor | 2.5KB | **2.5KB** | **0.0KB** |
+| HTML | 17,027 B | 18,682 B | +1,655 B |
+| CSS | 35,437 B | 35,542 B | **+105 B** |
+| DOM elements | 90 | 97 | +7 |
+
+**+105 B of CSS, and that number corrects the model in the block 1 entry.** That entry said a
+block introducing a new primitive adds another first-use step. Block 3 introduces `Prose` and
+`Section surface="sunken"`, both new to this route, and adds **one rule's worth of bytes**.
+
+**The step is per CSS *module file*, not per primitive.** `Prose` and `Section` both live in
+`structure.module.css`, which `/` already loaded for `Container` and `Heading` in block 1 —
+so the marginal cost of using more of it is zero. Block 1's +1,608 B and block 2's inheritance
+of `interactive.module.css` were both **file** first-use, not primitive first-use. **A block
+that reaches into a module file no route has loaded yet is the only kind that steps**, and
+there are four such files in `components/primitives/`.
+
+Three data points, and the shape now has a mechanism rather than a trend line:
+
+| Block | CSS | What it was |
+|---|---|---|
+| 1 hero | +1,608 B | first use of `structure.module.css` on this route |
+| 2 routing | +1,593 B | its own rules (`interactive.module.css` came and went with `next/link`) |
+| 3 argument | **+105 B** | its own rules, nothing new opened |
+
+**Deviation from `APP-FLOW.md` §2, corrected there in this commit.** The table says *"condensed
+(3 short points)"*; the approved copy is a heading and one paragraph. Splitting an approved
+paragraph into three bullets is rewriting it — a three-point list asserts what the three points
+are, which is structure nobody approved. Non-negotiable #2 covers invented structure for the
+same reason it covers invented figures.
+
+**Asymmetric, not centred** — `DESIGN.md` §4 reserves centring for the hero and CTA bands, and
+blocks 1 and 9 are the two exceptions on this page.
+
+**The copy states the relationship and stops there.** The studios share the client context; the
+same people do not execute across all three. That is `Q-M21`'s note for the record, written
+into the component rather than left as an implication of the word "together".
+
+**Verified live:** axe 32 analyses zero violations, 5 link targets all resolving, responsive 21
+combinations clean, 8 routes within budget. Master unchanged at **2.5KB of 15KB**.
+
+### N-01 block 2, revised — the 4.8KB bought nothing, and the measurement said so
+
+**Premise check, and it does not hold.** The previous entry recorded +4.8KB gz of JS for
+`next/link` and justified it as prefetch on the highest-value click. **`TECH-SPEC.md` §3:
+navigation between route groups is a full document load** — the four root layouts share no
+ancestor, so a client transition across the boundary cannot occur, and §9 wants it that way.
+
+**Measured rather than argued**, same server, both sides on clean builds:
+
+| | `next/link` | plain `<a>` | Delta |
+|---|---|---|---|
+| JS above the framework floor | 7.3KB | **2.5KB** | **−4.8KB** |
+| HTML | 17,839 B | 17,027 B | −812 B |
+| CSS | 40,743 B | 35,437 B | **−5,306 B** |
+| DOM elements | 94 | 90 | −4 |
+| RSC prefetches on load | **3, totalling 33,531 B** | **0** | −33,531 B |
+| Requests before the click | 20 | 13 | −7 |
+| M-J3's click | `document` request | `document` request | **identical** |
+
+**The click is the finding.** With the primitive in place the browser fetched
+`/design?_rsc=…`, `/digital?_rsc=…` and `/press?_rsc=…` at load — 33,531 B of RSC payload —
+and then navigated by `document` request anyway, discarding all three. Not "prefetch that
+gains little": **prefetch that is thrown away in full**, plus 4.8KB of JS to arrange it.
+
+Master is back to **2.5KB of 15KB**. The CSS drop is the block 1 anomaly closing: `/` no
+longer loads `interactive.module.css` at all, so the 5,591 B that entry treated as paid early
+is not paid at all.
+
+**And the convention was already written down, in two files.** `Footer` and `Header` both
+carry the comment *"Plain `<a>`, not the `Link` primitive… `TECH-SPEC.md` §3 requires
+route-group navigation to be a document load"*, and the footer's division switcher — the same
+three destinations — has always been plain `<a>`. **Block 2 shipped against a rule that two
+neighbouring components state explicitly.** No gate covered it, and the budget did not catch it
+because 7.3KB is inside 15KB. What caught it was being asked to measure the thing rather than
+reason about it.
+
+**`/` is a baseline route again.** The gate's spread assertion fired correctly last commit and
+the diagnosis — *a route grew a feature* — was correct on the evidence. It was still the wrong
+outcome, because a gate cannot ask whether the feature should exist. The note in
+`check-bundle-size.mjs` now says so: drop a route from `BASELINE_ROUTES` only after that
+question has been answered.
+
+**The consent-banner filter's subject left the tree with it.** Excluding `/`'s own
+`page-*.js` was right and stays, but with no page chunk on `/` it now removes nothing. It is
+a definition rather than an assertion, its proof stands against `dcd391e3` where the subject
+existed, and re-running it is `M-P2-20`.
+
+### `M-P2-19` — the 60% dim was not merely unmeasured, it was a WCAG failure
+
+Raised at P2 last commit as *"nobody measured it"*. Task 1 touched the component, so it was
+gated rather than deferred — and the gate failed on the first run.
+
+`--ink-muted` composited on `--canvas` at `opacity: 0.6` measures **2.90:1** against a
+4.5:1 floor. `DESIGN.md` §5 specified that 60%. **0.8 measures 4.57:1** and is the lowest
+step on the scale that clears AA, so the dim is 80% and §5 is corrected. `--ink` was never at
+risk — 5.02:1 even at 0.6 — which is why only the character sentence was failing and why
+nothing looked obviously wrong.
+
+**The new pass in `check:contrast` fixes the class, not the instance.** Every check in that
+file measured a token against a surface at full strength; **an `opacity` rule is invisible to
+all of them**, and axe does not evaluate hover states, so any fade anywhere was unmeasured.
+The pass composites every `opacity` below 1 in every CSS module against its own canvas.
+
+| Decision | Why |
+|---|---|
+| `opacity: 0` skipped | `RevealOnScroll`'s pre-reveal state. Absent text, not faded text; compositing it returns 1.00:1 against everything, which is arithmetic about invisibility |
+| `:disabled` skipped | WCAG 2.2 SC 1.4.3 exempts inactive components by name. The 0.45 on `Button` and `Field` **is** the disabled affordance |
+| `components/<division>/` scoped to that theme | A master component does not render on Press's canvas. Measuring it there invents failures nobody can reach |
+| threshold hardcoded, alpha read from the subject | The 4.5 is WCAG's and comes from outside; the alpha *is* what is being checked |
+
+**Three branches, three proofs, each fired alone:**
+
+| Broken | Fired |
+|---|---|
+| the dim put back to the spec's 0.6 | `fades to 0.6 — --ink-muted on master's --canvas measures 2.90:1` |
+| the only fade rule deleted | `no opacity declaration below 1 was found in any CSS module… this scan measured nothing` — the count reports zero |
+| the `:disabled` exemption removed | 16 problems across both disabled rules × 4 themes |
+
+#### The exemption did not work when it was written, and the reason is on the wall of this file
+
+`if (/:disabled\b/.test(selector))` was written with a **literal backspace, U+0008**, where
+`\b` was intended — so the pattern was `:disabled` followed by a control character, which
+matches nothing. **This is the `check:rls` defect, verbatim, in a different file, written by
+someone who had read the paragraph describing it that morning.** It survived reading the line
+three times: `sed` prints U+0008 as a backspace and the terminal renders `/:disabled\b/` and
+`/:disabled/` identically. `od -c` is what showed it.
+
+What found it was not inspection. The exemption was *supposed* to make 16 problems disappear
+and they did not, so the loop was instrumented, printed the selectors it was skipping —
+`".button:disabled"`, correctly — and the problems remained anyway. **A skip that logs the
+right thing and does not skip is only visible if you check the output, not the code.** The
+comparison is now `selector.includes(':disabled')`, which has no escape to get wrong, and the
+neighbouring path test was rewritten to use `path.sep` for the same reason.
+
+**Also corrected: the pass's own summary line.** It first read *"composited against 2 text
+token(s) × 4 themes"* — a product of two constants, printed whether or not the loop ran, and
+wrong the moment theme scoping landed. It now reports the composites actually performed.
+
+### N-01 block 2 — division routing, and the first block that costs JS
+
+**Premise check.** Block 1 measured **0.0KB of JS** and the entry above concluded that a
+Server Component with no client boundary costs nothing, so eight more of the same shape cost
+nothing. **Block 2 is not that shape and the projection does not survive it.** Three real
+`<a>`s go through the `Link` primitive, which is `next/link`, which is a Client Component.
+
+**Measured, clean build, same server, `/`:**
+
+| | Block 1 only | With block 2 | Delta |
+|---|---|---|---|
+| JS above the framework floor | 2.5KB | **7.3KB** | **+4.8KB** |
+| HTML | 12,713 B | 17,839 B | **+5,126 B** |
+| CSS | 39,150 B | 40,743 B | **+1,593 B** |
+| DOM elements | 69 | 94 | **+25** |
+
+**Master's delta is now 7.3KB of 15KB.** Nothing is over budget and no budget was touched.
+
+#### The CSS answer the previous entry asked for
+
+Block 1 predicted that its **+5,591 B of `interactive.module.css` would be paid one block
+early, not added**, because block 2's cards are real links. **Confirmed:** `interactive_link`
+and `interactive_focusable` now appear in the served HTML of `/`, and block 2's own CSS cost is
+**+1,593 B** — the routing rules in `master.module.css` and nothing else. Against block 1's
+structural +1,608 B, this is the first evidence for the shape of the curve: **a block that
+reuses the primitives already on the route costs its own rules, not another first-use step.**
+Two data points is not a curve, and blocks 4 and 8 pull images.
+
+#### +4.8KB of JS for three links, and it was a decision rather than an oversight
+
+A plain `<a href>` costs zero. `next/link` buys client-side navigation and prefetch, and this
+is the block where prefetch is worth most: `M-J3` is *"division hub within one click"* and this
+is the click. Master has 7.7KB spare, so nothing is being broken to afford it.
+
+**What is not yet known is whether it is paid once.** The 4.8KB is `/`'s own
+`chunks/app/(marketing)/page-*.js` plus what it pulls; the expectation is that block 4's work
+cards and block 8's insight links add nothing further, exactly as the CSS did. **That is a
+projection, and it is recorded as one.** Block 4 is the test.
+
+#### The measurement broke two assertions in `check-bundle-size`, and both were real
+
+Neither was a false alarm and neither was silenced. **Both fired on the same run and printed
+different messages**, so which was which was never in doubt.
+
+**1. `/` is no longer a baseline route.** The spread across the five went to 4.8KB against a
+0.3KB tolerance. The gate's own note says this shape means one of two things and names them:
+something shipped on a subset of routes, or **a route grew a feature and should leave
+`BASELINE_ROUTES` deliberately.** This is the second, so `/` left the list, and the note's
+warning against using that edit to go green is why this paragraph exists. Four featureless
+routes remain — three division placeholders and the 404 — so the invariant still has teeth.
+`masterDelta` now reads `/` from `rows` rather than from the baseline set.
+
+**2. The consent-banner figure had stopped being the consent banner.** It is defined as `/`'s
+`chunks/app/**` scripts minus `global-error`, and until this commit those were the shared
+layout boundary and nothing else. Block 2 gave `/` a page chunk of its own, the sum absorbed
+it, and the gate failed reporting that **the consent banner** had grown from 1.8KB to 3.5KB.
+The banner had not changed by a byte. **This is the hollow-subject class in the direction that
+fails loudly and wrongly** — the check kept measuring, the thing it measured stopped being what
+its name said, and the message accused the wrong component. The filter now excludes the route's
+own `page-*.js`; the banner measures **2.0KB** against its 3KB budget.
+
+**Both branches proven separately after the fix, each firing alone:**
+
+| Broken | Fired | Other branch |
+|---|---|---|
+| `/` put back into `BASELINE_ROUTES` | `baseline spread 4.8KB gz`, 1 problem | banner green at 2.0KB |
+| the `page-*.js` exclusion removed | `the shared layout client chunk is 3.5KB, over its 3KB budget`, 1 problem | spread green at 0.2KB |
+
+#### Two deviations from `DESIGN.md` §5, both corrected in the specification in this commit
+
+1. **The card body is prose, not "three example services in mono".** The approved copy supplies
+   two sentences; splitting them on commas gives three items for Design, four for Digital and a
+   broken phrase for Press. Mono would be wrong anyway — it marks what is **verifiable**, and a
+   services description is not.
+2. **The "not sure / need more than one" line ships as text.** `/contact` does not exist and
+   `M-03`'s rule is that only links with routes are shipped; `check-axe` fails on a same-origin
+   404. `DESIGN.md`'s requirement that it not be visually subordinate is met now — `--text-lg`,
+   `--ink`, full weight — and the href arrives with the route.
+
+`300ms` in §5 and §6 was also not on the duration scale, so it could not be honoured exactly.
+`--dur-base` (250ms) is used and both rows now name the token.
+
+**Verified live:** `check-axe` 32 analyses across 8 routes × 2 viewports × 2 phases, zero
+violations; 5 same-origin link targets, every one resolving; `check-responsive` 21 combinations,
+no overflow at 375/768/1440. **LHCI is skipped on Windows** — the `0.98` threshold on `/`, and
+whether 4.8KB of router JS moves TBT, are CI's reading.
+
+**Not covered by any gate: the 60% sibling dim.** `DESIGN.md` §5 requires it, axe does not
+evaluate hover states, and `--ink-muted` at 0.6 opacity is a contrast question nobody has
+measured. Logged as `M-P2-19`.
+
+### N-01 block 1, second commit — the approved copy, and a 5,591 B chunk merge
+
+**Q-M21 resolved.** The hero is the approved wording and the **homepage is hardcoded, not
+CMS-driven** — it changes rarely, every block is bespoke, and `groupPage` being closed to
+`approach` and `about` is correct. **No homepage schema is to be built.** Recorded here because
+the reason is the durable part: a schema for content with one instance that changes yearly is
+cost with no reader.
+
+**Measured, A/B on two clean builds** (`rm -rf .next` before each — see the caveat below), same
+server, `/`:
+
+| | `[TK]` placeholder | Approved copy | Delta |
+|---|---|---|---|
+| JS above the framework floor | 2.5KB | **2.5KB** | **0.0KB** |
+| HTML | 12,235 B | 12,713 B | **+478 B** |
+| CSS | 33,559 B | 39,150 B | **+5,591 B** |
+| DOM elements | 67 | 69 | **+2** |
+
+**The DOM figure is on a different basis from block 1's first commit** (57/59 there). That count
+was taken from the served HTML; this one is `document.querySelectorAll('*')` after hydration, so
+it includes `<html>`, `<head>` and the injected script and link elements. Deltas are comparable,
+absolutes are not.
+
+**+478 B of HTML is the sentence twice** — once in the markup, once in the RSC flight payload —
+plus the wrapper. That is what any hardcoded copy costs and it does not compound.
+
+#### The +5,591 B of CSS is not the paragraph, and it is not 5,591 B of new rules
+
+Nothing was added to `master.module.css`; `.heroIntro` was already there. **The figure is
+`interactive.module.css` — 5,591 B, byte for byte — which `/` did not previously download at
+all.** Adding the `<p>` merged two emitted stylesheets into one 21,827 B chunk (16,236 + 5,591)
+and `/` now fetches both.
+
+**`/` uses none of it.** `interactive_*` class names do not appear in the served HTML before or
+after: the header's nav links were dropped at `M-03` because their routes do not exist, so the
+route genuinely had no interactive primitive on it.
+
+**Reproduced three times, and the first two readings were wrong for a different reason.** The
+first A/B ran against an incremental `.next` and produced a build that silently did not rebuild
+— identical chunk hashes and timestamps to the previous one. `.next` then corrupted outright
+(`Cannot find module './vendor-chunks/@sanity.js'`, HTTP 500 on every route, `with-server`
+correctly refusing to proceed). **Both measurements were discarded and both builds redone
+clean.** The isolation run — approved headline, intro prop removed — returns exactly 33,559 B,
+which is what identifies the `<p>` as the trigger rather than the copy or the docstring.
+
+**No action, and the reason is block 2 rather than the mechanism.** The bundler heuristic that
+merges the two chunks is not explained here and chasing it would be speculative. It does not
+need explaining: **block 2 is the division routing cards, which are real `<a>`s, so `/` starts
+using `interactive.module.css` in the very next commit.** The cost is paid one block early, not
+added. If block 2's measurement shows the CSS total unchanged from 39,150 B, that confirms it.
+
+**What this does not measure** is Lighthouse. CSS is render-blocking, the `0.98` threshold on `/`
+is the gate that decides, and LHCI is skipped on Windows — CI is the reading.
+
+### N-06 — the strongest way to fix a name is to not accept one
+
+**Premise check: no measured or projected figure.** `_shared/00-PROCESS.md` opens *"FIXED — not
+a draft… not open for revision, rewording or 'improvement' by a later session"*, and research finding R6 is
+cited there with no number attached (the ledger's identifier space also uses `R\d+`, which
+is why that mention is not backticked — see `M-P2-16`). The only quantity is *six*, which counts a thing rather
+than measures one.
+
+**Rule 1 is "stage names are fixed", and the implementation is that an editor never supplies
+one.** Validating a typed name catches the typo and misses the point: the six stages are a
+public statement of how the company works, not content. So `lib/process/canonical.ts` renders,
+and the CMS supplies only what rule 3 allows — `divisionDetail`, `duration`, `clientTime`,
+keyed by stage. `processStep.title` keeps its validator for the reason `continuityExample.
+verified` is re-checked in its component: a document can arrive through the API.
+
+Rule 2's *"(if applicable)"* is a property of stage 6 rather than a string a caller appends, so
+a division cannot drop it. A non-canonical key is **rendered as a problem, not swallowed** —
+content that saved and silently did not appear is the hardest kind of bug for an editor to
+report.
+
+**The Sanity schema now imports the same constant** instead of transcribing it. It had a second
+copy of the six names; a copy with no check is a second source of truth waiting to disagree.
+
+**The gate compares the code against the specification, and they are genuinely different
+artefacts** — the document is the expectation, the constant is the subject — so this is not an
+expectation derived from what it checks. The document is parsed rather than transcribed, which
+is the point: transcribing it would have made the gate a third copy.
+
+| Broken | Fired |
+|---|---|
+| the code renames a stage | `stage 5 is "5 Delivery" in 00-PROCESS.md and "5 Handover" in lib/process/canonical.ts` |
+| **the document** renames a stage | the same comparison, the other way round |
+| the code drops stage 6 | `00-PROCESS.md has stage 6 "Support" and the code has no 6th stage` |
+| stage 6 loses `optional` | `the last canonical stage is not marked optional — 00-PROCESS.md rule 2` |
+| the gate points at a file with no stage table | `no stage table rows matched — the canonical list was compared against nothing` (the count goes to zero) |
+
+### `/_master-sink` — because putting these on the kitchen sink corrupted a measurement
+
+`check-bundle-size` derives the primitive layer as `/_kitchen-sink`'s delta minus the shared
+baseline. **Master-layer components on that page are therefore counted as primitives.** `N-05`
+moved the figure from 5.8KB to 6.0KB — exactly `PRIMITIVES_BUDGET_KB` — and `N-06` would have
+pushed it past, failing with a message blaming a primitive layer that had not grown at all.
+Quietly wrong first, loudly wrong for the wrong reason second.
+
+So composed master components get their own probe page, budgeted against Master's delta rather
+than the primitive layer's, because that is what they are. Measured after the split:
+**primitive layer back to 5.8KB**, `/_master-sink` at 2.5KB of 15KB. Both new specimens are
+also in `check-axe` (8 routes, 32 analyses) and `check-responsive` (7 routes, 21 combinations)
+— a table and a numbered list are the two shapes that overflow at 375px when built wrong.
+
+### The `check:schemas` audit — three of six checks could not be made to report zero
+
+**Ordered because the silent-insertion class recurred in this file after being recorded as a
+named class.** Awareness did not prevent recurrence, so the file was treated as suspect and
+every check was tested rather than the two known instances.
+
+Each of the six was given nothing to check and run. **The result splits cleanly, and the split
+is the finding.**
+
+| Check | Made to report zero? |
+|---|---|
+| 1. expected types are registered | **No** — emptying both expectation lists changed *nothing* in the output |
+| 2. every field type resolves, references point at documents | **No** — running the walk over an empty list changed nothing; there was no count for it at all |
+| 3. `isSeed` on every document type | **No** — emptying the loop still printed *"isSeed on all 8 seedable document type(s)"* |
+| 4. `REQUIRED_FIELDS` rules | Yes — `0 validation rule(s)` |
+| 5. `CLOSED_LISTS` | Yes — `0 closed list(s)` |
+| 6. `HARD_VALUES` | Yes — `0 hard-valued rule(s)` |
+
+**None of the three "No" checks existed only as a declaration — all six execute, and all six
+had already been proven to reject a bad input.** What they lacked is subtler and is the reason
+the second silent insertion survived: **their counts were derived from the subject, not from
+their own execution.** "10 object type(s) and 9 document type(s)" is a census of the registry;
+"all 8 seedable" is `documents.length - 1`, arithmetic computed independently of the loop. Both
+print the same confident number whether the loop ran or not, so **the output could not
+distinguish *ran and passed* from *did not run*** — which is precisely the state this gate
+shipped in, twice.
+
+Checks 4–6 were provable to zero for one reason: each iterates a list that is also what its
+summary counts. That is the property, and it is now general — every check increments its own
+counter inside its loop, the summary prints those counters, and **a counter of zero is a
+failure**: `the fields check iterated zero times — it did not run`.
+
+Re-proved after the fix: emptying check 1, 2 or 3's input now fails the build with that
+message, and 4, 5 and 6 still report `0`.
+
+### Why insertions into this file dropped silently — the mechanism, not the carelessness
+
+**Two in one session is a mechanism.** It is not file size directly, and it is not that the
+file is hard to read.
+
+Every edit to this file was applied as a script performing **several independent
+`str.replace(old, new)` calls with no assertion that `old` was found**. `replace` on a missing
+anchor is not an error — it returns the string unchanged. So a script with five hunks where one
+anchor has drifted writes the file back with four applied, exits 0, and reports nothing.
+
+**The specific failure shape follows from that.** The constant, the loop and the summary line
+were three separate hunks. The constant's anchor and the summary's anchor still matched; the
+loop's anchor did not, because an earlier edit had changed the surrounding whitespace. The
+result was the worst possible subset: **a declared constant and a summary line claiming a count,
+with no loop between them.** Had they been one hunk, partial application would have been
+impossible.
+
+Size is the aggravator rather than the cause. A file accumulates edits; anchors drift; the more
+history, the likelier any given anchor no longer matches exactly. `check-schemas.mjs` is 400+
+lines and has been edited in four sessions, and it is the first file in this repository to
+reach that combination — **which is why the next file to reach it will do the same thing.**
+
+Two rules follow, and the first is already in force:
+
+1. **Assert every hunk, and write nothing unless all of them matched.** The audit script for
+   this very fix caught its own drifted anchor and wrote no file — a loud failure where the
+   previous method produced a silent partial one.
+2. **Keep a check's declaration, its loop and its summary in one hunk** where possible, so that
+   partial application cannot produce a plausible-looking result.
+
+Neither is a substitute for the proof. Both reduce how often the proof has to be the thing that
+catches it.
+
+### N-05 — a hard-true constraint that makes seed content impossible, on purpose
+
+**Premise check: every figure is a structural minimum, none measured or projected.**
+`rows.min(4)` and `divisionsInvolved.min(2)` are completeness rules — a two-row table does not
+show continuity and one division is not cross-division. `relationshipMonths` is a data field
+with no asserted value. **`DESIGN.md` §5's "Month 1 / Month 18" is an illustration of the
+two-column shape, not a constant**: the component reads the real span and hardcodes nothing,
+because 18 would be a duration nobody measured about a client nobody named.
+
+**`verified` is hard-true, and the collision with the seed policy is the finding.**
+`FOUNDATION` §7 requires seed records to be structurally complete; completeness here means
+`verified: true`; and a seed record claiming to have been verified against real project records
+is precisely the lie `master/SCHEMA.md` §2 calls "the most damaging possible piece of content
+on the site". **The two rules do not both apply — the honesty rule wins and the type has no
+placeholder variant.** So `/approach` is built to stand without the document: the component
+returns an empty state, and `Q-M6` is the blocker for a real one.
+
+`isSeed` stays on the type because the group-wide rule and `A-12` require it, and nothing will
+ever set it.
+
+**The component re-checks `verified` as well as the schema, and that is not redundancy.** The
+schema governs what an editor can save; the component governs what a page can render. A
+document written through the API, restored from a backup or migrated between datasets bypasses
+Studio validation entirely, and the component is the last thing between it and a commercial
+claim on the site.
+
+A real `<table>` with `scope="row"` — the comparison is the point, and a grid of divs gives a
+screen reader no row/column association. Zero client JS. **axe caught the first version's empty
+corner `<th>`** (`empty-table-header`): a header with no text is a promise of a label that is
+not kept, so the corner is a `<td>`.
+
+**Every branch of the new assertion proven, including the count.**
+
+| Broken | Fired |
+|---|---|
+| `verified`'s rule made permissive — `r.custom(() => true)` | `accepts false — the rule is present and permissive, which a presence check cannot see` |
+| the `custom` rule replaced with `required()` | `never .custom() — required() alone would accept false` |
+| `rows.min(4)` replaced with `required()` | `never .min() — at least four rows` |
+| the `HARD_VALUES` entry removed | `0 hard-valued rule(s) run against 0 value(s)` — **the count moves**, per the rule added this session |
+
+**⚠ And the check-that-does-not-exist class recurred, in the same file, in the same session.**
+`HARD_VALUES` was declared, the summary printed *"1 hard-valued rule(s) run against 4
+value(s)"*, and **no loop iterated** — the second silent insertion failure in `check:schemas`.
+It was caught only because the permissive-rule branch was proved rather than assumed, which is
+exactly the obligation CLAUDE.md now carries. The insertion is verified by an assertion in the
+edit itself; a summary line remains no evidence at all.
+
+### N-03 — a row with no figure in it, and two structural claims made real
+
+**Premise check, per the standing instruction: `N-03` carries no measured or projected figure,
+because it carries no figure at all.** Its `Est` of 0.5d is an estimate of effort, not a
+property of the system. `master/SCHEMA.md` §2 states two *structural* claims instead, and
+structural claims are checkable in a way an unmeasured number is not:
+
+| Claim | Now enforced by |
+|---|---|
+| "singleton-per-slug for `/approach` and `/about`" | a closed slug set — a third `groupPage` is a published document no route renders, and the failure is silent |
+| `sunken-plain` "is a layout value rather than a styling decision **so it cannot be prettified by a later content edit**" | a closed layout set. The limits block is deliberately undesigned as an honesty device; polishing it would sell the limits, which is the point of leaving it plain |
+
+`check:schemas` asserts both — **and asserts that they are enforced on write**, not merely
+offered. Sanity treats `options.list` as a Studio affordance: it shapes the dropdown and does
+not refuse a value written through the API. So the gate runs each field's `custom` rule, the
+same technique that established SC-6.
+
+**Three defects, all found by proving branches, none by reading.**
+
+1. **The check did not exist.** The constant was declared, the summary line said *"2 closed
+   list(s) intact and enforced"*, and **nothing iterated** — an insertion that silently failed.
+   A green result from a check that was never in the file, and the summary was the only
+   evidence anyone would have had.
+2. **The check's own expectation was wrong.** Once it ran it immediately failed
+   `groupPage.slug has no options.list` — because a Sanity `slug` has no such key. The schema
+   was right and the check was wrong.
+3. **The fix for (2) left the gap open.** Exempting slug from the list comparison meant its
+   closure rested on *"a custom rule exists"* — which proves a rule is there, not what it
+   allows. **Widening `GROUP_PAGE_SLUGS` from two entries to three passed silently.**
+
+The last one had no clean answer: `SlugOptions` has no `list` key and TypeScript refuses one,
+so there is nowhere to declare the accepted set except the rejection message. The gate now
+parses it — `must be one of: a, b` — and compares that enumeration against its hardcoded
+expectation. **The message is not decoration; it is the field's only machine-readable statement
+of what it accepts**, and the schema says so where it is written.
+
+**Every branch proven separately:**
+
+| Broken | Fired |
+|---|---|
+| a value added to the layout list | `allows "hero-gradient", which is not in this gate's expected list` |
+| a value dropped from it | `no longer allows "sunken-plain"` |
+| `options.list` removed | `has no options.list — the value set is open` |
+| the `custom` rule removed | `never calls .custom() — options.list is a Studio affordance and does not refuse a value written through the API` |
+| the slug set widened to three | `accepts "manifesto", which is not in this gate's expected list` |
+
+### N-01's premise — half measured, half projected, and the halves are not the same claim
+
+**Checked before building, per the standing instruction. Not started — see the note at the
+end.**
+
+| The figure | Status |
+|---|---|
+| **Lighthouse performance ≥ 0.98 on `/`** | **Measured and gated.** `lighthouse/routes.cjs` carries `{ path: '/', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 }`, and `lighthouserc.desktop.cjs` asserts `categories:performance` at that value with `error` severity, median of 3, on `ubuntu-latest`. It runs today and passes. This is not a projection |
+| **That the homepage can carry nine content blocks and still clear it** | **A projection, and nobody has measured it.** Every green run to date is against a page containing an `h1`, a header and a footer. `Q-M16` says the same thing about LCP in as many words: the 78ms of headroom was measured on a page with one `h1`, and hero imagery, work grids and book covers all produce a larger and later LCP element |
+
+**The distinction matters because the two figures fail differently.** If `0.98` were wrong, the
+gate would be wrong and the fix would be the gate. What is actually unknown is the *budget*:
+how much of the 0.98 nine blocks consume. That is not knowable from the specification and it is
+not knowable from the current build — **it is knowable only by building a block and measuring
+what it costs**, which is what the standing instruction means by converting a row's deliverable
+into the measurement.
+
+So `N-01` should be built **incrementally against the gate**, not authored whole and measured at
+the end: the first block that moves the score is the one worth arguing about, and a homepage
+assembled in one commit gives no way to attribute a regression to any of nine candidates. The
+same applies to the LCP ceiling, which `Q-M16` explicitly defers to "the first Stage 3 route" —
+`N-01` is that route.
+
+**One dependency the row does not name.** The Definition of Done requires content from the CMS,
+and the homepage's blocks have no schema: `groupPage` is `N-03`, `continuityExample` is `N-05`,
+the canonical process component is `N-06`. `N-01` depends on `M-03` in the table and on three
+schema rows in practice. **`N-03` is the honest first row of Epic N**, not `N-01`.
+
+**Not started.** The premise check is the deliverable here; the build is the next session's, and
+it should begin at `N-03`.
+
+### A-08's notification half — a real email, and the limits of what that proves
+
+**Verified live.** A submission through the served app produced a real send: Resend accepted
+it, `contactEmail` in the `development` dataset is now `contact@gridsmith.uk` rather than a
+`[SEED]` placeholder, and that is what satisfies **e-commerce regs reg. 6(1)(c)** — a contact
+route that can actually receive mail. The `[SEED]` VAT number stays until registration
+completes; separate obligations, separate instruments.
+
+**⚠ Two limits are recorded in the gate's own output, not left in a docstring**, because a
+passing dev test is exactly the thing that gets read as a verified production path:
+
+1. **A `sent` proves the pipeline, not deliverability.** Development sends from
+   `onboarding@resend.dev`, Resend's shared sender, which needs no DNS verification and
+   **only delivers to the Resend account owner's own address**. It demonstrates that the
+   pipeline composes, authenticates and is accepted. It says nothing about delivery to an
+   arbitrary recipient.
+2. **At deployment the SPF `include:` must be MERGED into the existing record.**
+   `gridsmith.uk` already has an SPF record serving the live site's mail and it is deliberately
+   untouched until then. A domain may have exactly one: a second is a `permerror` under RFC
+   7208 §4.5, receivers treat that as *no SPF at all*, and **the existing mail starts failing
+   authentication**. Nothing bounces locally, so the failure is silent from the sending side.
+
+**The send does not block the response, and that is measured rather than asserted.** It runs in
+`after()`. Median of five, same payload, same server: **56ms with `after()`, 224ms awaited.**
+Awaiting would put a third-party API's latency *and its outages* on the critical path of a form
+submission — and a timeout would look to the visitor like a failed submission for a lead that
+is already saved.
+
+**Every branch proven separately.**
+
+| Branch | Proof |
+|---|---|
+| unset key **skips** | server built with the three variables cleared: `asserted "skipped (unconfigured)"` |
+| broken key **fails** | `RESEND_API_KEY=re_broken`: `Resend is configured so its outcome must be "sent", and it was "failed" (HTTP 401)` |
+| **a notification failure does not roll back the insert** | with the broken key, a valid submission still returned `201`, and the row `dd0de363…` was then read straight out of Postgres — present, `notified_at` null |
+| a successful send does not block the response | the timing A/B above, and the gate fails if the production path ever returns notification outcomes, which would mean it awaited |
+
+The third is the one that matters and it is proven against the database rather than the
+response: a lead in the database with no email sent is recoverable, a lost lead is not.
+
+**A gate defect found while proving, and fixed as a class.** The gate decided "configured" from
+its **own** `process.env` while asserting against the **server's** behaviour — two processes,
+one assumption. During the broken-key proof it reported *"Resend is not configured"* about a
+server that was configured and failing: a confidently wrong message. The probe route now
+reports `configured` from the server's own view and the gate compares against that. A gate that
+infers the state of a system it does not run in is asserting against something it cannot see.
+
+**`notified_at` is still not stamped**, deliberately — `anon` has no UPDATE policy, correctly.
+`M-P2-13`.
+
+### A-08 — the pipeline, and what verifying it live actually required
+
+**Premise check.** `FOUNDATION` §6 specifies `<60s` for the internal notification and
+`SCHEMA-CORE.md` §3 repeats it as a p95 alert threshold. **Neither has ever been measured**;
+both are targets. Nothing here is built to them. The column the measurement will use exists —
+and cannot yet be written, see below. `M-P2-13`. No CRM adapter, per D1: naming an integration
+target nobody has chosen is exactly the speculative work that rots.
+
+**It inserts as `anon`, not with a service role, and that is the whole point.** The publishable
+key runs as `anon`, so the insert is subject to the same RLS a browser would be. A service role
+would bypass RLS and make the `anon insert only` policy decorative — the database would be
+protected by this code remembering to behave, which is the arrangement `A-07` exists to
+replace.
+
+**Three constraints, all established at `A-07` by querying the live database:**
+
+1. **`Prefer: return=minimal` is required.** PostgREST's default reads the row back, and there
+   is deliberately no select policy for `anon`. Measured: `representation` **401**, `minimal`
+   **201**.
+2. **The id is generated in the action**, because nothing can read the row after writing it.
+3. **`notified_at` stays null and cannot be stamped yet.** It is meant to be set after the
+   notification is accepted, and `anon` has no UPDATE policy — correctly, since UPDATE from a
+   public form is precisely what RLS is keeping out. Stamping it needs a service-role writer,
+   which does not exist. **The column is real; the speed-to-lead measurement is not**, and
+   saying so is the point of `M-P2-13`.
+
+**Verification went through the runtime because it had to.** `lib/leads/submit.ts` carries
+`server-only`, which throws outside a bundler — correctly, since that import is what keeps its
+credentials out of a client bundle. So the subject is
+`app/(marketing)/gridsmith-lead-probe/route.probe.ts`, POSTed over HTTP against the real
+project. That is also the stronger form: `A-07` established that this system's RLS posture is
+**only observable from outside**, and a probe calling the function in-process would prove the
+function rather than the deployment.
+
+Confirmed in the database after a valid POST: one row, the action's own id, `lead_type`
+defaulting to `enquiry`, `status` `new`, `notified_at` null, `payload` `{}`.
+
+**Every branch proven separately, per the rule this session added to CLAUDE.md.** One branch
+firing is not evidence for the others:
+
+| Broken | Fired |
+|---|---|
+| `Prefer` flipped to `return=representation` | `a valid lead returned 200 {"status":"error","detail":"insert failed: HTTP 401"}` — and the message names the cause, because a 401 here reads as an auth problem and is an RLS one |
+| email validation weakened to `z.string()` | `a malformed email was not rejected — returned 201` |
+| `division` widened from the enum to `z.string()` | `a division outside the enum was not rejected — returned 200 … HTTP 400` (Postgres refused it, which is not the same as validating it) |
+| the 5000-character cap removed | `a body over the length cap was not rejected` |
+| `full_name`'s `.trim().min(1)` removed | `a blank required field was not rejected` |
+| the schema replaced with `z.any()` | two branches fired at once, which is what a missing boundary looks like |
+
+**The `Prefer` assertion is a status code, not a header grep**, deliberately: a grep passes a
+build where the header is set on the wrong request, and the status code is the behaviour.
+
+**Consent is not consulted anywhere in the pipeline.** `PROJECT-RULES.md` §6: processing an
+enquiry someone submitted is contract/legitimate interest, not analytics. Never block a form on
+consent.
+
+**Notifications are written and skipped.** `Q-M20` — no Resend key, no verified sender, no
+recipient, no Slack webhook. The recipient in particular cannot be guessed:
+`companyDetails.contactEmail` is still a `[SEED]` placeholder. **Unset is a skip; set-but-broken
+is a failure**, and that distinction is the design — a provider nobody has configured must not
+fail a build, and one that has been configured and silently stopped working is how a pipeline
+is found to have been dropping notifications for a month. A notification failure never rolls
+back the insert: a lead in the database with no email sent is recoverable; a lost lead is not.
+
+### A-07 — and the spec's own reporting view was an RLS bypass
+
+**Premise check first.** `SCHEMA-CORE.md` §3–§4 carry two figures and neither is built to.
+`is_ai_referral` is commented *"R1: 22% conversion premium"* — already flagged unmeasured in
+FOUNDATION, which says it must be measured rather than assumed; the column exists so that it
+**can** be, and nothing treats it as known. `notified_at - created_at` carries *"alert if p95
+exceeds 60 seconds"* — a target, not a measurement. The column exists, the alert does not, and
+`A-08` owns it. Both are recorded in the migration itself rather than in a commit message.
+
+Two migrations, applied with `npm run migrate` and verified against the live database.
+
+**The finding, and it was in the specification rather than in the implementation.** `0001`
+created `v_lead_funnel` exactly as §4 writes it. **A Postgres view runs with its owner's
+privileges unless `security_invoker` is set**, the owner is `postgres`, and Supabase grants
+`anon` SELECT on everything in `public` by default. So the view read `leads` as a superuser
+and handed the result to anyone holding the publishable key — which is designed to be public.
+
+Measured with one qualified lead in the table, the publishable key as the only credential:
+
+| Request | Before `0002` | After |
+|---|---|---|
+| `GET /rest/v1/leads?select=full_name,email` | `200 []` — RLS working | `200 []` |
+| `GET /rest/v1/v_lead_funnel?select=*` | `200 [{division, leads: 1, qualified: 1, …}]` — **RLS bypassed** | `401 permission denied` |
+
+Aggregates rather than names, but weekly lead volume, qualification rate and AI-referral share
+is commercially sensitive, and the *mechanism* would leak whatever a future view selects.
+`SCHEMA-CORE.md` §3's comment *"reads are service-role only"* was true of the table and false
+of the database. **This is the "check the source, not the summary" rule pointing at a spec that
+is itself the source** — the answer was in Postgres's behaviour, not in the SQL.
+
+`0002` fixes it two ways, because either alone leaves a hole: `security_invoker = true` makes
+the view obey the caller's RLS, and revoking the default grants means it is not reachable from
+the browser at all.
+
+**Three more things the live check established, none of them visible in the SQL:**
+
+- **RLS on `sample_grants` and `events` too.** §3 only writes `alter table leads enable row
+  level security`. A table without RLS is readable by anon through PostgREST by default, and
+  `sample_grants.token` is a bearer credential with a 72h expiry. The omission was not a
+  decision to leave them open.
+- **`insert … returning=representation` fails for anon** — 401. PostgREST's default `Prefer`
+  makes every insert a read as well, and there is deliberately no select policy. Measured:
+  `return=minimal` returns 201. **`A-08` must insert with `returning=minimal`**, and that
+  constraint is written in `0001` where it is created rather than left to be discovered.
+- **`insert into events` as anon is refused** — 401, no policy. Correct.
+
+### `check:rls` — the twentieth gate, and the proof found two bugs in it
+
+It reads the **committed migrations**, and the limitation is stated in the gate itself rather
+than implied: it asserts what the repository declares, not what the database currently is. A
+live check needs the connection string, which is a secret that must not be in CI. `M-P2-12` is
+the drift check and belongs where the credential already exists.
+
+Three rules: every table gets RLS; no policy grants anything but INSERT to `anon` or `public`;
+**every view sets `security_invoker`**. The last is stated for every view rather than for the
+one that leaked, because the cause is a Postgres default — the next view inherits it, and the
+next author will be reading the same spec that produced the first one.
+
+| Broken | Fired |
+|---|---|
+| `enable row level security` removed from `events` | `never gets "enable row level security" — PostgREST serves it to anon by default` |
+| `for select to anon using (true)` | `grants SELECT to anon — anon may insert a lead and nothing else` |
+| `for update to public with check (true)` | `grants UPDATE to public` |
+| `0002` deleted | `view "v_lead_funnel" never sets security_invoker` |
+| no `supabase/migrations` directory, or no `.sql` in it | hard failure — the gate must not report clean having read nothing |
+
+**Two bugs lived in one line of this gate and the proof found both; reading it found neither.**
+The role capture `([a-z0-9_,\s]+?)` first ran without a boundary, so `to anon using (true)`
+captured the role as `"anon using"`, which matches no role name — **a deliberate anon SELECT
+policy went green**. The fix was then written with a literal backspace (U+0008) where `\b` was
+meant, making the lookahead `(?:using|with)\x08`, which can never match — so the SELECT case
+**still** went green while the DELETE case, which ends in `;` and takes the other branch, fired
+correctly and looked like proof that the line worked. A half-working alternation is
+indistinguishable from a working one if you only test the branch that works.
+
+### A-09's grant path — a permanent subject, and the region is part of it
+
+**The grant path had been proven once by hand and the measurement was thrown away.** The
+surviving evidence was a commit message, which is the shape CLAUDE.md names: a fix with no
+subject. It now runs every CI run, against the committed banner:
+
+| Step | Asserts |
+|---|---|
+| fresh context, no cookie | zero analytics requests |
+| Accept | a request to **each configured provider**, and PostHog's to an **EU host** |
+| fresh context, Reject | **still zero** |
+
+**Step 3 is not step 1 repeated.** Step 1 is "before a choice"; step 3 is "after an explicit
+no". A banner that fires tags on any interaction rather than on consent passes the first and
+fails the third — which is exactly what the proof below produced.
+
+**The region is asserted twice, at two different levels, because they are different claims.**
+`NEXT_PUBLIC_POSTHOG_HOST` must match an EU endpoint *as configured*, and the request that
+actually goes out must reach one. PostHog's documented default is `us.i.posthog.com`, so the
+failure mode is silent: everything works and only the jurisdiction is wrong — UK GDPR Chapter
+V. The loader now throws rather than degrading, because loading US PostHog "for now" is the
+version of this that ships. The predicate lives in `lib/analytics/posthog-region.ts` so the
+gate asserts **the same predicate the loader uses**, not a copy that can drift.
+
+**CI configures shaped placeholders, not real ids.** The assertions are about which host was
+contacted, never about a response, so a fake id exercises the whole path with no credential in
+the repository. **If no id is configured the gate fails rather than skipping** — an
+unconfigured environment is precisely where this would go hollow.
+
+**Deliberate-failure proof, four branches:**
+
+| Broken | Fired |
+|---|---|
+| no id configured at all | `the grant path cannot be exercised… Skipping here is how this assertion goes hollow` |
+| `NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com` | `is not an EU endpoint… a UK site must not post behavioural data there` — alone |
+| both consent guards removed | `reject: 2 analytics request(s) AFTER an explicit reject — www.googletagmanager.com, eu.i.posthog.com` |
+| a provider configured but injecting nothing | `accept: GA4 is configured but made no request after the grant` |
+
+**And the assertion caught a defect in its own harness before any of that.** The first version
+reused one browser context, so the Reject step inherited the Accept step's `gs_consent` cookie:
+no banner, tags loaded on page load, and it reported `2 analytics request(s) before the click`
+and `no "Reject" button`. "A fresh context, no cookie" has to actually be one — **a page is not
+a context.**
+
+### Secrets: the gate now checks values, not only names
+
+`check-service-role-key` was written for one variable that no longer exists alone.
+`DIRECT_CONNECTION_STRING` carries the database password and `SANITY_API_WRITE_TOKEN` can
+rewrite the CMS; neither existed when the gate was written, so **the gate that exists to stop a
+credential reaching the browser could not see either of them.**
+
+**The names were half of it.** A bundler inlines the *value* of a variable, not its name, so a
+chunk can carry a database password with no recognisable identifier anywhere near it. Values
+now come from the environment and are **never printed** — a hit reports the variable and the
+chunk, because a gate that echoes the credential into a CI log has published it more
+effectively than the leak it caught. Values under 20 characters are skipped and **the skip is
+reported**, so an unchecked secret is visible rather than assumed covered.
+
+`PUBLISHABLE_KEY` and `PROJECT_URL` are deliberately **not** on the list: the publishable key
+is the one Supabase key that may be client-side, and row-level security is what actually guards
+the data. Listing it would assert something untrue and would have to be suppressed the first
+time it was used correctly, which is how a gate becomes noise. `NEXT_PUBLIC_GA4_ID` and the
+PostHog project key are absent for the same reason — both are public by construction.
+
+**Proof, both halves:**
+
+| Broken | Fired |
+|---|---|
+| `DIRECT_CONNECTION_STRING` referenced in a client component | `is named in a client chunk — it shipped`, on two chunks |
+| its **value** inlined via a `NEXT_PUBLIC_` variable, with the name nowhere in the bundle | `the VALUE of DIRECT_CONNECTION_STRING is present in a client chunk — it shipped. Rotate it` |
+
+The second is the case the original gate could never have caught.
+
+### V1-V3 — three visual items, and one distinction worth keeping
+
+**V1 — the state of the unmade choice was ungated, and that is a different question from
+storage.** Every existing consent assertion is about what is *stored or requested*: zero
+cookies, zero analytics requests, on every route with no interaction. **None said anything
+about what the consent state IS while the choice is unmade.** A banner could apply `granted`
+defaults, set no cookie and issue no request — every gate green, and PECR breached the moment
+a tag is added, because Consent Mode's default is what a later tag reads.
+
+`check-axe` now reads `dataLayer` on first render, with no consent cookie present, and
+requires every non-essential category to be `denied`. **Proof:** `DENIED.analytics_storage`
+flipped to `true` fired `first render applied analytics_storage=granted with no consent cookie
+present` on all 12 themed route/viewport combinations — **while the cookie and request
+assertions stayed green**, which is the distinction demonstrated rather than argued.
+
+**The reject affordance was already correct and nothing was changed.** Measured on a
+first-visit banner at 375px: Accept and Reject are the same component with the same class,
+**128×48 each**, identical background, identical 1px border, identical weight and size, side
+by side, Accept first. Preferences is a text button, third, no border, no fill — a third
+route, not a third answer. EDPB guidance requires refusing to be as easy as accepting; it is
+the same click at the same size.
+
+**V2 — the wordmark is locked to one face.** It used `--font-display`, which is a different
+face per division by design — neo-grotesque on master and Design, mono on Digital, serif on
+Press. The company mark reading as four different marks is the opposite of what shared
+structure is for. It is now `--font-mono`, and that choice is constrained rather than
+aesthetic: `--font-mono` resolves to JetBrains Mono in all four themes and **all four route
+groups already load it**, so it costs zero bytes. Locking to Inter instead would load a fourth
+family on `/press` for one word, on the critical path, against a 2.0s LCP budget with a ~1.52s
+empty-page floor. If the brand later wants a specific face, that is a Press font-budget
+decision. Verified: all four served routes render the same `chrome_wordmark` class and
+`/`, `/design`, `/digital` and `/press` all compute `"JetBrains Mono"`.
+
+**V3 — the division accents are on every theme now, not master alone.** The footer switcher's
+three 3px rules were falling back to `--line-strong` on Design, Digital and Press. Two gates
+moved with it:
+
+- `check:tokens` — `MASTER_EXTRAS` became `SHARED_ACCENTS`, required of all four themes.
+  **Proof:** deleting `--accent-press` from `press.css` fired `press: missing --accent-press`.
+- `check:contrast` — the matrix grew from **101 to 128 cells** (three accents × three surfaces
+  × the three themes that gained them).
+
+**And the matrix caught an overstatement immediately.** `--accent-digital` and `--accent-press`
+were claimed `role: 'body'` — true of the only surface they had ever existed on, master's
+white canvas, where they measure 5.09:1 and 9.74:1. It was never true of their *use*:
+`DESIGN.md` §5 puts division colour in a badge's 1px border with `--ink` text inside, and §2
+forbids coloured text for the amber. On Design's near-black canvas `--accent-press` measures
+**2.01:1**, so the claim became a failure the moment the token existed there. Corrected to
+`decor` — what the design system actually does with them — and `master/DESIGN.md` §2's two
+rows now say the ratio is AA/AAA *as a ratio* while the role is decorative.
+
+The `var(--accent-design, var(--line-strong))` fallbacks in the footer stay. `check:tokens`
+now makes them unreachable, and they cost nothing; the failure they guard — an invalid
+longhand at computed-value time discarding the shorthand's colour — is severe and silent.
+
+### A-12 — the spec's seed query counted almost nothing
+
+**Premise check, and it failed.** `TECH-SPEC.md` §6 sketches the deploy-blocking check as:
+
+```ts
+count(*[isSeed == true && published == true])
+```
+
+**Only `service` has a `published` field.** `project`, `faq`, `testimonial`, `post` and
+`teamMember` — five of the six seedable types, including the case studies the check exists to
+stop — do not. For those the predicate is `undefined == true`, so the count comes back **zero
+from a dataset full of published seed records**, and the gate reports clean. In Sanity,
+"published" means the document id carries no `drafts.` prefix, which is a different concept
+entirely. The query is now `count(*[isSeed == true && !(_id in path("drafts.**"))])`.
+
+That is the same defect class this programme keeps finding, this time sitting in a spec rather
+than in a script — and on *"the most damaging content failure available to this project"*.
+
+**It also proposed a third environment variable**, `NEXT_PUBLIC_ENV`. Three variables meaning
+overlapping things is how `M-P1-2` happened. The dataset is already the single fact that says
+"live", so the check keys off the same `PRODUCTION_DATASET` as everything else.
+
+**Folded into `check:launch` rather than given its own gate.** Same subject, same dataset, same
+two-tier shape — a twentieth gate would have duplicated the fetch and the env plumbing to ask
+one more question about the same document set.
+
+**The count is asserted to be a number in every dataset**, not merely compared to zero on
+production. Anything else — a null, an object, an error status — makes `> 0` false and reports
+clean.
+
+**`M-P1-2` is closed here, by the preferred remedy.** `NEXT_PUBLIC_SANITY_DATASET` has no
+default: an unset variable throws at module load. Local reads `.env.local`, CI sets it in
+`ci.yml`, and the host must set it before the first deploy. The gates that touch Sanity run
+with `--env-file-if-exists=.env.local`, so they behave the same way in both places.
+
+**`/_kitchen-sink` now inherits the probe exclusion.** Its page was renamed `page.tsx` ->
+`page.probe.tsx` and that is the entire change: the route path is unaltered, every gate that
+measures it still does, and a production build drops it from the route table for the same
+reason it drops the probes. `next.config.ts` asked for exactly this — *"when it lands it
+inherits this flag rather than inventing a second one"*. A rewrite or a `notFound()` would have
+compiled the page and shipped its chunk, and that chunk is 5.8KB of primitives, the largest
+single artefact in the build.
+
+**Deliberate-failure proof, four breaks:**
+
+| Broken | Fired |
+|---|---|
+| a published `isSeed: true` document, with the company record temporarily cleaned of `[SEED]` markers so nothing else could report | `1 published seed document(s) in the live dataset` — **alone** |
+| the seed query replaced with one returning a document instead of a count | `returned {...}, not a number — anything but a number makes the comparison below false and reports clean` |
+| the seed query given a GROQ typo | `the seed count query returned HTTP 400 — seed enforcement measured nothing` |
+| `NEXT_PUBLIC_SANITY_DATASET` unset | the build fails at module load with the three-line remedy, on every route |
+
+`GRIDSMITH_EXCLUDE_PROBES=1 npm run build` produces no `/_kitchen-sink` and no probe routes;
+the default build still produces all three, which is what keeps the gates' subjects present.
+
+### A-06 — the schema layer, and the gate that can see it
+
+**Premise check.** The row's own note was stale once already and was corrected last commit.
+Re-checked: A-06's scope is `SCHEMA-CORE.md` **§1–§2 only**. §3 and §4 are Supabase tables and
+views — that is `A-07`, blocked on `Q-M18`. The one figure in the file, `R1`'s 22% conversion
+premium, sits in a SQL comment for a column `A-07` will create and is already flagged
+unmeasured; nothing here is built to it.
+
+**Built:** 8 object types (`deliverable`, `metric`, `ctaBlock`, `seoBlock`, `pricingBlock`,
+`protectedImage`, `protectedVideo`, `processStep`) and 6 core document types (`service`,
+`project`, `faq`, `testimonial`, `post`, `teamMember`), joining `companyDetails` from `M-05`.
+
+Four decisions worth recording, each from a spec instruction rather than a preference:
+
+- **`processStep` is the master version, not the core one.** `SCHEMA-CORE.md` says so
+  explicitly, and says why the duplicate was deleted at kickoff: *"so that no session
+  implements the weaker version by reading this file first"*. This is the one with
+  `divisionDetail`, `clientTime` and the canonical-six validator.
+- **`metric.value` is a string, not a number.** `FOUNDATION` §7.6 requires seed metrics to
+  render as `[SEED] 00%`. A numeric field cannot hold that, so the marker would have to live
+  somewhere else — which is the drift the policy exists to prevent.
+- **`isCrossDivision` is deliberately not a field.** `master/SCHEMA.md` §1 says it is derived
+  by a GROQ projection and never hand-set, so the CMS does not expose it and there is nothing
+  to fall out of sync.
+- **`teamMember` uses the master extension's `divisions[]`, not core's `division`.** The
+  extension supersedes; implementing both would give the type two fields meaning one thing.
+  `isPublic` defaults **false** — a person appearing on a public website is a decision someone
+  makes, not the absence of one.
+
+**Two spec gaps, filled conservatively and logged rather than decided.**
+
+| Gap | What was done |
+|---|---|
+| **`protectedVideo` is referenced by `project.media` and defined in no spec.** A reference to an undefined type is a Studio error, so it had to be defined or dropped — and dropping it silently removes video from the portfolio, which this row does not own | Mirrors `protectedImage` field for field with a `file` in place of the `image`. A poster frame, a duration and a captions track (WCAG 1.2.2) are all plausible and none is specified, so none is guessed at. **`M-P2-9`**; `D-01` is the first row that renders one |
+| **`post.author` and `post.readingTime` are listed as bare names with no type.** `author` could reasonably be a reference to `teamMember`; `readingTime` could reasonably be computed at query time | String and stored number. A string cannot dangle and a stored number cannot be wrong invisibly. **`M-P2-10`**; `N-13` is the first row that renders either |
+
+### `check:schemas` — the nineteenth gate, and why this layer needed its own
+
+**`next build` never compiles `sanity/schemas/`.** The Studio is a separate application and
+the app reads Sanity over HTTP, so a typo in a `type:`, a `reference` pointing at an object
+type, or a missing `isSeed` fails for an editor opening the Studio and for **nothing in CI**.
+Four division workstreams build on this layer; it is the worst place in the repository for a
+silent break, and it had no gate at all.
+
+It **imports** the registry rather than parsing it, which is what makes the last assertion
+possible. `validation` is a function, so the only way to establish that
+`service.pricingModel` is *actually* required — rather than documented as required — is to run
+it, with a recording stand-in for Sanity's `Rule` that returns itself from every method and
+logs the names.
+
+That closes a real hole. **CLAUDE.md non-negotiable #3 says "never publish a service page
+without pricing — schema-enforced", and until now nothing checked that the enforcement
+existed.** Seven rules are asserted this way, including WCAG 1.1.1 alt text on both media
+types and the canonical-six validator.
+
+`allowImportingTsExtensions` was enabled for this. The tree has exactly two consumers and
+neither is webpack: the Studio (Vite, which resolves explicit extensions) and this gate
+(Node's type stripping, which requires them). Next never sees it.
+
+**Deliberate-failure proof, four breaks, each fired alone:**
+
+| Broken | Fired |
+|---|---|
+| `type: 'ctaBlock'` mistyped `'ctaBloc'` | `service.ctaPrimary has type "ctaBloc", which is neither registered nor a built-in` |
+| `service.faqs` referencing `metric`, an object type | `references "metric", which is not a document type — only documents can be referenced` |
+| `isSeed` deleted from `faq` | `document type "faq" has no isSeed field — A-12's production check cannot see it` |
+| `pricingModel`'s `required()` swapped for `warning()` | `validation calls [warning] and never .required() — CLAUDE.md non-negotiable #3 / SC-6` |
+
+The second is the one a text scan could not have caught: `metric` **is** registered, so the
+type resolves and the schema is still broken.
+
+### A-09 — built and provable, but not enabled, and the difference matters
+
+**Premise check first.** The only number the row rests on is `R1`'s **22% conversion premium**
+for AI-referred traffic. `FOUNDATION` §"AI-referral detection" already says it "must be
+measured, not assumed", so nothing here is built to it — the classifier flags traffic and makes
+no claim about what the flag is worth. Consistent with the standing instruction above: it is a
+projected figure, and it is treated as one.
+
+**What was built.** `lib/analytics/events.ts` (the eleven-name taxonomy as a closed union, so a
+typo is a build error rather than an event that silently never appears in a report),
+`lib/analytics/referral.ts` (the classifier), and `lib/analytics/load.ts` (the consent-gated
+loader). The banner calls it on every state change including the initial denied default, so
+there is exactly **one place in the codebase where a tag can be injected**, and it is
+downstream of consent by construction rather than by discipline.
+
+**The classifier matches on the registrable host, not a substring**, and its self-check
+carries the two cases that distinguishes: `https://example.com/?next=https://chatgpt.com` is
+not a ChatGPT referral, and `notchatgpt.com` is not a subdomain of one. `node
+lib/analytics/referral.ts` runs 11 assertions. **It is not in the verify chain** — that would
+be a nineteenth gate — so it is logged as `M-P2-8`.
+
+**`check-bundle-size` caught the loader before it shipped.** Statically imported, it put 0.8KB
+into the shared layout chunk of every route and the cheapest route measured 103.4KB against a
+100.2KB floor: *"something now ships on every route — decide whether every route should pay for
+it."* The answer is no. The early return moved **before** the dynamic import rather than inside
+the loader, so a visitor who has not granted `analytics_storage` never fetches analytics code
+at all — which is also the PECR-honest shape, not loaded-and-suppressed but not loaded. Shared
+cost with the loader deferred: **+0.1KB**. `/` measures **2.5KB of 15KB**.
+
+**A second assertion, and it is not a duplicate of the cookie one.** `check-axe` now records
+every request to `googletagmanager.com`, `google-analytics.com`, `posthog.com` and
+`i.posthog.com` across every route load with no interaction. A tag can make its request and
+store nothing, and a cookie can be set with no request; PECR is about the storage and
+`PROJECT-RULES.md` §6 is stricter — the scripts must not be *injected*. Only the network
+answers that one.
+
+| Broken | Fired |
+|---|---|
+| a `googletagmanager.com` script appended in the banner's mount effect | `15 analytics request(s) before any consent` — one per page load, with zero axe violations and zero cookies, so nothing else could have reported it |
+
+**⚠ The grant path is proven once and is not gated.** With `NEXT_PUBLIC_GA4_ID=G-PROOF0000`
+set on a build and Accept clicked in a real browser: **0 analytics requests before the click, 1
+after** — `https://www.googletagmanager.com/gtag/js?id=G-PROOF0000` — and the cookie recorded
+all three categories granted. That measurement was taken by hand and thrown away, which is
+exactly the shape CLAUDE.md warns about. It is recorded as unfinished rather than counted:
+**when the real ids land, the grant path needs a permanent committed subject**, and that is
+part of `Q-M19`'s resolution, not a separate row.
+
+**Nothing is injected today even after a grant, because no ids exist.** Inventing a placeholder
+measurement id would send real visitor data to a property nobody owns. `Q-M19` is the blocker;
+the site is analytics-ready and not analytics-enabled, and those are different claims.
+
+### Every unmeasured number in Epic M has been wrong, and always pessimistic
+
+**Three rows, three projections, three overstatements. Recorded once as one finding rather
+than three, because the pattern is the finding.**
+
+| Row | Projected | Measured | Error |
+|---|---|---|---|
+| `M-08` | ~29KB of render-blocking CSS, "a third useful"; 22 `@font-face` blocks per route | **the waste did not exist** — declarations were already scoped, `/press` ships no Inter | the whole premise |
+| `M-06` | 11.7KB committed before the header and footer contain any code | **0.5KB** | 11.2KB |
+| `A-11` | 8.0KB consent banner reservation | **2.0KB** | 6.0KB |
+
+**All three were pessimistic, and that direction is not a coincidence.** A projection is
+written when someone is worried about a cost; nobody projects a number for something they
+expect to be cheap. So the errors accumulate one way, and each one is *spent* — `M-06`'s
+projection reserved 11.7KB of a 15KB budget and produced a written expectation that Epic M
+would fail its budget, which shaped two sessions of planning. `M-08` produced a rowed refactor
+that had nothing to refactor. `A-11`'s reservation was still being subtracted from
+`/_kitchen-sink`'s ceiling months after it was invented.
+
+**Standing instruction for Epic N and everything after:**
+
+> **A number that was projected rather than measured is not evidence, and reserving against it
+> costs real budget.** Measure first, then decide. Where a row carries a figure, establish
+> whether anything ever measured it before building to it — and if nothing did, say so in the
+> commit and convert the row's deliverable into the measurement plus an assertion, as `M-08`,
+> `M-06` and `A-11` each did.
+
+This is the same rule CLAUDE.md already states for *published* numbers — the 29 contrast
+ratios, of which 25 were wrong. What Epic M adds is that it applies just as much to numbers
+nobody published: a figure in a tracker note or a spec sentence is exactly as unverified as one
+in a table, and it does more damage, because a budget reservation is acted on before anyone
+thinks to check it.
+
+### A-11 / M-06 — the banner, and the 8KB reservation measured at last
+
+**Built and measured: 2.0KB gz. The reservation was 8.0KB.** `PROJECT-RULES.md` §8 said <=8KB
+and named `check-bundle-size` as its enforcement; `TECH-SPEC.md` §4 said `~6KB`. **Neither had
+ever been measured** and the gate printed the literal `8.0` while asserting nothing. So the
+reservation is **retired, not kept**: the enforced budget is now **3.0KB** — the measurement
+plus room for real copy and the cookie-policy link `L-xx` will add. PROJECT-RULES' 8KB still
+holds; this is stricter, and it returns 5KB of Master's delta to Epic N.
+
+| | KB gz |
+|---|---|
+| `global-error` boundary | 0.4 |
+| **Consent banner + footer reopen** | **2.0** |
+| `/` delta | **2.4 of 15** |
+| Spare | **12.6** |
+
+**How it is measured, and why it is assertable at all.** `chunks/app/**` is App Router's
+per-Client-Component-boundary output; on every route in this build that is the shared layout
+boundary plus `global-error`. Removing the boundary's own chunk leaves exactly what the shared
+layout adds to every route. **A direct measurement of a named artefact, not a difference
+between two builds.** The name stops being accurate the moment a second shared Client
+Component lands, which is the point: the budget caps *everything the shared layout puts in
+every bundle*, and the next arrival has to fit or be argued for.
+
+**What was built.** `lib/consent/state.ts` (three Consent Mode v2 categories, all denied by
+default, `gs_consent` strictly-necessary cookie, 12 months, `SameSite=Lax`, `Secure` on
+https), `components/consent/ConsentBanner.tsx`, and a footer reopen button that dispatches an
+event so the footer stays a Server Component.
+
+- **Accept and Reject are the same component with the same class.** Measured in the browser:
+  128×49 both, same background, same 1px border, same weight. Preferences is a text button,
+  third, deliberately not a third answer.
+- **Nothing renders on the server**, so the first paint is identical with and without a
+  stored choice, there is no hydration mismatch, and `position: fixed` means no layout shift.
+- **No Escape-to-dismiss, deliberately.** Dismissing without choosing is a "not now", which
+  `PROJECT-RULES.md` forbids. Nothing is stored until a button is pressed, so default-denied
+  simply persists. It is not `aria-modal` and traps no focus, so it is escapable by tabbing.
+- **Round trip verified in the browser.** Reject gives `gs_consent=0` and a Consent Mode
+  update with all three denied; footer reopen, Preferences, Analytics, Save gives a cookie
+  reading `analytics_storage` and an update granting that one only.
+
+**Three gate assertions added, each proven alone.**
+
+| Assertion | Broken | Fired |
+|---|---|---|
+| No non-essential storage before consent (PECR, non-negotiable #7) | one `document.cookie` write in the banner's mount effect | `1 cookie(s) set before any consent was given`, nothing else |
+| Shared layout client chunk <= 3.0KB | budget lowered to 1.5 | `the shared layout client chunk is 1.8KB, over its 1.5KB budget` |
+| `/` delta <= 15KB | `MASTER_BUDGET_KB` lowered to 2.0 | `/ measures 2.3KB, which is 0.3KB over Master's 2KB` |
+
+The cookie assertion is the one that matters most and could not be a source sweep: a grep can
+show no GA4 snippet is imported today, but not that nothing *sets a cookie at runtime*, which
+is what the regulator cares about and what an added dependency changes silently. Every route
+is loaded fresh with no interaction, so any cookie present is one something set unprompted.
+The allowlist is empty and should stay empty — `gs_consent` is strictly necessary but is only
+written on a click.
+
+**Three things the build turned up, none of them in the banner's own logic.**
+
+1. **WCAG 2.4.11.** `check-responsive` measured a 220px fixed bottom bar at 375px against 0px
+   of reserve. The banner now publishes its **measured** `offsetHeight` — the `StickyCta`
+   lesson, whose `calc()` estimate was 27px short once its labels wrapped, and this bar varies
+   more because it grows when Preferences opens. `globals.css` reserves it at every width,
+   outside the media query, because unlike `StickyCta` this bar is fixed at every width.
+2. **WCAG 2.5.8.** The footer's new reopen button next to the mailto link made both fail
+   `target-size` at `--text-xs`. Both are now padded past 24px.
+3. **An `INCOMPLETE_ALLOWED` entry is back, one commit after the list was emptied**, and the
+   justification is recorded in full in the gate. axe returns `color-contrast` incomplete on
+   the banner text at 375px — *"background could not be determined because it partially
+   overlaps other elements"* — and resolves cleanly at 1280px, which is the tell. **Three
+   fixes were tried and none changed it**: an opaque background on the bar, on its inner
+   wrapper, and on the text element itself; all compute opaque, and `elementFromPoint` at four
+   corners and the centre returns the text element, so nothing is on top of it. The pair is
+   `--ink` on `--canvas-raised`, which `check:contrast` measures directly — 15.42:1 at its
+   worst cell. The heading's id was changed from `useId()` to a constant so the entry cannot
+   silently stop matching.
+
+### M-07 — the 500 does not work without JS, and that is now measured
+
+**`APP-FLOW.md` §7 says the 500 is "static, no JS dependency". It is not.** Both
+`app/global-error.tsx` and `gridsmith-error-probe` recorded the server-render path as
+**unknown** and refused to assert it — correctly, because it could not be induced without
+editing a file. `M-07` depends on the answer, so the file now exists:
+`app/(marketing)/gridsmith-ssr-throw-probe/page.probe.tsx`, `force-dynamic`, throwing during
+server render, excluded from production by the same `pageExtensions` mechanism as its sibling.
+
+**Measured, reading the response with no JavaScript executed:**
+
+| | |
+|---|---|
+| status | 500 |
+| document | `<html id="__next_error__">` |
+| `lang` | **absent — WCAG 3.1.1, Level A** |
+| `<h1>` / `<main>` | absent |
+| `<title>` | "Gridsmith Ltd", leaked from route metadata, not the boundary's |
+
+`global-error`'s chunk is preloaded, but the boundary renders only after hydration. **A
+visitor with JavaScript disabled gets the bare shell**, on every server-side crash.
+
+**A segment-level `app/(marketing)/error.tsx` was tried and changes nothing** — the served
+HTML is still the shell. There is no app-level fix: Next requires `global-error` to be a
+Client Component, and the layout that would supply the document is the thing that crashed.
+
+**So this is raised, not fixed — `M-P1-1`.** CLAUDE.md: *"Accessibility wins every conflict…
+Then raise the conflict."* The remedy is architectural (an edge/middleware-served static error
+document, or accepting the gap and recording it) and it is a decision for the owner.
+
+**What was shipped is the measurement holding still.** `check-axe` characterises the five
+facts above and **fails when any of them changes**. It is written to be deleted: if `lang`
+appears because a Next upgrade starts server-rendering the boundary, the characterisation
+comes out and the Level A requirement gets asserted directly.
+
+**Deliberate-failure proof, isolated.** `lang` flipped to `true` in `CHARACTERISED`:
+*"`/gridsmith-ssr-throw-probe` served lang=false, characterised as true"*, with **zero axe
+violations across all 28 analyses** — no other check could fire, because no other check
+requests that route.
+
+**The rest of `M-07` is blocked.** `APP-FLOW.md` §7 also wants the 404 to carry a search box,
+the division routing block and the top six services: search does not exist, the routing block
+is `N-02` and the services are CMS content. The 500 is to show email and phone; `contactEmail`
+is a `[SEED]` placeholder and the phone number is `Q-M5`, still open. The 404 itself is master
+themed, owns its document, and now inherits the header, footer and statutory block — audited
+every run at `/_gridsmith-404-probe`.
+
+### M-06 — the measurement, 18 August 2026. The projection was false.
+
+**Measured, with the full chrome shipped:**
+
+| | KB gz |
+|---|---|
+| `/` delta above the framework floor | **0.5** |
+| Consent banner reservation (`PROJECT-RULES` §8) | 8.0 |
+| **Master reservation** | **8.5 of 15** |
+| **Spare** | **6.5** |
+
+**Nothing is breached and nothing needs to leave the master layer.** The ⚑ block below
+projected 11.7KB committed before the header and footer contained any code. It was wrong in
+three ways, each verifiable:
+
+1. **The 3.3KB `next/link` term never happened.** It assumed a shared layout would use the
+   `Link` primitive. `M-03` and `M-04` use plain `<a>`, because `TECH-SPEC.md` §3 requires
+   route-group navigation to be a document load. **The header, footer, division switcher,
+   skip link and statutory block together cost 0KB** — every route's delta was 0.5KB before
+   them and is 0.5KB after.
+2. **The 5.8KB primitive layer is a `/_kitchen-sink` figure.** No master-layer route ships
+   it. `FOUNDATION` §5's *"8 + 5.8 + 0.5 = 14.2 of 15"* charged five routes for a cost one
+   pays. It may become true at `N-01` — the homepage's nine blocks — and that is Epic N's
+   checkpoint, not this one.
+3. **8.0KB has never been measured.** `PROJECT-RULES` §8 named `check-bundle-size` as its
+   enforcement and the gate printed the literal `8.0KB` and asserted nothing.
+   `TECH-SPEC.md` §4 said `~6KB` for the same component — two specs, two numbers, no gate.
+   `PROJECT-RULES` is binding, so 8KB stands and TECH-SPEC was corrected to match. **It
+   remains a reservation, not a weight.**
+
+**So the deliverable became the assertion, as at `M-08`.** `check-bundle-size` now asserts
+`masterDelta + CONSENT_RESERVE_KB <= 15` instead of printing a projection that could go
+negative in silence. The reservation is what makes it fire while there is still room to act.
+
+**Deliberate-failure proof, isolated.** `CONSENT_RESERVE_KB` temporarily 14.6: *"/ measures
+0.5KB and the consent banner reserves 14.6KB, which is 0.1KB over Master's 15KB delta
+budget."* `/`'s own delta is 0.5KB against a 15KB per-route budget, so the per-route check
+could not fire — the window between the two thresholds is 7KB wide and the proof landed
+inside it (`A-GATE-4-3`). Exit 1 on failure, 0 on pass.
+
+**The banner is not built and cannot be here.** `M-06` depends on `A-11` — consent management
+and script gating — which is `TODO`. The row is the measurement; the UI follows `A-11`.
+
+**The screen-reader checkpoint stays pending.** It was placed at "the `M-06` chrome
+checkpoint" so `M-02`, `M-03` and `M-04` could be walked in one pass. `M-06` turned out to be
+a measurement, not chrome, so the pass has not happened and is **not** folded in early. It
+still needs a human with NVDA or VoiceOver over the skip link, header and footer together.
+
+### ⚑ The original M-06 projection — kept as written, and wrong
+
+**Superseded by the measurement above. Kept because the reasoning is the record of how a
+projection outran its evidence, and because two of its figures — 0.5KB and 4.3KB — are real
+measurements that stay useful.** Read it as history, not as a plan.
+
+**Do not treat this as a watch item.** Master's 15KB delta budget is already committed
+before a single piece of chrome exists, and the remedy when it fails will be
+**architectural** — not a round of shaving kilobytes off components that have not been
+written yet.
+
+What is already banked, measured on CI conditions at the 12 August build:
+
+| Cost | KB gz | Status |
+|---|---|---|
+| `global-error` boundary | **0.4** | **Irreducible.** Next puts the root error boundary in every route's script list. It is already stripped to raw elements, no primitives, no stylesheet, no `next/font` |
+| Consent banner | **8.0** | Spec'd ceiling, `master/PROJECT-RULES.md` §8. Not yet built |
+| **Committed before any chrome** | **8.4** | of 15 |
+| Remaining for header, footer, division switcher, skip link | **6.6** | — |
+| The 23 primitives the kitchen sink renders, for comparison | **5.8** | measured on `/_kitchen-sink`; the layer is 24 — `Media` is not on the page. Includes `next/link` |
+
+**The `next/link` figure is the one to watch, and it is bigger than it looks.** It is
+currently inside the 5.8KB kitchen-sink page chunk because no shipped route uses the `Link`
+primitive. The moment a *shared* layout uses it — which a header and footer will — webpack
+splits it into a chunk every route loads. That was measured directly, once, by accident:
+putting one `Link` in the root `not-found` boundary took **every route from 100.2KB to
+104.5KB**, a 4.3KB shared cost (3.3KB `next/link` runtime + 1.0KB boundary chunk).
+
+So the realistic arithmetic at M-06 is 8.0 + 0.4 + ~3.3 = **11.7KB before the header and
+footer contain any code of their own**, leaving ~3.3KB for four components. That is why
+this is recorded as expected-to-fail rather than at-risk.
+
+**Do not attempt to solve it now.** `M-06` measures it for real and the decision is taken
+there, with numbers rather than projections. The likely levers are architectural — whether
+the consent banner needs 8KB of client JS at all, whether chrome links need `next/link`'s
+client runtime or can be plain anchors with a document load, whether the division switcher
+is a Server Component. All of those are Epic M design decisions, not Epic A cleanup.
+
+**A note on the numbers above.** 0.5KB and 4.3KB are measured by `check-bundle-size`. 8.0KB
+is a spec'd ceiling that nothing has yet measured — per CLAUDE.md, treat it as unverified
+until M-02 builds the banner and the gate reads it. A "0.5KB Link cost" has been quoted in
+discussion; no measurement supports that figure and it should not be carried forward — the
+measured shared cost of `next/link` is 3.3KB, and 4.3KB with the boundary chunk it arrived
+in.
+
+If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into Epic N.
 
 ## Epic N — Master pages
 
+> ### ⚠ Read before the first row
+>
+> **1. The spec is not a safe source for anything with a security or legal consequence.**
+>
+> `_shared/SCHEMA-CORE.md` §4 specified a reporting view. Implemented exactly as written, it
+> **leaked lead data to `anon`** — weekly volume, qualification rate, AI-referral share — to
+> anyone holding the publishable key, which is designed to be public. The SQL was correct. The
+> leak was in a Postgres default the spec did not mention and a Supabase grant it did not know
+> about, and `SCHEMA-CORE.md` §3's own comment, *"reads are service-role only"*, was true of
+> the table and false of the database.
+>
+> **Nothing in the file could have told you.** It was found by querying the deployed system
+> with the public key and comparing what came back — `GET /leads` returned `[]`, `GET
+> /v_lead_funnel` returned the aggregate of those same rows.
+>
+> So for any row touching auth, RLS, consent, personal data, payments, or a statutory or
+> contractual claim: **verify against the live system the way a hostile client would, not
+> against the source you wrote it from.** Send the request. Read the response. A spec review
+> and a code review both pass a system that is leaking.
+>
+> This extends the standing "check the source, not the summary" rule by one step: **sometimes
+> the source is wrong too, and only the running thing is authoritative.**
+>
+> **2. Pages are built one block at a time, measured against the Lighthouse gate after each.**
+>
+> The `0.98` performance threshold on `/` is **measured and gated** — `lighthouse/routes.cjs`,
+> asserted at `error` severity, median of 3, passing today. **That nine blocks fit under it is
+> a projection nobody has tested**: every green run to date is against an `h1`, a header and a
+> footer, and `Q-M16` says the same about the LCP headroom.
+>
+> So a page arrives in as many commits as it has blocks, each one run through the gate. **A
+> page delivered in one commit cannot attribute a regression to any one block** — nine
+> candidates, one number, and the only way back is to remove them one at a time, which is the
+> work you avoided doing in order. The first block that moves the score is the one worth
+> arguing about, and you only find it if you were watching.
+>
+> **3. A number that was projected rather than measured is not evidence**, and reserving
+> against it costs real budget. Three rows in Epic M carried a figure nobody had measured —
+> `M-08`'s font waste, `M-06`'s 11.7KB, `A-11`'s 8KB — and all three were wrong in the same
+> direction. Establish whether anything ever measured a row's figure before building to it, and
+> say which in the commit. If nothing did, the row's deliverable is the measurement plus an
+> assertion.
+>
+> Both rules and their full reasoning: § **"Epic M — CLOSED"**.
+
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| N-01 | Homepage, 9 blocks | P0 | 2.5d | M-03 | TODO | Dev | Lighthouse ≥98 |
+| N-03 | `groupPage` schema | P0 | 0.5d | A-06 | **DONE** 19 Aug | Dev | **Contains no figure — its claims are structural, and both are now enforced rather than restated.** Two closed lists, asserted by running the rules. `N-05` is next |
+| N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | **DONE** 19 Aug | Dev | `verified` hard-true, **run against values rather than counted**. **No seed example can exist** — a placeholder would have to claim it was verified, so the component renders an empty state and `Q-M6` blocks a real one. Zero client JS |
+| N-06 | Canonical process component + validator | P0 | 1d | A-06 | **DONE** 19 Aug | Dev | **Stage names never travel through the CMS** — the constant renders, the CMS supplies only `divisionDetail`/`duration`/`clientTime`. `check:schemas` asserts the constant against `00-PROCESS.md`, the source of truth. `N-01` is next |
+| N-01 | Homepage, 9 blocks | P0 | 2.5d | N-03, N-05, N-06 | **DONE 9 of 9** 21 Aug | Dev | Blocks 1–3 shipped for **0.0KB of JS between them** — Master 2.5KB of 15KB. Block 2 used `next/link` first, measured 4.8KB of JS and 33,531 B of prefetch discarded by the document load `TECH-SPEC` §3 requires, and went to plain `<a>`. Block 3 cost +105 B of CSS, which showed the first-use step is per module **file**, not per primitive. `Q-M21` **resolved** — homepage is hardcoded, no schema. **Block 5 shipped for 0.0KB of JS and +84 B of CSS**, after the first measurement caught `Numeric` dragging `interactive.module.css` (5,591 B) onto a page with no interactive primitive — `Numeric` moved to its own file, ungated (`M-P2-24`). **Block 4 is blocked on real client work** (`M-P2-25`) and was skipped, not deferred. Blocks 6–9 pending, one per commit |
 | N-02 | **Division routing block** | P0 | 1.5d | N-01 | TODO | Dev | Above second viewport |
-| N-03 | `groupPage` schema | P0 | 0.5d | A-06 | TODO | Dev | |
-| N-04 | `/approach`, 8 blocks | P0 | 2d | N-03 | TODO | Dev | Incl. limits section |
-| N-05 | `continuityExample` schema + component | P0 | 1.5d | N-03 | TODO | Dev | `verified` hard-true |
-| N-06 | Canonical process component + validator | P0 | 1d | A-06 | TODO | Dev | Six canonical titles only |
-| N-07 | `/about` + structure disclosure | P0 | 1.5d | M-05 | TODO | Dev | |
-| N-08 | `/work` master grid | P0 | 2d | A-06 | TODO | Dev | Cross-division sorted first |
-| N-09 | **Canonical `/work/[slug]`** | P0 | 1.5d | N-08 | TODO | Dev | Divisions link here |
+| N-04 | `/approach`, 8 blocks | P0 | 2d | **N-03, N-05, N-06** | **DONE** 21 Aug | Dev | Incl. limits section. `Depends` corrected: the page renders the continuity example (`N-05`) and the canonical process (`N-06`). One block per commit |
+| N-07 | `/about` + structure disclosure | P0 | 1.5d | **M-05, N-03** | **DONE** 21 Aug | Dev | `Depends` corrected: `/about` is a `groupPage` slug, so it needs `N-03`'s schema as well as `companyDetails` |
+| N-08 | `/work` master grid | P0 | 2d | A-06 | **DONE** 21 Aug | Dev | Cross-division sorted first |
+| N-09 | **Canonical `/work/[slug]`** | P0 | 1.5d | N-08 | **DONE** 21 Aug | Dev | Divisions link here |
 | N-10 | Division work routes → canonical links | P0 | 0.5d | N-09 | TODO | Dev | Removes duplicate-content risk |
-| N-11 | `/contact` master flow | P0 | 2d | A-08 | TODO | Dev | "More than one" first-class |
-| N-12 | Confirmation screen + commitment | P0 | 0.5d | M-05, N-11 | TODO | Dev | |
-| N-13 | `/insights` hub | P1 | 1d | A-06 | TODO | Dev | |
+| N-11 | `/contact` master flow | P0 | 2d | A-08 | **DONE** 21 Aug | Dev | "More than one" first-class |
+| N-12 | Confirmation screen + commitment | P0 | 0.5d | M-05, N-11 | **DONE** 21 Aug | Dev | Renders `companyDetails.responseCommitment` |
+| N-13 | `/insights` hub | P1 | 1d | A-06 | **DONE** 21 Aug | Dev | |
 
 ## Epic L — Legal & compliance
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| L-01 | `legalDocument` schema + clause anchors | P0 | 1d | A-06 | TODO | Dev | `solicitorApproved` gate |
-| L-02 | Legal page template, TOC, print CSS | P0 | 1d | L-01 | TODO | Dev | Stable `#anchor` per clause |
-| L-03 | Load four drafts from `_legal/` | P0 | 0.5d | L-02 | TODO | Content | To staging |
+| L-01 | `legalDocument` schema + clause anchors | P0 | 1d | A-06 | **DONE** 21 Aug | Dev | Five slugs, not the spec's four — `client-terms` split out because `anchorId` is contract-facing. `legalClause.basis` added. Closed list proven in four directions. `SCHEMA.md` corrected in the same commit |
+| L-02 | Legal page template, TOC, print CSS | P0 | 1d | L-01 | **DONE** 21 Aug | Dev | Stable `#anchor` per clause |
+| L-03 | Load **five** drafts | P0 | 0.5d | L-02 | **DONE** 21 Aug | Content | To staging |
 | L-04 | **Solicitor review of all documents** | P0 | — | L-03 | TODO | Atik + solicitor | **HARD GATE — send week 1** |
 | L-05 | Statutory disclosure verification | P0 | 0.5d | M-04 | TODO | Dev | Every page |
 | L-06 | ICO registration + number recorded | P0 | — | — | TODO | Atik | |
@@ -118,22 +2262,23 @@ that just wrote 24 primitives is the worst available reviewer of them.
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| G-01 | Crawl existing site, export URLs | P0 | 0.5d | — | TODO | Dev | |
-| G-02 | Build `redirects/legacy.json` | P0 | 1d | G-01 | TODO | Dev | Zero unmapped |
-| G-03 | Implement + test redirects | P0 | 0.5d | G-02 | TODO | Dev | None to `/` or 404 |
+| G-01 | Crawl existing site, export URLs | P0 | 0.5d | — | **BLOCKED** | Dev | **Deferred — greenfield, no existing site.** Unblocks only on a separate cutover decision |
+| G-02 | Build `redirects/legacy.json` | P0 | 1d | G-01 | **BLOCKED** | Dev | **Deferred with G-01.** File committed empty (`[]`) and wired into `next.config.ts` so the mechanism is testable now |
+| G-03 | Implement + test redirects | P0 | 0.5d | — | REVIEW | Dev | Mechanism wired against the empty map; defensive-domain 301s still to add. None to `/` or 404 |
 | G-04 | Sitemap, robots, `llms.txt` | P0 | 1d | N-* | TODO | Dev | All four groups |
 | G-05 | Structured data pass | P0 | 1d | N-* | TODO | Dev | `department`, not four orgs |
 | G-06 | **Bulk import script** | P0 | 1.5d | A-06 | TODO | Dev | 100 records in one pass |
 | G-07 | **Image ingest pipeline** | P0 | 1d | G-06 | TODO | Dev | Watermark, resize, AVIF |
+| G-08 | **Map the existing Press site's URLs before it comes down** | **P1** | 1d | — | TODO | Dev | The one migration obligation that survives the greenfield decision. The existing Press site trades throughout the build and **is switched off at launch**, so every indexed URL 404s on day one unless mapped. **Data, not architecture** — `redirects/legacy.json` is committed empty and wired into `next.config.ts`, so this is populating a file the mechanism already reads. **Do not crawl or plan yet**: the founder supplies the URL inventory before Stage 8 (`Q-M8`). Unmappable URLs go to the nearest Press hub, never to `/` and never to a 404 (FOUNDATION §6). Verified at press `6.6` |
 
 ## Epic S — Seed content
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| S-01 | Seed script, all volumes | P0 | 2d | A-12 | TODO | Dev | Per FOUNDATION §7 |
+| S-01 | Seed script, all volumes | P0 | 2d | A-12 | **DONE** 21 Aug | Dev | `scripts/seed-content.mjs` — 125 documents into `development`. 30 services, 24 projects to §7's distribution, 45 FAQs, 9 posts, 4 team, 2 groupPages, 5 legal docs. **6 testimonials are REAL** (verbatim Freelancer reviews, `isSeed: false`, `sourceUrl`). `continuityExample` cannot be seeded — `verified` is hard-true |
 | S-02 | 24 seed projects incl. 3 cross-division, 3 confidential | P0 | 1d | S-01 | TODO | Content | |
-| S-03 | Seed pricing with `INDICATIVE` badges | P0 | 0.5d | S-01 | TODO | Dev | No unbadged figure |
-| S-03a | **Seed metrics render `[SEED] 00%`** | P0 | 0.5d | S-01 | TODO | Dev | Zeroed digits, never a plausible figure. Per FOUNDATION §7.6 |
+| S-03 | Seed pricing with `INDICATIVE` badges | P0 | 0.5d | S-01 | **DONE (data)** 21 Aug | Dev | Every seed `pricingBlock` is `fromAmount: 0` with an `INDICATIVE` note. `fromAmount` is a **number** and cannot hold a `[SEED]` marker, so the zero carries the honesty and the note carries the marker. The render-side badge is the division pricing rows |
+| S-03a | **Seed metrics render `[SEED] 00%`** | P0 | 0.5d | S-01 | **DONE (data)** 21 Aug | Dev | Every seeded `metric.value` is the literal `[SEED] 00%`. `metric.value` is a string precisely so this is possible — SCHEMA-CORE §2 |
 | S-04 | Abstract placeholder imagery | P0 | 1d | S-01 | TODO | Design | **No fabricated drawings/covers/screenshots** |
 | S-05 | `?seed=hide` + env flag | P1 | 0.5d | S-01 | TODO | Dev | Demo mode |
 | S-06 | Production seed check verified | P0 | 0.5d | A-12 | TODO | Dev | Deliberate failure test |
@@ -143,7 +2288,7 @@ that just wrote 24 primitives is the worst available reviewer of them.
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| H-01 | Homepage performance ≥98 | P0 | 1.5d | N-01 | TODO | Dev | Banner in budget |
+| H-01 | Homepage performance ≥98 | P0 | 1.5d | N-01 | TODO | Dev | Lighthouse only — the JS delta is measured at M-06, before Stage 3 pages are built on it |
 | H-02 | Accessibility pass incl. consent banner | P0 | 2d | M-06 | TODO | Dev | |
 | H-03 | All states | P0 | 1d | N-* | TODO | Dev | Incl. seed-hidden |
 | H-04 | Cross-browser + device | P0 | 1d | H-01 | TODO | Dev | |
@@ -153,20 +2298,621 @@ that just wrote 24 primitives is the worst available reviewer of them.
 | H-08 | PostHog funnels | P0 | 0.5d | A-09 | TODO | Dev | 3 master funnels |
 | H-09 | Launch | P0 | — | H-* | TODO | Ops | |
 
+## Epic A11Y — accessibility audit backlog
+
+From the two-run `accessibility-audit` of 13 Aug, recorded in full at
+`_shared/07-A11Y-AUDIT.md`. Run 1 was the 24 primitives, run 2 the five served routes.
+Everything below is what was **not** fixed on 13 Aug; what was fixed is in the commits of
+that date and is not repeated here.
+
+**The primitive layer is 24 components.** `/_kitchen-sink` renders 23 of them — `Media` is
+excluded because it needs real imagery and inventing placeholders would breach
+non-negotiable #2. Two rows in this tracker phrased the kitchen sink's 23 as though it
+were the size of the layer; corrected in place. Criterion 1's "23 of the 24" wording is
+right and stays.
+
+### ~~P1 — Majors, audited and unfixed~~ — **all four fixed 13 Aug**
+
+These were AA failures, so they were never P2 with the rest of the backlog. Fixed the same
+day in one commit; the rows stay as the record of what was wrong.
+
+| ID | Item | WCAG | Where | Fix |
+|---|---|---|---|---|
+| ~~A11Y-1~~ | Breadcrumb links carry no `className` and `content.module.css` declares no `.breadcrumb a` rule, so they are the only interactive elements in the tier whose colour and focus ring the tier does not define | 2.4.7, 1.4.3 | `Breadcrumb.tsx:33` | `.breadcrumbLink` + `interactive.focusable`. Links are `--ink` underlined, the current crumb stays `--ink-muted` and is not — measured distinct |
+| ~~A11Y-2~~ | `EmptyState` and `ErrorState` render their title as `<p>` in `--font-display` `--text-lg` above body prose. Neither takes a heading-level prop, so a caller cannot correct it and heading navigation skips the state entirely | 1.3.1 (F2) | `EmptyState.tsx:24`, `ErrorState.tsx:32` | `headingLevel` prop, default 3, `2–6` allowed. Tailwind preflight resets heading margin and size, so the element changed and the appearance did not. **Run 3 found two more instances — `Stepper`'s step title and `/_kitchen-sink`'s `Specimen` name — so this row records the second per-instance fix of the class, not its closure.** Both fixed, and `check:headings` (gate 15) is now the deliverable: it fails on any `<p>`/`<span>`/`<div>` carrying a class that sets `font-family: var(--font-display)`. It covers the display-face shape completely and the mono shape not at all, for the reason in its docstring |
+| ~~A11Y-3~~ | `Container` accepts `as="nav" \| "main" \| "header" \| "footer"` but takes no `aria-label`, `id` or rest spread, so a second `nav` on a page cannot be distinguished and a `main` cannot be a skip-link target. `Breadcrumb` and `Pagination` both take a `label` for exactly this reason | 1.3.1, 4.1.2 | `Container.tsx:12-22` | `id`, `ariaLabel`, `ariaLabelledBy` declared individually — not a rest spread, which would also admit `role` and `tabIndex` on the primitive four route groups build page structure from. Unblocks the Epic M skip-link target |
+| ~~A11Y-4~~ | `.cardLinked` heading-link overlay is `position: absolute; inset: 0` with `z-index: auto`, so it paints above non-positioned inline siblings — every other link or button in a linked card is unclickable by pointer while staying in the tab order. Press §5 puts retailer links in exactly that position | press §5:100 | `content.module.css:32` | Overlay pinned to `z-index: 0`, other controls in the card to `1`. `.cardLinked` makes no stacking context, so 1 beats 0 independent of DOM order — source order alone would have held only while retailer links came after the title |
+
+### P2 — Minors and Info
+
+| ID | Item | Where |
+|---|---|---|
+| A11Y-5 | `list-style: none` on three `<ol>`s with no `role="list"` — Safari/VoiceOver drops the list role and item count | `content.module.css:117,133`, `interactive.module.css:143` |
+| A11Y-6 | `Stepper` wraps a `nav` landmark around static `<span>`/`<p>` markers and renders no links; documented as presentational only | `Stepper.tsx:36` |
+| A11Y-7 | A non-final crumb with no `href` renders visually as current but without `aria-current` — visual and programmatic state disagree | `Breadcrumb.tsx:28-31` |
+| A11Y-8 | `.prose a` has no `:focus-visible` rule and portable-text children cannot carry `.focusable`, so long-form links fall back to the UA ring — visible, but outside the system's one treatment | `structure.module.css:44-48` |
+| A11Y-9 | `.cardLinked:hover` moves the border `--line` → `--line-strong`, a computed delta of 1.30–1.38:1 across the four themes. Not an SC failure; the declaration simply does nothing | `content.module.css:30` |
+| A11Y-10 | `aria-invalid` on a `<fieldset>` — ARIA 1.2 does not allow it on `role="group"`. Inert rather than harmful; the error still reaches AT via `aria-describedby` | `RadioGroup.tsx:49` |
+| A11Y-11 | Option hint sits inside the `<label>` *and* is pointed at by `aria-describedby`, so it is announced twice — once as name, once as description | `RadioGroup.tsx:74,79-83` |
+| A11Y-12 | `--sticky-cta-block-size` is set on `documentElement` and never removed; the effect cleanup drops listeners but leaves the scroll reserve on any route where StickyCta has unmounted | `StickyCta.tsx:82,99-103` |
+| A11Y-13 | `transition: … visibility` holds the bar focusable for 250ms while it is translated off-viewport. Transient, and neutralised under `prefers-reduced-motion` | `motion.module.css:50-52` |
+| A11Y-14 | Digital's `--accent` computes 4.58:1 on `--canvas-sunken` — clears AA by 0.08. No headroom for any surface change; `check-contrast` covers the pair | `interactive.module.css:46`, `structure.module.css:45` |
+| A11Y-15 | `Badge tone` resolves only to `--accent`, so master's `--accent-design/-digital/-press` are unreachable through the primitive — master §5:108 specifies a division-accent border | `Badge.tsx:19` |
+| A11Y-16 | `Table` uses `caption` as both the region's `aria-label` and the `<caption>`, announcing it twice; `tabIndex={0}` is unconditional, adding a tab stop on tables that do not overflow | `Table.tsx:34-38` |
+| A11Y-17 | `ErrorState` defaults `announce = true`, so the riskier permanently-present `role="alert"` is what a caller gets by omitting the prop — the docstring describes the opposite intent | `ErrorState.tsx:17` |
+| A11Y-18 | The 404's raw `<a>` carries no author focus style and passes on the UA ring. Harmless now the token layer loads there, but it is the one link in the tier outside the system treatment | `global-not-found.tsx:70` |
+| A11Y-19 | `lang="en-GB"` on the 404 survives only because Next's outer shell emits `<html>` with no `lang` and the parser merges. If Next ever emits one, the route silently loses `en-GB` | `global-not-found.tsx:33-37` |
+| A11Y-20 | Digital's secondary-button and press's secondary-button §5 rows still specify a `--line-strong` border; only design's table was updated when the token moved to `--ink-subtle` for 1.4.11. Digital §5:107 also asks for `0.06em` tracking that the shared `.button` does not give it | `digital/DESIGN.md §5:107`, `press/DESIGN.md §5:99` |
+| ~~A11Y-21~~ | **FIXED 18 Aug at `M-02`**, before the chrome that would have made it a Blocker. ~~No skip link exists. **Not a failure today** — no header, nav or footer exists, so there is no repeated block to bypass. Becomes a Blocker the moment Epic M chrome lands~~ | `RootShell.tsx`, `chrome.module.css` |
+
+### P2 — gate coverage found while fixing, not swept
+
+| ID | Item |
+|---|---|
+| ~~A11Y-22~~ | `check-contrast` measures token-on-surface pairs, so it knew `--ink-subtle` was UI-only on `--canvas-sunken` and could not see three stylesheets using it as text. The permission matrix is right; nothing checks the declarations obey it. **CLOSED at the run-3 fixes, from both ends:** `check:contrast` gained a size pass that holds declarations to the matrix, and all four `--ink-subtle` values were re-derived so no restriction is needed at all — worst cell per theme now 4.96–5.01:1. A token that needs a restriction to be safe has the wrong value. FOUNDATION §3 |
+| A11Y-23 | `/_kitchen-sink` renders its Press specimens under the master layout, which never loads Source Serif, so `--font-display` falls back to Inter there. Press typography cannot be judged on the kitchen sink at all — the Press button defect was invisible on the one page built to show it |
+| A11Y-24 | Button typography is Design's specification hardcoded in the shared `.button` rule. Press now has a `:global([data-division='press'])` override, the first in the primitive layer. A second theme needing to differ (A11Y-20) should replace both with per-theme tokens |
+| A11Y-25 | **`check:lhci` exits 0 when it skips.** See below — the fifth instance of the gate class, and the only one still open |
+| ~~A11Y-27~~ | **CI never fired on this branch except through an open PR.** Sixth instance, and a shape above the other five — see below. **Fixed 13 Aug**: `push: branches: ['**']` |
+| ~~A11Y-28~~ | `check-node-version` matched `npm run <gate>` anywhere in `ci.yml`'s raw text, so **a comment counted as a step**. The comment explaining A11Y-27 registered `verify` as a CI gate and failed the build at `npm ci` on a commit that changed no gate. Every workflow file here carries long explanatory comments by house style, so it would have recurred. **Fixed 13 Aug**: full-line comments stripped before matching; trailing `#` after a real `run:` still works. Proven three ways — a real extra step is caught, a removed gate is caught, prose is ignored |
+| ~~A11Y-26~~ | `/_kitchen-sink` has no linked-card specimen carrying a second link, so nothing in CI exercised A11Y-4 and nothing catches a regression of it. The fix was proven by injecting a sibling link at runtime. **CLOSED at the run-3 fixes.** A permanent specimen — title link plus a second link, a button and a checkbox — is committed to the kitchen sink and marked as a gate subject, and `check-axe`'s DOM pass now hit-tests every interactive descendant of a `.cardLinked` against `elementFromPoint`. The lift selector also grew beyond `a, button` to `input, select, textarea, summary, [tabindex]` — it had been a per-instance fix of the class it was fixing |
+| A11Y-29 | **Seventh instance of the gate class** — `check:contrast`'s size pass shipped, briefly, with a predicate narrowed to the already-passing set. Caught by its own deliberate-failure proof one commit after the rule requiring that proof was written. See below |
+| ~~A11Y-35~~ | **No gate referenced `app/global-error.tsx` at all** — its 13 Aug Level A fix (`lang`, `<title>`, `<main>`, `<h1>`) was proven by a temporary probe route that was then deleted, leaving a docstring as the only evidence. **Fixed at the run-3 fixes:** `app/(marketing)/gridsmith-error-probe/page.tsx` is a committed gate subject that throws after hydration, `check-axe` audits it, and an `expect` block asserts the boundary identifies itself so the probe cannot go hollow. **First runtime verification of the fix:** title "Something went wrong — Gridsmith Ltd", `lang="en-GB"`, one `<main>`, one `<h1>`, no `data-division` (deliberately unthemed). Closes run-3b Unverified #1. **Excluded from production now, not deferred:** `next.config.ts` sets `pageExtensions` so `page.probe.tsx` is only a page when probes are included, making the route genuinely absent from a production build rather than present-and-redirected. Proven by building — 0 manifest entries, no route directory, no static chunk referencing it, under both `VERCEL_ENV=production` and `GRIDSMITH_EXCLUDE_PROBES=1`. The flag excludes rather than includes, so a forgotten flag cannot produce a green gate run against a build with no subject. `A-12` inherits it; `/_kitchen-sink` is still built everywhere and is A-12's to exclude |
+| ~~A11Y-36~~ | `eslint.config.mjs` scoped `no-html-link-for-pages` off for `app/not-found.tsx`, a path that has not existed since the `globalNotFound` rename. The override matched nothing; the rule was suppressed by an inline `eslint-disable` in the file — the exact mechanism the config's own comment rejects. **Fixed:** repointed at `app/global-not-found.tsx` and the inline disable removed. Verified rather than inferred — `npx eslint --print-config` reported the rule at `[2]` before and `[0]` after. Five stale doc references corrected |
+| ~~A11Y-33~~ | `check-axe` destructured `{ violations }` and discarded axe's `incomplete` bucket without a word — eight unresolved `color-contrast` evaluations reported as `clean`. **Fixed at the run-3 fixes:** an incomplete now fails unless listed in `INCOMPLETE_ALLOWED` with a rule + route + exact target + written reason. One entry today, carrying its own removal condition |
+| ~~A11Y-34~~ | `check-axe`'s token probe read four names, all four declared in `styles/themes/*.css`, so nothing probed a `tokens.css`-only value — and `--text-2xl` is the token whose absence put the 404's h1 at 16px. Adequate only because an `@import` bundles both layers into one file. **Fixed:** the list is derived from disk, base tokens plus the division's own |
+| A11Y-32 | **Eighth instance.** `check-axe`'s linked-card assertion reported clean against a deliberately broken selector — `elementFromPoint` hit-tests the viewport and the subject was below the fold. Caught by its own proof. The deliberate-failure rule has now caught a broken gate in three consecutive sessions, two of them gates written in the same session as the rule — see below |
+| A11Y-31 | **A rule whose stated justification was never checked against its own subject.** `--ink-subtle`'s `--canvas-sunken` restriction was justified as "4.18–4.43:1 across the four themes"; Design measured 5.19:1 there and was never in the failing set. A restriction that is too strict emits no failing output and cannot be found by reading gate results. Own class, not the gate class — see below |
+| A11Y-30 | **`check:contrast`'s size pass reads *declared* sizes, not rendered ones.** A rule block pairing `color: var(--token)` with `font-size: var(--text-*)` is measured; a colour and a size arriving from two different rules on the same element are not. Catching that needs a browser, and this gate runs in `verify:static` before the build, so it has no served page to read. **Deliberate deferral, not an oversight:** the rendered version belongs in the served tier beside `check-axe`, and it moves there during **Epic M**, when there are real pages with real chrome for it to measure. Today's only subject is `/_kitchen-sink`, where the declared-size pass already covers every case |
+
+### P2 — A11Y-25, in full: the fifth attribute-vs-result gate defect
+
+`scripts/check-lhci.mjs` cannot run on Windows — `chrome-launcher`'s `destroyTmp` races
+Node 24's `fs.rmSync`, every audit completes and then cleanup fails `EPERM` and the process
+exits 1 (VALIDATION §13 E12). The skip itself is correct and well documented. **What is
+not correct is that it exits 0.**
+
+So `npm run verify` reports success on a machine where **neither Lighthouse axis measured
+anything**, and Digital's `100/100/100` — the craft claim a prospect runs on their own
+laptop — is among the assertions that did not run. The banner is loud (`⚠ NOT ALL GATES
+RAN`), which is why this is P2 and not P1: a human reading the output is told. A script,
+a hook or a pre-push check reading the exit code is not.
+
+This is the same shape as the four before it, and CLAUDE.md already states the rule it
+breaks: *"A gate that can skip its subject silently must treat that skip as a hard failure,
+never a pass."*
+
+1. `_`-prefix filter that swallowed a whole route
+2. double-encoded chunk path that resolved to nothing
+3. line-anchored regex that counted a third of what it claimed
+4. `check-axe` asserting `body[data-division]` existed rather than that it computed —
+   **fixed 13 Aug**, and it had been green on a themeless route the whole time
+5. **this one**
+
+**Not fixed this session, deliberately.** CI runs on `ubuntu-latest` where the skip never
+triggers, so the real risk is covered today and the change is its own piece of work: it
+needs the same treatment `check-axe` got — fail loudly when it measures nothing — plus a
+decision about the local developer experience on Windows, where a hard failure would make
+`npm run verify` unrunnable. Do not simply flip the exit code without that second half.
+
+### A11Y-27, in full: the sixth instance, and it is a level above the other five
+
+`ci.yml` fired on `push: branches: [main]` and `pull_request:`. **Nothing in Epic A was
+ever pushed to `main`** — all of it landed on `feat/a-01-a-10a-scaffold-ci`. So every CI
+run this programme has ever had, including the numbered runs quoted throughout these docs,
+arrived through the `pull_request` trigger and existed only because PR #1 happened to be
+open. Close it, or start a branch without one, and `git push` runs nothing.
+
+**The other five are checks that measured nothing and reported a pass. This is a check
+that never ran and reported nothing at all** — no failure, no skip, no annotation, an empty
+Actions tab — while `npm run verify` still passed locally and the tree read green. The
+five earlier defects were caught because someone eventually read a gate's output. There was
+no output here to read.
+
+The consequence is not one gate: `CLAUDE.md` states *"CI is the arbiter. TypeScript,
+ESLint, `no-hardcoded-colors`, `check-service-role-key`, `check-bundle-size`, Lighthouse CI
+and axe all block merge."* That sentence was load-bearing for the whole of Epic A and was
+resting on an unexamined assumption about when the workflow fires. **The eleven commits of
+13 Aug were pushed believing CI would arbitrate them.**
+
+Fixed by `push: branches: ['**']`. `pull_request` is narrowed to `opened`/`reopened` so it
+no longer duplicates the push run on every commit to an open PR — with both unrestricted,
+each push would run the full suite twice, Lighthouse included.
+
+**The general lesson for the next gate someone adds:** "proven by deliberate failure" was
+being applied to what a gate asserts, never to whether it is reached. Both halves need the
+proof. A gate that cannot be observed failing on the branch you are working on is not
+known to run there.
+
+### A11Y-29, in full: the seventh instance — and the first the discipline caught itself
+
+`check:contrast`'s new size pass (G1, run-3 fixes) shipped in a first version that
+**skipped every surface where `USE.except` restricts a token**. The reasoning looked
+right — a restricted surface is one the matrix says the token may not carry text on, so
+why measure it. The consequence is that the pass only ever examined surfaces where the
+matrix *already* enforces 4.5:1 for body-role tokens. **There was no input that could make
+it fail.** It ran, printed a confident summary line, and checked nothing the existing
+matrix did not already check.
+
+Same family as the six before it, and a new sub-shape: the previous six were gates that
+could skip their subject. This one measured its subject correctly and had its *predicate*
+narrowed to the set that already passed.
+
+1. `_`-prefix filter that swallowed a whole route
+2. double-encoded chunk path that resolved to nothing
+3. line-anchored regex that counted a third of what it claimed
+4. `check-axe` asserting `body[data-division]` existed rather than that it computed
+5. `check:lhci` exiting 0 when it skips (A11Y-25, still open)
+6. `ci.yml` never firing on the working branch (A11Y-27)
+7. **this one** — the predicate narrowed to the already-passing set
+
+**What is worth keeping is when it was caught.** The standing rule requiring a permanent
+committed subject and a deliberate-failure proof was written into `CLAUDE.md` *one commit
+earlier*, in response to A11Y-4 and `global-error`. Writing the proof for the very next
+gate is what exposed it: the attempt to make the pass fail found that no input could.
+Without that step it would have been committed green, and the seventh instance would have
+been discovered by whichever audit eventually re-derived it — the same way the first six
+were.
+
+**This is the first time the discipline paid for itself inside the session that introduced
+it**, and it is the argument for the rule that no amount of restating it would have made.
+
+The corrected pass flags a text declaration using a token the matrix restricts on that
+surface — which is the enforcement half of A11Y-22, and it immediately found
+`.specimenName` still failing on `--canvas-sunken` in master and digital *after* the Press
+token fix. The token change alone would not have closed the defect.
+
+### A11Y-32, the eighth instance — and the case that the rule is load-bearing
+
+`check-axe`'s new linked-card assertion (G3) reported **clean** against a deliberately
+broken lift selector. `document.elementFromPoint` hit-tests the **viewport**, not the
+document, and the specimen it was written to inspect sits far below the fold on
+`/_kitchen-sink`. It returned `null`, the loop skipped, and the gate printed a green line
+having hit-tested nothing. Fixed by scrolling each candidate into view first; the trap is
+written into the comment beside it.
+
+**The count is now eight. What matters more is the hit rate of the proof.**
+
+| Session | Gate | What the proof found |
+|---|---|---|
+| 12 Aug | `lint:colors` | its existing proof used `color:` and a hex — both forms it already caught. A proof that exercises only what a check catches proves nothing |
+| Run 3, this session | `check:contrast` size pass | predicate narrowed to the already-passing set; no input could fail it (`A11Y-29`) |
+| Run 3, this session | `check-axe` linked-card | clean against a broken selector; viewport-only hit test (`A11Y-32`) |
+
+Three consecutive sessions in which the deliberate-failure step caught a gate that reading
+the code did not, and **two of the three gates were written in the same session as the rule
+requiring the proof** — by an author who had just read it. That is the argument that the
+rule is load-bearing rather than ceremonial, and it is now in `CLAUDE.md` beside the rule
+itself. Writing a gate and believing it works is the normal outcome. The proof is the only
+step that makes the difference observable.
+
+### A11Y-31, in full: a rule whose justification was never checked against its own subject
+
+**This is not the gate class and should not be filed under it.** Every one of the seven
+gate-class instances produces, or fails to produce, an *output* — a green line over an
+unmeasured subject, an empty Actions tab, a summary that counts less than it claims. They
+are all found by eventually reading something.
+
+This one emits nothing at all.
+
+`check:contrast`'s permission matrix carried
+`--ink-subtle: except { '--canvas-sunken': 'ui' }`, justified as *"measures 4.18–4.43:1 on
+sunken across the four themes, short of the 4.5:1 body floor"*. The restriction was
+documented, it named its reason, it was enforced by the matrix, and it was **untrue about
+one of the three themes it covered**: Design measured **5.19:1** on `--canvas-sunken` — not
+merely passing, but the highest of the three surfaces in that theme. Design had also grown
+a floor rule of its own in `design/DESIGN.md` §2 — *"body text only at ≥16px; never for
+small print"* — that its own measurement never required.
+
+Nothing was ever going to report this. The restriction was a *downgrade*: it asked less of
+the token than the measurement supported, so no assertion could fail, no gate could go red,
+and no output could look wrong. A restriction that is too strict is invisible by
+construction. It was found only because G1b re-derived all four values and the arithmetic
+had to be redone from the surfaces up.
+
+**The shape, stated generally:** *a rule that constrains something is only as good as the
+last time its justification was checked against its actual subject.* A justification is a
+factual claim and ages exactly like a published number — CLAUDE.md already says a
+measurable number is unverified until a gate measures it, and the same is true of the
+sentence explaining why a rule exists. Where the two disagree, the measurement wins and the
+rule gets re-derived, not trimmed.
+
+**And the remedy, which is the part worth carrying forward:**
+
+> **A token that needs a restriction to be safe has the wrong value. Fix the value, do not
+> narrow the restriction.**
+
+Narrowing would have been the natural move here — amend the reason to say "master and
+digital" and leave Design out. That keeps a restriction alive, keeps a rule whose
+justification has to stay true about a shrinking set, and leaves Design as the one theme
+whose `--ink-subtle` behaves differently from the other three in a system whose entire
+argument is that they read as one. G1b deleted the `except` outright instead and re-derived
+all four values so no restriction is needed by any of them.
+
+### G7 — DONE, 18 August 2026
+
+**Resolved as Epic M's first task.** Master's `S` and `N` were left alone — `Epic N` is cited
+by `00-FOUNDATION.md`, `05-HANDOVER.md` and `scripts/check-bundle-size.mjs` as the epic the
+budget rule guards, and moving it would have edited a gate to fix a documentation collision.
+The two division-side epics moved instead, into letters no tracker used:
+
+| Was | Now | Epic |
+|---|---|---|
+| `digital` `Epic S`, `S-01`–`S-09` | **`Epic U`, `U-01`–`U-09`** | Digital shell |
+| `press` `Epic N`, `N-01`–`N-22` | **`Epic K`, `K-01`–`K-22`** | Path Finder & conversion |
+| `app/(press)/press/page.tsx:3` `Epic R` | **`Epic P`** | Press shell |
+
+Cross-references followed: `01-VALIDATION-REPORT.md` §§ (press `N-04` → `K-04`, `N-16`–`N-20`
+→ `K-16`–`K-20`) and `app/(digital)/digital/page.tsx:3` (`Epic S` → `Epic U`). `05-HANDOVER.md`
+lines 250–254 cite master's `N-04`/`N-05`/`N-07`/`N-12` against `Q-M*` questions and are
+**correct unchanged** — the same string, a different epic, which is the whole reason this task
+existed. `08-A-GATE-RUN-3.md` is left as written: it is the report that raised the finding, and
+a report describing the state at the time it ran is not a stale reference.
+
+Epic letters now in use, all unique: `A` `M` `N` `L` `G` `S` `H` (master) · `B` `C` `D` `E` `F`
+(design) · `U` `T` `V` `W` `X` `Y` (digital) · `P` `R` `K` `O` `Z` (press). Free: `I` `J` `Q`.
+`Q` is spoken for by the `Q-M*` question IDs — do not take it for an epic.
+
+**No gate enforces uniqueness.** Logged as `M-P2-1` below rather than built now: adding an
+eighteenth gate means editing `check-node-version`'s machine-checked count and owing a
+deliberate-failure proof, which is a bigger change than the collision it prevents.
+
+### G7 — the original deferral, and what it owed
+
+**Deliberately not done, and sequenced after round 4.** Renumbering touches every tracker
+and every cross-reference in the programme; doing it before the audit would spend round 4's
+context reconciling references instead of confirming findings. Do it once round 4 returns.
+
+Three things, all found by run 3:
+
+| | Owed |
+|---|---|
+| `Epic S` | means **"Seed content"** in `master/PROJECT-TRACKER.md` and **"Digital shell"** in `digital/PROJECT-TRACKER.md` |
+| `Epic N` | means **"Master pages"** in master's and **"Path Finder & conversion"** in press's |
+| `app/(press)/press/page.tsx:3` | cites **`Epic R`** (Press *Trust architecture*) where Press's shell epic is **`P`**. The other three placeholder pages each cite their correct shell epic |
+
+Why it matters rather than being cosmetic: CLAUDE.md makes the tracker task the unit of
+work — *"One tracker task per session or PR"* — so an identifier that resolves to two
+different epics defeats the mechanism. A commit message or a code comment saying "Epic S"
+cannot be resolved without knowing which tracker was meant.
+
+**Renumber so identifiers are unique across all four trackers, then fix every reference**,
+including the four placeholder page comments.
+
+### A-GATE-4-3, in full: a proof satisfied by a different gate — and it is its own class
+
+**This is not the ninth gate-class instance and must not be filed as one.** Every gate-class
+instance is a check that *runs and measures less than it claims*. This one measured its
+subject correctly, asserted the right thing about it, and **could never execute**, because a
+different check with an arithmetically identical predicate exits first.
+
+`check-bundle-size`'s `G8` shared-baseline assertion fired on `shared > SHARED_BASELINE_BUDGET_KB`
+where that constant was `1.0`. The baseline routes are the cheapest rows in the build, so
+`cheapest = FLOOR_KB + shared`, and the floor check's `cheapest > FLOOR_KB + FLOOR_TOLERANCE_KB`
+with `FLOOR_TOLERANCE_KB = 1.0` is **exactly the same predicate**. The floor check
+`process.exit(1)`s ~70 lines earlier. The assertion was unreachable code from the commit that
+introduced it.
+
+**What makes it a class of its own is how the proof passed.** `G8`'s deliberate-failure proof
+pushed the shared baseline past its budget and observed a red build — correctly, honestly, and
+with captured output. The build was red. It was red **because the floor check fired**. The
+proof never distinguished which gate produced the failure, so a gate that had never run once
+was recorded as proven by deliberate failure.
+
+> **The tell: `G8`'s own write-up described the relationship correctly and drew the wrong
+> conclusion from it.** Commit `417e2661`'s body reads *"Growth in the shared baseline is
+> caught first by the symmetric floor check, which fires before this code runs."* That
+> sentence is the defect, stated accurately, and filed as reassurance. "Another gate catches
+> this first" was read as defence in depth. It is the definition of unreachable.
+
+**The general shape:** *a deliberate-failure proof observes a red build, not a red gate.*
+Where two checks can fire on one input, the proof has to establish **which** one did — and
+the only reliable way is to make the input land where the other cannot reach, or disable the
+other and re-run.
+
+**The remedy, and it generalises:** two checks that can fire on the same input need
+**thresholds far enough apart that a window exists where only one of them fires**, and the
+proof must land in that window. `SHARED_BASELINE_BUDGET_KB` is now `0.7` against
+`FLOOR_TOLERANCE_KB` of `1.0`, opening the window `0.7 < shared <= 1.0`, and the constant
+carries a docstring saying it must stay strictly below the tolerance and why. Re-proven three
+ways: at budget 0.4 against a measured 0.5 with the floor check intact (**exit 1, floor check
+fired zero times**); the same with the floor check disabled (**exit 1**, so it does not depend
+on it); and at the shipped 0.7 with the floor check still disabled (**exit 0**, so it is not
+merely always-on).
+
+This matters beyond one gate: `M-06`'s headroom is 0.8KB, and the shared baseline is the half
+of the arithmetic that comes straight out of every route's budget at once.
+
+### A-GATE-4-11: `Specimen`'s heading is ungated, and that is accepted
+
+**Recorded here because it was documented everywhere except the tracker, which is the one
+place that decides whether a gap is accepted or outstanding.**
+
+`G2` fixed two instances of WCAG 1.3.1 F2 — text presented as a heading without being one.
+`Stepper`'s is gated: `check:headings` fires on revert, proven. **`Specimen`'s is not.**
+
+`check:headings` matches `font-family: var(--font-display)` and nothing else, deliberately
+(`scripts/check-headings.mjs:36-47`: *"covers the display-face shape completely and the mono
+shape not at all… Do not widen it to mono + uppercase"*). `.specimenName` is mono. So
+reverting `Specimen` from `<h3>` to `<p>` leaves every gate green, and axe cannot see F2
+either — it is a semantic judgement, not a machine-detectable violation.
+
+**This is accepted, not outstanding, for three reasons:**
+
+1. The limit is a deliberate scope decision with a written justification, not an oversight,
+   and it is restated at the call site (`%5Fkitchen-sink/page.tsx:107-112`).
+2. Widening the gate to mono + uppercase is what its own docstring argues against — it
+   would flag every legitimate mono label in the system, and a gate that cries wolf gets
+   suppressed rather than obeyed.
+3. The subject is `/_kitchen-sink`, which `A-12` removes from the production build anyway.
+
+**What makes it acceptable rather than hidden is that it is written down in three places
+now — the gate, the call site, and here.** CLAUDE.md's rule is that a fix is not fixed until
+a permanent committed subject exists for a gate to reach; the honest reading is that this
+half of `G2` does not meet that bar and is being carried knowingly. If `Specimen` is ever
+promoted out of the kitchen sink onto a production route, this stops being acceptable and
+needs either a real gate or a display-face heading.
+
+### A-GATE-4-5: documentation outrunning the repo — the third occurrence
+
+`components/primitives/Tabs.tsx:2` asserted *"The only client component in this tier"* while
+`RevealOnScroll` and `StickyCta` sat beside it, both `'use client'`. Round 3 reported it.
+`G5`/`G6` recorded it fixed. **`git log -- components/primitives/Tabs.tsx` shows the file's
+last touch predates the entire `G1`–`G8` range: it was never opened.** Two documents — this
+tracker's criterion-5 row and `_shared/05-HANDOVER.md` §2 — carried "all fixed" for a day
+against a tree in which it was not.
+
+**This is the third occurrence of one pattern, and it is worth naming as a pattern rather
+than as three unrelated slips:**
+
+| | What the documentation said | What the repo held |
+|---|---|---|
+| 1 | Round 2: **"4 blockers, 4 majors, 7 minors — all fixed"** | eleven items in prose; the four majors and seven minors itemized nowhere. Closed as unreconstructable, `05-HANDOVER.md` §10 |
+| 2 | `G8`: **"every fix has a deliberate-failure proof"** | the shared-baseline proof was satisfied by the floor check firing; the assertion had never executed (`A-GATE-4-3`, above) |
+| 3 | `G5`/`G6`: **"all nine fixed"** | `Tabs.tsx:2` untouched, its last commit pre-`G1` |
+
+All three share a mechanism: **the record of the work was written by the session that did
+the work, in the same pass, and nothing re-read the tree afterwards.** A fix list is a
+measurable claim, and CLAUDE.md's rule applies to it exactly as it applies to a contrast
+ratio — *unverified until something measures it*. The something, here, is a fresh context
+re-reading the files, which is what criteria 5 and 6 have been asking for all along and why
+every round has returned findings.
+
+**The cheap habit that would have caught all three:** before writing "fixed", `git log --`
+the file. It is one command and it is decisive — occurrence 3 was found by exactly that.
+
+### The P2 backlog carried out of Epic A — 22 open, 1 ceiling, 1 deferred
+
+**Enumerated from `_shared/FIX-LEDGER.md`, which is machine-checked, rather than from the
+running count.** The shorthand used while closing the epic was *"eleven, plus round 6's seven,
+plus round 7's three"* = 21. **The real figure is 22 open**, and the difference is worth one
+line because this epic is about numbers being verified: the "eleven" omitted `A-GATE-5-2` and
+`A-GATE-5-4` (left open when `T1`/`T2`/`T4` took the other three run-5 items), round 6 left
+**four** open rather than seven (`U1`–`U3` closed `6-3`, `6-4`, `6-5`, `6-7`), and round 7 left
+**five** rather than three (two minors accompany the three majors). `npm run check:claims`
+prints the live count; do not re-derive it by hand.
+
+**None is an accessibility failure at any level.** Every item is gate discipline or
+documentation. That is why A-GATE passes with them open.
+
+**That remains true of the Epic A backlog. It is not true of Epic M's.** `M-P1-1`, below, is
+a live WCAG Level A failure — the first in the programme — and it is P1, not P2. It is a
+decision awaiting the owner, not work awaiting a session.
+
+| From | Item | |
+|---|---|---|
+| Epic M | ~~**`M-P1-5`**~~ | **FIXED 21 Aug. The file WAS the cause: a literal U+0008 at `ci.yml:92`.** YAML 1.2 forbids C0 controls anywhere in the stream, comments included, so GitHub could not parse the workflow and every push since 13 Aug died at startup in 0s with zero jobs. The byte sits inside the comment introducing `check:control` — the gate written for this exact class — added by the same commit (`4e988114`). **The 20 Aug diagnosis that cleared the file was wrong, and the error is instructive.** It reasoned from a `422 Workflow does not have 'workflow_dispatch' trigger` reply that GitHub must have parsed the file to enumerate its triggers. It does not follow: `workflow_dispatch` is registered from the **default branch**, and `main` carries no workflow file, so an unparsed file returns that same 422. The reply was consistent with both hypotheses and was read as evidence for one. **What actually discriminated it was a control:** a minimal hello-world workflow pushed to the same repo on the same push succeeded in 7s while `CI` failed in 0s (runs `32431419718` / `32431418552`). Actions was never blocked; making the repo public was not the fix and the minutes theory was wrong. **Why no gate caught it:** `sourceFiles`' `NOT_SOURCE` excludes `.github` as *"no colours, no keys"* — true for the two gates that list was written for, false for `check:control` — and its extension set had no `yml`. Both widened; `sourceFiles` now takes `extraRoots` so a gate can opt into a tree the colour and secret sweeps skip. Proven by appending a probe line to `ci.yml`: 1 hit, exit 1; removed: 0, exit 0 — the count moves, so the file is reached |
+| Epic M | ~~**`M-P2-18`/`M-P2-29`**~~ | **VERIFIED 21 Aug, both configs, both directions, on `ubuntu-latest`.** The Windows skip is a platform skip, so CI is the only place either gate can run at all. **Desktop can be made to fail:** an `first-contentful-paint: maxNumericValue 1` probe fired on all four routes with real measured values (260.3, 256.5, 257.1, 254.8 ms) — run `32432293802`. **Desktop reports a pass** against real content in runs `32431638271` and `32432600735`. **Mobile can be made to fail:** it did so on real content, unprompted — see the CLS row below — run `32431638271`. **Mobile reports a pass** with the CLS budget relaxed to 0.5, run `32432600735`, with LCP and TBT still asserted at their real budgets in the same run. Probes were pushed on a throwaway branch and removed; the evidence is the four run logs |
+| Epic M | ~~**`M-P2-31`**~~ | **FIXED 21 Aug, confirmed on CI (run `32434865630`): CLS 0.000 on all four routes, and mobile performance 1.00 on three of them.** The cause was measured, not guessed. Lighthouse's `layout-shifts` audit attributes every route to a single shift with cause **`"Web font loaded"`** — `/design` 0.1017 and `/press` 0.1231 on the **footer statutory line** (`chrome_statutory`), `/` 0.0382 on the hero `h1`. **`/digital` being clean was the clue and it held up, but not for the reason a theme-level guess would give.** Digital's `--font-display` and `--font-mono` are the same family, and its page is the 14-line placeholder with no body copy — so almost no text on it sits in a face that swaps, nothing above the footer rewraps, and the footer never translates. It was never a property of the digital theme; the same page shape on Design or Press would shift too. **The fix is `display: 'optional'` on all three faces**, replacing `'swap'`. `next/font`'s metric-matched fallback (`size-adjust`, `ascent-override`, `src: local("Arial")`) narrows the mismatch and cannot remove it — it matches average metrics, not per-glyph advances, so a long line still rewraps. `optional` removes the swap, so the shift cannot occur. **The cost is real and is the owner's to weigh, recorded as `M-P2-36`.** Getting here needed two fixes to `lhci-report` itself: it read nothing at all until it was pointed at `layout-shifts`, the id Lighthouse 12 emits — `layout-shift-elements` returned empty and the reporter printed *"0 shifting element(s)"* for three routes that had plainly shifted |
+| Epic M | `M-P2-36` | **`display: 'optional'` trades first-view typography for zero CLS, and that trade has not been signed off.** A first-time visitor on a slow connection sees the metric-matched fallback for that page view; the face is cached for every navigation after. Four distinct display faces are the identity premise (`CLAUDE.md`, *The feel*), so this is a design cost taken to meet a performance budget. The alternative is raising the CLS ceilings, which `CLAUDE.md` forbids outright. **No third option was found that keeps both** — preload is already on by default and the fonts still arrive after first paint under 4G. Flagged for the owner, not open work |
+| Epic M | **`M-P2-31` (superseded)** | **P1, real defect, not an environment difference. Mobile CLS exceeds budget on three of four route groups.** First measured by `check:lhci:mobile` on CI's first real run (`32431638271`), 4G throttle, 4x CPU, median of 3, all three runs identical to 16 decimal places: **`/` 0.0382 against 0.03**, **`/design` 0.1017 against 0.05**, **`/press` 0.1231 against 0.05**. `/digital` passed. LCP and TBT passed everywhere. This is content shifting at 375px and has never been visible before, because `check:lhci` hard-skips on Windows and CI has not completed a run since the mobile axis existed. **Not fixed in this session** — reported, per the instruction |
+| Epic M | **`M-P2-32`** | **`check-axe`'s A-08 lead-pipeline assertion cannot pass on CI: `PROJECT_URL or PUBLISHABLE_KEY is not set`.** An environment difference in cause and a real gap in effect. The gate refuses to skip when unconfigured — correctly, that is the `M-P1-6` rule — so it fails instead, and the whole lead path is therefore unasserted on the only machine that runs the suite. Both values are **publishable**, so unlike `SUPABASE_SERVICE_ROLE_KEY` they can be repository variables without a secret leaving the platform. **Setting them is the owner's call**, and until it is made this step cannot go green |
+| Epic M | ~~**`M-P2-33`**~~ | **FIXED 21 Aug, confirmed on CI (run `32434865630`): `check-axe` now runs to completion and reports a structured result instead of aborting.** **`check-axe` had three puppeteer launches, not one.** The `--no-sandbox` / `--disable-dev-shm-usage` flags were added to its main launch and to `check-responsive` when the runner first rejected them, and the docstring recording that said *"the four browser launch sites"* — counting the two Lighthouse configs and the two gates, and missing that one of those gates launches Chrome three times. The two analytics-grant launches were written later as bare `puppeteer.launch()` and inherited nothing. **That is the one-sentence difference between the two launches: the first was guarded, the later ones were added afterwards and were not.** It is why the 28 route/viewport audits all reported clean and the process then aborted seconds later in the same file — the clean results were evidence for the wrong conclusion. Fixed at the class: `scripts/browser-launch.mjs` is now the only place Chrome is launched from, and all four sites import it. Same shape as `M-P2-35` — a decision that was complete when it was made and silently incomplete once new call sites arrived |
+| Epic M | **`M-P2-33` (superseded)** | **`check-axe` crashes at a puppeteer launch on `ubuntu-latest`: `FATAL ... No usable sandbox!`.** Pure environment difference — the 28 route/viewport audits and the `_kitchen-sink`, `_master-sink`, `_gridsmith-404-probe` and `gridsmith-error-probe` specimens all ran and reported clean first; the crash is a **later** Chrome launch on a runner whose unprivileged user namespaces are restricted by AppArmor. Needs `--no-sandbox` for that launch, or a launch that reuses the first browser. Nothing about the site is implicated. `check:launch` and `check:responsive`, which run beside it under `with-server`, both passed |
+| Epic M | ~~**`M-P2-34`**~~ | **`actions/checkout@v5` defaults to `fetch-depth: 1`, and `check:claims` needs history.** All 34 ledger rows failed as *"not an ancestor of HEAD"* on CI's first real run — the gate asks git a question a shallow clone cannot answer. Environment difference, not a bad ledger; fixed by pinning `fetch-depth: 0`. Recorded because it is the general shape: **a gate that reads git is asserting about a repository CI only partially has** |
+| Epic M | ~~**`M-P1-2`**~~ | **FIXED 18 Aug at `A-12`, by remedy (a) — the preferred one.** `NEXT_PUBLIC_SANITY_DATASET` has no default; an unset variable throws at module load, so it is a build error rather than a silent fallback to `development`. That is the only remedy with no environment it cannot see. `.env.example`, `ci.yml` and `SETUP.md` all set it explicitly, and **it must be set in the Hostinger environment before the first deploy** |
+| Epic M | ~~**`M-P1-4`**~~ | **DONE 19 Aug — brought forward because `Q-M21` blocks Epic N.** All 20 gates audited. **Six checks across five gates could not be made to report zero**; all six fixed and re-proved. Full table below |
+| Epic M | **`M-P1-3`** | **P1. Nothing checks the live database's RLS posture.** `check:rls` reads the committed migrations and says so itself — it asserts what the repository declares. **`A-07` is the reason this is P1 rather than P2: the leak existed in the running system while the migration read correctly.** `v_lead_funnel` was written exactly as `SCHEMA-CORE.md` §4 specifies and served lead aggregates to `anon`, because the cause was a Postgres default and a Supabase grant, neither of which appears in SQL a reviewer reads. A source check cannot see that class at all, and it is the class that matters: drift added in the dashboard, a grant restored, a view recreated. **The shape is already proven by hand** — query as `anon` with the publishable key, assert `leads` returns `[]` and every view 401s. It needs a credential CI must not hold, so it belongs after deploy, in the environment that already has one. **The same job should prune `gridsmith-lead-probe`'s rows (`M-P2-14`).** |
+| Epic M | **`M-P1-1`** | **P1, accessibility, Level A.** A server-render crash serves `<html id="__next_error__">` with no `lang`, no `<h1>` and no `<main>`; `global-error` renders only after hydration, so a visitor without JS gets the bare shell. Measured at `M-07` against a committed probe and characterised by `check-axe`. **No app-level fix exists** — Next requires `global-error` to be a Client Component and a segment `error.tsx` was tried and does not change the served HTML. The remedy is architectural: an edge- or platform-served static error document, or a recorded acceptance. **Owner's decision — see `M-07` above** |
+
+| From | Items | Theme |
+|---|---|---|
+| Round 4 | `A-GATE-4-2`, `4-7`, `4-8` | `check:content` — comment-stripping swallows a line containing a URL; docstring claims percentage/duration patterns that do not exist; `candidatesSeen` is a global count, not per-subject |
+| Round 4 | `A-GATE-4-9`, `4-10`, `4-12` | drifted comments and a stale gate count (`check-axe.mjs:57` names `page.tsx` for `page.probe.tsx`; `.specimenName`'s comment; "fourteen gates" in two documents) |
+| Round 4 | `A-GATE-4-11` | `Specimen`'s heading is mono and therefore ungated — **accepted**, with the condition that ends the acceptance recorded above |
+| Round 4 | `A-GATE-4-13` | the 0.5KB shared-baseline attribution is asserted, not decomposed |
+| Round 5 | `A-GATE-5-2`, `5-4` | the `cheapest = FLOOR + shared` premise is unchecked; above the window the floor check hides the primitive-layer assertion |
+| Round 5 | `A-GATE-5-6`, `5-7`, `5-8` | stale documentation — the probe's `A-12` note, and two tracker rows contradicting completed runs |
+| Round 6 | `A-GATE-6-1`, `6-2` | `BASELINE_ROUTES` reads its expectation from itself; the spread tolerance's stated reason describes markup, not the JS it measures |
+| Round 6 | `A-GATE-6-6`, `6-8` | `GOVERNED` omits the run reports; `HEAD` is accepted as a commit reference |
+| Round 7 | `A-GATE-7-1`, `7-2`, `7-3` | the three majors — the boundary constraint is one-sided; the mention-escape closes only for rowed identifiers; one incidental non-`docs/` entry disarms the docs-only check |
+| Round 7 | `A-GATE-7-4`, `7-5` | the ledger reads as though substance is checked when path shape is; `ROUND_BOUNDARIES` ordering is belt-and-braces, not load-bearing |
+| **Ceiling** | `A-GATE-7-6` | **not backlog and will not be fixed** — see below |
+| ~~**Deferred**~~ | ~~`G7`~~ | ~~the epic identifier renumber~~ — **DONE 18 Aug**, see above |
+| Epic M | `M-P2-13` | **nothing measures the `<60s` notification target.** `FOUNDATION` §6 and `SCHEMA-CORE.md` §3 both state it; neither has ever been measured, and `notified_at` — the column the measurement needs — cannot be written by the only role the pipeline uses. `anon` has no UPDATE policy, correctly. Stamping it needs a service-role writer, and the alert needs production traffic and a destination. Until then the figure is a target, not a budget |
+| Epic M | ~~`M-P2-15`~~ | **Reclassified P1 as `M-P1-4` — see the P1 table above.** Filed P2 as a coverage gap. It is not one: the fault is invisible by construction |
+| Epic M | `M-P2-17` | **`check-axe`'s `"40+ tokens probed"` is derived from the token files, not the probe loop.** Disabling the probe leaves the number unchanged. Not an unguarded check — the computed-value assertion beside it does fail when starved, so the probe's purpose is covered — but the count is misleading and should be a loop counter like the rest |
+| Epic M | ~~`M-P2-19`~~ | **DONE 19 Aug — and it was a live WCAG AA failure, not just an unmeasured one.** `--ink-muted` at `opacity: 0.6` measures 2.90:1. The dim is now 80% (4.57:1), `DESIGN.md` §5 is corrected, and `check:contrast` grew an opacity pass covering every fade in every CSS module. Three branches proven. The exemption for `:disabled` did not work when written — a literal U+0008 where `\b` was intended, the `check:rls` defect verbatim |
+| Epic M | `M-P2-20` | **The consent-banner filter in `check-bundle-size` has no subject.** Excluding `/`'s own `page-*.js` is correct and was proven against `dcd391e3`, but block 2's revert to plain `<a>` removed the page chunk, so the filter now excludes nothing. Re-run the proof when `/` gains its first client boundary. Do not delete the filter — that re-arms the misattribution | Dev | N-01 | **The division cards' 60% sibling dim is unmeasured for contrast.** `DESIGN.md` §5 requires non-hovered cards to drop to `opacity: 0.6` on hover or focus. axe does not evaluate hover states and `check:contrast` works from tokens on surfaces, so nothing measures `--ink-muted` at 0.6 over `--canvas`. It is a transient state on a pointer interaction, which is why it shipped, but "nobody measured it" is the finding rather than "it is fine". `N-01` |
+| Epic M | `M-P2-26` | **`N-01` blocks 6 and 7 are both blocked, for different reasons, and neither is a build problem.** Block 6 (*"Clients and testimonial"*) has the same shape as block 4: a `testimonial` type is referenced by the schema and there is no real testimonial to put in it, so it waits on the founder alongside `M-P2-25`. Block 7 (*"Group structure statement — three divisions, one company, one contract"*) is not blocked on content but on **interpretation**: the words "one contract" and any statement about invoicing are claims about what the contract actually gives, and `CLAUDE.md` non-negotiable #6 plus the stop-and-ask list both put `_legal/` interpretation outside a build session. It needs the statement drafted or approved by whoever owns `_legal/`, then it is a small block. **Block 8 (insights) needs a `post` type with real posts; block 9 (CTA) needs `/contact`.** Effectively `N-01` is at its content ceiling: four of nine blocks shipped, and every remaining one waits on the founder, on the solicitor, or on a route |
+| Epic M | ~~**`M-P1-5` (superseded — see the FIXED row above)**~~ | **CI has not completed a run since 13 Aug; every push dies at startup with zero jobs in 0s.** Diagnosed 20 Aug and **the file is not the cause**: `ci.yml` parses, the workflow is `active`, `allowed_actions: all`, and a `workflow_dispatch` API call answered `422 Workflow does not have 'workflow_dispatch' trigger` — GitHub had parsed the file and enumerated its triggers, so the UI's *"workflow file issue"* message is misleading. That leaves a minutes or spending-limit block on Actions for a private repo, which needs the `user` billing scope to confirm and **was not worked around**. `workflow_dispatch` has been added to `ci.yml` so a run can be started without a commit once it is unblocked. **What to click, Atik:** github.com/settings/billing → *Plans and usage* → check **Actions** minutes for this month; if exhausted, either github.com/settings/billing/spending_limit → raise the Actions & Packages limit above £0, or on the newer billing UI github.com/settings/billing/budgets → add/raise a budget covering Actions. Then re-run from the repo's Actions tab, or push any commit. **The *Run workflow* button will not appear yet** — GitHub registers `workflow_dispatch` from the **default branch**, and `main` has no workflow file at all (verified: `git ls-tree origin/main` lists none). `workflow_dispatch` was added on the feature branch and is inert until that branch reaches `main`. **21 Aug: the repo was made public by the owner, which removes the Actions minutes limit.** CI runs again from the next push. **The durability gap stands and is not fixed by this:** `main` still carries no workflow file, so GitHub has no `workflow_dispatch` to register and the *Run workflow* button still will not appear; every run this programme has is reachable only because it is pushed to `feat/a-01-a-10a-scaffold-ci`. Delete or rename that branch and CI is gone again with no error. **Merging to `main` is the owner's call and has not been made.** Until it is, CI's existence rests on one feature branch. See the READ FIRST section at the top of this file for what the outage invalidates |
+| Epic M | ~~**`M-P1-3`**~~ | **FIXED 21 Aug. The RLS drift check reads the live database, from outside, as `anon`.** `app/api/rls-drift/route.ts`, run by a Vercel Cron at 04:00 daily, authorised by `CRON_SECRET` (404, not 401, so an unauthorised caller cannot confirm the route exists). **Where it runs was the first decision and three alternatives were rejected.** Not CI: pruning needs the service-role key, CI must not hold it, and CI has not run since 13 Aug (`M-P1-5`) so a check living there would have been silent for exactly the period it was needed. Not `pg_cron` inside Supabase — the decisive one: a job scheduled inside the database runs *as a role*, and every role that can schedule work is privileged enough to be blind to this class. **The vantage point is the check**; `A-07` was visible only from outside, over HTTP, holding nothing but a public key, so moving the check inside the database would reproduce the original mistake in a new place. Not a script the owner remembers to run — drift is a property of the interval. **Every assertion is made as `anon` with the publishable key; the service role is used only for the prune**, because using it for a probe would bypass RLS by design and every check would pass for the wrong reason. It also writes a probe row and asserts the insert still succeeds — drift runs both ways, and a tightening that breaks the public form is as much a defect as a leak. Prune closes `M-P2-14`: rows are marked `@gridsmith.invalid` (RFC 2606 reserves the TLD, so the marker can never collide with a real address), and `pruneConfigured` is **reported, not inferred** (`M-P1-6`, `M-P1-7`). **`SUPABASE_SERVICE_ROLE_KEY` and `CRON_SECRET` must be set in the Vercel environment and nowhere else** — the check runs without the first and says so; the prune does not happen until it is set |
+| Epic M | `M-P1-9` | **Two defects the deliberate-failure proof found in the drift check itself, both of the class the check exists to catch.** (1) The first draft read any non-2xx as "no rows", so an **unreachable database reported clean** — the exact shape this repository keeps finding, written into the gate meant to catch it. Now: denial (401/403) and an empty 200 are the two recognised postures and **any other status is a finding**, with the observed status returned rather than a bare verdict. (2) The insert probe's `fetch` had no `.catch`, so a network failure **crashed the handler** and the route returned an empty 500 with no findings at all — a gate that dies has not reported. Both were found by pointing `PROJECT_URL` at a non-existent host, not by reading. Recorded rather than folded into the fix row because the pattern is worth the entry: the proof found more than it was written to find |
+| Epic M | ~~**`M-P1-6`**~~ | **FIXED 20 Aug.** `check-axe` decided which analytics providers were configured from its own `process.env` while asserting the served build's behaviour; against the Vercel preview it reported *"no analytics id is configured"* about a build that had both. `lib/analytics/config.ts` now holds the three build-inlined constants and `ConsentBanner` calls `publishAnalyticsConfig()` on mount, so the page reports what the bundle actually inlined and the gate reads that. **Not in `load.ts`** — that module is deliberately dynamic-imported and is not fetched until a grant, and the fact is needed *before* a choice. Cost: Master 2.5KB → **2.7KB** of 15KB. **Four branches proven separately:** (A) runner env stripped, build has ids → passes, the exact case that was a false failure; (B) `publishAnalyticsConfig()` commented out → fails *"the served page did not publish window.__gsAnalyticsConfigured"*, so a hollowed subject is a failure and not a skip; (C) build with no ids → fails, and the message now names *the environment that builds the site* rather than the one running the gate; (D) build inlining `us.i.posthog.com` → fails the EU assertion. **(D) is a real strengthening, not just a re-proof:** the host was previously read from the runner, so a deployment built against US PostHog while the runner held EU would have passed |
+| Epic M | ~~**`M-P1-7`**~~ | **FIXED 20 Aug — it was a live production defect, not a queued P1.** `check-launch-content` read `SANITY_DATASET` from the runner while claiming to report on *the dataset being built*. On Vercel those are different machines and different values by design, so a `development` runner pointed at a production deployment announced *"the live-only assertions do not apply"* and exited 0 — **the gate whose sole purpose is stopping a `[SEED]` VAT number going public, unable to fire in the only case it exists for.** Third instance of the class after Resend and `M-P1-6`, and the most consequential. **The site now reports its own dataset:** `next.config.ts` emits `x-gridsmith-dataset` on every route (a header, not a probe route — probes are excluded from production builds and this must work *especially* there; it also costs no page weight and no DOM). The gate reads that and measures the dataset it was told. A missing header is a **hard failure**, never a fall-back: falling back to the runner is the defect, and assuming `development` would switch the live tier off. `sanity/project.ts` was split out of `env.ts` so the gate can import `SANITY_PROJECT_ID` without triggering `env.ts`'s deliberate throw — importing it made the gate crash on exactly the machines the fix exists to serve. **The gate moved from `verify:static` to `verify:served`**: it was never a source check, and running it with no target is what made inferring the dataset feel reasonable. Cost: a missing singleton now fails inside the build with a Sanity stack trace instead of pre-build with a sentence about the statutory record — worse output for the same defect, and the price of the fix. **Run against the live preview deployment 20 Aug**, with the runner's `NEXT_PUBLIC_SANITY_DATASET` unset: the deployment serves `X-Gridsmith-Dataset: development`, the gate reported that dataset by name as the one *the site reported*, and exited 0. **The forward-looking half, derived from a measured fact rather than assumed:** the Vercel Production target is configured for `production`, and that dataset currently holds no `companyDetails` document at all (queried directly: `details: null`). A production deployment will therefore make this gate fail with *"no companyDetails document in dataset production"* — **loudly, where it previously exited 0 in silence.** That failure is the fix working, not a regression. See `M-P1-8` for the one branch that could not be proven |
+| Epic M | **`M-P1-8`** | **`M-P1-7`'s "live dataset, clean → passes" branch could not be proven, and the reason is a launch blocker rather than a gate gap.** Three of the four branches were proven with real data: a live dataset carrying `[SEED]` **fails** (`vatNumber: "[SEED] GB000000000"`, exit 1, exercised by pointing `PRODUCTION_DATASET` at `development` for the run); a non-live dataset **states the skip and names the dataset the site reported**, with the runner's `NEXT_PUBLIC_SANITY_DATASET` entirely unset; the reporting mechanism removed **fails as a hollow subject** (proven twice — against a host that never emits the header, and against our own site rebuilt with `headers()` deleted — exit 1 both times). The fourth needs a live-named dataset with a complete statutory record. The `production` dataset is **empty** (`companyDetails` is null), and the only record that exists carries `[SEED] GB000000000` because **Gridsmith Ltd's VAT number is genuinely unknown**. Inventing one to turn a proof green is non-negotiable #2, so it was not done. Partial evidence does exist and is worth stating: in the branch-1 run the live tier reported **exactly one** problem, so its other two assertions — `vatNumber` non-empty and `contactEmail` non-empty — executed on real data and passed. **The gate refusing to go green on production today is correct behaviour, not an unproven branch.** It closes when the real VAT number is supplied, which is a content edit; `contactEmail` is already real (`contact@gridsmith.uk`) |
+| Epic M | `M-P2-30` | **`public/500.html` and `app/gridsmith-timeout-probe/route.ts` are kept, and neither is currently reached by anything.** The 500 document is the remedy ready to work the moment the platform can use it; deleting it would mean re-deriving the same conclusion next time somebody reads *"Vercel serves a static error document"*. It is written in CSS **system colours** (`Canvas`, `CanvasText`) rather than tokens, deliberately: a document served when the failing system owns the build manifest must not depend on a fingerprinted stylesheet that system emits, and system colours honour the reader's light/dark setting while being invisible to `no-hardcoded-colors` because they are not literals. **This also answers the "how does it stay in sync with the themes" question by removing it** — it never references the token layer, so it cannot drift. One loose end recorded rather than chased: the file serves **200 locally and 404 on Vercel**, which is consistent with the platform having claimed it out of static routing for error handling and then not being entitled to serve it. The timeout probe is the only way to induce a platform error on demand and is excluded at runtime like the lead probe (`M-P2-27`). Both are subjects with no gate until `M-P1-1` is decided |
+| Epic M | `M-P2-27` | **The `pageExtensions` probe-exclusion mechanism does not work for route handlers, and only a deployment could show it.** Built as `route.probe.ts`, Next emits no `route_client-reference-manifest.js`; built as `route.ts` it does; Vercel's output collection expects one either way, so the deployment failed `ENOENT` *after* a successful build that printed a full route table. Verified by building both ways and listing the output directory. Page probes are unaffected. `gridsmith-lead-probe` is now excluded at runtime instead, which is free for a route handler because it has no client chunk. **A route-group move was made first and fixed nothing** — the identical error returned at the ungrouped path — and is recorded in the file so a later reader does not credit it |
+| Epic M | `M-P2-28` | **The Lighthouse `seo: 0.90` assertion cannot pass against a Vercel preview, by construction.** Preview deployments are served with `X-Robots-Tag: noindex`, which Lighthouse scores as blocked-from-indexing: `/` measures **seo 0.50** on the deployment against **0.90** on `localhost`, on the same commit. Nothing regressed. It means the two axes' SEO assertion is only meaningful against a production target or a custom domain, and a preview run would fail it for a reason no user experiences — the same objection the mobile axis already records against pinning the performance score |
+| Epic M | ~~`M-P2-29` (superseded — verified 21 Aug, see above)~~ | **`M-P2-18` is still unverified in both directions, and the deploy did not change that.** `check:lhci` skips on **platform**, not on target, so a deployed URL does not make it runnable here; and CI — the stated remedy — is down (`M-P1-5`). The Lighthouse numbers reported on 20 Aug came from a **direct `lighthouse` run**, not from the gate: the Windows `chrome-launcher` fault is at temp-profile cleanup, *after* the audits, so a direct run reads the LHR before the crash. **That produces numbers and does not produce a verified gate.** Neither `check:lhci:desktop` nor `check:lhci:mobile` has ever been made to fail or shown to report zero |
+| Epic M | `M-P2-24` | **Nothing measures CSS per route.** `check-bundle-size` measures JS only, so `N-01` block 5's +5,591 B of render-blocking CSS — an unrelated module file opened by importing `Numeric` out of `Table.tsx` — was found by reading a stylesheet count in a hand-run measurement and would not have failed any build. The fix (`components/primitives/Numeric.tsx`) is **ungated**: the identical regression recurs the next time a route reaches for a primitive that carries luggage. The class is "a trivial component is the reason a closed CSS module file opens", and it is invisible at the call site. Wants a per-route CSS figure in `check-bundle-size` with a budget, which is a budget nobody has set — raise the budget question before writing the assertion |
+| Epic M | `M-P2-25` | **`N-01` block 4 is blocked on content, not on build.** `APP-FLOW.md` §2 wants *"Selected work — 6, mixed, at least 1 cross-division"*. There is no `caseStudy` schema and no real client work to cite; six invented projects is exactly non-negotiable #2. Needs real project records from the founder — names, what was done, what was delivered — before a schema is worth designing. The homepage is being built past it, so block 4 is a hole in the middle of the page, not the end of it |
+| Epic M | ~~`M-P2-35`~~ | **SWEPT 21 Aug — `01-VALIDATION-REPORT.md` §16 is the audit.** Twelve entries, and **only three of the nineteen gates consult `NOT_SOURCE` at all** — the other sixteen own their subject lists, so the blast radius was twelve entries × three gates. Six are correct and not authored (`.git`, `node_modules`, `.next`, `.lighthouseci`, `.sanity`, `.vercel`); `.next`'s is load-bearing, since two gates sweep it by their own path and excluding it here is what stops it counting twice. **Two were hiding something:** `.github` (the fifth U+0008) and `docs` (**a sixth, found by this sweep** — a literal backspace at `PROJECT-TRACKER.md:2731`, inside the row announcing `check:control` as the gate for this class, quoting the defect verbatim). **Two are correct by accident:** `public/` and `.claude/`. `check:control` now names the six hand-edited trees it needs and reports **203 files where it reported 135** — and a clean result from 135 files reads exactly like a clean result from 203. **Not gateable, and §16 says so plainly rather than inventing one** |
+| Epic M | ~~**`M-P2-37`**~~ | **FIXED 21 Aug. `check-service-role-key` sweeps served static assets.** Promoted to P1 before the fix: `public/` is returned byte for byte to anyone who asks, so it is the tree where a leak is already published. **A leak reaches a browser by one of two routes** - the bundler puts it in a chunk, or a file containing it is served verbatim. Only the first was swept. **The fix widens what the gate considers its subject, which is the point rather than a side effect:** a fourth sweep over `public/`, recursive, **with no extension filter**. `robots.txt`, `config.json`, `500.html` and `sw.js` are all fetchable and a key in any of them is equally readable; an extension filter was the second of the two accidents that kept the tree clean and reproducing it would rebuild the defect inside its own fix. Names and values both, on the chunk sweep's terms, values never printed. `NOT_SOURCE`'s entry now says the tree is **swept by that gate on its own path**, the way `.next` already was, rather than reading as unscanned. **Proven, all three directions:** a shaped key in `public/leak-probe.js` -> `1 violation(s)`, exit 1; removed -> clean, exit 0; `public/` emptied -> *"contains no files, so nothing was swept"*, exit 1; `public/` removed -> *"does not exist"*, exit 1. The summary now reads `1 served asset(s) in public/`, and that count cannot silently be zero |
+| Epic M | `M-P2-35` (original) | **`NOT_SOURCE`'s remaining exclusions have not been re-read against the gates added since they were written.** The fifth U+0008 got in because `.github` was excluded as *"workflow YAML — no colours, no keys"* — accurate for the two gates that list was written for, and not the question `check:control` asks. `01-VALIDATION-REPORT.md` §15 is the class. `check:control` now opts in via `extraRoots`, which fixes the instance; eleven entries remain, written for two gates, with nineteen gates now in the suite. **An exclusion produces no output, so nothing ever re-examines one.** The sweep is: for each entry, for each gate, is the stated reason still the whole question |
+| Epic M | `M-P2-23` | **The U+0008 class reached FIVE instances — see `01-VALIDATION-REPORT.md` §15 for the fifth, which took CI offline for eight days and is a different shape from the first four.** The gate existed and would have caught it on sight; it was never pointed at the file. Original row: **The U+0008 class reached four instances, and it is the clearest case in this build for a mechanical guard over a documented habit.** `check:rls` (twice over, in the capture and then in its fix), `check:contrast`'s `:disabled` exemption, `check-axe:988`, and one written into `check:control`'s own docstring **while the gate that caught it was being committed**. Three were live and passing green. None was preventable by care: all four render identically to the intended `\b` in `sed`, the terminal, the editor and the diff, so the only reviewer who could ever have caught one is a reviewer already running `od -c`. The habit was documented after instance one and instance two arrived hours later. **`check-axe:988` is the sharpest of the four** — a gate written specifically to detect a *future improvement* (Next beginning to server-render `global-error`, at which point `lang` appears and the characterisation must be deleted) was structurally incapable of detecting it, and agreed with its hardcoded expectation for the wrong reason. A gate that cannot fail is indistinguishable from a gate that passes, and this one was built to fail exactly once, later |
+| Epic M | `M-P2-21` | **Logged against `M-P2-20`, not acted on: block 2 shipped against a rule stated in two neighbouring files and enforced nowhere.** `Footer` and `Header` both carry the `TECH-SPEC` §3 comment on the plain-`<a>` convention. A convention documented at every call site and covered by no gate is the `M-P2-20` shape one level up — there the subject vanished, here the subject never existed. Whether it is gateable at all (a lint rule against `next/link` in chrome? an assertion on the served markup?) is a question for the sweep, not for now |
+| Epic M | `M-P2-22` | **The U+0008 class is now a gate: `check:control`.** `scripts/check-control-chars.mjs` rejects U+0000-U+0008, U+000B, U+000C, U+000E-U+001F across every tree `sourceFiles` enumerates; tab, newline and CR excepted. Wired into `verify:static`. Proven both directions: two codepoints inserted into `check-tokens.mjs` reported `2` naming file, line, column and codepoint; starving the file regex made the run exit non-zero with *"matched zero files"* rather than printing a clean `0`. **It found a third live instance on its first run** — `check-axe`'s `M-07` `lang` probe, written `[^>]*` + a literal backspace + `lang="` with a literal backspace, so that branch of the SSR-crash characterisation had never executed and agreed with its expectation for the wrong reason. Repaired to `\s`, re-measured against a real `next build && next start` (shell unchanged: no `lang`), and the branch proven to distinguish. Awareness had already been recorded twice and did not prevent the third |
+| Epic M | `M-P2-18` | **`check:lhci:desktop` and `check:lhci:mobile` were not audited by `M-P1-4`.** Both hard-skip on Windows and their assertions live in `lighthouserc.*.cjs`, evaluated by LHCI rather than by our code, so neither the zero test nor the made-to-fail test could be applied locally. **They are the only two of the 20 gates left unverified in both directions.** Audit them on a Linux runner, or from CI |
+| Epic M | `M-P2-16` | **the research findings R1-R6 and the fix ledger's repair rows R1-R5 share an identifier namespace.** (Written unbackticked here deliberately: backticking them trips the very gate this row is about, which is how it was found.) `check:claims` covers `R\d+` inside backticks in the five governed documents, so writing about research finding R6 in a tracker fails the gate — which it did, correctly, at `N-06`. This is `G7`'s class in a namespace `G7` did not sweep: an identifier that resolves to two different things. Today's workaround is not to backtick research references, which is a convention nobody will remember. Rename one side — `RF-1`…`RF-6` for the research findings is the cheaper half, since the ledger's are load-bearing in a gate |
+| Epic M | `M-P2-14` | **`gridsmith-lead-probe` inserts one row per CI run and nothing prunes them.** Invalid payloads never reach the database, so only the valid case writes. Pruning needs a privileged connection CI must not hold — it belongs to the same job as `M-P2-12`'s drift check, which already has the credential |
+| Epic M | ~~`M-P2-12`~~ | **Promoted to `M-P1-3` — see the P1 table above.** Filed P2 as a coverage gap. `A-07` showed it is not one: the leak existed **live** while the migration read correctly |
+| Epic M | `M-P2-11` | **the wordmark's face is constrained, not chosen.** It is `--font-mono` because that is the only family all four route groups already load, so it costs zero bytes — not because JetBrains Mono is the right face for the company mark. **Revisit at Press's shell epic (`P-xx`) when its font budget is set.** The question is whether one word justifies a fourth family on `/press`, on the critical path, against a 2.0s LCP budget with a ~1.52s empty-page floor. **It must be answered with a measured cost, not a preference** — build with Inter added to the Press layout, measure the LCP and the delta on both Lighthouse axes, then decide |
+| Epic M | `M-P2-9` | **`protectedVideo`'s shape is derived, not specified.** `SCHEMA-CORE.md` §1 references it from `project.media` and defines it nowhere. It mirrors `protectedImage` with a `file` asset. A poster frame, a duration and a captions track (WCAG 1.2.2, Level A for prerecorded video with audio) are all plausible additions and none is specified. Settle it at `D-01`, the first row that renders one |
+| Epic M | `M-P2-10` | **`post.author` and `post.readingTime` are untyped in the spec.** Listed as bare field names. Implemented as a string and a stored number; `author` could reasonably be a reference to `teamMember` and `readingTime` could reasonably be computed from `body` at query time. Settle at `N-13` |
+| Epic M | `M-P2-8` | **the AI-referral classifier's self-check is not in the verify chain.** `node lib/analytics/referral.ts` runs 11 assertions covering the substring and lookalike-host cases, and nothing runs it in CI. Folding it in means a nineteenth gate — `check-node-version` counts them and `ci.yml` has to agree — which is more than the logic currently warrants. Revisit when `lib/analytics/` grows, or when `Q-M19` resolves and the grant path needs a subject anyway |
+| Epic M | `M-P2-6` | **the baseline spread absorbs a duplicated chunk instead of attributing it.** `/_not-found` measures 0.2KB dearer than the other baseline routes because `global-not-found` is its own webpack entry and gets a second copy of the shared layout's client boundary — the same consent banner code, bundled twice. The tolerance was raised from 0.1 to 0.3 with the cause measured rather than guessed, which is the distinction the gate's own warning turns on. The fix is to compare non-entry chunks so a duplicate is attributed |
+| Epic M | `M-P2-7` | **`check-responsive` only measures fixed bottom bars below 768px.** That was right when `StickyCta` was the only one — it is `display: none` above 768px. The consent banner is fixed at **every** width, so its 2.4.11 reserve is asserted at 375px and unmeasured at 1440px. Widen the sweep to all three widths |
+| Epic M | ~~`M-P2-5`~~ | **Reclassified P1 as `M-P1-2` — see the P1 table above.** It was filed P2 on the reading that it is a deployment-configuration gap. It is not: the failure mode is a false VAT statement on a public website |
+| Epic M | `M-P2-3` | **every price field must carry whether its figure is net or gross of VAT, and each division's display rule follows from its audience.** Gridsmith is VAT registered at launch: consumer-facing prices must display VAT-inclusive, B2B prices must state their treatment explicitly. Press sells to individual authors — consumers under the Consumer Contracts Regulations 2013; Design and Digital sell largely B2B. **This is a schema constraint on the pricing rows and belongs to the division epics, not to `companyDetails`** — but it is cheaper to build in than to retrofit across three divisions at Stage 8. Raise it at the first pricing schema |
+| Epic M | `M-P2-4` | `npm audit` reports 13 high in the dev tree. All pre-existing (`@lhci/cli`, `puppeteer`, `next`/`postcss`) except `sharp`, which arrived transitively with the `sanity` devDependency at `M-05`. None is in the production dependency tree. Sweep at the Epic M sweep |
+| Epic M | `M-P2-2` | **a focusable element with a transition on `transform` can take focus while off screen** — the class behind the skip link's own first defect (`M-02`). Grepped, not swept: `motion.module.css:51` `.stickyCta` translates `100%` off screen over `--dur-base` and holds two buttons, so focus arriving mid-slide is the same shape; `visibility: hidden` makes it untabbable while hidden, which narrows the window but does not close it. `interactive.module.css:144` `.marker` rotates in place, is not focusable, and is not an instance. Nothing else transitions `transform`. Sweep at the Epic M sweep |
+| Epic M | `M-P2-1` | **no gate asserts that epic letters are unique across the four trackers.** `G7` fixed the instance by hand; nothing stops the next tracker edit reintroducing it. ~20 lines parsing `^## Epic (\S+)` from the four trackers. Deferred to the Epic M sweep because it is an eighteenth gate — `check-node-version` counts them and a proof is owed |
+
+**`A-GATE-6-6` is worth doing early**, because it is the direct cause of `A-GATE-7-2`: while
+`GOVERNED` excludes the run reports, a finding written only in a report creates no obligation
+to row it.
+
+### `A-GATE-7-6` — the ceiling, recorded against the PASS
+
+**This is not a defect and no amount of tightening removes it.**
+
+> **A gate over a hand-maintained ledger asserts that a plausible commit exists. It never
+> asserts that a fix occurred.**
+
+`check:claims` rejects a commit that does not exist, is not on this branch, predates the audit
+that raised the finding, never touched the named files, or names documents alone. Each rejects
+a class of *implausible* claim. **None reaches whether the change did what it says**, because
+the status column is written by the same person the ledger exists to check — promoting an
+`OPEN` row to `FIXED` against the current commit is accepted in one word and goes fully green.
+
+What establishes that a fix occurred is the **deliberate-failure proof**: make the gate go red,
+then green. The ledger and the proof are complementary; neither substitutes for the other.
+
+**Epic M must read the ledger knowing this.** A `FIXED` row is evidence that a claim is
+well-formed, not that it is true. Recorded in `CLAUDE.md` beside the standing rules because it
+bounds the verification approach rather than one script.
+
+### Defect classes logged this epic
+
+**Complete as at A-GATE PASS.** Eight instances of the gate class and four classes of its
+own. The list is the point: none was found by reading code, and nine were found by the
+deliberate-failure step — including three gates that shipped broken in the same session as
+the rule requiring the proof, written by authors who had just read it.
+
+| Class | Where | One line |
+|---|---|---|
+| **Gate measures nothing** — 8 instances | `A11Y-25`, `A11Y-27`, `A11Y-29`, `A11Y-32` + four earlier | a check that runs, reports a pass, and measured less than it claims |
+| **Proof satisfied by a different gate** | `A-GATE-4-3` | two checks share a predicate; the proof observes a red *build* and credits the wrong one, so unreachable code ships recorded as proven |
+| **Documentation outrunning the repo** — 5 occurrences | round 2's list, `G8`'s proof claim, `A-GATE-4-5`, `A-GATE-5-7`, `A-GATE-5-8` | the session that did the work wrote the record of it in the same pass; nothing re-read the tree. `git log --` the file before writing "fixed". **Now gated** — `check:claims` (`T3`/`U1`–`U3`), within the ceiling below |
+| **A verified record is not a verified fix** — the ceiling | `A-GATE-7-6`, `CLAUDE.md` | a gate over a hand-maintained register asserts a plausible claim exists, never that the work happened. Not fixable by tightening; the deliberate-failure proof is what answers it |
+| **Justification never re-checked** | `A11Y-31` | a restriction that is *too strict* emits no failing output and cannot be found by reading gate results |
+| **Expectation derived from its own subject** | `CLAUDE.md` "How to work" | deleting the subject deletes the expectation; the gate stays green having measured less |
+| **Hollow subject** | `CLAUDE.md` "How to work" | a subject that stops being the subject leaves the gate auditing whatever is there |
+
+Two rules came out of them and are now in `CLAUDE.md`: **a fix is not fixed until a
+permanent committed subject exists for a gate to reach**, and **a gate subject must assert
+that it is still the subject**. The proof rule is recorded there as *load-bearing, not
+ceremonial* — it has caught a broken gate in three consecutive sessions, twice on gates
+written in the same session as the rule.
+
+## Hosting — Vercel (`gridsmith-ltd`, `atikmurtazas-projects`), GitHub `atikmurtaza/Gridsmith-Ltd`
+
+**Moved 20 August 2026. The Hostinger section below is kept, not deleted** — the two
+constraints it records shaped `M-P1-1`'s framing and `A-12`'s fix, and a reader meeting those
+rows needs to know why they say what they say. What follows is what changed and what it costs.
+
+**Both Hostinger constraints are gone.**
+
+- *Constraint 1, managed hosting with no platform-level error document.* Vercel serves
+  configurable error responses, so `M-P1-1`'s preferred remedy is **available** where it may
+  not have been. That row's "may rule out the platform-served option" no longer applies.
+  `M-P1-1` is not started here — it is its own task — but it is no longer blocked on the
+  platform.
+- *Constraint 2, `npm` unavailable over SSH, therefore CI is the sole enforcement point.*
+  Vercel runs the build on its own runners and a deployment is reachable over HTTPS, so the
+  served gates can run against a real deployment rather than only against `localhost`. `M-P1-3`
+  (read the **live** database, not the migrations) becomes possible for the same reason. Also
+  its own task.
+
+**What replaced them, measured on the first deploy rather than assumed:**
+
+| | Hostinger (recorded) | Vercel (measured 20 Aug) |
+|---|---|---|
+| Node version | must be set to 24 by hand or `preinstall` fails | project is on `24.x`; `check:node` still runs at `preinstall` and is still the one gate that runs on the host |
+| Build config | platform UI | **`vercel.json` in the repo.** The project was created with `framework: null`, so the build ran, printed a full route table, and then failed `STATIC_BUILD_NO_OUT_DIR` looking for `dist/`. Pinned in the repo rather than the dashboard: a dashboard setting is invisible to this repository |
+| Egress to `api.sanity.io` at build | required, unverified | **verified** — the build reads `companyDetails` and succeeds |
+| Probe exclusion | `pageExtensions` rename, all probes | **pages only.** `gridsmith-lead-probe` is a route handler and is now excluded at runtime; see `M-P2-27` |
+| Deployment reachability | public | **SSO-protected** (`ssoProtection: all_except_custom_domains`). Bypass-for-automation is a Pro feature and this team is on hobby, so any gate run against a deployment needs protection lifted for the run |
+| Dataset | one value on the host | **per target.** Production → `production`, Preview and Development → `development`. Non-negotiable #4: the production target must never point at the seed dataset. The production dataset holds no content yet, so that target will render empty statutory fields until it is seeded — **not fixed here** |
+
+**Everything below this line is the superseded Hostinger record.**
+
+### Hosting — Hostinger Business, Node app via GitHub integration *(superseded 20 Aug 2026)*
+
+**Decided 18 August 2026.** The Node runtime this build assumes is available. Nothing already
+built needs revisiting and there is no static export.
+
+**Two constraints, both load-bearing for later rows.**
+
+**1. Managed hosting, not a VPS. No root, no nginx or Apache configuration.** `M-P1-1`'s
+preferred remedy — a platform-served static error document for the `__next_error__` shell —
+**may not be available**. The alternatives are an edge layer in front of the host, or a
+recorded acceptance of the Level A gap. **Not chosen and not built now: this is `A-12` work,
+once the deployment exists** and it can be established what the platform actually serves on a
+5xx.
+
+**2. `npm` cannot be run over SSH on this plan.** Build commands run automatically on deploy.
+**CI is therefore the sole enforcement point for every gate**, and that was checked rather
+than assumed.
+
+| Runs on the host at deploy | Runs in CI only |
+|---|---|
+| `preinstall` → `check:node`; `build` → `next build` | all 18 gates; `verify:*` is referenced by nothing the host invokes |
+
+Three things follow, and each is recorded rather than fixed:
+
+- **`check:node` does run on the host**, because it is wired to `preinstall` as well as to
+  `verify:static`. That is the one gate that is not CI-only. It is **correct that it runs
+  there** — a build on the wrong Node major is not this project's build — but it means
+  **Hostinger's Node version must be set to 24 or every deploy fails at install**, loudly,
+  with the message in `scripts/check-node-version.mjs`. `.nvmrc` is the source of truth.
+- **The build now makes an outbound request.** `M-05` made static generation read
+  `companyDetails` from Sanity, so the host needs network access to `api.sanity.io` at build
+  time. A host that blocks egress produces a build failure, not a silent empty footer —
+  `getCompanyDetails()` throws.
+- **⚠ `NEXT_PUBLIC_SANITY_DATASET` must be set on the host.** It defaults to `development`,
+  which is correct for a missing variable in CI and **wrong on a live deployment** — the
+  deploy would serve seed content with a `[SEED]` VAT number. `check:launch` cannot catch it
+  because it runs in CI against the CI environment, not against the host's. Logged as
+  **`M-P1-2`** — P1, not P2: the published value would be a false VAT statement. It belongs
+  with `A-12`'s production exclusions, and the preferred remedy is to remove the default
+  entirely so an unset variable is a build error rather than a silent fallback.
+
 ## Blocked / decisions needed
 
 | ID | Item | Needed from | Blocks |
 |---|---|---|---|
-| Q-M1 | Company number and registered office — **requested at kickoff, received as the literal placeholder `[company number + registered office]`. Still open. Not to be guessed** | Atik | M-05, L-05, 0.10 |
-| Q-M10 | Font licences — are Neue Haas Grotesk Display / GT America Mono / Freight Text held, or do we build on the open fallbacks (Inter / JetBrains Mono / Source Serif 4)? Blocks nothing before A-03; a later swap is a one-line `--font-display` change | Atik | A-03 |
-| Q-M11 | **Gridsmith Press is already live and trading.** Stage 5 is a cutover of a revenue-generating site, not a launch. Cutover plan to be written into `master/IMPLEMENTATION-PLAN.md` before Stage 3 work begins | Atik | G-01, G-02, Stage 5 |
+| ~~Q-M16~~ | **RESOLVED for the budgets; one observation stays open.** The mobile LCP ceilings are **measured, not provisional** — CI run #7 on `ubuntu-latest`, Node 24, median of 3, devtools throttling: 1522 / 1521 / 1522 / 1526ms across `/`, `/design`, `/digital`, `/press`. A 6ms spread on byte-identical empty pages is a fixed floor, not per-route content. **Digital has 78ms of headroom against its 1600ms ceiling.** The Lantern artefact that produced the original 533ms FCP→LCP gap is settled (VALIDATION §12) and LCP now equals FCP exactly on all four routes. **Still open, and carried into Stage 3:** (a) 78ms of LCP headroom is measured on a page containing one `h1` — hero imagery, work grids and book covers all produce a larger and later LCP element, so re-measure at the first Stage 3 route rather than at `H-01`, when the remedy would be cutting a page feature to pay for a floor; (b) **TBT is runner variance, not a Node 24 regression — corrected.** It was reported as a monotonic rise (83–86 → 87–98 → 104–107ms) on three runs; runs #9 and #10 came in at 81–86ms and 88–93ms, so the Node 24 spread (81–107ms) contains the Node 22 band entirely and there is no runtime effect. Under 4× CPU throttling TBT is CPU-bound and LCP is network-bound, which is why TBT moves ±13ms while LCP holds within 11ms. Lighthouse was 12.6.1 throughout, so no version drift. Digital's real headroom is ~55ms against a ±13ms band, on an empty page — re-measure at Epic M, and compare `benchmarkIndex` before reading any future TBT move as a code change | Atik | Stage 3 re-measure |
+| ~~Q-M1~~ | **RESOLVED 18 Aug 2026.** Company number `17050842`; registered office `30 Briarfield Road, Farnworth, Bolton, BL4 0HD`; trading address the same; VAT registration in progress, number before launch. All in the `companyDetails` singleton and nowhere else — nothing hardcodes them in a component. VAT is a **required field with a known-empty value**, gated by `check:launch` |
+| ~~Q-M17~~ | **RESOLVED 18 Aug 2026.** Sanity project `Gridsmith`, id `spzu6y31`, org `oJsbdLBrN`. Datasets `production` and `development`, both public, one shared schema folder. `A-06` is unblocked |
+| ~~Q-M18~~ | **RESOLVED 19 Aug 2026.** Supabase project `dqiutgmxillhsbzgnlsx`. `PROJECT_URL`, `PUBLISHABLE_KEY` and `DIRECT_CONNECTION_STRING` in `.env.local`, all server-side. `A-07` done, `A-08` unblocked |
+| Q-M15 | **No favicon or brand mark exists.** `/favicon.ico` 404s on every route; Lighthouse reports it as a console error and it holds best-practices at 0.96. A mark is a brand decision and is not being invented (`master/PROJECT-RULES.md` §11). Supply one — or confirm shipping without a favicon is acceptable and the assertion stays at 0.96 permanently | Atik | Lighthouse best-practices 1.0 |
+| ~~Q-M12~~ | **RESOLVED — the metric changed, not the numbers.** JS is now budgeted on the delta above the framework floor, not the total: Master ≤15KB, Digital ≤15KB, Press ≤20KB, Design ≤25KB, estimator/path-finder ≤40KB. The floor (100.2KB) is reported separately so a dependency upgrade shows as a floor change rather than silently consuming feature allowance. **Digital's 100/100/100 gate is unchanged** — Lighthouse scores measured experience, and the 90KB figure was a badly-set proxy for it | Atik | ~~Digital launch~~ unblocked |
+| ~~Q-M10~~ | **RESOLVED by default at A-03** — no licence held, so Inter / JetBrains Mono / Source Serif 4 are used, self-hosted via `next/font`. Licensed names deliberately left out of the font stacks. Buying a licence later changes one module in `styles/fonts/` | Atik | ~~A-03~~ |
+| ~~Q-M13~~ | **RESOLVED.** Design `--ink-subtle` is `#818180` at **5.01:1** — the first value on the theme's neutral ramp clearing 5.0:1, chosen over the 4.55:1 minimum so a later `--canvas` adjustment cannot push it back under AA. `--line-strong` recorded as decorative-only in `design/DESIGN.md` §5; Button (secondary) moved to `--ink-subtle` because its resting border is what identifies it as a button | Atik | ~~Design theme~~ applied |
+| ~~Q-M14~~ | **RESOLVED — CLAUDE.md was the file at fault, not FOUNDATION.** Both shadow tokens stay. The line now reads *"Depth comes primarily from 1px borders and background steps. `--shadow-2` is a hard ceiling; nothing beyond it."* Press book cards use `--shadow-1` by spec, and the Design and Digital rules already cap at `--shadow-2` | Atik | ~~A-05~~ |
+| ~~Q-M11~~ | **PARTLY REOPENED — the greenfield decision was over-broad.** The build is greenfield: nothing migrates, no content, no functionality, no database, and there is no cutover. But **the existing Press site is live and trading and comes down at launch**, so it has indexed URLs that 404 on day one unless mapped. Five of the six findings in `_shared/01-VALIDATION-REPORT.md` §10 stand; finding #3 ("nothing to crawl") is wrong for Press and is corrected there. Tracked as `G-08` (P1) | Atik | `G-08` |
+| ~~**Q-M19**~~ | **RESOLVED 19 Aug 2026.** Development GA4 and PostHog ids in `.env.local`; PostHog on **EU cloud**, asserted rather than defaulted. Live ids go in the Hostinger environment at launch — same variable names, different values per environment, the pattern `NEXT_PUBLIC_SANITY_DATASET` already uses. CI uses shaped placeholders, so the grant path is exercised there with no credential in the repository |
+| ~~**Q-M20**~~ | **RESOLVED for development, 19 Aug 2026.** `RESEND_API_KEY` in `.env.local`; sender `onboarding@resend.dev`, recipient `contact@gridsmith.uk`. Slack deliberately unused. **Two constraints carried to deployment, both recorded as constraints rather than gaps:** the sender becomes `notifications@gridsmith.uk` when DNS is done, and Resend's SPF `include:` must be **merged into the existing record** — `gridsmith.uk` already has one serving the live site's mail, and a second is a `permerror` under RFC 7208 §4.5 that silently breaks it | Atik | deployment |
+| ~~**Q-M21**~~ | **RESOLVED 19 Aug, for blocks 1–2.** Copy approved by the founder and recorded in `N-01 block 1` below. **And the homepage is hardcoded, not CMS-driven** — it changes rarely, every block is bespoke, and `groupPage` staying closed to `approach` and `about` is correct rather than a gap. **No homepage schema is to be built.** Blocks 3–9 still need approved copy, which is a copy question, not a schema one | Atik | N-01 |
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |
 | Q-M5 | Business hours and phone number for the confirmation screen | Atik | N-12 |
 | Q-M6 | A real continuity example — a client served across divisions or over time | Atik | N-05 |
 | Q-M7 | The honest limits — when should someone use a specialist instead? | Atik | N-04 |
-| Q-M8 | Existing site URL inventory / access to crawl | Atik | G-01 |
+| Q-M8 | **Existing Press site URL inventory** — the indexed URLs that must be mapped before the site is switched off at launch. Founder supplies before Stage 8; no crawl or planning until then | Atik | `G-08` |
 | Q-M9 | Public-facing team members | Atik | N-07 |
 
 ## Metrics dashboard
@@ -182,3 +2928,209 @@ that just wrote 24 primitives is the worst available reviewer of them.
 | Consent accept rate | tracked, not targeted | — |
 | Unmapped legacy URLs | 0 | — |
 | Seed records in production | 0 | — |
+
+---
+
+## Epic N/L/S — the seed-and-shell session, 21 August 2026
+
+**Scope, as given:** fill the site with seed content, ship a complete working shell, and produce
+one launch checklist. Explicitly *not* built for "launch tomorrow" — nothing goes live before VAT
+registration, which the owner confirmed. The checklist is `_shared/BEFORE-LAUNCH.md` and it is
+the only homework list; do not create a second one.
+
+### The defect worth reading before anything else: a dot in a document id
+
+**Sanity treats any document id containing `.` as a private document** — readable with a token,
+invisible to an unauthenticated query. `drafts.` is the familiar case; the behaviour is general.
+
+The first `S-01` run wrote 125 documents with ids like `seed.legal.privacy`. The transaction
+committed. The script printed a correct per-type census. **Every one was invisible to the site**,
+which reads with no token because both datasets are public.
+
+The visible symptom was mild and misleading: `/about`, `/approach` and all five `/legal/*` routes
+prerendered as 404s, the build exited 0, and the bundle table showed them at a 0.5KB delta
+instead of 2.7KB. It was found by asking why two routes were cheaper than their siblings, not by
+noticing missing pages.
+
+**The consequential symptom was invisible.** `check:launch` counts published seed documents with
+an **unauthenticated** query, and that count is the gate standing between fabricated case studies
+and a live site. With dotted ids it would have reported **0 published seed document(s)** in a
+dataset holding 125 of them — green, specific, and completely wrong, on the one check whose
+entire purpose is to see them. It now reports 119 (125 minus the six real testimonials), and the
+count moving is what establishes it reaches its subject at all.
+
+This is a new member of a familiar class and it is worth naming precisely: **the gate was
+correct, the query was correct, and the subject was invisible to the reader the gate used.** No
+amount of reading either file would have found it.
+
+Two remedies, both in `scripts/seed-content.mjs`, both proven by deliberate failure:
+
+| Guard | Proof | Message |
+|---|---|---|
+| No `_id` may contain a dot | reintroduced `seed.post.…` | `9 document id(s) contain a dot` |
+| Read the whole set back **unauthenticated** and fail unless every document is visible | added a non-existent id to the expected set | `wrote 125 document(s); an unauthenticated read sees 125` |
+
+The second is the general one, and it is the same rule as `check:launch` reading the dataset from
+the served site's header (`M-P1-7`) and `check-axe` asking the probe route whether Resend is
+configured (`A-08`): **ask the system.** Whether *this* process could write a document is a fact
+about this process. The site is a different reader, and the only way to establish what it will
+see is to be it.
+
+Verified independently before the fix: `probeplain` written and read back unauthenticated →
+visible; `probe.seed.check`, written in the same session with the same token → `[]`.
+
+### S-01 — 125 documents, and the six that are real
+
+`scripts/seed-content.mjs` plus `scripts/seed-legal.mjs`. Development only, hardcoded, for the
+same reason `seed-company-details.mjs` hardcodes it.
+
+| Type | n | Notes |
+|---|---|---|
+| `service` | 30 | 10 per division, every one with a pricing block — the schema will not save one without |
+| `project` | 24 | To FOUNDATION §7's distribution exactly: 8 minimum-content, 4 maximum-content, 3 cross-division, 3 confidential |
+| `faq` | 45 | 15 per division, inside §7's 12–18 band |
+| `post` | 9 | |
+| `teamMember` | 4 | `isPublic: true`, all named `[SEED] Placeholder Name` |
+| `groupPage` | 2 | `approach` and `about`, and only those two — the slug set is closed |
+| `legalDocument` | 5 | |
+| `testimonial` | **6** | **REAL.** `isSeed: false` |
+
+**The testimonials are the exception and the exception is the point.** Six public Freelancer
+reviews, transcribed verbatim on 21 August 2026 — the reviewers' own punctuation and
+capitalisation, including a missing space in one of them, because correcting a review is editing
+it. `verified: true` is defensible only because `sourceUrl` lets a reader check it, which is what
+the two new fields are for. The seed script refuses to write a testimonial without one.
+
+**`continuityExample` is not seeded and cannot be.** `verified` is hard-true (`N-05`), so a
+placeholder would have to assert that someone confirmed a story that did not happen. `/approach`
+renders the empty state until `Q-M6`.
+
+**Every figure is zeroed.** `metric.value` is the literal `[SEED] 00%` — the field is a string
+precisely so the marker can live inside the figure. `pricingBlock.fromAmount` is a *number* and
+cannot hold a marker, so it is `0`, renders `£0,000`, and the note carries `[SEED] INDICATIVE`.
+
+**No image asset was uploaded and none should be.** FOUNDATION §7.7's permitted placeholder —
+"neutral geometric placeholders at correct aspect ratios" — is a *rendering* concern, so
+`Placeholder.tsx` draws a hatched box from tokens. No request, no LCP candidate, correct reserved
+space, and nothing to delete when real work arrives. An uploaded placeholder asset would outlive
+the record referencing it.
+
+### N-01 — 9 of 9, and every block after 3 cost 0.0KB
+
+One block per commit, measured after each, as the epic's own rule requires. Block 4 (selected
+work) was the only one that had ever been *skipped* rather than deferred — `M-P2-25`, because
+building it meant inventing clients. `S-01` is what unblocked it, and the distinction that made
+it safe is worth restating: the plausibility of a seed project is in its **structure** and never
+in its **content**.
+
+`/` delta: **2.7KB of 15KB, unchanged across blocks 4 and 6–9.** None is a client component.
+
+**Lighthouse remains the open half of `N-01`'s premise.** The 0.98 threshold on `/` is gated at
+`error` severity and has still never run against nine blocks: Lighthouse does not run on Windows
+(chrome-launcher/Node 24 EPERM race, VALIDATION §13 E12), so CI is the arbiter and the next run
+is what tests the projection. Do not read "all gates green" as covering it.
+
+### The primitive layer stopped importing `next/link`
+
+`Link`, `Button`, `Breadcrumb` and `Pagination` were the last importers. Because the import is at
+module scope, **every consumer paid for it whether or not the branch using it ran** — `Link`'s
+external branch already returned a plain anchor and still dragged the runtime in.
+
+`TECH-SPEC` §3/§9 and `Header`, `Footer` and `DivisionRouting` had each already reached this
+conclusion independently, which is the tell that it was a layer-level decision nobody had made at
+the layer.
+
+Measured: a **3,389 B gz** shared chunk removed; `/_kitchen-sink` **8.6 → 5.3KB**. That also
+cleared a delta-budget failure caused purely by re-chunking — with eight new routes using
+breadcrumbs, the runtime became a *shared* chunk rather than a per-page one and pushed the
+kitchen sink 0.04KB over.
+
+`SHARED_BASELINE_BUDGET_KB` moved **2.6 → 2.8** and the reason is recorded beside the constant:
+webpack re-chunked, so the measured banner went 1.8 → 2.2KB and the baseline 2.6 → 2.7KB, while
+**`/`'s total delta stayed at 2.7KB across the same change**. That equality is how we know it is
+attribution moving rather than cost arriving. 2.8 keeps the `2.8 < shared <= 3.0` window the
+`A-GATE-4-3` guard requires, and the assertion was proven to still fire inside it (budget
+temporarily 2.65, shared 2.7, floor check silent).
+
+### Two pre-existing defects found by gates, both confirmed pre-existing
+
+Both were confirmed by stashing the session's changes and re-running against a clean build at
+`HEAD` — **not** assumed from the code.
+
+1. **`.stickyCta` overflowed 375px by 40px**, pushing the document to 415px. The same overflow is
+   what made axe report `color-contrast` UNRESOLVED on that button: an element hanging off the
+   viewport is "partially obscured". Two symptoms, one defect. Fixed with `flex-wrap` at the
+   element every caller routes through rather than by shortening a label.
+2. **`landmark-unique` on `/about`** — the `about` groupPage carried a "Who you will work with"
+   section and the route renders a team roster under the same heading. Fixed in the content: the
+   roster is code, so its heading is code's to own.
+
+### L-01/L-02/L-03 — five documents, drafted from this build's facts
+
+Not from a template. The processors named are the ones actually used, the cookie described is the
+one actually set (`gs_consent`, its real attributes and real 12-month life), the consent
+categories are the three actually implemented, and the enquiry fields listed are the ones in
+`lib/leads/schema.ts`.
+
+**Every clause names its instrument.** That is what makes the solicitor's job a check rather than
+a rewrite, and it makes visible which clauses are required by law and which are there because
+someone liked them. Where the draft is unsure which limb applies it says so rather than guessing
+at a sub-paragraph — `CLAUDE.md` #2 forbids invented clause references and a plausible one is
+worse than an admitted gap.
+
+**Two markers, two meanings.** `[SEED - SOLICITOR REVIEW REQUIRED]` heads every document and
+`solicitorApproved` is false on all five. `[DECISION]` marks a choice that is the owner's —
+retention, liability cap, IP transfer point, payment terms, ADR provider, hosting processor. Each
+carries a working default so the page renders; none is a recommendation.
+
+**The query deliberately does not filter on `solicitorApproved`.** `master/SCHEMA.md` offers an
+`$allowUnapproved` parameter; filtering would serve a 404 for `/legal/privacy`, and a site with
+no privacy notice is worse than one carrying a draft that says so in the first thing on the page.
+What must not happen — a draft presented as reviewed — is prevented by rendering the state and by
+`noindex`, not by hiding the document.
+
+`client-terms` is a fifth slug the spec did not list. `anchorId` is contract-facing, so a
+consumer-facing website notice must not share an anchor space with a B2B contract.
+
+### Division landing pages — one composition, three voices
+
+`DivisionLanding` names no colour and no typeface. Every rule resolves through the theme tokens
+the route group's root layout has already set on `<html data-division>`, so the same markup
+renders amber on near-black in a neo-grotesque, electric blue on off-white in a **monospace**
+display face, and deep green on warm paper in a **serif**. `CLAUDE.md`'s "shared structure, not
+shared colour" made executable; three components would have been three places for the grid to
+drift. Verified visually on all three.
+
+Each division supplies only `copy`. Press additionally uses an `afterHero` slot for its rights
+statement — a slot rather than a `showRights` boolean, because the next division to need one will
+need a different thing.
+
+**These are landing pages, not the full hubs.** Design's track fork and standards strip, Digital's
+ownership module and stack page, and Press's Path Finder and books shelf are `B-*`, `U-*` and
+`K-*`/`P-*` rows needing content and decisions that do not exist. Every component says so in its
+own docstring.
+
+### Measured, at close
+
+| | |
+|---|---|
+| Routes built | 51 measured by `check-bundle-size`, all within budget |
+| `/` delta | 2.7KB of 15KB — 12.3KB spare |
+| `/design` / `/digital` / `/press` | 2.7KB each, against 25 / 15 / 20KB |
+| `/contact` | 9.7KB of 15KB — the only master route with a client boundary besides the banner |
+| axe | 60 analyses across 15 routes x 2 viewports x 2 phases, **zero violations** |
+| Same-origin links | 47 distinct targets, every one resolves |
+| Responsive | 42 combinations (14 routes x 375/768/1440), no overflow |
+| Seed enforcement | 119 published seed documents counted in `development` |
+| Gates | 21, all green locally except the two Lighthouse axes, which do not run on Windows |
+
+### What did NOT happen, so nobody re-derives it
+
+- **Lighthouse has not run against the finished pages.** CI is the arbiter. `H-01` is still open.
+- **The screen-reader pass still has not happened.** `M-02` stays un-DONE. It is item 17 in
+  `BEFORE-LAUNCH.md`.
+- **No filter UI on `/work`.** FOUNDATION requires filters to derive options from the data; with
+  24 seed records the facets would be invented taxonomy. It arrives with real work.
+- **No `?seed=hide`** (`S-05`, P1) — not needed while nothing is being demonstrated to a prospect.
+- **`M-P1-4`'s two sweeps are still open**, and the "END OF EPIC N" entry above still governs
+  them.

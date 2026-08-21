@@ -25,7 +25,7 @@ Dark canvas. Work is the light source. This is the only one of the three divisio
 
   --ink:            #F5F5F4;
   --ink-muted:      #A1A1A0;
-  --ink-subtle:     #6B6B6A;
+  --ink-subtle:     #868685;   /* was #6B6B6A (3.67:1, failed AA) then #818180. See §2 */
 
   --accent:         #E8A33D;   /* amber — drafting pencil, warning tape */
   --accent-hover:   #F2B75C;
@@ -44,15 +44,30 @@ Dark canvas. Work is the light source. This is the only one of the three divisio
 
 **Contrast verification (WCAG 2.2 AA):**
 
-| Pair | Ratio | Pass |
+| Pair | Measured | Pass |
 |---|---|---|
-| `--ink` on `--canvas` | 17.8:1 | AAA |
-| `--ink-muted` on `--canvas` | 8.1:1 | AAA |
-| `--ink-subtle` on `--canvas` | 4.6:1 | AA — **body text only at ≥16px; never for small print** |
-| `--accent` on `--canvas` | 8.9:1 | AAA |
-| `--accent` on `--canvas-raised` | 7.6:1 | AAA |
-| `--accent-ink` on `--accent` | 8.9:1 | AAA |
-| `--line-strong` on `--canvas` | 3.1:1 | AA for UI borders |
+| `--ink` on `--canvas` | 17.92:1 | AAA |
+| `--ink-muted` on `--canvas` | 7.56:1 | AAA |
+| `--ink-subtle` on `--canvas` | 5.37:1 | AA at any size |
+| `--accent` on `--canvas` | 9.07:1 | AAA |
+| `--accent` on `--canvas-raised` | 8.46:1 | AAA |
+| `--accent-ink` on `--accent` | 9.07:1 | AAA |
+| `--line-strong` on `--canvas` | 1.72:1 | **Decorative only — never a component boundary or a state** |
+
+**Two corrections made at A-03, both from measurement.** This table previously carried
+figures that were not achievable with these colours.
+
+- **`--ink-subtle` was `#6B6B6A`, published as 4.6:1. It measured 3.67:1** — below the
+  4.5:1 AA floor for the body text this table permits it on. Now `#818180` at **5.01:1**.
+  Deliberately not the bare minimum: `#7A7A79` would have cleared AA by 0.05, which any
+  later adjustment to `--canvas` would erase. `#818180` is the first value on this
+  theme's neutral ramp (`R=G=x, B=x-1`, the pattern of `--ink` and `--ink-muted`) to
+  clear 5.0:1. Approved under `Q-M13`.
+- **`--line-strong` was published as 3.1:1 "AA for UI borders". It measures 1.72:1** and
+  never met 3:1. Reclassified as decorative, consistent with the other three themes, whose
+  equivalents sit at 1.59–1.74. **A component boundary or state indicator needs 3:1 under
+  WCAG 1.4.11 and must use `--ink-subtle` (5.37:1) instead** — this constrains input
+  outlines, selected states and focus rings on the Design theme.
 
 ## 3. Typography
 
@@ -91,7 +106,7 @@ Small, `--ink-subtle`, mono, uppercase. Repeated consistently, this does more id
 | Component | Specification |
 |---|---|
 | **Button (primary)** | `--accent` fill, `--accent-ink` text, 0 radius, `--space-4` / `--space-8` padding, mono uppercase `--text-sm` `0.08em`. Hover: `--accent-hover`, no transform. Focus: 2px `--ink` outline, 2px offset |
-| **Button (secondary)** | Transparent, 1px `--line-strong` border, `--ink` text. Hover: border `--accent`, text `--accent` |
+| **Button (secondary)** | Transparent, 1px **`--ink-subtle`** border, `--ink` text. Hover: border `--accent`, text `--accent`. Focus: 2px `--ink` outline, 2px offset. *Was `--line-strong`, which is 1.72:1 — a secondary button's border is what identifies it as a button, so it needs 3:1 under WCAG 1.4.11* |
 | **Track fork panel** | Full-height split, 1px `--line-strong` divider. Hover/focus: background `--canvas-raised`, accent 2px top rule animates in from left, sibling drops to 40% opacity |
 | **Work card** | Image (4:3), 0 radius, 1px `--line` border. Below: mono eyebrow (year · track), display title, `--ink-muted` one-liner. Hover: border → `--accent`, image scale 1.02, 400ms `--ease-out` |
 | **Drawing matrix** | Real `<table>`. Header row: mono uppercase, `--canvas-raised` background, sticky on scroll. Cells: 1px `--line` borders, `--space-3` padding. Alternating row tint at 2% white. Mobile: horizontal scroll inside a bordered container with a visible scroll affordance and the first column pinned |
@@ -100,6 +115,20 @@ Small, `--ink-subtle`, mono, uppercase. Repeated consistently, this does more id
 | **Pricing table** | Mono for all figures. 1px grid. "From" prefix in `--ink-subtle` `--text-xs`. A `--accent` left rule marks the recommended tier |
 | **Sticky mobile CTA** | Full-width, `--canvas-raised`, 1px top `--line-strong`, safe-area inset padding. Appears after 40% scroll depth |
 | **Media** | 0 radius, 1px `--line` border, watermark baked in, `user-select: none`, context menu suppressed |
+
+**`--line-strong` is decorative-only — and so is `--line`, in every theme.** This was
+first found here, but the A-05 sweep showed neither line token clears 3:1 in any theme on
+any surface. The rule and the replacement pattern now live in `_shared/00-FOUNDATION.md`
+§3 and are gated by `scripts/check-contrast.mjs`; this file does not restate them.
+
+For Design specifically: any border identifying a control or one of its states uses
+**`--ink-subtle` (5.37:1)**. Button focus is unaffected — it already specifies a 2px
+`--ink` outline at 2px offset, 17.92:1. Genuinely decorative rules stay on `--line-strong`:
+the track-fork divider, the sticky-CTA top rule, card and media borders.
+
+One component in the table above needed changing rather than noting: **Button (secondary)**
+specified a 1px `--line-strong` resting border, and that border is the only thing
+identifying it as a button. Moved to `--ink-subtle`.
 
 ## 6. Motion
 

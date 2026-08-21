@@ -7,7 +7,7 @@ Binding rules for anyone (human or AI coding agent) working on the root route gr
 ## 1. Non-negotiables
 
 1. **The master layer has no colour of its own.** `--accent` is ink. Do not introduce a fourth brand colour. Division accents appear only on division cards, division badges and the footer switcher.
-2. **`--accent-design` (amber) is 2.0:1 on white.** It may never be text, never a sole state indicator, never a link colour on master pages. Rules and badge borders only.
+2. **`--accent-design` (amber) is 2.16:1 on white** — the figure check:contrast measures. It may never be text, never a sole state indicator, never a link colour on master pages. Rules and badge borders only.
 3. **Division routing must sit above the second viewport** on every breakpoint. This is the founder's specialist-discovery requirement and it is testable.
 4. **"More than one" and "Not sure" are never styled as secondary.** They are the highest-value conversion path.
 5. **Case studies live at `/work/[slug]` only.** Division work routes are filtered indexes that link here. Do not create division-level detail routes.
@@ -86,12 +86,34 @@ redirects/legacy.json       generated, version-controlled
 
 | Rule | Enforcement |
 |---|---|
-| Homepage Lighthouse performance ≥98 | LHCI blocks merge |
-| LCP ≤1.8s, INP ≤200ms, CLS ≤0.03 | LHCI |
-| Master routes JS ≤110KB gz **including the consent banner** | size-limit |
-| `/work` with filters ≤150KB gz | size-limit |
-| Consent banner ≤8KB gz | size-limit |
+| Homepage Lighthouse performance ≥98 | LHCI **desktop axis** blocks merge, median of 3 |
+| LCP ≤1.8s, CLS ≤0.03 | LHCI **mobile axis**, asserted directly on a 4G throttle. Both were named here and asserted nowhere until the Epic A audit |
+| INP ≤200ms | **Not assertable in CI** — field metric. TBT ≤200ms is the lab proxy |
+| Master routes JS **delta ≤15KB gz** above the framework floor, **including the consent banner** | `check-bundle-size` |
+| Consent banner ≤8KB gz | `check-bundle-size` — **measured at `A-11`: 2.0KB.** Enforced at **3.0KB**, deliberately stricter than this rule: the measurement plus room for real copy and the cookie-policy link. This rule is the ceiling, not the budget. Until `M-06` the row named an enforcement that did not exist — the gate printed the literal `8.0KB` and checked nothing |
+| Framework floor reported separately; re-baselining it is its own commit | `check-bundle-size` |
 | No hero video, no third-party embeds | Manual review |
+
+**Lighthouse runs on two axes — FOUNDATION §8.** Desktop asserts the category scores (the
+craft claim a prospect runs); mobile asserts Core Web Vitals directly on a 4G throttle and
+deliberately does **not** assert the performance score, because that score is a weighted
+curve that moves between Lighthouse versions. Nothing was lowered when the two were split.
+
+**INP is not assertable in CI.** It is a field metric and a Lighthouse navigation run does
+not produce one; this file previously named LHCI as its enforcement, which was never
+possible. TBT at the same ceiling is the lab proxy. See `_shared/01-VALIDATION-REPORT.md` §11.
+
+**The LCP ceilings here are measured, not provisional.** CI run #7, `ubuntu-latest`, Node 24,
+median of 3, devtools throttling: 1519–1530ms across the four routes. The 1441ms figure this
+paragraph used to quote was the superseded dev-machine number, and the sentence stayed after
+`Q-M16` was closed and `_shared/00-FOUNDATION.md` §8 and `05-HANDOVER.md` took the budgets
+off provisional.
+
+**What remains open is durability, not the number.** Every figure above is what an empty
+page costs — one `h1`, 425 B of route JS. Hero imagery, work grids and book covers all
+produce a larger and later LCP element. Re-measure at the first Stage 3 route, not at
+`H-01`, by which point the remedy is cutting a page feature to pay for a floor. `Q-M16`.
+
 
 ## 9. Motion rules
 
@@ -101,7 +123,7 @@ redirects/legacy.json       generated, version-controlled
 
 ## 10. Definition of Done
 
-- [ ] Works at 375px, 768px, 1440px
+- [ ] Works at 375px, 768px, 1440px — `npm run check:responsive`, not a manual look
 - [ ] Keyboard navigable end to end
 - [ ] Screen reader tested for any interactive component
 - [ ] axe zero violations

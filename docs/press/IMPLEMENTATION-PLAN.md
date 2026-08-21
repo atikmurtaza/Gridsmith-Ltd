@@ -1,8 +1,24 @@
 # Implementation Plan — Gridsmith Press
 
-Press inherits the shared foundation built during Design's Phase 0 and starts at its own Phase 1.
+Press inherits the shared foundation from `master/IMPLEMENTATION-PLAN.md` Phase 0 and
+starts at its own Phase 1. Build position is **second of the three divisions** (Stage 6, after Digital) —
+`_shared/02-BUILD-SEQUENCE.md` §2, decided. It was first under the old staged-launch plan;
+that plan is withdrawn. Press sits third overall rather than last **because it is the
+section with real customers**, and the tail of a programme is where schedule slack
+disappears — not because of its launch-readiness advantages, which no longer bear on the
+order.
 
-**Build order note:** Press is recommended third, but it is the division with the most existing revenue and the most existing proof (published books, real clients). If launch speed matters more than sequencing logic, Press is the strongest candidate to go first — it is the only division whose content requirements are largely already satisfied by work already done.
+**There is no Press launch.** Everything goes live at once, after Stage 8, when real
+content is loaded. Press does not ship separately, is not linked separately, and has no
+"opening shortly" state. Phase 6 below is a **readiness** phase, not a launch event.
+
+**Greenfield for the build; not greenfield for the URLs.** Nothing migrates — no content,
+no functionality, no database. But **the existing Press site is live and trading, and comes
+down at launch**, so its indexed URLs must be mapped or they 404 on day one. That is
+tracked at `G-08` in the master tracker and is data, not architecture:
+`redirects/legacy.json` already exists, empty and wired. The URL inventory arrives before
+Stage 8. See `_shared/01-VALIDATION-REPORT.md` §10, which was over-broad on this point and
+is corrected there.
 
 ---
 
@@ -46,7 +62,7 @@ This ordering is deliberate. Press's conversion mechanism *is* the trust archite
 | 3.2 | `recommend.ts` pure function | 3.1 | Unit tested; all 6 outcomes reachable |
 | 3.3 | **ETH-04 verification run** | 3.2 | 3 scenarios that must return self-service / not-ready do so — **HARD GATE** |
 | 3.4 | Static SSR decision table (no-JS) | 3.1 | All 6 outcomes + criteria readable without JS |
-| 3.5 | Path Finder island, 5 steps | 3.2 | ≤140KB gz; fieldsets; `aria-live` |
+| 3.5 | Path Finder island, 5 steps | 3.2 | JS delta ≤40KB gz; fieldsets; `aria-live` |
 | 3.6 | Result view, CTA suppressed on honest outcomes | 3.5 | No CTA button on self-service or not-ready |
 | 3.7 | `press_path_results` + honesty audit column | Foundation | `is_gridsmith_outcome` written correctly |
 | 3.8 | `/press/assessment` entry offer page | 1.7 | Priced; sample report linked |
@@ -85,15 +101,19 @@ This ordering is deliberate. Press's conversion mechanism *is* the trust archite
 | 5.7 | Cross-browser + device | |
 | 5.8 | PostHog funnels + honesty dashboard | `v_path_finder_honesty` visible |
 
-## Phase 6 — Launch (Week 10)
+## Phase 6 — Launch readiness (Week 10)
+
+**Not a launch.** These are the checks that must be green before Press is considered
+complete; the site goes live with the other three sections after Stage 8.
 
 | # | Task | DoD |
 |---|---|---|
-| 6.1 | Author user test, 6 participants incl. 2 first-time authors | Ask directly: "does this feel like a vanity press?" — **any yes blocks launch until addressed** |
+| 6.1 | Author user test, 6 participants incl. 2 first-time authors | Ask directly: "does this feel like a vanity press?" — **any yes blocks launch until addressed**. Run this **early**, not at the end of the phase: with the staged launch gone it is one of only three pieces of pre-launch evidence the programme has |
 | 6.2 | Speed-to-lead drill | Notification <60s; reply by end of next business day |
 | 6.3 | Analytics verification | `retailer_click` and return-tracking working |
-| 6.4 | Soft launch to past clients | They are the best credibility check |
-| 6.5 | Public launch | |
+| 6.4 | Review with past clients | They are the best credibility check. Was "soft launch to past clients" — there is no soft launch, but the review is worth as much and can happen on staging |
+| 6.5 | ~~Public launch~~ | **Removed.** Single launch after Stage 8 |
+| 6.6 | **Existing Press site retirement checked** | Every indexed URL from the inventory maps to a destination in `redirects/legacy.json`, or is a deliberate 410. Zero unmapped. `G-08` |
 
 ## Phase 7 — Post-launch
 

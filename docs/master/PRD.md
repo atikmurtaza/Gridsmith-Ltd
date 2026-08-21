@@ -1,6 +1,6 @@
 # PRD — Gridsmith Master Layer
 
-**Scope:** `gridsmith.co.uk` root — homepage, `/about`, `/approach`, `/work`, `/insights`, `/contact`, `/legal/*`, and the shared chrome (header, footer, division switcher, error pages).
+**Scope:** `gridsmith.uk` root — homepage, `/about`, `/approach`, `/work`, `/insights`, `/contact`, `/legal/*`, and the shared chrome (header, footer, division switcher, error pages).
 **Not a fourth division.** This is the layer that makes three divisions read as one company.
 **Traces to:** `_shared/00-MARKET-RESEARCH-BASIS.md`, `00-FOUNDATION.md`, `00-PROCESS.md`
 
@@ -8,7 +8,7 @@
 
 ## 1. Problem statement
 
-The three division specs each solve a specific buyer's problem well. None of them answers the question a visitor to `gridsmith.co.uk` actually arrives with: **what is this company, and why would I use one firm for design, software and publishing rather than three specialists?**
+The three division specs each solve a specific buyer's problem well. None of them answers the question a visitor to `gridsmith.uk` actually arrives with: **what is this company, and why would I use one firm for design, software and publishing rather than three specialists?**
 
 That question has a real answer — the continuity principle: a client who stays gets faster, cheaper and better-served because Gridsmith accumulates context no single-discipline competitor holds. But it is only an answer if it is argued. Asserted, it reads as a conglomerate justifying itself.
 

@@ -75,7 +75,7 @@ See `master/IMPLEMENTATION-PLAN.md` Phase 0. It is complete before Design starts
 |---|---|---|
 | 5.1 | User test track fork, 5 per buyer type | ≥80% self-select correctly — **blocks launch** |
 | 5.2 | Speed-to-lead drill: submit → notification | Notification <60s verified; reply commitment is end of next business day |
-| 5.3 | Redirects from defensive domains | `gridsmithdesign.co.uk` → `/design/` 301 |
+| 5.3 | Redirects from defensive domains | `gridsmithdesign.uk` → `/design/` 301 |
 | 5.4 | Analytics verification | Every event in the taxonomy fires once, correctly |
 | 5.5 | Soft launch to 10 existing contacts | Feedback collected |
 | 5.6 | Public launch | |

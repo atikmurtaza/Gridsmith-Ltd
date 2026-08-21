@@ -1,0 +1,20 @@
+# Line endings are an environment assumption, so they get pinned rather than left to
+# whatever core.autocrlf each machine happens to have. The repo stores LF; checkouts on
+# Windows may render CRLF, and that is fine — what must not happen is CRLF entering the
+# repository, because then the same file differs by platform and every gate that reads
+# source has to keep guessing.
+#
+# All four scanning gates already split on /\r?\n/ and would survive either way. This is
+# the class fix rather than four instance fixes. 01-VALIDATION-REPORT §13.
+* text=auto eol=lf
+
+# Binary — never touched, never diffed as text.
+*.woff2 binary
+*.woff  binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.webp  binary
+*.avif  binary
+*.ico   binary
+*.pdf   binary

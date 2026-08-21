@@ -1,0 +1,55 @@
+/**
+ * Design theme — precision instrument, a drawing sheet.
+ * docs/design/DESIGN.md §2.
+ *
+ * Zero radius everywhere. Amber reads as drafting pencil and warning tape, and works
+ * here because the canvas is near-black — the same amber is 2.16:1 on master's white
+ * and is constrained there accordingly.
+ */
+
+[data-division="design"] {
+  --canvas:         #0C0C0D;
+  --canvas-raised:  #151517;
+  --canvas-sunken:  #060607;
+
+  --ink:            #F5F5F4;
+  --ink-muted:      #A1A1A0;
+  /**
+   * Was #6B6B6A, which DESIGN.md recorded as 4.6:1. Measured, it is 3.67:1 — below the
+   * 4.5:1 AA floor for the body text the spec permits it on.
+   *
+   * Set to 5.01:1 rather than the 4.55:1 minimum: clearing AA by 0.05 means any later
+   * adjustment to --canvas puts it back under, so the buffer is the point. #818180 is
+   * the first value on this theme's neutral ramp (R=G=x, B=x-1, as --ink #F5F5F4 and
+   * --ink-muted #A1A1A0) to clear 5.0:1. Approved under Q-M13.
+   */
+  --ink-subtle:     #868685;
+
+  --accent:         #E8A33D;   /* amber — drafting pencil, warning tape */
+  --accent-hover:   #F2B75C;
+  --accent-ink:     #0C0C0D;
+
+  --line:           #262628;
+  /**
+   * 1.72:1 — decorative only, matching the other three themes. DESIGN.md previously
+   * claimed "AA for UI borders", which it never met. A component boundary or state
+   * indicator needs 3:1 under WCAG 1.4.11 and must use --ink-subtle (5.37:1) instead.
+   */
+  --line-strong:    #3A3A3D;
+
+  --font-display:   var(--font-inter), system-ui, sans-serif;
+  --font-body:      var(--font-inter), system-ui, sans-serif;
+  --font-mono:      var(--font-jetbrains), ui-monospace, monospace;
+
+  --radius-default: 0;   /* zero radius everywhere — R5 tactile brutalism */
+
+  /* **The division accents are declared by every theme, not master alone** (V3).
+     Same three colours, same position — the footer division switcher's 3px top rules — on
+     all four. That is the cheapest thing that makes four themes read as one system, and it
+     removes a real hazard: these names used to resolve to nothing off master, which made
+     `border-block-start-color: var(--accent-design)` invalid at computed-value time and
+     discarded the shorthand's colour with it. `check:tokens` now holds all four. */
+  --accent-design:  #E8A33D;
+  --accent-digital: #1B5FFF;
+  --accent-press:   #2E4A3A;
+}

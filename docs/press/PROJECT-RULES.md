@@ -93,9 +93,30 @@ app/(press)/press/            Route segments, kebab-case
 
 | Rule | Enforcement |
 |---|---|
-| LCP ≤2.0s, INP ≤200ms, CLS ≤0.05 | LHCI blocks merge |
-| Marketing routes JS ≤110KB gz | size-limit |
-| `/press/path-finder` JS ≤140KB gz | size-limit |
+| LCP ≤2.0s, CLS ≤0.05 | LHCI **mobile axis**, asserted directly. Both were named here and asserted nowhere until the Epic A audit |
+| INP ≤200ms | **Not assertable in CI** — field metric. TBT ≤200ms is the lab proxy |
+**Lighthouse runs on two axes — FOUNDATION §8.** Desktop asserts the category scores (the
+craft claim a prospect runs); mobile asserts Core Web Vitals directly on a 4G throttle and
+deliberately does **not** assert the performance score, because that score is a weighted
+curve that moves between Lighthouse versions. Nothing was lowered when the two were split.
+
+**INP is not assertable in CI.** It is a field metric and a Lighthouse navigation run does
+not produce one; this file previously named LHCI as its enforcement, which was never
+possible. TBT at the same ceiling is the lab proxy. See `_shared/01-VALIDATION-REPORT.md` §11.
+
+**The LCP ceilings here are measured, not provisional.** CI run #7, `ubuntu-latest`, Node 24,
+median of 3, devtools throttling: 1519–1530ms across the four routes. The 1441ms figure this
+paragraph used to quote was the superseded dev-machine number, and the sentence stayed after
+`Q-M16` was closed and `_shared/00-FOUNDATION.md` §8 and `05-HANDOVER.md` took the budgets
+off provisional.
+
+**What remains open is durability, not the number.** Every figure above is what an empty
+page costs — one `h1`, 425 B of route JS. Hero imagery, work grids and book covers all
+produce a larger and later LCP element. Re-measure at the first Stage 3 route, not at
+`H-01`, by which point the remedy is cutting a page feature to pay for a floor. `Q-M16`.
+
+| Press route JS **delta ≤20KB gz** above the framework floor — covers books shelf and filters | `check-bundle-size` |
+| `/press/path-finder` JS **delta ≤40KB gz** | `check-bundle-size` |
 | Book covers: AVIF, fixed aspect, `sizes` tuned | Manual review |
 | Every image explicit dimensions | ESLint |
 

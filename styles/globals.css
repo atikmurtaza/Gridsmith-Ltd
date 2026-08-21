@@ -1,0 +1,89 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@import "./themes/master.css";
+@import "./themes/design.css";
+@import "./themes/digital.css";
+@import "./themes/press.css";
+
+/**
+ * Tailwind v4 ships its own `--text-*`, `--leading-*`, `--radius-*` and `--ease-*`
+ * theme variables, and those names collide with FOUNDATION §3 exactly. Both sets were
+ * being emitted to :root, and ours only won because tokens.css imports second —
+ * reordering these lines would have silently reverted the entire type scale, radius
+ * scale and easing curve to Tailwind's defaults, with no error and nothing failing
+ * loudly.
+ *
+ * Clearing the four colliding namespaces leaves tokens.css as the single definition.
+ * The matching Tailwind utilities (`text-3xl`, `rounded-md`, `leading-snug`, `ease-out`)
+ * go with them, which is the intended outcome: a utility that silently carries a
+ * different scale from the token of the same name is exactly the hazard here.
+ * Primitives read `var(--text-3xl)` directly.
+ *
+ * Tailwind's spacing and layout utilities are untouched.
+ */
+@theme {
+  --text-*: initial;
+  --leading-*: initial;
+  --radius-*: initial;
+  --ease-*: initial;
+}
+
+/* All four themes are always present in the stylesheet — they are ~20 lines each and
+   selector-scoped, so only the one matching [data-division] applies. Shipping four
+   costs less than the machinery to ship one. */
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: var(--leading-normal);
+}
+
+/* WCAG 2.2 SC 2.4.11 Focus Not Obscured (Minimum).
+   StickyCta is position: fixed against the bottom edge below 768px, which is exactly the
+   width where it renders. Without this, tabbing to a control near the bottom of the
+   document scrolls it under the bar and the focus ring is invisible.
+   master/PROJECT-RULES.md §7 states the rule for the consent banner; a fixed bar is a
+   fixed bar.
+
+   The reserve is MEASURED, not modelled. It used to be
+   `calc(2.75rem + var(--space-6) + …)` = 68px, derived from "a 2.75rem control plus
+   var(--space-3) top and bottom" — which is the bar's height only while its labels fit on
+   one line. At 375px they wrap and the bar is 95px, so the reserve was 27px short. The
+   component publishes its own rendered height into --sticky-cta-block-size and
+   check-responsive asserts this value against the bar it is reserving for, at every width
+   below 768px.
+
+   The 0px fallback is correct rather than defensive: the bar is visibility:hidden until
+   the same script shows it, so no script means no bar and nothing to reserve for. */
+@media (max-width: 767px) {
+  html {
+    scroll-padding-block-end: calc(var(--sticky-cta-block-size, 0px) + env(safe-area-inset-bottom));
+  }
+}
+
+/* The consent banner is the second fixed bottom bar, and unlike StickyCta it is fixed at
+   EVERY width, so its reserve is not inside a media query. It publishes its own measured
+   height for the same reason StickyCta does — it grows when the text wraps and again when
+   Preferences opens — and check-responsive asserts the reserve against the rendered bar.
+
+   Declared after the block above so it wins below 768px, where both could apply. The two
+   bars cannot be visible at once: StickyCta only shows past 40% scroll depth, and the
+   banner is dismissed by any choice. If that ever stops being true this needs to be a sum,
+   not a replacement. */
+html {
+  scroll-padding-block-end: calc(var(--consent-block-size, 0px) + env(safe-area-inset-bottom));
+}
+
+/* Visually hidden, still announced. Used for the "Step 3:" prefixes, the external-link
+   suffix, and table captions the design hides but a screen reader needs. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

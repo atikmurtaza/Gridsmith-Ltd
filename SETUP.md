@@ -37,6 +37,32 @@ the five verification agents live in there.
 3. Start Claude Code in the repo and paste the bootstrap prompt from
    `docs/_shared/03-CLAUDE-CODE-KICKOFF.md` §1.
 
+## Sanity (`M-05`)
+
+Project **Gridsmith**, id `spzu6y31`. Two datasets sharing **one** schema folder
+(`sanity/schemas/`, never two): `development` for seed and placeholder content,
+`production` for live website content. Both public, so the build reads them with no token.
+
+```bash
+cp .env.example .env.local     # then paste the write token into .env.local
+npm run seed:company           # writes companyDetails to `development` only
+npm run studio                 # Studio on localhost:3333
+```
+
+`NEXT_PUBLIC_SANITY_DATASET` selects the dataset at build time and **has no default** — an
+unset variable is a build error, not a fallback (`M-P1-2`). That is deliberate: on a live host
+a fallback to `development` would publish a `[SEED]` VAT number. Do not set it to `production`
+before Stage 8, and **set it in the Hostinger environment before the first deploy**.
+
+**Done — 19 August 2026.** The Studio's dev origin is allowed on the project:
+
+```bash
+npx sanity login && npx sanity cors add http://localhost:3333 --credentials
+```
+
+`--credentials`, not `--no-credentials`. This file said the latter until it was corrected: the
+Studio authenticates with a cookie, so an origin added without credentials cannot log in.
+
 ## Reading order, first time
 
 | Order | File | Why |

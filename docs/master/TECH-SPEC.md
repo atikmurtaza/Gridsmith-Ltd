@@ -28,17 +28,44 @@ This resolves a defect latent in the division specs, where each division implied
 
 ## 3. Header, footer and division switching
 
-```tsx
-// app/layout.tsx — root
-// data-division is set by each route group's layout; the master layer uses "master"
-<body data-division={division}>
-  <SkipLink />
-  <Header division={division} />
-  {children}
-  <Footer />          {/* division switcher lives here */}
-  <ConsentBanner />
-</body>
+**Four root layouts, not one — corrected at A-04.** This section previously showed a
+single `app/layout.tsx` receiving a `division` prop. App Router cannot do that: only a
+root layout may render `<html>`/`<body>`, and a root layout has no access to the pathname.
+Deriving it from `headers()` via middleware would opt every route out of static rendering
+and destroy the SSG requirement in §1.
+
+The supported shape is multiple root layouts — no `app/layout.tsx`, and one per route
+group:
+
 ```
+app/
+  (marketing)/layout.tsx   → <body data-division="master">   + page.tsx      → /
+  (design)/layout.tsx      → <body data-division="design">   + design/       → /design
+  (digital)/layout.tsx     → <body data-division="digital">  + digital/      → /digital
+  (press)/layout.tsx       → <body data-division="press">    + press/        → /press
+```
+
+```tsx
+// app/(design)/layout.tsx — one of four roots
+export default function DesignLayout({ children }: { children: ReactNode }) {
+  return (
+    <RootShell division="design" fontVariables={`${inter.variable} ${jetbrainsMono.variable}`}>
+      {children}
+    </RootShell>
+  );
+}
+```
+
+`components/chrome/RootShell.tsx` holds the shared document shell so the skip link,
+header, footer and consent banner are added once rather than four times.
+
+Two consequences, both of which the specs already wanted:
+
+- **Navigation between route groups is a full document load.** That satisfies §9's
+  "no page transition between route groups — the theme change *is* the transition", and
+  it removes any window in which a client-side theme swap could occur.
+- **Fonts scope naturally.** Each root layout imports only its own faces, so Source Serif
+  never reaches Design or Digital.
 
 **Division switcher placement rule:** footer only. A header-level division switcher pulls buyers sideways mid-funnel. The header shows the *current* division's navigation plus a wordmark link back to `/`.
 
@@ -47,7 +74,7 @@ Theme transition between route groups must be flash-free: `data-division` is set
 ## 4. Consent management (FR-M14)
 
 ```
-components/consent/ConsentBanner.tsx     ~6KB gz, self-hosted
+components/consent/ConsentBanner.tsx     2.0KB gz MEASURED at A-11; budget 3KB, rule <=8KB
 lib/consent/                             state, Consent Mode v2 bridge
 ```
 
@@ -57,6 +84,12 @@ lib/consent/                             state, Consent Mode v2 bridge
 - Accept and Reject are equally prominent, both one click, no dark patterns
 - Choice stored in `gs_consent` (strictly necessary, 12 months, `SameSite=Lax`)
 - A footer link reopens preferences at any time
+**The size figure here said `~6KB` and `PROJECT-RULES.md` §8 and `FOUNDATION` §5 both say
+8KB.** `PROJECT-RULES.md` is binding (CLAUDE.md, "How to work"), so 8KB stands and this line
+was corrected to match at `M-06`. **Neither number has ever been measured** — no banner
+exists. 8KB is a *reservation*, and `check-bundle-size` now asserts that the master route
+leaves room for it rather than printing it as though it had been weighed.
+
 - **Server-side lead capture is unaffected** — forms work fully regardless of consent state, because processing an enquiry someone submitted is contract/legitimate interest, not analytics
 
 Explicitly rejected: any third-party CMP. Typical CMPs add 60–100KB and render-blocking scripts, which breaks Digital's 100/100/100 gate.
@@ -68,7 +101,7 @@ Explicitly rejected: any third-party CMP. Typical CMPs add 60–100KB and render
 async redirects() {
   return [
     ...legacyRedirects,      // from redirects/legacy.json — generated from a crawl
-    ...defensiveDomains,     // gridsmithdesign.co.uk/* → /design/*
+    ...defensiveDomains,     // gridsmithdesign.uk/* → /design/*
   ];
 }
 ```
@@ -94,8 +127,8 @@ This is a deploy-blocking check. Fabricated case studies reaching production is 
 | LCP | ≤1.8s |
 | INP | ≤200ms |
 | CLS | ≤0.03 |
-| JS, master routes | ≤110KB gz (consent banner included) |
-| `/work` with filters | ≤150KB gz |
+| Framework floor (reported, not budgeted) | 100.2KB gz — Next 15 + React 19 |
+| **JS delta, master routes** | **≤15KB gz** above the floor, consent banner included (~115KB total) |
 
 ## 8. SEO & machine readability
 

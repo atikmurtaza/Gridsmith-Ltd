@@ -25,7 +25,7 @@ The site is the primary case study (R4.6, persona P4). Every decision optimises 
 
   --ink:            #0A0A0A;
   --ink-muted:      #52525B;
-  --ink-subtle:     #71717A;
+  --ink-subtle:     #686871;   /* was #71717A — see §2 */
 
   --accent:         #1B5FFF;
   --accent-hover:   #0E4BE0;
@@ -44,15 +44,22 @@ The site is the primary case study (R4.6, persona P4). Every decision optimises 
 
 **Contrast verification (WCAG 2.2 AA):**
 
-| Pair | Ratio | Pass |
+| Pair | Measured | Pass |
 |---|---|---|
-| `--ink` on `--canvas` | 18.9:1 | AAA |
-| `--ink-muted` on `--canvas` | 7.4:1 | AAA |
-| `--ink-subtle` on `--canvas` | 4.9:1 | AA |
-| `--accent` on `--canvas` | 6.8:1 | AA (AAA for large) |
-| `--accent` on `--canvas-raised` | 7.0:1 | AAA |
-| `--accent-ink` on `--accent` | 7.0:1 | AAA |
-| `--line-strong` on `--canvas` | 2.1:1 | **Decorative borders only — never a sole information carrier** |
+| `--ink` on `--canvas` | 18.96:1 | AAA |
+| `--ink-muted` on `--canvas` | 7.40:1 | AAA |
+| `--ink-subtle` on `--canvas` | 5.28:1 | AA at any size |
+| `--accent` on `--canvas` | 4.87:1 | AA (AAA for large) |
+| `--accent` on `--canvas-raised` | 5.09:1 | AA |
+| `--accent-ink` on `--accent` | 5.09:1 | AA |
+| `--line-strong` on `--canvas` | 1.59:1 | **Decorative borders only — never a sole information carrier** |
+
+**The accent rows were materially overstated** and were corrected at A-03 from
+measurement. Electric blue `#1B5FFF` gives 4.87:1 on the canvas, not 6.8:1, and white on
+blue gives 5.09:1, not 7.0:1. Every row still passes AA, but the accent clears the 4.5:1
+floor by 0.37 rather than by 2.3. **Treat the accent as having no contrast headroom**: it
+cannot be darkened toward the canvas, and `--accent-hover` `#0E4BE0` must stay at least as
+dark as it is.
 
 The last row is a real constraint: `--line-strong` cannot be used to indicate state (e.g. a selected estimator option) without a second, non-colour cue.
 

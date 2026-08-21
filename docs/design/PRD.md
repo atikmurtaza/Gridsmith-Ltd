@@ -1,7 +1,7 @@
 # PRD — Gridsmith Design
 
 **Division:** Gridsmith Design (trading division of Gridsmith Ltd)
-**Scope:** `gridsmith.co.uk/design/*`
+**Scope:** `gridsmith.uk/design/*`
 **Status:** Approved for build
 **Traces to:** `_shared/00-MARKET-RESEARCH-BASIS.md`, `_shared/00-FOUNDATION.md`
 

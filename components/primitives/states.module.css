@@ -1,0 +1,37 @@
+/* Tier 4 — states. Tokens only; no colour literals.
+   Deliberately plain. An empty or failed state that has been designed hard reads as
+   decoration; these are prose on a surface, matching the "sunken-plain" treatment the
+   specs use for the limits block and the expectations statement. */
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-12) var(--space-6);
+  background: var(--canvas-sunken);
+  border: var(--border-hairline) solid var(--line);
+  border-radius: var(--radius-default);
+}
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--ink);
+}
+.body {
+  max-width: var(--measure-narrow);
+  color: var(--ink-muted);
+}
+.actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+/* Mono marks the machine-readable part of an error — a reference someone will quote.
+   --ink-muted rather than --ink-subtle is now a hierarchy choice, not a contrast one.
+   It used to be a contrast one: --ink-subtle measured 4.18–4.43:1 on --canvas-sunken in
+   three of the four themes and was restricted to UI there. All four --ink-subtle values
+   were re-derived at the run-3 fixes and the restriction is gone (A11Y-22 closed), so
+   either token would pass here. --ink-muted stays because a quoted reference should read
+   as secondary, not tertiary. */
+.reference {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+}

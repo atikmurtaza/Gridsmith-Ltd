@@ -1,0 +1,39 @@
+/* Enquiry form and confirmation. Tokens only; no colour literals. */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--measure-narrow);
+}
+
+/* An error summary is a thing you have to be able to find after the announcement.
+   --line-strong rather than a colour: this site's register carries emphasis on 1px borders,
+   and colour alone would fail WCAG 1.4.1 regardless of which colour it was. */
+.formError {
+  margin: 0;
+  padding: var(--space-4);
+  border: var(--border-hairline) solid var(--line-strong);
+  background: var(--canvas-sunken);
+  color: var(--ink);
+}
+
+.confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: var(--measure-narrow);
+  padding: var(--space-8);
+  border: var(--border-hairline) solid var(--line-strong);
+}
+
+/* The response commitment is the only promise on the page, so it is the largest thing in the
+   confirmation. Non-negotiable #5 governs its content; this governs only its weight. */
+.commitment {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: var(--ink);
+}
+
+.confirmationDetail { margin: 0; color: var(--ink-muted); }

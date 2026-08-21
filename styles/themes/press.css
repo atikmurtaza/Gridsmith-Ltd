@@ -1,0 +1,60 @@
+/**
+ * Press theme — the well-made book.
+ * docs/press/DESIGN.md §2.
+ *
+ * The warm canvas costs roughly two points of contrast against pure white, which is why
+ * --ink-subtle needs a darker value here than a white-canvas theme would need.
+ *
+ * **--ink-subtle was #78716C and is now #6C6560, and the 17px floor went with it.**
+ * At #78716C it measured 4.56:1 on --canvas — clearing the AA body floor by 0.06 — and
+ * DESIGN.md §2 carried a "17px minimum, never below" rule to compensate. That floor was
+ * prose no gate could enforce: the permission matrix measures token-on-surface pairs and
+ * cannot see the size of the declarations that use them (A11Y-22). The run-3 audit found
+ * it breached 23 times per press frame on /_kitchen-sink by a single 12px declaration,
+ * and every gate was green.
+ *
+ * A colour that needs a size rule to be legible is the wrong colour. #6C6560 measures
+ * 5.44 / 5.73 / 4.98:1 on --canvas / --canvas-raised / --canvas-sunken, so it clears the
+ * body floor on every press surface with roughly half a point of buffer and needs no
+ * size rule at all. It stays clearly lighter than --ink-muted (7.25:1), so the three-step
+ * ink hierarchy is intact.
+ *
+ * Press was fixed first and the other three followed one commit later, for the reason
+ * that makes this a system and not four themes: press had become the only theme whose
+ * --ink-subtle needed no size rule. All four are now re-derived to clear the body floor on
+ * every surface, the --canvas-sunken restriction is gone from the matrix entirely, and
+ * A11Y-22 is closed. FOUNDATION §3 carries the full table.
+ */
+
+[data-division="press"] {
+  --canvas:         #FBF9F4;   /* warm paper */
+  --canvas-raised:  #FFFFFF;
+  --canvas-sunken:  #F2EFE7;
+
+  --ink:            #1A1815;
+  --ink-muted:      #57534E;
+  --ink-subtle:     #6C6560;
+
+  --accent:         #2E4A3A;   /* deep green — cloth binding, not celebratory */
+  --accent-hover:   #1F3428;
+  --accent-ink:     #FBF9F4;
+
+  --line:           #E3DFD4;
+  --line-strong:    #C8C2B2;
+
+  --font-display:   var(--font-source-serif), Georgia, serif;
+  --font-body:      var(--font-source-serif), Georgia, serif;
+  --font-mono:      var(--font-jetbrains), ui-monospace, monospace;
+
+  --radius-default: 2px;
+
+  /* **The division accents are declared by every theme, not master alone** (V3).
+     Same three colours, same position — the footer division switcher's 3px top rules — on
+     all four. That is the cheapest thing that makes four themes read as one system, and it
+     removes a real hazard: these names used to resolve to nothing off master, which made
+     `border-block-start-color: var(--accent-design)` invalid at computed-value time and
+     discarded the shorthand's colour with it. `check:tokens` now holds all four. */
+  --accent-design:  #E8A33D;
+  --accent-digital: #1B5FFF;
+  --accent-press:   #2E4A3A;
+}
