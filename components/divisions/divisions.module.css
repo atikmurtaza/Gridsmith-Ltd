@@ -1,0 +1,49 @@
+/* The division landing page. Tokens only; no colour literals, no typeface names.
+
+   Every rule here resolves through whichever theme the route group's root layout set on
+   <html data-division>. That is what lets one composition read as three studios: --accent is
+   amber on Design, electric blue on Digital, deep green on Press, and --font-display is a
+   neo-grotesque, a monospace and a serif respectively. Naming a colour or a face in this file
+   would collapse the three voices into one — see DivisionLanding.tsx. */
+
+/* The positioning line. `Heading size="display"` already carries DESIGN.md §3's display-hero
+   row; this adds only the measure, because a display line running the full container width is
+   unreadable above about 1100px and the hero is the first thing anyone reads. */
+.hero {
+  max-width: 20ch;
+  margin-block-end: var(--space-6);
+}
+
+.blockIntro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-block-end: var(--space-12);
+  max-width: var(--measure);
+}
+
+.lede { margin: 0; font-size: var(--text-lg); color: var(--ink-muted); }
+
+.more { margin: var(--space-8) 0 0; font-size: var(--text-lg); }
+
+.cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  text-align: center;
+}
+.ctaLede {
+  margin: 0;
+  max-width: var(--measure-narrow);
+  font-size: var(--text-lg);
+  color: var(--ink-muted);
+}
+/* Quiet, and monospace because it is a commitment rather than a sales line. Overstating a
+   promise typographically is how it turns into a claim. */
+.ctaCommitment {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
