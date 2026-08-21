@@ -716,3 +716,98 @@ signal interpreted against a mental model produces a confident answer and no way
 right one from a wrong one. A control produces a difference.** The cost of the wrong answer
 was eight days of CI silence and one irreversible repository visibility change made for a
 reason that turned out to be false.
+
+---
+
+## 16. `M-P2-35` — every exclusion, re-read against every gate
+
+**21 Aug 2026.** §15 named the class and fixed one instance. This is the sweep.
+
+Nineteen gates run. **Only three consult `NOT_SOURCE` at all**: `check:control`,
+`check-no-hardcoded-colors`, `check-service-role-key`. The other sixteen carry their own
+subject lists — globs, single files, or a directory they own — so `NOT_SOURCE` cannot hide
+anything from them. That narrows the sweep to twelve entries × three gates, and it is the
+first useful finding: the blast radius was smaller than "eleven exclusions, nineteen gates"
+suggested, and it was still enough to take CI offline for eight days.
+
+### The twelve entries
+
+| Entry | Written for | Colours | Secrets | Bytes | Verdict |
+|---|---|---|---|---|---|
+| `.git` | both | ✓ | ✓ | ✓ | **correct** — not authored |
+| `node_modules` | both | ✓ | ✓ | ✓ | **correct** — not authored |
+| `.next` | both | ✓ | ✓ | ✓ | **correct**, and load-bearing: `check-service-role-key` and `check-tokens` sweep `.next` *deliberately*, by their own path. Excluding it from the source walk is what stops it being counted twice |
+| `.lighthouseci` | both | ✓ | ✓ | ✓ | **correct** — gate output, gitignored |
+| `.sanity` | both | ✓ | ✓ | ✓ | **correct** — CLI cache, gitignored |
+| `.vercel` | both | ✓ | ✓ | ✓ | **correct** — CLI link state, gitignored |
+| `.github` | both | ✓ | ✓ | **✗ was hiding the fifth U+0008** | **fixed** — `check:control` opts in |
+| `docs` | both | ✓ | ✓ | **✗ was hiding a sixth** | **fixed** — see below |
+| `public` | both | correct **by accident** | **correct by accident** | ✗ | **fixed** for bytes; see the two accidents below |
+| `supabase` | both | ✓ | correct **by accident** | ✗ | **fixed** for bytes |
+| `redirects` | both | ✓ | ✓ | ✗ | **fixed** for bytes — low stakes, but the reason given ("URL mapping data") answers the colour question, not the byte one |
+| `.claude` | both | correct **by accident** | **correct by accident** | ✗ | **fixed** for bytes |
+
+### The sixth U+0008, found by this sweep
+
+`docs/master/PROJECT-TRACKER.md:2731`, inside the `M-P2-22` row — the row that **announces
+`check:control` as the gate for this class** — quoting the `check-axe` defect verbatim with
+the literal backspace still in it. `docs` is excluded, so nothing had ever looked. Escaped.
+
+The count is the proof: `check:control` reported **0 in 135 files** with `docs` excluded
+while the byte was sitting in it, and reports **0 in 203 files** now. A clean result from a
+scan of 135 files and a clean result from a scan of 203 read identically in a log.
+
+### Two exclusions that are correct by accident
+
+Correct-by-accident matters because the next commit can end it without anyone noticing.
+
+- **`public/` is excluded from `check-service-role-key`.** It holds one file today,
+  `500.html`. It is the *most* dangerous tree in the repository for a leaked key — everything
+  in it is served verbatim to anyone — and it is excluded with the reason *"served verbatim,
+  never bundled"*, which is the argument for scanning it, restated as the argument against.
+  It is clean today for two independent reasons that are both accidents: the tree holds one
+  hand-written file, and the gate's extension set is `ts|tsx|js|jsx|mjs|cjs`, so a `.html`
+  file would not match even if the tree were scanned. **Add one `.js` to `public/` and the
+  gap is live.** Not fixed here because fixing it properly means changing what
+  `check-service-role-key` considers source, which is a wider change than this sweep, and
+  because the load-bearing `.next/static/chunks` sweep is unaffected. Logged as `M-P2-37`.
+- **`.claude/` is excluded from both.** Agent definitions, never shipped, so a colour or a
+  key there reaches no user. True — but the reason recorded is *"agent definitions"*, which
+  is a description of the tree, not an argument about either question.
+
+`supabase/` is the same shape for secrets: `.sql` is outside the gate's extension set, so
+the exclusion is redundant rather than load-bearing there.
+
+### Is this gateable?
+
+**Partly, and the part that matters is not.**
+
+What *can* be asserted mechanically already is: every top-level directory is either scanned
+or excluded with a written reason — `sourceFiles` fails the build on an unclassified tree,
+which is why no tree has ever arrived unscanned. That is the shape a gate can check.
+
+What cannot be asserted is **whether a reason is still the whole question**. The reason is
+prose written about the gates that existed at the time; "no colours, no keys" was true when
+written, is true now, and was never the question `check:control` asks. Deciding that requires
+knowing what each gate is for, and no check can hold that.
+
+Two half-measures were considered and rejected as the kind of gate this document exists to
+warn about:
+
+1. *Require each `NOT_SOURCE` entry to name the gates its reason covers, and fail when a new
+   gate appears.* This asserts that someone edited a list, not that they thought about it.
+   The predictable outcome is a name appended to twelve entries in one commit.
+2. *Scan the excluded trees anyway and warn.* That is not an exclusion; it deletes the
+   feature and floods the log with `node_modules`.
+
+**So: this is a periodic review, not a gate, and saying so is the honest answer.** The
+structural mitigation actually taken is narrower and real — **an exclusion list should be
+per-question, not per-repository.** `sourceFiles` now takes `extraRoots`, so a gate states
+which trees it needs rather than inheriting a list assembled for someone else's question.
+That does not prevent the class; it makes each gate's own answer visible at its own call
+site, where the person adding a gate is already looking.
+
+The review itself: **when a gate is added, re-read every exclusion against it.** That
+sentence is the whole of the control, and it is worth exactly as much as the next person's
+willingness to do it — which is the accurate valuation, and better than a green check that
+implies more.

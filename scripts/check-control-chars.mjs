@@ -27,15 +27,23 @@ import { readFileSync } from 'node:fs';
 import { sourceFiles } from './source-files.mjs';
 
 const GATE = 'check-control-chars';
-const SOURCE = /\.(mjs|cjs|js|jsx|ts|tsx|css|json|sql|ya?ml|md)$/;
+const SOURCE = /\.(mjs|cjs|js|jsx|ts|tsx|css|json|sql|ya?ml|md|html)$/;
 const CONTROL = /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g;
 
-// `.github` is an extra root here and nowhere else. `sourceFiles`'s NOT_SOURCE excludes it
-// as "no colours, no keys", which is true for the two gates that list was written for and
-// false for this one: the U+0008 that motivated this gate was then written into a YAML
-// comment in `ci.yml` by the same commit that added the gate, and GitHub could not parse
-// the file. Every push died at startup in 0s with zero jobs for eight days. `M-P1-5`.
-const files = sourceFiles(GATE, SOURCE, ['.github']);
+// **Every hand-edited tree, not the two that `NOT_SOURCE` was written for.** That list
+// excludes `.github` as "no colours, no keys" and `docs` as "prose" — both true of
+// `check-no-hardcoded-colors` and `check-service-role-key`, and neither an answer to the
+// question this gate asks, which is about bytes and applies to anything a person types.
+//
+// The exclusions cost two instances. The fifth U+0008 sat in `.github/workflows/ci.yml`
+// and took CI offline for eight days (`M-P1-5`). The sixth was found by the sweep those
+// eight days prompted: a literal backspace inside the PROJECT-TRACKER row *describing the
+// class*, quoted verbatim from the defect it documents, in `docs/` — excluded, so nothing
+// had ever looked. `01-VALIDATION-REPORT.md` §15.
+//
+// What stays excluded is what nobody types: `.git`, `node_modules`, `.next`,
+// `.lighthouseci`, `.sanity`, `.vercel` — generated or vendored, and large.
+const files = sourceFiles(GATE, SOURCE, ['.claude', '.github', 'docs', 'public', 'redirects', 'supabase']);
 const hits = [];
 
 for (const file of files) {
