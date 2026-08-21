@@ -89,7 +89,7 @@ jobs:
       - name: Every recorded fix claim corresponds to a real commit
         run: npm run check:claims
 
-      # A literal U+0008 renders exactly like the two characters  in sed, the terminal,
+      # A literal U+0008 renders exactly like the two-character escape in sed, the terminal,
       # the editor and the diff, so a regex that can never match reads as correct in
       # every review. It has happened three times; only od -c and this gate can see it.
       - name: No control characters in source

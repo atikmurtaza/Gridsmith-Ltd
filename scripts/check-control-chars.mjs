@@ -27,10 +27,15 @@ import { readFileSync } from 'node:fs';
 import { sourceFiles } from './source-files.mjs';
 
 const GATE = 'check-control-chars';
-const SOURCE = /.(mjs|cjs|js|jsx|ts|tsx|css|json|sql)$/;
+const SOURCE = /\.(mjs|cjs|js|jsx|ts|tsx|css|json|sql|ya?ml|md)$/;
 const CONTROL = /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g;
 
-const files = sourceFiles(GATE, SOURCE);
+// `.github` is an extra root here and nowhere else. `sourceFiles`'s NOT_SOURCE excludes it
+// as "no colours, no keys", which is true for the two gates that list was written for and
+// false for this one: the U+0008 that motivated this gate was then written into a YAML
+// comment in `ci.yml` by the same commit that added the gate, and GitHub could not parse
+// the file. Every push died at startup in 0s with zero jobs for eight days. `M-P1-5`.
+const files = sourceFiles(GATE, SOURCE, ['.github']);
 const hits = [];
 
 for (const file of files) {

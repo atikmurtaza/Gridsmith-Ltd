@@ -34,6 +34,11 @@ export const ROOTS = ['app', 'components', 'lib', 'lighthouse', 'sanity', 'scrip
 const NOT_SOURCE = {
   '.claude': 'agent definitions',
   '.git': 'version control',
+  // Excluded from the colour and secret sweeps, which is what this list was written for.
+  // It is NOT excluded from every gate: check-control-chars passes it as an extra root,
+  // because a literal U+0008 in a comment in `ci.yml` is unparseable YAML and took CI
+  // offline for eight days while `check:control` — the gate written for exactly that
+  // byte — could not see the file. See `M-P1-5`.
   '.github': 'workflow YAML — no colours, no keys',
   '.lighthouseci': 'gate output',
   '.next': 'build output — swept separately, by the gates that measure the bundle',
@@ -51,8 +56,9 @@ const toPosix = (p) => p.split(sep).join(posix.sep);
 /**
  * @param {string} gate  name used in failure messages
  * @param {RegExp} source  which filenames count as source for this gate
+ * @param {string[]} [extraRoots]  trees in NOT_SOURCE that THIS gate does need to read
  */
-export function sourceFiles(gate, source) {
+export function sourceFiles(gate, source, extraRoots = []) {
   const top = readdirSync('.', { withFileTypes: true });
 
   const unclassified = top
@@ -76,7 +82,7 @@ export function sourceFiles(gate, source) {
     if (entry.isFile() && source.test(entry.name)) out.push(entry.name);
   }
 
-  for (const root of ROOTS) {
+  for (const root of [...ROOTS, ...extraRoots]) {
     if (!existsSync(root) || !statSync(root).isDirectory()) {
       console.error(`\n${gate}: root "${root}/" does not exist — it was not scanned.`);
       console.error('Remove it from ROOTS deliberately, or fix the path. Skipping it silently is not an option.\n');
