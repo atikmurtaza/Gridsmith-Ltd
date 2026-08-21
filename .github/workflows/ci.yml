@@ -168,6 +168,17 @@ jobs:
         if: always()
         run: node scripts/lhci-report.mjs mobile
 
+      # Q-M16 / P1-LCP-BIMODAL: the median hides the distribution, and mobile LCP is bimodal
+      # (~1520ms or ~1950ms, nothing between). The per-run JSON is the only place the two
+      # modes and their network timing can be told apart, so it is kept off the runner.
+      - name: Lighthouse raw reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouseci-reports
+          path: .lighthouseci/
+          retention-days: 14
+
       # axe, the statutory record and the responsive sweep share one server on 3000, started
       # and stopped by with-server so none of them can run against a server that never came up.
       #
