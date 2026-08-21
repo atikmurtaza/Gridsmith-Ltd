@@ -60,6 +60,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # check:claims asks git whether each commit a FIX-LEDGER row cites is an
+          # ancestor of HEAD. checkout's default fetch-depth: 1 is a shallow clone with
+          # no history, so every one of the 34 claims failed as "not on this branch" on
+          # CI's first real run — an environment difference, not a bad ledger. The gate
+          # needs the whole history to answer its question at all.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v5
         with:
