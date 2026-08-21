@@ -55,6 +55,19 @@ env:
   # EU, asserted rather than defaulted. PostHog's documented default is us.i.posthog.com.
   NEXT_PUBLIC_POSTHOG_HOST: https://eu.i.posthog.com
 
+  # The lead pipeline (`A-08`). Both are PUBLISHABLE — `PUBLISHABLE_KEY` is the anon key,
+  # the one the browser already holds — so they are repository **variables**, not secrets,
+  # and a public repository is the reason that is fine rather than the reason it is not.
+  # `SUPABASE_SERVICE_ROLE_KEY` is the opposite and must never appear here; `lint:secrets`
+  # greps the built chunks for it after every build.
+  #
+  # Mapped unconditionally. An unset variable expands to the empty string, which is exactly
+  # the state `check-axe` already reports as `"PROJECT_URL or PUBLISHABLE_KEY is not set"` —
+  # so this cannot mask anything, and setting the variables is the only remaining step.
+  # `M-P2-32`.
+  PROJECT_URL: ${{ vars.PROJECT_URL }}
+  PUBLISHABLE_KEY: ${{ vars.PUBLISHABLE_KEY }}
+
 jobs:
   verify:
     runs-on: ubuntu-latest
