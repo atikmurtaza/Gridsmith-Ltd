@@ -629,3 +629,90 @@ run and names the port; on `VERIFY_PORT=3100` the same commands pass.
 This is the same class as the other fourteen, and it was found by the class being fresh in
 mind rather than by any check. That is the argument for treating it as a standing property
 of the suite rather than a list that was worked through.
+
+---
+
+## 15. A seventh defect class — the exclusion that was correct when it was written
+
+**21 Aug 2026. Found by CI's first completed run since 13 August, which was the same defect.**
+
+### The fifth U+0008
+
+A literal U+0008 sat at `.github/workflows/ci.yml:92`, inside the comment introducing
+`check:control` — the gate written for this exact byte — put there by the same commit that
+added the gate (`4e988114`). YAML 1.2 forbids C0 controls anywhere in the stream, comments
+included, so GitHub could not parse the workflow. Every push from 13 to 21 August died at
+startup in 0s with zero jobs, no annotation and no log. `npm run verify` passed locally the
+whole time, so the tree read green.
+
+Instances one to four are recorded at `M-P2-23`. This is the fifth, and the first that cost
+anything.
+
+### What makes it distinct
+
+The first four were the byte defeating a *reader* — a regex that could never match, invisible
+in every rendering anyone looks at. `check:control` was built to end that, and it did: it
+would have caught this byte on sight.
+
+**It never saw the file.** `sourceFiles`' `NOT_SOURCE` excludes `.github` with the reason
+*"workflow YAML — no colours, no keys"*, and its extension set had no `yml`. Both were true
+of the two gates that list was written for — `check-no-hardcoded-colors` and
+`check-service-role-key`. Neither is true of a gate added afterwards that reads bytes rather
+than meaning.
+
+So the class is not "an exclusion was wrong". The class is:
+
+> **An exclusion carries the reasons of the gates that existed when it was written. A gate
+> added later inherits it silently, and the reason attached to it is no longer the whole
+> question being asked.**
+
+An exclusion is a *negative* assertion, and nothing ever re-examines one — a scanned tree
+produces output that can be read, and an excluded tree produces nothing at all. `NOT_SOURCE`
+even requires a written reason for each entry, which is the strongest form of the guard
+anyone had thought to build, and it did not help: the reason was accurate and it was
+answering a question no longer being asked.
+
+### Same shape as the role-true-by-scope defect
+
+`check:rls`'s unbounded role capture read `to anon using (true)` as the role `"anon using"`,
+which matches no role name, so a deliberate `anon` SELECT policy passed. Both defects are a
+**predicate that is true only within the scope it was written for, applied outside it and
+still reporting cleanly.** There the scope was the shape of the SQL the author had in mind;
+here it is the set of gates the exclusion was written for. In neither case does the check
+fail — it succeeds, having narrowed its subject without saying so.
+
+### The fix, and its limit
+
+`sourceFiles` now takes `extraRoots`, so a gate opts into a tree the colour and secret sweeps
+skip; `check:control` passes `['.github']` and its extension set covers `ya?ml` and `md`.
+Proven by appending a probe line to `ci.yml`: 1 hit, exit 1; removed, 0 hits, exit 0 — the
+count moves, so the file is genuinely reached.
+
+**The limit is that this fixed the instance.** `NOT_SOURCE` still holds eleven entries whose
+reasons were written for two gates, and nineteen gates now exist. Re-reading each exclusion
+against each gate is the sweep this class calls for and it has not been done.
+
+### The diagnosis before it — one signal, confidently wrong
+
+The 20 August session diagnosed the outage and **cleared the file**. Its evidence was a
+`workflow_dispatch` API call answering `422 Workflow does not have 'workflow_dispatch'
+trigger`, reasoned as: GitHub must have parsed the file to enumerate its triggers, therefore
+the file parses, therefore the cause is a billing or minutes block. That reasoning was
+written up at length and acted on — the repository was made public to remove the limit, which
+changed nothing.
+
+**The inference does not hold.** `workflow_dispatch` is registered from the **default
+branch**, and `main` carries no workflow file at all. An unparsed file on a feature branch
+returns exactly the same 422. The reply was consistent with both hypotheses and was read as
+evidence for one.
+
+**What settled it was a control**, not a better reading of the same signal: a minimal
+hello-world workflow pushed to the same repository on the same commit succeeded in 7s
+(`32431419718`) while `CI` failed in 0s (`32431418552`). One push, two workflows, one
+variable — the file.
+
+This belongs in this document because it is the analyst's version of §12 and §14: **a single
+signal interpreted against a mental model produces a confident answer and no way to tell a
+right one from a wrong one. A control produces a difference.** The cost of the wrong answer
+was eight days of CI silence and one irreversible repository visibility change made for a
+reason that turned out to be false.
