@@ -1,5 +1,6 @@
 import { Container } from '@/components/primitives/Container';
 import { Heading } from '@/components/primitives/Heading';
+import { Link } from '@/components/primitives/Link';
 import { Section } from '@/components/primitives/Section';
 import { ProcessStages } from '@/components/master/ProcessStages';
 import styles from './master.module.css';
@@ -24,8 +25,10 @@ import styles from './master.module.css';
  *
  * ## No link, and the same rule as blocks 2 and 3
  *
- * `APP-FLOW.md` §2 gives this block `→ /approach`. That route does not exist, so nothing links
- * to it — `M-03`, and `check-axe` fails the build on a same-origin 404.
+ * `APP-FLOW.md` §2 gives this block `→ /approach`. The route did not exist when the block
+ * shipped, so nothing linked to it (`M-03`). **`N-04` added it, and the link now goes to the
+ * full version of these same six stages** — the one that passes `divisionDetail`, `duration`
+ * and `clientTime`, which is what "condensed" means here.
  *
  * ## The heading is sourced, not written
  *
@@ -53,6 +56,9 @@ export function Process() {
           </p>
         </div>
         <ProcessStages headingLevel={3} />
+        <p className={styles.blockMore}>
+          <Link href="/approach">The six stages in full</Link>
+        </p>
       </Container>
     </Section>
   );

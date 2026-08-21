@@ -1,5 +1,6 @@
 import { Container } from '@/components/primitives/Container';
 import { Heading } from '@/components/primitives/Heading';
+import { Link } from '@/components/primitives/Link';
 import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import styles from './master.module.css';
@@ -7,10 +8,11 @@ import styles from './master.module.css';
 /**
  * Homepage block 3 — the one-company argument (`N-01`, `APP-FLOW.md` §2).
  *
- * Server Component, zero client JS, no link: this block's primary action in `APP-FLOW.md` is
- * `→ /approach`, and `/approach` does not exist yet. Same rule as block 2's "not sure" line —
- * `M-03` ships only links whose routes exist and `check-axe` fails the build on a same-origin
- * 404. The heading carries the argument on its own until the route lands.
+ * Server Component, zero client JS. `APP-FLOW.md` §2 gives this block the primary action
+ * `→ /approach`; that route did not exist when the block shipped, so it carried no link (`M-03`:
+ * only links whose routes exist, and `check-axe` fails the build on a same-origin 404).
+ * **`N-04` added the route and this commit adds the link.** It matters more here than anywhere
+ * else on the page: this block is `M-J2`'s first stop and `/approach` is where that journey goes.
  *
  * **This is `M-J2`'s entry point, the journey the master layer exists for.** A visitor whose
  * need spans two divisions must have a path that does not require picking one, and this block
@@ -52,6 +54,9 @@ export function Continuity() {
               your business, your goals and the work we’ve already done together.
             </p>
           </Prose>
+          <p className={styles.blockMore}>
+            <Link href="/approach">How three studios work as one company</Link>
+          </p>
         </div>
       </Container>
     </Section>

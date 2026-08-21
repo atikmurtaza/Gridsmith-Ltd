@@ -47,11 +47,13 @@ import styles from './master.module.css';
  *    items for Design, four for Digital and a broken phrase for Press. Mono would also be
  *    wrong: the convention across all four themes is that **monospace marks anything
  *    verifiable**, and a services list is a description, not a fact anyone can check.
- * 2. The "not sure / need more than one" line ships as **text, not a link**. `/contact` does
- *    not exist yet, and `M-03` set the rule that only links whose routes exist are shipped —
- *    `check-axe` fails the build on a same-origin link that 404s. It becomes a link in the
- *    commit that adds `/contact`, and `DESIGN.md`'s requirement that it not be visually
- *    subordinate is met now: `--text-lg`, `--ink`, full weight.
+ * 2. The "not sure / need more than one" line shipped as **text, not a link**, because
+ *    `/contact` did not exist and `M-03` set the rule that only links whose routes exist are
+ *    shipped. **`N-11` added the route, so it is now the link it was always meant to be** — it
+ *    is `M-J2`'s entry point and `M-J2` is the highest-value journey on the site.
+ *    `DESIGN.md`'s requirement that it not be visually subordinate is unchanged
+ *    (`--text-lg`, `--ink`, full weight) and it now carries an underline, because a link that
+ *    is only distinguishable by weight fails WCAG 1.4.1.
  */
 const DIVISIONS = [
   {
@@ -97,7 +99,11 @@ export function DivisionRouting() {
           ))}
         </ul>
         <p className={styles.divisionFallback}>
-          Not sure, or need more than one? Tell us what you need.
+          Not sure, or need more than one?{' '}
+          <a href="/contact" className={styles.divisionFallbackLink}>
+            Tell us what you need
+          </a>
+          .
         </p>
       </Container>
     </Section>

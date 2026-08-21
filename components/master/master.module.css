@@ -168,3 +168,40 @@
   max-width: var(--measure);
   color: var(--ink-muted);
 }
+
+/* --- Epic N homepage blocks 4 and 6-9 ----------------------------------- */
+
+/* The "see all" line under a block. Not a button: it is a continuation of reading, and
+   DESIGN.md reserves button treatment for the conversion action. */
+.blockMore {
+  margin: var(--space-8) 0 0;
+  font-size: var(--text-lg);
+}
+
+/* Block 9. Centred is one of exactly two exceptions in DESIGN.md §4 — the hero and this. */
+.ctaBand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  text-align: center;
+}
+.ctaLede {
+  margin: 0;
+  max-width: var(--measure-narrow);
+  font-size: var(--text-lg);
+  color: var(--ink-muted);
+}
+/* The response commitment sits below the button, quiet. It is a promise, not a sales line —
+   overstating it typographically is how a promise turns into a claim. */
+.ctaCommitment {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+/* M-J2's entry point, made a link at N-11. Underlined, because weight alone is not a
+   non-colour cue (WCAG 1.4.1) and this line already carries the cards' weight by design. */
+.divisionFallbackLink { color: var(--ink); text-underline-offset: 0.2em; }
+.divisionFallbackLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }

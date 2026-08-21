@@ -23,6 +23,15 @@ export const NAV: Record<Division, NavItem[]> = {
     { href: '/design', label: 'Design' },
     { href: '/digital', label: 'Digital' },
     { href: '/press', label: 'Press' },
+    // **The four routes `APP-FLOW.md` §8 named and `M-03` could not ship.** They exist now
+    // (`N-04`, `N-07`, `N-08`, `N-11`), so the header is the one the spec specified rather
+    // than the subset that resolved. `check-axe` resolves every same-origin link on every
+    // audited route, so this list cannot get ahead of the routes again without failing the
+    // build — which is what made shipping the subset the right call at the time rather than
+    // a compromise.
+    { href: '/work', label: 'Work' },
+    { href: '/approach', label: 'Approach' },
+    { href: '/about', label: 'About' },
   ],
   design: [],
   digital: [],
