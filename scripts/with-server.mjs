@@ -18,6 +18,7 @@
  * An npm wrapper leaves the server orphaned on Windows when the parent is killed.
  */
 import { spawn, spawnSync } from 'node:child_process';
+import { connect } from 'node:net';
 import { lhciSkipped, UNAVAILABLE_ON_WINDOWS } from './lhci-availability.mjs';
 
 const PORT = process.env.VERIFY_PORT ?? '3000';
@@ -38,6 +39,12 @@ if (commands.length === 0) {
  * `check-axe` dutifully reported two `label` violations and a missing `data-division` on
  * "/" — a critical failure, against an application that is not this one.
  *
+ * **It happened twice more on 22 August, in one session.** A stale `next start` of THIS app
+ * held 3000, and an unrelated project's Next server held 3100 — the port this file's own
+ * error message used to recommend as the escape hatch. Taking that advice would have pointed
+ * every served gate at another application and reported the result as this site's. The
+ * message now suggests a port with nothing on it, and says why.
+ *
  * A false red is the harmless direction. **The dangerous one is a stale `next start` of
  * THIS app**, left over from an earlier run: it answers 200 on every route, serves the
  * previous build, and every gate goes green against code that is no longer in the tree.
@@ -45,19 +52,62 @@ if (commands.length === 0) {
  *
  * So the port is a precondition, checked before spawning, rather than something to sniff
  * afterwards.
+ *
+ * ## The exit code, and the probe — `M-P1-12`
+ *
+ * This refusal used to exit **127**, printing a libuv assertion over its own message:
+ *
+ *     Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
+ *
+ * **127 is the shell's "command not found".** A CI log ending in 127 reads as a broken
+ * invocation rather than as a gate declining to measure, and the sentence explaining the
+ * refusal is buried under a C assertion. The status was never 0 and `npm run verify` has
+ * always failed here — but it failed while misreporting why, which is this repository's own
+ * defect class one layer down: in the harness that runs the gates rather than in a gate.
+ *
+ * **The cause was not the obvious one, and the first fix did not work.** `AbortSignal.timeout()`
+ * arms a libuv timer nothing cancels, so the diagnosis was that `process.exit(1)` ran with that
+ * handle live. Replacing it with an explicit `AbortController` and a cleared timer changed
+ * nothing: still 127, still the assertion. Draining the response body did not help either, nor
+ * did cancelling it. What holds the handle is undici's keep-alive socket — `fetch` does not
+ * close the connection, and an abrupt exit while it is open aborts the process on Windows.
+ *
+ * A raw TCP connect answers the question this guard actually asks — *is anything bound to this
+ * port* — closes its own socket, and exits with the status the code chose. It is also strictly
+ * more conservative than an HTTP probe: a listener that never answers HTTP still blocks
+ * `next start` from binding, and the old probe would have missed it and let the spawn fail
+ * later with a less obvious message.
+ *
+ * **How this was misread, which is the more useful half.** It was first reported as *"exits 0,
+ * so verify reports success having measured nothing"*, from reading
+ * `npm run verify:served 2>&1 | tail -80`. A pipeline's exit status is its LAST stage — `tail`
+ * succeeded, so the pipeline was 0 while the script was 127. **Read an exit code from the
+ * process, never through a pipe**, and treat `| tail`, `| head` or `| grep` on a command whose
+ * status is about to be quoted as the same class of error as a stale build: the number that
+ * comes back is real, and it is a number about something else.
  */
-try {
-  await fetch(BASE + '/', { signal: AbortSignal.timeout(2000) });
+const occupied = await new Promise((resolve) => {
+  const socket = connect({ host: '127.0.0.1', port: Number(PORT) });
+  const done = (result) => {
+    socket.destroy();
+    resolve(result);
+  };
+  socket.setTimeout(2000);
+  socket.on('connect', () => done(true));
+  socket.on('error', () => done(false));
+  socket.on('timeout', () => done(false));
+});
+
+if (occupied) {
   console.error(
     `\nwith-server: something is already listening on ${BASE}.` +
       '\n\nIt was not started by this script, so the served gates would measure it instead of' +
       '\nthis build — a stale server of this app answers every route and turns them all green' +
-      '\nagainst the previous build.' +
-      '\n\nStop it, or run on another port: VERIFY_PORT=3100 npm run verify\n',
+      '\nagainst the previous build, and an unrelated app answers them against something that' +
+      '\nis not this site at all. Both have happened.' +
+      '\n\nStop it, or run on a port nothing else is using: VERIFY_PORT=3210 npm run verify\n',
   );
   process.exit(1);
-} catch {
-  // Nothing listening. That is the only acceptable starting state.
 }
 
 const server = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', PORT], {
