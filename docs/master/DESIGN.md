@@ -31,6 +31,7 @@ The founder's brief for the brand is "innovative and institutionally trustworthy
 
   --accent:         #0F0F0F;   /* the master accent is ink — deliberate */
   --accent-hover:   #2A2A2A;
+  --accent-2:       #3A3A3A;   /* the second colour surface — a lightness pair here */
   --accent-ink:     #FFFFFF;
 
   --line:           #E7E5E4;
@@ -42,16 +43,17 @@ The founder's brief for the brand is "innovative and institutionally trustworthy
 
   --radius-default: 2px;
 
-  /* Division accents — used ONLY on division-referencing elements */
-  --accent-design:  #E8A33D;
-  --accent-digital: #1B5FFF;
-  --accent-press:   #2E4A3A;
+  /* Division accents — used ONLY on division-referencing elements.
+     Each now carries the foreground it takes when used as a FILL rather than a rule. */
+  --accent-design:  #E8A33D;  --accent-design-ink:  #0C0C0D;
+  --accent-digital: #1B5FFF;  --accent-digital-ink: #FFFFFF;
+  --accent-press:   #2E4A3A;  --accent-press-ink:   #FBF9F4;
 }
 ```
 
 **The master layer has no colour of its own.** Its accent is ink. This is the central identity decision: if the master brand claimed a fourth colour, the three divisions would become sub-brands of a fourth brand. With ink as the accent, the divisions supply the colour and the master supplies the structure — which is exactly the commercial relationship.
 
-Division accents appear at master level in only three places: division routing cards, division badges on work cards, and the footer division switcher.
+Division accents appear at master level in only three places: division routing cards, division badges on work cards, and the footer division switcher. **On the routing cards they are now a filled block rather than a 3px rule**, with `--accent-*-ink` as the foreground — see `docs/_shared/PALETTES.md`. The amber constraint is unchanged: it says the accent may never be a *foreground*, which is what 2.16:1 on white means, and it says nothing about the accent as a *surface*, where the same colour measures 9.07:1.
 
 **Contrast verification:**
 

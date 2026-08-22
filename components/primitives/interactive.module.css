@@ -63,6 +63,13 @@
 /* Resting border is the only thing identifying this as a button, so it needs 3:1. */
 .secondary { background: transparent; color: var(--ink); border-color: var(--ink-subtle); }
 .secondary:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+/* For a button sitting ON an accent band. `.primary` there would be --accent on
+   --accent-2, which measures 1.57-2.01:1 — the same colour family at two lightnesses, so
+   the button would all but vanish. Inverting the pair reuses the ratio the matrix has
+   already measured in the other direction (--accent-ink over --accent-2) rather than
+   introducing a fifth colour to be checked. */
+.inverse { background: var(--accent-ink); color: var(--accent-2); border-color: var(--accent-ink); }
+.inverse:hover:not(:disabled) { background: transparent; color: var(--accent-ink); }
 .button:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .link {

@@ -29,6 +29,7 @@ This division has an additional design constraint the others do not: **it must l
 
   --accent:         #2E4A3A;   /* deep green — cloth binding, not celebratory */
   --accent-hover:   #1F3428;
+  --accent-2:       #426953;   /* the second colour surface — a lighter cloth */
   --accent-ink:     #FBF9F4;
 
   --line:           #E3DFD4;
@@ -162,3 +163,19 @@ Minimal. Lucide, 1.5px stroke, 20px, `currentColor`. Icons appear only in functi
 | Reserve mono for verifiable facts | Use mono decoratively |
 | Keep motion nearly invisible | Animate anything book-shaped |
 | Let a non-conversion be a good outcome | Add urgency, scarcity, or celebration |
+
+
+### The colour surfaces — added with the palette work
+
+| Pair | Measured | Pass |
+|---|---|---|
+| `--accent-ink` on `--accent` (primary surface) | 9.25:1 | AA |
+| `--accent-ink` on `--accent-2` (secondary surface) | 5.91:1 | AA |
+
+`--accent-2` is **#426953**, derived from `--accent` by a lightness shift at constant hue and
+saturation. It carries `--accent-ink` (`#FBF9F4`) — one foreground clears AA on both surfaces,
+measured, so there is no separate `--accent-2-ink`.
+
+The division hero is a `--accent-2` band and the closing call-to-action is an `--accent`
+band; the button on a band is `Button variant="inverse"`, because `.primary` there would be
+the accent on its own second shade. Full published values: `docs/_shared/PALETTES.md`.

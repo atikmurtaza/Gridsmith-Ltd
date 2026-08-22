@@ -11,6 +11,16 @@
    unreadable above about 1100px and the hero is the first thing anyone reads. */
 .hero {
   max-width: 20ch;
+  /* **Pre-existing, and only visible once the hero had a background.** `Eyebrow` is
+     `line-height: 1` and this is `--leading-tight` (1.05) at up to 104px, so on Digital —
+     whose display face is a monospace with tall ascenders — the h1's first-line ink
+     overflows its own line box upward and lands on the eyebrow. The boxes do not collide
+     (measured: 0px overlap at HEAD as well as here), which is why no gate saw it and why
+     it survived on white. Colour behind it made it obvious.
+
+     A leading change would alter DESIGN.md §3's display-hero row across all four themes to
+     fix one face; the space belongs between these two elements and nowhere else. */
+  margin-block-start: var(--space-3);
   margin-block-end: var(--space-6);
 }
 
@@ -47,3 +57,8 @@
   font-size: var(--text-sm);
   color: var(--ink-muted);
 }
+
+/* The closing band steps up from `--accent-2` to the accent itself. `--accent-ink` is
+   measured on both (9.07 / 5.09 / 9.25:1 against 5.55 / 10.22 / 5.91:1), so the foreground
+   the `.accent` surface already sets is correct on either and nothing else changes. */
+.ctaBand { background: var(--accent); }

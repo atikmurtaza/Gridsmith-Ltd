@@ -42,8 +42,8 @@ const TOLERANCE = 0.02; // DESIGN.md now carries measured values to 2dp
  *
  * An expectation derived from its own subject is not an expectation.
  */
-const EXPECTED_PAIRS = 29;
-const EXPECTED_CELLS = 128;
+const EXPECTED_PAIRS = 36;
+const EXPECTED_CELLS = 148;
 
 /**
  * Pairs as named in each DESIGN.md §2 table, with the ratio each table publishes.
@@ -57,6 +57,12 @@ const PAIRS = {
     ['--ink-muted', '--canvas', 'text', 7.73],
     ['--ink-subtle', '--canvas', 'text', 5.52],
     ['--accent-ink', '--accent', 'text', 19.17],
+    ['--accent-ink', '--accent-2', 'text', 11.37],
+    // The three division fills — master/DESIGN.md §2. The accent stays decorative as a
+    // foreground and becomes a surface here, with its own paired ink on top.
+    ['--accent-design-ink', '--accent-design', 'text', 9.07],
+    ['--accent-digital-ink', '--accent-digital', 'text', 5.09],
+    ['--accent-press-ink', '--accent-press', 'text', 9.25],
     ['--accent-design', '--canvas', 'decor', 2.16],
     ['--accent-digital', '--canvas', 'text', 5.09],
     ['--accent-press', '--canvas', 'text', 9.74],
@@ -69,6 +75,7 @@ const PAIRS = {
     ['--accent', '--canvas', 'text', 9.07],
     ['--accent', '--canvas-raised', 'text', 8.46],
     ['--accent-ink', '--accent', 'text', 9.07],
+    ['--accent-ink', '--accent-2', 'text', 5.55],
     ['--line-strong', '--canvas', 'decor', 1.72],
   ],
   digital: [
@@ -78,6 +85,7 @@ const PAIRS = {
     ['--accent', '--canvas', 'text', 4.87],
     ['--accent', '--canvas-raised', 'text', 5.09],
     ['--accent-ink', '--accent', 'text', 5.09],
+    ['--accent-ink', '--accent-2', 'text', 10.22],
     ['--line-strong', '--canvas', 'decor', 1.59],
   ],
   press: [
@@ -86,6 +94,7 @@ const PAIRS = {
     ['--ink-subtle', '--canvas', 'text', 5.44],
     ['--accent', '--canvas', 'text', 9.25],
     ['--accent-ink', '--accent', 'text', 9.25],
+    ['--accent-ink', '--accent-2', 'text', 5.91],
     ['--ink', '--canvas-sunken', 'text', 15.42],
     ['--line-strong', '--canvas', 'decor', 1.69],
   ],
@@ -165,7 +174,25 @@ const USE = {
  * Foregrounds that sit on an accent fill rather than a canvas — the filled button, the
  * current pagination page, the current stepper marker.
  */
-const ON_ACCENT = { '--accent-ink': { role: 'body', over: ['--accent', '--accent-hover'] } };
+const ON_ACCENT = {
+  // `--accent-2` joins the list rather than becoming a fourth entry in SURFACES. A surface
+  // in that list is one the ink ramp lands on; this one never carries --ink-muted or
+  // --ink-subtle, it carries --accent-ink and nothing else. Putting it in SURFACES would
+  // have measured six pairs no design produces and constrained the colour to satisfy them.
+  '--accent-ink': { role: 'body', over: ['--accent', '--accent-hover', '--accent-2'] },
+  // **The division accents used as fills.** They are `role: 'decor'` in USE and stay that
+  // way — that rules them out as *foregrounds*, which is what 2.16:1 on white actually
+  // means. As backgrounds with a paired foreground they measure 9.07 / 5.09 / 9.25:1, and
+  // these three rows are what makes that claim checkable rather than asserted.
+  '--accent-design-ink': { role: 'body', over: ['--accent-design'] },
+  '--accent-digital-ink': { role: 'body', over: ['--accent-digital'] },
+  '--accent-press-ink': { role: 'body', over: ['--accent-press'] },
+  // The inverse button — `--accent-2` text on an `--accent-ink` fill. Same two colours as
+  // the row above it, the other way round, and therefore the same ratio; it is listed
+  // because the size pass keys its "is this foreground ruled at all" branch on ON_ACCENT
+  // membership, and an unlisted foreground is unmeasured rather than permitted.
+  '--accent-2': { role: 'body', over: ['--accent-ink'] },
+};
 
 /**
  * The control-border invariant — FOUNDATION §3. Neither line token clears 3:1 anywhere,

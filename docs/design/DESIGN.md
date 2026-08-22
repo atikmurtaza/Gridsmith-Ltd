@@ -29,6 +29,7 @@ Dark canvas. Work is the light source. This is the only one of the three divisio
 
   --accent:         #E8A33D;   /* amber — drafting pencil, warning tape */
   --accent-hover:   #F2B75C;
+  --accent-2:       #BD7A16;   /* the second colour surface — burnt amber */
   --accent-ink:     #0C0C0D;
 
   --line:           #262628;
@@ -168,3 +169,19 @@ Line icons only, 1.5px stroke, 24px grid, `currentColor`. Lucide as base set. No
 | Keep sections wide, text narrow | Set paragraphs full-bleed on dark |
 | Use one accent | Introduce a second accent for Track A |
 | Animate opacity and transform | Animate height, width, or scroll position |
+
+
+### The colour surfaces — added with the palette work
+
+| Pair | Measured | Pass |
+|---|---|---|
+| `--accent-ink` on `--accent` (primary surface) | 9.07:1 | AA |
+| `--accent-ink` on `--accent-2` (secondary surface) | 5.55:1 | AA |
+
+`--accent-2` is **#BD7A16**, derived from `--accent` by a lightness shift at constant hue and
+saturation. It carries `--accent-ink` (`#0C0C0D`) — one foreground clears AA on both surfaces,
+measured, so there is no separate `--accent-2-ink`.
+
+The division hero is a `--accent-2` band and the closing call-to-action is an `--accent`
+band; the button on a band is `Button variant="inverse"`, because `.primary` there would be
+the accent on its own second shade. Full published values: `docs/_shared/PALETTES.md`.

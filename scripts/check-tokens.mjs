@@ -158,6 +158,10 @@ const CONTRACT = [
   '--canvas', '--canvas-raised', '--canvas-sunken',
   '--ink', '--ink-muted', '--ink-subtle',
   '--accent', '--accent-hover', '--accent-ink',
+  // The second colour surface. In CONTRACT rather than SHARED_ACCENTS because it is a
+  // token a theme needs to *be* a theme — every theme's own palette, not a reference to
+  // another division's.
+  '--accent-2',
   '--line', '--line-strong',
   '--font-display', '--font-body', '--font-mono',
   '--radius-default',
@@ -175,7 +179,13 @@ const CONTRACT = [
  * Kept separate from `CONTRACT` so the split stays legible: `CONTRACT` is what a theme needs
  * to *be* a theme, this is what every theme carries to refer to the others.
  */
-const SHARED_ACCENTS = ['--accent-design', '--accent-digital', '--accent-press'];
+const SHARED_ACCENTS = [
+  '--accent-design', '--accent-digital', '--accent-press',
+  // The foreground each carries when it is used as a fill rather than a rule. Same
+  // theme-invariant reasoning as the accents themselves: a division block must look the
+  // same wherever it is rendered, so the pair travels together or not at all.
+  '--accent-design-ink', '--accent-digital-ink', '--accent-press-ink',
+];
 
 const themeProblems = [];
 // Counted inside the loop: `THEMES.length` and `CONTRACT.length` are both constants and print

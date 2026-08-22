@@ -88,11 +88,13 @@ export function DivisionRouting() {
         <ul className={styles.divisionCards}>
           {DIVISIONS.map((d) => (
             <Card as="li" key={d.href} linked className={styles[d.className]}>
-              <Heading level={2} size="d4">
-                <a href={d.href} className={styles.divisionLink}>
-                  {d.name}
-                </a>
-              </Heading>
+              <div className={styles.divisionHead}>
+                <Heading level={2} size="d4">
+                  <a href={d.href} className={styles.divisionLink}>
+                    {d.name}
+                  </a>
+                </Heading>
+              </div>
               <p className={styles.divisionServices}>{d.services}</p>
               <p className={styles.divisionCharacter}>{d.character}</p>
             </Card>

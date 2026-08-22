@@ -85,31 +85,63 @@
   .divisionCards { grid-template-columns: 1fr; }
 }
 
-/* The 3px accent rule. It is the one place the master layer carries a division colour
-   (DESIGN.md §2) and it is a rule, never text — --accent-design is 2.16:1 on this canvas
-   and would fail as a foreground. Padding is on the card; the rule sits inside its border. */
-.divisionCards > li { position: relative; border-block-start-width: 3px; }
-.cardDesign  { border-block-start-color: var(--accent-design); }
-.cardDigital { border-block-start-color: var(--accent-digital); }
-.cardPress   { border-block-start-color: var(--accent-press); }
+/* **The division colour block — this is where the master layer stopped being greyscale.**
 
-/* The wipe. A second bar over the accent rule, scaled from the left on hover or focus —
-   DESIGN.md §6's "top rule animates left→right". --ink is the master accent, so this
-   introduces no colour; the rule visibly runs from the division's colour to ink. */
-.divisionCards > li::after {
+   It was a 3px rule, and the reason it was only a rule is recorded in V3: `--accent-design`
+   is 2.16:1 on this canvas and fails AA as a foreground. That is a constraint on the accent
+   as TEXT. As a SURFACE with its own paired foreground on top it measures 9.07:1, and the
+   three `--accent-*-ink` tokens are that foreground — 9.07 / 5.09 / 9.25:1, gated as
+   ON_ACCENT pairs by check-contrast. `lint:colors`' amber-as-text rule is untouched and
+   still correct: nothing here paints text with `--accent-design`, it paints a background
+   with it.
+
+   Master keeps no colour of its own — the block colours belong to the divisions they route
+   to, which is the same argument that makes `--accent` ink on this theme.
+
+   The block is a padded strip carrying the card's heading, so the colour arrives at the top
+   of each card at a size a visitor can actually read a palette from. Card padding is
+   cancelled on the strip's own axis so it runs edge to edge inside the hairline. */
+.divisionHead {
+  margin: calc(var(--space-6) * -1) calc(var(--space-6) * -1) 0;
+  padding: var(--space-4) var(--space-6);
+}
+.cardDesign  .divisionHead { background: var(--accent-design);  color: var(--accent-design-ink); }
+.cardDigital .divisionHead { background: var(--accent-digital); color: var(--accent-digital-ink); }
+.cardPress   .divisionHead { background: var(--accent-press);   color: var(--accent-press-ink); }
+
+/* `inherit`, so the link takes whichever of the three inks its block set. Naming a token
+   here would need three rules to say what one word says, and would drift the moment a
+   fourth division existed.
+
+   **The heading has to be in the chain, and leaving it out is what `check-axe` caught.**
+   `Heading` carries `.heading { color: var(--ink) }`, so `inherit` on the anchor resolved
+   to the h2's near-black rather than to the block's ink. It measured 8.89:1 on amber and
+   passed, and 1.87:1 on Press's dark green and did not — one of the three, which is the
+   shape of defect that survives a spot check. The heading takes the block's colour first
+   and the anchor inherits from a heading that is already correct. */
+.divisionHead :is(h1, h2, h3, h4, h5, h6),
+.divisionHead a { color: inherit; }
+/* currentColor for the same reason, and because it is the one colour on this surface that
+   has been measured against it. */
+.divisionHead a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+/* The wipe. A bar sliding across the bottom of the colour block on hover or focus —
+   DESIGN.md §6's "top rule animates left-to-right", now drawn in the block's own foreground
+   because the block is no longer a 3px rule to draw over. */
+.divisionHead::after {
   content: '';
-  position: absolute;
-  inset-block-start: -3px;
-  inset-inline: -1px;
+  display: block;
   height: 3px;
-  background: var(--accent);
+  margin: var(--space-4) calc(var(--space-6) * -1) calc(var(--space-4) * -1);
+  background: currentColor;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform var(--dur-base) var(--ease-out);
 }
-.divisionCards > li:hover::after,
-.divisionCards > li:focus-within::after { transform: scaleX(1); }
+.divisionCards > li:hover .divisionHead::after,
+.divisionCards > li:focus-within .divisionHead::after { transform: scaleX(1); }
 
+.divisionCards > li { position: relative; overflow: hidden; }
 .divisionCards > li:hover,
 .divisionCards > li:focus-within { background: var(--canvas-raised); }
 
@@ -124,7 +156,7 @@
 /* No motion reset in globals.css — there is none to inherit; RevealOnScroll carries its
    own. Both animated properties are killed here, not slowed. */
 @media (prefers-reduced-motion: reduce) {
-  .divisionCards > li::after,
+  .divisionHead::after,
   .divisionCards:hover > li:not(:hover),
   .divisionCards:focus-within > li:not(:focus-within) { transition: none; }
 }
@@ -143,10 +175,10 @@
 /* The card's link. Plain <a> — TECH-SPEC §3, see DivisionRouting.tsx — so it carries its own
    focus ring and underline rather than the Link primitive's. Same shape as .switcherLink,
    which is the footer's answer to the same constraint. */
-.divisionLink { color: var(--ink); text-decoration: none; }
+.divisionLink { color: inherit; text-decoration: none; }
 .divisionLink:hover,
 .divisionLink:focus-visible { text-decoration: underline; text-underline-offset: 0.2em; }
-.divisionLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.divisionLink:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 
 /* The one-company argument — N-01 block 3. Asymmetric, per DESIGN.md §4: prose blocks are
    anchored, not centred. The heading is the argument and takes the narrow measure so it
@@ -205,3 +237,77 @@
    non-colour cue (WCAG 1.4.1) and this line already carries the cards' weight by design. */
 .divisionFallbackLink { color: var(--ink); text-underline-offset: 0.2em; }
 .divisionFallbackLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* --- The homepage mark — N-01 block 1. See HeroMark.tsx ------------------- */
+
+/* Fixed aspect ratio, so the box is the same size before and after the stylesheet loads
+   and at every breakpoint. This is the whole CLS story: nothing below it ever moves. */
+.mark {
+  display: block;
+  width: 100%;
+  max-width: var(--container-narrow);
+  margin: 0 auto var(--space-12);
+  aspect-ratio: 1200 / 320;
+  overflow: visible;
+}
+
+/* The drafting sheet. --line is the hairline the rest of the site is built from; at 1px in
+   a 1200-unit viewBox scaled to ~800px it lands close enough to a device pixel to read as
+   the same rule as every border on the page. */
+.markRule,
+.markRuleH {
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The blocks carry the three division colours as FILLS. That is the permitted use and
+   always was: --accent-design is 2.16:1 on this canvas and may never be a foreground, which
+   says nothing about it as a surface. Nothing here is text, a link, or the sole indicator
+   of a state — the mark is aria-hidden and repeats the headline underneath it. */
+.markBlock { transform-box: fill-box; }
+
+/* Everything below is inside the guard, and the guard is not politeness.
+
+   An `animation-timeline` declaration a browser does not understand is dropped, and what
+   is left is a named animation with a duration on the DOCUMENT timeline — which plays
+   once, on load, above the fold. DESIGN.md §6 prohibits exactly that, and it would land on
+   the LCP viewport of the route with the tightest Lighthouse gate on the site. Declaring
+   the animation only where the timeline exists is the difference between "no effect" and
+   "the wrong effect". */
+@supports (animation-timeline: scroll()) {
+  @media not (prefers-reduced-motion: reduce) {
+    /* **Only the blocks move, and the sheet is drawn from first paint.**
+
+       The rules were animated too, in a staggered draw-on. Screenshotting it settled the
+       question: at scroll 0 the mark was three rectangles floating in white space, because
+       every element was at its `from` keyframe at once and the drafting sheet had not been
+       ruled yet. The sheet is not an event — it is the surface the work happens on, and it
+       should be there before anything else is. Removing that half also removed thirteen
+       staggered animations, which is the cheaper implementation of the better idea.
+
+       One timeline: the root scroller, over the first 45% of the document. The assembly
+       finishes well before the second viewport, which is where APP-FLOW §2 needs the
+       division routing block to have the reader's whole attention. */
+    .markBlock {
+      animation-name: markAssemble;
+      animation-timeline: scroll();
+      animation-range: 4% 42%;
+      animation-fill-mode: both;
+      /* `linear`, not --ease-out. On a scrubbed timeline the easing curve is applied to
+         SCROLL POSITION, not to time: --ease-out is front-loaded enough that 80% of the
+         travel was spent in the first 12% of the range — measured, not guessed — and the
+         blocks snapped together and then sat still. The user's scroll is the easing. */
+      animation-timing-function: linear;
+    }
+  }
+}
+
+/* transform only — PROJECT-RULES §9. `to: none`, not `to: translateX(0)`: the resting
+   state in the markup is the ASSEMBLED one, so the animation's end is "no transform at
+   all" and a browser that never runs it shows the finished mark rather than a scattered
+   one. Reduced motion and no scroll-timeline support both land there. */
+@keyframes markAssemble {
+  from { transform: translate(var(--fx), var(--fy)); }
+  to { transform: none; }
+}

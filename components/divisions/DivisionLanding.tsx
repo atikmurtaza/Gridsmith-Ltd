@@ -101,7 +101,17 @@ export async function DivisionLanding({
 
   return (
     <main id="main" tabIndex={-1}>
-      <Section rhythm="loose">
+      {/* **The hero is a colour band, and this is the change the palette work exists for.**
+
+          The three division accents were demoted to `role: 'decor'` because they fail AA as
+          text on a dark canvas. That is correct and unchanged. What never followed was the
+          other half: a colour used as a SURFACE with a paired foreground passes AA easily,
+          and until now nothing on any page had one — the accents existed only as 1px rules,
+          so a visitor could not derive a palette from a page. `--accent-2` is the division's
+          second colour surface and `--accent-ink` is the foreground measured on it
+          (5.55 / 10.22 / 5.91:1). A background colour changes no geometry, so CLS is
+          unaffected and the LCP element is unchanged. */}
+      <Section rhythm="loose" surface="accent">
         <Container>
           {/* The division names itself before the positioning line. A visitor arriving from a
               social profile or a search result needs to know which studio they are on before
@@ -189,14 +199,16 @@ export async function DivisionLanding({
         </Container>
       </Section>
 
-      <Section rhythm="loose" surface="raised" labelledBy="cta">
+      {/* The conversion band takes the FULL-strength accent, not the second surface — the
+          hero opens in `--accent-2` and the page closes one step louder. */}
+      <Section rhythm="loose" surface="accent" className={styles.ctaBand} labelledBy="cta">
         <Container width="narrow">
           <div className={styles.cta}>
             <Heading level={2} id="cta">
               {copy.ctaHeading}
             </Heading>
             <p className={styles.ctaLede}>{copy.ctaLede}</p>
-            <Button href="/contact">{copy.ctaLabel}</Button>
+            <Button href="/contact" variant="inverse">{copy.ctaLabel}</Button>
             {/* One source of truth for what we promise — non-negotiable #5. No page on this
                 site writes this sentence itself. */}
             <p className={styles.ctaCommitment}>{company.responseCommitment}</p>

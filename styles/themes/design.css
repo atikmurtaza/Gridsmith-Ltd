@@ -29,6 +29,31 @@
   --accent-hover:   #F2B75C;
   --accent-ink:     #0C0C0D;
 
+  /**
+   * The second colour surface — burnt amber, the drafting sheet under the pencil.
+   *
+   * **The palette gap this closes.** V3 demoted the three division accents to `role: 'decor'`
+   * because they fail AA *as text* on a dark canvas, which is correct and is still enforced.
+   * What never followed was the other half: a colour used as a SURFACE with a paired
+   * foreground clears AA easily, and nothing in the token layer offered one. The accents
+   * therefore only ever existed as 1px rules, and the site read as four typefaces and three
+   * greys. `--accent` was always a fill token with `--accent-ink` beside it — nobody used it
+   * as one. This adds the second fill so a page has a primary and a secondary colour surface
+   * rather than a single button state.
+   *
+   * Derived from `--accent` by a lightness shift at constant hue and saturation, so the
+   * identity is continuous rather than a second colour bolted on. **It carries `--accent-ink`,
+   * not an ink of its own** — measured: 5.55:1, against 9.07:1 on `--accent`. A
+   * separate `--accent-2-ink` token would have held the same value in every theme, so there
+   * is not one.
+   *
+   * Measured 5.55:1 against `--canvas` and 1.63:1 against `--accent`: far enough from the
+   * canvas to read as a block, far enough from the accent to read as a different block.
+   * Gated as an `ON_ACCENT` fill by scripts/check-contrast.mjs — it is a background, so it
+   * is deliberately NOT in `SURFACES`; the ink ramp never lands on it.
+   */
+  --accent-2:       #BD7A16;
+
   --line:           #262628;
   /**
    * 1.72:1 — decorative only, matching the other three themes. DESIGN.md previously
@@ -52,4 +77,21 @@
   --accent-design:  #E8A33D;
   --accent-digital: #1B5FFF;
   --accent-press:   #2E4A3A;
+
+  /**
+   * **The ink each division accent carries when it is used as a FILL.**
+   *
+   * `--accent-design` is 2.16:1 on white and may never be text — `lint:colors` has a rule
+   * banning it from `color:` and that rule is unchanged. The constraint is on the accent as a
+   * *foreground*; as a *background* with the right foreground on top it measures 9.07:1. These
+   * three tokens are that foreground, and they are what lets the master layer show three real
+   * colour blocks instead of three 1px rules.
+   *
+   * Theme-invariant, exactly like the accents they pair with, so a division block looks the
+   * same wherever it is rendered. Measured 9.07 / 5.09 / 9.25:1 and gated as `ON_ACCENT`
+   * pairs by scripts/check-contrast.mjs.
+   */
+  --accent-design-ink:  #0C0C0D;
+  --accent-digital-ink: #FFFFFF;
+  --accent-press-ink:   #FBF9F4;
 }

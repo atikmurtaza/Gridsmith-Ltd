@@ -26,6 +26,36 @@
 .raised { background: var(--canvas-raised); }
 .sunken { background: var(--canvas-sunken); }
 
+/* The colour band — the whole point of the palette work.
+
+   `--accent-2` is a fill and `--accent-ink` is the one foreground the permission matrix has
+   measured on it: 5.55 / 10.22 / 5.91 / 11.37:1 on design / digital / press / master
+   (check-contrast's ON_ACCENT pass). `.ctaBand` in divisions.module.css swaps the background
+   to `--accent` itself, on which the same foreground measures 9.07 / 5.09 / 9.25 / 19.17:1.
+
+   **The ink ramp is re-pointed rather than overridden per element.** Components inside a band
+   set their own `color: var(--ink-muted)` and similar, every one of which is measured against
+   the theme's CANVASES and none of which is measured against this fill. A descendant
+   `color:` rule would have to out-specify each of them across module boundaries, which is a
+   specificity race decided by bundler output order. Re-pointing the custom property is
+   decided by the cascade at the element, wins everywhere, and — the part that matters — is
+   still a MEASURED pair: every one of these now resolves to `--accent-ink`, which is exactly
+   what ON_ACCENT checks against both fills.
+
+   `--accent` is deliberately NOT re-pointed: `.primary` builds its fill out of it, and
+   pointing it at the foreground would give that button the band's own colour on both sides.
+   A band's button is `Button variant="inverse"`. The one place `--accent` reaches text is a
+   Prose link, handled below where `.prose` is declared so the order is inside one file. */
+.accent {
+  background: var(--accent-2);
+  color: var(--accent-ink);
+  --ink: var(--accent-ink);
+  --ink-muted: var(--accent-ink);
+  --ink-subtle: var(--accent-ink);
+  --line: var(--accent-ink);
+  --line-strong: var(--accent-ink);
+}
+
 .prose {
   max-width: var(--measure);
   line-height: var(--leading-relaxed);
@@ -54,6 +84,12 @@
 }
 .prose hr { border: 0; border-block-start: var(--border-hairline) solid var(--line); }
 .proseNarrow { max-width: var(--measure-narrow); }
+/* The one foreground inside a colour band that the ink re-point above cannot reach:
+   `.prose a` names `--accent`, which stays pointed at the accent so `.primary` keeps
+   working. On a band that would be the accent on its own second shade — 1.57-2.01:1.
+   Declared here, after `.prose a`, so the tie in specificity is broken by source order
+   within a single file rather than across two modules. */
+.accent .prose a { color: var(--accent-ink); }
 
 .eyebrow {
   display: block;

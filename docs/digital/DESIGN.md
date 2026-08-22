@@ -29,6 +29,7 @@ The site is the primary case study (R4.6, persona P4). Every decision optimises 
 
   --accent:         #1B5FFF;
   --accent-hover:   #0E4BE0;
+  --accent-2:       #0033AA;   /* the second colour surface — navy */
   --accent-ink:     #FFFFFF;
 
   --line:           #E4E4E2;
@@ -154,3 +155,19 @@ Lucide, 1.5px stroke, 20px and 24px only, `currentColor`. No filled variants.
 | Say "Medium confidence" | Say "87% accurate" |
 | Give selected states three cues | Rely on border colour alone |
 | Let the site be the proof | Claim quality the site doesn't demonstrate |
+
+
+### The colour surfaces — added with the palette work
+
+| Pair | Measured | Pass |
+|---|---|---|
+| `--accent-ink` on `--accent` (primary surface) | 5.09:1 | AA |
+| `--accent-ink` on `--accent-2` (secondary surface) | 10.22:1 | AA |
+
+`--accent-2` is **#0033AA**, derived from `--accent` by a lightness shift at constant hue and
+saturation. It carries `--accent-ink` (`#FFFFFF`) — one foreground clears AA on both surfaces,
+measured, so there is no separate `--accent-2-ink`.
+
+The division hero is a `--accent-2` band and the closing call-to-action is an `--accent`
+band; the button on a band is `Button variant="inverse"`, because `.primary` there would be
+the accent on its own second shade. Full published values: `docs/_shared/PALETTES.md`.

@@ -1,6 +1,7 @@
 import { Container } from '@/components/primitives/Container';
 import { Heading } from '@/components/primitives/Heading';
 import { Section } from '@/components/primitives/Section';
+import { HeroMark } from './HeroMark';
 import styles from './master.module.css';
 
 /**
@@ -34,6 +35,7 @@ export function Hero({ headline, intro }: { headline: string; intro?: string }) 
   return (
     <Section rhythm="loose" className={styles.hero}>
       <Container width="narrow">
+        <HeroMark />
         <Heading level={1} size="display" className={styles.heroHeadline}>
           {headline}
         </Heading>

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import styles from './interactive.module.css';
 
-type Common = { variant?: 'primary' | 'secondary'; className?: string; children: ReactNode };
+type Common = { variant?: 'primary' | 'secondary' | 'inverse'; className?: string; children: ReactNode };
 
 /**
  * Renders a <button> or an <a> depending on whether `href` is given — a link that looks
