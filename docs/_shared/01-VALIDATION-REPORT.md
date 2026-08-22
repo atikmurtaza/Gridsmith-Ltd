@@ -833,3 +833,104 @@ second accident inside the fix for the first.
 Proven in all three directions the rule requires: a shaped key in `public/leak-probe.js`
 fired one violation and exit 1; removing it returned clean and exit 0; emptying `public/`
 and then deleting it both fail loudly rather than reporting a clean sweep of nothing.
+
+
+---
+
+## 17. `M-P1-12` — the class, found in the harness rather than in a gate
+
+Every gate defect this programme has recorded lived inside a gate: a predicate that could
+not match, a subject below the fold, a filter that swallowed a route, an expectation read
+from its own subject, a summary line over a loop that did not exist. This one is in
+`scripts/with-server.mjs` — the harness that starts the server and runs the five served
+gates — and it is the same class one layer down: **a process reporting something other than
+what happened.**
+
+### What it was
+
+`with-server` refuses to run when something is already listening on its port, because a
+stale server answers every route and turns every served gate green against a build that is
+not in the tree. The refusal is correct and it is not new. What it did on the way out was
+exit **127**, printing a libuv assertion over its own message:
+
+```
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\winsync.c, line 76
+```
+
+127 is the shell's *"command not found"*. A CI log ending in 127 reads as a broken
+invocation, not as a gate declining to measure, and the sentence explaining the refusal is
+buried underneath a C assertion. The failure was real; the report of it was wrong.
+
+### What it was not
+
+**It never exited 0, and `npm run verify` has always failed here.** It was first written up
+in this session as *"exits 0, so verify reports success having measured nothing"* — which
+would have made it the most serious gate defect on the list. That reading came from
+
+```
+npm run verify:served 2>&1 | tail -80
+```
+
+A shell pipeline's exit status is its **last stage**. `tail` succeeded, so the pipeline
+reported 0 while the script reported 127. The number was real and it was a number about
+`tail`.
+
+This is worth more than the bug. `| tail`, `| head` and `| grep` are how a long gate run is
+made readable, and every one of them replaces the status of the thing being measured with
+the status of the thing doing the reading. It belongs beside the stale-build rule in
+`CLAUDE.md`, and for the same reason: **the tell is not visible in the output, so the fix is
+to remove the possibility.** Read an exit code from the process.
+
+### Two wrong diagnoses before the right one
+
+Recorded because the wrong ones were the plausible ones.
+
+| Hypothesis | Change | Result |
+|---|---|---|
+| `AbortSignal.timeout()` leaves an uncancelled libuv timer | explicit `AbortController` + `clearTimeout` | still 127 |
+| the response body is an undrained stream holding a socket | `await res.arrayBuffer()`, then `await res.body.cancel()` | still 127, both ways |
+| **undici's keep-alive socket** — `fetch` does not close the connection, and an abrupt exit while it is open aborts the process on Windows | replace the probe with a raw TCP `connect` that destroys its own socket | **exit 1, no assertion** |
+
+### The part that was not the goal
+
+A TCP probe answers the question the guard actually asks — *is anything bound to this port* —
+and it is strictly more conservative than the HTTP probe it replaces. A listener that never
+speaks HTTP still stops `next start` binding, and `fetch` could not see one: pointed at a
+bare `net.createServer()`, the old probe reported the port free, spawned a server that could
+not bind, and sat in `ready()`'s 90-second poll until the run was killed at five minutes. The
+new probe refuses it in milliseconds.
+
+So the fix removed a second defect nobody had reported, in a probe that had been read several
+times without anyone noticing it could only detect listeners polite enough to answer.
+
+### Proofs
+
+Exit codes read from the process, never through a pipe.
+
+| Case | Expected | Result |
+|---|---|---|
+| occupied port | refuse, exit 1 | exit 1, 0 commands run, 0 assertions, message intact |
+| `npm run verify:served` on that port | fail | exit 1 |
+| free port | proceed | exit 0, the command ran — the guard is reached, not always-on |
+| bare TCP listener | refuse | exit 1, 0 commands run *(old probe: hung, killed at 5m)* |
+
+The free-port row is the one that matters most. A guard that refuses everything would pass
+the first two rows and be indistinguishable from a working one — the same shape as a count
+that cannot be made to move.
+
+### What surfaced it
+
+Nothing systematic. A stale `next start` of this app happened to be holding 3000 during the
+palette session on 22 August. The guard fired, correctly, and the exit code was noticed only
+because the number looked wrong.
+
+The same session then took the file's own advice — *"run on another port: VERIFY_PORT=3100"* —
+and hit the guard again, on an **unrelated project's** Next server. Had the guard not existed,
+`check-axe`, `check-launch`, `check-responsive` and both Lighthouse runs would have audited
+that application and reported the results as this site's. That is not a hypothetical: it is
+the 12 August incident in §13, repeated on the port this file recommended as the way around
+it. The message now names a port with nothing on it and says what the risk is.
+
+**Neither port collision was found by a check. Both were found by a guard firing and someone
+reading the output.** There is no gate over the harness, and this is the argument for one
+existing rather than a claim that one does.

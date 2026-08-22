@@ -101,6 +101,7 @@ of a claim, never as confirmation that the substance is where it says.
 | `A-GATE-7-5` | OPEN | — | — |
 | `A-GATE-7-6` | CEILING | — | — |
 | `M-P1-1` | ACCEPTED | — | — |
+| `M-P1-12` | FIXED | scripts/with-server.mjs | a0e7db2a |
 
 ## What this gate does not cover, stated rather than left to be discovered
 

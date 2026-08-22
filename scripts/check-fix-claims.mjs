@@ -112,6 +112,25 @@ const ROUND_BOUNDARIES = [
   ['R', 'docs/_shared/09-A-GATE-RUN-4.md'],
   ['T', 'docs/_shared/10-A-GATE-RUN-5.md'],
   ['U', 'docs/_shared/11-A-GATE-RUN-6.md'],
+  // `M-P1-*` is the pre-launch P1 list, whose register is BEFORE-LAUNCH.md. It differs from
+  // the rows above in that no round *report* raised these findings — they accumulate from
+  // sessions. The document that opens the list is still the right boundary and is still read
+  // from git: a fix cannot predate the list it is filed against.
+  //
+  // **This entry exists so an `M-P1-` row can be VERIFIED. It is deliberately not accompanied
+  // by an `M-P1-\d+` term in ID_RE, and that asymmetry is the point.** Widening ID_RE was
+  // tried and reverted: it pulled 49 identifiers already discussed across the governed
+  // documents into the covered space in one commit, each then demanding a status nobody in
+  // that commit had audited. The only way to go green would have been to write 49 statuses
+  // from prose, which is the guesswork this gate exists to remove — the T3 mistake with the
+  // sign flipped, inventing rows instead of deleting a mention.
+  //
+  // So `M-P1-12` carries a row VOLUNTARILY and is verified like any other: commit exists, is
+  // an ancestor, descends from BEFORE-LAUNCH.md's adding commit, touches the file it names,
+  // and is not documents alone. Its siblings remain outside coverage, exactly as they were
+  // before this commit — no obligation was created and none was removed. Bringing the rest of
+  // `M-P1-` in is real work against the real list, not a regex edit. `M-P1-12`.
+  ['M-P1-', 'docs/_shared/BEFORE-LAUNCH.md'],
 ];
 
 /**
@@ -122,7 +141,7 @@ const ROUND_BOUNDARIES = [
  *
  * Raise it in the same commit that adds rows, with the finding in the message.
  */
-const EXPECTED_ROWS = 58;
+const EXPECTED_ROWS = 59;
 
 const problems = [];
 
