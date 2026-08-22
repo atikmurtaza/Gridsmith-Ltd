@@ -854,7 +854,7 @@ not in the tree. The refusal is correct and it is not new. What it did on the wa
 exit **127**, printing a libuv assertion over its own message:
 
 ```
-Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\winsync.c, line 76
+Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 76
 ```
 
 127 is the shell's *"command not found"*. A CI log ending in 127 reads as a broken
@@ -880,6 +880,29 @@ made readable, and every one of them replaces the status of the thing being meas
 the status of the thing doing the reading. It belongs beside the stale-build rule in
 `CLAUDE.md`, and for the same reason: **the tell is not visible in the output, so the fix is
 to remove the possibility.** Read an exit code from the process.
+
+### The seventh instance of the class, written into the report describing the class
+
+The code fence above holds `src\win\async.c`. Writing it produced a literal **U+0007 BEL**
+where `\a` was intended, and `check:control` caught it in the same run that verified the fix.
+
+That is the seventh instance of the escape-sequence-as-control-byte defect in this repository
+(§15 was the fifth, §16 the sixth) and the first that is U+0007 rather than U+0008 — the byte
+follows the letter, so the class is the escape, not the character. The mechanism is identical
+every time: a backslash passing through one more layer of string processing than the author was
+counting. Here it was a Python heredoc writing Markdown; before, a JavaScript regex. `\w`
+survived because no such escape exists, `\a` did not, and both were in the same word.
+
+**The first attempt to fix it produced three more.** The correction was written through the
+same heredoc, so `\a` in the replacement text became BEL exactly as it had in the original —
+one byte became three, and `check:control` reported 3 where it had reported 1. The fix that
+worked does not write a backslash at all: it builds one from `chr(92)`, which no layer can
+reinterpret.
+
+It renders identically. Nothing in the diff looks wrong. Nothing in the rendered Markdown looks
+wrong. `check:control` is the only reason none of the four is in the file — and the argument
+for that gate is now made by it catching its own documentation twice, rather than by a
+paragraph asserting it would.
 
 ### Two wrong diagnoses before the right one
 
