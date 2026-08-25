@@ -99,6 +99,14 @@ The mono-for-facts convention holds across all four layers. It is the strongest 
 - Section rhythm `--space-24` / `--space-32`
 - **The master layer does not use a visible column grid.** Design does; that is Design's identity. The master frame stays plain so the divisions can be distinctive.
 - Asymmetric anchoring for prose blocks; centred only for the hero and CTA bands
+- **There is no sustained whitespace on `/`, and this is measured.** The only regions free of
+  text at *every* scroll position are two 60px gutters at 1440; at 768 and 375 there are none.
+  Under a speed cap of 5x the scroll rate no path exists at any size at any breakpoint for an
+  element travelling through the page. **Density is the design** — the whitespace is between
+  blocks, not around them. Any proposal for a floating, sticky or parallaxed element over the
+  reading column must overturn that map with a measurement, not a mockup:
+  `npm run mark:measure` and `npm run mark:solve` regenerate it, `npm run mark:overlap` audits a
+  candidate, and `_shared/01-VALIDATION-REPORT.md` §18 records what it cost to find out.
 
 ## 5. Components
 

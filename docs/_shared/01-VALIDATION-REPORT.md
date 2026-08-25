@@ -957,3 +957,108 @@ it. The message now names a port with nothing on it and says what the risk is.
 **Neither port collision was found by a check. Both were found by a guard firing and someone
 reading the output.** There is no gate over the harness, and this is the argument for one
 existing rather than a claim that one does.
+
+## 18. The homepage mark, variant B — rejected on the measurement, and three defects found on the way
+
+A second homepage mark was built alongside the shipped one: an inline SVG, out of flow,
+travelling through the page's empty regions on a CSS scroll timeline and ending assembled. Zero
+JS, `@supports`-guarded, reduced-motion-safe, CLS 0.0000 — every constraint met. It was
+**rejected, and not on taste.**
+
+### 18.0 The finding, which is about the layout and not about the mark
+
+Where a floating element may go is a property of the page. `scripts/mark-freespace.mjs` measures
+it: at every 24px of scroll, at 375, 768 and 1440, it records the ink boxes of every visible text
+run (`Range.getClientRects()` — line boxes, not element boxes, so a paragraph whose last line is
+three words long does not claim the whole container width). `scripts/mark-path.mjs` then solves
+for a path whose **linear interpolation** clears all of it, because linear interpolation is what
+CSS draws between keyframes.
+
+On `/`:
+
+| | Regions free at **every** scroll position |
+|---|---|
+| 1440 | two 60px gutters, and nothing else |
+| 768 | none |
+| 375 | none |
+
+And under a speed cap of 5x the scroll rate or below — the mark moving no more than five pixels
+per pixel of scroll, which is already fast — **there is no path at any size at any of the three
+breakpoints.** The paths that do exist need caps of 7x to 20x and are 70/196/101px wide: at 1440
+the largest admissible mark is a 101px sliver that hugs the left edge. A verified run of
+`check-mark-overlap` against the best of them is clean over 1131 scroll positions, which is the
+point — the constraint was satisfiable and the result was still not worth having.
+
+**Density is the design.** The register is tactile brutalism with tight internal density and
+generous whitespace *between* blocks, not around them, and the measurement is what that choice
+looks like from the outside. This is a **layout decision, not a mark decision**: the next
+proposal for a floating, sticky or parallaxed element on `/` does not need a new argument, it
+needs to overturn this map. `npm run mark:measure` and `npm run mark:solve` regenerate it; the
+JSON is deliberately not committed, because it is ~3MB and is only true of the layout that
+produced it.
+
+The scripts are kept for that reason. `check-mark-overlap.mjs` is kept as a **tool and not a
+gate** — it has no standing subject now, it is out of `verify` and out of CI, and `MARK_ROUTE`
+has no default so it cannot one day run green against a route with nothing on it.
+`check-mark-cls.mjs` stays a real gate on `/`, whose subject outlived the variant.
+
+### 18.1 The instrument lying about its own subject
+
+`check-mark-overlap` reported **253 text overlaps at 375 against a path that was correct.**
+
+A scroll-driven animation is sampled off the main thread. A `getBoundingClientRect()` taken
+synchronously after `window.scrollTo` therefore returns the element's **previous** position, and
+in this case returned the scroll-336 position for the entire rest of the document — the gate saw
+a frozen mark, dragged it across the whole page in its arithmetic, and reported the collisions
+that would have caused.
+
+This is the fifth-class defect (§12: *the gate is right and the number is wrong*) with the
+subject one layer further out. Every earlier instance measured the wrong thing about a real
+subject; this measured a **stale** subject, which is worse, because the number it produced was a
+plausible number of a real quantity. The fix is two `requestAnimationFrame`s after each scroll.
+
+**The part worth keeping: it failed loudly here and would have been believed anywhere else.** A
+screenshot taken the same way is stale in exactly the same way and says nothing about it. Any
+instrument that reads geometry after a programmatic scroll of a scroll-driven animation is
+reading the previous frame unless it waits, and screenshots are the common case.
+
+### 18.2 The observer that had never been shown able to report
+
+`check-mark-cls` printed `CLS 0.0000` for every route and viewport, and that was the correct
+answer. It was also, at that moment, **unearned**: nothing had established that the
+`PerformanceObserver` was wired up, that `layout-shift` entries were reaching the accumulator, or
+that the accumulator was being read. A silent observer prints the same `0.0000`.
+
+This is §14's rule — *any gate whose output is a count must be provable to report a different
+number* — arriving in the one shape where the failure is invisible by construction, because the
+success value of a CLS check **is** zero. Every other count in this repository can be seen to
+move when the subject moves; this one looks identical whether it is working or dead.
+
+`MARK_CLS_PROBE=1` inserts a block at the top of the document that grows one frame later. With
+it on, every row reports 0.37/0.29/0.21 and fails. The probe is committed, in the gate, and named
+in its docstring.
+
+### 18.3 Route-level exclusion is not import-level exclusion
+
+The variant lived at `/gridsmith-mark-b`, a `page.probe.tsx` route, absent from a production
+build by the `pageExtensions` mechanism in §15/§16. Its component was rendered from a shared
+`HomepageBody` behind `mark === 'travel'`.
+
+`/` shipped **8.4KB of keyframes it never used**, and it survived a probe-excluded production
+build.
+
+CSS modules are collected at **import** time, not at render time. A static `import` in shared
+code puts the stylesheet in the module graph of every route that imports that code, and no
+amount of conditional rendering, dead-code elimination or route exclusion removes it: the route
+was genuinely gone, and its stylesheet was genuinely still linked from `/` — the route with the
+tightest budget on the site.
+
+**This is the same shape as `Numeric` living in `Table.tsx`**: an exclusion that is correct at
+the boundary it names and silent about the boundary that actually carries the cost. §15 and §16
+swept exclusions against *gates*; this is an exclusion swept against the *module graph*, and the
+rule generalises — **an exclusion is only as good as the graph it cuts.** Ask which graph, not
+which route.
+
+The fix was to pass the element in as a slot from the probe route so `/` never imports it, and
+the proof was a probe-excluded build with no `markTravel` in any emitted stylesheet. The variant
+is deleted now and the instance stands regardless of it.

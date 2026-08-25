@@ -38,6 +38,11 @@
     "check:schemas": "node scripts/check-schemas.mjs",
     "migrate": "node --env-file=.env.local scripts/migrate.mjs",
     "check:rls": "node scripts/check-rls.mjs",
+    "mark:measure": "node scripts/mark-freespace.mjs",
+    "mark:solve": "node scripts/mark-path.mjs",
+    "mark:overlap": "node scripts/check-mark-overlap.mjs",
+    "check:mark:cls": "node scripts/check-mark-cls.mjs",
+    "check:mark:guard": "node scripts/check-mark-guard.mjs",
     "seed": "node --env-file=.env.local scripts/seed-content.mjs"
   },
   "dependencies": {
