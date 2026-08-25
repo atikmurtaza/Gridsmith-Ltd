@@ -1,14 +1,43 @@
 # Master Services Agreement (Business Clients) — DRAFT for solicitor review
 
+> **[SEED - SOLICITOR REVIEW REQUIRED]**
+> This is a draft prepared for a qualified UK solicitor to review, amend and adopt. It is not legal
+> advice and must not be used unreviewed. `legalDocument.solicitorApproved` gates publication.
+
 **Status: DRAFT. Not for use until reviewed and adopted by a qualified UK solicitor.**
+
+**Version 1.1 — revised 25 August 2026 against `02-CITATION-LEDGER.md`.** Every clause carries an
+inline comment naming the ledger entry it implements, or is flagged as having none. Clauses added at
+this revision are marked **NEW**.
 
 For **business clients only**. Consumers — including most individual authors and memoir clients — are covered by `CONSUMER-TERMS.md`. Using this agreement with a consumer would breach the Consumer Rights Act 2015.
 
 Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR-DG06, `press/PRD.md` FR-P04), so renumbering requires a version bump and anchor redirects.
 
+> **[DECISION REQUIRED] — one route, two instruments. This is the structural defect in the whole
+> `_legal/` set and no clause in this document can fix it.**
+> <!-- L-CRA-57 -->
+> `lib/legal/slugs.ts` declares **five** legal slugs, and `client-terms` is one document. **This MSA
+> and `CONSUMER-TERMS.md` both map to `/legal/client-terms`**, and the currently seeded document at
+> that slug mixes bases from both regimes — its clause 1.1 cites the Companies Act and its clause 2.1
+> cites Consumer Rights Act 2015 s. 50 (`scripts/seed-legal.mjs:226, 230`).
+> **A liability cap drafted for a business client and applied to a Press author is void to that extent
+> under CRA 2015 s. 57.** Options:
+> **(a)** add a sixth slug — `client-terms-business` and `client-terms-consumer` — and route by
+> division, so a Press author never reaches this instrument;
+> **(b)** publish one combined document whose consumer-facing half disapplies every clause that fails
+> s. 57, which is harder to draft and easy to get wrong;
+> **(c)** publish this MSA at the slug and hand `CONSUMER-TERMS.md` to consumers out of band, off the
+> website — then the published document is wrong for half its readers.
+> Consequence of leaving it: one route cannot carry both a valid B2B cap and a CRA-compliant consumer
+> position, and the CMS currently has no field that distinguishes them. OQ-13.
+
 ---
 
 ## 1. Parties and structure
+<!-- L-CA-82 -->
+<!-- L-TDR-25 -->
+
 
 1.1 This agreement is between **Gridsmith Ltd** (company number `[TK]`, registered office `[TK]`) and the client named in the Scope.
 
@@ -17,12 +46,16 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 1.3 Gridsmith may use affiliated production teams and subcontractors to deliver. **Gridsmith remains responsible to the client for all work**, and remains the client's sole point of contract.
 
 ## 2. Structure of the agreement
+<!-- NO LEDGER ENTRY: order of precedence between contract documents is a drafting convention, not a statutory obligation. Retained. -->
+
 
 2.1 The agreement comprises: this MSA · the Division Schedule for the relevant service · the signed Scope · any signed Change Order.
 
 2.2 Order of precedence where terms conflict: signed Change Order → signed Scope → Division Schedule → this MSA.
 
 ## 3. The Scope
+<!-- NO LEDGER ENTRY: scope definition and the exclusions rule are commercial terms. Retained. -->
+
 
 3.1 No work begins until a written Scope is agreed and the initial payment received (canonical process stage 3).
 
@@ -31,6 +64,8 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 3.3 **Anything not stated in the Scope is not included.** Exclusions are listed for clarity and the absence of an item from the exclusions list does not imply inclusion.
 
 ## 4. Changes
+<!-- NO LEDGER ENTRY: change control is a commercial term. Retained. -->
+
 
 4.1 Changes to scope require a written Change Order stating the change, the price effect and the timeline effect.
 
@@ -39,6 +74,8 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 4.3 Where a client delay or a change to client-supplied materials causes rework, that rework is chargeable.
 
 ## 5. Client responsibilities
+<!-- NO LEDGER ENTRY: client obligations, and the IP warranty and indemnity at 5.2, are commercial terms. Retained. 5.2 must never be applied to a consumer in this form — see CONSUMER-TERMS.md 9.3, which is deliberately softer. -->
+
 
 5.1 The client will provide materials, information, access, approvals and feedback within the timescales in the Scope.
 
@@ -49,20 +86,43 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 5.4 Where a project is suspended by client inaction for more than 30 days, Gridsmith may invoice work completed to date and reschedule remaining work subject to availability.
 
 ## 6. Fees and payment
+<!-- L-VAT-B2B -->
+<!-- L-ECOM-6 -->
+
 
 6.1 Fees are as stated in the Scope, exclusive of VAT.
+<!-- L-VAT-B2B — SI 2002/2013 reg. 6(2) does not require a B2B price to be VAT-inclusive; it requires
+the treatment to be stated. "Exclusive of VAT" is a compliant statement here. The failure is on the
+website, not in this clause: no price rendered by components/content/Price.tsx states any treatment at
+all. See clause 6.7. -->
 
 6.2 Standard payment structure: an initial payment before work begins, staged payments at agreed milestones, and the balance on delivery. The Scope states the actual split.
 
 6.3 Invoices are payable within **14 days** unless the Scope states otherwise.
 
 6.4 **Late payment.** Gridsmith may charge statutory interest and compensation under the Late Payment of Commercial Debts (Interest) Act 1998 — interest at 8% above the Bank of England base rate, plus the fixed statutory recovery sum.
+<!-- NO LEDGER ENTRY: 00-LEGAL-BASIS.md section 1 asserts the Late Payment of Commercial Debts
+(Interest) Act 1998 gives statutory interest at 8% above base plus a fixed recovery sum. Pass 2 raised
+no ledger entry and the Act was not read. `[TK — the rate and the fixed sum are specific figures no
+gate covers; treat them as unverified until the solicitor confirms them against the Act.]` -->
 
 6.5 Gridsmith may suspend work where an invoice is more than 14 days overdue, having given 7 days' written notice.
 
 6.6 Expenses (stock imagery, fonts, third-party licences, print, ISBNs, hosting) are charged at cost where identified in the Scope, and require written approval where not.
 
+6.7 **NEW — prices displayed on the website.** Prices shown on gridsmith.uk are indicative and are not
+an offer. `[TK — the VAT treatment sentence, once the decision at WEBSITE-TERMS.md clause 5A is taken.
+Today no price on the site states any VAT treatment, which fails SI 2002/2013 reg. 6(2) for Design and
+Digital as well as for Press. M-P2-3 is NOT BUILT.]`
+<!-- L-VAT-B2B -->
+<!-- L-ECOM-6 -->
+<!-- L-DMCC-230 — not engaged for a business client, but the same Price component renders to consumers
+on /press, where s. 230 requires a tax-inclusive total. The fix differs by division; see
+WEBSITE-TERMS.md clause 5A. -->
+
 ## 7. Delivery and acceptance
+<!-- NO LEDGER ENTRY: deemed acceptance after 10 working days is a commercial term. Retained, and flagged: the same mechanism applied to a consumer would be assessed for fairness under CRA 2015 Part 2 and is likely to fail, which is why CONSUMER-TERMS.md has no equivalent. -->
+
 
 7.1 Gridsmith will deliver in accordance with the Scope.
 
@@ -75,6 +135,8 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 7.5 Revisions beyond the number stated in the Scope are chargeable at the rate stated in the Scope.
 
 ## 8. Intellectual property
+<!-- NO LEDGER ENTRY: the ledger contains no CDPA 1988 entry. 00-LEGAL-BASIS.md section 4 asserts that s. 90(3) requires a written signed assignment and clause 8.3 is drafted to satisfy it, but Pass 2 raised no entry and the section was not read against the primary text. Retained; the solicitor must supply the citation and confirm 8.3 works for an electronically executed contract. -->
+
 
 8.1 **Client materials** remain the client's property throughout.
 
@@ -89,6 +151,8 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 8.6 **Portfolio licence.** Gridsmith may display the work in its portfolio and marketing, and may name the client, unless the Scope records that the client has opted out. Gridsmith will not disclose confidential information in doing so. The client may withdraw this permission on written notice, and Gridsmith will remove the work within 30 days.
 
 ## 9. Confidentiality
+<!-- NO LEDGER ENTRY: mutual confidentiality is a commercial term. Retained. -->
+
 
 9.1 Each party will keep the other's confidential information confidential, use it only for the purposes of the agreement, and protect it with at least reasonable care.
 
@@ -97,12 +161,39 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 9.3 These obligations continue for 3 years after the agreement ends.
 
 ## 10. Data protection
+<!-- L-GDPR-28 -->
+
 
 10.1 Where Gridsmith processes personal data on the client's behalf, the client is controller and Gridsmith is processor, and the parties will enter a data processing agreement in the form at Schedule DP.
 
 10.2 Each party will comply with applicable data protection law.
 
+10.3 **NEW — sub-processors.** Where Gridsmith engages a sub-processor to process the client's personal
+data, it will do so under a written contract imposing the Art. 28(3) obligations, and will inform the
+client of intended additions or replacements so the client may object.
+<!-- L-GDPR-28 — Art. 28(2) and 28(4). Stated honestly: `[TK — no DPA is recorded in the repository for
+any processor Gridsmith itself uses (Supabase, Vercel, Resend, Sanity, and Slack if enabled). The
+ledger records this as "cannot tell". Schedule DP cannot be completed until those exist.]` -->
+
+10.4 **NEW — international transfers.** Where processing under this agreement involves a transfer of
+personal data outside the United Kingdom, that transfer is made only where approved by regulations
+under UK GDPR Art. 45A, or subject to appropriate safeguards under Art. 46, or within an Art. 49
+derogation, applying the Art. 45B data protection test.
+<!-- L-GDPR-44A — Chapter V as restructured by DUAA 2025 with effect from 5 February 2026. Articles 44
+and 45 were OMITTED on that date: any clause referring to "adequacy decisions" or to Art. 45 cites
+repealed text. `[TK — the regions of Supabase, Vercel, Resend and Sanity are all unestablished
+(OQ-1 to OQ-4) and must not be assumed to be UK or EU.]` -->
+
+10.5 **NEW — data protection complaints.** A complaint about Gridsmith's handling of personal data may
+be made under the procedure in the Privacy Policy, which Gridsmith is required to operate under
+DPA 2018 s. 164A.
+<!-- L-DPA-164A — in force 19 June 2026, after this document's previous revision. `[TK — there is no
+complaints route and no electronic complaint form on the site. 01-FACTUAL-INVENTORY.md section 5.1.]` -->
+
 ## 11. Liability
+<!-- NO LEDGER ENTRY for the B2B reasonableness test: 00-LEGAL-BASIS.md section 1 asserts UCTA 1977 governs these limitations and Pass 2 raised no ledger entry for UCTA. Retained and flagged so the solicitor supplies the citation and applies the test. -->
+<!-- L-CRA-57 — this clause is the reason this instrument must never reach a consumer: a cap on liability for want of reasonable care and skill is not binding on a consumer to that extent. -->
+
 
 11.1 Nothing limits liability for death or personal injury caused by negligence, fraud, or anything else that cannot lawfully be limited.
 
@@ -117,6 +208,8 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 > **For solicitor review:** 11.3 must satisfy the UCTA 1977 reasonableness test. A cap at fees paid may be unreasonable for a high-consequence deliverable such as an engineering drawing set used in construction. A differentiated cap by division may be more defensible than a single figure.
 
 ## 12. Warranties
+<!-- NO LEDGER ENTRY: express warranties and the exclusion of implied ones are commercial terms. Retained. 12.3 has no consumer counterpart and must not acquire one — CRA 2015 ss. 49 and 57 make it void against a consumer. -->
+
 
 12.1 Gridsmith warrants it will perform with reasonable care and skill, in accordance with good industry practice.
 
@@ -127,6 +220,8 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 12.4 Gridsmith does not warrant any commercial outcome. **No representation is made about sales, revenue, rankings, traffic, audience or any other result.**
 
 ## 13. Term and termination
+<!-- NO LEDGER ENTRY: termination is a commercial term. Retained. -->
+
 
 13.1 The agreement runs until the Scope is completed, or until terminated.
 
@@ -139,6 +234,8 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 13.5 **Retainer and recurring services** may be terminated on the notice period stated in the relevant Schedule.
 
 ## 14. General
+<!-- NO LEDGER ENTRY: boilerplate. Retained. 14.7 (governing law and exclusive jurisdiction) has a consumer counterpart at CONSUMER-TERMS.md 16.4 which is deliberately non-exclusive. -->
+
 
 14.1 Neither party is liable for failure caused by events beyond its reasonable control.
 
@@ -154,15 +251,45 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 
 14.7 Governed by the law of England and Wales, with exclusive jurisdiction of the courts of England and Wales.
 
+## 15. Contracting by electronic means — NEW
+<!-- L-ECOM-9-11 -->
+
+15.1 Where this agreement or any Scope or Change Order is concluded by electronic means, the parties,
+**being neither of them a consumer**, agree that regulations 9(1) and 11(1)(b) of the Electronic
+Commerce (EC Directive) Regulations 2002 do not apply.
+
+15.2 Gridsmith will nonetheless acknowledge receipt of any order placed electronically without undue
+delay, and will make the concluded agreement available to the client.
+<!-- L-ECOM-9-11 — regs. 9(1) and 11(1)(b) may be excluded by agreement where the parties are not
+consumers; they are mandatory for consumers, which is why CONSUMER-TERMS.md has the opposite
+provision. Not engaged today: no contract is concluded on the website, because the estimator is
+NOT BUILT. -->
+
+## 16. Marketing — NEW
+<!-- L-PECR-22 -->
+
+16.1 Where the client is a **corporate subscriber**, PECR reg. 22 does not restrict Gridsmith sending
+it marketing electronic mail, but Gridsmith will identify itself and give a valid address in every
+message, and will stop on request.
+
+16.2 Where an individual at the client is an **individual subscriber** — including a sole trader using
+a personal address — Gridsmith will send marketing electronic mail only with consent, or where the
+PECR reg. 22(3) soft opt-in conditions are met, and will give a simple free means of refusing in every
+message.
+<!-- L-PECR-22 — the divergence stated to each standard rather than collapsed. CNV-3: the text of PECR
+reg. 23, which supplies the corporate-subscriber identity and address requirement in 16.1, was NOT
+retrieved by Pass 2 and must be read before this clause is relied on. -->
+<!-- Not engaged today: no marketing send of any kind exists (01-FACTUAL-INVENTORY.md sections 3 and 7). -->
+
 ---
 
 # Schedule A — Gridsmith Design
 
 **A1 Deliverables.** As stated in the Scope, itemised by asset or by drawing sheet.
 
-**A2 Standards.** Technical work is produced to the standards named in the Scope (for example BS 8888, BS EN ISO 128, relevant Eurocodes, RIBA Plan of Work stages). Where no standard is named, Gridsmith works to good industry practice.
+**A2 Standards.**<!-- NO LEDGER ENTRY: BS 8888, BS EN ISO 128, Eurocodes and the RIBA Plan of Work are named as examples. `[TK — CLAUDE.md prohibits inventing standards codes; the solicitor and the technical lead must confirm each named standard is one Gridsmith actually works to, or the examples must be removed.]` --> Technical work is produced to the standards named in the Scope (for example BS 8888, BS EN ISO 128, relevant Eurocodes, RIBA Plan of Work stages). Where no standard is named, Gridsmith works to good industry practice.
 
-**A3 Checking.** Technical deliverables are subject to Gridsmith's internal checking process before issue. **This does not replace the client's own design check, verification, or professional sign-off.** The client remains responsible for verifying that deliverables are fit for its intended purpose.
+**A3 Checking.**<!-- NO LEDGER ENTRY: allocation of design responsibility is a commercial and professional-liability term. Retained. --> Technical deliverables are subject to Gridsmith's internal checking process before issue. **This does not replace the client's own design check, verification, or professional sign-off.** The client remains responsible for verifying that deliverables are fit for its intended purpose.
 
 **A4 IP.** On payment in full, final approved deliverables are assigned under clause 8.3. Working files, rejected concepts and source assets remain Gridsmith's unless the Scope provides for their transfer.
 
@@ -174,7 +301,7 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 
 # Schedule B — Gridsmith Digital
 
-**B1 Ownership.** On payment in full, the client owns:
+**B1 Ownership.**<!-- NO LEDGER ENTRY: assignment under clause 8. Retained. --> On payment in full, the client owns:
 - (a) the source code written for the project, assigned under clause 8.3;
 - (b) all data in the systems built;
 - (c) the accounts and infrastructure, or full administrative access to them.
@@ -195,7 +322,7 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 
 # Schedule C — Gridsmith Press
 
-**C1 Rights.** **The author retains 100% of the copyright in the work at all times.** Gridsmith acquires no ownership interest in the manuscript, the finished book, or any derivative.
+**C1 Rights.**<!-- NO LEDGER ENTRY: author retains copyright. Retained. This is the clause the Press rights page cites, and the site must not claim more than it gives. --> **The author retains 100% of the copyright in the work at all times.** Gridsmith acquires no ownership interest in the manuscript, the finished book, or any derivative.
 
 **C2 Royalties.** **The author receives 100% of royalties and sales income.** Gridsmith takes no royalty, no commission on sales, and no share of income. Gridsmith is paid only the fees stated in the Scope.
 
@@ -211,13 +338,15 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 
 **C6.2 Marketing.** Book marketing is a **separate service** with its own Scope and fee. It is not included in any publishing package unless expressly stated. Clause C10 applies to it in full.
 
-**C7 Portfolio.** Gridsmith may display the published title in its portfolio and link to retail listings. **Written author consent is obtained before any title is displayed** and may be withdrawn on notice.
+**C7 Portfolio.**<!-- L-GDPR-6 — naming an author is personal data; written consent is the basis relied on here. -->
+<!-- L-DMCC-SCH20-13 — a curated portfolio is not a review, but selection that implies outcomes is adjacent to the prominence limb. --> Gridsmith may display the published title in its portfolio and link to retail listings. **Written author consent is obtained before any title is displayed** and may be withdrawn on notice.
 
 **C8 Editorial.** Gridsmith advises; the author decides. Final content is the author's, and the author is responsible for the accuracy and legality of the text.
 
-**C9 Author warranties.** The author warrants that the work is original, does not infringe copyright, is not defamatory, does not breach confidence or privacy, and does not contain unlawful material — and indemnifies Gridsmith accordingly.
+**C9 Author warranties.**<!-- L-CRA-57 — flagged: a warranty and indemnity of this width against a consumer author is assessed under CRA 2015 Part 2 and s. 57. Schedule C belongs to the BUSINESS agreement and must not reach a consumer; the consumer counterpart at CONSUMER-TERMS.md 9.3 is deliberately softer, and that asymmetry is intentional. --> The author warrants that the work is original, does not infringe copyright, is not defamatory, does not breach confidence or privacy, and does not contain unlawful material — and indemnifies Gridsmith accordingly.
 
-**C10 No outcome warranty.** Gridsmith makes **no representation about sales, rankings, reviews, bestseller status or income** — in respect of publishing services or marketing services. Services are supplied; commercial outcomes are not promised. This applies to marketing engagements without exception.
+**C10 No outcome warranty.**<!-- L-DMCC-SCH20-13 -->
+<!-- L-CRA-50 — for a consumer this is the counterweight to anything said on the website about outcomes: what is said publicly becomes a term, so the terms and the site must agree. --> Gridsmith makes **no representation about sales, rankings, reviews, bestseller status or income** — in respect of publishing services or marketing services. Services are supplied; commercial outcomes are not promised. This applies to marketing engagements without exception.
 
 **C11 Revisions.** The Scope states the revision rounds included. Further rounds are chargeable at the rate stated.
 
@@ -226,9 +355,19 @@ Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR
 > **For solicitor review:** C1, C2 and C6 are the clauses the website's rights page cites. The page must say exactly what these say and nothing more. Note that Gridsmith operates **no imprint and takes no publisher record** — this is a service-only model and the terms should not contain any residual language implying otherwise. Please confirm C9 (author warranties and indemnity) is enforceable against a consumer author, since the equivalent in `CONSUMER-TERMS.md` §9.3 is softer.
 
 # Schedule DP — Data Processing
+<!-- L-GDPR-28 -->
+<!-- L-GDPR-44A -->
+
 
 To be drafted where Gridsmith processes personal data on the client's behalf. Must cover: subject matter and duration · nature and purpose · types of data and categories of data subject · controller instructions · confidentiality · security measures · sub-processors and authorisation · assistance with data subject rights · breach notification · deletion or return on termination · audit rights · international transfers and the mechanism relied on.
 
 ---
 
-**`[TK]` items:** company number, registered office, liability cap figure, PI insurance limit.
+**`[TK]` items:** company number · registered office · liability cap figure (11.3) · PI insurance
+limit (11.4) · the Late Payment Act rate and fixed sum (6.4) · the VAT treatment sentence (6.7) · a DPA
+for every processor Gridsmith uses (10.3) · the region and transfer mechanism for each (10.4) · the
+electronic complaint form (10.5) · confirmation of every standard named in A2 · the CDPA s. 90(3)
+citation for clause 8.3.
+
+**`[DECISION REQUIRED]` items:** the one-slug/two-instruments problem set out at the head of this
+document.
