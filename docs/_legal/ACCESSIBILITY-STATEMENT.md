@@ -111,8 +111,9 @@ Stated because a statement that names its gaps is worth more than one that claim
 2. **No assistive-technology testing of any other kind** — no magnifier, voice control or switch
    testing has been done.
 3. **Four of our five legal pages are outside the automated audit.** The automated audit covers
-   `/legal/privacy`. It does **not** cover `/legal/cookies`, `/legal/terms`, `/legal/client-terms` or
-   `/legal/accessibility` — including this page. `[TK — adding the four routes to the audit is a small
+   `/legal/privacy`. It does **not** cover `/legal/cookies`, `/legal/terms`, `/legal/client-terms`,
+   `/legal/business-client-terms`, `/legal/consumer-client-terms` or
+   `/legal/accessibility` — including this page. `[TK — adding the six routes to the audit is a small
    change and should be done before this statement is published, so that the coverage claimed in §3 is
    the coverage that exists. OQ-18.]`
 4. **Interaction-to-Next-Paint is not measured.** It is a field metric and cannot be asserted in a lab

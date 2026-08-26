@@ -14,23 +14,45 @@ For **business clients only**. Consumers — including most individual authors a
 
 Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR-DG06, `press/PRD.md` FR-P04), so renumbering requires a version bump and anchor redirects.
 
-> **[DECISION REQUIRED] — one route, two instruments. This is the structural defect in the whole
-> `_legal/` set and no clause in this document can fix it.**
+## Who this agreement governs
+
+**This agreement governs business clients.** If you are a company, a partnership, a sole trader or
+anyone else engaging Gridsmith Ltd for the purposes of a trade, business, craft or profession, these
+are your terms.
+
+**It does not govern consumers.** If you are an individual buying for purposes outside your trade,
+business, craft or profession — which includes most individual authors and almost all memoir and
+legacy clients of Gridsmith Press — these are **not** your terms. Yours are `CONSUMER-TERMS.md`, at
+`/legal/consumer-client-terms`. Several clauses here, the liability cap at 11.3 in particular, would
+not bind you: **section 57 of the Consumer Rights Act 2015** makes a term not binding on a consumer
+to the extent it would exclude or restrict liability under sections 49 or 50.
+
+If you are not sure which you are, `/legal/client-terms` sets out the difference and links to both.
+
+> **[DECISION RECORDED] — owner, 26 August 2026. Option (a): split the routes.**
 > <!-- L-CRA-57 -->
-> `lib/legal/slugs.ts` declares **five** legal slugs, and `client-terms` is one document. **This MSA
-> and `CONSUMER-TERMS.md` both map to `/legal/client-terms`**, and the currently seeded document at
-> that slug mixes bases from both regimes — its clause 1.1 cites the Companies Act and its clause 2.1
-> cites Consumer Rights Act 2015 s. 50 (`scripts/seed-legal.mjs:226, 230`).
-> **A liability cap drafted for a business client and applied to a Press author is void to that extent
-> under CRA 2015 s. 57.** Options:
-> **(a)** add a sixth slug — `client-terms-business` and `client-terms-consumer` — and route by
-> division, so a Press author never reaches this instrument;
-> **(b)** publish one combined document whose consumer-facing half disapplies every clause that fails
-> s. 57, which is harder to draft and easy to get wrong;
-> **(c)** publish this MSA at the slug and hand `CONSUMER-TERMS.md` to consumers out of band, off the
-> website — then the published document is wrong for half its readers.
-> Consequence of leaving it: one route cannot carry both a valid B2B cap and a CRA-compliant consumer
-> position, and the CMS currently has no field that distinguishes them. OQ-13.
+> This was a `[DECISION REQUIRED]`, and it was the structural defect in the whole `_legal/` set: five
+> legal slugs, of which `client-terms` was one document serving **both** this MSA and
+> `CONSUMER-TERMS.md`. The seeded document at that slug mixed bases from both regimes — clause 1.1 on
+> the Companies Act, clause 2.1 on Consumer Rights Act 2015 s. 50 — so a Press author read a
+> liability cap that **s. 57 makes not binding on them**, with nothing on the page saying so.
+>
+> **The reasoning for (a) over (b) and (c).** (b) — one combined instrument disapplying each failing
+> clause for consumers — asks a single document to be two documents and is easy to get wrong in a way
+> nobody notices until it is tested. (c) — publish the MSA and hand consumers their terms out of
+> band — leaves the *published* document wrong for half its readers, which is the defect restated.
+> Neither addresses the actual failure, which is not what the clauses say but **which reader arrives
+> at them**. Only routing can answer that.
+>
+> **This document is now published at `/legal/business-client-terms`.** `CONSUMER-TERMS.md` is at
+> `/legal/consumer-client-terms`. `/legal/client-terms` survives as a disambiguation page carrying no
+> operative clause, rather than as a redirect: a redirect has to choose a target, and either choice
+> silently lands one audience on the other audience's instrument. `scripts/check-consumer-terms.mjs`
+> asserts against the served pages that no consumer-facing route links here.
+>
+> **Still for the solicitor:** this document retains consumer-facing material at 2.1, 6.1, 10.1 and
+> 11.1 that the split makes redundant. No clause was amended when the routes were split — `CLAUDE.md`
+> forbids drafting or amending clauses outside this review.
 
 ---
 

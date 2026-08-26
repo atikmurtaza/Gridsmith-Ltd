@@ -17,17 +17,37 @@ this revision are marked **NEW**.
 liability under s. 49 or s. 50, or prevent the consumer recovering the price paid. The MSA's clause
 11.3 cap is void against a consumer to that extent. -->
 
-> **[DECISION REQUIRED] — how a consumer actually reaches this document.** It has no route of its own.
-> `lib/legal/slugs.ts` declares five legal slugs and **both this document and `MSA-BUSINESS.md` map to
-> the single `/legal/client-terms`**; the seeded document at that slug mixes both regimes in one
-> instrument (`scripts/seed-legal.mjs:226, 230`). Nothing on the site distinguishes a consumer author
-> from a business buyer at any point — `/contact` is one form for all three divisions
-> (`01-FACTUAL-INVENTORY.md` §5.1, §5.2). Options:
-> **(a)** add a sixth slug and route Press to it;
-> **(b)** one combined instrument that disapplies each failing clause for consumers;
-> **(c)** hand these terms to consumers out of band and leave the published document B2B.
-> Consequence of leaving it: a Press author reading `/legal/client-terms` today reads terms drafted for
-> a business, including a liability cap that is void against them — and cannot tell. OQ-13.
+## Who these terms govern
+
+**These terms govern consumers** — individuals buying for purposes outside their trade, business,
+craft or profession. In practice that is most individual authors and almost all memoir and legacy
+clients of Gridsmith Press.
+
+**They do not govern business clients.** If you are engaging us for a company, a partnership or your
+own trade or profession, these are **not** your terms — yours are `MSA-BUSINESS.md`, at
+`/legal/business-client-terms`. If you are not sure which you are, `/legal/client-terms` sets out the
+difference and links to both.
+
+> **[DECISION RECORDED] — owner, 26 August 2026. This document now has a route of its own.**
+> <!-- L-CRA-57 -->
+> It did not. Five legal slugs were declared and **both this document and `MSA-BUSINESS.md` mapped to
+> the single `/legal/client-terms`**, whose seeded document mixed both regimes; nothing on the site
+> distinguished a consumer author from a business buyer at any point. A Press author reading that page
+> read terms drafted for a business, including a liability cap not binding on them under CRA 2015
+> s. 57, **and could not tell.**
+>
+> Option (a) was taken: this document is published at **`/legal/consumer-client-terms`**,
+> `MSA-BUSINESS.md` at `/legal/business-client-terms`, and `/legal/client-terms` survives as a
+> disambiguation page carrying no operative clause rather than as a redirect — a redirect has to
+> choose a target, and either choice lands one audience silently on the other's instrument.
+>
+> `/press` links here, to clause 10.1. `scripts/check-consumer-terms.mjs` asserts against the served
+> pages that no consumer-facing route links to the business terms, that `/press` does link here, and
+> that this document is still the consumer instrument. Each branch was proven by deliberate failure.
+>
+> **Still open, and it is `/contact`, not the legal routes.** One form still serves all three
+> divisions (`01-FACTUAL-INVENTORY.md` §5.1), so nothing in the enquiry flow yet identifies which
+> regime a buyer is in before an order is confirmed. `press/PRD.md` FR-P24 carries that requirement.
 
 ---
 

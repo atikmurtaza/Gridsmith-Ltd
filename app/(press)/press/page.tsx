@@ -25,8 +25,8 @@ export const metadata: Metadata = {
  * ## The rights statement is on the page, not behind a link
  *
  * Non-negotiable #6: *"Never claim more than the contract gives. Press's rights module cites
- * real clauses in `_legal/`."* The three sentences in the rights block correspond to clause 5.1
- * of the Client Terms — copyright stays with the author, no royalty interest, and help obtaining
+ * real clauses in `_legal/`."* The three sentences in the rights block correspond to clause 10.1
+ * of the **Client Terms for Consumers** — copyright stays with the author, no royalty interest, and help obtaining
  * **your own** ISBN rather than one registered to us. They are on the landing page because they
  * are the reason an author would choose Press over a company that takes the ISBN, and a
  * differentiator a visitor has to go looking for is not one.
@@ -104,8 +104,15 @@ function RightsStatement() {
             {/* The `Link` primitive rather than a bare anchor: it carries the layer's underline and
                 focus ring, and since Epic N it renders a plain `<a>` with no `next/link` runtime, so
                 the correctness costs nothing. */}
-            <Link href="/legal/client-terms#clause-5-1">
-              Read clause 5.1 of the Client Terms, which is where these come from
+            {/* **Consumer terms, not the MSA, and that is the point of the split.** This link
+                pointed at `/legal/client-terms` when that one slug served both instruments, so a
+                Press author following it from the rights statement landed on a B2B liability cap
+                that CRA 2015 s. 57 makes void against them, with nothing on the page saying so.
+                `scripts/check-consumer-terms.mjs` asserts against the SERVED page that no
+                consumer-facing route links to the business terms, and that this route links to
+                the consumer terms — so this cannot silently drift back. */}
+            <Link href="/legal/consumer-client-terms#clause-10-1">
+              Read clause 10.1 of the Client Terms for Consumers, which is where these come from
             </Link>
             .
           </p>

@@ -130,20 +130,26 @@ one.**
 
 **Gridsmith Press sells to consumers.** Individual authors and memoir clients are almost always consumers, not businesses. That changes the legal position substantially and cannot be handled with a single set of business terms.
 
-> **[DECISION REQUIRED] — and this is the point at which the split stops being a drafting matter.**
+> **[DECISION RECORDED] — owner, 26 August 2026. The routes were split.**
 > <!-- L-CRA-57 -->
-> `lib/legal/slugs.ts` declares **five** legal slugs. **`MSA-BUSINESS.md` and `CONSUMER-TERMS.md` both
-> map to the single `/legal/client-terms`**, and the seeded document there mixes both regimes in one
-> instrument (`scripts/seed-legal.mjs:226, 230`). Nothing on the site distinguishes a consumer author
-> from a business buyer at any point. Options: **(a)** a sixth slug and division routing; **(b)** one
-> combined instrument disapplying every clause that fails s. 57 for consumers; **(c)** consumers
-> handled off the website. **One route cannot carry both a valid B2B cap and a CRA-compliant consumer
-> position**, and no additional clause can fix it while there is one slug. OQ-13.
+> `lib/legal/slugs.ts` declared **five** legal slugs, and **`MSA-BUSINESS.md` and `CONSUMER-TERMS.md`
+> both mapped to the single `/legal/client-terms`**, whose seeded document mixed both regimes.
+> **One route cannot carry both a valid B2B cap and a CRA-compliant consumer position**, and no
+> additional clause could fix it while there was one slug — which is why this was never a drafting
+> matter. Option **(a)** was taken: `/legal/business-client-terms` and `/legal/consumer-client-terms`
+> carry the two instruments, each stating at the top who it governs and who it does not;
+> `/legal/client-terms` survives as a disambiguation page with no operative clause, rather than as a
+> redirect that would have to pick a target and be wrong for half its readers.
+> `scripts/check-consumer-terms.mjs` asserts the routing against the served pages.
+>
+> **What remains of OQ-13 is `/contact`:** one form still serves all three divisions, so nothing in
+> the enquiry flow identifies which regime a buyer is in before an order is confirmed
+> (`press/PRD.md` FR-P24).
 
 | | Business client | Consumer client |
 |---|---|---|
 | Governing terms | `MSA-BUSINESS.md` | `CONSUMER-TERMS.md` |
-| Route today | `/legal/client-terms` | **`/legal/client-terms` — the same page** |
+| Route | `/legal/business-client-terms` | `/legal/consumer-client-terms` — **a separate page since 26 Aug 2026** |
 | Cancellation right | None implied | **14 days from contract formation** (CCR 2013) |
 | Liability cap | Negotiable, subject to UCTA reasonableness *(uncited — see §1)* | **Void to the extent it excludes s. 49 or s. 50 liability, or prevents recovery of the price paid — CRA 2015 s. 57** |
 | Price display | Treatment must be **stated**; exclusive is permitted — SI 2002/2013 reg. 6(2) | Must be the **total inclusive of tax**, or state how it is calculated with equal prominence — DMCCA s. 230 |
@@ -197,15 +203,17 @@ A site that promises ownership terms the contract does not grant is a misreprese
 | `PRIVACY-POLICY.md` | UK GDPR privacy notice | Anyone whose data is processed | `/legal/privacy` |
 | `COOKIE-POLICY.md` | PECR cookie disclosure | Anyone visiting | `/legal/cookies` |
 | `ACCESSIBILITY-STATEMENT.md` | Equality Act position; WCAG 2.2 AA as an **adopted** benchmark, not a legal standard | Anyone | `/legal/accessibility` |
-| `MSA-BUSINESS.md` | Master services agreement + three division schedules | Business clients | **`/legal/client-terms` — shared** |
-| `CONSUMER-TERMS.md` | Consumer terms incl. cancellation rights | Individual authors, memoir clients | **`/legal/client-terms` — shared** |
+| `MSA-BUSINESS.md` | Master services agreement + three division schedules | Business clients | `/legal/business-client-terms` |
+| `CONSUMER-TERMS.md` | Consumer terms incl. cancellation rights | Individual authors, memoir clients | `/legal/consumer-client-terms` |
+| *(no draft — CMS only)* | Disambiguation. No operative clause; says which of the two above governs a reader, and links to both | Anyone unsure | `/legal/client-terms` |
 
 **Three audit documents sit alongside them and are not published:** `01-FACTUAL-INVENTORY.md` (the
 facts of the build), `02-CITATION-LEDGER.md` (31 obligations with primary citations — **the standard
 the drafts are measured against**) and `03-REVISION-LOG.md` (what Pass 3 changed and why).
 
-**Only `/legal/privacy` is covered by the accessibility gate.** The other four legal routes are absent
-from `check-axe.mjs` (OQ-18).
+**Only `/legal/privacy` is covered by the accessibility gate.** The other **six** legal routes are
+absent from `check-axe.mjs` (OQ-18) — the split added two more uncovered routes, and the two client
+terms are the documents a buyer is most likely to read end to end.
 
 ## 6. Questions for the solicitor
 

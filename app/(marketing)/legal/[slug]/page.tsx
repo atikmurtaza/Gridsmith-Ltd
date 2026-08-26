@@ -8,7 +8,11 @@ import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { Blocks } from '@/components/content/Blocks';
 import { getLegalDocument, listLegalDocuments } from '@/lib/sanity/queries';
-import { LEGAL_DOCUMENT_SLUGS } from '@/lib/legal/slugs';
+import {
+  CLIENT_TERMS_COUNTERPART,
+  LEGAL_DOCUMENT_SLUGS,
+  type LegalSlug,
+} from '@/lib/legal/slugs';
 import styles from '@/components/content/content.module.css';
 
 /**
@@ -68,7 +72,14 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const doc = await getLegalDocument(slug);
   if (!doc) notFound();
 
-  const others = (await listLegalDocuments()).filter((d) => d.slug !== slug);
+  // The counterpart client-terms instrument is excluded, not merely ordered last. Listing the
+  // business MSA at the foot of the consumer terms is the s. 57 defect the split removed,
+  // rebuilt as a hyperlink — see `CLIENT_TERMS_COUNTERPART`. `/legal/client-terms` stays in
+  // the list, and it is the page that explains which of the two a reader wants.
+  const counterpart = CLIENT_TERMS_COUNTERPART[slug as LegalSlug];
+  const others = (await listLegalDocuments()).filter(
+    (d) => d.slug !== slug && d.slug !== counterpart,
+  );
 
   return (
     <main id="main" tabIndex={-1}>

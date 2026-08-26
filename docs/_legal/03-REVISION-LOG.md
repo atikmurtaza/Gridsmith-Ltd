@@ -115,7 +115,42 @@ commitment. s. 164A's statutory outer limit is **30 days**.
 `CLAUDE.md` requires one source of truth for response commitments and forbids promising faster than
 end of next business day. Whatever is chosen must be identical in all three files.
 
-### D-10 — One slug, two instruments (`MSA-BUSINESS.md` head, `CONSUMER-TERMS.md` head, `00-LEGAL-BASIS.md` §3) · `L-CRA-57`
+### D-10 — One slug, two instruments — **DECIDED AND IMPLEMENTED, 26 August 2026** (`MSA-BUSINESS.md` head, `CONSUMER-TERMS.md` head, `00-LEGAL-BASIS.md` §3) · `L-CRA-57`
+
+> **Owner's decision, 26 August 2026: option (a) — split the routes.** The reasoning is that no
+> single instrument and no single redirect target is honest for both audiences, which is the finding
+> four verification passes converged on: s. 57 is not a drafting problem, it is a *who is reading
+> this page* problem, and only routing can answer it.
+>
+> | | |
+> |---|---|
+> | `/legal/business-client-terms` | `MSA-BUSINESS.md`. Design and Digital |
+> | `/legal/consumer-client-terms` | `CONSUMER-TERMS.md`. Press |
+> | `/legal/client-terms` | **Disambiguation.** No operative clause. Says who each governs, links to both |
+>
+> **Why the old path is a disambiguation page and not a redirect.** A redirect has to choose a
+> target, and either choice silently delivers one audience the other audience's instrument — the
+> same defect with an extra hop in front of it. `redirects/legacy.json` is therefore untouched.
+>
+> **Why the master layer links to both.** `/` and `/contact` serve both audiences
+> (`01-FACTUAL-INVENTORY.md` §5.1), so the master layer cannot pick one without being wrong for
+> half its visitors. It links to `/legal/client-terms`, which is the one page whose job is to say
+> which applies. In practice nothing in the master chrome links to any legal route yet — the footer
+> carries the statutory disclosure and no legal link group — so this is the rule for when it does.
+>
+> **Each instrument states who it governs in its summary**, which is the first prose on the page,
+> above the contents and above every clause.
+>
+> **Proven, not asserted.** `scripts/check-consumer-terms.mjs` reads the served pages and fails if
+> any consumer-facing route links to the business terms, if `/press` links to no consumer terms at
+> all, or if the consumer instrument stops being the consumer instrument. Three branches, each
+> proven by deliberate failure; the proof is recorded in the commit that added the gate.
+>
+> **What was NOT done, and is for the solicitor.** No clause was drafted or amended — `CLAUDE.md`
+> forbids it. The business instrument therefore still carries consumer-facing material at 2.1
+> (CRA s. 50), 6.1 (CRA s. 49), 10.1 (14-day distance cancellation) and 11.1 (consumer ADR), which
+> the split makes redundant there. Removing it is a drafting decision for the `L-04` review.
+
 **The structural defect in the whole `_legal/` set. No clause can fix it.**
 `lib/legal/slugs.ts` declares five slugs; `MSA-BUSINESS.md` and `CONSUMER-TERMS.md` both map to
 `/legal/client-terms`, and the seeded document there mixes both regimes.

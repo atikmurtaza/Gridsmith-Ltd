@@ -199,5 +199,10 @@ jobs:
       # dataset it was built against, so it cannot run before there is a site to ask. The
       # pre-build failure mode it was protecting against is now a build failure with a Sanity
       # stack trace, which is worse output for the same defect and is the price of the fix.
-      - name: axe + statutory record + no horizontal overflow at 375/768/1440
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive"
+      # check:consumer-terms shares the same server. It asserts that no consumer-facing route
+      # links to /legal/business-client-terms — the routing half of the CRA 2015 s. 57 fix, which
+      # a single href can silently undo. It reads the SERVED pages because the CMS can change
+      # what a page links to without a commit, so a source check would be asserting against
+      # something it cannot see.
+      - name: axe + statutory record + no horizontal overflow at 375/768/1440 + consumer terms routing
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms"

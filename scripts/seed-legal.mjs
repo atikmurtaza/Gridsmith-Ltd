@@ -1,12 +1,12 @@
 /**
- * The five legal documents, drafted from **this build's actual facts** — the processors it
+ * The seven legal documents, drafted from **this build's actual facts** — the processors it
  * really uses, the cookie it really sets, the consent categories it really implements, and the
  * lead-form fields really defined in `lib/leads/schema.ts`.
  *
  * ## Two markers, two different meanings
  *
  * **`[SEED - SOLICITOR REVIEW REQUIRED]`** heads every document. `solicitorApproved` is
- * `false` on all five, which is what `master/SCHEMA.md` says gates publication: the production
+ * `false` on all seven, which is what `master/SCHEMA.md` says gates publication: the production
  * build check treats an unapproved legal document the way it treats seed content. `L-04` is
  * the hard gate.
  *
@@ -218,10 +218,30 @@ const terms = doc(
   ],
 );
 
-const clientTerms = doc(
-  'client-terms',
-  'Client Terms',
-  'The standard terms on which Gridsmith Ltd carries out work. Every clause here is a commercial decision as well as a legal one, and every one marked [DECISION] is the owner\'s to make. This draft has not been reviewed by a solicitor.',
+/**
+ * ## The client terms are three documents, not one — owner's decision, 26 August 2026
+ *
+ * `client-terms` used to be a single slug carrying both `docs/_legal/MSA-BUSINESS.md` and
+ * `docs/_legal/CONSUMER-TERMS.md`, and the seeded document mixed both regimes: clause 1.1 on
+ * the Companies Act, clause 2.1 on Consumer Rights Act 2015 s. 50. **A liability cap drafted
+ * for a business client is void against a consumer to the extent of CRA 2015 s. 57**, and a
+ * Press author reading that page could not tell which half applied to them. The decision and
+ * the reasoning are in `lib/legal/slugs.ts`.
+ *
+ * Each instrument now states, in its summary and therefore in the first prose on the page, who
+ * it governs and who it does not. `client-terms` survives as a disambiguation page carrying no
+ * operative clause — the old path must not 404, and it must not silently deliver either
+ * instrument to the wrong reader.
+ *
+ * **The clause bodies below are unchanged.** `CLAUDE.md` forbids drafting or amending clauses.
+ * This document still carries consumer-facing material at 2.1, 6.1, 10.1 and 11.1 that the
+ * split makes redundant here; removing it is a drafting decision for the solicitor and is
+ * recorded in `docs/_legal/03-REVISION-LOG.md` rather than taken in a seed script.
+ */
+const businessClientTerms = doc(
+  'business-client-terms',
+  'Client Terms — Business Clients',
+  'These terms govern work done for BUSINESS clients — companies, partnerships, sole traders and anyone else buying for the purposes of their trade, business, craft or profession. They do NOT govern consumers. If you are an individual buying for yourself, including most individual authors and memoir clients of Gridsmith Press, these are not your terms: the Client Terms for Consumers are, and several clauses here would not bind you under the Consumer Rights Act 2015. Every clause marked [DECISION] is the owner\'s to make. This draft has not been reviewed by a solicitor.',
   [
     ['1.1', 'One company, one contract', 'Companies Act 2006 s. 51; Companies (Trading Disclosures) Regulations 2015 reg. 24', [
       'You contract with Gridsmith Ltd. Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of that one company and have no separate legal personality.',
@@ -309,4 +329,99 @@ const accessibility = doc(
   ],
 );
 
-export const LEGAL_DOCUMENTS = [privacy, cookies, terms, clientTerms, accessibility];
+/**
+ * The consumer instrument, seeded from `docs/_legal/CONSUMER-TERMS.md`.
+ *
+ * Clause numbers follow that draft's own section numbering so a link into a clause survives
+ * the draft being adopted. `/press` links to `clause-10-1`, which is where the rights
+ * statement on that page comes from — `CLAUDE.md` non-negotiable #6.
+ */
+const consumerClientTerms = doc(
+  'consumer-client-terms',
+  'Client Terms — Consumers',
+  'These terms govern work done for CONSUMERS — individuals buying for purposes outside their trade, business, craft or profession. In practice that is most individual authors and almost all memoir and legacy clients of Gridsmith Press. They do NOT govern business clients: a company, partnership or sole trader buying for its business is covered by the Client Terms for Business Clients instead. This draft has not been reviewed by a solicitor.',
+  [
+    ['1.1', 'Who we are', 'Companies (Trading Disclosures) Regulations 2015 reg. 24 and reg. 25; Electronic Commerce (EC Directive) Regulations 2002 reg. 6; Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013 Sch. 2', [
+      'Gridsmith Ltd, company number 17050842, registered in England & Wales, registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD, trading as Gridsmith Press. Contact: contact@gridsmith.uk.',
+    ]],
+    ['2.1', 'Your statutory rights', 'Consumer Rights Act 2015 s. 49, s. 51, s. 52 and s. 57', [
+      'Nothing in these terms affects your rights under the Consumer Rights Act 2015, the Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, or any other consumer protection law.',
+      'Under the Consumer Rights Act 2015 we must provide our services with reasonable care and skill, within a reasonable time, and at a reasonable price where none has been agreed. We cannot and do not exclude that.',
+      'If we do not, you are entitled to ask us to perform the service again, or to a price reduction, depending on the circumstances.',
+    ]],
+    ['5.1', 'Your right to cancel', 'Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013 reg. 29 and reg. 31', [
+      'You have the right to cancel this contract within 14 days without giving any reason. The cancellation period ends 14 days after the day the contract is made.',
+      'To cancel, tell us clearly — email us or write to us. You may use the model cancellation form at the end of these terms, but you do not have to.',
+      'If you cancel, we will refund all payments received from you within 14 days of being told, using the same payment method, at no charge to you.',
+      'If we failed to give you the cancellation information required by regulation 13 before you were bound, your cancellation period is extended — by up to 12 months.',
+    ]],
+    ['6.1', 'If you want us to start within the 14 days', 'Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013 reg. 36 and reg. 37', [
+      'If you ask us to begin during the cancellation period, you must ask us expressly, by ticking the specific box on the order confirmation. It is a separate box from accepting these terms, and we will not tick it for you.',
+      'You still keep your right to cancel during the 14 days. But if you cancel after we have started, you must pay a proportionate amount for the work done up to the point you told us — calculated as the proportion of the total service performed, against the total price.',
+      'Once the service has been fully performed within the 14 days, you lose the right to cancel entirely. We will tell you when we consider the service fully performed.',
+      'If you do not ask us to start early, we will begin after the 14 days have passed. We will confirm all of this in your order confirmation email, in writing, before any work starts.',
+    ]],
+    ['7.1', 'Price and payment', 'Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013 reg. 13; Digital Markets, Competition and Consumers Act 2024 s. 230', [
+      'The total price is stated in your order confirmation and includes VAT where applicable.',
+      'No charge will be added that was not disclosed before you ordered. If the work you want changes, we will tell you the new price in writing and you decide whether to proceed.',
+      'Payment is as set out in the order confirmation — usually an initial payment and a balance on delivery.',
+    ]],
+    ['10.1', 'Your rights in your book', 'Consumer Rights Act 2015 s. 50 — anything said on the Press pages becomes a term, so that page and this clause must not drift apart', [
+      'You keep 100% of the copyright in your work. We never own any part of it.',
+      'You keep 100% of all royalties and sales income. We take no royalty, no commission, and no share of your sales. We are paid only the fees in your order confirmation.',
+      'The cover and interior design we produce become yours once you have paid in full. We use your manuscript only to produce your book, and that permission ends when we deliver.',
+      'Where we set up distribution, the accounts are in your name and under your control, so your royalties are paid to you directly. We never hold an account on your behalf and we never receive your sales income.',
+      'You are the publisher. Your ISBN is registered to you, not to us. We do not run an imprint and we do not put our name on your book as publisher. Where it is part of your order, we will help you obtain your own ISBN and complete the registration — but it is yours, permanently, and it stays yours whatever happens between us.',
+    ]],
+    ['11.1', 'What we do not promise', 'Consumer Rights Act 2015 s. 50; Digital Markets, Competition and Consumers Act 2024 Sch. 20 para. 13', [
+      'We will produce your book to a professional standard. We do not and cannot promise how it will sell.',
+      'This applies equally if you buy book marketing from us. Marketing is a separate service with its own price, and buying it does not come with any promise of sales, reviews, rankings or coverage.',
+      'We make no promise about sales figures, income, reviews, rankings, bestseller status, media coverage or any other commercial outcome. Most independently published books sell modestly. Anyone who tells you otherwise is not being straight with you.',
+    ]],
+    ['13.1', 'Our responsibility to you', 'Consumer Rights Act 2015 s. 57 and s. 62; Unfair Contract Terms Act 1977 s. 2', [
+      'If we fail to comply with these terms, we are responsible for loss or damage you suffer that is a foreseeable result of our breaking the contract or failing to use reasonable care and skill.',
+      'We do not limit our liability in any way that the law does not allow. That includes death or personal injury caused by our negligence, fraud, and breach of your statutory rights.',
+      'There is no cap on our liability to you in these terms. The cap in the Client Terms for Business Clients is a business term and does not apply to you — section 57 of the Consumer Rights Act 2015 would make it not binding on you in any event.',
+      'We are not responsible for losses that were not foreseeable when the contract was made.',
+    ]],
+  ],
+);
+
+/**
+ * `/legal/client-terms` — the disambiguation page, and the reason there is no redirect.
+ *
+ * The old path was published and is cited. It must not 404, and it must not be redirected: a
+ * redirect has to choose a target, and either choice silently delivers one audience the other
+ * audience's instrument — the same defect with an extra hop in front of it. So the path
+ * survives carrying no operative clause. It says which document governs whom, and the "other
+ * documents" list at the foot of the page links to both.
+ */
+const clientTermsDisambiguation = doc(
+  'client-terms',
+  'Client Terms — which ones apply to you',
+  'There are two sets of client terms and this page is not either of them. It exists so that nobody reads the wrong one. Which applies to you depends on whether you are buying as a business or as an individual, and the difference is not cosmetic: consumer law gives you rights that cannot be excluded, and the business terms are drafted on the basis that you do not have them.',
+  [
+    ['1.1', 'If you are buying for a business', 'Unfair Contract Terms Act 1977 s. 3 and s. 11', [
+      'If you are a company, a partnership, a sole trader or anyone else buying for the purposes of a trade, business, craft or profession, the Client Terms for Business Clients apply. They are at /legal/business-client-terms and are linked at the foot of this page.',
+      'That is most Gridsmith Design and Gridsmith Digital work.',
+    ]],
+    ['1.2', 'If you are buying as an individual', 'Consumer Rights Act 2015 s. 2 and s. 57', [
+      'If you are an individual buying for purposes outside your trade, business, craft or profession, you are a consumer and the Client Terms for Consumers apply. They are at /legal/consumer-client-terms and are linked at the foot of this page.',
+      'That is most individual authors and almost all memoir and legacy clients of Gridsmith Press.',
+      'The two documents are deliberately not interchangeable. Section 57 of the Consumer Rights Act 2015 makes a term not binding on a consumer to the extent it would exclude or restrict liability under sections 49 or 50, so the liability cap in the business terms would not bind you even if you had signed them.',
+    ]],
+    ['1.3', 'If you are not sure', 'Not a statutory requirement — a commercial commitment', [
+      'Ask us before you order and we will tell you which one you are on and why. We will also say so in the scope or order confirmation, so that it is written down rather than assumed.',
+    ]],
+  ],
+);
+
+export const LEGAL_DOCUMENTS = [
+  privacy,
+  cookies,
+  terms,
+  clientTermsDisambiguation,
+  businessClientTerms,
+  consumerClientTerms,
+  accessibility,
+];

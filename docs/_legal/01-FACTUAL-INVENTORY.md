@@ -285,7 +285,7 @@ the visitor's own cookie, which they can delete. → OQ-11
 | `/work/[slug]` | `(marketing)` — master | Both | |
 | `/insights` | `(marketing)` — master | Both | |
 | `/insights/[slug]` | `(marketing)` — master | Both | |
-| `/legal/[slug]` | `(marketing)` — master | **Both** | Five slugs — see §5.2 |
+| `/legal/[slug]` | `(marketing)` — master | **Both** | Seven slugs — see §5.2. `business-client-terms` and `consumer-client-terms` are audience-specific; `client-terms` is the disambiguation page |
 | `/design` | `(design)` | **Largely B2B** | Copy targets workshops, contractors, product manufacture — `design/page.tsx:34-47` |
 | `/digital` | `(digital)` | **Largely B2B** | Websites, software, AI — `digital/page.tsx` metadata |
 | `/press` | `(press)` | **Consumer-facing** | Sells to individual authors — "Your book, published properly, and still yours"; "Tell us about the book" — `press/page.tsx:44-57` |
@@ -306,7 +306,7 @@ flow as a business buyer choosing "Digital".
 fork, and all `/design/*`, `/digital/*`, `/press/*` sub-routes. No route below a division landing page
 exists (`design/page.tsx:19-24`, `press/page.tsx:20-23`).
 
-### 5.2 The legal routes — five slugs, six drafts
+### 5.2 The legal routes — seven slugs, six drafts
 
 `lib/legal/slugs.ts:14-20` declares exactly five, and `generateStaticParams` builds only these
 (`legal/[slug]/page.tsx:46-48`):
@@ -316,17 +316,31 @@ exists (`design/page.tsx:19-24`, `press/page.tsx:20-23`).
 | `privacy` | `Privacy Policy` | `PRIVACY-POLICY.md` |
 | `cookies` | `Cookie Policy` | `COOKIE-POLICY.md` |
 | `terms` | `Terms of Use` | `WEBSITE-TERMS.md` |
-| `client-terms` | `Client Terms` | **`MSA-BUSINESS.md` *and* `CONSUMER-TERMS.md` — one route, two drafts** |
+| `client-terms` | `Client Terms — which ones apply to you` | **Neither.** A disambiguation page carrying no operative clause; it says which instrument governs whom and links to both |
+| `business-client-terms` | `Client Terms — Business Clients` | `MSA-BUSINESS.md` |
+| `consumer-client-terms` | `Client Terms — Consumers` | `CONSUMER-TERMS.md` |
 | `accessibility` | `Accessibility Statement` | `ACCESSIBILITY-STATEMENT.md` |
 
 Cited: `scripts/seed-legal.mjs:83-84, 147-148, 184-185, 221-222, 286-287`.
 
-**There is one `Client Terms` document and there are two client-terms drafts.** The seeded
-`client-terms` mixes both audiences in one instrument — its clause 1.1 basis cites the Companies Act,
-and clause 2.1 cites **Consumer Rights Act 2015 s. 50** (`seed-legal.mjs:226, 230`). No route,
-slug, or CMS document separates a consumer contract from a business one. → OQ-13
+**This was: one `Client Terms` document and two client-terms drafts.** The seeded `client-terms`
+mixed both audiences in one instrument — clause 1.1 on the Companies Act, clause 2.1 on **Consumer
+Rights Act 2015 s. 50** — and no route, slug or CMS document separated a consumer contract from a
+business one. A Press author read a B2B liability cap that **s. 57 makes not binding on them** and
+could not tell. **OQ-13 / D-10 is CLOSED by the owner's decision of 26 August 2026** — option (a),
+with a disambiguation page in place of a redirect. See `03-REVISION-LOG.md` and `lib/legal/slugs.ts`.
 
-All five render a **DRAFT — NOT YET REVIEWED BY A SOLICITOR** banner while `solicitorApproved` is
+Each instrument now states in its summary — the first prose on the page — who it governs and who it
+does not. `/press` links to `/legal/consumer-client-terms#clause-10-1`, and
+`scripts/check-consumer-terms.mjs` asserts against the **served** pages that no consumer-facing route
+links to `/legal/business-client-terms`, that `/press` does link to the consumer instrument, and that
+the consumer instrument is still itself. Each branch was proven by deliberate failure.
+
+**Residual, and it is a drafting question rather than a routing one:** the business instrument still
+carries consumer-facing material at 2.1, 6.1, 10.1 and 11.1, because `CLAUDE.md` forbids amending
+clauses outside a solicitor review. Flagged for the `L-04` review.
+
+All seven render a **DRAFT — NOT YET REVIEWED BY A SOLICITOR** banner while `solicitorApproved` is
 false, and are `noindex` in that state (`legal/[slug]/page.tsx:62, 87-94`).
 
 ### 5.3 Pricing, as the code actually renders it

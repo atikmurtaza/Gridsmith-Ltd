@@ -97,10 +97,12 @@ the bundle *and* the served static assets to prove it never reaches a browser.
 - **Elapsed:** 2–6 weeks with a solicitor
 - **Tracker:** `L-04`, `Q-M2`
 
-Five documents exist and are drafted from **this build's actual facts** — the real processors,
+Seven documents exist and are drafted from **this build's actual facts** — the real processors,
 the real cookie, the real consent categories, the real form fields. They are:
-`/legal/privacy`, `/legal/cookies`, `/legal/terms`, `/legal/client-terms`,
-`/legal/accessibility`.
+`/legal/privacy`, `/legal/cookies`, `/legal/terms`, `/legal/business-client-terms`,
+`/legal/consumer-client-terms`, `/legal/accessibility`, and `/legal/client-terms` — the last of
+which carries no operative clause and exists to say which of the two client-terms instruments
+governs a given reader (owner's decision, 26 August 2026; `_legal/03-REVISION-LOG.md` D-10).
 
 Every clause names the instrument behind it, so the solicitor's job is a check rather than a
 rewrite. **Every clause marked `[DECISION]` is yours, not theirs** — retention periods, the
