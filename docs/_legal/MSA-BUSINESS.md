@@ -18,6 +18,13 @@ excludable set is regs. 9(1), 9(2) and the whole of 11(1), and regs. 9(4) and 11
 exclude all of it). Two ledger entries were added to carry them — `L-LATE-PAYMENT` and
 `L-CDPA-90-91` — closing the two `NO LEDGER ENTRY` flags those clauses stood under.
 
+**Version 1.3 — revised 26 August 2026, round 8.** One correction, at **16.2**: its inline note told the
+reader not to rely on clause 16.1 pending a reading of PECR reg. 23 that two other drafts already
+recorded as done. reg. 23 was fetched and read at source in this round rather than the closure being
+accepted from either record, and 16.1's basis holds. `CNV-3` is closed in the ledger with the same
+reading. **The clause text is unchanged** — the defect was in the instruction attached to it, which
+would have sent a solicitor to duplicate work or to conclude that 16.1 was unsound.
+
 For **business clients only**. Consumers — including most individual authors and memoir clients — are covered by `CONSUMER-TERMS.md`. Using this agreement with a consumer would breach the Consumer Rights Act 2015.
 
 Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR-DG06, `press/PRD.md` FR-P04), so renumbering requires a version bump and anchor redirects.
@@ -364,9 +371,18 @@ message, and will stop on request.
 a personal address — Gridsmith will send marketing electronic mail only with consent, or where the
 PECR reg. 22(3) soft opt-in conditions are met, and will give a simple free means of refusing in every
 message.
-<!-- L-PECR-22 — the divergence stated to each standard rather than collapsed. CNV-3: the text of PECR
-reg. 23, which supplies the corporate-subscriber identity and address requirement in 16.1, was NOT
-retrieved by Pass 2 and must be read before this clause is relied on. -->
+<!-- L-PECR-22 — the divergence stated to each standard rather than collapsed.
+CNV-3 CLOSED, 26 August 2026, round 8. This note previously instructed the reader NOT to rely on 16.1
+pending a reading of PECR reg. 23. **reg. 23 has now been fetched and read in full at source in this
+round** — not taken from the round-7 record and not taken from `PRIVACY-POLICY.md` §3A, both of which
+are drafts rather than instruments. It provides that a person shall neither transmit nor instigate the
+transmission of direct-marketing electronic mail "(a) where the identity of the person on whose behalf
+the communication has been sent has been disguised or concealed; (b) where a valid address to which the
+recipient of the communication may send a request that such communications cease has not been
+provided", plus two reg. 7 limbs. It opens "A person shall neither transmit …" and speaks of "the
+recipient", and **carries no "individual subscriber" limitation** — unlike reg. 22, which reg. 22(1)
+confines to individual subscribers. So it binds for corporate-subscriber marketing where reg. 22 does
+not, which is precisely what 16.1 rests on. **16.1 is soundly based and may be relied on.** -->
 <!-- Not engaged today: no marketing send of any kind exists (01-FACTUAL-INVENTORY.md sections 3 and 7). -->
 
 ---

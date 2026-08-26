@@ -10,6 +10,17 @@
 inline comment naming the ledger entry it implements, or is flagged as having none. Clauses added at
 this revision are marked **NEW**.
 
+**Version 1.2 — revised 26 August 2026, round 8.** Two substantive corrections, each verified by
+fetching the instrument rather than by accepting the finding that raised it: **§6** (reg. 36(2) makes
+the loss of the cancellation right conditional on an acknowledgement as well as an express request —
+the draft supplied only the request and stated the loss as automatic, against the consumer; and reg.
+36(6) removes the §6(c) payment entirely where the information duties were not met) and **§10.3**
+(the copyright assignment carried none of the CDPA s. 90(3) / s. 91 signed-writing language
+`MSA-BUSINESS.md` 8.3 carries, so the consumer had the weaker transfer of the two). Clauses added or
+rewritten at this revision are marked **NEW** or **REVISED**. One ledger entry was added to carry the
+first — `L-CCR-36` — and `L-CDPA-90-91` now discharges §10.3, closing the `NO LEDGER ENTRY` flag it
+stood under.
+
 **For clients who are consumers** — individuals buying for purposes outside their trade, business, craft or profession. In practice this covers most individual authors and almost all memoir and legacy clients of Gridsmith Press.
 
 **Do not use the Master Services Agreement with a consumer.** Several of its clauses — the liability cap, the deemed-acceptance provision, the exclusion of implied warranties — would be assessed against the Consumer Rights Act 2015 fairness test and are likely to fail. Using business terms with a consumer risks the terms being unenforceable and, separately, is the kind of behaviour the publishing market screens for.
@@ -148,6 +159,7 @@ implicit. -->
 
 ## 6. If you want us to start within the 14 days
 <!-- L-CCR-29 -->
+<!-- L-CCR-36 -->
 
 
 **This section matters and we will draw your attention to it before you order.**
@@ -156,16 +168,58 @@ We know most people want work to begin promptly. But if we start during the 14-d
 
 If you ask us to begin during the cancellation period:
 
-- **(a)** you must ask us expressly, by ticking the specific box on the order confirmation. It is a separate box from accepting these terms, and we will not tick it for you;
+- **(a)** you must ask us expressly, by ticking the specific box on the order confirmation. It is a
+  separate box from accepting these terms, and we will not tick it for you;
+- **(a1) REVISED — and you must acknowledge, in the same step, that you will lose your right to
+  cancel once we have fully performed the service.** This is a second, separate confirmation from the
+  request in (a). We will set it out in those words and we will not tick it for you either. **If you
+  have not given it, (d) below does not apply to you and you keep your right to cancel.**
 - **(b)** you still keep your right to cancel during the 14 days;
-- **(c)** but if you cancel after we have started, **you must pay a proportionate amount for the work done up to the point you told us** — calculated as the proportion of the total service performed, against the total price;
-- **(d)** and once the service has been **fully performed** within the 14 days, **you lose the right to cancel entirely.** We will tell you when we consider the service fully performed.
+- **(c)** but if you cancel after we have started, **you must pay a proportionate amount for the work
+  done up to the point you told us** — for the period the service was supplied, ending when you told
+  us you were cancelling, and in proportion to what has been supplied against the full coverage of the
+  contract. It is calculated on the total price agreed; if that price is excessive, it is calculated
+  on the market value of the service supplied, judged against what other traders charge for the
+  equivalent;
+- **(d) REVISED — you lose the right to cancel only where all three of these are true:** the service
+  has been **fully performed** within the 14 days, **and** performance began after your express
+  request under (a), **and** it began with your acknowledgement under (a1). If any one of them is
+  missing, **you keep the right to cancel.** We will tell you when we consider the service fully
+  performed;
+- **(e) NEW — and you pay nothing at all** for the service supplied in the cancellation period,
+  in full or in part, if we failed to give you the cancellation information or the information about
+  this payment that the law requires before you were bound, or if we supplied the service without your
+  express request under (a). In that case (c) does not apply to you.
 
 If you do not ask us to start early, we will begin after the 14 days have passed.
 
 We will confirm all of this in your order confirmation email, in writing, before any work starts.
+<!-- L-CCR-36 — revised 26 August 2026, round 8, reg. 36 read in full at source.
+(a1) and the rewritten (d) implement **reg. 36(2)**, which makes the loss of the right conditional on
+BOTH limbs: performance began "(a) after a request by the consumer in accordance with paragraph (1),
+and (b) **with the acknowledgement that the consumer would lose that right** once the contract had
+been fully performed by the trader." The previous (d) stated the loss as an automatic consequence of
+full performance, which is the (b) limb omitted — and it stated it AGAINST the consumer, telling them
+a right was gone that on these facts they may still have held.
+(c) now states reg. 36(4)'s two limbs and reg. 36(5)'s calculation basis, which is the question the
+solicitor note below asks about.
+(e) implements **reg. 36(6)**: no cost at all where the Sch. 2 para. (l) cancellation information or
+the para. (n) cost information was not given in accordance with Part 2, or where the service was not
+supplied in response to a para. (1) request. It is the sibling of the reg. 31 consequence at §5.1 —
+the same omission that extends the cancellation period by up to 12 months also wipes out the §6(c)
+proportionate payment entirely.
+`[TK — BUILD TASK, NOT A DRAFTING ONE. reg. 36(2)(b) is satisfied by an acknowledgement actually
+given, not by a term reciting that one will be. The order flow must present the acknowledgement as a
+second unticked control alongside the (a) request box, and must RECORD that it was given, with what
+wording and when — the evidential position is the trader's to prove. Nothing on the site does this:
+there is no order flow at all (01-FACTUAL-INVENTORY.md §7, and see clause 4.1, "not engaged today").
+This task falls due the same day the (a) tick box does. Not built here; recorded so it is not built
+without it.]` -->
 
-> **For solicitor review:** this section implements regs 36–37 of the CCR 2013. Please confirm the express-request mechanism, the wording of the loss-of-rights notice, and that the pro-rata calculation method in (c) is defensible. This is the highest-frequency consumer exposure in the business.
+> **For solicitor review:** this section implements regs 36–37 of the CCR 2013. Please confirm the
+> express-request mechanism at (a), **the wording of the (a1) acknowledgement and how it is captured
+> and evidenced**, and that the calculation method in (c) is defensible. This is the highest-frequency
+> consumer exposure in the business.
 
 ## 7. Price and payment
 <!-- L-VAT-CONSUMER -->
@@ -217,7 +271,13 @@ a premium-rate number.]` -->
 9.3 You confirm that the work is yours, that it does not copy anyone else's work, that it is not defamatory, and that it does not contain unlawful material.
 
 ## 10. Your rights in your book
-<!-- NO LEDGER ENTRY: the ledger contains no CDPA 1988 entry, so the copyright position in 10.1-10.4 has no citation. Retained — this is the promise the Press site is built on and it must exist in the contract. The solicitor must supply the citation. -->
+<!-- L-CDPA-90-91 — added 26 August 2026, round 8. The previous note here said "the ledger contains no
+CDPA 1988 entry". That entry exists as of round 7 and 10.3 is the clause it discharges. ss. 90 and 91
+were re-read at source in round 8 rather than taken from the entry. -->
+<!-- NO LEDGER ENTRY for 10.1, 10.2 and 10.4: those are not assignments. 10.1 and 10.2 are statements
+that Gridsmith takes nothing — no transfer occurs, so no formality is engaged — and 10.4 is a limited
+licence granted BY the consumer TO Gridsmith, which s. 90(3) does not govern (it governs assignments).
+Retained as commercial terms. -->
 <!-- L-CRA-50 — 10.1, 10.2, 10.5 and 10.6 are all repeated on the Press pages; anything said there becomes a term, so the two must not drift apart. -->
 
 
@@ -225,7 +285,35 @@ a premium-rate number.]` -->
 
 **10.2 You keep 100% of all royalties and sales income. We take no royalty, no commission, and no share of your sales.** We are paid only the fees in your order confirmation.
 
-10.3 The cover and interior design we produce become yours once you have paid in full.
+10.3 **REVISED — the cover and interior design.** On payment in full, Gridsmith **assigns to you all
+copyright and other intellectual property rights in the cover and interior design we produce for your
+book.** This assignment is made in writing and signed by or on behalf of Gridsmith, and takes effect on
+receipt of final payment. Where that design does not exist when these terms are agreed, this clause is
+an agreement in relation to **future copyright** within the meaning of **section 91 of the Copyright,
+Designs and Patents Act 1988**, made and signed by Gridsmith as prospective owner, so that the
+copyright vests in you on coming into existence without any further act of assignment. Where the
+design already exists, the assignment is made in writing and signed as **section 90(3)** of that Act
+requires.
+<!-- L-CDPA-90-91 — revised 26 August 2026, round 8. ss. 90 and 91 fetched and read at source in this
+round, not taken from the ledger entry. The defect being corrected ran AGAINST THE CONSUMER: version
+1.1 said only that the design would "become yours once you have paid in full". That is a bare promise
+that rights will pass. **s. 90(3): "An assignment of copyright is not effective unless it is in writing
+signed by or on behalf of the assignor."** A cover and interior design does not exist when the contract
+is made, so the operative section is **s. 91(1)**, which vests future copyright in the assignee on
+creation only where the agreement is "made in relation to future copyright, and signed by or on behalf
+of the prospective owner" and the prospective owner "purports to assign" it. The old wording did
+neither: it did not purport to assign, and it named no signed-writing basis. So the CONSUMER
+instrument gave a weaker transfer than `MSA-BUSINESS.md` 8.3 gives a business client, in the document
+whose entire selling proposition (10.1, 10.6, and `/press`) is that the author owns everything. This
+clause is now the same language as 8.3.
+`[TK — the same two questions 8.3 records, carried across deliberately rather than resolved, because
+neither section answers them and this pass is not the place to decide them: (i) whether an
+electronically executed agreement is "signed" for s. 90(3) and s. 91(1) — which matters more here than
+in the MSA, since a consumer order is the case most likely to be concluded by a click; (ii) whether
+"other intellectual property rights", which are not copyright, are validly assigned by these words —
+ss. 90 and 91 govern copyright only, and registered designs, trade marks and unregistered design right
+each have their own assignment formalities. A cover design is a plausible registered-design subject,
+so (ii) is not academic here.]` -->
 
 10.4 We use your manuscript only to produce your book. That permission ends when we deliver.
 
@@ -361,8 +449,11 @@ Date: ____________________
 rate (7.4) · complaint response time (12) · ADR provider if any · the estimator reference at clause 4,
 since no such tool exists · the VAT-inclusive price the site does not currently show (3, 7.1) · the
 electronic complaint form (12.1) · whether the six testimonials shown on the site are a complete or
-selected set, and whether the reviewers consented (10.8).
+selected set, and whether the reviewers consented (10.8) · **the reg. 36(2)(b) acknowledgement
+capture, which is a build task and not a drafting one (6)** · **the two CDPA formality questions
+carried across from `MSA-BUSINESS.md` 8.3 (10.3)**.
 
-**`[DECISION REQUIRED]` items:** how a consumer reaches this document at all, given one
-`/legal/client-terms` slug serves two instruments (head of document) · the complaint acknowledgement
-and response times (12).
+**`[DECISION REQUIRED]` items:** the complaint acknowledgement and response times (12). *The routing
+question — how a consumer reaches this document at all — was `[DECISION REQUIRED]` and is closed: the
+owner took option (a) on 26 August 2026 and this document has its own route. See the head of the
+document.*

@@ -382,6 +382,25 @@ showed the proposed correction was also wrong on the tiering.
 | **engaged here because** | Same as `L-CCR-13`. Ghostwriting and publishing services are precisely the case reg. 36 addresses: work usually starts before day 14. |
 | **status in this build** | **cannot tell.** Flagged because reg. 31's 12-month extension is the most expensive consequence in this section and follows automatically from a reg. 13 omission. |
 
+### L-CCR-36 — supply of a service in the cancellation period
+
+**Added 26 August 2026, round 8.** `L-CCR-29` named reg. 36 in passing and stated two of its six
+paragraphs. The two it did not state are the two that decide whether the consumer keeps the right and
+whether they pay anything, so reg. 36 gets its own entry. **Fetched and read in full at
+`legislation.gov.uk` on 26 August 2026.**
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 36(1), (2), (4), (5), (6)** |
+| **in-force version** | As made and amended; checked 26 Aug 2026 |
+| **what it requires** | **36(1)**: the trader must not begin supply before the end of the cancellation period unless the consumer "has made an express request" (and, for an off-premises contract, made it on a durable medium). **36(2)**: the consumer **ceases to have the right to cancel** if the service has been fully performed **and** performance began *"(a) after a request by the consumer in accordance with paragraph (1), **and** (b) with the acknowledgement that the consumer would lose that right once the contract had been fully performed by the trader."* **36(4)**: where the service was supplied on a para. (1) request, the consumer must (subject to (6)) pay an amount for the period supplied, ending when the trader is informed of the cancellation, *"which is in proportion to what has been supplied, in comparison with the full coverage of the contract."* **36(5)**: that amount is calculated on the total price agreed, or on market value if the total price is excessive. **36(6)**: the consumer *"bears no cost for supply of the service, in full or in part, in the cancellation period"* if the trader failed to give the **Sch. 2 para. (l)** cancellation information or the **para. (n)** cost information in accordance with Part 2, **or** if the service was not supplied in response to a para. (1) request. |
+| **the two limbs, stated because the second is the one routinely dropped** | 36(2) is **conjunctive**. An express request alone does not extinguish the right; it must be accompanied by the acknowledgement. A trader who takes the request and omits the acknowledgement has a consumer who has fully received the service **and still holds a cancellation right** — and, by 36(6)(a), may owe nothing for it if the information duties were also missed. The exposure is the whole price, not a proportion of it. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/36 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | Ghostwriting, editing and publishing work almost always begins before day 14. `CONSUMER-TERMS.md` §6 is the clause, and its own solicitor note calls it *"the highest-frequency consumer exposure in the business"*. |
+| **status in this build** | **not engaged today, and this is a build obligation when it is.** Nothing can be ordered on the site (`01-FACTUAL-INVENTORY.md` §7), so no request and no acknowledgement is captured anywhere. 36(2)(b) is satisfied by an acknowledgement **given and evidenced**, not by a term reciting that one will be given, so the order flow must present it as a second unticked control and record it. Recorded at `CONSUMER-TERMS.md` §6 as a `[TK]` build task. |
+
 ### L-CCR-40 — additional payments
 
 | | |
@@ -453,7 +472,7 @@ showed the proposed correction was also wrong on the tiering.
 | **primary source** | https://www.legislation.gov.uk/ukpga/2010/15/section/20 · https://www.legislation.gov.uk/ukpga/2010/15/schedule/2 |
 | **applies to** | all |
 | **engaged here because** | Inventory §6.4 — automated gates cover axe over 14 routes × 3 viewports × 2 consent phases, contrast, headings, responsive/target size, theme, and two-axis Lighthouse. |
-| **status in this build** | **partially satisfied, with two named gaps.** (1) **"The screen-reader pass has never happened"** — `05-HANDOVER.md:79` is explicit that the gates "do not cover announcement, and no lab check does"; no AT testing of any kind (magnifier, voice control, switch) is referenced anywhere. OQ-19. (2) **Four of the five legal routes are not audited** — `/legal/cookies`, `/legal/terms`, `/legal/client-terms` and `/legal/accessibility` are absent from `check-axe.mjs:48-74`; only `/legal/privacy` is covered. OQ-18. |
+| **status in this build** | **partially satisfied, with two named gaps.** (1) **"The screen-reader pass has never happened"** — `05-HANDOVER.md:79` is explicit that the gates "do not cover announcement, and no lab check does"; no AT testing of any kind (magnifier, voice control, switch) is referenced anywhere. OQ-19. (2) **Six of the seven legal routes are not audited** — `/legal/cookies`, `/legal/terms`, `/legal/client-terms`, `/legal/business-client-terms`, `/legal/consumer-client-terms` and `/legal/accessibility` are absent from `check-axe.mjs:48-74`; only `/legal/privacy` is covered. Corrected 26 August 2026, round 8, from "four of the five": `lib/legal/slugs.ts` declares seven, and the 26 Aug client-terms split put two more routes outside the gate. OQ-18. |
 
 ### L-WCAG-22 — what legal status WCAG actually has here
 
@@ -551,8 +570,8 @@ below was fetched and read at `legislation.gov.uk` on 26 August 2026.
 | **why s. 91 is the operative section for a deliverables clause** | s. 90(3) governs an assignment of copyright **that already exists**. A services agreement signed before any deliverable is made assigns copyright in works not yet created — **future copyright**, which is **s. 91**. **s. 91(1)**: where by an agreement made in relation to future copyright, *"and signed by or on behalf of the prospective owner of the copyright"*, the prospective owner purports to assign the future copyright, then on the copyright coming into existence **it vests in the assignee by virtue of that subsection** — no further act of assignment is needed. **s. 91(2)** defines *"future copyright"* as copyright that will or may come into existence in respect of a future work or class of works or on the occurrence of a future event, and *"prospective owner"* accordingly. |
 | **the practical consequence** | s. 91 also requires **signed writing**, so a clause drafted to satisfy s. 90(3) is likely adequate in form. But s. 91 is what makes the assignment bite automatically on creation, and citing only s. 90(3) leaves the mechanism for works created after signature unstated. Both sections should be named. |
 | **primary source** | https://www.legislation.gov.uk/ukpga/1988/48/section/90 · https://www.legislation.gov.uk/ukpga/1988/48/section/91 |
-| **applies to** | all — but `MSA-BUSINESS.md` 8.3 is the only clause in the set that assigns copyright. |
-| **engaged here because** | `MSA-BUSINESS.md` 8.3 assigns *"all copyright and other intellectual property rights in the final approved deliverables"* on payment, and cited s. 90(3) alone with a `NO LEDGER ENTRY` flag. |
+| **applies to** | all. **Two clauses in the set assign copyright**, and as of round 8 both are drafted to the same standard: `MSA-BUSINESS.md` 8.3 (deliverables, business client) and `CONSUMER-TERMS.md` 10.3 (cover and interior design, consumer). Until round 8, 10.3 said only that the design would *"become yours once you have paid in full"* — no purported assignment, no signed writing, no s. 91 — so **the consumer instrument gave the weaker transfer of the two**, in the document whose selling proposition is that the author owns everything. |
+| **engaged here because** | `MSA-BUSINESS.md` 8.3 assigns *"all copyright and other intellectual property rights in the final approved deliverables"* on payment, and cited s. 90(3) alone with a `NO LEDGER ENTRY` flag. `CONSUMER-TERMS.md` 10.3 makes the equivalent assignment for a consumer and, until round 8, declared that no CDPA entry existed. |
 | **status in this build** | **drafting only.** Two questions this entry does **not** answer and which remain the solicitor's: whether an electronically executed agreement is *"signed"* for s. 90(3) / s. 91(1) purposes, and whether *"other intellectual property rights"* — which are not copyright — are validly assigned by the same words. Both are recorded as open at 8.3. |
 
 ---
@@ -567,15 +586,42 @@ Sch. A1 para. 5 statistical-purposes exception, which is the single point where 
 most change what `COOKIE-POLICY.md` should say. **Recommend Pass 3 fetch the ICO's current cookies
 guidance before drafting the cookie policy.**
 
+**[STILL OPEN, and the gap has moved rather than closed — 26 August 2026, round 8.]** The sentence
+above remains literally true of **this ledger**: no entry rests on ICO guidance. But Pass 3 did fetch
+the guidance, and **`COOKIE-POLICY.md` §4A now carries eight verbatim ICO quotations that no entry here
+backs** — sourced in prose to *Guidance on the use of storage and access technologies*, chapter "What
+are the exceptions?", retrieved 25 August 2026. They are load-bearing: they are the evidential base of
+a `[DECISION REQUIRED]` worth the difference between relying on consent and relying on the Sch. A1
+para. 5 exception. Pass 5 could not re-verify them — `ico.org.uk` returned HTTP 403 — and neither did
+this round; **the quotations rest on a single unrepeatable retrieval.** They must be re-checked against
+the live page and given an entry here before publication. `COOKIE-POLICY.md` §4A itself is untouched by
+this round, per the standing instruction not to edit the ICO quotations.
+
 **CNV-2 — Art. 30(4) UK GDPR.** `legislation.gov.uk` records an **outstanding, unapplied** amendment to
 Art. 30(4) from SI 2026/386 (the DUAA consequential-amendments regulations). The consolidated text does
 not yet show it. `L-GDPR-30` therefore cites Art. 30(1) and 30(5), which are consolidated and were read,
 and does not rely on 30(4).
 
-**CNV-3 — PECR reg. 23 (identity and address in marketing mail).** Referenced inside `L-PECR-22` as the
-provision that still binds for corporate subscribers, but **the text of reg. 23 was not retrieved** — the
-fetch returned reg. 22 only. Pass 3 must read
-`https://www.legislation.gov.uk/uksi/2003/2426/regulation/23` before drafting any marketing clause.
+**CNV-3 — PECR reg. 23 (identity and address in marketing mail). CLOSED, 26 August 2026, round 8.**
+Originally recorded because the Pass 2 fetch returned reg. 22 only. **reg. 23 has now been fetched and
+read in full**, in this round, at source — not accepted from the round-7 record that said it had been
+read, and not accepted from `PRIVACY-POLICY.md` §3A, which is a draft rather than an instrument.
+
+The text: a person shall neither transmit nor instigate the transmission of a direct-marketing
+communication by electronic mail *"(a) where the identity of the person on whose behalf the
+communication has been sent has been disguised or concealed; (b) where a valid address to which the
+recipient of the communication may send a request that such communications cease has not been
+provided;"* or (c)/(d) where it would contravene, or encourages visiting sites contravening, reg. 7 of
+SI 2002/2013.
+
+**The proposition it was needed for holds.** reg. 23 opens *"A person shall neither transmit …"* and
+speaks of *"the recipient of the communication"*. It carries **no "individual subscriber" limitation** —
+unlike reg. 22, which is expressly confined to individual subscribers by reg. 22(1). So reg. 23 binds
+for corporate-subscriber marketing where reg. 22 does not, which is exactly what `MSA-BUSINESS.md` 16.1
+rests on. `L-PECR-22`'s reference to it stands.
+
+*Kept in this section rather than deleted, with its closure and the reason, so the record shows what was
+unverified and when that changed.*
 
 **CNV-4 — Price Marking Order 2004.** Considered as a candidate primary source for consumer VAT display
 and **not cited**, because it is directed at products offered to consumers and its application to
@@ -622,9 +668,16 @@ be missing from the drafts.
 5. **`L-VAT-CONSUMER` / `L-VAT-B2B` / `L-ECOM-6` reg. 6(2) — VAT treatment on prices.** Every price on
    every division fails, for two different reasons, needing two different fixes. `M-P2-3` NOT BUILT.
 
-6. **`L-CRA-57` — one `Client Terms` route for two audiences.** A B2B liability cap applied to a Press
-   author is void to that extent. This is a routing and instrument-structure defect, not a drafting one:
-   **no additional clause can fix it while there is one slug.** OQ-13.
+6. **`L-CRA-57` — one `Client Terms` route for two audiences. DISCHARGED, 26 August 2026.** ~~A B2B
+   liability cap applied to a Press author is void to that extent. This is a routing and
+   instrument-structure defect, not a drafting one: **no additional clause can fix it while there is one
+   slug.** OQ-13.~~ The diagnosis was right and the remedy was taken: the owner split the routes on
+   26 Aug 2026. `lib/legal/slugs.ts` now declares **seven** slugs, with `business-client-terms` and
+   `consumer-client-terms` carrying the two instruments and `client-terms` surviving as a
+   disambiguation page carrying no operative clause. `scripts/check-consumer-terms.mjs` asserts the
+   separation against the served pages. **What remains is not this item**: `/contact` still serves one
+   form to all three divisions, so nothing in the enquiry flow identifies which regime a buyer is in
+   before an order is confirmed (`press/PRD.md` FR-P24).
 
 7. **`L-PECR-CONSENT-EVIDENCE` — no consent audit trail.** `consent_events` does not exist. Currently
    mitigated only by the fact that nothing consent-gated collects anything (§1.3); the mitigation
@@ -641,7 +694,11 @@ be missing from the drafts.
     were omitted is a decision no gate can observe and no clause can cure. OQ-20.
 
 11. **`L-WCAG-22` / `L-EQA-20` — the accessibility statement's evidential base.** The screen-reader pass
-    has never happened, and four of the five legal routes are outside the axe gate. Any statement of AA
+    has never happened, and **six of the seven legal routes are outside the axe gate** — corrected
+    26 August 2026 from "four of the five". `lib/legal/slugs.ts` declares seven; `check-axe.mjs`
+    `ROUTES` contains `/legal/privacy` and no other legal path. The count moved because the
+    client-terms split added two slugs, and it moved in the wrong direction: the two documents most
+    likely to be read by someone deciding whether to buy are both unaudited. Any statement of AA
     conformance is currently unearned, and saying so is itself a `L-CRA-50` statement.
 
 ---

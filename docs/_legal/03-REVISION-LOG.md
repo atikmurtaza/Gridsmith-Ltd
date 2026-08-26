@@ -909,3 +909,347 @@ retained. None resolves anything by guessing.
 ---
 
 *End of round 7.*
+
+---
+
+# Round 8 — 26 August 2026: the last drafting pass on the four held documents
+
+**Input:** `05-REVERIFICATION-REPORT.md` (Pass 5). **Treated as a fallible peer, not a baseline** —
+its predecessor was wrong four times, and this round's instruction was to verify each finding at the
+primary source before acting on it. Every instrument named below was fetched at `legislation.gov.uk`
+in this round. Nothing was taken from `02-CITATION-LEDGER.md`, from Pass 5, or from round 7's record
+of what it had read.
+
+**Instruments read at source in this round:** SI 2013/3134 **reg. 36(1)–(6)** · CDPA 1988 **s. 90(1)–(4)**
+and **s. 91(1)–(3)** · PECR 2003 **reg. 23**. Build facts re-derived: `lib/legal/slugs.ts` (seven
+slugs, counted), `package.json` (`build` = `next build`; `check:launch` lives only in `verify:served`),
+and the Vercel production build log for `dpl_Bvr712Dpw7PDTd6AAoYVudfKGKja`.
+
+**Every Pass 5 finding acted on survived its own re-derivation.** None was rejected on the merits.
+Two were narrowed — see §6.
+
+---
+
+## 1. `CONSUMER-TERMS.md` — version 1.2. The two substantive defects
+
+### 1.1 §6 — the cancellation right, misstated against the consumer
+
+**reg. 36 fetched in full.** **36(2)** reads: the consumer ceases to have the right to cancel if the
+service has been fully performed **and** performance began *"(a) after a request by the consumer in
+accordance with paragraph (1), **and** (b) with the acknowledgement that the consumer would lose that
+right once the contract had been fully performed by the trader."*
+
+It is **conjunctive**, and version 1.1 supplied only the first limb. §6(a) had the express request;
+nothing anywhere in the document required the (b) acknowledgement, and §6(d) presented the loss of the
+right as an automatic consequence of full performance: *"once the service has been fully performed
+within the 14 days, you lose the right to cancel entirely."*
+
+**What that clause did.** It told a consumer, in the document written for them, that a statutory right
+was gone when on these facts they may still have held it — in the section the draft itself calls
+*"the highest-frequency consumer exposure in the business"*. A consumer who read it and believed it
+would not have asked to cancel.
+
+**Fixed:** a new **§6(a1)** requires the acknowledgement as a second, separate confirmation and states
+in terms that without it (d) does not apply; **§6(d)** is rewritten to make the loss conditional on
+all three of full performance, the (a) request and the (a1) acknowledgement, and to say that if any
+one is missing the consumer keeps the right.
+
+**And a second omission, on the same reading: reg. 36(6).** *"The consumer bears no cost for supply of
+the service, in full or in part, in the cancellation period"* where the trader failed to give the
+Sch. 2 **para. (l)** cancellation information or the **para. (n)** cost information in accordance with
+Part 2, or where the service was not supplied on a para. (1) request. §6(c)'s proportionate payment
+read as an unconditional entitlement and is not one. **Fixed:** new **§6(e)**.
+
+The two consequences are siblings and it is worth saying so once: **the same information failure that
+extends the cancellation period by up to 12 months under reg. 31 — which §5.1 was added to state —
+also removes the proportionate payment entirely under reg. 36(6).** §5.1 stated the expensive half and
+the document was silent on the other.
+
+**§6(c)** also now states reg. 36(4)'s two limbs and **reg. 36(5)**'s calculation basis — total price
+agreed, or market value where the total price is excessive. That is the question the section's own
+solicitor note asks about ("that the pro-rata calculation method in (c) is defensible"), and it was
+being asked without the paragraph that answers it.
+
+**Recorded as a build task, not built.** reg. 36(2)(b) is satisfied by an acknowledgement **given and
+evidenced**, not by a term reciting that one will be given. A `[TK]` at §6 requires the order flow to
+present it as a second unticked control alongside the (a) request box **and to record that it was
+given, with what wording and when** — the evidential position is the trader's to prove. It falls due
+the same day the (a) tick box does. Nothing on the site does this today because nothing can be ordered
+at all (`01-FACTUAL-INVENTORY.md` §7), which is why the whole of §6 is currently unengaged and why
+this is cheap to get right now.
+
+### 1.2 §10.3 — the consumer had the weaker copyright transfer
+
+Version 1.1: *"The cover and interior design we produce become yours once you have paid in full."*
+
+**ss. 90 and 91 fetched.** **s. 90(3)**: *"An assignment of copyright is not effective unless it is in
+writing signed by or on behalf of the assignor."* A cover and interior design does not exist when the
+contract is made, so the operative section is **s. 91(1)**, which vests future copyright in the
+assignee on creation — but only where the agreement is *"made in relation to future copyright, and
+signed by or on behalf of the prospective owner"* and the prospective owner *"purports to assign"* it.
+
+The old wording did neither. It did not purport to assign anything; it promised that rights would
+become the consumer's, which is a statement of intention. And it named no signed-writing basis.
+
+**The direction of the defect is the point.** `MSA-BUSINESS.md` 8.3 was corrected at round 7 and
+carries both sections expressly. So **the business client had an assignment that bites and the
+consumer had a promise that may not** — in the instrument whose entire selling proposition, at 10.1,
+10.6 and across `/press`, is that the author owns everything. 10.3 is now the same language as 8.3.
+
+**The two open questions at 8.3 are carried across rather than resolved**, because neither section
+answers them and this pass is not the place to decide them: whether an electronically executed
+agreement is *"signed"* for s. 90(3) and s. 91(1) — which matters **more** here than in the MSA, since
+a consumer order is the case most likely to be concluded by a click — and whether *"other intellectual
+property rights"* are reached by ss. 90–91 at all, those sections governing copyright only. The second
+is not academic for a cover design, which is a plausible registered-design subject.
+
+The `NO LEDGER ENTRY` note at §10 is replaced by `L-CDPA-90-91`, narrowed to say why 10.1, 10.2 and
+10.4 remain uncited: they are not assignments. 10.1 and 10.2 state that Gridsmith takes nothing, so no
+transfer occurs and no formality is engaged; 10.4 is a licence granted **by** the consumer, which
+s. 90(3) does not govern.
+
+---
+
+## 2. `MSA-BUSINESS.md` — version 1.3. One correction, and it is to an instruction, not a clause
+
+Clause **16.2**'s inline note told the reader that PECR reg. 23 *"was NOT retrieved by Pass 2 and must
+be read before this clause is relied on"* — while `PRIVACY-POLICY.md` §3A recorded the same question
+closed at round 7. The MSA was instructing a solicitor not to rely on clause 16.1, which another draft
+said was soundly based.
+
+**reg. 23 was fetched and read in full in this round**, rather than the closure being accepted from
+round 7's record or from `PRIVACY-POLICY.md` — both are drafts, not instruments, and Pass 5 was right
+to record the closure as *claimed, not re-derived*. It forbids transmitting direct-marketing electronic
+mail where the sender's identity is disguised or concealed, or where no valid opt-out address is
+provided, plus two reg. 7 limbs. It opens *"A person shall neither transmit …"* and speaks of *"the
+recipient of the communication"*: **no "individual subscriber" limitation**, unlike reg. 22, which
+reg. 22(1) so confines. That is exactly the proposition 16.1 rests on, and it holds.
+
+**The clause text is unchanged.** The defect was in the instruction attached to it.
+
+---
+
+## 3. `WEBSITE-TERMS.md` — the audience decision block, re-derived
+
+The block asked the solicitor to weigh option (b) — splitting the website terms by audience — against
+a cost stated as *"a sixth legal slug (`lib/legal/slugs.ts` declares five)"*. **Counted from the file:
+it declares seven.** The five-slug era ended on 26 August 2026 with the client-terms split.
+
+So (b) needs an **eighth and ninth** slug, and `terms` would follow `client-terms` in becoming a
+disambiguation page rather than a redirect, for the reason recorded there. **But the correction makes
+(b) easier to choose, not harder:** the split it proposes has now been done once, and
+`/legal/client-terms` is a working precedent with a gate on it. The block now says both.
+
+A solicitor cannot be asked to decide a structural question on a false statement of what the structure
+is, which is why this and not the document's `[TK]`s was what held it back.
+
+**The class, swept.** Round 7 corrected the identical five-slug assumption in
+`ACCESSIBILITY-STATEMENT.md` §4.3 and stopped there. `CLAUDE.md`'s *fix the class, not the instance*
+applies to a stale **fact** as much as to a defect in code: when a number changes, every document
+asserting it is a site of the same error, and the sweep is to grep the number rather than to fix where
+it was found. Grepping it found three more instances, all now corrected —
+`01-FACTUAL-INVENTORY.md` §"routes not audited" and open question 18, and `L-WCAG-22`'s status cell in
+the ledger, each of which said *"four of the five legal routes"* where the answer is **six of the
+seven**. The count moved in the worse direction: the two client-terms instruments are the documents a
+buyer is most likely to read before deciding, and the split put both outside the axe gate.
+
+Clause 3's `NO LEDGER ENTRY` note is **narrowed, not closed.** It said the ledger holds no CDPA entry;
+one now exists. But `L-CDPA-90-91` covers ss. 90–91 — **assignment** — and clause 3 asserts copyright
+**subsistence** and grants a permitted-use **licence**. Citing it there would be a clause citing an id
+that does not discharge it, which is the defect this round fixed at CONSUMER-TERMS 10.3 in the other
+direction. The note now says so.
+
+---
+
+## 4. `00-LEGAL-BASIS.md` — the map that had drifted behind the territory
+
+This is the first file a solicitor opens, and §1 still stated, as the requirements the drafts are
+written against, the two things round 7 had corrected inside `MSA-BUSINESS.md` 6.4:
+
+- *"Statutory interest at 8% + Bank of England base, plus a fixed recovery sum."* **Both halves wrong.**
+  The 8% is not in the Act at all — s. 6(1) only empowers the Secretary of State, and **SI 2002/1675
+  art. 4** sets the rate over *"the official dealing rate in force on the 30th June … or the 31st
+  December … immediately before the day on which statutory interest starts to run"*. That is a rate
+  **fixed six-monthly**, not the base rate on the invoice date, and "8% + Bank of England base"
+  describes a floating rate the statute does not create. And there are **three** fixed sums by debt
+  band under s. 5A(2) — £40 / £70 / £100 — plus **s. 5A(2A)**'s recovery costs above the fixed sum,
+  which the singular gave away by omission.
+- The CDPA row named **s. 90(3) alone**, which governs copyright that already exists, and omitted
+  **s. 91** — the section that makes an assignment of future copyright vest on creation.
+
+Both rows also carried `NO LEDGER ENTRY` flags declaring the instruments **unread**, when
+`L-LATE-PAYMENT` and `L-CDPA-90-91` had existed since round 7 and both instruments had been fetched.
+The marketing row still carried the `CNV-3` caveat closed at §2 above.
+
+All corrected, and **each corrected row was re-derived from the instrument in this round** rather than
+copied from the ledger entry or from the corrected clause — a map rewritten from the thing it disagreed
+with would agree with it by construction and prove nothing.
+
+**Why this mattered more than its size.** A requirements map that repeats the errors the drafts were
+corrected for is worse than no map, because it is read first and will be trusted over the clause. The
+drafts were right and the index was wrong, which is the failure mode that survives a review of the
+drafts.
+
+---
+
+## 5. Ledger changes
+
+**One entry added.**
+
+- **`L-CCR-36` — supply of a service in the cancellation period.** reg. 36(1), (2), (4), (5), (6),
+  fetched and read in full. `L-CCR-29` named reg. 36 in passing and stated two of its six paragraphs;
+  the two it did not state — 36(2)'s conjunctive test and 36(6)'s no-cost rule — are the two that
+  decide whether the consumer keeps the right and whether they pay anything, so reg. 36 gets its own
+  entry. Cited at `CONSUMER-TERMS.md` §6 and in `00-LEGAL-BASIS.md` §1.
+
+**Four records corrected.**
+
+- **`CNV-3` closed**, on this round's own reading of reg. 23, with the text and the reasoning recorded.
+  Kept in the `COULD NOT VERIFY` section with its closure rather than deleted, so the record still
+  shows what was unverified and when that changed.
+- **`CNV-1`** — the sentence *"no entry in this ledger rests on ICO guidance"* is still literally true
+  and is left standing. What is added is that the gap **moved rather than closed**: `COOKIE-POLICY.md`
+  §4A now carries eight verbatim ICO quotations that no entry backs, they are the evidential base of a
+  `[DECISION REQUIRED]`, and they rest on a single unrepeatable retrieval — `ico.org.uk` returned
+  HTTP 403 to Pass 5 and was not reached in this round either. They must be re-checked against the
+  live page and given an entry before publication.
+- **No-clause item 6** (`L-CRA-57`, one route for two audiences) marked **discharged**: its diagnosis
+  was right, and the owner's 26 Aug split is the remedy. What survives is not that item — `/contact`
+  still serves one form to all three divisions, so nothing in the enquiry flow identifies the regime.
+- **No-clause item 11** corrected from *"four of the five legal routes"* to **six of the seven**.
+
+`L-CDPA-90-91`'s "applies to" and "engaged here because" cells now record that **two** clauses assign
+copyright, not one, and that the consumer's was the weaker until this round.
+
+---
+
+## 6. Findings narrowed rather than applied, and one not applied at all
+
+- **F-2, in part.** Pass 5 said 10.3's fix *"is for the solicitor to draft"* and should be *"flagged as
+  a defect rather than as a missing citation"*. It was both, and the flag alone would have left a
+  consumer with a defective assignment through review. The clause is redrafted to the standard 8.3
+  already sets — which is not new drafting, it is applying a decision already taken in this set — and
+  the two questions ss. 90–91 genuinely do not answer are left open for the solicitor, marked.
+- **F-5, direction.** Pass 5 reported the corrected cost of option (b) as *"understated"*. True as to
+  slug count, and incomplete: the same correction supplies a precedent that makes (b) cheaper to
+  execute. Recorded both ways.
+- **F-7 — NOT APPLIED, and deliberately.** `PRIVACY-POLICY.md` §6's Resend row omits `lead_type` and
+  `service_slug` from an enumeration. The finding is sound. But this round's instruction confines edits
+  to `PRIVACY-POLICY.md` to stale cross-references into the four held documents, and this is not one.
+  Pass 5 itself rates the exposure nil (neither field is personal data today) and rates the document
+  solicitor-ready with it. **It is left open and named here so it is not lost**, since the defect class
+  — an enumerated list in a privacy notice reading as exhaustive — is one round 7 already swept once
+  in §2 of the same document.
+- **N-2 (UCTA 1977) left open, correctly.** `MSA-BUSINESS.md` 11 and `WEBSITE-TERMS.md` 11 still carry
+  `NO LEDGER ENTRY` flags saying UCTA was never read. It still has not been, and this round did not
+  read it. The consumer side of the same question is fully cited at `L-CRA-57`; the business side —
+  which is what caps Gridsmith's exposure at 11.3 — remains asserted. Flagging it is the correct state;
+  closing it would need the Act.
+
+---
+
+## 7. The PECR episode — what actually happened, and the transferable part
+
+Recorded because the sequence is instructive and because two of the three accounts of it in circulation
+are wrong in different directions.
+
+**The sequence.** Pass 4 proposed correcting `CLAUDE.md`'s uncited *"£17.5m or 4% of turnover"* to
+*"£8.7m / 2%"*, reading PECR Sch. 1 para. 18(b)(ii) as modifying DPA 2018 s. 157(2) as a whole. **The
+owner rejected the proposal** and directed that the figure be established from primary source instead
+of one uncited number being swapped for another. Chasing it to source showed para. 18(b)(ii) substitutes
+its list for the words *"from 'section 35' to 'or 78'"*, which appear only in **s. 157(2)(a)** — the
+**higher**-maximum limb, defined by s. 157(5). reg. 6 is in the substituted list. So **Pass 4's proposal
+understated the exposure by a tier**: it would have replaced a correct figure with a wrong one, and
+would have looked like a rigorous correction while doing it.
+
+**The owner's rejection was right in outcome.** The owner's stated reasoning — *"that is the UK GDPR
+maximum, not PECR's"* — is now only half right, and saying so is not a criticism of the call. Since
+5 February 2026 £8.7m / 2% **is** PECR's standard maximum, at s. 157(6), for infringements outside the
+para. 18 list. The two regimes are **tiered together**, not distinct. The rejection was right for a
+reason adjacent to the one given.
+
+**Two things this is not, and both have been said.** It is not that the owner's correction was wrong in
+the direction of understating exposure — that was **Pass 4's proposal**, not the owner's. And it is not
+that reading the guidance would have caught it: nothing short of following the substitution through
+four instruments would have.
+
+**The durable lesson is the one the owner named, and it is the method rather than the answer: chase a
+correction to source rather than accept it from anyone — the report, the owner, or a previous pass.**
+Pass 4 was confident and specific and wrong. The owner was right and reasoned from a premise that had
+since changed. The primary text settled it, and it is the only thing that could have. This round was
+run on that instruction and it is why every finding above was re-derived before being acted on, and why
+`CNV-3` was re-read at source rather than closed on two drafts' say-so.
+
+---
+
+## 8. The production build failure — established from the Vercel build log today
+
+**Every production-target deployment since 19 August 2026 is `ERROR`.** Read from the deployment list
+for `prj_kfFxGWf0ai1VYAGICYfVvNn0QYYN` today: every deployment with `target: "production"` is in state
+`ERROR`, and every `READY` deployment in the same window is a preview (`target: null`). The most recent
+is `dpl_Bvr712Dpw7PDTd6AAoYVudfKGKja`, commit `a322c27` on `main`.
+
+**The first failing line, from that build's log:**
+
+```
+Error occurred prerendering page "/_not-found". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: No companyDetails document in dataset "production". Every page renders the statutory footer,
+so the build cannot proceed without it. Seed it with `npm run seed:company`.
+```
+
+Thrown by `getCompanyDetails()` at `lib/company/companyDetails.ts`, while prerendering `/_not-found`.
+
+**Nothing else is failing behind it.** The same log shows `✓ Compiled successfully in 9.7s`, then
+*"Linting and checking validity of types"* passing without output, then *"Collecting page data"*, then
+*"Generating static pages (0/17)"* and the throw. The build exits at that one assertion:
+`Export encountered an error on /_not-found/page: /_not-found, exiting the build.`
+
+**It is NOT `check:launch`, and this corrects a belief held in the handover and by the owner.**
+Vercel's build command is `npm run build`, which `package.json:12` defines as `next build` and nothing
+else. `check:launch` is a member of **`verify:served`** (`package.json:33`), which runs behind
+`scripts/with-server.mjs` and which **Vercel never invokes**. The seed-content gate is a **CI guard
+only**.
+
+**So the thing currently protecting production is the `companyDetails` throw, not the seed gate.** That
+is worth stating precisely, because the two protect against different things and only one of them is
+running here: the throw refuses to build a site whose statutory footer has no source, and the seed gate
+refuses to ship a dataset carrying `[SEED]` markers — including the fabricated VAT number
+`[SEED] GB123456789` that `WEBSITE-TERMS.md` clause 1 and `00-LEGAL-BASIS.md` §1 both record as live
+in `development`. **A production dataset that is seeded but seeded with placeholder content would
+satisfy the throw and never meet the gate.** Whoever populates `production` must run `check:launch`
+deliberately; passing the Vercel build is not evidence of it.
+
+---
+
+## 9. State after this round
+
+| Document | Verdict |
+|---|---|
+| `WEBSITE-TERMS.md` | the blocking finding (F-5) is corrected; remaining items are owner facts and owner choices |
+| `MSA-BUSINESS.md` | the blocking finding (F-6) is corrected |
+| `CONSUMER-TERMS.md` | both substantive findings (F-3/F-4, F-2) are corrected |
+| `00-LEGAL-BASIS.md` | the map now agrees with the drafts it indexes (F-1) |
+
+**Verdicts are for Pass 6 to give, not for the round that did the drafting.** A pass that graded its
+own work would agree with it by construction, which is the same defect as a clause verified against the
+ledger it was drafted from.
+
+## What this round did not do
+
+- **No `[TK]` or `[DECISION REQUIRED]` was resolved.** Every one is an owner fact, a build fact, or a
+  solicitor's judgement. One `[DECISION REQUIRED]` was **closed as already decided** —
+  `CONSUMER-TERMS.md`'s footer still listed the routing question that the owner settled on 26 August —
+  and one `[TK]` was **added**, the reg. 36(2)(b) acknowledgement capture at §6, which is a build task.
+- **No clause was drafted or amended beyond the findings above.** `CLAUDE.md`'s standing instruction is
+  not to draft or amend clauses in `_legal/`; the two clause changes here restate provisions read at
+  source and align a consumer clause with a business clause already settled in this set.
+- **The `[SEED - SOLICITOR REVIEW REQUIRED]` banners are untouched** on all four documents.
+- **`COOKIE-POLICY.md` §4A's ICO quotations were not verified and not edited**, and the GA4 cookie
+  question was not reopened — it is settled by measurement.
+- **F-7 was not applied**, for the reason at §6.
+- **UCTA 1977 was not read.**
+- **Nothing was committed.**
+
+---
+
+*End of round 8.*

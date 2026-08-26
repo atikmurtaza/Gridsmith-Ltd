@@ -8,6 +8,13 @@
 **Revised 25 August 2026 against `02-CITATION-LEDGER.md`.** Every clause below carries an inline
 comment naming the ledger entry it implements, or is flagged as having none.
 
+**Version 1.2 — revised 26 August 2026, round 8.** **No clause text changed.** Two notes did, and both
+were reasoning from facts that had moved: the audience `[DECISION REQUIRED]` below stated option (b)'s
+cost as *"a sixth legal slug (`lib/legal/slugs.ts` declares five)"* — it declares **seven**, counted
+from the file, since the 26 August client-terms split — and clause 3's `NO LEDGER ENTRY` note said the
+ledger holds no CDPA entry, which it now does. The second is **narrowed rather than closed**, because
+the entry covers assignment and clause 3 concerns subsistence and licence.
+
 These terms govern use of gridsmith.uk. They do **not** govern services we provide — those are covered
 by the Master Services Agreement (business clients) or the Consumer Terms (individual clients).
 
@@ -16,11 +23,30 @@ by the Master Services Agreement (business clients) or the Consumer Terms (indiv
 > `/legal/*` page mix consumer and business visitors). Options:
 > **(a)** keep one instrument and mark each clause that diverges — as clause 11 does — which is what
 > this draft does;
-> **(b)** split into a consumer-facing and a business-facing terms of use, which requires a sixth
-> legal slug (`lib/legal/slugs.ts` declares five).
+> **(b)** split into a consumer-facing and a business-facing terms of use.
 > Consequence of (a): every limitation must be read down for consumers, and clause 11 is the only
 > place that currently happens. Consequence of (b): build work, and a routing decision about how a
 > visitor reaches the right one.
+>
+> **[COST OF (b) RE-DERIVED — 26 August 2026, round 8. Counted from `lib/legal/slugs.ts`, not from
+> any report.]** This block previously said option (b) *"requires a sixth legal slug
+> (`lib/legal/slugs.ts` declares five)"*. **It declares seven** — `privacy`, `cookies`, `terms`,
+> `client-terms`, `business-client-terms`, `consumer-client-terms`, `accessibility`. The five-slug era
+> ended on 26 August 2026 when the owner split the client terms. So **(b) needs an eighth and a ninth
+> slug, not a sixth**, and `terms` would follow `client-terms` in becoming a disambiguation page rather
+> than a redirect, for the reason recorded there: a redirect has to choose a target, and either choice
+> lands one audience silently on the other's instrument.
+>
+> **This makes (b) cheaper to weigh, not more expensive.** The split it describes has now been done
+> once, for the client terms, and `/legal/client-terms` is a working precedent for the disambiguation
+> pattern (`scripts/check-consumer-terms.mjs` guards it, and `lib/legal/slugs.ts` records why a
+> redirect was rejected). Option (b) here would reuse that pattern rather than invent one.
+>
+> **Why this was wrong is worth stating**, because it is the same fact getting stale in more than one
+> place: round 7 corrected the identical five-slug assumption in `ACCESSIBILITY-STATEMENT.md` §4.3
+> and stopped at that one instance. `CLAUDE.md`'s *fix the class, not the instance* applies to a stale
+> **fact** as much as to a defect in code — when a number changes, every document asserting it is a
+> site of the same error, and the sweep is to grep the number rather than to fix where it was found.
 
 ---
 
@@ -66,9 +92,14 @@ binding a visitor at all. The solicitor should rule on whether use-implies-accep
 By using this site you accept these terms. If you do not accept them, please do not use the site.
 
 ## 3. Our content
-<!-- NO LEDGER ENTRY: copyright subsistence and the scope of a permitted-use licence are CDPA 1988
-matters. The ledger contains no CDPA entry — 00-LEGAL-BASIS.md §1 asserts CDPA s.90(3) but Pass 2
-raised no entry for it. Retained; the solicitor should confirm the licence scope and whether the
+<!-- NO LEDGER ENTRY, and it is still the right flag — narrowed 26 August 2026, round 8. The previous
+note said "the ledger contains no CDPA entry". One now exists, `L-CDPA-90-91`, added at round 7. **It
+does not discharge this clause and is deliberately not cited here.** It covers ss. 90 and 91 —
+ASSIGNMENT of copyright, present and future. This clause asserts neither: it asserts copyright
+SUBSISTENCE in the site's content and grants a limited permitted-use LICENCE, which are different
+provisions of the Act again. Citing `L-CDPA-90-91` here would be a clause citing an id that does not
+discharge it, which is the defect this round corrected at CONSUMER-TERMS 10.3 in the other direction.
+Retained as uncited; the solicitor should confirm the licence scope and whether the
 text-and-data-mining bullet is effective against the UK TDM exception. -->
 
 All content on this site — text, images, drawings, book covers, code, design and layout — is owned by

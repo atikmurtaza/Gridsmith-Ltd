@@ -437,8 +437,12 @@ refuses a `production` dataset with an empty or seeded VAT number
 **`/legal/privacy`**, `/contact`, `/_kitchen-sink`, `/_master-sink`, `/_gridsmith-404-probe`, plus
 `/gridsmith-error-probe`.
 
-**Four of the five legal routes are NOT audited** — `/legal/cookies`, `/legal/terms`,
-`/legal/client-terms`, `/legal/accessibility` do not appear in `ROUTES`. → OQ-18
+**Six of the seven legal routes are NOT audited** — `/legal/cookies`, `/legal/terms`,
+`/legal/client-terms`, `/legal/business-client-terms`, `/legal/consumer-client-terms` and
+`/legal/accessibility` do not appear in `ROUTES`; only `/legal/privacy` does. → OQ-18
+*Corrected 26 August 2026, round 8, counted from `lib/legal/slugs.ts` (seven) against
+`check-axe.mjs` `ROUTES`. It read "four of the five" — the client-terms split on 26 Aug added two
+slugs, and both new routes landed outside the gate.*
 
 **What has NOT been tested — stated plainly:**
 
@@ -552,9 +556,12 @@ running site. None has been filled with a default.
     data protection fee, and what is the registration number?
 17. **`contactPhone` and `businessHours`** are schema fields that are never populated. Is there a
     telephone contact route, and what are the business hours the response commitment refers to?
-18. **Four of the five legal routes are not covered by the accessibility gate.** Should
-    `/legal/cookies`, `/legal/terms`, `/legal/client-terms` and `/legal/accessibility` be added to
-    `check-axe.mjs:48-74` before the accessibility statement claims automated coverage?
+18. **Six of the seven legal routes are not covered by the accessibility gate** (corrected
+    26 August 2026 from "four of the five"). Should `/legal/cookies`, `/legal/terms`,
+    `/legal/client-terms`, `/legal/business-client-terms`, `/legal/consumer-client-terms` and
+    `/legal/accessibility` be added to `check-axe.mjs:48-74` before the accessibility statement
+    claims automated coverage? The two client-terms instruments are the documents a buyer is most
+    likely to read before deciding, and both are outside the gate.
 19. **The screen-reader pass.** It has never happened. The accessibility statement cannot honestly
     describe manual testing until it does. When, and by whom?
 20. **Testimonials.** `Testimonials.tsx:16` says six are real public Freelancer reviews. Confirm the
