@@ -8,9 +8,35 @@ import type { EventContext, EventName, EventProps } from './events';
  *
  * **Nothing is injected until `analytics_storage` is granted, and "injected" is the whole
  * point** — `PROJECT-RULES.md` §6 says "not loaded-and-suppressed". A script that is
- * present and told not to record has already made the request and, for GA4, already set
- * the cookie; PECR is about the storage, not the intent. So the tags are appended to the
- * document at grant time and never before.
+ * present and told not to record has already made the request, and the request itself
+ * carries the visitor's IP address and user-agent to a third party. PECR is about the
+ * storage, not the intent, and UK GDPR is about the transmission either way. So the tags
+ * are appended to the document at grant time and never before.
+ *
+ * **This docstring used to add "and, for GA4, already set the cookie". That was wrong, and
+ * it was settled by measurement rather than by reading.** A clean production build of this
+ * tree was loaded with `NEXT_PUBLIC_GA4_ID` and `NEXT_PUBLIC_POSTHOG_KEY` both present —
+ * the page's own `__gsAnalyticsConfigured` reported `{ga4: true, posthog: true}`, so this
+ * is a reading from a configured environment and not from an empty one. In all three
+ * consent states the only cookie on the site is `gs_consent`: no `_ga`, no `_ga_*`, no
+ * PostHog cookie, and `localStorage` and `sessionStorage` empty throughout.
+ *
+ * The reason is below, in `loadAnalytics` itself. `inject` appends the loader and nothing
+ * else. `gtag/js?id=…` fetches the container and fires `gtm.dom`/`gtm.load`, but a GA4 tag
+ * is only instantiated by a `gtag('config', …)` call, and no `gtag()` call exists anywhere
+ * in this repository — `window.gtag` stays `undefined` after a grant. Same shape for
+ * PostHog: `array.js` defines the stub, `window.posthog.__loaded` stays `false`, and no
+ * `posthog.init()` call exists either. Both libraries load and sit inert.
+ *
+ * **So the cookie policy is right and this file was wrong**, and the reasoning above
+ * survives the correction: injection is still the thing that must wait for consent,
+ * because the request goes out either way. `01-FACTUAL-INVENTORY.md` §1.3 and
+ * `COOKIE-POLICY.md` §2/§4 record the same measurement; `docs/_legal/03-REVISION-LOG.md`
+ * carries the finding that consent is currently collected for two libraries that record
+ * nothing. Whether to initialise them or to stop asking is the owner's decision (OQ-7).
+ * **Any commit that adds an initialisation call must rewrite this docstring, both of those
+ * §s, and the cookie tables in the same commit** — at that point `_ga`, `_ga_*` and a
+ * PostHog identifier all begin to exist and the published tables become understatements.
  *
  * **`A-11` before `A-09` is why this can be proved at all.** The consent layer owns the
  * state; this file only reacts to it. `check-axe` asserts zero requests to any analytics

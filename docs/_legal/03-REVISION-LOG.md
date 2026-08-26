@@ -565,6 +565,66 @@ is still NOT BUILT. Every `[TK]` that says the site does not state VAT treatment
 both audiences still fail on the live site today. The second-order question — whether the company is
 VAT-registered at all — is untouched and still open.
 
+## 4. The GA4 cookie contradiction — settled by measurement
+
+**Round 6, 26 August 2026.** Two sources in this repository disagreed about whether Google Analytics
+sets a cookie on this site. `lib/analytics/load.ts`'s opening docstring asserted that a GA4 script
+which is present has "already set the cookie". `COOKIE-POLICY.md` §2 gives a **complete** cookie list
+containing only `gs_consent`, and §4 states that no analytics cookie is set in any state, resting on
+`01-FACTUAL-INVENTORY.md` §1.3.
+
+**Settled by loading the site, not by reading either source.** Environments:
+
+| Environment | Reachable | Reading taken |
+|---|---|---|
+| Vercel production (`gridsmith-ltd-atikmurtazas-projects.vercel.app`) | **No.** Project `live: false`; every production-target deployment since 19 Aug is in state `ERROR`; the production alias returns `404 NOT_FOUND` with no deployment behind it | none |
+| Vercel preview deployments (three `READY`) | **No.** Vercel Authentication (SSO) is enabled for `all_except_custom_domains`, so no unauthenticated browser can reach one | none |
+| **Local production build** — `rm -rf .next`, `next build`, `next start` on port 3100 | Yes | **all three consent states** |
+
+**The measurement id was present.** This matters, because a "no cookie" reading from an environment
+with no id proves nothing. The served page's own `window.__gsAnalyticsConfigured` — published by
+`lib/analytics/config.ts` precisely so a reader asks the page rather than the runner's `process.env` —
+reported `{ga4: true, posthog: true, posthogHost: "https://eu.i.posthog.com"}` in every state.
+`.env.local` supplies `NEXT_PUBLIC_GA4_ID=G-CB4NWWYRQ1`, and the id appears in the injected URL.
+
+**Observed, in full:**
+
+| State | `document.cookie` | `localStorage` | `sessionStorage` | Third-party requests |
+|---|---|---|---|---|
+| No choice yet | *(empty)* | empty | empty | **none** |
+| **Accept** | `gs_consent=analytics_storage%2Cad_storage%2Cfunctionality_storage` — **and nothing else** | empty | empty | `googletagmanager.com/gtag/js?id=G-CB4NWWYRQ1`, `eu.i.posthog.com/static/array.js` — both 200, neither followed by any further request |
+| **Reject** | `gs_consent=0` | empty | empty | **none** |
+
+Re-checked after an 8-second settle and again after a second page load on a different route, in case
+either library set a cookie late. No `_ga`, no `_ga_*`, no `ph_*`, in any state.
+
+**Why, verified at code level after the measurement told us what happened.** `gtag/js` did load and
+did execute — `window.google_tag_data` becomes an object and `gtm.dom`/`gtm.load` are pushed into
+`dataLayer` — but a GA4 tag is only instantiated by a `gtag('config', …)` call, and no `gtag()` call
+exists anywhere in the repository; `window.gtag` remains `undefined` after a grant. PostHog is the
+same shape: `array.js` defines the stub object, `window.posthog.__loaded` stays `false`, and there is
+no `posthog.init()`. A `grep` for `gtag(` and `.init(` across `lib/`, `components/` and `app/` returns
+nothing.
+
+**Verdict: `COOKIE-POLICY.md` was right and the docstring was wrong.** §2, §4 and
+`01-FACTUAL-INVENTORY.md` §1.3 are **confirmed by independent measurement and unchanged**. The cookie
+policy does **not** understate what the site sets.
+
+**Changed: `lib/analytics/load.ts` only** — the docstring now states what happens and why, names the
+environment the reading came from, records that the id was present, and requires that any commit
+adding an initialisation call rewrite it and the two `_legal` §s in the same commit. The rule this
+correction is an instance of is `CLAUDE.md`'s: a docstring asserting the state of a system it does not
+run in is guessing, and this one had been guessing since `A-09`.
+
+**No analytics behaviour was changed.** The inert-analytics finding is the owner's to resolve and is
+already open as OQ-7 and as `COOKIE-POLICY.md` §4's `[DECISION REQUIRED]`.
+
+**Also observed, adjacent and not acted on:** `lib/consent/state.ts:74` pushes a plain array
+`['consent','update',{…}]` into `dataLayer`, where Google's contract is an `arguments` object from a
+`gtag()` shim. If a `config` call is ever added, whether the queued denied-default is honoured needs
+proving by measurement before the tag is trusted — it is exactly the shape of claim that reads as
+working and is not.
+
 ## What this round did not do
 
 - **No clause was drafted or amended.** The fourteen other Pass 4 findings (§2.4–§2.14, §3.1, §4.1–§4.6)
@@ -574,4 +634,4 @@ VAT-registered at all — is untouched and still open.
 
 ---
 
-*End of round 5. Nothing was committed.*
+*End of round 6. Nothing was committed.*
