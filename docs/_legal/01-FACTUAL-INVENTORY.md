@@ -411,8 +411,8 @@ refuses a `production` dataset with an empty or seeded VAT number
 
 | Gate | What it measures |
 |---|---|
-| `check:axe` | axe-core over **14 routes × 3 viewports × 2 consent phases**, plus link resolution, computed theme, and skip link (`scripts/check-axe.mjs:48-74, 1081-1136`) |
-| `check:contrast` | 29 token pairs / 101 cells across four themes |
+| `check:axe` | axe-core over **15 routes (11 public, 4 internal) × 2 viewports (375px/1280px) × 2 scroll states (initial/scrolled)** = 60 analyses, plus link resolution, computed theme, and skip link (`scripts/check-axe.mjs:48-95, 120-128, 1081-1136`). **Corrected 26 Aug 2026** — counted from `ROUTES`/`VIEWPORTS`/`PHASES`; the second axis is scroll position, not consent |
+| `check:contrast` | 36 token pairs / 148 cells across four themes (`EXPECTED_PAIRS`/`EXPECTED_CELLS`, `check-contrast.mjs:45-46`). **Corrected 26 Aug 2026** from 29/101 |
 | `check:headings` | Heading structure |
 | `check:responsive` | 375 / 768 / 1440, incl. WCAG 2.2 target size and focus-not-obscured |
 | `check:theme` | Theme flash / token loading |

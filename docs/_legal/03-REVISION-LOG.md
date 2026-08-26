@@ -445,4 +445,98 @@ it is drafted twice and labelled:
 
 ---
 
-*End of revision log. Pass 4 checks the inline ids against the ledger.*
+*End of Pass 3 revision log. Pass 4 checked the inline ids against the ledger.*
+
+---
+
+# Round 5 — acting on Pass 4
+
+**Date: 26 August 2026.** Three owner decisions executed against `04-VERIFICATION-REPORT.md`. **No
+clause was drafted or amended on the law**; this round corrects numbers, records a decision, and adds
+one ledger entry. The `[SEED - SOLICITOR REVIEW REQUIRED]` banners are untouched.
+
+## 1. The PECR penalty figure — a proposed correction rejected, and why that matters
+
+**Pass 4 §2.1 and §4.5 proposed replacing `CLAUDE.md`'s uncited "up to 4% of turnover" with "£8.7m or
+2%". The owner rejected that correction.** The ground of rejection was not that the new figure was
+implausible — it is the real UK GDPR *standard* maximum — but that **it was another uncited number put
+in place of an uncited number.** Swapping one unsourced figure for a differently-unsourced figure
+looks like a fix and is not one: it leaves the reader in exactly the position `CLAUDE.md` warns
+about, holding a specific-looking number that nothing verifies and that therefore stops anyone
+re-deriving it.
+
+**The provision was then read.** The result:
+
+- **Established: a PECR reg. 6 breach attracts the HIGHER maximum — £17,500,000 or 4% of total annual
+  worldwide turnover, whichever is higher.** Route: reg. 31 → Sch. 1 para. 18 → DPA 2018
+  s. 157(2)(a) and (5). Para. 18(b)(ii) substitutes the reg. list **into paragraph (a) of** s. 157(2),
+  and (2)(a) is the higher-maximum limb; (2)(b), "otherwise", is the standard maximum, £8.7m or 2%
+  (s. 157(6)). Both PECR provisions substituted 5 Feb 2026 by DUAA 2025 ss. 115(5), (8) and Sch. 13,
+  commenced by SI 2026/82 reg. 2.
+- **So the tiering in the proposed correction was inverted.** Pass 4 read para. 18(b)(ii) as modifying
+  s. 157(2) as a whole. It modifies paragraph (a) of it. The rejection was made on the citation
+  ground alone and turned out to be right on the substance as well — which is the argument for the
+  rule, not a coincidence that excuses departing from it.
+- **The figure now carries a primary citation and a stable id.** New ledger entry
+  **`L-PECR-PENALTY`**, which states the route, quotes para. 18, gives both tiers, and says in terms
+  which tier reg. 6 falls into. It also records the ICO's summary page as **regulator guidance, not
+  statute** — the ICO states the alignment with UK GDPR and no figure of its own.
+- **Settled, not left open.** Every link in the chain is in force and reachable at
+  `legislation.gov.uk` at the in-force version, checked 26 Aug 2026.
+
+Changed: `CLAUDE.md` #7 (one line, now naming the provision) · `00-LEGAL-BASIS.md` §2.1 (`[TK]`
+closed, provenance of both earlier figures recorded) · `_shared/01-VALIDATION-REPORT.md` L-02 (cited)
+· `02-CITATION-LEDGER.md` (new `L-PECR-PENALTY`).
+
+## 2. The contrast and route figures — taken from the gates, not from the report
+
+Read out of the scripts rather than out of Pass 4:
+
+| Claim | Was | Now | Source |
+|---|---|---|---|
+| Contrast pairs / cells | 29 / 101 | **36 / 148** | `check-contrast.mjs:45-46`, hard-failed at :288 and :352 |
+| axe routes | "14 routes" | **15 — 11 public, 4 internal** | `check-axe.mjs` `ROUTES` |
+| axe viewports | "3 viewports" | **2 — 375px and 1280px** | `VIEWPORTS` |
+| axe second axis | "2 consent phases" | **2 scroll states — initial and scrolled** | `PHASES` |
+
+**Two things Pass 4 did not catch, found by counting.** (a) It reported "ten public routes plus five
+internal probe routes"; the internal routes are **four** (`/_kitchen-sink`, `/_master-sink`,
+`/_gridsmith-404-probe`, `/gridsmith-error-probe`) and the public pages are therefore **eleven**.
+(b) The viewport count and the description of the second axis were wrong in the published statement
+and Pass 4 quoted them without checking. Consent state *is* asserted by `check-axe`, but as a separate
+per-route check, not as an axis of the axe matrix.
+
+`CLAUDE.md`'s "of 29 published contrast ratios, 25 were wrong" is a **historical fact about A-03** and
+is still true of the 29 that existed then, so the anecdote is kept and put in the past tense; the
+live count in the same paragraph, and the `EXPECTED_*` literals quoted later in the file, are
+corrected to the measured values.
+
+Changed: `CLAUDE.md` (two passages) · `ACCESSIBILITY-STATEMENT.md` §3 · `01-FACTUAL-INVENTORY.md` §
+gates table.
+
+## 3. VAT display — decision recorded
+
+**Owner, 26 August 2026: option (c).** Add the net/gross field to `pricingBlock` and render per
+division — inclusive on `/press`, labelled-exclusive on `/design` and `/digital`. **Reasoning: it is
+the only option that satisfies the consumer-inclusive requirement (`L-VAT-CONSUMER`, Press) and the
+B2B labelling requirement (`L-VAT-B2B`, Design and Digital) simultaneously.**
+
+The `[DECISION REQUIRED]` block at `WEBSITE-TERMS.md` §5A is converted to `[DECISION TAKEN]` with the
+three options and their consequences left standing, so the solicitor can see what was weighed.
+Propagated to `CONSUMER-TERMS.md` §3's inline note and `00-LEGAL-BASIS.md`'s VAT row.
+
+**Not implemented, deliberately.** The price-rendering change is `M-P2-3`, a separate build task, and
+is still NOT BUILT. Every `[TK]` that says the site does not state VAT treatment **stays open**, and
+both audiences still fail on the live site today. The second-order question — whether the company is
+VAT-registered at all — is untouched and still open.
+
+## What this round did not do
+
+- **No clause was drafted or amended.** The fourteen other Pass 4 findings (§2.4–§2.14, §3.1, §4.1–§4.6)
+  are untouched and remain for the solicitor or a later round.
+- **The `check:contrast` and `check-axe` figures were not re-proved.** They are read from the gates'
+  own literals, which is what the arbitration rule requires. Neither gate was run in this round.
+
+---
+
+*End of round 5. Nothing was committed.*

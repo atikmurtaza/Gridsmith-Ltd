@@ -39,7 +39,7 @@ disagreement is visible rather than quietly resolved.
 | Copyright / IP | Copyright, Designs and Patents Act 1988, **s.90(3)** | **Assignment of copyright must be in writing and signed by the assignor.** <!-- NO LEDGER ENTRY: Pass 2 raised no CDPA entry and s. 90(3) was not read. `MSA-BUSINESS.md` clause 8.3 is drafted to satisfy it and Digital's whole ownership promise rests on it, so **this is an unverified citation carrying real weight**. The solicitor must confirm it, including whether it is satisfied by an electronically executed contract. --> |
 | Late payment (B2B) | Late Payment of Commercial Debts (Interest) Act 1998 | Statutory interest at 8% + Bank of England base, plus a fixed recovery sum. <!-- NO LEDGER ENTRY: Pass 2 raised no entry and the Act was not read. `[TK — 8% and "a fixed recovery sum" are specific figures no gate covers. Per CLAUDE.md, a specific-looking number that nothing verifies is worse than no number. Confirm against the Act before MSA clause 6.4 is relied on.]` --> |
 | Accessibility <!-- L-EQA-29 --><!-- L-EQA-20 --><!-- L-WCAG-22 --> | Equality Act 2010 **s. 29** and **s. 20 with Sch. 2** | Not to discriminate in providing a service, and an **anticipatory** duty to make reasonable adjustments — Sch. 2 para. 2(2) makes it owed to disabled people generally, not to a particular customer; s. 20(7) forbids charging for it. **[CORRECTED]** **WCAG 2.2 is a W3C Recommendation, not law, and not a statutory standard for a private-sector UK service** — the 2018 public-sector accessibility regulations do not bind Gridsmith Ltd. It is a benchmark the company has **adopted**, and its value is evidential. It follows that **a claim of AA conformance made without the screen-reader pass having happened is itself a statement about the service under CRA 2015 s. 50** |
-| VAT on displayed prices <!-- L-VAT-CONSUMER --><!-- L-VAT-B2B --> | DMCCA 2024 s. 230 and SI 2013/3134 Sch. 2 for consumers; SI 2002/2013 reg. 6(2) for business | **[NEW ROW] The divergence in one line: Press prices must be *inclusive*; Design and Digital prices need only be *labelled*.** Both are currently *unlabelled*, so both fail — but they fail differently and the fix is not the same. Collapsing to "all prices exc. VAT" would fix Design and Digital and break Press. `M-P2-3` is NOT BUILT |
+| VAT on displayed prices <!-- L-VAT-CONSUMER --><!-- L-VAT-B2B --> | DMCCA 2024 s. 230 and SI 2013/3134 Sch. 2 for consumers; SI 2002/2013 reg. 6(2) for business | **[NEW ROW] The divergence in one line: Press prices must be *inclusive*; Design and Digital prices need only be *labelled*.** Both are currently *unlabelled*, so both fail — but they fail differently and the fix is not the same. Collapsing to "all prices exc. VAT" would fix Design and Digital and break Press. **[DECISION TAKEN 26 Aug 2026 — owner: option (c), per-division rendering (inclusive on `/press`, labelled-exclusive on `/design` and `/digital`), as the only option satisfying both requirements at once. `WEBSITE-TERMS.md` cl. 5A.]** `M-P2-3` is NOT BUILT — the decision is recorded, not implemented |
 
 ## 2. What changed in 2026 and what it means here
 
@@ -49,14 +49,25 @@ Three consequences for this build:
 
 ### 2.1 PECR fines are now aligned with UK GDPR
 
-**[CORRECTED — the figures are unverified.]** <!-- NO LEDGER ENTRY: Pass 2 raised no entry for the
-PECR penalty ceiling and did not read the provision. `£17.5m or 4% of global annual turnover` and the
-removal of the substantial-damage-and-distress threshold are therefore **asserted, not verified**, and
-`CLAUDE.md` requires an unverified number to be treated as unverified and said so. `[TK — confirm the
-ceiling and its commencement against DUAA 2025 and PECR before this figure is repeated anywhere,
-including in `CLAUDE.md` itself, which currently states "up to 4% of turnover" as fact.]` -->
+**[VERIFIED 26 August 2026 — the `[TK]` is closed. See `L-PECR-PENALTY`.]** <!-- L-PECR-PENALTY -->
 
-Whatever the ceiling turns out to be, the architectural conclusion does not depend on it: the consent
+**A breach of reg. 6 attracts the *higher* maximum: £17,500,000 or 4% of total annual worldwide
+turnover, whichever is higher.** The route is PECR reg. 31 → PECR Sch. 1 (both substituted 5 Feb 2026
+by DUAA 2025 s. 115(5) and Sch. 13, commenced by SI 2026/82 reg. 2) → Sch. 1 para. 18, which modifies
+DPA 2018 s. 157. Para. 18(b)(ii) puts **"regulation 5, 6, 7, 8, 14, 19, 20, 21, 21A, 21B, 22, 23, 24
+or 32B(4) or (5)"** into **s. 157(2)(a)** — the limb that carries the higher maximum. s. 157(5)
+defines it. Every *other* PECR infringement falls to s. 157(2)(b), the standard maximum, £8.7m or 2%
+(s. 157(6)).
+
+<!-- PROVENANCE, because the number changed twice. Version 1.0 asserted £17.5m/4% with no citation.
+Pass 4 (04-VERIFICATION-REPORT.md §2.1, §4.5) proposed correcting it to "£8.7m or 2%", reading para.
+18(b)(ii) as modifying s. 157(2) as a whole. It modifies **paragraph (a) of** subsection (2), and
+(2)(a) is the higher-maximum limb — so the proposed correction inverted the tiering. That correction
+was REJECTED by the owner on 26 Aug 2026 on the separate ground that it substituted one uncited number
+for another; reading the provision then showed it was also wrong on the merits. The figure now stands
+on the primary text, not on either assertion. -->
+
+The architectural conclusion never depended on the ceiling in any event: the consent
 banner already places nothing before a choice, and that is the position `L-PECR-6` records as
 satisfied.
 

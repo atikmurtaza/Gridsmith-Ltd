@@ -133,7 +133,20 @@ s. 51 entitles you to pay only a reasonable price.
 Prices shown on this site carry an `INDICATIVE` badge and, where applicable, a "What moves it: …"
 line. `[TK — VAT treatment sentence, per the decision below]`
 
-> **[DECISION REQUIRED] — VAT display, and it splits by audience.**
+> **[DECISION TAKEN — option (c). Owner, 26 August 2026.]** *Was `[DECISION REQUIRED]`. The options
+> and their consequences are left standing below so the solicitor can see what was weighed.*
+>
+> **Decided:** option **(c)** — add the net/gross field to `pricingBlock` and render per division:
+> inclusive on `/press`, labelled-exclusive on `/design` and `/digital`.
+> **Reasoning:** it is the only option that satisfies the consumer-inclusive requirement
+> (`L-VAT-CONSUMER`, Press) and the B2B labelling requirement (`L-VAT-B2B`, Design and Digital)
+> **simultaneously**. (a) and (b) each fix one audience by breaking the other.
+> **Not implemented.** This records the decision only. The rendering change is `M-P2-3`, a build
+> task, and remains NOT BUILT — so both audiences still fail today, and the `[TK]` above stays open
+> until it ships. **The second-order point below is unaffected and still open:** if the company is
+> not VAT-registered there is no VAT to state and the correct label is different again.
+>
+> **[DECISION REQUIRED — as it stood] — VAT display, and it splits by audience.**
 > `L-VAT-B2B` (SI 2002/2013 reg. 6(2)) requires that a price **state its treatment** — a VAT-exclusive
 > price is permitted for Design and Digital, provided it says so.
 > `L-VAT-CONSUMER` (DMCCA 2024 s. 230 with the CCRs Sch. 2) requires a price shown to a **consumer** to

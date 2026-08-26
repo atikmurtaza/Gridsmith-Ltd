@@ -98,7 +98,7 @@ Most significantly: **a consumer has 14 days to cancel a distance contract.** Ca
 This was the single most valuable finding of the legal pass and it would have been expensive to discover in a dispute.
 
 ### L-02 · PECR penalties increased 35-fold
-The Data (Use and Access) Act 2025, in force from 5 February 2026, raised the PECR ceiling from £500,000 to £17.5m or 4% of global turnover. Cookie compliance is now a material financial risk rather than housekeeping. The consent architecture from v1 was already correct; its justification is now much stronger.
+The Data (Use and Access) Act 2025, in force from 5 February 2026, raised the PECR ceiling from £500,000 to £17.5m or 4% of total annual worldwide turnover, whichever is higher. **Cited 26 Aug 2026:** PECR reg. 31 and Sch. 1 para. 18(b)(ii), applying DPA 2018 s. 157(2)(a) and (5) — a reg. 6 breach is in the higher-maximum list. Full entry and the tiering at `_legal/02-CITATION-LEDGER.md` `L-PECR-PENALTY`. Cookie compliance is now a material financial risk rather than housekeeping. The consent architecture from v1 was already correct; its justification is now much stronger.
 
 ### L-03 · New cookie exemptions exist — position taken not to rely on them
 The DUAA introduced narrow exemptions including analytics used solely for aggregate statistics. Commentary in 2026 is not uniform on scope, and an opt-out is required regardless.

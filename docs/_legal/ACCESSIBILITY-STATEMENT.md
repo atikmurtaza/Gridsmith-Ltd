@@ -63,9 +63,19 @@ AA conformance made on this evidence would be unearned. The choices are set out 
 
 **Automatically tested on every code change, blocking merge** (`package.json`, all gates blocking):
 
-- **axe-core** across **14 routes × 3 viewports × 2 consent phases**, plus link resolution, computed
-  theme and skip link
-- **Contrast**: 29 token pairs across 101 cells over four themes, checked against WCAG ratios
+- **axe-core** across **15 routes — 11 public pages plus 4 internal test-harness routes** — at
+  **2 viewports (375px and 1280px) × 2 scroll states (initial and scrolled)**, 60 analyses in all,
+  plus link resolution, computed theme and skip link
+<!-- Corrected 26 Aug 2026. The previous "14 routes × 3 viewports × 2 consent phases" was wrong in
+three ways: the route count, the viewport count, and the description of the second axis, which is
+scroll position and not consent. Counted from scripts/check-axe.mjs — ROUTES (15 entries, of which
+/_kitchen-sink, /_master-sink, /_gridsmith-404-probe and /gridsmith-error-probe are internal),
+VIEWPORTS (2) and PHASES (2); the gate itself asserts ROUTES × VIEWPORTS × PHASES analyses at
+check-axe.mjs:1081. Consent state IS asserted, but as a separate per-route check, not as an axis. -->
+- **Contrast**: 36 token pairs across 148 cells over four themes, checked against WCAG ratios
+<!-- Corrected 26 Aug 2026 from EXPECTED_PAIRS / EXPECTED_CELLS at scripts/check-contrast.mjs:45-46,
+which the gate hard-fails against. The published figures were 29 and 101. -->
+
 - **Heading structure**
 - **Responsive behaviour** at 375 / 768 / 1440, including WCAG 2.2 target size and focus-not-obscured
 - **Theme flash and token loading**

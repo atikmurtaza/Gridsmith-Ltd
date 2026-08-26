@@ -44,7 +44,7 @@ Soft shadows, rounded-everything, gradient meshes, glassmorphism, floating 3D sh
 4. **Never let seed content reach production.** Build check blocks it.
 5. **Never promise a response faster than end of next business day.** One source of truth: `companyDetails.responseCommitment`.
 6. **Never claim more than the contract gives.** Digital's ownership module and Press's rights module cite real clauses in `_legal/`.
-7. **Never fire a non-essential cookie before consent.** PECR penalties are now up to 4% of turnover.
+7. **Never fire a non-essential cookie before consent.** A reg. 6 breach attracts PECR's *higher* maximum — £17.5m or 4% of worldwide turnover (PECR Sch. 1 para. 18(b)(ii), applying DPA 2018 s. 157(2)(a) and (5); in force 5 Feb 2026). See `_legal/02-CITATION-LEDGER.md` `L-PECR-PENALTY`.
 8. **Never break a performance budget to add a feature.** The feature changes or is cut.
 9. **Never remove Press's honest outcomes.** The Path Finder must be able to recommend against Gridsmith. Schema-enforced and audited.
 10. **Accessibility wins every conflict.** WCAG 2.2 AA is the floor. Then raise the conflict.
@@ -122,10 +122,10 @@ Read the workstream's own files before touching its code.
 - **Update the spec in the same commit** as any deviation. A spec that has silently drifted is worse than none — the next session will follow it.
 - **A measurable number in the specs is unverified until a gate measures it.** Where a
   gate and the prose disagree, **the gate is the source of truth** and the prose gets
-  corrected. The two existing examples are `check:contrast` (the 29 contrast ratios in
+  corrected. The two existing examples are `check:contrast` (the 36 contrast ratios in
   the four `DESIGN.md` §2 tables) and `check-bundle-size.mjs` (the JS budgets). This rule
-  exists because it was learned the hard way: of 29 published contrast ratios, 25 were
-  wrong and 2 were hiding WCAG AA failures that the published figures said were passes. A
+  exists because it was learned the hard way: at A-03 there were 29 published ratios, and
+  25 of them were wrong — 2 hiding WCAG AA failures the published figures called passes. A
   specific-looking number is worse than no number, because it stops anyone re-deriving it.
   **If you meet an asserted number that no gate covers, treat it as unverified and say
   so** rather than building on it.
@@ -248,8 +248,8 @@ Read the workstream's own files before touching its code.
   If a check reads its expected values out of the same file it is checking, deleting an
   entry deletes the expectation with it and the check stays green having measured less.
   This is why `check:tokens` holds a **hardcoded** 39-token `REQUIRED` list rather than
-  scraping `tokens.css`, and why `check:contrast` carries literal `EXPECTED_PAIRS = 29` and
-  `EXPECTED_CELLS = 101`.
+  scraping `tokens.css`, and why `check:contrast` carries literal `EXPECTED_PAIRS = 36` and
+  `EXPECTED_CELLS = 148`.
 
   **It does not follow that derived lists are always wrong — it depends on the question.**
   The two live examples divide cleanly and both are correct:

@@ -68,8 +68,10 @@ total price inclusive of tax, or state how it will be calculated, with the calcu
 prominent as the figure. This clause is correct as drafted. **The website is not.**
 `[TK — 01-FACTUAL-INVENTORY.md §5.3: every price on /press is rendered by the same
 components/content/Price.tsx as the B2B divisions and states no VAT treatment at all. So these terms
-promise a tax-inclusive total that the page the consumer read did not show. See the decision at
-WEBSITE-TERMS.md clause 5A; the build task is M-P2-3 and it is NOT BUILT.]` -->
+promise a tax-inclusive total that the page the consumer read did not show. **The display decision is
+now taken — option (c), per-division rendering, owner, 26 August 2026; see WEBSITE-TERMS.md clause 5A.
+Press prices will be shown inclusive, which is what this clause promises. The build task is M-P2-3 and
+it is still NOT BUILT, so this `[TK]` stays open until it ships.**]` -->
 - how and when you pay
 - how long the work will take
 - the number of revision rounds included, and the cost of further rounds
