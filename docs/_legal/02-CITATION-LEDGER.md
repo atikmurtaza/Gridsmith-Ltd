@@ -170,8 +170,9 @@ collapsing to the stricter standard.
 | | |
 |---|---|
 | **instrument** | Data Protection (Charges and Information) Regulations 2018, SI 2018/480 |
-| **provision** | reg. 2 (duty to pay), reg. 3 (amount), Sch. 1 (tiers) |
-| **in-force version** | As made and amended; checked 25 Aug 2026 |
+| **provision** | reg. 2 (duty to pay, and the bands at reg. 2(3)(b) and (c)), reg. 3 (amount), the Schedule (**EXEMPT PROCESSING**) |
+| **corrected** | 26 Aug 2026, round 7. This entry read *"Sch. 1 (tiers)"*. The contents page was fetched — https://www.legislation.gov.uk/uksi/2018/480/contents/made — and SI 2018/480 has **one** Schedule, titled **"Exempt Processing"** (para. 1 interpretation, para. 2 exempt processing). The bands are in reg. 2, not in the Schedule. The Schedule is the more useful citation than this entry realised: it decides whether the fee is owed at all, which is exactly the open question at OQ-16. |
+| **in-force version** | As made and amended; checked 25 Aug 2026, contents re-checked 26 Aug 2026 |
 | **what it requires** | A data controller must pay a charge to the Information Commissioner unless all of its processing is exempt processing, and must pay within the first 21 days of each charge period. Reg. 2 also requires the controller to state its staff-number band (≤10 / 11–250 / >250) and turnover band (≤£632,000 / £632,000–£36m / >£36m) and whether it is a public authority. |
 | **primary source** | https://www.legislation.gov.uk/uksi/2018/480/regulation/2/made |
 | **applies to** | all |
@@ -508,11 +509,51 @@ showed the proposed correction was also wrong on the tiering.
 | **instrument** | SI 2002/2013 |
 | **provision** | regs. 9, 11, 12 |
 | **in-force version** | As made; checked 25 Aug 2026 |
-| **what it requires** | Where a contract is to be concluded by electronic means, the service provider must, before the order is placed, state the technical steps to conclude the contract, whether the concluded contract will be filed and accessible, the technical means for identifying and correcting input errors, and the languages offered; and must acknowledge receipt of the order without undue delay. **regs. 9(1) and 11(1)(b) may be excluded by agreement where the parties are not consumers.** |
-| **primary source** | https://www.legislation.gov.uk/uksi/2002/2013/regulation/9/made |
+| **what it requires** | Where a contract is to be concluded by electronic means, the service provider must, before the order is placed, state the technical steps to conclude the contract, whether the concluded contract will be filed and accessible, the technical means for identifying and correcting input errors, and the languages offered (reg. 9(1)); must indicate the codes of conduct it subscribes to (reg. 9(2)); must make terms and conditions available in a way that allows them to be stored and reproduced (reg. 9(3)); and, where the order is placed through technological means, must acknowledge receipt without undue delay and provide means to identify and correct input errors (reg. 11(1)(a) and (b)). |
+| **the excludable set, corrected 26 August 2026** | **regs. 9(1), 9(2) and the whole of reg. 11(1)** may be excluded by agreement where neither party is a consumer. Each opens with the words *"Unless parties who are not consumers have agreed otherwise"*, and in reg. 11 that conditional governs **paragraph (1) as a whole**, both (a) and (b) — the regulation draws no sub-paragraph division for this purpose. The earlier form of this entry said *"regs. 9(1) and 11(1)(b)"*, which named less than the parties can disapply and a division the instrument does not make. **reg. 9(3) is not excludable** and is not touched by the carve-out below. |
+| **the email carve-out** | **reg. 9(4)**: *"The requirements of paragraphs (1) and (2) above shall not apply to contracts concluded exclusively by exchange of electronic mail or by equivalent individual communications."* **reg. 11(3)** is in identical terms for reg. 11(1). A contract concluded by exchanging emails is therefore **already outside regs. 9(1), 9(2) and 11(1)** by operation of the instrument, with no agreement to exclude them required. This is how Gridsmith in fact contracts (`MSA-BUSINESS.md` 3.1 — work begins on a written Scope; `01-FACTUAL-INVENTORY.md` §7 — nothing can be ordered on the website), so an exclusion clause is belt-and-braces over a carve-out that already applies. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2002/2013/regulation/9/made · https://www.legislation.gov.uk/uksi/2002/2013/regulation/11/made — both fetched and read in full, 26 Aug 2026 |
 | **applies to** | **This is a divergence**: mandatory for consumers (Press), disapplicable by agreement between businesses (Design, Digital). |
 | **engaged here because** | Inventory §7 — the estimator is NOT BUILT, so no contract is concluded on the site today. |
 | **status in this build** | **not engaged today.** Recorded because the estimator would engage it. |
+
+---
+
+## I. Business contract terms
+
+**Added 26 August 2026, round 7.** Both entries close a `NO LEDGER ENTRY` flag in `MSA-BUSINESS.md`
+where a specific figure or a specific section was asserted with no primary citation. Every provision
+below was fetched and read at `legislation.gov.uk` on 26 August 2026.
+
+### L-LATE-PAYMENT — statutory interest and fixed recovery sums on a late commercial debt
+
+| | |
+|---|---|
+| **instrument** | Late Payment of Commercial Debts (Interest) Act 1998 (c. 20), with The Late Payment of Commercial Debts (Rate of Interest) (No. 3) Order 2002, **SI 2002/1675** |
+| **provision** | 1998 Act **ss. 5A(1), 5A(2), 5A(2A)** and **s. 6**; SI 2002/1675 **art. 4** |
+| **in-force version** | As amended; checked 26 Aug 2026 |
+| **what it requires** | **s. 5A(1)**: once statutory interest begins to run on a qualifying debt the supplier is entitled to a **fixed sum in addition to the interest**. **s. 5A(2)** sets **three** fixed sums by debt band — **£40** for a debt under £1,000, **£70** for £1,000 or more but under £10,000, **£100** for £10,000 or more. **s. 5A(2A)**: *"If the reasonable costs of the supplier in recovering the debt are not met by the fixed sum, the supplier shall also be entitled to a sum equivalent to the difference between the fixed sum and those costs."* |
+| **where the 8% actually lives** | **Not in the Act.** s. 6(1) only empowers the Secretary of State to *"by order made with the consent of the Treasury set the rate of statutory interest"*. The rate is set by **SI 2002/1675 art. 4**: *"The rate of interest … shall be 8 per cent per annum over the official dealing rate in force on the 30th June (in respect of interest which starts to run between 1st July and 31st December) or the 31st December (in respect of interest which starts to run between 1st January and 30th June) immediately before the day on which statutory interest starts to run."* |
+| **the mechanic, stated because it is routinely elided** | The reference rate is the official dealing rate **on 30 June or 31 December**, and it then holds for the following six months. It is **not** the base rate on the day the invoice fell due. A clause that says "8% above the Bank of England base rate" without this is describing a floating rate the statute does not create. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1998/20/section/5A · https://www.legislation.gov.uk/ukpga/1998/20/section/6 · https://www.legislation.gov.uk/uksi/2002/1675/article/4/made |
+| **applies to** | **B2B only.** The Act governs contracts for the supply of goods or services where both parties act in the course of a business — so `MSA-BUSINESS.md`, never `CONSUMER-TERMS.md`. |
+| **engaged here because** | `MSA-BUSINESS.md` 6.4 charges late-payment interest and compensation, and stated both the rate and the recovery sum with no citation. |
+| **status in this build** | **drafting only** — nothing in the repository calculates or charges interest. The entitlement is a term of the contract, not a code path. |
+
+### L-CDPA-90-91 — assignment of copyright, present and future
+
+| | |
+|---|---|
+| **instrument** | Copyright, Designs and Patents Act 1988 (c. 48) |
+| **provision** | **s. 90(1)–(3)** and **s. 91(1)–(2)** |
+| **in-force version** | As amended; checked 26 Aug 2026 |
+| **what it requires** | **s. 90(1)**: copyright is transmissible by assignment. **s. 90(2)**: an assignment may be partial, limited to some of the acts restricted by the copyright or to part of the term. **s. 90(3)**: *"An assignment of copyright is not effective unless it is in writing signed by or on behalf of the assignor."* |
+| **why s. 91 is the operative section for a deliverables clause** | s. 90(3) governs an assignment of copyright **that already exists**. A services agreement signed before any deliverable is made assigns copyright in works not yet created — **future copyright**, which is **s. 91**. **s. 91(1)**: where by an agreement made in relation to future copyright, *"and signed by or on behalf of the prospective owner of the copyright"*, the prospective owner purports to assign the future copyright, then on the copyright coming into existence **it vests in the assignee by virtue of that subsection** — no further act of assignment is needed. **s. 91(2)** defines *"future copyright"* as copyright that will or may come into existence in respect of a future work or class of works or on the occurrence of a future event, and *"prospective owner"* accordingly. |
+| **the practical consequence** | s. 91 also requires **signed writing**, so a clause drafted to satisfy s. 90(3) is likely adequate in form. But s. 91 is what makes the assignment bite automatically on creation, and citing only s. 90(3) leaves the mechanism for works created after signature unstated. Both sections should be named. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1988/48/section/90 · https://www.legislation.gov.uk/ukpga/1988/48/section/91 |
+| **applies to** | all — but `MSA-BUSINESS.md` 8.3 is the only clause in the set that assigns copyright. |
+| **engaged here because** | `MSA-BUSINESS.md` 8.3 assigns *"all copyright and other intellectual property rights in the final approved deliverables"* on payment, and cited s. 90(3) alone with a `NO LEDGER ENTRY` flag. |
+| **status in this build** | **drafting only.** Two questions this entry does **not** answer and which remain the solicitor's: whether an electronically executed agreement is *"signed"* for s. 90(3) / s. 91(1) purposes, and whether *"other intellectual property rights"* — which are not copyright — are validly assigned by the same words. Both are recorded as open at 8.3. |
 
 ---
 

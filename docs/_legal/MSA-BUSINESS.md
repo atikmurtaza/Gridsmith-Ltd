@@ -10,6 +10,14 @@
 inline comment naming the ledger entry it implements, or is flagged as having none. Clauses added at
 this revision are marked **NEW**.
 
+**Version 1.2 — revised 26 August 2026, round 7.** Three citation defects corrected, each verified by
+fetching the instrument rather than by accepting the finding that raised it: **6.4** (the 8% is
+SI 2002/1675 art. 4, not the 1998 Act, and there are three fixed sums plus s. 5A(2A) recovery costs);
+**8.3** (the clause assigns future copyright, which is CDPA s. 91, not s. 90(3) alone); **15.1** (the
+excludable set is regs. 9(1), 9(2) and the whole of 11(1), and regs. 9(4) and 11(3) may already
+exclude all of it). Two ledger entries were added to carry them — `L-LATE-PAYMENT` and
+`L-CDPA-90-91` — closing the two `NO LEDGER ENTRY` flags those clauses stood under.
+
 For **business clients only**. Consumers — including most individual authors and memoir clients — are covered by `CONSUMER-TERMS.md`. Using this agreement with a consumer would breach the Consumer Rights Act 2015.
 
 Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR-DG06, `press/PRD.md` FR-P04), so renumbering requires a version bump and anchor redirects.
@@ -122,11 +130,25 @@ all. See clause 6.7. -->
 
 6.3 Invoices are payable within **14 days** unless the Scope states otherwise.
 
-6.4 **Late payment.** Gridsmith may charge statutory interest and compensation under the Late Payment of Commercial Debts (Interest) Act 1998 — interest at 8% above the Bank of England base rate, plus the fixed statutory recovery sum.
-<!-- NO LEDGER ENTRY: 00-LEGAL-BASIS.md section 1 asserts the Late Payment of Commercial Debts
-(Interest) Act 1998 gives statutory interest at 8% above base plus a fixed recovery sum. Pass 2 raised
-no ledger entry and the Act was not read. `[TK — the rate and the fixed sum are specific figures no
-gate covers; treat them as unverified until the solicitor confirms them against the Act.]` -->
+6.4 **Late payment.** Gridsmith may charge statutory interest and compensation under the Late Payment
+of Commercial Debts (Interest) Act 1998. Statutory interest runs at **8% per annum above the Bank of
+England official dealing rate**, that rate being the one in force on **30 June** (for interest that
+starts to run between 1 July and 31 December) or **31 December** (for interest that starts to run
+between 1 January and 30 June) immediately before the day the interest starts to run, as set by
+article 4 of the Late Payment of Commercial Debts (Rate of Interest) (No. 3) Order 2002. In addition,
+Gridsmith is entitled to **the fixed sum under section 5A(2) of that Act appropriate to the debt —
+£40 for a debt under £1,000, £70 for a debt of £1,000 or more but under £10,000, and £100 for a debt
+of £10,000 or more — and, under section 5A(2A), to any reasonable costs of recovering the debt to the
+extent they exceed that fixed sum.**
+<!-- L-LATE-PAYMENT — revised 26 August 2026, round 7. Three corrections, each verified at source:
+(a) the 8% is NOT in the 1998 Act. s. 6 only empowers the Secretary of State to set the rate by
+order; the rate is SI 2002/1675 art. 4. The clause previously attributed it to the Act.
+(b) the rate is fixed by reference to the official dealing rate on 30 June / 31 December and holds
+for six months. It is not the base rate on the day the invoice falls due, which is what "8% above the
+Bank of England base rate" reads as.
+(c) there is no "the fixed statutory recovery sum". s. 5A(2) sets THREE sums by debt band, and
+s. 5A(2A) adds recovery costs above the fixed sum. The previous definite singular both mis-stated the
+entitlement and gave away s. 5A(2A) by omission. -->
 
 6.5 Gridsmith may suspend work where an invoice is more than 14 days overdue, having given 7 days' written notice.
 
@@ -157,14 +179,35 @@ WEBSITE-TERMS.md clause 5A. -->
 7.5 Revisions beyond the number stated in the Scope are chargeable at the rate stated in the Scope.
 
 ## 8. Intellectual property
-<!-- NO LEDGER ENTRY: the ledger contains no CDPA 1988 entry. 00-LEGAL-BASIS.md section 4 asserts that s. 90(3) requires a written signed assignment and clause 8.3 is drafted to satisfy it, but Pass 2 raised no entry and the section was not read against the primary text. Retained; the solicitor must supply the citation and confirm 8.3 works for an electronically executed contract. -->
+<!-- L-CDPA-90-91 — added to the ledger 26 August 2026, round 7, closing the NO LEDGER ENTRY flag that
+stood here. Both s. 90 and s. 91 were fetched and read at legislation.gov.uk on that date. The
+electronic-execution question the previous flag raised is separate, is not answered by the citation,
+and remains open at 8.3. -->
 
 
 8.1 **Client materials** remain the client's property throughout.
 
 8.2 **Background IP** — tools, frameworks, methods and components Gridsmith owned before the engagement or developed independently — remains Gridsmith's. Gridsmith grants a perpetual, non-exclusive, royalty-free licence to use it as embedded in the deliverables.
 
-8.3 **Deliverables.** On payment in full, Gridsmith **assigns to the client, with full title guarantee, all copyright and other intellectual property rights in the final approved deliverables.** This assignment is made in writing and signed, and takes effect on receipt of final payment. It satisfies section 90(3) of the Copyright, Designs and Patents Act 1988.
+8.3 **Deliverables.** On payment in full, Gridsmith **assigns to the client, with full title guarantee,
+all copyright and other intellectual property rights in the final approved deliverables.** This
+assignment is made in writing and signed by or on behalf of Gridsmith, and takes effect on receipt of
+final payment. Where a deliverable does not exist when this agreement is signed, this clause is an
+agreement in relation to **future copyright** within the meaning of **section 91 of the Copyright,
+Designs and Patents Act 1988**, made and signed by Gridsmith as prospective owner, so that the
+copyright vests in the client on coming into existence without any further act of assignment. Where a
+deliverable already exists, the assignment is made in writing and signed as **section 90(3)** of that
+Act requires.
+<!-- L-CDPA-90-91 — revised 26 August 2026, round 7. The previous clause cited s. 90(3) alone. s. 90(3)
+governs an assignment of copyright THAT ALREADY EXISTS; this clause assigns rights in deliverables
+that do not exist at signature, which is future copyright under s. 91. s. 91(1) also requires signed
+writing, so the form was probably already adequate — but the section that makes the assignment bite
+automatically on creation was not named. Both are now cited.
+`[TK — two questions this citation does NOT answer, both for the solicitor: (i) whether an
+electronically executed agreement is "signed" for s. 90(3) and s. 91(1); (ii) whether "other
+intellectual property rights", which are not copyright, are validly assigned by these words — s. 90
+and s. 91 govern copyright only, and registered designs, trade marks and patents each have their own
+assignment formalities.]` -->
 
 8.4 **Until payment in full**, the client has a licence to use the deliverables for review and approval only.
 
@@ -277,14 +320,37 @@ complaints route and no electronic complaint form on the site. 01-FACTUAL-INVENT
 <!-- L-ECOM-9-11 -->
 
 15.1 Where this agreement or any Scope or Change Order is concluded by electronic means, the parties,
-**being neither of them a consumer**, agree that regulations 9(1) and 11(1)(b) of the Electronic
-Commerce (EC Directive) Regulations 2002 do not apply.
+**being neither of them a consumer**, agree that **regulations 9(1), 9(2) and 11(1)** of the
+Electronic Commerce (EC Directive) Regulations 2002 do not apply. Regulation 9(3) — under which
+Gridsmith makes these terms available in a form the client can store and reproduce — continues to
+apply and is not excluded.
 
-15.2 Gridsmith will nonetheless acknowledge receipt of any order placed electronically without undue
+15.2 Where this agreement, a Scope or a Change Order is concluded **exclusively by exchange of
+electronic mail or by equivalent individual communications**, regulations 9(1), 9(2) and 11(1) do not
+apply in any event, by operation of regulations 9(4) and 11(3). Clause 15.1 is agreed for the
+avoidance of doubt and does not imply that those regulations would otherwise bite.
+
+15.3 Gridsmith will nonetheless acknowledge receipt of any order placed electronically without undue
 delay, and will make the concluded agreement available to the client.
-<!-- L-ECOM-9-11 — regs. 9(1) and 11(1)(b) may be excluded by agreement where the parties are not
-consumers; they are mandatory for consumers, which is why CONSUMER-TERMS.md has the opposite
-provision. Not engaged today: no contract is concluded on the website, because the estimator is
+<!-- L-ECOM-9-11 — revised 26 August 2026, round 7. Two corrections, both verified by fetching regs. 9
+and 11 in full:
+(a) the excludable set is regs. 9(1), 9(2) and the WHOLE of 11(1). Each opens "Unless parties who are
+not consumers have agreed otherwise", and in reg. 11 that conditional governs paragraph (1) entire —
+the instrument draws no (a)/(b) division for this purpose. The clause previously named "9(1) and
+11(1)(b)", which disapplied less than the parties can and cited a division that does not exist.
+Reg. 9(3) carries no such conditional and is NOT excludable, so 15.1 now says so rather than leaving a
+reader to infer the exclusion is wider than it is.
+(b) reg. 9(4) and reg. 11(3) already disapply all three paragraphs for a contract concluded
+exclusively by email — which is how Gridsmith in fact contracts (clause 3.1: work begins on a written
+Scope; 01-FACTUAL-INVENTORY.md §7: nothing can be ordered on the website). Clause 15 is therefore
+belt-and-braces over a carve-out that already applies.
+`[DECISION REQUIRED — for the solicitor: whether clause 15 is worth keeping at all. It costs nothing
+and covers the case where a Scope is agreed through some future non-email mechanism; but if every
+Gridsmith contract is concluded by email, regs. 9(4) and 11(3) do the work and the clause is a
+billable paragraph the statute did not require. Keeping it is defensible; keeping it without knowing
+this is not.]`
+These regulations are mandatory for consumers, which is why CONSUMER-TERMS.md has the opposite
+provision. Not engaged on the website today: no contract is concluded there, because the estimator is
 NOT BUILT. -->
 
 ## 16. Marketing — NEW
@@ -386,10 +452,18 @@ To be drafted where Gridsmith processes personal data on the client's behalf. Mu
 ---
 
 **`[TK]` items:** company number · registered office · liability cap figure (11.3) · PI insurance
-limit (11.4) · the Late Payment Act rate and fixed sum (6.4) · the VAT treatment sentence (6.7) · a DPA
+limit (11.4) · the VAT treatment sentence (6.7) · a DPA
 for every processor Gridsmith uses (10.3) · the region and transfer mechanism for each (10.4) · the
-electronic complaint form (10.5) · confirmation of every standard named in A2 · the CDPA s. 90(3)
-citation for clause 8.3.
+electronic complaint form (10.5) · confirmation of every standard named in A2 · whether an
+electronically executed agreement is "signed" for CDPA s. 90(3) and s. 91(1), and whether "other
+intellectual property rights" are validly assigned by clause 8.3's words.
 
-**`[DECISION REQUIRED]` items:** the one-slug/two-instruments problem set out at the head of this
-document.
+**Closed at round 7, 26 August 2026:** the Late Payment rate and fixed sum (6.4) — now cited to
+`L-LATE-PAYMENT`, SI 2002/1675 art. 4 and 1998 Act ss. 5A(2) and 5A(2A); and the CDPA citation for
+clause 8.3 — now cited to `L-CDPA-90-91`, ss. 90(3) and **91**.
+
+**`[DECISION REQUIRED]` items:** whether clause 15 is retained at all, given that regs. 9(4) and 11(3)
+already exclude regs. 9(1), 9(2) and 11(1) for a contract concluded by email (15.2).
+
+**Closed at round 7:** the one-slug/two-instruments problem set out at the head of this document was
+`[DECISION REQUIRED]` and is now `[DECISION RECORDED]` — the owner split the routes on 26 August 2026.

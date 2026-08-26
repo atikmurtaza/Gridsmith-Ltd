@@ -8,7 +8,7 @@
 registered office `[TK]`.
 **ICO registration:** `[TK]`
 **Contact:** `[TK email]`
-**Version:** 1.1 · **Effective from:** `[TK]` · **Status: DRAFT — not for publication until reviewed**
+**Version:** 1.2 · **Effective from:** `[TK]` · **Status: DRAFT — not for publication until reviewed**
 
 Drafted against UK GDPR and the Data Protection Act 2018 **as amended by the Data (Use and Access) Act
 2025** — main provisions in force **5 February 2026**, the direct-complaints duty in force **19 June
@@ -18,6 +18,14 @@ Drafted against UK GDPR and the Data Protection Act 2018 **as amended by the Dat
 **Revised 25 August 2026 against `02-CITATION-LEDGER.md`.** Several statements in version 1.0 described
 controls the build does not have. Those have been corrected rather than softened; where the honest
 answer is "not implemented", this draft says so.
+
+**Revision 1.2, 26 August 2026 — round 7.** Three changes, each answering a Pass 4 finding after
+re-checking it at the primary source or in the code: **§2A is new** and discharges Art. 13(2)(e), the
+only Art. 13 limb this notice did not address and the only gap nothing was tracking; **§2's list of
+schema fields no form sends** was incomplete and is replaced (the previous list named four of ten, and
+mis-sorted `role`); and **§6A's two-script statement** was unconditional when the behaviour is
+conditional on environment variables, and is now stated conditionally. The §3A note recording that
+PECR reg. 23 had not been read is closed — it has been.
 
 ---
 
@@ -42,9 +50,15 @@ populated and never rendered anywhere on the site** — 01-FACTUAL-INVENTORY.md 
 
 Registration number: `[TK]`. Staff-number band and turnover band as notified to the Commissioner:
 `[TK]`.
-<!-- L-DPA-FEE — SI 2018/480 regs. 2-3 and Sch. 1. The duty falls on the controller unless all
-processing is exempt processing; lead capture is not exempt processing. This is a fact about the
-company, not the codebase, but the site has a field for it and shows nothing. -->
+<!-- L-DPA-FEE — SI 2018/480 reg. 2 (the duty to pay, and the staff-number and turnover bands, at
+reg. 2(3)(b) and (c)), reg. 3 (the amount), and the Schedule (EXEMPT PROCESSING). The duty falls on
+the controller unless all processing is exempt processing; lead capture is not exempt processing. This
+is a fact about the company, not the codebase, but the site has a field for it and shows nothing.
+Corrected 26 August 2026, round 7, per 04-VERIFICATION-REPORT.md §2.6, after fetching
+https://www.legislation.gov.uk/uksi/2018/480/contents/made and confirming it: the instrument has ONE
+Schedule and it is titled "EXEMPT PROCESSING", not the tiers. The bands are in reg. 2, not the
+Schedule. The Schedule is nonetheless the more useful citation than the earlier note realised, because
+it is what decides whether the fee is owed at all — which is the open question at OQ-16. -->
 
 ## 2. What we collect
 <!-- L-GDPR-13 -->
@@ -67,9 +81,30 @@ company, not the codebase, but the site has a field for it and shows nothing. --
   category names, with **no timestamp, no version and no identifier**. See §11A.
 - **`created_at` has been added.** It is stamped automatically on every submission
   (`0001_core.sql:27`) and a visitor would not think of it as a form field.
-- **`role`, `track`, `service_slug` and a `payload` field are accepted by the database schema but no
-  form on the site sends them** (`01-FACTUAL-INVENTORY.md` §3.2). They are not listed above because
-  nothing populates them. If a later form does, this table must be updated in the same change.
+- **The database schema accepts several further fields that no form on this site sends.** They are
+  not listed in the table above because nothing on gridsmith.uk populates them. They are: `track`,
+  `service_slug`, `role`, `payload`, `source`, `medium`, `campaign`, `referrer`, `landing_page` and
+  `is_ai_referral`. **Seven of them — `role`, `source`, `medium`, `campaign`, `referrer`,
+  `landing_page` and `is_ai_referral` — are read by the server that handles enquiries from whatever is
+  submitted to it**, so a submission made by something other than our own form could supply them and
+  they would be stored. `track`, `service_slug` and `payload` are not read by the server at all today.
+  If a later form sends any of these, this table must be updated in the same change.
+<!-- Corrected 26 August 2026, round 7. Re-derived from lib/leads/schema.ts and lib/leads/action.ts
+against the eight inputs components/leads/ContactForm.tsx actually renders (division, full_name, email,
+company, phone, message, budget_band, timeline). Three corrections:
+(a) the previous enumeration named four fields and omitted six — source, medium, campaign, referrer,
+landing_page, is_ai_referral. An enumerated list in a privacy notice reads as exhaustive; that one was
+not, which is the defect, not the length.
+(b) `role` was listed as "not sent" but action.ts DOES read it from FormData — it belongs with the
+seven, not with the three.
+(c) 04-VERIFICATION-REPORT.md §2.11 said "two of which the server action reads from submitted form
+data". That is an undercount: action.ts:51-52 is where referrer and landing_page are read, but the
+same block reads role, source, medium, campaign and is_ai_referral as well. SEVEN, not two.
+`referrer` and `landing_page` hold URLs and are the fields here most likely to become personal data
+if anything ever starts sending them. -->
+- **Nothing on this site fills any of those fields, and nothing derives them.** We do not read your
+  referring page or your landing page from your browser and we do not attach campaign identifiers to
+  your enquiry.
 - **We do not capture your IP address or user-agent.** The application reads neither
   (`lib/leads/schema.ts:20-24`). Our hosting provider's own platform logging is separate — see §6B.
 
@@ -83,6 +118,53 @@ be shared, we ask for a link. This is deliberate — it avoids us holding your i
 before there is a contract governing it.
 <!-- NO LEDGER ENTRY: a data-minimisation design choice, not a statutory obligation. Retained because
 it is true of the build and is a genuine limit on what we hold. -->
+
+## 2A. Whether you have to give us this, and what happens if you do not
+<!-- L-GDPR-13 -->
+
+**NEW — added at revision 1.2.** Nothing on this page is required of you by law. There is no statute
+that obliges you to give Gridsmith Ltd any personal data, and we are under no statutory duty to
+collect any from you before we may speak to you.
+
+- **You are not obliged to submit an enquiry at all.** Using gridsmith.uk does not require you to
+  provide any personal data. You can read every page on this site, including this one, without
+  giving us anything.
+- **If you do send an enquiry, our form requires two things: your name and your email address.**
+  Everything else it asks — company, phone, your message, budget, timeline — is optional and the
+  form will accept a submission without it. **The consequence of not providing the two required
+  fields is simply that the enquiry cannot be submitted and we will not receive it**, because we
+  would have no way to reply to you.
+- **Providing them is a contractual requirement only in this narrow sense**: giving us a name and a
+  reply address is necessary if you want us to take the step you have asked us to take — responding
+  to your enquiry and, if it goes further, preparing a scope or proposal. That is the Art. 6(1)(b)
+  basis in §3. It is not a condition of anything else, and we do not make access to any part of this
+  site depend on it.
+- **The consequence of not providing optional information** is only that our reply is likely to be
+  less useful — we will ask you for what we need instead. Withholding it has no other effect, and we
+  do not treat a sparse enquiry differently.
+
+`[TK — the equivalent statement for a client engagement, which this notice does not yet make. Once
+someone becomes a client, some information genuinely does become a contractual requirement (the
+details needed to invoice and deliver) and some becomes a statutory one (what HMRC requires to be
+kept in accounting records — §3's Art. 6(1)(c) row). Neither can be written from this repository: no
+engagement process, invoicing flow or record-keeping policy exists in it. The owner and the solicitor
+must supply what is actually required of a client and what happens if a client declines to give it.]`
+
+<!-- L-GDPR-13 — Art. 13(2)(e), added 26 August 2026, round 7. This closes the ONE Art. 13 limb that
+had no clause anywhere in this notice and, unlike every other gap in it, was not marked [TK] — so
+nothing was tracking it (04-VERIFICATION-REPORT.md §3.1).
+Verified at source, 26 August 2026: https://www.legislation.gov.uk/eur/2016/679/article/13 was fetched
+and every sub-paragraph of Art. 13(2) read in order. 13(2)(e) requires the controller to state
+"whether the provision of personal data is a statutory or contractual requirement, or a requirement
+necessary to enter into a contract, as well as whether the data subject is obliged to provide the
+personal data and of the possible consequences of failure to provide such data." All three limbs —
+which kind of requirement, whether obliged, what follows from refusing — are answered above for the
+enquiry case and marked [TK] for the client case rather than guessed.
+The facts are re-derived from the build, not from the earlier drafts: lib/leads/schema.ts makes
+full_name and email the only non-optional text fields (both `.min(1)` / required, and the table's only
+NOT NULL text columns); every other field components/leads/ContactForm.tsx renders — company, phone,
+message, budget_band, timeline — is `.optional()`. `division` has a default of 'unsure' and is not
+something a visitor must choose. -->
 
 ## 3. Lawful bases
 <!-- L-GDPR-6 -->
@@ -129,10 +211,15 @@ will apply if that changes.
   Submitting the contact form is not consent to marketing and we will not treat it as such.
 
 <!-- L-PECR-22 — this is a real consumer/B2B divergence and is written to the two standards separately
-rather than collapsed. Note CNV-3: the ledger records that the text of PECR reg. 23 (sender identity
-and valid address for corporate subscribers) was NOT retrieved by Pass 2. The corporate-subscriber
-sentence above is therefore drafted to the ledger's summary of reg. 23 and must be checked against the
-provision before publication. -->
+rather than collapsed.
+CNV-3 is CLOSED, 26 August 2026, round 7. reg. 23 was fetched and read at
+https://www.legislation.gov.uk/uksi/2003/2426/regulation/23. It prohibits marketing electronic mail
+"(a) where the identity of the person on whose behalf the communication has been sent has been
+disguised or concealed; (b) where a valid address to which the recipient of the communication may send
+a request that such communications cease has not been provided", and two further limbs turning on
+E-Commerce reg. 7. Critically, **reg. 23 carries no "individual subscriber" limitation** — unlike
+reg. 22(1), it binds as to any recipient. The corporate-subscriber sentence above is therefore correct
+as drafted and no longer rests on a ledger summary. -->
 
 ## 4. How we use it
 <!-- L-GDPR-13 -->
@@ -209,14 +296,44 @@ consent. **We do not.** Observed on the running site in all three consent states
 (`01-FACTUAL-INVENTORY.md` §1.3, §2.2):
 
 - Before you make a choice, **no third-party request is made at all**.
-- If you **accept**, two scripts are requested — `googletagmanager.com/gtag/js` and
-  `eu.i.posthog.com/static/array.js`. Requesting a script sends your IP address and browser
-  user-agent to Google and to PostHog, because every HTTP request does. That is the whole of what
-  they receive.
-- **Neither library is ever initialised.** No `gtag('config')` call and no `posthog.init()` call
-  exists anywhere in our code. No analytics cookie is set, no event is recorded, no identifier is
-  created, and nothing is stored in your browser.
+- If you **accept**, and **only where a Google Analytics measurement id or a PostHog key is
+  configured for the environment serving this site**, two scripts are requested —
+  `googletagmanager.com/gtag/js` and `eu.i.posthog.com/static/array.js`. Requesting a script sends
+  your IP address and browser user-agent to Google and to PostHog, because every HTTP request does.
+  That is the whole of what they receive. **Where neither id is configured, accepting requests
+  nothing at all**, because each injection is conditional on its own id being present.
+- **Neither library is ever initialised, in any environment.** No `gtag('config')` call and no
+  `posthog.init()` call exists anywhere in our code. No analytics cookie is set, no event is
+  recorded, no identifier is created, and nothing is stored in your browser. This does not depend on
+  configuration — the call simply does not exist.
 - If you **reject**, no third-party request is made and no script is injected.
+
+<!-- Corrected 26 August 2026, round 7, per 04-VERIFICATION-REPORT.md §2.12. The two-script sentence
+was stated unconditionally. lib/analytics/load.ts guards each injection on its own id — `if (GA4_ID)`
+and `if (POSTHOG_KEY)` — and lib/analytics/config.ts derives both from NEXT_PUBLIC_* variables
+defaulting to ''. The unconditional form was a true observation of a development environment
+generalised into a statement about every environment, and it was wrong in the visitor's favour for any
+environment where the ids are unset. That matters at publication: the live platform's variables are a
+different set and are not yet established.
+The non-initialisation half is NOT conditional and is stated unconditionally on purpose. It was
+settled by measurement on 26 August 2026 — 03-REVISION-LOG.md round 6 — on a local production build
+where the served page's own `window.__gsAnalyticsConfigured` reported both ids present: gtag/js and
+array.js both loaded and executed, `window.gtag` stayed undefined, `window.posthog.__loaded` stayed
+false, and the ONLY cookie in any of the three consent states was `gs_consent`. That measurement is
+not to be re-litigated from source; if it is ever to be revisited, it is to be revisited by loading
+the site again. -->
+<!-- L-PECR-6 — note which half of this section the regulation reaches. reg. 6 catches storing
+information in, or gaining access to information stored in, terminal equipment. Requesting a script
+does neither; it is the initialisation that would. This is why the conditional sentence above is about
+accuracy to the visitor rather than about exposure under reg. 6. -->
+<!-- L-GDPR-44A — a script request sends the visitor's IP address to Google and to PostHog. Whether
+that is a restricted transfer, and on what basis, is unresolved and sits with §6C's open item. -->
+
+`[TK — which analytics ids, if any, are set on the live platform environment. Round 6 established that
+Vercel production is not currently reachable at all (no deployment behind the production alias) and
+that preview deployments are behind SSO, so no reading has ever been taken from the environment this
+notice will actually be published from. This sentence must be checked against that environment before
+publication.]`
 
 So today there is no analytics dataset, and no analytics retention period, because there is nothing to
 retain. **This section must be rewritten the day either library is initialised**, and that change also
@@ -419,7 +536,9 @@ Vercel, Resend) · the transfer mechanism relied on for each · Vercel's platfor
 enquiry retention period **and the job that enforces it** · the electronic complaint form · the written
 legitimate-interests assessment · the process for handling an erasure request · whether affiliated
 production entities exist and what reaches them · whether a honeypot or rate limit is built before
-launch · the ROPA.
+launch · the ROPA · **which analytics ids, if any, are set on the live platform environment (§6A)** ·
+**what information is a contractual or statutory requirement once someone becomes a client, and what
+follows from declining to give it (§2A)**.
 
 **`[DECISION REQUIRED]` items:** Slack (§6) · the enquiry retention period (§7) · consent evidence
 versus the statistical-purposes exception (§11A) · the complaint acknowledgement window (§12).

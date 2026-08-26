@@ -4,7 +4,14 @@
 > This is a draft prepared for a qualified UK solicitor to review, amend and adopt. It is not legal
 > advice and must not be published unreviewed. `legalDocument.solicitorApproved` gates publication.
 
-**Version:** 1.1 · **Last tested:** `[TK]` · **Status: DRAFT**
+**Version:** 1.2 · **Last tested:** `[TK]` · **Status: DRAFT**
+
+**Revision 1.2, 26 August 2026 — round 7.** One correction, in §4.3: the count of legal pages outside
+the automated audit. **§3's evidence figures were re-verified against the gates and are unchanged** —
+36 contrast pairs / 148 cells (`check-contrast.mjs:45-46`) and 15 axe routes, 11 public and 4
+internal, at 2 viewports × 2 scroll states (`check-axe.mjs`). The client-terms route split added two
+legal pages to the site and **no route to `check-axe.mjs`**, so it did not move §3's count; it moved
+§4.3's. Nothing here claims screen-reader testing, because it still has not happened.
 
 **Revised 25 August 2026.** Version 1.0 described testing that has not happened and features that do
 not exist. Under `L-CRA-50` a written statement about the service becomes a term of a consumer
@@ -44,7 +51,7 @@ commitment whose value is evidential.
 
 `[TK — the reason, stated plainly: WCAG 2.2 Level AA conformance requires that all Level A and Level AA
 success criteria are satisfied. Automated tooling cannot establish that. The screen-reader pass has
-never happened (§6), and four of our five legal pages are outside the automated audit (§4). A claim of
+never happened (§6), and six of our seven legal pages are outside the automated audit (§4). A claim of
 AA conformance made on this evidence would be unearned. The choices are set out below.]`
 
 > **[DECISION REQUIRED] — what to publish as the conformance status.** Options:
@@ -110,12 +117,19 @@ Stated because a statement that names its gaps is worth more than one that claim
    and the consent banner's behaviour under a screen reader are untested by anyone.
 2. **No assistive-technology testing of any other kind** — no magnifier, voice control or switch
    testing has been done.
-3. **Four of our five legal pages are outside the automated audit.** The automated audit covers
-   `/legal/privacy`. It does **not** cover `/legal/cookies`, `/legal/terms`, `/legal/client-terms`,
-   `/legal/business-client-terms`, `/legal/consumer-client-terms` or
+3. **Six of our seven legal pages are outside the automated audit.** The automated audit covers
+   `/legal/privacy` and no other legal page. It does **not** cover `/legal/cookies`, `/legal/terms`,
+   `/legal/client-terms`, `/legal/business-client-terms`, `/legal/consumer-client-terms` or
    `/legal/accessibility` — including this page. `[TK — adding the six routes to the audit is a small
    change and should be done before this statement is published, so that the coverage claimed in §3 is
    the coverage that exists. OQ-18.]`
+<!-- Corrected 26 Aug 2026, round 7. The lead sentence said "four of our five legal pages" while the
+list beneath it named six routes — the sentence was written against the five-slug era and the list was
+updated when the client-terms routes were split, leaving the two inconsistent. Counted from
+lib/legal/slugs.ts, which declares SEVEN slugs: privacy, cookies, terms, client-terms,
+business-client-terms, consumer-client-terms, accessibility. One is audited, six are not.
+Note what the split did NOT change: check-axe.mjs's ROUTES contains /legal/privacy and no other legal
+path, so adding two slugs to the site added two UNAUDITED pages and left §3's route count at 15. -->
 4. **Interaction-to-Next-Paint is not measured.** It is a field metric and cannot be asserted in a lab
    run; we use Total Blocking Time as the proxy. Real INP has to come from field data we do not yet
    have.
@@ -170,8 +184,8 @@ and roles; they do not cover announcement, and no lab check does."*
 ---
 
 **`[TK]` items:** conformance status · contact email · manual keyboard test date and tester ·
-screen-reader pass date and tester · next review date · the four uncovered legal routes · anything the
-screen-reader pass finds.
+screen-reader pass date and tester · next review date · the **six** uncovered legal routes · anything
+the screen-reader pass finds.
 
 **`[DECISION REQUIRED]` items:** the published conformance status (§2) · the feedback response time
 (§5).

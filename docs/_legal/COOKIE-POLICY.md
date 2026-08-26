@@ -4,7 +4,7 @@
 > This is a draft prepared for a qualified UK solicitor to review, amend and adopt. It is not legal
 > advice and must not be published unreviewed. `legalDocument.solicitorApproved` gates publication.
 
-**Version:** 1.1 · **Effective from:** `[TK]` · **Status: DRAFT**
+**Version:** 1.2 · **Effective from:** `[TK]` · **Status: DRAFT**
 
 Drafted against PECR 2003 **reg. 6 as substituted, and new Schedule A1 as inserted, by the Data (Use
 and Access) Act 2025 s. 112 and Sch. 12 — in force 5 February 2026** (SI 2026/82 reg. 2).
@@ -72,12 +72,26 @@ with 24-month and 12-month durations. **None of them exists.** Observed on the r
 | If you | What happens |
 |---|---|
 | have not chosen yet | No third-party request. No cookie at all. |
-| **accept** | Two scripts are requested — `googletagmanager.com/gtag/js` and `eu.i.posthog.com/static/array.js`. Requesting a script sends your IP address and user-agent to Google and PostHog, as every HTTP request does. **Neither library is then initialised**: no configuration call is ever made, so no cookie is set, no event is recorded and no identifier is created. |
+| **accept** | **Where a Google Analytics measurement id or a PostHog key is configured for the environment serving this site**, two scripts are requested — `googletagmanager.com/gtag/js` and `eu.i.posthog.com/static/array.js`. Requesting a script sends your IP address and user-agent to Google and PostHog, as every HTTP request does. **Where neither is configured, nothing is requested.** Either way, **neither library is then initialised**: no configuration call is ever made, so no cookie is set, no event is recorded and no identifier is created. |
 | **reject** | No third-party request. No script injected. No cookie. |
 
 So at the moment we ask for analytics consent and then collect nothing with it. That is a defect in
 the build, not a claim of virtue, and it is recorded as such. This section must be rewritten the day
 either library is initialised.
+
+<!-- Corrected 26 August 2026, round 7, per 04-VERIFICATION-REPORT.md §2.12 and matching
+PRIVACY-POLICY.md §6A word for word on the conditional. Each injection in lib/analytics/load.ts is
+guarded on its own id; lib/analytics/config.ts defaults both to ''. The unconditional form described a
+development environment and would have been wrong, in the visitor's favour, in any environment where
+the ids are unset — including the live one, whose variables are not yet established.
+The "neither library is initialised" half stays unconditional and is NOT to be softened. It was
+settled by measurement, not by reading source: 03-REVISION-LOG.md round 6, local production build,
+ids confirmed present on the served page via `window.__gsAnalyticsConfigured`, all three consent
+states observed, `gs_consent` the only cookie in any of them. This section and PRIVACY-POLICY.md §6A
+change together or not at all. -->
+<!-- The `lib/analytics/load.ts` docstring that used to contradict this section — asserting GA4 had
+"already set the cookie" — was corrected at round 6 after the measurement. §2's complete cookie list
+and this section were confirmed right and were not changed. Do not reopen this from the source code. -->
 
 ## 4A. The 2026 statistical-purposes exception
 <!-- L-PECR-6 -->
@@ -208,8 +222,16 @@ nothing consent-gated collects anything (§4). See the decision at `PRIVACY-POLI
 
 ---
 
+**Revision 1.2, 26 August 2026 — round 7.** One change: **§4's two-script statement** was
+unconditional when each script injection is conditional on its own environment variable, and is now
+stated conditionally. Nothing else in this document was altered. §2 and §4's cookie claims were
+confirmed by measurement at round 6 and stand unchanged, and **the ICO quotations at §4A were not
+touched** — they are the owner's to settle with the solicitor and remain flagged exactly as they were.
+
 **`[TK]` items:** effective date · contact email · whether the two inert toggles stay (§4B) · whether
-analytics runs on consent or on the para. 5 exception (§4A) · the consent-evidence position (§7).
+analytics runs on consent or on the para. 5 exception (§4A) · the consent-evidence position (§7) ·
+**which analytics ids, if any, are set on the live platform environment (§4) — no reading has ever
+been taken from it; see `PRIVACY-POLICY.md` §6A**.
 
 **Standing instruction for whoever publishes this:** the tables in §2, §3 and §4 must be re-verified
 against the running site immediately before publication, in all three consent states. Version 1.0 was

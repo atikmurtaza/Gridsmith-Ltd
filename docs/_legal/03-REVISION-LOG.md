@@ -635,3 +635,277 @@ working and is not.
 ---
 
 *End of round 6. Nothing was committed.*
+
+---
+
+# Round 7 — 26 August 2026: the four held-back documents
+
+**Scope.** The four documents Pass 4 marked *needs another pass* —
+`PRIVACY-POLICY.md`, `COOKIE-POLICY.md`, `ACCESSIBILITY-STATEMENT.md`, `MSA-BUSINESS.md`. Nothing
+else was drafted or amended, except two ledger corrections the clauses in these four depend on.
+
+**Method, and the rule this round was built on.** Pass 4 was treated as a list of *leads*, not as an
+authority. It has been wrong three times in this project — it inverted the PECR tiering (round 4), and
+it miscounted both the public/internal route split and the axe viewports (round 5). **Every finding
+below was re-checked at the primary source or in the code before it was acted on, and three were
+rejected on that check.** Where a Pass 4 count differed from the count taken here, the count taken
+here is the one in the document, and the divergence is recorded.
+
+Primary sources fetched and read in full on 26 August 2026:
+`legislation.gov.uk` — CDPA 1988 ss. 90 and 91 · LPCD(I)A 1998 ss. 5A and 6 · SI 2002/1675 art. 4 ·
+SI 2002/2013 regs. 9 and 11 · SI 2003/2426 reg. 23 · SI 2018/480 contents · UK GDPR Art. 13.
+Code re-derived: `lib/leads/schema.ts`, `lib/leads/action.ts`, `components/leads/ContactForm.tsx`,
+`lib/legal/slugs.ts`, `scripts/check-axe.mjs`, `scripts/check-contrast.mjs`.
+
+## 1. `MSA-BUSINESS.md` — version 1.2
+
+### 1.1 Clause 6.4 — late payment. Three corrections, all confirmed at source.
+
+`SI 2002/1675 art. 4` reads: *"The rate of interest … shall be 8 per cent per annum over the official
+dealing rate in force on the 30th June (in respect of interest which starts to run between 1st July
+and 31st December) or the 31st December (in respect of interest which starts to run between 1st
+January and 30th June) immediately before the day on which statutory interest starts to run."*
+**1998 Act s. 6(1)** only empowers the Secretary of State to set the rate by order — the Act sets no
+rate. **s. 5A(2)** sets **three** fixed sums, £40 / £70 / £100 by band; **s. 5A(2A)** adds reasonable
+recovery costs above the fixed sum.
+
+So the clause was wrong on the instrument (it credited the Act), wrong on the mechanic (it read as
+8% over the base rate on the day the invoice fell due, which is a floating rate the statute does not
+create), and wrong on the recovery sum (*"the fixed statutory recovery sum"*, definite and singular,
+where there are three plus s. 5A(2A)). The third of those was **giving away** an entitlement by
+omission. All three are now stated. **Pass 4 §2.8 and §2.9 hold.**
+
+### 1.2 Clause 8.3 — the assignment is of future copyright.
+
+**CDPA s. 90(3)** governs assignment of copyright that already exists. Clause 8.3 assigns rights in
+deliverables that do not exist at signature — future copyright, **s. 91**. s. 91(1) makes the
+copyright vest in the assignee *"by virtue of this subsection"* on coming into existence, given an
+agreement in relation to future copyright *"signed by or on behalf of the prospective owner"*. s. 91
+also requires signed writing, so the clause's **form** was probably already adequate and Pass 4 was
+right to say so — but the section that makes the assignment bite automatically was unnamed. Both are
+now cited. **Pass 4 §4.1 holds.**
+
+Two questions the citation does **not** answer are marked `[TK]` on the clause rather than resolved:
+whether an electronically executed agreement is *"signed"*, and whether *"other intellectual property
+rights"* — which are not copyright, and which ss. 90 and 91 do not reach — are validly assigned by
+these words. The second was not raised by Pass 4 and was found by reading the clause against the
+sections.
+
+### 1.3 Clause 15 — the excludable set, and the carve-out that may make the clause unnecessary.
+
+Regs. 9 and 11 were fetched in full. Each of **reg. 9(1)**, **reg. 9(2)** and **reg. 11(1)** opens
+*"Unless parties who are not consumers have agreed otherwise"*, and in reg. 11 that conditional
+governs paragraph (1) **entire** — the instrument draws no (a)/(b) division for this purpose. The
+clause named *"9(1) and 11(1)(b)"*: less than the parties can disapply, and a division that does not
+exist. **reg. 9(3)** carries no such conditional and is **not** excludable; the clause now says so,
+because a reader should not be left to infer an exclusion wider than it is. That last point is not in
+Pass 4 — it came out of reading reg. 9 in full rather than reading reg. 9(1).
+
+**reg. 9(4)** and **reg. 11(3)** disapply all three paragraphs for a contract *"concluded exclusively
+by exchange of electronic mail or by equivalent individual communications"*. That is how Gridsmith
+contracts. A new **15.2** states it, and a `[DECISION REQUIRED]` asks the solicitor whether clause 15
+is worth keeping at all — it is belt-and-braces over a carve-out that already applies, and the
+alternative to asking is a billable paragraph the statute did not require. **Pass 4 §2.4 and §2.5
+hold.**
+
+## 2. `PRIVACY-POLICY.md` — version 1.2
+
+### 2.1 §2A is new — UK GDPR Art. 13(2)(e).
+
+Art. 13 was fetched and every sub-paragraph of Art. 13(2) read in order: (a) storage period,
+(b) access/rectification/erasure/restriction/objection/portability, (c) withdraw consent, (ca)
+complain to the controller under DPA 2018 s. 164A, (d) complain to the Commissioner, **(e) whether
+provision is a statutory or contractual requirement**, (f) automated decision-making. **(e)** requires
+three things: which kind of requirement it is, whether the data subject is obliged, and the possible
+consequences of not providing.
+
+*A note on how this was verified, because the first attempt failed.* A general "quote Article 13(2)"
+fetch returned the text of Art. 13(1)(e) — recipients or categories of recipients — presented as
+13(2)(e). The article was re-fetched with a prompt enumerating every sub-paragraph of paragraph 2 by
+letter, which returned the correct text. **A summarised fetch of a numbered provision can silently
+return the wrong limb**, and the tell is only that the text does not match what the provision is known
+to be about. Enumerate the sub-paragraphs.
+
+This was the only Art. 13 limb with no clause anywhere in the notice, and — unlike every other gap in
+it — **it was not marked `[TK]`, so nothing was tracking it.** §2A now answers all three limbs for the
+enquiry case, from the build rather than from the drafts: `lib/leads/schema.ts` makes `full_name` and
+`email` the only required text fields, every other rendered field is `.optional()`, and `division`
+defaults to `'unsure'`. So: no statutory requirement on anyone; two fields required if you want a
+reply; the consequence of withholding them is that the enquiry cannot be submitted; the consequence of
+withholding the optional fields is only a less useful reply.
+
+The **client-engagement** half is marked `[TK]` and deliberately not written. Some client information
+genuinely does become contractual (invoicing and delivery) and some statutory (accounting records,
+§3's Art. 6(1)(c) row) — but no engagement process, invoicing flow or record-keeping policy exists in
+this repository, so it cannot be written from it without inventing it. **Pass 4 §3.1 holds.**
+
+### 2.2 §2's list of schema fields no form sends — and a correction to Pass 4's own count.
+
+Re-derived from `lib/leads/schema.ts` and `lib/leads/action.ts` against the eight inputs
+`components/leads/ContactForm.tsx` actually renders (`division`, `full_name`, `email`, `company`,
+`phone`, `message`, `budget_band`, `timeline`).
+
+| | |
+|---|---|
+| Fields the schema accepts that no form sends | **ten** — `track`, `service_slug`, `role`, `payload`, `source`, `medium`, `campaign`, `referrer`, `landing_page`, `is_ai_referral` |
+| Of those, read by the server action from submitted `FormData` | **seven** — `role`, `source`, `medium`, `campaign`, `referrer`, `landing_page`, `is_ai_referral` |
+| Not read by the server at all | three — `track`, `service_slug`, `payload` |
+
+**Two things Pass 4 got wrong here, found by counting.** (a) It said *"two of which the server action
+reads from submitted form data"*, citing `action.ts:51-52` where `referrer` and `landing_page` are
+read. The same block reads five more. It is **seven**, not two. (b) It left `role` in the
+already-published "not sent" enumeration; `action.ts` reads `role`, so it belongs with the seven.
+
+The enumeration is replaced with a complete list plus the general statement, because **an enumerated
+list in a privacy notice reads as exhaustive** and the previous one named four of ten. A sentence was
+added saying plainly that nothing on the site fills these and nothing derives them — `referrer` and
+`landing_page` hold URLs and are the fields here most likely to become personal data if anything ever
+starts sending them. **Pass 4 §2.11 holds in substance; its count did not.**
+
+### 2.3 §6A — the two-script claim made conditional.
+
+`lib/analytics/load.ts` guards each injection on its own id (`if (GA4_ID)`, `if (POSTHOG_KEY)`) and
+`lib/analytics/config.ts` defaults both to `''`. The unconditional sentence was a true observation of
+a development environment generalised into a statement about every environment, and it was wrong **in
+the visitor's favour** wherever the ids are unset. It is now conditional, and a `[TK]` records that no
+reading has ever been taken from the environment this notice will be published from — round 6 found
+Vercel production unreachable and previews behind SSO.
+
+**The non-initialisation half was deliberately left unconditional**, with a comment saying why: it
+does not depend on configuration, and it was settled by measurement at round 6 on a build where the
+ids were confirmed present on the served page. That measurement is not to be re-litigated from source.
+**Pass 4 §2.12 holds. Pass 4 §2.13 is closed by round 6 and was not reopened.**
+
+### 2.4 Two flags closed.
+
+`CNV-3` — the §3A note saying PECR reg. 23's text had not been retrieved. It has now been fetched and
+read: reg. 23 prohibits marketing mail where the sender's identity is *"disguised or concealed"* or
+where *"a valid address to which the recipient … may send a request that such communications cease
+has not been provided"*, and it carries **no individual-subscriber limitation**, unlike reg. 22(1).
+The corporate-subscriber sentence is correct as drafted and no longer rests on a summary.
+
+`L-DPA-FEE`'s Schedule citation at §1A. SI 2018/480's contents page was fetched: the instrument has
+**one** Schedule, titled **"Exempt Processing"** (para. 1 interpretation, para. 2 exempt processing).
+The bands are in reg. 2(3)(b) and (c). Corrected in the clause comment and in the ledger entry.
+**Pass 4 §2.6 holds.**
+
+## 3. `COOKIE-POLICY.md` — version 1.2
+
+One change: §4's two-script row is made conditional, in the same words as `PRIVACY-POLICY.md` §6A,
+with a comment requiring the two to change together or not at all. **Pass 4 §2.12 holds.**
+
+**§4A was not touched.** The ICO quotations there are the owner's to settle with the solicitor and are
+left flagged exactly as they were. Pass 4's own limit 1 — that it did not independently retrieve
+them — stands unresolved and is not this round's to close.
+
+§2's complete cookie list and §4's *"no analytics cookie is set in any state"* were confirmed by
+measurement at round 6 and are unchanged.
+
+## 4. `ACCESSIBILITY-STATEMENT.md` — version 1.2
+
+### 4.1 §3's figures re-verified. Unchanged, and correct.
+
+| Claim in §3 | Re-counted from | Result |
+|---|---|---|
+| 36 token pairs / 148 cells | `check-contrast.mjs:45-46`, hard-failed at :288 and :352 | **correct** |
+| 15 axe routes, 11 public + 4 internal | `check-axe.mjs` `ROUTES` — 15 entries; internal are `/_kitchen-sink`, `/_master-sink`, `/_gridsmith-404-probe`, `/gridsmith-error-probe` | **correct** |
+| 2 viewports × 2 scroll states, 60 analyses | `VIEWPORTS` (375px, 1280px), `PHASES` (initial, scrolled); 15 × 2 × 2 = 60 | **correct** |
+
+**The client-terms split did not move this count.** `ROUTES` contains `/legal/privacy` and no other
+legal path, so adding two slugs to the site added two **unaudited** pages and left the audited count
+at 15. That was the specific risk this round was asked to check and it did not materialise here — it
+materialised in §4.3.
+
+### 4.2 §4.3 — the count that the split *did* move.
+
+The lead sentence read *"Four of our five legal pages are outside the automated audit"* while the list
+beneath it named **six** routes. The sentence was written in the five-slug era; the list was updated
+when the routes were split; nobody updated the sentence, so the paragraph contradicted itself.
+`lib/legal/slugs.ts` declares **seven** slugs — `privacy`, `cookies`, `terms`, `client-terms`,
+`business-client-terms`, `consumer-client-terms`, `accessibility`. One is audited. **Six are not.**
+Corrected in §4.3, in §2's `[TK]` which repeated it, and in the `[TK]` index.
+
+This is worth naming as a class rather than an instance: **a count in prose and a list beneath it are
+two statements of the same fact, and only one of them gets updated.** Both derive from the same
+source and should be read together whenever either changes.
+
+### 4.3 Nothing was added.
+
+No claim in this document was strengthened. The screen-reader pass still has not happened, §6 still
+says so plainly, and §2 still cannot say more than "partially conformant".
+
+## 5. Findings NOT applied, and why
+
+**`04-VERIFICATION-REPORT.md` §2.1 and §4.5 — the PECR penalty ceiling. REJECTED, at round 4.** Pass 4
+proposed replacing *"4% of turnover"* with *"£8.7m or 2%"*. Round 4 read the provision and found the
+proposed correction inverted the tiering: **reg. 6 is inside the PECR Sch. 1 para. 18(b)(ii) list, so
+it sits in DPA 2018 s. 157(2)(a) and attracts the HIGHER maximum — £17.5m or 4%** (`L-PECR-PENALTY`).
+This is the *"1 failing uncited statement"* in Pass 4 §4, and it is now **cited rather than removed**.
+
+**It does not land in any of these four documents.** A grep for every form of the figure across
+`PRIVACY-POLICY.md`, `COOKIE-POLICY.md`, `ACCESSIBILITY-STATEMENT.md` and `MSA-BUSINESS.md` returns
+nothing. The statement lived in `CLAUDE.md` #7 and `00-LEGAL-BASIS.md` §2.1, both corrected at round
+4. Nothing was done to it here, and **the 2% / £8.7m figure is not to be reintroduced.**
+
+**Pass 4 §2.11's "two of which the server action reads". REJECTED on the count.** It is seven. See
+§2.2 above. The finding's substance — that the enumeration is incomplete — holds and was applied; its
+arithmetic did not and was not.
+
+**Pass 4 §2.3's "ten public routes plus five internal probe routes". REJECTED on the count**, as it
+already was at round 5. Four internal, eleven public. Re-counted again here and unchanged.
+
+**Pass 4 §2.13 — the GA4 cookie contradiction. NOT REOPENED.** Settled by measurement at round 6: the
+scripts load and never initialise, and `gs_consent` is the only cookie in any state.
+`COOKIE-POLICY.md` §2 and §4 were confirmed correct. Pass 4 could not settle it from source and said
+so; the answer did not come from source and will not.
+
+**Pass 4 §2.7, §2.10, §2.14 — out of scope.** §2.7 lands in `CONSUMER-TERMS.md`, §2.10 in
+`WEBSITE-TERMS.md`, both of which Pass 4 cleared for a solicitor. §2.14's two mis-descriptions are in
+ledger entries (`L-DMCC-230`'s heading, `L-CA-82 / L-TDR-24`'s reg. 24(2)) whose substance is right
+and which no clause in these four documents relies on. All three remain open.
+
+## 6. Ledger entries added
+
+Both close a `NO LEDGER ENTRY` flag that stood on a clause carrying a specific figure or a specific
+section with no primary citation.
+
+- **`L-LATE-PAYMENT`** — LPCD(I)A 1998 ss. 5A(1), 5A(2), 5A(2A) and s. 6, with SI 2002/1675 art. 4.
+  Records where the 8% actually lives, the three fixed sums, s. 5A(2A) recovery costs, and the
+  30 June / 31 December reference-rate mechanic. B2B only.
+- **`L-CDPA-90-91`** — CDPA 1988 ss. 90(1)–(3) and 91(1)–(2). Records why s. 91 is the operative
+  section for a deliverables clause signed before the deliverables exist.
+
+Both sit in a new **section I — Business contract terms**. `L-ECOM-9-11` was amended in place with the
+corrected excludable set and the reg. 9(4) / reg. 11(3) carve-out; `L-DPA-FEE`'s Schedule citation was
+corrected in place. Each amendment records what it replaced.
+
+## 7. State after this round
+
+| Document | Version | `[TK]` markers | `[DECISION REQUIRED]` |
+|---|---|---|---|
+| `PRIVACY-POLICY.md` | 1.2 | 35 | 6 |
+| `COOKIE-POLICY.md` | 1.2 | 5 | 2 |
+| `ACCESSIBILITY-STATEMENT.md` | 1.2 | 10 | 3 |
+| `MSA-BUSINESS.md` | 1.2 | 11 | 3 |
+
+Raw marker counts including the index lines at the foot of each document, which repeat markers rather
+than adding them. Three `[TK]`s and one `[DECISION REQUIRED]` are new in this round — the client-side
+Art. 13(2)(e) statement, the live-environment analytics ids (counted once in each of the two policies
+that assert the behaviour), the two open CDPA questions at MSA 8.3, and whether MSA clause 15 is
+retained. None resolves anything by guessing.
+
+## What this round did not do
+
+- **No `[TK]` or `[DECISION REQUIRED]` was resolved.** Every one is an owner fact, a build fact, or a
+  solicitor's judgement, and none became knowable in this round.
+- **The `[SEED - SOLICITOR REVIEW REQUIRED]` banner on all four documents is untouched.**
+- **`COOKIE-POLICY.md` §4A's ICO quotations were not verified and not edited.**
+- **No gate was run.** §3's contrast and axe figures were read from the gates' own literals and their
+  `ROUTES` / `VIEWPORTS` / `PHASES` arrays, which is what the arbitration rule requires. Neither gate
+  was executed, and this round therefore establishes that the published figures **match the gates**,
+  not that the gates measure what they claim.
+- **Nothing was committed.**
+
+---
+
+*End of round 7.*
