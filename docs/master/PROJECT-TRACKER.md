@@ -3110,6 +3110,37 @@ that it is still the subject**. The proof rule is recorded there as *load-bearin
 ceremonial* — it has caught a broken gate in three consecutive sessions, twice on gates
 written in the same session as the rule.
 
+### `M-P1-14` — the deploy did not run the seed gate (26 Aug 2026)
+
+**Status: fixed in the working tree, uncommitted. Ledger row is `OPEN` until it lands.**
+Full write-up and the deliberate-failure proof: `_shared/01-VALIDATION-REPORT.md` §19.
+
+Asked of the system, not inferred. Vercel's build for
+`dpl_Bvr712Dpw7PDTd6AAoYVudfKGKja`:
+`vercel build` -> `Detected Next.js version: 15.5.23` -> `Running "npm run build"` ->
+`next build`. No dashboard Build Command override. `check:launch` lived in `verify:served`,
+which runs in CI and nowhere else, so **the deploy has never run it.**
+
+What was actually protecting production was `getCompanyDetails()` throwing on the **empty**
+`production` dataset — the reason every `target: production` deployment since 19 Aug is
+`ERROR`. A production dataset **seeded** with placeholder content is not empty: it satisfies
+that throw, builds green, and publishes `[SEED] GB123456789` as the VAT number. Non-negotiable
+#4 was resting on an accident.
+
+Eighth defect class, and the widest so far. §15/§16 swept exclusions against *gates*; §18 swept
+one against the *module graph*; this is an exclusion swept against the *pipeline*. **Ask which
+pipeline runs the gate, not whether the gate exists.**
+
+| | |
+|---|---|
+| Wired at | `package.json` `prebuild` -> `check:launch --build`; `vercel.json` `buildCommand: "npm run build"` pins the npm entry point against a dashboard edit |
+| Guarded by | `check:node` now fails if either the hook or the build command goes missing — `walk()` cannot see an implicit npm lifecycle hook, so parity would have stayed green |
+| Permanent subject | `scripts/check-launch-content.selftest.mjs`, 11 committed specimens, in `verify:static` and CI. The live tier previously had **no subject at all** — its only subject was a live dataset that has never contained a `[SEED]` marker |
+| Proof | `[SEED]`-bearing production-named dataset -> `EXIT=1` at prebuild, `next build` never started, `getCompanyDetails`'s message confirmed **absent** from the log. Count moved 121 -> 0 across two real datasets. Clean case builds, `EXIT=0` |
+| Not closed | A clean *`production`* dataset has never been built end to end — nothing is in it yet. The seed count is unauthenticated and cannot see a dotted id (write-side guard only). See §19.10 |
+
+---
+
 ## Hosting — Vercel (`gridsmith-ltd`, `atikmurtazas-projects`), GitHub `atikmurtaza/Gridsmith-Ltd`
 
 **Moved 20 August 2026. The Hostinger section below is kept, not deleted** — the two

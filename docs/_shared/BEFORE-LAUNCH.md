@@ -419,7 +419,22 @@ Needs a browser login, which is why it has never been done from a session.
 seed script and the import path are deliberately separate.
 
 `check:launch` will refuse a production build that contains a published seed document, so this
-is enforced rather than remembered. Today's count in `development` is 119.
+is enforced rather than remembered. Today's count in `development` is 121 (re-counted 26 Aug).
+
+**Since 26 Aug that sentence is true of the Vercel deploy as well as of CI, and it was not
+before** — `M-P1-14`, VALIDATION §19. The gate ran only in `verify:served`, which CI runs and
+Vercel does not. Two things follow for this item:
+
+- The gate now runs as npm's `prebuild`, so a seeded production dataset fails the **deploy**,
+  not merely a CI run someone might not have looked at.
+- **It counts published seed documents unauthenticated, and Sanity hides any id containing a
+  dot from an unauthenticated read.** The seed script refuses to create dotted ids, so this is
+  covered for content this repository writes. If production content is ever imported by any
+  other route, that guarantee does not travel with it.
+
+One thing this gate still cannot tell you: a *clean* `production` dataset has never been built
+end to end, because there is nothing in `production` to build against yet. Expect the first
+real seed here to be the first time the live-clean path runs (VALIDATION §19.10).
 
 ---
 

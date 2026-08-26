@@ -21,7 +21,18 @@ measured, all within budget. axe: 60 analyses, zero violations.
 
 **Nothing is live and nothing can go live by accident.** `NEXT_PUBLIC_SANITY_DATASET` has no
 default and `check:launch` refuses a production dataset carrying `[SEED]` markers or published
-seed documents. `development` holds 119 of them today.
+seed documents. `development` holds 121 of them today (re-counted 26 Aug; the 119 previously
+recorded here was stale, not wrong at the time).
+
+> **This paragraph was true of CI and false of the deploy until 26 Aug — `M-P1-14`,
+> VALIDATION §19.** `check:launch` lived in `verify:served`, which runs in CI and nowhere
+> else. Vercel runs `next build`, so **no deployment has ever run the seed gate.** What was
+> actually stopping production was `getCompanyDetails()` throwing on the *empty* `production`
+> dataset — and a dataset seeded with placeholder content is not empty, so it would have built
+> green and published `[SEED] GB123456789` as the VAT number. The gate now runs as npm's
+> `prebuild`, `vercel.json` pins `buildCommand` to `npm run build` so the hook cannot be
+> bypassed from the dashboard, and `check:node` fails if either goes missing. Read the claim
+> above as true of both paths only from that date.
 
 **`_shared/BEFORE-LAUNCH.md` is the only homework list. Do not create a second one.** Everything
 on it needs the owner. The full close-out — what was built, what was measured, what was found —

@@ -117,6 +117,19 @@ jobs:
       - name: Row-level security is declared on every table, view and policy
         run: npm run check:rls
 
+      # The committed subject for check:launch's live tier — M-P1-14. That tier's only
+      # subject was the live dataset, which has never held a [SEED] marker or a published
+      # seed record, so the assertions behind non-negotiable #4 had never been observed to
+      # fire while printing a seed count every run. These specimens are the deliberate
+      # failures, and two of them differ only in the count (0 and 121) so the number is
+      # proven to move rather than merely to be printed.
+      - name: The seed and statutory assertions still fire (committed specimens)
+        run: npm run check:launch:selftest
+
+      # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
+      # wiring that puts the gate into Vercel's deploy, exercised here on every push against
+      # the `development` dataset. check:launch still runs against the SERVED site below;
+      # the two answer different questions and neither replaces the other.
       - name: Build
         run: npm run build
 

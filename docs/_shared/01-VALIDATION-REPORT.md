@@ -1062,3 +1062,197 @@ which route.
 The fix was to pass the element in as a slot from the probe route so `/` never imports it, and
 the proof was a probe-excluded build with no `markTravel` in any emitted stylesheet. The variant
 is deleted now and the instance stands regardless of it.
+
+---
+
+## 19. `M-P1-14` — an eighth defect class: the gate covers CI's path, not the deploy's
+
+Every exclusion swept in §15 and §16 was an exclusion *within* a build — a route left out, a
+file filtered, a stylesheet still linked. §18 generalised it to the module graph. This one is a
+layer further out again, and it is the largest: **the gate list and the deploy are two different
+pipelines, and nothing asserted they were the same one.**
+
+### 19.1 What Vercel actually runs
+
+Asked of the system rather than inferred, per CLAUDE.md. `get_project` on
+`prj_kfFxGWf0ai1VYAGICYfVvNn0QYYN` (team `team_OVquiVuYynOepnUnaMAgcQnP`) and the build log for
+`dpl_Bvr712Dpw7PDTd6AAoYVudfKGKja` (commit `a322c272`) agree:
+
+```
+Running "vercel build"          Vercel CLI 59.3.0
+Detected Next.js version: 15.5.23
+Running "npm run build"
+> next build
+```
+
+No Build Command was set in the dashboard — the log shows the framework default, and an
+override would have printed the override string. **The repo and the dashboard did not disagree,
+but nothing was stopping them from disagreeing**, which is the second half of the finding.
+
+One cosmetic discrepancy worth recording rather than acting on: the project object reports
+`"framework": null` while `vercel.json` declares `"framework": "nextjs"`. `vercel.json` wins and
+detection worked, so this is a stale dashboard field, not a live fault.
+
+### 19.2 The exclusion
+
+`check:launch` is the gate behind non-negotiable #4, *never let seed content reach production*.
+It lived in `verify:served` and in `ci.yml`. **`verify:served` runs in CI and nowhere else.**
+Vercel's build is `next build`. So the deploy has never run the seed gate, on any deployment,
+ever.
+
+Production was not unprotected — it was protected by something else, which is worse, because
+nobody chose it. Every `target: production` deployment since 19 Aug is `ERROR`, failing at
+
+```
+Error: No companyDetails document in dataset "production". Every page renders the
+statutory footer, so the build cannot proceed without it.
+```
+
+thrown by `getCompanyDetails()` while prerendering `/_not-found`. That throw fires on an
+**empty** dataset. **A production dataset seeded with placeholder content is not empty.** It
+would have satisfied the throw, built green, and published `[SEED] GB123456789` as the
+company's VAT registration number on every page — the precise outcome `check:launch`'s live
+tier exists to prevent, defeated by an environment CI cannot see. Third time that sentence has
+been written in this repository (`M-P1-2`, `M-P1-7`, now this).
+
+### 19.3 The live tier had no subject at all
+
+Separately, and just as bad. `check-launch-content.mjs` was a top-level-`await` script that
+fetched before it asserted, so the only subject its assertions ever had was whatever the live
+dataset happened to contain — and the live dataset has never held a `[SEED]` marker or a
+published seed record. The zero-tolerance rule had **never been observed to fire**, while
+printing `N published seed document(s) counted` on every run. CLAUDE.md names this exactly: *a
+summary line is not evidence a check ran.*
+
+### 19.4 The fix
+
+| Where | What | Why there |
+|---|---|---|
+| `package.json` `prebuild` | `npm run check:launch:build` | npm runs `prebuild` before `build`, so it is in the path that actually deploys. Smallest hook that needs no new build wrapper |
+| `vercel.json` `buildCommand` | `"npm run build"` | The npm lifecycle only fires when the build is entered through npm. A dashboard Build Command of `next build` would bypass `prebuild` silently; `vercel.json` takes precedence over the dashboard, so this pins it |
+| `scripts/check-node-version.mjs` | asserts both of the above still exist | `walk()` follows `npm run` chains from `verify`. `prebuild` is an implicit lifecycle hook in no chain, so the parity gate would have gone on reporting that verify and CI run the same set while the deploy ran neither |
+| `scripts/launch-content-rules.mjs` | `evaluate()`, pure | Splits the predicate from the fetch so a committed specimen can reach it |
+| `scripts/check-launch-content.selftest.mjs` | 11 committed specimens | The permanent subject. Runs in `verify:static` and CI |
+
+**`--build` mode reads `NEXT_PUBLIC_SANITY_DATASET`, and that is not a regression to
+`M-P1-7`.** `M-P1-7` was a CI runner reading its *own* environment while asserting about a
+*deployment* — two machines, two values. In `--build` mode there is no other system: the
+process is a child of the build that is about to run `next build`, in the same environment
+`next.config.ts` reads to decide what the app connects to. *Ask the system you are asserting
+about.* Served mode still asks the running site's `x-gridsmith-dataset` header and is unchanged.
+
+An unset variable is a hard failure in both modes, never a default.
+
+### 19.5 Which gate fired — the window, established rather than assumed
+
+Two things can now fail on a bad production dataset, so the proof had to land where only one
+of them can. It does so by construction: `getCompanyDetails()` throws on a dataset with **no**
+`companyDetails` singleton, and the seeded subject has a complete one. The ordering settles it
+independently — `prebuild` runs to completion before `next build` starts, so `getCompanyDetails`
+is never reached.
+
+Subject: the `development` dataset, which holds **real seeded content** — 121 published seed
+documents and `vatNumber: "[SEED] GB123456789"` — with `PRODUCTION_DATASET` in
+`sanity/project.ts` temporarily redirected to it, then reverted. A scratch dataset could not be
+used: the gate's `isLive` predicate keys off the literal name `production`, Sanity has no
+rename, and writing `[SEED]` content into the real `production` dataset was out of scope by
+instruction.
+
+```
+$ NEXT_PUBLIC_SANITY_DATASET=development npm run build
+
+> gridsmith@0.1.0 prebuild
+> npm run check:launch:build
+
+check-launch-content: 2 problem(s) in dataset "development"
+  (established from this build's NEXT_PUBLIC_SANITY_DATASET)
+
+  vatNumber carries a [SEED] marker and the dataset is live: "[SEED] GB123456789"
+  121 published seed document(s) in the live dataset. Fabricated case studies reaching
+  production is the most damaging content failure available to this project (TECH-SPEC §6).
+  ...
+
+EXIT=1
+```
+
+Exit code read from the process, not through a pipe (`M-P1-12`). `grep -c "Creating an
+optimized production build"` over the full log returns **0** — `next build` never started — and
+`grep -c "No companyDetails document in dataset"` returns **0**, so the throw is confirmed
+absent. **It is the seed gate that fired.**
+
+### 19.6 The count moves
+
+Same code path, same live tier, two real datasets:
+
+| Dataset | `publishedSeeds` | Seed problem raised |
+|---|---|---|
+| `development` (redirected to live) | **121** | yes |
+| `production` (live, empty) | **0** | no |
+
+Specimens `MANY` (121), `ONE` (1) and `ZERO` (0) hold the same three points in the committed
+subject, so the number is proven to move without needing a dataset to move.
+
+### 19.7 Every branch, broken separately
+
+| Branch | Message observed | Exit |
+|---|---|---|
+| `--build`, `NEXT_PUBLIC_SANITY_DATASET` unset | `NEXT_PUBLIC_SANITY_DATASET is not set … Failing rather than guessing.` | 1 |
+| dataset does not exist | `returned 404 — nothing could be measured` **and** `the seed count query returned HTTP 404 — seed enforcement measured nothing` | 1 |
+| served mode, nothing serving | `did not report an x-gridsmith-dataset header` | 1 |
+| Sanity host unreachable | `TypeError: fetch failed` / `ENOTFOUND` — uncaught, deliberately | 1 |
+| `prebuild` hook deleted | `package.json "prebuild" must run npm run check:launch:build` | 1 |
+| `vercel.json` `buildCommand` set to `next build` | `vercel.json "buildCommand" must be exactly "npm run build"` | 1 |
+| zero-tolerance rule loosened to `> 200` | 3 specimens red: `SEEDED`, `MANY`, `ONE` | 1 |
+| a specimen deleted | `10 specimens, expected 11` | 1 |
+
+The two deploy-wiring branches were broken one at a time and produced distinct messages —
+neither is credited to the other.
+
+**Clean case, end to end through the deploy command.** `rm -rf .next` then
+`NEXT_PUBLIC_SANITY_DATASET=development npm run build` with `PRODUCTION_DATASET` restored:
+prebuild reports `5 statutory field(s) present`, `121 published seed document(s) counted; the
+zero-tolerance rule applies to "production" only`, `next build` runs, `Compiled successfully`,
+**EXIT=0**. A gate that always fails is not a gate.
+
+### 19.8 The dot-id trap, observed live
+
+`production` reports **0** documents unauthenticated and **12** authenticated. All twelve are
+Sanity system records — `_.groups.*`, `_.retention._maximum_project` — so there is no content
+hiding there and no live defect. It is a clean demonstration that the mechanism
+`05-HANDOVER.md` records is real and active in this project right now: **any id containing a
+dot is invisible to the unauthenticated read this gate performs.**
+
+The mitigation is at the write side and already existed: `scripts/seed-content.mjs` refuses to
+publish any document whose `_id` contains a dot. A read-side fix is not available — the build
+holds no Sanity token and both datasets are public by design. Recorded as a residual limit, not
+closed.
+
+### 19.9 What this changes about `M-P1-7`
+
+The `ci.yml` comment at `M-P1-7` recorded a price paid: moving `check:launch` after the build
+meant a missing singleton became "a build failure with a Sanity stack trace, which is worse
+output for the same defect". `prebuild` gets that back without giving up the served check.
+Against the empty `production` dataset the deploy build now stops with
+
+```
+no companyDetails document in dataset "production" — every page renders the statutory footer
+```
+
+instead of a prerender stack trace, and the served gate still runs in CI afterwards. The two
+answer different questions and neither replaces the other.
+
+### 19.10 Residual risk
+
+1. **A clean *`production`-named* dataset has never been built end to end**, because
+   `production` holds no `companyDetails` singleton and seeding it is owner work
+   (`BEFORE-LAUNCH.md`). The live-clean predicate is covered by the committed `ZERO` specimen;
+   the network path against a live-named dataset is covered only in its failing direction.
+   Close this at the first real production seed.
+2. **The unauthenticated seed count cannot see a dotted id.** §19.8. Mitigated at the write
+   side only.
+3. **`vercel.json` pins the build command against a dashboard edit, not against a
+   `vercel.json` edit.** Someone removing `buildCommand` restores dashboard precedence, and
+   `check:node` is what catches that — a gate in the repo guarding a fact about the repo, which
+   is sound, but it is CI catching it, and CI is not the deploy. There is no mechanism that
+   makes Vercel refuse to build without the gate; that would need a Vercel-side deployment
+   check, which is an owner decision.

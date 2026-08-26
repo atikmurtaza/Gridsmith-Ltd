@@ -135,6 +135,59 @@ if (!/check-node-version/.test(pkg.scripts?.preinstall ?? '')) {
 reachable.delete('check:node');
 
 /**
+ * **The deploy path runs the seed gate — `M-P1-14`.**
+ *
+ * `check:launch` is the gate behind non-negotiable #4, "never let seed content reach
+ * production". Until now **Vercel never ran it**: the deploy is `vercel build` -> framework
+ * detection -> `npm run build` -> `next build`, and `check:launch` lived only in
+ * `verify:served`, which runs in CI and nowhere else. Production was protected by an unrelated
+ * accident — `getCompanyDetails()` throwing on the empty `production` dataset — and a
+ * production dataset seeded with placeholder content would have satisfied that throw, gone
+ * green, and published `[SEED]` content. Same exclusion class as the `_`-prefix filter and the
+ * double-encoded chunk path, one layer out: the gate covered CI's path, not the deploy's.
+ *
+ * The fix is two lines in two files, and **both are invisible in normal operation**, which is
+ * why they are asserted here rather than trusted:
+ *
+ *   - `package.json` `prebuild` — npm runs it before `build`. Deleting it removes the gate
+ *     from the deploy with no error and no missing log line.
+ *   - `vercel.json` `buildCommand: "npm run build"` — the npm lifecycle only fires when the
+ *     build is entered through npm. A Build Command set in the Vercel dashboard to
+ *     `next build` would bypass `prebuild` entirely; vercel.json takes precedence over the
+ *     dashboard, so this line is what holds against that edit.
+ *
+ * The `walk()` above cannot see either of them: it follows `npm run` chains from `verify`, and
+ * `prebuild` is an implicit npm lifecycle hook that appears in no chain. So the gate-parity
+ * check would have gone on reporting that verify and CI run the same set while the deploy ran
+ * neither.
+ */
+const deployWiring = [
+  [
+    'package.json "prebuild"',
+    /check:launch:build/.test(pkg.scripts?.prebuild ?? ''),
+    'must run `npm run check:launch:build`, or the deploy build skips the seed gate',
+  ],
+  [
+    'vercel.json "buildCommand"',
+    JSON.parse(read('vercel.json')).buildCommand === 'npm run build',
+    'must be exactly "npm run build", or npm\'s prebuild hook never fires on Vercel',
+  ],
+];
+
+const unwired = deployWiring.filter(([, ok]) => !ok);
+if (unwired.length > 0) {
+  console.error('\ncheck-node-version: the deploy path no longer runs the seed gate (M-P1-14)\n');
+  for (const [where, , why] of unwired) console.error(`  ${where} ${why}`);
+  console.error(
+    '\nCI running check:launch is not a substitute. Vercel does not run CI, and the only other' +
+      '\nthing standing between a seeded production dataset and a published [SEED] VAT number is' +
+      '\nan accident: getCompanyDetails() throws on an EMPTY dataset, and a seeded one is not' +
+      '\nempty. VALIDATION §14.\n',
+  );
+  process.exit(1);
+}
+
+/**
  * Comment lines are stripped before this looks for gates.
  *
  * It matched `npm run <name>` anywhere in the file text, so **prose counted as a step**.

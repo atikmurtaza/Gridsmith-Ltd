@@ -102,6 +102,15 @@ of a claim, never as confirmation that the substance is where it says.
 | `A-GATE-7-6` | CEILING | — | — |
 | `M-P1-1` | ACCEPTED | — | — |
 | `M-P1-12` | FIXED | scripts/with-server.mjs | a0e7db2a |
+| `M-P1-14` | OPEN | — | — |
+
+**`M-P1-14` is `OPEN` because the work is in the working tree and uncommitted, not because it
+is undone.** VALIDATION §19 records the deliberate-failure proof in full. Promote this row to
+`FIXED` in the commit that lands it, naming
+`package.json`, `vercel.json`, `scripts/check-launch-content.mjs`,
+`scripts/launch-content-rules.mjs`, `scripts/check-launch-content.selftest.mjs`,
+`scripts/check-node-version.mjs` and `.github/workflows/ci.yml`. Writing `FIXED` now would be
+exactly the well-formed-but-false claim `A-GATE-7-6` records as this gate's ceiling.
 
 ## What this gate does not cover, stated rather than left to be discovered
 
