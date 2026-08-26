@@ -520,8 +520,11 @@ Single Sanity `project` document type, `divisions[]` as a multi-select. Queried 
 
 ### Consent management (UK GDPR / PECR) — **added at validation**
 
+**⚠ AMENDED 26 August 2026 — `M-P2-ANALYTICS`, owner decision OQ-7 option 2.** The analytics injection and all three consent categories are **removed** from the site. Nothing non-essential is stored or transmitted in any state, so PECR reg. 6(2) consent is not engaged and the banner is a **notice**: one control, no toggles, no Consent Mode signal. `gs_consent` remains, exempt under Sch. A1 para. 4, holding `1`. **Everything below describes the arrangement that returns with the analytics** — `docs/_shared/BEFORE-LAUNCH.md` item 22, whose prerequisites (`L-07` and the `dataLayer` shim defect) are conditions, not follow-ups. `docs/_legal/03-REVISION-LOG.md` round 10.
+
 GA4, PostHog and the Design division's `gs_design_track` cookie are all non-essential
-storage under PECR. They require prior consent.
+storage under PECR. They require prior consent. **None of the three exists any more: the first
+two were deleted and the third never existed.**
 
 ```
 Consent Mode v2 (Google) + a self-hosted banner
@@ -541,7 +544,8 @@ breaks the performance budgets in §7 and, on Digital, the 100/100/100 launch ga
 
 Consequence for `is_ai_referral` tracking (R1): referrer classification for
 consented sessions only. Expect a measurement gap and do not treat consented
-volume as total volume.
+volume as total volume. **Moot since 26 Aug 2026 — nothing is classified, because nothing is
+recorded. `lib/analytics/referral.ts` is kept, pure and unreferenced.**
 
 ### Migration & redirects — **added at validation**
 

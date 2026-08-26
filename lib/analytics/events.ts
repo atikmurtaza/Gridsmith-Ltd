@@ -5,6 +5,11 @@
  * instead of an event that silently never appears in a report — which is the failure mode
  * that makes analytics untrustworthy months later, when nobody can tell a missing event
  * from a missing behaviour.
+ *
+ * **Unreferenced since round 8, deliberately.** The analytics injection was deleted with the
+ * consent categories (OQ-7 option 2 — `lib/consent/state.ts`), so nothing imports this file
+ * today. It is kept because it is design work the specs name, not because it runs: wiring
+ * analytics up is `docs/_shared/BEFORE-LAUNCH.md` §"Analytics" and starts from here.
  */
 export const EVENTS = [
   'page_view',

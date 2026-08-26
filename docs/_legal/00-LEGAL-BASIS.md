@@ -117,6 +117,14 @@ second one: relying on consent means Art. 7(1) demands we can **demonstrate** it
 nor PostHog is initialised, so nothing is collected in any consent state today
 (`01-FACTUAL-INVENTORY.md` §1.3). The decision must be made **before** the libraries are turned on.
 
+**⚠ 26 August 2026, round 10 — the libraries were removed rather than turned on.** The owner took
+OQ-7 option 2: GA4, PostHog and all three consent categories are deleted from the site, on the
+reasoning that with no traffic the removal costs zero measurement while keeping them was liability
+with nothing on the other side. **This decision is therefore still `[DECISION REQUIRED]` and is now
+explicitly deferred**, not answered — it becomes live again before any analytics returns, and
+`docs/_shared/BEFORE-LAUNCH.md` item 22 names it as a prerequisite alongside `L-07`. The ICO
+quotations at `COOKIE-POLICY.md` §4A were not touched. `03-REVISION-LOG.md` round 10.
+
 ### 2.3 A formal data protection complaints procedure is now required
 <!-- L-DPA-164A -->
 

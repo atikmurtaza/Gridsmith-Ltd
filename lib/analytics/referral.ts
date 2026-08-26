@@ -7,6 +7,11 @@
  * **The 22% conversion premium in `R1` is not measured and nothing here assumes it.**
  * FOUNDATION states it as the reason the flag exists — "must be measured, not assumed" —
  * so this classifies traffic and makes no claim about what the classification is worth.
+ *
+ * **Unreferenced since round 8, deliberately.** The analytics injection was deleted with the
+ * consent categories (OQ-7 option 2 — `lib/consent/state.ts`), so nothing imports this file
+ * today. It is kept because it is design work the specs name, not because it runs: wiring
+ * analytics up is `docs/_shared/BEFORE-LAUNCH.md` §"Analytics" and starts from here.
  */
 
 /**

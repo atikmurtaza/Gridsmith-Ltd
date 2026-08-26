@@ -46,18 +46,83 @@ it still lists them as blockers while the rows they block are marked DONE. Belie
 
 ### New — on no list before, and both block production
 
-### 22. Set the live GA4 and PostHog ids in the platform environment
+### 22. Analytics — decide whether to wire it up, and if so do it in this order
 
-- **Status:** Blocks production
-- **Where:** the hosting control panel
-- **Your time:** 5 minutes, once the properties exist
-- **Tracker:** `A-09`, `Q-M19`
+- **Status:** **Not a blocker. Deliberately deferred, and safe to launch without.**
+- **Where:** the codebase first, the hosting control panel last
+- **Tracker:** `M-P2-ANALYTICS` (master), superseding `A-09` and `Q-M19`
+- **Legal:** `COOKIE-POLICY.md` §4 and §4A · `PRIVACY-POLICY.md` §6A and §11A ·
+  `01-FACTUAL-INVENTORY.md` §4 · `03-REVISION-LOG.md` round 10
 
-`Q-M19` was resolved for **development**. CI runs against deliberate placeholders
-(`G-CIPLACEHOLDER`, `phc_ci_placeholder_not_a_real_project_key`) and the row says in terms:
-*"Live ids go in the platform environment at launch."* Nothing injects without them, and a
-placeholder in production would send real visitor data to a property nobody owns. PostHog must
-stay on the **EU** host.
+**This item used to read "set the live GA4 and PostHog ids in the platform environment". It is
+superseded, and the ids no longer do anything at all.** On 26 August 2026 you took OQ-7 option 2:
+measurement had established that GA4 and PostHog were loading on consent and **never
+initialising** — no `gtag('config')`, no `posthog.init()`, `window.gtag` undefined,
+`posthog.__loaded` false, and `gs_consent` the only cookie in any of the three states. Consent was
+being collected for two libraries that recorded nothing while every accepting visitor's IP address
+and user-agent still reached Google and PostHog. Your reasoning, recorded as the basis of the
+decision: *"There is no traffic, so option 2 costs zero measurement today, which makes option 3
+pure liability with nothing on the other side."*
+
+So the scripts, the three consent categories and the `NEXT_PUBLIC_GA4_ID` /
+`NEXT_PUBLIC_POSTHOG_KEY` / `NEXT_PUBLIC_POSTHOG_HOST` variables are gone from the code, from
+`.env.example` and from CI. **Setting them anywhere now has no effect.**
+
+**Option 1 — wiring analytics up properly — is this item, and it is a real task, not a
+regret.** The reason to do it is that the site currently measures nothing about itself, and the
+day there is traffic that becomes a genuine cost. The reason it is not urgent is the same fact
+that made option 2 free: there is no traffic yet.
+
+**Two things are prerequisites, not follow-ups. Doing them afterwards is worse than not doing
+the task at all:**
+
+1. **`L-07` — the `consent_events` table — must exist and be written to BEFORE any library is
+   initialised.** The moment a tag initialises, the site stores non-essential information on the
+   visitor's device and relies on consent to do it. PECR reg. 6 then applies at its **higher**
+   penalty tier — £17.5m or 4% of worldwide turnover (CLAUDE.md non-negotiable #7) — while UK
+   GDPR Art. 7(1) demands the controller be able to **demonstrate** the consent, and today the
+   only record of a choice is a cookie in the visitor's own browser with no timestamp, no policy
+   version and no identifier. Initialising first therefore lands in a **worse position than
+   either today's or the pre-removal one**: full exposure, no evidence. `PRIVACY-POLICY.md` §11A
+   holds the open decision; option (a) there is this prerequisite.
+
+2. **The `dataLayer` shim is a defect and must be fixed and re-proved BEFORE initialising.**
+   The removed `lib/consent/state.ts:74` pushed a plain array — `['consent','update',{…}]` —
+   where Google Consent Mode's contract is an `arguments` object produced by a `gtag()` shim
+   (`function gtag(){dataLayer.push(arguments)}`). A plain array is not that object, so **the
+   queued denied-default may never be honoured**, and the failure is silent: the queue looks
+   populated and the tag reads nothing from it. That is the shape of claim CLAUDE.md warns about
+   — one that reads as working and is not.
+   **Whether it is honoured must be settled by measurement, not by reading**, exactly as the
+   round 6 finding was: load a production build with a real id, initialise, and observe whether
+   `_ga` appears before a grant. Do not accept a source reading in either direction.
+
+**Then, and only then, the order of the rest:**
+
+3. Settle `COOKIE-POLICY.md` §4A — **consent, or the PECR Sch. A1 para. 5 statistical-purposes
+   exception**. It is `[STILL OPEN]` and the ICO's published conditions are set out there
+   verbatim. It changes the banner's behaviour and the policy together, so it comes before code.
+   If consent: the Accept/Reject pair returns to the banner, visually identical, per
+   `PROJECT-RULES.md` §7 — the banner's own source comment records that requirement.
+4. Restore the consent category or categories the answer to (3) requires, and **only** those.
+   Do not restore `ad_storage` or `functionality_storage` to "declare the signal": that is what
+   was removed, and nothing on this site sets an advertising or preference cookie.
+5. Rewrite, in the **same commit as the code**: `COOKIE-POLICY.md` §2 and §4,
+   `PRIVACY-POLICY.md` §6A, and the cookie tables. At that point `_ga`, `_ga_*` and a PostHog
+   identifier begin to exist and every published table becomes an understatement.
+6. Update `scripts/check-axe.mjs`. Its cookie-notice path asserts that **no analytics host is
+   contacted in any state** and that the notice offers no category control; both become wrong
+   together. Re-prove each new assertion by deliberate failure and record which message fired.
+7. Only now put the live ids in the platform environment, and keep PostHog on the **EU** host —
+   a UK site posting behavioural data to PostHog's US default is a UK GDPR Chapter V transfer,
+   and the failure is silent because everything works and only the jurisdiction is wrong.
+8. Re-measure in a browser, in every state, and write the reading into `03-REVISION-LOG.md`.
+   Both previous readings of this subsystem were settled that way and both times the source was
+   wrong.
+
+`lib/analytics/events.ts` and `lib/analytics/referral.ts` were deliberately kept and are
+unreferenced today. They are the event taxonomy and the AI-referral classifier that FOUNDATION
+specifies, and this task starts from them.
 
 ### 23. Set `CRON_SECRET` and `SUPABASE_SERVICE_ROLE_KEY` in Vercel
 
@@ -444,8 +509,11 @@ position while it stands.
   accordingly. **Do not let anyone reword them** — a paraphrased review is an invented one.
 - The enquiry pipeline works end to end and has been verified against the live database and a
   real email send, not against the source it was written from.
-- Consent is compliant and gated: nothing is stored and nothing is requested before a choice,
-  asserted on every route on every build.
+- **There is no analytics and no consent to collect** (26 Aug 2026, item 22). Nothing
+  non-essential is stored and no third-party request is made in any state; the one cookie is
+  `gs_consent`, which records only that the cookie notice was seen. Asserted in a real browser on
+  every route on every build, before and after the notice is dismissed, and for a visitor still
+  carrying a pre-removal cookie.
 - 21 gates run on every commit. All are green.
 
 ---

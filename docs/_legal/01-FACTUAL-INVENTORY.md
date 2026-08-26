@@ -21,6 +21,15 @@ directly in each of the three consent states.
 
 ---
 
+> **⚠ SUPERSEDED IN PART — 26 August 2026, round 10.** This inventory is a **dated record of what was
+> observed**, and it is not rewritten when the site changes; it is annotated. On 26 August 2026 the
+> owner took OQ-7 option 2 and the analytics scripts and **all three consent categories were removed
+> from the site**. Everything below about GA4, PostHog and the consent categories describes the site
+> **as it was before that change** and is retained as evidence of what the removal was a response to.
+> The current state is `COOKIE-POLICY.md` §4, `PRIVACY-POLICY.md` §6A and `03-REVISION-LOG.md` round 10.
+> **Superseding notes are marked `⟶ ROUND 10` at each affected §.** OQ-7 and OQ-10 are answered by the
+> removal; **OQ-5, OQ-11 and OQ-21 are not** — see §6.
+
 ## 1. Processors and data regions
 
 ### 1.1 Summary
@@ -31,8 +40,8 @@ directly in each of the three consent states.
 | **Supabase** | Processor | Every lead-form field (§3) | Project ref `dqiutgmxillhsbzgnlsx` (`PROJECT_URL`, `.env.local`) — **region not established** → OQ-2 | IMPLEMENTED |
 | **Vercel** | Processor | Request metadata for every visitor; lead payload transits the Server Action | `vercel.json:1-10` — framework + one cron. **No region pinned in config** → OQ-3 | IMPLEMENTED (hosting moved 20 Aug 2026) |
 | **Resend** | Processor | Name, email, company, phone, division, lead type, service slug, record id | `https://api.resend.com/emails` — `lib/leads/notify.ts:101`. No region parameter sent → OQ-4 | IMPLEMENTED |
-| **GA4 / Google** | Processor (contested; Google acts as controller for some purposes) → OQ-5 | Nothing observed — see §1.3 | `https://www.googletagmanager.com/gtag/js?id=…` — `lib/analytics/load.ts:74`. Measurement id `G-CB4NWWYRQ1` (`.env.local`) | Script **loads on grant but is never initialised** — §1.3 |
-| **PostHog** | Processor | Nothing observed — see §1.3 | `https://eu.i.posthog.com` — `lib/analytics/config.ts:20`, enforced EU-only at `lib/analytics/load.ts:76-85` and `lib/analytics/posthog-region.ts:15-19` | Script **loads on grant but is never initialised** — §1.3 |
+| **GA4 / Google** | ~~Processor (contested)~~ → **not a processor: removed** | ~~Nothing observed~~ | ~~`googletagmanager.com/gtag/js`~~ | **⟶ ROUND 10: REMOVED.** `lib/analytics/load.ts` deleted; no request in any state |
+| **PostHog** | ~~Processor~~ → **not a processor: removed** | ~~Nothing observed~~ | ~~`https://eu.i.posthog.com`~~ | **⟶ ROUND 10: REMOVED.** `lib/analytics/{load,config,posthog-region}.ts` deleted |
 | **Slack** | Processor | Division, full name, lead type | `SLACK_LEADS_WEBHOOK` — `lib/leads/notify.ts:125-133` | **Code path live; variable unset, so it skips.** Undocumented processor → §1.4, OQ-6 |
 
 ### 1.2 Hostinger sweep
@@ -52,6 +61,12 @@ matches are in documentation and all are already marked superseded:
 asserts Hostinger. Any Hostinger reference *inside* the drafts is a Pass 2 finding.
 
 ### 1.3 GA4 and PostHog do not initialise — observed, not inferred
+
+**⟶ ROUND 10, 26 August 2026: this finding was acted on and the subject is gone.** The owner's decision
+was that a script which transmits the visitor's IP and user-agent while recording nothing is liability
+with nothing on the other side, so both libraries were deleted rather than initialised. The
+observations below stand as the record of the state that produced the decision; the file and line
+references in them point at files that no longer exist. **Do not read this § as current.**
 
 This is the single most consequential processor finding. After **Accept**, on the running site:
 
@@ -102,6 +117,12 @@ Value format (`lib/consent/state.ts:34, 47-48`): the granted category names, com
 URL-encoded; the literal string `0` means an explicit reject. Observed values below.
 
 ### 2.2 The three observed states
+
+**⟶ ROUND 10: there are no longer three states.** There is no Accept and no Reject; the banner is a
+notice with one control. The table below records the pre-removal site. The post-removal measurement, in
+the equivalent states, is in `03-REVISION-LOG.md` round 10: no third-party request in any state,
+`localStorage` and `sessionStorage` empty throughout, and `gs_consent` the only cookie — now holding
+`1`.
 
 | | State (a) before any choice | State (b) after **Accept** | State (c) after **Reject** |
 |---|---|---|---|
@@ -221,7 +242,20 @@ This matches the declared state: RLS on all three tables (`0001_core.sql:85-87`)
 
 ## 4. Consent categories, verbatim
 
-### 4.1 The categories
+**⟶ ROUND 10, 26 August 2026: THERE ARE NO CONSENT CATEGORIES.** All three were removed from
+`lib/consent/state.ts` and from the banner, together with the analytics injection that was the only
+thing consuming one of them. `CATEGORIES`, `DENIED`, `readConsent`, `writeConsent` and `applyConsent`
+no longer exist; `state.ts` exports `COOKIE`, `noticeSeen()` and `markNoticeSeen()` and touches
+`dataLayer` not at all. The banner is a notice with one control and no form control of any kind, which
+`check:axe` asserts in the browser on every run. **§4.1 and §4.2 below are the pre-removal record**,
+retained because §4.1's own finding — that two of the three toggles gated nothing — is what the
+decision acted on. **OQ-10 is answered: option (a), and it reached all three toggles rather than two.**
+
+The current, complete storage position: one cookie, `gs_consent`, holding `1`, strictly necessary under
+PECR Sch. A1 para. 4. Cookies written before this change carry the old category names and are read for
+presence only — nothing reads the value, and they are deliberately not rewritten.
+
+### 4.1 The categories — as they were until 26 August 2026
 
 Three, declared at `lib/consent/state.ts:13` as Google Consent Mode v2 names used verbatim:
 
@@ -478,6 +512,9 @@ unset variable is a build error (`sanity/env.ts:31-39`), and `check:launch-conte
 (`scripts/seed-legal.mjs:13`) — e.g. the seeded cookie policy asserts *"Analytics data: retained for 14
 months"* (`seed-legal.mjs:128`), which is a `[DECISION]` default, not a configured setting. **Nothing
 in the codebase configures a GA4 retention period**, and per §1.3 GA4 is not initialised at all. → OQ-21
+**⟶ ROUND 10: the seeded assertion was removed from `seed-legal.mjs` rather than left as a default**,
+because there is now no analytics data to retain. **OQ-21 stays open** as a question for the day
+analytics returns — it is not answered by having nothing to retain.
 
 ---
 
@@ -485,10 +522,10 @@ in the codebase configures a GA4 retention period**, and per §1.3 GA4 is not in
 
 | Thing | State |
 |---|---|
-| Consent banner, three categories, default-denied, reject parity, reopen | IMPLEMENTED |
-| Consent-gated script injection | IMPLEMENTED |
-| GA4 / PostHog **initialisation and event capture** | **NOT BUILT** (§1.3) |
-| `consent_events` audit trail (`L-07`) | **NOT BUILT** |
+| Cookie notice, one control, no categories, reopen | IMPLEMENTED — **⟶ ROUND 10**, replaces "consent banner, three categories, default-denied, reject parity" |
+| Consent-gated script injection | **REMOVED ⟶ ROUND 10** — there is nothing to gate |
+| GA4 / PostHog **initialisation and event capture** | **REMOVED ⟶ ROUND 10**, was NOT BUILT (§1.3). Re-introducing it is `BEFORE-LAUNCH.md` §"Analytics" |
+| `consent_events` audit trail (`L-07`) | **NOT BUILT** — and now a stated **prerequisite** of re-introducing analytics, not a follow-up |
 | Lead capture → Supabase → Resend | IMPLEMENTED |
 | Slack notification | Code path IMPLEMENTED; unconfigured |
 | Lead **retention / erasure** | **NOT IMPLEMENTED** |
@@ -523,20 +560,23 @@ running site. None has been filled with a default.
    settings, not code, and cannot be read from the repository.
 6. **Slack**: is it intended to be enabled? If so it becomes a processor receiving enquirers' names,
    and needs to appear in the privacy notice and a DPA before `SLACK_LEADS_WEBHOOK` is set.
-7. **Should the drafts describe GA4/PostHog as they are (script loaded, never initialised, no data
-   collected, no analytics cookie) or as intended?** A cookie policy listing `_ga` and `ph_*` cookies
-   today would describe cookies that do not exist. This is a choice about whether to document
-   current or planned behaviour, and it changes the cookie table materially.
+7. ~~**Should the drafts describe GA4/PostHog as they are or as intended?**~~ **ANSWERED — 26 August
+   2026, option 2: neither. The libraries were removed.** Owner's reasoning, recorded as the basis:
+   *"There is no traffic, so this costs zero measurement today, which makes keeping it pure liability
+   with nothing on the other side."* The drafts describe a site with no analytics. Re-introducing it
+   is a deliberate pre-launch task with prerequisites — `docs/_shared/BEFORE-LAUNCH.md` §"Analytics".
 8. **Vercel platform logging.** The application captures no IP or user-agent, but the hosting platform
    does. What is retained, where, and for how long?
 9. **Lead retention period.** Nothing is implemented and nothing is scheduled. What period should the
    privacy notice state, and who will build the deletion job?
-10. **`ad_storage` and `functionality_storage` gate nothing.** Should the banner keep offering two
-    toggles that control no behaviour? Offering a switch that does nothing is itself a
-    representation to the visitor.
-11. **No consent audit trail exists.** The only record of a consent choice is a cookie in the
-    visitor's own browser, with no timestamp and no version. Is that acceptable, or must `L-07` be
-    built before launch?
+10. ~~**`ad_storage` and `functionality_storage` gate nothing.**~~ **ANSWERED — removed, and so was
+    `analytics_storage`.** The same reasoning reached the third toggle once the scripts went: it
+    gated two libraries that recorded nothing. `COOKIE-POLICY.md` §4B carries the `[DECISION TAKEN]`.
+11. **No consent audit trail exists.** The only record is a cookie in the visitor's own browser, with
+    no timestamp and no version. **STILL OPEN.** Round 10 makes it moot *today* — nothing relies on
+    consent, so Art. 7(1) is not engaged — but it does not answer it. `L-07` is now recorded as a
+    **prerequisite** of re-introducing analytics rather than a follow-up
+    (`docs/_shared/BEFORE-LAUNCH.md` §"Analytics", `PRIVACY-POLICY.md` §11A).
 12. **`/gridsmith-lead-probe` and `/gridsmith-timeout-probe`** are route handlers excluded at
     *runtime*, not removed from the production build (`next.config.ts:51-57`). Confirm they cannot
     accept a real submission on the live site.
@@ -567,8 +607,9 @@ running site. None has been filled with a default.
 20. **Testimonials.** `Testimonials.tsx:16` says six are real public Freelancer reviews. Confirm the
     reviewers consented to being quoted on the company website, and that the attributions shown are
     accurate.
-21. **Analytics retention.** The seeded cookie policy states 14 months as a `[DECISION]` default. No
-    code configures any retention. Confirm the intended GA4 and PostHog retention settings.
+21. **Analytics retention.** **STILL OPEN, deferred.** The seeded 14-month `[DECISION]` default has
+    been removed from `seed-legal.mjs` rather than left standing, because there is no analytics data.
+    The question returns with the analytics.
 
 ---
 

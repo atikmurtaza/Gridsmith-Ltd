@@ -8,7 +8,7 @@
 registered office `[TK]`.
 **ICO registration:** `[TK]`
 **Contact:** `[TK email]`
-**Version:** 1.2 · **Effective from:** `[TK]` · **Status: DRAFT — not for publication until reviewed**
+**Version:** 1.3 · **Effective from:** `[TK]` · **Status: DRAFT — not for publication until reviewed**
 
 Drafted against UK GDPR and the Data Protection Act 2018 **as amended by the Data (Use and Access) Act
 2025** — main provisions in force **5 February 2026**, the direct-complaints duty in force **19 June
@@ -74,11 +74,13 @@ it is what decides whether the fee is owed at all — which is the open question
 
 - **"Interaction data — pages viewed, referrer, device type, approximate location from IP" has been
   removed.** No such data is collected. `01-FACTUAL-INVENTORY.md` §1.3: neither Google Analytics 4 nor
-  PostHog is ever initialised — `window.gtag` is `undefined` and `window.posthog.__loaded` is `false`
-  even after Accept. No behavioural event, identifier or persisted storage is produced. See §6A.
+  PostHog was ever initialised — `window.gtag` was `undefined` and `window.posthog.__loaded` was
+  `false` even after Accept. **At revision 1.3 both libraries were removed from the site altogether**,
+  so the row is not merely unpopulated, there is nothing that could populate it. See §6A.
 - **"A random consent identifier … the policy version" has been removed.** No such record exists.
-  `01-FACTUAL-INVENTORY.md` §4.3: the only consent record is a first-party cookie holding the granted
-  category names, with **no timestamp, no version and no identifier**. See §11A.
+  `01-FACTUAL-INVENTORY.md` §4.3: the only cookie is a first-party one recording that you have seen the
+  cookie notice, with **no timestamp, no version and no identifier**. At revision 1.3 there are no
+  consent categories at all, so it records no choice either. See §11A.
 - **`created_at` has been added.** It is stamped automatically on every submission
   (`0001_core.sql:27`) and a visitor would not think of it as a form field.
 - **The database schema accepts several further fields that no form on this site sends.** They are
@@ -185,7 +187,9 @@ taken. -->
 
 **Rows removed at revision 1.1:** "Sending you a sample pack, estimate or assessment you requested" —
 no such flow exists (`01-FACTUAL-INVENTORY.md` §7). "Analytics and performance measurement — consent" —
-retained in §6A instead, where the fact that nothing is collected can be stated alongside it.
+retained in §6A instead, where the fact that nothing is collected can be stated alongside it. **At
+revision 1.3 that purpose has no lawful basis row because it has no processing:** the analytics
+libraries are removed and there is no consent category to rely on.
 
 Where we rely on legitimate interests, we have assessed that our interest in operating and improving a
 professional services business does not override your rights. `[TK — that assessment (an LIA) does not
@@ -309,59 +313,50 @@ they are, what data reaches them, or where. It is retained as an open item rathe
 because a privacy notice must not describe a transfer it cannot particularise — and must not omit one
 that is real. The owner must confirm which it is.]`
 
-## 6A. Analytics — what actually happens today
+## 6A. Analytics — there is none
 <!-- L-PECR-6 -->
 <!-- L-GDPR-13 -->
 
-**NEW — added at revision 1.1, and it corrects version 1.0's most consequential inaccuracy.**
+**REWRITTEN at revision 1.3, 26 August 2026, and this time the site changed rather than the wording.**
 
-Version 1.0 said we collect "pages viewed, referrer, device type, approximate location from IP" with
-consent. **We do not.** Observed on the running site in all three consent states
-(`01-FACTUAL-INVENTORY.md` §1.3, §2.2):
+**We do not use analytics.** No Google Analytics, no PostHog, no product analytics, no heatmaps, no
+session recording, no advertising or retargeting pixel. Nothing on this site measures your visit, and
+**no third-party request of any kind is made in any state** — before the cookie notice, after
+dismissing it, or on any later visit.
 
-- Before you make a choice, **no third-party request is made at all**.
-- If you **accept**, and **only where a Google Analytics measurement id or a PostHog key is
-  configured for the environment serving this site**, two scripts are requested —
-  `googletagmanager.com/gtag/js` and `eu.i.posthog.com/static/array.js`. Requesting a script sends
-  your IP address and browser user-agent to Google and to PostHog, because every HTTP request does.
-  That is the whole of what they receive. **Where neither id is configured, accepting requests
-  nothing at all**, because each injection is conditional on its own id being present.
-- **Neither library is ever initialised, in any environment.** No `gtag('config')` call and no
-  `posthog.init()` call exists anywhere in our code. No analytics cookie is set, no event is
-  recorded, no identifier is created, and nothing is stored in your browser. This does not depend on
-  configuration — the call simply does not exist.
-- If you **reject**, no third-party request is made and no script is injected.
+**What was here before, and why it went.** Version 1.1 and 1.2 described a site that requested two
+scripts when a visitor accepted — `googletagmanager.com/gtag/js` and `eu.i.posthog.com/static/array.js`
+— and recorded, accurately, that **neither library was ever initialised**: no `gtag('config')` call and
+no `posthog.init()` call existed, so no analytics cookie was set, no event was recorded and no
+identifier was created. Requesting a script nonetheless sends your IP address and browser user-agent to
+the host serving it, because every HTTP request does. So the arrangement disclosed something about
+every accepting visitor to two third parties and collected nothing in return. **On 26 August 2026 the
+scripts and the consent categories were deleted** rather than the libraries being switched on.
 
-<!-- Corrected 26 August 2026, round 7, per 04-VERIFICATION-REPORT.md §2.12. The two-script sentence
-was stated unconditionally. lib/analytics/load.ts guards each injection on its own id — `if (GA4_ID)`
-and `if (POSTHOG_KEY)` — and lib/analytics/config.ts derives both from NEXT_PUBLIC_* variables
-defaulting to ''. The unconditional form was a true observation of a development environment
-generalised into a statement about every environment, and it was wrong in the visitor's favour for any
-environment where the ids are unset. That matters at publication: the live platform's variables are a
-different set and are not yet established.
-The non-initialisation half is NOT conditional and is stated unconditionally on purpose. It was
-settled by measurement on 26 August 2026 — 03-REVISION-LOG.md round 6 — on a local production build
-where the served page's own `window.__gsAnalyticsConfigured` reported both ids present: gtag/js and
-array.js both loaded and executed, `window.gtag` stayed undefined, `window.posthog.__loaded` stayed
-false, and the ONLY cookie in any of the three consent states was `gs_consent`. That measurement is
-not to be re-litigated from source; if it is ever to be revisited, it is to be revisited by loading
-the site again. -->
-<!-- L-PECR-6 — note which half of this section the regulation reaches. reg. 6 catches storing
-information in, or gaining access to information stored in, terminal equipment. Requesting a script
-does neither; it is the initialisation that would. This is why the conditional sentence above is about
-accuracy to the visitor rather than about exposure under reg. 6. -->
-<!-- L-GDPR-44A — a script request sends the visitor's IP address to Google and to PostHog. Whether
-that is a restricted transfer, and on what basis, is unresolved and sits with §6C's open item. -->
+**Consequences for you, stated rather than implied:**
 
-`[TK — which analytics ids, if any, are set on the live platform environment. Round 6 established that
-Vercel production is not currently reachable at all (no deployment behind the production alias) and
-that preview deployments are behind SSO, so no reading has ever been taken from the environment this
-notice will actually be published from. This sentence must be checked against that environment before
-publication.]`
+- Your IP address and user-agent are no longer sent to Google or to PostHog at all, in any state.
+- There is no analytics dataset, no analytics retention period and no analytics processor, because
+  there is nothing to retain and nobody to process it.
+- There is no analytics consent to give or withdraw. §11A's demonstrability question is not engaged.
 
-So today there is no analytics dataset, and no analytics retention period, because there is nothing to
-retain. **This section must be rewritten the day either library is initialised**, and that change also
-turns on `L-PECR-CONSENT-EVIDENCE` — see §11A.
+<!-- Rewritten 26 August 2026, round 10. This section and COOKIE-POLICY.md §4 say the same thing and
+change together or not at all — that pairing was established at round 7 and survives the rewrite.
+Basis: 03-REVISION-LOG.md round 6 established by measurement (local production build, both ids
+confirmed present on the served page via `window.__gsAnalyticsConfigured`, all three consent states)
+that the libraries loaded and never initialised; round 10 records the owner's decision on that finding
+and re-measured the same three states after the removal. lib/analytics/load.ts, lib/analytics/config.ts
+and lib/analytics/posthog-region.ts are deleted; lib/consent/state.ts has no categories.
+**If analytics is ever re-introduced this section is rewritten in the same commit as the code**, along
+with COOKIE-POLICY.md §2 and §4 — see docs/_shared/BEFORE-LAUNCH.md §"Analytics", whose prerequisites
+(L-07 and the dataLayer shim defect) are conditions, not follow-ups. -->
+<!-- L-GDPR-44A — the restricted-transfer question that hung on the script request is resolved by the
+request no longer being made. It returns with the request, and §6C's open item is the place it returns
+to. -->
+<!-- The revision 1.2 `[TK]` "which analytics ids, if any, are set on the live platform environment" is
+CLOSED, not deferred: NEXT_PUBLIC_GA4_ID and NEXT_PUBLIC_POSTHOG_KEY are read by no code, so their
+value on any environment has no effect on what this section says. They have been removed from
+.env.example and from CI. -->
 
 ## 6B. Our hosting provider's own logs
 <!-- L-GDPR-13 -->
@@ -404,8 +399,8 @@ is `/api/rls-drift`, which is a security check. Enquiry data currently accumulat
 | Enquiries that do not become clients | `[TK]` | **Nothing implemented.** OQ-9 |
 | Client records | `[TK]` | Held outside this website |
 | Contracts | `[TK]` | Held outside this website |
-| Consent choice | 365 days | Implemented — it is the `Max-Age` on the `gs_consent` cookie in your own browser |
-| Analytics | Not applicable | Nothing is collected — see §6A |
+| Cookie-notice acknowledgement | 365 days | Implemented — it is the `Max-Age` on the `gs_consent` cookie in your own browser |
+| Analytics | Not applicable | There is no analytics — see §6A |
 
 > **[DECISION REQUIRED] — the enquiry retention period, and who builds the deletion.** Art. 13(2)(a)
 > requires this notice to state either a period or the criteria for determining one, and Art. 5(1)(e)
@@ -481,11 +476,14 @@ footer.
 keep "a random consent identifier, your choice, which categories you selected, and the version of this
 policy in force … for 24 months". **No such record exists.**
 
-What actually exists (`01-FACTUAL-INVENTORY.md` §4.3): a first-party cookie in your own browser holding
-the names of the categories you granted, or the single character `0` if you refused. **No timestamp, no
-version, no identifier, and no server-side record.** The `consent_events` table described in our
-internal specification **has not been built**. You can delete the cookie, and then no record of your
-choice exists anywhere.
+What actually exists (`01-FACTUAL-INVENTORY.md` §4.3): a first-party cookie in your own browser
+recording that you have seen the cookie notice. **No timestamp, no version, no identifier, and no
+server-side record.** The `consent_events` table described in our internal specification **has not been
+built**.
+
+**Revised at revision 1.3.** There are now no consent categories, so the cookie records no choice — it
+holds the single character `1`. Cookies set before 26 August 2026 still carry the old category names;
+nothing reads them and they are not overwritten (`COOKIE-POLICY.md` §2).
 
 > **[DECISION REQUIRED] — consent evidence.** Art. 7(1) requires a controller relying on consent to be
 > **able to demonstrate** that consent was given. Options:
@@ -498,6 +496,17 @@ choice exists anywhere.
 > Option (c) is currently defensible for one reason only: **nothing consent-gated collects anything
 > today** (§6A), so there is no consent-based processing to demonstrate. That defence evaporates on the
 > day either analytics library is initialised, and the code that initialises it will not know that.
+
+**[STILL OPEN — 26 August 2026, revision 1.3.]** Revision 1.3 removed the analytics libraries, so this
+site relies on consent for nothing and Art. 7(1) is not engaged today. **That is not an answer to this
+decision and must not be recorded as one.** The gap is unchanged: there is still no server-side consent
+record, and it becomes live again the moment anything non-essential returns. Option (a) —
+building `L-07` (`consent_events`) — is therefore written into `docs/_shared/BEFORE-LAUNCH.md`
+§"Analytics" as a **prerequisite of re-introducing analytics, not a follow-up to it**. Initialising
+first would engage PECR reg. 6's higher penalty tier (CLAUDE.md non-negotiable #7) while leaving
+demonstrability unmet — worse than either today's position or version 1.2's. The sentence above about
+the initialising code not knowing this is exactly why the requirement now sits in the launch checklist
+rather than only in this notice.
 
 ## 12. Complaints
 <!-- L-DPA-164A -->
@@ -560,9 +569,17 @@ Vercel, Resend) · the transfer mechanism relied on for each · Vercel's platfor
 enquiry retention period **and the job that enforces it** · the electronic complaint form · the written
 legitimate-interests assessment · the process for handling an erasure request · whether affiliated
 production entities exist and what reaches them · whether a honeypot or rate limit is built before
-launch · the ROPA · **which analytics ids, if any, are set on the live platform environment (§6A)** ·
+launch · the ROPA ·
 **what information is a contractual or statutory requirement once someone becomes a client, and what
 follows from declining to give it (§2A)**.
 
 **`[DECISION REQUIRED]` items:** Slack (§6) · the enquiry retention period (§7) · consent evidence
-versus the statistical-purposes exception (§11A) · the complaint acknowledgement window (§12).
+versus the statistical-purposes exception (§11A — **still open**; revision 1.3 removed the processing
+rather than answering it) · the complaint acknowledgement window (§12).
+
+**Revision 1.3, 26 August 2026 — round 10.** §6A rewritten: the analytics libraries and all three
+consent categories are removed from the site, so there is no analytics and no analytics consent. §2's
+correction notes, §4's lawful-basis note, §7's retention table and §11A are updated to match, and
+COOKIE-POLICY.md §1–§4, §6 and §7 change in the same commit. One `[TK]` is closed — which analytics ids
+are set on the live platform environment — because no code reads them. §11A's `[DECISION REQUIRED]` is
+**not** closed.

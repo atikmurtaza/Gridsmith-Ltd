@@ -149,7 +149,7 @@ collapsing to the stricter standard.
 | **what it requires** | A transfer to a third country may take place only where approved by regulations under Art. 45A, or subject to appropriate safeguards under Art. 46, or within an Art. 49 derogation. Art. 45B replaces the old adequacy test with **the "data protection test"**: whether the standard of protection in the receiving country or for the receiving organisation **is not materially lower than** the standard under the UK GDPR and DPA 2018. |
 | **primary source** | https://www.legislation.gov.uk/eur/2016/679/chapter/V |
 | **applies to** | all |
-| **engaged here because** | Inventory §1.1 — the region of **Sanity (OQ-1), Supabase (OQ-2), Vercel (OQ-3) and Resend (OQ-4) is unestablished**, and OQ-2 states explicitly that the live Supabase project's region "must not be assumed to be EU". PostHog is the one processor pinned EU-only in code (`lib/analytics/posthog-region.ts:15-19`). |
+| **engaged here because** | Inventory §1.1 — the region of **Sanity (OQ-1), Supabase (OQ-2), Vercel (OQ-3) and Resend (OQ-4) is unestablished**, and OQ-2 states explicitly that the live Supabase project's region "must not be assumed to be EU". ~~PostHog is the one processor pinned EU-only in code (`lib/analytics/posthog-region.ts:15-19`).~~ **PostHog is no longer a processor at all — removed at round 10, along with that file.** The four unestablished regions are unaffected and this citation stands on them. |
 | **status in this build** | **cannot tell — and it is the largest single unknown.** Any transfer clause in the drafts naming "adequacy decisions" or Art. 45 is citing text that was **omitted on 5 Feb 2026**. |
 
 ### L-GDPR-30 — records of processing
@@ -228,8 +228,8 @@ showed the proposed correction was also wrong on the tiering.
 | **what it requires** | Consent must be freely given, specific, informed and unambiguous, by a statement or clear affirmative action. Art. 7(3): the data subject has the right to withdraw consent at any time, and **it must be as easy to withdraw as to give**. |
 | **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/4 · https://www.legislation.gov.uk/eur/2016/679/article/7 |
 | **applies to** | all |
-| **engaged here because** | Inventory §4.2 — Accept and Reject share one CSS class and one width (`ConsentBanner.tsx:176, 179`); every category defaults to denied; nothing is stored until a button is pressed; per-category granularity exists one level in via Preferences; withdrawal is a persistent footer control, `Cookie preferences`, verified in the live footer. |
-| **status in this build** | **satisfied on parity, granularity and withdrawal.** One live issue: §4.1 — **`ad_storage` and `functionality_storage` are offered as toggles but no code branches on them**; only `analytics_storage` gates anything. Offering a control that does nothing is a representation to the visitor (OQ-10) and bears on "informed". |
+| **engaged here because** | ~~Inventory §4.2 — Accept and Reject share one CSS class and one width; every category defaults to denied; per-category granularity via Preferences; withdrawal is a persistent footer control.~~ **Not engaged since 26 Aug 2026 (round 10).** Art. 4(11) governs the quality of a consent, and Art. 7(3) the ease of withdrawing one. **No consent is sought and none is relied on**: the analytics injection and all three consent categories are removed, so there is no non-essential storage and PECR reg. 6(2) is not engaged for anything. |
+| **status in this build** | **The obligation is now discharged differently: by having nothing to consent to, rather than by consenting well.** The live issue this row used to carry — `ad_storage` and `functionality_storage` offered as toggles that no code branches on, which bore on whether the consent was *informed* — is **resolved by removal (OQ-10 answered)**, and `analytics_storage` went with the scripts. The banner is a notice with one control and no form control of any kind; the footer link is relabelled **"Cookie notice"** because there are no preferences. `check:axe` asserts both in a browser. **This citation becomes live again, unchanged, the moment any non-essential storage returns** — `BEFORE-LAUNCH.md` item 22 carries the parity requirement, and the banner's CSS keeps the single shared button class for it. |
 
 ### L-PECR-CONSENT-EVIDENCE — demonstrating consent
 
@@ -242,7 +242,7 @@ showed the proposed correction was also wrong on the tiering.
 | **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/7 |
 | **applies to** | all |
 | **engaged here because** | Inventory §4.3 — the consent record holds **the granted category names only, with no timestamp, no version, and no record of the banner text shown**, in a cookie in the visitor's own browser which they can delete. **`consent_events` does not exist**; `L-07` is SPECIFIED-BUT-NOT-BUILT. "There is therefore no evidence of consent retained anywhere." OQ-11. |
-| **status in this build** | **not satisfied** as a matter of demonstrability. Note the mitigation: because nothing consent-gated actually collects data today (§1.3), there is currently no consent-based processing to demonstrate. That changes the day GA4 or PostHog is initialised. |
+| **status in this build** | **not satisfied** as a matter of demonstrability, and **not discharged — merely not engaged**. Since round 10 (26 Aug 2026) this site relies on consent for **nothing**: the analytics is deleted and there are no consent categories, so Art. 7(1) has no processing to attach to. The underlying gap is untouched — `consent_events` still does not exist, and the `gs_consent` cookie now records only that a notice was seen. **The mitigation is no longer "nothing collects anything yet" but "nothing asks for consent at all", which is a stronger position and an equally temporary one.** `L-07` is therefore recorded as a **prerequisite** of re-introducing analytics rather than a follow-up (`BEFORE-LAUNCH.md` item 22, `PRIVACY-POLICY.md` §11A): initialising a tag first would engage PECR reg. 6's higher penalty tier while leaving demonstrability unmet. OQ-11 stays open. |
 
 ### L-PECR-22 — electronic mail for direct marketing
 
@@ -793,9 +793,11 @@ be missing from the drafts.
    form to all three divisions, so nothing in the enquiry flow identifies which regime a buyer is in
    before an order is confirmed (`press/PRD.md` FR-P24).
 
-7. **`L-PECR-CONSENT-EVIDENCE` — no consent audit trail.** `consent_events` does not exist. Currently
-   mitigated only by the fact that nothing consent-gated collects anything (§1.3); the mitigation
-   evaporates the day GA4 or PostHog is initialised. OQ-11.
+7. **`L-PECR-CONSENT-EVIDENCE` — no consent audit trail.** `consent_events` does not exist. **Since
+   round 10 the site relies on consent for nothing at all**, so Art. 7(1) is not engaged — a stronger
+   mitigation than the previous one and just as temporary. It evaporates the day anything
+   non-essential returns, which is why `L-07` is now a **prerequisite** of that work rather than a
+   follow-up (`BEFORE-LAUNCH.md` item 22). OQ-11 stays open.
 
 8. **`L-GDPR-28` / `L-GDPR-13` — Slack as an undocumented processor.** A live code path transmits an
    enquirer's **full name** to Slack the moment `SLACK_LEADS_WEBHOOK` is set. It appears in no

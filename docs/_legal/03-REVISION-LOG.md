@@ -1525,3 +1525,186 @@ classification. **The stale ledger count at §5 — "31 obligations", unchanged 
 ---
 
 *End of round 9.*
+
+---
+
+# Round 10 — 26 August 2026: the owner's decision on the inert analytics, and the code that followed
+
+**This round is different from every round before it. Rounds 1–9 changed documents. This one changed
+the site, and the documents follow it.** Nine rounds of drafting had repeatedly recorded the same
+finding and left it open because it was the owner's to settle. It is now settled.
+
+## 1. The decision
+
+**Owner, 26 August 2026: OQ-7 option 2 — stop asking.** The options as they stood were:
+
+| | |
+|---|---|
+| **1** | Wire the analytics up properly — initialise GA4 and PostHog behind the existing consent |
+| **2** | **TAKEN.** Remove the analytics and the consent categories; ask for nothing |
+| **3** | Leave it as it is — consent collected, scripts loaded, nothing recorded |
+
+**The reasoning, recorded verbatim as the basis:**
+
+> There is no traffic, so option 2 costs zero measurement today, which makes option 3 pure liability
+> with nothing on the other side.
+
+**What it was a decision about.** Round 6 established by measurement — not by reading source — that
+GA4 and PostHog **loaded on consent and never initialised**: no `gtag('config')` call and no
+`posthog.init()` call existed anywhere, `window.gtag` stayed `undefined`, `posthog.__loaded` stayed
+`false`, and `gs_consent` was the only cookie in any of the three states. So consent was being
+collected for two libraries that recorded nothing, while every **accepting** visitor's IP address and
+user-agent still reached Google and PostHog, because requesting a script does that whatever the script
+then does. Version 1.2 of `COOKIE-POLICY.md` called this *"a defect in the build, not a claim of
+virtue"*. Option 3 was that defect, kept.
+
+## 2. What was removed from the site
+
+| Removed | Why |
+|---|---|
+| `lib/analytics/load.ts`, `config.ts`, `posthog-region.ts` | The injection itself. Removing the category without removing the injection would have fixed nothing — the transmission is the whole point of the decision |
+| `analytics_storage` | Its only consumer went with the injection |
+| `ad_storage` | Gated no code path. Declared only because Google Consent Mode v2 defines the signal; there is now no Google tag to read a default |
+| `functionality_storage` | Gated no code path. It was documented as gating `gs_design_track`, which has never existed |
+| The Consent Mode `dataLayer` bridge (`state.ts`) | It signalled categories that no longer exist — **and it was signalling them in the wrong shape** (§5) |
+| `NEXT_PUBLIC_GA4_ID`, `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | From `.env.example` and from CI. Setting them anywhere now has no effect |
+
+**`ad_storage` and `functionality_storage` were removed regardless of the analytics decision**, on the
+ground `COOKIE-POLICY.md` §4B had already identified: a control that changes nothing is a
+representation to the visitor about what they control, and bears on whether consent is *informed*
+under Art. 4(11). The same reasoning then reached `analytics_storage` once the scripts went.
+
+**Kept, deliberately:** `lib/analytics/events.ts` (the eleven-name closed taxonomy) and
+`lib/analytics/referral.ts` (the AI-referral classifier, with its own runnable self-check). Both are
+pure, transmit nothing, and are now unreferenced; each carries a header note saying so. They are the
+design work FOUNDATION specifies and the starting point for option 1.
+
+## 3. What the banner became
+
+**A notice, not a request.** There is no non-essential storage and no non-essential access, so PECR
+reg. 6(2) consent is not engaged and there is nothing to accept or reject. One control, "Got it".
+No toggles. `gs_consent` remains — exempt under **Sch. A1 para. 4** on the same reasoning as before,
+narrowed to its true purpose: it is what stops the notice appearing on every page. Its value is now
+the single character `1`.
+
+**`PROJECT-RULES.md` §7 (Accept/Reject parity) is not weakened.** It forbids making reject harder than
+accept. There is no accept. The rule, and the identically-treated button pair, return with the
+analytics — the banner's source comment and `BEFORE-LAUNCH.md` item 22 both carry that requirement,
+and the CSS class the two buttons shared is kept unchanged for it.
+
+**Existing visitors' cookies.** A `gs_consent` written before today carries the granted category names,
+or `0`. **It is read for presence only and is deliberately not rewritten.** Three reasons: the names
+now name nothing, since no code reads the value, so a stale grant cannot switch anything on; the cookie
+is the visitor's own record of what they were shown, and silently rewriting it to say something else is
+the misleading state the requirement was there to prevent; and re-prompting someone who has already
+dismissed a notice is noise. It expires on its own within 12 months. This is asserted in a browser —
+§6, branches A2.6 and A2.7.
+
+## 4. The measurement — taken after the change, in a real browser, on a production build
+
+Same method as round 6, and for the same reason: **this subsystem has been settled by measurement
+twice and the source was wrong both times.** `rm -rf .next`, `next build`, `next start` on port 3100,
+driven through the browser. Four states, because there are no longer three — Accept and Reject no
+longer exist, so the two legacy cookies stand in for what they used to produce.
+
+| State | `document.cookie` | `localStorage` | `sessionStorage` | Third-party requests | `dataLayer` | `window.gtag` | `window.posthog` |
+|---|---|---|---|---|---|---|---|
+| **A** — before any choice | *(empty)* | empty | empty | **none** | **absent** | `undefined` | `undefined` |
+| **B** — after "Got it" (replaces Accept) | `gs_consent=1` — **and nothing else** | empty | empty | **none** | **absent** | `undefined` | `undefined` |
+| **B2** — second route, cookie present | `gs_consent=1` | empty | empty | **none** | **absent** | — | — |
+| **C** — legacy cookie from a pre-removal **Accept** (`analytics_storage,ad_storage,functionality_storage`) | **unchanged, not rewritten** | empty | empty | **none** | **absent** | `undefined` | `undefined` |
+| **D** — legacy cookie from a pre-removal **Reject** (`gs_consent=0`) | **unchanged, not rewritten** | empty | empty | **none** | **absent** | `undefined` | `undefined` |
+
+**State C is the one that matters most and it is the one a source reading would have skipped.** It is
+the visitor who previously granted analytics: under the old code that grant loaded both scripts on
+every page. It now loads nothing, and the notice is not shown again.
+
+`window.__gsAnalyticsConfigured` is **no longer published**, which is correct — the object existed so
+that a gate could ask the page which ids the build had inlined, and no id is inlined any more.
+
+**Also verified:** the footer control is relabelled **"Cookie notice"** (there are no preferences to
+offer) and still reopens the notice; the notice is `role="region"` with `aria-labelledby`, one button,
+zero form controls.
+
+## 5. The `dataLayer` shim — recorded as a defect to fix *before* anything is initialised
+
+Round 6 noted, adjacent and not acted on, that `lib/consent/state.ts:74` pushed a **plain array**
+`['consent','update',{…}]` into `dataLayer` where Google Consent Mode's contract is an `arguments`
+object produced by a `gtag()` shim. A plain array is not that object, so **the queued denied-default
+may never be honoured**, and the failure is silent: the queue looks populated and the tag reads nothing
+from it.
+
+The shim is gone with the categories, so nothing is queued today. **It is recorded as a prerequisite,
+not a footnote** — `BEFORE-LAUNCH.md` item 22 item 2 — and with the instruction that whether the
+default is honoured must be **settled by measurement when the time comes, not by reading**. It is
+precisely the shape of claim that reads as working and is not.
+
+## 6. The gates — one hollow subject found and fixed, eight branches proven
+
+**Two `check-axe` assertions had their subject removed by this change**, and neither could be left:
+
+**(a) The `A-09` grant path** — fresh context, Accept, assert a request to each configured provider on
+an EU host; fresh context, Reject, assert silence. Every premise of it was gone. **Deleting it would
+have left the site's one legally load-bearing claim asserted only by the no-interaction sweeps**, which
+say nothing about what happens after a click. It is **inverted, not removed**: an interaction with the
+notice must contact nobody, in every state including the one that used to be a grant, plus the two
+migration assertions about a pre-removal cookie. It also no longer needs an id configured, which
+removes the `M-P1-6` premise-from-the-wrong-system problem by construction rather than managing it.
+
+**(b) The per-route "state of the unmade choice"** — it asserted a *denied* Consent Mode default was
+queued on first render. Left alone it would have failed every route; written to tolerate an empty
+queue it would have gone **hollow** — green while measuring nothing. It is inverted: **no Consent Mode
+signal may be queued at all**, on any route, in any category.
+
+**One hollow line was found by running the gate and reading its output.** `check:axe` passed, and then
+printed *"first render applied a denied default for every non-essential category on 14 themed
+route(s)"* — a specific, plausible, entirely unearned summary of an assertion that no longer checks
+that. Corrected. It is the class CLAUDE.md names: a summary line is not evidence a check ran.
+
+**Deliberate-failure proof, eight branches, each broken alone, `.next` removed and rebuilt each time:**
+
+| Broken | Fired |
+|---|---|
+| a Consent Mode signal queued in the banner | `a Consent Mode signal was queued: ["consent","update",{"analytics_storage":"granted"}]` — **28 times, one per themed route × viewport**, which is also the proof the loop reaches its subject: the count moved from 0 to 28 |
+| the notice never renders | `no cookie notice on a first visit with no cookie — the subject of this whole block is not there` **and** `the notice has no control to press` |
+| a category checkbox added to the notice | `the notice offers 1 form control(s). There are no consent categories (round 10)` |
+| a second button added (an accept/reject pair) | `the notice has 2 button(s) [Got it, Reject]; expected exactly one` |
+| a `googletagmanager.com` script injected on the press | `1 analytics request(s) AFTER acknowledging the notice — https://www.googletagmanager.com/gtag/js?id=G-PROOF` |
+| acknowledging sets no cookie | `after the press: expected exactly one cookie, gs_consent — got []` **and** `the notice reappeared on reload with gs_consent set` |
+| a pre-removal cookie rewritten on sight | `a pre-round-10 gs_consent was rewritten on sight — now "gs_consent=1"` |
+| a pre-removal cookie not recognised | `a visitor carrying a pre-round-10 gs_consent is asked again` |
+
+Each fired **alone**, with the other assertions green, so each message identifies its own branch.
+
+## 7. Documents changed, all in one commit
+
+`COOKIE-POLICY.md` → **1.3** (§1, §2, §3, §4, §6, §7 rewritten; §4B answered `[DECISION TAKEN]`) ·
+`PRIVACY-POLICY.md` → **1.3** (§6A rewritten; §2, §4, §7, §11A updated) ·
+`01-FACTUAL-INVENTORY.md` (annotated `⟶ ROUND 10`, not rewritten — it is a dated record) ·
+`scripts/seed-legal.mjs` (**the CMS seed content the site actually publishes** — privacy §2.2, §3.1,
+§3.2, §4.1, §4.2, §5.1 and cookies §1.1, §1.2, §2.1, §2.2, §3.1, §3.2) ·
+`docs/_shared/BEFORE-LAUNCH.md` item 22 · `docs/master/PROJECT-TRACKER.md`.
+
+**The constraint this round was executed under: the published policy and the banner can never
+disagree.** Every document describing the categories moved in the same commit as the code, including
+the seed content, which is the copy a visitor actually reads.
+
+## 8. What this round did NOT do
+
+- **No clause was drafted or amended.** §4A's `[DECISION REQUIRED]` — consent versus the PECR Sch. A1
+  para. 5 statistical-purposes exception — is **left open and explicitly deferred**, and **its ICO
+  quotations were not touched.** It becomes live again before any analytics returns.
+- **`PRIVACY-POLICY.md` §11A's `[DECISION REQUIRED]` on consent evidence is not closed.** Art. 7(1) is
+  not *engaged* today because nothing relies on consent; that is a consequence, not an answer.
+  `L-07` (`consent_events`) is now written into the launch checklist as a **prerequisite** of
+  re-introducing analytics rather than a follow-up: initialising first engages PECR reg. 6's higher
+  penalty tier while leaving demonstrability unmet, which is worse than either today's position or
+  the one this round replaced.
+- **OQ-5** (GA4's controller/processor position) and **OQ-21** (analytics retention) are not answered.
+  They are moot while there is no analytics and return with it.
+- Every `[SEED - SOLICITOR REVIEW REQUIRED]` banner is intact. Nothing here is legal advice.
+- **Nothing was committed.**
+
+---
+
+*End of round 10.*

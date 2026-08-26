@@ -99,34 +99,32 @@ const privacy = doc(
       'We do not ask for and do not want special category data, financial details, or identity documents through this form.',
     ]],
     ['2.2', 'What we collect automatically', 'PECR reg. 6; UK GDPR Art. 13(1)(c)', [
-      'With your consent, we collect analytics data about how pages on this site are used. Without your consent, we do not — no analytics script is loaded and no analytics cookie is set until you choose. This is described in full in the Cookie Policy.',
+      'We collect no analytics data. There is no Google Analytics, no product analytics and no tracking script of any kind on this site, in any state — so nothing measures your visit and there is no analytics consent to give or withhold. This is described in full in the Cookie Policy.',
       'Our hosting provider processes server request logs, including IP addresses, as a necessary part of delivering the site and protecting it from abuse.',
     ]],
     ['3.1', 'Why we process it, and on what basis', 'UK GDPR Art. 6(1)(b) and Art. 6(1)(f); PECR reg. 6(2)', [
       'Responding to your enquiry and preparing a quotation: Article 6(1)(b), steps taken at your request prior to entering into a contract.',
       'Keeping a record of enquiries, and protecting the site from abuse: Article 6(1)(f), our legitimate interest in running the business and keeping the service available. We have considered your interests and rights and consider this proportionate because the data is limited to what you chose to send us.',
-      'Analytics and any non-essential storage: your consent, given through the banner, and withdrawable at any time. Consent is the lawful basis for the processing as well as the basis for the storage access under PECR reg. 6.',
+      'Non-essential storage: none is used, so no consent is sought and none is relied on. The one cookie this site sets is strictly necessary and exempt under PECR Schedule A1 paragraph 4 — see the Cookie Policy.',
     ]],
     ['3.2', 'We do not sell or share your data for advertising', 'UK GDPR Art. 13(1)(e)', [
-      'We do not sell personal data. We do not share it with advertising networks. The ad_storage consent category exists in our consent implementation because Google Consent Mode defines it, and it is set to denied and left denied; nothing on this site currently uses it.',
+      'We do not sell personal data. We do not share it with advertising networks. There is no advertising storage on this site and no consent category for it: the ad_storage signal was removed along with the analytics scripts on 26 August 2026, because a control that changes nothing misrepresents what you control.',
     ]],
     ['4.1', 'Processors we use', 'UK GDPR Art. 28 and Art. 13(1)(e)', [
       'Sanity (content management) — stores the website content, and stores no enquiry data.',
       'Supabase (database) — stores enquiries submitted through the form.',
       'Resend (transactional email) — delivers the notification email that tells us an enquiry has arrived.',
       `Hosting — Vercel Inc. The site is built and served by Vercel. Static content is delivered from Vercel's global edge network, which serves each visitor from the nearest location; serverless functions for this project run in Vercel's ${VERCEL_FUNCTION_REGION} region. ${D} The Art. 46 transfer mechanism relied on for Vercel must be confirmed by the solicitor review at L-01 and named here before publication — see 4.2.`,
-      'Google Analytics 4 (analytics) — only after you consent.',
-      'PostHog (product analytics) — only after you consent, and configured against PostHog\'s EU host.',
       'Each is engaged under that provider\'s standard data processing terms. Article 28(3) requires a written contract; the review at L-04 should confirm each provider\'s terms have been accepted in Gridsmith\'s name and are on file.',
     ]],
     ['4.2', 'International transfers', 'UK GDPR Art. 44–46', [
-      `${D} Some of the providers above operate outside the UK. PostHog is configured against its EU host specifically so that product analytics data stays in the EU. Vercel serves this site from a global edge network and runs this project's serverless functions in the United States, so a transfer mechanism is required for it. For Vercel and for the remainder, the mechanism is the provider's standard contractual clauses or the UK Addendum, and the specific mechanism relied on for each provider must be confirmed and stated here before publication.`,
+      `${D} Some of the providers above operate outside the UK. Vercel serves this site from a global edge network and runs this project's serverless functions in the United States, so a transfer mechanism is required for it. For Vercel and for the remainder, the mechanism is the provider's standard contractual clauses or the UK Addendum, and the specific mechanism relied on for each provider must be confirmed and stated here before publication.`,
     ]],
     ['5.1', 'How long we keep it', 'UK GDPR Art. 5(1)(e) and Art. 13(2)(a)', [
       `${D} Enquiries that do not become work: kept for 24 months from the last contact, then deleted. Rationale: enquiries commonly return within a project cycle, and 24 months is short enough to be defensible and long enough to be useful.`,
       `${D} Enquiries that become work: kept for 6 years after the end of the engagement, to align with the limitation period for a simple contract under section 5 of the Limitation Act 1980 and with the record-keeping period in section 388 of the Companies Act 2006.`,
-      `${D} Analytics data: retained for 14 months, the shortest retention Google Analytics 4 offers for event data.`,
-      'Your consent choice is stored in your browser for 12 months, after which you will be asked again.',
+      'Analytics data: none. There is no analytics on this site, so there is nothing to retain and no retention period to state.',
+      'The cookie recording that you have seen the cookie notice is stored in your browser for 12 months, after which the notice appears once more.',
     ]],
     ['6.1', 'Your rights', 'UK GDPR Art. 15–22 and Art. 13(2)(b)', [
       'You have the right to ask for a copy of your personal data, to have it corrected, to have it erased, to restrict or object to how we use it, and to receive it in a portable form. Where we rely on your consent, you can withdraw it at any time without affecting processing already carried out.',
@@ -151,29 +149,27 @@ const cookies = doc(
   [
     ['1.1', 'Nothing non-essential runs before you choose', 'PECR reg. 6(1) and 6(2)', [
       'Regulation 6 permits storing information on your device, or gaining access to information already stored, only where you have been given clear information about the purpose and have given consent. The only exception is where the storage is strictly necessary to provide a service you have asked for.',
-      'On this site that rule is implemented rather than described: on a first visit, with no interaction, no cookie is set and no request is made to any analytics provider. That is asserted on every audited route by an automated check that fails the build if a cookie appears.',
+      'On this site that rule is implemented rather than described: no cookie is set until you dismiss the cookie notice, and no request is made to any analytics provider in any state, before or after. Both are asserted in a real browser on every audited route by an automated check that fails the build if a cookie or a third-party request appears.',
     ]],
     ['1.2', 'The strictly necessary cookie', 'PECR reg. 6(4)', [
-      'gs_consent — records which consent categories you granted. Set only once you have made a choice. First-party, Path=/, SameSite=Lax, Secure over HTTPS, expires after 12 months. It holds a comma-separated list of granted category names, or the single character 0 if you granted none. It contains no identifier and nothing about you.',
-      'This cookie is exempt from the consent requirement because it exists to record your consent decision; a site that had to ask permission to remember your refusal could not honour the refusal.',
+      'gs_consent — records that you have seen the cookie notice. Set only once you dismiss it. First-party, Path=/, SameSite=Lax, Secure over HTTPS, expires after 12 months. It holds the single character 1. It contains no identifier and nothing about you.',
+      'This cookie is exempt from the consent requirement under Schedule A1 paragraph 4 because it is strictly necessary for a service you asked for: it is the thing that stops the notice appearing on every page.',
+      'If you visited before 26 August 2026 your browser may still hold a gs_consent listing the consent categories that existed then. Nothing reads that value any more — only whether the cookie is present — and we do not overwrite it. It expires on its own.',
     ]],
-    ['2.1', 'The consent categories', 'PECR reg. 6(2); UK GDPR Art. 4(11)', [
-      'analytics_storage — analytics about how the site is used. Defaults to denied.',
-      'ad_storage — advertising storage. Defaults to denied, and nothing on this site currently uses it. It is declared because Google Consent Mode v2 defines the signal and omitting it would leave the signal unset rather than denied.',
-      'functionality_storage — optional convenience storage. Defaults to denied.',
-      'The defaults above are the state before you choose, not merely our intention: an automated check asserts that the unmade choice is transmitted as denied rather than left unset.',
+    ['2.1', 'There are no consent categories', 'PECR reg. 6(2); UK GDPR Art. 4(11)', [
+      'This site has no consent categories, because it has no non-essential storage to consent to. Until 26 August 2026 the banner offered three — analytics_storage, ad_storage and functionality_storage. Two of them gated nothing at all, and the third gated two analytics libraries that were loaded on acceptance and never started, so they recorded nothing while still disclosing your IP address and browser to their hosts. All three, and both libraries, were removed.',
+      'A control that changes nothing is a statement to you about what you control. That is why they were removed rather than explained.',
     ]],
-    ['2.2', 'What runs after you accept analytics', 'PECR reg. 6(2); UK GDPR Art. 6(1)(a)', [
-      'Google Analytics 4 — sets first-party cookies in the _ga family. Google documents _ga as expiring after two years and _ga_<container-id> likewise. These are set by Google\'s script, not by us, so their exact names and durations follow Google\'s current implementation.',
-      'PostHog — product analytics, loaded against PostHog\'s EU host so that the data stays in the EU. PostHog sets a first-party cookie in the ph_<key>_posthog family.',
-      `${D} The measurement ID and project key are not yet issued (tracker row Q-M19), so today neither script loads even after an acceptance. The exact cookie names above must be confirmed against a real loaded session before this policy is published.`,
+    ['2.2', 'What runs after you dismiss the notice', 'PECR reg. 6(2)', [
+      'Nothing. Dismissing the notice sets gs_consent and makes no request to anybody. There is no analytics cookie on this site — no _ga, no _ga_ family, no PostHog cookie — and no localStorage or sessionStorage entry, in any state.',
+      'This is asserted in a real browser on every build: after the notice is dismissed, the complete cookie list must be exactly gs_consent, storage must be empty, and no analytics host may be contacted.',
     ]],
     ['3.1', 'Changing your mind', 'PECR reg. 6(3); UK GDPR Art. 7(3)', [
-      'There is a link in the footer of every page that reopens the consent choice. Withdrawing consent must be as easy as giving it, and reopening the same banner from the same place on every page is how that is met here.',
-      'You can also delete cookies in your browser. Deleting gs_consent removes your recorded choice, and you will be asked again on your next visit.',
+      'There is nothing to change your mind about: no consent is sought and nothing non-essential is stored. A link in the footer of every page reopens the cookie notice if you want to read it again. It stores nothing and switches nothing on or off.',
+      'You can also delete cookies in your browser. Deleting gs_consent means the notice appears once more on your next visit; nothing else depends on it.',
     ]],
-    ['3.2', 'Refusing is a real option', 'PECR reg. 6(2); UK GDPR Recital 42', [
-      'Accept and Reject are presented with the same prominence, the same size and the same visual treatment. Nothing on this site is withheld from a visitor who rejects.',
+    ['3.2', 'There is nothing to refuse', 'PECR reg. 6(2); UK GDPR Recital 42', [
+      'Nothing on this site is withheld from you for declining anything, because you are not asked for anything. If non-essential storage is ever introduced, an Accept and a Reject will be presented with the same prominence, the same size and the same visual treatment, and that requirement is written into the build task that would introduce it.',
     ]],
     ['4.1', 'Enforcement', 'Data Protection Act 2018 Sch. 1 Pt. 6; PECR reg. 31 and Sch. 1', [
       'Breaches of PECR are enforced by the Information Commissioner. This site treats the requirement as non-negotiable and enforces it in the build rather than in a policy document, which is the only form of the rule that survives a redesign.',

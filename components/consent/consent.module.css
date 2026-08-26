@@ -32,26 +32,19 @@
   font-size: var(--text-sm);
   color: var(--ink);
 }
-.prefs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-.legend { padding: 0; font-size: var(--text-sm); color: var(--ink); }
-.pref {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 2.75rem;
-  font-size: var(--text-sm);
-  color: var(--ink);
-}
 .actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
-/* Accept and Reject share this class and nothing else distinguishes them — same size,
+/* Monospace marks anything verifiable — CLAUDE.md §"The feel". A cookie name is one. */
+.cookieName {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+}
+
+/* Round 10: there is one control, "Got it", because there is nothing to accept or reject —
+   see ConsentBanner.tsx. The class is unchanged and deliberately so: when analytics is wired
+   up (BEFORE-LAUNCH §"Analytics") Accept and Reject come back sharing this one class and
+   nothing else distinguishing them.
+   Accept and Reject share this class and nothing else distinguishes them — same size,
    same weight, same treatment. A visual hierarchy between them is a dark pattern and
    invalidates the consent (PROJECT-RULES §7). Do not add a variant. */
 .choice {
@@ -66,21 +59,7 @@
   font-size: var(--text-sm);
   cursor: pointer;
 }
-.preferences {
-  min-height: 2.75rem;
-  padding: var(--space-3) 0;
-  background: none;
-  border: 0;
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--ink);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-  cursor: pointer;
-}
-.choice:focus-visible,
-.preferences:focus-visible,
-.pref input:focus-visible {
+.choice:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
