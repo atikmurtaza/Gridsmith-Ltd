@@ -362,10 +362,30 @@ NOT BUILT. -->
 
 ## 16. Marketing — NEW
 <!-- L-PECR-22 -->
+<!-- L-PECR-23 -->
 
-16.1 Where the client is a **corporate subscriber**, PECR reg. 22 does not restrict Gridsmith sending
-it marketing electronic mail, but Gridsmith will identify itself and give a valid address in every
-message, and will stop on request.
+16.1 **REVISED.** Where the client is a **corporate subscriber**, PECR reg. 22 does not restrict
+Gridsmith sending it marketing electronic mail. **PECR reg. 23 applies regardless**, and Gridsmith will
+accordingly, in every marketing message: not disguise or conceal the identity of the person on whose
+behalf it is sent; provide a valid address to which a request that such communications cease may be
+sent; and stop on request.
+<!-- L-PECR-23 — REVISED 26 August 2026, round 9. The undertaking in this clause is a **reg. 23**
+obligation and the clause cited **`L-PECR-22`** for it, an entry whose provision field is
+"reg. 22(1)–(3); reg. 22(3A) and 22(5)" and which states no reg. 23 requirement at all. reg. 23's
+verified text sat in `CNV-3` — the ledger's COULD NOT VERIFY section — which is a good record and the
+wrong citation home, because it is the section a solicitor reads to find out what was *not* established.
+This is the same defect round 8 identified at `WEBSITE-TERMS.md` clause 3 and declined to commit: a
+clause citing an id that does not discharge it.
+`L-PECR-23` now exists and carries reg. 23(a)–(d) verbatim. **reg. 23 was fetched and read again at
+source for it in this round** rather than promoted from `CNV-3` or from round 8's note in 16.2 —
+so the "no individual-subscriber limitation" proposition this clause rests on has now been independently
+derived from the instrument three times (round 8, `06-FINAL-VERIFICATION.md` §1.3, and round 9).
+The wording is also tightened to track reg. 23(a) and (b) rather than paraphrasing them as "identify
+itself and give a valid address": (b) requires a valid address **for a request that the communications
+cease**, which is a narrower and more useful thing than a contact address, and the old wording did not
+say so. reg. 23(c) and (d) — the SI 2002/2013 reg. 7 limbs — are recorded in `L-PECR-23` with a `[TK]`
+noting that reg. 7 has not been read at source in any round; they are not drafted here because no
+marketing send exists. -->
 
 16.2 Where an individual at the client is an **individual subscriber** — including a sole trader using
 a personal address — Gridsmith will send marketing electronic mail only with consent, or where the
@@ -382,7 +402,10 @@ recipient of the communication may send a request that such communications cease
 provided", plus two reg. 7 limbs. It opens "A person shall neither transmit …" and speaks of "the
 recipient", and **carries no "individual subscriber" limitation** — unlike reg. 22, which reg. 22(1)
 confines to individual subscribers. So it binds for corporate-subscriber marketing where reg. 22 does
-not, which is precisely what 16.1 rests on. **16.1 is soundly based and may be relied on.** -->
+not, which is precisely what 16.1 rests on. **16.1 is soundly based and may be relied on.**
+Round 9: the reading above is re-derived and holds. **The citation is now `L-PECR-23`, at 16.1 where
+the obligation is** — this note is left in place because it records how the proposition was reached,
+but it is no longer the only place reg. 23's text lives. -->
 <!-- Not engaged today: no marketing send of any kind exists (01-FACTUAL-INVENTORY.md sections 3 and 7). -->
 
 ---

@@ -251,11 +251,35 @@ section must be rewritten in the same change, because their output is a statemen
 |---|---|---|---|
 | **Vercel** | Website hosting; your enquiry passes through the server action | Everything you submit, in transit; request metadata for every visitor | `[TK — no region is pinned in `vercel.json`. OQ-3]` |
 | **Supabase** | The enquiry database | Every field of your enquiry | `[TK — OQ-2. The live project ref is `dqiutgmxillhsbzgnlsx` and its region is **not established**. It must not be assumed to be in the UK or EU.]` |
-| **Resend** | The email that notifies us of your enquiry | Division, name, email, company, phone, and a record id. **Your message is deliberately not included** (`lib/leads/notify.ts:56-61`) | `[TK — OQ-4]` |
-| **Slack** | Internal notification that an enquiry arrived | **Your full name** and the division | `[TK — OQ-6. See the decision below.]` |
+| **Resend** | The email that notifies us of your enquiry | **CORRECTED — this is the whole of it.** The division; the **enquiry type**; the **service you enquired about**, where you named one; your **name**; your **email address**; your **company**, where you gave one; your **phone number**, where you gave one; and a record id. **Your message is deliberately not included** (`lib/leads/notify.ts:62-79`) | `[TK — OQ-4]` |
+| **Slack** | Internal notification that an enquiry arrived | **CORRECTED — this is the whole of it.** Your **full name**, the division, and the **enquiry type** (`lib/leads/notify.ts:128`) | `[TK — OQ-6. See the decision below.]` |
 | **Sanity** | Content management for the site's own pages | **None.** Read-only and server-side at build time | `[TK — OQ-1]` |
 | Our accountants | Bookkeeping and statutory accounts | Client billing data | `[TK]` |
 
+<!-- L-GDPR-13 — CORRECTED 26 August 2026, round 9. Two rows understated what reaches the processor.
+**`lib/leads/notify.ts` was read end to end for this correction, not checked at the fields the findings
+named** — which is how the second row was missed in the first place: Pass 5 raised the Resend row as
+F-7, round 8 deferred it, and nobody looked one row down until `06-FINAL-VERIFICATION.md` §2.3.
+`internalEmail()` at `notify.ts:62-79` composes, in order: `Division`, `Type` (= `lead.lead_type`),
+`Service` (= `lead.service_slug`, **conditional** — the line is omitted where the field is empty),
+`Name`, `Email`, `Company` (conditional), `Phone` (conditional), and `Record` (the row id). The row
+listed five of the eight. The Slack line at `notify.ts:128` is
+`` `New ${lead.division} lead: ${lead.full_name} (${lead.lead_type})` `` — three fields; the row listed
+two.
+The conditional fields are stated as "where you gave one" / "where you named one" rather than listed
+flat, because a notice that says a field is sent when it is sent only sometimes is inaccurate in the
+other direction.
+**Why this matters more than the fields themselves.** `lead_type` is hardcoded `'enquiry'` at
+`lib/leads/action.ts:39` and is not personal data standing alone, so today's exposure is negligible.
+The defect is the **enumeration**: a recipient table is the one place in a privacy notice a reader is
+entitled to treat as exhaustive, and an incomplete one misstates Art. 13 disclosure regardless of the
+sensitivity of what was left out. This is the third appearance of this class in this document — round 7
+swept §2 for the same reason — and the class, not the two instances, is what was swept here.
+`[TK — this correction is accurate to the code as at 26 August 2026 and has no gate. Adding a field to
+`internalEmail()` or to the Slack line silently falsifies this table, and nothing in `verify:static`
+would notice. There is no check that reads `notify.ts` and compares it to this row; whether one is
+worth building is a decision for whoever owns `M-P1-3`, which has the same shape — a document asserting
+something about a system it does not run in.]` -->
 <!-- L-GDPR-28 — Art. 28(3) requires a written contract binding on each processor. The ledger records
 the status as "cannot tell": **no DPA is recorded in the repository for any processor.** Every row
 above needs one before publication. -->

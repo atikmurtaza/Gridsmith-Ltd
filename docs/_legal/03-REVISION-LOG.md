@@ -1253,3 +1253,275 @@ ledger it was drafted from.
 ---
 
 *End of round 8.*
+
+---
+
+# Round 9 — 26 August 2026: CCR 2013 Part 3 read end to end, and the three narrow fixes
+
+**Scope:** `CONSUMER-TERMS.md` §§3, 5, 6, 6A, 7, 12.1, 15.1 · `MSA-BUSINESS.md` 16.1/16.2 ·
+`PRIVACY-POLICY.md` §6 · `00-LEGAL-BASIS.md` §1, §3, §5, §6 · `02-CITATION-LEDGER.md`.
+`WEBSITE-TERMS.md`, `COOKIE-POLICY.md` and `ACCESSIBILITY-STATEMENT.md` were not touched, and
+`COOKIE-POLICY.md` §4A's ICO quotations were not read, not verified and not edited.
+
+**Method, and it is why this round found what it found.** `06-FINAL-VERIFICATION.md` named two
+defects in `CONSUMER-TERMS.md` §§5–6 and one in §5's period. **This round did not go and look at
+those three paragraphs.** It fetched **SI 2013/3134 Part 3 — regulations 27 to 38 — in full**, plus
+the **reg. 5 definitions** and **Schedule 2 paragraph by paragraph**, and swept §§5–7 against the
+Part as a whole. Every other instrument named below was fetched in this round as well:
+PECR **regs. 22 and 23**; CRA 2015 **ss. 62, 63** and **Sch. 2 Part 1**; Late Payment of Commercial
+Debts (Interest) Act 1998 **ss. 2, 6** and SI 2002/1675 **art. 4**; DPA 2018 **s. 164A**. `lib/leads/notify.ts`
+was read **end to end**, not at the fields the findings named.
+
+**That method was chosen because this file's defects come in neighbours, twice demonstrated.** Round 8
+fixed §6(d) and left §6(a) wrong in the same list. `06-` then found §6(a) and, because it was
+verifying findings rather than reading the Part, did not reach regs. 32, 34, 35, 37 or 38, or the four
+missing Schedule 2 items. **Reading the whole Part turned up five matters no report has named.** Had
+this round patched the three paragraphs it was pointed at, all five would still be live and the file
+would have been marked ready.
+
+## Totals
+
+| | Count |
+|---|---|
+| Files changed | **5** |
+| Ledger entries **added** | **6** — `L-CCR-27-28`, `L-CCR-30`, `L-CCR-32-35`, `L-CCR-37-38`, `L-PECR-23`, `L-CRA-62` |
+| Ledger entries after this round | **43** (was 39) |
+| Clauses / sections **added** | **8** — `CONSUMER-TERMS.md` §5A, §5.0, §5.2, §5.3, §5.4, §5.5, §6A, and the §15.1 reg. 23 limb |
+| Clauses **amended** | **8** — `CONSUMER-TERMS.md` §3, §5 (prose), §6(a), §6(e), §6(a1) label, §7.4 note, §12.1; `MSA-BUSINESS.md` 16.1 |
+| Findings from `06-` **applied** | **6** |
+| Findings from `06-` **rejected or narrowed** | **1** (§2.2's two-period reading — see below) |
+| `06-` findings deliberately **not reached** | **3** (§3.2 CDPA over-assignment, §5's UCTA item, §5's ICO quotations) |
+| `[SEED - SOLICITOR REVIEW REQUIRED]` banner present | **7 / 7**, untouched |
+
+## 1. `CONSUMER-TERMS.md` — the priority file
+
+### 1.1 The scope omission — reg. 27(1). **APPLIED, and it was the finding that mattered.**
+
+**reg. 27(1) at source:** *"This Part applies to distance and off-premises contracts between a trader
+and a consumer, subject to paragraphs (2) and (3) and regulations 6 and 28."* The file contained
+neither phrase and stated a flat 14-day right for every consumer in every case.
+
+**New §5A** states the three regimes in the consumer's own words, says which one is Gridsmith's
+ordinary case and why, and says plainly what happens if a contract is outside Part 3 — no cancellation
+right under these Regulations, everything else in the terms unaffected. The last sentence undertakes
+to tell the consumer which regime theirs is **before they order**, which is not a courtesy: it is
+**Sch. 2 para. (o)**, now also added to §3's list.
+
+**What was not assumed.** Whether Gridsmith has business premises, and whether any Press engagement is
+ever concluded in person, is **`[TK]`** — an owner fact. §5A drafts the distance case as the ordinary
+one because that is what the site's enquiry-led flow produces, and the note says in terms that this is
+**an inference from the build, not an established fact about how contracts are signed**.
+
+### 1.2 reg. 36(1)(b) — the durable-medium request. **APPLIED.**
+
+**reg. 36(1) at source** is two requirements, not one: an express request, *"and (b) in the case of an
+off-premises contract, has made the request on a durable medium."* §6(a) specified a tick box, which
+is a distance mechanism and cannot satisfy (b).
+
+**§6(a) rewritten** to state both forms, with the off-premises limb spelled out — paper or email,
+something addressed to the consumer that they can keep and that cannot be altered, per the **reg. 5**
+definition, which names paper and email expressly. It says a tick, a verbal yes or a note Gridsmith
+makes itself is not enough. **§6(e) rewritten** as a three-limb list with the (1)(b) failure carried
+explicitly: a request in the wrong form *"is not a request for this purpose, however clearly you said
+yes"*, and **(c) then does not apply at all** — reg. 36(6)(b), no cost, not a reduced cost.
+
+**The build consequence is recorded, not built.** A second `[TK]` build task at §6: the flow must know
+the contract type **before** it takes the request, the off-premises confirmation must be paper or
+email rather than a web control, and **what was sent, in what wording, to whom and when must be
+recorded** — the evidential burden is Gridsmith's, and a record that a box was ticked is not evidence
+that a durable-medium request was made.
+
+### 1.3 §5's cancellation period — reg. 30. **APPLIED, with `06-`'s reading corrected at source.**
+
+**New §5.0** states four cases: services from the contract date (reg. 30(2)); goods from physical
+possession (reg. 30(3)); several deliveries from the last of them (regs. 30(4), (5)); and the mixed
+case.
+
+**`06-` §2.2 is corrected here, and this is the one report finding rejected as drafted.** It reasoned
+that where a Press order includes printed copies, *"that element is a sales contract and its
+cancellation period runs from delivery"* — two elements, two periods. **reg. 5 does not permit that
+reading.** It defines *sales contract* as one transferring ownership of goods **"including any
+contract that has both goods and services as its object"**, and defines *service contract* as
+**"a contract, other than a sales contract"**. A mixed order is therefore a **sales contract in its
+entirety** and has **one** period, on the goods clock. `06-`'s conclusion — that §5 was wrong — holds
+and is applied; its analysis of what the correct rule is does not, and §5.0 states the single-period
+rule instead. The finding was checked at the instrument rather than accepted, which is what the brief
+required, and this is what that check produced.
+
+**A consequence neither report drew:** **reg. 31(3)** measures the 12-month extension from the day the
+period would have ended **under reg. 30** — so on a mixed contract the extension runs from delivery
+too, and understating the base period understates the extended one by exactly as much. §5.1 now
+carries that.
+
+### 1.4 What reading regs. 27–38 in full turned up that no report had named
+
+**Five matters, all now drafted, none previously flagged anywhere in the drafts, the ledger, or passes
+4, 5 or 6.**
+
+1. **reg. 37 — digital content — did not exist in this document.** §6 was drafted as though reg. 36
+   covered everything supplied in the cancellation period. It does not, and the three differences all
+   run in different directions: the right is lost on supply **beginning** (37(2)) rather than on full
+   performance (36(2)); there is **no durable-medium limb** in reg. 37(1) where reg. 36(1)(b) has one;
+   and the consumer owes **nothing** (37(4)) rather than a proportionate payment (36(4)). **New §6A**
+   states reg. 37 and marks the classification question `[DECISION REQUIRED]` for the solicitor. It is
+   deliberately drafted to be correct if the answer is yes and simply inapplicable if it is no.
+   This is the largest of the five: a whole regime, in the section the last two rounds existed to fix.
+2. **reg. 38 — ancillary contracts — did not exist either.** They terminate **automatically**, at no
+   cost to the consumer, and **reg. 38(2) puts the duty to notify the third party on Gridsmith**. It
+   is engaged rather than theoretical: §10.5 contemplates Gridsmith setting up distribution accounts
+   and §10.7 submission to named platforms, which is the reg. 38(3)(b) shape. **New §5.5**, with a
+   `[TK]` because §10.5's own two sentences point opposite ways on whether an arrangement exists.
+3. **Four Schedule 2 items were missing from §3's pre-order list, and two of them penalise their own
+   omission.** **(m)** return costs — if not given, **regs. 35(5)(b) and 35(6)** treat the contract as
+   including a term that **Gridsmith** bears them; **(n)** the reg. 36(4) liability — if not given,
+   **reg. 36(6)(a)** means the consumer bears no cost at all; **(o)** the no-right/lost-right
+   disclosure; **(p)** the conformity reminder for goods. So on the drafts as they stood, Gridsmith
+   bore every return cost by default **and** the clause telling the consumer they bore it did not
+   exist. Both halves are fixed — §3 lists all four, §5.4 states the rule.
+4. **regs. 32 and 34 were unstated, and §5's refund promise was an accidental concession.** §5 said
+   *"we will refund all payments received from you within 14 days"* — that is **reg. 34(6)**, right for
+   services and **more generous than reg. 34(5)** for returned goods, and binding under `L-CRA-50` once
+   stated. **New §5.3** states the real rule with reg. 34(2)/(3) delivery charges and reg. 34(9)
+   diminished value, including the **reg. 34(11)** carve-out. **New §5.2** states reg. 32(3) (any clear
+   statement) and reg. 32(5) (sent in time is in time), and carries a `[TK]` build task for
+   **reg. 32(4)(b)** — the day a web cancellation form ships, an acknowledgement of receipt must go out
+   **on a durable medium without delay**. That makes **three distinct durable-medium duties** at three
+   different moments — reg. 16's order confirmation, reg. 36(1)(b)'s early-start request, and this —
+   and they were previously one sentence in §4.1.
+5. **reg. 27(3)** — Part 3 does not reach an off-premises contract at £42 or less. Recorded at §5A and
+   not drafted: no Press package is plausibly at that level.
+
+### 1.5 The rest of the sweep of §§5–7
+
+- **§7.4 — `06-` §2.4. APPLIED.** *"This reflects our actual cost and is not a penalty"* is a legal
+  characterisation and carried **no `L-` id and no `NO LEDGER ENTRY` flag** through three revisions.
+  New **`L-CRA-62`**: **s. 62(4)** with **Sch. 2 Part 1 para. 6**, and **s. 63(1)** making the list
+  indicative. The note also records what the wording invites the reader to assume and cannot rely on:
+  **s. 2(1)** of the 1998 Act confines it to contracts where *"the purchaser and the supplier are each
+  acting in the course of a business"*, so there is **no statutory rate to anchor a consumer clause to**.
+- **§6(a1)'s label — `06-` §5. APPLIED.** Marked `REVISED` in round 8; it has no predecessor. Now
+  marked `NEW`, with the round-8 mislabel noted so a reviewer diffing 1.1 against 1.2 does not hunt for
+  one.
+- **§12.1 — `06-` §5. APPLIED.** **s. 164A(4)** fetched: the controller must *"without undue delay"*
+  respond and inform the complainant of the outcome. The clause said *"acknowledge within 30 days and
+  respond"* and omitted the standard governing the response itself.
+- **§15.1 — swept as a class, not as an instance.** The clause gave the reg. 22(3)(c) opt-out
+  undertaking and cited `L-PECR-22` for it, correctly — but **reg. 23(a) and (b) are additional
+  obligations it also owed** and had no citation. The same defect `06-` found at `MSA-BUSINESS.md`
+  16.1, one document over. Fixed in both.
+
+## 2. `MSA-BUSINESS.md` 16.1 / 16.2 — reg. 23. **APPLIED.**
+
+`06-` §3.1's diagnosis is right and re-derived: 16.1's reg. 23 undertaking cited **`L-PECR-22`**, whose
+provision field is reg. 22 only, while reg. 23's verified text sat in **`CNV-3`** — the ledger's
+**COULD NOT VERIFY** section, which is where a solicitor looks to find out what was *not* established.
+
+**Round 8's proposition was verified independently before being relied on, as instructed.** Both
+regulations were fetched again in this round. **reg. 23** opens *"A person shall neither transmit, nor
+instigate the transmission of…"*, is framed around *"the recipient of the communication"*, and carries
+**no individual-subscriber limitation**. **reg. 22(1)** reads *"This regulation applies to the
+transmission of unsolicited communications by means of electronic mail to individual subscribers."*
+The proposition holds; it has now been derived from the instrument three times independently.
+
+**New `L-PECR-23`** carries reg. 23(a)–(d) verbatim, its 26 May 2011 amendment position, and `applies
+to: all`. **16.1 was also tightened**, not merely re-cited: *"identify itself and give a valid
+address"* is a paraphrase, and reg. 23(b) requires a valid address **for a request that the
+communications cease** — narrower and more useful than a contact address. `CNV-3` is marked
+**superseded as a citation** and must not be cited. **reg. 23(c) and (d)** pull in **SI 2002/2013
+reg. 7**, which **has not been read at source in any round**; that is a `[TK]` in the new entry, not an
+assumption from reg. 6.
+
+## 3. `PRIVACY-POLICY.md` §6 — both rows. **APPLIED.**
+
+`lib/leads/notify.ts` was **read end to end**, which is the whole instruction: Pass 5 raised the Resend
+row as F-7, round 8 deferred it, and nobody looked one row down until `06-` §2.3.
+
+- **Resend row** listed five fields. `internalEmail()` at **`notify.ts:62-79`** sends **eight**:
+  division, **`lead_type`**, **`service_slug`** (conditional), name, email, company (conditional),
+  phone (conditional), record id. The line reference in the row was also stale — `56-61` pointed at the
+  docstring above the function.
+- **Slack row** listed two fields. **`notify.ts:128`** sends **three**:
+  `` `New ${lead.division} lead: ${lead.full_name} (${lead.lead_type})` ``.
+
+The three conditional fields are stated as *"where you gave one"* rather than listed flat — a notice
+saying a field is sent when it is sent only sometimes is inaccurate in the other direction.
+
+**Why this was worth the correction, given the exposure is negligible.** `lead_type` is hardcoded
+`'enquiry'` at `action.ts:39` and is not personal data alone. The defect is the **enumeration**: a
+recipient table is the one list in a privacy notice a reader may treat as exhaustive, and an incomplete
+one misstates Art. 13 regardless of what was left out. **Third appearance of this class in this
+document.**
+
+**A `[TK]` was added that no report asked for.** This correction is accurate to the code today and
+**has no gate**. Adding a field to `internalEmail()` or to the Slack line silently falsifies the table
+and nothing in `verify:static` would notice. That is the same shape as `M-P1-3` — a document asserting
+something about a system it does not run in — and it is recorded rather than solved.
+
+## 4. `00-LEGAL-BASIS.md` — the §4.3 correction and the map. **APPLIED.**
+
+**Art. 4 re-fetched.** *"8 per cent per annum over the official dealing rate in force on the 30th June
+… or the 31st December … immediately before the day on which statutory interest starts to run."*
+`06-` §4.3 is right: art. 4 creates **exactly** 8% **over** a Bank of England rate, so round 8's
+sentence — *"'8% + Bank of England base' describes a floating rate the statute does not create"* —
+reads as though the **margin** were wrong. It is not. What version 1.0 got wrong was the **fixing
+date**. The row now says so, and no longer disagrees with `MSA-BUSINESS.md` 6.4, which it indexes.
+
+**One `[TK]` added beyond the finding.** **s. 6 was read at source in this round and contains no
+definition of "official dealing rate"** — only the power to prescribe — and SI 2002/1675 does not
+define it either. The equation with the Bank of England's rate is universal in practice and is what
+6.4 states, but **it is a gloss, not a statutory definition**, and no round has established it from a
+primary source.
+
+**The map was also brought into line with Part 3.** The consumer-contracts row named four of the twelve
+regulations in Part 3 and now names the Part, with reg. 27(1)'s scope limit, reg. 28(1)(b), the
+by-supply-type periods, reg. 37 and reg. 38. The B2B/consumer comparison row's *"14 days from contract
+formation"* is corrected the same way. The marketing row cites `L-PECR-23`. **§3's "14-day problem"
+passage was corrected on two counts neither report reached**: *"an express request"* describes the
+distance mechanism only, and *"cancel on day 13"* assumes the services clock. **Three solicitor
+questions added** (14, 15, 16) for the scope fact, the reg. 28(1)(b) question and the reg. 37
+classification. **The stale ledger count at §5 — "31 obligations", unchanged since Pass 3 — is now 43.**
+
+## 5. What was rejected, and why
+
+- **`06-` §2.2's two-period reading of a mixed contract. REJECTED as drafted; its conclusion applied.**
+  reg. 5 makes a contract with both goods and services as its object a **sales contract in its
+  entirety**, and defines *service contract* as *"a contract, other than a sales contract"*. There are
+  not two periods. §5 was wrong, which is what `06-` established; it is wrong in a different way than
+  `06-` said. **This is the finding the brief's instruction was for**, and it did not survive the
+  instrument.
+- **`06-` §3.2 — the CDPA over-assignment at `CONSUMER-TERMS.md` 10.3 and `MSA-BUSINESS.md` 8.3.**
+  **NOT ACTIONED, deliberately.** `06-` says it *"should be resolved by drafting"*. It cannot be
+  resolved here: it turns on whether registered designs, trade marks and unregistered design right pass
+  under words relying on sections that govern copyright only, and each has its own assignment
+  formalities that **no round has read**. `CLAUDE.md` forbids interpreting `_legal/` and non-negotiable
+  2 forbids guessing. It stays flagged in both documents, and it is question 3 on the solicitor list.
+  **Recorded as rejected rather than silently skipped.**
+- **`06-` §5's `PRIVACY-POLICY.md` §11A `L-07` citation.** Not in this round's scope and not touched.
+- **UCTA 1977** remains unread, and `MSA-BUSINESS.md` 11.3 / `WEBSITE-TERMS.md` 11 keep their
+  `NO LEDGER ENTRY` flags. Out of scope, and the honest state.
+- **`COOKIE-POLICY.md` §4A's ICO quotations** were not read, not verified and not edited, per the
+  brief. `ico.org.uk` was not fetched in this round.
+- **`06-` §5's `check-consumer-terms.mjs` branch-B observation.** A gate note, not a drafting one; left
+  for whoever owns the gate.
+
+## 6. What this round did not do
+
+- **No `[TK]` or `[DECISION REQUIRED]` was resolved.** Every one is an owner fact, a build task, or a
+  solicitor's judgement. **Ten `[TK]`s and two `[DECISION REQUIRED]`s were added**, all of them things
+  the previous drafting had concealed by not asking.
+- **Nothing unbuilt is described as built.** Every new obligation whose discharge needs a control names
+  the control and marks it not built: the reg. 32(4)(b) acknowledgement, the reg. 36(1)(b) capture.
+- **No gate was written.** The `[TK]` at `PRIVACY-POLICY.md` §6 records that the recipient table has no
+  gate; it does not claim one.
+- **The `[SEED - SOLICITOR REVIEW REQUIRED]` banners are untouched** on all seven documents.
+- **`WEBSITE-TERMS.md`, `COOKIE-POLICY.md` and `ACCESSIBILITY-STATEMENT.md` were not edited at all** —
+  no cross-reference in them went stale, because §5's new subsections are additions and §5 and §6 keep
+  their numbers.
+- **Verdicts are not given here.** A round that graded its own drafting would agree with it by
+  construction. `CONSUMER-TERMS.md` §§5–7 have now been read against the whole of Part 3 once; they
+  have not been *verified* by anyone who did not draft them.
+- **Nothing was committed.**
+
+---
+
+*End of round 9.*

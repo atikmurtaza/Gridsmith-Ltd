@@ -259,6 +259,26 @@ showed the proposed correction was also wrong on the tiering.
 
 ---
 
+### L-PECR-23 — sender identity and a valid opt-out address, in every marketing email
+
+**Added 26 August 2026, round 9.** reg. 23's verified text had lived since round 7 in `CNV-3` — the
+**COULD NOT VERIFY** section — while `MSA-BUSINESS.md` 16.1's reg. 23 undertaking cited `L-PECR-22`,
+whose provision field is reg. 22 only. A clause citing an entry that does not reach it. **reg. 23 and
+reg. 22(1) were each fetched and read again at `legislation.gov.uk` on 26 August 2026 for this entry,
+rather than promoted from `CNV-3` or from round 8's note.**
+
+| | |
+|---|---|
+| **instrument** | PECR 2003, SI 2003/2426 |
+| **provision** | **reg. 23(a)–(d)** |
+| **in-force version** | reg. 23(a) word omitted, and reg. 23(c) and (d) inserted, 26 May 2011 by SI 2011/1208 reg. 9; checked 26 Aug 2026 |
+| **what it requires** | *"A person shall neither transmit, nor instigate the transmission of, a communication for the purposes of direct marketing by means of electronic mail — (a) where the identity of the person on whose behalf the communication has been sent has been disguised or concealed; (b) where a valid address to which the recipient of the communication may send a request that such communications cease has not been provided; (c) where that electronic mail would contravene regulation 7 of the Electronic Commerce (EC Directive) Regulations 2002; or (d) where that electronic mail encourages recipients to visit websites which contravene that regulation."* |
+| **the point that makes this a separate entry, and it was verified twice** | **reg. 23 carries no "individual subscriber" limitation.** It opens *"A person shall neither transmit …"* and is framed throughout around *"the recipient of the communication"*. **reg. 22(1)**, by contrast, reads *"This regulation applies to the transmission of unsolicited communications by means of electronic mail to individual subscribers."* So reg. 23 binds marketing to a **corporate** subscriber, where reg. 22 does not reach at all — which is precisely what `MSA-BUSINESS.md` 16.1 rests on. Re-derived here from the instrument; round 8 reached the same reading and `06-FINAL-VERIFICATION.md` §1.3 reached it a third time. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2003/2426/regulation/23 · https://www.legislation.gov.uk/uksi/2003/2426/regulation/22 |
+| **applies to** | **all** — business and consumer alike, unlike `L-PECR-22`. This is the entry a B2B marketing clause cites. |
+| **engaged here because** | `MSA-BUSINESS.md` 16.1 undertakes that Gridsmith *"will identify itself and give a valid address in every message"* to a corporate subscriber, and `CONSUMER-TERMS.md` §15.1 gives the parallel undertaking to an individual. Both are reg. 23 obligations; neither had a reg. 23 citation. |
+| **status in this build** | **not engaged today** — no marketing send of any kind exists (`01-FACTUAL-INVENTORY.md` §§3, 7). It becomes engaged with the first marketing email, and limbs (c) and (d) then pull in **SI 2002/2013 reg. 7** (commercial communications must be clearly identifiable as such, and so must the person on whose behalf they are sent), which `L-ECOM-6` covers for reg. 6 but **not** for reg. 7. `[TK — SI 2002/2013 reg. 7 has not been read at source in any round. It is not needed until a marketing send exists, and it is recorded here so that the day it does, it is not assumed from reg. 6.]` |
+
 ## C. Identification and trading disclosures
 
 ### L-CA-82 / L-TDR-24 — disclosure of registered name on the website
@@ -356,6 +376,25 @@ showed the proposed correction was also wrong on the tiering.
 | **engaged here because** | Inventory §5.2 — a single `client-terms` instrument serves both audiences. **A liability cap drafted for a B2B MSA and applied to a consumer author is void to that extent under s. 57**, and this is exactly the collapse the one-route/two-drafts problem creates. OQ-13. |
 | **status in this build** | **not satisfied structurally.** One route cannot carry both a valid B2B cap and a CRA-compliant consumer position. |
 
+### L-CRA-62 — the fairness test, and the grey list
+
+**Added 26 August 2026, round 9.** `CONSUMER-TERMS.md` 7.4 asserts that its late-payment interest
+*"reflects our actual cost and is not a penalty"* — a legal characterisation — and carried **no `L-`
+id and no `NO LEDGER ENTRY` flag**. `L-CRA-57` is cited at §13 and does different work: s. 57 is about
+excluding liability, not about a sum the consumer is required to pay. **s. 62 and Sch. 2 fetched and
+read at `legislation.gov.uk` on 26 August 2026.**
+
+| | |
+|---|---|
+| **instrument** | Consumer Rights Act 2015 |
+| **provision** | **s. 62(1), (4), (5)**; **s. 63(1)**; **Sch. 2 Part 1 paras. 5 and 6** (the indicative "grey list") |
+| **in-force version** | As amended; checked 26 Aug 2026 |
+| **what it requires** | **62(1)**: *"An unfair term of a consumer contract is not binding on the consumer."* **62(4)**: *"A term is unfair if, contrary to the requirement of good faith, it causes a significant imbalance in the parties' rights and obligations under the contract to the detriment of the consumer."* **62(5)**: fairness is judged by the nature of the subject matter and by all the circumstances existing **when the term was agreed**, and by reference to the other terms. **Sch. 2 para. 6** names as indicatively unfair *"A term which has the object or effect of requiring a consumer who fails to fulfil his obligations under the contract to pay a disproportionately high sum in compensation."* **Sch. 2 para. 5** names the neighbouring case — a disproportionately high sum where the consumer decides not to conclude or perform. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2015/15/section/62 · https://www.legislation.gov.uk/ukpga/2015/15/schedule/2 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | `CONSUMER-TERMS.md` 7.4 charges interest on late payment at a rate still `[TK]`. Para. 6 is the provision that governs it. Note what is **not** available here: **s. 2(1)** of the Late Payment of Commercial Debts (Interest) Act 1998 confines that Act to a contract *"where the purchaser and the supplier are each acting in the course of a business"*, so `L-LATE-PAYMENT` and SI 2002/1675 art. 4 are unavailable against a consumer — a consumer interest clause has no statutory rate to anchor to and stands or falls on s. 62 alone. |
+| **status in this build** | **cannot tell, and it is an owner fact.** The rate is `[TK]` at 7.4, so there is no figure to test against para. 6. The clause is flagged for the solicitor at 7.4 and the grey-list entry is now named there. **s. 63(1)** makes Sch. 2 Part 1 *"an indicative and non-exhaustive list of terms … that may be regarded as unfair"* — listing does not decide unfairness, and 7.4 has to be judged on s. 62(4) with the chosen figure in front of it. |
+
 ### L-CCR-13 — pre-contract information for distance contracts
 
 | | |
@@ -400,6 +439,78 @@ whether they pay anything, so reg. 36 gets its own entry. **Fetched and read in 
 | **applies to** | consumer only — Press |
 | **engaged here because** | Ghostwriting, editing and publishing work almost always begins before day 14. `CONSUMER-TERMS.md` §6 is the clause, and its own solicitor note calls it *"the highest-frequency consumer exposure in the business"*. |
 | **status in this build** | **not engaged today, and this is a build obligation when it is.** Nothing can be ordered on the site (`01-FACTUAL-INVENTORY.md` §7), so no request and no acknowledgement is captured anywhere. 36(2)(b) is satisfied by an acknowledgement **given and evidenced**, not by a term reciting that one will be given, so the order flow must present it as a second unticked control and record it. Recorded at `CONSUMER-TERMS.md` §6 as a `[TK]` build task. |
+
+### L-CCR-27-28 — which contracts Part 3 reaches, and the contracts it does not
+
+**Added 26 August 2026, round 9.** Part 3 was cited in three clauses for two rounds without any entry
+stating **what it applies to**. `L-CCR-29` recites reg. 29(1)'s words *"a distance or off-premises
+contract"* inside its "what it requires" cell and no clause ever carried the limitation to the
+consumer. **regs. 27 and 28 fetched and read in full at `legislation.gov.uk` on 26 August 2026**,
+together with the reg. 5 definitions of *sales contract*, *service contract*, *distance contract*,
+*off-premises contract*, *on-premises contract* and *durable medium*.
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 27(1)–(3)**, **reg. 28(1), (2), (3)**, with the **reg. 5** definitions |
+| **in-force version** | As made and amended; checked 26 Aug 2026 |
+| **what it requires** | **27(1)**: *"This Part applies to distance and off-premises contracts between a trader and a consumer, subject to paragraphs (2) and (3) and regulations 6 and 28."* **27(3)**: Part 3 does not apply to off-premises contracts where the consumer's payment is **not more than £42**. **28(1)(b)**: Part 3 does not apply as regards *"the supply of goods that are made to the consumer's specifications or are clearly personalised"*. **28(3)(b)**: the Part 3 rights cease for sealed audio, video or computer-software recordings once unsealed after delivery. |
+| **the definitions that decide which regime a contract is in** | **on-premises contract** = *"a contract between a trader and a consumer which is neither a distance contract nor an off-premises contract"* — it attracts **no reg. 29 right at all**. **distance contract** requires an *"organised distance sales or service-provision scheme"* and the exclusive use of distance communication **up to and including** conclusion. **off-premises contract** covers, among others, a contract concluded *"in the simultaneous physical presence of the trader and the consumer, in a place which is not the business premises of the trader"*. **sales contract** = a contract transferring ownership of goods, *"including any contract that has both goods and services as its object"*; **service contract** is expressly *"a contract, other than a sales contract"*. So a mixed order — editorial work **and** printed copies — is a **sales contract in its entirety**, not two contracts. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/27 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/28 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/5 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | `CONSUMER-TERMS.md` §5 granted a 14-day cancellation right flatly, to every consumer, in every case. Press's memoir and legacy clients are the population most likely to be contracted with **in person**, and a book made from the author's own manuscript is a plausible reg. 28(1)(b) subject. Neither question can be answered from the repository. |
+| **status in this build** | **cannot tell, and it is an owner fact plus a solicitor question, not a build gap.** Whether Gridsmith has business premises at which a consumer could sign, and whether any Press engagement is ever concluded on them or in person elsewhere, is recorded as `[TK]` at `CONSUMER-TERMS.md` §5A. Whether printed copies are reg. 28(1)(b) goods is a `[DECISION REQUIRED]` for the solicitor at §5A, because it decides whether a cancellation right exists over them at all. |
+
+### L-CCR-30 — the cancellation period, which differs by what is supplied
+
+**Added 26 August 2026, round 9.** `L-CCR-29` stated *"14 days"* once, for everything. reg. 30 states
+it five ways. **reg. 30 fetched and read in full on 26 August 2026.**
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 30(1)–(6)**; reg. 31 (extension for breach of the information requirement) |
+| **in-force version** | As made and amended; checked 26 Aug 2026 |
+| **what it requires** | **30(2)**: for a **service contract**, or a contract for **digital content not supplied on a tangible medium**, the period ends 14 days after the day **the contract is entered into**. **30(3)**: for a **sales contract**, 14 days after the day the goods come into the **physical possession** of the consumer (or a person, other than the carrier, whom the consumer identified). **30(4)**: multiple goods in one order delivered on different days — from the **last** of them. **30(5)**: multiple lots or pieces delivered on different days — from the **last** lot or piece. **30(6)**: regular delivery over a defined period of more than one day — from the **first** delivery. **reg. 31(3)**: where the Sch. 2 para. (l) information was never given, the period ends 12 months after the day it would have ended **under reg. 30** — so the extension is measured from the reg. 30 date that actually applies, not from contract. |
+| **the consequence the drafts missed** | Because reg. 5 makes a contract with **both goods and services as its object** a **sales contract**, a Press order that includes printed copies runs the **whole** contract's cancellation period from **delivery of the copies**, not from the day the contract was made — and 30(4)/(5) push it to the **last** delivery where copies arrive in more than one consignment. A draft that states one 14-day-from-contract rule understates the period the trader is bound by, and reg. 31 then compounds the understatement by 12 months. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/30 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/31 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | `CONSUMER-TERMS.md` §10.6 and §10.7 contemplate printed books, ISBNs and platform submission; §8 contemplates delivery. `01-FACTUAL-INVENTORY.md` does not establish whether printed copies are supplied under any package. |
+| **status in this build** | **cannot tell** — no order flow exists. §5 now states each period separately and states the mixed case; whether Press packages include printed copies is `[TK]` at §5A. |
+
+### L-CCR-32-35 — exercising the right, reimbursement, and returning goods
+
+**Added 26 August 2026, round 9.** Four regulations reachable from `L-CCR-29`'s "provision" field only
+by inference, and stated in no clause.
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 32(2)–(6)**, **reg. 34(1)–(3), (5)–(9), (11), (13)**, **reg. 35(1)–(8)**; Sch. 2 paras. (m), (n), (o), (p) |
+| **in-force version** | As made and amended; checked 26 Aug 2026 |
+| **what it requires** | **32(3)**: the consumer may use the model form **or** *"make any other clear statement setting out the decision to cancel"*. **32(4)(b)**: if the trader gives the consumer the option of submitting the form or statement **on the trader's website**, the trader **must communicate an acknowledgement of receipt on a durable medium without delay**. **32(5)**: a communication **sent** before the end of the period is in time. **34(4), (6)**: reimbursement without undue delay and in any event within 14 days of being informed — **but 34(5)**, for a sales contract where the trader has not offered to collect, sets the later time of 14 days after the goods are received back or after the consumer supplies evidence of having sent them. **34(2), (3)**: delivery charges are reimbursed only up to the least expensive common and generally acceptable kind offered. **34(7), (8)**: same means of payment unless the consumer expressly agreed otherwise; **no fee** may be imposed. **34(9), (11)**: the trader may recover diminished value from handling beyond what is necessary to establish nature, characteristics and functioning — **but not** where the Sch. 2 para. (l) information was not given. **34(13)**: reg. 34's provisions are **treated as terms of the contract**. **35(4)**: the consumer must send the goods back within 14 days of informing the trader. **35(5)(b)**: the consumer bears the direct return cost **unless** the trader failed to give the **Sch. 2 para. (m)** information — in which case **35(6)** treats the contract as including a term that the **trader** bears it. **35(7)**: no other return cost falls on the consumer. |
+| **the Sch. 2 items that were missing upstream** | **(m)** the consumer bearing return costs; **(n)** liability to pay reg. 36(4) costs after an early-start request; **(o)** *"where under regulation 28, 36 or 37 there is no right to cancel or the right to cancel may be lost, the information that the consumer will not benefit from a right to cancel, or the circumstances under which the consumer loses the right to cancel"*; **(p)** for a sales contract, a reminder that the trader is under a legal duty to supply goods in conformity with the contract. **All four were absent from `CONSUMER-TERMS.md` §3's pre-order list**, and (m) and (n) each carry a self-executing penalty — 35(5)(b)/35(6) and 36(6)(a) respectively. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/32 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/34 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/35 · https://www.legislation.gov.uk/uksi/2013/3134/schedule/2 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | §5 promised *"we will refund all payments received from you within 14 days"* — which is reg. 34(6)'s rule and is **more generous than reg. 34(5)** for returned goods, and by `L-CRA-50` binding once stated. Nothing in §5–§7 addressed returning printed copies, who pays for that, or the acknowledgement duty that attaches the day a cancellation form is put on the site. |
+| **status in this build** | **not engaged today** — no order flow, no cancellation form, nothing shipped. reg. 32(4)(b) becomes a **build obligation** the day a web cancellation form exists; recorded as a `[TK]` build task at `CONSUMER-TERMS.md` §5.2. |
+
+### L-CCR-37-38 — digital content in the cancellation period; ancillary contracts
+
+**Added 26 August 2026, round 9.** reg. 37 applies a **different test from reg. 36** and no draft
+mentioned it. reg. 38 terminates ancillary contracts automatically and no draft mentioned that either.
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 37(1)–(4)**, **reg. 38(1)–(3)**; reg. 5 definition of *digital content* |
+| **in-force version** | As made and amended; checked 26 Aug 2026 |
+| **what it requires** | **37(1)**: for digital content **not on a tangible medium**, the trader must not begin supply before the end of the reg. 30(1) period unless the consumer has given **express consent** *and* has **acknowledged that the right to cancel will be lost**. **37(2)**: the right is lost once supply has **begun** on that consent and acknowledgement — **not**, as under reg. 36(2), on **full performance**. **37(4)**: the consumer bears **no cost** where prior express consent was not given, or was given without the acknowledgement, or where the reg. 12(5)/16(3) confirmation was not provided. **38(1)**: withdrawal or cancellation **automatically terminates any ancillary contract**, *"without any costs for the consumer"* beyond regs. 34(3), 34(9), 35(5) and 36(4). **38(2)**: the trader must **inform any other trader** with whom the consumer has an ancillary contract that is terminated. **38(3)**: an ancillary contract is one by which the consumer acquires related goods or services provided by the trader, or by a third party *"on the basis of an arrangement between the third party and the trader"*. |
+| **why the two tests must not be collapsed** | reg. 36 and reg. 37 differ on all three of: the trigger for losing the right (full performance vs beginning supply); whether a durable medium is required (reg. 36(1)(b) for off-premises contracts; reg. 37 has no such limb); and what the consumer owes on cancellation (a **proportionate** payment under 36(4) vs **nothing** under 37(4)). A single "if you ask us to start early" clause covering both misstates one of them. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/37 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/38 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | *digital content* is defined at reg. 5 as *"data which are produced and supplied in digital form"*. `CONSUMER-TERMS.md` §10.7 contemplates preparing files to Amazon KDP, IngramSpark, Draft2Digital, Apple Books and Kobo specifications, and §10.5 contemplates Gridsmith **setting up distribution accounts in the author's name**, which is the reg. 38(3)(b) shape. Whether any deliverable reaches the author **as digital content** rather than as the output of a service is established nowhere in the repository. |
+| **status in this build** | **cannot tell.** `CONSUMER-TERMS.md` §6A states reg. 37 and marks the classification question `[DECISION REQUIRED]` for the solicitor rather than assuming an answer. §5.5 states reg. 38. |
 
 ### L-CCR-40 — additional payments
 
@@ -602,7 +713,10 @@ Art. 30(4) from SI 2026/386 (the DUAA consequential-amendments regulations). The
 not yet show it. `L-GDPR-30` therefore cites Art. 30(1) and 30(5), which are consolidated and were read,
 and does not rely on 30(4).
 
-**CNV-3 — PECR reg. 23 (identity and address in marketing mail). CLOSED, 26 August 2026, round 8.**
+**CNV-3 — PECR reg. 23 (identity and address in marketing mail). CLOSED, 26 August 2026, round 8.
+SUPERSEDED as a citation, round 9: the obligation now has its own entry, `L-PECR-23`, and that is what
+clauses cite. This record is retained for its history and must not be cited — a live obligation citing
+an entry in the COULD NOT VERIFY section reads as unestablished when it is not.**
 Originally recorded because the Pass 2 fetch returned reg. 22 only. **reg. 23 has now been fetched and
 read in full**, in this round, at source — not accepted from the round-7 record that said it had been
 read, and not accepted from `PRIVACY-POLICY.md` §3A, which is a draft rather than an instrument.
