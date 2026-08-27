@@ -1708,3 +1708,67 @@ the seed content, which is the copy a visitor actually reads.
 ---
 
 *End of round 10.*
+
+---
+
+# Round 11 — 27 August 2026: the reseed, and the published cookie policy caught up with the code
+
+Round 10 changed the drafts, the CMS seed script and the site in one commit. What it could not do
+in that commit is make the **served** page carry the new text, because the served page reads the
+Sanity `development` dataset and that dataset still held the pre-round-10 documents.
+
+## 1. What was done
+
+With the owner's authorisation, the `development` dataset was reseeded using
+`SANITY_API_WRITE_TOKEN` from `.env.local`. `npm run seed` wrote **127 documents**, including
+**7 `legalDocument`s**, and reported all 127 visible to an unauthenticated read.
+
+`/legal/cookies` was then fetched from the served site and read.
+
+## 2. What the served page now says
+
+| Term | Where it appears now |
+|---|---|
+| `analytics_storage`, `ad_storage`, `functionality_storage` | **only** inside a dated historical passage explaining what the banner offered until 26 August 2026 |
+| `_ga` | **only** inside its own negation — "There is no analytics cookie on this site — no `_ga`, no `_ga_` family, no PostHog cookie" |
+
+This closes the last place the banner and the published policy disagreed. Round 10's constraint —
+*the published policy and the banner can never disagree* — now holds of the copy a visitor actually
+reads, not only of the drafts and the seed script.
+
+## 3. The method note, which is the reusable part
+
+**The first check was a term-presence grep, and it read as a failure.** It counted three hits for
+each of the three removed categories and reported the removal incomplete. It was wrong.
+
+A keyword scan cannot distinguish:
+
+- an **assertion** ("we set `_ga`") from
+- its **negation** ("there is no `_ga`"), or from
+- a **dated historical reference** ("until 26 August 2026 the banner offered `analytics_storage`").
+
+All three produce an identical hit. The count was real; the conclusion drawn from it was not.
+**Reading the surrounding text is what settled it** — and the surrounding text is where the
+compliance question actually lives, because a policy that explains what it *used to* do is doing
+its job, while one that describes a cookie it no longer sets is the defect.
+
+This is the documentary form of a rule the build side already carries: a count is evidence that
+something was counted, never evidence of what it means. Where a removal is verified by search, the
+search finds **candidates**; a person reads them. Any future check over legal copy for a removed
+term must either quote its context or be treated as a list to review, not a result.
+
+## 4. What this round did NOT do
+
+- **No clause was drafted or amended.** The reseed republished round 10's already-approved copy.
+- Every `[SEED - SOLICITOR REVIEW REQUIRED]` banner is intact — 7 / 7.
+- No open `[DECISION REQUIRED]` item was closed. §4A (consent vs the PECR Sch. A1 para. 5
+  statistical-purposes exception) and `PRIVACY-POLICY.md` §11A remain open and deferred.
+- No document version number changed. The documents were already at their round-10 versions; this
+  round moved the **dataset**, not the drafts.
+- The `production` dataset was not touched. It remains empty and blocked on the VAT number
+  (`BEFORE-LAUNCH.md` §16).
+- **Nothing was committed.**
+
+---
+
+*End of round 11.*

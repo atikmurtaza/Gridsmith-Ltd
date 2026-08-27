@@ -436,6 +436,22 @@ One thing this gate still cannot tell you: a *clean* `production` dataset has ne
 end to end, because there is nothing in `production` to build against yet. Expect the first
 real seed here to be the first time the live-clean path runs (VALIDATION §19.10).
 
+**Precisely which half is unproven — VALIDATION §19.11.** The gate is proven to **fail** on a
+seeded live dataset, over the network, against 121 real seed documents. Its **passing**
+direction over the network has never run: every live-tier pass on record is either a committed
+specimen (no network, no dataset name) or the `development` dataset, where the zero-tolerance
+rule is *skipped* rather than satisfied. So when you seed `production`, run it deliberately and
+record what you see:
+
+1. `NEXT_PUBLIC_SANITY_DATASET=production npm run build` on a clean `.next`, no redirect.
+2. `prebuild` reports the live tier as **applying** — dataset named `production`, rule in force.
+3. Seed count **0**, *and* a non-zero total document count in the same output — otherwise the
+   `0` cannot be told apart from a query that reached nothing.
+4. Statutory fields present with the **real** values; no `[SEED]` anywhere in the output.
+5. `next build` runs to `Compiled successfully`, **EXIT=0** read from the process.
+
+All five in one run closes VALIDATION §19.10 item 1. Fewer than five does not.
+
 ---
 
 ## Things that need a person, not a decision

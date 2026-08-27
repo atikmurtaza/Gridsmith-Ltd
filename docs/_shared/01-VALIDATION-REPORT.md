@@ -1247,7 +1247,8 @@ answer different questions and neither replaces the other.
    `production` holds no `companyDetails` singleton and seeding it is owner work
    (`BEFORE-LAUNCH.md`). The live-clean predicate is covered by the committed `ZERO` specimen;
    the network path against a live-named dataset is covered only in its failing direction.
-   Close this at the first real production seed.
+   Close this at the first real production seed. **Read §19.11 before treating §19.5–§19.7 as
+   covering the whole gate.**
 2. **The unauthenticated seed count cannot see a dotted id.** §19.8. Mitigated at the write
    side only.
 3. **`vercel.json` pins the build command against a dashboard edit, not against a
@@ -1255,4 +1256,192 @@ answer different questions and neither replaces the other.
    `check:node` is what catches that — a gate in the repo guarding a fact about the repo, which
    is sound, but it is CI catching it, and CI is not the deploy. There is no mechanism that
    makes Vercel refuse to build without the gate; that would need a Vercel-side deployment
-   check, which is an owner decision.
+   check, which is an owner decision. **Costed and closed as ACCEPTED at §20** — 27 Aug 2026.
+
+### 19.11 The exact boundary of the `prebuild` proof — what it does *not* cover
+
+Recorded here, at the proof, rather than only in `BEFORE-LAUNCH.md`, because §19 is what a
+future reader finds first and §19.5–§19.7 read like a complete proof if this section is absent.
+
+**Proven, and only this:**
+
+| Claim | Established by | Direction |
+|---|---|---|
+| the hook is in the deploy's path | `prebuild` observed running under `npm run build`; `next build` observed never starting (§19.5) | — |
+| the gate **rejects** a seeded live dataset | `NEXT_PUBLIC_SANITY_DATASET=development` with `PRODUCTION_DATASET` redirected — 121 real seed documents, over the network, EXIT=1 (§19.5) | **failing** |
+| the gate **admits** a clean live dataset | the committed `ZERO` specimen, through `evaluate()` (§19.6) | **passing, in-process only** |
+| each branch fires alone | eight branches, broken separately (§19.7) | mixed |
+| the count reaches its subject | 121 vs 0 across two real datasets, and `MANY`/`ONE`/`ZERO` in the specimen set (§19.6) | — |
+
+**Not proven, and this is the whole of the gap:**
+
+- **The network path has never run in its passing direction against a dataset named
+  `production`.** Every live-tier *pass* on record is either a specimen (no network, no Sanity,
+  no dataset name) or a dataset named `development`, where `isLive` is false and the
+  zero-tolerance rule is therefore skipped rather than satisfied. The one code path that
+  matters at launch — **fetch a `production`-named dataset, find zero published seeds, find a
+  complete `companyDetails`, and return exit 0** — has been exercised in neither half at once.
+- The `ZERO` specimen covers the *predicate* on that path, not the *fetch* that feeds it. A
+  GROQ query that silently returns an empty result for a reason unrelated to cleanliness — a
+  wrong query shape, a filter that excludes everything, a projection that drops
+  `isSeed` — is arithmetically indistinguishable, from inside `evaluate()`, from a genuinely
+  clean dataset. §19.8's dotted-id case is one live instance of exactly that shape and is
+  mitigated only at the write side.
+- Nothing here says the *statutory-field* half passes against real content. It has only been
+  run against seeded fields (`5 statutory field(s) present`, against `[SEED] GB123456789`).
+
+**What would have to be observed to close it** — all in one run, on the first real production
+seed (`BEFORE-LAUNCH.md` §16, blocked on the VAT number, item 2):
+
+1. `NEXT_PUBLIC_SANITY_DATASET=production npm run build` on a clean `.next`, with
+   `PRODUCTION_DATASET` at its real value — no redirect.
+2. `prebuild` prints the live tier as **applying**, not skipped: the dataset is named
+   `production`, `isLive` is true, and the zero-tolerance rule is reported as *in force*.
+3. The seed count is **0** *and the query is shown to have reached content* — the same run must
+   report a non-zero total document count, or the `0` is unfalsifiable. A count that cannot be
+   shown to have measured anything is the defect class CLAUDE.md names; `ZERO` passing in a
+   specimen file does not discharge it over the network.
+4. The statutory fields are reported present with the **real** values, and no `[SEED]` marker
+   anywhere in the output.
+5. `next build` then starts and completes — `Compiled successfully`, **EXIT=0**, read from the
+   process, not through a pipe (`M-P1-12`).
+
+Until items 1–5 are observed together, read §19 as: **the seed gate is proven to fail, and
+proven to be reached. It is not proven to pass over the network.** Both halves are needed; a
+gate that always fails is not a gate (§19.7), and one that has only ever failed is not yet
+known to be one either.
+
+---
+
+## 20. `M-P1-14` residual 3 — costed at the platform, and ACCEPTED
+
+27 August 2026. §19.10 item 3 left one thing open: `vercel.json` pins the build command against
+a *dashboard* edit, but nothing stops someone editing `vercel.json` itself, and the gate that
+catches that (`check:node`) runs in CI, which is not the deploy. The question asked here is not
+"how do we build one" but **what the platform can actually enforce, at this account's tier**.
+
+### 20.1 The tier — asked of the system
+
+`list_teams` on the Vercel API returns, for team `team_OVquiVuYynOepnUnaMAgcQnP`
+("atikmurtaza's projects", slug `atikmurtazas-projects`):
+
+```json
+{ "name": "atikmurtaza's projects", "id": "team_OVquiVuYynOepnUnaMAgcQnP", "plan": "hobby" }
+```
+
+**`plan: "hobby"`, from the platform's own object, not from the owner's recollection.** Corroborated
+by `get_project_deployment_protection` on `prj_kfFxGWf0ai1VYAGICYfVvNn0QYYN`:
+
+```json
+"passwordProtection": { "enabled": false }, "trustedIps": { "enabled": false },
+"ssoProtection": { "enabled": true, "deploymentType": "all_except_custom_domains" }
+```
+
+`all_except_custom_domains` is Standard Protection — the only scope Hobby has. Both Enterprise-only
+methods read `enabled: false`, which is what a Hobby project looks like from the outside.
+
+**Recorded, not acted on:** Vercel's fair-use guidelines state the Hobby plan *"restricts users to
+non-commercial, personal use only"* (`/docs/plans/hobby`, *Hobby billing cycle*). Gridsmith Ltd is a
+trading company. That is an owner/commercial matter, outside this finding, but it is written down
+here because it was met while establishing the tier.
+
+### 20.2 The mechanisms, and when each runs
+
+The distinction that decides this: a check that runs **after** the build has already produced and
+published a deployment is a different guarantee from one that stops the build. For seed content the
+difference is the entire point — by the time a post-build check runs, `[SEED] GB123456789` has been
+rendered into static HTML and served from a generated URL.
+
+| Mechanism | Runs | Can it assert "the seed gate ran"? | Can it stop a **production build**? | Plan |
+|---|---|---|---|---|
+| **`ignoreCommand`** (`vercel.json` / Ignored Build Step) | **before** the build | it can run any command and skip the build on exit 0 — but it is configured in `vercel.json`, the same file whose edit is the risk | it can *skip* a build, never fail one | all plans |
+| **`prebuild`** (npm lifecycle — what is deployed today) | **before** `next build`, inside the build container | yes — it *is* the gate | **yes** | n/a, not a platform feature |
+| **Build Output API** | *is* the build's output | no — a directory-structure specification, not a validator | no | all plans |
+| **Deployment Checks** (GitHub / integration checks) | **after** the build is ready | only that some external check reported a status | **no** — it withholds the *alias* | not stated in the docs read |
+| **Checks API** (marketplace integration) | **after** `deployment.ready` | as above, via an integration that would have to be built and published | no | requires an integration |
+| **Deployment Protection** | at **request** time | no — access control on a served deployment | no | see below |
+| **Sensitive environment variables** | at write / read time | no — hides values, asserts nothing about the build | no | not stated as plan-gated |
+
+Sources, all fetched 27 Aug 2026:
+
+- **Deployment Checks** — `/docs/deployment-checks`: *"Deployment Checks are conditions that must be
+  met before promoting a production build to your production environment."* And: *"Vercel will hold
+  each production deployment until all required checks pass before assigning it to your custom
+  production domains."* The lifecycle is explicit — *"Production deployments will still be created,
+  but will not be automatically assigned to your custom domains until all Deployment Checks are met."*
+  It also documents its own bypass: *"You can bypass Deployment Checks by selecting Force Promote."*
+- **Checks API** — `/docs/checks`: *"Checks are tests and assertions created and run after every
+  successful deployment."* Its lifecycle runs `deployment.created` → build → `deployment.ready` →
+  checks → *"Once all checks receive a `conclusion`, aliases will apply, and the deployment will go
+  live"*. Creating one requires a native or connectable-account **integration** published to the
+  marketplace.
+- **Build Output API** — `/docs/build-output-api`: *"a file-system-based specification for a directory
+  structure that can produce a Vercel deployment."* Aimed at framework authors. It is a shape the
+  build emits; nothing in it validates content.
+- **`ignoreCommand`** — `/docs/project-configuration/vercel-json`: *"Overrides the default Ignored
+  Build Step command. Exiting with code 0 ignores the build, while code 1 continues it."*
+- **Deployment Protection** — `/docs/deployment-protection`: *"On the Hobby plan, Vercel Authentication
+  with Standard Protection is available. This protects your preview deployments and deployment URLs,
+  but your production domain remains publicly accessible. To protect production domains, you need a Pro
+  or Enterprise plan."* Methods: Vercel Authentication *"Available on all plans"*; Passport *"Available
+  on the Enterprise plan"*; Password Protection *"Available on the Enterprise plan, or as a paid add-on
+  for Pro plans"* (Advanced Deployment Protection, *"an additional $150 per month"*, and it must have
+  been used *"a minimum of 30 days"* before it can be disabled); Trusted IPs *"Available on the
+  Enterprise plan"*. Scopes: Standard Protection *"Available on all plans"*; All Deployments
+  *"Available on Pro and Enterprise plans"*.
+- **Sensitive environment variables** —
+  `/docs/environment-variables/sensitive-environment-variables`: values are *"non-readable once
+  created"*, with build-log redaction for values of 32 characters or longer. **No plan requirement is
+  stated on that page**, and none is asserted here.
+
+**One thing deliberately not stated: the plan requirement for Deployment Checks.** The
+`/docs/deployment-checks` page names none, and the Hobby/Pro comparison table at `/docs/plans/hobby`
+has no Deployment Checks row. Per instruction, no plan requirement is claimed that was not seen in a
+source. What *is* in the sources is that neighbouring release-control features are Pro-and-above —
+`vercel rollback` is documented as *"available for Pro or Enterprise plans"* and Rolling Releases
+requires *"a Pro or Enterprise plan"* — so the surrounding surface is paid. That is an inference, and
+it is marked as one rather than reported as a plan requirement.
+
+### 20.3 The verdict — the plan is not what blocks this
+
+**Even if Deployment Checks were free on Hobby, they would not close residual 3, and that is the
+finding.** Three reasons, each from the sources above:
+
+1. **Wrong side of the build.** The threat is a build that ran without the seed gate. A Deployment
+   Check runs after that build has been created and is ready. The seeded HTML exists by then. It
+   withholds the custom-domain alias; it does not withhold the build.
+2. **It cannot see the premise.** A Deployment Check imports a *GitHub Actions status* or an
+   integration's conclusion. That status is produced by CI — the very system §19 established is not
+   the deploy. Wiring it up asserts "CI went green on this commit" one layer further out; it still
+   cannot observe whether the Vercel build container ran `prebuild`. This is exactly the class
+   CLAUDE.md names: *a gate that infers the state of a system it does not run in.*
+3. **It documents its own bypass.** *Force Promote* is a button. A control a person can click past
+   sits on the same footing as the repo-side gate it would be duplicating.
+
+`ignoreCommand` runs on the right side of the build and is available on Hobby — but it lives in
+`vercel.json`, so it is defeated by exactly the edit residual 3 describes, and it can only *skip* a
+build, never fail one. A skipped build leaves the previous deployment live, which for a seeded
+dataset is the wrong-shaped answer regardless.
+
+**There is no mechanism at any tier — Hobby, Pro or Enterprise — that makes Vercel refuse to *build*
+because a repository-side gate was removed from the repository.** The build command is defined by the
+repository; a repository that no longer defines the gate is, from the platform's point of view, a
+valid repository. The platform can gate *promotion*. It cannot gate *compilation* on the contents of
+the file that describes compilation.
+
+### 20.4 Recorded as ACCEPTED
+
+**Residual 3 is ACCEPTED, not open.** It is not closeable at this tier, and — separately, and more
+usefully — it is not closeable at any tier by the mechanism the original note imagined.
+
+| | |
+|---|---|
+| **What remains possible** | A Deployment Check fed by the existing CI workflow would add a *promotion* gate on top of the *build* gate. It duplicates a signal that already blocks merge, sits on the wrong side of the build, and is Force-Promotable. Judged not worth its wiring today; revisit only if the release model changes — a promote step, or more than one committer |
+| **What it would take to close properly** | Not a Vercel feature. It would take the gate not being editable in the same commit as the code: branch protection on `vercel.json` and `package.json` with a required reviewer — a GitHub-side control, on a repository with more than one person on it. A single-committer repository cannot have that property |
+| **Compensating controls in force** | (a) `prebuild` in `package.json` — the gate is in the deploy's own path, §19.4; (b) `vercel.json` `buildCommand` pinned to `npm run build` — dashboard precedence removed, and Vercel's own build log confirms the npm lifecycle is entered, §19.1; (c) `check:node` asserts both artefacts still exist, and both of its branches were broken separately and produced distinct messages, §19.7 |
+| **The honest size of what is left** | One person, editing two files in one commit, defeats it. That person is the owner. It is a self-sabotage scenario, not an attack surface and not an accident surface — every accidental path (a dashboard edit, a lost CI step, a bypassed npm lifecycle) is covered by (a)–(c) |
+| **Review trigger** | A second committer, a move off Hobby, or any change to how production is released |
+
+The value of writing this down is not the conclusion but the costing: **an accepted risk with its
+reasoning on the page is a different object from an open one nobody has priced**, and the next reader
+of §19.10 should not spend a session re-deriving that Deployment Checks are post-build.
