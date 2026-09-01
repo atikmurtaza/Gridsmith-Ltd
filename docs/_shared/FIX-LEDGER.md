@@ -103,6 +103,17 @@ of a claim, never as confirmation that the substance is where it says.
 | `M-P1-1` | ACCEPTED | — | — |
 | `M-P1-12` | FIXED | scripts/with-server.mjs | a0e7db2a |
 | `M-P1-14` | OPEN | — | — |
+| `F-1` | FIXED | scripts/seed-legal.mjs · docs/_legal/CONSUMER-TERMS.md | 9da8f5c1 |
+| `F-2` | FIXED | scripts/seed-legal.mjs · docs/_legal/PRIVACY-POLICY.md | 9da8f5c1 |
+| `F-3` | FIXED | scripts/seed-legal.mjs | 9da8f5c1 |
+| `F-4` | FIXED | scripts/seed-legal.mjs | 9da8f5c1 |
+| `F-5` | FIXED | scripts/seed-legal.mjs | 9da8f5c1 |
+| `F-6` | FIXED | scripts/seed-legal.mjs | 9da8f5c1 |
+| `F-7` | FIXED | scripts/seed-legal.mjs · docs/_legal/COOKIE-POLICY.md | 9da8f5c1 |
+| `F-8` | OPEN | — | — |
+| `F-9` | FIXED | scripts/legal-parity-rules.mjs · docs/_legal/WEBSITE-TERMS.md | 9da8f5c1 |
+| `F-10` | OPEN | — | — |
+| `F-11` | OPEN | — | — |
 
 **`M-P1-14` is `OPEN` because the work is in the working tree and uncommitted, not because it
 is undone.** VALIDATION §19 records the deliberate-failure proof in full. Promote this row to
@@ -159,3 +170,32 @@ exactly the well-formed-but-false claim `A-GATE-7-6` records as this gate's ceil
   true.** What establishes that a fix occurred is the deliberate-failure proof. Recorded in
   `CLAUDE.md` beside the standing rules, because it bounds the approach rather than this
   script.
+
+
+## The `F-*` rows — `07-STATE-REPORT.md`'s twelve findings
+
+Added 29 August 2026. The boundary is the commit that added the report itself, exactly as
+`M-P1-` uses `BEFORE-LAUNCH.md`, and — like `M-P1-` — **`F-\d+` is deliberately absent from
+`ID_RE`**. The identifiers are discussed in prose across the legal set, and widening the covered
+space would demand a status for every mention from whoever next edits a draft. These rows are
+here because there was something to file.
+
+**`F-12` has no row, and the reason is a property of this gate rather than an oversight.** Its
+fix — four drafts citing `L-CA-82` alone where the ledger entry is compound and `CNV-7` records
+that s. 82's text was never fetched — is **genuinely documents-only**, and a `FIXED` row whose
+files are all under `docs/` fails by construction (`A-GATE-6-5`). That rule is right and should
+not be softened to admit this: it exists because a docs-only commit satisfying a fix claim is the
+exact failure the ledger was built to catch, and the cost of keeping it sharp is that a real
+documentation fix cannot be claimed here. `F-12` is recorded in `_legal/03-REVISION-LOG.md`
+round 12 §5 instead, and the sweep it describes went to four files where the report named three.
+
+**`F-10` and `F-11` are `OPEN`, not `CEILING`, and the distinction is load-bearing.** Both are
+over-promises *inside* a reviewed draft — `CONSUMER-TERMS.md` §5's headline refund is more
+generous than the §5.3 it defers to, and §5.0's digital-content bullet points at a period §6A
+does not state. `check:legal:parity` is green over both and correct to be green, because it
+asserts that the page matches the draft and it does. **The gate's blindness to them is the
+CEILING; the findings themselves are OPEN**, and they close when a solicitor rules on the
+drafting. Filing them as `CEILING` would say nobody should act, which is wrong — someone should.
+
+**`F-8` is `OPEN` and belongs to the owner**: the footer publishes a fabricated VAT number, which
+is a `companyDetails` value and a registration fact, not a legal-draft one.
