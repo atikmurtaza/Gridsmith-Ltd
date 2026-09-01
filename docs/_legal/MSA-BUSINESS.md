@@ -366,6 +366,19 @@ in 02-CITATION-LEDGER.md `L-UCTA-11` for the solicitor instead. -->
 11.8 **NEW — the cap and the insurance are one question, not two.** Section 11(4)(b) directs attention
 to the professional indemnity cover at 11.4 when testing the cap at 11.3, so a cap set materially below
 the cover actually available is harder to defend than one set at it.
+<!-- **OWNER INSTRUCTION — 29 August 2026, and it is an instruction, not a note.**
+The owner is obtaining the professional indemnity cover this week. When the cover is known, the cap
+at 11.3 and the s. 11(4)(b) reasonableness argument are to be **set together, in one pass**.
+**DO NOT PICK A FIGURE FOR 11.3 IN THE MEANTIME** — not a placeholder, not a "sensible default", not
+a zeroed one. This is stated as a prohibition because the failure mode is specific and this
+repository has already recorded it in the general form (`CLAUDE.md` non-negotiable #2, "never a
+plausible figure"): a later session reads a `[TK]` next to a clause that will not render sensibly
+without a number, judges the gap unhelpful, and supplies a plausible one. Here that would be worse
+than unhelpful. **A cap chosen before the cover is known cannot be defended under s. 11(4)(b)**,
+because the subsection directs the enquiry to the insurance — so an invented figure does not merely
+sit in the document waiting to be replaced, it makes the clause harder to justify than leaving the
+gap. The `[TK]` is the correct state of this clause until the owner's call lands.
+-->
 <!-- L-UCTA-11 — this is the substantive consequence of reading the Act, and it changes how the two
 open figures should be settled. 11.3 and 11.4 have been carried as two independent owner `[TK]`s
 through four revisions; s. 11(4)(b) makes them one decision, and the order matters — **the cover has to
