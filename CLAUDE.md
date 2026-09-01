@@ -289,6 +289,47 @@ Read the workstream's own files before touching its code.
   and never let a green ledger stand in for running the thing. The same reasoning applies to
   any future gate that checks a human-written register — a tracker, a changelog, an
   attestation. Verify the shape mechanically; verify the substance by making it fail.
+- **Two documents that must agree, with no assertion between them, is its own defect class —
+  and where only one of them is delivered, the assertion must run against the delivered one.**
+  `scripts/seed-legal.mjs` was not a stale copy of `docs/_legal/`. It was an **independently
+  authored second document set**, internally coherent, actively maintained, and carrying its own
+  version — `0.1-draft` on all seven documents while the drafts were at 1.2 and 1.3 after nine
+  review rounds. **The site published the seed script.** So every round that verified a clause
+  against an instrument was verifying a document the public never received, and the served
+  consumer terms kept a 14-day refund promise round 9 had deliberately removed — which under
+  `L-CRA-50` is a term of the contract, so the site was **making a more generous offer than the
+  reviewed draft, and nobody chose it**. Six further divergences sat alongside it and five ran
+  against Gridsmith or the reader.
+
+  **This is not "documentation drifts".** Four features distinguish it and all four must hold:
+  both artefacts are authored rather than derived, so no build step is missing; both are
+  maintained, so neither looks stale; **only one is delivered**, and the undelivered one is the
+  one everybody reviews; and their disagreement is not unlikely but *unobservable*, because
+  nothing in the system takes both as input. Eleven rounds went past it — not from carelessness,
+  but because **no output was wrong, no check was silent, and there was no place the question
+  could be asked**.
+
+  **It was found by transcribing one document into the other word for word**, which is the
+  reusable part: reading for a defect finds the defects you can imagine, and a transcription
+  fails on the sentences that cannot be located regardless of what you were looking for. The
+  first pass reported 106 divergences, nine of which were connectives the transcription had
+  itself invented — the same defect in miniature, in the work done to fix it.
+
+  So: **when two artefacts must agree and only one reaches a user, assert against the one that
+  reaches the user.** A check between the two sources is a check between two things nobody
+  receives — which is why `check:legal:parity` reads the served page and not `seed-legal.mjs`.
+  Two instances of this shape are still open and are now recorded as one class rather than two
+  notes: `PRIVACY-POLICY.md` §6's recipient table against `lib/leads/notify.ts`, and the
+  committed migrations against the live database (`M-P1-3`, `M-P2-12`).
+  `_shared/01-VALIDATION-REPORT.md` §21.
+- **A parity gate asserts that the delivered copy matches the reviewed copy. It never asserts
+  that the reviewed copy is right, and that limit belongs in the gate.** A defect the two share
+  is invisible to it by construction — `CONSUMER-TERMS.md` §5's headline refund promise is more
+  generous than the §5.3 it defers to (`F-11`), and the served page reproduces it faithfully, so
+  `check:legal:parity` is green and correct to be green. That is a **CEILING, not a gap**:
+  widening it would mean asserting that a clause is legally sound, which is the solicitor review.
+  State it in the gate's own docstring, because a green line is otherwise read as "the copy is
+  fine" when what it means is **"the copy is the copy that was reviewed."**
 - **Never recursively delete outside the repository working tree without asking.** Inside
   the repo, `.next/` and `node_modules/` are regenerable — remove them freely. Outside it —
   home directories, tool installs, version-manager trees, anything under `AppData` or

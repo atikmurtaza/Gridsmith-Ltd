@@ -1445,3 +1445,116 @@ usefully — it is not closeable at any tier by the mechanism the original note 
 The value of writing this down is not the conclusion but the costing: **an accepted risk with its
 reasoning on the page is a different object from an open one nobody has priced**, and the next reader
 of §19.10 should not spend a session re-deriving that Deployment Checks are post-build.
+
+---
+
+## 21. A ninth defect class — the second document set
+
+**29 August 2026.** Every defect class this report holds so far is a **gate** measuring the wrong
+thing: an instrument lying about its own subject (§18.1), an observer never shown able to report
+(§18.2), route-level exclusion mistaken for import-level (§18.3), a gate covering CI's path and not
+the deploy's (§19). This one is not about a gate at all. **It is about two documents that had to
+agree, with nothing between them that could tell whether they did.**
+
+### 21.1 What was actually true
+
+`scripts/seed-legal.mjs` was not a stale copy of `docs/_legal/`. **It was an independently authored
+second document set.** Different clause numbering, different headings, different sentences, a
+different number of clauses per document. It carried its own version — `0.1-draft`, hardcoded for all
+seven documents — while the drafts it nominally corresponded to were at **1.2 and 1.3** and had been
+through nine review rounds.
+
+Both were real. Both were maintained. Neither referred to the other. Nothing in `verify:static`,
+`verify:build`, `verify:served` or CI read both.
+
+**The site published the seed script.** So for the whole of the review programme, every round that
+verified a clause against an instrument was verifying a document **the public never received**, and
+`07-STATE-REPORT.md` §3 had to end with the sentence *"the drafts are not what the site publishes"* as
+a thing to tell a solicitor out loud, because nothing else would.
+
+### 21.2 What it cost
+
+The consumer terms are the case that matters. Round 9 read CCR 2013 regs. 27–38 end to end and
+rewrote §§5–7 — adding the reg. 27(1) scope, the reg. 30(3) goods clock, the reg. 34(5) refund timing,
+the reg. 36(1)(b) durable-medium requirement and the whole of reg. 37 at §6A. **None of it reached the
+site.** The served page kept a flat 14-day right for every consumer, ran the period from the contract
+date in every case, and promised an unqualified 14-day refund from notification.
+
+That last one is the sharp end. Under `L-CRA-50` a written statement a consumer takes into account
+becomes a term of the contract. So the site was not merely out of date — **it was making an offer**,
+and a more generous one than the reviewed draft, from a document superseded five days earlier.
+Round 9 removed that concession deliberately, having read reg. 34(5). Nobody chose to keep it. It was
+being published because it lived in the other document.
+
+Six more divergences of the same shape sat alongside it, and the direction is worth naming: **five of
+the seven ran against Gridsmith or against the reader.** A retention promise no job enforces. A
+processor region asserted as fact where the draft says `[TK]` precisely because it could not be
+established. A recipient absent from a table a reader is entitled to treat as exhaustive. A repealed
+statutory provision cited for a complaints route. A claim that the enquiry form records data nothing
+on the site sends.
+
+### 21.3 The class
+
+> **Two documents that must agree, with no assertion between them.**
+
+It is not "documentation drifts", which is universal and mostly harmless. The distinguishing features
+are these, and all four have to hold:
+
+1. **Both are authored, not derived.** Neither is generated from the other, so there is no build step
+   whose absence would be noticed.
+2. **Both are maintained.** A stale file gets caught eventually because someone opens it and it looks
+   old. These did not look old — the seed script was internally coherent, well-commented, and had been
+   edited four days earlier.
+3. **Only one of them is delivered.** The undelivered one is the one everybody reviews, because it is
+   the one that reads like the source of truth.
+4. **Their disagreement is silent by construction.** Not unlikely — *impossible to observe*, because
+   nothing in the system takes both as input.
+
+Feature 3 is what makes it expensive and feature 4 is what makes it survive. Eleven rounds of review,
+four verification reports and a state report went past it. **It was not missed because anyone was
+careless; it was missed because there was nothing to miss.** No output was wrong, no check was silent,
+no number was stale. There was simply no place in the system where the question could be asked.
+
+### 21.4 How it was found, which is the reusable part
+
+Not by reading either document. **By transcribing one into the other word for word** — which forces
+every sentence of the delivered version to be located in the reviewed version, and fails on the ones
+that cannot be.
+
+This is the same method round 9 used on CCR regs. 27–38: read the Part through rather than check the
+paragraphs a report named. Reading for a defect finds the defects you can imagine. Transcribing finds
+the ones you cannot, because the procedure does not depend on knowing what you are looking for. The
+first pass reported **106 divergences**; the eventual count of things that were genuinely wrong rather
+than merely differently punctuated was smaller, and it included nine places where the transcription
+itself had invented a connective — the same defect in miniature, caught by the same method, in the
+work done to fix it.
+
+### 21.5 What closes it
+
+`scripts/check-legal-parity.mjs`. Not because it compares two files — a source-to-source check would
+have missed half of this, since the seed script can be correct and the dataset never reseeded — but
+because it compares **the reviewed document against the delivered one**, which is the pair the class is
+about.
+
+**The general form, for the next instance:** where two artefacts must agree and only one is delivered,
+the assertion has to run against the **delivered** one. A check between the two sources is a check
+between two things nobody receives.
+
+### 21.6 Where else this shape is live
+
+Asked deliberately, because the class is more useful than the instance.
+
+| Pair | Delivered | Asserted? |
+|---|---|---|
+| `docs/_legal/` ↔ the served `/legal/*` pages | the pages | **Yes, since 29 Aug 2026** — `check:legal:parity` |
+| `PRIVACY-POLICY.md` §6's recipient table ↔ `lib/leads/notify.ts` | the notice | **No.** Adding a field to `internalEmail()` or the Slack line silently falsifies the table. `07-STATE-REPORT.md` §4 records it; `M-P1-3` is the same shape |
+| The committed migrations ↔ the live database | the database | **No.** `check:rls` reads the migrations. `A-07`'s leak existed in the running system while the migration read correctly — the source cannot see the class that matters. `M-P2-12` |
+| `.github/workflows/ci.yml` ↔ `package.json`'s verify chain | both | **Yes** — `check:node`, which is the earliest instance of this class anyone here solved |
+| `sanity/schemas/` ↔ what the Studio enforces on write | the Studio | **Partly** — `check:schemas` runs the rules rather than trusting `options.list` |
+| The specs' asserted numbers ↔ the gates that measure them | the gates | **Partly.** `check:contrast` and `check-bundle-size` carry theirs; `CLAUDE.md`'s standing rule is that an unasserted number is unverified |
+
+Two rows are `No`, both were already known, and both are now recorded as one class rather than two
+unrelated notes. That is the whole value of writing this section: `M-P1-3` and `M-P2-12` stop being
+separate items on a list and become **the two remaining instances of a defect class that has cost this
+project a published over-promise once already.**
+
