@@ -423,8 +423,8 @@ deviations from the original numbering are marked ⚑ and explained below the ta
 | 7 | A-06 | Sanity project + core schemas | P0 | 2d | — | **DONE** 18 Aug | Dev | Project and datasets at `M-05`; the core schemas here — 8 object types, 7 document types, `isSeed` group-wide, the canonical-six validator. **New gate `check:schemas` — 19 gates now** — because `next build` never compiles this tree, so nothing else could see a break. `A-12` unblocked |
 | 8 | A-07 | Supabase + `leads` + RLS | P0 | 1d | — | **DONE** 19 Aug | Dev | `Q-M18` resolved. Two migrations applied and verified against the live database. **The spec's own §4 view was an RLS bypass** — found by querying as `anon`, not by reading the SQL. New gate `check:rls` — **20 gates now**. `A-08` unblocked |
 | 9 | A-08 | Lead pipeline end-to-end | P0 | 1.5d | A-07 | **DONE** 19 Aug | Dev | Both halves verified live. Insert as `anon`; notification in `after()` so the send never blocks the response — **measured 56ms vs 224ms**. `Q-M20` resolved for development. **A dev `sent` is not deliverability** and **the SPF include must be MERGED at deployment** — both recorded in the gate, not just in prose |
-| 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | **DONE** 18 Aug | Dev | **Precedes A-09.** No cookie before consent — now asserted in the browser, not just stated. State, Consent Mode v2 bridge, banner, footer reopen. **Measured 2.0KB gz against an 8KB reservation.** `A-09` is unblocked |
-| 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | **DONE — enabled in dev** 19 Aug | Dev | `Q-M19` resolved. The grant path has a permanent gate subject: nothing before a choice, a request to each provider after Accept, **PostHog on an EU host**, nothing after Reject. Live ids go in the platform environment at launch |
+| 10 | A-11 | ⚑ **Consent management + script gating** | P0 | 2d | A-01 | **DONE** 18 Aug · **AMENDED 26 Aug — see `M-P2-ANALYTICS`: there are no consent categories and the banner is a notice** | Dev | **Precedes A-09.** No cookie before consent — now asserted in the browser, not just stated. State, Consent Mode v2 bridge, banner, footer reopen. **Measured 2.0KB gz against an 8KB reservation.** `A-09` is unblocked |
+| 11 | A-09 | ⚑ Analytics + AI-referral detection | P0 | 1d | ⚑ **A-11** | **REVERSED 26 Aug — the injection is deleted. See `M-P2-ANALYTICS`** | Dev | `Q-M19` resolved. The grant path has a permanent gate subject: nothing before a choice, a request to each provider after Accept, **PostHog on an EU host**, nothing after Reject. Live ids go in the platform environment at launch |
 | 12 | A-12 | **Seed enforcement + production build check** | P0 | 1d | A-06 | **DONE** 18 Aug | Dev | Seed publish fails a live build. **The spec's query counted almost nothing** — see below. Also closes **`M-P1-2`**: the dataset variable has no default and an unset one is a build error. `/_kitchen-sink` now inherits the probe exclusion rather than getting a second mechanism |
 
 **The six deviations, and why:**
@@ -632,7 +632,7 @@ because nothing else could see their subject.
 | | Blocked on | Owner |
 |---|---|---|
 | ~~`A-07`, `A-08` — Supabase, `leads`, RLS, the lead pipeline~~ | ~~`Q-M18`~~ — **resolved.** Both rows closed 19 Aug against the live database; `PROJECT_URL` and `PUBLISHABLE_KEY` are repository Variables and reach CI. **This row was stale: it listed a blocker whose dependents were already marked DONE.** | — |
-| `A-09`'s grant path — a permanent gate subject for tag injection | **`Q-M19`** — **resolved for development**, `A-09` closed 19 Aug. What remains is the **live** ids in the platform environment at launch, now `BEFORE-LAUNCH` item 22. A placeholder in production would send real visitor data to a property nobody owns | **Atik, at launch** |
+| ~~`A-09`'s grant path~~ → **the cookie-notice path** | **`Q-M19` is moot.** The owner took OQ-7 option 2 on 26 Aug: the injection and all three consent categories are deleted, and `NEXT_PUBLIC_GA4_ID` / `NEXT_PUBLIC_POSTHOG_KEY` are read by no code. The gate subject is kept and **inverted** — an interaction with the notice must contact nobody. **Nothing is blocked on anyone**; re-introducing analytics is `M-P2-ANALYTICS` and `BEFORE-LAUNCH` item 22, with `L-07` and the `dataLayer` shim as prerequisites | **Nobody — deferred by decision** |
 | **`M-P1-1`** — the 500 serves Next's `__next_error__` shell with no `lang`. WCAG 3.1.1 Level A on every server-side crash | **still a decision, and the remedy recorded on the move to Vercel does not work — measured 21 Aug, not read.** The premise was *"Vercel serves a static error document outside Next's render path"*. `public/500.html` was written and deployed, then two failures were induced on the preview: a **genuine platform error** (`/gridsmith-timeout-probe`, a hanging invocation the platform killed — **504**) and the **server-render crash** (`/gridsmith-ssr-throw-probe` — **500**). **Neither served the document.** So the option is not "available but unbuilt", it is unavailable here. Two further facts bound what that proves: Vercel's own docs describe custom error pages as covering *platform* errors, and a Next function returning its own 500 is not one; and the docs page is marked **permission-gated**, while this team is on **hobby**. Because the 504 case failed too, **it is not established whether the feature would cover a Next-returned 500 on a paid plan** — the gated-off explanation covers both observations, so one test cannot separate them. The remaining routes are the same two as before, minus the one that was thought to have opened: an edge layer that can rewrite a 5xx response body, or a recorded acceptance. **Atik** | **Atik** || `M-07`'s remaining content — the 404's search box, division routing block and top six services; the 500's phone number | Epic N and `Q-M5` | — |
 | The Studio's CORS origin | an interactive `npx sanity login`. `SETUP.md` has the command | **Atik** |
 | **The screen-reader pass over `M-02`, `M-03`, `M-04` and the consent banner** | a human with NVDA or VoiceOver. It was placed at "the `M-06` chrome checkpoint"; `M-06` turned out to be a measurement plus a build, so **the checkpoint never happened and was deliberately not folded in early** | **Atik** |
@@ -1893,6 +1893,14 @@ indistinguishable from a working one if you only test the branch that works.
 
 ### A-09's grant path — a permanent subject, and the region is part of it
 
+> **⚠ SUPERSEDED 26 August 2026 — `M-P2-ANALYTICS`.** The grant path no longer exists: there is no
+> Accept, no Reject, no configured provider and no injection. **The subject was kept and the assertion
+> inverted** rather than deleted, because its real value was that a committed subject existed for the
+> one legally load-bearing claim on this site. What follows is the record of the assertion this one
+> replaced; the replacement and its eight-branch proof are below at **`M-P2-ANALYTICS`** and in
+> `docs/_legal/03-REVISION-LOG.md` round 10.
+
+
 **The grant path had been proven once by hand and the measurement was thrown away.** The
 surviving evidence was a commit message, which is the shape CLAUDE.md names: a fix with no
 subject. It now runs every CI run, against the committed banner:
@@ -1978,6 +1986,16 @@ requires every non-essential category to be `denied`. **Proof:** `DENIED.analyti
 flipped to `true` fired `first render applied analytics_storage=granted with no consent cookie
 present` on all 12 themed route/viewport combinations — **while the cookie and request
 assertions stayed green**, which is the distinction demonstrated rather than argued.
+
+> **⚠ INVERTED 26 August 2026 — `M-P2-ANALYTICS`.** There are no consent categories, so there is no
+> denied default to queue and `state.ts` touches `dataLayer` not at all. **The assertion now requires
+> that NO Consent Mode signal is queued, in any category, on any route.** Leaving it as written would
+> have failed every route; rewriting it to tolerate an empty queue would have made it **hollow** —
+> green while measuring nothing — which is precisely the distinction V1 was added to make. Re-proven
+> by pushing a signal from the banner: fired 28 times, one per themed route × viewport, count moved
+> from 0. **The V1 summary line survived the rewrite and still claimed the denied default had been
+> verified; that line is the one hollow artefact this change produced and it was caught by reading
+> the gate's own output, not the code.**
 
 **The reject affordance was already correct and nothing was changed.** Measured on a
 first-visit banner at 375px: Accept and Reject are the same component with the same class,
@@ -2147,6 +2165,12 @@ type resolves and the schema is still broken.
 
 ### A-09 — built and provable, but not enabled, and the difference matters
 
+> **⚠ REVERSED 26 August 2026 — `M-P2-ANALYTICS`.** "Built and not enabled" was the state the owner
+> was asked to resolve, and the resolution was to remove it. `lib/analytics/load.ts`, `config.ts` and
+> `posthog-region.ts` are deleted. `events.ts` and `referral.ts` are kept and unreferenced. What
+> follows is the record of what was built.
+
+
 **Premise check first.** The only number the row rests on is `R1`'s **22% conversion premium**
 for AI-referred traffic. `FOUNDATION` §"AI-referral detection" already says it "must be
 measured, not assumed", so nothing here is built to it — the classifier flags traffic and makes
@@ -2270,6 +2294,9 @@ event so the footer stays a Server Component.
 - **Round trip verified in the browser.** Reject gives `gs_consent=0` and a Consent Mode
   update with all three denied; footer reopen, Preferences, Analytics, Save gives a cookie
   reading `analytics_storage` and an update granting that one only.
+  **⚠ 26 Aug — none of this exists any more (`M-P2-ANALYTICS`).** There is one control, "Got it",
+  it writes `gs_consent=1`, and no Consent Mode update is emitted at all. The Accept/Reject parity
+  measurement above is retained because the pair returns with the analytics, sharing the same class.
 
 **Three gate assertions added, each proven alone.**
 
@@ -3030,6 +3057,7 @@ decision awaiting the owner, not work awaiting a session.
 | Epic M | `M-P2-6` | **the baseline spread absorbs a duplicated chunk instead of attributing it.** `/_not-found` measures 0.2KB dearer than the other baseline routes because `global-not-found` is its own webpack entry and gets a second copy of the shared layout's client boundary — the same consent banner code, bundled twice. The tolerance was raised from 0.1 to 0.3 with the cause measured rather than guessed, which is the distinction the gate's own warning turns on. The fix is to compare non-entry chunks so a duplicate is attributed |
 | Epic M | `M-P2-7` | **`check-responsive` only measures fixed bottom bars below 768px.** That was right when `StickyCta` was the only one — it is `display: none` above 768px. The consent banner is fixed at **every** width, so its 2.4.11 reserve is asserted at 375px and unmeasured at 1440px. Widen the sweep to all three widths |
 | Epic M | ~~`M-P2-5`~~ | **Reclassified P1 as `M-P1-2` — see the P1 table above.** It was filed P2 on the reading that it is a deployment-configuration gap. It is not: the failure mode is a false VAT statement on a public website |
+| Epic M | **`M-P2-ANALYTICS`** | **DONE 26 Aug — the analytics and all three consent categories are removed from the site, by owner decision (OQ-7 option 2).** Round 6 had established by measurement that GA4 and PostHog loaded on consent and never initialised — no `gtag('config')`, no `posthog.init()`, `window.gtag` undefined, `posthog.__loaded` false, `gs_consent` the only cookie in any state. So consent was collected for two libraries that recorded nothing while every **accepting** visitor's IP and user-agent still reached Google and PostHog. Owner's reasoning, recorded as the basis: *"There is no traffic, so option 2 costs zero measurement today, which makes option 3 pure liability with nothing on the other side."* **Deleted:** `lib/analytics/{load,config,posthog-region}.ts`, `analytics_storage`, `ad_storage`, `functionality_storage`, the Consent Mode `dataLayer` bridge, and the three `NEXT_PUBLIC_*` analytics variables from `.env.example` and CI. **`ad_storage` and `functionality_storage` went regardless of the analytics decision** — they gated no code path and misrepresented control the visitor did not have. **Kept:** `events.ts` and `referral.ts`, pure and now unreferenced, each saying so in its header. **The banner is a notice, not a request:** nothing non-essential is stored, so PECR reg. 6(2) consent is not engaged; one control, no toggles, `gs_consent=1`, exempt under Sch. A1 para. 4 as the thing that stops the notice returning. **`PROJECT-RULES` §7 is not weakened** — there is no accept to make harder than a reject, and the identically-treated pair returns with the analytics. **Pre-existing cookies are read for presence only and deliberately not rewritten** — the names name nothing, the cookie is the visitor's own record, and rewriting it is the misleading state the requirement exists to prevent. **Two gate subjects changed and neither was left:** the `A-09` grant path is **inverted** (an interaction must contact nobody, in every state, plus two migration assertions) and the V1 denied-default assertion is **inverted** (no Consent Mode signal at all). **One hollow line was produced and caught by reading the gate's output:** `check:axe` passed while printing *"first render applied a denied default for every non-essential category on 14 themed route(s)"* about an assertion that no longer checks it. **Proven by deliberate failure, eight branches, each alone, `.next` removed and rebuilt each time** — see `03-REVISION-LOG.md` round 10 §6 for the eight messages. **Re-measured in a real browser on a production build, four states** (before any choice · after "Got it" · a legacy cookie from a pre-removal Accept · one from a pre-removal Reject): no third-party request in any state, `localStorage` and `sessionStorage` empty throughout, `gs_consent` the only cookie, legacy values unchanged. Legal documents changed in the same commit: `COOKIE-POLICY.md` 1.3, `PRIVACY-POLICY.md` 1.3, `01-FACTUAL-INVENTORY.md`, **and `scripts/seed-legal.mjs`, which is the copy a visitor actually reads**. **Option 1 — wiring analytics up properly — is recorded as a deliberate pre-launch task at `BEFORE-LAUNCH.md` item 22, with `L-07` (`consent_events`) and the `dataLayer` shim defect as PREREQUISITES rather than follow-ups.** `COOKIE-POLICY.md` §4A and `PRIVACY-POLICY.md` §11A are left explicitly **open**; the ICO quotations at §4A were not touched |
 | Epic M | `M-P2-3` | **every price field must carry whether its figure is net or gross of VAT, and each division's display rule follows from its audience.** Gridsmith is VAT registered at launch: consumer-facing prices must display VAT-inclusive, B2B prices must state their treatment explicitly. Press sells to individual authors — consumers under the Consumer Contracts Regulations 2013; Design and Digital sell largely B2B. **This is a schema constraint on the pricing rows and belongs to the division epics, not to `companyDetails`** — but it is cheaper to build in than to retrofit across three divisions at Stage 8. Raise it at the first pricing schema |
 | Epic M | `M-P2-4` | `npm audit` reports 13 high in the dev tree. All pre-existing (`@lhci/cli`, `puppeteer`, `next`/`postcss`) except `sharp`, which arrived transitively with the `sanity` devDependency at `M-05`. None is in the production dependency tree. Sweep at the Epic M sweep |
 | Epic M | `M-P2-2` | **a focusable element with a transition on `transform` can take focus while off screen** — the class behind the skip link's own first defect (`M-02`). Grepped, not swept: `motion.module.css:51` `.stickyCta` translates `100%` off screen over `--dur-base` and holds two buttons, so focus arriving mid-slide is the same shape; `visibility: hidden` makes it untabbable while hidden, which narrows the window but does not close it. `interactive.module.css:144` `.marker` rotates in place, is not focusable, and is not an instance. Nothing else transitions `transform`. Sweep at the Epic M sweep |
@@ -3081,6 +3109,37 @@ permanent committed subject exists for a gate to reach**, and **a gate subject m
 that it is still the subject**. The proof rule is recorded there as *load-bearing, not
 ceremonial* — it has caught a broken gate in three consecutive sessions, twice on gates
 written in the same session as the rule.
+
+### `M-P1-14` — the deploy did not run the seed gate (26 Aug 2026)
+
+**Status: fixed in the working tree, uncommitted. Ledger row is `OPEN` until it lands.**
+Full write-up and the deliberate-failure proof: `_shared/01-VALIDATION-REPORT.md` §19.
+
+Asked of the system, not inferred. Vercel's build for
+`dpl_Bvr712Dpw7PDTd6AAoYVudfKGKja`:
+`vercel build` -> `Detected Next.js version: 15.5.23` -> `Running "npm run build"` ->
+`next build`. No dashboard Build Command override. `check:launch` lived in `verify:served`,
+which runs in CI and nowhere else, so **the deploy has never run it.**
+
+What was actually protecting production was `getCompanyDetails()` throwing on the **empty**
+`production` dataset — the reason every `target: production` deployment since 19 Aug is
+`ERROR`. A production dataset **seeded** with placeholder content is not empty: it satisfies
+that throw, builds green, and publishes `[SEED] GB123456789` as the VAT number. Non-negotiable
+#4 was resting on an accident.
+
+Eighth defect class, and the widest so far. §15/§16 swept exclusions against *gates*; §18 swept
+one against the *module graph*; this is an exclusion swept against the *pipeline*. **Ask which
+pipeline runs the gate, not whether the gate exists.**
+
+| | |
+|---|---|
+| Wired at | `package.json` `prebuild` -> `check:launch --build`; `vercel.json` `buildCommand: "npm run build"` pins the npm entry point against a dashboard edit |
+| Guarded by | `check:node` now fails if either the hook or the build command goes missing — `walk()` cannot see an implicit npm lifecycle hook, so parity would have stayed green |
+| Permanent subject | `scripts/check-launch-content.selftest.mjs`, 11 committed specimens, in `verify:static` and CI. The live tier previously had **no subject at all** — its only subject was a live dataset that has never contained a `[SEED]` marker |
+| Proof | `[SEED]`-bearing production-named dataset -> `EXIT=1` at prebuild, `next build` never started, `getCompanyDetails`'s message confirmed **absent** from the log. Count moved 121 -> 0 across two real datasets. Clean case builds, `EXIT=0` |
+| Not closed | A clean *`production`* dataset has never been built end to end — nothing is in it yet. The seed count is unauthenticated and cannot see a dotted id (write-side guard only). See §19.10 |
+
+---
 
 ## Hosting — Vercel (`gridsmith-ltd`, `atikmurtazas-projects`), GitHub `atikmurtaza/Gridsmith-Ltd`
 

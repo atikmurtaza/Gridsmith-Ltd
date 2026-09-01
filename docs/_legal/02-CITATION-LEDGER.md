@@ -1,0 +1,941 @@
+# 02 — Citation Ledger
+
+**Date checked: 25 August 2026**, with additions on 26 August (round 7, §I) and **29 August 2026
+(round 12, the five `L-UCTA-*` entries)**. All primary sources fetched on the date each entry records,
+from `legislation.gov.uk` (current in-force text unless stated) and `w3.org`.
+
+**This is not legal advice.** It is a register of obligations with primary citations, assembled so a
+solicitor can check the drafts against the instruments rather than against a summary of them. Nothing
+here is a legal opinion on whether Gridsmith Ltd complies.
+
+---
+
+## Method
+
+1. **A secondary source finds the primary source. It never states what the law says.** Law-firm
+   briefings and ICO guidance were used only to locate an instrument, section, or commencement date.
+   Every "what it requires" field below was written after reading the primary text at the URL cited.
+2. **No primary citation, no entry.** Anything that could not be reached or verified is in
+   §COULD NOT VERIFY, with what was tried.
+3. **In-force version checked.** `legislation.gov.uk` serves original and as-amended text; each entry
+   records the amendment position observed on 25 Aug 2026.
+4. **`00-LEGAL-BASIS.md` was treated as an unverified assertion, not a source.** Its §2 claim — DUAA
+   2025 main provisions commenced 5 Feb 2026, direct-complaints duty 19 June 2026 — **was independently
+   verified and is correct**: SI 2026/82 reg. 2 (5 Feb 2026, incl. s.112) and reg. 3 (19 June 2026,
+   s.103 and Sch. 10). See `L-DUAA-COMMENCEMENT`.
+5. **The six legal drafts were not read.** This ledger is the standard they are to be measured against.
+
+### Audience key
+
+The build serves two audiences through one set of routes (`01-FACTUAL-INVENTORY.md` §5.1):
+**Press is consumer-facing**; **Design and Digital are largely B2B**; `/`, `/contact` and every
+`/legal/*` page mix both. Where an obligation lands differently, the entry says so rather than
+collapsing to the stricter standard.
+
+---
+
+## A. Data protection — UK GDPR and DPA 2018
+
+### L-DUAA-COMMENCEMENT — the amendment baseline
+
+| | |
+|---|---|
+| **instrument** | Data (Use and Access) Act 2025 (c. 18) |
+| **provision** | s. 142 (commencement); The Data (Use and Access) Act 2025 (Commencement No. 6 and Transitional and Saving Provisions) Regulations 2026, SI 2026/82, regs. 2 and 3 |
+| **in-force version** | As made; checked 25 Aug 2026 |
+| **what it requires** | Not an obligation — the dating baseline for every UK GDPR / DPA / PECR entry below. SI 2026/82 reg. 2 brought a block of Part 5 into force on **5 February 2026**, including s. 112 (terminal-equipment storage). Reg. 3 brought **s. 103 (complaints by data subjects) and Sch. 10 into force on 19 June 2026**. Both dates confirmed against the SI itself. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2026/82/made · https://www.legislation.gov.uk/ukpga/2025/18/contents |
+| **applies to** | all |
+| **engaged here because** | Every draft under audit was written before or across these dates; `PRIVACY-POLICY.md` and `COOKIE-POLICY.md` were last touched 21 Aug 2026 (§0 file listing). |
+| **status in this build** | n/a — baseline |
+
+### L-GDPR-6 — lawful basis
+
+| | |
+|---|---|
+| **instrument** | UK GDPR (Regulation (EU) 2016/679 as retained and amended) |
+| **provision** | Art. 6(1) — in particular 6(1)(b) (steps at the data subject's request prior to entering a contract) and 6(1)(f) (legitimate interests) |
+| **in-force version** | Retained EU law as amended to 5 Feb 2026; checked 25 Aug 2026 |
+| **what it requires** | Processing is lawful only to the extent at least one Art. 6(1) condition is met. The controller must identify which, before processing. |
+| **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/6 |
+| **applies to** | all |
+| **engaged here because** | Inventory §3.1 — the lead form collects `full_name`, `email`, `company`, `phone` and free-text `message` (up to 5000 chars) and writes them to `leads`; §3.4 — the record is transmitted to Resend and (if enabled) Slack. |
+| **status in this build** | **cannot tell.** Nothing in the inventory records a documented lawful basis; `lib/leads/schema.ts:20-24` states a data-minimisation policy, not a basis. |
+
+### L-GDPR-5-1e — storage limitation
+
+| | |
+|---|---|
+| **instrument** | UK GDPR |
+| **provision** | Art. 5(1)(e); accountability at Art. 5(2) |
+| **in-force version** | As amended to 5 Feb 2026; checked 25 Aug 2026 |
+| **what it requires** | Personal data must be kept in identifiable form no longer than is necessary for the purposes for which it is processed. Art. 5(2) makes the controller responsible for, and required to demonstrate, compliance. |
+| **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/5 |
+| **applies to** | all |
+| **engaged here because** | Inventory §3.4 — **"Retention: NOT IMPLEMENTED."** No purge, anonymisation or scheduled delete over `leads` exists anywhere in the repository; the only cron is `/api/rls-drift`. OQ-9. |
+| **status in this build** | **not satisfied.** Lead data accumulates indefinitely with no defined period and no deletion mechanism. |
+
+### L-GDPR-13 — information to be provided (privacy notice content)
+
+| | |
+|---|---|
+| **instrument** | UK GDPR |
+| **provision** | Art. 13(1) and 13(2) |
+| **in-force version** | **As amended by DUAA 2025 with effect from 5 Feb 2026 and 19 June 2026**; checked 25 Aug 2026 |
+| **what it requires** | Where data is obtained from the data subject, the controller must provide at the time of collection: identity and contact details of the controller (and representative / DPO where applicable); purposes and legal basis; the legitimate interests where 6(1)(f) is relied on; recipients or categories of recipient; the fact of any third-country transfer and the safeguard relied on. Art. 13(2) adds: retention period or the criteria for determining it; the rights of access, rectification, erasure, restriction, objection and portability; the right to withdraw consent; **the right to make a complaint to the controller under DPA 2018 s. 164A** (a UK addition, in force 19 June 2026); the right to complain to the Commissioner; whether provision is statutory or contractual and the consequences of not providing; and the existence of automated decision-making. |
+| **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/13 |
+| **applies to** | all |
+| **engaged here because** | Inventory §3 — data is obtained directly from the data subject at `/contact`. |
+| **status in this build** | **not satisfied in at least three respects, from the inventory alone**: no retention period exists to state (§3.4); the Slack recipient is undocumented (§1.4); processor regions are unestablished (OQ-1 to OQ-4), so the transfer disclosure cannot be accurate. The s. 164A complaint right is new since the drafts were last touched. |
+
+### L-GDPR-RIGHTS — data subject rights
+
+| | |
+|---|---|
+| **instrument** | UK GDPR |
+| **provision** | Arts. 15 (access), 16 (rectification), 17 (erasure), 18 (restriction), 20 (portability), 21 (objection); Art. 12 (modalities, and the one-month response period) |
+| **in-force version** | As amended to 5 Feb 2026; checked 25 Aug 2026 |
+| **what it requires** | The controller must facilitate the exercise of these rights and respond without undue delay and in any event within one month of receipt (Art. 12(3)), extendable by two further months where necessary given complexity and number of requests. Information is provided free of charge save for manifestly unfounded or excessive requests. |
+| **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/12 · https://www.legislation.gov.uk/eur/2016/679/article/15 · https://www.legislation.gov.uk/eur/2016/679/article/17 |
+| **applies to** | all |
+| **engaged here because** | Inventory §3.1 — identifiable records are held in `leads` with `id`, `email` and `created_at`. |
+| **status in this build** | **cannot tell.** No erasure mechanism exists (§3.4), so an Art. 17 request would have to be executed by hand against Supabase; nothing in the inventory records a process. |
+
+### L-DPA-164A — the DUAA direct-complaints duty
+
+| | |
+|---|---|
+| **instrument** | Data Protection Act 2018, s. 164A, inserted by Data (Use and Access) Act 2025 s. 103 |
+| **provision** | DPA 2018 s. 164A; DUAA 2025 s. 103 and Sch. 10 |
+| **in-force version** | **In force 19 June 2026** — SI 2026/82 reg. 3; checked 25 Aug 2026 |
+| **what it requires** | A controller must **facilitate the making of data protection complaints**, "by taking steps such as providing a complaint form which can be completed electronically and by other means"; must **acknowledge receipt within 30 days**; and must **without undue delay take appropriate steps to respond** and inform the complainant of the outcome, including making appropriate inquiries and keeping the complainant informed of progress. No small-organisation exemption. Art. 13(2) requires the existence of this right to be stated in the privacy notice (see `L-GDPR-13`). |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2025/18/section/103/enacted · https://www.legislation.gov.uk/uksi/2026/82/made |
+| **applies to** | all |
+| **engaged here because** | Gridsmith Ltd is a controller for the `leads` data (inventory §3). The duty commenced **after** the 21 Aug 2026 revision date of the current privacy draft. |
+| **status in this build** | **not satisfied.** Inventory §5.1 lists every route; there is **no complaints route and no electronic complaint form**. `/contact` is a sales enquiry form whose `message` field is deliberately withheld from the notification email (§3.4) — it is not a complaints channel. |
+
+### L-GDPR-32 — security of processing
+
+| | |
+|---|---|
+| **instrument** | UK GDPR |
+| **provision** | Art. 32(1) |
+| **in-force version** | As amended to 5 Feb 2026; checked 25 Aug 2026 |
+| **what it requires** | Appropriate technical and organisational measures to ensure a level of security appropriate to the risk, having regard to the state of the art, costs, and the nature, scope, context and purposes of processing — including as appropriate pseudonymisation and encryption, ongoing confidentiality/integrity/availability/resilience, restoration after incident, and **a process for regularly testing, assessing and evaluating the effectiveness** of the measures. |
+| **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/32 |
+| **applies to** | all |
+| **engaged here because** | Inventory §3.4 — RLS verified live as anon-insert-only on `leads`, no anon SELECT/UPDATE/DELETE, the analytics view revoked and `security_invoker`; a daily `/api/rls-drift` cron re-tests it (`vercel.json:4-9`). That cron is a concrete instance of the Art. 32(1)(d) testing limb. |
+| **status in this build** | **satisfied in substantial part, with one gap.** No honeypot, rate limit or CAPTCHA on the public write path (§3.3) — an availability/abuse exposure on the one endpoint anon may write to. |
+
+### L-GDPR-28 — processors
+
+| | |
+|---|---|
+| **instrument** | UK GDPR |
+| **provision** | Art. 28(1) and 28(3) |
+| **in-force version** | As amended to 5 Feb 2026; checked 25 Aug 2026 |
+| **what it requires** | A controller may use only processors providing sufficient guarantees. Processing by a processor must be governed by a contract **binding on the processor** setting out the subject-matter, duration, nature and purpose, type of personal data, categories of data subject, and the controller's rights — and containing the specific stipulations in Art. 28(3)(a)–(h), including that the processor acts only on documented instructions, assists with data subject rights and Arts. 32–36, and deletes or returns the data at the end of provision. |
+| **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/28 |
+| **applies to** | all |
+| **engaged here because** | Inventory §1.1 — Supabase, Vercel and Resend all receive lead personal data; §1.4 — **Slack is a live code path transmitting an enquirer's full name** and appears in no documentation. |
+| **status in this build** | **cannot tell.** No DPA is recorded in the repository for any processor (OQ-1, OQ-4, OQ-6). |
+
+### L-GDPR-44A — international transfers
+
+| | |
+|---|---|
+| **instrument** | UK GDPR, Chapter V **as restructured by DUAA 2025** |
+| **provision** | Art. 44A (general principles, **inserted 5 Feb 2026**); Art. 45A (transfers approved by regulations); **Art. 45B (the data protection test)**; Art. 46 (appropriate safeguards, substantially amended 5 Feb 2026); Art. 49 (derogations). **Old Arts. 44 and 45 were omitted on 5 Feb 2026.** |
+| **in-force version** | Chapter V as amended by DUAA 2025 with effect from 19 June 2025 (partial) and 5 Feb 2026 (full); checked 25 Aug 2026 |
+| **what it requires** | A transfer to a third country may take place only where approved by regulations under Art. 45A, or subject to appropriate safeguards under Art. 46, or within an Art. 49 derogation. Art. 45B replaces the old adequacy test with **the "data protection test"**: whether the standard of protection in the receiving country or for the receiving organisation **is not materially lower than** the standard under the UK GDPR and DPA 2018. |
+| **primary source** | https://www.legislation.gov.uk/eur/2016/679/chapter/V |
+| **applies to** | all |
+| **engaged here because** | Inventory §1.1 — the region of **Sanity (OQ-1), Supabase (OQ-2), Vercel (OQ-3) and Resend (OQ-4) is unestablished**, and OQ-2 states explicitly that the live Supabase project's region "must not be assumed to be EU". ~~PostHog is the one processor pinned EU-only in code (`lib/analytics/posthog-region.ts:15-19`).~~ **PostHog is no longer a processor at all — removed at round 10, along with that file.** The four unestablished regions are unaffected and this citation stands on them. |
+| **status in this build** | **cannot tell — and it is the largest single unknown.** Any transfer clause in the drafts naming "adequacy decisions" or Art. 45 is citing text that was **omitted on 5 Feb 2026**. |
+
+### L-GDPR-30 — records of processing
+
+| | |
+|---|---|
+| **instrument** | UK GDPR |
+| **provision** | Art. 30(1) and the Art. 30(5) exemption |
+| **in-force version** | As amended to 5 Feb 2026; checked 25 Aug 2026. `legislation.gov.uk` shows an outstanding unapplied amendment to Art. 30(4) from SI 2026/386 — see COULD NOT VERIFY §CNV-2. |
+| **what it requires** | A controller must maintain a record of processing activities: contact details; purposes; categories of data subject and of personal data; categories of recipient including those in third countries; third-country transfers and their safeguards; envisaged erasure time limits; and a general description of the Art. 32(1) security measures. Art. 30(5) **exempts** an organisation employing fewer than 250 persons **unless** the processing is likely to result in a risk to rights and freedoms, **is not occasional**, or involves Art. 9 or Art. 10 data. |
+| **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/30 |
+| **applies to** | all |
+| **engaged here because** | Gridsmith Ltd is plainly under 250 employees, but lead capture is a **continuous, automated, always-on** process (§3.4 — every submission writes a row and fires a notification), which is not "occasional". The exemption therefore does not obviously apply. |
+| **status in this build** | **not satisfied / cannot tell.** No ROPA exists in the repository; the inventory itself is the closest thing to one. |
+
+### L-DPA-FEE — the data protection fee
+
+| | |
+|---|---|
+| **instrument** | Data Protection (Charges and Information) Regulations 2018, SI 2018/480 |
+| **provision** | reg. 2 (duty to pay, and the bands at reg. 2(3)(b) and (c)), reg. 3 (amount), the Schedule (**EXEMPT PROCESSING**) |
+| **corrected** | 26 Aug 2026, round 7. This entry read *"Sch. 1 (tiers)"*. The contents page was fetched — https://www.legislation.gov.uk/uksi/2018/480/contents/made — and SI 2018/480 has **one** Schedule, titled **"Exempt Processing"** (para. 1 interpretation, para. 2 exempt processing). The bands are in reg. 2, not in the Schedule. The Schedule is the more useful citation than this entry realised: it decides whether the fee is owed at all, which is exactly the open question at OQ-16. |
+| **in-force version** | As made and amended; checked 25 Aug 2026, contents re-checked 26 Aug 2026 |
+| **what it requires** | A data controller must pay a charge to the Information Commissioner unless all of its processing is exempt processing, and must pay within the first 21 days of each charge period. Reg. 2 also requires the controller to state its staff-number band (≤10 / 11–250 / >250) and turnover band (≤£632,000 / £632,000–£36m / >£36m) and whether it is a public authority. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2018/480/regulation/2/made |
+| **applies to** | all |
+| **engaged here because** | Inventory §6.1 — `icoRegistration` **exists in the Sanity schema and is never populated or rendered anywhere** (`sanity/schemas/companyDetails.ts:47`). OQ-16 asks directly whether the company is registered and paying the fee. |
+| **status in this build** | **cannot tell.** This is a fact about the company, not the codebase, but the site has a field for it and shows nothing. |
+
+---
+
+## B. PECR — cookies and electronic mail
+
+### L-PECR-6 — storage of and access to information on terminal equipment
+
+| | |
+|---|---|
+| **instrument** | Privacy and Electronic Communications (EC Directive) Regulations 2003, SI 2003/2426 |
+| **provision** | **reg. 6 as substituted, and new Sch. A1, by Data (Use and Access) Act 2025 s. 112 and Sch. 12** |
+| **in-force version** | **In force 5 February 2026** (SI 2026/82 reg. 2); checked 25 Aug 2026 |
+| **what it requires** | reg. 6(1) now states the prohibition directly: a person **must not store information, or gain access to information stored, in the terminal equipment of a subscriber or user** — unless a Sch. A1 exception applies. New Sch. A1 sets out the exceptions: **para. 2** consent (clear and comprehensive information given, consent obtained, capable of being signified by browser or other application settings); **para. 3** transmission of a communication; **para. 4** strictly necessary for an information society service requested by the user (examples include security of the terminal equipment, fraud and fault prevention, and authentication records); **para. 5 statistical purposes** — permitted for improving the service, but only with clear information and **"a simple means of objecting, free of charge"**, and the data must not be shared except for improvement purposes; **para. 6 appearance and functionality** — adapting the site to the user's preferences, on the same information-plus-objection conditions; **para. 7** determining geographic position in response to an emergency assistance request. Conditions need be satisfied only on first use for recurring uses. DUAA also inserted reg. 6A, a Secretary of State power to add further exceptions by SI. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2025/18/section/112/enacted · https://www.legislation.gov.uk/ukpga/2025/18/schedule/12/enacted · https://www.legislation.gov.uk/uksi/2003/2426/regulation/6 |
+| **applies to** | all — reg. 6 is not limited to individual subscribers |
+| **engaged here because** | Inventory §2 — **exactly one cookie exists in every state**, `gs_consent`, first-party, `Max-Age` 365 days, recording which categories were granted. §2.2 — after Accept, `googletagmanager.com` and `eu.i.posthog.com` scripts are injected; before any choice, **zero third-party requests**. §1.3 — those scripts are **never initialised**, so **no analytics cookie is set in any state**. |
+| **status in this build** | **satisfied on the evidence, and the position is stronger than the drafts are likely to claim.** No non-essential storage occurs at all today. `gs_consent` itself is defensible under Sch. A1 para. 4 (strictly necessary to give effect to the user's own choice). **Two live questions**: (a) the para. 5 and para. 6 exceptions are new since 5 Feb 2026 and change what a cookie policy should say about analytics — OQ-7; (b) reg. 6 catches *access to* stored information, not only cookies, so the injected scripts are within scope the moment they initialise. |
+
+### L-PECR-PENALTY — the maximum penalty for a PECR breach
+
+**Added 26 August 2026, after Pass 4.** This entry exists because the figure was asserted twice
+without a citation and inverted once. `CLAUDE.md` non-negotiable #7 stated "up to 4% of turnover" as
+fact with no source; `04-VERIFICATION-REPORT.md` §2.1 proposed replacing it with "£8.7m or 2%", which
+is the UK GDPR *standard* maximum and was equally uncited. The owner rejected that correction on the
+ground that it substituted one uncited number for another. Reading the provision settled it — and
+showed the proposed correction was also wrong on the tiering.
+
+| | |
+|---|---|
+| **instrument** | PECR 2003, SI 2003/2426, applying the Data Protection Act 2018 |
+| **provision** | **PECR reg. 31 and Sch. 1 para. 18**, applying **DPA 2018 s. 157(2)(a), (5) and (6)**. Both reg. 31 and Sch. 1 were **substituted 5 February 2026 by Data (Use and Access) Act 2025 ss. 115(5), (8) and 142(1) with Sch. 13**, commenced by **SI 2026/82 reg. 2(y), (z14)** (with regs. 8–11). Para. 18(b)(ii) was itself substituted on the same date by DUAA 2025 s. 116(4), which added "24 or 32B(4) or (5)" to the list. |
+| **in-force version** | In force 5 February 2026; **checked 26 August 2026** |
+| **what it requires** | reg. 31: *"Schedule 1 provides for certain provisions of Parts 5 to 7 of the Data Protection Act 2018 to apply with modifications for the purposes of enforcing these Regulations."* Sch. 1 para. 18 then modifies DPA 2018 s. 157 (maximum amount of penalty) so that: **(a)** subsection (1) is omitted; **(b)** in subsection (2), "Part 3 of this Act" becomes "the PEC Regulations" and, **in paragraph (a)**, the list of DPA sections becomes **"regulation 5, 6, 7, 8, 14, 19, 20, 21, 21A, 21B, 22, 23, 24 or 32B(4) or (5)"**; **(c)** subsections (3) and (4A) are omitted; **(d)** a new (4B) applies the higher maximum to an infringement of DPA 2018 s. 142(8B). Unmodified, **s. 157(2)(a) carries the higher maximum and s. 157(2)(b) — "otherwise" — carries the standard maximum**. **s. 157(5): higher maximum = "£17,500,000 or 4% of the undertaking's total annual worldwide turnover in the preceding financial year, whichever is higher"** (£17,500,000 flat for a non-undertaking). **s. 157(6): standard maximum = "£8,700,000 or 2% …, whichever is higher"** (£8,700,000 flat otherwise). |
+| **the tiering, stated plainly** | **A breach of reg. 6 — storage of, or access to, information in terminal equipment, i.e. the cookie rule — is inside the para. 18(b)(ii) list, so it sits in s. 157(2)(a) and attracts the HIGHER maximum: £17.5m or 4% of total annual worldwide turnover, whichever is higher.** So do regs. 22 and 23, the marketing rules. The **standard** maximum (£8.7m or 2%) is the residual tier for PECR provisions *not* in that list. This is the reverse of the tiering proposed at `04-VERIFICATION-REPORT.md` §2.1, which read para. 18(b)(ii) as modifying s. 157(2) as a whole rather than paragraph (a) of it. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2003/2426/regulation/31 · https://www.legislation.gov.uk/uksi/2003/2426/schedule/1/paragraph/18 · https://www.legislation.gov.uk/ukpga/2018/12/section/157 · https://www.legislation.gov.uk/uksi/2026/82/made |
+| **regulator guidance, not statute** | The ICO's *DUAA 2025 — summary of the changes*, "Privacy and electronic communications", states that s. 115 *"brings the enforcement powers under PECR into line with UK GDPR, so that enforcement mechanisms and penalties are the same in most cases"* and that the powers are in DUAA Sch. 13. It states no figure of its own on that page, and it is **guidance, not statute** — it is recorded here as corroboration of the routing only. https://ico.org.uk/about-the-ico/what-we-do/legislation-we-cover/data-use-and-access-act-2025/the-data-use-and-access-act-2025-duaa-summary-of-the-changes/privacy-and-electronic-communications/ (retrieved 26 Aug 2026) |
+| **applies to** | all — the tier depends on the regulation breached, not on the audience |
+| **engaged here because** | This is the number `CLAUDE.md` non-negotiable #7 cites as the reason nothing may be stored before a choice, and the reason `L-PECR-6`'s position is treated as load-bearing rather than housekeeping. |
+| **status in this build** | **No exposure on the evidence, for the same reason as `L-PECR-6`:** nothing non-essential is stored before a choice. The figure governs the consequence of getting that wrong; it does not itself impose a duty. Historical note for anyone reading older material: before 5 Feb 2026 the PECR ceiling was £500,000, so a pre-2026 secondary source will state a figure 35 times smaller and is not wrong about its own date. |
+
+### L-PECR-6-CONSENT — the standard of consent
+
+| | |
+|---|---|
+| **instrument** | PECR 2003 reg. 2(1) (definition of consent, referring to UK GDPR) with UK GDPR Arts. 4(11) and 7 |
+| **provision** | UK GDPR Art. 4(11), Art. 7(3) |
+| **in-force version** | As amended to 5 Feb 2026; checked 25 Aug 2026 |
+| **what it requires** | Consent must be freely given, specific, informed and unambiguous, by a statement or clear affirmative action. Art. 7(3): the data subject has the right to withdraw consent at any time, and **it must be as easy to withdraw as to give**. |
+| **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/4 · https://www.legislation.gov.uk/eur/2016/679/article/7 |
+| **applies to** | all |
+| **engaged here because** | ~~Inventory §4.2 — Accept and Reject share one CSS class and one width; every category defaults to denied; per-category granularity via Preferences; withdrawal is a persistent footer control.~~ **Not engaged since 26 Aug 2026 (round 10).** Art. 4(11) governs the quality of a consent, and Art. 7(3) the ease of withdrawing one. **No consent is sought and none is relied on**: the analytics injection and all three consent categories are removed, so there is no non-essential storage and PECR reg. 6(2) is not engaged for anything. |
+| **status in this build** | **The obligation is now discharged differently: by having nothing to consent to, rather than by consenting well.** The live issue this row used to carry — `ad_storage` and `functionality_storage` offered as toggles that no code branches on, which bore on whether the consent was *informed* — is **resolved by removal (OQ-10 answered)**, and `analytics_storage` went with the scripts. The banner is a notice with one control and no form control of any kind; the footer link is relabelled **"Cookie notice"** because there are no preferences. `check:axe` asserts both in a browser. **This citation becomes live again, unchanged, the moment any non-essential storage returns** — `BEFORE-LAUNCH.md` item 22 carries the parity requirement, and the banner's CSS keeps the single shared button class for it. |
+
+### L-PECR-CONSENT-EVIDENCE — demonstrating consent
+
+| | |
+|---|---|
+| **instrument** | UK GDPR |
+| **provision** | Art. 7(1) |
+| **in-force version** | As amended to 5 Feb 2026; checked 25 Aug 2026 |
+| **what it requires** | "Where processing is based on consent, the controller **shall be able to demonstrate** that the data subject has consented to processing of his or her personal data." |
+| **primary source** | https://www.legislation.gov.uk/eur/2016/679/article/7 |
+| **applies to** | all |
+| **engaged here because** | Inventory §4.3 — the consent record holds **the granted category names only, with no timestamp, no version, and no record of the banner text shown**, in a cookie in the visitor's own browser which they can delete. **`consent_events` does not exist**; `L-07` is SPECIFIED-BUT-NOT-BUILT. "There is therefore no evidence of consent retained anywhere." OQ-11. |
+| **status in this build** | **not satisfied** as a matter of demonstrability, and **not discharged — merely not engaged**. Since round 10 (26 Aug 2026) this site relies on consent for **nothing**: the analytics is deleted and there are no consent categories, so Art. 7(1) has no processing to attach to. The underlying gap is untouched — `consent_events` still does not exist, and the `gs_consent` cookie now records only that a notice was seen. **The mitigation is no longer "nothing collects anything yet" but "nothing asks for consent at all", which is a stronger position and an equally temporary one.** `L-07` is therefore recorded as a **prerequisite** of re-introducing analytics rather than a follow-up (`BEFORE-LAUNCH.md` item 22, `PRIVACY-POLICY.md` §11A): initialising a tag first would engage PECR reg. 6's higher penalty tier while leaving demonstrability unmet. OQ-11 stays open. |
+
+### L-PECR-22 — electronic mail for direct marketing
+
+| | |
+|---|---|
+| **instrument** | PECR 2003 |
+| **provision** | reg. 22(1)–(3); reg. 22(3A) and 22(5) inserted 5 Feb 2026 by DUAA 2025 |
+| **in-force version** | As amended 5 Feb 2026; checked 25 Aug 2026 |
+| **what it requires** | reg. 22(1): the regulation applies to unsolicited direct-marketing electronic mail **"to individual subscribers"**. reg. 22(2): no transmission unless the recipient has previously notified the sender of consent. reg. 22(3) — the **soft opt-in** — permits it where the sender obtained the contact details **in the course of the sale or negotiations for the sale of a product or service to that recipient**, the marketing is of **similar** products and services only, and the recipient was given **"a simple means of refusing (free of charge except for the costs of the transmission of the refusal)"** at the time the details were collected **and in every subsequent message**. New reg. 22(3A) creates a parallel charity exemption. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2003/2426/regulation/22 |
+| **applies to** | **This is a real consumer/B2B divergence.** reg. 22 binds only for **individual subscribers** — which for Press's author audience means most recipients, and for a sole trader using a personal address may also. Marketing to a **corporate subscriber** (Design/Digital's typical buyer) falls outside reg. 22, though the sender's identity and a valid address are still required by reg. 23, and UK GDPR still applies to the personal data. |
+| **engaged here because** | Inventory §3.1 — `email` is captured on every submission; §3.2 — the schema carries latent `source`/`medium`/`campaign` columns. Nothing in the inventory shows a marketing consent checkbox on the form or any mailing list. |
+| **status in this build** | **not engaged today** — no marketing send exists. **It becomes engaged the moment enquirer emails are used for anything other than replying to the enquiry**, and the soft opt-in in reg. 22(3) is not available for an enquiry that did not become a negotiation for a sale. |
+
+---
+
+### L-PECR-23 — sender identity and a valid opt-out address, in every marketing email
+
+**Added 26 August 2026, round 9.** reg. 23's verified text had lived since round 7 in `CNV-3` — the
+**COULD NOT VERIFY** section — while `MSA-BUSINESS.md` 16.1's reg. 23 undertaking cited `L-PECR-22`,
+whose provision field is reg. 22 only. A clause citing an entry that does not reach it. **reg. 23 and
+reg. 22(1) were each fetched and read again at `legislation.gov.uk` on 26 August 2026 for this entry,
+rather than promoted from `CNV-3` or from round 8's note.**
+
+| | |
+|---|---|
+| **instrument** | PECR 2003, SI 2003/2426 |
+| **provision** | **reg. 23(a)–(d)** |
+| **in-force version** | reg. 23(a) word omitted, and reg. 23(c) and (d) inserted, 26 May 2011 by SI 2011/1208 reg. 9; checked 26 Aug 2026 |
+| **what it requires** | *"A person shall neither transmit, nor instigate the transmission of, a communication for the purposes of direct marketing by means of electronic mail — (a) where the identity of the person on whose behalf the communication has been sent has been disguised or concealed; (b) where a valid address to which the recipient of the communication may send a request that such communications cease has not been provided; (c) where that electronic mail would contravene regulation 7 of the Electronic Commerce (EC Directive) Regulations 2002; or (d) where that electronic mail encourages recipients to visit websites which contravene that regulation."* |
+| **the point that makes this a separate entry, and it was verified twice** | **reg. 23 carries no "individual subscriber" limitation.** It opens *"A person shall neither transmit …"* and is framed throughout around *"the recipient of the communication"*. **reg. 22(1)**, by contrast, reads *"This regulation applies to the transmission of unsolicited communications by means of electronic mail to individual subscribers."* So reg. 23 binds marketing to a **corporate** subscriber, where reg. 22 does not reach at all — which is precisely what `MSA-BUSINESS.md` 16.1 rests on. Re-derived here from the instrument; round 8 reached the same reading and `06-FINAL-VERIFICATION.md` §1.3 reached it a third time. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2003/2426/regulation/23 · https://www.legislation.gov.uk/uksi/2003/2426/regulation/22 |
+| **applies to** | **all** — business and consumer alike, unlike `L-PECR-22`. This is the entry a B2B marketing clause cites. |
+| **engaged here because** | `MSA-BUSINESS.md` 16.1 undertakes that Gridsmith *"will identify itself and give a valid address in every message"* to a corporate subscriber, and `CONSUMER-TERMS.md` §15.1 gives the parallel undertaking to an individual. Both are reg. 23 obligations; neither had a reg. 23 citation. |
+| **status in this build** | **not engaged today** — no marketing send of any kind exists (`01-FACTUAL-INVENTORY.md` §§3, 7). It becomes engaged with the first marketing email, and limbs (c) and (d) then pull in **SI 2002/2013 reg. 7** (commercial communications must be clearly identifiable as such, and so must the person on whose behalf they are sent), which `L-ECOM-6` covers for reg. 6 but **not** for reg. 7. `[TK — SI 2002/2013 reg. 7 has not been read at source in any round. It is not needed until a marketing send exists, and it is recorded here so that the day it does, it is not assumed from reg. 6.]` |
+
+## C. Identification and trading disclosures
+
+### L-CA-82 / L-TDR-24 — disclosure of registered name on the website
+
+| | |
+|---|---|
+| **instrument** | Companies Act 2006, s. 82; Company, Limited Liability Partnership and Business (Names and Trading Disclosures) Regulations 2015, SI 2015/17 |
+| **provision** | CA 2006 s. 82 (the power); **SI 2015/17 reg. 24** |
+| **in-force version** | As made; checked 25 Aug 2026 |
+| **what it requires** | reg. 24: **"Every company shall disclose its registered name on its websites."** The same duty applies to business letters, notices and other official publications, order forms, invoices, receipts and demands for payment. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2015/17/regulation/24/made · https://www.legislation.gov.uk/ukpga/2006/46/section/82 |
+| **applies to** | all |
+| **engaged here because** | Inventory §6.1 — the live footer renders "Gridsmith Ltd" on every page, from the Sanity `companyDetails` singleton, and a missing singleton fails the build. |
+| **status in this build** | **satisfied.** Note §6.1 also lists three trading names (Gridsmith Design / Digital / Press); s. 1202–1206 CA 2006 (business names) is not separately entered because the registered name is disclosed alongside them. |
+
+### L-TDR-25 — particulars to be disclosed on the website
+
+| | |
+|---|---|
+| **instrument** | SI 2015/17 |
+| **provision** | **reg. 25** |
+| **in-force version** | As made; checked 25 Aug 2026 |
+| **what it requires** | On business letters, order forms **and websites**, a company must disclose: **the part of the United Kingdom in which it is registered**; **its registered number**; **the address of its registered office**; plus, where applicable, exemption from using "limited", CIC status, and investment-company status. If any share-capital amount is stated, it must be paid-up share capital. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2015/17/regulation/25/made |
+| **applies to** | all |
+| **engaged here because** | Inventory §6.1 — the live footer renders, verbatim: "Gridsmith Ltd · registered in England & Wales · company number 17050842 · registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD". All four particulars are present. |
+| **status in this build** | **satisfied as to the required particulars.** Caveat from OQ-15: the number and address sit in a file named `seed-company-details.mjs` alongside a value explicitly marked `[SEED]`, so the file itself does not distinguish verified from placeholder values. Correctness of the disclosed particulars is an owner confirmation, not a code fact. |
+
+### L-ECOM-6 — electronic commerce general information
+
+| | |
+|---|---|
+| **instrument** | Electronic Commerce (EC Directive) Regulations 2002, SI 2002/2013 |
+| **provision** | **reg. 6(1) and reg. 6(2)** |
+| **in-force version** | As made and amended; checked 25 Aug 2026 |
+| **what it requires** | reg. 6(1): a service provider must make the following **"easily, directly and permanently accessible"** to recipients and enforcement authorities — the name of the service provider; the geographic address at which it is established; **details including an electronic mail address which make it possible to contact it rapidly and communicate in a direct and effective manner**; trade register and registration number; supervisory authority particulars where authorisation is required; regulated-profession particulars; and **where the provider undertakes an activity subject to VAT, its VAT identification number**. reg. 6(2): **where prices are referred to, they must be indicated clearly and unambiguously and in particular must indicate whether they are inclusive of tax and delivery costs.** |
+| **primary source** | https://www.legislation.gov.uk/uksi/2002/2013/regulation/6/made |
+| **applies to** | **all — this regulation is not consumer-only.** It is the reason the VAT-treatment obligation on prices reaches the B2B divisions as well as Press. |
+| **engaged here because** | Inventory §6.1 — name, address and `contact@gridsmith.uk` are rendered on every page. **§6.3 — the rendered VAT number is the placeholder `[SEED] GB123456789`.** §5.3 — `components/content/Price.tsx` renders prices on all three division landing pages and **"No VAT treatment is stated anywhere"** — no "inc. VAT", no "exc. VAT", no footnote. |
+| **status in this build** | **not satisfied, twice.** (1) reg. 6(1)(g): the site publishes a **fabricated VAT number** on every page. If the company is not VAT-registered the correct action is to publish none, not a placeholder — and a false VAT number is a worse defect than a missing one. (2) reg. 6(2): prices are displayed with no tax indication, across **every** division. `sanity/schemas/objects.ts:75-79` already records this as gap `M-P2-3`. |
+
+---
+
+## D. Consumer law — Press primarily; the mixed routes secondarily
+
+### L-CRA-49 — reasonable care and skill
+
+| | |
+|---|---|
+| **instrument** | Consumer Rights Act 2015 |
+| **provision** | s. 48 (scope), **s. 49** |
+| **in-force version** | As amended; checked 25 Aug 2026 |
+| **what it requires** | s. 48: applies to a contract for a trader to supply a service to a consumer. s. 49: every such contract is **treated as including a term that the trader must perform the service with reasonable care and skill**. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2015/15/part/1/chapter/4 |
+| **applies to** | **consumer only.** Engaged by Press (individual authors — inventory §5.1: "Your book, published properly, and still yours"). Not engaged by a Design or Digital contract with a business customer. |
+| **engaged here because** | Inventory §5.2 — the seeded `client-terms` document **already cites CRA 2015 s. 50** at `seed-legal.mjs:230`, so the consumer regime is acknowledged in the build. §5.1 — `/press` sells to individuals. |
+| **status in this build** | **cannot tell** from the inventory (the drafts were not read), but §5.2 records the structural problem: **one `Client Terms` route serves two drafts and mixes Companies Act and Consumer Rights Act bases in a single instrument.** OQ-13. |
+
+### L-CRA-50 — pre-contract information becomes a term
+
+| | |
+|---|---|
+| **instrument** | Consumer Rights Act 2015 |
+| **provision** | **s. 50** |
+| **in-force version** | As amended; checked 25 Aug 2026 |
+| **what it requires** | Anything said or written to the consumer, by or on behalf of the trader, **about the trader or the service** is a term of the contract if the consumer takes it into account when deciding to enter the contract, or when making any decision about the service after entering it. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2015/15/part/1/chapter/4 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | This is the sharpest consumer-law hook in the whole build. Inventory §6.5: **`[SEED]` content is live on the running site today** — case-study metrics render as `[SEED] 00%`, selected work is `[SEED]`-prefixed, team members are `[SEED] Placeholder Name`, prices are `£0,000`. §6.2: the response commitment — "always by the end of the next business day" — is rendered on `/contact`. Every one of those is a written statement about the trader or the service that a consumer may take into account. |
+| **status in this build** | **not satisfied while seed content is live.** The mitigation is real but partial: `check:launch-content` refuses a `production` dataset carrying `[SEED]` markers or an empty VAT number (§6.3, §6.5). The response commitment is genuine and single-sourced. |
+
+### L-CRA-51 / L-CRA-52 — price and time where not fixed
+
+| | |
+|---|---|
+| **instrument** | Consumer Rights Act 2015 |
+| **provision** | s. 51 (reasonable price), s. 52 (reasonable time) |
+| **in-force version** | As amended; checked 25 Aug 2026 |
+| **what it requires** | Where the contract does not fix the price (or a way of determining it), the consumer must pay **only a reasonable price**. Where it does not fix the time, the trader must perform **within a reasonable time**. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2015/15/part/1/chapter/4 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | Inventory §5.3 — **every price on the site carries an unconditional `INDICATIVE` badge** (`Price.tsx:61`) and lead words "From" / "Typically" / "Day rate from". No price on the site is a fixed offer. |
+| **status in this build** | **satisfied by design, with a consequence to state.** Indicative pricing means s. 51 supplies the default for any Press engagement not separately quoted — so the drafts must not imply the indicative figure is binding on the consumer. |
+
+### L-CRA-57 — liability that cannot be excluded
+
+| | |
+|---|---|
+| **instrument** | Consumer Rights Act 2015 |
+| **provision** | **s. 57**; and Part 2 (ss. 61–76) on unfair terms |
+| **in-force version** | As amended; checked 25 Aug 2026 |
+| **what it requires** | A term is **not binding** to the extent that it would exclude or restrict the trader's liability under s. 49 (reasonable care and skill) or s. 50 (information binding as a term), or would prevent the consumer recovering the price paid. Part 2 additionally makes an unfair term in a consumer contract non-binding and requires transparency. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2015/15/part/1/chapter/4 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | Inventory §5.2 — a single `client-terms` instrument serves both audiences. **A liability cap drafted for a B2B MSA and applied to a consumer author is void to that extent under s. 57**, and this is exactly the collapse the one-route/two-drafts problem creates. OQ-13. |
+| **status in this build** | **not satisfied structurally.** One route cannot carry both a valid B2B cap and a CRA-compliant consumer position. |
+
+### L-CRA-62 — the fairness test, and the grey list
+
+**Added 26 August 2026, round 9.** `CONSUMER-TERMS.md` 7.4 asserts that its late-payment interest
+*"reflects our actual cost and is not a penalty"* — a legal characterisation — and carried **no `L-`
+id and no `NO LEDGER ENTRY` flag**. `L-CRA-57` is cited at §13 and does different work: s. 57 is about
+excluding liability, not about a sum the consumer is required to pay. **s. 62 and Sch. 2 fetched and
+read at `legislation.gov.uk` on 26 August 2026.**
+
+| | |
+|---|---|
+| **instrument** | Consumer Rights Act 2015 |
+| **provision** | **s. 62(1), (4), (5)**; **s. 63(1)**; **Sch. 2 Part 1 paras. 5 and 6** (the indicative "grey list") |
+| **in-force version** | As amended; checked 26 Aug 2026 |
+| **what it requires** | **62(1)**: *"An unfair term of a consumer contract is not binding on the consumer."* **62(4)**: *"A term is unfair if, contrary to the requirement of good faith, it causes a significant imbalance in the parties' rights and obligations under the contract to the detriment of the consumer."* **62(5)**: fairness is judged by the nature of the subject matter and by all the circumstances existing **when the term was agreed**, and by reference to the other terms. **Sch. 2 para. 6** names as indicatively unfair *"A term which has the object or effect of requiring a consumer who fails to fulfil his obligations under the contract to pay a disproportionately high sum in compensation."* **Sch. 2 para. 5** names the neighbouring case — a disproportionately high sum where the consumer decides not to conclude or perform. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2015/15/section/62 · https://www.legislation.gov.uk/ukpga/2015/15/schedule/2 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | `CONSUMER-TERMS.md` 7.4 charges interest on late payment at a rate still `[TK]`. Para. 6 is the provision that governs it. Note what is **not** available here: **s. 2(1)** of the Late Payment of Commercial Debts (Interest) Act 1998 confines that Act to a contract *"where the purchaser and the supplier are each acting in the course of a business"*, so `L-LATE-PAYMENT` and SI 2002/1675 art. 4 are unavailable against a consumer — a consumer interest clause has no statutory rate to anchor to and stands or falls on s. 62 alone. |
+| **status in this build** | **cannot tell, and it is an owner fact.** The rate is `[TK]` at 7.4, so there is no figure to test against para. 6. The clause is flagged for the solicitor at 7.4 and the grey-list entry is now named there. **s. 63(1)** makes Sch. 2 Part 1 *"an indicative and non-exhaustive list of terms … that may be regarded as unfair"* — listing does not decide unfairness, and 7.4 has to be judged on s. 62(4) with the chosen figure in front of it. |
+
+### L-CCR-13 — pre-contract information for distance contracts
+
+| | |
+|---|---|
+| **instrument** | Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, SI 2013/3134 |
+| **provision** | **reg. 13** with **Sch. 2**; reg. 14 (contracts concluded by electronic means); reg. 16 (confirmation on a durable medium) |
+| **in-force version** | As made and amended; checked 25 Aug 2026 |
+| **what it requires** | Before a consumer is bound by a distance contract, the trader must give the Sch. 2 information in a clear and comprehensible way — including the main characteristics, the trader's identity, geographical address and contact details, **the total price inclusive of taxes** (or the manner in which it will be calculated where it cannot be calculated in advance), arrangements for payment and performance, the complaints-handling policy, and **the existence and conditions of the right to cancel with the model cancellation form**. reg. 14 requires that where the contract is concluded electronically and places the consumer under an obligation to pay, the order button be labelled unambiguously. reg. 16 requires confirmation on a durable medium. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/contents |
+| **applies to** | **consumer only, and only where the contract is a distance or off-premises contract.** For Press, an engagement negotiated and signed remotely by an individual author is a distance contract. |
+| **engaged here because** | Inventory §5.1 — `/press` is consumer-facing and its call to action is "Tell us about the book"; §5.1 — `/contact` is one form for all three divisions, so the consumer author and the business buyer travel the identical flow. |
+| **status in this build** | **cannot tell** — the contracting flow after the enquiry is outside the repository. The inventory establishes that nothing on the site distinguishes a consumer author from a business buyer at any point. |
+
+### L-CCR-29 — the right to cancel
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 29** (right to cancel), reg. 30 (14-day period), **reg. 31 (period extended by up to 12 months for breach of the information requirement)**, reg. 36 (supply of a service in the cancellation period, and the express request needed to start early) |
+| **in-force version** | As made and amended; checked 25 Aug 2026 |
+| **what it requires** | The consumer may cancel a distance or off-premises contract within 14 days without giving reason. **If the trader did not give the cancellation information required by reg. 13, the period is extended — by up to 12 months (reg. 31).** Under reg. 36 a service may not begin within the cancellation period unless the consumer has made an express request; if the consumer then cancels, they pay a proportionate amount for what was supplied. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/contents |
+| **applies to** | consumer only — Press |
+| **engaged here because** | Same as `L-CCR-13`. Ghostwriting and publishing services are precisely the case reg. 36 addresses: work usually starts before day 14. |
+| **status in this build** | **cannot tell.** Flagged because reg. 31's 12-month extension is the most expensive consequence in this section and follows automatically from a reg. 13 omission. |
+
+### L-CCR-36 — supply of a service in the cancellation period
+
+**Added 26 August 2026, round 8.** `L-CCR-29` named reg. 36 in passing and stated two of its six
+paragraphs. The two it did not state are the two that decide whether the consumer keeps the right and
+whether they pay anything, so reg. 36 gets its own entry. **Fetched and read in full at
+`legislation.gov.uk` on 26 August 2026.**
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 36(1), (2), (4), (5), (6)** |
+| **in-force version** | As made and amended; checked 26 Aug 2026 |
+| **what it requires** | **36(1)**: the trader must not begin supply before the end of the cancellation period unless the consumer "has made an express request" (and, for an off-premises contract, made it on a durable medium). **36(2)**: the consumer **ceases to have the right to cancel** if the service has been fully performed **and** performance began *"(a) after a request by the consumer in accordance with paragraph (1), **and** (b) with the acknowledgement that the consumer would lose that right once the contract had been fully performed by the trader."* **36(4)**: where the service was supplied on a para. (1) request, the consumer must (subject to (6)) pay an amount for the period supplied, ending when the trader is informed of the cancellation, *"which is in proportion to what has been supplied, in comparison with the full coverage of the contract."* **36(5)**: that amount is calculated on the total price agreed, or on market value if the total price is excessive. **36(6)**: the consumer *"bears no cost for supply of the service, in full or in part, in the cancellation period"* if the trader failed to give the **Sch. 2 para. (l)** cancellation information or the **para. (n)** cost information in accordance with Part 2, **or** if the service was not supplied in response to a para. (1) request. |
+| **the two limbs, stated because the second is the one routinely dropped** | 36(2) is **conjunctive**. An express request alone does not extinguish the right; it must be accompanied by the acknowledgement. A trader who takes the request and omits the acknowledgement has a consumer who has fully received the service **and still holds a cancellation right** — and, by 36(6)(a), may owe nothing for it if the information duties were also missed. The exposure is the whole price, not a proportion of it. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/36 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | Ghostwriting, editing and publishing work almost always begins before day 14. `CONSUMER-TERMS.md` §6 is the clause, and its own solicitor note calls it *"the highest-frequency consumer exposure in the business"*. |
+| **status in this build** | **not engaged today, and this is a build obligation when it is.** Nothing can be ordered on the site (`01-FACTUAL-INVENTORY.md` §7), so no request and no acknowledgement is captured anywhere. 36(2)(b) is satisfied by an acknowledgement **given and evidenced**, not by a term reciting that one will be given, so the order flow must present it as a second unticked control and record it. Recorded at `CONSUMER-TERMS.md` §6 as a `[TK]` build task. |
+
+### L-CCR-27-28 — which contracts Part 3 reaches, and the contracts it does not
+
+**Added 26 August 2026, round 9.** Part 3 was cited in three clauses for two rounds without any entry
+stating **what it applies to**. `L-CCR-29` recites reg. 29(1)'s words *"a distance or off-premises
+contract"* inside its "what it requires" cell and no clause ever carried the limitation to the
+consumer. **regs. 27 and 28 fetched and read in full at `legislation.gov.uk` on 26 August 2026**,
+together with the reg. 5 definitions of *sales contract*, *service contract*, *distance contract*,
+*off-premises contract*, *on-premises contract* and *durable medium*.
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 27(1)–(3)**, **reg. 28(1), (2), (3)**, with the **reg. 5** definitions |
+| **in-force version** | As made and amended; checked 26 Aug 2026 |
+| **what it requires** | **27(1)**: *"This Part applies to distance and off-premises contracts between a trader and a consumer, subject to paragraphs (2) and (3) and regulations 6 and 28."* **27(3)**: Part 3 does not apply to off-premises contracts where the consumer's payment is **not more than £42**. **28(1)(b)**: Part 3 does not apply as regards *"the supply of goods that are made to the consumer's specifications or are clearly personalised"*. **28(3)(b)**: the Part 3 rights cease for sealed audio, video or computer-software recordings once unsealed after delivery. |
+| **the definitions that decide which regime a contract is in** | **on-premises contract** = *"a contract between a trader and a consumer which is neither a distance contract nor an off-premises contract"* — it attracts **no reg. 29 right at all**. **distance contract** requires an *"organised distance sales or service-provision scheme"* and the exclusive use of distance communication **up to and including** conclusion. **off-premises contract** covers, among others, a contract concluded *"in the simultaneous physical presence of the trader and the consumer, in a place which is not the business premises of the trader"*. **sales contract** = a contract transferring ownership of goods, *"including any contract that has both goods and services as its object"*; **service contract** is expressly *"a contract, other than a sales contract"*. So a mixed order — editorial work **and** printed copies — is a **sales contract in its entirety**, not two contracts. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/27 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/28 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/5 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | `CONSUMER-TERMS.md` §5 granted a 14-day cancellation right flatly, to every consumer, in every case. Press's memoir and legacy clients are the population most likely to be contracted with **in person**, and a book made from the author's own manuscript is a plausible reg. 28(1)(b) subject. Neither question can be answered from the repository. |
+| **status in this build** | **cannot tell, and it is an owner fact plus a solicitor question, not a build gap.** Whether Gridsmith has business premises at which a consumer could sign, and whether any Press engagement is ever concluded on them or in person elsewhere, is recorded as `[TK]` at `CONSUMER-TERMS.md` §5A. Whether printed copies are reg. 28(1)(b) goods is a `[DECISION REQUIRED]` for the solicitor at §5A, because it decides whether a cancellation right exists over them at all. |
+
+### L-CCR-30 — the cancellation period, which differs by what is supplied
+
+**Added 26 August 2026, round 9.** `L-CCR-29` stated *"14 days"* once, for everything. reg. 30 states
+it five ways. **reg. 30 fetched and read in full on 26 August 2026.**
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 30(1)–(6)**; reg. 31 (extension for breach of the information requirement) |
+| **in-force version** | As made and amended; checked 26 Aug 2026 |
+| **what it requires** | **30(2)**: for a **service contract**, or a contract for **digital content not supplied on a tangible medium**, the period ends 14 days after the day **the contract is entered into**. **30(3)**: for a **sales contract**, 14 days after the day the goods come into the **physical possession** of the consumer (or a person, other than the carrier, whom the consumer identified). **30(4)**: multiple goods in one order delivered on different days — from the **last** of them. **30(5)**: multiple lots or pieces delivered on different days — from the **last** lot or piece. **30(6)**: regular delivery over a defined period of more than one day — from the **first** delivery. **reg. 31(3)**: where the Sch. 2 para. (l) information was never given, the period ends 12 months after the day it would have ended **under reg. 30** — so the extension is measured from the reg. 30 date that actually applies, not from contract. |
+| **the consequence the drafts missed** | Because reg. 5 makes a contract with **both goods and services as its object** a **sales contract**, a Press order that includes printed copies runs the **whole** contract's cancellation period from **delivery of the copies**, not from the day the contract was made — and 30(4)/(5) push it to the **last** delivery where copies arrive in more than one consignment. A draft that states one 14-day-from-contract rule understates the period the trader is bound by, and reg. 31 then compounds the understatement by 12 months. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/30 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/31 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | `CONSUMER-TERMS.md` §10.6 and §10.7 contemplate printed books, ISBNs and platform submission; §8 contemplates delivery. `01-FACTUAL-INVENTORY.md` does not establish whether printed copies are supplied under any package. |
+| **status in this build** | **cannot tell** — no order flow exists. §5 now states each period separately and states the mixed case; whether Press packages include printed copies is `[TK]` at §5A. |
+
+### L-CCR-32-35 — exercising the right, reimbursement, and returning goods
+
+**Added 26 August 2026, round 9.** Four regulations reachable from `L-CCR-29`'s "provision" field only
+by inference, and stated in no clause.
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 32(2)–(6)**, **reg. 34(1)–(3), (5)–(9), (11), (13)**, **reg. 35(1)–(8)**; Sch. 2 paras. (m), (n), (o), (p) |
+| **in-force version** | As made and amended; checked 26 Aug 2026 |
+| **what it requires** | **32(3)**: the consumer may use the model form **or** *"make any other clear statement setting out the decision to cancel"*. **32(4)(b)**: if the trader gives the consumer the option of submitting the form or statement **on the trader's website**, the trader **must communicate an acknowledgement of receipt on a durable medium without delay**. **32(5)**: a communication **sent** before the end of the period is in time. **34(4), (6)**: reimbursement without undue delay and in any event within 14 days of being informed — **but 34(5)**, for a sales contract where the trader has not offered to collect, sets the later time of 14 days after the goods are received back or after the consumer supplies evidence of having sent them. **34(2), (3)**: delivery charges are reimbursed only up to the least expensive common and generally acceptable kind offered. **34(7), (8)**: same means of payment unless the consumer expressly agreed otherwise; **no fee** may be imposed. **34(9), (11)**: the trader may recover diminished value from handling beyond what is necessary to establish nature, characteristics and functioning — **but not** where the Sch. 2 para. (l) information was not given. **34(13)**: reg. 34's provisions are **treated as terms of the contract**. **35(4)**: the consumer must send the goods back within 14 days of informing the trader. **35(5)(b)**: the consumer bears the direct return cost **unless** the trader failed to give the **Sch. 2 para. (m)** information — in which case **35(6)** treats the contract as including a term that the **trader** bears it. **35(7)**: no other return cost falls on the consumer. |
+| **the Sch. 2 items that were missing upstream** | **(m)** the consumer bearing return costs; **(n)** liability to pay reg. 36(4) costs after an early-start request; **(o)** *"where under regulation 28, 36 or 37 there is no right to cancel or the right to cancel may be lost, the information that the consumer will not benefit from a right to cancel, or the circumstances under which the consumer loses the right to cancel"*; **(p)** for a sales contract, a reminder that the trader is under a legal duty to supply goods in conformity with the contract. **All four were absent from `CONSUMER-TERMS.md` §3's pre-order list**, and (m) and (n) each carry a self-executing penalty — 35(5)(b)/35(6) and 36(6)(a) respectively. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/32 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/34 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/35 · https://www.legislation.gov.uk/uksi/2013/3134/schedule/2 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | §5 promised *"we will refund all payments received from you within 14 days"* — which is reg. 34(6)'s rule and is **more generous than reg. 34(5)** for returned goods, and by `L-CRA-50` binding once stated. Nothing in §5–§7 addressed returning printed copies, who pays for that, or the acknowledgement duty that attaches the day a cancellation form is put on the site. |
+| **status in this build** | **not engaged today** — no order flow, no cancellation form, nothing shipped. reg. 32(4)(b) becomes a **build obligation** the day a web cancellation form exists; recorded as a `[TK]` build task at `CONSUMER-TERMS.md` §5.2. |
+
+### L-CCR-37-38 — digital content in the cancellation period; ancillary contracts
+
+**Added 26 August 2026, round 9.** reg. 37 applies a **different test from reg. 36** and no draft
+mentioned it. reg. 38 terminates ancillary contracts automatically and no draft mentioned that either.
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 37(1)–(4)**, **reg. 38(1)–(3)**; reg. 5 definition of *digital content* |
+| **in-force version** | As made and amended; checked 26 Aug 2026 |
+| **what it requires** | **37(1)**: for digital content **not on a tangible medium**, the trader must not begin supply before the end of the reg. 30(1) period unless the consumer has given **express consent** *and* has **acknowledged that the right to cancel will be lost**. **37(2)**: the right is lost once supply has **begun** on that consent and acknowledgement — **not**, as under reg. 36(2), on **full performance**. **37(4)**: the consumer bears **no cost** where prior express consent was not given, or was given without the acknowledgement, or where the reg. 12(5)/16(3) confirmation was not provided. **38(1)**: withdrawal or cancellation **automatically terminates any ancillary contract**, *"without any costs for the consumer"* beyond regs. 34(3), 34(9), 35(5) and 36(4). **38(2)**: the trader must **inform any other trader** with whom the consumer has an ancillary contract that is terminated. **38(3)**: an ancillary contract is one by which the consumer acquires related goods or services provided by the trader, or by a third party *"on the basis of an arrangement between the third party and the trader"*. |
+| **why the two tests must not be collapsed** | reg. 36 and reg. 37 differ on all three of: the trigger for losing the right (full performance vs beginning supply); whether a durable medium is required (reg. 36(1)(b) for off-premises contracts; reg. 37 has no such limb); and what the consumer owes on cancellation (a **proportionate** payment under 36(4) vs **nothing** under 37(4)). A single "if you ask us to start early" clause covering both misstates one of them. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/37 · https://www.legislation.gov.uk/uksi/2013/3134/regulation/38 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | *digital content* is defined at reg. 5 as *"data which are produced and supplied in digital form"*. `CONSUMER-TERMS.md` §10.7 contemplates preparing files to Amazon KDP, IngramSpark, Draft2Digital, Apple Books and Kobo specifications, and §10.5 contemplates Gridsmith **setting up distribution accounts in the author's name**, which is the reg. 38(3)(b) shape. Whether any deliverable reaches the author **as digital content** rather than as the output of a service is established nowhere in the repository. |
+| **status in this build** | **cannot tell.** `CONSUMER-TERMS.md` §6A states reg. 37 and marks the classification question `[DECISION REQUIRED]` for the solicitor rather than assuming an answer. §5.5 states reg. 38. |
+
+### L-CCR-40 — additional payments
+
+| | |
+|---|---|
+| **instrument** | SI 2013/3134 |
+| **provision** | **reg. 40**; reg. 41 (helpline charges above basic rate) |
+| **in-force version** | As made; checked 25 Aug 2026 |
+| **what it requires** | An additional payment beyond the main contractual obligation requires the consumer's **express consent**; consent inferred from a default option the consumer must reject (a pre-ticked box) does not count, and any such payment is recoverable. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2013/3134/regulation/40 |
+| **applies to** | consumer only — Press |
+| **engaged here because** | Inventory §5.3 — pricing is indicative with "What moves it: …" modifiers, i.e. the final figure moves upward from the displayed one. Any such uplift charged to a consumer needs express consent. |
+| **status in this build** | **cannot tell** — no checkout exists (§7: estimator NOT BUILT). Recorded so the estimator is not built with a default-on option. |
+
+---
+
+## E. DMCCA 2024 — pricing and reviews
+
+### L-DMCC-230 — total price in an invitation to purchase (drip pricing)
+
+| | |
+|---|---|
+| **instrument** | Digital Markets, Competition and Consumers Act 2024 (c. 13) |
+| **provision** | **s. 230** (material information in an invitation to purchase); with s. 226 (misleading actions) and s. 227 (misleading omissions) |
+| **in-force version** | Part 4 Chapter 1 **in force 6 April 2025**; checked 25 Aug 2026 |
+| **what it requires** | Where a commercial practice indicates a product's characteristics and price so as to enable the consumer to decide whether to purchase, the trader must give the material information listed in s. 230 unless already apparent from context — including **the total price of the product**, or where it cannot reasonably be calculated in advance, **how it will be calculated**; and where additional charges or taxes cannot reasonably be calculated in advance, **the fact that they may be payable**. Information enabling the price to be calculated must be given **"as much prominence as any information"** about the base price. Also required: trader identity, business address, email and service address, delivery charges, the right of withdrawal or cancellation, and any departure from published complaint-handling practice. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2024/13/section/230 |
+| **applies to** | **consumer only** (Part 4 is the consumer regime, replacing CPUT 2008). For Press. Design and Digital are reached by `L-ECOM-6` reg. 6(2) instead. |
+| **engaged here because** | Inventory §5.3 — `/press` renders prices through `Price.tsx` with **no VAT treatment stated**, and the prominence rule bites on the `INDICATIVE` badge and the "What moves it: …" line: those are the price-calculation information, and s. 230 requires them to be as prominent as the figure itself. OQ-14. |
+| **status in this build** | **not satisfied on the tax limb.** A consumer-facing price with no statement of whether tax is included, and no statement that further charges may be payable, is the exact omission s. 230 names. Partially mitigated: the `INDICATIVE` badge is unconditional and rendered adjacent to the amount. |
+
+### L-DMCC-SCH20-13 — consumer reviews
+
+| | |
+|---|---|
+| **instrument** | DMCCA 2024 |
+| **provision** | **Sch. 20 para. 13** (banned practices — consumer reviews); s. 225 (banned practices are unfair in all circumstances, with no average-consumer transactional test) |
+| **in-force version** | In force 6 April 2025; checked 25 Aug 2026 |
+| **what it requires** | Unfair in all circumstances: submitting or commissioning a **fake consumer review** — one that "purports to be, but is not, based on a person's genuine experience"; concealing that a review was **incentivised or commissioned**; publishing reviews in a misleading way, including **"failing to publish, or removing from publication, negative consumer reviews whilst publishing positive ones"** or giving greater prominence to positive ones; **failing to take reasonable and proportionate steps** to prevent the publication of fake, concealed-incentive or false reviews; and offering services to facilitate any of these. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2024/13/schedule/20 |
+| **applies to** | consumer only — but the testimonials block appears on the **master** homepage, which mixes both audiences (inventory §5.1), so the consumer regime reaches it. |
+| **engaged here because** | Inventory §6.5 — testimonials are the **one exception** to seed content: `components/master/Testimonials.tsx:16` states six are **real public Freelancer reviews**. OQ-20 asks whether the reviewers consented and whether the attributions are accurate. |
+| **status in this build** | **cannot tell — and this is the highest-risk single item in the ledger relative to how little the build says about it.** Two distinct exposures: (a) whether the six shown are a **selected** subset with negative reviews omitted — that is the para. 13 prominence limb, and it is a selection decision no gate can see; (b) accuracy of attribution. Consent to be quoted is a separate question (see `L-GDPR-6` — a named reviewer is personal data). |
+
+---
+
+## F. Accessibility
+
+### L-EQA-29 — services: the duty not to discriminate
+
+| | |
+|---|---|
+| **instrument** | Equality Act 2010 |
+| **provision** | **s. 29**, in particular s. 29(7)(a) |
+| **in-force version** | As amended; checked 25 Aug 2026 |
+| **what it requires** | A person concerned with the provision of a service to the public must not discriminate against, harass or victimise a person requiring the service, including in the terms on which it is provided or by not providing it. **s. 29(7)(a): "A duty to make reasonable adjustments applies to — (a) a service-provider."** |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2010/15/section/29 |
+| **applies to** | all — service provision to the public, consumer and business alike |
+| **engaged here because** | The site is the public-facing service channel for all three divisions (inventory §5.1). |
+| **status in this build** | **cannot tell** — a discrimination question, not a codebase one. |
+
+### L-EQA-20 — reasonable adjustments
+
+| | |
+|---|---|
+| **instrument** | Equality Act 2010 |
+| **provision** | **s. 20** (the three requirements) and **Sch. 2** (application to services); **s. 20(7)** (no charging) |
+| **in-force version** | As amended; checked 25 Aug 2026 |
+| **what it requires** | The three requirements: to take reasonable steps to avoid the substantial disadvantage caused by a provision, criterion or practice; by a physical feature; and to provide an auxiliary aid. **Sch. 2 para. 2(2) makes the services duty anticipatory** — references to a disabled person are to "disabled persons generally", not to a particular customer, so the provider must anticipate needs rather than wait for a request. s. 20(7): the provider is not entitled to require the disabled person to pay the costs of complying. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2010/15/section/20 · https://www.legislation.gov.uk/ukpga/2010/15/schedule/2 |
+| **applies to** | all |
+| **engaged here because** | Inventory §6.4 — automated gates cover axe over 14 routes × 3 viewports × 2 consent phases, contrast, headings, responsive/target size, theme, and two-axis Lighthouse. |
+| **status in this build** | **partially satisfied, with two named gaps.** (1) **"The screen-reader pass has never happened"** — `05-HANDOVER.md:79` is explicit that the gates "do not cover announcement, and no lab check does"; no AT testing of any kind (magnifier, voice control, switch) is referenced anywhere. OQ-19. (2) **Six of the seven legal routes are not audited** — `/legal/cookies`, `/legal/terms`, `/legal/client-terms`, `/legal/business-client-terms`, `/legal/consumer-client-terms` and `/legal/accessibility` are absent from `check-axe.mjs:48-74`; only `/legal/privacy` is covered. Corrected 26 August 2026, round 8, from "four of the five": `lib/legal/slugs.ts` declares seven, and the 26 Aug client-terms split put two more routes outside the gate. OQ-18. |
+
+### L-WCAG-22 — what legal status WCAG actually has here
+
+| | |
+|---|---|
+| **instrument** | Web Content Accessibility Guidelines (WCAG) 2.2 — **W3C Recommendation** |
+| **provision** | Conformance Level AA (all Level A and Level AA success criteria satisfied) |
+| **in-force version** | W3C Recommendation; this version 12 December 2024 (`REC-WCAG22-20241212`), superseding the 5 October 2023 Recommendation; checked 25 Aug 2026 |
+| **what it requires** | Level AA conformance requires that the page satisfy all Level A and Level AA success criteria, or that a conforming alternate version is provided. |
+| **primary source** | https://www.w3.org/TR/WCAG22/ |
+| **applies to** | all |
+| **engaged here because** | `CLAUDE.md` states "WCAG 2.2 AA is the floor"; `ACCESSIBILITY-STATEMENT.md` is one of the five published legal routes (inventory §5.2). |
+| **status in this build** | **This entry exists to state the status precisely, because it is easy to get wrong in a public statement.** **WCAG 2.2 is not a statutory standard for a private-sector service in the UK.** It is a W3C Recommendation — a technical specification, not law. The Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 bind WCAG-level conformance to public sector bodies only, and **Gridsmith Ltd is not one**. The actual legal duty on this site is `L-EQA-20`: an **anticipatory** duty to take reasonable steps to avoid substantial disadvantage. WCAG 2.2 AA is the recognised benchmark by which "reasonable steps" is conventionally evidenced — a voluntary commitment whose value is evidential. It follows that (a) the accessibility statement should describe WCAG 2.2 AA as the standard the company **has adopted**, not one it is **required** to meet; and (b) **a claim of AA conformance made without the screen-reader pass having happened is a statement about the service under `L-CRA-50` and, for consumers, potentially `L-DMCC-230`'s sibling s. 226 misleading-action provision.** Automated tooling does not establish AA. |
+
+---
+
+## G. VAT display — the divergence
+
+### L-VAT-CONSUMER — prices shown to consumers
+
+| | |
+|---|---|
+| **instrument** | DMCCA 2024 s. 230; SI 2013/3134 reg. 13 and Sch. 2; SI 2002/2013 reg. 6(2) |
+| **provision** | See `L-DMCC-230`, `L-CCR-13`, `L-ECOM-6` |
+| **in-force version** | DMCCA Part 4 in force 6 Apr 2025; others as amended; checked 25 Aug 2026 |
+| **what it requires** | The price presented to a consumer must be **the total price inclusive of taxes**, or state how it will be calculated where it cannot be calculated in advance, with equal prominence for the calculation information. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/2024/13/section/230 · https://www.legislation.gov.uk/uksi/2013/3134/contents |
+| **applies to** | **consumer only — Press** |
+| **engaged here because** | Inventory §5.3 — `/press` is consumer-facing and renders prices through the same `Price.tsx` as the B2B divisions, with no net/gross field in `pricingBlock` (`objects.ts:81-95`). |
+| **status in this build** | **not satisfied.** `M-P2-3` is NOT BUILT (§7). |
+
+### L-VAT-B2B — prices shown to business customers
+
+| | |
+|---|---|
+| **instrument** | SI 2002/2013 reg. 6(2); Value Added Tax Act 1994 and the VAT Regulations 1995 for invoicing |
+| **provision** | **reg. 6(2)** is the operative display rule |
+| **in-force version** | As made and amended; checked 25 Aug 2026 |
+| **what it requires** | reg. 6(2): prices must be indicated **clearly and unambiguously** and **must in particular indicate whether they are inclusive of tax and delivery costs.** There is **no requirement that a B2B price be VAT-inclusive** — the requirement is that the treatment be **stated**. A tax-exclusive price is permitted; a price with no stated treatment is not. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2002/2013/regulation/6/made |
+| **applies to** | **business — Design and Digital.** Note reg. 6 itself is not consumer-limited, so it also backstops the Press position. |
+| **engaged here because** | Inventory §5.3 — no VAT treatment is stated on any price on any division landing page. |
+| **status in this build** | **not satisfied.** **This is the divergence in one line: Press prices must be *inclusive*; Design and Digital prices need only be *labelled*. Both are currently *unlabelled*, so both fail — but they fail differently and the fix is not the same clause.** Collapsing to "all prices exc. VAT" would fix Design and Digital and break Press. |
+
+---
+
+## H. Website terms
+
+### L-ECOM-9-11 — contract formation by electronic means
+
+| | |
+|---|---|
+| **instrument** | SI 2002/2013 |
+| **provision** | regs. 9, 11, 12 |
+| **in-force version** | As made; checked 25 Aug 2026 |
+| **what it requires** | Where a contract is to be concluded by electronic means, the service provider must, before the order is placed, state the technical steps to conclude the contract, whether the concluded contract will be filed and accessible, the technical means for identifying and correcting input errors, and the languages offered (reg. 9(1)); must indicate the codes of conduct it subscribes to (reg. 9(2)); must make terms and conditions available in a way that allows them to be stored and reproduced (reg. 9(3)); and, where the order is placed through technological means, must acknowledge receipt without undue delay and provide means to identify and correct input errors (reg. 11(1)(a) and (b)). |
+| **the excludable set, corrected 26 August 2026** | **regs. 9(1), 9(2) and the whole of reg. 11(1)** may be excluded by agreement where neither party is a consumer. Each opens with the words *"Unless parties who are not consumers have agreed otherwise"*, and in reg. 11 that conditional governs **paragraph (1) as a whole**, both (a) and (b) — the regulation draws no sub-paragraph division for this purpose. The earlier form of this entry said *"regs. 9(1) and 11(1)(b)"*, which named less than the parties can disapply and a division the instrument does not make. **reg. 9(3) is not excludable** and is not touched by the carve-out below. |
+| **the email carve-out** | **reg. 9(4)**: *"The requirements of paragraphs (1) and (2) above shall not apply to contracts concluded exclusively by exchange of electronic mail or by equivalent individual communications."* **reg. 11(3)** is in identical terms for reg. 11(1). A contract concluded by exchanging emails is therefore **already outside regs. 9(1), 9(2) and 11(1)** by operation of the instrument, with no agreement to exclude them required. This is how Gridsmith in fact contracts (`MSA-BUSINESS.md` 3.1 — work begins on a written Scope; `01-FACTUAL-INVENTORY.md` §7 — nothing can be ordered on the website), so an exclusion clause is belt-and-braces over a carve-out that already applies. |
+| **primary source** | https://www.legislation.gov.uk/uksi/2002/2013/regulation/9/made · https://www.legislation.gov.uk/uksi/2002/2013/regulation/11/made — both fetched and read in full, 26 Aug 2026 |
+| **applies to** | **This is a divergence**: mandatory for consumers (Press), disapplicable by agreement between businesses (Design, Digital). |
+| **engaged here because** | Inventory §7 — the estimator is NOT BUILT, so no contract is concluded on the site today. |
+| **status in this build** | **not engaged today.** Recorded because the estimator would engage it. |
+
+---
+
+## I. Business contract terms
+
+**Added 26 August 2026, round 7.** The first two entries close a `NO LEDGER ENTRY` flag in
+`MSA-BUSINESS.md` where a specific figure or a specific section was asserted with no primary citation.
+Every provision below was fetched and read at `legislation.gov.uk` on 26 August 2026.
+
+**Extended 29 August 2026, round 12 — UCTA 1977.** The five `L-UCTA-*` entries below were added in a
+pass that read the Act at source for the first time. **UCTA had never been read by any round**, while
+the consumer side of the same question (`L-CRA-57`, `L-CRA-62`) was fully cited — so the B2B liability
+limbs at `MSA-BUSINESS.md` 11 and `WEBSITE-TERMS.md` 11 stood on `00-LEGAL-BASIS.md` §1's bare
+assertion that "UCTA 1977 applies", with two `NO LEDGER ENTRY` flags asking a solicitor to supply the
+citation. `07-STATE-REPORT.md` §2.3 recorded it as the largest uncosted gap in the set. Provisions
+fetched and read on 29 August 2026: **ss. 1, 2, 3, 11, 13, 26, 27 and Schedule 2.**
+
+> **The single most consequential thing this pass found is a negative.** **Schedule 2 does not apply
+> to sections 2 or 3.** Its own opening words confine it to *"sections 6(1A), 7(1A) and (4), 20 and
+> 21"* — the supply-of-goods provisions — and **s. 11(2)** likewise directs regard to Schedule 2
+> *"for the purposes of section 6 or 7 above"*. Gridsmith sells services, so **no clause in this set
+> is within Schedule 2's terms at all.** Courts commonly apply the guidelines by analogy to s. 3
+> cases, but that is case law, and **no round in this project has read a single authority.** A draft
+> that recites Schedule 2 as the applicable checklist would be citing the wrong provision with
+> confidence, which is this repository's own defect class in a legal document rather than in a gate.
+
+### L-UCTA-1 — scope: business liability, and what "negligence" means in the Act
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 1(1), s. 1(2), s. 1(3), s. 1(4)** |
+| **in-force version** | As amended (Consumer Rights Act 2015 Sch. 4); checked 29 Aug 2026 |
+| **what it requires** | **s. 1(1)** defines *negligence* for Part I as breach of (a) any contractual obligation to take reasonable care or exercise reasonable skill, (b) any common-law duty to take reasonable care or exercise reasonable skill, and (c) the common duty of care under the Occupiers' Liability Act 1957. Limb (a) is the operative one here: **a breach of `MSA-BUSINESS.md` 12.1's reasonable-care-and-skill warranty is "negligence" for UCTA purposes**, so s. 2 governs it and not only s. 3. **s. 1(3)**: ss. 2 to 7 apply only to *business liability* — *"liability for breach of obligations or duties arising (a) from things done or to be done by a person in the course of a business (whether his own business or another's); or (b) from the occupation of premises used for business purposes."* **s. 1(2)**: Part I is subject to Part III, and in relation to contracts the operation of ss. 2, 3 and 7 is subject to the exceptions in Schedule 1. **s. 1(4)**: it is immaterial whether the breach was inadvertent or intentional, or whether liability arises directly or vicariously. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/section/1 |
+| **applies to** | **B2B only in this set.** s. 2(4) and s. 3(3), both inserted by CRA 2015, take consumer contracts and consumer notices out of ss. 2 and 3 entirely; the consumer position is CRA 2015 ss. 57 and 62 — `L-CRA-57`, `L-CRA-62`. **UCTA and the CRA do not overlap.** A draft that cites both for the same term against the same counterparty has cited one of them wrongly. |
+| **engaged here because** | Every liability limb in `MSA-BUSINESS.md` 11 and 12.3, the deemed-acceptance clause at 7.4, the 12-month notification bar at 11.5, the Schedule A3 design-check allocation, and `WEBSITE-TERMS.md` 11's business-user exclusion are all terms limiting business liability. |
+| **status in this build** | **drafting only.** Nothing in the repository executes a liability term. |
+
+### L-UCTA-SCH1 — the intellectual-property carve-out, which reaches clause 8
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 1(2)** with **Schedule 1 para. 1(c)** |
+| **in-force version** | As amended; checked 29 Aug 2026 |
+| **what it requires** | s. 1(2) makes the operation of ss. 2, 3 and 7 *"subject to the exceptions made by Schedule 1"*. **Schedule 1 para. 1** provides that **ss. 2 and 3 do not extend to** a contract **"so far as it relates to"** — among other things — **"the creation or transfer of a right or interest in any patent, trade mark, copyright or design right, registered design, technical or commercial information or other intellectual property, or relates to the termination of any such right or interest"** (para. 1(c)). The other listed exclusions — insurance, interests in land, company formation and constitution, securities, and the bus and coach matters governed by Art. 6 of Regulation (EU) 181/2011 — do not touch anything Gridsmith does. |
+| **why this is a finding and not a comfort** | **`MSA-BUSINESS.md` clause 8 is an IP assignment**, and 8.3 transfers *"all copyright and other intellectual property rights in the final approved deliverables"*. So ss. 2 and 3 **do not reach the contract so far as it relates to that transfer** — which means a term limiting liability for, say, defective title in the assigned copyright is outside the reasonableness test altogether. **But the carve-out is "so far as it relates to", not "if it contains".** A services agreement that happens to include an assignment is not thereby removed from UCTA; clause 11's cap, so far as it operates on liability for negligent *performance of the services*, is untouched by para. 1(c) and remains squarely inside s. 2(2) and s. 3. |
+| **the trap** | The tempting reading — *"the MSA transfers IP, therefore Schedule 1 takes it out of UCTA"* — is wrong and would remove the reasonableness discipline from the whole liability clause. **Where the line falls is a question of construction on authority, and `CNV-8` records that no authority has been read.** The drafts therefore state the s. 2 and s. 3 position without relying on Schedule 1 at all, which is the safe direction: a limit drafted to survive the reasonableness test is unharmed by discovering it never had to. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/schedule/1 |
+| **applies to** | `MSA-BUSINESS.md` 8.1–8.6, Schedules A4, B1, B4, C1–C4; and, so far as any of them operates on the IP transfer rather than on service performance, 11.2, 11.3 and 12.3 |
+| **engaged here because** | Nothing in the set had noticed the carve-out, and the first person to notice it would most likely have over-read it. |
+| **status in this build** | **drafting only, and deliberately not relied on.** No clause is drafted on the footing that Schedule 1 saves it. |
+
+### L-UCTA-2 — negligence liability: the ineffective limb and the reasonableness limb
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 2(1), s. 2(2), s. 2(3), s. 2(4)** |
+| **in-force version** | As amended; s. 2(4) inserted by CRA 2015 Sch. 4 para. 3 (1 Oct 2015 / 1 Oct 2016). Checked 29 Aug 2026 |
+| **what it requires** | **s. 2(1)**: *"A person cannot by reference to any contract term or to a notice given to persons generally or to particular persons exclude or restrict his liability for death or personal injury resulting from negligence."* Absolute — no reasonableness test, no contracting out. **s. 2(2)**: *"In the case of other loss or damage, a person cannot so exclude or restrict his liability for negligence except in so far as the term or notice satisfies the requirement of reasonableness."* **s. 2(3)**: agreement to, or awareness of, such a term or notice *"is not of itself to be taken as indicating his voluntary acceptance of any risk"* — so a term saying the client accepts the risk does not convert an exclusion into consent. **s. 2(4)**: the section does not apply to a term in a consumer contract or to a consumer notice. |
+| **the word "notice", and why it reaches a free website** | s. 2 bites on *"a notice given to persons generally"* as well as on a contract term. It therefore reaches `WEBSITE-TERMS.md` 11's business-user exclusion **whether or not a browsewrap is a contract at all** — which is the question clause 2 leaves open and which s. 3 turns on. **s. 2(2) applies to that exclusion on either answer**, and this is the reason the website terms need UCTA cited even though nobody pays for the site. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/section/2 |
+| **applies to** | `MSA-BUSINESS.md` 11.1, 11.2, 11.3, Schedule A3 · `WEBSITE-TERMS.md` 11 |
+| **engaged here because** | `MSA-BUSINESS.md` 11.1 already carves out death and personal injury, which is s. 2(1) stated without citation. 11.2 and 11.3 limit liability for loss caused by failure to exercise reasonable care and skill — s. 1(1)(a) negligence — so both are s. 2(2) terms and each must independently satisfy s. 11. |
+| **status in this build** | **drafting only.** 11.1 is correct as drafted and needed no change; what it lacked was the citation making clear it is an ineffective-limb restatement rather than a concession Gridsmith chose to make. |
+
+### L-UCTA-3 — written standard terms of business, and s. 13's extension to remedies
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 3(1), s. 3(2)(a), s. 3(2)(b)(i)–(ii), s. 3(3)**; **s. 13(1)(a)–(c) and its closing words; s. 13(2)** |
+| **in-force version** | As amended; s. 3(1) amended and s. 3(3) inserted by CRA 2015 Sch. 4 para. 4. s. 13(1) amended by CRA 2015 Sch. 4 para. 12. Checked 29 Aug 2026 |
+| **what it requires** | **s. 3(1)**: *"This section applies as between contracting parties where one of them deals on the other's written standard terms of business."* (The former "deals as consumer or" limb was removed by the CRA.) **s. 3(2)**: as against that party, the other cannot by reference to any contract term (a) when himself in breach, exclude or restrict any liability in respect of the breach; or (b) claim to be entitled (i) *"to render a contractual performance substantially different from that which was reasonably expected of him"*, or (ii) *"in respect of the whole or any part of his contractual obligation, to render no performance at all"* — **except in so far as the term satisfies the requirement of reasonableness. s. 3(3)**: does not apply to a term in a consumer contract. |
+| **s. 13 — the clauses that are exclusions without looking like one** | **s. 13(1)**: to the extent Part I prevents the exclusion or restriction of any liability *"it also prevents — (a) making the liability or its enforcement subject to restrictive or onerous conditions; (b) excluding or restricting any right or remedy in respect of the liability, or subjecting a person to any prejudice in consequence of his pursuing any such right or remedy; (c) excluding or restricting rules of evidence or procedure"*. So **a notification deadline and a deemed-acceptance clause are exclusions for UCTA purposes**, not neutral machinery. **s. 13(2)**: an arbitration agreement is not treated as excluding or restricting liability. |
+| **the limit of s. 13's closing words, stated because it is easy to over-read** | The tail of s. 13(1) — *"and (to that extent) sections 2, 6 and 7 also prevent excluding or restricting liability by reference to terms and notices which exclude or restrict the relevant obligation or duty"* — **names ss. 2, 6 and 7 and does not name s. 3.** So a term that defines the duty rather than excluding it is pulled back in through **s. 2**, not through s. 3. That is the route by which `MSA-BUSINESS.md` Schedule A3 is reached, and citing s. 3 for it would be wrong. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/section/3 · https://www.legislation.gov.uk/ukpga/1977/50/section/13 |
+| **applies to** | `MSA-BUSINESS.md` 7.4, 11.2, 11.3, 11.5, 12.3 |
+| **engaged here because** | The MSA is offered as a standing instrument the client signs a Scope against; `docs/_shared/` treats it as the standard contract for every business engagement. **Whether the client "deals on Gridsmith's written standard terms" is a question of fact per engagement** — individual negotiation of the terms takes the contract outside s. 3 — which is why the clause added at 11.6 states the premise conditionally rather than asserting it. |
+| **status in this build** | **drafting only**, and one open fact: nothing in the repository records whether any Scope has ever varied the MSA's terms. |
+
+### L-UCTA-11 — the reasonableness test, the burden, and the Schedule 2 trap
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 11(1), s. 11(2), s. 11(3), s. 11(4)(a)–(b), s. 11(5)**; **Schedule 2 paras. (a)–(e)** |
+| **in-force version** | As amended; checked 29 Aug 2026 |
+| **what it requires** | **s. 11(1)**: the requirement of reasonableness is *"that the term shall have been a fair and reasonable one to be included having regard to the circumstances which were, or ought reasonably to have been, known to or in the contemplation of the parties when the contract was made."* **The test is applied as at contract date, not with hindsight from the loss.** **s. 11(3)**: for a non-contractual notice the test is instead whether *"it should be fair and reasonable to allow reliance on it, having regard to all the circumstances obtaining when the liability arose"* — a different test on different facts, and the one that governs `WEBSITE-TERMS.md` 11 if the browsewrap is a notice rather than a contract. **s. 11(4)**: where a term restricts liability *"to a specified sum of money"*, regard shall be had in particular to *"(a) the resources which he could expect to be available to him for the purpose of meeting the liability should it arise; and (b) how far it was open to him to cover himself by insurance."* **s. 11(5)**: *"It is for those claiming that a contract term or notice satisfies the requirement of reasonableness to show that it does."* |
+| **s. 11(4) makes the cap and the insurance one question** | `MSA-BUSINESS.md` 11.3 (the cap) and 11.4 (the PI limit) have been drafted, reviewed and left `[TK]` as two independent owner figures through four revisions. **s. 11(4)(b) makes them one.** A cap set materially below the cover actually available is a term the court is directed to test against that availability, and the party defending it is Gridsmith under s. 11(5). Choosing the cap without knowing the cover is choosing the harder half first. |
+| **Schedule 2 — what it actually governs** | Schedule 2's own heading words confine it to **"sections 6(1A), 7(1A) and (4), 20 and 21"**, and **s. 11(2)** directs regard to it *"for the purposes of section 6 or 7 above"*. Those are the **supply of goods** provisions. **Nothing Gridsmith sells is within them**, so on the face of the Act Schedule 2 governs no clause in this set. Its five guidelines — (a) relative bargaining strength; (b) inducement to agree, and the availability of a similar contract without the term; (c) whether the customer knew or ought to have known of the term; (d) practicability of complying with a condition; (e) whether the goods were made to the customer's special order — are **recorded here for the solicitor's benefit and are deliberately not recited in any draft as the applicable checklist.** |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/section/11 · https://www.legislation.gov.uk/ukpga/1977/50/schedule/2 |
+| **applies to** | every term reached by `L-UCTA-2` and `L-UCTA-3` |
+| **engaged here because** | `MSA-BUSINESS.md`'s own solicitor note has said since version 1.0 that *"11.3 must satisfy the UCTA 1977 reasonableness test"* — with no citation of what that test is, where the burden lies, or which figures it looks at. |
+| **status in this build** | **cannot tell, and it cannot be told.** The test is fact-specific and applied per contract; both figures it turns on are `[TK]`. What the drafts can carry, and now do, is the test itself, the burden, and the s. 11(4) link. |
+
+### L-UCTA-26-27 — international supply contracts, and the choice-of-law escape
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 26(1)–(4)**; **s. 27(1), s. 27(2)** |
+| **in-force version** | As amended (Contracts (Applicable Law) Act 1990; CRA 2015 Sch. 4 — s. 27(3) omitted); checked 29 Aug 2026 |
+| **what it requires** | **s. 26(1)–(2)**: the Act's limits, and the s. 3 reasonableness requirement, do not apply to liability arising under an *international supply contract*. **s. 26(3)–(4)** define it: the contract must be **a contract of sale of goods or one under or in pursuance of which possession or ownership of goods passes** (s. 26(3)(a)), the parties must have places of business or habitual residences in different States (s. 26(3)(b)), **and** one of goods-in-carriage-between-States, offer and acceptance in different States, or delivery to a State other than that of offer and acceptance (s. 26(4)). **s. 27(1)**: where the applicable law is the law of a part of the UK **only by the parties' choice**, and would otherwise be the law of a country outside the UK, **ss. 2 to 7 and 16 to 21 do not operate**. **s. 27(2)**: the Act nonetheless has effect notwithstanding a choice of foreign law imposed wholly or mainly to evade it. |
+| **the finding, and it runs against the instinct** | **s. 26 does not help Gridsmith.** Every limb of s. 26(3)(a) is about **goods**, and Gridsmith supplies services; a design, software or publishing engagement with an overseas company is **not** an international supply contract, so UCTA continues to apply to it in full. The escape that does exist is **s. 27(1)**, and it operates only where E&W law would not have applied anyway — so it is a consequence of `MSA-BUSINESS.md` 14.7 rather than something 14.7 was drafted to achieve, and it is not something to draft towards. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/section/26 · https://www.legislation.gov.uk/ukpga/1977/50/section/27 |
+| **applies to** | `MSA-BUSINESS.md` 14.7 · `WEBSITE-TERMS.md` 14 |
+| **engaged here because** | 1.3 contemplates *"affiliated production teams and subcontractors"*, and nothing in the repository establishes where any client is. Neither clause is amended by this entry — the entry exists so that nobody later reasons from "international client" to "UCTA does not apply". |
+| **status in this build** | **drafting only.** No change made to either clause; recorded to close a line of reasoning, not to open one. |
+
+### L-LATE-PAYMENT — statutory interest and fixed recovery sums on a late commercial debt
+
+| | |
+|---|---|
+| **instrument** | Late Payment of Commercial Debts (Interest) Act 1998 (c. 20), with The Late Payment of Commercial Debts (Rate of Interest) (No. 3) Order 2002, **SI 2002/1675** |
+| **provision** | 1998 Act **ss. 5A(1), 5A(2), 5A(2A)** and **s. 6**; SI 2002/1675 **art. 4** |
+| **in-force version** | As amended; checked 26 Aug 2026 |
+| **what it requires** | **s. 5A(1)**: once statutory interest begins to run on a qualifying debt the supplier is entitled to a **fixed sum in addition to the interest**. **s. 5A(2)** sets **three** fixed sums by debt band — **£40** for a debt under £1,000, **£70** for £1,000 or more but under £10,000, **£100** for £10,000 or more. **s. 5A(2A)**: *"If the reasonable costs of the supplier in recovering the debt are not met by the fixed sum, the supplier shall also be entitled to a sum equivalent to the difference between the fixed sum and those costs."* |
+| **where the 8% actually lives** | **Not in the Act.** s. 6(1) only empowers the Secretary of State to *"by order made with the consent of the Treasury set the rate of statutory interest"*. The rate is set by **SI 2002/1675 art. 4**: *"The rate of interest … shall be 8 per cent per annum over the official dealing rate in force on the 30th June (in respect of interest which starts to run between 1st July and 31st December) or the 31st December (in respect of interest which starts to run between 1st January and 30th June) immediately before the day on which statutory interest starts to run."* |
+| **the mechanic, stated because it is routinely elided** | The reference rate is the official dealing rate **on 30 June or 31 December**, and it then holds for the following six months. It is **not** the base rate on the day the invoice fell due. A clause that says "8% above the Bank of England base rate" without this is describing a floating rate the statute does not create. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1998/20/section/5A · https://www.legislation.gov.uk/ukpga/1998/20/section/6 · https://www.legislation.gov.uk/uksi/2002/1675/article/4/made |
+| **applies to** | **B2B only.** The Act governs contracts for the supply of goods or services where both parties act in the course of a business — so `MSA-BUSINESS.md`, never `CONSUMER-TERMS.md`. |
+| **engaged here because** | `MSA-BUSINESS.md` 6.4 charges late-payment interest and compensation, and stated both the rate and the recovery sum with no citation. |
+| **status in this build** | **drafting only** — nothing in the repository calculates or charges interest. The entitlement is a term of the contract, not a code path. |
+
+### L-CDPA-90-91 — assignment of copyright, present and future
+
+| | |
+|---|---|
+| **instrument** | Copyright, Designs and Patents Act 1988 (c. 48) |
+| **provision** | **s. 90(1)–(3)** and **s. 91(1)–(2)** |
+| **in-force version** | As amended; checked 26 Aug 2026 |
+| **what it requires** | **s. 90(1)**: copyright is transmissible by assignment. **s. 90(2)**: an assignment may be partial, limited to some of the acts restricted by the copyright or to part of the term. **s. 90(3)**: *"An assignment of copyright is not effective unless it is in writing signed by or on behalf of the assignor."* |
+| **why s. 91 is the operative section for a deliverables clause** | s. 90(3) governs an assignment of copyright **that already exists**. A services agreement signed before any deliverable is made assigns copyright in works not yet created — **future copyright**, which is **s. 91**. **s. 91(1)**: where by an agreement made in relation to future copyright, *"and signed by or on behalf of the prospective owner of the copyright"*, the prospective owner purports to assign the future copyright, then on the copyright coming into existence **it vests in the assignee by virtue of that subsection** — no further act of assignment is needed. **s. 91(2)** defines *"future copyright"* as copyright that will or may come into existence in respect of a future work or class of works or on the occurrence of a future event, and *"prospective owner"* accordingly. |
+| **the practical consequence** | s. 91 also requires **signed writing**, so a clause drafted to satisfy s. 90(3) is likely adequate in form. But s. 91 is what makes the assignment bite automatically on creation, and citing only s. 90(3) leaves the mechanism for works created after signature unstated. Both sections should be named. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1988/48/section/90 · https://www.legislation.gov.uk/ukpga/1988/48/section/91 |
+| **applies to** | all. **Two clauses in the set assign copyright**, and as of round 8 both are drafted to the same standard: `MSA-BUSINESS.md` 8.3 (deliverables, business client) and `CONSUMER-TERMS.md` 10.3 (cover and interior design, consumer). Until round 8, 10.3 said only that the design would *"become yours once you have paid in full"* — no purported assignment, no signed writing, no s. 91 — so **the consumer instrument gave the weaker transfer of the two**, in the document whose selling proposition is that the author owns everything. |
+| **engaged here because** | `MSA-BUSINESS.md` 8.3 assigns *"all copyright and other intellectual property rights in the final approved deliverables"* on payment, and cited s. 90(3) alone with a `NO LEDGER ENTRY` flag. `CONSUMER-TERMS.md` 10.3 makes the equivalent assignment for a consumer and, until round 8, declared that no CDPA entry existed. |
+| **status in this build** | **drafting only.** Two questions this entry does **not** answer and which remain the solicitor's: whether an electronically executed agreement is *"signed"* for s. 90(3) / s. 91(1) purposes, and whether *"other intellectual property rights"* — which are not copyright — are validly assigned by the same words. Both are recorded as open at 8.3. |
+
+---
+
+## COULD NOT VERIFY
+
+**CNV-1 — ICO statutory guidance positions.** The task permits ICO guidance as a primary source "where
+it is the regulator's published position". No ICO guidance page was fetched during this pass, so **no
+entry in this ledger rests on ICO guidance** — every entry above cites statute or the W3C
+Recommendation. Consequence: the ledger does not record the ICO's post-DUAA position on the new PECR
+Sch. A1 para. 5 statistical-purposes exception, which is the single point where a regulator view would
+most change what `COOKIE-POLICY.md` should say. **Recommend Pass 3 fetch the ICO's current cookies
+guidance before drafting the cookie policy.**
+
+**[STILL OPEN, and the gap has moved rather than closed — 26 August 2026, round 8.]** The sentence
+above remains literally true of **this ledger**: no entry rests on ICO guidance. But Pass 3 did fetch
+the guidance, and **`COOKIE-POLICY.md` §4A now carries eight verbatim ICO quotations that no entry here
+backs** — sourced in prose to *Guidance on the use of storage and access technologies*, chapter "What
+are the exceptions?", retrieved 25 August 2026. They are load-bearing: they are the evidential base of
+a `[DECISION REQUIRED]` worth the difference between relying on consent and relying on the Sch. A1
+para. 5 exception. Pass 5 could not re-verify them — `ico.org.uk` returned HTTP 403 — and neither did
+this round; **the quotations rest on a single unrepeatable retrieval.** They must be re-checked against
+the live page and given an entry here before publication. `COOKIE-POLICY.md` §4A itself is untouched by
+this round, per the standing instruction not to edit the ICO quotations.
+
+**CNV-2 — Art. 30(4) UK GDPR.** `legislation.gov.uk` records an **outstanding, unapplied** amendment to
+Art. 30(4) from SI 2026/386 (the DUAA consequential-amendments regulations). The consolidated text does
+not yet show it. `L-GDPR-30` therefore cites Art. 30(1) and 30(5), which are consolidated and were read,
+and does not rely on 30(4).
+
+**CNV-3 — PECR reg. 23 (identity and address in marketing mail). CLOSED, 26 August 2026, round 8.
+SUPERSEDED as a citation, round 9: the obligation now has its own entry, `L-PECR-23`, and that is what
+clauses cite. This record is retained for its history and must not be cited — a live obligation citing
+an entry in the COULD NOT VERIFY section reads as unestablished when it is not.**
+Originally recorded because the Pass 2 fetch returned reg. 22 only. **reg. 23 has now been fetched and
+read in full**, in this round, at source — not accepted from the round-7 record that said it had been
+read, and not accepted from `PRIVACY-POLICY.md` §3A, which is a draft rather than an instrument.
+
+The text: a person shall neither transmit nor instigate the transmission of a direct-marketing
+communication by electronic mail *"(a) where the identity of the person on whose behalf the
+communication has been sent has been disguised or concealed; (b) where a valid address to which the
+recipient of the communication may send a request that such communications cease has not been
+provided;"* or (c)/(d) where it would contravene, or encourages visiting sites contravening, reg. 7 of
+SI 2002/2013.
+
+**The proposition it was needed for holds.** reg. 23 opens *"A person shall neither transmit …"* and
+speaks of *"the recipient of the communication"*. It carries **no "individual subscriber" limitation** —
+unlike reg. 22, which is expressly confined to individual subscribers by reg. 22(1). So reg. 23 binds
+for corporate-subscriber marketing where reg. 22 does not, which is exactly what `MSA-BUSINESS.md` 16.1
+rests on. `L-PECR-22`'s reference to it stands.
+
+*Kept in this section rather than deleted, with its closure and the reason, so the record shows what was
+unverified and when that changed.*
+
+**CNV-4 — Price Marking Order 2004.** Considered as a candidate primary source for consumer VAT display
+and **not cited**, because it is directed at products offered to consumers and its application to
+professional services of the kind Press sells was not established from primary text within this pass.
+`L-VAT-CONSUMER` rests on DMCCA s. 230 and CCRs Sch. 2 instead, both of which were read.
+
+**CNV-5 — VAT invoicing detail.** `L-VAT-B2B` cites VATA 1994 and the VAT Regulations 1995 by name for
+invoicing but **the specific regulation (reg. 14, invoice content) was not fetched**. The display
+obligation in that entry rests entirely on the e-commerce reg. 6(2) text, which was read. Any invoicing
+clause in the drafts needs its own citation.
+
+**CNV-6 — DMCCA s. 226/227 text.** Referenced in `L-DMCC-230` and `L-WCAG-22` as the misleading
+actions/omissions provisions. Their commencement (6 Apr 2025) is verified and s. 230 was read in full,
+but **ss. 226 and 227 were not individually fetched.** Cite them only after reading.
+
+**CNV-7 — Companies Act 2006 s. 82 text.** The empowering section is named in `L-CA-82` but the
+obligation cited and read is in SI 2015/17 regs. 24–25. s. 82 itself was not fetched.
+
+**CNV-8 — no UCTA case law has been read, by any round.** The five `L-UCTA-*` entries rest entirely on
+the statute. That is enough to state the test, the burden and which provision reaches which clause, and
+it is **not** enough to answer whether any particular cap is reasonable — a question decided almost
+entirely on authority. Two specific points in `L-UCTA-11` are statute-only and would be answered
+differently by a practitioner with the cases: **(i)** whether Schedule 2's guidelines are applied by
+analogy to s. 3, which is settled practice in the case law and is not in the Act; **(ii)** where the
+line falls between a term that *defines* a duty and one that *excludes* it for s. 13(1) purposes, which
+is the whole of the `MSA-BUSINESS.md` Schedule A3 question. **Nobody in this project is qualified to
+read those cases, and none was read.** This is the largest remaining gap on the business side and it is
+a gap only a solicitor can close.
+
+**CNV-9 — no UCTA Schedule 1 CNV entry is needed; Schedule 1 was read.** It was initially recorded here
+as not reached, and that was wrong — it was fetched in the same pass and is material enough to have its
+own entry. See **`L-UCTA-SCH1`** in §I. Left in place as a numbered id so nothing renumbers.
+
+---
+
+## Engaged obligations with no clause anywhere in the build
+
+These are engaged by the facts in `01-FACTUAL-INVENTORY.md` and have **no implementation** — distinct
+from "the drafts may not mention it", which Pass 3 determines. Ordered by how badly the gap is likely to
+be missing from the drafts.
+
+1. **`L-DPA-164A` — the direct-complaints duty.** In force **19 June 2026**, after every draft's last
+   revision. Requires an electronic complaint form, a 30-day acknowledgement, and a response duty.
+   **Inventory §5.1 lists every route: there is no complaints route.** Also requires a corresponding
+   line in the privacy notice under the amended Art. 13(2). **Most likely to be entirely absent.**
+
+2. **`L-GDPR-44A` — Chapter V as restructured.** Arts. 44 and 45 were **omitted on 5 Feb 2026**. Any
+   draft clause referring to "adequacy decisions" or Art. 45 cites repealed text, and the applicable
+   test is now **Art. 45B's "data protection test"**. Compounded by four unestablished processor regions
+   (OQ-1 to OQ-4).
+
+3. **`L-ECOM-6` reg. 6(1)(g) — the fabricated VAT number.** `[SEED] GB123456789` renders in the footer
+   of **every page of the running site**. This is not a missing disclosure; it is a false one, and it is
+   the single most concrete defect in the ledger.
+
+4. **`L-GDPR-5-1e` — retention.** No period, no job, no clause. A privacy notice cannot satisfy
+   Art. 13(2)(a) without a period or criteria, and there is nothing to state. OQ-9.
+
+5. **`L-VAT-CONSUMER` / `L-VAT-B2B` / `L-ECOM-6` reg. 6(2) — VAT treatment on prices.** Every price on
+   every division fails, for two different reasons, needing two different fixes. `M-P2-3` NOT BUILT.
+
+6. **`L-CRA-57` — one `Client Terms` route for two audiences. DISCHARGED, 26 August 2026.** ~~A B2B
+   liability cap applied to a Press author is void to that extent. This is a routing and
+   instrument-structure defect, not a drafting one: **no additional clause can fix it while there is one
+   slug.** OQ-13.~~ The diagnosis was right and the remedy was taken: the owner split the routes on
+   26 Aug 2026. `lib/legal/slugs.ts` now declares **seven** slugs, with `business-client-terms` and
+   `consumer-client-terms` carrying the two instruments and `client-terms` surviving as a
+   disambiguation page carrying no operative clause. `scripts/check-consumer-terms.mjs` asserts the
+   separation against the served pages. **What remains is not this item**: `/contact` still serves one
+   form to all three divisions, so nothing in the enquiry flow identifies which regime a buyer is in
+   before an order is confirmed (`press/PRD.md` FR-P24).
+
+7. **`L-PECR-CONSENT-EVIDENCE` — no consent audit trail.** `consent_events` does not exist. **Since
+   round 10 the site relies on consent for nothing at all**, so Art. 7(1) is not engaged — a stronger
+   mitigation than the previous one and just as temporary. It evaporates the day anything
+   non-essential returns, which is why `L-07` is now a **prerequisite** of that work rather than a
+   follow-up (`BEFORE-LAUNCH.md` item 22). OQ-11 stays open.
+
+8. **`L-GDPR-28` / `L-GDPR-13` — Slack as an undocumented processor.** A live code path transmits an
+   enquirer's **full name** to Slack the moment `SLACK_LEADS_WEBHOOK` is set. It appears in no
+   documentation. OQ-6.
+
+9. **`L-GDPR-30` — no ROPA.** The Art. 30(5) exemption probably does not apply, because lead capture is
+   continuous rather than occasional.
+
+10. **`L-DMCC-SCH20-13` — testimonial selection.** Six real reviews are shown. Whether negative ones
+    were omitted is a decision no gate can observe and no clause can cure. OQ-20.
+
+11. **`L-WCAG-22` / `L-EQA-20` — the accessibility statement's evidential base.** The screen-reader pass
+    has never happened, and **six of the seven legal routes are outside the axe gate** — corrected
+    26 August 2026 from "four of the five". `lib/legal/slugs.ts` declares seven; `check-axe.mjs`
+    `ROUTES` contains `/legal/privacy` and no other legal path. The count moved because the
+    client-terms split added two slugs, and it moved in the wrong direction: the two documents most
+    likely to be read by someone deciding whether to buy are both unaudited. Any statement of AA
+    conformance is currently unearned, and saying so is itself a `L-CRA-50` statement.
+
+---
+
+*End of ledger. Pass 3 cites these ids inline in the drafts.*

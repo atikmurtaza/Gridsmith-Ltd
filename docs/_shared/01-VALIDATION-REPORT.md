@@ -98,7 +98,7 @@ Most significantly: **a consumer has 14 days to cancel a distance contract.** Ca
 This was the single most valuable finding of the legal pass and it would have been expensive to discover in a dispute.
 
 ### L-02 · PECR penalties increased 35-fold
-The Data (Use and Access) Act 2025, in force from 5 February 2026, raised the PECR ceiling from £500,000 to £17.5m or 4% of global turnover. Cookie compliance is now a material financial risk rather than housekeeping. The consent architecture from v1 was already correct; its justification is now much stronger.
+The Data (Use and Access) Act 2025, in force from 5 February 2026, raised the PECR ceiling from £500,000 to £17.5m or 4% of total annual worldwide turnover, whichever is higher. **Cited 26 Aug 2026:** PECR reg. 31 and Sch. 1 para. 18(b)(ii), applying DPA 2018 s. 157(2)(a) and (5) — a reg. 6 breach is in the higher-maximum list. Full entry and the tiering at `_legal/02-CITATION-LEDGER.md` `L-PECR-PENALTY`. Cookie compliance is now a material financial risk rather than housekeeping. The consent architecture from v1 was already correct; its justification is now much stronger.
 
 ### L-03 · New cookie exemptions exist — position taken not to rely on them
 The DUAA introduced narrow exemptions including analytics used solely for aggregate statistics. Commentary in 2026 is not uniform on scope, and an opt-out is required regardless.
@@ -1062,3 +1062,499 @@ which route.
 The fix was to pass the element in as a slot from the probe route so `/` never imports it, and
 the proof was a probe-excluded build with no `markTravel` in any emitted stylesheet. The variant
 is deleted now and the instance stands regardless of it.
+
+---
+
+## 19. `M-P1-14` — an eighth defect class: the gate covers CI's path, not the deploy's
+
+Every exclusion swept in §15 and §16 was an exclusion *within* a build — a route left out, a
+file filtered, a stylesheet still linked. §18 generalised it to the module graph. This one is a
+layer further out again, and it is the largest: **the gate list and the deploy are two different
+pipelines, and nothing asserted they were the same one.**
+
+### 19.1 What Vercel actually runs
+
+Asked of the system rather than inferred, per CLAUDE.md. `get_project` on
+`prj_kfFxGWf0ai1VYAGICYfVvNn0QYYN` (team `team_OVquiVuYynOepnUnaMAgcQnP`) and the build log for
+`dpl_Bvr712Dpw7PDTd6AAoYVudfKGKja` (commit `a322c272`) agree:
+
+```
+Running "vercel build"          Vercel CLI 59.3.0
+Detected Next.js version: 15.5.23
+Running "npm run build"
+> next build
+```
+
+No Build Command was set in the dashboard — the log shows the framework default, and an
+override would have printed the override string. **The repo and the dashboard did not disagree,
+but nothing was stopping them from disagreeing**, which is the second half of the finding.
+
+One cosmetic discrepancy worth recording rather than acting on: the project object reports
+`"framework": null` while `vercel.json` declares `"framework": "nextjs"`. `vercel.json` wins and
+detection worked, so this is a stale dashboard field, not a live fault.
+
+### 19.2 The exclusion
+
+`check:launch` is the gate behind non-negotiable #4, *never let seed content reach production*.
+It lived in `verify:served` and in `ci.yml`. **`verify:served` runs in CI and nowhere else.**
+Vercel's build is `next build`. So the deploy has never run the seed gate, on any deployment,
+ever.
+
+Production was not unprotected — it was protected by something else, which is worse, because
+nobody chose it. Every `target: production` deployment since 19 Aug is `ERROR`, failing at
+
+```
+Error: No companyDetails document in dataset "production". Every page renders the
+statutory footer, so the build cannot proceed without it.
+```
+
+thrown by `getCompanyDetails()` while prerendering `/_not-found`. That throw fires on an
+**empty** dataset. **A production dataset seeded with placeholder content is not empty.** It
+would have satisfied the throw, built green, and published `[SEED] GB123456789` as the
+company's VAT registration number on every page — the precise outcome `check:launch`'s live
+tier exists to prevent, defeated by an environment CI cannot see. Third time that sentence has
+been written in this repository (`M-P1-2`, `M-P1-7`, now this).
+
+### 19.3 The live tier had no subject at all
+
+Separately, and just as bad. `check-launch-content.mjs` was a top-level-`await` script that
+fetched before it asserted, so the only subject its assertions ever had was whatever the live
+dataset happened to contain — and the live dataset has never held a `[SEED]` marker or a
+published seed record. The zero-tolerance rule had **never been observed to fire**, while
+printing `N published seed document(s) counted` on every run. CLAUDE.md names this exactly: *a
+summary line is not evidence a check ran.*
+
+### 19.4 The fix
+
+| Where | What | Why there |
+|---|---|---|
+| `package.json` `prebuild` | `npm run check:launch:build` | npm runs `prebuild` before `build`, so it is in the path that actually deploys. Smallest hook that needs no new build wrapper |
+| `vercel.json` `buildCommand` | `"npm run build"` | The npm lifecycle only fires when the build is entered through npm. A dashboard Build Command of `next build` would bypass `prebuild` silently; `vercel.json` takes precedence over the dashboard, so this pins it |
+| `scripts/check-node-version.mjs` | asserts both of the above still exist | `walk()` follows `npm run` chains from `verify`. `prebuild` is an implicit lifecycle hook in no chain, so the parity gate would have gone on reporting that verify and CI run the same set while the deploy ran neither |
+| `scripts/launch-content-rules.mjs` | `evaluate()`, pure | Splits the predicate from the fetch so a committed specimen can reach it |
+| `scripts/check-launch-content.selftest.mjs` | 11 committed specimens | The permanent subject. Runs in `verify:static` and CI |
+
+**`--build` mode reads `NEXT_PUBLIC_SANITY_DATASET`, and that is not a regression to
+`M-P1-7`.** `M-P1-7` was a CI runner reading its *own* environment while asserting about a
+*deployment* — two machines, two values. In `--build` mode there is no other system: the
+process is a child of the build that is about to run `next build`, in the same environment
+`next.config.ts` reads to decide what the app connects to. *Ask the system you are asserting
+about.* Served mode still asks the running site's `x-gridsmith-dataset` header and is unchanged.
+
+An unset variable is a hard failure in both modes, never a default.
+
+### 19.5 Which gate fired — the window, established rather than assumed
+
+Two things can now fail on a bad production dataset, so the proof had to land where only one
+of them can. It does so by construction: `getCompanyDetails()` throws on a dataset with **no**
+`companyDetails` singleton, and the seeded subject has a complete one. The ordering settles it
+independently — `prebuild` runs to completion before `next build` starts, so `getCompanyDetails`
+is never reached.
+
+Subject: the `development` dataset, which holds **real seeded content** — 121 published seed
+documents and `vatNumber: "[SEED] GB123456789"` — with `PRODUCTION_DATASET` in
+`sanity/project.ts` temporarily redirected to it, then reverted. A scratch dataset could not be
+used: the gate's `isLive` predicate keys off the literal name `production`, Sanity has no
+rename, and writing `[SEED]` content into the real `production` dataset was out of scope by
+instruction.
+
+```
+$ NEXT_PUBLIC_SANITY_DATASET=development npm run build
+
+> gridsmith@0.1.0 prebuild
+> npm run check:launch:build
+
+check-launch-content: 2 problem(s) in dataset "development"
+  (established from this build's NEXT_PUBLIC_SANITY_DATASET)
+
+  vatNumber carries a [SEED] marker and the dataset is live: "[SEED] GB123456789"
+  121 published seed document(s) in the live dataset. Fabricated case studies reaching
+  production is the most damaging content failure available to this project (TECH-SPEC §6).
+  ...
+
+EXIT=1
+```
+
+Exit code read from the process, not through a pipe (`M-P1-12`). `grep -c "Creating an
+optimized production build"` over the full log returns **0** — `next build` never started — and
+`grep -c "No companyDetails document in dataset"` returns **0**, so the throw is confirmed
+absent. **It is the seed gate that fired.**
+
+### 19.6 The count moves
+
+Same code path, same live tier, two real datasets:
+
+| Dataset | `publishedSeeds` | Seed problem raised |
+|---|---|---|
+| `development` (redirected to live) | **121** | yes |
+| `production` (live, empty) | **0** | no |
+
+Specimens `MANY` (121), `ONE` (1) and `ZERO` (0) hold the same three points in the committed
+subject, so the number is proven to move without needing a dataset to move.
+
+### 19.7 Every branch, broken separately
+
+| Branch | Message observed | Exit |
+|---|---|---|
+| `--build`, `NEXT_PUBLIC_SANITY_DATASET` unset | `NEXT_PUBLIC_SANITY_DATASET is not set … Failing rather than guessing.` | 1 |
+| dataset does not exist | `returned 404 — nothing could be measured` **and** `the seed count query returned HTTP 404 — seed enforcement measured nothing` | 1 |
+| served mode, nothing serving | `did not report an x-gridsmith-dataset header` | 1 |
+| Sanity host unreachable | `TypeError: fetch failed` / `ENOTFOUND` — uncaught, deliberately | 1 |
+| `prebuild` hook deleted | `package.json "prebuild" must run npm run check:launch:build` | 1 |
+| `vercel.json` `buildCommand` set to `next build` | `vercel.json "buildCommand" must be exactly "npm run build"` | 1 |
+| zero-tolerance rule loosened to `> 200` | 3 specimens red: `SEEDED`, `MANY`, `ONE` | 1 |
+| a specimen deleted | `10 specimens, expected 11` | 1 |
+
+The two deploy-wiring branches were broken one at a time and produced distinct messages —
+neither is credited to the other.
+
+**Clean case, end to end through the deploy command.** `rm -rf .next` then
+`NEXT_PUBLIC_SANITY_DATASET=development npm run build` with `PRODUCTION_DATASET` restored:
+prebuild reports `5 statutory field(s) present`, `121 published seed document(s) counted; the
+zero-tolerance rule applies to "production" only`, `next build` runs, `Compiled successfully`,
+**EXIT=0**. A gate that always fails is not a gate.
+
+### 19.8 The dot-id trap, observed live
+
+`production` reports **0** documents unauthenticated and **12** authenticated. All twelve are
+Sanity system records — `_.groups.*`, `_.retention._maximum_project` — so there is no content
+hiding there and no live defect. It is a clean demonstration that the mechanism
+`05-HANDOVER.md` records is real and active in this project right now: **any id containing a
+dot is invisible to the unauthenticated read this gate performs.**
+
+The mitigation is at the write side and already existed: `scripts/seed-content.mjs` refuses to
+publish any document whose `_id` contains a dot. A read-side fix is not available — the build
+holds no Sanity token and both datasets are public by design. Recorded as a residual limit, not
+closed.
+
+### 19.9 What this changes about `M-P1-7`
+
+The `ci.yml` comment at `M-P1-7` recorded a price paid: moving `check:launch` after the build
+meant a missing singleton became "a build failure with a Sanity stack trace, which is worse
+output for the same defect". `prebuild` gets that back without giving up the served check.
+Against the empty `production` dataset the deploy build now stops with
+
+```
+no companyDetails document in dataset "production" — every page renders the statutory footer
+```
+
+instead of a prerender stack trace, and the served gate still runs in CI afterwards. The two
+answer different questions and neither replaces the other.
+
+### 19.10 Residual risk
+
+1. **A clean *`production`-named* dataset has never been built end to end**, because
+   `production` holds no `companyDetails` singleton and seeding it is owner work
+   (`BEFORE-LAUNCH.md`). The live-clean predicate is covered by the committed `ZERO` specimen;
+   the network path against a live-named dataset is covered only in its failing direction.
+   Close this at the first real production seed. **Read §19.11 before treating §19.5–§19.7 as
+   covering the whole gate.**
+2. **The unauthenticated seed count cannot see a dotted id.** §19.8. Mitigated at the write
+   side only.
+3. **`vercel.json` pins the build command against a dashboard edit, not against a
+   `vercel.json` edit.** Someone removing `buildCommand` restores dashboard precedence, and
+   `check:node` is what catches that — a gate in the repo guarding a fact about the repo, which
+   is sound, but it is CI catching it, and CI is not the deploy. There is no mechanism that
+   makes Vercel refuse to build without the gate; that would need a Vercel-side deployment
+   check, which is an owner decision. **Costed and closed as ACCEPTED at §20** — 27 Aug 2026.
+
+### 19.11 The exact boundary of the `prebuild` proof — what it does *not* cover
+
+Recorded here, at the proof, rather than only in `BEFORE-LAUNCH.md`, because §19 is what a
+future reader finds first and §19.5–§19.7 read like a complete proof if this section is absent.
+
+**Proven, and only this:**
+
+| Claim | Established by | Direction |
+|---|---|---|
+| the hook is in the deploy's path | `prebuild` observed running under `npm run build`; `next build` observed never starting (§19.5) | — |
+| the gate **rejects** a seeded live dataset | `NEXT_PUBLIC_SANITY_DATASET=development` with `PRODUCTION_DATASET` redirected — 121 real seed documents, over the network, EXIT=1 (§19.5) | **failing** |
+| the gate **admits** a clean live dataset | the committed `ZERO` specimen, through `evaluate()` (§19.6) | **passing, in-process only** |
+| each branch fires alone | eight branches, broken separately (§19.7) | mixed |
+| the count reaches its subject | 121 vs 0 across two real datasets, and `MANY`/`ONE`/`ZERO` in the specimen set (§19.6) | — |
+
+**Not proven, and this is the whole of the gap:**
+
+- **The network path has never run in its passing direction against a dataset named
+  `production`.** Every live-tier *pass* on record is either a specimen (no network, no Sanity,
+  no dataset name) or a dataset named `development`, where `isLive` is false and the
+  zero-tolerance rule is therefore skipped rather than satisfied. The one code path that
+  matters at launch — **fetch a `production`-named dataset, find zero published seeds, find a
+  complete `companyDetails`, and return exit 0** — has been exercised in neither half at once.
+- The `ZERO` specimen covers the *predicate* on that path, not the *fetch* that feeds it. A
+  GROQ query that silently returns an empty result for a reason unrelated to cleanliness — a
+  wrong query shape, a filter that excludes everything, a projection that drops
+  `isSeed` — is arithmetically indistinguishable, from inside `evaluate()`, from a genuinely
+  clean dataset. §19.8's dotted-id case is one live instance of exactly that shape and is
+  mitigated only at the write side.
+- Nothing here says the *statutory-field* half passes against real content. It has only been
+  run against seeded fields (`5 statutory field(s) present`, against `[SEED] GB123456789`).
+
+**What would have to be observed to close it** — all in one run, on the first real production
+seed (`BEFORE-LAUNCH.md` §16, blocked on the VAT number, item 2):
+
+1. `NEXT_PUBLIC_SANITY_DATASET=production npm run build` on a clean `.next`, with
+   `PRODUCTION_DATASET` at its real value — no redirect.
+2. `prebuild` prints the live tier as **applying**, not skipped: the dataset is named
+   `production`, `isLive` is true, and the zero-tolerance rule is reported as *in force*.
+3. The seed count is **0** *and the query is shown to have reached content* — the same run must
+   report a non-zero total document count, or the `0` is unfalsifiable. A count that cannot be
+   shown to have measured anything is the defect class CLAUDE.md names; `ZERO` passing in a
+   specimen file does not discharge it over the network.
+4. The statutory fields are reported present with the **real** values, and no `[SEED]` marker
+   anywhere in the output.
+5. `next build` then starts and completes — `Compiled successfully`, **EXIT=0**, read from the
+   process, not through a pipe (`M-P1-12`).
+
+Until items 1–5 are observed together, read §19 as: **the seed gate is proven to fail, and
+proven to be reached. It is not proven to pass over the network.** Both halves are needed; a
+gate that always fails is not a gate (§19.7), and one that has only ever failed is not yet
+known to be one either.
+
+---
+
+## 20. `M-P1-14` residual 3 — costed at the platform, and ACCEPTED
+
+27 August 2026. §19.10 item 3 left one thing open: `vercel.json` pins the build command against
+a *dashboard* edit, but nothing stops someone editing `vercel.json` itself, and the gate that
+catches that (`check:node`) runs in CI, which is not the deploy. The question asked here is not
+"how do we build one" but **what the platform can actually enforce, at this account's tier**.
+
+### 20.1 The tier — asked of the system
+
+`list_teams` on the Vercel API returns, for team `team_OVquiVuYynOepnUnaMAgcQnP`
+("atikmurtaza's projects", slug `atikmurtazas-projects`):
+
+```json
+{ "name": "atikmurtaza's projects", "id": "team_OVquiVuYynOepnUnaMAgcQnP", "plan": "hobby" }
+```
+
+**`plan: "hobby"`, from the platform's own object, not from the owner's recollection.** Corroborated
+by `get_project_deployment_protection` on `prj_kfFxGWf0ai1VYAGICYfVvNn0QYYN`:
+
+```json
+"passwordProtection": { "enabled": false }, "trustedIps": { "enabled": false },
+"ssoProtection": { "enabled": true, "deploymentType": "all_except_custom_domains" }
+```
+
+`all_except_custom_domains` is Standard Protection — the only scope Hobby has. Both Enterprise-only
+methods read `enabled: false`, which is what a Hobby project looks like from the outside.
+
+**Recorded, not acted on:** Vercel's fair-use guidelines state the Hobby plan *"restricts users to
+non-commercial, personal use only"* (`/docs/plans/hobby`, *Hobby billing cycle*). Gridsmith Ltd is a
+trading company. That is an owner/commercial matter, outside this finding, but it is written down
+here because it was met while establishing the tier.
+
+### 20.2 The mechanisms, and when each runs
+
+The distinction that decides this: a check that runs **after** the build has already produced and
+published a deployment is a different guarantee from one that stops the build. For seed content the
+difference is the entire point — by the time a post-build check runs, `[SEED] GB123456789` has been
+rendered into static HTML and served from a generated URL.
+
+| Mechanism | Runs | Can it assert "the seed gate ran"? | Can it stop a **production build**? | Plan |
+|---|---|---|---|---|
+| **`ignoreCommand`** (`vercel.json` / Ignored Build Step) | **before** the build | it can run any command and skip the build on exit 0 — but it is configured in `vercel.json`, the same file whose edit is the risk | it can *skip* a build, never fail one | all plans |
+| **`prebuild`** (npm lifecycle — what is deployed today) | **before** `next build`, inside the build container | yes — it *is* the gate | **yes** | n/a, not a platform feature |
+| **Build Output API** | *is* the build's output | no — a directory-structure specification, not a validator | no | all plans |
+| **Deployment Checks** (GitHub / integration checks) | **after** the build is ready | only that some external check reported a status | **no** — it withholds the *alias* | not stated in the docs read |
+| **Checks API** (marketplace integration) | **after** `deployment.ready` | as above, via an integration that would have to be built and published | no | requires an integration |
+| **Deployment Protection** | at **request** time | no — access control on a served deployment | no | see below |
+| **Sensitive environment variables** | at write / read time | no — hides values, asserts nothing about the build | no | not stated as plan-gated |
+
+Sources, all fetched 27 Aug 2026:
+
+- **Deployment Checks** — `/docs/deployment-checks`: *"Deployment Checks are conditions that must be
+  met before promoting a production build to your production environment."* And: *"Vercel will hold
+  each production deployment until all required checks pass before assigning it to your custom
+  production domains."* The lifecycle is explicit — *"Production deployments will still be created,
+  but will not be automatically assigned to your custom domains until all Deployment Checks are met."*
+  It also documents its own bypass: *"You can bypass Deployment Checks by selecting Force Promote."*
+- **Checks API** — `/docs/checks`: *"Checks are tests and assertions created and run after every
+  successful deployment."* Its lifecycle runs `deployment.created` → build → `deployment.ready` →
+  checks → *"Once all checks receive a `conclusion`, aliases will apply, and the deployment will go
+  live"*. Creating one requires a native or connectable-account **integration** published to the
+  marketplace.
+- **Build Output API** — `/docs/build-output-api`: *"a file-system-based specification for a directory
+  structure that can produce a Vercel deployment."* Aimed at framework authors. It is a shape the
+  build emits; nothing in it validates content.
+- **`ignoreCommand`** — `/docs/project-configuration/vercel-json`: *"Overrides the default Ignored
+  Build Step command. Exiting with code 0 ignores the build, while code 1 continues it."*
+- **Deployment Protection** — `/docs/deployment-protection`: *"On the Hobby plan, Vercel Authentication
+  with Standard Protection is available. This protects your preview deployments and deployment URLs,
+  but your production domain remains publicly accessible. To protect production domains, you need a Pro
+  or Enterprise plan."* Methods: Vercel Authentication *"Available on all plans"*; Passport *"Available
+  on the Enterprise plan"*; Password Protection *"Available on the Enterprise plan, or as a paid add-on
+  for Pro plans"* (Advanced Deployment Protection, *"an additional $150 per month"*, and it must have
+  been used *"a minimum of 30 days"* before it can be disabled); Trusted IPs *"Available on the
+  Enterprise plan"*. Scopes: Standard Protection *"Available on all plans"*; All Deployments
+  *"Available on Pro and Enterprise plans"*.
+- **Sensitive environment variables** —
+  `/docs/environment-variables/sensitive-environment-variables`: values are *"non-readable once
+  created"*, with build-log redaction for values of 32 characters or longer. **No plan requirement is
+  stated on that page**, and none is asserted here.
+
+**One thing deliberately not stated: the plan requirement for Deployment Checks.** The
+`/docs/deployment-checks` page names none, and the Hobby/Pro comparison table at `/docs/plans/hobby`
+has no Deployment Checks row. Per instruction, no plan requirement is claimed that was not seen in a
+source. What *is* in the sources is that neighbouring release-control features are Pro-and-above —
+`vercel rollback` is documented as *"available for Pro or Enterprise plans"* and Rolling Releases
+requires *"a Pro or Enterprise plan"* — so the surrounding surface is paid. That is an inference, and
+it is marked as one rather than reported as a plan requirement.
+
+### 20.3 The verdict — the plan is not what blocks this
+
+**Even if Deployment Checks were free on Hobby, they would not close residual 3, and that is the
+finding.** Three reasons, each from the sources above:
+
+1. **Wrong side of the build.** The threat is a build that ran without the seed gate. A Deployment
+   Check runs after that build has been created and is ready. The seeded HTML exists by then. It
+   withholds the custom-domain alias; it does not withhold the build.
+2. **It cannot see the premise.** A Deployment Check imports a *GitHub Actions status* or an
+   integration's conclusion. That status is produced by CI — the very system §19 established is not
+   the deploy. Wiring it up asserts "CI went green on this commit" one layer further out; it still
+   cannot observe whether the Vercel build container ran `prebuild`. This is exactly the class
+   CLAUDE.md names: *a gate that infers the state of a system it does not run in.*
+3. **It documents its own bypass.** *Force Promote* is a button. A control a person can click past
+   sits on the same footing as the repo-side gate it would be duplicating.
+
+`ignoreCommand` runs on the right side of the build and is available on Hobby — but it lives in
+`vercel.json`, so it is defeated by exactly the edit residual 3 describes, and it can only *skip* a
+build, never fail one. A skipped build leaves the previous deployment live, which for a seeded
+dataset is the wrong-shaped answer regardless.
+
+**There is no mechanism at any tier — Hobby, Pro or Enterprise — that makes Vercel refuse to *build*
+because a repository-side gate was removed from the repository.** The build command is defined by the
+repository; a repository that no longer defines the gate is, from the platform's point of view, a
+valid repository. The platform can gate *promotion*. It cannot gate *compilation* on the contents of
+the file that describes compilation.
+
+### 20.4 Recorded as ACCEPTED
+
+**Residual 3 is ACCEPTED, not open.** It is not closeable at this tier, and — separately, and more
+usefully — it is not closeable at any tier by the mechanism the original note imagined.
+
+| | |
+|---|---|
+| **What remains possible** | A Deployment Check fed by the existing CI workflow would add a *promotion* gate on top of the *build* gate. It duplicates a signal that already blocks merge, sits on the wrong side of the build, and is Force-Promotable. Judged not worth its wiring today; revisit only if the release model changes — a promote step, or more than one committer |
+| **What it would take to close properly** | Not a Vercel feature. It would take the gate not being editable in the same commit as the code: branch protection on `vercel.json` and `package.json` with a required reviewer — a GitHub-side control, on a repository with more than one person on it. A single-committer repository cannot have that property |
+| **Compensating controls in force** | (a) `prebuild` in `package.json` — the gate is in the deploy's own path, §19.4; (b) `vercel.json` `buildCommand` pinned to `npm run build` — dashboard precedence removed, and Vercel's own build log confirms the npm lifecycle is entered, §19.1; (c) `check:node` asserts both artefacts still exist, and both of its branches were broken separately and produced distinct messages, §19.7 |
+| **The honest size of what is left** | One person, editing two files in one commit, defeats it. That person is the owner. It is a self-sabotage scenario, not an attack surface and not an accident surface — every accidental path (a dashboard edit, a lost CI step, a bypassed npm lifecycle) is covered by (a)–(c) |
+| **Review trigger** | A second committer, a move off Hobby, or any change to how production is released |
+
+The value of writing this down is not the conclusion but the costing: **an accepted risk with its
+reasoning on the page is a different object from an open one nobody has priced**, and the next reader
+of §19.10 should not spend a session re-deriving that Deployment Checks are post-build.
+
+---
+
+## 21. A ninth defect class — the second document set
+
+**29 August 2026.** Every defect class this report holds so far is a **gate** measuring the wrong
+thing: an instrument lying about its own subject (§18.1), an observer never shown able to report
+(§18.2), route-level exclusion mistaken for import-level (§18.3), a gate covering CI's path and not
+the deploy's (§19). This one is not about a gate at all. **It is about two documents that had to
+agree, with nothing between them that could tell whether they did.**
+
+### 21.1 What was actually true
+
+`scripts/seed-legal.mjs` was not a stale copy of `docs/_legal/`. **It was an independently authored
+second document set.** Different clause numbering, different headings, different sentences, a
+different number of clauses per document. It carried its own version — `0.1-draft`, hardcoded for all
+seven documents — while the drafts it nominally corresponded to were at **1.2 and 1.3** and had been
+through nine review rounds.
+
+Both were real. Both were maintained. Neither referred to the other. Nothing in `verify:static`,
+`verify:build`, `verify:served` or CI read both.
+
+**The site published the seed script.** So for the whole of the review programme, every round that
+verified a clause against an instrument was verifying a document **the public never received**, and
+`07-STATE-REPORT.md` §3 had to end with the sentence *"the drafts are not what the site publishes"* as
+a thing to tell a solicitor out loud, because nothing else would.
+
+### 21.2 What it cost
+
+The consumer terms are the case that matters. Round 9 read CCR 2013 regs. 27–38 end to end and
+rewrote §§5–7 — adding the reg. 27(1) scope, the reg. 30(3) goods clock, the reg. 34(5) refund timing,
+the reg. 36(1)(b) durable-medium requirement and the whole of reg. 37 at §6A. **None of it reached the
+site.** The served page kept a flat 14-day right for every consumer, ran the period from the contract
+date in every case, and promised an unqualified 14-day refund from notification.
+
+That last one is the sharp end. Under `L-CRA-50` a written statement a consumer takes into account
+becomes a term of the contract. So the site was not merely out of date — **it was making an offer**,
+and a more generous one than the reviewed draft, from a document superseded five days earlier.
+Round 9 removed that concession deliberately, having read reg. 34(5). Nobody chose to keep it. It was
+being published because it lived in the other document.
+
+Six more divergences of the same shape sat alongside it, and the direction is worth naming: **five of
+the seven ran against Gridsmith or against the reader.** A retention promise no job enforces. A
+processor region asserted as fact where the draft says `[TK]` precisely because it could not be
+established. A recipient absent from a table a reader is entitled to treat as exhaustive. A repealed
+statutory provision cited for a complaints route. A claim that the enquiry form records data nothing
+on the site sends.
+
+### 21.3 The class
+
+> **Two documents that must agree, with no assertion between them.**
+
+It is not "documentation drifts", which is universal and mostly harmless. The distinguishing features
+are these, and all four have to hold:
+
+1. **Both are authored, not derived.** Neither is generated from the other, so there is no build step
+   whose absence would be noticed.
+2. **Both are maintained.** A stale file gets caught eventually because someone opens it and it looks
+   old. These did not look old — the seed script was internally coherent, well-commented, and had been
+   edited four days earlier.
+3. **Only one of them is delivered.** The undelivered one is the one everybody reviews, because it is
+   the one that reads like the source of truth.
+4. **Their disagreement is silent by construction.** Not unlikely — *impossible to observe*, because
+   nothing in the system takes both as input.
+
+Feature 3 is what makes it expensive and feature 4 is what makes it survive. Eleven rounds of review,
+four verification reports and a state report went past it. **It was not missed because anyone was
+careless; it was missed because there was nothing to miss.** No output was wrong, no check was silent,
+no number was stale. There was simply no place in the system where the question could be asked.
+
+### 21.4 How it was found, which is the reusable part
+
+Not by reading either document. **By transcribing one into the other word for word** — which forces
+every sentence of the delivered version to be located in the reviewed version, and fails on the ones
+that cannot be.
+
+This is the same method round 9 used on CCR regs. 27–38: read the Part through rather than check the
+paragraphs a report named. Reading for a defect finds the defects you can imagine. Transcribing finds
+the ones you cannot, because the procedure does not depend on knowing what you are looking for. The
+first pass reported **106 divergences**; the eventual count of things that were genuinely wrong rather
+than merely differently punctuated was smaller, and it included nine places where the transcription
+itself had invented a connective — the same defect in miniature, caught by the same method, in the
+work done to fix it.
+
+### 21.5 What closes it
+
+`scripts/check-legal-parity.mjs`. Not because it compares two files — a source-to-source check would
+have missed half of this, since the seed script can be correct and the dataset never reseeded — but
+because it compares **the reviewed document against the delivered one**, which is the pair the class is
+about.
+
+**The general form, for the next instance:** where two artefacts must agree and only one is delivered,
+the assertion has to run against the **delivered** one. A check between the two sources is a check
+between two things nobody receives.
+
+### 21.6 Where else this shape is live
+
+Asked deliberately, because the class is more useful than the instance.
+
+| Pair | Delivered | Asserted? |
+|---|---|---|
+| `docs/_legal/` ↔ the served `/legal/*` pages | the pages | **Yes, since 29 Aug 2026** — `check:legal:parity` |
+| `PRIVACY-POLICY.md` §6's recipient table ↔ `lib/leads/notify.ts` | the notice | **No.** Adding a field to `internalEmail()` or the Slack line silently falsifies the table. `07-STATE-REPORT.md` §4 records it; `M-P1-3` is the same shape |
+| The committed migrations ↔ the live database | the database | **No.** `check:rls` reads the migrations. `A-07`'s leak existed in the running system while the migration read correctly — the source cannot see the class that matters. `M-P2-12` |
+| `.github/workflows/ci.yml` ↔ `package.json`'s verify chain | both | **Yes** — `check:node`, which is the earliest instance of this class anyone here solved |
+| `sanity/schemas/` ↔ what the Studio enforces on write | the Studio | **Partly** — `check:schemas` runs the rules rather than trusting `options.list` |
+| The specs' asserted numbers ↔ the gates that measure them | the gates | **Partly.** `check:contrast` and `check-bundle-size` carry theirs; `CLAUDE.md`'s standing rule is that an unasserted number is unverified |
+
+Two rows are `No`, both were already known, and both are now recorded as one class rather than two
+unrelated notes. That is the whole value of writing this section: `M-P1-3` and `M-P2-12` stop being
+separate items on a list and become **the two remaining instances of a defect class that has cost this
+project a published over-promise once already.**
+

@@ -15,6 +15,9 @@
  * field with a known-empty value, not an absent one, and the footer omits its line while it
  * is empty. What must not happen is that state reaching live.
  *
+ * The assertions themselves are in `launch-content-rules.mjs`, so a committed self-test can
+ * reach them without a network — see that file and `check-launch-content.selftest.mjs`.
+ *
  * No token: both datasets are public. A fetch that fails is a hard failure rather than a
  * skip — the whole class of defect this repository keeps finding is a check that measured
  * nothing and reported clean.
@@ -45,160 +48,141 @@
  * the loop drain returns 1 on every platform.
  */
 import { SANITY_API_VERSION, SANITY_PROJECT_ID, PRODUCTION_DATASET } from '../sanity/project.ts';
+import { evaluate, ALWAYS_REQUIRED, LIVE_REQUIRED } from './launch-content-rules.mjs';
 
 /**
- * ## The dataset is read from the SITE, never from this process — `M-P1-7`
+ * ## Two modes, because there are two different questions — `M-P1-14`
  *
- * This gate used to import `SANITY_DATASET` from `sanity/env.ts`, which resolves the runner's
- * `NEXT_PUBLIC_SANITY_DATASET`. That is a premise about a machine this process is not running
- * on, and on Vercel it is wrong by design: the Production target builds against `production`
- * and every other target against `development`. A `development` runner pointed at a production
- * deployment reported *"the live-only assertions do not apply"* and exited 0 — the gate that
- * exists to stop a `[SEED]` VAT number going public, silent in the only case that matters.
+ * ### `--build`: is the dataset THIS BUILD is compiling against clean?
  *
- * Third instance of the class, after Resend (`A-08`) and the analytics ids (`M-P1-6`), and the
- * most consequential of the three. The remedy is the same each time: **ask the system.** The
- * site emits `x-gridsmith-dataset` on every route (`next.config.ts`), and what this gate then
- * measures is the dataset the site says it was built against.
+ * This mode exists because **Vercel never ran this gate at all**. Vercel's build is
+ * `vercel build` -> framework detection -> `npm run build` -> `next build`. `check:launch`
+ * lived only in `verify:served`, which runs in CI and nowhere else. Production was protected
+ * by an unrelated accident — `getCompanyDetails()` throwing on the empty `production`
+ * dataset — and **a production dataset seeded with placeholder content would have satisfied
+ * that throw and never met this gate.** The build would have gone green and published
+ * `[SEED]` content. Same exclusion class as every other one in this repository, one layer
+ * out: the gate covered CI's path, not the deploy's.
  *
- * **A missing header is a hard failure, not a fall-back.** Falling back to this process's
- * environment is precisely the defect; falling back to "assume development" would be worse,
- * because it turns the live tier off. A site that has stopped reporting is a subject that has
- * stopped being one.
+ * It is now wired as `prebuild` in `package.json`, which npm runs before `build` — so it is
+ * in the path that actually deploys, and it fires *before* `next build` reaches
+ * `getCompanyDetails()`. That ordering is deliberate: on an empty or seeded production
+ * dataset two things can now fail, and this one failing first is what makes it possible to
+ * say which gate fired.
  *
- * This is why the gate moved out of `verify:static` and into `verify:served`. It was never a
- * source check — it asserts a deployment — and running it without a target is what made
- * inferring the dataset feel reasonable.
+ * ### Reading the dataset from `process.env` here is NOT the `M-P1-7` defect
+ *
+ * `M-P1-7` was a CI runner asserting about a *deployment* — a different machine, whose
+ * `NEXT_PUBLIC_SANITY_DATASET` was `development` while the deployment's was `production`. The
+ * premise was read from the wrong system, so the gate announced that the live-only assertions
+ * did not apply and exited 0.
+ *
+ * In `--build` mode there is no other system. This process is a child of the same build that
+ * is about to run `next build`, in the same environment, and `next.config.ts` reads the same
+ * variable to decide what the app connects to. The build's own environment **is** the subject
+ * here, not a guess about a remote one. That is the distinction "ask the system" turns on: ask
+ * the system you are asserting about. In served mode the system is a running site, so the
+ * dataset comes from its header; in build mode the system is this build.
+ *
+ * An unset variable is a hard failure, never a default. `sanity/env.ts` records why at length
+ * (`M-P1-2`): a fallback to `development` on a host would publish a `[SEED]` VAT number.
+ *
+ * ### served (default): which dataset did the RUNNING SITE build against?
+ *
+ * Unchanged, and still what CI runs. The site emits `x-gridsmith-dataset` on every route
+ * (`next.config.ts`). **A missing header is a hard failure, not a fall-back.** Falling back to
+ * this process's environment is precisely `M-P1-7`; falling back to "assume development" would
+ * be worse, because it turns the live tier off. A site that has stopped reporting is a subject
+ * that has stopped being one.
  */
+const BUILD_MODE = process.argv.includes('--build');
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
 
-const headRes = await fetch(BASE_URL, { method: 'HEAD' }).catch((e) => ({ ok: false, error: e }));
-const reportedDataset = headRes.headers?.get?.('x-gridsmith-dataset') ?? null;
+/** What the SITE (or, in build mode, THIS BUILD) says it is using. Never an assumption. */
+let SANITY_DATASET;
+/** How the dataset was established, for the summary line. Never omitted — see below. */
+let SOURCE;
 
-if (!reportedDataset) {
-  console.error(
-    `\ncheck-launch-content: ${BASE_URL} did not report an x-gridsmith-dataset header, so this` +
-      '\ngate cannot establish which dataset the site was built against. next.config.ts sets it' +
-      '\non every route. Reading this process\u2019s NEXT_PUBLIC_SANITY_DATASET instead is the' +
-      '\ndefect M-P1-7 records, and assuming "development" would switch the live tier off.' +
-      '\nFailing rather than measuring the wrong dataset.\n',
-  );
-  process.exit(1);
+if (BUILD_MODE) {
+  SANITY_DATASET = process.env.NEXT_PUBLIC_SANITY_DATASET;
+  SOURCE = 'this build’s NEXT_PUBLIC_SANITY_DATASET';
+  if (!SANITY_DATASET) {
+    console.error(
+      '\ncheck-launch-content --build: NEXT_PUBLIC_SANITY_DATASET is not set.' +
+        '\n\nThis mode runs inside the build it is asserting about, so this variable is the' +
+        '\nbuild’s own statement of which dataset it compiles against — the same one' +
+        '\nnext.config.ts reads. There is deliberately no default (M-P1-2): a fallback to' +
+        '\n"development" on a host would publish a [SEED] VAT number on every page.' +
+        '\n\nFailing rather than guessing.\n',
+    );
+    process.exit(1);
+  }
+} else {
+  const headRes = await fetch(BASE_URL, { method: 'HEAD' }).catch((e) => ({ ok: false, error: e }));
+  SANITY_DATASET = headRes.headers?.get?.('x-gridsmith-dataset') ?? null;
+  SOURCE = `the served site at ${BASE_URL}`;
+  if (!SANITY_DATASET) {
+    console.error(
+      `\ncheck-launch-content: ${BASE_URL} did not report an x-gridsmith-dataset header, so this` +
+        '\ngate cannot establish which dataset the site was built against. next.config.ts sets it' +
+        '\non every route. Reading this process’s NEXT_PUBLIC_SANITY_DATASET instead is the' +
+        '\ndefect M-P1-7 records, and assuming "development" would switch the live tier off.' +
+        '\nFailing rather than measuring the wrong dataset.\n',
+    );
+    process.exit(1);
+  }
 }
-
-/** What the SITE says it was built against. Never this process's environment. */
-const SANITY_DATASET = reportedDataset;
-
-/**
- * **Checked against the legislation, not against the tracker row's summary of it.**
- *
- * `reg. 24(2)` of the Companies (Trading Disclosures) Regulations 2015 requires the
- * registered name on a company's websites; `reg. 25(2)` requires the part of the UK in which
- * it is registered, its registered number and its registered office address. The row
- * summarised this as "registered name, registered number, registered office" and dropped the
- * place of registration.
- */
-const ALWAYS_REQUIRED = [
-  'legalName',
-  'companyNumber',
-  'placeOfRegistration',
-  'registeredOffice',
-  'responseCommitment',
-];
-
-/**
- * Fields that may be empty today and must not be on a live dataset.
- *
- * **`contactEmail` is here because verifying `M-04`'s premise turned it up, and it was in no
- * tracker row.** The VAT number's basis is not the Companies Act at all — it is reg. 6(1)(g)
- * of the Electronic Commerce (EC Directive) Regulations 2002, which binds while the activity
- * is VAT-subject. reg. 6(1)(c) of the same instrument requires contact details including an
- * email address that make it possible to reach the provider rapidly, and that is a launch
- * obligation of exactly the same shape: legitimately empty now, unacceptable live.
- */
-const LIVE_REQUIRED = [
-  ['vatNumber', 'e-commerce regs reg. 6(1)(g)'],
-  ['contactEmail', 'e-commerce regs reg. 6(1)(c)'],
-];
 
 const isLive = SANITY_DATASET === PRODUCTION_DATASET;
-const problems = [];
 
-const url =
+const query = (groq) =>
   `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}` +
-  `?query=${encodeURIComponent('*[_type == "companyDetails"][0]')}`;
+  `?query=${encodeURIComponent(groq)}`;
 
-const seedUrl =
-  `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}` +
-  `?query=${encodeURIComponent('count(*[isSeed == true && !(_id in path("drafts.**"))])')}`;
+/**
+ * A fetch that rejects is a hard failure, and it is left to reject.
+ *
+ * An unreachable Sanity, a DNS failure or a severed network throws out of `await fetch`, the
+ * rejection is unhandled, and Node exits non-zero with the cause printed. Catching it to
+ * report "could not check" and carrying on is the silent-skip defect this whole file guards
+ * against. Verified by deliberate failure at `M-P1-14` — see VALIDATION §14.
+ */
+const res = await fetch(query('*[_type == "companyDetails"][0]'));
+const result = res.ok ? (await res.json()).result : null;
 
-const res = await fetch(url);
-let result = null;
-if (!res.ok) {
-  problems.push(`dataset "${SANITY_DATASET}" returned ${res.status} — nothing could be measured`);
-} else {
-  ({ result } = await res.json());
-}
+/**
+ * **Counted unauthenticated, and that is a known limit rather than an oversight.**
+ *
+ * Sanity treats any document id containing a dot as private, so an unauthenticated count
+ * cannot see one. A dataset holding 125 dotted seed records would report 0 here. The
+ * mitigation is at the write side, where the ids are chosen: `seed-content.mjs` refuses to
+ * publish any document whose `_id` contains a dot. The build has no token and both datasets
+ * are public, so a read-side fix is not available to this mode. Recorded in VALIDATION §14.
+ */
+const seedRes = await fetch(query('count(*[isSeed == true && !(_id in path("drafts.**"))])'));
+const publishedSeeds = seedRes.ok ? (await seedRes.json()).result : null;
 
-if (res.ok && !result) {
-  problems.push(`no companyDetails document in dataset "${SANITY_DATASET}" — every page renders the statutory footer`);
-}
-
-if (result) {
-  for (const field of ALWAYS_REQUIRED) {
-    if (!String(result[field] ?? '').trim()) problems.push(`${field} is empty`);
-  }
-  if (isLive) {
-    for (const [field, why] of LIVE_REQUIRED) {
-      if (!String(result[field] ?? '').trim()) {
-        problems.push(
-          `${field} is empty and the dataset is live (${why}). Supplying it is a content ` +
-            'edit — no schema change, no code change, no deploy',
-        );
-      }
-    }
-    for (const [field, value] of Object.entries(result)) {
-      if (typeof value === 'string' && value.includes('[SEED]')) {
-        problems.push(`${field} carries a [SEED] marker and the dataset is live: "${value}"`);
-      }
-    }
-  }
-}
-
-const seedRes = await fetch(seedUrl);
-let publishedSeeds = null;
-if (!seedRes.ok) {
-  problems.push(`the seed count query returned HTTP ${seedRes.status} — seed enforcement measured nothing`);
-} else {
-  ({ result: publishedSeeds } = await seedRes.json());
-  if (typeof publishedSeeds !== 'number') {
-    problems.push(
-      `the seed count query returned ${JSON.stringify(publishedSeeds)}, not a number — ` +
-        'anything but a number makes the comparison below false and reports clean',
-    );
-  } else if (isLive && publishedSeeds > 0) {
-    problems.push(
-      `${publishedSeeds} published seed document(s) in the live dataset. Fabricated case ` +
-        'studies reaching production is the most damaging content failure available to this ' +
-        'project (TECH-SPEC §6). Delete and replace them — seed records are never edited into ' +
-        'real content (PROJECT-RULES §5)',
-    );
-  }
-}
+const problems = evaluate({
+  dataset: SANITY_DATASET,
+  queryStatus: res.status,
+  result,
+  seedStatus: seedRes.status,
+  publishedSeeds,
+});
 
 if (problems.length > 0) {
   console.error(`
-check-launch-content: ${problems.length} problem(s) in dataset "${SANITY_DATASET}" (reported by ${BASE_URL})
+check-launch-content: ${problems.length} problem(s) in dataset "${SANITY_DATASET}" (established from ${SOURCE})
 `);
   for (const p of problems) console.error(`  ${p}`);
   console.error('');
   process.exitCode = 1;
 } else {
   console.log(
-    `check-launch-content: ${BASE_URL} reports dataset "${SANITY_DATASET}" — ${ALWAYS_REQUIRED.length} statutory field(s) present` +
+    `check-launch-content: ${SOURCE} reports dataset "${SANITY_DATASET}" — ${ALWAYS_REQUIRED.length} statutory field(s) present` +
       (isLive
         ? `, ${LIVE_REQUIRED.map(([f]) => f).join(' and ')} supplied, no [SEED] markers`
-        : `; the live-only assertions (${LIVE_REQUIRED.map(([f]) => f).join(', ')}, no [SEED] markers) do not apply to "${SANITY_DATASET}" — the dataset the SITE reported, not one this gate assumed`),
+        : `; the live-only assertions (${LIVE_REQUIRED.map(([f]) => f).join(', ')}, no [SEED] markers) do not apply to "${SANITY_DATASET}" — the dataset the SYSTEM reported, not one this gate assumed`),
   );
   console.log(
     `check-launch-content: ${publishedSeeds} published seed document(s) counted` +
@@ -206,5 +190,4 @@ check-launch-content: ${problems.length} problem(s) in dataset "${SANITY_DATASET
         ? ' — must be 0 on a live dataset, and is'
         : `; the zero-tolerance rule applies to "${PRODUCTION_DATASET}" only`),
   );
-
 }

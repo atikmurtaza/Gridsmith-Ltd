@@ -44,14 +44,21 @@ Soft shadows, rounded-everything, gradient meshes, glassmorphism, floating 3D sh
 4. **Never let seed content reach production.** Build check blocks it.
 5. **Never promise a response faster than end of next business day.** One source of truth: `companyDetails.responseCommitment`.
 6. **Never claim more than the contract gives.** Digital's ownership module and Press's rights module cite real clauses in `_legal/`.
-7. **Never fire a non-essential cookie before consent.** PECR penalties are now up to 4% of turnover.
+7. **Never fire a non-essential cookie before consent.** (Today there is none to fire — see *Stack*. The rule is what keeps it that way.) A reg. 6 breach attracts PECR's *higher* maximum — £17.5m or 4% of worldwide turnover (PECR Sch. 1 para. 18(b)(ii), applying DPA 2018 s. 157(2)(a) and (5); in force 5 Feb 2026). See `_legal/02-CITATION-LEDGER.md` `L-PECR-PENALTY`.
 8. **Never break a performance budget to add a feature.** The feature changes or is cut.
 9. **Never remove Press's honest outcomes.** The Path Finder must be able to recommend against Gridsmith. Schema-enforced and audited.
 10. **Accessibility wins every conflict.** WCAG 2.2 AA is the floor. Then raise the conflict.
 
 ## Stack
 
-Next.js 15 App Router (**pinned — Next 16 adds ~29KB gz to the JS floor and breaks every budget below**) · React 19 · Node 24 · TypeScript strict · Tailwind v4 + CSS custom properties · Sanity CMS · Supabase (Postgres) · Resend · Vercel · GA4 + PostHog (consent-gated) · Zod + Server Actions.
+Next.js 15 App Router (**pinned — Next 16 adds ~29KB gz to the JS floor and breaks every budget below**) · React 19 · Node 24 · TypeScript strict · Tailwind v4 + CSS custom properties · Sanity CMS · Supabase (Postgres) · Resend · Vercel · Zod + Server Actions.
+
+**No analytics.** GA4 and PostHog were removed on 26 Aug 2026 (owner decision, OQ-7 option 2): they
+loaded on consent and never initialised, so consent was collected for two libraries that recorded
+nothing while every accepting visitor's IP and user-agent still reached Google and PostHog. There are
+**no consent categories** and the banner is a notice. Re-introducing analytics is a single deliberate
+task with prerequisites — `docs/_shared/BEFORE-LAUNCH.md` item 22 — and `_legal/03-REVISION-LOG.md`
+round 10 is the decision and the measurement.
 
 Rejected and not to be reintroduced: any UI component library (shadcn, MUI, Chakra), any third-party consent platform, any charting or animation library, any page builder. The primitives are hand-built because this site *is* the case study — 67% of B2B buyers judge vendor trustworthiness by site UX.
 
@@ -122,10 +129,10 @@ Read the workstream's own files before touching its code.
 - **Update the spec in the same commit** as any deviation. A spec that has silently drifted is worse than none — the next session will follow it.
 - **A measurable number in the specs is unverified until a gate measures it.** Where a
   gate and the prose disagree, **the gate is the source of truth** and the prose gets
-  corrected. The two existing examples are `check:contrast` (the 29 contrast ratios in
+  corrected. The two existing examples are `check:contrast` (the 36 contrast ratios in
   the four `DESIGN.md` §2 tables) and `check-bundle-size.mjs` (the JS budgets). This rule
-  exists because it was learned the hard way: of 29 published contrast ratios, 25 were
-  wrong and 2 were hiding WCAG AA failures that the published figures said were passes. A
+  exists because it was learned the hard way: at A-03 there were 29 published ratios, and
+  25 of them were wrong — 2 hiding WCAG AA failures the published figures called passes. A
   specific-looking number is worse than no number, because it stops anyone re-deriving it.
   **If you meet an asserted number that no gate covers, treat it as unverified and say
   so** rather than building on it.
@@ -248,8 +255,8 @@ Read the workstream's own files before touching its code.
   If a check reads its expected values out of the same file it is checking, deleting an
   entry deletes the expectation with it and the check stays green having measured less.
   This is why `check:tokens` holds a **hardcoded** 39-token `REQUIRED` list rather than
-  scraping `tokens.css`, and why `check:contrast` carries literal `EXPECTED_PAIRS = 29` and
-  `EXPECTED_CELLS = 101`.
+  scraping `tokens.css`, and why `check:contrast` carries literal `EXPECTED_PAIRS = 36` and
+  `EXPECTED_CELLS = 148`.
 
   **It does not follow that derived lists are always wrong — it depends on the question.**
   The two live examples divide cleanly and both are correct:
@@ -282,6 +289,47 @@ Read the workstream's own files before touching its code.
   and never let a green ledger stand in for running the thing. The same reasoning applies to
   any future gate that checks a human-written register — a tracker, a changelog, an
   attestation. Verify the shape mechanically; verify the substance by making it fail.
+- **Two documents that must agree, with no assertion between them, is its own defect class —
+  and where only one of them is delivered, the assertion must run against the delivered one.**
+  `scripts/seed-legal.mjs` was not a stale copy of `docs/_legal/`. It was an **independently
+  authored second document set**, internally coherent, actively maintained, and carrying its own
+  version — `0.1-draft` on all seven documents while the drafts were at 1.2 and 1.3 after nine
+  review rounds. **The site published the seed script.** So every round that verified a clause
+  against an instrument was verifying a document the public never received, and the served
+  consumer terms kept a 14-day refund promise round 9 had deliberately removed — which under
+  `L-CRA-50` is a term of the contract, so the site was **making a more generous offer than the
+  reviewed draft, and nobody chose it**. Six further divergences sat alongside it and five ran
+  against Gridsmith or the reader.
+
+  **This is not "documentation drifts".** Four features distinguish it and all four must hold:
+  both artefacts are authored rather than derived, so no build step is missing; both are
+  maintained, so neither looks stale; **only one is delivered**, and the undelivered one is the
+  one everybody reviews; and their disagreement is not unlikely but *unobservable*, because
+  nothing in the system takes both as input. Eleven rounds went past it — not from carelessness,
+  but because **no output was wrong, no check was silent, and there was no place the question
+  could be asked**.
+
+  **It was found by transcribing one document into the other word for word**, which is the
+  reusable part: reading for a defect finds the defects you can imagine, and a transcription
+  fails on the sentences that cannot be located regardless of what you were looking for. The
+  first pass reported 106 divergences, nine of which were connectives the transcription had
+  itself invented — the same defect in miniature, in the work done to fix it.
+
+  So: **when two artefacts must agree and only one reaches a user, assert against the one that
+  reaches the user.** A check between the two sources is a check between two things nobody
+  receives — which is why `check:legal:parity` reads the served page and not `seed-legal.mjs`.
+  Two instances of this shape are still open and are now recorded as one class rather than two
+  notes: `PRIVACY-POLICY.md` §6's recipient table against `lib/leads/notify.ts`, and the
+  committed migrations against the live database (`M-P1-3`, `M-P2-12`).
+  `_shared/01-VALIDATION-REPORT.md` §21.
+- **A parity gate asserts that the delivered copy matches the reviewed copy. It never asserts
+  that the reviewed copy is right, and that limit belongs in the gate.** A defect the two share
+  is invisible to it by construction — `CONSUMER-TERMS.md` §5's headline refund promise is more
+  generous than the §5.3 it defers to (`F-11`), and the served page reproduces it faithfully, so
+  `check:legal:parity` is green and correct to be green. That is a **CEILING, not a gap**:
+  widening it would mean asserting that a clause is legally sound, which is the solicitor review.
+  State it in the gate's own docstring, because a green line is otherwise read as "the copy is
+  fine" when what it means is **"the copy is the copy that was reviewed."**
 - **Never recursively delete outside the repository working tree without asking.** Inside
   the repo, `.next/` and `node_modules/` are regenerable — remove them freely. Outside it —
   home directories, tool installs, version-manager trees, anything under `AppData` or
@@ -327,7 +375,7 @@ dependency upgrade shows up as *the floor moving*, not as everyone's budget shri
 
 | Route group | Lighthouse | LCP | **JS delta (gz)** | ≈ total |
 |---|---|---|---|---|
-| Master | ≥98 perf | ≤1.8s | **≤15KB** — consent 8KB + chrome | ~115KB |
+| Master | ≥98 perf | ≤1.8s | **≤15KB** — notice + chrome | ~115KB |
 | Design | ≥95 perf | ≤2.0s | **≤25KB** — work grid + matrix + filters | ~125KB |
 | **Digital** | **100/100/100** | ≤1.6s | **≤15KB** — deliberately tightest | ~115KB |
 | Press | ≥95 perf | ≤2.0s | **≤20KB** — books shelf + filters | ~120KB |

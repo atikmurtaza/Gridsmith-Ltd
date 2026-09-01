@@ -42,18 +42,10 @@ on:
 # publish a [SEED] VAT number. CI builds against `development` and says so here.
 env:
   NEXT_PUBLIC_SANITY_DATASET: development
-  # **Shaped placeholders, not the real ids.** `check-axe`'s grant-path assertions are about
-  # which host was contacted, never about a response, so a fake id exercises the whole path
-  # with no credential in the repository. Real dev ids live in `.env.local`; live ids go in
-  # the platform environment at launch — same variable names, different values per
-  # environment, the pattern NEXT_PUBLIC_SANITY_DATASET already uses.
-  #
-  # The gate FAILS if none is configured rather than skipping: an unconfigured environment is
-  # exactly where this assertion would go quietly hollow.
-  NEXT_PUBLIC_GA4_ID: G-CIPLACEHOLDER
-  NEXT_PUBLIC_POSTHOG_KEY: phc_ci_placeholder_not_a_real_project_key
-  # EU, asserted rather than defaulted. PostHog's documented default is us.i.posthog.com.
-  NEXT_PUBLIC_POSTHOG_HOST: https://eu.i.posthog.com
+  # No analytics placeholders. Round 10 deleted the injection and the consent categories
+  # (OQ-7 option 2); check:axe now asserts that no analytics host is contacted in ANY state,
+  # which needs no id to exercise. Re-adding placeholders here is part of BEFORE-LAUNCH
+  # §"Analytics", not a tidy-up.
 
   # The lead pipeline (`A-08`). Both are PUBLISHABLE — `PUBLISHABLE_KEY` is the anon key,
   # the one the browser already holds — so they are repository **variables**, not secrets,
@@ -125,6 +117,29 @@ jobs:
       - name: Row-level security is declared on every table, view and policy
         run: npm run check:rls
 
+      # The committed subject for check:launch's live tier — M-P1-14. That tier's only
+      # subject was the live dataset, which has never held a [SEED] marker or a published
+      # seed record, so the assertions behind non-negotiable #4 had never been observed to
+      # fire while printing a seed count every run. These specimens are the deliberate
+      # failures, and two of them differ only in the count (0 and 121) so the number is
+      # proven to move rather than merely to be printed.
+      - name: The seed and statutory assertions still fire (committed specimens)
+        run: npm run check:launch:selftest
+
+      # The committed subject for check:legal:parity, which cannot self-test: it fetches
+      # before it asserts, so its only subject would be whatever a server happened to serve.
+      # The specimens are the three findings the gate exists for — 07-STATE-REPORT.md F-1 (a
+      # whole section absent from the served consumer terms), F-2 (a retention promise the
+      # draft does not make, enforced by a job that does not exist) and F-9 (a version header
+      # a document disagreed with itself about for a week) — each rejected by the branch that
+      # exists for it, separately.
+      - name: The legal-parity predicates still fire (committed specimens)
+        run: npm run check:legal:selftest
+
+      # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
+      # wiring that puts the gate into Vercel's deploy, exercised here on every push against
+      # the `development` dataset. check:launch still runs against the SERVED site below;
+      # the two answer different questions and neither replaces the other.
       - name: Build
         run: npm run build
 
@@ -199,5 +214,20 @@ jobs:
       # dataset it was built against, so it cannot run before there is a site to ask. The
       # pre-build failure mode it was protecting against is now a build failure with a Sanity
       # stack trace, which is worse output for the same defect and is the price of the fix.
-      - name: axe + statutory record + no horizontal overflow at 375/768/1440
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive"
+      # check:consumer-terms shares the same server. It asserts that no consumer-facing route
+      # links to /legal/business-client-terms — the routing half of the CRA 2015 s. 57 fix, which
+      # a single href can silently undo. It reads the SERVED pages because the CMS can change
+      # what a page links to without a commit, so a source check would be asserting against
+      # something it cannot see.
+      # check:legal:parity shares the same server, and it is on this list rather than in
+      # verify:static deliberately. It asserts that the seven /legal/* pages a visitor
+      # receives ARE the drafts in docs/_legal/ — same version, no published sentence the
+      # draft does not contain, no draft clause the page has dropped. 07-STATE-REPORT.md F-1
+      # to F-7 are seven live divergences that failed no build: the served consumer terms
+      # were the pre-round-9 instrument, binding Gridsmith under L-CRA-50 to a refund
+      # concession round 9 had removed, and the served privacy policy stated retention
+      # periods nothing enforces. Comparing the drafts to seed-legal.mjs would have missed
+      # both halves of F-1, because the seed can be correct and the dataset never reseeded.
+      # The subject has to be the document the customer actually reads.
+      - name: axe + statutory record + no horizontal overflow at 375/768/1440 + consumer terms routing + legal parity
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity"

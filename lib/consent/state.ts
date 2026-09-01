@@ -1,28 +1,35 @@
 /**
  * Consent state (`A-11`). No third-party CMP — `PROJECT-RULES.md` §6.
  *
- * The three categories are Google Consent Mode v2's names, used verbatim so the bridge is
- * a pass-through rather than a translation table. `ad_storage` is here because Consent
- * Mode requires it to be declared even though nothing on this site sets an ad cookie;
- * declaring it denied is the correct state, not a placeholder.
+ * **There are no consent categories, because there is nothing non-essential to consent to.**
+ * Owner's decision, 26 August 2026 (`docs/_legal/03-REVISION-LOG.md` round 10, OQ-7 option 2).
+ * Measurement at round 6 established that GA4 and PostHog loaded on grant and never
+ * initialised: no `gtag('config')`, no `posthog.init()`, `window.gtag` undefined,
+ * `posthog.__loaded` false, and `gs_consent` the only cookie in any of the three states. So
+ * consent was being collected for two libraries that recorded nothing while every accepting
+ * visitor's IP and user-agent still reached Google and PostHog. The injection is gone
+ * (`lib/analytics/load.ts` deleted), and with it the three categories:
  *
- * **Every category defaults to denied and there is no fourth "strictly necessary" toggle**,
- * because strictly necessary storage does not need consent and offering a switch for it
- * implies it does.
+ * - `analytics_storage` — removed with its only consumer.
+ * - `ad_storage` — removed. It was declared because Google Consent Mode v2 defines the
+ *   signal; with no Google tag there is no signal to default. Nothing on this site has ever
+ *   set an advertising cookie.
+ * - `functionality_storage` — removed. It gated `gs_design_track`, which does not exist.
+ *
+ * All three misrepresented control the visitor did not have. Re-introducing analytics is a
+ * deliberate pre-launch task with prerequisites — `docs/_shared/BEFORE-LAUNCH.md` §"Analytics".
+ *
+ * **The Consent Mode `dataLayer` bridge went with them.** It pushed a plain array where
+ * Google's contract is an `arguments` object from a `gtag()` shim; that defect is recorded in
+ * BEFORE-LAUNCH as a thing to fix *before* any tag is initialised, and it must be settled by
+ * measurement rather than by reading. Leaving a broken bridge in place to signal categories
+ * that no longer exist would be worse than having none.
  */
-export const CATEGORIES = ['analytics_storage', 'ad_storage', 'functionality_storage'] as const;
-export type Category = (typeof CATEGORIES)[number];
-export type Consent = Record<Category, boolean>;
-
-export const DENIED: Consent = {
-  analytics_storage: false,
-  ad_storage: false,
-  functionality_storage: false,
-};
 
 /**
- * The choice cookie. Strictly necessary — it exists only to remember that a choice was
- * made, which is what stops the banner re-prompting, so it needs no consent of its own.
+ * The notice cookie. Strictly necessary — it exists only to remember that the cookie notice
+ * has been seen, which is what stops it appearing again. Exempt under **PECR Sch. A1
+ * para. 4**; see `COOKIE-POLICY.md` §2.
  *
  * 12 months and `SameSite=Lax` are `FOUNDATION` §"Consent management" and `TECH-SPEC.md`
  * §4. `Secure` is omitted on plain http so local development works; on the deployed site
@@ -31,46 +38,23 @@ export const DENIED: Consent = {
 export const COOKIE = 'gs_consent';
 const MAX_AGE = 60 * 60 * 24 * 365;
 
-/** Serialised as the granted category names, comma-separated. `"0"` means an explicit reject. */
-export function readConsent(): Consent | null {
-  const raw = document.cookie.split('; ').find((c) => c.startsWith(`${COOKIE}=`));
-  if (!raw) return null;
-  const granted = decodeURIComponent(raw.slice(COOKIE.length + 1)).split(',');
-  return {
-    analytics_storage: granted.includes('analytics_storage'),
-    ad_storage: granted.includes('ad_storage'),
-    functionality_storage: granted.includes('functionality_storage'),
-  };
-}
-
-export function writeConsent(consent: Consent): void {
-  const granted = CATEGORIES.filter((c) => consent[c]);
-  const value = encodeURIComponent(granted.length > 0 ? granted.join(',') : '0');
-  const secure = location.protocol === 'https:' ? '; Secure' : '';
-  document.cookie = `${COOKIE}=${value}; Max-Age=${MAX_AGE}; Path=/; SameSite=Lax${secure}`;
-  applyConsent(consent);
-}
-
 /**
- * The Consent Mode v2 bridge (`TECH-SPEC.md` §4).
+ * Has the notice been acknowledged?
  *
- * **This pushes into `dataLayer` and loads nothing.** Google's contract is that the default
- * denied state must be queued *before* any Google tag runs, so the queue has to exist from
- * the first paint even though no tag is installed — `A-09` is what adds GA4 and PostHog,
- * behind this. Pushing an update costs no request and sets no cookie, so it does not
- * violate "no non-essential storage before consent"; it is what makes that true later.
+ * **Any value counts, including the pre-round-10 ones.** A cookie written before this change
+ * carries granted category names (`analytics_storage,ad_storage,functionality_storage`) or
+ * the single character `0`. Those names now name nothing — no code reads them, so a stale
+ * value cannot enable anything, and the direction of the staleness is safe either way. The
+ * cookie is **not rewritten**: it is the visitor's own record of what they were shown, and
+ * silently rewriting it to say something else is the misleading state this check exists to
+ * avoid. It is read for presence only, and expires on its own within 12 months.
  */
-type ConsentSignal = 'granted' | 'denied';
-declare global {
-  interface Window {
-    dataLayer?: unknown[];
-  }
+export function noticeSeen(): boolean {
+  return document.cookie.split('; ').some((c) => c.startsWith(`${COOKIE}=`));
 }
 
-export function applyConsent(consent: Consent): void {
-  const signals = Object.fromEntries(
-    CATEGORIES.map((c) => [c, (consent[c] ? 'granted' : 'denied') as ConsentSignal]),
-  );
-  window.dataLayer = window.dataLayer ?? [];
-  window.dataLayer.push(['consent', 'update', signals]);
+/** Records that the notice was seen. `1` — there is no state beyond presence. */
+export function markNoticeSeen(): void {
+  const secure = location.protocol === 'https:' ? '; Secure' : '';
+  document.cookie = `${COOKIE}=1; Max-Age=${MAX_AGE}; Path=/; SameSite=Lax${secure}`;
 }

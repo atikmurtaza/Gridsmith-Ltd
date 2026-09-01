@@ -47,7 +47,7 @@ export function RootShell({
             the skip link — "announced on appearance" — while `position: fixed` keeps it
             off the top, where it would obscure the skip link, and out of the layout, where
             it would shift it (master/PROJECT-RULES.md §7). */}
-        <ConsentBanner division={division} />
+        <ConsentBanner />
         <Header division={division} />
         {children}
         <Footer />

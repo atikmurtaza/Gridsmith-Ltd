@@ -1,59 +1,42 @@
 'use client';
-// Client Component because the choice lives in a cookie that must be read without making
-// any route dynamic. Reading it on the server via `cookies()` would opt every route out of
-// static rendering — the same trade rejected at M-04 for `cache: 'no-store'`.
+// Client Component because the notice's dismissal lives in a cookie that must be read
+// without making any route dynamic. Reading it on the server via `cookies()` would opt every
+// route out of static rendering — the same trade rejected at M-04 for `cache: 'no-store'`.
 
 import { useEffect, useRef, useState } from 'react';
-import { publishAnalyticsConfig } from '@/lib/analytics/config';
-import type { Division } from '@/components/chrome/RootShell';
-import { CATEGORIES, DENIED, applyConsent, readConsent, type Consent } from '@/lib/consent/state';
+import { COOKIE, markNoticeSeen, noticeSeen } from '@/lib/consent/state';
 import styles from './consent.module.css';
-
-const LABELS: Record<(typeof CATEGORIES)[number], string> = {
-  analytics_storage: 'Analytics',
-  ad_storage: 'Advertising',
-  functionality_storage: 'Preferences',
-};
 
 /** Published to CSS so the focus reserve is the bar's real height — see the effect below. */
 const RESERVE_VAR = '--consent-block-size';
 
 /**
- * **The gate on `A-09`, and it is a `return` before an `import`.**
+ * The cookie notice (`A-11`, FR-M14). Self-hosted, no CMP.
  *
- * Statically importing `lib/analytics/load` put its 0.8KB in the shared layout chunk of
- * every route — `check-bundle-size` reported the cheapest route at 103.4KB against a
- * 100.2KB floor and asked whether every route should pay for it. The answer is no: a
- * visitor who has not granted `analytics_storage` should not download analytics code, and
- * with no measurement ids configured (`Q-M19`) nobody downloads it at all today.
+ * **It is a notice, not a consent request, and that is the whole change of round 10.** The
+ * owner took OQ-7 option 2: stop asking. Nothing on this site stores or transmits anything
+ * non-essential — the analytics injection is deleted and the three consent categories with
+ * it (`lib/consent/state.ts`). PECR reg. 6 requires consent for non-essential storage and
+ * access; there is none, so there is no consent to collect. `gs_consent` remains, exempt
+ * under Sch. A1 para. 4, recording only that this notice has been seen.
  *
- * The early return is before the dynamic import rather than inside the loader, so the
- * module is not fetched on the denied path — which is also the PECR-honest shape: not
- * loaded-and-suppressed, not loaded.
- */
-async function maybeLoadAnalytics(consent: Consent, division: Division): Promise<void> {
-  if (!consent.analytics_storage) return;
-  const { loadAnalytics } = await import('@/lib/analytics/load');
-  loadAnalytics(consent, division);
-}
-
-const ALL_GRANTED: Consent = {
-  analytics_storage: true,
-  ad_storage: true,
-  functionality_storage: true,
-};
-
-/**
- * The consent banner (`A-11`, FR-M14). Self-hosted, no CMP.
+ * **Why keep a bar at all.** Because the visitor is still owed the information — UK GDPR
+ * Art. 13 and PECR reg. 6(2)'s "clear and comprehensive information" — and because the
+ * accurate statement ("we set one cookie, and it is the one remembering you saw this") is
+ * worth making rather than assuming. What is *not* kept is a choice, because offering a
+ * choice that changes nothing is the same defect as the two inert toggles this round removed:
+ * it represents control the visitor does not have.
  *
- * **Accept and Reject are the same component with the same class and the same width.**
- * `PROJECT-RULES.md` §7 and `DESIGN.md` §5 both require it, and it is a compliance
- * requirement rather than an aesthetic one: making reject harder is a recognised dark
- * pattern and regulators treat the resulting consent as invalid. Preferences is a text
- * link, third, and deliberately not a third button — it is not a third answer.
+ * **There is deliberately no Accept/Reject pair any more, and `PROJECT-RULES.md` §7 is not
+ * weakened by that.** That rule forbids making reject harder than accept. Here there is no
+ * accept: one control, one meaning, and nothing is stored until it is pressed. The rule
+ * against a "not now" deferral is likewise intact — the button is not a deferral of an
+ * unanswered question, there is no question. Both rules become live again the moment
+ * analytics is wired up (`docs/_shared/BEFORE-LAUNCH.md` §"Analytics"), and the Accept/Reject
+ * shape must come back with it.
  *
  * **Nothing renders on the server.** `show` starts false, so the first paint is identical
- * with and without a stored choice and there is no hydration mismatch. The bar is
+ * with and without the cookie and there is no hydration mismatch. The bar is
  * `position: fixed`, so appearing after mount shifts no layout (`PROJECT-RULES.md` §7).
  *
  * **It sits early in the DOM and low on the screen.** A screen reader meets it immediately
@@ -62,18 +45,17 @@ const ALL_GRANTED: Consent = {
  * escapable by tabbing — and it is bottom-anchored, so it cannot obscure the skip link,
  * which is fixed to the top.
  *
- * **There is deliberately no Escape-to-dismiss.** Dismissing without choosing is a "not
- * now", and `PROJECT-RULES.md` §"Never" forbids a deferral dressed as an answer. Nothing
- * is stored until a button is pressed, so the default-denied state simply persists.
+ * `reopen` is the footer's "Cookie notice" link: FOUNDATION requires a persistent way back
+ * in. It listens for a plain custom event rather than exporting a setter, so the footer stays
+ * a Server Component and costs nothing.
  *
- * `reopen` is the footer's "Cookie preferences" link: FOUNDATION requires a persistent way
- * back in. It listens for a plain custom event rather than exporting a setter, so the
- * footer stays a Server Component and costs nothing.
+ * **It takes no props.** It used to take `division`, purely to stamp the analytics event
+ * context; that context went with the analytics. `RootShell` still knows the division and can
+ * pass it again the day it means something.
  */
-export function ConsentBanner({ division }: { division: Division }) {
+export function ConsentBanner() {
   const ref = useRef<HTMLDivElement>(null);
   const [show, setShow] = useState(false);
-  const [prefs, setPrefs] = useState<Consent | null>(null);
   // A constant id, not `useId()`. There is exactly one banner per document, so it cannot
   // collide, and `check-axe`'s INCOMPLETE_ALLOWED entry matches on the exact node target —
   // a generated id would change on any React or bundler change and silently stop matching,
@@ -81,29 +63,12 @@ export function ConsentBanner({ division }: { division: Division }) {
   const headingId = 'gs-consent-heading';
 
   useEffect(() => {
-    // The build's view of which analytics ids were inlined, published for `check-axe` to read
-    // off the page rather than guess from its own environment — `M-P1-6`. Here rather than in
-    // `load.ts` because that module is deliberately not fetched until a grant, and the gate
-    // needs this fact *before* a choice. Three booleans; no id is exposed that the bundle does
-    // not already carry.
-    publishAnalyticsConfig();
+    setShow(!noticeSeen());
 
-    const stored = readConsent();
-    // `A-09` hangs off this line and no other. The analytics loader is called with whatever
-    // the state is — including the denied default — so there is exactly one place in the
-    // codebase where a tag can be injected, and it is downstream of consent by construction
-    // rather than by discipline.
-    applyConsent(stored ?? DENIED);
-    void maybeLoadAnalytics(stored ?? DENIED, division);
-    setShow(!stored);
-
-    const reopen = () => {
-      setPrefs(readConsent() ?? DENIED);
-      setShow(true);
-    };
+    const reopen = () => setShow(true);
     window.addEventListener('gs:consent-reopen', reopen);
     return () => window.removeEventListener('gs:consent-reopen', reopen);
-  }, [division]);
+  }, []);
 
   /**
    * WCAG 2.2 SC 2.4.11 Focus Not Obscured. The bar is `position: fixed` against the bottom
@@ -111,10 +76,10 @@ export function ConsentBanner({ division }: { division: Division }) {
    * it. `check-responsive` measured 220px of bar against 0px of reserve at 375px.
    *
    * **The measured height, not a modelled one** — the same lesson as `StickyCta`, whose
-   * `calc()` estimate was 27px short once its labels wrapped. This bar's height varies far
-   * more: it grows when the text wraps and again when Preferences opens three checkboxes.
-   * Publishing `offsetHeight` and letting CSS reserve it is the only version that stays
-   * correct. Cleared when the bar goes, so nothing reserves for an absent element.
+   * `calc()` estimate was 27px short once its labels wrapped. This bar's height still varies
+   * with text wrapping at narrow widths. Publishing `offsetHeight` and letting CSS reserve it
+   * is the only version that stays correct. Cleared when the bar goes, so nothing reserves
+   * for an absent element.
    */
   useEffect(() => {
     const el = ref.current;
@@ -130,64 +95,30 @@ export function ConsentBanner({ division }: { division: Division }) {
       window.removeEventListener('resize', reserve);
       root.removeProperty(RESERVE_VAR);
     };
-  }, [show, prefs]);
+  }, [show]);
 
   if (!show) return null;
-
-  const choose = async (consent: Consent) => {
-    const { writeConsent } = await import('@/lib/consent/state');
-    writeConsent(consent);
-    void maybeLoadAnalytics(consent, division);
-    setShow(false);
-    setPrefs(null);
-  };
 
   return (
     <div ref={ref} className={styles.bar} role="region" aria-labelledby={headingId}>
       <div className={styles.inner}>
         <p id={headingId} className={styles.text}>
-          We use cookies to understand how this site is used. Nothing non-essential is set
-          until you choose.
+          This site sets one cookie, <code className={styles.cookieName}>{COOKIE}</code>, which
+          records that you have seen this notice. There is no analytics, no advertising and no
+          third-party tracking of any kind, so there is nothing to opt out of.
         </p>
 
-        {prefs ? (
-          <fieldset className={styles.prefs}>
-            <legend className={styles.legend}>Choose what to allow</legend>
-            {CATEGORIES.map((c) => (
-              <label key={c} className={styles.pref}>
-                <input
-                  type="checkbox"
-                  checked={prefs[c]}
-                  onChange={(e) => setPrefs({ ...prefs, [c]: e.target.checked })}
-                />
-                {LABELS[c]}
-              </label>
-            ))}
-          </fieldset>
-        ) : null}
-
         <div className={styles.actions}>
-          {prefs ? (
-            <button type="button" className={styles.choice} onClick={() => choose(prefs)}>
-              Save choices
-            </button>
-          ) : (
-            <>
-              <button type="button" className={styles.choice} onClick={() => choose(ALL_GRANTED)}>
-                Accept
-              </button>
-              <button type="button" className={styles.choice} onClick={() => choose(DENIED)}>
-                Reject
-              </button>
-              <button
-                type="button"
-                className={styles.preferences}
-                onClick={() => setPrefs(readConsent() ?? DENIED)}
-              >
-                Preferences
-              </button>
-            </>
-          )}
+          <button
+            type="button"
+            className={styles.choice}
+            onClick={() => {
+              markNoticeSeen();
+              setShow(false);
+            }}
+          >
+            Got it
+          </button>
         </div>
       </div>
     </div>

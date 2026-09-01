@@ -12,7 +12,7 @@ Binding rules for anyone (human or AI coding agent) working on the root route gr
 4. **"More than one" and "Not sure" are never styled as secondary.** They are the highest-value conversion path.
 5. **Case studies live at `/work/[slug]` only.** Division work routes are filtered indexes that link here. Do not create division-level detail routes.
 6. **No non-essential cookie, script or pixel fires before consent.** Not loaded-and-suppressed — not injected.
-7. **Accept and Reject on the consent banner are visually identical.** Same size, same weight, same colour treatment. Making reject harder is a dark pattern and invalidates consent.
+7. **Accept and Reject on the consent banner are visually identical.** Same size, same weight, same colour treatment. Making reject harder is a dark pattern and invalidates consent. **Not engaged since 26 Aug 2026 — there is no accept.** The banner is a notice with one control because nothing non-essential is stored (§6). The rule is dormant, not repealed: the pair returns with the analytics, sharing the one CSS class that is kept unchanged for it.
 8. **The response commitment renders from `companyDetails.responseCommitment`.** Never hardcoded, never paraphrased, never made faster. Current value: *as soon as we can, and always by the end of the next business day.*
 9. **Statutory disclosure appears on every page.** Legal name, company number, place of registration, registered office. It is a legal requirement, not a footer decoration.
 10. **No seed content in production.** The build check is not to be bypassed, weakened, or excluded from a deploy pipeline.
@@ -67,10 +67,18 @@ redirects/legacy.json       generated, version-controlled
 
 ## 6. Consent and privacy rules
 
-- Default deny for `analytics_storage`, `ad_storage`, `functionality_storage`.
-- The Design division's `gs_design_track` preference cookie is gated on `functionality_storage`.
+**⚠ AMENDED 26 August 2026 — `M-P2-ANALYTICS`, owner decision OQ-7 option 2.** The analytics injection and all three consent categories are **removed** from the site. Nothing non-essential is stored or transmitted in any state, so PECR reg. 6(2) consent is not engaged and the banner is a **notice**: one control, no toggles, no Consent Mode signal. `gs_consent` remains, exempt under Sch. A1 para. 4, holding `1`. **Everything below describes the arrangement that returns with the analytics** — `docs/_shared/BEFORE-LAUNCH.md` item 22, whose prerequisites (`L-07` and the `dataLayer` shim defect) are conditions, not follow-ups. `docs/_legal/03-REVISION-LOG.md` round 10.
+
+- **There are no consent categories, and nothing non-essential is stored or transmitted.** The
+  binding rule today is the stronger one: no analytics host may be contacted in **any** state, and
+  the notice must offer no control that changes nothing. `check:axe` asserts both in a browser.
+- ~~Default deny for `analytics_storage`, `ad_storage`, `functionality_storage`.~~ Removed. If a
+  category ever returns, it returns **only** where it gates a real code path — the two that gated
+  nothing are why this rule changed.
+- ~~The Design division's `gs_design_track` preference cookie is gated on `functionality_storage`.~~
+  That cookie has never existed.
 - **Lead capture works fully regardless of consent state.** Processing an enquiry someone submitted is contract/legitimate interest, not analytics. Never block a form on consent.
-- `consent_events` stores a random consent id, the choice, the categories and the policy version — **no personal data**. Do not add IP, email, or a raw user agent.
+- `consent_events` stores a random consent id, the choice, the categories and the policy version — **no personal data**. Do not add IP, email, or a raw user agent. **It is NOT BUILT, and it is now a prerequisite of re-introducing analytics rather than a follow-up** (`L-07`, `BEFORE-LAUNCH` item 22): initialising a tag first engages PECR reg. 6's higher penalty tier while leaving UK GDPR Art. 7(1) demonstrability unmet.
 - No third-party CMP. It would break the performance budgets and Digital's 100/100/100 gate.
 - No PII in analytics events, URLs, or logs — across all four route groups.
 

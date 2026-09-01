@@ -125,6 +125,8 @@ The mono-for-facts convention holds across all four layers. It is the strongest 
 
 The consent banner specification is a compliance requirement, not an aesthetic choice: making reject harder than accept is a recognised dark pattern and regulators treat it as invalid consent.
 
+**⚠ AMENDED 26 August 2026 — `M-P2-ANALYTICS`.** The bar is unchanged in every respect that DESIGN owns — bottom-anchored, `--canvas-raised`, 1px top `--line-strong`, same button class, same treatment. What changed is its content: **one control, "Got it", and no toggles**, because there are no consent categories and nothing to accept or reject. The Preferences text link is gone with the panel it opened. **The Accept/Reject pair and its parity requirement return with the analytics**, sharing the same single class — `.choice` is kept unchanged for exactly that, and the CSS says so.
+
 ## 6. Motion
 
 | Interaction | Spec |

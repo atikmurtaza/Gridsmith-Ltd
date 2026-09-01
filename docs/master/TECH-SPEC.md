@@ -75,15 +75,22 @@ Theme transition between route groups must be flash-free: `data-division` is set
 
 ```
 components/consent/ConsentBanner.tsx     2.0KB gz MEASURED at A-11; budget 3KB, rule <=8KB
-lib/consent/                             state, Consent Mode v2 bridge
+lib/consent/                             the notice cookie. No categories, no Consent Mode bridge
 ```
 
-- Default: `analytics_storage=denied`, `ad_storage=denied`, `functionality_storage=denied`
-- GA4 and PostHog scripts are **not injected** until consent is granted — not loaded-and-suppressed
-- The Design division's `gs_design_track` preference cookie is gated on `functionality_storage`
-- Accept and Reject are equally prominent, both one click, no dark patterns
-- Choice stored in `gs_consent` (strictly necessary, 12 months, `SameSite=Lax`)
-- A footer link reopens preferences at any time
+**⚠ AMENDED 26 August 2026 — `M-P2-ANALYTICS`, owner decision OQ-7 option 2.** The analytics injection and all three consent categories are **removed** from the site. Nothing non-essential is stored or transmitted in any state, so PECR reg. 6(2) consent is not engaged and the banner is a **notice**: one control, no toggles, no Consent Mode signal. `gs_consent` remains, exempt under Sch. A1 para. 4, holding `1`. **Everything below describes the arrangement that returns with the analytics** — `docs/_shared/BEFORE-LAUNCH.md` item 22, whose prerequisites (`L-07` and the `dataLayer` shim defect) are conditions, not follow-ups. `docs/_legal/03-REVISION-LOG.md` round 10.
+
+**Current:** no consent categories · no analytics of any kind · the notice is dismissed by one
+control, which writes `gs_consent=1` (strictly necessary, 12 months, `SameSite=Lax`) · a footer link
+labelled **"Cookie notice"** reopens it and stores nothing · a pre-removal `gs_consent` is read for
+presence only and never rewritten.
+
+**Superseded, and what returns with the analytics:**
+
+- Default: `analytics_storage=denied`, `ad_storage=denied`, `functionality_storage=denied` — **removed.** If any category returns, only one that gates a real code path returns with it
+- GA4 and PostHog scripts are **not injected** until consent is granted — not loaded-and-suppressed. **Now stronger: they are not injected at all**
+- The Design division's `gs_design_track` preference cookie is gated on `functionality_storage` — **that cookie has never existed**
+- Accept and Reject are equally prominent, both one click, no dark patterns — **binding again the moment there is anything to accept**
 **The size figure here said `~6KB` and `PROJECT-RULES.md` §8 and `FOUNDATION` §5 both say
 8KB.** `PROJECT-RULES.md` is binding (CLAUDE.md, "How to work"), so 8KB stands and this line
 was corrected to match at `M-06`. **Neither number has ever been measured** — no banner

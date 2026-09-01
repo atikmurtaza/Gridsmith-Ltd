@@ -77,7 +77,7 @@ const CLOSED_LISTS = [
   ['groupSection', 'layout', ['prose', 'two-column', 'sunken-plain', 'process', 'continuity'], (v) => v],
   // `L-01`. Same shape and same reason as `groupPage.slug`: a slug with no route is a
   // published document that renders nowhere, silently.
-  ['legalDocument', 'slug', ['privacy', 'cookies', 'terms', 'client-terms', 'accessibility'], (v) => ({ current: v })],
+  ['legalDocument', 'slug', ['privacy', 'cookies', 'terms', 'client-terms', 'business-client-terms', 'consumer-client-terms', 'accessibility'], (v) => ({ current: v })],
 ];
 
 /**

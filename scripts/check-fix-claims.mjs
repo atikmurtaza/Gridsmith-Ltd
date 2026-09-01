@@ -131,6 +131,13 @@ const ROUND_BOUNDARIES = [
   // before this commit — no obligation was created and none was removed. Bringing the rest of
   // `M-P1-` in is real work against the real list, not a regex edit. `M-P1-12`.
   ['M-P1-', 'docs/_shared/BEFORE-LAUNCH.md'],
+  // `F-*` is the twelve findings of `docs/_legal/07-STATE-REPORT.md`, and the report that
+  // raised them is its own boundary — the same arrangement as `M-P1-`, and voluntary for the
+  // same reason. **`F-\d+` is deliberately NOT in ID_RE**: the identifiers are discussed
+  // across the legal set in prose, and widening the covered space would demand a status for
+  // every mention from whoever next edits a draft. The rows below are filed because there is
+  // something to file, not because a regex compelled them.
+  ['F-', 'docs/_legal/07-STATE-REPORT.md'],
 ];
 
 /**
@@ -141,7 +148,7 @@ const ROUND_BOUNDARIES = [
  *
  * Raise it in the same commit that adds rows, with the finding in the message.
  */
-const EXPECTED_ROWS = 59;
+const EXPECTED_ROWS = 71;
 
 const problems = [];
 

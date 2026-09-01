@@ -125,13 +125,23 @@ legalClause {
 }
 ```
 
-**Deviation, recorded at `L-01`: the slug set is five, not four.** The spec listed `terms |
+**Deviation, recorded at `L-01` and widened on 26 August 2026: the slug set is seven, not four.** The spec listed `terms |
 privacy | cookies | accessibility`, and none of those is the contract a client signs. A fifth
 slug `client-terms` carries the engagement terms. They are separated rather than folded into
 `terms` because `anchorId` is contract-facing — the paragraph below requires a version bump and
 a redirect to renumber one — and a consumer-facing website notice sharing an anchor space with a
-B2B contract guarantees a collision. `check:schemas` holds the five as a closed list, proven in
+B2B contract guarantees a collision. `check:schemas` holds them as a closed list, proven in
 all four directions (widened, narrowed, permissive rule, absent rule).
+
+**`client-terms` then became three slugs — owner's decision, 26 August 2026.** It served two
+instruments, `_legal/MSA-BUSINESS.md` and `_legal/CONSUMER-TERMS.md`, and a liability cap drafted
+for a business client is not binding on a consumer to the extent of **CRA 2015 s. 57** — so a Press
+author read a cap that did not apply to them and had no way to tell. `business-client-terms` and
+`consumer-client-terms` now carry the two instruments, and `client-terms` survives as a
+disambiguation page: no operative clause, and no redirect, because a redirect has to pick a target
+and either choice lands one audience silently on the other's terms. The routing is asserted against
+the **served** pages by `scripts/check-consumer-terms.mjs`. See `lib/legal/slugs.ts` for the
+decision and the reasoning.
 
 `legalClause` also gains a `basis` string: the instrument the clause implements. `CLAUDE.md` #2
 forbids invented clause references, and naming the instrument per clause makes it visible which

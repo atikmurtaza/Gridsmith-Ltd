@@ -20,7 +20,6 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import { launch } from './browser-launch.mjs';
-import { isEuPostHogHost } from '../lib/analytics/posthog-region.ts';
 
 /**
  * The axe source is read and passed in explicitly rather than left to the adapter.
@@ -362,36 +361,33 @@ async function domIntegrity(page, route, themed = true, expect = null) {
       }
     }
 
-    // **The state of the unmade choice — V1.**
+    // **The state of the unmade choice — V2, round 10.**
     //
-    // The existing gates assert that nothing is *stored* before a choice: zero cookies and
-    // zero analytics requests on every route load. **Neither says anything about what the
-    // consent state IS while the choice is unmade**, and those are different questions. A
-    // banner could apply `granted` defaults, set no cookie and issue no request — every
-    // gate green, PECR breached the moment a tag is added, because Consent Mode's default
-    // is what a later tag reads.
+    // V1 asserted that a *denied* Consent Mode default was queued on first render. Its
+    // subject is gone: there are no consent categories, because there is nothing
+    // non-essential to consent to, and `lib/consent/state.ts` no longer touches `dataLayer`
+    // at all (OQ-7 option 2). Left as it was, that check would have failed every route; had
+    // it been written to tolerate an empty queue it would have gone hollow instead — green
+    // while measuring nothing.
     //
-    // The browser here has no consent cookie (nothing writes one without a click, which is
-    // asserted separately), so this is a first render. Every non-essential category must be
-    // denied.
+    // So it is inverted rather than deleted, and it now asserts the thing the decision
+    // created: **no Consent Mode signal is emitted at all, in any category, on any route.**
+    // A signal reappearing means a category reappeared, and a category reappearing without
+    // the banner, the cookie policy and BEFORE-LAUNCH moving with it is exactly the drift
+    // this round removed. The queue is still the right place to look: it is where a Google
+    // tag reads its default from, so a stray push is not cosmetic.
     if (themed) {
-      const updates = (window.dataLayer ?? []).filter(
-        (e) => Array.isArray(e) && e[0] === 'consent' && e[1] === 'update',
+      const signals = (window.dataLayer ?? []).filter(
+        (e) => Array.isArray(e) && e[0] === 'consent',
       );
-      if (updates.length === 0) {
+      for (const entry of signals) {
         problems.push(
-          'no consent state was applied on first render — Consent Mode v2 requires the denied ' +
-            'default to be queued before any tag runs (A-11)',
+          `a Consent Mode signal was queued: ${JSON.stringify(entry)}. There are no consent ` +
+            'categories on this site — nothing non-essential is stored or transmitted, so ' +
+            'there is nothing to signal (round 10, OQ-7 option 2). If analytics is being ' +
+            'wired up, BEFORE-LAUNCH §"Analytics" is the task and this assertion changes ' +
+            'with it, in the same commit as the banner and the cookie policy',
         );
-      } else {
-        for (const [category, signal] of Object.entries(updates.at(-1)[2] ?? {})) {
-          if (signal !== 'denied') {
-            problems.push(
-              `first render applied ${category}=${signal} with no consent cookie present — ` +
-                'every non-essential category defaults to denied (PROJECT-RULES §6)',
-            );
-          }
-        }
       }
     }
 
@@ -697,14 +693,21 @@ check-axe: ${linkProblems.length} link(s) do not resolve:`);
  * present are ones something set unprompted. The allowlist is empty and should stay that way:
  * `gs_consent` itself is strictly necessary but is only written on a click, so a run that
  * never clicks must not see it either. **A cookie here is a finding, not a configuration.**
+ *
+ * **Round 10 makes the analytics half unconditional.** There is no longer a state in which an
+ * analytics host may be contacted — the injection is deleted and the categories with it — so
+ * "before any consent" is now a description of when this sweep runs, not a qualifier on the
+ * claim. The notice path below covers after the press, and expects the same silence.
  */
 if (analyticsRequests.length > 0) {
   total += analyticsRequests.length;
   console.error(`\ncheck-axe: ${analyticsRequests.length} analytics request(s) before any consent:`);
   for (const r of analyticsRequests) console.error(`      ${r}`);
   console.error(
-    '      PROJECT-RULES §6: the scripts are not injected until consent is granted —' +
-      '\n      not loaded-and-suppressed. A-09 loads them from the consent layer only.',
+    '      Round 10 removed the analytics injection entirely (OQ-7 option 2): there is no' +
+      '\n      consent state in which any analytics host is contacted. A request here means' +
+      '\n      something re-added a tag — BEFORE-LAUNCH §"Analytics" is the task, and it has' +
+      '\n      prerequisites (L-07, the dataLayer shim) that come first.',
   );
 }
 
@@ -850,154 +853,214 @@ check-axe: ${leadProblems.length} problem(s) on the lead pipeline (A-08):`);
 }
 
 /**
- * **The grant path — `A-09`, and it exists because the alternative was a measurement nobody
- * kept.**
+ * **The notice path — round 10, and it replaces the `A-09` grant path because the grant is
+ * gone.**
  *
- * The no-interaction sweep above proves the denied half: zero cookies, zero analytics
- * requests, denied defaults, on every route. **It cannot prove the other half**, and for a
- * while nothing did — the grant path was verified once by hand with a throwaway env var and
- * the result was written into a commit message. That is the shape CLAUDE.md calls a fix with
- * no subject: the only surviving evidence was prose.
+ * What used to be here ran a fresh context, clicked Accept, asserted a request to each
+ * configured provider on an EU host, then ran a second context, clicked Reject, and asserted
+ * silence. Every premise of that sequence has been removed: `lib/analytics/load.ts` is
+ * deleted, `NEXT_PUBLIC_GA4_ID` and `NEXT_PUBLIC_POSTHOG_KEY` are inert, there is no Accept
+ * and no Reject, and `window.__gsAnalyticsConfigured` is no longer published. The owner took
+ * OQ-7 option 2 (`docs/_legal/03-REVISION-LOG.md` round 10): stop asking, because the two
+ * libraries loaded on consent and never initialised.
  *
- * So the subject is the committed banner and this sequence, run every CI run:
+ * **Deleting the block outright was the wrong move and this is why.** The old sequence's real
+ * value was not "does Accept load GA4" — it was that a *committed subject* existed for the
+ * one legally load-bearing claim on this site. Take it away and the only surviving assertions
+ * about analytics are the no-interaction sweeps, which say nothing about what happens after a
+ * click. So the subject is kept and the assertion is inverted: **an interaction with the
+ * notice must contact nobody, in every state including the one that used to be a grant.**
  *
- *   1. a fresh context, no cookie   -> zero analytics requests
- *   2. Accept                       -> a request to each configured provider, and PostHog's
- *                                      to an EU host
- *   3. a fresh context, Reject      -> still zero
+ *   1. fresh context, no cookie  -> the notice is there, offers NO category control,
+ *                                   zero analytics requests, zero cookies
+ *   2. press the one control     -> notice gone, exactly one cookie (`gs_consent`), still
+ *                                   zero analytics requests, storage still empty
+ *   3. reload, same context      -> notice stays gone; the cookie is what stops it
+ *   4. fresh context, a LEGACY   -> notice not shown, cookie NOT rewritten, still zero
+ *      pre-round-10 cookie value     analytics requests
  *
- * **Step 3 is not step 1 repeated.** Step 1 is "before a choice"; step 3 is "after an
- * explicit no", and a banner that fires tags on any interaction rather than on consent passes
- * step 1 and fails step 3.
+ * **Step 4 is the migration assertion and it has no other home.** Cookies written before this
+ * round carry `analytics_storage,ad_storage,functionality_storage` — names that now name
+ * nothing. `noticeSeen()` reads presence only, so a stale grant cannot switch anything on;
+ * this proves that in the browser rather than by reading the predicate, and it proves the
+ * cookie is left as the visitor's own record rather than silently rewritten.
  *
- * **CI configures placeholder ids, not the real ones.** The assertions are about *which host
- * was contacted*, never about a response — so a shaped-but-fake id exercises the whole path
- * with no credential in the repository. If no id is configured the gate fails rather than
- * skipping: an unconfigured environment is exactly where this would go quietly hollow.
+ * **Step 1's "no category control" is a subject-state assertion, not decoration.** A banner
+ * that quietly regrew a checkbox would leave every other assertion here green while the
+ * cookie policy said there were no categories. Assert the state, not the existence.
  *
- * **Which ids are configured is read from the PAGE, not from this process — `M-P1-6`.** It
- * used to come from `process.env` here. The gate and the site are different processes and,
- * once the site is a deployment, different machines: run against the Vercel preview without
- * `.env.local` loaded, this gate reported *"no analytics id is configured"* about a build that
- * had both. The failure is not a wrong value, it is a **premise read from the wrong system** —
- * the second instance of the class, after Resend, and both were invisible on `localhost`
- * because there the two processes are one. `lib/analytics/load.ts` publishes
- * `window.__gsAnalyticsConfigured` with what the shipped bundle actually inlined, and that is
- * what is read below. Ask the system, do not infer.
- *
- * The absence of that object is itself a failure, not a skip — a page that stopped publishing
- * it would otherwise silently become an unconfigured environment.
+ * **This gate needs no id configured, and that is the point.** The old one failed when
+ * nothing was configured, because an unconfigured environment was where it went hollow. The
+ * claim is now "nobody is contacted", which is exercised identically in every environment —
+ * the `M-P1-6` premise-from-the-wrong-system problem disappears rather than being managed.
  */
-const PROVIDERS = [
-  { name: 'GA4', key: 'ga4', env: 'NEXT_PUBLIC_GA4_ID', host: 'googletagmanager.com' },
-  { name: 'PostHog', key: 'posthog', env: 'NEXT_PUBLIC_POSTHOG_KEY', host: 'posthog' },
-];
+const LEGACY_COOKIE = 'gs_consent=analytics_storage%2Cad_storage%2Cfunctionality_storage';
+const noticeProblems = [];
 
-const grantProblems = [];
-
-const reported = await (async () => {
-  const b = await launch();
-  try {
-    const page = await b.newPage();
-    await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
-    return await page.evaluate(() => window.__gsAnalyticsConfigured ?? null);
-  } finally {
-    await b.close();
-  }
-})();
-
-if (reported === null) {
-  grantProblems.push(
-    'the served page did not publish window.__gsAnalyticsConfigured, so this gate cannot ' +
-      'establish what the build inlined. lib/analytics/config.ts sets it and ConsentBanner calls it on mount; a page without it is ' +
-      'a subject that has stopped being one (M-P1-6). Failing rather than assuming unconfigured.',
-  );
-}
-
-const configured = reported ? PROVIDERS.filter((p) => reported[p.key]) : [];
-if (reported !== null && configured.length === 0) {
-  grantProblems.push(
-    'the served build has no analytics id inlined, so the grant path cannot be exercised. Set ' +
-      `${PROVIDERS.map((p) => p.env).join(' and ')} in the environment THAT BUILDS THE SITE ` +
-      '— CI uses shaped placeholders, not real ids. Setting them where this gate runs does ' +
-      'nothing: they are inlined at build time. Skipping here is how this assertion goes ' +
-      'hollow in the one environment that matters.',
-  );
-} else if (reported !== null) {
-  const posthogHost = reported.posthogHost.replace(/\/$/, '');
-  if (!isEuPostHogHost(posthogHost)) {
-    grantProblems.push(
-      `NEXT_PUBLIC_POSTHOG_HOST is "${posthogHost}", which is not an EU endpoint. PostHog's ` +
-        'documented default is us.i.posthog.com; a UK site must not post behavioural data ' +
-        'there (UK GDPR Chapter V).',
-    );
-  }
-
+{
   const browser2 = await launch();
   try {
-    for (const [label, button, expectRequests] of [
-      ['accept', 'Accept', true],
-      ['reject', 'Reject', false],
-    ]) {
-      // **A fresh browser context per step, not just a fresh page.** The first version
-      // reused one context, so the Reject step inherited the Accept step's `gs_consent`
-      // cookie: no banner was shown, the tags loaded on page load, and the gate reported
-      // `2 analytics request(s) before the click` and `no "Reject" button`. That is the
-      // assertion catching its own harness — "a fresh context, no cookie" has to actually be
-      // one, and a page is not a context.
-      const context = await browser2.createBrowserContext();
-      const page = await context.newPage();
-      const seen = [];
-      page.on('request', (req) => {
-        const host = new URL(req.url()).hostname;
-        if (PROVIDERS.some((p) => host.includes(p.host))) seen.push({ host, url: req.url() });
-      });
-      await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
+    // ---- Steps 1-3: a first visit, the press, and the reload.
+    const context = await browser2.createBrowserContext();
+    const page = await context.newPage();
+    const seen = [];
+    page.on('request', (req) => {
+      const host = new URL(req.url()).hostname;
+      if (ANALYTICS_HOSTS.some((h) => host === h || host.endsWith(`.${h}`))) seen.push(req.url());
+    });
 
-      if (seen.length > 0) {
-        grantProblems.push(`${label}: ${seen.length} analytics request(s) before the click`);
-      }
+    await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
 
-      const clicked = await page.evaluate((text) => {
-        const b = [...document.querySelectorAll('button')].find((el) => el.textContent.trim() === text);
-        if (!b) return false;
-        b.click();
-        return true;
-      }, button);
-      if (!clicked) {
-        grantProblems.push(`${label}: no "${button}" button on the first-visit banner — the subject is not there`);
-        await context.close();
-        continue;
-      }
-      await new Promise((r) => setTimeout(r, 1500));
+    const first = await page.evaluate(() => {
+      const bar = document.getElementById('gs-consent-heading')?.closest('[role="region"]');
+      return {
+        present: Boolean(bar),
+        categoryControls: bar ? bar.querySelectorAll('input, select').length : -1,
+        buttons: bar ? [...bar.querySelectorAll('button')].map((b) => b.textContent.trim()) : [],
+      };
+    });
 
-      if (expectRequests) {
-        for (const provider of configured) {
-          const hit = seen.find((s) => s.host.includes(provider.host));
-          if (!hit) {
-            grantProblems.push(`accept: ${provider.name} is configured but made no request after the grant`);
-          } else if (provider.name === 'PostHog' && !isEuPostHogHost(`https://${hit.host}`)) {
-            grantProblems.push(`accept: PostHog contacted ${hit.host}, which is not an EU endpoint`);
-          }
-        }
-      } else if (seen.length > 0) {
-        grantProblems.push(
-          `reject: ${seen.length} analytics request(s) AFTER an explicit reject — ` +
-            `${seen.map((s) => s.host).join(', ')}. Tags fire on consent, not on interaction`,
+    if (!first.present) {
+      noticeProblems.push(
+        'no cookie notice on a first visit with no cookie — the subject of this whole block ' +
+          'is not there (A-11, components/consent/ConsentBanner.tsx)',
+      );
+    } else {
+      if (first.categoryControls > 0) {
+        noticeProblems.push(
+          `the notice offers ${first.categoryControls} form control(s). There are no consent ` +
+            'categories (round 10): a control here offers the visitor a choice that changes ' +
+            'nothing, which is the misrepresentation this round removed',
         );
       }
-      await context.close();
+      if (first.buttons.length !== 1) {
+        noticeProblems.push(
+          `the notice has ${first.buttons.length} button(s) [${first.buttons.join(', ')}]; ` +
+            'expected exactly one. Two would mean an accept/reject pair has come back with ' +
+            'nothing for it to accept or reject',
+        );
+      }
     }
+    if (seen.length > 0) {
+      noticeProblems.push(`first visit: ${seen.length} analytics request(s) before any press`);
+    }
+    const cookiesFirst = await page.cookies();
+    if (cookiesFirst.length > 0) {
+      noticeProblems.push(
+        `first visit: ${cookiesFirst.length} cookie(s) before any press — ` +
+          cookiesFirst.map((c) => c.name).join(', '),
+      );
+    }
+
+    const pressed = await page.evaluate(() => {
+      const bar = document.getElementById('gs-consent-heading')?.closest('[role="region"]');
+      const b = bar?.querySelector('button');
+      if (!b) return false;
+      b.click();
+      return true;
+    });
+    if (!pressed) {
+      noticeProblems.push('the notice has no control to press — nothing can be acknowledged');
+    } else {
+      await new Promise((r) => setTimeout(r, 1500));
+
+      if (seen.length > 0) {
+        noticeProblems.push(
+          `${seen.length} analytics request(s) AFTER acknowledging the notice — ` +
+            `${seen.join(', ')}. Acknowledging a notice contacts nobody; there is nothing ` +
+            'consent-gated left to load (round 10, OQ-7 option 2)',
+        );
+      }
+
+      const after = await page.evaluate(() => ({
+        gone: !document.getElementById('gs-consent-heading'),
+        local: Object.keys(localStorage).length,
+        session: Object.keys(sessionStorage).length,
+      }));
+      if (!after.gone) noticeProblems.push('the notice is still shown after being acknowledged');
+      if (after.local > 0 || after.session > 0) {
+        noticeProblems.push(
+          `after the press: ${after.local} localStorage and ${after.session} sessionStorage ` +
+            'key(s). This site uses neither, in any state',
+        );
+      }
+
+      const cookiesAfter = await page.cookies();
+      if (cookiesAfter.length !== 1 || cookiesAfter[0].name !== 'gs_consent') {
+        noticeProblems.push(
+          `after the press: expected exactly one cookie, gs_consent — got [${cookiesAfter
+            .map((c) => `${c.name}=${c.value}`)
+            .join(', ')}]. COOKIE-POLICY.md §2 gives that as the COMPLETE list`,
+        );
+      }
+
+      // Step 3 — the reload. The cookie's only job is to stop the notice returning, and
+      // that job is what makes it strictly necessary under Sch. A1 para. 4.
+      await page.reload({ waitUntil: 'networkidle0' });
+      const stillGone = await page.evaluate(() => !document.getElementById('gs-consent-heading'));
+      if (!stillGone) {
+        noticeProblems.push(
+          'the notice reappeared on reload with gs_consent set — it would show on every page ' +
+            'view, and the cookie would then have no strictly-necessary purpose to rest on',
+        );
+      }
+    }
+    await context.close();
+
+    // ---- Step 4: a visitor carrying a pre-round-10 cookie.
+    const legacyContext = await browser2.createBrowserContext();
+    const legacyPage = await legacyContext.newPage();
+    const legacySeen = [];
+    legacyPage.on('request', (req) => {
+      const host = new URL(req.url()).hostname;
+      if (ANALYTICS_HOSTS.some((h) => host === h || host.endsWith(`.${h}`))) {
+        legacySeen.push(req.url());
+      }
+    });
+    // Written through the page rather than via setCookie, so the value is exactly what the
+    // old `writeConsent()` wrote — encoded commas included.
+    await legacyPage.goto(`${BASE_URL}/`, { waitUntil: 'domcontentloaded' });
+    await legacyPage.evaluate((v) => {
+      document.cookie = `${v}; Max-Age=31536000; Path=/; SameSite=Lax`;
+    }, LEGACY_COOKIE);
+    await legacyPage.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
+    await new Promise((r) => setTimeout(r, 1000));
+
+    const legacy = await legacyPage.evaluate(() => ({
+      shown: Boolean(document.getElementById('gs-consent-heading')),
+      cookie: document.cookie,
+    }));
+    if (legacy.shown) {
+      noticeProblems.push(
+        'a visitor carrying a pre-round-10 gs_consent is asked again. Presence is the only ' +
+          'thing that value means now (lib/consent/state.ts, noticeSeen)',
+      );
+    }
+    if (!legacy.cookie.includes('analytics_storage')) {
+      noticeProblems.push(
+        `a pre-round-10 gs_consent was rewritten on sight — now "${legacy.cookie}". It is the ` +
+          "visitor's own record of what they were shown and is left alone; the removed " +
+          'category names are read by nothing, so a stale grant cannot enable anything',
+      );
+    }
+    if (legacySeen.length > 0) {
+      noticeProblems.push(
+        `${legacySeen.length} analytics request(s) for a visitor whose old cookie GRANTED ` +
+          `analytics_storage — ${legacySeen.join(', ')}. This is the state that would fail ` +
+          'silently if the removed category were still read anywhere',
+      );
+    }
+    await legacyContext.close();
   } finally {
     await browser2.close();
   }
 }
 
-if (grantProblems.length > 0) {
-  total += grantProblems.length;
+if (noticeProblems.length > 0) {
+  total += noticeProblems.length;
   console.error(`
-check-axe: ${grantProblems.length} problem(s) on the consent grant path (A-09):`);
-  for (const p of grantProblems) console.error(`      ${p}`);
+check-axe: ${noticeProblems.length} problem(s) on the cookie-notice path (A-11, round 10):`);
+  for (const p of noticeProblems) console.error(`      ${p}`);
 }
 
 /**
@@ -1103,9 +1166,10 @@ if (!process.exitCode) {
     `check-axe: ${linkedFrom.size} distinct same-origin link target(s) across ${ROUTES.length} routes — every one resolves`,
   );
   console.log(
-    `check-axe: first render applied a denied default for every non-essential category on ` +
+    `check-axe: no Consent Mode signal was queued in dataLayer on any of ` +
       `${ROUTES.filter((r) => r.themed !== false).length} themed route(s) × ${VIEWPORTS.length} ` +
-      'viewport(s) — the STATE of the unmade choice, which the two assertions below do not cover',
+      'viewport(s) — there are no consent categories to signal (round 10). This is the STATE of ' +
+      'the site, which the storage and request assertions below do not cover',
   );
   console.log(
     `check-axe: lead pipeline — a valid submission returns 201 with an id and no notification ` +
@@ -1120,8 +1184,10 @@ if (!process.exitCode) {
       'into the existing record — a second record is a permerror and breaks the live mail',
   );
   console.log(
-    `check-axe: grant path — ${configured.length} provider(s) configured; nothing before a ` +
-      'choice, a request to each after Accept, PostHog on an EU host, nothing after Reject',
+    'check-axe: cookie-notice path — the notice is present with no category control and one ' +
+      'button; acknowledging it contacts no analytics host and leaves exactly gs_consent with ' +
+      'empty local/session storage; it stays dismissed on reload; and a pre-round-10 cookie ' +
+      'granting analytics_storage is neither re-prompted, rewritten, nor acted on',
   );
   console.log(
     'check-axe: zero cookies set and zero requests to ' +
