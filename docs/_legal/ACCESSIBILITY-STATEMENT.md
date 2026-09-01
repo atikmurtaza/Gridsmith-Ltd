@@ -4,7 +4,31 @@
 > This is a draft prepared for a qualified UK solicitor to review, amend and adopt. It is not legal
 > advice and must not be published unreviewed. `legalDocument.solicitorApproved` gates publication.
 
-**Version:** 1.2 · **Last tested:** `[TK]` · **Status: DRAFT**
+**Version:** 1.3 · **Last tested:** `[TK]` · **Status: DRAFT**
+
+**Revision 1.3, 29 August 2026 — round 12.** §3's evidence figures were **re-derived from the
+gates rather than carried forward**, which is what `CLAUDE.md` requires of any measurable number: *"a
+measurable number in the specs is unverified until a gate measures it. Where a gate and the prose
+disagree, the gate is the source of truth."* Both figures **hold**: `check-contrast.mjs:45-46` still
+reads `EXPECTED_PAIRS = 36` / `EXPECTED_CELLS = 148`, and `check-axe.mjs` still declares 15 `ROUTES`,
+2 `VIEWPORTS` and 2 `PHASES`, asserting their product — a run on 29 August 2026 reported *"60 analyses
+— 15 routes × 375px/1280px × initial/scrolled"* from the gate itself, not from this document. **Nothing
+in §3 changed except the addition of one gate.**
+
+Recording that the figures held is deliberate. Round 7 corrected §3's route count, viewport count and
+the description of the second axis, and corrected the contrast figures from 29/101 to 36/148 — the
+published ones having been wrong in a way that hid two WCAG AA failures. A number that survived that
+correction is worth re-deriving rather than trusting, and worth saying so.
+
+**Added to §3:** `check:legal:parity`. It is **not an accessibility gate** and is listed under §3
+because §3 is this statement's inventory of what is asserted on every build, and a reader entitled to
+know what is checked is entitled to know what it checks. It asserts that the seven `/legal/*` pages a
+visitor receives are the drafts in `docs/_legal/` — which is a **content** guarantee, not a conformance
+one, and §4.3's limitation is untouched by it: those six pages are still outside the automated
+accessibility audit.
+
+**Nothing here claims screen-reader testing, because it still has not happened**, and §2's conformance
+status is still `[TK]`. Neither `[DECISION REQUIRED]` is answered.
 
 **Revision 1.2, 26 August 2026 — round 7.** One correction, in §4.3: the count of legal pages outside
 the automated audit. **§3's evidence figures were re-verified against the gates and are unchanged** —
@@ -81,12 +105,24 @@ VIEWPORTS (2) and PHASES (2); the gate itself asserts ROUTES × VIEWPORTS × PHA
 check-axe.mjs:1081. Consent state IS asserted, but as a separate per-route check, not as an axis. -->
 - **Contrast**: 36 token pairs across 148 cells over four themes, checked against WCAG ratios
 <!-- Corrected 26 Aug 2026 from EXPECTED_PAIRS / EXPECTED_CELLS at scripts/check-contrast.mjs:45-46,
-which the gate hard-fails against. The published figures were 29 and 101. -->
+which the gate hard-fails against. The published figures were 29 and 101.
+RE-DERIVED 29 Aug 2026, round 12, and UNCHANGED: the gate still reads 36 and 148 at the same lines.
+Re-derived rather than trusted because these are the two figures that were wrong by the widest margin
+when they were last checked. -->
 
 - **Heading structure**
 - **Responsive behaviour** at 375 / 768 / 1440, including WCAG 2.2 target size and focus-not-obscured
 - **Theme flash and token loading**
 - **Lighthouse** on two axes — desktop category scores, and mobile LCP / CLS / TBT under 4G throttling
+- **Legal-page parity** — the seven `/legal/*` pages a visitor receives are compared against the drafts
+  in `docs/_legal/`: same version, no published sentence the draft does not contain, no draft clause the
+  page has dropped, and each page still announcing itself as an unreviewed draft
+<!-- Added 29 August 2026, round 12. `scripts/check-legal-parity.mjs`, in `verify:served` and in CI.
+**This is a content gate, not an accessibility one**, and it is listed here because §3 is the inventory
+of what blocks a merge. It does not touch §4.3: the six legal pages outside `check-axe.mjs`'s ROUTES
+are still outside it, and this gate reading those pages does not audit them. Saying so explicitly
+because a longer list of gates beside an unchanged limitation is exactly how a reader concludes the
+limitation shrank. -->
 
 **Design decisions that are true of the build:**
 
@@ -189,3 +225,14 @@ the screen-reader pass finds.
 
 **`[DECISION REQUIRED]` items:** the published conformance status (§2) · the feedback response time
 (§5).
+
+**Revision 1.3, 29 August 2026 — round 12. What this pass did NOT do, which is most of it.** §2's
+conformance status is still `[TK]` and **cannot** be answered from this repository: WCAG 2.2 Level AA
+conformance requires every Level A and AA criterion to be satisfied, automated tooling cannot establish
+that, the screen-reader pass has never happened (§6), and six of the seven legal routes are outside the
+audit (§4.3). Both `[DECISION REQUIRED]` items are blocked on people rather than on work — the
+conformance status on the screen-reader pass and `OQ-18`, and the feedback response time on the
+site-wide response commitment, which `CLAUDE.md` requires to be single-sourced and which
+`PRIVACY-POLICY.md` §12 and `CONSUMER-TERMS.md` §12 also await. **Publishing any conformance claim
+today would itself be an `L-CRA-50` statement about the service**, which is the reason this document
+would rather say `[TK]` than say something.

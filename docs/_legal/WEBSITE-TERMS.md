@@ -4,7 +4,7 @@
 > This is a draft prepared for a qualified UK solicitor to review, amend and adopt. It is not legal
 > advice and must not be published unreviewed. `legalDocument.solicitorApproved` gates publication.
 
-**Version:** 1.1 · **Effective from:** `[TK]` · **Status: DRAFT**
+**Version:** 1.3 · **Effective from:** `[TK]` · **Status: DRAFT**
 **Revised 25 August 2026 against `02-CITATION-LEDGER.md`.** Every clause below carries an inline
 comment naming the ledger entry it implements, or is flagged as having none.
 
@@ -15,8 +15,26 @@ from the file, since the 26 August client-terms split — and clause 3's `NO LED
 ledger holds no CDPA entry, which it now does. The second is **narrowed rather than closed**, because
 the entry covers assignment and clause 3 concerns subsistence and licence.
 
+**Version 1.3 — revised 29 August 2026, round 12.** Two things, one of them overdue.
+
+**(a) The version header was wrong and had been since round 8** — it read `1.1` while the round-8 note
+directly beneath it announced version 1.2. `07-STATE-REPORT.md` F-9. It is corrected here rather than
+patched, and the reason it survived a full verification pass is worth stating: **nothing in the build
+reads a draft's version header**, so a document could disagree with itself indefinitely and no gate
+would notice. `scripts/check-legal-parity.mjs`, added in this round, now compares this header against
+the version the served page renders, which closes the class rather than this instance.
+
+**(b) Clause 11 has a citation for the first time.** It carried a `NO LEDGER ENTRY` flag reading
+*"00-LEGAL-BASIS.md §1 asserts UCTA 1977 applies to B2B limitations, and Pass 2 raised no ledger entry
+for UCTA. The exclusion is retained and flagged so the solicitor can supply the citation and test it."*
+**UCTA 1977 had never been read by any round**, while the consumer side of the same question was fully
+cited. ss. 1, 2, 3, 11, 13, 26, 27, Schedule 1 and Schedule 2 were fetched and read at
+`legislation.gov.uk` on 29 August 2026; six ledger entries carry them. **No exclusion in this document
+was widened or narrowed** — what changed is that the provisions governing it are named and the burden
+is stated. `MSA-BUSINESS.md` 11.6 to 11.8 are the sibling clauses and were written in the same pass.
+
 These terms govern use of gridsmith.uk. They do **not** govern services we provide — those are covered
-by the Master Services Agreement (business clients) or the Consumer Terms (individual clients).
+by the Client Terms for Business Clients or the Client Terms for Consumers.
 
 > **[DECISION REQUIRED] — audience of this document.** These website terms are served at
 > `/legal/terms` to **both** audiences (`01-FACTUAL-INVENTORY.md` §5.1: `/`, `/contact` and every
@@ -51,7 +69,7 @@ by the Master Services Agreement (business clients) or the Consumer Terms (indiv
 ---
 
 ## 1. Who we are
-<!-- L-CA-82 -->
+<!-- L-CA-82 / L-TDR-24 — the ledger entry is compound and this clause cites both halves as of 29 August 2026, round 12. It read `L-CA-82` alone. **CNV-7 records that Companies Act 2006 s. 82's text was never fetched**: the obligation actually read and verified is SI 2015/17 reg. 24, and s. 82 is only the empowering power. Citing the unread half is the same defect round 9 fixed at MSA-BUSINESS.md 16.1 — a clause citing an id that does not discharge it. 07-STATE-REPORT.md F-12(a) named three files; there are four. -->
 <!-- L-TDR-24 -->
 <!-- L-TDR-25 -->
 <!-- L-ECOM-6 -->
@@ -77,7 +95,7 @@ worse defect than a missing one. See the decision below.]`
 
 We trade as **Gridsmith Design**, **Gridsmith Digital** and **Gridsmith Press**. These are trading
 divisions of Gridsmith Ltd, not separate companies. Any contract you enter is with Gridsmith Ltd.
-<!-- L-CA-82 -->
+<!-- L-CA-82 / L-TDR-24 — the ledger entry is compound and this clause cites both halves as of 29 August 2026, round 12. It read `L-CA-82` alone. **CNV-7 records that Companies Act 2006 s. 82's text was never fetched**: the obligation actually read and verified is SI 2015/17 reg. 24, and s. 82 is only the empowering power. Citing the unread half is the same defect round 9 fixed at MSA-BUSINESS.md 16.1 — a clause citing an id that does not discharge it. 07-STATE-REPORT.md F-12(a) named three files; there are four. -->
 
 Contact: `[TK email — contact@gridsmith.uk is recorded as a real address at
 scripts/seed-company-details.mjs:44-49]` · `[TK phone — the companyDetails.contactPhone field exists in
@@ -261,6 +279,10 @@ measure and does not satisfy Art. 32. -->
 ## 11. Liability
 <!-- L-CRA-57 -->
 <!-- L-CRA-49 -->
+<!-- L-UCTA-1 -->
+<!-- L-UCTA-2 -->
+<!-- L-UCTA-3 -->
+<!-- L-UCTA-11 -->
 
 Nothing in these terms limits our liability for death or personal injury caused by negligence, for
 fraud or fraudulent misrepresentation, or for anything else that cannot lawfully be limited.
@@ -268,9 +290,53 @@ fraud or fraudulent misrepresentation, or for anything else that cannot lawfully
 **If you are a business user**, and subject to the paragraph above, we exclude liability for loss
 arising from use of this site, including loss of profit, business, data or goodwill, and any indirect
 or consequential loss.
-<!-- NO LEDGER ENTRY for the B2B reasonableness test: 00-LEGAL-BASIS.md §1 asserts UCTA 1977 applies to
-B2B limitations, and Pass 2 raised no ledger entry for UCTA. The exclusion is retained and flagged so
-the solicitor can supply the citation and test it. -->
+
+**NEW — that exclusion is subject to the Unfair Contract Terms Act 1977.** Section 2(1) makes an
+exclusion of liability for death or personal injury resulting from negligence ineffective, which is why
+the paragraph above it is not qualified. Section 2(2) subjects an exclusion of liability for any other
+loss or damage caused by negligence to the requirement of reasonableness. Section 3 subjects to the
+same requirement any term by which we exclude or restrict liability for our own breach where you deal
+on our written standard terms of business, and these terms are written standard terms of business.
+
+**NEW — the reasonableness test is at section 11.** Section 11(1) asks whether the term was a fair and
+reasonable one to be included having regard to the circumstances which were, or ought reasonably to have
+been, known to or in the contemplation of the parties when the contract was made. **Section 11(5) places
+the burden of showing that a term satisfies the requirement on the party claiming that it does, which is
+us.**
+<!-- L-UCTA-2 — **s. 2 reaches this clause whether or not clause 2's browsewrap is a contract at all**,
+because s. 2 bites on "a notice given to persons generally" as well as on a contract term. That is the
+whole reason this document needs UCTA cited even though nobody pays for the site, and it is why the
+paragraphs above name s. 2 before s. 3. Clause 2's `NO LEDGER ENTRY` note asks the solicitor to rule on
+whether use-implies-acceptance is adequate to form a contract; **s. 2(2) applies on either answer**, so
+that open question does not leave this clause uncited. -->
+<!-- L-UCTA-11 — and note the test is not the same on both answers. **s. 11(1)** governs a contract
+term and is judged as at contract date. **s. 11(3)** governs a notice not having contractual effect and
+asks instead whether "it should be fair and reasonable to allow reliance on it, having regard to all
+the circumstances obtaining when the liability arose". The clause states s. 11(1) because it is drafted
+as a term; if the browsewrap is held to be a notice, s. 11(3) is the applicable test and it is a
+different test on different facts. Recorded rather than drafted for, because drafting for both would be
+asserting an answer to clause 2's question. -->
+<!-- L-UCTA-11 — **Schedule 2 is deliberately not recited.** Its opening words confine it to
+"sections 6(1A), 7(1A) and (4), 20 and 21" — the supply-of-goods provisions — and s. 11(2) directs
+regard to it "for the purposes of section 6 or 7 above". Nothing here is within them. The guidelines
+are applied by analogy to s. 3 cases in the authorities, and `CNV-8` records that no round has read
+any authority. See 02-CITATION-LEDGER.md `L-UCTA-11`. -->
+<!-- L-UCTA-3 — s. 3 requires that one party "deals on the other's written standard terms of business".
+`[TK — whether a free browsewrap on a marketing site is a contract on written standard terms of
+business at all is genuinely arguable: there is no price, no consideration a court would readily
+identify, and no negotiation. If it is not a contract, s. 3 falls away and s. 2(2) alone governs. This
+is the same open question clause 2 records, seen from the other end, and it is for the solicitor.]` -->
+
+> **[DECISION REQUIRED] — for the solicitor, added round 12: exclusion or cap?** Section 11(5) puts the
+> burden of justifying this term on us, and it is drafted as a **total exclusion** of business-user
+> liability for site use. A total exclusion is the hardest form to defend under section 2(2), and the
+> site is free, informational, and carries `[SEED]` content today (clause 7) — which is the factual
+> matrix section 11(1) directs a court to. Options: **(a)** keep the exclusion and rely on the site
+> being free; **(b)** recast it as a cap at a nominal sum, which is a restriction rather than an
+> exclusion and engages the section 11(4) resources-and-insurance enquiry; **(c)** narrow it to
+> specified heads of loss. Consequence of doing nothing: an unreasonable exclusion is ineffective in
+> its entirety, so the exclusion that is hardest to defend is also the one that leaves us with nothing
+> if it fails.
 
 **If you are a consumer**, nothing in these terms affects your statutory rights, and the exclusion in
 the paragraph above does not apply to you.
@@ -321,4 +387,16 @@ position, including what has and has not been tested, is set out in our Accessib
 **`[TK]` items in this document:** company number · registered office · VAT number (or its removal) ·
 contact email · contact phone · business days/hours · effective date · whether clause 5 (estimating
 tools) survives given none of the tools is built · clause 4's sample-request flow, which is also not
-built · the VAT-treatment sentence in clause 5A.
+built · the VAT-treatment sentence in clause 5A · **NEW, round 12 — whether a free browsewrap is a
+contract on written standard terms of business at all, which decides whether UCTA s. 3 reaches clause 11
+or only s. 2(2) does (clause 11, and the same question at clause 2)**.
+
+**`[DECISION REQUIRED]` items:** the audience of this document, one instrument or two (head) · the VAT
+number (clause 1) · **NEW, round 12 — whether clause 11's business-user limb stays a total exclusion or
+becomes a cap, given that s. 11(5) puts the burden of justifying it on us and a total exclusion is the
+hardest form to defend (clause 11)**.
+
+**Closed at version 1.3 (round 12):** clause 11's `NO LEDGER ENTRY` flag — UCTA 1977 was read at source
+and is cited at `L-UCTA-1`, `L-UCTA-2`, `L-UCTA-3` and `L-UCTA-11`. The version header, which had
+disagreed with this document's own revision note since round 8 (`07-STATE-REPORT.md` F-9), and which no
+gate could see until `scripts/check-legal-parity.mjs` existed.

@@ -2,6 +2,16 @@
 
 **Date: 27 August 2026.** Written for the owner, to be handed to a solicitor alongside the drafts.
 
+> **SUPERSEDED IN PART — 29 August 2026, round 12.** Read this report with the amendments in the
+> boxes below. **F-1 to F-7 are closed** by a reseed of all seven documents from the drafts, and
+> **the class they belong to now has a gate**: `scripts/check-legal-parity.mjs` compares the
+> **served** legal pages against `docs/_legal/` on every `verify:served` and every CI run, and
+> was proven by nine separate deliberate failures. **F-9 and F-12 are closed.** **UCTA 1977 has
+> been read at source** and six ledger entries carry it; `MSA-BUSINESS.md` is at 1.4 and
+> `WEBSITE-TERMS.md` at 1.3. `03-REVISION-LOG.md` round 12 is the account. **F-8, F-10 and F-11
+> are open**, and every owner figure and every `[DECISION REQUIRED]` in §2 below is still open —
+> three more were added.
+
 **Supersedes `06-FINAL-VERIFICATION.md`**, which was written before rounds 9, 10 and 11 and called
 four documents ready that were changed after it called them ready.
 
@@ -35,6 +45,13 @@ correct, including the one finding it rejected. What did not hold is something n
 > served **privacy policy** states as fact several things the drafts mark `[TK]` precisely because they
 > could not be established. A solicitor reviewing `docs/_legal/` would review a document the public
 > never sees.
+
+> **[CLOSED — 29 August 2026, round 12.]** All seven documents were reseeded from the drafts, and
+> `scripts/check-legal-parity.mjs` now asserts on every CI run that they stay that way: same
+> version, no published sentence the draft does not contain, no draft clause the page has dropped,
+> and the page still announcing itself as an unreviewed draft. **The finding above was correct and
+> it was the most valuable thing this report produced** — it is left in full, because the reason it
+> went unnoticed for eleven rounds is more instructive than the fix.
 
 ---
 
@@ -106,10 +123,10 @@ non-copyright IP · `COOKIE-POLICY.md` §4A's ICO quotations · SI 2002/2013 reg
 
 | Item | Owner | Blocked on |
 |---|---|---|
-| **Reseed the legal CMS content from the current drafts** (F-1 to F-7). `scripts/seed-legal.mjs` is a separate, shorter, older document set at `Version 0.1-draft`; the drafts are at 1.2/1.3 | **Developer** | Nothing. This is the highest-value hour of work in the set |
+| ~~**Reseed the legal CMS content from the current drafts**~~ **DONE — 29 Aug 2026.** All seven, from the drafts, to the `development` dataset. `seed-legal.mjs` is now a transcription and is held to it by the gate above: **every published paragraph is a contiguous word-run of its draft.** 13 paragraphs the old seed had published out of the drafts' HTML comments were removed — a draft does not publish those either | **Developer** | — |
 | **Remove the retention periods from the published privacy policy, or build the deletion job** (F-2) | **Owner** decides which; **developer** builds | D-5 |
 | **The VAT number** — publish the real one, or publish none (F-8, D-1) | **Owner** | Nothing. `production` is blocked on it (`BEFORE-LAUNCH.md` §16) |
-| **A gate that compares the served legal pages against the drafts.** F-1 to F-7 are all one class: a document asserting the state of a system it does not run in. Nothing in `verify:static` or `verify:served` would have caught any of them | **Developer** | Nothing |
+| ~~**A gate that compares the served legal pages against the drafts.**~~ **DONE — 29 Aug 2026.** `scripts/check-legal-parity.mjs`, in `verify:served` and in CI. Four branches — version parity, the draft agreeing with itself, content containment, clause coverage — plus a hollow-subject guard, over six of seven slugs, with the seventh named in every run. Nine deliberate-failure proofs, each in a window where only its own branch fires | **Developer** | — |
 
 ### 2.2 Owner — facts, registrations and decisions only the business can supply
 
@@ -127,7 +144,7 @@ non-copyright IP · `COOKIE-POLICY.md` §4A's ICO quotations · SI 2002/2013 reg
 | Processor regions and the transfer mechanism for each | `PRIVACY-POLICY.md` §6, §6C | Four `[TK]`. The served page asserts one of them anyway — F-3 |
 | Do affiliated production entities outside the UK exist? | `PRIVACY-POLICY.md` §6 | A notice must not describe a transfer it cannot particularise, nor omit a real one |
 | Are the six Freelancer testimonials a complete set, and did the reviewers consent? | `CONSUMER-TERMS.md` 10.8 | `L-DMCC-SCH20-13`, OQ-20. No gate can observe this |
-| Liability cap figure and PI limit | `MSA-BUSINESS.md` 11 | |
+| Liability cap figure and PI limit | `MSA-BUSINESS.md` 11.3, 11.4 | **These are ONE decision, not two — round 12.** UCTA **s. 11(4)(b)** directs the reasonableness enquiry to how far Gridsmith could cover itself by insurance, so the cap is tested against the cover. **The cover has to be known before the cap can be chosen.** They have been carried as two independent `[TK]`s through four revisions |
 | Are the A2 standards (BS 8888, BS EN ISO 128, Eurocodes, RIBA stages) confirmed? | `MSA-BUSINESS.md` Sch. A2 | `CLAUDE.md` forbids inventing standards codes |
 | **The response / acknowledgement window** — 5 working days, 30 days, or 5-as-target/30-as-guarantee | three documents | D-9. Must be identical in all three, and `companyDetails.responseCommitment` is the single source of truth |
 | Consent versus the PECR Sch. A1 para. 5 exception | `COOKIE-POLICY.md` §4A | D-6. **Deferred, correctly** — moot until analytics returns |
@@ -145,7 +162,8 @@ non-copyright IP · `COOKIE-POLICY.md` §4A's ICO quotations · SI 2002/2013 reg
 | Is §7.4's "reflects our actual cost and is not a penalty" fair under CRA s. 62 with Sch. 2 Pt. 1 para. 6? | `CONSUMER-TERMS.md` 7.4 | There is **no statutory rate** to anchor a consumer clause to — the 1998 Act is business-to-business only |
 | Audience of the website terms — one instrument, or a sixth slug? | `WEBSITE-TERMS.md` head | D-3 |
 | Whether the business instrument should keep its now-redundant consumer material at 2.1, 6.1, 10.1, 11.1 | `MSA-BUSINESS.md` | The route split made it redundant there; removing it is a drafting decision |
-| The UCTA 1977 reasonableness basis for the B2B liability limbs | `MSA-BUSINESS.md` 11.3, `WEBSITE-TERMS.md` 11 | **UCTA has never been read in any round.** The consumer side is fully cited; the business side is not cited at all |
+| The UCTA 1977 reasonableness basis for the B2B liability limbs | `MSA-BUSINESS.md` 11.3 and new 11.6–11.8, `WEBSITE-TERMS.md` 11 | **The statute has now been read** — ss. 1, 2, 3, 11, 13, 26, 27, Sch. 1, Sch. 2, on 29 Aug 2026 — and six ledger entries carry it. **What remains is its application, which is the part that was always yours.** Three specific questions: whether Sch. 2's guidelines apply by analogy to a s. 3 case (authority, not statute); how far Sch. 1 para. 1(c) removes clause 11 from ss. 2 and 3 given that clause 8 assigns IP; and whether Schedule A3 defines a duty or excludes one under s. 13(1). `CNV-8` records that **no authority has been read by anyone here** |
+| **Exclusion or cap, for the website terms' business-user limb** | `WEBSITE-TERMS.md` 11 | **NEW, round 12.** s. 11(5) puts the burden of justifying it on Gridsmith, and it is drafted as a **total exclusion** — the hardest form to defend, and an unreasonable one is ineffective in its entirety. s. 2 reaches it whether or not the browsewrap is a contract; s. 3 only if it is |
 
 ### 2.4 Developer — build tasks the drafts already depend on
 
@@ -228,15 +246,17 @@ is wrong.
 
 | Not covered | Consequence |
 |---|---|
-| **The served legal pages versus the drafts** — **NEW, and it is the largest gap in the set.** F-1 to F-7 are seven live divergences and **not one of them fails a build.** `check-consumer-terms.mjs` asserts the *routing* (that a consumer page never links to the business terms), not the *content* | The site can publish a superseded instrument indefinitely. It is doing so today |
+| ~~**The served legal pages versus the drafts**~~ — **COVERED, 29 Aug 2026.** `check:legal:parity`. What it still cannot see is stated rather than implied: **it asserts that the page matches the draft, never that the draft is right.** F-11 — §5's headline refund promise being more generous than the §5.3 it defers to — is an over-promise **inside** the draft, and the gate is silent on it by construction | Reduced to: a defect the drafts and the site share is invisible to it |
+| **`/legal/client-terms` is outside `check:legal:parity`** — **NEW.** It has no draft, because it is not an instrument. The gate names it in every run rather than skipping it silently | `check-consumer-terms.mjs` guards its routing; nothing guards its wording |
 | **`PRIVACY-POLICY.md` §6's recipient table** | Adding a field to `internalEmail()` or the Slack line silently falsifies the table. Nothing in `verify:static` notices. Same class as `M-P1-3` |
 | **Six of seven legal routes are outside the axe route list.** `check-axe.mjs` `ROUTES` contains `/legal/privacy` and no other legal path | The two documents most likely to be read by someone deciding whether to buy — the two client-terms instruments — are both unaudited |
 | **The screen-reader pass has never been performed.** No AT testing of any kind | No conformance status can be published. Blocks D-8 |
 | **Lighthouse has never been run locally** | Every LCP budget is provisional; an empty page already measures ~1520ms against Digital's 1600ms |
 | **A live-clean production build has never run.** Every production-target deployment since 19 Aug 2026 is `ERROR` | The seed gate is a **CI guard only**. Vercel runs `next build`, which never invokes `check:launch`. Whoever populates `production` must run it deliberately |
 | **`[TK]` and `[DECISION REQUIRED]` markers have no gate** — **NEW.** **109** `[TK]` markers, **28** `[DECISION REQUIRED]` and **2** `[DECISION TAKEN]` occurrences across the seven documents, counted mechanically in this pass (13/37/6/10/12/29/2 `[TK]` respectively) | A marker can be silently deleted, or a document can be published carrying them. Nothing counts them, and no count in any previous report has been reproducible |
-| **Document version headers have no gate** — **NEW.** `WEBSITE-TERMS.md`'s header and its own revision note disagree (F-9) | The version a reviewer cites may not be the version they read |
-| **Ledger citation hygiene has no gate** — **NEW.** F-12 found a clause citing the half of a compound entry that `CNV-7` records as never fetched | `check:claims` verifies that fix claims are *well-formed*, not that citations *discharge* what they are cited for |
+| ~~**Document version headers have no gate**~~ — **COVERED, 29 Aug 2026.** `check:legal:parity` branch A2 asserts that a draft's `**Version:**` header is the highest version the file declares, and branch A that it equals the version the page serves. F-9 is fixed and reproduced as a committed specimen in `check-legal-parity.selftest.mjs` |
+| **Ledger citation hygiene has no gate.** F-12 found a clause citing the half of a compound entry that `CNV-7` records as never fetched. **F-12 itself is fixed and was swept as a class — the report named three files and there were four — but nothing stops the next one** | `check:claims` verifies that fix claims are *well-formed*, not that citations *discharge* what they are cited for |
+| **No UCTA authority has been read, by anyone** — **NEW, `CNV-8`.** The six `L-UCTA-*` entries rest on the statute alone. That states the test, the burden, and which provision reaches which clause; it does **not** answer whether any cap is reasonable, which is decided on case law | The largest remaining gap on the business side, and only a solicitor can close it |
 | **INP cannot be asserted in CI** | A field metric. TBT is the lab proxy at the same ceiling |
 | **Testimonial selection** (`L-DMCC-SCH20-13`) | Whether negative reviews were omitted is not observable from the repository and no clause can cure it |
 | **`COOKIE-POLICY.md` §4A's ICO quotations** | One retrieval, unrepeatable, no ledger entry, load-bearing for D-6 |

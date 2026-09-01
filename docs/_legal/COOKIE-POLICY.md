@@ -191,7 +191,8 @@ retrieved from `ico.org.uk` on **25 August 2026**. Its published position, in it
 §4B removed the analytics libraries rather than choosing between (a), (b) and (c), so **this question
 is not answered and must not be read as answered**. It becomes live again, and must be settled, before
 any analytics is re-introduced — `docs/_shared/BEFORE-LAUNCH.md` §"Analytics" names it as a
-prerequisite alongside `L-07`. The options and the ICO's published conditions above are left exactly
+prerequisite alongside `L-07` (a build-requirement id from `00-FOUNDATION.md`, not a
+citation-ledger entry — `07-STATE-REPORT.md` F-12(b)). The options and the ICO's published conditions above are left exactly
 as they were, and **the quotations in this section have not been touched**, so the solicitor sees what
 was weighed rather than a summary of it.
 

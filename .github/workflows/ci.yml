@@ -126,6 +126,16 @@ jobs:
       - name: The seed and statutory assertions still fire (committed specimens)
         run: npm run check:launch:selftest
 
+      # The committed subject for check:legal:parity, which cannot self-test: it fetches
+      # before it asserts, so its only subject would be whatever a server happened to serve.
+      # The specimens are the three findings the gate exists for — 07-STATE-REPORT.md F-1 (a
+      # whole section absent from the served consumer terms), F-2 (a retention promise the
+      # draft does not make, enforced by a job that does not exist) and F-9 (a version header
+      # a document disagreed with itself about for a week) — each rejected by the branch that
+      # exists for it, separately.
+      - name: The legal-parity predicates still fire (committed specimens)
+        run: npm run check:legal:selftest
+
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
       # the `development` dataset. check:launch still runs against the SERVED site below;
@@ -209,5 +219,15 @@ jobs:
       # a single href can silently undo. It reads the SERVED pages because the CMS can change
       # what a page links to without a commit, so a source check would be asserting against
       # something it cannot see.
-      - name: axe + statutory record + no horizontal overflow at 375/768/1440 + consumer terms routing
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms"
+      # check:legal:parity shares the same server, and it is on this list rather than in
+      # verify:static deliberately. It asserts that the seven /legal/* pages a visitor
+      # receives ARE the drafts in docs/_legal/ — same version, no published sentence the
+      # draft does not contain, no draft clause the page has dropped. 07-STATE-REPORT.md F-1
+      # to F-7 are seven live divergences that failed no build: the served consumer terms
+      # were the pre-round-9 instrument, binding Gridsmith under L-CRA-50 to a refund
+      # concession round 9 had removed, and the served privacy policy stated retention
+      # periods nothing enforces. Comparing the drafts to seed-legal.mjs would have missed
+      # both halves of F-1, because the seed can be correct and the dataset never reseeded.
+      # The subject has to be the document the customer actually reads.
+      - name: axe + statutory record + no horizontal overflow at 375/768/1440 + consumer terms routing + legal parity
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity"

@@ -76,7 +76,7 @@ difference and links to both.
 ---
 
 ## 1. Who we are
-<!-- L-CA-82 -->
+<!-- L-CA-82 / L-TDR-24 — the ledger entry is compound and this clause cites both halves as of 29 August 2026, round 12. It read `L-CA-82` alone. **CNV-7 records that Companies Act 2006 s. 82's text was never fetched**: the obligation actually read and verified is SI 2015/17 reg. 24, and s. 82 is only the empowering power. Citing the unread half is the same defect round 9 fixed at MSA-BUSINESS.md 16.1 — a clause citing an id that does not discharge it. 07-STATE-REPORT.md F-12(a) named three files; there are four. -->
 <!-- L-TDR-25 -->
 <!-- L-ECOM-6 -->
 <!-- L-CCR-13 — Sch. 2 requires the trader's identity, geographical address and contact details before the consumer is bound. -->

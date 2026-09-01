@@ -25,6 +25,21 @@ accepted from either record, and 16.1's basis holds. `CNV-3` is closed in the le
 reading. **The clause text is unchanged** — the defect was in the instruction attached to it, which
 would have sent a solicitor to duplicate work or to conclude that 16.1 was unsound.
 
+**Version 1.4 — revised 29 August 2026, round 12. UCTA 1977 read at source for the first time in this
+project.** Clause 11 previously stood under a `NO LEDGER ENTRY` flag reading *"`00-LEGAL-BASIS.md`
+section 1 asserts UCTA 1977 governs these limitations and Pass 2 raised no ledger entry for UCTA"* — an
+instruction to a solicitor to supply the citation, carried through four revisions while the consumer
+side of the same question was fully cited (`L-CRA-57`, `L-CRA-62`). `07-STATE-REPORT.md` §2.3 named it
+the largest uncosted gap in the set. **ss. 1, 2, 3, 11, 13, 26, 27, Schedule 1 and Schedule 2 were
+fetched and read at `legislation.gov.uk` on 29 August 2026**, and six ledger entries now carry them:
+`L-UCTA-1`, `L-UCTA-SCH1`, `L-UCTA-2`, `L-UCTA-3`, `L-UCTA-11` and `L-UCTA-26-27`.
+
+**No limit, cap, exclusion or figure in this agreement was changed.** What changed is that the
+provisions governing them are now named, the burden is stated, and three clauses that were not
+recognised as exclusions are flagged as ones. New or rewritten material is at **7.4**, **11.6**,
+**11.7**, **11.8**, **12.3** and **Schedule A3**, marked **NEW** or **REVISED**. Two `NO LEDGER ENTRY`
+flags are closed (clauses 11 and 12); one is **narrowed rather than closed** (clause 7).
+
 For **business clients only**. Consumers — including most individual authors and memoir clients — are covered by `CONSUMER-TERMS.md`. Using this agreement with a consumer would breach the Consumer Rights Act 2015.
 
 Clause numbers are stable. The website cites them by number (`digital/PRD.md` FR-DG06, `press/PRD.md` FR-P04), so renumbering requires a version bump and anchor redirects.
@@ -72,7 +87,7 @@ If you are not sure which you are, `/legal/client-terms` sets out the difference
 ---
 
 ## 1. Parties and structure
-<!-- L-CA-82 -->
+<!-- L-CA-82 / L-TDR-24 — the ledger entry is compound and this clause cites both halves as of 29 August 2026, round 12. It read `L-CA-82` alone. **CNV-7 records that Companies Act 2006 s. 82's text was never fetched**: the obligation actually read and verified is SI 2015/17 reg. 24, and s. 82 is only the empowering power. Citing the unread half is the same defect round 9 fixed at MSA-BUSINESS.md 16.1 — a clause citing an id that does not discharge it. 07-STATE-REPORT.md F-12(a) named three files; there are four. -->
 <!-- L-TDR-25 -->
 
 
@@ -172,7 +187,17 @@ on /press, where s. 230 requires a tax-inclusive total. The fix differs by divis
 WEBSITE-TERMS.md clause 5A. -->
 
 ## 7. Delivery and acceptance
-<!-- NO LEDGER ENTRY: deemed acceptance after 10 working days is a commercial term. Retained, and flagged: the same mechanism applied to a consumer would be assessed for fairness under CRA 2015 Part 2 and is likely to fail, which is why CONSUMER-TERMS.md has no equivalent. -->
+<!-- L-UCTA-3 — REVISED 29 August 2026, round 12. The previous flag read "NO LEDGER ENTRY: deemed
+acceptance after 10 working days is a commercial term." **It is not only a commercial term.**
+UCTA s. 13(1)(a) and (b) provide that, to the extent Part I prevents the exclusion or restriction of a
+liability, it also prevents "making the liability or its enforcement subject to restrictive or onerous
+conditions" and "excluding or restricting any right or remedy in respect of the liability". A clause
+under which a deliverable is deemed accepted — and the non-conformity remedy at 7.3 therefore lost —
+after 10 working days is both. Where the client deals on these written standard terms, 7.4 is
+accordingly subject to the s. 3 requirement of reasonableness, and under s. 11(5) the burden of showing
+it reasonable is Gridsmith's.
+The consumer flag is retained and is unaffected: CRA 2015 Part 2 governs the consumer position and
+CONSUMER-TERMS.md deliberately has no equivalent. -->
 
 
 7.1 Gridsmith will deliver in accordance with the Scope.
@@ -181,7 +206,11 @@ WEBSITE-TERMS.md clause 5A. -->
 
 7.3 Where a valid non-conformity is notified, Gridsmith will correct it at no charge.
 
-7.4 If no notice is given within 10 working days, or the client puts the deliverables into use, they are deemed accepted.
+7.4 **REVISED.** If no notice is given within 10 working days, or the client puts the deliverables into
+use, they are deemed accepted. **Section 13(1) of the Unfair Contract Terms Act 1977 applies section 3
+to a term which makes a liability or its enforcement subject to restrictive or onerous conditions, or
+which excludes or restricts a remedy or a rule of evidence, so this clause and clause 11.5 are both
+subject to the requirement of reasonableness where the client deals on these written standard terms.**
 
 7.5 Revisions beyond the number stated in the Scope are chargeable at the rate stated in the Scope.
 
@@ -263,7 +292,18 @@ DPA 2018 s. 164A.
 complaints route and no electronic complaint form on the site. 01-FACTUAL-INVENTORY.md section 5.1.]` -->
 
 ## 11. Liability
-<!-- NO LEDGER ENTRY for the B2B reasonableness test: 00-LEGAL-BASIS.md section 1 asserts UCTA 1977 governs these limitations and Pass 2 raised no ledger entry for UCTA. Retained and flagged so the solicitor supplies the citation and applies the test. -->
+<!-- L-UCTA-1 -->
+<!-- L-UCTA-2 -->
+<!-- L-UCTA-3 -->
+<!-- L-UCTA-11 -->
+<!-- L-UCTA-SCH1 -->
+<!-- The NO LEDGER ENTRY flag that stood here is CLOSED, 29 August 2026, round 12. It read:
+"00-LEGAL-BASIS.md section 1 asserts UCTA 1977 governs these limitations and Pass 2 raised no ledger
+entry for UCTA. Retained and flagged so the solicitor supplies the citation and applies the test."
+The Act has now been read at source and six entries carry it. That flag asked for two things and only
+one of them was ever a solicitor's job: supplying the citation was a research task this project could
+do and had not done for four revisions; applying the test is a legal judgement on facts, and remains
+open at 11.8. -->
 <!-- L-CRA-57 — this clause is the reason this instrument must never reach a consumer: a cap on liability for want of reasonable care and skill is not binding on a consumer to that extent. -->
 
 
@@ -277,17 +317,100 @@ complaints route and no electronic complaint form on the site. 01-FACTUAL-INVENT
 
 11.5 Claims must be notified within 12 months of the client becoming aware of the circumstances giving rise to them.
 
-> **For solicitor review:** 11.3 must satisfy the UCTA 1977 reasonableness test. A cap at fees paid may be unreasonable for a high-consequence deliverable such as an engineering drawing set used in construction. A differentiated cap by division may be more defensible than a single figure.
+11.6 **NEW — Unfair Contract Terms Act 1977: which provisions apply.** Section 2(1) makes an exclusion
+or restriction of business liability for death or personal injury resulting from negligence ineffective,
+and no contract term or notice can defeat it. That is why 11.1 is unqualified rather than a concession.
+Section 2(2) subjects an exclusion or restriction of liability for any other loss or damage caused by
+negligence to the requirement of reasonableness. Section 3 applies where the client deals on Gridsmith's
+written standard terms of business, and subjects to the same requirement any term by which Gridsmith
+excludes or restricts liability for its own breach, or claims to be entitled to render a contractual
+performance substantially different from that which was reasonably expected of it, or to render no
+performance at all. **This agreement is Gridsmith's written standard terms of business unless the Scope
+records that its terms were individually negotiated**, so section 3 applies to 11.2, 11.3, 11.5, 7.4
+and 12.3.
+<!-- L-UCTA-1 — s. 1(1)(a) defines "negligence" to include breach of a contractual obligation to
+exercise reasonable care or skill. Clause 12.1 is exactly such an obligation, so a failure of it is
+UCTA negligence and s. 2(2) governs any limit on it — **not only s. 3**. Both routes are stated because
+they have different triggers: s. 2 needs no contract at all and no standard terms; s. 3 needs both. A
+draft that named only s. 3 would lose the limb that survives an individually negotiated Scope. -->
+<!-- L-UCTA-3 — the "unless the Scope records" conditional is deliberate. Whether the client "deals on
+the other's written standard terms of business" is a question of fact per engagement, and asserting it
+flatly would assert something no round has established. `[TK — nothing in the repository records
+whether any Scope has ever varied these terms. If none ever has, the conditional is theoretical; if
+some have, s. 3 does not reach those engagements and the reasonableness analysis differs between
+clients on one instrument.]` -->
+
+11.7 **NEW — the reasonableness test.** Section 11(1) asks whether the term was a fair and reasonable
+one to be included **having regard to the circumstances which were, or ought reasonably to have been,
+known to or in the contemplation of the parties when the contract was made** — as at contract date, not
+with hindsight from the loss. Section 11(4) provides that where a term restricts liability to a
+specified sum of money, regard is to be had in particular to the resources which Gridsmith could expect
+to be available to it for the purpose of meeting the liability should it arise, and to how far it was
+open to Gridsmith to cover itself by insurance. **Section 11(5) places the burden of showing that a term
+satisfies the requirement of reasonableness on the party claiming that it does, which is Gridsmith.**
+<!-- L-UCTA-11 — s. 11(3) states a DIFFERENT test for a non-contractual notice: whether it is fair and
+reasonable to allow reliance on it, judged on the circumstances obtaining when the liability arose
+rather than at contract date. It is not engaged by this agreement, which is a contract. It is the test
+that governs WEBSITE-TERMS.md clause 11 if a browsewrap is a notice rather than a contract, and that
+clause now says so. -->
+<!-- L-UCTA-11 — **Schedule 2 is NOT cited here and that is deliberate.** Its opening words confine it
+to "sections 6(1A), 7(1A) and (4), 20 and 21", and s. 11(2) directs regard to it "for the purposes of
+section 6 or 7 above". Those are the supply-of-goods provisions, and Gridsmith supplies services — so
+on the face of the Act **no clause in this agreement is within Schedule 2's terms at all**. The
+guidelines are routinely applied by analogy to s. 3 cases, but that is authority, not statute, and
+`CNV-8` records that **no round in this project has read any authority**. Reciting Schedule 2 here as
+the applicable checklist would be a clause citing a provision that does not discharge it — the defect
+round 9 fixed at 16.1 and round 8 identified at WEBSITE-TERMS.md clause 3. The guidelines are set out
+in 02-CITATION-LEDGER.md `L-UCTA-11` for the solicitor instead. -->
+
+11.8 **NEW — the cap and the insurance are one question, not two.** Section 11(4)(b) directs attention
+to the professional indemnity cover at 11.4 when testing the cap at 11.3, so a cap set materially below
+the cover actually available is harder to defend than one set at it.
+<!-- L-UCTA-11 — this is the substantive consequence of reading the Act, and it changes how the two
+open figures should be settled. 11.3 and 11.4 have been carried as two independent owner `[TK]`s
+through four revisions; s. 11(4)(b) makes them one decision, and the order matters — **the cover has to
+be known before the cap can be chosen**, not after. Choosing the cap first is choosing the harder half
+of a single question in the dark. -->
+<!-- L-UCTA-SCH1 — note what does NOT save this clause. Schedule 1 para. 1(c) takes ss. 2 and 3 out of
+a contract "so far as it relates to" the creation or transfer of a right or interest in intellectual
+property, and clause 8 is an IP assignment. **The carve-out is "so far as it relates to", not "if it
+contains"**: so far as 11.2 and 11.3 operate on liability for negligent performance of the services,
+para. 1(c) does not touch them. Where exactly the line falls is a question of construction on
+authority — `CNV-8` again — so nothing here is drafted on the footing that Schedule 1 saves it. A limit
+drafted to survive the reasonableness test is unharmed by later discovering it never had to. -->
+
+> **For solicitor review:** 11.3 must satisfy the UCTA 1977 reasonableness test, which 11.7 now states
+> and 11.6 now routes. **The statute is no longer the open question; its application is.** A cap at
+> fees paid may be unreasonable for a high-consequence deliverable such as an engineering drawing set
+> used in construction, and a differentiated cap by division may be more defensible than a single
+> figure. Please also settle the three points the statute does not answer: **(i)** whether Schedule 2's
+> guidelines are applied by analogy to a s. 3 case, which is authority and not statute; **(ii)** how far
+> Schedule 1 para. 1(c) removes clause 11 from ss. 2 and 3 given clause 8; **(iii)** whether Schedule A3
+> defines the duty or excludes it — see the note there. `[TK — both figures at 11.3 and 11.4 are owner
+> items, and s. 11(4)(b) makes them one decision rather than two. The test cannot be applied to either
+> until both exist.]`
 
 ## 12. Warranties
-<!-- NO LEDGER ENTRY: express warranties and the exclusion of implied ones are commercial terms. Retained. 12.3 has no consumer counterpart and must not acquire one — CRA 2015 ss. 49 and 57 make it void against a consumer. -->
+<!-- L-UCTA-3 — REVISED 29 August 2026, round 12. The NO LEDGER ENTRY flag covered the whole clause and
+is now narrowed to 12.1, 12.2 and 12.4, which are express warranties and are commercial terms.
+**12.3 is not a commercial term — it is an exclusion**, and where the client deals on these written
+standard terms it is a s. 3(2)(a) term subject to the requirement of reasonableness, with the burden on
+Gridsmith under s. 11(5). Note the interaction with 12.1: s. 1(1)(a) makes breach of the
+reasonable-care-and-skill warranty "negligence" for UCTA purposes, so an exclusion of implied terms
+reaching that far would also engage s. 2(2). 12.3 is expressed "to the extent permitted", which is what
+stops it doing so.
+12.3 has no consumer counterpart and must not acquire one — CRA 2015 ss. 49 and 57 make it void against
+a consumer, and UCTA ss. 2(4) and 3(3) put the consumer case outside UCTA entirely. -->
 
 
 12.1 Gridsmith warrants it will perform with reasonable care and skill, in accordance with good industry practice.
 
 12.2 Gridsmith warrants the deliverables will conform to the Scope in all material respects for 30 days from acceptance.
 
-12.3 Except as stated, all warranties implied by law are excluded to the extent permitted.
+12.3 **REVISED.** Except as stated, all warranties implied by law are excluded to the extent permitted.
+**Where the client deals on these written standard terms of business, that exclusion is subject to the
+requirement of reasonableness under section 3 of the Unfair Contract Terms Act 1977, and the burden of
+showing it reasonable is Gridsmith's under section 11(5).**
 
 12.4 Gridsmith does not warrant any commercial outcome. **No representation is made about sales, revenue, rankings, traffic, audience or any other result.**
 
@@ -416,7 +539,26 @@ but it is no longer the only place reg. 23's text lives. -->
 
 **A2 Standards.**<!-- NO LEDGER ENTRY: BS 8888, BS EN ISO 128, Eurocodes and the RIBA Plan of Work are named as examples. `[TK — CLAUDE.md prohibits inventing standards codes; the solicitor and the technical lead must confirm each named standard is one Gridsmith actually works to, or the examples must be removed.]` --> Technical work is produced to the standards named in the Scope (for example BS 8888, BS EN ISO 128, relevant Eurocodes, RIBA Plan of Work stages). Where no standard is named, Gridsmith works to good industry practice.
 
-**A3 Checking.**<!-- NO LEDGER ENTRY: allocation of design responsibility is a commercial and professional-liability term. Retained. --> Technical deliverables are subject to Gridsmith's internal checking process before issue. **This does not replace the client's own design check, verification, or professional sign-off.** The client remains responsible for verifying that deliverables are fit for its intended purpose.
+**A3 Checking.**<!-- L-UCTA-2 — REVISED 29 August 2026, round 12. The previous flag read "NO LEDGER
+ENTRY: allocation of design responsibility is a commercial and professional-liability term." That is
+the characterisation Gridsmith wants to be right, and **whether it is right is exactly the question
+s. 13(1) asks.** The closing words of s. 13(1) provide that "sections 2, 6 and 7 also prevent excluding
+or restricting liability by reference to terms and notices which exclude or restrict the relevant
+obligation or duty" — so a term purporting to define the duty narrowly, rather than to exclude
+liability for breaching it, is still caught **if on its true construction it is doing the second thing**.
+Note which sections that tail names: **ss. 2, 6 and 7, and NOT s. 3.** The route to A3 is therefore
+s. 2(2), and citing s. 3 for it would be wrong.
+This is the highest-consequence clause in the agreement — an engineering drawing set used in
+construction is the deliverable 11.8 is about — and the distinction it turns on is decided on
+authority, which `CNV-8` records nobody here has read. --> Technical deliverables are subject to Gridsmith's internal checking process before issue. **This does not replace the client's own design check, verification, or professional sign-off.** The client remains responsible for verifying that deliverables are fit for its intended purpose.
+
+> **[DECISION REQUIRED] — for the solicitor, added round 12: does A3 define the duty Gridsmith
+> undertakes, or exclude one it would otherwise owe?** Section 13(1) of UCTA brings within section 2 a
+> term which "excludes or restricts the relevant obligation or duty", so if A3 falls the wrong side of
+> that line it is subject to the section 2(2) reasonableness test rather than being a description of
+> what was sold — and under section 11(5) the burden of showing it reasonable would be Gridsmith's.
+> Gridsmith produces drawings; it is not taking on design liability for the client's engineering
+> decisions. That distinction must be watertight and the PI insurance at 11.4 must match it.
 
 **A4 IP.** On payment in full, final approved deliverables are assigned under clause 8.3. Working files, rejected concepts and source assets remain Gridsmith's unless the Scope provides for their transfer.
 
@@ -424,7 +566,10 @@ but it is no longer the only place reg. 23's text lives. -->
 
 **A6 Design Desk retainer.** Monthly fee, stated hours, stated turnaround SLA, stated rollover policy. Minimum term and notice period as stated. Unused hours do not carry beyond the stated rollover.
 
-> **For solicitor review:** A3 is important. Gridsmith produces drawings; it is not taking on design liability for the client's engineering decisions. This distinction must be watertight and the PI insurance must match it.
+> **For solicitor review:** A3 is important, and round 12 gave it a provision — see the
+> `[DECISION REQUIRED]` above and `L-UCTA-2`. Gridsmith produces drawings; it is not taking on design
+> liability for the client's engineering decisions. This distinction must be watertight and the PI
+> insurance must match it.
 
 # Schedule B — Gridsmith Digital
 
@@ -502,7 +647,18 @@ intellectual property rights" are validly assigned by clause 8.3's words.
 clause 8.3 — now cited to `L-CDPA-90-91`, ss. 90(3) and **91**.
 
 **`[DECISION REQUIRED]` items:** whether clause 15 is retained at all, given that regs. 9(4) and 11(3)
-already exclude regs. 9(1), 9(2) and 11(1) for a contract concluded by email (15.2).
+already exclude regs. 9(1), 9(2) and 11(1) for a contract concluded by email (15.2) · **NEW, round 12 —
+whether Schedule A3 defines the duty Gridsmith undertakes or excludes one it would otherwise owe, which
+decides whether UCTA s. 2(2) reaches it (Schedule A, A3)**.
+
+**Added at version 1.4 (round 12), and all three are for the solicitor because the statute does not
+answer them:** whether UCTA Schedule 2's guidelines are applied by analogy to a s. 3 case (11.7) ·
+how far Schedule 1 para. 1(c) removes clause 11 from ss. 2 and 3, given that clause 8 is an IP
+assignment (11.8) · whether any Scope has ever varied these terms, which decides whether the client
+"deals on written standard terms of business" and therefore whether s. 3 is engaged at all (11.6).
+**Also recorded: the liability cap (11.3) and the PI limit (11.4) are one decision, not two** —
+s. 11(4)(b) directs the reasonableness enquiry to the insurance, so the cover has to be known before
+the cap is chosen.
 
 **Closed at round 7:** the one-slug/two-instruments problem set out at the head of this document was
 `[DECISION REQUIRED]` and is now `[DECISION RECORDED]` — the owner split the routes on 26 August 2026.

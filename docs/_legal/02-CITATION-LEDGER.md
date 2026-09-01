@@ -1,7 +1,8 @@
 # 02 — Citation Ledger
 
-**Date checked: 25 August 2026.** All primary sources fetched on that date from `legislation.gov.uk`
-(current in-force text unless stated) and `w3.org`.
+**Date checked: 25 August 2026**, with additions on 26 August (round 7, §I) and **29 August 2026
+(round 12, the five `L-UCTA-*` entries)**. All primary sources fetched on the date each entry records,
+from `legislation.gov.uk` (current in-force text unless stated) and `w3.org`.
 
 **This is not legal advice.** It is a register of obligations with primary citations, assembled so a
 solicitor can check the drafts against the instruments rather than against a summary of them. Nothing
@@ -651,9 +652,112 @@ mentioned it. reg. 38 terminates ancillary contracts automatically and no draft 
 
 ## I. Business contract terms
 
-**Added 26 August 2026, round 7.** Both entries close a `NO LEDGER ENTRY` flag in `MSA-BUSINESS.md`
-where a specific figure or a specific section was asserted with no primary citation. Every provision
-below was fetched and read at `legislation.gov.uk` on 26 August 2026.
+**Added 26 August 2026, round 7.** The first two entries close a `NO LEDGER ENTRY` flag in
+`MSA-BUSINESS.md` where a specific figure or a specific section was asserted with no primary citation.
+Every provision below was fetched and read at `legislation.gov.uk` on 26 August 2026.
+
+**Extended 29 August 2026, round 12 — UCTA 1977.** The five `L-UCTA-*` entries below were added in a
+pass that read the Act at source for the first time. **UCTA had never been read by any round**, while
+the consumer side of the same question (`L-CRA-57`, `L-CRA-62`) was fully cited — so the B2B liability
+limbs at `MSA-BUSINESS.md` 11 and `WEBSITE-TERMS.md` 11 stood on `00-LEGAL-BASIS.md` §1's bare
+assertion that "UCTA 1977 applies", with two `NO LEDGER ENTRY` flags asking a solicitor to supply the
+citation. `07-STATE-REPORT.md` §2.3 recorded it as the largest uncosted gap in the set. Provisions
+fetched and read on 29 August 2026: **ss. 1, 2, 3, 11, 13, 26, 27 and Schedule 2.**
+
+> **The single most consequential thing this pass found is a negative.** **Schedule 2 does not apply
+> to sections 2 or 3.** Its own opening words confine it to *"sections 6(1A), 7(1A) and (4), 20 and
+> 21"* — the supply-of-goods provisions — and **s. 11(2)** likewise directs regard to Schedule 2
+> *"for the purposes of section 6 or 7 above"*. Gridsmith sells services, so **no clause in this set
+> is within Schedule 2's terms at all.** Courts commonly apply the guidelines by analogy to s. 3
+> cases, but that is case law, and **no round in this project has read a single authority.** A draft
+> that recites Schedule 2 as the applicable checklist would be citing the wrong provision with
+> confidence, which is this repository's own defect class in a legal document rather than in a gate.
+
+### L-UCTA-1 — scope: business liability, and what "negligence" means in the Act
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 1(1), s. 1(2), s. 1(3), s. 1(4)** |
+| **in-force version** | As amended (Consumer Rights Act 2015 Sch. 4); checked 29 Aug 2026 |
+| **what it requires** | **s. 1(1)** defines *negligence* for Part I as breach of (a) any contractual obligation to take reasonable care or exercise reasonable skill, (b) any common-law duty to take reasonable care or exercise reasonable skill, and (c) the common duty of care under the Occupiers' Liability Act 1957. Limb (a) is the operative one here: **a breach of `MSA-BUSINESS.md` 12.1's reasonable-care-and-skill warranty is "negligence" for UCTA purposes**, so s. 2 governs it and not only s. 3. **s. 1(3)**: ss. 2 to 7 apply only to *business liability* — *"liability for breach of obligations or duties arising (a) from things done or to be done by a person in the course of a business (whether his own business or another's); or (b) from the occupation of premises used for business purposes."* **s. 1(2)**: Part I is subject to Part III, and in relation to contracts the operation of ss. 2, 3 and 7 is subject to the exceptions in Schedule 1. **s. 1(4)**: it is immaterial whether the breach was inadvertent or intentional, or whether liability arises directly or vicariously. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/section/1 |
+| **applies to** | **B2B only in this set.** s. 2(4) and s. 3(3), both inserted by CRA 2015, take consumer contracts and consumer notices out of ss. 2 and 3 entirely; the consumer position is CRA 2015 ss. 57 and 62 — `L-CRA-57`, `L-CRA-62`. **UCTA and the CRA do not overlap.** A draft that cites both for the same term against the same counterparty has cited one of them wrongly. |
+| **engaged here because** | Every liability limb in `MSA-BUSINESS.md` 11 and 12.3, the deemed-acceptance clause at 7.4, the 12-month notification bar at 11.5, the Schedule A3 design-check allocation, and `WEBSITE-TERMS.md` 11's business-user exclusion are all terms limiting business liability. |
+| **status in this build** | **drafting only.** Nothing in the repository executes a liability term. |
+
+### L-UCTA-SCH1 — the intellectual-property carve-out, which reaches clause 8
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 1(2)** with **Schedule 1 para. 1(c)** |
+| **in-force version** | As amended; checked 29 Aug 2026 |
+| **what it requires** | s. 1(2) makes the operation of ss. 2, 3 and 7 *"subject to the exceptions made by Schedule 1"*. **Schedule 1 para. 1** provides that **ss. 2 and 3 do not extend to** a contract **"so far as it relates to"** — among other things — **"the creation or transfer of a right or interest in any patent, trade mark, copyright or design right, registered design, technical or commercial information or other intellectual property, or relates to the termination of any such right or interest"** (para. 1(c)). The other listed exclusions — insurance, interests in land, company formation and constitution, securities, and the bus and coach matters governed by Art. 6 of Regulation (EU) 181/2011 — do not touch anything Gridsmith does. |
+| **why this is a finding and not a comfort** | **`MSA-BUSINESS.md` clause 8 is an IP assignment**, and 8.3 transfers *"all copyright and other intellectual property rights in the final approved deliverables"*. So ss. 2 and 3 **do not reach the contract so far as it relates to that transfer** — which means a term limiting liability for, say, defective title in the assigned copyright is outside the reasonableness test altogether. **But the carve-out is "so far as it relates to", not "if it contains".** A services agreement that happens to include an assignment is not thereby removed from UCTA; clause 11's cap, so far as it operates on liability for negligent *performance of the services*, is untouched by para. 1(c) and remains squarely inside s. 2(2) and s. 3. |
+| **the trap** | The tempting reading — *"the MSA transfers IP, therefore Schedule 1 takes it out of UCTA"* — is wrong and would remove the reasonableness discipline from the whole liability clause. **Where the line falls is a question of construction on authority, and `CNV-8` records that no authority has been read.** The drafts therefore state the s. 2 and s. 3 position without relying on Schedule 1 at all, which is the safe direction: a limit drafted to survive the reasonableness test is unharmed by discovering it never had to. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/schedule/1 |
+| **applies to** | `MSA-BUSINESS.md` 8.1–8.6, Schedules A4, B1, B4, C1–C4; and, so far as any of them operates on the IP transfer rather than on service performance, 11.2, 11.3 and 12.3 |
+| **engaged here because** | Nothing in the set had noticed the carve-out, and the first person to notice it would most likely have over-read it. |
+| **status in this build** | **drafting only, and deliberately not relied on.** No clause is drafted on the footing that Schedule 1 saves it. |
+
+### L-UCTA-2 — negligence liability: the ineffective limb and the reasonableness limb
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 2(1), s. 2(2), s. 2(3), s. 2(4)** |
+| **in-force version** | As amended; s. 2(4) inserted by CRA 2015 Sch. 4 para. 3 (1 Oct 2015 / 1 Oct 2016). Checked 29 Aug 2026 |
+| **what it requires** | **s. 2(1)**: *"A person cannot by reference to any contract term or to a notice given to persons generally or to particular persons exclude or restrict his liability for death or personal injury resulting from negligence."* Absolute — no reasonableness test, no contracting out. **s. 2(2)**: *"In the case of other loss or damage, a person cannot so exclude or restrict his liability for negligence except in so far as the term or notice satisfies the requirement of reasonableness."* **s. 2(3)**: agreement to, or awareness of, such a term or notice *"is not of itself to be taken as indicating his voluntary acceptance of any risk"* — so a term saying the client accepts the risk does not convert an exclusion into consent. **s. 2(4)**: the section does not apply to a term in a consumer contract or to a consumer notice. |
+| **the word "notice", and why it reaches a free website** | s. 2 bites on *"a notice given to persons generally"* as well as on a contract term. It therefore reaches `WEBSITE-TERMS.md` 11's business-user exclusion **whether or not a browsewrap is a contract at all** — which is the question clause 2 leaves open and which s. 3 turns on. **s. 2(2) applies to that exclusion on either answer**, and this is the reason the website terms need UCTA cited even though nobody pays for the site. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/section/2 |
+| **applies to** | `MSA-BUSINESS.md` 11.1, 11.2, 11.3, Schedule A3 · `WEBSITE-TERMS.md` 11 |
+| **engaged here because** | `MSA-BUSINESS.md` 11.1 already carves out death and personal injury, which is s. 2(1) stated without citation. 11.2 and 11.3 limit liability for loss caused by failure to exercise reasonable care and skill — s. 1(1)(a) negligence — so both are s. 2(2) terms and each must independently satisfy s. 11. |
+| **status in this build** | **drafting only.** 11.1 is correct as drafted and needed no change; what it lacked was the citation making clear it is an ineffective-limb restatement rather than a concession Gridsmith chose to make. |
+
+### L-UCTA-3 — written standard terms of business, and s. 13's extension to remedies
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 3(1), s. 3(2)(a), s. 3(2)(b)(i)–(ii), s. 3(3)**; **s. 13(1)(a)–(c) and its closing words; s. 13(2)** |
+| **in-force version** | As amended; s. 3(1) amended and s. 3(3) inserted by CRA 2015 Sch. 4 para. 4. s. 13(1) amended by CRA 2015 Sch. 4 para. 12. Checked 29 Aug 2026 |
+| **what it requires** | **s. 3(1)**: *"This section applies as between contracting parties where one of them deals on the other's written standard terms of business."* (The former "deals as consumer or" limb was removed by the CRA.) **s. 3(2)**: as against that party, the other cannot by reference to any contract term (a) when himself in breach, exclude or restrict any liability in respect of the breach; or (b) claim to be entitled (i) *"to render a contractual performance substantially different from that which was reasonably expected of him"*, or (ii) *"in respect of the whole or any part of his contractual obligation, to render no performance at all"* — **except in so far as the term satisfies the requirement of reasonableness. s. 3(3)**: does not apply to a term in a consumer contract. |
+| **s. 13 — the clauses that are exclusions without looking like one** | **s. 13(1)**: to the extent Part I prevents the exclusion or restriction of any liability *"it also prevents — (a) making the liability or its enforcement subject to restrictive or onerous conditions; (b) excluding or restricting any right or remedy in respect of the liability, or subjecting a person to any prejudice in consequence of his pursuing any such right or remedy; (c) excluding or restricting rules of evidence or procedure"*. So **a notification deadline and a deemed-acceptance clause are exclusions for UCTA purposes**, not neutral machinery. **s. 13(2)**: an arbitration agreement is not treated as excluding or restricting liability. |
+| **the limit of s. 13's closing words, stated because it is easy to over-read** | The tail of s. 13(1) — *"and (to that extent) sections 2, 6 and 7 also prevent excluding or restricting liability by reference to terms and notices which exclude or restrict the relevant obligation or duty"* — **names ss. 2, 6 and 7 and does not name s. 3.** So a term that defines the duty rather than excluding it is pulled back in through **s. 2**, not through s. 3. That is the route by which `MSA-BUSINESS.md` Schedule A3 is reached, and citing s. 3 for it would be wrong. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/section/3 · https://www.legislation.gov.uk/ukpga/1977/50/section/13 |
+| **applies to** | `MSA-BUSINESS.md` 7.4, 11.2, 11.3, 11.5, 12.3 |
+| **engaged here because** | The MSA is offered as a standing instrument the client signs a Scope against; `docs/_shared/` treats it as the standard contract for every business engagement. **Whether the client "deals on Gridsmith's written standard terms" is a question of fact per engagement** — individual negotiation of the terms takes the contract outside s. 3 — which is why the clause added at 11.6 states the premise conditionally rather than asserting it. |
+| **status in this build** | **drafting only**, and one open fact: nothing in the repository records whether any Scope has ever varied the MSA's terms. |
+
+### L-UCTA-11 — the reasonableness test, the burden, and the Schedule 2 trap
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 11(1), s. 11(2), s. 11(3), s. 11(4)(a)–(b), s. 11(5)**; **Schedule 2 paras. (a)–(e)** |
+| **in-force version** | As amended; checked 29 Aug 2026 |
+| **what it requires** | **s. 11(1)**: the requirement of reasonableness is *"that the term shall have been a fair and reasonable one to be included having regard to the circumstances which were, or ought reasonably to have been, known to or in the contemplation of the parties when the contract was made."* **The test is applied as at contract date, not with hindsight from the loss.** **s. 11(3)**: for a non-contractual notice the test is instead whether *"it should be fair and reasonable to allow reliance on it, having regard to all the circumstances obtaining when the liability arose"* — a different test on different facts, and the one that governs `WEBSITE-TERMS.md` 11 if the browsewrap is a notice rather than a contract. **s. 11(4)**: where a term restricts liability *"to a specified sum of money"*, regard shall be had in particular to *"(a) the resources which he could expect to be available to him for the purpose of meeting the liability should it arise; and (b) how far it was open to him to cover himself by insurance."* **s. 11(5)**: *"It is for those claiming that a contract term or notice satisfies the requirement of reasonableness to show that it does."* |
+| **s. 11(4) makes the cap and the insurance one question** | `MSA-BUSINESS.md` 11.3 (the cap) and 11.4 (the PI limit) have been drafted, reviewed and left `[TK]` as two independent owner figures through four revisions. **s. 11(4)(b) makes them one.** A cap set materially below the cover actually available is a term the court is directed to test against that availability, and the party defending it is Gridsmith under s. 11(5). Choosing the cap without knowing the cover is choosing the harder half first. |
+| **Schedule 2 — what it actually governs** | Schedule 2's own heading words confine it to **"sections 6(1A), 7(1A) and (4), 20 and 21"**, and **s. 11(2)** directs regard to it *"for the purposes of section 6 or 7 above"*. Those are the **supply of goods** provisions. **Nothing Gridsmith sells is within them**, so on the face of the Act Schedule 2 governs no clause in this set. Its five guidelines — (a) relative bargaining strength; (b) inducement to agree, and the availability of a similar contract without the term; (c) whether the customer knew or ought to have known of the term; (d) practicability of complying with a condition; (e) whether the goods were made to the customer's special order — are **recorded here for the solicitor's benefit and are deliberately not recited in any draft as the applicable checklist.** |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/section/11 · https://www.legislation.gov.uk/ukpga/1977/50/schedule/2 |
+| **applies to** | every term reached by `L-UCTA-2` and `L-UCTA-3` |
+| **engaged here because** | `MSA-BUSINESS.md`'s own solicitor note has said since version 1.0 that *"11.3 must satisfy the UCTA 1977 reasonableness test"* — with no citation of what that test is, where the burden lies, or which figures it looks at. |
+| **status in this build** | **cannot tell, and it cannot be told.** The test is fact-specific and applied per contract; both figures it turns on are `[TK]`. What the drafts can carry, and now do, is the test itself, the burden, and the s. 11(4) link. |
+
+### L-UCTA-26-27 — international supply contracts, and the choice-of-law escape
+
+| | |
+|---|---|
+| **instrument** | Unfair Contract Terms Act 1977 (c. 50) |
+| **provision** | **s. 26(1)–(4)**; **s. 27(1), s. 27(2)** |
+| **in-force version** | As amended (Contracts (Applicable Law) Act 1990; CRA 2015 Sch. 4 — s. 27(3) omitted); checked 29 Aug 2026 |
+| **what it requires** | **s. 26(1)–(2)**: the Act's limits, and the s. 3 reasonableness requirement, do not apply to liability arising under an *international supply contract*. **s. 26(3)–(4)** define it: the contract must be **a contract of sale of goods or one under or in pursuance of which possession or ownership of goods passes** (s. 26(3)(a)), the parties must have places of business or habitual residences in different States (s. 26(3)(b)), **and** one of goods-in-carriage-between-States, offer and acceptance in different States, or delivery to a State other than that of offer and acceptance (s. 26(4)). **s. 27(1)**: where the applicable law is the law of a part of the UK **only by the parties' choice**, and would otherwise be the law of a country outside the UK, **ss. 2 to 7 and 16 to 21 do not operate**. **s. 27(2)**: the Act nonetheless has effect notwithstanding a choice of foreign law imposed wholly or mainly to evade it. |
+| **the finding, and it runs against the instinct** | **s. 26 does not help Gridsmith.** Every limb of s. 26(3)(a) is about **goods**, and Gridsmith supplies services; a design, software or publishing engagement with an overseas company is **not** an international supply contract, so UCTA continues to apply to it in full. The escape that does exist is **s. 27(1)**, and it operates only where E&W law would not have applied anyway — so it is a consequence of `MSA-BUSINESS.md` 14.7 rather than something 14.7 was drafted to achieve, and it is not something to draft towards. |
+| **primary source** | https://www.legislation.gov.uk/ukpga/1977/50/section/26 · https://www.legislation.gov.uk/ukpga/1977/50/section/27 |
+| **applies to** | `MSA-BUSINESS.md` 14.7 · `WEBSITE-TERMS.md` 14 |
+| **engaged here because** | 1.3 contemplates *"affiliated production teams and subcontractors"*, and nothing in the repository establishes where any client is. Neither clause is amended by this entry — the entry exists so that nobody later reasons from "international client" to "UCTA does not apply". |
+| **status in this build** | **drafting only.** No change made to either clause; recorded to close a line of reasoning, not to open one. |
 
 ### L-LATE-PAYMENT — statutory interest and fixed recovery sums on a late commercial debt
 
@@ -753,6 +857,21 @@ but **ss. 226 and 227 were not individually fetched.** Cite them only after read
 
 **CNV-7 — Companies Act 2006 s. 82 text.** The empowering section is named in `L-CA-82` but the
 obligation cited and read is in SI 2015/17 regs. 24–25. s. 82 itself was not fetched.
+
+**CNV-8 — no UCTA case law has been read, by any round.** The five `L-UCTA-*` entries rest entirely on
+the statute. That is enough to state the test, the burden and which provision reaches which clause, and
+it is **not** enough to answer whether any particular cap is reasonable — a question decided almost
+entirely on authority. Two specific points in `L-UCTA-11` are statute-only and would be answered
+differently by a practitioner with the cases: **(i)** whether Schedule 2's guidelines are applied by
+analogy to s. 3, which is settled practice in the case law and is not in the Act; **(ii)** where the
+line falls between a term that *defines* a duty and one that *excludes* it for s. 13(1) purposes, which
+is the whole of the `MSA-BUSINESS.md` Schedule A3 question. **Nobody in this project is qualified to
+read those cases, and none was read.** This is the largest remaining gap on the business side and it is
+a gap only a solicitor can close.
+
+**CNV-9 — no UCTA Schedule 1 CNV entry is needed; Schedule 1 was read.** It was initially recorded here
+as not reached, and that was wrong — it was fetched in the same pass and is material enough to have its
+own entry. See **`L-UCTA-SCH1`** in §I. Left in place as a numbered id so nothing renumbers.
 
 ---
 

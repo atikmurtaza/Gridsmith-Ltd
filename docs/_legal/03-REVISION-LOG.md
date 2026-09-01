@@ -1772,3 +1772,273 @@ term must either quote its context or be treated as a list to review, not a resu
 ---
 
 *End of round 11.*
+---
+
+# Round 12 — 29 August 2026
+
+**The reseed, the gate that makes the reseed stick, and UCTA 1977.**
+
+Round 11 reseeded two documents and verified three removed analytics terms were gone from two
+served pages. That was true and it was narrow. `07-STATE-REPORT.md` then established what no
+round had checked: **the drafts and the published site were two different documents, and nobody
+was comparing them.** F-1 to F-7 are seven live divergences and not one of them failed a build.
+
+## 1. The reseed — all seven documents, from the drafts
+
+`scripts/seed-legal.mjs` was a **second, independently written document set**. It was shorter
+than the drafts, it sat at `Version 0.1-draft` while the drafts were at 1.2 and 1.3, and it
+diverged from them in every way a separately-authored document can.
+
+The two worst divergences, both now gone:
+
+**F-1 — the published consumer terms were the pre-round-9 instrument.** §5.1 stated a flat
+14-day right for every consumer with **no reg. 27(1) scope**, ran the period from the contract
+date **in every case** (reg. 30(2) applied to goods), and promised a flat 14-day refund from
+notification — the reg. 34(6) concession round 9 removed after reading reg. 34(5). §5A, §5.0,
+§5.2–§5.5 and §6A **did not exist on the site**. Under `L-CRA-50` a statement a consumer takes
+into account becomes a term, so the site was **binding Gridsmith to a concession nobody chose**,
+out of a document superseded five days earlier. That is the sentence that matters: the defect
+was not that the page was out of date, it was that the page was an *offer*.
+
+**F-2 — the published privacy policy stated retention as fact.** *"Kept for 24 months … then
+deleted"*, *"kept for 6 years"*, while `PRIVACY-POLICY.md` §7 records retention as **NOT
+IMPLEMENTED**: no purge, no anonymisation, no scheduled delete. The site told a data subject
+their data was deleted by a job that does not exist.
+
+Also closed by the reseed: **F-3** (Vercel's `iad1` region asserted as fact where the draft has
+`[TK]` for every processor region), **F-4** (Slack absent from the recipient list while
+`lib/leads/notify.ts:128` is a live path), **F-5** (DPA 2018 **s. 165** cited for complaints
+where the duty in force since 19 June 2026 is **s. 164A**), **F-6** (a claim that the form
+records referrer, landing page and campaign parameters, which nothing on the site sends), and
+**F-7** (a wrong PECR enforcement citation on the cookie policy).
+
+### The rule the seed script now works to, and what it cost
+
+> **Every seeded paragraph is a transcription of operative prose in the matching draft** — markdown
+> emphasis dropped, bullets flattened, nothing else changed. `[TK]` and `[DECISION REQUIRED]`
+> markers that stand in the draft's own body are **kept**.
+
+**Editorial apparatus is not transcribed.** `<!-- ledger -->` comments, revision notes and
+`> For solicitor review` blocks are things the draft does not publish either, and seeding them
+is the same divergence pointing the other way. Applying that rule removed **13 paragraphs** the
+old seed had published out of the drafts' comments.
+
+The transcription was corrected against the gate's own predicate rather than by reading:
+**106 divergences on the first pass, 87 after the revision markers were understood, 0 at the
+end.** Nine of those were places where a connective had been invented — `"Region: "` in front of
+a table cell — which is exactly the class F-2 and F-3 belong to, caught in miniature.
+
+**One anchor is pinned.** `/press` links to `#clause-10-1` on the consumer terms and
+`check-consumer-terms.mjs` asserts it. The draft numbers that section `§10`, so deriving the
+anchor would have silently moved it to `clause-10`, leaving that link resolving to the page and
+then to nothing — the failure mode a 404 at least announces. `seed-legal.mjs` carries an explicit
+override with the reason beside it.
+
+## 2. The gate — `scripts/check-legal-parity.mjs`
+
+**The reseed alone drifts again on the next revision. This is the deliverable.**
+
+### The choice: the seed script, or the served page
+
+The served page, on three grounds.
+
+**Coverage is a strict superset.** Both directions catch a draft edited without the seed being
+updated. **Only the served-page comparison catches a seed updated and never reseeded** — and
+that is half of what F-1 actually was: round 10 touched `seed-legal.mjs` for the analytics
+sections, and the consumer terms had not been reseeded since before round 8. A source-to-source
+check would have gone green over a CMS serving a superseded instrument.
+
+**It is the instrument the customer reads.** `L-CRA-50` attaches to what was said to the
+consumer, not to what a repository intended to say. `CLAUDE.md`'s rule about gates inferring the
+state of systems they do not run in was written after `check-axe` decided whether Resend was
+configured from the *runner's* environment while asserting the *server's* behaviour. A gate over
+`seed-legal.mjs` would be the same error: reading the source of a document to assert something
+about the document that was delivered.
+
+**The cost is already paid.** The argument against is that it needs a running site.
+`verify:served` already starts one through `with-server.mjs`, and `check-consumer-terms.mjs`
+already reads served legal pages from behind it. This is one more command in that list.
+
+### The trade, stated rather than argued away
+
+- It **cannot run in `verify:static`**. A developer editing a draft learns of a divergence only
+  after a build and a server. The source-to-source alternative would have run in milliseconds on
+  a bare checkout — and would have been reassuring about a question nobody was asking.
+- It **needs a populated dataset**. On an empty one every route 404s, which branch D reports as a
+  failure rather than as nothing to measure. That is deliberate: "nothing to measure" is how F-1
+  survived.
+- **Six of seven slugs.** `/legal/client-terms` has no draft, because it is not an instrument.
+  The exclusion is **printed on every successful run**, because a gate that silently covers six
+  of seven reads exactly like one that covers seven.
+
+### What it compares
+
+The unit is a **sequence of words**, not a string: punctuation, markdown emphasis, table pipes
+and typographic forms are stripped, and what is left must appear in the draft **contiguously and
+in order**. That is what makes the assertion exact rather than fuzzy while still surviving
+transcription — a draft's table row and the sentence built from its cells are the same words and
+differ in every character of punctuation. It also means the transcription **may not invent so
+much as a connective**, which is how the nine `"Region: "` cases were found.
+
+Two normalisations are not identity and both are recorded in the source: `§` reads as the word
+*section*, and the drafts' `NEW` / `REVISED` / `CORRECTED` / `REWRITTEN` markers are dropped from
+both sides because they sit inside operative sentences and no published page carries them.
+
+## 3. The proofs — nine, each in a window where only its own branch fires
+
+`CLAUDE.md`: *"A deliberate-failure proof observes a red build, not a red gate — establish which
+gate fired."* Every proof below was run against a real `next start` on port 3210 serving the
+reseeded dataset, from a green baseline (**6 documents, 92 clauses, 423 paragraphs, 198 clause
+tokens**), and each was reverted before the next.
+
+| # | Branch | What was broken | What fired |
+|---|---|---|---|
+| 1 | **B** content | `CONSUMER-TERMS.md` 13.3, *"not foreseeable"* → *"not **reasonably** foreseeable"* — **one word** | *"clause-13 publishes text that is not in CONSUMER-TERMS.md"*, naming the exact word at which the run breaks. Branch A stayed silent |
+| 2 | **A** version | draft bumped 1.3 → 1.4, dataset untouched | *"serves version 1.3 and CONSUMER-TERMS.md is at 1.4"*. Alone |
+| 3 | **A2** self-disagreement | `WEBSITE-TERMS.md` header set to 1.1 while its notes declare 1.3 — **F-9 reproduced exactly** | *"disagrees with itself"*. Alone, and **without** A, since the served version still matched the file's true version |
+| 4 | **C** coverage | `## 6B.` added to the draft — **F-1's shape** | *"declares clause 6B as a section of its own and … serves no clause covering it"*, listing all 18 served numbers |
+| 5 | **C2** the count moves | inline `16.5` added | **green, and the token count moved 198 → 199.** A count that cannot be made to move is not counting |
+| 6 | **D1** route | routes pointed at `/legal/<slug>-deleted` | six × *"returned 404 — nothing was measured"* |
+| 7 | **D2** hollow subject | routes pointed at `/press` — 200, real `<h1>`, wrong document | three distinct failures per route: **no draft banner**, **version null**, **no clause at all** |
+| 8 | **E** starvation | see below | **`0 paragraph(s) and 198 clause token(s) compared`** |
+| 9 | **F** the docs count | one entry removed from `LEGAL_DRAFT_SOURCES` | *"measured 5 document(s), expected 6"* — `EXPECTED_DOCS` is a literal, so shortening the list cannot shorten the expectation with it |
+
+**Proof 8 is the one worth reading, because the first attempt proved the wrong thing.** Breaking
+the `<section id="clause-…">` regex produced **204 problems** — but every one of them was branch
+D's *"served no clause at all"*, and `problems.length > 0` short-circuits the count report
+entirely. The count guard **never executed**. That is the `A-GATE-4-3` shape: two checks that can
+fire on one input, and a proof that credits whichever one you had in mind. The window where only
+the count guard fires is *sections found, paragraphs not* — breaking only the `<p>` match — and in
+that window it printed the zero.
+
+**Both halves are recorded.** A gate whose output is a count must be provable to report zero
+(proof 8) **and** to report a different number (proof 5).
+
+### The permanent subject
+
+`check-legal-parity.mjs` fetches before it asserts, so its predicates' only subject would be
+whatever a server happened to serve. They live in `scripts/legal-parity-rules.mjs` — pure, no
+network, no filesystem, no clock — and `scripts/check-legal-parity.selftest.mjs` holds
+**31 committed assertions** over specimens that are the findings themselves: F-1's missing `§6A`,
+F-2's invented retention promise, F-9's stale header. It runs in `verify:static`, and it asserts
+its own assertion count, because a self-test that quietly stopped running most of its cases
+reports clean.
+
+## 4. UCTA 1977 — read at source for the first time in this project
+
+`07-STATE-REPORT.md` §2.3 recorded it as the largest uncosted gap: *"UCTA has never been read in
+this project. The consumer side is fully cited and the business side is not cited at all."*
+Clause 11 of `MSA-BUSINESS.md` and clause 11 of `WEBSITE-TERMS.md` each stood under a
+`NO LEDGER ENTRY` flag asking a solicitor to supply the citation — which was a research task this
+project could have done and had not, for four revisions.
+
+**Read at `legislation.gov.uk` on 29 August 2026: ss. 1, 2, 3, 11, 13, 26, 27, Schedule 1 and
+Schedule 2.** Six ledger entries carry them: `L-UCTA-1`, `L-UCTA-SCH1`, `L-UCTA-2`, `L-UCTA-3`,
+`L-UCTA-11`, `L-UCTA-26-27`.
+
+### The five findings, in the order they change something
+
+**(i) Schedule 2 does not apply to sections 2 or 3.** Its own opening words confine it to
+*"sections 6(1A), 7(1A) and (4), 20 and 21"* — the supply-of-goods provisions — and **s. 11(2)**
+directs regard to it *"for the purposes of section 6 or 7 above"*. **Gridsmith sells services, so
+no clause in this set is within Schedule 2's terms at all.** The guidelines are applied by analogy
+to s. 3 cases in the authorities, but that is case law; `CNV-8` records that **no round here has
+read a single authority**. A draft reciting Schedule 2 as the applicable checklist would be
+citing the wrong provision with confidence — this repository's own defect class, in a legal
+document rather than in a gate. Both drafts therefore state the test and **deliberately do not
+recite Schedule 2**, with the reason in the clause note.
+
+**(ii) The liability cap and the PI limit are one decision, not two.** **s. 11(4)(b)** directs the
+reasonableness enquiry to *"how far it was open to him to cover himself by insurance"*. 11.3 and
+11.4 have been carried as two independent owner `[TK]`s through four revisions. They are one
+question, and the order matters: **the cover has to be known before the cap can be chosen.**
+Choosing the cap first is choosing the harder half in the dark. This is the single most useful
+thing the reading produced.
+
+**(iii) Three clauses are exclusions and were not recognised as ones.** **s. 13(1)** provides that
+where Part I prevents excluding a liability it also prevents *"making the liability or its
+enforcement subject to restrictive or onerous conditions"* and *"excluding or restricting any
+right or remedy"*. So **7.4** (deemed acceptance after 10 working days, which extinguishes 7.3's
+remedy), **11.5** (the 12-month notification bar) and **12.3** (exclusion of implied warranties)
+are all subject to the s. 3 reasonableness test. Each previously sat under a `NO LEDGER ENTRY`
+flag calling it *"a commercial term"*.
+
+**(iv) s. 13(1)'s duty-defining tail names ss. 2, 6 and 7 — and not s. 3.** That is the route to
+**Schedule A3**, the design-check allocation, and it means citing s. 3 for it would be wrong. A3
+is the highest-consequence clause in the agreement and whether it *defines* the duty or *excludes*
+one is decided on authority; it now carries a `[DECISION REQUIRED]` saying so.
+
+**(v) Schedule 1 para. 1(c) reaches clause 8, and must not be over-read.** ss. 2 and 3 do not
+extend to a contract *"so far as it relates to"* the creation or transfer of a right or interest
+in intellectual property — and clause 8 is an IP assignment. **The carve-out is "so far as it
+relates to", not "if it contains"**: so far as 11.2 and 11.3 operate on liability for negligent
+*performance of the services*, para. 1(c) does not touch them. The tempting reading — *the MSA
+transfers IP, therefore UCTA is out* — would remove the reasonableness discipline from the whole
+liability clause. **Nothing is drafted on the footing that Schedule 1 saves it**, which is the
+safe direction: a limit drafted to survive the test is unharmed by discovering it never had to.
+
+### And one finding that runs against the instinct
+
+**s. 26 does not help.** An overseas business client does **not** put the contract outside UCTA:
+every limb of s. 26(3)(a) is about **goods**, and Gridsmith supplies services. The escape that does
+exist is **s. 27(1)** — where English law applies *only by the parties' choice* — which is a
+consequence of `MSA-BUSINESS.md` 14.7 rather than something 14.7 achieved, and is not something to
+draft towards. `L-UCTA-26-27` exists to **close a line of reasoning, not to open one**.
+
+### What changed in the drafts
+
+**No limit, cap, exclusion or figure was changed.** `MSA-BUSINESS.md` → **1.4**, with new 11.6,
+11.7, 11.8, revised 7.4 and 12.3, and a `[DECISION REQUIRED]` at Schedule A3.
+`WEBSITE-TERMS.md` → **1.3**, with the UCTA paragraphs at clause 11 and a `[DECISION REQUIRED]`
+on exclusion-versus-cap: **s. 11(5) puts the burden on us, and a total exclusion is the hardest
+form to defend** — an unreasonable one is ineffective in its entirety, so the version hardest to
+justify is also the one that leaves nothing behind when it fails.
+
+## 5. F-9 and F-12, swept as classes
+
+**F-9** — `WEBSITE-TERMS.md`'s header said 1.1 while its own round-8 note said 1.2. Corrected to
+1.3 in this round. **Why it survived a full verification pass is the point**: nothing in the build
+read a draft's version header. Branch A2 now does, for every draft.
+
+**F-12(a)** — four drafts cited `L-CA-82` alone for the trading disclosure. The ledger heading is
+compound, `L-CA-82 / L-TDR-24`, and **`CNV-7` records that s. 82's text was never fetched**: the
+obligation read is SI 2015/17 reg. 24. Citing the unread half is the defect round 9 fixed at MSA
+16.1. **The report named three files; there are four** — `WEBSITE-TERMS.md` carries it twice.
+Swept as a class, not at the instances named.
+
+**F-12(b)** — `L-07` is a `00-FOUNDATION.md` build-requirement id, not a ledger entry, cited in the
+`L-` namespace where everything else is a citation. Annotated where a reader first meets it in each
+draft rather than renamed, since the id is used across `_shared/` too.
+
+## 6. What this round did NOT do
+
+- **The three `[TK]` figures the drafts turn on are untouched** — the liability cap (11.3), the PI
+  limit (11.4) and the consumer late-payment rate (7.4) are owner figures and remain `[TK]`.
+- **No `[DECISION REQUIRED]` was closed. Three were added**, all UCTA: exclusion-versus-cap at
+  `WEBSITE-TERMS.md` 11, the reasonableness of the cap per division at `MSA-BUSINESS.md` 11.8, and
+  whether Schedule A3 defines or excludes a duty.
+- **`CNV-8` is the honest limit of the whole UCTA pass.** The statute is enough to state the test,
+  the burden and which provision reaches which clause. It is **not** enough to say whether any
+  particular cap is reasonable, which is decided almost entirely on authority. Nobody here is
+  qualified to read those cases and none was read.
+- **F-8 is untouched** — the fabricated VAT number in the footer is an owner decision and a
+  `companyDetails` value, not a legal-draft one.
+- **F-10 and F-11 are recorded and not fixed.** §5.0's digital-content bullet points the reader to
+  §6A for a *period* that §6A does not state, and §5's headline refund sentence is more generous
+  than §5.3 which it defers to. Both are drafting decisions for the solicitor, and F-11 in
+  particular is an over-promise **inside the draft** — the gate cannot see it, because the gate
+  asserts that the page matches the draft and it does.
+- The six uncovered legal routes are still outside `check-axe`. Adding them is `OQ-18` and it is
+  still a small change nobody has made.
+- Every `[SEED - SOLICITOR REVIEW REQUIRED]` banner is intact — **7 / 7**, asserted on every served
+  page by branch D.
+- The `production` dataset was not touched.
+- **Nothing was committed.** `docs/_shared/FIX-LEDGER.md` therefore has **no row for this round**:
+  a `FIXED` row requires a commit that exists and is an ancestor of `HEAD`, and filing one against
+  work that is not committed is precisely the claim-outruns-the-repo failure that ledger exists to
+  catch. The rows go in with the commit.
+
+---
+
+*End of round 12.*
+

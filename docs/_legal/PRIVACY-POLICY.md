@@ -8,7 +8,7 @@
 registered office `[TK]`.
 **ICO registration:** `[TK]`
 **Contact:** `[TK email]`
-**Version:** 1.3 · **Effective from:** `[TK]` · **Status: DRAFT — not for publication until reviewed**
+**Version:** 1.4 · **Effective from:** `[TK]` · **Status: DRAFT — not for publication until reviewed**
 
 Drafted against UK GDPR and the Data Protection Act 2018 **as amended by the Data (Use and Access) Act
 2025** — main provisions in force **5 February 2026**, the direct-complaints duty in force **19 June
@@ -18,6 +18,30 @@ Drafted against UK GDPR and the Data Protection Act 2018 **as amended by the Dat
 **Revised 25 August 2026 against `02-CITATION-LEDGER.md`.** Several statements in version 1.0 described
 controls the build does not have. Those have been corrected rather than softened; where the honest
 answer is "not implemented", this draft says so.
+
+**Revision 1.4, 29 August 2026 — round 12.** One correction, and it is the third instance of a
+class round 10 swept twice and stopped short of. **§11 still described the consent mechanism round 10
+deleted**: it told the reader the cookie "records the choice you made", that nothing non-essential is
+placed "until you have made a choice", and that the choice can be changed "at any time from the
+**Cookie preferences** link in the footer". All three are false and have been since 26 August 2026 —
+there are no categories, there is no choice, and the footer control was **relabelled to "Cookie
+notice"** in the same commit (`components/consent/ConsentReopen.tsx`, whose docstring records the
+relabelling). §11 is now what §11A, §6A and `COOKIE-POLICY.md` §1–§2 and §6 already said.
+
+**Why it survived.** Round 10's own standing instruction was that *"this section and `COOKIE-POLICY.md`
+§4 say the same thing and change together or not at all"* — and it named **two** sections, §6A and
+§11A. §11 is a **third** place this document describes the same mechanism, in two sentences, under a
+heading that reads like a cross-reference rather than a statement. The rule was right and its scope was
+short by one: `CLAUDE.md`'s *fix the class, not the instance* applies to a **fact repeated across a
+document** as much as to a defect in code, and the sweep is to grep the claim rather than to fix the
+sections you remembered writing. It was found by transcribing the document into
+`scripts/seed-legal.mjs` word for word — reading it as a whole rather than at the sections a report
+named — which is the same method round 9 used on CCR regs. 27–38.
+
+**Also at 1.4:** the trading-disclosure citation at §1 now names both halves of the compound ledger
+entry, `L-CA-82 / L-TDR-24`. It cited `L-CA-82` alone, and `CNV-7` records that s. 82's text was never
+fetched: the obligation read and verified is SI 2015/17 reg. 24. `07-STATE-REPORT.md` F-12(a), swept
+across all four drafts that carried it — the report named three.
 
 **Revision 1.2, 26 August 2026 — round 7.** Three changes, each answering a Pass 4 finding after
 re-checking it at the primary source or in the code: **§2A is new** and discharges Art. 13(2)(e), the
@@ -31,7 +55,7 @@ PECR reg. 23 had not been read is closed — it has been.
 
 ## 1. Who we are
 <!-- L-GDPR-13 -->
-<!-- L-CA-82 -->
+<!-- L-CA-82 / L-TDR-24 — the ledger entry is compound and this clause cites both halves as of 29 August 2026, round 12. It read `L-CA-82` alone. **CNV-7 records that Companies Act 2006 s. 82's text was never fetched**: the obligation actually read and verified is SI 2015/17 reg. 24, and s. 82 is only the empowering power. Citing the unread half is the same defect round 9 fixed at MSA-BUSINESS.md 16.1 — a clause citing an id that does not discharge it. 07-STATE-REPORT.md F-12(a) named three files; there are four. -->
 <!-- L-TDR-25 -->
 
 Gridsmith Ltd is the data controller for personal data collected through gridsmith.uk. We operate three
@@ -463,10 +487,22 @@ override your rights.
 ## 11. Cookies
 <!-- L-PECR-6 -->
 
+**REVISED at revision 1.4 — it described a mechanism that was removed on 26 August 2026.**
+
 See our Cookie Policy. In short: **exactly one cookie exists on this site**, `gs_consent`, which
-records the choice you made so we do not ask again. Nothing non-essential is placed until you have made
-a choice, and you can change that choice at any time from the **Cookie preferences** link in the
-footer.
+records that you have seen the cookie notice so we do not show it again. **Nothing non-essential is
+placed at any point, and there is no choice to make.** The **Cookie notice** link in the footer of any
+page brings the notice back if you want to read it again; it stores nothing and switches nothing on or
+off.
+<!-- L-PECR-6 — REVISED 29 August 2026, round 12. The previous text said the cookie "records the choice
+you made", that nothing non-essential is placed "until you have made a choice", and that the choice may
+be changed "at any time from the **Cookie preferences** link in the footer". All three describe the
+pre-round-10 site. There are no consent categories (§11A), the cookie holds the single character `1`
+(COOKIE-POLICY.md §2), and the footer control is labelled **"Cookie notice"** —
+components/consent/ConsentReopen.tsx:9 records the relabelling and the reason: "there are no
+preferences to offer".
+This is the third place in this document describing the same mechanism. Round 10 named two of them in
+its standing instruction and swept those two. See the revision note at the head of this file. -->
 
 ## 11A. Our record of your consent
 <!-- L-PECR-CONSENT-EVIDENCE -->
@@ -487,7 +523,9 @@ nothing reads them and they are not overwritten (`COOKIE-POLICY.md` §2).
 
 > **[DECISION REQUIRED] — consent evidence.** Art. 7(1) requires a controller relying on consent to be
 > **able to demonstrate** that consent was given. Options:
-> **(a)** build the server-side consent record (`L-07`, `consent_events`) before any analytics library
+> **(a)** build the server-side consent record (`L-07` — a `docs/_shared/00-FOUNDATION.md`
+> build-requirement id, **not** a citation-ledger entry, despite the `L-` prefix it shares
+> with them; `07-STATE-REPORT.md` F-12(b)) (`consent_events`) before any analytics library
 > is initialised;
 > **(b)** rely on the **PECR Sch. A1 para. 5 statistical-purposes exception** instead of consent for
 > analytics, which removes the demonstrability problem for that purpose entirely — see
@@ -576,6 +614,17 @@ follows from declining to give it (§2A)**.
 **`[DECISION REQUIRED]` items:** Slack (§6) · the enquiry retention period (§7) · consent evidence
 versus the statistical-purposes exception (§11A — **still open**; revision 1.3 removed the processing
 rather than answering it) · the complaint acknowledgement window (§12).
+
+**Revision 1.4, 29 August 2026 — round 12.** §11 corrected (it described the removed consent
+mechanism); §1's trading-disclosure citation completed to `L-CA-82 / L-TDR-24`; §11A's `L-07` reference
+annotated as a build-requirement id rather than a ledger entry (F-12(b)). **No `[TK]` was closed and no
+`[DECISION REQUIRED]` was answered.** What did change outside this file is that the **published**
+policy is now this document: `scripts/seed-legal.mjs` is a transcription of it, and
+`scripts/check-legal-parity.mjs` asserts on every CI run that the served page carries no sentence this
+draft does not contain. F-2 to F-6 — a retention promise nothing enforces, a processor region the draft
+marks `[TK]`, Slack missing from the recipient list, DPA 2018 s. 165 for s. 164A, and a claim that the
+form records referrer and campaign data — were **all live on the site** when this document already said
+otherwise. They are closed, and the class now has a gate.
 
 **Revision 1.3, 26 August 2026 — round 10.** §6A rewritten: the analytics libraries and all three
 consent categories are removed from the site, so there is no analytics and no analytics consent. §2's
