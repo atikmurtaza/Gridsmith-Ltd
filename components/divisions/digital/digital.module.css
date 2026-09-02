@@ -51,3 +51,11 @@
   max-inline-size: var(--measure-narrow);
   color: var(--ink-muted);
 }
+
+/* U-08 service page CTA pair. Wraps rather than shrinking: two Buttons at 375px do not
+   fit side by side and a shrunk target fails WCAG 2.5.8. */
+.serviceCtas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}

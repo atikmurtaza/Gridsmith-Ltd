@@ -41,6 +41,45 @@ export type ServiceCard = {
   order: number | null;
 };
 
+/**
+ * One service page's full record (`U-08`).
+ *
+ * `pricingModel` is **not** nullable here although `ServiceCard`'s is. The schema makes it
+ * `required`, so a saved service always has one — but a projection can only promise what the
+ * type says, and the card type predates this and is used where a partial record is fine. The
+ * page treats an absent price as a build-visible fault rather than an empty section, because
+ * CLAUDE.md non-negotiable #3 is "never publish a service page without pricing" and rendering
+ * the page without one would be publishing it.
+ *
+ * `faqs` and `relatedProjects` are in the schema and **not in this projection**. Nothing
+ * populates either today — not the seed, not the CMS — so selecting them would add two empty
+ * arrays, two nullable branches in the template and two states no reader can reach. They go in
+ * when there is content for them.
+ */
+export type ServiceDetail = {
+  title: string;
+  slug: string;
+  division: Division;
+  track: string | null;
+  searchIntent: string | null;
+  problem: string | null;
+  deliverables: { label: string; detail: string | null; included: boolean }[] | null;
+  process: {
+    number: number;
+    title: string;
+    description: string | null;
+    divisionDetail: string | null;
+    duration: string | null;
+    clientTime: string | null;
+  }[] | null;
+  pricingModel: PricingModel;
+  ctaPrimary: { label: string; href: string } | null;
+  ctaSecondary: { label: string; href: string } | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  isSeed: boolean;
+};
+
 export type ProjectCard = {
   title: string;
   slug: string;
@@ -215,6 +254,43 @@ export const listServices = (division: Division) =>
      | order(order asc){
        "title": title, "slug": slug.current, division, track, problem, ${PRICING}, order
      }`,
+    { division },
+  );
+
+/**
+ * One service, by division AND slug (`U-08`).
+ *
+ * **The division is part of the lookup, not a filter applied afterwards.** Slugs are unique
+ * per service document but nothing in the schema stops two divisions carrying the same one —
+ * `copywriting` is plausible for both Digital and Press — and `/digital/services/copywriting`
+ * must never resolve to a Press service because it happened to sort first. A route that can
+ * serve another division's content under this division's URL is the kind of defect that reads
+ * as correct in every test written against a dataset that has no collision yet.
+ *
+ * `published == true` matches `listServices`. An unpublished service is not 404-by-accident:
+ * it is a document whose author has not said it may be public, and the group landing does not
+ * list it either, so the two agree.
+ */
+export const getService = (division: Division, slug: string) =>
+  q<ServiceDetail | null>(
+    `*[_type == "service" && division == $division && slug.current == $slug
+       && published == true && !(_id in path("drafts.**"))][0]{
+      "title": title, "slug": slug.current, division, track, searchIntent, problem,
+      deliverables[]{label, detail, "included": coalesce(included, true)},
+      process[]{number, title, description, divisionDetail, duration, clientTime},
+      ${PRICING},
+      ctaPrimary{label, href}, ctaSecondary{label, href},
+      "metaTitle": seo.metaTitle, "metaDescription": seo.metaDescription,
+      "isSeed": coalesce(isSeed, false)
+    }`,
+    { division, slug },
+  );
+
+/** Slugs for `generateStaticParams`, scoped to one division for the same reason. */
+export const listServiceSlugs = (division: Division) =>
+  q<string[]>(
+    `*[_type == "service" && division == $division && published == true
+       && !(_id in path("drafts.**"))].slug.current`,
     { division },
   );
 

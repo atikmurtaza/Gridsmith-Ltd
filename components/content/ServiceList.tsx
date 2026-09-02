@@ -15,18 +15,26 @@ import styles from './content.module.css';
  * The list renders the same fact at the summary level so that a visitor never has to open a page
  * to find out whether a number exists.
  *
- * There is no link to a per-service page: those routes belong to each division's own shell epic
- * (`B-*`, `U-*`, `P-*`), and `check-axe` resolves every same-origin link on every audited route,
- * so linking one before it exists fails the build rather than shipping a 404. The card is the
- * service until then, which is why it carries the problem statement and the price rather than a
- * teaser.
+ * ## `basePath` is opt-in per division, and that is the whole of the linking policy
+ *
+ * Per-service routes belong to each division's own shell epic (`B-*`, `U-*`, `P-*`), and only
+ * Digital has one — `/digital/services/[slug]`, `U-08`. This component is shared by all three
+ * landings, so a link hardcoded here would 404 on `/design` and `/press`; `check-axe` resolves
+ * every same-origin link on every audited route, so it would fail the build rather than ship
+ * quietly, which is the good outcome but still the wrong design. **The caller supplies the base
+ * path or supplies nothing**, and a division with no service routes passes nothing and gets the
+ * card it had before: the card is the service until then, which is why it carries the problem
+ * statement and the price rather than a teaser.
  */
 export function ServiceList({
   services,
   headingLevel = 3,
+  basePath,
 }: {
   services: ServiceCard[];
   headingLevel?: 2 | 3 | 4;
+  /** e.g. `/digital/services`. Omit where the division has no per-service routes. */
+  basePath?: string;
 }) {
   if (services.length === 0) {
     return (
@@ -41,7 +49,13 @@ export function ServiceList({
       {services.map((service) => (
         <Card as="li" key={service.slug} className={styles.serviceCard}>
           <Heading level={headingLevel} size="d4">
-            {service.title}
+            {basePath ? (
+              <a href={`${basePath}/${service.slug}`} className={styles.cardLink}>
+                {service.title}
+              </a>
+            ) : (
+              service.title
+            )}
           </Heading>
           {service.problem ? <p className={styles.serviceProblem}>{service.problem}</p> : null}
           <Price pricing={service.pricingModel} />

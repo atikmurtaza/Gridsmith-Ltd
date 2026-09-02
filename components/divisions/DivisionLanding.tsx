@@ -139,7 +139,13 @@ export async function DivisionLanding({
             </Heading>
             <p className={styles.lede}>{copy.servicesLede}</p>
           </div>
-          <ServiceList services={services} />
+          {/* Only Digital has per-service routes today (`U-08`). The other two landings pass
+              nothing and render unlinked cards — see `ServiceList`'s own note on why the
+              decision is the caller's. */}
+          <ServiceList
+            services={services}
+            basePath={division === 'digital' ? '/digital/services' : undefined}
+          />
         </Container>
       </Section>
 

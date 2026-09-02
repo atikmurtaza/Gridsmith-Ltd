@@ -34,6 +34,11 @@ const ROUTES = [
   // the insights hub, a legal document and the one route with a form. The per-slug routes are
   // represented by one instance each - 24 case studies share one template, and auditing all of
   // them would multiply the run without adding a subject.
+  // `U-08`'s subject. One instance of the template, chosen the same way the case study was:
+  // ten Digital services share it. `website-design-build` is the one with the fullest record —
+  // four deliverables and three pricing variables — so it exercises every block the template
+  // has rather than the smallest.
+  { path: '/digital/services/website-design-build', status: 200 },
   { path: '/work', status: 200 },
   { path: '/work/brand-website-and-launch-book', status: 200 },
   { path: '/about', status: 200 },

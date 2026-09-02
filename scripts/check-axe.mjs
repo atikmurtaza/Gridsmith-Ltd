@@ -54,6 +54,11 @@ const ROUTES = [
   // the insights hub, a legal document and the one route with a form. The per-slug routes are
   // represented by one instance each - 24 case studies share one template, and auditing all of
   // them would multiply the run without adding a subject.
+  // `U-08`'s subject. One instance of the template, chosen the same way the case study was:
+  // ten Digital services share it. `website-design-build` is the one with the fullest record —
+  // four deliverables and three pricing variables — so it exercises every block the template
+  // has rather than the smallest.
+  { path: '/digital/services/website-design-build', status: 200 },
   { path: '/work', status: 200 },
   { path: '/work/brand-website-and-launch-book', status: 200 },
   { path: '/about', status: 200 },
@@ -170,13 +175,20 @@ const INCOMPLETE_ALLOWED = [
       '/', '/design', '/digital', '/press', '/_kitchen-sink', '/_master-sink', '/_gridsmith-404-probe',
       '/work', '/work/brand-website-and-launch-book', '/about', '/approach', '/insights',
       '/legal/privacy', '/contact',
+      '/digital/services/website-design-build',
     ],
     target: '#gs-consent-heading',
     why:
       'The consent banner is position:fixed at the bottom edge, so at 375px its text rect ' +
       'intersects page content behind it and axe returns "background could not be determined ' +
-      'because it partially overlaps other elements". It resolves cleanly at 1280px, which is ' +
-      'the tell: this is axe declining on a fixed overlay, not a contrast problem. Three fixes ' +
+      'because it partially overlaps other elements". Which viewport it declines at follows ' +
+      'the page, not the rule — CORRECTED at U-08, where this sentence used to read "it ' +
+      'resolves cleanly at 1280px". On the service page it is the other way round: 375px ' +
+      'initial resolves and both 1280px states do not, because the page is short enough that ' +
+      'the fixed bar sits over main content at the wider width too. The tell is not which ' +
+      'viewport fires; it is that the answer moves with page LENGTH while the colour pair ' +
+      'never changes. This is axe declining on a fixed overlay, not a contrast problem. ' +
+      'Three fixes ' +
       'were tried and none changed it — an opaque background on .bar, on .inner, and on the ' +
       'text element itself; all three compute opaque in the browser (the canvas-raised triplet) and ' +
       'elementFromPoint at all four corners and the centre returns the text element, so ' +
