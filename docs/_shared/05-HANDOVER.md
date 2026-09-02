@@ -9,6 +9,33 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
+## ⇢ 2 September 2026 — the legal set was replaced wholesale, and VAT left the system
+
+**Read this before touching `docs/_legal/` or anything that renders a price.**
+
+**The drafts are a new set at version 2.0.** The owner adopted a revised set on 2 September
+2026; it replaces all six instruments and their nine rounds of internal apparatus. `[TK]` and
+`[DECISION REQUIRED]` markers are gone from operative prose because the new drafts do not carry
+any. `scripts/seed-legal.mjs` was re-transcribed against them and `check:legal:parity` is green
+on the served pages: 6 documents, 94 clauses, 339 paragraphs word-for-word, 94 clause tokens all
+reachable. `solicitorApproved` is still `false` on all seven — a revised set is not a reviewed
+one, and `L-04` is unchanged.
+
+**Gridsmith Ltd is not VAT registered, and the system no longer has a place to say otherwise.**
+`vatNumber` is removed from the Sanity schema, the GROQ projection, the footer, `/about`, the
+seed and `check:launch`'s live-required tier. `M-P2-3` is **closed, not deferred**: there is no
+net/gross field and no tax label, because a non-registered trader's price is the amount charged.
+**No price anywhere in the UI may be presented as VAT-exclusive** — `scripts/check-vat-display.mjs`
+is the gate, in `verify:served`, and it proves its own predicate against 13 specimens before it
+fetches anything.
+
+**The registered office appears once per instrument and once site-wide.** SI 2015/17 reg. 25(2)
+is a *website* obligation, satisfied by the statutory block in `components/chrome/Footer.tsx` and
+repeated on `/about`. Each instrument carries the address in its party block only — consumer
+terms 18, privacy 15, MSA 19 — and every other mention is "Bolton, United Kingdom".
+
+---
+
 ## ⇢ START HERE — Epic N is built out. The site is complete as a shell. Read this box, then `_shared/BEFORE-LAUNCH.md`.
 
 **Revised 21 August 2026.** The box below it is the Epic M close and is kept because its

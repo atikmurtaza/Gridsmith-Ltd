@@ -180,7 +180,7 @@ if (unwired.length > 0) {
   for (const [where, , why] of unwired) console.error(`  ${where} ${why}`);
   console.error(
     '\nCI running check:launch is not a substitute. Vercel does not run CI, and the only other' +
-      '\nthing standing between a seeded production dataset and a published [SEED] VAT number is' +
+      '\nthing standing between a seeded production dataset and a published [SEED] statutory footer is' +
       '\nan accident: getCompanyDetails() throws on an EMPTY dataset, and a seeded one is not' +
       '\nempty. VALIDATION §14.\n',
   );

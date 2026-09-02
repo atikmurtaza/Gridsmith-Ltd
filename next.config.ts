@@ -93,7 +93,7 @@ const nextConfig: NextConfig = {
    * machines and, by design, different values: the Production target builds against
    * `production` and everything else against `development`. Run from a `development` runner
    * against a production deployment, the gate announced *"the live-only assertions do not
-   * apply"* and exited 0 — **the one gate whose purpose is stopping a `[SEED]` VAT number
+   * apply"* and exited 0 — **the one gate whose purpose is stopping a `[SEED]` statutory footer
    * reaching a public page, unable to fire in the only situation it exists for.**
    *
    * A header rather than a probe route, for three reasons. Probe routes are excluded from

@@ -8,13 +8,13 @@ import { defineField, defineType } from 'sanity';
  * says the same about `responseCommitment` specifically, and the reason generalises — a
  * value that exists in two places drifts in one of them.
  *
- * **`vatNumber` is a required field with a known-empty value, not an absent one.** Gridsmith
- * will be VAT registered before launch, so the registered case is what is built: the footer
- * renders the line whenever the field is non-empty and omits it when empty, and supplying
- * the number is a content edit — no schema change, no code change, no deploy. It carries no
- * Sanity `required` rule because that would block every save until registration completes;
- * the constraint that matters is enforced at the launch boundary instead, by
- * `check:launch-content`, which fails if the dataset is `production` and this is empty.
+ * **There is no `vatNumber` field, and its absence is the decision.** Gridsmith is not VAT
+ * registered, so e-commerce regs reg. 6(1)(g) — which binds only *"where the provider
+ * undertakes an activity subject to VAT"* — is not engaged, and publishing a number would be
+ * a false disclosure. The field is removed rather than left empty so that no rendering path
+ * can put one back without a schema change. Prices are the amount charged, stated plainly;
+ * they carry no VAT-inclusive or VAT-exclusive label. If registration ever completes, this
+ * field, the footer line, the `/about` row and the price labelling return together.
  */
 export const companyDetails = defineType({
   name: 'companyDetails',
@@ -30,12 +30,6 @@ export const companyDetails = defineType({
       type: 'text',
       rows: 4,
       description: 'Leave empty when it is the same as the registered office.',
-    }),
-    defineField({
-      name: 'vatNumber',
-      type: 'string',
-      description:
-        'Empty until registration completes. The footer omits the line while it is empty, and the launch gate refuses a production dataset without it.',
     }),
     defineField({ name: 'tradingNames', type: 'array', of: [{ type: 'string' }] }),
     defineField({ name: 'contactEmail', type: 'string' }),

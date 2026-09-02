@@ -14,8 +14,8 @@ const DIVISIONS: { href: string; label: string; division: Division }[] = [
  * once per build. Nothing here is hardcoded: every company fact comes from the singleton.
  *
  * **The row summarised the legal requirement as "registered name, registered number,
- * registered office". That is incomplete, and the VAT line's basis is a different
- * instrument entirely.** Checked against the legislation rather than the summary:
+ * registered office". That is incomplete.** Checked against the legislation rather than the
+ * summary:
  *
  * | Particular | Source |
  * |---|---|
@@ -23,12 +23,21 @@ const DIVISIONS: { href: string; label: string; division: Division }[] = [
  * | **The part of the UK in which the company is registered** | reg. 25(2)(a) — *missing from the row's summary* |
  * | Registered number | reg. 25(2)(b) |
  * | Registered office address | reg. 25(2)(c) |
- * | VAT identification number | **Electronic Commerce (EC Directive) Regulations 2002 reg. 6(1)(g)** — not the Companies Act, and it binds only while the activity is VAT-subject |
  * | Name, geographic address, and a rapid contact route incl. email | e-commerce regs reg. 6(1)(a)–(c) |
  *
  * That last row is why `contactEmail` renders here and why `check:launch` requires it on a
- * production dataset alongside the VAT number: reg. 6(1)(c) is a launch obligation of the
- * same shape, and it was not in the tracker row at all.
+ * production dataset: reg. 6(1)(c) is a launch obligation of the same shape, and it was not
+ * in the tracker row at all.
+ *
+ * **No VAT line.** e-commerce regs reg. 6(1)(g) requires a VAT identification number only
+ * *"where the provider undertakes an activity subject to VAT"*. Gridsmith is not registered,
+ * so there is no number, no field on the singleton, and nothing here to render.
+ *
+ * **This block is the reg. 25(2) disclosure and it lives here on purpose.** The regulation
+ * requires the registered name, the part of the UK of registration, the company number and
+ * the registered office on the *website*, not only inside a transaction flow. Everywhere
+ * else on the site the company's location is written "Bolton, United Kingdom"; the full
+ * address appears here and on `/about`, and nowhere else.
  *
  * Every conditional line follows one rule — **render when the field is non-empty, omit when
  * empty**. Supplying a value is a content edit: no schema change, no code change, no deploy.
@@ -70,7 +79,6 @@ export async function Footer() {
             {c.legalName} · registered in {c.placeOfRegistration} · company number{' '}
             {c.companyNumber} · registered office {c.registeredOffice}
             {c.tradingAddress?.trim() ? ` · trading address ${c.tradingAddress}` : ''}
-            {c.vatNumber?.trim() ? ` · VAT number ${c.vatNumber}` : ''}
           </p>
           {/* FOUNDATION requires a persistent way back into the choice. It is its own
               tiny Client Component so the footer stays a Server Component. */}
