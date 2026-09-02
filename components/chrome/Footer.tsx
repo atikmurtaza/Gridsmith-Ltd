@@ -47,10 +47,15 @@ const DIVISIONS: { href: string; label: string; division: Division }[] = [
  * in a shared layout would put `next/link`'s client runtime in every route's chunk.
  *
  * The division switcher lives here and only here (`TECH-SPEC.md` §3) — a header-level
- * switcher pulls buyers sideways mid-funnel. `APP-FLOW.md` §8 also lists Company and Legal
- * link groups; those routes are Epic N and Epic L and do not exist, so they are not linked.
- * `check-axe` resolves every link on every audited route and would fail the build if they
- * were.
+ * switcher pulls buyers sideways mid-funnel.
+ *
+ * **`APP-FLOW.md` §8 also lists Company and Legal link groups, and this comment used to say
+ * those routes did not exist. They do now.** `/about`, `/approach`, `/contact`, `/work`,
+ * `/insights` and `/legal/[slug]` all shipped in Epics N and L. The groups are unbuilt rather
+ * than unbuildable, and today the only link to a legal document anywhere in the chrome is on
+ * the Press landing page. Filed as `master/PROJECT-TRACKER.md` `M-P2-22`, which also records
+ * why it may not be P2 at all. `check-axe` resolves every link on every audited route, so the
+ * groups still cannot get ahead of their routes.
  */
 export async function Footer() {
   const c = await getCompanyDetails();
