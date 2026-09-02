@@ -34,7 +34,7 @@ Claude Code reads `CLAUDE.md` automatically at the start of every session. Every
 ### `_legal/` — solicitor-ready drafts
 Website terms · privacy policy · cookie policy · accessibility statement · master services agreement with three division schedules · consumer terms.
 
-**Drafts, not advice.** `legalDocument.solicitorApproved` gates production publication. Do not extend or amend clauses in code.
+**Drafts, not advice.** `legalDocument.solicitorApproved` **describes** review state; it gates nothing — no query filter, no route, no build, no indexing. External review is booked separately and the programme does not wait on it. Do not extend or amend clauses in code.
 
 ### Four workstreams
 `master/` · `design/` · `digital/` · `press/` — eight files each:

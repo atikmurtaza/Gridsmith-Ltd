@@ -46,9 +46,11 @@
  *
  * ## `solicitorApproved` is still false on all seven
  *
- * A revised draft set is not a reviewed one. `master/SCHEMA.md` makes `solicitorApproved` what
- * gates publication, `L-04` is the hard gate, and `check-legal-parity.mjs` branch D fails if a
- * served page ever stops carrying the unapproved-draft banner.
+ * A revised draft set is not a reviewed one, so the flag stays false as a **description of
+ * state**. As of 2 September 2026 it gates nothing: no query filter, no route, no build, no
+ * indexing — external review is booked separately and the programme does not wait on it.
+ * `check-legal-parity.mjs` branch D fails if a served page ever stops carrying the
+ * unapproved-draft banner, which asserts that the state is shown rather than hiding anything.
  */
 
 const S = '[SEED - SOLICITOR REVIEW REQUIRED]';
