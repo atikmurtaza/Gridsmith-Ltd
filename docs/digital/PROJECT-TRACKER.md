@@ -16,7 +16,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | U-03 | **Data row component** | P0 | 1d | U-01 | TODO | Dev | Dominant primitive |
 | U-04 | Header, footer, mobile nav | P0 | 1d | A-05 | TODO | Dev | |
 | U-05 | Split sticky mobile CTA | P0 | 0.5d | U-04 | TODO | Dev | Estimate 60 / Talk 40 |
-| U-06 | `/digital/` hub, 11 blocks | P0 | 2d | U-04 | TODO | Dev | Lighthouse 100/100/100 |
+| U-06 | `/digital/` hub, 11 blocks | P0 | 2d | U-04 | TODO | Dev | Lighthouse 100/100/100. **`app/(digital)/digital/page.tsx` already exists and is NOT this row.** It is the Epic N/L/S shell landing page: 46 lines of copy handed to the shared `components/divisions/DivisionLanding.tsx`, which the other two divisions render too. Measured against `APP-FLOW.md` §3's eleven blocks — **5 present** (1 hero, 2 four service groups, 5 selected work, 6 process, 11 CTA band; it also renders a testimonials section the eleven do not list) and **6 absent**: 3 ownership guarantee (`T-03`), 4 live vitals badge (`T-07`/`T-08`), 7 what we don't do (`T-05`), 8 diagnostic offer (`T-09`), 9 Care Plan teaser (Epic W), 10 FAQ. **Every absent block is a Digital-specific differentiator that depends on another row**, which is why the shared shell has none of them, and the file's own docstring says so: *"This is the landing page, not the full hub."* Estimate stands at 2d — the 5 present blocks are generic and most will be replaced rather than kept |
 | U-07 | 4 service group landings | P0 | 2d | U-06 | TODO | Dev | Visible price band each |
 | U-08 | Service page template | P0 | 2d | A-06 | TODO | Dev | Pricing + client time commitment |
 | U-09 | Case study template, before/after | P0 | 1.5d | A-06 | TODO | Dev | Stack rendered |
