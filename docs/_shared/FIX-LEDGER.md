@@ -103,6 +103,7 @@ of a claim, never as confirmation that the substance is where it says.
 | `M-P1-1` | ACCEPTED | — | — |
 | `M-P1-12` | FIXED | scripts/with-server.mjs | a0e7db2a |
 | `M-P1-14` | OPEN | — | — |
+| `M-P2-22` | FIXED | components/chrome/Footer.tsx · components/chrome/chrome.module.css · lib/legal/slugs.ts · scripts/check-axe.mjs | 7c069b0d |
 | `F-1` | FIXED | scripts/seed-legal.mjs · docs/_legal/CONSUMER-TERMS.md | 9da8f5c1 |
 | `F-2` | FIXED | scripts/seed-legal.mjs · docs/_legal/PRIVACY-POLICY.md | 9da8f5c1 |
 | `F-3` | FIXED | scripts/seed-legal.mjs | 9da8f5c1 |
@@ -216,3 +217,18 @@ equal to them. `F-14` is the VAT display rule, which existed only as a docstring
 `check-vat-display.mjs` gave it a served subject. `F-15` is `solicitorApproved`'s one real gate:
 `robots: { index: false }` on every legal route until the flag flipped, which withheld the
 published instruments from search pending a review that was not booked.
+
+**`M-P2-22` is in this table although it is a tracker row rather than an audit finding**, and
+that is the point of it being here. It was filed P2, its own row said the label was probably
+wrong, and the reason it was wrong is the one this ledger exists to make legible: the defect was
+an **absence**. The footer's Company and Legal groups were never built, so no gate saw anything
+to reject — the resolve pass in `check-axe` asks whether every link that exists points somewhere
+real, and a missing link passes that question by not being asked. The only link to a legal
+document anywhere in the chrome was one on the Press landing page, for eleven rounds.
+
+Read the row the way the rest of the table is read: it says a claim is well-formed. What
+establishes the fix is the deliberate-failure proof, and each of the new assertion's three
+branches was broken separately — a dropped slug (13 of 14 routes, not 14, because
+`/legal/privacy` still links `/legal/cookies` from its own other-documents list), a footer
+suppressed for one division only (1 of 14, naming `/digital`), and the hollow-subject branch
+pointed at a route that does carry the footer. The count moved in both directions.

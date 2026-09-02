@@ -138,6 +138,21 @@ const ROUND_BOUNDARIES = [
   // every mention from whoever next edits a draft. The rows below are filed because there is
   // something to file, not because a regex compelled them.
   ['F-', 'docs/_legal/07-STATE-REPORT.md'],
+  // `M-P2-*` is the post-launch P2 list in `master/PROJECT-TRACKER.md`, and it is here for
+  // one row: `M-P2-22`, whose own row said the P2 label was probably wrong and was right.
+  // Voluntary, like `M-P1-` and `F-`, and `M-P2-\d+` is deliberately absent from ID_RE for
+  // the same reason — the identifiers are discussed in tracker prose and widening the covered
+  // space would demand a status from whoever next edits the tracker.
+  //
+  // **State the weakness rather than hide it: this boundary is nearly vacuous.** The
+  // register's adding commit is the tracker's own, which predates every P2 row in it, so
+  // "descends from the boundary" rejects almost nothing for this prefix — where `A-GATE-7-`
+  // rejects a fix predating a report written days earlier, this one rejects only a fix
+  // predating the repository's tracker. The other four checks (commit exists, is an ancestor,
+  // touches every file named, is not documents alone) carry the row. A boundary that rejects
+  // little is worth having anyway, because its absence is a hard failure and that is what
+  // brought this row to the gate's attention rather than past it.
+  ['M-P2-', 'docs/master/PROJECT-TRACKER.md'],
 ];
 
 /**
@@ -148,7 +163,7 @@ const ROUND_BOUNDARIES = [
  *
  * Raise it in the same commit that adds rows, with the finding in the message.
  */
-const EXPECTED_ROWS = 74;
+const EXPECTED_ROWS = 75;
 
 const problems = [];
 

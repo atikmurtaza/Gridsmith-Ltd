@@ -199,6 +199,12 @@ if (barsMeasured === 0) {
     `\ncheck-responsive: no fixed bottom bar was found on any route below ${FIXED_BAR_MAX_WIDTH + 1}px,` +
       '\nso the WCAG 2.2 SC 2.4.11 scroll-reserve assertion measured nothing and would have' +
       '\nreported success anyway.' +
+      // This message is the mitigation, not a note about one. The subject has a known
+      // REMOVAL DATE rather than an unknown emptiness, which makes it a scheduled expiry --
+      // distinct from every hollow subject this programme has caught, all of which were
+      // found after the fact by proof. A gate that knows when its subject goes away can say
+      // so where the next reader will be standing, and exit 1 rather than pass empty.
+      // Closes at U-05, when the 60/40 bar puts a StickyCta on a real route.
       '\n\nIts only subject today is the StickyCta on /_kitchen-sink, and A-12 removes that route' +
       '\nfrom the production build. If you are reading this at A-12: put a StickyCta on a real' +
       '\nroute, or delete this assertion deliberately. Do not let it pass empty.\n',
