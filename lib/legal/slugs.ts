@@ -64,3 +64,25 @@ export const CLIENT_TERMS_COUNTERPART: Partial<Record<LegalSlug, LegalSlug>> = {
   [CLIENT_TERMS_BUSINESS]: CLIENT_TERMS_CONSUMER,
   [CLIENT_TERMS_CONSUMER]: CLIENT_TERMS_BUSINESS,
 };
+
+/**
+ * The legal documents that appear in the footer's Legal group (`M-P2-22`).
+ *
+ * A hardcoded subset of `LEGAL_DOCUMENT_SLUGS`, in `APP-FLOW.md` §8's order, not a filter
+ * over it: the two client-terms instruments and the `client-terms` disambiguation page are
+ * audience-specific and belong where someone is entering a contract, not in the chrome of
+ * every page. Deriving this by exclusion would silently admit the next instrument added.
+ *
+ * The labels are here rather than read from the CMS because the footer must not depend on a
+ * fetch to satisfy e-commerce regs reg. 6 permanence, and because `doc.title` is long-form
+ * ("Privacy Notice") where a footer needs one word.
+ *
+ * The `slug` values are typed `LegalSlug`, so removing a document from
+ * `LEGAL_DOCUMENT_SLUGS` breaks this file at compile time rather than leaving a dead link.
+ */
+export const LEGAL_FOOTER_SLUGS: { slug: LegalSlug; label: string }[] = [
+  { slug: 'terms', label: 'Terms' },
+  { slug: 'privacy', label: 'Privacy' },
+  { slug: 'cookies', label: 'Cookies' },
+  { slug: 'accessibility', label: 'Accessibility' },
+];

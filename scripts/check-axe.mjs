@@ -679,6 +679,65 @@ check-axe: ${linkProblems.length} link(s) do not resolve:`);
 }
 
 /**
+ * **The footer's legal links are on every route, not just on one — `M-P2-22`.**
+ *
+ * The resolve pass above answers "does every link that exists point somewhere real". This
+ * answers the opposite question, and nothing asked it before: **does a link that must exist
+ * exist at all.** For eleven rounds it did not — the only link to a legal document anywhere
+ * in the site's chrome was one on the Press landing page, so the privacy notice and the
+ * cookie policy were reachable by URL and effectively by nothing else. No gate fired,
+ * because a missing link is not a broken one.
+ *
+ * E-commerce regs reg. 6 requires the particulars *easily, directly and permanently
+ * accessible*, and the ICO's expectation is a cookie policy reachable from the footer.
+ * "Permanently" is why this asserts **every** audited route rather than a sample: a footer
+ * group that renders on the master route group and not on a division's would satisfy any
+ * spot check and none of the regulation.
+ *
+ * **The expected paths are hardcoded, deliberately.** The question is whether the delivered
+ * footer *declares* these links, so the expectation must come from outside the subject —
+ * deriving it from `LEGAL_FOOTER_SLUGS` would mean deleting a slug deletes the expectation
+ * with it and this stays green having measured less (CLAUDE.md, `check:tokens`).
+ *
+ * `/gridsmith-error-probe` is excluded and that exclusion is asserted, not assumed: it
+ * throws after hydration, so `global-error` replaces the whole document, footer included.
+ * If it ever *does* carry the footer, the boundary stopped firing and the probe went hollow.
+ */
+const FOOTER_LEGAL_PATHS = [
+  '/legal/terms',
+  '/legal/privacy',
+  '/legal/cookies',
+  '/legal/accessibility',
+];
+const FOOTER_EXEMPT = '/gridsmith-error-probe';
+const footeredRoutes = ROUTES.map((r) => r.path).filter((p) => p !== FOOTER_EXEMPT);
+const footerProblems = [];
+for (const path of FOOTER_LEGAL_PATHS) {
+  const from = linkedFrom.get(path) ?? new Set();
+  const missing = footeredRoutes.filter((r) => !from.has(r));
+  if (missing.length > 0) {
+    footerProblems.push(
+      `${path} is not linked from ${missing.length} of ${footeredRoutes.length} route(s): ${missing.join(', ')}`,
+    );
+  }
+  if (from.has(FOOTER_EXEMPT)) {
+    footerProblems.push(
+      `${path} is linked from ${FOOTER_EXEMPT} — global-error did not replace the document, so that probe is no longer its subject`,
+    );
+  }
+}
+if (footerProblems.length > 0) {
+  console.error(`
+check-axe: ${footerProblems.length} footer legal link problem(s):`);
+  for (const p of footerProblems) console.error(`      ${p}`);
+  total += footerProblems.length;
+} else {
+  console.log(
+    `check-axe: ${FOOTER_LEGAL_PATHS.length} footer legal link(s) present on all ${footeredRoutes.length} footered route(s)`,
+  );
+}
+
+/**
  * **No non-essential storage before consent — `A-11`, and it is a legal assertion.**
  *
  * PECR: no non-essential cookie, script or pixel may fire before an affirmative choice, and

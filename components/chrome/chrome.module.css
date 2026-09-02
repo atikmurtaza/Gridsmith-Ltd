@@ -152,6 +152,44 @@
 .switcherLink:focus-visible { text-decoration: underline; text-underline-offset: 0.2em; }
 .switcherLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
+/* Company and Legal link groups — M-P2-22. Two columns at 768px+, stacked below; the
+   division switcher above already wraps, so this uses the same flex-wrap rather than a
+   grid with a breakpoint of its own. */
+.footerGroups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) var(--space-12);
+  margin-block-start: var(--space-10);
+}
+.footerGroup {
+  min-width: 10rem;
+}
+.footerGroupHeading {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.footerList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* WCAG 2.5.8: --text-sm inline links stack close enough to fail target-size, the same way
+   the statutory links did. `display: block` plus the padding takes each past 24px. */
+.footerLink {
+  display: block;
+  padding-block: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  text-decoration: none;
+}
+.footerLink:hover,
+.footerLink:focus-visible { text-decoration: underline; text-underline-offset: 0.2em; }
+.footerLink:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
 .statutory {
   border-block-start: var(--border-hairline) solid var(--line);
 }
