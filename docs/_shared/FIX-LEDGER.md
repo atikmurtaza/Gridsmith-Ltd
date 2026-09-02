@@ -110,10 +110,13 @@ of a claim, never as confirmation that the substance is where it says.
 | `F-5` | FIXED | scripts/seed-legal.mjs | 9da8f5c1 |
 | `F-6` | FIXED | scripts/seed-legal.mjs | 9da8f5c1 |
 | `F-7` | FIXED | scripts/seed-legal.mjs · docs/_legal/COOKIE-POLICY.md | 9da8f5c1 |
-| `F-8` | OPEN | — | — |
+| `F-8` | FIXED | components/chrome/Footer.tsx · sanity/schemas/companyDetails.ts · lib/company/companyDetails.ts · scripts/seed-company-details.mjs · scripts/launch-content-rules.mjs | f6662029 |
 | `F-9` | FIXED | scripts/legal-parity-rules.mjs · docs/_legal/WEBSITE-TERMS.md | 9da8f5c1 |
-| `F-10` | OPEN | — | — |
-| `F-11` | OPEN | — | — |
+| `F-10` | FIXED | scripts/seed-legal.mjs · docs/_legal/CONSUMER-TERMS.md | f6662029 |
+| `F-11` | FIXED | scripts/seed-legal.mjs · docs/_legal/CONSUMER-TERMS.md | f6662029 |
+| `F-13` | FIXED | scripts/seed-legal.mjs · docs/_legal/WEBSITE-TERMS.md · docs/_legal/MSA-BUSINESS.md · docs/_legal/CONSUMER-TERMS.md | f6662029 |
+| `F-14` | FIXED | scripts/check-vat-display.mjs · package.json · sanity/schemas/objects.ts | f6662029 |
+| `F-15` | FIXED | app/(marketing)/legal/[slug]/page.tsx · README.md | 059474b5 |
 
 **`M-P1-14` is `OPEN` because the work is in the working tree and uncommitted, not because it
 is undone.** VALIDATION §19 records the deliberate-failure proof in full. Promote this row to
@@ -189,13 +192,27 @@ exact failure the ledger was built to catch, and the cost of keeping it sharp is
 documentation fix cannot be claimed here. `F-12` is recorded in `_legal/03-REVISION-LOG.md`
 round 12 §5 instead, and the sweep it describes went to four files where the report named three.
 
-**`F-10` and `F-11` are `OPEN`, not `CEILING`, and the distinction is load-bearing.** Both are
-over-promises *inside* a reviewed draft — `CONSUMER-TERMS.md` §5's headline refund is more
-generous than the §5.3 it defers to, and §5.0's digital-content bullet points at a period §6A
-does not state. `check:legal:parity` is green over both and correct to be green, because it
-asserts that the page matches the draft and it does. **The gate's blindness to them is the
-CEILING; the findings themselves are OPEN**, and they close when a solicitor rules on the
-drafting. Filing them as `CEILING` would say nobody should act, which is wrong — someone should.
+**`F-10` and `F-11` closed on 2 September 2026 by supersession, not by drafting.** Both were
+over-promises *inside* the reviewed draft — `CONSUMER-TERMS.md` §5's headline refund being more
+generous than the §5.3 it deferred to, and §5.0's digital-content bullet pointing at a period
+§6A did not state. The owner adopted a revised set at version 2.0 that replaces the document
+entirely: the §5 those findings describe no longer exists, and the clauses that took its number
+are "Revisions and changes". **Read these two rows as "the defect is gone", never as "the
+drafting question was answered"** — nobody ruled on the old wording, it was withdrawn. Their
+files are the transcription and the draft, which is where the supersession lives.
 
-**`F-8` is `OPEN` and belongs to the owner**: the footer publishes a fabricated VAT number, which
-is a `companyDetails` value and a registration fact, not a legal-draft one.
+**`F-8` closed in the same commit and it was the owner's**: the footer published a fabricated
+VAT number. Gridsmith Ltd is not VAT registered, so the fix is not a real number but the removal
+of the field — schema, projection, footer, `/about`, seed and the launch gate's live-required
+tier. `check:launch` no longer demands a value on a live dataset, because a gate demanding a
+disclosure the law does not engage is a gate demanding a false one.
+
+**`F-13` to `F-15` extend the series past the report's twelve, and the boundary is unchanged.**
+They are findings against the legal set raised by the 2 September 2026 adoption round rather than
+by `07-STATE-REPORT.md`, and they are filed under `F-` because the boundary that matters is the
+same: a fix to the legal set must not predate the report that put the set under audit. `F-13` is
+the adoption itself — the revised drafts and the re-transcription that keeps the served pages
+equal to them. `F-14` is the VAT display rule, which existed only as a docstring until
+`check-vat-display.mjs` gave it a served subject. `F-15` is `solicitorApproved`'s one real gate:
+`robots: { index: false }` on every legal route until the flag flipped, which withheld the
+published instruments from search pending a review that was not booked.

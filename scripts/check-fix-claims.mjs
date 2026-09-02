@@ -148,7 +148,7 @@ const ROUND_BOUNDARIES = [
  *
  * Raise it in the same commit that adds rows, with the finding in the message.
  */
-const EXPECTED_ROWS = 71;
+const EXPECTED_ROWS = 74;
 
 const problems = [];
 
