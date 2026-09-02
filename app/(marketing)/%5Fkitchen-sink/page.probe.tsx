@@ -23,6 +23,7 @@ import { StickyCta } from '@/components/primitives/StickyCta';
 import { Numeric } from '@/components/primitives/Numeric';
 import { Table } from '@/components/primitives/Table';
 import { Tabs } from '@/components/primitives/Tabs';
+import { DataRows } from '@/components/divisions/digital/DataRow';
 import styles from './kitchen-sink.module.css';
 
 /**
@@ -123,6 +124,24 @@ function Specimen({ name, children }: { name: string; children: React.ReactNode 
 function AllPrimitives({ division }: { division: string }) {
   return (
     <>
+      {/* U-03. Digital-only, and it renders inside the digital frame only — the component
+          lives in components/divisions/digital/ because DESIGN.md names four Digital
+          consumers and no other division asks for the pattern. It is here rather than
+          nowhere because check-axe audits this route at two viewports in two phases, and a
+          component with no committed specimen is a component no gate can reach. */}
+      {division === 'digital' ? (
+        <Specimen name="Data row — mono label, mono value, body rationale (Digital only)">
+          <DataRows
+            label="Specimen data rows"
+            items={[
+              { label: 'Database', value: 'PostgreSQL', rationale: 'Your data, portable, no proprietary lock.' },
+              { label: 'Hosting', value: 'Vercel', rationale: 'Deploys from your own repository.' },
+              { label: 'Revision', value: 'A', rationale: 'Monospace marks anything verifiable.' },
+              { label: 'No rationale', value: 'Two cells only' },
+            ]}
+          />
+        </Specimen>
+      ) : null}
       {/* All four sizes at one level. The page already has its h1 and each frame its h2,
           so the specimen sits at h3 — Heading separates level from size precisely so a
           large heading does not have to be a high one, and this is that demonstration.
