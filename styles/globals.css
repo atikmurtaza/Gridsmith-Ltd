@@ -38,6 +38,36 @@ body {
   line-height: var(--leading-normal);
 }
 
+/* `P-02` — press/DESIGN.md §3 and PROJECT-RULES.md §3: Press body copy is 17px minimum at
+   1.7 leading. Press is the division whose product is reading, so this is the brand rather
+   than a preference, and §3 says so in as many words: "This requires a larger base size than
+   the shared token default."
+
+   **Two facts made this invisible.** `body` above sets no `font-size` at all, so every
+   division renders body copy at the user-agent default 16px — Press was never set to 17px and
+   then lowered, it was never set. And `--text-base` is `clamp(1rem, 0.97rem + 0.15vw,
+   1.0625rem)`, which is 16px at 375px and reaches 17px only near 1440px, so naming the token
+   alone would have satisfied the rule on a desktop monitor and broken it on a phone — the
+   exact reading the run-3 audit recorded as Info (`08-A-GATE-RUN-3.md`:88).
+
+   `max()` rather than a flat literal because the rule is a FLOOR: if the shared clamp is ever
+   raised, Press follows it up rather than pinning below it. The literal is the 17px the rule
+   names; it is a length, not a colour.
+
+   The selector is `[data-division="press"]`, which is on `<body>` — the same element the rule
+   above sets, so this wins on specificity without `!important` and without a second selector.
+
+   **This is unrelated to the deleted `--ink-subtle` 17px floor** (`themes/press.css:8-16`).
+   That was a contrast compensation and it went with the old token value. This is typographic and
+   stands
+   on its own — `press/DESIGN.md` §2 line 76 says the two must not be conflated again.
+
+   Gated on the served page at 375/768/1440 by `scripts/check-press-type.mjs`. */
+[data-division="press"] {
+  font-size: max(1.0625rem, var(--text-base));
+  line-height: var(--leading-relaxed);
+}
+
 /* WCAG 2.2 SC 2.4.11 Focus Not Obscured (Minimum).
    StickyCta is position: fixed against the bottom edge below 768px, which is exactly the
    width where it renders. Without this, tabbing to a control near the bottom of the

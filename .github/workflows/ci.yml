@@ -232,5 +232,11 @@ jobs:
       # periods nothing enforces. Comparing the drafts to seed-legal.mjs would have missed
       # both halves of F-1, because the seed can be correct and the dataset never reseeded.
       # The subject has to be the document the customer actually reads.
-      - name: axe + statutory record + no horizontal overflow at 375/768/1440 + consumer terms routing + legal parity
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat"
+      # check:press:type shares the same server for the same reason as the two above: the
+      # subject is the served page. Press body copy is 17px/1.7/52ch (press/DESIGN.md §3,
+      # PROJECT-RULES.md §3) and all three were false on disk while four documents asserted
+      # them. The 17px reading in particular cannot be taken from source — --text-base is a
+      # clamp that is 16px at 375px and 17px near 1440px, so a source check that found the
+      # token named would have called the phone rendering a pass.
+      - name: axe + statutory record + no horizontal overflow at 375/768/1440 + consumer terms routing + legal parity + press body type
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type"

@@ -26,8 +26,8 @@ is corrected there.
 
 | # | Task | Depends on | DoD |
 |---|---|---|---|
-| 1.1 | Press theme, contrast verified | Foundation | All pairs verified; 17px `--ink-subtle` floor enforced |
-| 1.2 | Serif type loading, 17px/1.7/52ch base | 1.1 | Reading comfort checked on real content, not lorem |
+| 1.1 | Press theme, contrast verified | Foundation | All pairs verified by `check:contrast`. ~~17px `--ink-subtle` floor enforced~~ — the floor was deleted with `#78716C` at the run-3 fixes and is not a relaxation: `styles/themes/press.css:8-16` |
+| 1.2 | Serif type loading, 17px/1.7/52ch base | 1.1 | All three measured on the served page at 375/768/1440 by `check:press-type`, not read from CSS |
 | 1.3 | Margin-note component + mobile collapse | 1.1 | Collapses inline below the annotated paragraph |
 | 1.4 | Header, footer, mobile nav | Foundation | Books and Packages in primary nav |
 | 1.5 | Split sticky mobile bar | 1.4 | [Packages & prices] / [Start an assessment] |

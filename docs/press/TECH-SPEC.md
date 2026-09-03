@@ -124,7 +124,9 @@ No affiliate links on retailer URLs. Monetising the verification path would be a
 ## 10. Accessibility
 
 WCAG 2.2 AA. Press-specific risks:
-- Serif body type at small sizes — minimum body size is 17px, and `--ink-subtle` may not be used below 17px
+- Serif body type at small sizes — minimum body size is 17px, enforced against the served page
+  by `check:press-type`. ~~`--ink-subtle` may not be used below 17px~~ — that floor went with
+  `#78716C`; see `styles/themes/press.css:8-16` and `PROJECT-RULES.md` §3
 - Warm paper canvas reduces available contrast headroom; every pair verified in `DESIGN.md` §2
 - Book covers require meaningful `alt` (title and author), not `alt="book cover"`
 - Path Finder: real fieldsets, legends, `aria-live` progress, keyboard operable
