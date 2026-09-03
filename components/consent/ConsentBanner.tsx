@@ -5,6 +5,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { COOKIE, markNoticeSeen, noticeSeen } from '@/lib/consent/state';
+import { BUNDLE_SIZE_PROBE } from './bundle-size-probe';
 import styles from './consent.module.css';
 
 /** Published to CSS so the focus reserve is the bar's real height — see the effect below. */
@@ -63,6 +64,11 @@ export function ConsentBanner() {
   const headingId = 'gs-consent-heading';
 
   useEffect(() => {
+    // The committed shared-baseline probe. Empty and eliminated unless the build sets
+    // NEXT_PUBLIC_BUNDLE_SIZE_PROBE — see bundle-size-probe.ts. Assigned rather than merely
+    // imported so the minifier cannot drop it when it is non-empty.
+    if (BUNDLE_SIZE_PROBE) (window as unknown as Record<string, string>).__gsBundleProbe = BUNDLE_SIZE_PROBE;
+
     setShow(!noticeSeen());
 
     const reopen = () => setShow(true);
