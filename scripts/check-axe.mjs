@@ -59,6 +59,11 @@ const ROUTES = [
   // four deliverables and three pricing variables — so it exercises every block the template
   // has rather than the smallest.
   { path: '/digital/services/website-design-build', status: 200 },
+  // `V-06`'s subject: the static pricing bands, the one Digital route that must be fully
+  // readable with JS disabled. It is also the only route on the site whose entire content is
+  // a data table, so it is the only place `Table`'s focusable scroll region is audited on a
+  // production route rather than on the kitchen sink.
+  { path: '/digital/estimate', status: 200 },
   { path: '/work', status: 200 },
   { path: '/work/brand-website-and-launch-book', status: 200 },
   { path: '/about', status: 200 },
@@ -176,6 +181,7 @@ const INCOMPLETE_ALLOWED = [
       '/work', '/work/brand-website-and-launch-book', '/about', '/approach', '/insights',
       '/legal/privacy', '/contact',
       '/digital/services/website-design-build',
+      '/digital/estimate',
     ],
     target: '#gs-consent-heading',
     why:
