@@ -181,6 +181,44 @@ Read the workstream's own files before touching its code.
   read this rule, and neither was caught by reading the code. Writing a gate and believing
   it works is the normal outcome; the proof is what makes the difference observable.
 
+  **A probe that produces no red is not evidence about the gate until the probe is shown to
+  be a subject the gate could have caught.** The rule above says a gate never made to fail is
+  not yet a gate; it assumes the attempt to make it fail was valid, and that assumption is
+  where the next defect lives. A green result from a deliberate-failure attempt has two
+  readings — *the gate is broken* and *nothing was injected that the gate measures* — and they
+  are indistinguishable from the exit code. **Establish the second before concluding the
+  first**, and establish it from a property of the probe, not from the gate's silence.
+
+  `V-06`'s overflow probe was a `3000×0px` div and `check:responsive` stayed green. A
+  zero-height box contributes no scrollable overflow, so the probe was never a subject: the
+  run measured nothing and read exactly like a broken gate. The gate's own `widest` reporter
+  compares `rect.right` and would have named it, but the outer predicate is `scrollWidth`,
+  which never reached it. A `3000×20px` div fired at all three widths.
+
+  **The general form is that a probe has to satisfy the gate's predicate, not merely resemble
+  its subject**, and a probe fails that test in three ways worth checking by name: it is
+  *inert* — the injected thing cannot produce the quantity the predicate reads, as with the
+  zero-height overflow box; it is *out of scope* — the file, route, viewport or state carrying
+  it is not one the gate visits, as when a specimen sits below the fold of a hit-tested
+  viewport; or it is *unreachable* — an earlier exit, filter or narrowed predicate consumes it
+  before the assertion under test runs, which is `A-GATE-4-3` and `A11Y-29`.
+
+  **A red result carries its own validity proof and needs no separate one** — the gate named
+  the injection, so the injection reached it. The obligation is asymmetric and falls entirely
+  on green readings, which is why it is easy to skip: the proofs that need it most are the
+  ones that looked finished fastest. **Where a proof's recorded outcome is an absence, the
+  record must say what makes the probe a subject** — the property, measured or derived, that
+  puts it inside the predicate. "It did not fire, so there is no false positive" is a claim
+  about the gate only if the same run fired on something else in the same file, route and
+  pass; say which.
+
+  **Prefer a probe whose validity is structural.** A committed selftest that asserts a rule
+  function's *return value* cannot have this defect, because the reading is a value rather
+  than an absence — `check-legal-parity.selftest.mjs` and `check-launch-content.selftest.mjs`
+  are the shape. Where the subject must be a served page, make the probe's validity observable
+  in the same run: assert the injected quantity directly, or use a probe large enough that the
+  gate's secondary reporter names it even when the primary predicate does not.
+
   **A deliberate-failure proof observes a red build, not a red gate — establish which gate
   fired.** Where two checks can fire on the same input, a proof that only records "the build
   went red" credits whichever one you had in mind. `G8`'s shared-baseline assertion was

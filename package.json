@@ -51,6 +51,8 @@
     "check:mark:guard": "node scripts/check-mark-guard.mjs",
     "seed": "node --env-file=.env.local scripts/seed-content.mjs",
     "check:vat": "node scripts/check-vat-display.mjs",
+    "audit:proofs": "node scripts/audit-proof-validity.mjs",
+    "audit:proofs:selfcheck": "node scripts/audit-proof-validity.mjs --selfcheck",
     "check:state-cues": "node scripts/check-state-cues.mjs"
   },
   "dependencies": {

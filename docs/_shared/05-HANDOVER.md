@@ -9,6 +9,36 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
+## ⇢ 3 September 2026 — the probe-validity rule, and `V-07` is blocked
+
+**A probe that produces no red proves nothing until it is shown to be a subject the gate could
+have caught.** `V-06`'s first overflow probe was `3000×0px` and `check:responsive` stayed green:
+a zero-height box contributes no scrollable overflow, so the run measured nothing and read
+exactly like a broken gate. Every other deliberate-failure rule in `CLAUDE.md` governs what
+happens *after* the gate reacts and assumes the attempt was valid — this is the assumption
+underneath them. The rule is in `CLAUDE.md`'s deliberate-failure block; the class and the audit
+are `01-VALIDATION-REPORT.md` §22.
+
+**40 recorded proofs audited, 6 unsound, 3 declared-unproven and counted as neither.** Five of
+the six were already fixed as individual findings; **`G8` / `A-GATE-4-3` is the one still open.**
+Nothing was fixed this session — the brief was to list them. `npm run audit:proofs`, and
+`audit:proofs:selfcheck` proves the count reports zero from the loop rather than from an emptied
+register. It is deliberately not in the `verify:*` chain.
+
+**`V-07` (estimator island) is BLOCKED on Atik, and its `Depends` was wrong.** It read `V-03`
+alone; it is `V-01, V-03, V-05`. On disk there is no `lib/estimate/` and no `estimatorConfig`
+schema, and `V-01`–`V-05` are all TODO. Every number the island emits comes from
+`estimatorConfig` through `calculate.ts`, and the two inputs — `Q-DG2` (base bands per project
+type) and `Q-DG1` (ten historical projects with real final prices) — are open with the owner.
+`PROJECT-RULES.md` #4 and non-negotiable #2 both forbid shipping it on invented rates.
+**Epic M satisfies none of it** — it gave the chrome and the primitives, and `V-06` gave the
+route, the bands table and both gates on the route by name, which is the degradation target
+rather than an input. Building the six steps without the calculator was considered and rejected:
+it spends the route's first real JS on a form that ends in nothing. Full reasoning on the
+tracker row.
+
+---
+
 ## ⇢ 2 September 2026 — the legal set was replaced wholesale, and VAT left the system
 
 **Read this before touching `docs/_legal/` or anything that renders a price.**
