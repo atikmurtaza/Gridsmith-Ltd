@@ -158,9 +158,18 @@ STEP 2  Branch:
         Content  → volume, formats, turnaround, contracting requirements
 STEP 3  Budget band + manuscript link (not upload — see TECH-SPEC §9)
 STEP 4  Contact details
+        + which client terms would apply, from the step 1 segment (K-16 / FR-P24):
+          business -> /legal/business-client-terms
+          author, memoir -> /legal/consumer-client-terms
+          content -> /legal/client-terms (the disambiguation page: "ongoing content"
+                     states no purpose of purchase, so neither instrument's §1 is
+                     satisfied and neither is asserted)
+          It says which terms WOULD apply. An enquiry is not a contract
+          (CONSUMER-TERMS.md §3), so nothing here is presented as agreed.
         ↓
    Confirmation: what happens next, response commitment, and — only here — the
-   cross-division prompt (FR-P20)
+   cross-division prompt (FR-P20, built at K-15: names Design and Digital, links to
+   both, asks for nothing)
 
 CONSUMER PATH (author / memoir segments) — at order confirmation, not enquiry:
 

@@ -186,6 +186,10 @@ const INCOMPLETE_ALLOWED = [
       '/', '/design', '/digital', '/press', '/_kitchen-sink', '/_master-sink', '/_gridsmith-404-probe',
       '/work', '/work/brand-website-and-launch-book', '/about', '/approach', '/insights',
       '/legal/privacy', '/contact',
+      // K-13's two routes. They were added to the route list and not to this entry, so the
+      // shared banner's incomplete — allowed on all sixteen other routes — reported UNRESOLVED
+      // on eight combinations and the gate has been red since. Found at K-16 by running it.
+      '/press/contact', '/press/contact/thank-you',
       '/digital/services/website-design-build',
       '/digital/estimate',
     ],

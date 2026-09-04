@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Container } from '@/components/primitives/Container';
 import { Heading } from '@/components/primitives/Heading';
+import { Link } from '@/components/primitives/Link';
 import { Numeric } from '@/components/primitives/Numeric';
 import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
@@ -28,8 +29,12 @@ export const metadata: Metadata = {
  * The response commitment is read from the CMS singleton, not written here — non-negotiable #5,
  * one source for that sentence.
  *
- * `K-15` (the cross-division prompt) belongs on this page and only on this page. It is a
- * separate row and is not built here.
+ * ## The cross-division prompt (`K-15`, FR-P20) is here and nowhere else
+ *
+ * `APP-FLOW.md` §6: *"never mid-funnel — upselling a suspicious buyer mid-decision is exactly
+ * the behaviour they are screening for."* So it sits after the enquiry is sent, states what the
+ * other two divisions are, and asks for nothing: no second form, no button styled as a call to
+ * action, no claim about what the work costs or how good it is. Two links and a sentence.
  */
 export default async function Page() {
   const company = await getCompanyDetails();
@@ -54,6 +59,15 @@ export default async function Page() {
                 .
               </p>
             ) : null}
+          </Prose>
+          <Prose>
+            <p>
+              Gridsmith Press is one of three trading divisions of Gridsmith Ltd. If the book
+              turns out to need a cover, a set of drawings, or a place on the web, the same
+              company does that work — <Link href="/design">Gridsmith Design</Link> and{' '}
+              <Link href="/digital">Gridsmith Digital</Link>. There is nothing to do about that
+              now; it is here so you know it exists.
+            </p>
           </Prose>
         </Container>
       </Section>

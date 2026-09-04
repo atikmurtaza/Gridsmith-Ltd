@@ -29,7 +29,11 @@
  * **A green line here means the contract rejects what it should, not that the flow works.**
  */
 import { pressLeadPayload, pressPayloadFrom } from '../lib/leads/pressLead.ts';
-import { pressSegmentOptions } from '../lib/leads/pressSegments.ts';
+import {
+  PRESS_SEGMENTS,
+  pressSegmentOptions,
+  pressSegmentTerms,
+} from '../lib/leads/pressSegments.ts';
 
 const form = (entries) => {
   const fd = new FormData();
@@ -187,6 +191,46 @@ const CASES = [
     name: 'COUPLING — with a statement supplied, all four segments are offered',
     run: () => pressSegmentOptions(true).map((o) => o.value),
     expect: (v) => v.length === 4 && v.includes('memoir'),
+  },
+
+  // ---- K-16 / FR-P24. Which instrument a segment is routed to is a legal-consequence
+  // decision, so each of the four branches is asserted on its own returned slug. One branch
+  // returning the right value is not evidence for the others: this is a three-way if/else and
+  // the last arm is the fall-through, which is exactly the shape that reports a plausible
+  // answer for an input it never considered.
+  {
+    name: 'K-16 BUSINESS — routed to the business MSA, the only segment that states a trade purpose',
+    run: () => pressSegmentTerms('business'),
+    expect: (v) => v === 'business-client-terms',
+  },
+  {
+    name: 'K-16 AUTHOR — routed to the consumer instrument, never the business MSA (CRA 2015 s. 57)',
+    run: () => pressSegmentTerms('author'),
+    expect: (v) => v === 'consumer-client-terms',
+  },
+  {
+    name: 'K-16 MEMOIR — routed to the consumer instrument',
+    run: () => pressSegmentTerms('memoir'),
+    expect: (v) => v === 'consumer-client-terms',
+  },
+  {
+    name: 'K-16 CONTENT — routed to the disambiguation page; purpose is unstated, so neither instrument is asserted',
+    run: () => pressSegmentTerms('content'),
+    expect: (v) => v === 'client-terms',
+  },
+  {
+    name: 'K-16 NO CONSUMER SEGMENT REACHES THE MSA — the assertion the split exists for',
+    run: () => ['author', 'memoir', 'content'].map(pressSegmentTerms),
+    expect: (v) => !v.includes('business-client-terms'),
+  },
+  {
+    name: 'K-16 EVERY SEGMENT IS ROUTED — no segment falls through to undefined or an unknown slug',
+    run: () => PRESS_SEGMENTS.map(pressSegmentTerms),
+    expect: (v) =>
+      v.length === 4 &&
+      v.every((s) =>
+        ['business-client-terms', 'consumer-client-terms', 'client-terms'].includes(s),
+      ),
   },
 ];
 

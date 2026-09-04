@@ -13,7 +13,7 @@ import { RadioGroup } from '@/components/primitives/RadioGroup';
 import { Select } from '@/components/primitives/Select';
 import type { FormState } from '@/lib/leads/action';
 import { submitPressLeadAction } from '@/lib/leads/pressAction';
-import { pressSegmentOptions, type PressSegment } from '@/lib/leads/pressSegments';
+import { pressSegmentOptions, pressSegmentTerms, type PressSegment } from '@/lib/leads/pressSegments';
 import controls from '@/components/primitives/interactive.module.css';
 import styles from './pressContact.module.css';
 
@@ -76,6 +76,30 @@ const BUDGETS = [
   { value: 'project', label: 'A full book project' },
   { value: 'programme', label: 'An ongoing programme or retainer' },
 ];
+
+/**
+ * `K-16` — the sentence beside each terms destination.
+ *
+ * Keyed by slug rather than by segment, because two segments share a destination and the
+ * reader is being told which instrument applies, not which box they ticked. The wording states
+ * the test each instrument states for itself — purpose of purchase — and claims nothing beyond
+ * it; `pressSegmentTerms` carries the routing and the reasoning.
+ */
+const TERMS_COPY: Record<string, { sentence: string; link: string }> = {
+  'business-client-terms': {
+    sentence: 'Work bought for a business, trade or profession would be covered by our business client terms.',
+    link: 'Read the business client terms',
+  },
+  'consumer-client-terms': {
+    sentence:
+      'If you are buying as an individual, outside a trade or business, our consumer client terms would cover the work.',
+    link: 'Read the consumer client terms',
+  },
+  'client-terms': {
+    sentence: 'Which of our client terms would apply depends on whether you are buying for a business.',
+    link: 'Read which client terms apply',
+  },
+};
 
 const YES_NO = [
   { value: 'yes', label: 'Yes' },
@@ -364,6 +388,21 @@ export function PressContactFlow({
           {responseCommitment} What we do with what you send is in the{' '}
           <Link href="/legal/privacy">privacy notice</Link>.
         </p>
+        {/* K-16 / FR-P24. Here rather than on the confirmation route: the confirmation is a
+            plain route with no segment, and the requirement is that the applicable instrument
+            is identified before an order is confirmed. An enquiry is not a contract
+            (CONSUMER-TERMS.md §3, MSA-BUSINESS.md §1), so this says which terms *would*
+            apply and does not present anything as agreed. */}
+        {segment !== '' ? (
+          <p className={styles.privacy}>
+            {TERMS_COPY[pressSegmentTerms(segment)].sentence} Nothing is agreed until we send a
+            written order confirmation.{' '}
+            <Link href={`/legal/${pressSegmentTerms(segment)}`}>
+              {TERMS_COPY[pressSegmentTerms(segment)].link}
+            </Link>
+            .
+          </p>
+        ) : null}
       </div>
 
       <div className={styles.nav}>

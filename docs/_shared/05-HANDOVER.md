@@ -9,7 +9,66 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
-## ⇢ 4 September 2026 (latest) — `K-13` is built, and Epic K's clear runway is about two days
+## ⇢ 4 September 2026 (latest) — `K-16` and `K-15` are built, and Epic K's runway is now `P-03` alone
+
+**`K-16` is built.** `pressSegmentTerms` in `lib/leads/pressSegments.ts`, rendered at step 4 of the
+Press flow beside the privacy line. **The premise check held** — both destinations existed at
+`lib/legal/slugs.ts:40-42` and all three serve 200 — but reading the instruments changed one
+routing from what `PRD.md` FR-P24 implies.
+
+**The instruments do not test who you are, they test what you are buying for.**
+`CONSUMER-TERMS.md` §1 is *"wholly or mainly for purposes outside their trade, business, craft or
+profession"*; `MSA-BUSINESS.md` §1 is *"only where the client is acting for purposes relating to a
+trade, business, craft or profession"*. Against that test:
+
+| Segment | Destination | Determinate? |
+|---|---|---|
+| `business` | `/legal/business-client-terms` | yes — *"a business or a founder"* states the trade purpose |
+| `author` | `/legal/consumer-client-terms` | FR-P24 and `_legal/00-LEGAL-BASIS.md` §3; the instrument's own §1 corrects the minority buying in trade |
+| `memoir` | `/legal/consumer-client-terms` | same, more strongly — and withheld at step 1 regardless |
+| `content` | **`/legal/client-terms`** | **no.** *"I need ongoing content"* states no purpose, FR-P24 does not name the segment, and neither §1 resolves it |
+
+**`content` going to the disambiguation page is the finding, not a shortcut.** The page carries no
+operative clause and exists to explain both; picking an instrument there would be the
+pre-26-August defect with an extra step. It is recorded on the FR-P24 row and in the tracker
+rather than resolved quietly.
+
+**Six deliberate-failure proofs, each naming its own case.** Business→consumer fired the business
+case; content→business fired content and the no-consumer-reaches-the-MSA case; collapsing the
+fall-through fired author and memoir together; memoir→MSA fired memoir and the MSA case;
+author→disambiguation fired author and content; author→`undefined` fired author and the
+every-segment-routed case. Validity is structural — every specimen reads a **returned slug**,
+so there is no absence to misread. Selftest 19 → 25 cases, and the count moved.
+
+**Live over HTTP on `next start`:** driving step 1 through all three reachable segments swapped the
+rendered `href` and the link text each time — `/legal/consumer-client-terms`,
+`/legal/business-client-terms`, `/legal/client-terms` — and all three serve 200. **JS delta
+7.7 → 8.0KB against a 20KB budget**, two clean builds per side (`rm -rf .next` each).
+
+**`K-15` is built** on `/press/contact/thank-you` and nowhere else. Copy and two links, no figure
+and no claim; `check:content` clean, route delta unchanged at 1.9KB because it is server-rendered.
+
+### One pre-existing defect found by running the gates, and it was `K-13`'s
+
+**`check:axe` has been RED since `K-13`**, and the `K-13` write-up's *"axe is clean on both new
+routes"* was true about violations and not about the gate. The two new routes went into the route
+list and not into `INCOMPLETE_ALLOWED`, so the shared consent banner's `color-contrast` incomplete
+— allowed on all sixteen other routes — reported **UNRESOLVED on eight combinations**. Fixed by
+adding the two routes to the existing entry; allowed count **56 → 64, unresolved 0**, so the count
+moved and proves the entry was reached. **A route added to a gate's subject list is not the same
+as a route added to its allowlist**, and nothing in the K-13 session asked the second question.
+
+### Runway after this session: **1 day, one row**
+
+`P-03` (1d, margin-note component, `DESIGN.md` §3 line 105, zero hits in the tree) is the only
+unblocked Epic K/P row left. It was **not started** — deliberately, on instruction. `K-19` (0.5d,
+`consumer_consents`) is buildable as a migration but every consumer is downstream of the blocked
+`K-17`. Everything else is behind `Q-P13`, `Q-P5`/`P6`/`P7`/`P11`, the missing `K-10` sample asset,
+the owner's `K-17` decision, or `R-09`/`O-09` for the memoir residual.
+
+---
+
+## ⇢ 4 September 2026 — `K-13` is built, and Epic K's clear runway is about two days
 
 **`K-13` is built and verified live.** `app/(press)/press/contact` and `/contact/thank-you`,
 `components/divisions/press/PressContactFlow.tsx`, `lib/leads/{pressLead,pressSegments,pressAction}.ts`,
