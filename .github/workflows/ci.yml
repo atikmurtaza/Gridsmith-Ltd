@@ -154,6 +154,13 @@ jobs:
       - name: The Path Finder recommendation function decides correctly (committed specimens)
         run: npm run check:path:selftest
 
+      # K-13. The Press contact payload is a four-way discriminated union, and CLAUDE.md is
+      # explicit that one branch of an alternation firing is not evidence for the others. Each
+      # segment has a VALID specimen and at least one REJECTS specimen, and ETH-07's memoir gate
+      # is broken three ways. Value reads throughout, so there is no absence to misread.
+      - name: The Press contact contract rejects what it must (committed specimens)
+        run: npm run check:press:contact:selftest
+
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
       # the `development` dataset. check:launch still runs against the SERVED site below;

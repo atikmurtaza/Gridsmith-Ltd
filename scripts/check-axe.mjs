@@ -73,6 +73,12 @@ const ROUTES = [
   { path: '/legal/privacy', status: 200 },
   // The only master route with a client boundary besides the consent banner.
   { path: '/contact', status: 200 },
+  // `K-13`. Press's only client boundary, and the site's only multi-step form. Audited at
+  // step 1 only: steps 2-4 are `hidden` until a segment is chosen, and `hidden` removes them
+  // from the accessibility tree, so what axe sees here is exactly what a visitor first meets.
+  // The later steps reuse the same primitives the kitchen sink already audits.
+  { path: '/press/contact', status: 200 },
+  { path: '/press/contact/thank-you', status: 200 },
   { path: '/_kitchen-sink', status: 200 },
   // Composed master components. Separate from the kitchen sink so the primitive-layer
   // measurement stays a measurement of primitives — see the page's own docstring.

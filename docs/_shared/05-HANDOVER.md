@@ -9,7 +9,108 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
-## ⇢ 4 September 2026 (latest) — `K-08` is built and applied live, and the `check:struck` sweeps are closed
+## ⇢ 4 September 2026 (latest) — `K-13` is built, and Epic K's clear runway is about two days
+
+**`K-13` is built and verified live.** `app/(press)/press/contact` and `/contact/thank-you`,
+`components/divisions/press/PressContactFlow.tsx`, `lib/leads/{pressLead,pressSegments,pressAction}.ts`,
+and `check:press:contact:selftest` as the 30th gate — in `verify:static` **and** in `ci.yml`, which
+`check:node` caught me omitting.
+
+**The premise check corrected the row's own reading.** `components/leads/ContactForm.tsx` is not a
+single-step version of this flow — it is the **master** `/contact` form, mounted only at
+`app/(marketing)/contact/page.tsx`, division-agnostic by design and carrying the "more than one
+division" journey `N-11` exists for. `app/(press)` held a layout and one landing page and nothing
+else. So there was nothing to extend: this is a new route, and the master form is untouched.
+**What was reused is the pipeline** — `submitLead`, the `anon` insert, `Prefer: return=minimal`,
+the generated id, the `after()` notification fan-out. `pressAction.ts` is a second `useActionState`
+adapter over the same function, and the branch answers land in `leads.payload`, the `jsonb` column
+`0001` already indexed for exactly this. **No second data path and no new RLS surface.**
+
+**`SCHEMA.md` §6 said `expectationsAcknowledged: z.boolean()`, and a boolean accepts `false`.**
+`PROJECT-RULES.md` §7 requires ETH-07 *"enforced in the Zod schema, not just the UI"*, and it was
+enforced in neither — the requirement lived in the paragraph under the code block. It ships as
+`z.literal(true)`, `SCHEMA.md` is corrected in the same commit, and the selftest breaks it three
+ways: unticked, explicit `false`, and an attempt to route round it by relabelling the segment as
+`author` (which parses, and drops the memoir keys — that is the point).
+
+**Six deliberate-failure proofs, each naming its own case and nothing else.** Weakening the ETH-07
+literal fired the two ETH-07 cases only; breaking the coupling fired one; loosening
+`manuscriptLink` from `z.url()` fired one; widening the memoir stage enum fired one; deleting
+`genre` from the mapper fired the three author-carrying cases and no others. Validity is
+structural throughout — every specimen reads a **return value**, so there is no absence to
+misread and no inert-probe class to rule out.
+
+### Two things `K-13` did not do, and neither is code
+
+1. **The memoir segment is withheld at step 1.** ETH-07's commercial-expectations statement is
+   `R-09` (design) and `O-09` (copy), both TODO, and authoring it is non-negotiable #2. An
+   acknowledgement checkbox above nothing to acknowledge is a consent record of nothing, so
+   `pressSegmentOptions()` returns three options until a statement is supplied. **The branch and
+   its gate are built behind an `expectationsStatement` prop** — one prop away, not a rebuild —
+   and both directions of the coupling are asserted in the selftest by reading the returned list.
+2. **Budget bands diverge from `SCHEMA.md` §6 and this is unresolved, not decided.** §6 lists
+   money bands; `check:content`'s price pattern rejects any currency-plus-digits in
+   `components/**`, and it is right to — every Gridsmith price on this site is `[SEED] INDICATIVE`,
+   so a band would be the first hard money figure on it. The shipped values are the four
+   shape-of-engagement bands `/contact` has used since August, so `leads.budget_band` keeps one
+   vocabulary. **Nothing was struck**; `SCHEMA.md` §6 now says the divergence is open.
+
+### A budget failure caught by the clean-build rule, and worth carrying
+
+The first clean build put `/press/contact` at a **23.9KB** delta against a 20KB budget. The cause
+was one named import: the client component took `pressSegmentOptions` and `PressSegment` from
+`pressLead.ts`, **which imports Zod**, so the whole schema library crossed into the browser.
+Moving the list into a Zod-free `lib/leads/pressSegments.ts` took the route to **7.7KB**. Nothing
+was cut and no budget moved. `pressSegments.ts` carries the rule in its own docstring: nothing in
+it may import Zod or anything that does, and `pressLead.ts` imports *from* it, never the reverse.
+Both readings are clean builds — `rm -rf .next` each side. `/contact` moved 5.6 → 5.7KB across the
+same pair, which is chunk-splitting jitter from two new routes and is reported rather than
+explained away.
+
+### Verified live over HTTP, as a hostile `anon` client
+
+A real enquiry was submitted through the built form on a production server (`next start`, port
+3010): author segment, finished draft, `https://example.com/draft`, and it **redirected to
+`/press/contact/thank-you`**. That redirect happens only on `submitLead` returning `ok`, which
+happens only on PostgREST returning 201 — so the row landed, and that is the read-back-free
+evidence the table is not empty. Then, holding nothing but the publishable key:
+
+| Probe | Result |
+|---|---|
+| `SELECT * FROM leads` | 200, `[]` |
+| `SELECT * WHERE email = <the probe's own address>` | 200, `[]` |
+| `SELECT payload FROM leads` | 200, `[]` |
+| `SELECT * FROM v_lead_funnel` | **401**, `permission denied for view` |
+
+**The `[]` on the probe's own email is the reading that matters**, and it is a subject rather than
+an inert probe precisely because the submission above proved that row exists. The UPDATE and
+DELETE probes also returned `200 []` and **are not counted as proofs** — that is the PostgREST
+subselect asymmetry recorded on 4 September: a filtered write cannot find a row while there is no
+SELECT policy, whatever the write policy says. They are noted and disregarded, not re-added as
+defence in depth.
+
+Three gates gained the new routes and each count moved to prove it reached them: `check:axe`
+16 → 18 footered routes, `check:responsive` 48 → 51 combinations, `check:press:type` 3 → 6
+route/width combinations and 6 → 12 measured blocks. Axe is clean on both new routes. Step 1 is
+what axe sees, and deliberately: steps 2–4 carry `hidden`, which computes `display: none` and
+removes them from the accessibility tree — confirmed in the browser rather than assumed.
+
+### Epic K's remaining runway is short: **about 2.2 days, three rows**
+
+`K-16` (0.7d, segment → terms routing, both destinations and now both segments exist), `K-15`
+(0.5d, cross-division prompt — the confirmation route it belongs on now exists), and `P-03` (1d,
+margin-note component, spec'd at `DESIGN.md` §3 line 105, zero hits in the tree). `K-19` (0.5d,
+`consumer_consents`) is buildable as a migration but its consumers are all downstream of the
+blocked `K-17`, so it is thin rather than false. Everything else in Epic K is behind `Q-P13`
+(`K-04`/`K-05`/`K-06`/`K-07`/`K-14`), `Q-P5`/`P6`/`P7`/`P11` (`K-09`/`K-11`/`K-12`/`K-21`/`K-22`),
+the missing sample asset (`K-10`) or the owner's `K-17` decision. Epic P's remaining rows are
+each waiting on another row's *subject*: `P-05` on `R-11`, `P-08` on `R-01`, `P-06` and `P-07` on
+content that has no schema yet. **Press stalls after roughly a session and a half unless a `Q-P`
+is answered or `R-09`/`O-09` land.**
+
+---
+
+## ⇢ 4 September 2026 — `K-08` is built and applied live, and the `check:struck` sweeps are closed
 
 **`K-08` is done.** `supabase/migrations/0003_press_path_results.sql`, applied to the live
 database with `npm run migrate`. It was chosen because it is the only Epic K row clear of every
@@ -50,7 +151,7 @@ rule is registered in the same commit that strikes it, and struck in place rathe
 
 ---
 
-## ⇢ 4 September 2026 (latest) — `K-03` is built, `K-05` is blocked, and `check:struck` holds five rules
+## ⇢ 4 September 2026 — `K-03` is built, `K-05` is blocked, and `check:struck` holds five rules
 
 **`K-03` is done.** `lib/path/recommend.ts` plus `check:path:selftest`, in `verify:static`. Nine
 deliberate-failure proofs, one per branch, each naming its own case. The selftest imports the

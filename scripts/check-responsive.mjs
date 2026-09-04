@@ -29,6 +29,9 @@ const ROUTES = [
   { path: '/design', status: 200 },
   { path: '/digital', status: 200 },
   { path: '/press', status: 200 },
+  // `K-13`. A form is where a fixed-width control overflows a 375px viewport, so the site's
+  // only multi-step form is a subject rather than a duplicate of /press.
+  { path: '/press/contact', status: 200 },
   // Epic N routes. Seven of the eight new master pages, chosen to cover every distinct
   // template rather than every URL: a grid, a canonical case study, both `groupPage` layouts,
   // the insights hub, a legal document and the one route with a form. The per-slug routes are

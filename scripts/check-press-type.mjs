@@ -53,7 +53,7 @@ import { launch } from './browser-launch.mjs';
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
 
 /** Press routes. See "The subject" above before adding or removing one. */
-const ROUTES = ['/press'];
+const ROUTES = ['/press', '/press/contact'];
 
 /** The three widths the Definition of Done names — the same set as `check-responsive`. */
 const WIDTHS = [375, 768, 1440];
