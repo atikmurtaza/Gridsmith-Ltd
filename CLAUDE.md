@@ -315,6 +315,31 @@ Read the workstream's own files before touching its code.
   fallback paragraph and pass. So the route asserts that the boundary identifies itself —
   title, `h1`, `lang` — and fails if it does not. Wherever a gate depends on its subject
   being in a particular *state*, assert the state, not the subject's existence.
+- **Adding a subject to a gate is not done until every list that gate consults has been
+  updated — and a gate's green is only evidence for the question it was actually asked.**
+  Most gates hold more than one list: a subject list, and alongside it allowlists, exclusions,
+  budgets, expected-counts. Adding a route to the first and not the others is **invisible in
+  the source**, because nothing in the gate relates its own lists to each other. There is no
+  wrong output to notice and no silent check to find — only a red run later, on a route the
+  session that added it has stopped looking at.
+
+  `K-13` put `/press/contact` and `/press/contact/thank-you` into `check-axe`'s `ROUTES` and
+  not into `INCOMPLETE_ALLOWED`, and `check:axe` was red for **two sessions**. The `K-13`
+  write-up's *"axe is clean on both new routes"* was not careless and not false: it was true
+  about **violations**, which is what that session had asked about. It was silent about
+  **incompletes**, which is a second question the same gate answers and nobody had put to it.
+  So the second half of this rule is the load-bearing half: **when you report a gate green,
+  report which of its questions you asked.** A gate with two assertions has two greens, and
+  the summary line prints both whether or not you read both.
+
+  The obligation when adding a subject is therefore: **enumerate the gate's lists, decide each
+  one explicitly, then re-run the gate** — the run is what settles whether an allowlist entry
+  was needed, because that depends on what the route renders and no static reading can know it.
+  `check:lists` (`scripts/check-list-parity.mjs`) asserts the half that *is* static — every key
+  in a dependent list names something in the subject list — and its discovery guard makes a new
+  multi-list gate impossible to add without registering a relation for each of its lists. It
+  does not and cannot catch the `K-13` direction; its docstring says so, and the run is what does.
+
 - **An expectation derived from its own subject cannot fail when the subject is removed.**
   If a check reads its expected values out of the same file it is checking, deleting an
   entry deletes the expectation with it and the check stays green having measured less.

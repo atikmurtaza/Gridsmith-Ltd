@@ -9,7 +9,131 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
-## ⇢ 4 September 2026 (latest) — `K-16` and `K-15` are built, and Epic K's runway is now `P-03` alone
+## ⇢ 5 September 2026 (latest) — `check:lists` and `P-03`, and Epic K/P has **no unblocked row left**
+
+### `check:lists` — the 31st gate, from `K-13`'s defect rather than from a tracker row
+
+`K-16` found `check:axe` red because `K-13` put two routes into `ROUTES` and not into
+`INCOMPLETE_ALLOWED`. The rule that came out of it is in `CLAUDE.md` above the
+expectation-derived-from-its-own-subject rule, and it has two halves, the second of which is the
+load-bearing one: **adding a subject to a gate is not done until every list that gate consults has
+been updated, and a gate's green is only evidence for the question it was actually asked.** The
+`K-13` write-up's *"axe is clean on both new routes"* was true about **violations** — the question
+that session asked — and silent about **incompletes**, a second question the same gate answers.
+
+**The mechanical audit, run over all 26 gates.** Every module-level list in `scripts/check-*.mjs`
+was extracted and classified by key domain. **Two gates hold more than one route-keyed list** and
+both are in sync:
+
+| Gate | Lists | Relation | State |
+|---|---|---|---|
+| `check-axe` | `ROUTES` (19) · `INCOMPLETE_ALLOWED` (18) · `FOOTER_EXEMPT` (1) | subset of `ROUTES` | **in sync** |
+| `check-axe` | `FOOTER_LEGAL_PATHS` (4) | **none** — link *targets*, not routes visited | n/a, and asserting one would assert a falsehood |
+| `check-bundle-size` | `BASELINE_ROUTES` (5) ⊆ `REQUIRED` (6) | subset | **in sync** |
+| `check-bundle-size` | `BUDGETS` (9) | **none** — budgets precede their routes (`/design/estimate`, `/press/path-finder` are unbuilt) | n/a |
+| `check-tokens` | `REQUIRED` (39) vs `CONTRACT` (16) + `SHARED_ACCENTS` (6) | **disjoint** — base layer vs theme layer | **in sync** |
+
+Everything else — `check-responsive`, `check-press-type`, `check-vat-display`,
+`check-consumer-terms` — holds exactly one subject list and a widths/regex axis, so the shape
+cannot occur. `check-contrast`, `check-schemas` and `check-theme-flash` hold several lists over
+non-route key domains; they are outside the discovery guard by construction and that ceiling is in
+the gate's docstring.
+
+**Five coupled pairs, 102 keys, all in sync.** `scripts/check-list-parity.mjs` asserts them, and
+its **discovery guard** is what stops the registry rotting: a gate with two or more route-keyed
+lists that is not registered is a hard failure, so a future multi-list gate cannot be added
+without a decision — a relation, or an explicit `unrelated` entry — being written down.
+
+**What it cannot do, stated in its own docstring.** The two directions are not symmetrical.
+*Dependent → subject* is decidable and asserted: an allowlist key naming nothing in the subject
+list is a decision that has silently stopped applying. *Subject → dependent* — the actual `K-13`
+direction — **is not decidable statically**, because whether a new route needs an allowlist entry
+depends on what it renders. Running the gate is what settles it. So this gate closes the mirror
+image of `K-13`, not `K-13`; the rule in `CLAUDE.md` is the part that closes `K-13`, and it is
+procedural.
+
+Proven both structurally and on the real tree. The selftest's **14 cases each read the returned
+problem set**, so a broken comparator cannot pass as an absence. On the real tree: injecting
+`'/press/gone'` into `INCOMPLETE_ALLOWED` named it; appending a second route list to
+`check-press-type` fired the discovery guard on both of that file's lists; deleting one allowlist
+route moved the key count **102 → 101**, which is the count proving it reached the lists at all.
+In `verify:static` and in `ci.yml`.
+
+### `P-03` is built — the margin note
+
+`components/divisions/press/MarginNote.tsx` + `pressMargin.module.css`. **The premise held**:
+`marginNote` / `MarginNote` / `margin-note` had zero hits across `components/`, `app/` and
+`styles/`.
+
+**A two-column grid, not a float, and the reason is a gate.** The obvious marginalia technique is
+`float` with a negative margin, which pulls the note outside the text container — and overflows
+the viewport at the widths between "the container has slack" and "the container is capped".
+`check:responsive` asserts `scrollWidth` at three of them. A grid cannot overflow: the second
+column is space that already exists inside `--container-narrow`.
+
+**Degradation is measured, not asserted.** *"On mobile these collapse inline beneath the paragraph
+they annotate"* is a geometric claim, so `check:press-type` gained a fourth branch that measures it
+as one — below `1024px` the note's left edge is flush with the annotated block's and its top is
+below that block's bottom; at or above it, the note's left edge is beyond the block's right edge.
+Live at 1440: note left **836**, annotated block right **804**, a 32px `--space-8` gutter, 15px,
+`rgb(87, 83, 78)`. A margin note with no margin has to be a note rather than a broken layout, and
+nothing but geometry can say which.
+
+**The breakpoint is `64rem` and it is now in `DESIGN.md` §4, which had only said "on mobile".**
+`--container-narrow` is 800px and Press prose caps at 52ch (~426px in Source Serif at 17px), so the
+slack is real from about 768px — but a ~290px note column beside a 426px column of 17px serif is
+two cramped columns, not a book's margin. 375 and 768 collapse; 1440 does not.
+
+**The subject is real content already on the page, not a specimen.** The rights statement on
+`/press` ends in a clause-10.1 reference, and `DESIGN.md` §4 names clause references as the use
+case. That paragraph is now the margin note beside the three rights paragraphs. Nothing was
+authored: the sentence, the link and the anchor are unchanged, and `check:consumer-terms` still
+reports `/press` linking to the consumer instrument. **Both sinks are in `(marketing)`**, so a
+kitchen-sink specimen was not available — `check:press-type` requires `data-division="press"`.
+
+**The note is deliberately outside the 17px / 1.7 / 52ch assertions** — `DESIGN.md` §4 sets it at
+`--text-sm` `--ink-muted`, and at 375px it measures 14.05px against a 16.08px body. That exemption
+is the shape that goes unmeasured, so it has its own branch rather than none.
+
+**Seven deliberate-failure proofs, each firing its own case and nothing else**: `--text-base` fired
+size at all three widths; `--ink` fired colour at all three; removing the media query fired the
+outer-column branch **at 1440 only**, both collapse branches still passing; a 40px inline start
+fired flush-left at 375 and 768 only; a -400px block start fired beneath-the-paragraph at the same
+two and not flush-left; emitting the note first fired the no-preceding-sibling branch and stopped
+there; deleting the only call site fired the hollow-subject exit. The two collapse branches were
+broken separately on purpose — one alternation branch firing is not evidence for the other.
+
+**JS delta 1.9 → 1.9KB on `/press` against a 20KB budget**, two clean builds per side
+(`rm -rf .next` each). It is a server component; there is no client boundary to pay for.
+
+**Every list of every gate this touched was checked, per the rule above.** `/press` was already in
+`check-axe`'s `ROUTES` **and** its `INCOMPLETE_ALLOWED`, in `check-responsive`'s `ROUTES`, in
+`check-press-type`'s `ROUTES` and in `check-bundle-size`'s `REQUIRED`, `BASELINE_ROUTES` and
+`BUDGETS` — no route is new, so no list changed, and `check:lists` re-confirms all five pairs. Axe
+on the changed route: **zero violations and zero unresolved incompletes**, which are two answers
+and are reported as two.
+
+### Runway after this session: **nothing. No Epic K or P row is buildable without an owner decision.**
+
+`P-03` was the last one. What remains and what each waits on:
+
+| Blocked on | Rows |
+|---|---|
+| Owner decision `K-17` | `K-17`, and `K-19`'s consumers (`K-19` itself is buildable as a migration, but every consumer is downstream) |
+| Missing `K-10` sample asset | `K-10` |
+| `Q-P13` | `K-21`, `K-22` |
+| `Q-P5`/`P6`/`P7`/`P11` | `K-04`, `K-05`, `K-06`, `K-07`, `K-14` |
+| `R-09` (design) + `O-09` (copy) | `K-13`'s memoir residual, `K-09`, `K-11`, `K-12` |
+| `P-03` — now unblocked | `R-08`, `R-09`, `R-13`, `R-17` are **no longer blocked by their dependency**, but `R-09` and `R-17` both need clause and copy decisions that are not mine to make |
+
+`R-08` and `R-13` are the two that are closest to buildable and neither is clean: `R-08` is a
+three-way honest comparison naming what Gridsmith is not, and `R-13` names distribution platforms.
+Both are content-first rows under non-negotiable #2, and authoring either means inventing the
+comparison or the platform list. **They are open questions wearing a Dev label, not runway.**
+
+---
+
+## ⇢ 4 September 2026 — `K-16` and `K-15` are built, and Epic K's runway is now `P-03` alone
 
 **`K-16` is built.** `pressSegmentTerms` in `lib/leads/pressSegments.ts`, rendered at step 4 of the
 Press flow beside the privacy line. **The premise check held** — both destinations existed at

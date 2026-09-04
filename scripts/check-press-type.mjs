@@ -43,8 +43,21 @@
  *
  * This asserts the three numbers on the routes listed below. It does not assert that every
  * Press body-copy block goes through `Prose` — a future block that sets its own `max-width`
- * from `--measure` is outside the subject set and this gate will not see it. `P-03`'s margin
- * note is the first candidate; route it through `Prose` or extend the selector here.
+ * from `--measure` is outside the subject set and this gate will not see it.
+ *
+ * ## `P-03`'s margin note — branch 4, and why it is not measured as body copy
+ *
+ * The margin note is **not** body copy and is deliberately outside the 17px / 1.7 / 52ch
+ * assertions: `DESIGN.md` §4 sets it at `--text-sm` `--ink-muted` in the outer column. That
+ * exemption is exactly the shape that goes unmeasured, so it has its own branch rather than
+ * no branch, asserting the three things §4 actually claims — smaller than body copy, muted,
+ * and **in the outer column only where there is an outer column.**
+ *
+ * The degradation half is the one worth having. *"On mobile these collapse inline beneath the
+ * paragraph they annotate"* is a geometric claim, and it is measured as one: below `1024px`
+ * the note's left edge is flush with the annotated block's and its top is below that block's
+ * bottom; at or above it, the note's left edge is beyond the block's right edge. A margin note
+ * with no margin has to be a note, not a broken layout, and nothing but geometry can say which.
  *
  * Expects a server already running at BASE_URL (`npm run start`).
  */
@@ -64,6 +77,14 @@ const MIN_LEADING = 1.7;
 const MAX_MEASURE_CH = 52;
 
 /**
+ * `P-03`. The width at which `pressMargin.module.css` opens its second column. A literal here
+ * rather than a value scraped from that file: the stylesheet is the subject, and an expectation
+ * read out of its own subject cannot fail when the subject changes — `CLAUDE.md`. Move the
+ * media query and this must move in the same commit, which is the point.
+ */
+const MARGIN_NOTE_MIN_WIDTH = 1024;
+
+/**
  * Sub-pixel tolerance only. A browser reports `max()` of `1.0625rem` as exactly 17px and the
  * leading as 28.9px over 17px, which is 1.7 to fifteen places; this absorbs the last bit of
  * float, never a design decision. 0.05 would let 16.96px through and is deliberately not used.
@@ -74,6 +95,7 @@ const browser = await launch();
 const problems = [];
 let bodyChecks = 0;
 let measureChecks = 0;
+let marginNoteChecks = 0;
 
 try {
   for (const path of ROUTES) {
@@ -114,7 +136,38 @@ try {
           return { i, maxWidthPx, chPx };
         });
 
-        return { fontPx, lineHeightPx, division, blocks };
+        /**
+         * Branch 4 — `P-03`. Two probes carry the expected size and colour so that this file
+         * never has to know what `--text-sm` or `--ink-muted` resolve to in the Press theme:
+         * the browser resolves them, in the note's own inherited context.
+         */
+        const nprobe = document.createElement('span');
+        nprobe.style.cssText =
+          'font-size:var(--text-sm);color:var(--ink-muted);position:absolute;visibility:hidden';
+        body.appendChild(nprobe);
+        const nprobeStyle = getComputedStyle(nprobe);
+        const expectedNote = {
+          fontPx: parseFloat(nprobeStyle.fontSize),
+          color: nprobeStyle.color,
+        };
+        nprobe.remove();
+
+        const notes = [...document.querySelectorAll('[data-margin-note]')].map((el, i) => {
+          const ns = getComputedStyle(el);
+          const annotated = el.previousElementSibling;
+          const n = el.getBoundingClientRect();
+          const a = annotated ? annotated.getBoundingClientRect() : null;
+          return {
+            i,
+            fontPx: parseFloat(ns.fontSize),
+            color: ns.color,
+            hasAnnotated: Boolean(annotated),
+            note: { left: n.left, top: n.top },
+            annotated: a ? { left: a.left, right: a.right, bottom: a.bottom } : null,
+          };
+        });
+
+        return { fontPx, lineHeightPx, division, blocks, notes, expectedNote };
       }, MAX_MEASURE_CH);
 
       const where = `${path} @ ${width}px`;
@@ -163,6 +216,66 @@ try {
         }
       }
 
+      // ---- Branch 4: the margin note — `P-03`, press/DESIGN.md §4. ----
+      for (const n of read.notes) {
+        marginNoteChecks += 1;
+
+        if (!n.hasAnnotated) {
+          problems.push(
+            `${where} — margin note #${n.i} has no preceding sibling, so there is nothing it ` +
+              'annotates and the collapse assertion below has no reference. MarginNote renders ' +
+              'the annotated block immediately before the note; something else is emitting ' +
+              'data-margin-note.',
+          );
+          continue;
+        }
+
+        if (Math.abs(n.fontPx - read.expectedNote.fontPx) > EPS) {
+          problems.push(
+            `${where} — margin note #${n.i} is ${n.fontPx.toFixed(2)}px, not the ` +
+              `${read.expectedNote.fontPx.toFixed(2)}px --text-sm resolves to here ` +
+              '(press/DESIGN.md §4). Marginalia is secondary information and is set smaller ' +
+              'than the body copy it sits beside.',
+          );
+        }
+
+        if (n.color !== read.expectedNote.color) {
+          problems.push(
+            `${where} — margin note #${n.i} is ${n.color}, not the ${read.expectedNote.color} ` +
+              '--ink-muted resolves to here (press/DESIGN.md §4).',
+          );
+        }
+
+        if (width >= MARGIN_NOTE_MIN_WIDTH) {
+          if (!(n.note.left >= n.annotated.right)) {
+            problems.push(
+              `${where} — margin note #${n.i} starts at x=${n.note.left.toFixed(0)}, which is ` +
+                `not beyond the annotated block right edge at ${n.annotated.right.toFixed(0)}. ` +
+                'At this width DESIGN.md §4 puts it in the OUTER COLUMN; it is overlapping or ' +
+                'sitting inside the text column instead.',
+            );
+          }
+        } else {
+          if (Math.abs(n.note.left - n.annotated.left) > 1) {
+            problems.push(
+              `${where} — margin note #${n.i} starts at x=${n.note.left.toFixed(0)} and the ` +
+                `block it annotates at x=${n.annotated.left.toFixed(0)}. Below ` +
+                `${MARGIN_NOTE_MIN_WIDTH}px there is no outer column, so DESIGN.md §4 collapses ` +
+                'it INLINE beneath the paragraph — flush left with it, not indented into a ' +
+                'margin that is not there.',
+            );
+          }
+          if (!(n.note.top >= n.annotated.bottom - 1)) {
+            problems.push(
+              `${where} — margin note #${n.i} has its top at y=${n.note.top.toFixed(0)}, above ` +
+                `the annotated block bottom at ${n.annotated.bottom.toFixed(0)}. Collapsed, ` +
+                'the note goes BENEATH the paragraph it annotates; this is the two-column rule ' +
+                'still applying at a width with no margin, which is the broken-layout case.',
+            );
+          }
+        }
+      }
+
       await page.close();
     }
   }
@@ -196,6 +309,22 @@ if (measureChecks === 0) {
   process.exit(1);
 }
 
+/**
+ * `P-03`. Same reasoning as `measureChecks`: the note is rendered by one call site, and a call
+ * site can drop it without any route disappearing. Branch 4 would then pass having measured
+ * nothing, which is the case this whole file's docstring exists to refuse.
+ */
+if (marginNoteChecks === 0) {
+  console.error(
+    '\ncheck-press-type: no [data-margin-note] was found on any Press route, so the P-03' +
+      '\nassertions measured nothing and would have reported success anyway.' +
+      '\n\nThe subject today is the clause reference beside the rights statement on /press.' +
+      '\nEither a call site dropped its <MarginNote>, or MarginNote.tsx stopped emitting the' +
+      '\nattribute. Restore it or delete branch 4 deliberately — do not let it pass empty.\n',
+  );
+  process.exit(1);
+}
+
 if (problems.length > 0) {
   console.error(`\ncheck-press-type: ${problems.length} problem(s)\n`);
   for (const p of problems) console.error(`  ${p}`);
@@ -213,4 +342,9 @@ console.log(
 console.log(
   `check-press-type: ${measureChecks} body-copy block(s) measured — each within ${MAX_MEASURE_CH}ch, ` +
     'converted in the page own serif rather than by an assumed ratio',
+);
+console.log(
+  `check-press-type: ${marginNoteChecks} margin note(s) measured — --text-sm and --ink-muted on ` +
+    `every one, in the outer column at >=${MARGIN_NOTE_MIN_WIDTH}px and collapsed beneath the ` +
+    'paragraph they annotate below it',
 );

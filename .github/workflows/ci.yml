@@ -161,6 +161,17 @@ jobs:
       - name: The Press contact contract rejects what it must (committed specimens)
         run: npm run check:press:contact:selftest
 
+      # K-13 again, from the other side. check:axe was red for two sessions because K-13's two
+      # routes went into ROUTES and not into INCOMPLETE_ALLOWED — a gate consulting two lists,
+      # with nothing in the source relating them. This asserts the relation, and its discovery
+      # guard makes a new multi-list gate impossible to add without registering one. Selftest
+      # first: every case reads the returned problem set, so a broken comparator cannot pass.
+      - name: Every list a gate consults agrees with its subject list (selftest)
+        run: npm run check:lists:selftest
+
+      - name: Every list a gate consults agrees with its subject list
+        run: npm run check:lists
+
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
       # the `development` dataset. check:launch still runs against the SERVED site below;
