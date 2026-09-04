@@ -68,6 +68,7 @@ const base = () => [
   { file: 'rule-3-subject.md', text: '~~| INP | <=200ms | Lighthouse CI |~~ struck — TBT is the lab proxy\n' },
   { file: 'rule-4-subject.md', text: "~~Digital's 90KB budget~~ — struck, the budget is a 15KB delta\n" },
   { file: 'rule-5-subject.md', text: '~~Imprint name, ISBN prefix~~ — struck at Q-P8\n' },
+  { file: 'rule-6-subject.md', text: "~~{ name: 'vatNumber', type: 'string' }~~ - struck 2 Sept 2026, not VAT registered\n" },
 ];
 
 const SPECIMENS = [
@@ -94,7 +95,7 @@ const SPECIMENS = [
   {
     name: 'BRANCH 4 — zero subject: corpus below the floor',
     files: base().slice(MIN_FILES),
-    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 5 document(s)')),
+    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 6 document(s)')),
   },
   {
     name: 'EXONERATION — annotation on a neighbouring line, inside the window',
@@ -149,6 +150,19 @@ const SPECIMENS = [
   {
     name: 'NOT A SUBJECT — the surviving "no imprint is operated" statement',
     files: [...base(), { file: 'x.md', text: 'No imprint is claimed, because none is operated.\n' }],
+    expect: (r) => r.ok,
+  },
+  {
+    name: 'BRANCH 8 - `vatNumber` re-specified as a field, unannotated',
+    files: [...base(), { file: 'master/SCHEMA.md', text: "{ name: 'vatNumber', type: 'string' },\n" }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('MASTER-VAT-NUMBER-FIELD STANDS at master/SCHEMA.md:1')),
+  },
+  {
+    // The rule is one pattern over a field name, which is the loosest predicate in the
+    // registry - so the discrimination it has to show is against the *surviving* VAT rule,
+    // which is about display and never names the field.
+    name: 'NOT A SUBJECT - the surviving no-VAT-exclusive-price display rule',
+    files: [...base(), { file: 'x.md', text: 'No price may be presented as VAT-exclusive, and no VAT number may be published.\n' }],
     expect: (r) => r.ok,
   },
   {

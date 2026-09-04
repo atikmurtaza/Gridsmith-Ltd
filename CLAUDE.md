@@ -402,6 +402,18 @@ Read the workstream's own files before touching its code.
   global tool install. This rule exists because a recursive delete of a Node version
   directory destroyed a global CLI install that a one-level look had not revealed
   (`_shared/01-VALIDATION-REPORT.md` §13, E13).
+- **When a rule is struck, register it in `check:struck` in the same commit that strikes it,
+  and strike it in place rather than deleting it.** A rule removed from one document and left
+  standing in another is `_shared/01-VALIDATION-REPORT.md` §21's shape, and it has recurred:
+  `P-01`'s 17px floor stood in four documents, and `vatNumber` — removed from the schema, the
+  projection, the footer, `/about`, the seed and `check:launch` on 2 September 2026 — was still
+  specified in `master/SCHEMA.md` two days later, where an implementer rebuilding the singleton
+  would have restored a field whose absence is a compliance decision. Deleting the wording is
+  not the fix either: it removes the gate's only subject, so the annotated line stays and
+  `scripts/struck-rules.mjs` gets the entry. **Retrospective sweeps of the audit trail are
+  closed** — two ran on 4 September 2026, a third found nothing, and the registry is now
+  populated by deliberate registration at strike time rather than by archaeology.
+
 - **Fix the class, not the instance.** When a defect is found, ask what category it
   belongs to and sweep every place that category can occur. A per-instance fix leaves the
   same defect live everywhere else and guarantees it recurs. Three of the four Epic A

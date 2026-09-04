@@ -9,6 +9,47 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
+## ⇢ 4 September 2026 (latest) — `K-08` is built and applied live, and the `check:struck` sweeps are closed
+
+**`K-08` is done.** `supabase/migrations/0003_press_path_results.sql`, applied to the live
+database with `npm run migrate`. It was chosen because it is the only Epic K row clear of every
+open question: `K-06`/`K-07` are nominally VALID but both consume the Path Finder rules `Q-P13`
+blocks, so building them is building around `K-05`; `K-13` and everything downstream of it is a
+2d PARTIAL; `K-22` waits on `K-21`. `K-08` depends on `A-07` alone, and its content is the
+schema, not the decision logic.
+
+**Two constraints are in it that `SCHEMA.md` §7 does not carry**, both because non-negotiable #9
+is audited from this table and nothing else. `press_path_outcome_known` closes `outcome` to the
+same six keys `pathOutcome.key` is closed to; `press_path_honesty_agrees` derives the audit
+column from the outcome, so `IMPLEMENTATION-PLAN.md` 3.7's *"`is_gridsmith_outcome` written
+correctly"* is enforced by the database rather than by application discipline. **Seven
+deliberate-failure proofs against the live database, each naming its own constraint**, and their
+validity is structural: two correct rows went in through the identical statement and were
+accepted, so the rejections are the constraints and not the table refusing everything.
+
+**`app/api/rls-drift/route.ts` covers the new subject** — `press_path_results` in `NO_READ`
+(labelled NOT VALIDATED, the honest label, until `K-06` writes a row), in `NO_WRITE` with a
+constraint-satisfying row so only RLS can refuse it, and `v_path_finder_honesty` in `NO_REACH`.
+**Both new assertions were proven by breaking the live database** — an anon insert policy and a
+view grant — and each fired naming its own subject with everything else still green. Restored;
+one policy in the whole schema. One incidental fix: `NO_WRITE` ids are now unique per request,
+because a probe that once succeeded would collide on the next run and return 409, which the loop
+reads as *refused* — a leak would have reported itself closed the day after it opened.
+**JS delta zero, two clean builds, `npm run size` byte-identical across 64 routes.**
+
+**`check:struck`'s retrospective sweeps are CLOSED. Do not run another one.** The second sweep
+registered exactly one rule, `MASTER-VAT-NUMBER-FIELD`, and it was standing in **nine** lines of
+`docs/master/` — `SCHEMA.md` still specified the `vatNumber` field and the statutory-footer
+projection two days after the field was removed from the schema, the footer, `/about`, the seed
+and `check:launch` because Gridsmith is not VAT registered. An implementer rebuilding the
+singleton from the spec would have restored a field whose absence is the compliance decision. A
+third pass over the same trail — Hostinger, the analytics removal, the four root layouts —
+**found nothing registrable, which is the expected result and the signal to stop.** The registry
+is six rules and 19 specimens. `CLAUDE.md` now carries the replacement obligation: **a struck
+rule is registered in the same commit that strikes it, and struck in place rather than deleted.**
+
+---
+
 ## ⇢ 4 September 2026 (latest) — `K-03` is built, `K-05` is blocked, and `check:struck` holds five rules
 
 **`K-03` is done.** `lib/path/recommend.ts` plus `check:path:selftest`, in `verify:static`. Nine

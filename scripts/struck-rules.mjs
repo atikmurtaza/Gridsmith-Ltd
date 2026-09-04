@@ -2,10 +2,10 @@
  * **The struck-rule registry and its predicate — a rule deleted in one document and left
  * standing in others.**
  *
- * Five registered so far, and only the first two were found by a person reading two documents
- * side by side. The other three came from a sweep of the audit trail for decisions recorded as
- * *removed* — and all three were still standing somewhere when they were registered, which is
- * the argument for the sweep rather than for the registry alone.
+ * Six registered, and only the first two were found by a person reading two documents side by
+ * side. The other four came from sweeps of the audit trail for decisions recorded as
+ * *removed* — and every one of them was still standing somewhere when it was registered, which
+ * is the argument for the sweep rather than for the registry alone.
  *
  * Twice now. `P-01`'s `--ink-subtle` 17px floor was deleted at the run-3 fixes and survived in
  * four documents until 4 September 2026. `01-VALIDATION-REPORT.md` §21 is the same shape at a
@@ -14,6 +14,23 @@
  *
  * Neither was found by a check, because there was nowhere to ask the question. Both were found
  * by a human reading two documents side by side, which does not scale and does not recur.
+ *
+ * ## The registry is populated by deliberate registration at strike time, not by archaeology
+ *
+ * **The retrospective sweeps are closed.** Two ran, on 4 September 2026; the first found three
+ * live divergences and the second found one, `MASTER-VAT-NUMBER-FIELD`, standing in nine lines
+ * of `docs/master/`. A third pass over the same trail — Hostinger, the analytics removal, the
+ * four root layouts — produced nothing registrable, which is the expected result once the
+ * backlog is drained and is the signal to stop. Sweeping again buys diminishing returns and
+ * tempts the failure mode already recorded below: **a registry padded with rules that cannot
+ * fire honestly is worse than a short one.** The analytics categories are the standing example
+ * — removed on 26 August, but `master/PROJECT-RULES.md` §7 preserves the arrangement as the one
+ * that returns with the analytics, so a rule over it would fire on a deliberate record.
+ *
+ * From here the registry grows one way only: **when a rule is struck, it is registered in the
+ * same commit that strikes it.** That obligation is in `CLAUDE.md`. What this gate provides
+ * going forward is regression coverage — a struck rule can never quietly come back — and that
+ * is all it has ever provided; the retrospective value was a one-off backlog, and it is spent.
  *
  * ## Scope — narrow, and stated because the honest scope is narrower than the class
  *
@@ -164,6 +181,29 @@ export const STRUCK_RULES = [
       'claimed, because none is operated."* FR-P04a and R-18 are the module that says so to ' +
       'the reader. The credentials strip keeps company number, years trading, titles ' +
       'published and platforms published to — all verifiable.',
+  },
+  {
+    id: 'MASTER-VAT-NUMBER-FIELD',
+    /**
+     * One pattern, and that is deliberate — the field name itself is the struck thing. There
+     * is no correct un-annotated use of it left in the standing spec: `companyDetails` has no
+     * such field, so every line naming it either specifies one to build or records one that
+     * used to exist, and both need the annotation for the reader to tell which.
+     */
+    patterns: [/vatNumber/],
+    why:
+      'Gridsmith Ltd is not VAT registered. On 2 September 2026 `vatNumber` was removed from ' +
+      'the Sanity schema, the GROQ projection, the footer, `/about`, the seed and ' +
+      "`check:launch`'s live-required tier, and `M-P2-3` was closed rather than deferred — a " +
+      'non-registered trader has no number to disclose and no net/gross distinction to draw. ' +
+      'The absence is the decision and both `sanity/schemas/companyDetails.ts` and ' +
+      '`lib/company/companyDetails.ts` say so in their first lines. ' +
+      '`_shared/05-HANDOVER.md` 2 Sept 2026; `docs/_legal/03-REVISION-LOG.md`.',
+    where:
+      'The **VAT display rule** survives and is the live one: no price this site serves may be ' +
+      'presented as VAT-exclusive and no VAT number may be published. ' +
+      '`scripts/check-vat-display.mjs`, in `verify:served`, proving its predicate against 13 ' +
+      'specimens first. This check asserts only that no document re-specifies the field.',
   },
 ];
 

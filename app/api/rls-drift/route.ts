@@ -84,8 +84,13 @@ const anonHeaders = { apikey: PUBLISHABLE_KEY, Authorization: `Bearer ${PUBLISHA
  * `@gridsmith.invalid` and are not this route's to delete. The other two are labelled in `observations` rather than
  * silently counted, and they become real assertions the first time a row exists. `K-10` is the
  * row that puts the first grant in `sample_grants`.
+ *
+ * `press_path_results` (`K-08`) joins them as a fourth, and it is inert today for the same
+ * reason: the table is empty until `K-06` writes to it. It is listed rather than left out
+ * because the read is free and becomes a real assertion the moment a result is recorded, and
+ * because its write probe below is a positive reading that is valid now.
  */
-const NO_READ = ['leads', 'sample_grants', 'events'];
+const NO_READ = ['leads', 'sample_grants', 'events', 'press_path_results'];
 
 /**
  * Tables `anon` may never WRITE, asserted by attempting the write. **This is a positive
@@ -119,10 +124,27 @@ const NO_WRITE: { table: string; row: Record<string, unknown>; why: string }[] =
     why: 'sample_grants.token is a bearer credential with a 72h expiry — an INSERT policy here lets any browser mint a grant for any asset',
   },
   { table: 'events', row: { session_id: 'rls-drift-probe', event: 'probe' }, why: 'events is written server-side only (0001_core.sql)' },
+  {
+    // **The row is deliberately one the table would accept.** `0003` puts two check
+    // constraints on this table, and a row that violated either would be refused by the
+    // constraint rather than by RLS — a non-2xx that this loop reads as "refused", which is
+    // the inert-probe class with a security label on it. `self-service`/`false` satisfies
+    // `press_path_outcome_known` and `press_path_honesty_agrees`, so the only thing left that
+    // can refuse it is the absence of an INSERT policy.
+    table: 'press_path_results',
+    row: {
+      id: 'rls-drift-probe',
+      config_version: 0,
+      answers: {},
+      outcome: 'self-service',
+      is_gridsmith_outcome: false,
+    },
+    why: 'press_path_results is the ETH-04 audit trail — an INSERT policy lets any browser forge the record that shows the Path Finder still recommends against Gridsmith (non-negotiable #9)',
+  },
 ];
 
 /** Views `anon` may not reach at all — `0002` revoked the grant as well as setting invoker. */
-const NO_REACH = ['v_lead_funnel'];
+const NO_REACH = ['v_lead_funnel', 'v_path_finder_honesty'];
 
 type Finding = { subject: string; problem: string; observed: string };
 
@@ -302,7 +324,15 @@ export async function GET(request: Request): Promise<Response> {
     const res = await fetch(`${PROJECT_URL}/rest/v1/${table}`, {
       method: 'POST',
       headers: { ...anonHeaders, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify(table === 'sample_grants' ? { ...row, token: `rls-drift-probe-${probeId}` } : row),
+      // Unique-per-request where the table has a unique column. Without this a probe that
+      // once succeeded — the finding — would collide on the next run and return 409, which
+      // this loop would read as "refused". A leak would report itself closed the day after it
+      // opened. `sample_grants.token` is unique; `press_path_results.id` is the primary key.
+      body: JSON.stringify({
+        ...row,
+        ...(table === 'sample_grants' ? { token: `rls-drift-probe-${probeId}` } : {}),
+        ...('id' in row ? { id: `${row.id}-${probeId}` } : {}),
+      }),
       cache: 'no-store',
     }).catch(() => null);
     if (!res) {

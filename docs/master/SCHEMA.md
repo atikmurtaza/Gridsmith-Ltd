@@ -159,7 +159,10 @@ clauses are required by law and which are there because someone liked them.
     { name: 'companyNumber', type: 'string', validation: required },
     { name: 'placeOfRegistration', type: 'string', initialValue: 'England & Wales' },
     { name: 'registeredOffice', type: 'text', validation: required },
-    { name: 'vatNumber',     type: 'string' },        // null until registered
+    // ~~{ name: 'vatNumber', type: 'string' }~~ **STRUCK 2 September 2026** — Gridsmith is
+    // not VAT registered, so the field was removed from the schema, the projection, the
+    // footer, `/about`, the seed and `check:launch`. Its absence is the decision, not an
+    // omission: `sanity/schemas/companyDetails.ts` records it. `check:struck` holds the rule.
     { name: 'tradingNames',  type: 'array', of: [{type:'string'}] },
     { name: 'contactEmail',  type: 'string' },
     { name: 'contactPhone',  type: 'string' },
@@ -249,7 +252,8 @@ from division_routing group by 1 order by 1 desc;
 // Statutory footer — one source of truth
 *[_type == "companyDetails"][0] {
   legalName, companyNumber, placeOfRegistration, registeredOffice,
-  vatNumber, contactEmail, contactPhone, responseCommitment, businessHours
+  // ~~vatNumber~~ removed 2 September 2026 — see above; not VAT registered
+  contactEmail, contactPhone, responseCommitment, businessHours
 }
 
 // Legal page — production requires solicitor approval

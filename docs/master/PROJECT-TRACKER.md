@@ -749,7 +749,7 @@ requires it — but nothing in the tracker would have told anyone to.
 
 **reg. 6(1)(c) was in no row at all**, and it is a launch obligation of exactly the same shape
 as the VAT number: legitimately empty today, unacceptable live. So `contactEmail` joins
-`vatNumber` in `check:launch`'s live-only tier, and the footer renders it on the same rule —
+`vatNumber` in `check:launch`'s live-only tier, and the footer renders it on the same rule — *(the `vatNumber` half of this is **struck** — 2 Sept 2026, not VAT registered; `check:struck`)*
 non-empty renders, empty omits.
 
 reg. 6 also requires the particulars to be *"easily, directly and permanently accessible"*,
@@ -759,11 +759,11 @@ which decided a second question below.
 
 | Seeded | `.next/server/app/index.html` |
 |---|---|
-| `vatNumber` and `contactEmail` set to `[SEED]` placeholders | `… · registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD · VAT number [SEED] GB000000000` followed by `<a href="mailto:…">` |
+| `vatNumber` and `contactEmail` set to `[SEED]` placeholders | `… · registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD · VAT number [SEED] GB000000000` followed by `<a href="mailto:…">` | *(the `vatNumber` half of this is **struck** — 2 Sept 2026, not VAT registered; `check:struck`)*
 | both re-seeded empty | `… · registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD` and no second `<p>` |
 
 `contactEmail`'s placeholder uses `.invalid`, reserved by RFC 2606 and unable to resolve, for
-the same reason `vatNumber`'s is `[SEED]`-marked: a conditional path first exercised at launch
+the same reason `vatNumber`'s is `[SEED]`-marked: a conditional path first exercised at launch *(the `vatNumber` half of this is **struck** — 2 Sept 2026, not VAT registered; `check:struck`)*
 is a path nobody has run.
 
 **Live-tier proof for `contactEmail`, isolated:** `PRODUCTION_DATASET` temporarily
@@ -818,7 +818,7 @@ route**. An embedded `/studio` is a multi-megabyte client bundle inside an appli
 premise is a JS delta measured in kilobytes, and `check-bundle-size` would have needed an
 exemption for it. Route deltas are unchanged.
 
-**`vatNumber` is a required field with a known-empty value, not an absent one.** Registration
+**`vatNumber` is a required field with a known-empty value, not an absent one.** Registration *(the `vatNumber` half of this is **struck** — 2 Sept 2026, not VAT registered; `check:struck`)*
 is in progress and the number arrives before launch, so the registered case is what is built:
 the footer renders the line whenever the field is non-empty and omits it when empty, and
 supplying the number is a content edit — no schema change, no code change, no deploy. It
@@ -830,7 +830,7 @@ The constraint lives at the launch boundary instead.
 | Tier | Asserts | Why |
 |---|---|---|
 | Every dataset | the singleton exists; `legalName`, `companyNumber`, `placeOfRegistration`, `registeredOffice`, `responseCommitment` non-empty | every page renders the statutory footer, so this tier has teeth today rather than waiting for Stage 8 |
-| `production` only | `vatNumber` non-empty; no field carries `[SEED]` | the state that must not reach live |
+| `production` only | `vatNumber` non-empty; no field carries `[SEED]` | the state that must not reach live | *(the `vatNumber` half of this is **struck** — 2 Sept 2026, not VAT registered; `check:struck`)*
 
 A gate that only fired on `production` would sit green and unexercised until the one build
 where it matters, which is a gate nobody has run.
@@ -840,8 +840,8 @@ where it matters, which is a gate nobody has run.
 | Broken | Fired |
 |---|---|
 | `NEXT_PUBLIC_SANITY_DATASET=production` (the dataset is empty) | `no companyDetails document in dataset "production"` |
-| `PRODUCTION_DATASET` temporarily `'development'`, seed's `[SEED] GB000000000` in place | `vatNumber carries a [SEED] marker and the dataset is live` — everything else populated, so nothing else fired |
-| same, with `vatNumber` re-seeded empty | `vatNumber is empty and the dataset is live` |
+| `PRODUCTION_DATASET` temporarily `'development'`, seed's `[SEED] GB000000000` in place | `vatNumber carries a [SEED] marker and the dataset is live` — everything else populated, so nothing else fired | *(the `vatNumber` half of this is **struck** — 2 Sept 2026, not VAT registered; `check:struck`)*
+| same, with `vatNumber` re-seeded empty | `vatNumber is empty and the dataset is live` | *(the `vatNumber` half of this is **struck** — 2 Sept 2026, not VAT registered; `check:struck`)*
 
 The second and third are the isolation: every other assertion had a real value to check and
 stayed green, so the live-only tier is what went red.
@@ -3509,3 +3509,51 @@ means the documents **agree**, not that they are **right**. Whether striking the
 correct is `check:contrast`'s question; what the cancellation panel should say is the owner's
 and the solicitor's.
 
+
+### The registration sweeps, and their close (4 Sept 2026)
+
+**Six rules, 19 specimens, and the retrospective sweeps are now closed.** The section above
+records the gate at two rules. Two sweeps of the audit trail for decisions recorded as
+*removed* followed, and **every rule either sweep registered was still standing somewhere when
+it was registered** — which is the argument for having swept, and equally the argument for
+stopping once it stops producing.
+
+| Sweep | Registered | Standing at, when registered |
+|---|---|---|
+| 1 | `INP-ENFORCED-BY-LIGHTHOUSE-CI` | `design/TECH-SPEC.md:72` |
+| 1 | `DIGITAL-90KB-TOTAL-BUDGET` | `_shared/00-FOUNDATION.md:137`  (the id names the **struck** total budget) |
+| 1 | `PRESS-IMPRINT-CREDENTIAL` | `press/IMPLEMENTATION-PLAN.md:55`, `press/PROJECT-TRACKER.md:66` |
+| 2 | `MASTER-VAT-NUMBER-FIELD` | **nine lines** — `master/SCHEMA.md:162` and `:252`, `master/PROJECT-TRACKER.md` 752, 762, 766, 821, 833, 843, 844 |
+
+**`MASTER-VAT-NUMBER-FIELD` is the sharpest instance the registry has caught.** `vatNumber` was
+removed from the Sanity schema, the GROQ projection, the footer, `/about`, the seed and
+`check:launch`'s live-required tier on 2 September 2026 — Gridsmith is not VAT registered, so
+`M-P2-3` closed rather than deferred and the absence is itself the compliance decision, recorded
+in the first lines of both `sanity/schemas/companyDetails.ts` and `lib/company/companyDetails.ts`.
+**`master/SCHEMA.md` still specified the field, in the field list and in the statutory-footer
+projection.** That is the §21 shape at its most direct: an implementer rebuilding the singleton
+from the specification restores a field whose absence was chosen, and no gate could have asked
+the question. The rule fired red on nine lines before annotation and green on ten after, so the
+red carried its own validity.
+
+The predicate is **one pattern** — the field name — and that is deliberate, because there is no
+correct un-annotated use of it left in the standing spec. What it has to discriminate against is
+therefore the *surviving* rule, which is about display and never names the field: no price may
+be presented as VAT-exclusive and no VAT number may be published, `scripts/check-vat-display.mjs`
+in `verify:served`. That is `BRANCH 8`'s paired NOT-A-SUBJECT specimen.
+
+**One candidate was rejected rather than registered, in both sweeps: the analytics arrangement.**
+GA4, PostHog and the three consent categories went on 26 August, but `master/PROJECT-RULES.md` §7
+preserves the arrangement as *"the arrangement that returns with the analytics"*
+(`BEFORE-LAUNCH` item 22) and `IMPLEMENTATION-PLAN.md` 0.8/0.11/6.8 are that plan. A rule over it
+would fire on the deliberate record of what returns. **A registry padded with rules that cannot
+fire honestly is worse than a short one.** Hostinger and the four-root-layouts shape were checked
+in the third pass and are the same answer: the superseded hosting record is already headed
+*superseded*, and the no-`app/layout.tsx` rule is stated correctly everywhere it appears.
+
+**The third pass found nothing registrable, and that is the expected and correct result.** The
+sweeps are closed. `scripts/struck-rules.mjs`'s docstring says so, and `CLAUDE.md` now carries
+the obligation that replaces them: **when a rule is struck, it is registered in the same commit
+that strikes it, and struck in place rather than deleted.** From here the gate is regression
+coverage going forward — a registered struck rule can never quietly come back — which is all it
+has ever provided. The retrospective value was a one-off backlog and it is spent.
