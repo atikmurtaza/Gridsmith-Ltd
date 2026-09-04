@@ -9,6 +9,35 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
+## ⇢ 4 September 2026 (later) — `check:struck` is the 29th gate, and `K-01`/`K-02` are built
+
+**Two rules went into `CLAUDE.md`.** The **PostgREST transport asymmetry**, stated generally: a
+security proof executed over a transport no hostile client has is not a proof, whatever it
+returns, and a clean result is the dangerous one. It sits with the verify-live rule as the
+concrete reason behind it. And **read before you build** — list `scripts/` and `app/api/` and
+establish absence before authoring a gate; a check is not new because the tracker row is open.
+
+**`check:struck`** — a rule struck in one document may not stand in another. Registry scope
+only, stated in the script. It **fired red on its first real run**: `press/APP-FLOW.md:168`
+still carried the flat 14-day refund promise round 9 removed. The copy is now struck in place
+rather than deleted, because deleting it removes the gate's only subject. Full record in
+`master/PROJECT-TRACKER.md`.
+
+**`K-10`'s write path is DECIDED and recorded on the row.** `SUPABASE_SERVICE_ROLE_KEY` is in
+the Vercel environment; the grant is written by a **server route using service-role**. The
+`anon insert` policy and the `security definer` RPC are both rejected and are not to be
+reopened. **`K-10` is still BLOCKED** — blocker 1 stands: there is no redacted real assessment
+to deliver and authoring one is non-negotiable #2. `K-17` was not touched beyond striking the
+stale spec copy.
+
+**`K-01` and `K-02` are built together, and that was deliberate** — an ethics validator whose
+limbs have never been made to fail is not a validator. `pathFinderConfig` plus three objects;
+`pathOutcome.key` closed and enforced by a rule that is run; `ethicsRule`'s three limbs each
+disabled separately, each producing only its own message. JS delta **zero**, measured on a
+clean build — nothing in `next build` compiles the schema folder.
+
+---
+
 ## ⇢ 4 September 2026 — `P-02` is gated, and `K-10` is blocked on the owner
 
 **`P-02` is done and the row's targets were right.** Press body copy renders 17px / 1.7 / 52ch and

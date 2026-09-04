@@ -139,6 +139,15 @@ jobs:
       - name: The legal-parity predicates still fire (committed specimens)
         run: npm run check:legal:selftest
 
+      # A rule struck in one document may not stand in another. Twice now: P-01's --ink-subtle
+      # 17px floor across four documents, and VALIDATION §21's 14-day refund promise. Registry
+      # scope only — scripts/struck-rules.mjs states what it cannot see.
+      - name: The struck-rule predicates still fire (committed specimens)
+        run: npm run check:struck:selftest
+
+      - name: No struck rule stands in the specification documents
+        run: npm run check:struck
+
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
       # the `development` dataset. check:launch still runs against the SERVED site below;

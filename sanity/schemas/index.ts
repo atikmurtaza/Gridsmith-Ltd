@@ -4,6 +4,12 @@ import { coreDocumentTypes } from './documents.ts';
 import { groupPage, groupSection } from './groupPage.ts';
 import { legalClause, legalDocument } from './legalDocument.ts';
 import { objectTypes } from './objects.ts';
+import {
+  pathFinderConfig,
+  pathOutcome,
+  pathQuestion,
+  pathRule,
+} from './pathFinderConfig.ts';
 
 /**
  * **One schema folder, shared by both datasets — never two.** `development` and `production`
@@ -23,9 +29,13 @@ export const schemaTypes = [
   groupSection,
   continuityRow,
   legalClause,
+  pathQuestion,
+  pathOutcome,
+  pathRule,
   ...coreDocumentTypes,
   groupPage,
   continuityExample,
   legalDocument,
   companyDetails,
+  pathFinderConfig,
 ];

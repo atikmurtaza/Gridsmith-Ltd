@@ -3463,3 +3463,49 @@ own docstring.
 - **No `?seed=hide`** (`S-05`, P1) — not needed while nothing is being demonstrated to a prospect.
 - **`M-P1-4`'s two sweeps are still open**, and the "END OF EPIC N" entry above still governs
   them.
+
+---
+
+## `check:struck` — a rule struck in one document may not stand in another (4 Sept 2026)
+
+**The 29th gate.** `scripts/struck-rules.mjs` (registry + pure predicate) and
+`scripts/check-struck-rules.mjs` (runner, `--selftest`). In `verify:static` and `ci.yml`.
+
+**Why: it has happened twice.** `P-01`'s `--ink-subtle` 17px floor was deleted at the run-3
+fixes and stood in four documents until 4 September. `01-VALIDATION-REPORT.md` §21 is the same
+shape at a larger scale. Neither was found by a check, because there was nowhere to ask the
+question; both were found by a person reading two documents side by side, which does not scale
+and does not recur.
+
+**The scope is narrow and the script says so.** It covers **explicitly registered
+rule-statements only** — there is no way to recognise "a normative statement" in Markdown, and
+a check claiming to would be a summary line over an empty search, which is the class
+`check:schemas` shipped twice. What it buys is regression coverage, not discovery: a registered
+struck rule can never quietly come back. It does not find the *next* silent divergence.
+
+Corpus: the 34 standing-spec documents under `docs/{master,design,digital,press}/` plus
+`00-FOUNDATION.md` and `00-PROCESS.md`. **`docs/_legal/` is excluded on principle, not for
+convenience** — `check:legal:parity` owns those, a struck-rule check has no business asserting
+anything about a clause, and the revision log's job is to preserve superseded wording verbatim.
+The dated audit reports and `FIX-LEDGER.md` are excluded for the same reason: a record is
+*supposed* to quote the struck text.
+
+Two rules registered. **`CONSUMER-14-DAY-UNCONDITIONAL` fired red on its first run against the
+real corpus** — `press/APP-FLOW.md:168` still specified *"You can cancel within 14 days for any
+reason and get a full refund"*, the promise round 9 deliberately removed and the wording `K-17`
+is marked STALE for. A red carries its own validity proof. **The fix strikes the copy in place
+rather than deleting it**, both because deleting it would remove the gate's only subject
+(`HOLLOW SUBJECT` now fails on exactly that) and because the replacement wording is `K-17`,
+blocked on the owner, and is not drafted here.
+
+Ten committed specimens, each asserting a **return value** rather than an absence: both
+violation branches, the hollow-subject branch, the zero-subject floor, exoneration inside the
+window, exoneration *beyond* the window failing to reach, two not-a-subject cases (the
+surviving 17px body rule; the conditional cancellation right), and a count-moves case that
+takes `matched` from 1 to 4.
+
+**Ceiling, stated in the runner's docstring for `check:legal:parity`'s reason:** a green line
+means the documents **agree**, not that they are **right**. Whether striking the 17px floor was
+correct is `check:contrast`'s question; what the cancellation panel should say is the owner's
+and the solicitor's.
+

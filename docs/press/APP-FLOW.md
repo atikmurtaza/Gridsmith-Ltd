@@ -163,10 +163,20 @@ STEP 4  Contact details
    cross-division prompt (FR-P20)
 
 CONSUMER PATH (author / memoir segments) — at order confirmation, not enquiry:
+
+   ~~The notice copy below is STRUCK and must not be built.~~ Round 9 deliberately
+   removed the flat 14-day right; CONSUMER-TERMS.md §6 confers it only *where* the
+   contract is distance or off-premises and the CCR 2013 give it, with §6.1 and §6.2
+   governing the refund. Under L-CRA-50 this panel's wording becomes a term of the
+   contract, so the copy below offers more than the reviewed contract gives —
+   non-negotiable #6, the §21 shape exactly. The replacement wording is K-17, it is
+   blocked on the owner, and it is not drafted here. Kept visible rather than deleted
+   because it is `check:struck`'s committed subject.
+
    ┌────────────────────────────────────────────────────────────────┐
-   │  Your 14-day cancellation right                                │
+   │  ~~Your 14-day cancellation right                              │
    │  You can cancel within 14 days for any reason and get a         │
-   │  full refund.                                                   │
+   │  full refund.~~                                                 │
    │                                                                 │
    │  ☐  I want you to start work before the 14 days are up.        │
    │     I understand that if I cancel after you've started, I pay   │

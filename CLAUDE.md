@@ -124,6 +124,16 @@ Read the workstream's own files before touching its code.
 
 - **One tracker task per session or PR.** `C-02: Drawing matrix component` is a unit of work. "Build the Track B page" is nine tasks and context will drift.
 - **Server Components by default.** `'use client'` needs a one-line comment saying why. "Easier" is not a reason.
+- **Read before you build. Establish absence before authoring a gate or a route.** Before
+  writing anything into `scripts/` or `app/api/`, list both directories and read the files whose
+  names are near the question — a check is not new because the tracker row is open. `scripts/`
+  holds 28 gates and `app/api/` holds the live probes; several answer questions phrased
+  differently from the row that sends you there. `scripts/check-rls-live.mjs` was written,
+  proven and then deleted at the `K-10` premise check because it duplicated
+  `app/api/rls-drift/route.ts` by about 70%; the duplicated question had been recorded `FIXED`
+  on 21 August and the route had been in the tree since. **That cost most of a session, and the
+  reading that would have prevented it was two `ls` calls.** Where an existing gate is close but
+  wrong, extend it — a second gate over one subject is how two gates disagree in silence.
 - **CI is the arbiter.** TypeScript, ESLint, `no-hardcoded-colors`, `check-service-role-key`, `check-bundle-size`, Lighthouse CI and axe all block merge. Never add a bypass.
 - **Conventional commits**, scoped by workstream: `feat(press): add platform compliance table`.
 - **Update the spec in the same commit** as any deviation. A spec that has silently drifted is worse than none — the next session will follow it.
@@ -281,6 +291,22 @@ Read the workstream's own files before touching its code.
   deployment — env vars set, dataset selected, mail authenticated — is an assertion about a
   machine CI does not run on, and must be answered by that machine rather than inferred from
   the workflow file.
+
+  **A security proof executed over a transport no hostile client has is not a proof, whatever
+  it returns — and a clean result is the dangerous one.** Choose the probe's transport to match
+  the attacker's, not the one that is convenient to drive. Where they differ, the convenient
+  transport can make an exposure unreachable *in the probe* while leaving it reachable in the
+  system, and can equally make a real defence look like one the probe established.
+
+  The concrete instance, because it will be rediscovered: **over PostgREST an `anon` UPDATE or
+  DELETE probe cannot fire while the table has no SELECT policy.** PostgREST resolves a filtered
+  write through a subselect, so it never finds a row to write, whatever UPDATE policy exists.
+  Measured both ways at the `K-10` premise check: the same write is **1 row** as role `anon` in
+  SQL and **0 rows** over HTTP. Two such probes were written and removed as unreachable code —
+  **do not re-add them as defence in depth**; they are the inert-probe class wearing a security
+  label. The reading that matters — `anon` cannot SELECT — is the one that makes them inert, so
+  assert *that*, and assert INSERT separately because INSERT does not go through the subselect.
+  `app/api/rls-drift/route.ts` is where this lives.
 
   **A gate subject must assert that it is still the subject.** A subject that quietly stops
   being one leaves the gate auditing whatever happens to be there and calling it clean —
