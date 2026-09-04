@@ -9,6 +9,62 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
+## ⇢ 4 September 2026 — `P-02` is gated, and `K-10` is blocked on the owner
+
+**`P-02` is done and the row's targets were right.** Press body copy renders 17px / 1.7 / 52ch and
+`check:press-type` is the 28th gate, reading the served page at 375/768/1440 — a source check cannot
+tell 16.08px from 17px, because `--text-base` is a clamp. Five branches, five deliberate-failure
+proofs. **The row's own diagnosis was wrong and the proof is what found it**: it said body *"reaches
+17px only at the top of the clamp"*; `body` set no `font-size` at all, so every division rendered
+the UA default **16.00px at 1440 as well as at 375**. No token was added and none overridden —
+`check:tokens` makes the theme contract closed, so the fix overrides the declaration site.
+
+**`P-01`'s stale `--ink-subtle` 17px floor is deleted from all four documents that carried it.** The
+17px *body* rule is a separate, surviving, typographic claim; §2 line 76 of `press/DESIGN.md` already
+said so and three documents had not caught up.
+
+### `K-10` is BLOCKED on Atik. Two blockers, and neither is code.
+
+1. **The asset does not exist and may not be authored here.** `TECH-SPEC.md` §9 requires a *redacted
+   real document*. There has been no assessment, so there is no report. Writing a plausible one is
+   non-negotiable #2. It is `Q-P5`'s sibling — FR-P10 pairs the offer with the sample report.
+2. **There is no write path to `sample_grants`, by design.** Zero policies, no service-role key, and
+   `submit.ts` says a service-role writer does not exist. The three ways to make one are a new
+   credential, an `anon insert` policy that lets any browser mint a bearer token, or a
+   `security definer` RPC — which is anon-callable by construction, so **the token would gate
+   link-sharing and indexing rather than access**. That is a change to what "signed URL" promises and
+   it is the owner's call.
+
+**`K-17` is not a dependency and was not touched** — it is order-confirmation copy for a paid consumer
+contract; a free sample request is not an order.
+
+### What the premise check did land: three defects in `app/api/rls-drift/route.ts`
+
+The live RLS posture was verified over HTTP as a hostile `anon` client. **The posture is clean** — 61
+leads in the table, `anon` sees 0, updates 0, deletes 0, one policy in the whole schema, the view
+401s. **The check that asserts this daily had three defects**, all found by breaking it rather than
+reading it, full record in `master/PROJECT-TRACKER.md` under `M-P1-3`:
+
+* **two of its three `NO_READ` probes were inert** — `sample_grants` and `events` are empty, so a
+  permissive SELECT policy on each left the route reporting clean; `HTTP 200, 0 rows` was a reading of
+  an empty table presented as a reading of RLS;
+* **`leads`' validity was accidental** — it worked only because the table happens to hold rows. A
+  read-back now makes it structural;
+* **nothing asserted that `anon` cannot INSERT into `sample_grants`**, which is exactly `K-10`'s
+  security premise.
+
+**And one finding worth carrying because it will be rediscovered:** over PostgREST, an UPDATE or
+DELETE probe as `anon` **cannot fire** while there is no SELECT policy — PostgREST resolves a filtered
+write through a subselect, so it never finds a row, whatever UPDATE policy exists. Measured both ways:
+SQL as role `anon` affects 1 row, the same write over HTTP affects 0. Two such probes were written
+here and removed as unreachable code. **Do not re-add them as defence in depth.**
+
+**A `scripts/check-rls-live.mjs` was also written, proven, and then deleted** — it duplicated this
+route by about 70%. `M-P1-3` was already FIXED on 21 Aug and `app/api/` was in the tree; the cost of
+writing before reading it was most of a session.
+
+---
+
 ## ⇢ 3 September 2026 — the probe-validity rule, and `V-07` is blocked
 
 **A probe that produces no red proves nothing until it is shown to be a subject the gate could
