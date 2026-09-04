@@ -9,6 +9,49 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
+## ⇢ 4 September 2026 (latest) — `K-03` is built, `K-05` is blocked, and `check:struck` holds five rules
+
+**`K-03` is done.** `lib/path/recommend.ts` plus `check:path:selftest`, in `verify:static`. Nine
+deliberate-failure proofs, one per branch, each naming its own case. The selftest imports the
+shipped `.ts` under Node 24 type-stripping so the subject is the file, not a `.mjs` copy of it.
+**JS delta zero, measured on two clean builds** — `rm -rf .next` each side, `npm run size`
+byte-identical across 64 routes. Nothing imports it yet; `K-05` and `K-06` are the importers.
+
+Three semantics the schema forced and `SCHEMA.md` §3 does not state are recorded in the file:
+`in` takes a comma-separated `value`; **a condition over an unanswered question never matches,
+`not` included** (plain inequality makes `not` true against `undefined`, so a rule would fire on
+question one); `conditions` is an AND. And **no match returns `null`, never a fallback** — a
+default outcome would defeat ETH-04 with every gate green.
+
+**`K-05` is BLOCKED on Atik, and the blocker is not an open `Q-P` — there was no `Q-P`.** The
+route premise-checks clean and `V-06` is the precedent, but `PROJECT-RULES.md` §6 requires the
+static table to render **all six outcomes and their criteria**, and the criteria are stated
+nowhere: `APP-FLOW.md` §5 gives one of six, `pathFinderConfig.rules` is empty by `K-01`'s design,
+no Epic O row owns them and no `Q-P` did. **`Q-P13` is now open for exactly that.** `K-04`
+follows it. Authoring the rules here is inventing the decision logic non-negotiable #9 rests on.
+
+**`check:struck` went from 2 registered rules to 5, and all three new ones fired red before they
+were annotated** — the registry was not padded, it was catching live divergences:
+
+| Rule | Struck where | Still standing at | Fired |
+|---|---|---|---|
+| `INP-ENFORCED-BY-LIGHTHOUSE-CI` | the `A-10b` two-axis split; INP is a field metric and LHCI can never produce one | `design/TECH-SPEC.md:72` | yes, 1 |
+| `DIGITAL-90KB-TOTAL-BUDGET` | `Q-M12` — JS is budgeted on the delta above the floor, not the total | `_shared/00-FOUNDATION.md:137` | yes, 1 |
+| `PRESS-IMPRINT-CREDENTIAL` | `Q-P8` — author's own ISBN, no Gridsmith imprint, so neither credential exists | `press/IMPLEMENTATION-PLAN.md:55`, `press/PROJECT-TRACKER.md:66` | yes, 2 |
+
+Each is struck **in place**, not deleted, because deleting removes the gate's only subject —
+`APP-FLOW.md:168`'s precedent. Selftest is 17 specimens over 5 rules; each new rule has a STANDS
+specimen and a NOT-A-SUBJECT specimen so the pattern is shown to discriminate, not just to match.
+
+**One candidate was rejected rather than registered: the three consent categories.** They were
+removed on 26 August, but `master/PROJECT-RULES.md` §7 explicitly preserves the arrangement as
+*"the arrangement that returns with the analytics"* (`BEFORE-LAUNCH` item 22), and
+`IMPLEMENTATION-PLAN.md` 0.8/0.11/6.8 are that plan. A rule over it would fire on the deliberate
+record of what returns. **A registry padded with rules that cannot fire honestly is worse than a
+short one**, so it is out and this is the note saying why.
+
+---
+
 ## ⇢ 4 September 2026 (later) — `check:struck` is the 29th gate, and `K-01`/`K-02` are built
 
 **Two rules went into `CLAUDE.md`.** The **PostgREST transport asymmetry**, stated generally: a

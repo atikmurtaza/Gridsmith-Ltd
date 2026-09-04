@@ -148,6 +148,12 @@ jobs:
       - name: No struck rule stands in the specification documents
         run: npm run check:struck
 
+      # K-03. recommend.ts is pure, so every specimen reads a RETURN VALUE rather than the
+      # absence of output — the structural immunity CLAUDE.md asks for. It imports the shipped
+      # .ts under Node 24 type-stripping, so the subject is the file and not a copy of it.
+      - name: The Path Finder recommendation function decides correctly (committed specimens)
+        run: npm run check:path:selftest
+
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
       # the `development` dataset. check:launch still runs against the SERVED site below;

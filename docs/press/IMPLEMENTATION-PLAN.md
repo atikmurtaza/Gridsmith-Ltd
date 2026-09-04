@@ -52,7 +52,7 @@ This ordering is deliberate. Press's conversion mechanism *is* the trust archite
 | 2.9 | `publishingPackage` schema | Foundation | Price required, excludes min 3, `notFor` required |
 | 2.10 | `/press/packages` full matrix | 2.9 | Real `<table>`; exclusions row equal weight; mobile pinned column |
 | 2.11 | Named distribution module | 1.3 | Names KDP/IngramSpark/D2D and states authors could use them directly |
-| 2.12 | Credentials strip | 1.4 | Imprint name, ISBN prefix, company number, titles published |
+| 2.12 | Credentials strip | 1.4 | ~~Imprint name, ISBN prefix~~ **STRUCK at Q-P8** — the author uses their own ISBN and is publisher of record, and Gridsmith operates no imprint, so neither credential exists (`PRD.md` FR-P19). Company number, years trading, titles published, platforms published to. Kept in place as `check:struck`’s subject for `PRESS-IMPRINT-CREDENTIAL` |
 
 ## Phase 3 — Conversion (Week 5–6)
 

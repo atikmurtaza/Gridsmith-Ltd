@@ -69,7 +69,7 @@ This is deterrence, not DRM. Documented as such so nobody assumes it is stronger
 | Metric | Budget | Enforcement |
 |---|---|---|
 | LCP | ≤2.0s (4G, Moto G4) | Lighthouse CI, blocks merge |
-| INP | ≤200ms | Lighthouse CI |
+| ~~INP~~ | ~~≤200ms~~ | ~~Lighthouse CI~~ — **STRUCK.** INP is a field metric; a Lighthouse navigation run does not produce one, so LHCI was never able to enforce it. The ≤200ms target survives in `PROJECT-RULES.md` §7 with **TBT ≤200ms as the lab proxy**, and real INP has to come from field data. Kept in place rather than deleted because it is `check:struck`’s subject for `INP-ENFORCED-BY-LIGHTHOUSE-CI` |
 | CLS | ≤0.05 | Lighthouse CI |
 | Framework floor (reported, not budgeted) | 100.2KB gz | Next 15 + React 19 |
 | **JS delta, Design routes** | **≤25KB gz** (~125KB total) | `scripts/check-bundle-size.mjs` in CI |

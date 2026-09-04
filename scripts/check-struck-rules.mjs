@@ -65,11 +65,14 @@ const base = () => [
   ...bulk(MIN_FILES),
   { file: 'rule-1-subject.md', text: '~~`--ink-subtle` may never be used below 17px~~ deleted\n' },
   { file: 'rule-2-subject.md', text: 'STRUCK: "cancel within 14 days for any reason" — removed at round 9\n' },
+  { file: 'rule-3-subject.md', text: '~~| INP | <=200ms | Lighthouse CI |~~ struck — TBT is the lab proxy\n' },
+  { file: 'rule-4-subject.md', text: "~~Digital's 90KB budget~~ — struck, the budget is a 15KB delta\n" },
+  { file: 'rule-5-subject.md', text: '~~Imprint name, ISBN prefix~~ — struck at Q-P8\n' },
 ];
 
 const SPECIMENS = [
   {
-    name: 'CLEAN — both rules present and annotated',
+    name: 'CLEAN — every registered rule has an annotated subject',
     files: base(),
     expect: (r) => r.ok && r.counts['PRESS-INK-SUBTLE-17PX'].exonerated === 1,
   },
@@ -91,7 +94,7 @@ const SPECIMENS = [
   {
     name: 'BRANCH 4 — zero subject: corpus below the floor',
     files: base().slice(MIN_FILES),
-    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 2 document(s)')),
+    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 5 document(s)')),
   },
   {
     name: 'EXONERATION — annotation on a neighbouring line, inside the window',
@@ -111,6 +114,41 @@ const SPECIMENS = [
   {
     name: 'NOT A SUBJECT — the conditional cancellation right',
     files: [...base(), { file: 'x.md', text: 'Where the CCR 2013 give you a cancellation right, you will normally have 14 days.\n' }],
+    expect: (r) => r.ok,
+  },
+  {
+    name: 'BRANCH 5 — INP re-named as a Lighthouse CI gate, unannotated',
+    files: [...base(), { file: 'design/TECH-SPEC.md', text: '| INP | <=200ms | Lighthouse CI |\n' }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('INP-ENFORCED-BY-LIGHTHOUSE-CI STANDS at design/TECH-SPEC.md:1')),
+  },
+  {
+    name: 'NOT A SUBJECT — LCP really is asserted by LHCI, and only the INP row was struck',
+    files: [...base(), { file: 'x.md', text: '| LCP | <=2.0s | Lighthouse CI, blocks merge |\n' }],
+    expect: (r) => r.ok,
+  },
+  {
+    name: 'NOT A SUBJECT — the surviving INP target with TBT as the lab proxy',
+    files: [...base(), { file: 'x.md', text: '| INP <=200ms | Not assertable in CI — field metric. TBT <=200ms is the lab proxy |\n' }],
+    expect: (r) => r.ok,
+  },
+  {
+    name: 'BRANCH 6 — the 90KB total budget restated, unannotated',
+    files: [...base(), { file: 'digital/TECH-SPEC.md', text: "a JS runtime does not survive Digital's 90KB budget\n" }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('DIGITAL-90KB-TOTAL-BUDGET STANDS at digital/TECH-SPEC.md:1')),
+  },
+  {
+    name: 'NOT A SUBJECT — the surviving 15KB delta budget',
+    files: [...base(), { file: 'x.md', text: 'Digital JS delta budget: 15KB gz above the 100.2KB framework floor.\n' }],
+    expect: (r) => r.ok,
+  },
+  {
+    name: 'BRANCH 7 — the imprint / ISBN-prefix credential restated, unannotated',
+    files: [...base(), { file: 'press/PRD.md', text: '| Credentials strip | Imprint name, ISBN prefix, company number |\n' }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('PRESS-IMPRINT-CREDENTIAL STANDS at press/PRD.md:1')),
+  },
+  {
+    name: 'NOT A SUBJECT — the surviving "no imprint is operated" statement',
+    files: [...base(), { file: 'x.md', text: 'No imprint is claimed, because none is operated.\n' }],
     expect: (r) => r.ok,
   },
   {

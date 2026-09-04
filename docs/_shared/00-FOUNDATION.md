@@ -134,7 +134,7 @@ separation exists to produce.
 Budgeting on the total would have hidden the Next 16 regression as four unrelated feature
 overruns instead of one framework fact.
 
-**Explicitly rejected:** Vite SPA (no SSG — fatal for the organic-search strategy); WordPress (performance ceiling, security surface); any page-builder (defeats the premium-craft positioning per R4.6); **any animation library, Framer Motion included** — every motion spec in the four `DESIGN.md` files is reachable with CSS plus, at most, an `IntersectionObserver`, and a JS animation runtime does not survive Digital's 90KB budget or its 100/100/100 gate; any UI component library; any third-party CMP.
+**Explicitly rejected:** Vite SPA (no SSG — fatal for the organic-search strategy); WordPress (performance ceiling, security surface); any page-builder (defeats the premium-craft positioning per R4.6); **any animation library, Framer Motion included** — every motion spec in the four `DESIGN.md` files is reachable with CSS plus, at most, an `IntersectionObserver`, and a JS animation runtime does not survive ~~Digital's 90KB budget~~ or its 100/100/100 gate — the **90KB total is struck** at Q-M12, which changed the metric rather than the numbers: Digital's budget is a **≤15KB delta** above the 100.2KB framework floor. The 100/100/100 gate is unchanged and is the real claim. Kept in place as `check:struck`'s subject for `DIGITAL-90KB-TOTAL-BUDGET`; any UI component library; any third-party CMP.
 
 ## 3. Base design tokens
 

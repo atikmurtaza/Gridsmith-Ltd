@@ -2,6 +2,11 @@
  * **The struck-rule registry and its predicate — a rule deleted in one document and left
  * standing in others.**
  *
+ * Five registered so far, and only the first two were found by a person reading two documents
+ * side by side. The other three came from a sweep of the audit trail for decisions recorded as
+ * *removed* — and all three were still standing somewhere when they were registered, which is
+ * the argument for the sweep rather than for the registry alone.
+ *
  * Twice now. `P-01`'s `--ink-subtle` 17px floor was deleted at the run-3 fixes and survived in
  * four documents until 4 September 2026. `01-VALIDATION-REPORT.md` §21 is the same shape at a
  * larger scale: round 9 removed an unconditional 14-day refund promise from `CONSUMER-TERMS.md`
@@ -106,6 +111,59 @@ export const STRUCK_RULES = [
       '`docs/_legal/CONSUMER-TERMS.md` §6, and nowhere else. The replacement UI copy is ' +
       'K-17 and is blocked on the owner — this check asserts only that the struck wording ' +
       'does not stand, never what should stand in its place.',
+  },
+  {
+    id: 'INP-ENFORCED-BY-LIGHTHOUSE-CI',
+    /**
+     * Both, on the same line. `INP` alone hits every budget table and every corrected
+     * paragraph; `Lighthouse CI` alone hits the LCP and CLS rows, which are correct — the
+     * mobile axis really does assert those.
+     */
+    patterns: [/\bINP\b/, /\b(Lighthouse\s*CI|LHCI)\b/i],
+    why:
+      'INP is a field metric and a Lighthouse navigation run does not produce one, so naming ' +
+      'LHCI as its enforcement was never possible. Struck at the A-10b two-axis split; TBT at ' +
+      'the same ceiling is the lab proxy and real INP has to come from field data. ' +
+      '`CLAUDE.md` performance budgets, `master/PROJECT-TRACKER.md` line 534.',
+    where:
+      'The INP *target* survives — `{master,design,digital,press}/PROJECT-RULES.md` state it ' +
+      'as **not assertable in CI** with TBT as the proxy, and `00-FOUNDATION.md` §8 is the ' +
+      'two-axis record. This check asserts only that no document re-names LHCI as the gate.',
+  },
+  {
+    id: 'DIGITAL-90KB-TOTAL-BUDGET',
+    /** `budget` matches `budgeted` in the annotated Q-M12 line, which is the committed subject. */
+    patterns: [/\b90\s*KB\b/i, /budget/i],
+    why:
+      'Q-M12 changed the metric, not the numbers: JS is budgeted on the delta above the ' +
+      '100.2KB framework floor, not on the total, because budgeting on the total lets a ' +
+      'framework upgrade silently eat the allowance features were supposed to have. Digital ' +
+      "carries a 15KB delta. The 90KB total was a badly-set proxy for Digital's 100/100/100 " +
+      'gate. `master/PROJECT-TRACKER.md` Q-M12; `CLAUDE.md` performance budgets.',
+    where:
+      "Digital's **100/100/100 Lighthouse gate** survives unchanged and is the real claim — " +
+      '`digital/PROJECT-RULES.md`. The delta budgets are `CLAUDE.md` and are gated by ' +
+      '`scripts/check-bundle-size.mjs`, which reports the floor as its own number.',
+  },
+  {
+    id: 'PRESS-IMPRINT-CREDENTIAL',
+    /**
+     * Both, on the same line — this is the credentials-strip specification and nothing else.
+     * `imprint` alone would hit every correct *no imprint* statement, of which the corpus has
+     * several and all of them are the surviving rule.
+     */
+    patterns: [/\bimprint\b/i, /\bISBN prefix\b/i],
+    why:
+      'Q-P8 resolved as the author\u2019s own ISBN, the author as publisher of record, and no ' +
+      'Gridsmith imprint. Gridsmith therefore has neither an imprint name nor an ISBN prefix, ' +
+      'so a credentials strip carrying them would state two credentials that do not exist — ' +
+      'non-negotiable #2, and the structural claim in `press/PRD.md` \u00a7Positioning is that a ' +
+      'vanity press holds exactly these. `press/PROJECT-TRACKER.md` Q-P8.',
+    where:
+      '`press/PRD.md` FR-P19 is the surviving rule and states it directly: *"No imprint is ' +
+      'claimed, because none is operated."* FR-P04a and R-18 are the module that says so to ' +
+      'the reader. The credentials strip keeps company number, years trading, titles ' +
+      'published and platforms published to — all verifiable.',
   },
 ];
 
