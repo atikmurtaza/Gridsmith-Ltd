@@ -79,6 +79,11 @@ const ROUTES = [
   // The later steps reuse the same primitives the kitchen sink already audits.
   { path: '/press/contact', status: 200 },
   { path: '/press/contact/thank-you', status: 200 },
+  // `K-05`. The static SSR decision table. A real <table> with a caption, a scrollable
+  // focusable region and row headers, on the route that carries the ETH-04 honest outcomes —
+  // the one page on the site where a screen-reader user losing the row/column relationship
+  // would lose which outcome a criterion belongs to.
+  { path: '/press/path-finder', status: 200 },
   { path: '/_kitchen-sink', status: 200 },
   // Composed master components. Separate from the kitchen sink so the primitive-layer
   // measurement stays a measurement of primitives — see the page's own docstring.
@@ -190,6 +195,11 @@ const INCOMPLETE_ALLOWED = [
       // shared banner's incomplete — allowed on all sixteen other routes — reported UNRESOLVED
       // on eight combinations and the gate has been red since. Found at K-16 by running it.
       '/press/contact', '/press/contact/thank-you',
+      // `K-05`, added to this list in the same commit as the route list. The banner is in the
+      // shared layout, so this route reproduces the identical incomplete and is not a new
+      // question — this is the K-13 direction, and it is decided here rather than discovered
+      // by a red run two sessions later.
+      '/press/path-finder',
       '/digital/services/website-design-build',
       '/digital/estimate',
     ],

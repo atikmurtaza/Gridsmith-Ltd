@@ -32,6 +32,10 @@ const ROUTES = [
   // `K-13`. A form is where a fixed-width control overflows a 375px viewport, so the site's
   // only multi-step form is a subject rather than a duplicate of /press.
   { path: '/press/contact', status: 200 },
+  // `K-05`. A wide data table is the other way a page overflows 375px, and the only one on
+  // the site outside the kitchen sink — `Table` wraps in an `overflow-x: auto` region, and
+  // whether that region actually contains the overflow is a layout-time fact.
+  { path: '/press/path-finder', status: 200 },
   // Epic N routes. Seven of the eight new master pages, chosen to cover every distinct
   // template rather than every URL: a grid, a canonical case study, both `groupPage` layouts,
   // the insights hub, a legal document and the one route with a form. The per-slug routes are

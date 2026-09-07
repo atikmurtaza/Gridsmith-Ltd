@@ -1,7 +1,7 @@
 # Handover — Epic N built out, site complete as a shell
 
-**Written:** 11 August 2026 · **Revised:** 21 August 2026, at **EPIC N BUILD-OUT** · **Branch:**
-`feat/a-01-a-10a-scaffold-ci` · **Runtime:** Node 24.15.0
+**Written:** 11 August 2026 · **Revised:** 7 September 2026, at **the live-site read, `Q-P13`,
+`K-05` and `K-04`** · **Branch:** `legal/round-12-parity-gate-and-ucta` · **Runtime:** Node 24.15.0
 
 This file exists because a session ended with state that only that session knew. Everything
 here is either unrecorded elsewhere or scattered across five documents. Read it before
@@ -9,7 +9,98 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
-## ⇢ 5 September 2026 (latest) — `check:lists` and `P-03`, and Epic K/P has **no unblocked row left**
+## ⇢ 7 September 2026 (latest) — the live site is **Digital**, not Press; `Q-P13` has a [SEED] draft; `K-05` and `K-04` are built
+
+### **Correction to this file: the live `gridsmith.uk` is NOT Press-facing.** Verified, not assumed.
+
+Earlier revisions of this handover describe the live site as Press. It is **wholly Gridsmith
+Digital** — website development, SEO, digital marketing, branding support, automation.
+`press`, `book`, `publish`, `manuscript`, `ghostwrit`, `ISBN`, `editorial` and `author` appear
+**nowhere** on the served homepage; the only adjacent word is *"publishing outcomes"* inside the
+T&Cs' no-guarantees clause, which is a disclaimer, not an offer. **Design** exists only as
+*"branding support"* — a line item inside Digital's list. There is no division structure at all.
+
+**Full verbatim record: `docs/_shared/LIVE-SITE-EXTRACT.md`.** Read it before writing any copy
+that assumes what the public currently sees.
+
+Four things in it that will otherwise be rediscovered:
+
+1. **The six process stages in `00-PROCESS.md` came from the live site.** Near-verbatim. The
+   provenance was recorded nowhere until now. Live stage 6 names *"SEO improvements"* inside a
+   description the build treats as division-neutral.
+2. **The footer's email inconsistency runs the opposite way to how it is usually described.**
+   The served markup is `<a href="mailto:info@gridsmith.uk">contact.gridsmith@gmail.com</a>` —
+   **the label is the Gmail address and the `href` is `info@`**. Three addresses are in play
+   across the estate, and the third — `contact@gridsmith.uk`, in the build's seed — is the one
+   `CONSUMER-TERMS.md` §6.1 names for serving a **statutory cancellation notice**, and it is
+   published on none of the three live pages.
+3. **The live T&Cs elect the law of Pakistan** (§13) for a UK-registered company publishing a UK
+   address. Both build instruments elect England & Wales. Largest single divergence found.
+4. **The live registered address differs from the seed in four ways**, one substantive: the live
+   postcode reads `BL4 **O**HD` with the **letter O**. Neither string was checked against the
+   Companies House register in that session, and the live site publishes **no company number**,
+   so the two artefacts cannot corroborate each other.
+
+**`K-17` was not resolved and was not touched.** `LIVE-SITE-EXTRACT.md` §11.4 compares the live
+refund summary against `CONSUMER-TERMS` and `MSA-BUSINESS` and stops there.
+
+### `Q-P13` — a **[SEED]** rule set, and the row stays open
+
+`lib/path/seedConfig.ts`: 5 questions, 6 outcomes, **13 rules**, `isSeed: true`. **The questions
+and their 21 option labels are `APP-FLOW.md` §5 verbatim and were never the blocker** — the
+`K-05` premise check said so and it was right. Only the criteria are drafted, plus the option
+*slugs* (the spec gives labels, not keys) and the outcome prose, each `[SEED]`-prefixed where it
+renders.
+
+**The schema settles the question count at five, not three to five.** `pathFinderConfig.questions`
+is `r.length(5)` — exactly five, not a minimum.
+
+**`APP-FLOW.md` §5's *under £500 + partial draft → E or F* is implemented unconditionally** at
+priority 10, two conditions, with no third that could let it fall through. It is the one rule in
+the file whose replacement is a spec change rather than a content edit.
+
+**The six honest-outcome rules hold the six lowest priority numbers**, so no Gridsmith rule can
+shadow one. That ordering is what `ETH-04` needs and it is the thing a later content edit is
+most likely to reverse quietly.
+
+### `K-05` and `K-04` are built
+
+`app/(press)/press/path-finder/page.tsx` — Server Component, no client boundary, the criteria
+column **derived** from `SEED_RULES` rather than written beside them. `K-04` extended
+`check:path:selftest` from **13 to 28 cases** rather than adding a 32nd gate. Fifteen
+deliberate-failure proofs, each naming its own case; the full record is on the two tracker rows.
+
+**One proof was invalid on its first run and the record says so.** The catch-all-fallback probe's
+`^\];$` anchor matched `SEED_QUESTIONS`' closing bracket rather than `SEED_RULES`', so the
+injected rule went into the wrong array and the gate never saw it — a green reading that looked
+exactly like a broken gate. Re-run with probe validity established **structurally first** (rule
+count printed 13 → 14 before the gate ran).
+
+**Two process mistakes worth not repeating**, both mine and both cheap:
+
+- **`verify:static` was started while the proof harness was still mutating its subject**, and read
+  a temporarily-mutated `isSeed: false`. The red was real and the cause was the race. Do not run
+  the suite and a mutation harness concurrently over the same file.
+- The two harnesses themselves overlapped, so one proof's output carried another's mutation. Both
+  readings were recoverable; neither had to be.
+
+### `PRE-DEPLOYMENT-CHECKLIST.md` — 44 rows in nine groups
+
+`docs/_shared/PRE-DEPLOYMENT-CHECKLIST.md`. Everything assumed, drafted, inferred or lifted.
+**It is not a gate and must not become one** — a check that failed on placeholder content would
+fail every build until launch and be bypassed within a day.
+
+**No placeholder photography was added, and that is a deviation from the brief with a reason.**
+The brief allowed *"Unsplash, Pexels, or generated blocks"*; generated blocks were taken because
+the other two are prohibited by `CLAUDE.md` *The feel* (stock photography) and `00-FOUNDATION.md`
+§"Seed content" item 7 (*"neutral geometric placeholders at correct aspect ratios"*), and because
+`Placeholder.tsx` already fills every surface with a CSS hatch that costs no request. Group E
+lists the three surfaces with no imagery and why none of them is an empty surface waiting for a
+picture.
+
+---
+
+## ⇢ 5 September 2026 — `check:lists` and `P-03`, and Epic K/P has **no unblocked row left**
 
 ### `check:lists` — the 31st gate, from `K-13`'s defect rather than from a tracker row
 
