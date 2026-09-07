@@ -1,7 +1,7 @@
 # Handover — the Path Finder is interactive; the live site is reference, not authority
 
-**Written:** 11 August 2026 · **Revised:** 7 September 2026, at **`K-06`/`K-07`, the
-live-site extract reframe and the preview verification** · **Branch:** `main` · **Runtime:** Node 24.15.0
+**Written:** 11 August 2026 · **Revised:** 7 September 2026, at **`R-01`/`R-10`/`R-15` — the last
+buildable rows, and the stopping report** · **Branch:** `main` · **Runtime:** Node 24.15.0
 
 This file exists because a session ended with state that only that session knew. Everything
 here is either unrecorded elsewhere or scattered across five documents. Read it before
@@ -9,7 +9,122 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
-## ⇢ 7 September 2026 (latest) — `K-14` ships as an **enforcement**; the production deploy is still `ERROR` on the empty dataset
+## ⇢ 7 September 2026 (latest) — `R-01`/`R-10`/`R-15` ship, and **the build stops here**
+
+### The build has stopped, and what it is stopped on is owner facts
+
+**There is no buildable row left that does not need an answer from Atik.** That is the state,
+stated plainly rather than left to be rediscovered by a session that opens the tracker looking
+for work. `R-01`, `R-10` and `R-15` were the last three rows in the programme that were pure
+code with no owner input, and they are `DONE` and pushed at `e0b2f0ce`. Every remaining open
+row either names a `Q-` question in its `Depends`, or depends on a row that does.
+
+**This is not a blocked build. It is a finished phase.** The schema layer, the gate layer, the
+legal instruments, the primitives, the four route groups' chrome and the Path Finder are built
+and gated; what is missing is content and the commercial decisions the content encodes. Nothing
+technical is in the way of any of it.
+
+### Which single answer buys the most work
+
+Ordered by **days of downstream open work released**, largest first. The transitive closure was
+computed from the four `PROJECT-TRACKER.md` files rather than read off any one of them:
+`scratchpad/unblock.py` parses every row's `Depends` and walks the children.
+
+⚠ **Every day figure below is a spec estimate that no gate measures.** `CLAUDE.md`'s rule about
+unverified numbers applies to these in full — they are useful for *ordering* the questions and
+should not be read as a schedule.
+
+| Rank | Question | Direct rows | Days released | Notes |
+|---|---|---|---|---|
+| 1 | **`Q-DG2`** base price bands per project type | `V-01` | **13.0d** | The largest single answer in the programme. It unlocks the whole Digital estimator spine — `V-01`→`V-16` plus `Y-09` |
+| 2 | **`Q-M6`** a real cross-division continuity example | `N-05` | **10.0d** | Unlocks `N-01`, `N-02`, `N-04`, `N-05`, `H-01`, `H-04`, `H-05` — the master layer's homepage and approach page. `master/SCHEMA.md` §2 calls an invented one "the most damaging possible piece of content on the site", so it cannot be seeded |
+| 3 | **`Q-DG1`** 10 historical projects with real final prices | `V-04`, `V-05` | **9.5d** | Overlaps `Q-DG2` almost entirely — see the grouping note below |
+| 4 | **`Q-02`** real pricing figures per Design service | `C-06`, `E-01`, `E-02` | **8.5d** | |
+| 5 | **`Q-01`** Track A vs Track B split | `B-06` | **6.5d** | The only architectural question left; it is a positioning decision, not a price |
+| 6 | **`Q-04`** which 8 Design projects become case studies | `E-03`, `E-04` | **6.0d** | |
+| 7 | **`Q-DG6`** which 8 Digital projects become case studies | `X-02` | **5.0d** | |
+| 8= | **`Q-P3`** final package prices and inclusions | `O-05` | **5.0d** | `R-10` is now built, so what is left is content |
+| 8= | **`Q-P1`** author consent for 12+ titles | `O-01`, `O-02` | **5.0d** | Also gates `Z-02`, `Z-06`, `Z-07` — the launch checks |
+| 8= | **`Q-P4`** revision rounds + extra cost per package | — | **5.0d** | Same downstream set as `Q-P3` |
+| 11 | **`Q-P11`** marketing package contents and prices | `K-21`, `K-22` | 3.0d | |
+| 11= | **`Q-P12`** platform spec detail per platform | `R-16` | 3.0d | `R-15` is now built |
+| 13 | **`Q-DG4`** diagnostic price and deliverable | `T-09` | 2.5d | |
+| 14 | **`Q-P5`** Manuscript Assessment price + deliverable | `K-09` | 2.2d | |
+| 15= | **`Q-M7`**, **`Q-DG7`**, **`Q-P13`**, **`Q-P10`**, **`Q-DG3`** | | 2.0d each | `Q-P13` has a `[SEED]` draft and is a decision, not a blocker |
+| 20= | **`Q-P7`**, **`Q-P6`**, **`Q-M9`**, **`Q-05`**, **`Q-P2`** | | 1.5d each | |
+| 25= | **`Q-M8`**, **`Q-DG5`**, **`Q-M5`** | | 1.0d each | |
+| 28 | **`Q-DG8`** the exclusions list | `X-05` | 0.5d | |
+| — | **`Q-M2`**, **`Q-M3`**, **`Q-M4`**, **`Q-03`**, **`Q-06`**, **`Q-M15`** | | 0d of *build* | External or gate rows with no dev effort behind them. `Q-M2` (solicitor) and `Q-M3` (ICO) release no build days and are still launch blockers |
+
+### The Press price questions **are** one sitting — four of the six, not all six
+
+The grouping in the brief is **right about `Q-P3`, `Q-P4`, `Q-P5` and `Q-P11`, and wrong about
+`Q-P6` and `Q-P7`.** The distinction is what kind of answer each needs, not what it is about.
+
+- **One sitting — the Press price list: `Q-P3` + `Q-P4` + `Q-P5` + `Q-P11` = 10.2d** over 9 rows
+  (`K-09`, `K-10`, `K-21`, `K-22`, `O-05`, `O-13`, `P-05`, `R-11`, `R-12`). All four are *"what
+  does this cost and what is in it"*, they share one document, and `Q-P4` in particular cannot be
+  answered apart from `Q-P3` — revision rounds are a line in the package. `Q-P11` is a separate
+  *service* (`FR-P27`, never bundled) but not a separate *decision*.
+- **`Q-P6` is not a price.** *"Ghostwriting: real author hours per stage"* is an observation about
+  how the process actually consumes the author's time. It is answered by looking at a past
+  project, not by choosing a number, and getting it wrong is an honesty failure rather than a
+  margin failure. Different sitting, and arguably a different day.
+- **`Q-P7` is two questions wearing one row.** The *tiers* belong to the price sitting; the *SLAs
+  and notice period* are contract terms that bear on the consumer and business instruments in
+  `_legal/`. Answering the tiers alone does not release `K-12`.
+
+All six together are **13.2d**, so adding `Q-P6` and `Q-P7` to the sitting buys 3.0d more and
+costs the sitting its focus. **Take the four.**
+
+For comparison, the two other genuine one-sitting groups: **`Q-DG1` + `Q-DG2` = 13.0d** (the
+Digital price bands — these two overlap almost completely, so they are one answer with two
+tracker rows), and **`Q-02` + `Q-04` = 14.5d** for Design. The Digital pair is the single
+highest-value hour available.
+
+### What shipped
+
+`e0b2f0ce`. Three document types, three object types, `check:schemas` extended, and **three
+rules that were stated in prose and enforced nowhere** — the `ETH-07` shape, hunted deliberately
+rather than met by accident:
+
+| Rule | Stated in | Now enforced by |
+|---|---|---|
+| No affiliate links on retailer URLs | `press/PROJECT-RULES.md` §1.7 | `retailerLink.url`, a named parameter set |
+| `extraRevisionCost` is required | `press/SCHEMA.md` §2 **prose**, contradicting its own code block | `publishingPackage.extraRevisionCost` |
+| A spec unchecked for 90 days is surfaced in the CMS | `press/SCHEMA.md` §3a | `publishingPlatform.specCheckedOn`, as a `.warning()` |
+
+**24 deliberate-failure proofs, all red, each naming its own case.** Six were re-run in a second
+pass: the first attempt deleted the whole `validation` and produced *"has no validation
+function"*, which proves the gate found the field and **not** that it asserts the particular
+rule. The second pass swapped `min(1)` for `max(99)` and `required()` for a permissive `custom`,
+so the only thing that changed was the assertion under test. **That correction is the reusable
+part** — a probe that removes the subject proves the lookup, not the assertion.
+
+`check:schemas` gained one piece of machinery: a `HARD_VALUES` refusal case may now be
+`[value, substring]`, naming the limb whose message it must produce. `noAffiliateRule` has three
+limbs and without it, one limb firing on every case reads exactly like all three working —
+`check:rls`'s half-working alternation, which shipped twice.
+
+**The JS delta is structurally zero and was not measured, deliberately.** `sanity/schemas/` is
+imported by `sanity.config.ts` and two gate scripts and by nothing under `app/`, `components/` or
+`lib/` — established by grep, not assumed — so no route's module graph can reach it. An A/B over
+an unreachable subject reports a `0` that means nothing, which is the inert-probe class wearing a
+performance label. One clean build ran as a control: green, `check-bundle-size` 67 routes all
+within budget.
+
+### Housekeeping and standing state
+
+`press/k-14-carries-nothing` and `press/k-14-preview` are **deleted** from the remote. Three
+older branches remain and were not touched: `feat/a-01-a-10a-scaffold-ci`,
+`feat/palette-and-homepage-mark`, `legal/round-12-parity-gate-and-ucta`.
+
+Production deploys still `ERROR` on the empty `production` dataset. **That is `H1`/`D6`, it is an
+owner item, and it is not a regression — do not report it as a finding.**
+
+---
+
+## ⇢ 7 September 2026 — `K-14` ships as an **enforcement**; the production deploy is still `ERROR` on the empty dataset
 
 ### The `62d8aa9a` production deploy **ERRORed**, and it is `H1`/`D6`
 
@@ -73,7 +188,7 @@ end of the `K-14` session report and on the tracker rows themselves.
 
 ---
 
-## ⇢ 7 September 2026 (latest) — `K-06`/`K-07` built and gated; the live-site extract is reframed; the preview is verified
+## ⇢ 7 September 2026 — `K-06`/`K-07` built and gated; the live-site extract is reframed; the preview is verified
 
 ### The live site's authority is now **two things**, and the rest is superseded — owner decision
 
