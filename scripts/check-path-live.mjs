@@ -34,7 +34,7 @@
  * second opinion about the rules, which is not the question. It is the browser and node running
  * the *same* evaluator over the *same* rules, so any disagreement is the render.
  *
- * ## The four assertions, and each is a value or a count
+ * ## The five assertions, and each is a value or a count
  *
  * 1. **AGREES** — the island's `data-path-result` equals the key node computed. A value.
  * 2. **HONEST OUTCOME CARRIES NO CTA** — an outcome whose record says `showCta: false` renders
@@ -43,12 +43,38 @@
  * 4. **GUIDANCE IS RENDERED** — an honest outcome's `externalGuidance` text is present in the
  *    panel. Without this, deleting the guidance and the CTA together would pass assertion 2.
  *
+ * 5. **CARRIES NOTHING** (`K-14`) — every link from the result panel to the contact route
+ *    resolves to a URL whose search and hash are empty. A value per link, not an absence.
+ *
+ * ### Why 5 is here and not a 33rd gate
+ *
+ * `K-14` is *"Path Finder -> contact prefill"*, and the owner decision on that row is to carry
+ * **nothing** — not the five answers, not the outcome key. A query string puts a memoir
+ * author's answers in browser history and in the referrer of every page the contact form links
+ * to, which is the trade `PressContactFlow` already refused once for this audience. The
+ * behaviour that decision requires is the behaviour the component already had, so what `K-14`
+ * ships is the **enforcement**: nothing in the tree stopped a later session adding
+ * `?outcome=…` to `ctaHref` and calling it a helpful prefill.
+ *
+ * Assertions 1–4 read the link's **pathname only**, so a query string passed all four. This is
+ * the same gate's subject — the served result panel, driven through five clicks — and a second
+ * gate over one subject is how two gates disagree in silence.
+ *
+ * It applies to **both** link sites: the Gridsmith CTA and the no-recommendation panel's link.
+ * Both are a result-to-form carrier and the decision does not distinguish them.
+ *
+ * **Its ceiling:** it asserts the *link* carries nothing. It does not assert that no other
+ * carrier exists — `sessionStorage`, a cookie, a POST. None is used anywhere in the tree today
+ * (grepped at `K-14`), and a gate cannot enumerate mechanisms that do not exist; adding one
+ * would be the inert-probe class. The link is the carrier the row is about.
+ *
  * Assertions 2 and 3 are separate branches on purpose. One of them firing is not evidence for
  * the other — a component that rendered no CTA anywhere would satisfy 2 for both honest
  * outcomes and look clean, and only 3 says so.
  *
- * The summary prints **case count and total CTA count**. Both must be provable to move; the
- * proofs are recorded on the `K-06`/`K-07` tracker rows.
+ * The summary prints **case count, total CTA count and the count of links carrying answer
+ * data**. All three must be provable to move; the proofs are recorded on the `K-06`/`K-07` and
+ * `K-14` tracker rows.
  *
  * ## The ceiling, in the gate's own words
  *
@@ -138,6 +164,7 @@ await page.setViewport({ width: 1280, height: 900 });
 await page.setCacheEnabled(false);
 
 let ctaTotal = 0;
+let carryingTotal = 0;
 let driven = 0;
 
 for (const testCase of cases) {
@@ -186,6 +213,13 @@ for (const testCase of cases) {
     return {
       key: panel.getAttribute('data-path-result'),
       ctaCount: targets.length,
+      // Everything the link carries beyond its path. `''` is the only acceptable value —
+      // see the CARRIES NOTHING assertion. Read from the resolved URL rather than the
+      // attribute so a relative `?a=b` and an absolute one are the same measurement.
+      ctaCarried: targets.map((a) => {
+        const url = new URL(a.href, location.origin);
+        return url.search + url.hash;
+      }),
       text: panel.textContent ?? '',
     };
   }, CTA_ROUTE);
@@ -197,6 +231,21 @@ for (const testCase of cases) {
 
   driven += 1;
   ctaTotal += rendered.ctaCount;
+
+  // 5. CARRIES NOTHING — `K-14`. Every link from the result to the contact route is a plain
+  //    link: no query string, no fragment, nothing of the five answers and not the outcome key
+  //    either. Applied to both link sites, because both are a result-to-form carrier.
+  for (const carried of rendered.ctaCarried) {
+    carryingTotal += carried === '' ? 0 : 1;
+    if (carried !== '') {
+      fail(
+        `CARRIES NOTHING "${label}": the link to ${CTA_ROUTE} carries "${carried}". ` +
+          'K-14 is built on carrying nothing from the result to the form — a query string ' +
+          "puts a memoir author's answers in browser history and in the referrer of every " +
+          'page the contact form links to.',
+      );
+    }
+  }
 
   // 1. AGREES — a value, never an absence.
   const expectedKey = testCase.key ?? 'none';
@@ -254,5 +303,6 @@ if (problems.length > 0) {
 
 console.log(
   `check-path-live: ${driven} answer set(s) driven through ${SEED_QUESTIONS.length} steps — ` +
-    `${reached.length} outcome(s) reached, ${ctaTotal} call(s) to action rendered across all of them.`,
+    `${reached.length} outcome(s) reached, ${ctaTotal} call(s) to action rendered across all of ` +
+    `them, ${carryingTotal} of which carry answer data.`,
 );

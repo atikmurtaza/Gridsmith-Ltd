@@ -9,6 +9,70 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
+## ⇢ 7 September 2026 (latest) — `K-14` ships as an **enforcement**; the production deploy is still `ERROR` on the empty dataset
+
+### The `62d8aa9a` production deploy **ERRORed**, and it is `H1`/`D6`
+
+`dpl_JxP3QzsoL8ZT1mot3S1XExbSyUZo`, target `production`. Cause read from the build log rather
+than inferred from the last known failure:
+
+```
+check-launch-content: 1 problem(s) in dataset "production"
+  no companyDetails document in dataset "production" — every page renders the statutory footer
+Error: Command "npm run build" exited with 1
+```
+
+**Not a regression and not a `K-06`/`K-07` defect.** The gate is working: it refuses to publish a
+site whose every page would render a footer with no company details in it. It is the known empty-
+`production`-dataset failure and it is an owner item. Preview deployments are unaffected — they
+build against `development` and are `READY`.
+
+### `K-14` — the decision is **carry nothing**, and what shipped is the gate, not the behaviour
+
+**Owner decision, recorded so it is not reopened: NOTHING travels from the Path Finder result to
+the contact form. No query string, no answers, not even the outcome key.** The visitor follows a
+plain link and the form starts clean. The reason is the audience — a query string puts a memoir
+author's five answers in browser history and in the referrer of every page the contact form links
+to, and `PressContactFlow` already refused that same trade once for these same people.
+
+**The premise check found the required behaviour already present**: `ctaHref` defaulted to a bare
+`/press/contact`, and nothing under `app/(press)/press/contact/` reads a query param — the only
+`searchParams` in the whole tree is `app/gridsmith-lead-probe/route.ts`. So this row had **no
+behaviour to build**, and shipping it as "done, nothing to do" would have left the decision as a
+comment. What it ships is the **enforcement**: nothing in the tree stopped a later session
+appending `?outcome=…` and calling it a helpful prefill.
+
+`check:path:live` gains a **fifth assertion, CARRIES NOTHING** — every link from the result panel
+to the contact route must resolve to a URL with an empty search **and** an empty hash. It went
+into that gate rather than a 33rd because it is the same subject, and **assertions 1–4 read the
+link's `pathname` only, so a query string passed all four of them**.
+
+**Two deliberate-failure proofs, each firing its own branch and its own half of the predicate:**
+
+| Probe | Site | Result |
+|---|---|---|
+| `?outcome=<key>` | the Gridsmith CTA | **4 problems** — one per `showCta` outcome; the no-recommendation link stayed clean, so the two sites are independent |
+| `#answers` | the no-recommendation link | **1 problem** — exercising the `url.hash` half that the first probe never touched |
+
+**The count moved 0 → 4 → 1 → 0**, so it is provable to report something other than zero. Both
+probes were red, so each carries its own validity proof. Subject restored from bytes captured
+before the first mutation and confirmed **md5-identical to baseline both times**.
+
+**The ceiling is in the gate's docstring:** it asserts the *link* carries nothing, not that no
+other carrier exists. `sessionStorage`, `localStorage` and cookies appear **nowhere in the tree**
+(grepped at `K-14`), and asserting the absence of a mechanism that does not exist is the
+inert-probe class.
+
+### Runway after this session is **thin and it is three schema rows**
+
+`R-01` (1d), `R-10` (1d), `R-15` (0.5d) — the `book`, `publishingPackage` and `publishingPlatform`
+schemas. All three are pure code with hard validators, the shape `K-01`/`K-02` already shipped,
+and none needs a price or a title. **Every other open row in Epics K, P and R needs an owner fact
+or sits behind one of these three.** The full assessment, row by row with the reason, is at the
+end of the `K-14` session report and on the tracker rows themselves.
+
+---
+
 ## ⇢ 7 September 2026 (latest) — `K-06`/`K-07` built and gated; the live-site extract is reframed; the preview is verified
 
 ### The live site's authority is now **two things**, and the rest is superseded — owner decision

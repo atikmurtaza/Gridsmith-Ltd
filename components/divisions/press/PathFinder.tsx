@@ -67,7 +67,15 @@ export function PathFinder({
   questions: SeedQuestion[];
   outcomes: SeedOutcome[];
   rules: PathRule[];
-  /** Where a Gridsmith outcome's CTA goes. `K-14` is the row that prefills it. */
+  /**
+   * Where a Gridsmith outcome's CTA goes. **A plain path, and `K-14` decided it stays one.**
+   *
+   * Nothing travels from the result to the contact form — not the five answers, not the
+   * outcome key. A query string puts a memoir author's answers in browser history and in the
+   * referrer of every page the contact form links to, and `PressContactFlow` already refused
+   * that trade once for this audience. `check:path:live`'s CARRIES NOTHING assertion holds it:
+   * a search or a hash on this value fails the build.
+   */
   ctaHref?: string;
 }) {
   const [step, setStep] = useState(0);
