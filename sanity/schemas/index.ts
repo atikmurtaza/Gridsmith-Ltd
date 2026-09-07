@@ -1,3 +1,4 @@
+import { book, retailerLink } from './book.ts';
 import { companyDetails } from './companyDetails.ts';
 import { continuityExample, continuityRow } from './continuityExample.ts';
 import { coreDocumentTypes } from './documents.ts';
@@ -10,6 +11,8 @@ import {
   pathQuestion,
   pathRule,
 } from './pathFinderConfig.ts';
+import { packageLine, publishingPackage } from './publishingPackage.ts';
+import { platformSpec, publishingPlatform } from './publishingPlatform.ts';
 
 /**
  * **One schema folder, shared by both datasets — never two.** `development` and `production`
@@ -32,10 +35,16 @@ export const schemaTypes = [
   pathQuestion,
   pathOutcome,
   pathRule,
+  retailerLink,
+  packageLine,
+  platformSpec,
   ...coreDocumentTypes,
   groupPage,
   continuityExample,
   legalDocument,
   companyDetails,
   pathFinderConfig,
+  book,
+  publishingPackage,
+  publishingPlatform,
 ];

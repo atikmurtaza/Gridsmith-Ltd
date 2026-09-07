@@ -46,7 +46,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
-| R-01 | `book` schema + hard validations | P0 | 1d | A-06 | TODO | Dev | retailers ≥1, consent = true |
+| R-01 | `book` schema + hard validations | P0 | 1d | A-06 | **DONE** | Dev | `sanity/schemas/book.ts`. `retailers` min(1) and `authorConsent` hard-true, as specified. **A third validator was added because the rule existed only in prose**: `PROJECT-RULES.md` §1.7's affiliate-link ban is now enforced on `retailerLink.url` — same shape as `ETH-07`, which lived in a paragraph until something ran it. `retailerLink.retailer` is closed (`R-04` reports per retailer). **9 deliberate-failure proofs**, each red and each naming its own case, incl. all three limbs of the affiliate rule proved separately. No content — `O-02` is that |
 | R-02 | `/press/books` shelf + filters | P0 | 2d | R-01 | TODO | Dev | Fixed 2:3, zero CLS |
 | R-03 | `/press/books/[slug]` detail | P0 | 1d | R-02 | TODO | Dev | `Book` schema.org |
 | R-04 | Retailer link-check cron | P0 | 1d | R-01 | TODO | Dev | Weekly + Slack alert |
@@ -55,11 +55,11 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | R-07 | **Rights wording legal sign-off** | P0 | — | R-06 | TODO | Atik + solicitor | **HARD GATE** |
 | R-08 | "What we are and are not" module | P0 | 1d | P-03 | TODO | Dev | Three-way honest comparison |
 | R-09 | Commercial expectations statement | P0 | 0.5d | P-03 | TODO | Dev | Undesigned, before pricing |
-| R-10 | `publishingPackage` schema | P0 | 1d | A-06 | TODO | Dev | Price required; no POA path |
+| R-10 | `publishingPackage` schema | P0 | 1d | A-06 | **DONE** | Dev | `sanity/schemas/publishingPackage.ts`. Non-negotiable #3 is structural: no POA path. **`price`, `revisionRounds` and `extraRevisionCost` use a custom rule, not `required()`** — Sanity's `required()` accepts `0` on a number, and `0` is a legitimate answer, so `required()` alone cannot tell *"free"* from *"blank"*. **`extraRevisionCost` was required in §2's prose and unmarked in its code block**; the prose won and `SCHEMA.md` is corrected in this commit. **10 proofs.** Needs no price — `Q-P3`/`Q-P4` and `O-05` are the content |
 | R-11 | `/press/packages` matrix | P0 | 2d | R-10 | TODO | Dev | Real table; exclusions equal weight |
 | R-12 | Packages mobile: pinned column | P0 | 0.5d | R-11 | TODO | Dev | |
 | R-13 | Named distribution module | P0 | 0.5d | P-03 | TODO | Dev | Names platforms honestly |
-| R-15 | `publishingPlatform` schema | P0 | 0.5d | A-06 | TODO | Dev | `specCheckedOn` required |
+| R-15 | `publishingPlatform` schema | P0 | 0.5d | A-06 | **DONE** | Dev | `sanity/schemas/publishingPlatform.ts`. `specCheckedOn` required, plus **the 90-day staleness surfacing §3a asked for and nothing enforced** — installed as a `.warning()`, because an error would refuse every unrelated edit to a platform whose spec is merely old. Ceiling in the docstring: it fires on the recorded date, not on the platform's real spec. **5 proofs**, incl. demoting the warning and making the rule permissive. Needs no spec detail — `Q-P12` and `O-12` are that |
 | R-16 | `/press/platforms` compliance page | P0 | 1.5d | R-15 | TODO | Dev | Incl. "could you do it yourself" |
 | R-17 | **Six ownership facts module** | P0 | 1d | P-03 | TODO | Dev | Each with a contract clause |
 | R-18 | ISBN / publisher-of-record explainer | P0 | 0.5d | R-17 | TODO | Dev | Author is publisher; no imprint |

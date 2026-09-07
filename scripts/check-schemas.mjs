@@ -44,6 +44,10 @@ const EXPECTED_OBJECTS = [
   'pathQuestion',
   'pathOutcome',
   'pathRule',
+  // R-01 / R-10 / R-15. Press document shapes; `press/SCHEMA.md` §1, §2 and §3a.
+  'retailerLink',
+  'packageLine',
+  'platformSpec',
 ];
 const EXPECTED_DOCUMENTS = [
   'service',
@@ -57,6 +61,9 @@ const EXPECTED_DOCUMENTS = [
   'legalDocument',
   'companyDetails',
   'pathFinderConfig',
+  'book',
+  'publishingPackage',
+  'publishingPlatform',
 ];
 
 /**
@@ -88,6 +95,10 @@ const CLOSED_LISTS = [
   // recommends away from Gridsmith, with every gate green — `groupPage.slug`'s reason applied to
   // the field the honesty guarantee rests on.
   ['pathOutcome', 'key', ['full-package', 'ghostwriting', 'assessment-first', 'content-programme', 'self-service', 'not-ready'], (v) => v],
+  // `R-01`. `press/SCHEMA.md` §3 keys `press_link_checks` by `(book_slug, retailer)` and
+  // `R-04` reports per retailer, so a free-text value opens a partition nothing reports on.
+  // `other` is inside the closed set, which is why the set can be closed at all.
+  ['retailerLink', 'retailer', ['amazon-uk', 'amazon-us', 'waterstones', 'ingram', 'kobo', 'apple-books', 'bookshop-org', 'other'], (v) => v],
 ];
 
 /**
@@ -266,7 +277,32 @@ const REQUIRED_FIELDS = [
   ['continuityExample', 'divisionsInvolved', 'min', 'at least two divisions, or it is not cross-division'],
   ['continuityExample', 'verified', 'custom', 'hard-true — required() alone would accept false'],
   ['pathFinderConfig', 'outcomes', 'custom', 'ETH-04 / non-negotiable #9 — min(6) alone permits six Gridsmith outcomes'],
+  // `R-01`. press/SCHEMA.md §1 and press/PROJECT-RULES.md §1.6-§1.7.
+  ['book', 'retailers', 'min', 'a book with no verifiable link is a claim, and the shelf exists to be the opposite of a claim'],
+  ['book', 'authorConsent', 'custom', 'ETH-06 — hard-true; required() alone accepts false'],
+  ['book', 'cover', 'required', 'the shelf is a fixed 2:3 grid and a missing cover is the CLS'],
+  ['retailerLink', 'url', 'custom', 'press/PROJECT-RULES.md §1.7 — no affiliate links on retailer URLs'],
+  // `R-10`. Non-negotiable #3 / FR-P06 / ETH-03.
+  ['publishingPackage', 'price', 'required', 'CLAUDE.md non-negotiable #3 — there is no POA path'],
+  ['publishingPackage', 'scalingFactors', 'min', 'a price with no stated variables is a quote pretending to be a price'],
+  ['publishingPackage', 'includes', 'min', 'press/SCHEMA.md §2 — at least five lines'],
+  ['publishingPackage', 'excludes', 'min', 'ETH-03 / FR-P06 — exclusions carry equal weight to inclusions'],
+  ['publishingPackage', 'revisionRounds', 'custom', 'unexplained later fees are the vanity-press behaviour buyers are warned about'],
+  ['publishingPackage', 'extraRevisionCost', 'custom', 'required by §2 prose and not by its code block; the prose carries the reason'],
+  ['publishingPackage', 'authorTimeCommitment', 'required', 'press/SCHEMA.md §2'],
+  ['publishingPackage', 'notFor', 'required', 'the honesty requirement — a package that never says who it is wrong for is a funnel'],
+  // `R-15`. FR-P07a.
+  ['publishingPlatform', 'specRequirements', 'min', 'press/SCHEMA.md §3a — at least four requirements'],
+  ['publishingPlatform', 'whatWeDo', 'required', 'FR-P07a'],
+  ['publishingPlatform', 'couldYouDoItYourself', 'required', 'the answer that makes the paid service credible rather than gatekept'],
+  ['publishingPlatform', 'specCheckedOn', 'required', 'press/SCHEMA.md §3a — platform specifications change'],
+  ['publishingPlatform', 'specCheckedOn', 'warning', 'the 90-day surfacing §3a asks for, installed as a warning so an old date does not block an unrelated edit'],
 ];
+
+/** Today, for the date-valued rule below. Computed rather than written down: a literal would
+ *  age into a stale date and start proving the opposite of what it is here to prove. */
+const TODAY = new Date().toISOString().slice(0, 10);
+
 
 /**
  * **Rules that must accept one value and refuse another, run rather than counted** (`N-05`).
@@ -278,6 +314,26 @@ const REQUIRED_FIELDS = [
  */
 const HARD_VALUES = [
   ['continuityExample', 'verified', [true], [false, undefined, 'true']],
+  // `R-01`. ETH-06. `required()` alone accepts `false`, which is the whole point.
+  ['book', 'authorConsent', [true], [false, undefined, 'true', 0]],
+  /**
+   * `R-01`. `noAffiliateRule` has **three limbs** — a named parameter set, `*aff*`, and
+   * `utm_*` — and CLAUDE.md's multi-branch rule says one limb firing is not evidence for
+   * the others. Each refusal below names the substring its message must contain, so a limb
+   * that stops firing reports another limb's message and fails here rather than passing.
+   */
+  ['retailerLink', 'url', ['https://www.example-retailer.test/book/placeholder', 'https://www.example-retailer.test/book/placeholder?format=paperback', ''], [
+    ['https://www.example-retailer.test/book/placeholder?tag=placeholder-21', 'tag'],
+    ['https://www.example-retailer.test/book/placeholder?aid=placeholder', 'aid'],
+    ['https://www.example-retailer.test/book/placeholder?affiliate_id=placeholder', 'affiliate_id'],
+    ['https://www.example-retailer.test/book/placeholder?utm_source=placeholder', 'utm_source'],
+  ]],
+  // `R-10`. `0` is a legitimate answer and absence is not; `required()` cannot tell them apart.
+  ['publishingPackage', 'price', [0, 1], [undefined, null, '1200', NaN]],
+  ['publishingPackage', 'revisionRounds', [0, 2], [undefined, '2']],
+  ['publishingPackage', 'extraRevisionCost', [0, 150], [undefined, '150']],
+  // `R-15`. The 90-day surfacing. Fresh accepted, ancient refused — provable to move.
+  ['publishingPlatform', 'specCheckedOn', [TODAY, '', undefined], [['2000-01-01', 'days ago']]],
 ];
 for (const [typeName, fieldName, expected, why] of REQUIRED_FIELDS) {
   const calls = rulesFor(typeName, fieldName);
@@ -419,11 +475,24 @@ for (const [typeName, fieldName, mustAccept, mustRefuse] of HARD_VALUES) {
       problems.push(`${typeName}.${fieldName} refuses ${JSON.stringify(value)}, which it must accept`);
     }
   }
-  for (const value of mustRefuse) {
-    if (run(value).every((r) => r === true)) {
+  for (const entry of mustRefuse) {
+    /**
+     * A refusal case is either a bare value, or `[value, substring]` naming the limb whose
+     * message must be produced. The second form is what makes a multi-limb rule provable
+     * limb by limb: without it, one limb firing on every case reads exactly like all of
+     * them working — `check:rls`'s half-working alternation, which shipped twice.
+     */
+    const [value, mustMention] = Array.isArray(entry) ? entry : [entry, null];
+    const verdict = run(value).find((r) => r !== true) ?? true;
+    if (verdict === true) {
       problems.push(
         `${typeName}.${fieldName} accepts ${JSON.stringify(value)} — the rule is present and ` +
           'permissive, which a presence check cannot see',
+      );
+    } else if (mustMention && !String(verdict).includes(mustMention)) {
+      problems.push(
+        `${typeName}.${fieldName} refuses ${JSON.stringify(value)} with "${verdict}", which ` +
+          `does not name "${mustMention}" — a different limb fired and this one is unproven`,
       );
     }
   }

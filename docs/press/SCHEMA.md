@@ -50,9 +50,19 @@ retailerLink {
 }
 ```
 
-Two hard validations:
+Three hard validations — the third was added at `R-01`:
 - `retailers` requires at least one entry. **A book cannot appear on the shelf without a way to verify it exists.** This is the entire purpose of the shelf.
 - `authorConsent` must be true. Publishing a client's book as a credential without written permission is both an IP issue and, given ETH-06, a stated ethical commitment.
+
+- `retailerLink.url` refuses affiliate and campaign parameters. **`PROJECT-RULES.md` §1.7 —
+  *"No affiliate links on retailer URLs"* — was stated in prose and enforced nowhere**, and the
+  drift is invisible: a monetised link still resolves, the book still exists, and no page or gate
+  looks different. The rule is a **named set** of parameters (`tag`, `linkCode`, `linkId`,
+  `ascsubtag`, `aid`, anything `*aff*` or `utm_*`), so its ceiling is that it makes the ordinary
+  way of doing it impossible from the Studio — not that it proves a URL earns nothing.
+- `retailerLink.retailer` is a **closed list**, because §3's `press_link_checks` keys a row by
+  `(book_slug, retailer)` and `R-04` reports per retailer; a free-text value opens a partition
+  nothing reports on. `other` is inside the set.
 
 `linkStatus` and `lastChecked` are written by the weekly cron, read-only in the CMS.
 
@@ -75,7 +85,8 @@ Two hard validations:
     { name: 'excludes',    type: 'array', of: [{type:'string'}],
       validation: r => r.min(3) },                  // ETH-03 / FR-P06
     { name: 'revisionRounds', type: 'number', validation: required },
-    { name: 'extraRevisionCost', type: 'number' },
+    { name: 'extraRevisionCost', type: 'number', validation: required },  // R-10: was
+                                       // unmarked here and required in the prose below
     { name: 'typicalDuration', type: 'string' },
     { name: 'authorTimeCommitment', type: 'string', validation: required },
     { name: 'distributionPlatforms', type: 'array', of: [{type:'string'}] },
@@ -93,7 +104,9 @@ packageLine { label: string, detail: text, category: 'editorial'|'design'|'produ
 
 `notFor` and `excludes` are required with minimums, for the same reason.
 
-`revisionRounds` and `extraRevisionCost` are required because unexplained later fees are the specific vanity-press behaviour buyers are warned about (R6-Press).
+`revisionRounds` and `extraRevisionCost` are required because unexplained later fees are the specific vanity-press behaviour buyers are warned about (R6-Press). **The code block above marked only `revisionRounds` until `R-10`; the prose is the stronger reading and it is the one with the reason attached, so both are enforced.**
+
+`price`, `revisionRounds` and `extraRevisionCost` are enforced by a **custom** rule and not by `required()` alone. Sanity's `required()` accepts `0` on a numeric field, and `0` is a legitimate answer here — free extra revisions is a real package. The rule asserts the value *is a number*, which accepts `0` and refuses absence, because the difference between *"extra revisions are free"* and *"nobody filled this in"* is exactly the difference the vanity-press warning is about.
 
 ## 3. `pathFinderConfig` — singleton
 
@@ -177,7 +190,7 @@ Powers the platform compliance module (FR-P07a) — the concrete answer to "why 
 platformSpec { requirement: string, detail: text, category: 'interior'|'cover'|'metadata'|'account' }
 ```
 
-`couldYouDoItYourself` is required and must be answered honestly — for most platforms the answer is "yes, and here is what it involves". Saying so is the move that makes the paid service credible rather than gatekept. `specCheckedOn` exists because platform specifications change; a stale date on a live page is a quality failure and should be surfaced in the CMS after 90 days.
+`couldYouDoItYourself` is required and must be answered honestly — for most platforms the answer is "yes, and here is what it involves". Saying so is the move that makes the paid service credible rather than gatekept. `specCheckedOn` exists because platform specifications change; a stale date on a live page is a quality failure and should be surfaced in the CMS after 90 days. **`R-15` enforces that surfacing** — `validation: r => [r.required(), r.custom(specFreshnessRule).warning()]`. It is a **warning, not an error**, deliberately: an error would refuse every unrelated edit to a platform whose spec is merely old, making the honest date the one thing an editor is punished for keeping. Two rules rather than one chain, because `.warning()` applies to the whole rule it terminates and would demote `required()` with it. **Ceiling: it fires on the recorded date, not on the platform's actual specification.** A date bumped without re-reading the platform's own documentation passes it; `O-12` is the row that does the reading.
 
 ## 3b. `marketingPackage`
 
