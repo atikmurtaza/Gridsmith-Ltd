@@ -31,14 +31,22 @@ Hostinger-held domain points DNS at the existing Vercel project when the owner c
 |---|---|---|
 | **A — Company facts only you can supply** | 7 | Addresses, numbers, mailboxes, insurance |
 | **B — Prices and commercial terms** | 4 | Every price on the site is a placeholder |
-| **C — The Q-P13 Path Finder rules** | 4 | Drafted this session, all `[SEED]` |
+| **C — The Q-P13 Path Finder rules** | 6 | Drafted 7 Sept 2026, all `[SEED]`, and now applied by the island |
 | **D — Seed content in the CMS** | 6 | `isSeed: true` records and the marked strings |
 | **E — Placeholder imagery** | 3 | What is drawn, and the surfaces left empty |
 | **F — Taken or adapted from the live gridsmith.uk** | 3 | Provenance that was not recorded before |
 | **G — Statements about the business no one confirmed** | 5 | Sentences asserting a fact about Gridsmith |
 | **H — Environment and infrastructure** | 8 | Variables unset for production |
-| **I — Legal, already tracked elsewhere** | 4 | Pointers, not new work |
-| **Total** | **44** | |
+| **I — Legal, already tracked elsewhere** | 3 | Pointers, not new work |
+| **Total** | **45** | |
+
+**One row was removed on 7 September 2026: `I4`, the live site's Pakistan governing law.** The
+owner's decision is that the live `gridsmith.uk` is authoritative for the **services** and the
+**work process** and nothing else; its email addresses, refund policy, terms and governing law
+are legacy and `docs/_legal/` is the only source. Those differences are therefore not
+contradictions to resolve and do not belong on this register. `LIVE-SITE-EXTRACT.md` records
+them as superseded. **`A3` is unaffected and survives on its own footing** — it is a mailbox
+`CONSUMER-TERMS.md` §6.1 requires, not a divergence from the old site.
 
 ---
 
@@ -48,7 +56,7 @@ Hostinger-held domain points DNS at the existing Vercel project when the owner c
 |---|---|---|---|---|
 | A1 | **Registered office string** | `scripts/seed-company-details.mjs:40` | `30 Briarfield Road, Farnworth, Bolton, BL4 0HD` | Confirm against the Companies House register. The live site publishes a **different string** for the same premises — `30, Briarfield Road, Farnworth Bolton BL4 **O**HD` — with the **letter O in the postcode**. `LIVE-SITE-EXTRACT.md` §11.3 |
 | A2 | **Company number** | `scripts/seed-company-details.mjs:38` | `17050842` | Confirm. It appears **nowhere on the live site**, so the two artefacts cannot corroborate each other and this session verified neither against the register |
-| A3 | **Contact email** | `seed-company-details.mjs:47`, `CONSUMER-TERMS.md` §6.1/§18 | `contact@gridsmith.uk` | **Confirm it receives mail.** It is the address a consumer is told to use to serve a statutory cancellation notice, and it is published on none of the three live pages. Three addresses are in play across the estate — `LIVE-SITE-EXTRACT.md` §11.2 |
+| A3 | **Contact email — the mailbox does not exist yet** | `seed-company-details.mjs:47`, `CONSUMER-TERMS.md` §6.1/§18 | `contact@gridsmith.uk` | **Create it, then confirm it receives mail.** `CONSUMER-TERMS.md` §6.1 and §18 name it as the address for serving a **statutory cancellation notice** under CCRs 2013, so a consumer must be able to reach it from the day the instrument is published. This is a requirement of the **new instrument**, not a divergence from the live site — the live site's addresses are legacy and superseded (`LIVE-SITE-EXTRACT.md` §11.2) |
 | A4 | **Contact phone** | not in the seed | absent | The live site publishes `+44 7405 448534`. Decide whether it appears on the new site; `companyDetails.contactPhone` exists and is unset |
 | A5 | **Response commitment** | `seed-company-details.mjs` | *"We'll reply as soon as we can, and always by the end of the next business day."* | Confirm you will meet it. Non-negotiable #5 makes this the single source of truth and `Z-10` is the drill that tests it |
 | A6 | **PI insurer and cover limit** | `companyDetails.piInsurer`, `piCoverLimit` | unset | Supply or decide they are not published. Fields exist because the specs expected them |
@@ -82,6 +90,8 @@ explicit about which parts were specified and which were invented.
 | C2 | **The five questions and 21 option labels** | nothing — verbatim from `APP-FLOW.md` §5 | the `questionKey` and option **slugs** are invented, because the spec gives labels and not keys. Renaming one is a data migration once results are logged |
 | C3 | **The six outcome explanations and both `externalGuidance` texts** | **all of the prose**, each `[SEED]`-prefixed in the rendered string | the six keys (closed at `K-01`) and the six titles (`APP-FLOW.md` §5's A–F box). Amazon KDP and IngramSpark are named because `APP-FLOW.md` §5 names them |
 | C4 | **The route that publishes them** | `app/(press)/press/path-finder/page.tsx` renders the criteria table and **says on the page** that the criteria are placeholders | `PROJECT-RULES.md` §6 requires all six outcomes and their criteria without JS; that requirement is met, with seed criteria |
+| C5 | **The island now gives a visitor a recommendation off these rules** | `components/divisions/press/PathFinder.tsx` (`K-06`/`K-07`, 7 Sept 2026). The result panel carries its own **"This recommendation is a placeholder"** line, so nobody is told they qualify or do not qualify on rules you have not seen | Replacing the rules is the same decision as C1; this row exists because until 7 Sept the seed rules were only *described* on the page and are now *applied* to a real visitor's answers |
+| C6 | **Nothing is logged.** `APP-FLOW.md` §5 says every outcome logs to `press_path_results` and `K-08` built the table; the write path is **not built** | The table has zero policies and `app/api/rls-drift/route.ts` asserts live that `anon` can neither read nor write it | **A decision, not a gap.** An `anon` insert policy would break that standing live assertion and let any browser forge rows in the table non-negotiable #9 is audited from; a service-role route is a new credential in the request path — the same choice you already took separately for `K-10`. Until it is taken, *"if E and F never fire in production, the tool is broken"* has no measurement behind it |
 
 **The honesty guarantee is real even though the rules are seed.** `check:path:selftest` drives a
 complete answer set through the shipped evaluator for each of the six outcomes and reads the key
@@ -161,7 +171,7 @@ Full record and verbatim source: `docs/_shared/LIVE-SITE-EXTRACT.md`.
 |---|---|---|---|
 | F1 | **The six process stage names and descriptions** | `docs/_shared/00-PROCESS.md`, and every route that renders the canonical process | Already in the build, near-verbatim from the live `HOW IT WORKS`. **The provenance was recorded nowhere until now.** Confirm you want them; also note stage 6 names *"SEO improvements"* inside a description that claims to be division-neutral |
 | F2 | **The registered address and phone** | `seed-company-details.mjs` — see A1, A4 | Adapted, with four differences from the live string |
-| F3 | **Everything else on the live site** | **nothing** | The services list, the FAQs, the About copy, the Service Integrity list and the pricing language are **recorded in `LIVE-SITE-EXTRACT.md` and not adopted**. If any of it should carry over, that is a decision, and it lands here first |
+| F3 | **Everything else on the live site** | **nothing** | The services list, the FAQs, the About copy, the Service Integrity list and the pricing language are **recorded in `LIVE-SITE-EXTRACT.md` and not adopted**. If any of it should carry over, that is a decision, and it lands here first. **The live legal copy is excluded entirely** — refund policy, terms, emails, consent banner and governing law are superseded by `docs/_legal/` and can never become a row here |
 
 ---
 
@@ -177,7 +187,7 @@ is still a claim.
 | G2 | *"We are not your publisher. We are the people who make the book, and the rights stay where they started."* | same. It **is** consistent with `CONSUMER-TERMS` clause 10.1, which the page links to — but it is a marketing sentence, not the clause |
 | G3 | *"Every price here is a starting point, not a quotation"* | same. Depends on B1/B2 being true when real prices land |
 | G4 | *"We take manuscripts as a link, never as an upload — nothing of yours ends up sitting on our servers."* | `app/(press)/press/contact/page.tsx`. **This one is an operational commitment**, and the flow is built to honour it — confirm you will keep it |
-| G5 | The Path Finder's six outcome explanations and both guidance texts | `lib/path/seedConfig.ts` — also C3, listed here because they read as the company's voice rather than as data |
+| G5 | The Path Finder's six outcome explanations and both guidance texts | `lib/path/seedConfig.ts` — also C3, listed here because they read as the company's voice rather than as data. Since `K-07` they are also spoken **to one visitor about their own book**, which is a different register from a row in a table |
 
 ---
 
@@ -207,9 +217,8 @@ This one is easy to get wrong once and hard to notice.
 | # | Item | Where it lives |
 |---|---|---|
 | I1 | All seven `_legal/` instruments are **drafts pending solicitor review** | `L-04`, `BEFORE-LAUNCH.md` |
-| I2 | `K-17` — the consumer cancellation notice | `press/PROJECT-TRACKER.md`. **Open, and this session did not resolve it.** `LIVE-SITE-EXTRACT.md` §11.4 compares the live refund summary to both instruments and stops there |
+| I2 | `K-17` — the consumer cancellation notice | `press/PROJECT-TRACKER.md`. **Open.** It is a decision about the *build's* notice under `CONSUMER-TERMS.md`; the live site's refund copy is superseded and bears on it not at all |
 | I3 | `F-11` — `CONSUMER-TERMS` §5's headline is more generous than the §5.3 it defers to | `check:legal:parity` is green and correct to be green; the ceiling is in its docstring |
-| I4 | The live site elects **the law of Pakistan** (T&Cs §13) while both build instruments elect England & Wales | `LIVE-SITE-EXTRACT.md` §11.4. Largest single divergence found; sits underneath every other live clause |
 
 ---
 

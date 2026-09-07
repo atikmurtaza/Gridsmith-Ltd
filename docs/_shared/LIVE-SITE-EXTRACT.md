@@ -13,6 +13,41 @@ that a claim is true.*
 
 ---
 
+## What this file has authority over — **owner decision, 7 September 2026**
+
+**The live `gridsmith.uk` is authoritative for two things only: the services offered, and the
+work process.** Everything else on it is legacy.
+
+| Section | Standing |
+|---|---|
+| §3 the six stages · §4 services · §6 Service Integrity · §7 FAQs · §8 About | **Reference material.** Not adopted automatically; adoption still goes through `PRE-DEPLOYMENT-CHECKLIST.md` |
+| §9 address, phone · §11.3 registered address | **Reference material** — company facts, checklist rows `A1`/`A4` |
+| §11.1 positioning | **Open** — the owner's decision, unchanged by this |
+| §5 refund/cancellation language · §9 email addresses · §10 consent banner · §11.2 · §11.4 · governing law | **SUPERSEDED BY `docs/_legal/`** — see below |
+
+### SUPERSEDED BY `docs/_legal/`
+
+**The live site's email addresses, refund policy, terms and governing law carry no authority
+over this build.** The six drafted instruments in `docs/_legal/` — `CONSUMER-TERMS`,
+`MSA-BUSINESS`, `PRIVACY-POLICY`, `COOKIE-POLICY`, `WEBSITE-TERMS`, `ACCESSIBILITY-STATEMENT`,
+published across seven routes with `client-terms` as the disambiguation page — are drafted to
+UK law and are the only source. The differences recorded in §5, §9's email rows, §10, §11.2 and §11.4 below are
+**not contradictions to resolve** — they are two documents about the same company where only
+one governs, and it is not this one. They are kept because deleting the record would make the
+same comparison get re-derived by the next session, and re-derived comparisons come back as
+open questions.
+
+**Do not reconcile the build against the live site's legal copy. Do not carry any of it as a
+checklist row.** `I4` — the Pakistan governing-law row — was removed from
+`PRE-DEPLOYMENT-CHECKLIST.md` on this decision.
+
+**One thing survives, and it is a requirement of the new instrument rather than of the old
+site.** `CONSUMER-TERMS.md` §6.1 and §18 name **`contact@gridsmith.uk`** as the address for
+serving a statutory cancellation notice. **That mailbox does not exist yet.** It stays on the
+checklist as `A3` — a mailbox to create, not a divergence to reconcile.
+
+---
+
 ## 0. Correction to `05-HANDOVER.md` — recorded before anything else
 
 `05-HANDOVER.md` describes the live site as Press-facing. **It is not, and this was verified
@@ -109,6 +144,10 @@ Second block, headed **DIGITAL GROWTH SERVICES / Build, Improve, and Grow Online
 > **Refund & Cancellation Summary:** Refund eligibility depends on the project stage, agreed
 > scope, and work completed. Full terms are outlined in the Terms & Conditions page.
 
+> **⛔ SUPERSEDED BY `docs/_legal/`.** The refund and cancellation position is
+> `CONSUMER-TERMS.md` §6–§7 and `MSA-BUSINESS.md` §6. The paragraph above has no standing over
+> this build and is recorded for provenance only.
+
 *(A stray literal `x` follows this block in the served markup — an Elementor artefact, not
 copy.)*
 
@@ -163,6 +202,10 @@ pricing* — is the direct answer to this, and it is schema-enforced there.
 The T&Cs §14 and the Privacy Policy §10 both repeat the same address and the same Gmail
 address as the contact of record.
 
+**⛔ The two email rows above are SUPERSEDED BY `docs/_legal/`.** The build's address of record
+is `contact@gridsmith.uk` (`CONSUMER-TERMS.md` §6.1/§18), and the live values are legacy. The
+**address, phone and copyright rows are reference material** and feed checklist rows `A1`/`A4`.
+
 ## 10. Consent banner, verbatim — recorded because it bears on non-negotiable #7
 
 > We use cookies to enhance your browsing experience, serve personalised ads or content, and
@@ -173,13 +216,18 @@ Privacy Policy §4 says the site *"may use cookies and similar technologies for 
 functionality, analytics, and performance measurement"* and that *"Third-party tools may also
 collect limited usage data."*
 
-The new build has **no analytics and no consent categories** — its banner is a notice
-(`CLAUDE.md` *Stack*, and `_legal/03-REVISION-LOG.md` round 10). The two sites therefore make
-**incompatible statements about the same company**, and whichever survives is a decision.
+**⛔ SUPERSEDED BY `docs/_legal/`.** The build has **no analytics and no consent categories** —
+its banner is a notice (`CLAUDE.md` *Stack*, `COOKIE-POLICY.md`, and `_legal/03-REVISION-LOG.md`
+round 10). The live banner and Privacy §4 describe a different site's behaviour; they are not a
+statement this build has to reconcile itself against, and the decision recorded in round 10
+stands. Recorded for provenance only.
 
 ---
 
-# 11. Contradictions and inconsistencies — listed, none resolved
+# 11. Differences from the live site
+
+**§11.2 and §11.4 are SUPERSEDED BY `docs/_legal/` and are provenance, not open questions.**
+§11.1 is an owner decision and §11.3 is a company fact; both remain live.
 
 ## 11.1 Positioning — the live site and the new build describe different companies
 
@@ -191,7 +239,7 @@ The new build has **no analytics and no consent categories** — its banner is a
 | Design | one bullet, *"branding support"*, inside Digital | a division with CAD and engineering drawings |
 | Digital | the whole company | one of three |
 | Prices | none published | non-negotiable #3 forbids a service page without one |
-| Governing law | **Pakistan** (T&Cs §13) | England & Wales |
+| Governing law | **Pakistan** (T&Cs §13) — *superseded, see §11.4* | England & Wales |
 
 **This is a positioning change and it is the owner's to confirm.** Not recorded as a defect
 in either artefact — the live site is not wrong about itself, and the build is not wrong about
@@ -202,7 +250,12 @@ confirmed, **launching it replaces a live public description of the company**. A
 `gridsmith.uk` before launch and after will see Press appear from nothing. That is normal for a
 repositioning and it is only a problem if a client contracted against the old description.
 
-## 11.2 The contact-address inconsistency — **the direction is the opposite of the brief**
+## 11.2 The contact-address inconsistency — **SUPERSEDED BY `docs/_legal/`**
+
+**The live site's email addresses are legacy and carry no authority.** Nothing below is a
+divergence to resolve. It is recorded so the comparison is not re-derived. The one live item
+with consequences for this build is stated at the end of the section and it is a **mailbox to
+create**, not a reconciliation.
 
 The brief states the footer link *text* reads `info@gridsmith.uk` while pointing at the Gmail
 address. **The served markup is the other way round:**
@@ -225,14 +278,16 @@ That makes **three** addresses in play across the estate:
 | `info@gridsmith.uk` | footer link `href` only — appears nowhere as visible text |
 | `contact@gridsmith.uk` | **the new build**, `scripts/seed-company-details.mjs:47`, and `CONSUMER-TERMS.md` §6.1 as the address for serving a **statutory cancellation notice** |
 
-The third is the one with legal weight: a consumer cancelling under CCRs 2013 is told in the
-build's own instrument to write to `contact@gridsmith.uk`, which is **not published anywhere on
-the live site** and whose deliverability this session has not tested. Listed, not resolved.
+**Only the third has any standing.** A consumer cancelling under CCRs 2013 is told in the
+build's own instrument to write to `contact@gridsmith.uk`. That mailbox **does not exist yet**,
+and its deliverability has never been tested. It is checklist row `A3` — *create the mailbox*,
+a requirement of `CONSUMER-TERMS.md` §6.1, not of the old site. The other two addresses are
+legacy and are not carried.
 
-A separate, smaller defect in the same family: **T&Cs §1 says the Terms govern *"your use of
-contact.gridsmith@gmail.com"*** — an email address occupying the slot where the website URL
-belongs. The Privacy Policy §1 has the mirror-image slip, naming
-*"https://gridsmith.uk/Gridsmith.com"*.
+A separate, smaller defect in the same family, recorded and **not carried**: T&Cs §1 says the
+Terms govern *"your use of contact.gridsmith@gmail.com"* — an email address in the slot where
+the website URL belongs — and Privacy §1 has the mirror-image slip, *"https://gridsmith.uk/Gridsmith.com"*.
+Both are defects in a superseded instrument. `WEBSITE-TERMS.md` is the build's equivalent.
 
 ## 11.3 Registered address — live vs. `companyDetails`
 
@@ -262,9 +317,16 @@ Structurally, the live site publishes **no company number and never uses the wor
 office"**, so it does not meet what `master/PROJECT-RULES.md` expects of the statutory footer.
 Recorded as a difference; whether it is a live compliance gap is not this session's call.
 
-## 11.4 Refund summary — live vs. `CONSUMER-TERMS` and `MSA-BUSINESS` as published
+## 11.4 Refund summary and governing law — **SUPERSEDED BY `docs/_legal/`**
 
-**`K-17` is open and this does not resolve it.** Comparison only.
+**The live refund policy, terms and governing law have no authority over this build.** The
+table below is a provenance record of a superseded instrument, kept so the comparison is not
+re-derived as an open question. **The four observations that follow it are not defects to fix
+and not checklist rows** — the row that used to carry the governing-law divergence (`I4`) has
+been removed from `PRE-DEPLOYMENT-CHECKLIST.md`.
+
+**`K-17` is open and is independent of this file.** It is an owner decision about the *build's*
+consumer cancellation notice, tracked on `press/PROJECT-TRACKER.md`. Nothing here bears on it.
 
 | | Live homepage summary | Live T&Cs §10 | `CONSUMER-TERMS.md` | `MSA-BUSINESS.md` |
 |---|---|---|---|---|
@@ -275,7 +337,7 @@ Recorded as a difference; whether it is a live compliance gap is not this sessio
 | After substantial work | *"refunds may not be available"* | same | §7: *"the refundable balance may be small or zero"* | §6: *"may therefore be zero"* |
 | Governing law | — | **Pakistan** (§13) | England & Wales | England & Wales, exclusive jurisdiction |
 
-Four observations, none acted on:
+Four observations, none acted on and none actionable:
 
 1. **The live pages describe no statutory cancellation right at all.** The build's
    `CONSUMER-TERMS` §6 treats one as existing for distance consumer contracts under CCRs 2013.
@@ -286,8 +348,10 @@ Four observations, none acted on:
    nearly identical across all four columns — *may be zero* — which is why a summary-level
    reading makes them look aligned when the mechanism differs completely.
 3. **Live T&Cs §13 elects the law of Pakistan** for a UK-registered company publishing a UK
-   address. Both build instruments elect England & Wales. This is the largest single
-   divergence found and it sits underneath every other clause on the live site.
+   address. Both build instruments elect England & Wales. It is the largest single divergence
+   found and it sits underneath every other clause on the live site — **and it is superseded,
+   so it is not a contradiction this build resolves.** It was a checklist row (`I4`) and is
+   no longer one.
 4. **The live T&Cs are one instrument for everyone.** The build splits consumer and business —
    which is `K-16`'s finding: the instruments test *what you are buying for*, not who you are.
    A single set cannot make that distinction, so the live site applies business-style
@@ -308,5 +372,12 @@ Two items are already in the build with live-site provenance and are on
 - the registered address and phone number, which exist in the seed in a form that differs from
   the live one in four ways.
 
-Everything else in this file — the services list, the FAQs, the About copy, the Service
-Integrity list, the pricing language — is **recorded and not adopted**.
+The services list, the FAQs, the About copy and the Service Integrity list are **reference
+material** — authoritative about what the company today says it offers and how it works, and
+adopted only through a checklist row.
+
+The legal copy — refund policy, terms, email addresses, consent banner and governing law — is
+**superseded by `docs/_legal/` and is not reference material at all.** It reaches neither the
+build nor the checklist. The single exception is the `contact@gridsmith.uk` mailbox, which is
+on the checklist because `CONSUMER-TERMS.md` §6.1 requires it — not because the live site
+lacks it.

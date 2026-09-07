@@ -1,7 +1,7 @@
-# Handover — Epic N built out, site complete as a shell
+# Handover — the Path Finder is interactive; the live site is reference, not authority
 
-**Written:** 11 August 2026 · **Revised:** 7 September 2026, at **the live-site read, `Q-P13`,
-`K-05` and `K-04`** · **Branch:** `legal/round-12-parity-gate-and-ucta` · **Runtime:** Node 24.15.0
+**Written:** 11 August 2026 · **Revised:** 7 September 2026, at **`K-06`/`K-07`, the
+live-site extract reframe and the preview verification** · **Branch:** `main` · **Runtime:** Node 24.15.0
 
 This file exists because a session ended with state that only that session knew. Everything
 here is either unrecorded elsewhere or scattered across five documents. Read it before
@@ -9,7 +9,132 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
-## ⇢ 7 September 2026 (latest) — the live site is **Digital**, not Press; `Q-P13` has a [SEED] draft; `K-05` and `K-04` are built
+## ⇢ 7 September 2026 (latest) — `K-06`/`K-07` built and gated; the live-site extract is reframed; the preview is verified
+
+### The live site's authority is now **two things**, and the rest is superseded — owner decision
+
+**`gridsmith.uk` is authoritative for the services offered and the work process. Nothing else.**
+Its email addresses, refund policy, terms and governing law are **legacy**, and the six drafted
+instruments in `docs/_legal/` are the only source. `LIVE-SITE-EXTRACT.md` now says so at the top
+and marks §5's refund summary, §9's two email rows, §10's consent banner, §11.2 and §11.4
+**SUPERSEDED BY `docs/_legal/`**. They are kept as provenance so the comparison is not
+re-derived — a deleted record comes back as an open question — but they are not contradictions
+to resolve and may never become checklist rows.
+
+**One row was removed from `PRE-DEPLOYMENT-CHECKLIST.md`: `I4`**, the Pakistan governing-law
+divergence. Group I 4 → 3. `I2` (`K-17`) kept its row and lost its pointer at §11.4 — `K-17` is
+a decision about the *build's* notice and the live refund copy bears on it not at all.
+
+**`A3` survives the rewrite and changed meaning.** `CONSUMER-TERMS.md` §6.1/§18 name
+`contact@gridsmith.uk` as the address for serving a **statutory cancellation notice**, and that
+mailbox **does not exist**. It is a mailbox to create — a requirement of the new instrument, not
+a divergence from the old site — and a consumer must be able to reach it the day the instrument
+is published.
+
+### Two rules added to `CLAUDE.md`, both from last session's own mistakes
+
+**A proof harness owns its subject exclusively for the duration of the run.** Two harnesses
+overlapping do not conflict noisily — they interleave, and the loser's "restore" writes the
+winner's mutation back **as the original**. That is how `isSeed: false` reached disk. Restore
+from bytes captured before the first mutation, never by inverse edit, and assert
+`git diff --quiet -- <file>` before believing the result.
+
+**Geometric placeholders only; the Unsplash refusal was right and is not reopened.** The brief
+authorised stock photography and *The feel* plus `00-FOUNDATION.md` §"Seed content" item 7
+prohibit it, so adopting one would mean striking a rule rather than filling a surface. Recorded
+in `CLAUDE.md` so the next session does not re-litigate it as a content gap.
+
+### The `seedConfig.ts` damage is **fully repaired**, and this was established rather than assumed
+
+Working tree clean, so disk equals `HEAD`, and `lib/path/seedConfig.ts` has exactly **one**
+commit (`ced37cea`) — there was no second, repairing commit, so the mutation was reverted before
+it was ever committed. The file on disk is the file that was reviewed.
+
+Verified structurally rather than by eye: **5 questions, 21 option labels, 6 outcomes, 13 rules,
+priorities `10,11,12,13,20,21,30,31,40,41,45,50,51` all distinct, 15 `[SEED]` markers,
+`isSeed: true`** — every figure matching what the `Q-P13` write-up claimed. **The six lowest
+priorities all belong to `self-service` and `not-ready`**, so no Gridsmith rule can shadow an
+honest outcome, which is the ordering `ETH-04` needs and the thing a content edit is most likely
+to reverse quietly. Both honest outcomes carry `isGridsmithService: false`, `showCta: false` and
+guidance. `verify:static` green across all 20 gates; the other harness-touched files
+(`check-path-recommend.selftest.mjs`, `path-finder/page.tsx`, three gate route lists) carry no
+probe residue. **`SEED IS MARKED` catching line 373 was the only mutation there was.**
+
+### The preview **can** be verified under Hobby, and `/press/path-finder` serves
+
+Deployment protection on `gridsmith-ltd` is **Vercel Authentication (SSO),
+`all_except_custom_domains`** — `passwordProtection` and `trustedIps` are both off. That is not
+a Pro feature and it is not a wall: the Vercel MCP server's `web_fetch_vercel_url` performs an
+**authenticated** fetch as the account owner.
+**`https://gridsmith-6dox1skvr-…vercel.app/press/path-finder` returned 200** with the complete
+page — five questions, all 21 options, the three-column table, both honest outcomes with
+guidance and no CTA, `data-division="press"`, `x-gridsmith-dataset: development`,
+`x-robots-tag: noindex`.
+
+**The probe's validity is structural.** The same URL fetched **unauthenticated** returns
+**302 to `vercel.com/sso-api`** — so the protection is real, and the authenticated transport is
+what got through rather than an unprotected deployment. Two transports, one URL, two outcomes.
+
+Also read while there: the last two **production**-target deployments are `ERROR`, which is the
+known empty-`production`-dataset failure (`H1`/`D6`), not a regression.
+
+### `K-06` and `K-07` are built — the island, and the result view
+
+`components/divisions/press/PathFinder.tsx`, mounted where `K-05`'s static question list was.
+Full detail is on the two tracker rows; four things that will otherwise be rediscovered:
+
+1. **They were built together on purpose.** A five-step island that shows no recommendation is
+   not shippable, and `APP-FLOW.md` §5 draws the steps and the outcome as one flow. The split is
+   estimation.
+2. **The no-JS path nearly regressed silently.** A client component server-renders step 1 and no
+   further, so replacing the static list would have dropped four questions — and question 2's
+   options appear in **no rule**, so `criteriaFor()` would not have carried them either. The full
+   list is now inside `<noscript>`.
+3. **`check:path:live` is the 32nd gate, and its reason for existing is the reason to keep it.**
+   `check:path:selftest` asserts the *data* says no CTA on an honest outcome. It cannot see
+   whether the component reads that field, and an island ignoring `showCta` leaves all 28 of its
+   cases green while drawing a button under *"you do not need us"*. The new gate drives the
+   served page through five clicks. Its expectation is **derived** — node enumerates the whole
+   1152-set cross-product — and the derivation is checked **before a browser launches**: fewer
+   than six reachable outcomes, or no `null` set, is a hard failure, not a shorter run.
+4. **Nothing is logged, and that is an owner decision recorded rather than taken.**
+   `press_path_results` has zero policies and `app/api/rls-drift/route.ts` asserts live that
+   `anon` can neither read nor write it. An `anon` insert policy breaks that standing assertion;
+   a service-role route is a new credential in the request path. Checklist row `C6`.
+
+**Seven deliberate-failure proofs, each firing its own branch, and two probes were invalid on
+their first run.** A regex that deleted rules broke the TypeScript, so the red was a parse error
+and said nothing about the guard; and blanking the guidance by forcing its guard `false` failed
+`next build`'s eslint at `--max-warnings 0`, so the probe never reached the gate. Both recorded
+rather than quietly re-run. Counts proved to move: 1 → 2 unreachable outcomes, 1152 → 864 answer
+sets. **JS delta 1.9 → 5.9KB gz against 40KB**, two clean builds per side.
+
+### ⚠ `next build` fails on this Windows machine, and the escape hatch is committed
+
+**`[Error: spawn UNKNOWN]` errno `-4094` partway through `Generating static pages`, on a clean
+checkout with no local changes** — which is how it was established to be the environment and not
+the tree. `next build` forks one `jest-worker` child per core; several succeed first, so it reads
+as a late crash rather than a resource limit. **`NEXT_BUILD_CPUS=1 npm run build` works every
+time.**
+
+`next.config.ts` carries it as a **spread**, so an unset variable adds no key at all and CI keeps
+Next's own default. Proven both ways in the same session: unset, the build still fails; set, it
+succeeds. Every measurement and every gate run in this session used it.
+
+### Runway after this session
+
+`K-14` (0.5d) is the next Path Finder row and both its Depends are now built. It needs one
+decision first, and it is the decision `PressContactFlow` already refused once for this audience:
+**what travels from the result to the contact form, and how.** A query string puts a memoir
+author's five answers in browser history and in the referrer of every page the contact form
+links to.
+
+Everything else is where the 5 September table left it — `K-17`, `K-10`'s asset, `R-09`/`O-09`,
+`Q-P5`/`P6`/`P7`/`P11`.
+
+---
+
+## ⇢ 7 September 2026 — the live site is **Digital**, not Press; `Q-P13` has a [SEED] draft; `K-05` and `K-04` are built
 
 ### **Correction to this file: the live `gridsmith.uk` is NOT Press-facing.** Verified, not assumed.
 

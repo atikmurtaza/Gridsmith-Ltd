@@ -4,7 +4,8 @@ import { Heading } from '@/components/primitives/Heading';
 import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { Table } from '@/components/primitives/Table';
-import { SEED_OUTCOMES, SEED_QUESTIONS, criteriaFor } from '@/lib/path/seedConfig';
+import { PathFinder } from '@/components/divisions/press/PathFinder';
+import { SEED_OUTCOMES, SEED_QUESTIONS, SEED_RULES, criteriaFor } from '@/lib/path/seedConfig';
 
 export const metadata: Metadata = {
   title: 'Path Finder — Gridsmith Press',
@@ -16,18 +17,20 @@ export const metadata: Metadata = {
  * `/press/path-finder` — `K-05`, the **static SSR decision table**.
  *
  * `press/PROJECT-RULES.md` §6: *"The static SSR decision table must render all six outcomes and
- * their criteria without JavaScript."* This route is that table. It is a Server Component with
- * **no client boundary at all** — `K-06`'s island mounts above it later, exactly as `V-06`'s
- * JS-disabled half is its own statically-generated route with the island layered over it.
+ * their criteria without JavaScript."* This route is that table, and the table is still there.
+ * **`K-06`/`K-07`'s island now mounts above it** — `components/divisions/press/PathFinder.tsx`,
+ * the page's only client boundary — exactly as `V-06`'s JS-disabled half is its own statically
+ * generated route with the island layered over it. Everything below the island is server-rendered
+ * and unchanged, so a reader with no JavaScript loses the five interactive steps and keeps every
+ * outcome, every criterion and both honest answers.
  *
  * ## Why the table is the base layer and not the fallback
  *
  * A `<noscript>` block is a fallback: it is authored once, never rendered in development, and
- * rots. This page is what everybody gets. When `K-06` ships, the island replaces the
- * *questions* section and the table stays below it as the thing a visitor can read end to end
- * without answering anything — which is also the answer to the market-research finding behind
- * the whole tool, that this audience wants to see the reasoning before it will trust the
- * recommendation.
+ * rots. This page is what everybody gets. The island replaced the *questions* section and the
+ * table stayed below it as the thing a visitor can read end to end without answering anything —
+ * which is also the answer to the market-research finding behind the whole tool, that this
+ * audience wants to see the reasoning before it will trust the recommendation.
  *
  * ## Everything on this page is [SEED] except the outcome keys and the question labels
  *
@@ -45,10 +48,11 @@ export const metadata: Metadata = {
  *
  * ## The honest outcomes are in the same table as the others
  *
- * Not a footnote, not a disclosure below the fold, no CTA on either — `ETH-04`, and `K-07`
- * renders no button on E or F for the same reason. `showCta` is read from the outcome rather
- * than assumed by position, so an outcome that ever acquired a CTA would show one here and be
- * visible rather than silently correct.
+ * Not a footnote, not a disclosure below the fold, no CTA on either — `ETH-04`, and the island
+ * renders no CTA on E or F for the same reason and off the same field. `showCta` is read from
+ * the outcome rather than assumed by position in both places, so an outcome that ever acquired
+ * a CTA would show one here and be visible rather than silently correct. `check:path:live`
+ * drives the island to both honest outcomes and asserts the rendered result carries none.
  *
  * ## The table is THREE columns, and the fourth was removed by a measurement
  *
@@ -104,21 +108,37 @@ export default function Page() {
           <Prose>
             <p>Every option is listed. Nothing here needs any knowledge of publishing.</p>
           </Prose>
-          {SEED_QUESTIONS.map((q, i) => (
-            <div key={q.key}>
-              <Heading level={3}>
-                {i + 1}. {q.question}
-              </Heading>
-              <Prose>
-                <p>{q.helpText}</p>
-                <ul>
-                  {q.options.map((o) => (
-                    <li key={o.key}>{o.label}</li>
-                  ))}
-                </ul>
-              </Prose>
-            </div>
-          ))}
+          <PathFinder questions={SEED_QUESTIONS} outcomes={SEED_OUTCOMES} rules={SEED_RULES} />
+          {/* The island server-renders question 1 and no further, so without JavaScript the
+              other four questions and their options would simply be absent — and question 2's
+              options appear in no rule, so the criteria table below would not carry them
+              either. This is the platform's own mechanism for that and it is server-rendered
+              like everything else on the page. `PROJECT-RULES.md` §6 is about the outcomes
+              table; this is about not losing the questions on the way to it. */}
+          <noscript>
+            <Prose>
+              <p>
+                Without JavaScript the five steps do not advance. Every question and every
+                option is below, and the table after it gives all six outcomes and what leads
+                to each.
+              </p>
+            </Prose>
+            {SEED_QUESTIONS.map((q, i) => (
+              <div key={q.key}>
+                <Heading level={3}>
+                  {i + 1}. {q.question}
+                </Heading>
+                <Prose>
+                  <p>{q.helpText}</p>
+                  <ul>
+                    {q.options.map((o) => (
+                      <li key={o.key}>{o.label}</li>
+                    ))}
+                  </ul>
+                </Prose>
+              </div>
+            ))}
+          </noscript>
         </Container>
       </Section>
 

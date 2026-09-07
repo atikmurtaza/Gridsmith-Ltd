@@ -94,6 +94,23 @@ const nextConfig: NextConfig = {
    */
   experimental: {
     globalNotFound: true,
+    /**
+     * **A Windows-only escape hatch, inert unless you set it.** Not a build setting.
+     *
+     * `next build`'s static generation forks one `jest-worker` child per core. On this
+     * project's Windows machine that reliably exhausts the OS's spawn capacity partway
+     * through `Generating static pages` and the build dies with `[Error: spawn UNKNOWN]`
+     * errno `-4094` — **on a clean checkout with no local changes**, which is how it was
+     * established to be the environment rather than the tree. Several forks succeed first,
+     * so it reads as a late crash rather than a resource limit; `NEXT_BUILD_CPUS=1` makes
+     * it build every time.
+     *
+     * It is a spread rather than `cpus: undefined` so that an unset variable adds no key at
+     * all: CI must keep Next's own default, and a key present with an undefined value is the
+     * kind of thing a config merge treats differently between versions. Unset, this line
+     * cannot change anything — which is the property that makes it safe to commit.
+     */
+    ...(process.env.NEXT_BUILD_CPUS ? { cpus: Number(process.env.NEXT_BUILD_CPUS) } : {}),
   },
   /**
    * **The site reports which Sanity dataset it was built against — `M-P1-7`.**

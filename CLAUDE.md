@@ -157,6 +157,25 @@ Read the workstream's own files before touching its code.
   session's `.next` then corrupted outright and served HTTP 500 on every route, which is the
   loud version of the same fault and the harmless one.
 
+- **A proof harness owns its subject exclusively for the duration of the run. Nothing else
+  reads or writes that file in the window — not a second harness, not `verify:static`, not a
+  dev server.** A harness works by mutating a committed file, reading a result, and restoring
+  the original. Two of those overlapping do not conflict noisily; they interleave, and the
+  loser's "restore" writes the winner's mutation back **as the original**. The file is then
+  wrong on disk, in a state no diff attributes to either proof, and both readings still look
+  like readings.
+
+  This shipped. At `K-04` two harnesses overlapped over `lib/path/seedConfig.ts` and committed
+  `isSeed: false` to disk; separately, `verify:static` was started while a harness was mid-
+  mutation and went red on a temporarily-mutated subject — **a real red with no real defect**,
+  which is the reading that wastes a session. Both were recoverable and neither had to be.
+
+  So: **one harness at a time, and no other reader of the subject while it runs.** Restore by
+  writing back bytes captured before the first mutation, not by re-applying an inverse edit —
+  an inverse edit of the wrong baseline is exactly the failure above. And when a proof ends,
+  **assert the subject is byte-identical to `HEAD`** (`git diff --quiet -- <file>`) before
+  believing the result; a harness that cannot say its subject is clean has not finished.
+
 - **Every gate must be proven by deliberate failure before it is trusted, and the proof
   recorded.** A gate that can skip its subject silently must treat that skip as a hard
   failure, never a pass. A green result from a check that measured nothing is worse than
@@ -438,6 +457,28 @@ Read the workstream's own files before touching its code.
   `scripts/struck-rules.mjs` gets the entry. **Retrospective sweeps of the audit trail are
   closed** — two ran on 4 September 2026, a third found nothing, and the registry is now
   populated by deliberate registration at strike time rather than by archaeology.
+
+- **Placeholder imagery is geometric and generated in this repository. Never stock
+  photography — not Unsplash, not Pexels, not "just for now".** *The feel* above prohibits
+  stock photography outright and `00-FOUNDATION.md` §"Seed content" item 7 requires *"neutral
+  geometric placeholders at correct aspect ratios"*. `components/content/Placeholder.tsx` is
+  that placeholder: a bordered box with a token-drawn CSS hatch, no file, no `<img>`, no Sanity
+  asset, no network request, at every ratio the site uses.
+
+  **This has already been asked for and correctly refused, and the refusal stands.** A brief on
+  7 September 2026 authorised *"Unsplash, Pexels, or generated blocks"*; generated blocks were
+  taken and the refusal was right, for four reasons that are still true. Two are rules already
+  written here, so adopting a photograph would mean **striking a rule, not filling a surface**.
+  The third is performance — 24 photographic cards is 24 requests on the route with the
+  tightest budget in the programme, and `Q-M16` already measures an *empty* page at 1520ms
+  against Digital's 1600ms. The fourth is that seed records are deleted rather than edited, and
+  an uploaded asset outlives the record referencing it.
+
+  **Do not reopen this as a content gap.** A surface with a `Placeholder` is filled. An unbuilt
+  route is not an empty surface. `Media.tsx` and the `2:3` book cover are deliberately
+  unexercised and `PRE-DEPLOYMENT-CHECKLIST.md` Group E says why. If photography is wanted it
+  is a positioning decision by the owner, taken by striking the two rules above and registering
+  them in `check:struck` — not by an implementer reaching for an image host mid-task.
 
 - **Fix the class, not the instance.** When a defect is found, ask what category it
   belongs to and sweep every place that category can occur. A per-instance fix leaves the

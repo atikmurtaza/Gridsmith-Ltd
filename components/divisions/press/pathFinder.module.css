@@ -1,0 +1,50 @@
+/* Path Finder island (K-06, K-07). Tokens only; no colour literals. */
+
+.flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--measure-narrow);
+}
+
+/* Where you are, announced rather than only drawn. No percentage bar — ETH-01 rules out
+   pressure mechanics, and a filling meter on a five-question tool is one. Same decision,
+   same reason, as pressContact.module.css `.progress`. */
+.progress {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+/* The result. Bordered rather than tinted: an honest outcome and a Gridsmith one are drawn
+   IDENTICALLY, so nothing in the styling makes "you should not hire us" read as the lesser
+   answer. ETH-04 is a design constraint here, not only a data one. */
+.result {
+  padding: var(--space-6);
+  border: var(--border-hairline) solid var(--line-strong);
+  background: var(--canvas-sunken);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.answers {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.seedNote {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
