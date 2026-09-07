@@ -35,11 +35,18 @@ import styles from '@/components/content/content.module.css';
  *
  * ## An unapproved document is announced, never hidden
  *
- * `solicitorApproved` defaults false and `L-04` is the hard gate that flips it. The query does
- * **not** filter on it — `lib/sanity/queries.ts` explains why in full. A missing privacy notice
- * is a worse outcome than a draft that says, in the first thing on the page, that it is a
- * draft. What must not happen is a draft presented as though it were reviewed, and that is
- * prevented by rendering the state rather than by hiding the document.
+ * `solicitorApproved` defaults false. The query does **not** filter on it —
+ * `lib/sanity/queries.ts` explains why in full. A missing privacy notice is a worse outcome
+ * than a draft that says, in the first thing on the page, that it is a draft. What must not
+ * happen is a draft presented as though it were reviewed, and that is prevented by rendering
+ * the state rather than by hiding the document.
+ *
+ * **As of 2 September 2026 the flag gates nothing — it describes.** It filters no query,
+ * blocks no route, fails no build, and no longer suppresses indexing. The owner's decision is
+ * that external legal review is booked separately and the programme does not wait on it, so a
+ * flag that withheld the published instruments until the review landed was withholding them
+ * indefinitely. `check-legal-parity.mjs` branch D still requires the banner to render, which
+ * is an assertion that the state is *shown* — the opposite of a gate.
  *
  * ## Print
  *
@@ -62,8 +69,14 @@ export async function generateMetadata({
   return {
     title: `${doc.title} — Gridsmith Ltd`,
     description: doc.summary ?? undefined,
-    // A draft must not be indexed as though it were the company's published position.
-    robots: doc.solicitorApproved ? undefined : { index: false, follow: true },
+    // **No `robots` gate on `solicitorApproved`, as of 2 September 2026.** It used to `noindex`
+    // every legal page until the flag flipped, which made the flag a publication gate: the
+    // instruments were served but withheld from search, so the company's published legal
+    // position was unfindable pending a review that had not been booked. The owner's decision
+    // is that the review does not gate the programme. The draft state is *described* — the
+    // banner below, `reviewedBy`, and the version — and describing a state is not the same as
+    // suppressing the document. A visitor who searches for Gridsmith's privacy notice should
+    // find the notice Gridsmith actually publishes.
   };
 }
 
@@ -97,10 +110,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
           {!doc.solicitorApproved ? (
             <p className={styles.legalStatus}>
-              DRAFT — NOT YET REVIEWED BY A SOLICITOR. This document is published so that its
-              shape can be reviewed and so that the site is not missing a notice it is required
-              to carry. Do not rely on it. Clauses marked [DECISION] are choices the company has
-              not yet made, and each shows a working default rather than a settled position.
+              DRAFT — NOT YET REVIEWED BY A SOLICITOR. This is the document Gridsmith Ltd
+              currently publishes and works to. It has been through internal revision but not
+              external legal review, and it will be updated when that review happens.
             </p>
           ) : null}
 

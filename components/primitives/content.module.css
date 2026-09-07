@@ -158,7 +158,14 @@
   text-underline-offset: 0.2em;
 }
 .breadcrumbLink:hover { color: var(--accent); }
-.breadcrumbCurrent { color: var(--ink-muted); }
+/* The current crumb was distinguished from its siblings only by hue — the links carry
+   text-decoration: underline and this carries a different colour. Arguably already 1.4.1-safe,
+   because the absence of the underline is itself perceivable, but that reading depends on a
+   sibling rule and `check:state-cues` judges a state on what it declares. The weight makes the
+   cue explicit, which is cheaper than teaching a gate to reason about siblings and is better
+   anyway: "you are here" should not be the faintest item in the trail. Found by the gate on
+   its first run over the tree — U-03. */
+.breadcrumbCurrent { color: var(--ink-muted); font-weight: 600; }
 
 .pagination { display: flex; align-items: center; gap: var(--space-2); }
 .paginationList {

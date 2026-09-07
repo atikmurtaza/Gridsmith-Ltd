@@ -35,8 +35,12 @@ export const metadata: Metadata = {
  * misreading it has contractual consequences: a client who believes they are contracting with
  * "Gridsmith Press" is wrong about who owes them the work. So it is stated in prose, and then
  * stated again as a table of checkable facts — company number, place of registration,
- * registered office, VAT position — in monospace, which is this site's convention for anything
- * verifiable.
+ * registered office — in monospace, which is this site's convention for anything verifiable.
+ *
+ * **No VAT row.** Gridsmith is not VAT registered, so e-commerce regs reg. 6(1)(g) is not
+ * engaged and there is no number to publish; the field does not exist on the singleton. This
+ * page and the statutory footer are the two places the full registered office appears — the
+ * reg. 25(2) disclosure — and everywhere else the site says "Bolton, United Kingdom".
  *
  * Every one of those values comes from `companyDetails`, the same singleton the statutory
  * footer reads. There is no second copy of the company number on this site.
@@ -63,7 +67,6 @@ export default async function Page() {
     ['Place of registration', company.placeOfRegistration],
     ['Registered office', company.registeredOffice],
     ['Trading address', company.tradingAddress],
-    ['VAT number', company.vatNumber],
     ['Trading divisions', 'Gridsmith Design · Gridsmith Digital · Gridsmith Press'],
     ['Contact', company.contactEmail],
   ];

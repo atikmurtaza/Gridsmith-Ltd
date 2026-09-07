@@ -16,6 +16,10 @@ export function Prose({
 }) {
   return (
     <div
+      /* `P-02`. CSS module class names are hashed, so a gate reading the served page cannot
+         select `.prose`. This attribute is the stable handle `check:press-type` uses to assert
+         the 52ch measure on every body-copy block in Press, and it is inert otherwise. */
+      data-prose=""
       className={[styles.prose, measure === 'narrow' ? styles.proseNarrow : '', className]
         .filter(Boolean)
         .join(' ')}

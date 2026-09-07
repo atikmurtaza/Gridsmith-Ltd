@@ -72,11 +72,13 @@ export const seoBlock = defineType({
  * `variables` carries a `min(2)` rule straight from the spec: *"what moves this number —
  * required, min 2"*. A price with no stated variables is a quote pretending to be a price.
  *
- * **No net/gross field yet, and that is `M-P2-3`, not an omission here.** Gridsmith is VAT
- * registered at launch; consumer-facing prices must display VAT-inclusive and B2B prices must
- * state their treatment. That is a constraint on this block, but the display rule differs per
- * division audience, so it is raised at the first division pricing row rather than guessed at
- * in the shared layer.
+ * **No net/gross field, and `M-P2-3` is closed rather than deferred.** Gridsmith is not VAT
+ * registered, so there is no VAT to state and no tax-treatment label to choose: a price here
+ * is the amount charged, stated plainly. SI 2002/2013 reg. 6(2) requires prices to be clear
+ * and unambiguous and to indicate whether they include tax — a price from a non-registered
+ * trader that adds nothing at checkout is exactly that. **Nothing on this site may present a
+ * price as VAT-exclusive.** If registration ever completes, the net/gross field, the display
+ * rule per division audience and the legal copy change together.
  */
 export const pricingBlock = defineType({
   name: 'pricingBlock',

@@ -10,10 +10,10 @@
  *
  *   npm run seed:company
  *
- * **`vatNumber` is a deliberately invalid placeholder, not a blank.** Registration is in
- * progress and the number arrives before launch, but the rendering path that shows the VAT
- * line has to be exercised now rather than first seen at launch. `[SEED]` marks it as
- * unusable to any human reading it, per FOUNDATION §7.6.
+ * **There is no `vatNumber` any more, here or on the schema.** Gridsmith is not VAT
+ * registered, so e-commerce regs reg. 6(1)(g) is not engaged and the correct disclosure is
+ * none at all — a placeholder here was the mechanism that put `[SEED] GB123456789` in the
+ * footer of every page, which is a false statement rather than a marked-unusable one.
  */
 import { rmSync } from 'node:fs';
 import { createClient } from '@sanity/client';
@@ -40,12 +40,10 @@ const doc = {
   registeredOffice: '30 Briarfield Road, Farnworth, Bolton, BL4 0HD',
   // Same as the registered office, so the field stays empty and the footer says it once.
   tradingAddress: '',
-  vatNumber: '[SEED] GB123456789',
   // **Real, and no longer a placeholder.** The footer's contact line is what satisfies
   // e-commerce regs reg. 6(1)(c) — contact details including an email address that make it
   // possible to reach the provider rapidly — so a `[SEED]` value there was a legal
-  // requirement met by a string that cannot receive mail. `vatNumber` stays marked until
-  // registration completes; these are separate obligations under separate instruments.
+  // requirement met by a string that cannot receive mail.
   contactEmail: 'contact@gridsmith.uk',
   tradingNames: ['Gridsmith Design', 'Gridsmith Digital', 'Gridsmith Press'],
   responseCommitment:
@@ -63,7 +61,7 @@ const client = createClient({
 const written = await client.createOrReplace(doc);
 console.log(`seed-company-details: wrote ${written._id} to dataset "${DATASET}"`);
 console.log(`  companyNumber ${doc.companyNumber}`);
-console.log(`  vatNumber "${doc.vatNumber}" — placeholder; contactEmail "${doc.contactEmail}" — real`);
+console.log(`  contactEmail "${doc.contactEmail}" — real; no vatNumber (not VAT registered)`);
 
 // Next's Data Cache persists across local builds, so a rebuild after a content change can
 // prerender the previous response with nothing reporting it — measured, by adding

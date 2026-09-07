@@ -54,6 +54,16 @@ const ROUTES = [
   // the insights hub, a legal document and the one route with a form. The per-slug routes are
   // represented by one instance each - 24 case studies share one template, and auditing all of
   // them would multiply the run without adding a subject.
+  // `U-08`'s subject. One instance of the template, chosen the same way the case study was:
+  // ten Digital services share it. `website-design-build` is the one with the fullest record —
+  // four deliverables and three pricing variables — so it exercises every block the template
+  // has rather than the smallest.
+  { path: '/digital/services/website-design-build', status: 200 },
+  // `V-06`'s subject: the static pricing bands, the one Digital route that must be fully
+  // readable with JS disabled. It is also the only route on the site whose entire content is
+  // a data table, so it is the only place `Table`'s focusable scroll region is audited on a
+  // production route rather than on the kitchen sink.
+  { path: '/digital/estimate', status: 200 },
   { path: '/work', status: 200 },
   { path: '/work/brand-website-and-launch-book', status: 200 },
   { path: '/about', status: 200 },
@@ -63,6 +73,17 @@ const ROUTES = [
   { path: '/legal/privacy', status: 200 },
   // The only master route with a client boundary besides the consent banner.
   { path: '/contact', status: 200 },
+  // `K-13`. Press's only client boundary, and the site's only multi-step form. Audited at
+  // step 1 only: steps 2-4 are `hidden` until a segment is chosen, and `hidden` removes them
+  // from the accessibility tree, so what axe sees here is exactly what a visitor first meets.
+  // The later steps reuse the same primitives the kitchen sink already audits.
+  { path: '/press/contact', status: 200 },
+  { path: '/press/contact/thank-you', status: 200 },
+  // `K-05`. The static SSR decision table. A real <table> with a caption, a scrollable
+  // focusable region and row headers, on the route that carries the ETH-04 honest outcomes —
+  // the one page on the site where a screen-reader user losing the row/column relationship
+  // would lose which outcome a criterion belongs to.
+  { path: '/press/path-finder', status: 200 },
   { path: '/_kitchen-sink', status: 200 },
   // Composed master components. Separate from the kitchen sink so the primitive-layer
   // measurement stays a measurement of primitives — see the page's own docstring.
@@ -170,13 +191,30 @@ const INCOMPLETE_ALLOWED = [
       '/', '/design', '/digital', '/press', '/_kitchen-sink', '/_master-sink', '/_gridsmith-404-probe',
       '/work', '/work/brand-website-and-launch-book', '/about', '/approach', '/insights',
       '/legal/privacy', '/contact',
+      // K-13's two routes. They were added to the route list and not to this entry, so the
+      // shared banner's incomplete — allowed on all sixteen other routes — reported UNRESOLVED
+      // on eight combinations and the gate has been red since. Found at K-16 by running it.
+      '/press/contact', '/press/contact/thank-you',
+      // `K-05`, added to this list in the same commit as the route list. The banner is in the
+      // shared layout, so this route reproduces the identical incomplete and is not a new
+      // question — this is the K-13 direction, and it is decided here rather than discovered
+      // by a red run two sessions later.
+      '/press/path-finder',
+      '/digital/services/website-design-build',
+      '/digital/estimate',
     ],
     target: '#gs-consent-heading',
     why:
       'The consent banner is position:fixed at the bottom edge, so at 375px its text rect ' +
       'intersects page content behind it and axe returns "background could not be determined ' +
-      'because it partially overlaps other elements". It resolves cleanly at 1280px, which is ' +
-      'the tell: this is axe declining on a fixed overlay, not a contrast problem. Three fixes ' +
+      'because it partially overlaps other elements". Which viewport it declines at follows ' +
+      'the page, not the rule — CORRECTED at U-08, where this sentence used to read "it ' +
+      'resolves cleanly at 1280px". On the service page it is the other way round: 375px ' +
+      'initial resolves and both 1280px states do not, because the page is short enough that ' +
+      'the fixed bar sits over main content at the wider width too. The tell is not which ' +
+      'viewport fires; it is that the answer moves with page LENGTH while the colour pair ' +
+      'never changes. This is axe declining on a fixed overlay, not a contrast problem. ' +
+      'Three fixes ' +
       'were tried and none changed it — an opaque background on .bar, on .inner, and on the ' +
       'text element itself; all three compute opaque in the browser (the canvas-raised triplet) and ' +
       'elementFromPoint at all four corners and the centre returns the text element, so ' +
@@ -676,6 +714,65 @@ if (linkProblems.length > 0) {
 check-axe: ${linkProblems.length} link(s) do not resolve:`);
   for (const p of linkProblems) console.error(`      ${p}`);
   total += linkProblems.length;
+}
+
+/**
+ * **The footer's legal links are on every route, not just on one — `M-P2-22`.**
+ *
+ * The resolve pass above answers "does every link that exists point somewhere real". This
+ * answers the opposite question, and nothing asked it before: **does a link that must exist
+ * exist at all.** For eleven rounds it did not — the only link to a legal document anywhere
+ * in the site's chrome was one on the Press landing page, so the privacy notice and the
+ * cookie policy were reachable by URL and effectively by nothing else. No gate fired,
+ * because a missing link is not a broken one.
+ *
+ * E-commerce regs reg. 6 requires the particulars *easily, directly and permanently
+ * accessible*, and the ICO's expectation is a cookie policy reachable from the footer.
+ * "Permanently" is why this asserts **every** audited route rather than a sample: a footer
+ * group that renders on the master route group and not on a division's would satisfy any
+ * spot check and none of the regulation.
+ *
+ * **The expected paths are hardcoded, deliberately.** The question is whether the delivered
+ * footer *declares* these links, so the expectation must come from outside the subject —
+ * deriving it from `LEGAL_FOOTER_SLUGS` would mean deleting a slug deletes the expectation
+ * with it and this stays green having measured less (CLAUDE.md, `check:tokens`).
+ *
+ * `/gridsmith-error-probe` is excluded and that exclusion is asserted, not assumed: it
+ * throws after hydration, so `global-error` replaces the whole document, footer included.
+ * If it ever *does* carry the footer, the boundary stopped firing and the probe went hollow.
+ */
+const FOOTER_LEGAL_PATHS = [
+  '/legal/terms',
+  '/legal/privacy',
+  '/legal/cookies',
+  '/legal/accessibility',
+];
+const FOOTER_EXEMPT = '/gridsmith-error-probe';
+const footeredRoutes = ROUTES.map((r) => r.path).filter((p) => p !== FOOTER_EXEMPT);
+const footerProblems = [];
+for (const path of FOOTER_LEGAL_PATHS) {
+  const from = linkedFrom.get(path) ?? new Set();
+  const missing = footeredRoutes.filter((r) => !from.has(r));
+  if (missing.length > 0) {
+    footerProblems.push(
+      `${path} is not linked from ${missing.length} of ${footeredRoutes.length} route(s): ${missing.join(', ')}`,
+    );
+  }
+  if (from.has(FOOTER_EXEMPT)) {
+    footerProblems.push(
+      `${path} is linked from ${FOOTER_EXEMPT} — global-error did not replace the document, so that probe is no longer its subject`,
+    );
+  }
+}
+if (footerProblems.length > 0) {
+  console.error(`
+check-axe: ${footerProblems.length} footer legal link problem(s):`);
+  for (const p of footerProblems) console.error(`      ${p}`);
+  total += footerProblems.length;
+} else {
+  console.log(
+    `check-axe: ${FOOTER_LEGAL_PATHS.length} footer legal link(s) present on all ${footeredRoutes.length} footered route(s)`,
+  );
 }
 
 /**

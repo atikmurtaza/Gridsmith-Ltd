@@ -452,7 +452,7 @@ const groupPageDocs = [
       // content in each. Caught by check:axe at Epic N. The roster is code, so its heading is
       // code's to own; the CMS supplies the prose around it.
       section(2, 'verify', 'How to check us', 'prose',
-        `${S} Placeholder. Company number, registered office and VAT position are in the footer of every page.`),
+        `${S} Placeholder. Company number and registered office are in the footer of every page.`),
     ],
     isSeed: true,
   },

@@ -60,6 +60,16 @@ const excludeProbes =
   process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
 
 const nextConfig: NextConfig = {
+  /**
+   * **Declared here so it is always defined, which is what makes the probe cost nothing when
+   * it is off.** `components/consent/bundle-size-probe.ts` is the committed subject for
+   * `check-bundle-size`'s shared-baseline assertion (`G8` / `A-GATE-4-3`). A `NEXT_PUBLIC_*`
+   * variable that is merely *absent* is not replaced at build time, so the ternary guarding
+   * its payload stayed a runtime check and the 1KB payload shipped on every route in a normal
+   * build — measured, at the first attempt: `shared` read 3.0KB with the flag unset. Defining
+   * it as `''` makes the condition a constant the minifier folds away.
+   */
+  env: { NEXT_PUBLIC_BUNDLE_SIZE_PROBE: process.env.NEXT_PUBLIC_BUNDLE_SIZE_PROBE ?? '' },
   pageExtensions: excludeProbes ? ['tsx', 'ts'] : ['tsx', 'ts', 'probe.tsx', 'probe.ts'],
   /**
    * `globalNotFound` is what makes the 404 load the token layer at all.
@@ -93,7 +103,7 @@ const nextConfig: NextConfig = {
    * machines and, by design, different values: the Production target builds against
    * `production` and everything else against `development`. Run from a `development` runner
    * against a production deployment, the gate announced *"the live-only assertions do not
-   * apply"* and exited 0 — **the one gate whose purpose is stopping a `[SEED]` VAT number
+   * apply"* and exited 0 — **the one gate whose purpose is stopping a `[SEED]` statutory footer
    * reaching a public page, unable to fire in the only situation it exists for.**
    *
    * A header rather than a probe route, for three reasons. Probe routes are excluded from

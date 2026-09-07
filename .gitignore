@@ -16,3 +16,37 @@ next-env.d.ts
 # Machine-local Claude Code permissions, not shared config.
 .claude/settings.local.json
 .lighthouseci/
+
+# Credentials and key material. `.env`/`.env.*` above covers the env files; these cover the
+# forms a key takes when it is NOT in an env file — a downloaded service-account JSON, a
+# private key, a certificate. None of these has ever been in this tree and the point is that
+# none ever silently arrives: `lint:secrets` (`check-service-role-key`) asserts the value
+# never reaches a client chunk, and this asserts the file never reaches a commit.
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+service-account*.json
+credentials.json
+secrets.json
+.env.local
+.env.production
+
+# Editor and OS cruft.
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Build and tool output not already covered above.
+coverage/
+.turbo/
+*.log
+npm-debug.log*

@@ -83,11 +83,11 @@ Personal project, often older, often the least commercially sophisticated and th
 | FR-P17 | Sticky mobile CTA | P0 | R1 |
 | FR-P18 | FAQ, objection-led, `FAQPage` schema — **must include the vanity-press question directly** | P0 | SC-14 |
 | FR-P19 | Credentials strip: company number, years trading, titles published to date, platforms published to, and the author-ownership statement. **No imprint is claimed, because none is operated** | P0 | R4.4 |
-| FR-P20 | Cross-division prompt on the confirmation screen only — never mid-funnel | P1 | O6 |
+| FR-P20 | Cross-division prompt on the confirmation screen only — never mid-funnel | P1 | O6 | **BUILT** `K-15` — `/press/contact/thank-you`, two links and a sentence, nothing to click through |
 | FR-P21 | Sample chapter / sample report request | P1 | R4.2 |
 | FR-P22 | Insights hub filtered to Press topics | P2 | |
 | FR-P23 | Trust footer with company number, registered office, contract summary link, GDPR | P0 | |
-| FR-P24 | **Consumer terms path** — individual author and memoir segments are served the Consumer Terms, not the business MSA. The contact flow must identify which applies before an order is confirmed | P0 | CRA 2015, `_legal/00-LEGAL-BASIS.md` §3 |
+| FR-P24 | **Consumer terms path** — individual author and memoir segments are served the Consumer Terms, not the business MSA. The contact flow must identify which applies before an order is confirmed | P0 | CRA 2015, `_legal/00-LEGAL-BASIS.md` §3 | **BUILT** `K-16` — `pressSegmentTerms` in `lib/leads/pressSegments.ts`, asserted per branch by `check:press:contact:selftest`. **One divergence from this row's wording, recorded rather than resolved quietly: the `content` segment is served neither instrument.** *"I need ongoing content"* states nothing about purpose of purchase, which is the only test either instrument applies (`CONSUMER-TERMS.md` §1, `MSA-BUSINESS.md` §1), and this row names only author and memoir. It routes to `/legal/client-terms`, the disambiguation page, which carries no operative clause and explains both — a correct destination, not the closest one. |
 | FR-P25 | **14-day cancellation notice** — consumer segments see the cancellation right stated before pricing, in plain language | P0 | CCR 2013 |
 | FR-P26 | **Early-start express request** — a separate, unbundled checkbox at order confirmation where the client asks work to begin inside the 14 days, with the loss-of-rights wording and a timestamped record | P0 | CCR 2013 regs 36–37 |
 

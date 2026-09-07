@@ -3,9 +3,8 @@ import { sanityClient } from '@/lib/sanity/client';
 /**
  * The statutory record, read once per build (`M-05`).
  *
- * `vatNumber` is `string` and may be empty — see the schema. Callers decide what an empty
- * value means; the footer omits its line, and `check:launch-content` refuses a production
- * dataset that still has one.
+ * **No `vatNumber`.** Gridsmith is not VAT registered, so there is nothing to disclose under
+ * e-commerce regs reg. 6(1)(g) and no field to read — see `sanity/schemas/companyDetails.ts`.
  */
 export type CompanyDetails = {
   legalName: string;
@@ -13,7 +12,6 @@ export type CompanyDetails = {
   placeOfRegistration: string;
   registeredOffice: string;
   tradingAddress: string | null;
-  vatNumber: string | null;
   contactEmail: string | null;
   contactPhone: string | null;
   responseCommitment: string;
@@ -22,7 +20,7 @@ export type CompanyDetails = {
 
 export const COMPANY_DETAILS_QUERY = `*[_type == "companyDetails"][0]{
   legalName, companyNumber, placeOfRegistration, registeredOffice, tradingAddress,
-  vatNumber, contactEmail, contactPhone, responseCommitment, businessHours
+  contactEmail, contactPhone, responseCommitment, businessHours
 }`;
 
 /**

@@ -1558,3 +1558,86 @@ unrelated notes. That is the whole value of writing this section: `M-P1-3` and `
 separate items on a list and become **the two remaining instances of a defect class that has cost this
 project a published over-promise once already.**
 
+
+
+---
+
+## 22. A tenth defect class — the invalid probe, and the audit of every proof against it
+
+**Raised 3 September 2026, from `V-06`.** The rule is now `CLAUDE.md`, in the deliberate-failure
+block; this section is the audit it required.
+
+### The class
+
+Every rule in this repository about deliberate-failure proofs governs what happens **after** the
+gate reacts: establish which gate fired, prove each branch separately, keep a permanent subject.
+All of them assume the attempt to make the gate fail was a valid attempt. **That assumption is
+where the tenth defect lives.**
+
+`V-06`'s overflow probe was a `3000×0px` div and `check:responsive` stayed green. A zero-height
+box contributes no scrollable overflow, so the probe was never a subject: the run measured
+nothing and read *exactly* like a broken gate. The gate's `widest` reporter compares `rect.right`
+and would have named it; the outer predicate is `scrollWidth`, which never reached it. A
+`3000×20px` div fired at all three widths.
+
+**A green from a deliberate-failure attempt has two readings** — *the gate is broken* and
+*nothing was injected that the gate measures* — and the exit code cannot separate them. The
+obligation is asymmetric: a **red** result carries its own validity proof, because the gate named
+the injection and the injection therefore reached it. Only greens need the probe shown to be a
+subject, from a property of the probe rather than from the gate's silence.
+
+Three failure modes, all live in this repository's history:
+
+| Mode | The probe | Instance |
+|---|---|---|
+| **inert** | cannot produce the quantity the predicate reads | `V-06`'s zero-height overflow box |
+| **out of scope** | the file, route, viewport or state carrying it is not one the gate visits | `A11Y-32` — specimen below a hit-tested fold |
+| **unreachable** | an earlier exit, filter or narrowed predicate consumes it first | `A-GATE-4-3`, `A11Y-29` |
+
+### The audit
+
+`scripts/audit-proof-validity.mjs` holds the register and the loop. **40 proofs audited, 6 found
+unsound**, plus 3 rows that declare themselves unproven and are counted as neither.
+
+| Unsound | Gate | Mode | Status |
+|---|---|---|---|
+| `G8` | `check-bundle-size` shared-baseline | unreachable | **open** — `A-GATE-4-3` |
+| `V06-OVF-1` | `check-responsive` overflow | inert | superseded by the `3000×20` probe |
+| `RLS-SELECT` | `check:rls` anon SELECT branch | inert, twice | fixed and re-proven per branch |
+| `SCHEMAS-CL` | `check:schemas` `CLOSED_LISTS` | no probe at all | fixed |
+| `A11Y-29` | `check:contrast` size pass | unreachable | fixed |
+| `A11Y-32` | `check-axe` linked-card | out of scope | fixed |
+
+**Nothing here is fixed by this session** — the brief was to list them. `G8` is the one still
+open, and it was already open as `A-GATE-4-3`; the value of the audit is that the other five now
+sit in one class with it instead of being five unrelated notes, which is the same value §21 had.
+
+**Three rows are `declared`**: `G2b` (`Specimen`'s mono heading, ungated by design), `SKIP-4`
+(*“link cannot take focus”* — no cheap subject produces it without tripping another row) and
+`MARK-OVL` (`check:mark:overlap` has no standing subject and says so). None claims to be proven,
+so none is a defect; they are counted separately so that the sound total is not inflated by them.
+
+### The count reports zero from the loop, not from the subject
+
+`CLAUDE.md`: *“Any gate whose output is a count must be provable to report zero, or to report a
+different number.”* The register is the obvious place to cheat — delete the six rows and the
+count is zero. So `audit()` never reads `REGISTER`; it is passed its subject.
+
+```
+node scripts/audit-proof-validity.mjs             40 audited, 34 sound, 6 UNSOUND
+node scripts/audit-proof-validity.mjs --control   40 audited, 40 sound, 0 UNSOUND
+node scripts/audit-proof-validity.mjs --selfcheck 40 rows both ways; register 6, control 0
+```
+
+`CONTROL` is the identical 40 rows with every `unestablished` promoted to `established`, so the
+zero comes from the predicate over a **non-empty** subject. `--selfcheck` asserts all four facts
+at once and exits 1 if any fails — including `real.audited === 0`, which is what makes an emptied
+register a red rather than a clean zero.
+
+### The limit, stated
+
+This is a gate over a hand-maintained record, so §the standing limit applies in full: it asserts
+the **classification** is consistent with what each record says, never that the transcription is
+complete or that the recorded outcome is what actually happened. Adding a row is how it grows;
+nothing derives it. It is deliberately **not** in the `verify:*` chain — `check:node` machine-checks
+that chain against `ci.yml`, and this is an audit run on demand, not a build gate.

@@ -124,6 +124,16 @@ Read the workstream's own files before touching its code.
 
 - **One tracker task per session or PR.** `C-02: Drawing matrix component` is a unit of work. "Build the Track B page" is nine tasks and context will drift.
 - **Server Components by default.** `'use client'` needs a one-line comment saying why. "Easier" is not a reason.
+- **Read before you build. Establish absence before authoring a gate or a route.** Before
+  writing anything into `scripts/` or `app/api/`, list both directories and read the files whose
+  names are near the question — a check is not new because the tracker row is open. `scripts/`
+  holds 28 gates and `app/api/` holds the live probes; several answer questions phrased
+  differently from the row that sends you there. `scripts/check-rls-live.mjs` was written,
+  proven and then deleted at the `K-10` premise check because it duplicated
+  `app/api/rls-drift/route.ts` by about 70%; the duplicated question had been recorded `FIXED`
+  on 21 August and the route had been in the tree since. **That cost most of a session, and the
+  reading that would have prevented it was two `ls` calls.** Where an existing gate is close but
+  wrong, extend it — a second gate over one subject is how two gates disagree in silence.
 - **CI is the arbiter.** TypeScript, ESLint, `no-hardcoded-colors`, `check-service-role-key`, `check-bundle-size`, Lighthouse CI and axe all block merge. Never add a bypass.
 - **Conventional commits**, scoped by workstream: `feat(press): add platform compliance table`.
 - **Update the spec in the same commit** as any deviation. A spec that has silently drifted is worse than none — the next session will follow it.
@@ -180,6 +190,44 @@ Read the workstream's own files before touching its code.
   and the subject sat below the fold (`A11Y-32`). Both were written by someone who had just
   read this rule, and neither was caught by reading the code. Writing a gate and believing
   it works is the normal outcome; the proof is what makes the difference observable.
+
+  **A probe that produces no red is not evidence about the gate until the probe is shown to
+  be a subject the gate could have caught.** The rule above says a gate never made to fail is
+  not yet a gate; it assumes the attempt to make it fail was valid, and that assumption is
+  where the next defect lives. A green result from a deliberate-failure attempt has two
+  readings — *the gate is broken* and *nothing was injected that the gate measures* — and they
+  are indistinguishable from the exit code. **Establish the second before concluding the
+  first**, and establish it from a property of the probe, not from the gate's silence.
+
+  `V-06`'s overflow probe was a `3000×0px` div and `check:responsive` stayed green. A
+  zero-height box contributes no scrollable overflow, so the probe was never a subject: the
+  run measured nothing and read exactly like a broken gate. The gate's own `widest` reporter
+  compares `rect.right` and would have named it, but the outer predicate is `scrollWidth`,
+  which never reached it. A `3000×20px` div fired at all three widths.
+
+  **The general form is that a probe has to satisfy the gate's predicate, not merely resemble
+  its subject**, and a probe fails that test in three ways worth checking by name: it is
+  *inert* — the injected thing cannot produce the quantity the predicate reads, as with the
+  zero-height overflow box; it is *out of scope* — the file, route, viewport or state carrying
+  it is not one the gate visits, as when a specimen sits below the fold of a hit-tested
+  viewport; or it is *unreachable* — an earlier exit, filter or narrowed predicate consumes it
+  before the assertion under test runs, which is `A-GATE-4-3` and `A11Y-29`.
+
+  **A red result carries its own validity proof and needs no separate one** — the gate named
+  the injection, so the injection reached it. The obligation is asymmetric and falls entirely
+  on green readings, which is why it is easy to skip: the proofs that need it most are the
+  ones that looked finished fastest. **Where a proof's recorded outcome is an absence, the
+  record must say what makes the probe a subject** — the property, measured or derived, that
+  puts it inside the predicate. "It did not fire, so there is no false positive" is a claim
+  about the gate only if the same run fired on something else in the same file, route and
+  pass; say which.
+
+  **Prefer a probe whose validity is structural.** A committed selftest that asserts a rule
+  function's *return value* cannot have this defect, because the reading is a value rather
+  than an absence — `check-legal-parity.selftest.mjs` and `check-launch-content.selftest.mjs`
+  are the shape. Where the subject must be a served page, make the probe's validity observable
+  in the same run: assert the injected quantity directly, or use a probe large enough that the
+  gate's secondary reporter names it even when the primary predicate does not.
 
   **A deliberate-failure proof observes a red build, not a red gate — establish which gate
   fired.** Where two checks can fire on the same input, a proof that only records "the build
@@ -244,6 +292,22 @@ Read the workstream's own files before touching its code.
   machine CI does not run on, and must be answered by that machine rather than inferred from
   the workflow file.
 
+  **A security proof executed over a transport no hostile client has is not a proof, whatever
+  it returns — and a clean result is the dangerous one.** Choose the probe's transport to match
+  the attacker's, not the one that is convenient to drive. Where they differ, the convenient
+  transport can make an exposure unreachable *in the probe* while leaving it reachable in the
+  system, and can equally make a real defence look like one the probe established.
+
+  The concrete instance, because it will be rediscovered: **over PostgREST an `anon` UPDATE or
+  DELETE probe cannot fire while the table has no SELECT policy.** PostgREST resolves a filtered
+  write through a subselect, so it never finds a row to write, whatever UPDATE policy exists.
+  Measured both ways at the `K-10` premise check: the same write is **1 row** as role `anon` in
+  SQL and **0 rows** over HTTP. Two such probes were written and removed as unreachable code —
+  **do not re-add them as defence in depth**; they are the inert-probe class wearing a security
+  label. The reading that matters — `anon` cannot SELECT — is the one that makes them inert, so
+  assert *that*, and assert INSERT separately because INSERT does not go through the subselect.
+  `app/api/rls-drift/route.ts` is where this lives.
+
   **A gate subject must assert that it is still the subject.** A subject that quietly stops
   being one leaves the gate auditing whatever happens to be there and calling it clean —
   the *hollow subject*, and the general form of how `global-error` went unmeasured. Its
@@ -251,6 +315,31 @@ Read the workstream's own files before touching its code.
   fallback paragraph and pass. So the route asserts that the boundary identifies itself —
   title, `h1`, `lang` — and fails if it does not. Wherever a gate depends on its subject
   being in a particular *state*, assert the state, not the subject's existence.
+- **Adding a subject to a gate is not done until every list that gate consults has been
+  updated — and a gate's green is only evidence for the question it was actually asked.**
+  Most gates hold more than one list: a subject list, and alongside it allowlists, exclusions,
+  budgets, expected-counts. Adding a route to the first and not the others is **invisible in
+  the source**, because nothing in the gate relates its own lists to each other. There is no
+  wrong output to notice and no silent check to find — only a red run later, on a route the
+  session that added it has stopped looking at.
+
+  `K-13` put `/press/contact` and `/press/contact/thank-you` into `check-axe`'s `ROUTES` and
+  not into `INCOMPLETE_ALLOWED`, and `check:axe` was red for **two sessions**. The `K-13`
+  write-up's *"axe is clean on both new routes"* was not careless and not false: it was true
+  about **violations**, which is what that session had asked about. It was silent about
+  **incompletes**, which is a second question the same gate answers and nobody had put to it.
+  So the second half of this rule is the load-bearing half: **when you report a gate green,
+  report which of its questions you asked.** A gate with two assertions has two greens, and
+  the summary line prints both whether or not you read both.
+
+  The obligation when adding a subject is therefore: **enumerate the gate's lists, decide each
+  one explicitly, then re-run the gate** — the run is what settles whether an allowlist entry
+  was needed, because that depends on what the route renders and no static reading can know it.
+  `check:lists` (`scripts/check-list-parity.mjs`) asserts the half that *is* static — every key
+  in a dependent list names something in the subject list — and its discovery guard makes a new
+  multi-list gate impossible to add without registering a relation for each of its lists. It
+  does not and cannot catch the `K-13` direction; its docstring says so, and the run is what does.
+
 - **An expectation derived from its own subject cannot fail when the subject is removed.**
   If a check reads its expected values out of the same file it is checking, deleting an
   entry deletes the expectation with it and the check stays green having measured less.
@@ -338,6 +427,18 @@ Read the workstream's own files before touching its code.
   global tool install. This rule exists because a recursive delete of a Node version
   directory destroyed a global CLI install that a one-level look had not revealed
   (`_shared/01-VALIDATION-REPORT.md` §13, E13).
+- **When a rule is struck, register it in `check:struck` in the same commit that strikes it,
+  and strike it in place rather than deleting it.** A rule removed from one document and left
+  standing in another is `_shared/01-VALIDATION-REPORT.md` §21's shape, and it has recurred:
+  `P-01`'s 17px floor stood in four documents, and `vatNumber` — removed from the schema, the
+  projection, the footer, `/about`, the seed and `check:launch` on 2 September 2026 — was still
+  specified in `master/SCHEMA.md` two days later, where an implementer rebuilding the singleton
+  would have restored a field whose absence is a compliance decision. Deleting the wording is
+  not the fix either: it removes the gate's only subject, so the annotated line stays and
+  `scripts/struck-rules.mjs` gets the entry. **Retrospective sweeps of the audit trail are
+  closed** — two ran on 4 September 2026, a third found nothing, and the registry is now
+  populated by deliberate registration at strike time rather than by archaeology.
+
 - **Fix the class, not the instance.** When a defect is found, ask what category it
   belongs to and sweep every place that category can occur. A per-instance fix leaves the
   same defect live everywhere else and guarantees it recurs. Three of the four Epic A

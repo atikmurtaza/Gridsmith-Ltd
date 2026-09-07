@@ -5,6 +5,7 @@ import { Prose } from '@/components/primitives/Prose';
 import { Link } from '@/components/primitives/Link';
 import { Section } from '@/components/primitives/Section';
 import { DivisionLanding, type DivisionCopy } from '@/components/divisions/DivisionLanding';
+import { MarginNote } from '@/components/divisions/press/MarginNote';
 
 export const metadata: Metadata = {
   title: 'Gridsmith Press — publishing, ghostwriting and content',
@@ -85,38 +86,43 @@ function RightsStatement() {
         <Heading level={2} id="rights">
           You keep the rights. You keep the ISBN.
         </Heading>
-        <Prose>
-          <p>
-            Copyright in your book stays yours. We do not acquire a share of it, we do not take a
-            royalty interest, and we do not become your publisher of record.
-          </p>
-          <p>
-            Where an ISBN is needed, we help you obtain <strong>your own</strong>. An ISBN
-            registered to us would make us the publisher on every retail listing for the life of
-            the title, and that is not what you are buying.
-          </p>
-          <p>
-            On ghostwritten work, the finished manuscript is yours and we waive our moral rights
-            in your favour so that you can be named as the author — recorded in the engagement
-            scope rather than assumed.
-          </p>
-          <p>
-            {/* The `Link` primitive rather than a bare anchor: it carries the layer's underline and
-                focus ring, and since Epic N it renders a plain `<a>` with no `next/link` runtime, so
-                the correctness costs nothing. */}
-            {/* **Consumer terms, not the MSA, and that is the point of the split.** This link
-                pointed at `/legal/client-terms` when that one slug served both instruments, so a
-                Press author following it from the rights statement landed on a B2B liability cap
-                that CRA 2015 s. 57 makes void against them, with nothing on the page saying so.
-                `scripts/check-consumer-terms.mjs` asserts against the SERVED page that no
-                consumer-facing route links to the business terms, and that this route links to
-                the consumer terms — so this cannot silently drift back. */}
-            <Link href="/legal/consumer-client-terms#clause-10-1">
-              Read clause 10.1 of the Client Terms for Consumers, which is where these come from
-            </Link>
-            .
-          </p>
-        </Prose>
+        <MarginNote
+          note={
+            <>
+              {/* The `Link` primitive rather than a bare anchor: it carries the layer's underline and
+                  focus ring, and since Epic N it renders a plain `<a>` with no `next/link` runtime, so
+                  the correctness costs nothing. */}
+              {/* **Consumer terms, not the MSA, and that is the point of the split.** This link
+                  pointed at `/legal/client-terms` when that one slug served both instruments, so a
+                  Press author following it from the rights statement landed on a B2B liability cap
+                  that CRA 2015 s. 57 makes void against them, with nothing on the page saying so.
+                  `scripts/check-consumer-terms.mjs` asserts against the SERVED page that no
+                  consumer-facing route links to the business terms, and that this route links to
+                  the consumer terms — so this cannot silently drift back. */}
+              <Link href="/legal/consumer-client-terms#clause-10-1">
+                Read clause 10.1 of the Client Terms for Consumers, which is where these come from
+              </Link>
+              .
+            </>
+          }
+        >
+          <Prose>
+            <p>
+              Copyright in your book stays yours. We do not acquire a share of it, we do not take a
+              royalty interest, and we do not become your publisher of record.
+            </p>
+            <p>
+              Where an ISBN is needed, we help you obtain <strong>your own</strong>. An ISBN
+              registered to us would make us the publisher on every retail listing for the life of
+              the title, and that is not what you are buying.
+            </p>
+            <p>
+              On ghostwritten work, the finished manuscript is yours and we waive our moral rights
+              in your favour so that you can be named as the author — recorded in the engagement
+              scope rather than assumed.
+            </p>
+          </Prose>
+        </MarginNote>
       </Container>
     </Section>
   );

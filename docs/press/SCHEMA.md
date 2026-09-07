@@ -277,7 +277,7 @@ const memoirPayload = z.object({
   segment: z.literal('memoir'),
   manuscriptStage: z.enum(['idea','partial-draft','finished-draft']),
   intendedReadership: z.enum(['family-only','public','undecided']),
-  expectationsAcknowledged: z.boolean(),   // ETH-07 — must be true to submit
+  expectationsAcknowledged: z.literal(true),// ETH-07 — must be true to submit
   timeline: z.enum(['6-months','12-months','no-deadline'])
 });
 
@@ -293,7 +293,11 @@ export const pressLeadPayload = z.discriminatedUnion('segment',
   [authorPayload, businessPayload, memoirPayload, contentPayload]);
 ```
 
-`expectationsAcknowledged` on the memoir branch is a required boolean. The form cannot submit without it. This is ETH-07 enforced in the data contract rather than left to UI discipline.
+`expectationsAcknowledged` on the memoir branch is `z.literal(true)`. This is ETH-07 enforced in the data contract rather than left to UI discipline.
+
+**It was `z.boolean()` until `K-13`, and that was the defect this rule exists to prevent.** A boolean accepts `false`, so the requirement lived in this paragraph and nowhere in the schema — `PROJECT-RULES.md` §7 says *"enforced in the Zod schema, not just the UI"* and it was enforced in neither. `lib/leads/pressLead.ts` is the shipped contract and `check:press:contact:selftest` breaks it three ways: box unticked, explicit `false`, and an attempt to route round the gate by relabelling the segment.
+
+**Budget bands are an open divergence, not a resolved decision.** The list below is money bands; the site ships shape-of-engagement bands (`not-sure` · `small` · `project` · `programme`) on both `/contact` and `/press/contact`, because a money band rendered into a component is a hard price figure on a site whose prices are all `[SEED] INDICATIVE`, and `check:content` rejects it. See the `K-13` row.
 
 Budget bands:
 `under-1k` · `1k-3k` · `3k-8k` · `8k-20k` · `20k-50k` · `50k-plus` · `monthly-retainer` · `not-sure`

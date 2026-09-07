@@ -39,7 +39,7 @@ on:
 
 # `NEXT_PUBLIC_SANITY_DATASET` has no default (M-P1-2): an unset variable is a build error
 # rather than a silent fallback to `development`, because on a live host that fallback would
-# publish a [SEED] VAT number. CI builds against `development` and says so here.
+# publish a [SEED] statutory footer. CI builds against `development` and says so here.
 env:
   NEXT_PUBLIC_SANITY_DATASET: development
   # No analytics placeholders. Round 10 deleted the injection and the consent categories
@@ -95,6 +95,9 @@ jobs:
       - name: No element styled as a heading without being one
         run: npm run check:headings
 
+      - name: A state may never be carried by colour alone (WCAG 1.4.1)
+        run: npm run check:state-cues
+
       - name: No invented prices, codes or ISBNs in rendering files
         run: npm run check:content
 
@@ -135,6 +138,39 @@ jobs:
       # exists for it, separately.
       - name: The legal-parity predicates still fire (committed specimens)
         run: npm run check:legal:selftest
+
+      # A rule struck in one document may not stand in another. Twice now: P-01's --ink-subtle
+      # 17px floor across four documents, and VALIDATION §21's 14-day refund promise. Registry
+      # scope only — scripts/struck-rules.mjs states what it cannot see.
+      - name: The struck-rule predicates still fire (committed specimens)
+        run: npm run check:struck:selftest
+
+      - name: No struck rule stands in the specification documents
+        run: npm run check:struck
+
+      # K-03. recommend.ts is pure, so every specimen reads a RETURN VALUE rather than the
+      # absence of output — the structural immunity CLAUDE.md asks for. It imports the shipped
+      # .ts under Node 24 type-stripping, so the subject is the file and not a copy of it.
+      - name: The Path Finder recommendation function decides correctly (committed specimens)
+        run: npm run check:path:selftest
+
+      # K-13. The Press contact payload is a four-way discriminated union, and CLAUDE.md is
+      # explicit that one branch of an alternation firing is not evidence for the others. Each
+      # segment has a VALID specimen and at least one REJECTS specimen, and ETH-07's memoir gate
+      # is broken three ways. Value reads throughout, so there is no absence to misread.
+      - name: The Press contact contract rejects what it must (committed specimens)
+        run: npm run check:press:contact:selftest
+
+      # K-13 again, from the other side. check:axe was red for two sessions because K-13's two
+      # routes went into ROUTES and not into INCOMPLETE_ALLOWED — a gate consulting two lists,
+      # with nothing in the source relating them. This asserts the relation, and its discovery
+      # guard makes a new multi-list gate impossible to add without registering one. Selftest
+      # first: every case reads the returned problem set, so a broken comparator cannot pass.
+      - name: Every list a gate consults agrees with its subject list (selftest)
+        run: npm run check:lists:selftest
+
+      - name: Every list a gate consults agrees with its subject list
+        run: npm run check:lists
 
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
@@ -229,5 +265,11 @@ jobs:
       # periods nothing enforces. Comparing the drafts to seed-legal.mjs would have missed
       # both halves of F-1, because the seed can be correct and the dataset never reseeded.
       # The subject has to be the document the customer actually reads.
-      - name: axe + statutory record + no horizontal overflow at 375/768/1440 + consumer terms routing + legal parity
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity"
+      # check:press:type shares the same server for the same reason as the two above: the
+      # subject is the served page. Press body copy is 17px/1.7/52ch (press/DESIGN.md §3,
+      # PROJECT-RULES.md §3) and all three were false on disk while four documents asserted
+      # them. The 17px reading in particular cannot be taken from source — --text-base is a
+      # clamp that is 16px at 375px and 17px near 1440px, so a source check that found the
+      # token named would have called the phone rendering a pass.
+      - name: axe + statutory record + no horizontal overflow at 375/768/1440 + consumer terms routing + legal parity + press body type
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type"

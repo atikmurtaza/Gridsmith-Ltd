@@ -85,7 +85,7 @@ import { evaluate, ALWAYS_REQUIRED, LIVE_REQUIRED } from './launch-content-rules
  * dataset comes from its header; in build mode the system is this build.
  *
  * An unset variable is a hard failure, never a default. `sanity/env.ts` records why at length
- * (`M-P1-2`): a fallback to `development` on a host would publish a `[SEED]` VAT number.
+ * (`M-P1-2`): a fallback to `development` on a host would publish a `[SEED]` statutory footer.
  *
  * ### served (default): which dataset did the RUNNING SITE build against?
  *
@@ -112,7 +112,7 @@ if (BUILD_MODE) {
         '\n\nThis mode runs inside the build it is asserting about, so this variable is the' +
         '\nbuild’s own statement of which dataset it compiles against — the same one' +
         '\nnext.config.ts reads. There is deliberately no default (M-P1-2): a fallback to' +
-        '\n"development" on a host would publish a [SEED] VAT number on every page.' +
+        '\n"development" on a host would publish a [SEED] statutory footer on every page.' +
         '\n\nFailing rather than guessing.\n',
     );
     process.exit(1);

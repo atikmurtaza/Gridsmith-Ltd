@@ -36,7 +36,14 @@ app/(press)/press/            Route segments, kebab-case
 ## 3. Styling rules
 
 - **Body copy minimum 17px, leading 1.7, measure 52ch.** This is a serif division; smaller or tighter is a legibility failure, and legibility is part of the credibility claim.
-- **`--ink-subtle` may never be used below 17px** (4.9:1 on the warm canvas).
+- ~~**`--ink-subtle` may never be used below 17px** (4.9:1 on the warm canvas).~~ **Deleted at
+  the run-3 fixes, and not relaxed.** The token was `#78716C` at 4.56:1 and the size floor was
+  prose no gate could enforce — `check:contrast` measures token-on-surface pairs, so the floor
+  was breached 23 times on one page with every gate green (A11Y-22). `--ink-subtle` is now
+  `#6C6560`, measuring 5.44 / 5.73 / 4.98:1 on `--canvas` / `--canvas-raised` /
+  `--canvas-sunken`, and needs no size rule. `styles/themes/press.css:8-16` is the record.
+  **The 17px body rule above survives this deletion on its own terms** — it is typographic, not
+  a contrast compensation (`DESIGN.md` §2 line 76), and `check:press-type` is what enforces it.
 - **`--line-strong` is 2.3:1** and may never carry information alone. Selected and error states need a glyph or background change as well as a border.
 - Buttons are **sentence case**, never uppercase. Uppercase CTAs read as sales pressure here.
 - `--radius-default` is `2px`. Do not exceed.

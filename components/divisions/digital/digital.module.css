@@ -1,0 +1,61 @@
+/* Gridsmith Digital — division-specific composition.
+   Tokens only. Every colour resolves through the theme the route group's root layout has
+   already set on <html data-division="digital">; nothing here names a colour or a typeface. */
+
+/* U-03, the data row. digital/DESIGN.md §4: mono label · mono value · body rationale, on a
+   1px rule. The rule is --line, not --line-strong: it is a separator carrying no information,
+   and --line-strong measures 1.59:1 on Digital's canvas (check:contrast, decorative only). */
+.dataRows {
+  margin: 0;
+  border-block-start: var(--border-hairline) solid var(--line);
+}
+
+.dataRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-1) var(--space-6);
+  padding-block: var(--space-4);
+  border-block-end: var(--border-hairline) solid var(--line);
+}
+
+/* Two-column definition layout is the spec's dominant pattern, so the rationale sits beside
+   the pair rather than under it once there is room for prose at a readable measure. */
+@media (min-width: 48rem) {
+  .dataRow {
+    grid-template-columns: minmax(8rem, 1fr) minmax(8rem, 1fr) 2fr;
+    align-items: baseline;
+  }
+}
+
+.dataLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+/* Monospace marks anything verifiable — CLAUDE.md's one cross-division convention. */
+.dataValue {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+
+.dataRationale {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  max-inline-size: var(--measure-narrow);
+  color: var(--ink-muted);
+}
+
+/* U-08 service page CTA pair. Wraps rather than shrinking: two Buttons at 375px do not
+   fit side by side and a shrunk target fails WCAG 2.5.8. */
+.serviceCtas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}

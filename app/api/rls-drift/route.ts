@@ -59,11 +59,92 @@ const PROBE_EMAIL_SUFFIX = '@gridsmith.invalid';
 
 const anonHeaders = { apikey: PUBLISHABLE_KEY, Authorization: `Bearer ${PUBLISHABLE_KEY}` };
 
-/** Tables `anon` may never read. Absence of a policy is denial; this asserts the absence. */
-const NO_READ = ['leads', 'sample_grants', 'events'];
+/**
+ * Tables `anon` may never read. Absence of a policy is denial; this asserts the absence.
+ *
+ * **Two of these three were INERT probes until the `K-10` premise check, and the reading looked
+ * identical to a real one.** `sample_grants` and `events` hold no rows, so "anon SELECT returned
+ * rows" cannot fire for them however broken RLS is: a permissive `for select to anon using
+ * (true)` policy was added to each against the live database and this route stayed clean. The
+ * observation line `sample_grants: HTTP 200, 0 rows` was a reading of an empty table being
+ * reported as a reading of row-level security — `01-VALIDATION-REPORT.md` §22, live and
+ * shipped, in the gate written to catch exactly that class.
+ *
+ * `leads` was not inert, but its validity was accidental: it works only because the table
+ * happens to hold rows, which nothing asserted. The read-back below fixes that structurally —
+ * a row this request writes, read back by its own id — and it is the only one of the three
+ * whose green is earned today.
+ *
+ * **The `leads` entry here and the read-back fire together on the same input, and no window
+ * was found where only one of them does.** A SELECT policy on `leads` produces both findings.
+ * That is stated rather than filed as defence in depth (`A-GATE-4-3`), because the two are not
+ * interchangeable: this one is silent on an empty table and the read-back is not, so the
+ * read-back is what the proof credits. Emptying `leads` to produce the window was attempted and
+ * abandoned — 33 rows are `check-axe`'s probes, which carry a different marker from the prune's
+ * `@gridsmith.invalid` and are not this route's to delete. The other two are labelled in `observations` rather than
+ * silently counted, and they become real assertions the first time a row exists. `K-10` is the
+ * row that puts the first grant in `sample_grants`.
+ *
+ * `press_path_results` (`K-08`) joins them as a fourth, and it is inert today for the same
+ * reason: the table is empty until `K-06` writes to it. It is listed rather than left out
+ * because the read is free and becomes a real assertion the moment a result is recorded, and
+ * because its write probe below is a positive reading that is valid now.
+ */
+const NO_READ = ['leads', 'sample_grants', 'events', 'press_path_results'];
+
+/**
+ * Tables `anon` may never WRITE, asserted by attempting the write. **This is a positive
+ * reading — a refusal — rather than an absence, which is why it is here and not folded into
+ * the read loop.** It was missing entirely, and `sample_grants` is the one that matters:
+ * `token` is a bearer credential with a 72h expiry, so an INSERT policy on that table lets any
+ * browser mint a grant for any asset. `0001_core.sql` writes both tables server-side only.
+ *
+ * **There is deliberately no UPDATE or DELETE probe, and that is a measurement rather than an
+ * omission.** Both were written during the `K-10` premise check and removed when their
+ * deliberate-failure proofs came back GREEN with a permissive `for update to anon using (true)`
+ * policy live on `leads`. The experiment that separated the two readings:
+ *
+ *   - as role `anon` in SQL, UPDATE policy present, no SELECT policy —
+ *     `update leads set status = 'won' where id = $1` affects **1 row**;
+ *   - the same write through PostgREST — **0 rows**, HTTP 204, row unchanged.
+ *
+ * PostgREST resolves a filtered write through a subselect on the table, so with no SELECT
+ * policy for `anon` it can never find a row to write, whatever UPDATE or DELETE policy exists.
+ * Over HTTP — the only transport this route has, and the only one a hostile client has — those
+ * branches cannot fire while the read-back is clean, and cannot be made to fire independently.
+ * They would report a zero affected-row count as evidence of RLS when that zero is what
+ * PostgREST returns regardless. **That is unreachable code, and filing it as defence in depth
+ * is the tell `CLAUDE.md` names.** The property is asserted where it is reachable, by
+ * `check:rls` over the migrations.
+ */
+const NO_WRITE: { table: string; row: Record<string, unknown>; why: string }[] = [
+  {
+    table: 'sample_grants',
+    row: { asset_key: 'rls-drift-probe', expires_at: '2099-01-01T00:00:00Z' },
+    why: 'sample_grants.token is a bearer credential with a 72h expiry — an INSERT policy here lets any browser mint a grant for any asset',
+  },
+  { table: 'events', row: { session_id: 'rls-drift-probe', event: 'probe' }, why: 'events is written server-side only (0001_core.sql)' },
+  {
+    // **The row is deliberately one the table would accept.** `0003` puts two check
+    // constraints on this table, and a row that violated either would be refused by the
+    // constraint rather than by RLS — a non-2xx that this loop reads as "refused", which is
+    // the inert-probe class with a security label on it. `self-service`/`false` satisfies
+    // `press_path_outcome_known` and `press_path_honesty_agrees`, so the only thing left that
+    // can refuse it is the absence of an INSERT policy.
+    table: 'press_path_results',
+    row: {
+      id: 'rls-drift-probe',
+      config_version: 0,
+      answers: {},
+      outcome: 'self-service',
+      is_gridsmith_outcome: false,
+    },
+    why: 'press_path_results is the ETH-04 audit trail — an INSERT policy lets any browser forge the record that shows the Path Finder still recommends against Gridsmith (non-negotiable #9)',
+  },
+];
 
 /** Views `anon` may not reach at all — `0002` revoked the grant as well as setting invoker. */
-const NO_REACH = ['v_lead_funnel'];
+const NO_REACH = ['v_lead_funnel', 'v_path_finder_honesty'];
 
 type Finding = { subject: string; problem: string; observed: string };
 
@@ -129,7 +210,11 @@ export async function GET(request: Request): Promise<Response> {
       findings.push({ subject: table, problem: 'anon SELECT returned rows — RLS is not denying reads', observed: `HTTP 200, ${rows.length} row(s)` });
       continue;
     }
-    observations.push(`${table}: HTTP 200, 0 rows`);
+    observations.push(
+      table === 'leads'
+        ? `${table}: HTTP 200, 0 rows — validated by the read-back below`
+        : `${table}: HTTP 200, 0 rows — NOT VALIDATED, the table may simply be empty (see NO_READ)`,
+    );
   }
 
   for (const view of NO_REACH) {
@@ -164,11 +249,19 @@ export async function GET(request: Request): Promise<Response> {
     }
   }
 
+  /**
+   * The id is generated HERE rather than left to the database default, and that is what makes
+   * the read-back below possible: `anon` cannot read the row it just wrote, so the only way to
+   * ask for it by name is to have chosen the name.
+   */
+  const probeId = crypto.randomUUID();
+
   // The capability that must NOT be lost. Drift runs both ways.
   const insert = await fetch(`${PROJECT_URL}/rest/v1/leads`, {
     method: 'POST',
     headers: { ...anonHeaders, 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      id: probeId,
       division: 'design',
       full_name: 'RLS drift probe',
       email: `drift${PROBE_EMAIL_SUFFIX}`,
@@ -193,6 +286,62 @@ export async function GET(request: Request): Promise<Response> {
       problem: 'anon INSERT was refused — the public contact form cannot submit',
       observed: `HTTP ${insert.status} ${(await insert.text()).slice(0, 200)}`,
     });
+  }
+
+  /**
+   * **The read-back — the one reading here whose green is earned, and the validity proof for
+   * every `0 rows` above.** A `201` followed by an empty read is not an absence: it is a row
+   * that demonstrably exists, filtered out of a query by the same key that wrote it, seconds
+   * apart. Without it, `leads: HTTP 200, 0 rows` is only as good as the assumption that the
+   * table is not empty, and `01-VALIDATION-REPORT.md` §22 is the record of what that assumption
+   * costs. Skipped when the insert did not land, because there is then no subject to look for.
+   */
+  if (insert?.ok) {
+    const back = await fetch(`${PROJECT_URL}/rest/v1/leads?id=eq.${probeId}&select=id`, {
+      headers: anonHeaders,
+      cache: 'no-store',
+    }).catch(() => null);
+    if (!back) {
+      findings.push({ subject: 'leads', problem: 'the read-back request did not complete, so nothing above is validated', observed: 'network error' });
+    } else if (DENIED.includes(back.status)) {
+      observations.push(`leads read-back: HTTP ${back.status}, denied outright`);
+    } else if (back.status !== 200) {
+      findings.push({ subject: 'leads', problem: 'unrecognised status on the read-back — nothing was measured', observed: `HTTP ${back.status}` });
+    } else {
+      const rows: unknown = await back.json().catch(() => null);
+      if (!Array.isArray(rows)) {
+        findings.push({ subject: 'leads', problem: 'the read-back body was not an array, so it validates nothing', observed: `HTTP 200, ${JSON.stringify(rows)?.slice(0, 80)}` });
+      } else if (rows.length > 0) {
+        findings.push({ subject: 'leads', problem: 'anon read back the row it had just inserted — there is a SELECT policy for anon, or RLS is off. Every lead in the database is readable from any browser', observed: `HTTP 200, ${rows.length} row(s)` });
+      } else {
+        observations.push('leads read-back: HTTP 200, 0 rows — a row written by this request is invisible to the key that wrote it, so the empty reads above are filtered reads');
+      }
+    }
+  }
+
+  // Positive readings: a refusal, not an absence. See NO_WRITE.
+  for (const { table, row, why } of NO_WRITE) {
+    const res = await fetch(`${PROJECT_URL}/rest/v1/${table}`, {
+      method: 'POST',
+      headers: { ...anonHeaders, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      // Unique-per-request where the table has a unique column. Without this a probe that
+      // once succeeded — the finding — would collide on the next run and return 409, which
+      // this loop would read as "refused". A leak would report itself closed the day after it
+      // opened. `sample_grants.token` is unique; `press_path_results.id` is the primary key.
+      body: JSON.stringify({
+        ...row,
+        ...(table === 'sample_grants' ? { token: `rls-drift-probe-${probeId}` } : {}),
+        ...('id' in row ? { id: `${row.id}-${probeId}` } : {}),
+      }),
+      cache: 'no-store',
+    }).catch(() => null);
+    if (!res) {
+      findings.push({ subject: table, problem: 'the insert-refusal request did not complete, so the write path was not measured', observed: 'network error' });
+    } else if (res.ok) {
+      findings.push({ subject: table, problem: `anon INSERT was accepted — ${why}`, observed: `HTTP ${res.status}` });
+    } else {
+      observations.push(`${table} insert: HTTP ${res.status}, refused`);
+    }
   }
 
   // Pruning needs the service role, which is why this job does not live in CI (`M-P2-14`).

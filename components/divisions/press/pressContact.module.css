@@ -1,0 +1,77 @@
+/* Press contact flow (K-13). Tokens only; no colour literals. */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--measure-narrow);
+}
+
+/* Steps that are not current stay in the DOM so their answers still submit. `hidden` is the
+   platform's own mechanism for that and it removes them from the accessibility tree too, which
+   a `display: none` class would only do by accident. */
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Where you are, announced rather than only drawn. No percentage bar: a progress bar on an
+   enquiry form is a completion-pressure device, and ETH-01 rules out pressure mechanics. */
+.progress {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.formError {
+  margin: 0;
+  padding: var(--space-4);
+  border: var(--border-hairline) solid var(--line-strong);
+  background: var(--canvas-sunken);
+  color: var(--ink);
+}
+
+/* The commercial-expectations statement (ETH-07). Bordered rather than tinted — `--line-strong`
+   is 2.3:1 and may not carry information alone, so the acknowledgement below it is the cue. */
+.expectations {
+  margin: 0;
+  padding: var(--space-6);
+  border: var(--border-hairline) solid var(--line-strong);
+  background: var(--canvas-sunken);
+  color: var(--ink);
+}
+
+.checks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.check {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.check input {
+  margin-top: 0.25em;
+  accent-color: var(--accent);
+  flex: none;
+}
+
+.checkLabel {
+  color: var(--ink);
+}
+
+.privacy {
+  margin: 0;
+  color: var(--ink-muted);
+}

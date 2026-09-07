@@ -1,11 +1,612 @@
 # Handover — Epic N built out, site complete as a shell
 
-**Written:** 11 August 2026 · **Revised:** 21 August 2026, at **EPIC N BUILD-OUT** · **Branch:**
-`feat/a-01-a-10a-scaffold-ci` · **Runtime:** Node 24.15.0
+**Written:** 11 August 2026 · **Revised:** 7 September 2026, at **the live-site read, `Q-P13`,
+`K-05` and `K-04`** · **Branch:** `legal/round-12-parity-gate-and-ucta` · **Runtime:** Node 24.15.0
 
 This file exists because a session ended with state that only that session knew. Everything
 here is either unrecorded elsewhere or scattered across five documents. Read it before
 touching anything; delete the sections that go stale as they are resolved.
+
+---
+
+## ⇢ 7 September 2026 (latest) — the live site is **Digital**, not Press; `Q-P13` has a [SEED] draft; `K-05` and `K-04` are built
+
+### **Correction to this file: the live `gridsmith.uk` is NOT Press-facing.** Verified, not assumed.
+
+Earlier revisions of this handover describe the live site as Press. It is **wholly Gridsmith
+Digital** — website development, SEO, digital marketing, branding support, automation.
+`press`, `book`, `publish`, `manuscript`, `ghostwrit`, `ISBN`, `editorial` and `author` appear
+**nowhere** on the served homepage; the only adjacent word is *"publishing outcomes"* inside the
+T&Cs' no-guarantees clause, which is a disclaimer, not an offer. **Design** exists only as
+*"branding support"* — a line item inside Digital's list. There is no division structure at all.
+
+**Full verbatim record: `docs/_shared/LIVE-SITE-EXTRACT.md`.** Read it before writing any copy
+that assumes what the public currently sees.
+
+Four things in it that will otherwise be rediscovered:
+
+1. **The six process stages in `00-PROCESS.md` came from the live site.** Near-verbatim. The
+   provenance was recorded nowhere until now. Live stage 6 names *"SEO improvements"* inside a
+   description the build treats as division-neutral.
+2. **The footer's email inconsistency runs the opposite way to how it is usually described.**
+   The served markup is `<a href="mailto:info@gridsmith.uk">contact.gridsmith@gmail.com</a>` —
+   **the label is the Gmail address and the `href` is `info@`**. Three addresses are in play
+   across the estate, and the third — `contact@gridsmith.uk`, in the build's seed — is the one
+   `CONSUMER-TERMS.md` §6.1 names for serving a **statutory cancellation notice**, and it is
+   published on none of the three live pages.
+3. **The live T&Cs elect the law of Pakistan** (§13) for a UK-registered company publishing a UK
+   address. Both build instruments elect England & Wales. Largest single divergence found.
+4. **The live registered address differs from the seed in four ways**, one substantive: the live
+   postcode reads `BL4 **O**HD` with the **letter O**. Neither string was checked against the
+   Companies House register in that session, and the live site publishes **no company number**,
+   so the two artefacts cannot corroborate each other.
+
+**`K-17` was not resolved and was not touched.** `LIVE-SITE-EXTRACT.md` §11.4 compares the live
+refund summary against `CONSUMER-TERMS` and `MSA-BUSINESS` and stops there.
+
+### `Q-P13` — a **[SEED]** rule set, and the row stays open
+
+`lib/path/seedConfig.ts`: 5 questions, 6 outcomes, **13 rules**, `isSeed: true`. **The questions
+and their 21 option labels are `APP-FLOW.md` §5 verbatim and were never the blocker** — the
+`K-05` premise check said so and it was right. Only the criteria are drafted, plus the option
+*slugs* (the spec gives labels, not keys) and the outcome prose, each `[SEED]`-prefixed where it
+renders.
+
+**The schema settles the question count at five, not three to five.** `pathFinderConfig.questions`
+is `r.length(5)` — exactly five, not a minimum.
+
+**`APP-FLOW.md` §5's *under £500 + partial draft → E or F* is implemented unconditionally** at
+priority 10, two conditions, with no third that could let it fall through. It is the one rule in
+the file whose replacement is a spec change rather than a content edit.
+
+**The six honest-outcome rules hold the six lowest priority numbers**, so no Gridsmith rule can
+shadow one. That ordering is what `ETH-04` needs and it is the thing a later content edit is
+most likely to reverse quietly.
+
+### `K-05` and `K-04` are built
+
+`app/(press)/press/path-finder/page.tsx` — Server Component, no client boundary, the criteria
+column **derived** from `SEED_RULES` rather than written beside them. `K-04` extended
+`check:path:selftest` from **13 to 28 cases** rather than adding a 32nd gate. Fifteen
+deliberate-failure proofs, each naming its own case; the full record is on the two tracker rows.
+
+**One proof was invalid on its first run and the record says so.** The catch-all-fallback probe's
+`^\];$` anchor matched `SEED_QUESTIONS`' closing bracket rather than `SEED_RULES`', so the
+injected rule went into the wrong array and the gate never saw it — a green reading that looked
+exactly like a broken gate. Re-run with probe validity established **structurally first** (rule
+count printed 13 → 14 before the gate ran).
+
+**Two process mistakes worth not repeating**, both mine and both cheap:
+
+- **`verify:static` was started while the proof harness was still mutating its subject**, and read
+  a temporarily-mutated `isSeed: false`. The red was real and the cause was the race. Do not run
+  the suite and a mutation harness concurrently over the same file.
+- The two harnesses themselves overlapped, so one proof's output carried another's mutation. Both
+  readings were recoverable; neither had to be.
+
+### `PRE-DEPLOYMENT-CHECKLIST.md` — 44 rows in nine groups
+
+`docs/_shared/PRE-DEPLOYMENT-CHECKLIST.md`. Everything assumed, drafted, inferred or lifted.
+**It is not a gate and must not become one** — a check that failed on placeholder content would
+fail every build until launch and be bypassed within a day.
+
+**No placeholder photography was added, and that is a deviation from the brief with a reason.**
+The brief allowed *"Unsplash, Pexels, or generated blocks"*; generated blocks were taken because
+the other two are prohibited by `CLAUDE.md` *The feel* (stock photography) and `00-FOUNDATION.md`
+§"Seed content" item 7 (*"neutral geometric placeholders at correct aspect ratios"*), and because
+`Placeholder.tsx` already fills every surface with a CSS hatch that costs no request. Group E
+lists the three surfaces with no imagery and why none of them is an empty surface waiting for a
+picture.
+
+---
+
+## ⇢ 5 September 2026 — `check:lists` and `P-03`, and Epic K/P has **no unblocked row left**
+
+### `check:lists` — the 31st gate, from `K-13`'s defect rather than from a tracker row
+
+`K-16` found `check:axe` red because `K-13` put two routes into `ROUTES` and not into
+`INCOMPLETE_ALLOWED`. The rule that came out of it is in `CLAUDE.md` above the
+expectation-derived-from-its-own-subject rule, and it has two halves, the second of which is the
+load-bearing one: **adding a subject to a gate is not done until every list that gate consults has
+been updated, and a gate's green is only evidence for the question it was actually asked.** The
+`K-13` write-up's *"axe is clean on both new routes"* was true about **violations** — the question
+that session asked — and silent about **incompletes**, a second question the same gate answers.
+
+**The mechanical audit, run over all 26 gates.** Every module-level list in `scripts/check-*.mjs`
+was extracted and classified by key domain. **Two gates hold more than one route-keyed list** and
+both are in sync:
+
+| Gate | Lists | Relation | State |
+|---|---|---|---|
+| `check-axe` | `ROUTES` (19) · `INCOMPLETE_ALLOWED` (18) · `FOOTER_EXEMPT` (1) | subset of `ROUTES` | **in sync** |
+| `check-axe` | `FOOTER_LEGAL_PATHS` (4) | **none** — link *targets*, not routes visited | n/a, and asserting one would assert a falsehood |
+| `check-bundle-size` | `BASELINE_ROUTES` (5) ⊆ `REQUIRED` (6) | subset | **in sync** |
+| `check-bundle-size` | `BUDGETS` (9) | **none** — budgets precede their routes (`/design/estimate`, `/press/path-finder` are unbuilt) | n/a |
+| `check-tokens` | `REQUIRED` (39) vs `CONTRACT` (16) + `SHARED_ACCENTS` (6) | **disjoint** — base layer vs theme layer | **in sync** |
+
+Everything else — `check-responsive`, `check-press-type`, `check-vat-display`,
+`check-consumer-terms` — holds exactly one subject list and a widths/regex axis, so the shape
+cannot occur. `check-contrast`, `check-schemas` and `check-theme-flash` hold several lists over
+non-route key domains; they are outside the discovery guard by construction and that ceiling is in
+the gate's docstring.
+
+**Five coupled pairs, 102 keys, all in sync.** `scripts/check-list-parity.mjs` asserts them, and
+its **discovery guard** is what stops the registry rotting: a gate with two or more route-keyed
+lists that is not registered is a hard failure, so a future multi-list gate cannot be added
+without a decision — a relation, or an explicit `unrelated` entry — being written down.
+
+**What it cannot do, stated in its own docstring.** The two directions are not symmetrical.
+*Dependent → subject* is decidable and asserted: an allowlist key naming nothing in the subject
+list is a decision that has silently stopped applying. *Subject → dependent* — the actual `K-13`
+direction — **is not decidable statically**, because whether a new route needs an allowlist entry
+depends on what it renders. Running the gate is what settles it. So this gate closes the mirror
+image of `K-13`, not `K-13`; the rule in `CLAUDE.md` is the part that closes `K-13`, and it is
+procedural.
+
+Proven both structurally and on the real tree. The selftest's **14 cases each read the returned
+problem set**, so a broken comparator cannot pass as an absence. On the real tree: injecting
+`'/press/gone'` into `INCOMPLETE_ALLOWED` named it; appending a second route list to
+`check-press-type` fired the discovery guard on both of that file's lists; deleting one allowlist
+route moved the key count **102 → 101**, which is the count proving it reached the lists at all.
+In `verify:static` and in `ci.yml`.
+
+### `P-03` is built — the margin note
+
+`components/divisions/press/MarginNote.tsx` + `pressMargin.module.css`. **The premise held**:
+`marginNote` / `MarginNote` / `margin-note` had zero hits across `components/`, `app/` and
+`styles/`.
+
+**A two-column grid, not a float, and the reason is a gate.** The obvious marginalia technique is
+`float` with a negative margin, which pulls the note outside the text container — and overflows
+the viewport at the widths between "the container has slack" and "the container is capped".
+`check:responsive` asserts `scrollWidth` at three of them. A grid cannot overflow: the second
+column is space that already exists inside `--container-narrow`.
+
+**Degradation is measured, not asserted.** *"On mobile these collapse inline beneath the paragraph
+they annotate"* is a geometric claim, so `check:press-type` gained a fourth branch that measures it
+as one — below `1024px` the note's left edge is flush with the annotated block's and its top is
+below that block's bottom; at or above it, the note's left edge is beyond the block's right edge.
+Live at 1440: note left **836**, annotated block right **804**, a 32px `--space-8` gutter, 15px,
+`rgb(87, 83, 78)`. A margin note with no margin has to be a note rather than a broken layout, and
+nothing but geometry can say which.
+
+**The breakpoint is `64rem` and it is now in `DESIGN.md` §4, which had only said "on mobile".**
+`--container-narrow` is 800px and Press prose caps at 52ch (~426px in Source Serif at 17px), so the
+slack is real from about 768px — but a ~290px note column beside a 426px column of 17px serif is
+two cramped columns, not a book's margin. 375 and 768 collapse; 1440 does not.
+
+**The subject is real content already on the page, not a specimen.** The rights statement on
+`/press` ends in a clause-10.1 reference, and `DESIGN.md` §4 names clause references as the use
+case. That paragraph is now the margin note beside the three rights paragraphs. Nothing was
+authored: the sentence, the link and the anchor are unchanged, and `check:consumer-terms` still
+reports `/press` linking to the consumer instrument. **Both sinks are in `(marketing)`**, so a
+kitchen-sink specimen was not available — `check:press-type` requires `data-division="press"`.
+
+**The note is deliberately outside the 17px / 1.7 / 52ch assertions** — `DESIGN.md` §4 sets it at
+`--text-sm` `--ink-muted`, and at 375px it measures 14.05px against a 16.08px body. That exemption
+is the shape that goes unmeasured, so it has its own branch rather than none.
+
+**Seven deliberate-failure proofs, each firing its own case and nothing else**: `--text-base` fired
+size at all three widths; `--ink` fired colour at all three; removing the media query fired the
+outer-column branch **at 1440 only**, both collapse branches still passing; a 40px inline start
+fired flush-left at 375 and 768 only; a -400px block start fired beneath-the-paragraph at the same
+two and not flush-left; emitting the note first fired the no-preceding-sibling branch and stopped
+there; deleting the only call site fired the hollow-subject exit. The two collapse branches were
+broken separately on purpose — one alternation branch firing is not evidence for the other.
+
+**JS delta 1.9 → 1.9KB on `/press` against a 20KB budget**, two clean builds per side
+(`rm -rf .next` each). It is a server component; there is no client boundary to pay for.
+
+**Every list of every gate this touched was checked, per the rule above.** `/press` was already in
+`check-axe`'s `ROUTES` **and** its `INCOMPLETE_ALLOWED`, in `check-responsive`'s `ROUTES`, in
+`check-press-type`'s `ROUTES` and in `check-bundle-size`'s `REQUIRED`, `BASELINE_ROUTES` and
+`BUDGETS` — no route is new, so no list changed, and `check:lists` re-confirms all five pairs. Axe
+on the changed route: **zero violations and zero unresolved incompletes**, which are two answers
+and are reported as two.
+
+### Runway after this session: **nothing. No Epic K or P row is buildable without an owner decision.**
+
+`P-03` was the last one. What remains and what each waits on:
+
+| Blocked on | Rows |
+|---|---|
+| Owner decision `K-17` | `K-17`, and `K-19`'s consumers (`K-19` itself is buildable as a migration, but every consumer is downstream) |
+| Missing `K-10` sample asset | `K-10` |
+| `Q-P13` | `K-21`, `K-22` |
+| `Q-P5`/`P6`/`P7`/`P11` | `K-04`, `K-05`, `K-06`, `K-07`, `K-14` |
+| `R-09` (design) + `O-09` (copy) | `K-13`'s memoir residual, `K-09`, `K-11`, `K-12` |
+| `P-03` — now unblocked | `R-08`, `R-09`, `R-13`, `R-17` are **no longer blocked by their dependency**, but `R-09` and `R-17` both need clause and copy decisions that are not mine to make |
+
+`R-08` and `R-13` are the two that are closest to buildable and neither is clean: `R-08` is a
+three-way honest comparison naming what Gridsmith is not, and `R-13` names distribution platforms.
+Both are content-first rows under non-negotiable #2, and authoring either means inventing the
+comparison or the platform list. **They are open questions wearing a Dev label, not runway.**
+
+---
+
+## ⇢ 4 September 2026 — `K-16` and `K-15` are built, and Epic K's runway is now `P-03` alone
+
+**`K-16` is built.** `pressSegmentTerms` in `lib/leads/pressSegments.ts`, rendered at step 4 of the
+Press flow beside the privacy line. **The premise check held** — both destinations existed at
+`lib/legal/slugs.ts:40-42` and all three serve 200 — but reading the instruments changed one
+routing from what `PRD.md` FR-P24 implies.
+
+**The instruments do not test who you are, they test what you are buying for.**
+`CONSUMER-TERMS.md` §1 is *"wholly or mainly for purposes outside their trade, business, craft or
+profession"*; `MSA-BUSINESS.md` §1 is *"only where the client is acting for purposes relating to a
+trade, business, craft or profession"*. Against that test:
+
+| Segment | Destination | Determinate? |
+|---|---|---|
+| `business` | `/legal/business-client-terms` | yes — *"a business or a founder"* states the trade purpose |
+| `author` | `/legal/consumer-client-terms` | FR-P24 and `_legal/00-LEGAL-BASIS.md` §3; the instrument's own §1 corrects the minority buying in trade |
+| `memoir` | `/legal/consumer-client-terms` | same, more strongly — and withheld at step 1 regardless |
+| `content` | **`/legal/client-terms`** | **no.** *"I need ongoing content"* states no purpose, FR-P24 does not name the segment, and neither §1 resolves it |
+
+**`content` going to the disambiguation page is the finding, not a shortcut.** The page carries no
+operative clause and exists to explain both; picking an instrument there would be the
+pre-26-August defect with an extra step. It is recorded on the FR-P24 row and in the tracker
+rather than resolved quietly.
+
+**Six deliberate-failure proofs, each naming its own case.** Business→consumer fired the business
+case; content→business fired content and the no-consumer-reaches-the-MSA case; collapsing the
+fall-through fired author and memoir together; memoir→MSA fired memoir and the MSA case;
+author→disambiguation fired author and content; author→`undefined` fired author and the
+every-segment-routed case. Validity is structural — every specimen reads a **returned slug**,
+so there is no absence to misread. Selftest 19 → 25 cases, and the count moved.
+
+**Live over HTTP on `next start`:** driving step 1 through all three reachable segments swapped the
+rendered `href` and the link text each time — `/legal/consumer-client-terms`,
+`/legal/business-client-terms`, `/legal/client-terms` — and all three serve 200. **JS delta
+7.7 → 8.0KB against a 20KB budget**, two clean builds per side (`rm -rf .next` each).
+
+**`K-15` is built** on `/press/contact/thank-you` and nowhere else. Copy and two links, no figure
+and no claim; `check:content` clean, route delta unchanged at 1.9KB because it is server-rendered.
+
+### One pre-existing defect found by running the gates, and it was `K-13`'s
+
+**`check:axe` has been RED since `K-13`**, and the `K-13` write-up's *"axe is clean on both new
+routes"* was true about violations and not about the gate. The two new routes went into the route
+list and not into `INCOMPLETE_ALLOWED`, so the shared consent banner's `color-contrast` incomplete
+— allowed on all sixteen other routes — reported **UNRESOLVED on eight combinations**. Fixed by
+adding the two routes to the existing entry; allowed count **56 → 64, unresolved 0**, so the count
+moved and proves the entry was reached. **A route added to a gate's subject list is not the same
+as a route added to its allowlist**, and nothing in the K-13 session asked the second question.
+
+### Runway after this session: **1 day, one row**
+
+`P-03` (1d, margin-note component, `DESIGN.md` §3 line 105, zero hits in the tree) is the only
+unblocked Epic K/P row left. It was **not started** — deliberately, on instruction. `K-19` (0.5d,
+`consumer_consents`) is buildable as a migration but every consumer is downstream of the blocked
+`K-17`. Everything else is behind `Q-P13`, `Q-P5`/`P6`/`P7`/`P11`, the missing `K-10` sample asset,
+the owner's `K-17` decision, or `R-09`/`O-09` for the memoir residual.
+
+---
+
+## ⇢ 4 September 2026 — `K-13` is built, and Epic K's clear runway is about two days
+
+**`K-13` is built and verified live.** `app/(press)/press/contact` and `/contact/thank-you`,
+`components/divisions/press/PressContactFlow.tsx`, `lib/leads/{pressLead,pressSegments,pressAction}.ts`,
+and `check:press:contact:selftest` as the 30th gate — in `verify:static` **and** in `ci.yml`, which
+`check:node` caught me omitting.
+
+**The premise check corrected the row's own reading.** `components/leads/ContactForm.tsx` is not a
+single-step version of this flow — it is the **master** `/contact` form, mounted only at
+`app/(marketing)/contact/page.tsx`, division-agnostic by design and carrying the "more than one
+division" journey `N-11` exists for. `app/(press)` held a layout and one landing page and nothing
+else. So there was nothing to extend: this is a new route, and the master form is untouched.
+**What was reused is the pipeline** — `submitLead`, the `anon` insert, `Prefer: return=minimal`,
+the generated id, the `after()` notification fan-out. `pressAction.ts` is a second `useActionState`
+adapter over the same function, and the branch answers land in `leads.payload`, the `jsonb` column
+`0001` already indexed for exactly this. **No second data path and no new RLS surface.**
+
+**`SCHEMA.md` §6 said `expectationsAcknowledged: z.boolean()`, and a boolean accepts `false`.**
+`PROJECT-RULES.md` §7 requires ETH-07 *"enforced in the Zod schema, not just the UI"*, and it was
+enforced in neither — the requirement lived in the paragraph under the code block. It ships as
+`z.literal(true)`, `SCHEMA.md` is corrected in the same commit, and the selftest breaks it three
+ways: unticked, explicit `false`, and an attempt to route round it by relabelling the segment as
+`author` (which parses, and drops the memoir keys — that is the point).
+
+**Six deliberate-failure proofs, each naming its own case and nothing else.** Weakening the ETH-07
+literal fired the two ETH-07 cases only; breaking the coupling fired one; loosening
+`manuscriptLink` from `z.url()` fired one; widening the memoir stage enum fired one; deleting
+`genre` from the mapper fired the three author-carrying cases and no others. Validity is
+structural throughout — every specimen reads a **return value**, so there is no absence to
+misread and no inert-probe class to rule out.
+
+### Two things `K-13` did not do, and neither is code
+
+1. **The memoir segment is withheld at step 1.** ETH-07's commercial-expectations statement is
+   `R-09` (design) and `O-09` (copy), both TODO, and authoring it is non-negotiable #2. An
+   acknowledgement checkbox above nothing to acknowledge is a consent record of nothing, so
+   `pressSegmentOptions()` returns three options until a statement is supplied. **The branch and
+   its gate are built behind an `expectationsStatement` prop** — one prop away, not a rebuild —
+   and both directions of the coupling are asserted in the selftest by reading the returned list.
+2. **Budget bands diverge from `SCHEMA.md` §6 and this is unresolved, not decided.** §6 lists
+   money bands; `check:content`'s price pattern rejects any currency-plus-digits in
+   `components/**`, and it is right to — every Gridsmith price on this site is `[SEED] INDICATIVE`,
+   so a band would be the first hard money figure on it. The shipped values are the four
+   shape-of-engagement bands `/contact` has used since August, so `leads.budget_band` keeps one
+   vocabulary. **Nothing was struck**; `SCHEMA.md` §6 now says the divergence is open.
+
+### A budget failure caught by the clean-build rule, and worth carrying
+
+The first clean build put `/press/contact` at a **23.9KB** delta against a 20KB budget. The cause
+was one named import: the client component took `pressSegmentOptions` and `PressSegment` from
+`pressLead.ts`, **which imports Zod**, so the whole schema library crossed into the browser.
+Moving the list into a Zod-free `lib/leads/pressSegments.ts` took the route to **7.7KB**. Nothing
+was cut and no budget moved. `pressSegments.ts` carries the rule in its own docstring: nothing in
+it may import Zod or anything that does, and `pressLead.ts` imports *from* it, never the reverse.
+Both readings are clean builds — `rm -rf .next` each side. `/contact` moved 5.6 → 5.7KB across the
+same pair, which is chunk-splitting jitter from two new routes and is reported rather than
+explained away.
+
+### Verified live over HTTP, as a hostile `anon` client
+
+A real enquiry was submitted through the built form on a production server (`next start`, port
+3010): author segment, finished draft, `https://example.com/draft`, and it **redirected to
+`/press/contact/thank-you`**. That redirect happens only on `submitLead` returning `ok`, which
+happens only on PostgREST returning 201 — so the row landed, and that is the read-back-free
+evidence the table is not empty. Then, holding nothing but the publishable key:
+
+| Probe | Result |
+|---|---|
+| `SELECT * FROM leads` | 200, `[]` |
+| `SELECT * WHERE email = <the probe's own address>` | 200, `[]` |
+| `SELECT payload FROM leads` | 200, `[]` |
+| `SELECT * FROM v_lead_funnel` | **401**, `permission denied for view` |
+
+**The `[]` on the probe's own email is the reading that matters**, and it is a subject rather than
+an inert probe precisely because the submission above proved that row exists. The UPDATE and
+DELETE probes also returned `200 []` and **are not counted as proofs** — that is the PostgREST
+subselect asymmetry recorded on 4 September: a filtered write cannot find a row while there is no
+SELECT policy, whatever the write policy says. They are noted and disregarded, not re-added as
+defence in depth.
+
+Three gates gained the new routes and each count moved to prove it reached them: `check:axe`
+16 → 18 footered routes, `check:responsive` 48 → 51 combinations, `check:press:type` 3 → 6
+route/width combinations and 6 → 12 measured blocks. Axe is clean on both new routes. Step 1 is
+what axe sees, and deliberately: steps 2–4 carry `hidden`, which computes `display: none` and
+removes them from the accessibility tree — confirmed in the browser rather than assumed.
+
+### Epic K's remaining runway is short: **about 2.2 days, three rows**
+
+`K-16` (0.7d, segment → terms routing, both destinations and now both segments exist), `K-15`
+(0.5d, cross-division prompt — the confirmation route it belongs on now exists), and `P-03` (1d,
+margin-note component, spec'd at `DESIGN.md` §3 line 105, zero hits in the tree). `K-19` (0.5d,
+`consumer_consents`) is buildable as a migration but its consumers are all downstream of the
+blocked `K-17`, so it is thin rather than false. Everything else in Epic K is behind `Q-P13`
+(`K-04`/`K-05`/`K-06`/`K-07`/`K-14`), `Q-P5`/`P6`/`P7`/`P11` (`K-09`/`K-11`/`K-12`/`K-21`/`K-22`),
+the missing sample asset (`K-10`) or the owner's `K-17` decision. Epic P's remaining rows are
+each waiting on another row's *subject*: `P-05` on `R-11`, `P-08` on `R-01`, `P-06` and `P-07` on
+content that has no schema yet. **Press stalls after roughly a session and a half unless a `Q-P`
+is answered or `R-09`/`O-09` land.**
+
+---
+
+## ⇢ 4 September 2026 — `K-08` is built and applied live, and the `check:struck` sweeps are closed
+
+**`K-08` is done.** `supabase/migrations/0003_press_path_results.sql`, applied to the live
+database with `npm run migrate`. It was chosen because it is the only Epic K row clear of every
+open question: `K-06`/`K-07` are nominally VALID but both consume the Path Finder rules `Q-P13`
+blocks, so building them is building around `K-05`; `K-13` and everything downstream of it is a
+2d PARTIAL; `K-22` waits on `K-21`. `K-08` depends on `A-07` alone, and its content is the
+schema, not the decision logic.
+
+**Two constraints are in it that `SCHEMA.md` §7 does not carry**, both because non-negotiable #9
+is audited from this table and nothing else. `press_path_outcome_known` closes `outcome` to the
+same six keys `pathOutcome.key` is closed to; `press_path_honesty_agrees` derives the audit
+column from the outcome, so `IMPLEMENTATION-PLAN.md` 3.7's *"`is_gridsmith_outcome` written
+correctly"* is enforced by the database rather than by application discipline. **Seven
+deliberate-failure proofs against the live database, each naming its own constraint**, and their
+validity is structural: two correct rows went in through the identical statement and were
+accepted, so the rejections are the constraints and not the table refusing everything.
+
+**`app/api/rls-drift/route.ts` covers the new subject** — `press_path_results` in `NO_READ`
+(labelled NOT VALIDATED, the honest label, until `K-06` writes a row), in `NO_WRITE` with a
+constraint-satisfying row so only RLS can refuse it, and `v_path_finder_honesty` in `NO_REACH`.
+**Both new assertions were proven by breaking the live database** — an anon insert policy and a
+view grant — and each fired naming its own subject with everything else still green. Restored;
+one policy in the whole schema. One incidental fix: `NO_WRITE` ids are now unique per request,
+because a probe that once succeeded would collide on the next run and return 409, which the loop
+reads as *refused* — a leak would have reported itself closed the day after it opened.
+**JS delta zero, two clean builds, `npm run size` byte-identical across 64 routes.**
+
+**`check:struck`'s retrospective sweeps are CLOSED. Do not run another one.** The second sweep
+registered exactly one rule, `MASTER-VAT-NUMBER-FIELD`, and it was standing in **nine** lines of
+`docs/master/` — `SCHEMA.md` still specified the `vatNumber` field and the statutory-footer
+projection two days after the field was removed from the schema, the footer, `/about`, the seed
+and `check:launch` because Gridsmith is not VAT registered. An implementer rebuilding the
+singleton from the spec would have restored a field whose absence is the compliance decision. A
+third pass over the same trail — Hostinger, the analytics removal, the four root layouts —
+**found nothing registrable, which is the expected result and the signal to stop.** The registry
+is six rules and 19 specimens. `CLAUDE.md` now carries the replacement obligation: **a struck
+rule is registered in the same commit that strikes it, and struck in place rather than deleted.**
+
+---
+
+## ⇢ 4 September 2026 — `K-03` is built, `K-05` is blocked, and `check:struck` holds five rules
+
+**`K-03` is done.** `lib/path/recommend.ts` plus `check:path:selftest`, in `verify:static`. Nine
+deliberate-failure proofs, one per branch, each naming its own case. The selftest imports the
+shipped `.ts` under Node 24 type-stripping so the subject is the file, not a `.mjs` copy of it.
+**JS delta zero, measured on two clean builds** — `rm -rf .next` each side, `npm run size`
+byte-identical across 64 routes. Nothing imports it yet; `K-05` and `K-06` are the importers.
+
+Three semantics the schema forced and `SCHEMA.md` §3 does not state are recorded in the file:
+`in` takes a comma-separated `value`; **a condition over an unanswered question never matches,
+`not` included** (plain inequality makes `not` true against `undefined`, so a rule would fire on
+question one); `conditions` is an AND. And **no match returns `null`, never a fallback** — a
+default outcome would defeat ETH-04 with every gate green.
+
+**`K-05` is BLOCKED on Atik, and the blocker is not an open `Q-P` — there was no `Q-P`.** The
+route premise-checks clean and `V-06` is the precedent, but `PROJECT-RULES.md` §6 requires the
+static table to render **all six outcomes and their criteria**, and the criteria are stated
+nowhere: `APP-FLOW.md` §5 gives one of six, `pathFinderConfig.rules` is empty by `K-01`'s design,
+no Epic O row owns them and no `Q-P` did. **`Q-P13` is now open for exactly that.** `K-04`
+follows it. Authoring the rules here is inventing the decision logic non-negotiable #9 rests on.
+
+**`check:struck` went from 2 registered rules to 5, and all three new ones fired red before they
+were annotated** — the registry was not padded, it was catching live divergences:
+
+| Rule | Struck where | Still standing at | Fired |
+|---|---|---|---|
+| `INP-ENFORCED-BY-LIGHTHOUSE-CI` | the `A-10b` two-axis split; INP is a field metric and LHCI can never produce one | `design/TECH-SPEC.md:72` | yes, 1 |
+| `DIGITAL-90KB-TOTAL-BUDGET` | `Q-M12` — JS is budgeted on the delta above the floor, not the total | `_shared/00-FOUNDATION.md:137` | yes, 1 |
+| `PRESS-IMPRINT-CREDENTIAL` | `Q-P8` — author's own ISBN, no Gridsmith imprint, so neither credential exists | `press/IMPLEMENTATION-PLAN.md:55`, `press/PROJECT-TRACKER.md:66` | yes, 2 |
+
+Each is struck **in place**, not deleted, because deleting removes the gate's only subject —
+`APP-FLOW.md:168`'s precedent. Selftest is 17 specimens over 5 rules; each new rule has a STANDS
+specimen and a NOT-A-SUBJECT specimen so the pattern is shown to discriminate, not just to match.
+
+**One candidate was rejected rather than registered: the three consent categories.** They were
+removed on 26 August, but `master/PROJECT-RULES.md` §7 explicitly preserves the arrangement as
+*"the arrangement that returns with the analytics"* (`BEFORE-LAUNCH` item 22), and
+`IMPLEMENTATION-PLAN.md` 0.8/0.11/6.8 are that plan. A rule over it would fire on the deliberate
+record of what returns. **A registry padded with rules that cannot fire honestly is worse than a
+short one**, so it is out and this is the note saying why.
+
+---
+
+## ⇢ 4 September 2026 (later) — `check:struck` is the 29th gate, and `K-01`/`K-02` are built
+
+**Two rules went into `CLAUDE.md`.** The **PostgREST transport asymmetry**, stated generally: a
+security proof executed over a transport no hostile client has is not a proof, whatever it
+returns, and a clean result is the dangerous one. It sits with the verify-live rule as the
+concrete reason behind it. And **read before you build** — list `scripts/` and `app/api/` and
+establish absence before authoring a gate; a check is not new because the tracker row is open.
+
+**`check:struck`** — a rule struck in one document may not stand in another. Registry scope
+only, stated in the script. It **fired red on its first real run**: `press/APP-FLOW.md:168`
+still carried the flat 14-day refund promise round 9 removed. The copy is now struck in place
+rather than deleted, because deleting it removes the gate's only subject. Full record in
+`master/PROJECT-TRACKER.md`.
+
+**`K-10`'s write path is DECIDED and recorded on the row.** `SUPABASE_SERVICE_ROLE_KEY` is in
+the Vercel environment; the grant is written by a **server route using service-role**. The
+`anon insert` policy and the `security definer` RPC are both rejected and are not to be
+reopened. **`K-10` is still BLOCKED** — blocker 1 stands: there is no redacted real assessment
+to deliver and authoring one is non-negotiable #2. `K-17` was not touched beyond striking the
+stale spec copy.
+
+**`K-01` and `K-02` are built together, and that was deliberate** — an ethics validator whose
+limbs have never been made to fail is not a validator. `pathFinderConfig` plus three objects;
+`pathOutcome.key` closed and enforced by a rule that is run; `ethicsRule`'s three limbs each
+disabled separately, each producing only its own message. JS delta **zero**, measured on a
+clean build — nothing in `next build` compiles the schema folder.
+
+---
+
+## ⇢ 4 September 2026 — `P-02` is gated, and `K-10` is blocked on the owner
+
+**`P-02` is done and the row's targets were right.** Press body copy renders 17px / 1.7 / 52ch and
+`check:press-type` is the 28th gate, reading the served page at 375/768/1440 — a source check cannot
+tell 16.08px from 17px, because `--text-base` is a clamp. Five branches, five deliberate-failure
+proofs. **The row's own diagnosis was wrong and the proof is what found it**: it said body *"reaches
+17px only at the top of the clamp"*; `body` set no `font-size` at all, so every division rendered
+the UA default **16.00px at 1440 as well as at 375**. No token was added and none overridden —
+`check:tokens` makes the theme contract closed, so the fix overrides the declaration site.
+
+**`P-01`'s stale `--ink-subtle` 17px floor is deleted from all four documents that carried it.** The
+17px *body* rule is a separate, surviving, typographic claim; §2 line 76 of `press/DESIGN.md` already
+said so and three documents had not caught up.
+
+### `K-10` is BLOCKED on Atik. Two blockers, and neither is code.
+
+1. **The asset does not exist and may not be authored here.** `TECH-SPEC.md` §9 requires a *redacted
+   real document*. There has been no assessment, so there is no report. Writing a plausible one is
+   non-negotiable #2. It is `Q-P5`'s sibling — FR-P10 pairs the offer with the sample report.
+2. **There is no write path to `sample_grants`, by design.** Zero policies, no service-role key, and
+   `submit.ts` says a service-role writer does not exist. The three ways to make one are a new
+   credential, an `anon insert` policy that lets any browser mint a bearer token, or a
+   `security definer` RPC — which is anon-callable by construction, so **the token would gate
+   link-sharing and indexing rather than access**. That is a change to what "signed URL" promises and
+   it is the owner's call.
+
+**`K-17` is not a dependency and was not touched** — it is order-confirmation copy for a paid consumer
+contract; a free sample request is not an order.
+
+### What the premise check did land: three defects in `app/api/rls-drift/route.ts`
+
+The live RLS posture was verified over HTTP as a hostile `anon` client. **The posture is clean** — 61
+leads in the table, `anon` sees 0, updates 0, deletes 0, one policy in the whole schema, the view
+401s. **The check that asserts this daily had three defects**, all found by breaking it rather than
+reading it, full record in `master/PROJECT-TRACKER.md` under `M-P1-3`:
+
+* **two of its three `NO_READ` probes were inert** — `sample_grants` and `events` are empty, so a
+  permissive SELECT policy on each left the route reporting clean; `HTTP 200, 0 rows` was a reading of
+  an empty table presented as a reading of RLS;
+* **`leads`' validity was accidental** — it worked only because the table happens to hold rows. A
+  read-back now makes it structural;
+* **nothing asserted that `anon` cannot INSERT into `sample_grants`**, which is exactly `K-10`'s
+  security premise.
+
+**And one finding worth carrying because it will be rediscovered:** over PostgREST, an UPDATE or
+DELETE probe as `anon` **cannot fire** while there is no SELECT policy — PostgREST resolves a filtered
+write through a subselect, so it never finds a row, whatever UPDATE policy exists. Measured both ways:
+SQL as role `anon` affects 1 row, the same write over HTTP affects 0. Two such probes were written
+here and removed as unreachable code. **Do not re-add them as defence in depth.**
+
+**A `scripts/check-rls-live.mjs` was also written, proven, and then deleted** — it duplicated this
+route by about 70%. `M-P1-3` was already FIXED on 21 Aug and `app/api/` was in the tree; the cost of
+writing before reading it was most of a session.
+
+---
+
+## ⇢ 3 September 2026 — the probe-validity rule, and `V-07` is blocked
+
+**A probe that produces no red proves nothing until it is shown to be a subject the gate could
+have caught.** `V-06`'s first overflow probe was `3000×0px` and `check:responsive` stayed green:
+a zero-height box contributes no scrollable overflow, so the run measured nothing and read
+exactly like a broken gate. Every other deliberate-failure rule in `CLAUDE.md` governs what
+happens *after* the gate reacts and assumes the attempt was valid — this is the assumption
+underneath them. The rule is in `CLAUDE.md`'s deliberate-failure block; the class and the audit
+are `01-VALIDATION-REPORT.md` §22.
+
+**40 recorded proofs audited, 6 unsound, 3 declared-unproven and counted as neither.** Five of
+the six were already fixed as individual findings; **`G8` / `A-GATE-4-3` is the one still open.**
+Nothing was fixed this session — the brief was to list them. `npm run audit:proofs`, and
+`audit:proofs:selfcheck` proves the count reports zero from the loop rather than from an emptied
+register. It is deliberately not in the `verify:*` chain.
+
+**`V-07` (estimator island) is BLOCKED on Atik, and its `Depends` was wrong.** It read `V-03`
+alone; it is `V-01, V-03, V-05`. On disk there is no `lib/estimate/` and no `estimatorConfig`
+schema, and `V-01`–`V-05` are all TODO. Every number the island emits comes from
+`estimatorConfig` through `calculate.ts`, and the two inputs — `Q-DG2` (base bands per project
+type) and `Q-DG1` (ten historical projects with real final prices) — are open with the owner.
+`PROJECT-RULES.md` #4 and non-negotiable #2 both forbid shipping it on invented rates.
+**Epic M satisfies none of it** — it gave the chrome and the primitives, and `V-06` gave the
+route, the bands table and both gates on the route by name, which is the degradation target
+rather than an input. Building the six steps without the calculator was considered and rejected:
+it spends the route's first real JS on a form that ends in nothing. Full reasoning on the
+tracker row.
+
+---
+
+## ⇢ 2 September 2026 — the legal set was replaced wholesale, and VAT left the system
+
+**Read this before touching `docs/_legal/` or anything that renders a price.**
+
+**The drafts are a new set at version 2.0.** The owner adopted a revised set on 2 September
+2026; it replaces all six instruments and their nine rounds of internal apparatus. `[TK]` and
+`[DECISION REQUIRED]` markers are gone from operative prose because the new drafts do not carry
+any. `scripts/seed-legal.mjs` was re-transcribed against them and `check:legal:parity` is green
+on the served pages: 6 documents, 94 clauses, 339 paragraphs word-for-word, 94 clause tokens all
+reachable. `solicitorApproved` is still `false` on all seven — a revised set is not a reviewed
+one, and `L-04` is unchanged.
+
+**Gridsmith Ltd is not VAT registered, and the system no longer has a place to say otherwise.**
+`vatNumber` is removed from the Sanity schema, the GROQ projection, the footer, `/about`, the
+seed and `check:launch`'s live-required tier. `M-P2-3` is **closed, not deferred**: there is no
+net/gross field and no tax label, because a non-registered trader's price is the amount charged.
+**No price anywhere in the UI may be presented as VAT-exclusive** — `scripts/check-vat-display.mjs`
+is the gate, in `verify:served`, and it proves its own predicate against 13 specimens before it
+fetches anything.
+
+**The registered office appears once per instrument and once site-wide.** SI 2015/17 reg. 25(2)
+is a *website* obligation, satisfied by the statutory block in `components/chrome/Footer.tsx` and
+repeated on `/about`. Each instrument carries the address in its party block only — consumer
+terms 18, privacy 15, MSA 19 — and every other mention is "Bolton, United Kingdom".
 
 ---
 

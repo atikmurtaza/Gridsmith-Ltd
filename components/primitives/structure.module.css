@@ -61,6 +61,19 @@
   line-height: var(--leading-relaxed);
   color: var(--ink);
 }
+/* `P-02` — press/DESIGN.md §3: "52ch for all body copy, without exception", and
+   PROJECT-RULES.md §3. Press is the only division whose body face is a serif, and a serif
+   set beyond 60ch is the legibility failure that rule names.
+
+   Here rather than in `styles/themes/press.css` because `--measure` is a BASE token and
+   master/PROJECT-RULES.md §3 makes the theme contract closed — `check:tokens` fails a theme
+   file that declares anything outside the 15-token contract, and fails the base layer if a
+   token is declared more than once in the built CSS. So this overrides the DECLARATION SITE,
+   not the token. `--measure-narrow` is the existing 52ch token; no new token is introduced.
+
+   `.proseNarrow` is consequently a no-op under press, which is correct: the opt-in became
+   the floor. */
+[data-division="press"] .prose { max-width: var(--measure-narrow); }
 .prose > * + * { margin-block-start: var(--space-4); }
 .prose > * + :is(h2, h3, h4) { margin-block-start: var(--space-12); }
 .prose :is(h2, h3, h4) { font-family: var(--font-display); line-height: var(--leading-snug); }

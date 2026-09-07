@@ -26,7 +26,7 @@ export const metadata: Metadata = {
  * details, **including an electronic mail address**, that make it possible to contact the
  * provider rapidly and communicate with them directly and effectively. A form alone does not
  * satisfy it — the user cannot reach us if it fails. That is why `contactEmail` is in
- * `check:launch`'s live-required tier alongside `vatNumber`, and why it is rendered here in
+ * `check:launch`'s live-required tier — now the only entry in it — and why it is rendered here in
  * plain text as well as being a link.
  *
  * ## The commitment string is read once and passed down

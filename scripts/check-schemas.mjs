@@ -40,6 +40,10 @@ const EXPECTED_OBJECTS = [
   'groupSection',
   'continuityRow',
   'legalClause',
+  // K-01. Path Finder shape; `press/SCHEMA.md` §3.
+  'pathQuestion',
+  'pathOutcome',
+  'pathRule',
 ];
 const EXPECTED_DOCUMENTS = [
   'service',
@@ -52,6 +56,7 @@ const EXPECTED_DOCUMENTS = [
   'continuityExample',
   'legalDocument',
   'companyDetails',
+  'pathFinderConfig',
 ];
 
 /**
@@ -78,6 +83,11 @@ const CLOSED_LISTS = [
   // `L-01`. Same shape and same reason as `groupPage.slug`: a slug with no route is a
   // published document that renders nowhere, silently.
   ['legalDocument', 'slug', ['privacy', 'cookies', 'terms', 'client-terms', 'business-client-terms', 'consumer-client-terms', 'accessibility'], (v) => ({ current: v })],
+  // `K-01`. Non-negotiable #9 depends on two of these six keys existing and meaning what they
+  // mean. A free-text key lets a content edit rename `self-service` to something that no longer
+  // recommends away from Gridsmith, with every gate green — `groupPage.slug`'s reason applied to
+  // the field the honesty guarantee rests on.
+  ['pathOutcome', 'key', ['full-package', 'ghostwriting', 'assessment-first', 'content-programme', 'self-service', 'not-ready'], (v) => v],
 ];
 
 /**
@@ -110,7 +120,7 @@ const problems = [];
  * difference between a summary that reports and a summary that asserts, and it is what makes
  * `npm run check:schemas` output evidence rather than decoration.
  */
-const counted = { expectations: 0, fields: 0, seedable: 0, stages: 0 };
+const counted = { expectations: 0, fields: 0, seedable: 0, stages: 0, ethics: 0 };
 
 const byName = new Map(schemaTypes.map((t) => [t.name, t]));
 const documents = schemaTypes.filter((t) => t.type === 'document').map((t) => t.name);
@@ -255,6 +265,7 @@ const REQUIRED_FIELDS = [
   ['continuityExample', 'rows', 'min', 'master/SCHEMA.md §2 — at least four rows; two do not show continuity'],
   ['continuityExample', 'divisionsInvolved', 'min', 'at least two divisions, or it is not cross-division'],
   ['continuityExample', 'verified', 'custom', 'hard-true — required() alone would accept false'],
+  ['pathFinderConfig', 'outcomes', 'custom', 'ETH-04 / non-negotiable #9 — min(6) alone permits six Gridsmith outcomes'],
 ];
 
 /**
@@ -419,6 +430,59 @@ for (const [typeName, fieldName, mustAccept, mustRefuse] of HARD_VALUES) {
 }
 
 /**
+ * 6a. **ETH-04 is run limb by limb, and each limb is identified by its own message** (`K-02`).
+ *
+ * `pathFinderConfig.outcomes` carries a three-limb custom rule. Running it against one bad set
+ * and seeing a rejection proves whichever limb happened to fire first and credits the other
+ * two — `CLAUDE.md`'s multi-branch rule, and `check:rls` is the instance that motivated it:
+ * a half-working alternation reported success from the branch that was exercised while two
+ * `anon` SELECT bugs sat in the branch that was not.
+ *
+ * So each case names the message it must produce. A limb that stops firing does not fall
+ * through to another limb's message and pass; it reports the wrong string and fails here.
+ *
+ * The rule reached is the schema's own `validation`, not an import of `ethicsRule` — the
+ * subject is what the Studio enforces, and an import would assert the function rather than
+ * its installation.
+ */
+const outcome = (over = {}) => ({
+  key: 'full-package', title: 't', explanation: 'e', isGridsmithService: true, showCta: true, ...over,
+});
+/** The two honest outcomes, correctly formed. Everything below mutates this set. */
+const HONEST = [
+  outcome({ key: 'self-service', isGridsmithService: false, showCta: false, externalGuidance: 'Use KDP.' }),
+  outcome({ key: 'not-ready', isGridsmithService: false, showCta: false, externalGuidance: 'Finish the draft.' }),
+];
+const SIX = [outcome(), outcome({ key: 'ghostwriting' }), outcome({ key: 'assessment-first' }), outcome({ key: 'content-programme' }), ...HONEST];
+
+const ETH_04_CASES = [
+  ['a compliant set of six', SIX, true],
+  ['one honest outcome only', [...SIX.slice(0, 5)], 'At least two non-Gridsmith outcomes (self-service, not-ready) are required'],
+  ['six Gridsmith outcomes', SIX.map((o) => ({ ...o, isGridsmithService: true })), 'At least two non-Gridsmith outcomes (self-service, not-ready) are required'],
+  ['a CTA on an honest outcome', [...SIX.slice(0, 4), { ...HONEST[0], showCta: true }, HONEST[1]], 'Non-Gridsmith outcomes must not display a CTA'],
+  ['an honest outcome with no guidance', [...SIX.slice(0, 4), { ...HONEST[0], externalGuidance: '' }, HONEST[1]], 'Non-Gridsmith outcomes require honest external guidance'],
+];
+
+{
+  const field = byName.get('pathFinderConfig')?.fields?.find((f) => f.name === 'outcomes');
+  const { rule, customFns } = recordingRule();
+  if (typeof field?.validation !== 'function' || (field.validation(rule), customFns.length === 0)) {
+    problems.push('pathFinderConfig.outcomes has no custom rule — ETH-04 is not enforced at all');
+  } else {
+    for (const [label, value, expected] of ETH_04_CASES) {
+      const results = customFns.map((fn) => fn(value, {}));
+      const verdict = results.find((r) => r !== true) ?? true;
+      if (verdict !== expected) {
+        problems.push(
+          `ETH-04 (${label}): expected ${JSON.stringify(expected)}, got ${JSON.stringify(verdict)}`,
+        );
+      }
+      counted.ethics++;
+    }
+  }
+}
+
+/**
  * **A zero here means a check did not run, and that is a failure, not a clean result.**
  *
  * The three counters above are the ones that could previously not be made to report zero. If
@@ -497,6 +561,10 @@ console.log(
 console.log(
   `check-schemas: ${counted.stages} canonical process stage(s) matched against ${PROCESS_DOC}, ` +
     'the source of truth — names never travel through the CMS',
+);
+console.log(
+  `check-schemas: ETH-04 run as ${counted.ethics} case(s), each asserted against its own limb's ` +
+    'message — non-negotiable #9 is enforced by the schema, not only declared by it',
 );
 console.log(
   `check-schemas: ${CLOSED_LISTS.length} closed list(s) intact and enforced by a custom rule, ` +

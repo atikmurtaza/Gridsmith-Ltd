@@ -29,11 +29,28 @@ const ROUTES = [
   { path: '/design', status: 200 },
   { path: '/digital', status: 200 },
   { path: '/press', status: 200 },
+  // `K-13`. A form is where a fixed-width control overflows a 375px viewport, so the site's
+  // only multi-step form is a subject rather than a duplicate of /press.
+  { path: '/press/contact', status: 200 },
+  // `K-05`. A wide data table is the other way a page overflows 375px, and the only one on
+  // the site outside the kitchen sink — `Table` wraps in an `overflow-x: auto` region, and
+  // whether that region actually contains the overflow is a layout-time fact.
+  { path: '/press/path-finder', status: 200 },
   // Epic N routes. Seven of the eight new master pages, chosen to cover every distinct
   // template rather than every URL: a grid, a canonical case study, both `groupPage` layouts,
   // the insights hub, a legal document and the one route with a form. The per-slug routes are
   // represented by one instance each - 24 case studies share one template, and auditing all of
   // them would multiply the run without adding a subject.
+  // `U-08`'s subject. One instance of the template, chosen the same way the case study was:
+  // ten Digital services share it. `website-design-build` is the one with the fullest record —
+  // four deliverables and three pricing variables — so it exercises every block the template
+  // has rather than the smallest.
+  { path: '/digital/services/website-design-build', status: 200 },
+  // `V-06`'s subject: the static pricing bands, the one Digital route that must be fully
+  // readable with JS disabled. It is also the only route on the site whose entire content is
+  // a data table, so it is the only place `Table`'s focusable scroll region is audited on a
+  // production route rather than on the kitchen sink.
+  { path: '/digital/estimate', status: 200 },
   { path: '/work', status: 200 },
   { path: '/work/brand-website-and-launch-book', status: 200 },
   { path: '/about', status: 200 },
@@ -199,6 +216,12 @@ if (barsMeasured === 0) {
     `\ncheck-responsive: no fixed bottom bar was found on any route below ${FIXED_BAR_MAX_WIDTH + 1}px,` +
       '\nso the WCAG 2.2 SC 2.4.11 scroll-reserve assertion measured nothing and would have' +
       '\nreported success anyway.' +
+      // This message is the mitigation, not a note about one. The subject has a known
+      // REMOVAL DATE rather than an unknown emptiness, which makes it a scheduled expiry --
+      // distinct from every hollow subject this programme has caught, all of which were
+      // found after the fact by proof. A gate that knows when its subject goes away can say
+      // so where the next reader will be standing, and exit 1 rather than pass empty.
+      // Closes at U-05, when the 60/40 bar puts a StickyCta on a real route.
       '\n\nIts only subject today is the StickyCta on /_kitchen-sink, and A-12 removes that route' +
       '\nfrom the production build. If you are reading this at A-12: put a StickyCta on a real' +
       '\nroute, or delete this assertion deliberately. Do not let it pass empty.\n',

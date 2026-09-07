@@ -29,12 +29,11 @@ const CLEAN_RECORD = {
   placeOfRegistration: 'England and Wales',
   registeredOffice: 'A registered office address',
   responseCommitment: 'By end of the next business day',
-  vatNumber: 'GB000000000',
   contactEmail: 'hello@example.invalid',
 };
 
 /** The exact condition that would currently publish: a live dataset full of seed content. */
-const SEEDED_RECORD = { ...CLEAN_RECORD, vatNumber: '[SEED] GB123456789' };
+const SEEDED_RECORD = { ...CLEAN_RECORD, registeredOffice: '[SEED] A registered office address' };
 
 const ok = (over = {}) => ({
   dataset: PRODUCTION_DATASET,
@@ -51,7 +50,7 @@ const SPECIMENS = [
     name: 'SEEDED — [SEED] marker in a live dataset',
     input: ok({ result: SEEDED_RECORD, publishedSeeds: 121 }),
     expect: [
-      'vatNumber carries a [SEED] marker and the dataset is live: "[SEED] GB123456789"',
+      'registeredOffice carries a [SEED] marker and the dataset is live: "[SEED] A registered office address"',
       '121 published seed document(s) in the live dataset',
     ],
   },
@@ -91,9 +90,9 @@ const SPECIMENS = [
     expect: ['placeOfRegistration is empty'],
   },
   {
-    name: 'LIVE-ONLY — vatNumber empty on a live dataset',
-    input: ok({ result: { ...CLEAN_RECORD, vatNumber: '' } }),
-    expect: ['vatNumber is empty and the dataset is live'],
+    name: 'LIVE-ONLY — contactEmail empty on a live dataset',
+    input: ok({ result: { ...CLEAN_RECORD, contactEmail: '' } }),
+    expect: ['contactEmail is empty and the dataset is live'],
   },
 
   // ── must PASS ───────────────────────────────────────────────────────────────────────────

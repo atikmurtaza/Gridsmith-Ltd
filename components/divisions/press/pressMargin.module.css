@@ -1,0 +1,38 @@
+/* `P-03` — Press margin note. See `MarginNote.tsx` for why this is a grid and not a float. */
+
+.wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--space-4);
+}
+
+.body {
+  min-width: 0;
+}
+
+.note {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--ink-muted);
+  /* Marginalia, not body copy: the 52ch measure is Press's rule for the latter. This keeps a
+     collapsed note from running the full container width at 768px. */
+  max-width: 44ch;
+}
+
+/* The second column starts where the container has reached `--container-narrow` and the slack
+   beside a 52ch measure is a margin rather than a cramped second column. Below this the note
+   is a block beneath the paragraph it annotates — `DESIGN.md` §4. */
+@media (min-width: 64rem) {
+  .wrap {
+    grid-template-columns: minmax(0, var(--measure-narrow)) minmax(0, 1fr);
+    column-gap: var(--space-8);
+    align-items: start;
+    row-gap: 0;
+  }
+
+  .note {
+    /* Optical alignment with the first line of the annotated paragraph. The note is smaller,
+       so its own line box is shorter and its baseline would otherwise sit above the body's. */
+    margin-block-start: 0.15em;
+  }
+}

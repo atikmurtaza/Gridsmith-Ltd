@@ -39,14 +39,16 @@ export const ALWAYS_REQUIRED = [
  * Fields that may be empty today and must not be on a live dataset.
  *
  * **`contactEmail` is here because verifying `M-04`'s premise turned it up, and it was in no
- * tracker row.** The VAT number's basis is not the Companies Act at all — it is reg. 6(1)(g)
- * of the Electronic Commerce (EC Directive) Regulations 2002, which binds while the activity
- * is VAT-subject. reg. 6(1)(c) of the same instrument requires contact details including an
- * email address that make it possible to reach the provider rapidly, and that is a launch
- * obligation of exactly the same shape: legitimately empty now, unacceptable live.
+ * tracker row.** reg. 6(1)(c) of the Electronic Commerce (EC Directive) Regulations 2002
+ * requires contact details including an email address that make it possible to reach the
+ * provider rapidly: legitimately empty now, unacceptable live.
+ *
+ * **`vatNumber` used to be the other entry here and has been removed with the field.**
+ * reg. 6(1)(g) requires a VAT identification number only where the provider undertakes an
+ * activity subject to VAT. Gridsmith is not registered, so requiring a value on a live
+ * dataset would have been a gate demanding a false disclosure.
  */
 export const LIVE_REQUIRED = [
-  ['vatNumber', 'e-commerce regs reg. 6(1)(g)'],
   ['contactEmail', 'e-commerce regs reg. 6(1)(c)'],
 ];
 

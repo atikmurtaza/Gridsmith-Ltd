@@ -158,15 +158,34 @@ STEP 2  Branch:
         Content  → volume, formats, turnaround, contracting requirements
 STEP 3  Budget band + manuscript link (not upload — see TECH-SPEC §9)
 STEP 4  Contact details
+        + which client terms would apply, from the step 1 segment (K-16 / FR-P24):
+          business -> /legal/business-client-terms
+          author, memoir -> /legal/consumer-client-terms
+          content -> /legal/client-terms (the disambiguation page: "ongoing content"
+                     states no purpose of purchase, so neither instrument's §1 is
+                     satisfied and neither is asserted)
+          It says which terms WOULD apply. An enquiry is not a contract
+          (CONSUMER-TERMS.md §3), so nothing here is presented as agreed.
         ↓
    Confirmation: what happens next, response commitment, and — only here — the
-   cross-division prompt (FR-P20)
+   cross-division prompt (FR-P20, built at K-15: names Design and Digital, links to
+   both, asks for nothing)
 
 CONSUMER PATH (author / memoir segments) — at order confirmation, not enquiry:
+
+   ~~The notice copy below is STRUCK and must not be built.~~ Round 9 deliberately
+   removed the flat 14-day right; CONSUMER-TERMS.md §6 confers it only *where* the
+   contract is distance or off-premises and the CCR 2013 give it, with §6.1 and §6.2
+   governing the refund. Under L-CRA-50 this panel's wording becomes a term of the
+   contract, so the copy below offers more than the reviewed contract gives —
+   non-negotiable #6, the §21 shape exactly. The replacement wording is K-17, it is
+   blocked on the owner, and it is not drafted here. Kept visible rather than deleted
+   because it is `check:struck`'s committed subject.
+
    ┌────────────────────────────────────────────────────────────────┐
-   │  Your 14-day cancellation right                                │
+   │  ~~Your 14-day cancellation right                              │
    │  You can cancel within 14 days for any reason and get a         │
-   │  full refund.                                                   │
+   │  full refund.~~                                                 │
    │                                                                 │
    │  ☐  I want you to start work before the 14 days are up.        │
    │     I understand that if I cancel after you've started, I pay   │

@@ -4,7 +4,7 @@
  *
  * `env.ts` throws at module load when `NEXT_PUBLIC_SANITY_DATASET` is unset. That is
  * deliberate and load-bearing (`M-P1-2`): on a host, an unset variable falling back to
- * `development` would publish a `[SEED]` VAT number, so the build must fail instead.
+ * `development` would publish a `[SEED]` statutory footer, so the build must fail instead.
  *
  * But `check-launch-content` now reads the dataset **from the served site**, and it must be
  * able to run on a machine where that variable is not set — a CI runner or a laptop pointed at

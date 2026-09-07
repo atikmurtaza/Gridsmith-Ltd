@@ -43,6 +43,24 @@ const LEAD: Record<PricingModel['model'], string> = {
   'day-rate': 'Day rate from',
 };
 
+/**
+ * The same price, reduced to its parts, for callers that need it inside a table cell rather
+ * than as a block — `V-06`'s bands table. Exported so there is one money formatter and one
+ * lead-word map on the site: a second copy is how `£0,000` stops meaning "placeholder" on
+ * one page and starts looking like a real number on another.
+ */
+export function priceParts(pricing: PricingModel | null) {
+  if (!pricing) return null;
+  const from = money(pricing.fromAmount);
+  if (!from) return null;
+  const to = money(pricing.toAmount);
+  return {
+    lead: LEAD[pricing.model],
+    amount: `${from}${pricing.model === 'range' && to ? ` – ${to}` : ''}`,
+    unit: pricing.unit ?? null,
+  };
+}
+
 export function Price({ pricing }: { pricing: PricingModel | null }) {
   if (!pricing) return null;
   const from = money(pricing.fromAmount);

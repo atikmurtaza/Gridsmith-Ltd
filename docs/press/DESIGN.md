@@ -102,7 +102,7 @@ Mono is reserved for **factual data only**: ISBN, price, publication date, word 
 
 - 12-column grid, `--container` 1280px, but text blocks constrained to 52ch and often offset rather than centred
 - Generous vertical rhythm: `--space-24` mobile, `--space-32` desktop — Press breathes more than the other two
-- **Margin notes**: secondary information set in the outer columns at `--text-sm` `--ink-muted`, mirroring a printed book's marginalia. Used for clause references, footnotes, caveats. On mobile these collapse inline beneath the paragraph they annotate.
+- **Margin notes**: secondary information set in the outer columns at `--text-sm` `--ink-muted`, mirroring a printed book's marginalia. Used for clause references, footnotes, caveats. On mobile these collapse inline beneath the paragraph they annotate. **Built at `P-03` as `components/divisions/press/MarginNote.tsx`** — a two-column grid, not a float, because a float pulled outside the text column overflows between "the container has slack" and "the container is capped". *"On mobile"* is **below `64rem`**: `--container-narrow` is 800px and Press prose caps at 52ch (~426px in Source Serif at 17px), so slack exists from roughly 768px, but a ~290px note column beside it is two cramped columns rather than a margin. All four claims — the size, the colour, the outer column at >=1024px and the collapse below it — are measured by `check:press-type` branch 4 as geometry on the served page.
 - Drop cap on the opening paragraph of long-form editorial pages only (rights, expectations, insights). Never on marketing pages.
 - Rules are `--line` hairlines; sections separated by whitespace first, rules second.
 
