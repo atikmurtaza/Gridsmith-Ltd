@@ -1,5 +1,9 @@
 # Project Rules — Gridsmith Master Layer
 
+> **GS-P00 override — 11 September 2026.** `GS-D001` removes public client/cross-division project
+> proof from the launch critical path; `GS-D002` removes shared public price assumptions. The master
+> tracker maps the preserved historical rows to the current capability/process/quote strategy.
+
 Binding rules for anyone (human or AI coding agent) working on the root route group and the shared chrome. **These rules also govern the shared foundation**, so they apply to code that all four route groups depend on. Where this conflicts with a division rules file, this file wins for shared code; the division file wins inside that division's components.
 
 ---

@@ -5,6 +5,21 @@
 
 Update `Status` and `Notes` in place. Do not delete rows — move them to `DONE`.
 
+## GS-P00 reconciliation — authoritative override
+
+The historical rows below remain for traceability. This table overrides their launch priority and
+owner dependencies under `GS-D001` and `GS-D002`.
+
+| Historical IDs | Current treatment |
+|---|---|
+| `B-09`, `C-06`, `E-01`, `E-02`, `Q-02` | Keep truthful service pages, but public pricing is not required. Rescope toward bespoke quote CTAs; `Q-02` is **SUPERSEDED** as an owner price request. |
+| `C-14`–`C-17` | Public drawing-price estimator is **DEFERRED/RESCOPE**. Consider a non-price drawing scoping tool after the service list; calibration against eight priced jobs is not a launch gate. |
+| `B-10`, `D-01`–`D-05`, `E-03`, `E-04`, `Q-04` | Public portfolio/case-study delivery is **POST-LAUNCH/CONSENT-DEPENDENT**. No eight-project launch requirement and no replacement fabricated assets. |
+| `C-13`, `Q-05` | Design Desk may remain as an engagement model if it is a real service, but public tier prices are not required. Final treatment depends on `GS-O002`. |
+
+Unaffected Design dependencies, including service truth, accessible UX, QA/process content,
+professional review and security, remain active.
+
 ---
 
 ## Epic A — Shared foundation · *moved to `master/PROJECT-TRACKER.md`*

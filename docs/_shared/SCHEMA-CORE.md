@@ -1,5 +1,10 @@
 # Core Schema — shared across all three divisions
 
+> **GS-P00 schema note — 11 September 2026.** The current `pricingModel` requirement documents
+> implemented source, not the approved production policy. `GS-D002` requires a later forward-only
+> change that makes public price publication optional (`GS-T001`). No schema change occurs in GS-P00.
+> Public project/case-study records are optional future capability under `GS-D001`, not launch data.
+
 Authoritative definition of types used by every division. Each division's `SCHEMA.md` defines its own document types and the extensions it adds to these. Nothing here is duplicated per division — one CMS, one database.
 
 ---

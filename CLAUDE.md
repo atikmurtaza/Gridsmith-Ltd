@@ -40,7 +40,10 @@ Soft shadows, rounded-everything, gradient meshes, glassmorphism, floating 3D sh
 
 1. **Never hardcode a colour.** Tokens only. CI enforces this.
 2. **Never invent content.** No fabricated case study metrics, client names, standards codes, ISBNs, prices, contract clauses, statistics or credentials. Mark `[TK]` and stop.
-3. **Never publish a service page without pricing.** Schema-enforced.
+3. **Never require public pricing.** `GS-D002` supersedes the earlier schema-enforced rule that
+   every service page must publish a price. Until a dedicated implementation phase changes the
+   schema and renderers, treat that requirement as technical debt (`GS-T001`), not as authority to
+   ask the owner for prices or to publish placeholders. Public journeys lead to a bespoke quote.
 4. **Never let seed content reach production.** Build check blocks it.
 5. **Never promise a response faster than end of next business day.** One source of truth: `companyDetails.responseCommitment`.
 6. **Never claim more than the contract gives.** Digital's ownership module and Press's rights module cite real clauses in `_legal/`.
@@ -48,6 +51,9 @@ Soft shadows, rounded-everything, gradient meshes, glassmorphism, floating 3D sh
 8. **Never break a performance budget to add a feature.** The feature changes or is cut.
 9. **Never remove Press's honest outcomes.** The Path Finder must be able to recommend against Gridsmith. Schema-enforced and audited.
 10. **Accessibility wins every conflict.** WCAG 2.2 AA is the floor. Then raise the conflict.
+11. **Never manufacture public portfolio proof.** `GS-D001` removes public client projects,
+    titles, covers, retailer links and similar permission-dependent evidence from the production
+    critical path. Explain real capabilities, disciplines, process, methodology and quality instead.
 
 ## Stack
 
@@ -115,10 +121,16 @@ Read the workstream's own files before touching its code.
 | `docs/_shared/02-BUILD-SEQUENCE.md` | Stage order and rationale |
 | `docs/_shared/04-AGENT-STRATEGY.md` | How to parallelise and verify |
 | `docs/_shared/05-HANDOVER.md` | **Read first in a fresh session.** Live state, open questions, in-flight work, and the findings that must not be rediscovered |
+| `docs/_shared/PROJECT-STATUS.md` | **Current production-programme authority.** Phase, blockers, readiness and next recommendation |
+| `docs/_shared/AI-DEVELOPMENT-PROTOCOL.md` | Permanent scope, evidence, commercial, security, database, git and stop rules |
+| `docs/_shared/OWNER-ACTIONS.md` | Owner decisions/evidence only; do not assign implementation work here |
+| `docs/_shared/AI-HANDOFF.md` | Required end-state record for every `GS-P###` phase |
 | `docs/{master,design,digital,press}/` | 8 files each: PRD · TECH-SPEC · APP-FLOW · DESIGN · SCHEMA · IMPLEMENTATION-PLAN · PROJECT-TRACKER · PROJECT-RULES |
 | `docs/_legal/` | Solicitor-ready drafts. **Do not draft or amend clauses.** |
 
-**`PROJECT-RULES.md` for the workstream you are in is binding.** Where it conflicts with general best practice, it wins.
+**`PROJECT-RULES.md` for the workstream you are in is binding, except where a later owner decision
+in the production control files explicitly supersedes it.** `GS-D001` and `GS-D002` are the first
+such programme-wide overrides. Preserve the older text as history and follow the mapped current rule.
 
 ## How to work
 

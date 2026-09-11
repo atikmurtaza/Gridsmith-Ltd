@@ -1,5 +1,10 @@
 # Market Research Basis — Gridsmith Division Websites
 
+> **SUPERSEDED commercial conclusion — 11 September 2026.** The research remains historical
+> evidence, but its adopted requirement to publish pricing and avoid quote/contact pricing journeys
+> is overridden by owner decision `GS-D002`. Gridsmith uses bespoke quotations. The portfolio-proof
+> conclusions are likewise limited by `GS-D001`: no public client evidence without permission.
+
 Evidence layer. Every conversion and UX decision in the three division specs traces back to a numbered finding here. The validation report (`01-VALIDATION-REPORT.md`) checks each spec against these.
 
 ---

@@ -4,6 +4,18 @@
 
 The master layer owns the shared foundation (Epic A, previously in the Design tracker) plus two additions.
 
+## GS-P00 reconciliation — authoritative override
+
+| Historical IDs | Current treatment |
+|---|---|
+| `N-05`, `Q-M6`, homepage/approach continuity-example dependencies | A public client example is not required under `GS-D001`. Explain the continuity methodology truthfully without inventing or superficially anonymising a project. A real example may be discussed privately where permitted. |
+| `N-08`–`N-10`, `S-02`, `S-07` and public work/case-study dependencies | Public portfolio surfaces are **POST-LAUNCH/CONSENT-DEPENDENT** and must not block the four-section launch. Existing generic code may remain dormant until a later authorised portfolio phase. |
+| `S-03` and shared public pricing assumptions | Seed/public price replacement is not an owner dependency. `GS-T001` owns making public pricing optional under `GS-D002`. |
+| Live-site service-list authority | **SUPERSEDED.** The definitive services come from `GS-O002`; the existing site is reference material only. |
+
+The shared foundation, company/legal facts, contact flow, security, performance, accessibility,
+single-launch model and production seed protections remain active.
+
 ---
 
 ## ✋ ACCEPTED — `M-P2-36`, first-view typography under `display: 'optional'`

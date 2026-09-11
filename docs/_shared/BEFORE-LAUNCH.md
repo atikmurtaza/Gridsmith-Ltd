@@ -1,5 +1,12 @@
 # Before launch — everything Atik must change
 
+> **GS-P00 reconciliation — 11 September 2026.** `OWNER-ACTIONS.md` replaces this file as the
+> active owner-action register. Historical numbering is preserved. Item 9 (real public prices) is
+> **SUPERSEDED by `GS-D002`** and does not block production. Public portfolio/case-study/book content,
+> covers, retailer links and their consent collection are **SUPERSEDED as launch dependencies by
+> `GS-D001`**. Do not request replacements. Remaining company, legal, infrastructure, accessibility,
+> content-quality, SEO and release actions remain subject to current source evidence.
+
 **Written:** 21 August 2026 · **Branch:** `feat/a-01-a-10a-scaffold-ci`
 
 This is the only homework list. Everything on it is a thing **only you can do** — a decision, a
@@ -302,14 +309,14 @@ which is exactly why it must not be shortened casually.
 
 ### 9. Real prices
 
-- **Status:** Blocks production
+- **Status:** **SUPERSEDED by `GS-D002` — does not block production**
 - **Where:** Sanity Studio → **Service** → `pricingModel` on each of the 30 services
 - **Your time:** ~3 hours, and mostly thinking rather than typing
 - **Tracker:** `S-03`
 
-Every service currently shows `£0,000` with an `INDICATIVE` badge. The zeroes are the
-convention for a figure that asserts nothing, and the schema will not let a service be published
-without a pricing block at all — CLAUDE.md non-negotiable #3, enforced structurally.
+Every service currently shows `£0,000` with an `INDICATIVE` badge and the schema structurally
+requires a pricing block. That is now `GS-T001`, an implementation dependency to remove or rescope,
+not an owner request for real public figures.
 
 Two things to keep when you replace them:
 

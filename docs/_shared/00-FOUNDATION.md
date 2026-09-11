@@ -1,5 +1,10 @@
 # Shared Foundation — Architecture & Design Tokens
 
+> **GS-P00 commercial override — 11 September 2026.** Portfolio volumes and public pricing in
+> this historical foundation are not launch requirements. `GS-D001` and `GS-D002`, as mapped in
+> `PROJECT-STATUS.md` and the project trackers, are authoritative. Preserve reusable architecture;
+> do not populate public portfolio or price fields merely to satisfy an older example/volume rule.
+
 Read this before any division file. The three division sites are **three themed sections of one application**, not three codebases.
 
 ---

@@ -1,5 +1,10 @@
 # Project Rules — Gridsmith Press
 
+> **GS-P00 override — 11 September 2026.** The Press tracker reconciliation table and
+> `GS-D001`/`GS-D002` remove the public title catalogue, retailer links, author-consent volume and
+> public price tables from the launch critical path. The Path Finder's honest outcomes, rights,
+> safety, accessibility and non-exploitative rules remain active.
+
 Binding rules for anyone (human or AI coding agent) working on the Press route group. Where this conflicts with general best practice or with conversion optimisation orthodoxy, this file wins.
 
 **Read this first:** Press sells to people the market has warned to be suspicious of companies exactly like this one, and to people (memoir and legacy authors) who can be financially harmed by aggressive selling. Several rules below will look like they suppress conversion. They are the reason this division converts at all.

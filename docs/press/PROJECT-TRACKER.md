@@ -1,5 +1,21 @@
 # Project Tracker — Gridsmith Press
 
+## GS-P00 reconciliation — authoritative override
+
+The historical rows remain as evidence of the earlier public-catalogue/pricing strategy. Current
+sequencing follows this table.
+
+| Historical IDs | Current treatment |
+|---|---|
+| `O-01`, `O-02`, `O-04`, `Z-02`, `Z-06`, `Q-P1` and public cover/retailer-link dependencies | **POST-LAUNCH/CONSENT-DEPENDENT** under `GS-D001`. Twelve titles, author consent, covers and retailer links are not production launch dependencies. |
+| `O-05`, `Q-P3`, `Q-P4`, `Q-P5`, `Q-P11`, package/assessment/revision/marketing price requirements | Public prices are **SUPERSEDED** by `GS-D002`. Service definitions, deliverables, exclusions and consultation routes may remain after `GS-O002`. |
+| `K-09`, `K-21`, `K-22` | Retain only if the assessment/marketing services are owner-confirmed; rescope pages around consultation/quotation rather than published prices. |
+| `K-01`–`K-08`, `K-14`, `Q-P13` | **RETAIN the Path Finder** as a recommendation/scoping tool independent of price display. Preserve reachable honest outcomes and no-CTA results; owner validation of seed rules remains required. Review money-band questions so they scope without implying public package prices. |
+| `Z-09` | External trust/usability review may remain useful, but it is not dependent on a twelve-title public shelf. |
+
+Rights, consumer flows, truthful service scope, accessibility, security and operational hardening
+remain active.
+
 **Status:** `TODO` · `WIP` · `BLOCKED` · `REVIEW` · `DONE` · **Priority:** P0 blocks launch · P1 desirable · P2 post-launch
 
 Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, including

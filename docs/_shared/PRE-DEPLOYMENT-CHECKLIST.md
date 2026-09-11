@@ -2,6 +2,14 @@
 
 **Written:** 7 September 2026. **Owner of every row below: Atik.**
 
+> **GS-P00 reconciliation — 11 September 2026.** This is now a historical/provisional-content
+> inventory, not the active owner-action register. `OWNER-ACTIONS.md` is authoritative. Under
+> `GS-D002`, Group B does not create a requirement to supply or publish prices; B1-B4 are retained
+> to locate implementation assumptions that a later phase must remove or rescope. Under `GS-D001`,
+> D3/D4 and the portfolio/book-cover parts of Group E are not replacement-content requests; public
+> portfolio evidence is deferred unless explicit permission is obtained. The Path Finder rows remain
+> relevant to recommendation/scoping and honesty, independently of public price publication.
+
 ## What this is, and what it is not
 
 This is a **register of things a machine cannot decide**. Every row is a value, a sentence or a
@@ -67,14 +75,14 @@ not a gap — `sanity/schemas/companyDetails.ts` and `check:vat:display` both en
 
 ---
 
-## Group B — Prices and commercial terms
+## Group B — Public-price assumptions — **SUPERSEDED by `GS-D002`**
 
 | # | Item | Where | What is there now |
 |---|---|---|---|
-| B1 | **Every price on the site** | `scripts/seed-content.mjs:90`, `pricingBlock.fromAmount` | **`0`**. `fromAmount` is a number so it cannot carry a `[SEED]` prefix; the honesty mechanism is the visible `INDICATIVE` badge (`components/content/Price.tsx`) and `FOUNDATION` §7.5 |
-| B2 | **Every "from" price on every service page** | the seeded `service` records | Non-negotiable #3 forbids publishing a service page without a price, so **a real figure is required per service before any service page goes live**, not merely desirable |
-| B3 | **Press budget bands** | `lib/path/seedConfig.ts` question 3 | The six bands are `APP-FLOW.md` §5's, not invented — but they imply a price range the company has never quoted. Confirm they describe real engagements |
-| B4 | **The Press contact flow's budget bands** | `PressContactFlow.tsx` | Diverge from `SCHEMA.md` §6 — an open question recorded at `K-13`, not a decision. Four shape-of-engagement values, not money bands |
+| B1 | **Every price on the site** | `scripts/seed-content.mjs:90`, `pricingBlock.fromAmount` | **SUPERSEDED production requirement.** Locate and remove/rescope public price rendering in `GS-T001`; do not replace zeroes with real public figures |
+| B2 | **Every "from" price on every service page** | the seeded `service` records | **SUPERSEDED.** Service pages may lead to a bespoke quotation without displaying a price |
+| B3 | **Press budget bands** | `lib/path/seedConfig.ts` question 3 | **REVIEW FOR SCOPING ONLY.** A budget question may help route an enquiry, but must not imply published package prices and still requires owner validation |
+| B4 | **The Press contact flow's budget bands** | `PressContactFlow.tsx` | **RETAIN AS NON-PRICE SHAPE-OF-ENGAGEMENT INPUT** unless a later owner decision changes it |
 
 ---
 

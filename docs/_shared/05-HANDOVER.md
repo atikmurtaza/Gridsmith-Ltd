@@ -1,11 +1,37 @@
-# Handover — the Path Finder is interactive; the live site is reference, not authority
+# Handover — GS-P00 production controls are authoritative
 
-**Written:** 11 August 2026 · **Revised:** 7 September 2026, at **`R-01`/`R-10`/`R-15` — the last
-buildable rows, and the stopping report** · **Branch:** `main` · **Runtime:** Node 24.15.0
+**Written:** 11 August 2026 · **Revised:** 11 September 2026, at **`GS-P00` — production-control
+baseline and commercial-policy reconciliation** · **Branch:** `main` · **Runtime:** Node 24.15.0
 
 This file exists because a session ended with state that only that session knew. Everything
 here is either unrecorded elsewhere or scattered across five documents. Read it before
 touching anything; delete the sections that go stale as they are resolved.
+
+---
+
+## ⇢ 11 September 2026 (latest) — `GS-P00` establishes the production-control system
+
+Read `PROJECT-STATUS.md`, `AI-DEVELOPMENT-PROTOCOL.md`, `OWNER-ACTIONS.md` and `AI-HANDOFF.md`
+before using the historical sections below. They are now the authoritative control set.
+
+Two owner decisions supersede the old stopping report's price/portfolio dependency ordering:
+
+- `GS-D001`: public case studies, client work, books/covers, retailer links and similar evidence
+  requiring permissions Gridsmith does not hold are not launch dependencies. Do not fabricate or
+  superficially anonymise them. Public capability, process, methodology and quality content replaces
+  them; permitted examples may be discussed privately without promising disclosure.
+- `GS-D002`: public fixed, starting, indicative, package, band and estimator-generated prices are
+  not launch dependencies. The public route is bespoke quotation/consultation.
+
+Therefore the 7 September ranking beginning with `Q-DG2`, `Q-DG1`, `Q-02`, `Q-04`, `Q-DG6`,
+`Q-P3` and `Q-P1` is historical, not the current critical path. The live `gridsmith.uk` service
+list is also no longer definitive; `GS-O002` asks the owner for the final service inventory.
+
+The Press Path Finder remains useful as a non-price recommendation/scoping tool. Its seed rules
+still require owner validation, but removing public prices does not remove its honesty outcomes.
+
+Supabase switching was not performed: the connected integration exposed neither intended project.
+No remote system other than GitHub may change in GS-P00. See `GS-O001` for exact owner steps.
 
 ---
 

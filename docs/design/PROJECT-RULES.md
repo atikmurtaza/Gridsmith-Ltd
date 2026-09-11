@@ -1,5 +1,9 @@
 # Project Rules — Gridsmith Design
 
+> **GS-P00 override — 11 September 2026.** The Design tracker reconciliation table and
+> `GS-D001`/`GS-D002` override public portfolio volumes, public pricing and price-estimator launch
+> rules in this historical document. Other safety, honesty, accessibility and design rules remain.
+
 Binding rules for anyone (human or AI coding agent) working on this codebase. Read fully before the first commit. Where this file conflicts with a general best practice, this file wins.
 
 ---

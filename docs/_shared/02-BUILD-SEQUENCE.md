@@ -1,5 +1,37 @@
 # Build Sequence — solo build with Claude Code
 
+## GS-P00 authoritative critical path — 11 September 2026
+
+This section supersedes the dependency ordering and schedule assumptions below while preserving
+them as programme history. Do not use the old week estimates as dates.
+
+1. `GS-P00` baseline/control reconciliation and owner-decision mapping.
+2. `GS-P01` unblocked security and operational hardening: headers, public lead boundary, durable
+   notification/reconciliation controls, secret/configuration verification and live RLS-drift path.
+3. Owner supplies the definitive service inventory (`GS-O002`) while legal, insurance and Supabase
+   actions proceed in parallel.
+4. Reconcile Master, Digital, Press and Design around truthful services, capabilities, process,
+   methodology, quality and bespoke-quote CTAs.
+5. Implement `GS-D002`: make public pricing optional; remove/rescope price-first components and
+   decide the Digital estimator treatment. Retain the Press Path Finder as non-price recommendation
+   and scoping unless a later owner decision removes it.
+6. Implement `GS-D001`: remove public portfolio/catalogue evidence from production dependencies;
+   keep reusable future functionality dormant or post-launch where safe.
+7. Complete applicable legal/consumer flows after owner and professional review.
+8. Load real production service/company/legal/SEO/assets/email/redirect content. Never copy seed
+   records as production content.
+9. Create a staging release candidate for all four sections together.
+10. Run automated release audit, then human accessibility/content/device acceptance.
+11. Remediate any failures and repeat the affected gates.
+12. In a dedicated authorised release phase only: deploy, perform controlled Hostinger DNS cutover
+    while preserving mail DNS, and verify the live site.
+13. Declare `PRODUCTION READY` only after successful live verification.
+
+No public prices, public client case studies, public client assets, Press title catalogue, retailer
+links or author-consent collection are launch dependencies under `GS-D001`/`GS-D002`.
+
+---
+
 **Context:** one person, building from scratch in Claude Code to production, then populating the database and configuring services once the site is complete.
 
 That last point changes the sequencing meaningfully. You are not building a site and filling it as you go — you are building an **empty machine that gets loaded at the end**. Everything below is arranged around that.

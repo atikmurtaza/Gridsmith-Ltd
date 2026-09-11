@@ -5,6 +5,20 @@
 Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, including
 `A-GATE`.
 
+## GS-P00 reconciliation — authoritative override
+
+The historical rows below are preserved. This table controls current sequencing.
+
+| Historical IDs | Current treatment |
+|---|---|
+| `U-07`, `U-08`, `V-06`, `Y-04` | Keep service/scoping routes where useful, but remove the requirement to expose public price bands. Existing structural price enforcement is `GS-T001`. |
+| `V-01`–`V-16`, `Y-08`, `Y-09`, `Q-DG1`, `Q-DG2` | The public price estimator and its historical-price calibration are **SUPERSEDED as launch requirements**. Later decide: remove, internal-only, post-launch, or convert to a non-price project-scoping/quote-request tool. Do not implement that decision in GS-P00. |
+| `T-09`, `Q-DG4` | A diagnostic/scoping offer may remain if it is a real service; public diagnostic price is not required. Resolve after `GS-O002`. |
+| `U-09`, `W-01`, `W-02`, `X-02`, `Q-DG6` | Public case studies/work grid are **POST-LAUNCH/CONSENT-DEPENDENT** under `GS-D001`; eight projects are not a launch dependency. |
+
+Ownership, exclusions, security posture, performance, accessibility, service truth and quote/contact
+flows remain active. Price publication does not determine whether those features are useful.
+
 ---
 
 ## Epic U — Digital shell

@@ -2,6 +2,11 @@
 
 **For internal use — 2 September 2026**
 
+> **GS-P00 note — 11 September 2026.** `GS-D001` and `GS-D002` change the intended public website:
+> it will not depend on public client/author portfolio evidence or public prices. The legal
+> instruments themselves were not redrafted in GS-P00. A solicitor must review portfolio-use,
+> quotation/price and consumer-flow wording against these decisions before publication (`GS-X001`).
+
 This file is not a public legal notice. It records the practical items that should stay aligned with the public terms.
 
 ## Required before public launch

@@ -1,5 +1,9 @@
 # Project Rules — Gridsmith Digital
 
+> **GS-P00 override — 11 September 2026.** The Digital tracker reconciliation table and
+> `GS-D001`/`GS-D002` override public case-study, price-band, estimator-price and calibration launch
+> rules in this historical document. Other safety, honesty, accessibility and technical rules remain.
+
 Binding rules for anyone (human or AI coding agent) working on the Digital route group. Where this conflicts with general best practice, this file wins.
 
 **Read this first:** Digital sells software craft. This codebase is the primary sales artifact. A shortcut taken here is not a technical debt entry — it is a visible defect in the product being sold (R4.6, persona P4).
