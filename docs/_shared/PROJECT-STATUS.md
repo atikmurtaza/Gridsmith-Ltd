@@ -2,18 +2,19 @@
 
 **Programme:** controlled production readiness
 
-**Status:** ACTIVE — Supabase availability verified; implementation not authorised by this task
+**Status:** ACTIVE — GS-P01 repository hardening complete; production activation remains deferred
 
-**Current task:** `GS-O001-R2` — restore and verify availability of the Gridsmith Supabase project
+**Current task:** `GS-P01` — dependency, database-boundary and application security hardening
 
-**Current commit:** `a5d7773f45567b18ed858ab4c25193949b33498d` at task start; the ending commit is the single `GS-O001-R2` documentation commit containing this record
+**Current commit:** `b0f4fee7f3300f45d2bc663a2a73d48f43ac67a6` at task start; the ending
+commit is the single GS-P01 commit containing this record
 
 **Branch:** `main`, tracking `origin/main`
 
-**Working tree:** clean at task start; GS-O001-R2 documentation changes only
+**Working tree:** clean at task start; GS-P01 files only after implementation
 
-**CI/build:** see `AI-HANDOFF.md` for the GS-O001-R2 verification record; no application build or
-integration test is required for documentation-only lifecycle verification
+**CI/build:** local static, clean production build, secrets, bundle and served security-header
+checks pass. GitHub CI is authoritative for the two Lighthouse axes skipped on Windows.
 
 **Last updated:** 11 September 2026
 
@@ -23,15 +24,18 @@ integration test is required for documentation-only lifecycle verification
 
 **Lifecycle state:** `ACTIVE_HEALTHY`
 
-**Identity:** verified by exact project reference through the Supabase connector; repository records
-name the same reference.
+**GS-P01 access:** read-only metadata, advisors and aggregate compatibility checks only. No
+production schema, data, RLS, Auth or credential mutation occurred.
 
-**Reachability:** PASS — connector project lookup, project URL lookup and read-only database metadata
-query succeeded. Expected Supabase schemas and the repository's migrated public tables were present.
-The project was already active, so no resume or other lifecycle mutation occurred.
+The repository now contains
+`supabase/migrations/20260911203125_gs_p01_security_hardening.sql`. It revokes all direct
+`anon`/`authenticated` privileges from the five reviewed public tables, drops the permissive lead
+insert policy, enables RLS on the migration ledger, adds durable lead bounds, and prevents future
+automatic public table/sequence grants. It has **not** been applied to production.
 
-`GS-O001`: **COMPLETE**. The generic Supabase project-switching blocker is removed. Lifecycle
-management of projects in other organisations is outside the Gridsmith production critical path.
+All 63 existing production leads passed aggregate, read-only compatibility checks for the proposed
+constraints. This is not a clean migration replay. Docker is unavailable and the project has no
+non-production Supabase branch, so replay/application remains a later controlled operation.
 
 ## Production state
 
@@ -40,8 +44,27 @@ management of projects in other organisations is outside the Gridsmith productio
 | Production readiness | **NOT READY** |
 | Production deployment authorisation | **NOT AUTHORISED** |
 | `gridsmith.uk` cutover | **PROHIBITED until a dedicated production-release phase** |
-| Latest completed phase | `GS-P00` when its commit and push are complete |
-| Next recommended phase | `GS-P01` — security and operational hardening that does not depend on owner service content |
+| Latest completed phase | `GS-P01` when its commit and push are complete |
+| Next recommended phase | Service-definition/content architecture planning after controller approval |
+
+## GS-P01 outcome
+
+- `GS-T006`: **REMEDIATED** in the repository. Next.js moved from `15.5.23` to `15.5.25`,
+  PostCSS resolves to `8.5.28`, Sharp resolves to `0.35.4`, and `npm audit --omit=dev` reports zero
+  vulnerabilities.
+- Lead intake: **REMEDIATED IN REPOSITORY**. The existing Server Action is the sole write boundary;
+  it validates and explicitly maps public input before a server-only service-role insert. Direct
+  anonymous table insertion is removed by the pending migration.
+- `GS-T004`: **REMEDIATED IN REPOSITORY / OPEN IN PRODUCTION**. The migration-ledger exposure and
+  broad public grants are fixed by the pending migration, but the live database is intentionally
+  unchanged until a controlled migration phase.
+- Security headers: **REMEDIATED IN REPOSITORY** with an enforced staged CSP, referrer/MIME/framing/
+  permissions/HSTS policy and removal of `X-Powered-By`. Deployment verification remains later.
+- Vercel credential presence: **UNVERIFIED** because CLI authentication was unavailable. The code
+  requires `SUPABASE_SERVICE_ROLE_KEY` for public lead submission after the migration is applied;
+  environment configuration and migration/deployment must be coordinated in a later release phase.
+- Notification retry/reconciliation and live email delivery remain outside GS-P01 and were not
+  changed.
 
 ## Authoritative decisions
 
@@ -50,9 +73,6 @@ management of projects in other organisations is outside the Gridsmith productio
   replace it. Permitted private examples may be discussed without promising disclosure.
 - `GS-D002` — public fixed, starting, indicative, package or estimator-generated prices are not a
   production dependency. Public journeys lead to a bespoke quotation or consultation.
-
-See the full decision record and affected historical requirements in `AI-HANDOFF.md` and the
-GS-P00 reconciliation notes at the top of each project tracker.
 
 ## Active blockers
 
@@ -71,27 +91,18 @@ GS-P00 reconciliation notes at the top of each project tracker.
   internal, deferred, or converted to non-price project scoping before production.
 - `GS-T003` — public work/case-study/book surfaces and related launch gates still exist in code and
   older specifications; production content and navigation must not depend on them under `GS-D001`.
-- `GS-T004` — security/operations findings remain open, including security headers, public lead
-  boundary hardening, durable notification reconciliation and live RLS-drift credentials/checks.
-  Read-only verification on 11 September 2026 additionally found RLS disabled on
-  `public._gridsmith_migrations`; do not enable it without first defining and validating the intended
-  access/policy model in `GS-P01`.
+- `GS-T004` — apply and verify the GS-P01 Supabase migration in a controlled release sequence,
+  coordinated with the server-only service-role environment and deployment. Until then the live
+  migration ledger and broad grants retain their pre-GS-P01 state.
 - `GS-T005` — the production Sanity dataset/content path remains incomplete and seed content must
   never be promoted as production content.
-- `GS-T006` — the production dependency audit reports 3 vulnerabilities: 1 critical in the
-  installed Next.js dependency path and 2 high in transitive PostCSS/Sharp paths. Remediate and
-  re-run the audit in a dedicated hardening phase; do not apply an unreviewed bulk audit fix.
+- Notification reconciliation and live RLS-drift scheduling/credential verification remain later
+  operational work; GS-P01 did not broaden into those systems.
 
 ### External-review blockers
 
 - `GS-X001` — solicitor review of the legal instruments and the impact of `GS-D001`/`GS-D002`.
 - `GS-X002` — professional review appropriate to engineering/CAD claims and the drawing matrix.
-
-### Content blockers
-
-- `GS-O002` — definitive services and truthful capability/process copy.
-- Real production company, contact, legal, SEO and accessibility content listed in
-  `OWNER-ACTIONS.md`; no public portfolio or public pricing content is requested.
 
 ### Human-acceptance blockers
 

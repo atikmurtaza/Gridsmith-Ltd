@@ -9,13 +9,12 @@ import { leadSchema } from './schema.ts';
  * The lead pipeline (`A-08`, `FOUNDATION` §6). Server Action, Zod at the boundary, Supabase
  * insert, then notifications.
  *
- * ## It inserts as `anon`, deliberately, and not with a service role
+ * ## It inserts only from this server boundary
  *
- * The publishable key runs as the `anon` role, so **the insert is subject to the same RLS the
- * browser would be**. Using a service role here would bypass RLS and make the `anon insert
- * only` policy decorative — the database would be protected by this file remembering to
- * behave, which is the arrangement `A-07` exists to replace. If this code is ever wrong, RLS
- * still holds.
+ * GS-P01 removes direct `anon` table insertion. The service-role credential is held only in
+ * this `server-only` module; `leadSchema` strips unknown fields and the insert body is built from
+ * that parsed value, so callers cannot populate status, notes or notification/CRM timestamps.
+ * Database constraints independently preserve the durable bounds.
  *
  * ## Three constraints established at `A-07` by querying the live database, not by reading SQL
  *
@@ -25,10 +24,8 @@ import { leadSchema } from './schema.ts';
  *    returns **201**.
  * 2. **The id is generated here rather than read back**, for the same reason: nothing can read
  *    the row after writing it. `randomUUID()` is what the notification references.
- * 3. **`notified_at` stays null.** It is meant to be stamped after the notification is
- *    accepted, and `anon` has no UPDATE policy — correctly, since UPDATE from a public form is
- *    exactly what RLS is keeping out. Stamping it needs a service-role writer, which does not
- *    exist yet. The column is real; the speed-to-lead measurement is not. `M-P2-13`.
+ * 3. **`notified_at` stays null.** Notification reconciliation is outside GS-P01; acquiring a
+ *    server credential here does not authorise that separate workflow.
  *
  * ## Order, and what a partial failure means
  *
@@ -57,7 +54,7 @@ export type SubmitResult =
   | { status: 'error'; detail: string };
 
 const PROJECT_URL = (process.env.PROJECT_URL ?? '').replace(/\/$/, '');
-const PUBLISHABLE_KEY = process.env.PUBLISHABLE_KEY ?? '';
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
 
 export async function submitLead(input: unknown): Promise<SubmitResult> {
   const parsed = leadSchema.safeParse(input);
@@ -70,8 +67,8 @@ export async function submitLead(input: unknown): Promise<SubmitResult> {
     return { status: 'invalid', errors };
   }
 
-  if (!PROJECT_URL || !PUBLISHABLE_KEY) {
-    return { status: 'error', detail: 'PROJECT_URL or PUBLISHABLE_KEY is not set' };
+  if (!PROJECT_URL || !SERVICE_ROLE_KEY) {
+    return { status: 'error', detail: 'PROJECT_URL or SUPABASE_SERVICE_ROLE_KEY is not set' };
   }
 
   const id = randomUUID();
@@ -79,8 +76,8 @@ export async function submitLead(input: unknown): Promise<SubmitResult> {
   const response = await fetch(`${PROJECT_URL}/rest/v1/leads`, {
     method: 'POST',
     headers: {
-      apikey: PUBLISHABLE_KEY,
-      Authorization: `Bearer ${PUBLISHABLE_KEY}`,
+      apikey: SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
       'Content-Type': 'application/json',
       // See constraint 1 above. Changing this to `return=representation` breaks every
       // submission with a 401, and it will look like an auth problem rather than an RLS one.

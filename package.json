@@ -31,9 +31,9 @@
     "check:legal:selftest": "node scripts/check-legal-parity.selftest.mjs",
     "check:lhci:desktop": "node scripts/check-lhci.mjs desktop",
     "check:lhci:mobile": "node scripts/check-lhci.mjs mobile",
-    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run lint:colors && npm run check:contrast && npm run check:state-cues && npm run check:headings && npm run check:content && npm run check:claims && npm run check:control && npm run check:schemas && npm run check:rls && npm run check:launch:selftest && npm run check:legal:selftest && npm run check:struck:selftest && npm run check:struck && npm run check:path:selftest && npm run check:press:contact:selftest && npm run check:lists:selftest && npm run check:lists",
+    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run lint:colors && npm run check:contrast && npm run check:state-cues && npm run check:headings && npm run check:content && npm run check:claims && npm run check:control && npm run check:schemas && npm run check:rls && npm run check:lead-security && npm run check:launch:selftest && npm run check:legal:selftest && npm run check:struck:selftest && npm run check:struck && npm run check:path:selftest && npm run check:press:contact:selftest && npm run check:lists:selftest && npm run check:lists",
     "verify:build": "npm run build && npm run lint:secrets && npm run check:tokens && npm run check:theme && npm run size",
-    "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:launch\" \"npm run check:responsive\" \"npm run check:consumer-terms\" \"npm run check:legal:parity\" \"npm run check:vat\" \"npm run check:press:type\" \"npm run check:path:live\" \"npm run check:lhci:desktop\" \"npm run check:lhci:mobile\"",
+    "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:security-headers\" \"npm run check:launch\" \"npm run check:responsive\" \"npm run check:consumer-terms\" \"npm run check:legal:parity\" \"npm run check:vat\" \"npm run check:press:type\" \"npm run check:path:live\" \"npm run check:lhci:desktop\" \"npm run check:lhci:mobile\"",
     "verify": "npm run verify:static && npm run verify:build && npm run verify:served",
     "check:node": "node scripts/check-node-version.mjs",
     "studio": "sanity dev --port 3333",
@@ -44,6 +44,8 @@
     "check:schemas": "node scripts/check-schemas.mjs",
     "migrate": "node --env-file=.env.local scripts/migrate.mjs",
     "check:rls": "node scripts/check-rls.mjs",
+    "check:lead-security": "node scripts/check-lead-security.mjs",
+    "check:security-headers": "node scripts/check-security-headers.mjs",
     "mark:measure": "node scripts/mark-freespace.mjs",
     "mark:solve": "node scripts/mark-path.mjs",
     "mark:overlap": "node scripts/check-mark-overlap.mjs",
@@ -65,7 +67,7 @@
   },
   "dependencies": {
     "@sanity/client": "^8.1.0",
-    "next": "^15.5.23",
+    "next": "^15.5.25",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "server-only": "^0.0.1",
@@ -81,7 +83,7 @@
     "@types/react-dom": "^19.2.4",
     "axe-core": "^4.13.0",
     "eslint": "^9.39.5",
-    "eslint-config-next": "^15.5.23",
+    "eslint-config-next": "^15.5.25",
     "pg": "^8.23.0",
     "postcss": "^8.5.26",
     "puppeteer": "^24.43.1",
@@ -89,5 +91,9 @@
     "styled-components": "^6.5.3",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "postcss": "$postcss",
+    "sharp": "0.35.4"
   }
 }

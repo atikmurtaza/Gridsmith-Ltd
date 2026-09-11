@@ -15,9 +15,8 @@
  *
  * **A Vercel Cron hitting this route on the deployment.**
  *
- * - **Not CI.** Pruning needs the service-role key and CI must not hold it — that is the
- *   standing rule, and it is currently also true that CI has not run since 13 Aug (`M-P1-5`),
- *   so a check living there would have been silent for the whole period it was needed.
+ * - **Not CI.** The deployment is the system whose live Data API posture is being checked;
+ *   CI can only verify the committed migration declarations.
  * - **Not `pg_cron` inside Supabase.** This is the decisive one. A job running inside the
  *   database runs *as a role*, and every role that can schedule work is privileged enough to
  *   be blind to exactly this class: `postgres` reads `leads` freely and always will. The leak
@@ -37,13 +36,8 @@
  * the service role is deliberately not used for any assertion, only for the prune. Using it
  * here would bypass RLS by design and every probe would pass for the wrong reason.
  *
- * The insert probe is not decoration: RLS drift runs both ways, and a tightening that breaks
- * the one capability the public form needs is as much a defect as a leak. It writes a row
- * marked `@gridsmith.invalid` — RFC 2606 reserves `.invalid`, so the marker can never collide
- * with a real address — and the prune then removes those rows, which closes `M-P2-14`.
- *
- * **The prune's configuration is reported, never inferred** (`M-P1-6`, `M-P1-7`): the caller is
- * told whether a service-role key was present rather than being left to read a zero as clean.
+ * GS-P01 removes every expected anonymous write. Insert probes are therefore positive refusal
+ * checks and create no rows when the database is correctly configured.
  */
 import { NextResponse } from 'next/server';
 
@@ -51,11 +45,7 @@ export const dynamic = 'force-dynamic';
 
 const PROJECT_URL = (process.env.PROJECT_URL ?? '').replace(/\/$/, '');
 const PUBLISHABLE_KEY = process.env.PUBLISHABLE_KEY ?? '';
-const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
 const CRON_SECRET = process.env.CRON_SECRET ?? '';
-
-/** The reserved-TLD marker every probe row carries. RFC 2606: `.invalid` is never routable. */
-const PROBE_EMAIL_SUFFIX = '@gridsmith.invalid';
 
 const anonHeaders = { apikey: PUBLISHABLE_KEY, Authorization: `Bearer ${PUBLISHABLE_KEY}` };
 
@@ -90,7 +80,7 @@ const anonHeaders = { apikey: PUBLISHABLE_KEY, Authorization: `Bearer ${PUBLISHA
  * because the read is free and becomes a real assertion the moment a result is recorded, and
  * because its write probe below is a positive reading that is valid now.
  */
-const NO_READ = ['leads', 'sample_grants', 'events', 'press_path_results'];
+const NO_READ = ['_gridsmith_migrations', 'leads', 'sample_grants', 'events', 'press_path_results'];
 
 /**
  * Tables `anon` may never WRITE, asserted by attempting the write. **This is a positive
@@ -118,6 +108,15 @@ const NO_READ = ['leads', 'sample_grants', 'events', 'press_path_results'];
  * `check:rls` over the migrations.
  */
 const NO_WRITE: { table: string; row: Record<string, unknown>; why: string }[] = [
+  {
+    table: 'leads',
+    row: {
+      division: 'design',
+      full_name: 'RLS drift probe',
+      email: 'drift@gridsmith.invalid',
+    },
+    why: 'GS-P01 makes the server action the only lead writer; direct Data API inserts bypass application abuse controls',
+  },
   {
     table: 'sample_grants',
     row: { asset_key: 'rls-drift-probe', expires_at: '2099-01-01T00:00:00Z' },
@@ -249,78 +248,14 @@ export async function GET(request: Request): Promise<Response> {
     }
   }
 
-  /**
-   * The id is generated HERE rather than left to the database default, and that is what makes
-   * the read-back below possible: `anon` cannot read the row it just wrote, so the only way to
-   * ask for it by name is to have chosen the name.
-   */
   const probeId = crypto.randomUUID();
 
-  // The capability that must NOT be lost. Drift runs both ways.
-  const insert = await fetch(`${PROJECT_URL}/rest/v1/leads`, {
-    method: 'POST',
-    headers: { ...anonHeaders, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      id: probeId,
-      division: 'design',
-      full_name: 'RLS drift probe',
-      email: `drift${PROBE_EMAIL_SUFFIX}`,
-    }),
-    cache: 'no-store',
-    // `.catch` for the same reason as the probes above, and this one was missing until the
-    // unreachable-host proof crashed the handler: an ENOTFOUND rejected here, escaped, and the
-    // route returned an empty 500 with no findings at all. A gate that dies has not reported.
-  }).catch(() => null);
-  if (!insert) {
-    findings.push({
-      subject: 'leads',
-      problem: 'the insert request did not complete, so the write path was not measured',
-      observed: 'network error',
-    });
-  } else if (insert.ok) {
-    observations.push(`leads insert: HTTP ${insert.status}, accepted`);
-  }
-  if (insert && !insert.ok) {
-    findings.push({
-      subject: 'leads',
-      problem: 'anon INSERT was refused — the public contact form cannot submit',
-      observed: `HTTP ${insert.status} ${(await insert.text()).slice(0, 200)}`,
-    });
-  }
-
-  /**
-   * **The read-back — the one reading here whose green is earned, and the validity proof for
-   * every `0 rows` above.** A `201` followed by an empty read is not an absence: it is a row
-   * that demonstrably exists, filtered out of a query by the same key that wrote it, seconds
-   * apart. Without it, `leads: HTTP 200, 0 rows` is only as good as the assumption that the
-   * table is not empty, and `01-VALIDATION-REPORT.md` §22 is the record of what that assumption
-   * costs. Skipped when the insert did not land, because there is then no subject to look for.
-   */
-  if (insert?.ok) {
-    const back = await fetch(`${PROJECT_URL}/rest/v1/leads?id=eq.${probeId}&select=id`, {
-      headers: anonHeaders,
-      cache: 'no-store',
-    }).catch(() => null);
-    if (!back) {
-      findings.push({ subject: 'leads', problem: 'the read-back request did not complete, so nothing above is validated', observed: 'network error' });
-    } else if (DENIED.includes(back.status)) {
-      observations.push(`leads read-back: HTTP ${back.status}, denied outright`);
-    } else if (back.status !== 200) {
-      findings.push({ subject: 'leads', problem: 'unrecognised status on the read-back — nothing was measured', observed: `HTTP ${back.status}` });
-    } else {
-      const rows: unknown = await back.json().catch(() => null);
-      if (!Array.isArray(rows)) {
-        findings.push({ subject: 'leads', problem: 'the read-back body was not an array, so it validates nothing', observed: `HTTP 200, ${JSON.stringify(rows)?.slice(0, 80)}` });
-      } else if (rows.length > 0) {
-        findings.push({ subject: 'leads', problem: 'anon read back the row it had just inserted — there is a SELECT policy for anon, or RLS is off. Every lead in the database is readable from any browser', observed: `HTTP 200, ${rows.length} row(s)` });
-      } else {
-        observations.push('leads read-back: HTTP 200, 0 rows — a row written by this request is invisible to the key that wrote it, so the empty reads above are filtered reads');
-      }
-    }
-  }
-
   // Positive readings: a refusal, not an absence. See NO_WRITE.
-  for (const { table, row, why } of NO_WRITE) {
+  // Before the GS-P01 migration lands, the migration ledger itself is publicly readable. That
+  // finding suppresses write probes so deploying this code ahead of the controlled migration can
+  // never create a row in the still-permissive leads table.
+  const databaseIsHardened = !findings.some((finding) => finding.subject === '_gridsmith_migrations');
+  for (const { table, row, why } of databaseIsHardened ? NO_WRITE : []) {
     const res = await fetch(`${PROJECT_URL}/rest/v1/${table}`, {
       method: 'POST',
       headers: { ...anonHeaders, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
@@ -344,35 +279,10 @@ export async function GET(request: Request): Promise<Response> {
     }
   }
 
-  // Pruning needs the service role, which is why this job does not live in CI (`M-P2-14`).
-  const pruneConfigured = Boolean(SERVICE_ROLE_KEY);
-  let pruned: number | null = null;
-  if (pruneConfigured) {
-    const del = await fetch(
-      `${PROJECT_URL}/rest/v1/leads?email=like.*${encodeURIComponent(PROBE_EMAIL_SUFFIX)}`,
-      {
-        method: 'DELETE',
-        headers: {
-          apikey: SERVICE_ROLE_KEY,
-          Authorization: `Bearer ${SERVICE_ROLE_KEY}`,
-          Prefer: 'return=representation',
-        },
-        cache: 'no-store',
-      },
-    );
-    const deleted: unknown = del.ok ? await del.json().catch(() => null) : null;
-    pruned = Array.isArray(deleted) ? deleted.length : null;
-    if (!del.ok) {
-      findings.push({
-        subject: 'prune',
-        problem: 'the probe-row prune failed',
-        observed: `HTTP ${del.status}`,
-      });
-    }
-  }
+  if (!databaseIsHardened) observations.push('write-refusal probes skipped until _gridsmith_migrations is no longer publicly readable');
 
   return NextResponse.json(
-    { ok: findings.length === 0, checkedAs: 'anon', observations, findings, pruneConfigured, pruned },
+    { ok: findings.length === 0, checkedAs: 'anon', observations, findings },
     { status: findings.length === 0 ? 200 : 500 },
   );
 }

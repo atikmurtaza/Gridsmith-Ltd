@@ -2,9 +2,8 @@
 /**
  * check-rls
  *
- * **Row-level security is the only thing standing between a publishable key and every lead in
- * the database.** The key is designed to be public; RLS is what makes that safe. Nothing
- * checked it.
+ * GS-P01 uses two independent layers: RLS and explicit privilege revocation. The publishable
+ * key must have no direct table write path; the server-only lead boundary is the sole writer.
  *
  * This reads the committed migrations, which is a deliberate limitation stated up front:
  * **it asserts what the repository declares, not what the database currently is.** A live
@@ -57,7 +56,7 @@ const lower = sql.toLowerCase();
  * disabled all three loops here and the summary line did not change by one character —
  * "RLS on all 3 table(s) … security_invoker on all 1 view(s)" with nothing checked. `M-P1-4`.
  */
-const counted = { tables: 0, policies: 0, views: 0 };
+const counted = { tables: 0, views: 0 };
 
 const tables = [...lower.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?([a-z0-9_]+)/g)].map((m) => m[1]);
 const views = [...lower.matchAll(/create\s+(?:or\s+replace\s+)?view\s+([a-z0-9_]+)/g)].map((m) => m[1]);
@@ -75,32 +74,37 @@ for (const table of tables) {
   }
 }
 
-// 2. No read or write policy for anon or public. Absence is denial under RLS, and the only
-//    anon capability the schema is meant to have is inserting a lead.
-for (const m of sql.matchAll(
-  // The role list stops at `using` / `with check` / `;`. Two bugs lived in this one line and
-  // **both were found by the deliberate-failure proof, neither by reading it**:
-  //
-  //   1. Without the boundary the greedy class swallowed the next keyword — `to anon using
-  //      (true)` captured the role as "anon using", which matched no role name, so a
-  //      deliberate anon SELECT policy went green.
-  //   2. The fix for (1) was written with a literal backspace (U+0008) where a word boundary
-  //      was intended, so the lookahead could never match and the SELECT case
-  //      STILL went green while the DELETE case — which ends in `;` and takes the other
-  //      branch — fired correctly. A half-working alternation looks exactly like a working
-  //      one from the one case you happen to test.
-  /create\s+policy\s+("[^"]+"|[a-z0-9_]+)\s+on\s+([a-z0-9_]+)\s+for\s+([a-z]+)\s+to\s+([a-z0-9_,\s]+?)(?=\s+(?:using|with)|\s*;)/gi,
-)) {
-  counted.policies += 1;
-  const [, name, table, cmd, roles] = m;
-  const to = roles.toLowerCase().split(',').map((r) => r.trim());
-  if (!to.some((r) => r === 'anon' || r === 'public')) continue;
-  if (cmd.toLowerCase() !== 'insert') {
-    problems.push(
-      `policy ${name} on "${table}" grants ${cmd.toUpperCase()} to ${to.join(', ')} — ` +
-        'anon may insert a lead and nothing else. Reads are service-role only',
-    );
+// 2. GS-P01 drops the historical anon lead policy. Only SQL after that forward-only boundary
+//    describes the current public-policy state.
+const policyBoundary = lower.lastIndexOf('drop policy if exists "anon insert only" on public.leads');
+if (policyBoundary < 0) {
+  problems.push('the historical anon lead INSERT policy is never dropped');
+} else {
+  const finalPolicySql = lower.slice(policyBoundary);
+  if (/create\s+policy[\s\S]+?\bto\s+(?:anon|public)\b/.test(finalPolicySql)) {
+    problems.push('a public RLS policy is created after the GS-P01 boundary — direct Data API access is meant to stay closed');
   }
+}
+
+const publicTables = ['_gridsmith_migrations', 'leads', 'sample_grants', 'events', 'press_path_results'];
+for (const table of publicTables) {
+  const revoke = new RegExp(
+    `revoke\\s+all\\s+on\\s+table\\s+public\\.${table}\\s+from\\s+anon\\s*,\\s*authenticated`,
+  );
+  if (!revoke.test(lower)) problems.push(`table "${table}" never revokes privileges from anon and authenticated`);
+}
+if (!/alter\s+table\s+public\._gridsmith_migrations\s+enable\s+row\s+level\s+security/.test(lower)) {
+  problems.push('_gridsmith_migrations never enables RLS');
+}
+
+for (const constraint of [
+  'leads_full_name_bounds',
+  'leads_email_bounds',
+  'leads_message_bounds',
+  'leads_payload_object',
+  'leads_payload_size',
+]) {
+  if (!lower.includes(`add constraint ${constraint}`)) problems.push(`lead constraint "${constraint}" is absent`);
 }
 
 // 3. Every view sets security_invoker. See the docstring: this is the defect that shipped.
@@ -120,8 +124,6 @@ for (const view of views) {
 }
 
 for (const [what, n] of Object.entries(counted)) {
-  // Policies legitimately can be zero only if there are no policies at all, which for this
-  // schema would itself be the finding: `anon insert only` is the one policy that must exist.
   if (n === 0) problems.push(`the ${what} check iterated zero times — it did not run`);
 }
 
@@ -135,7 +137,7 @@ if (problems.length > 0) {
 
 console.log(
   `check-rls: ${files.length} migration(s) — RLS checked on ${counted.tables} table(s), ` +
-    `${counted.policies} policy(ies) checked for anon read/write, security_invoker checked on ` +
-    `${counted.views} view(s). ` +
+  `public table privileges revoked, no active public policy declared, security_invoker checked on ` +
+    `${counted.views} view(s), lead integrity constraints present. ` +
     'Declared, not live — see M-P2-12',
 );

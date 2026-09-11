@@ -59,7 +59,36 @@ if (!Array.isArray(legacyRedirects)) {
 const excludeProbes =
   process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
 
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://cdn.sanity.io",
+  "font-src 'self'",
+  "connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co",
+  "media-src 'self' https://cdn.sanity.io",
+  "worker-src 'self' blob:",
+  "manifest-src 'self'",
+].join('; ');
+
+const securityHeaders = [
+  { key: 'Content-Security-Policy', value: contentSecurityPolicy },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()',
+  },
+  { key: 'Strict-Transport-Security', value: 'max-age=31536000' },
+];
+
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   /**
    * **Declared here so it is always defined, which is what makes the probe cost nothing when
    * it is off.** `components/consent/bundle-size-probe.ts` is the committed subject for
@@ -134,7 +163,12 @@ const nextConfig: NextConfig = {
    * earlier than before.
    */
   async headers() {
-    return [{ source: '/:path*', headers: [{ key: 'x-gridsmith-dataset', value: SANITY_DATASET }] }];
+    return [
+      {
+        source: '/:path*',
+        headers: [{ key: 'x-gridsmith-dataset', value: SANITY_DATASET }, ...securityHeaders],
+      },
+    ];
   },
   async redirects() {
     return legacyRedirects;

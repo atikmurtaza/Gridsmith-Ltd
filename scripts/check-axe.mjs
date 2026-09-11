@@ -822,25 +822,15 @@ if (cookiesBeforeConsent.length > 0) {
 }
 
 /**
- * **The lead pipeline's contract — `A-08`.**
+ * **The lead validation contract — `A-08`, hardened at GS-P01.**
  *
- * Exercised over HTTP against `app/(marketing)/gridsmith-lead-probe/route.probe.ts`, not by
- * importing `submitLead`: that module carries `server-only` and throws outside a bundler,
- * correctly, because the import is what keeps its credentials out of a client bundle. Going
- * through the runtime is also the stronger form — `A-07` established that this system's RLS
- * posture is only observable from outside.
- *
- * **The `Prefer: return=minimal` constraint is asserted by the valid case's status code, not
- * by grepping for the header.** PostgREST's default is `return=representation`, which makes
- * every insert a read as well, and `anon` has no select policy — so switching it back turns
- * every submission into a 401 and this assertion into a failure. Measured at `A-07`:
- * representation 401, minimal 201. A header grep would pass a build where the header was set
- * on the wrong request.
+ * Exercised over HTTP against `app/gridsmith-lead-probe/route.ts`. GS-P01 deliberately removed
+ * the live insert from this probe: CI must not hold the service-role key and a verification run
+ * must not create production data. `check:lead-security` owns the insert-boundary assertions.
  *
  * Every rejection case is a real validation boundary rather than a sample: a malformed email,
  * a division outside the enum, a blank required field, a body over the length cap, and a
- * request that is not an object at all. Each must be refused **without reaching the
- * database** — `status: 'invalid'` and no row.
+ * request that is not an object at all. Each must be refused before any database call.
  */
 const LEAD_PROBE = `${BASE_URL}/gridsmith-lead-probe`;
 const VALID_LEAD = { division: 'design', full_name: 'Pipeline Probe', email: 'pipeline@gridsmith.invalid' };
@@ -911,23 +901,8 @@ const postLead = async (body) => {
 
 {
   const ok = await postLead(VALID_LEAD);
-  if (ok.status !== 201 || ok.json?.status !== 'ok') {
-    leadProblems.push(
-      `a valid lead returned ${ok.status} ${JSON.stringify(ok.json)}. If this is a 401 the ` +
-        'insert used Prefer: return=representation — PostgREST reads the row back and anon has ' +
-        'no select policy (A-07)',
-    );
-  } else if (!ok.json.id) {
-    leadProblems.push('a valid lead returned no id — nothing can read the row back, so the action must generate it');
-  } else if ('notifications' in ok.json) {
-    // The response carrying outcomes means the send was awaited. Measured: 56ms median with
-    // `after()`, 224ms awaited — a third-party API's latency and its outages would otherwise
-    // sit on the critical path of a form submission, and a timeout would look to the visitor
-    // like a failed submission for a lead that is already saved.
-    leadProblems.push(
-      'the production path returned notification outcomes, so the send was awaited. It must ' +
-        'run in after(): the response cannot wait on a third-party API',
-    );
+  if (ok.status !== 200 || ok.json?.status !== 'valid') {
+    leadProblems.push(`a valid lead did not pass validation — returned ${ok.status} ${JSON.stringify(ok.json)}`);
   }
 
   for (const [label, body] of REJECTED) {
@@ -935,8 +910,7 @@ const postLead = async (body) => {
     if (bad.json?.status !== 'invalid') {
       leadProblems.push(
         `${label} was not rejected — returned ${bad.status} ${JSON.stringify(bad.json)}. ` +
-          'Zod at the boundary is the only thing between a public form and an anon INSERT policy ' +
-          'with `with check (true)`',
+          'the server boundary must reject it before the service-role insert is attempted',
       );
     }
   }
@@ -1269,9 +1243,9 @@ if (!process.exitCode) {
       'the site, which the storage and request assertions below do not cover',
   );
   console.log(
-    `check-axe: lead pipeline — a valid submission returns 201 with an id and no notification ` +
-      `outcomes (the send is in after()), and ${REJECTED.length} validation boundaries are ` +
-      'refused without reaching the database',
+    `check-axe: lead validation — a valid payload is accepted and ${REJECTED.length} malformed ` +
+      'boundaries are refused without writing to the database; check:lead-security owns the ' +
+      'server-only insert assertions',
   );
   console.log(
     `check-axe: lead notification — asserted "${notifyBranch}". ` +

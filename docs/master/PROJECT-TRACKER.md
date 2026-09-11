@@ -18,6 +18,31 @@ single-launch model and production seed protections remain active.
 
 ---
 
+## GS-P01 security hardening — 11 September 2026
+
+**Status: COMPLETE IN REPOSITORY; live database migration and application deployment are not
+authorised in this phase.** Starting commit: `b0f4fee7f3300f45d2bc663a2a73d48f43ac67a6`.
+
+| Finding | Status | Evidence / residual |
+|---|---|---|
+| `GS-T006` production dependencies | **REMEDIATED** | Next.js `15.5.23 -> 15.5.25`; PostCSS resolves to `8.5.28`; Sharp resolves to `0.35.4`; final `npm audit --omit=dev` is zero. Initial advisories: `GHSA-p293-qw3h-jr36`, `GHSA-2xp9-vwfh-vxw4`, `GHSA-6g55-p6wh-862q`, `GHSA-r28c-9q8g-f849`, `GHSA-f88m-g3jw-g9cj`, `GHSA-rgj7-g3m4-5g8c`, plus the moderate PostCSS advisories included in the high dependency path. |
+| Direct anonymous lead insert | **REMEDIATED IN REPOSITORY / OPEN LIVE** | Existing Server Action is the sole intended writer; Zod strips protected fields and bounds JSON to 16 KiB; server-only service role performs the insert. Pending migration drops `WITH CHECK (true)` and revokes public grants. |
+| `GS-T004` migration ledger | **REMEDIATED IN REPOSITORY / OPEN LIVE** | `_gridsmith_migrations` is migration-script bookkeeping only. Pending migration enables RLS with no public policy and revokes `anon`/`authenticated`; direct privileged migration access remains. Production remains unchanged. |
+| `sample_grants`, `events`, `press_path_results` | **REMEDIATED IN REPOSITORY / OPEN LIVE** | Intended server-only tables retain RLS/no-policy denial; pending migration removes broad latent table grants and the events-sequence grant. |
+| Durable lead integrity | **REMEDIATED IN REPOSITORY** | Database checks cover bounded text, trimmed required identity fields, basic email shape, JSON-object payload and 16 KiB payload size. Read-only aggregates found zero violations across 63 live leads. Clean replay remains unproven because Docker is unavailable and no Supabase development branch exists. |
+| Security headers | **REMEDIATED IN REPOSITORY / UNDEPLOYED** | Staged enforced CSP, referrer, MIME, framing, permissions, HSTS and `poweredByHeader: false`; served gate passed three response classes and was proven red by deliberate failure. |
+| Privileged environment boundary | **REMEDIATED IN CODE / CONFIG UNVERIFIED** | `SUPABASE_SERVICE_ROLE_KEY` is referenced only in a `server-only` module and documented without a value. Local value is absent; Vercel presence was not verified because CLI authentication was unavailable. |
+
+The migration, service-role environment and application deployment must be activated in one
+controlled later operation so public submission is never routed to a database that has already
+revoked anonymous insertion without a configured server credential. No production write, migration,
+RLS, Auth, credential, Vercel, Hostinger, DNS or domain change occurred in GS-P01.
+
+Notification reconciliation/delivery, SEO, service definitions, public content, pricing/portfolio
+restructuring, legal wording and production deployment remain outside this phase.
+
+---
+
 ## ✋ ACCEPTED — `M-P2-36`, first-view typography under `display: 'optional'`
 
 **Status `ACCEPTED`, not `OPEN`. Accepted by Atik on 21 August 2026. This is not backlog and

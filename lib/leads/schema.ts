@@ -16,6 +16,14 @@ import { z } from 'zod';
  */
 export const DIVISIONS = ['design', 'digital', 'press', 'unsure'] as const;
 export const LEAD_TYPES = ['enquiry', 'sample_request', 'estimate', 'assessment', 'newsletter'] as const;
+export const MAX_LEAD_PAYLOAD_BYTES = 16_384;
+
+const leadPayloadSchema = z
+  .record(z.string().max(120), z.json())
+  .refine(
+    (value) => new TextEncoder().encode(JSON.stringify(value)).length <= MAX_LEAD_PAYLOAD_BYTES,
+    `Answers are too large (maximum ${MAX_LEAD_PAYLOAD_BYTES} bytes)`,
+  );
 
 /**
  * **No PII beyond what the form asks for, and nothing derived.** `PROJECT-RULES.md` §6 bans
@@ -43,7 +51,7 @@ export const leadSchema = z.object({
    * Division-specific answers. Capped, because `payload` is `jsonb` with a GIN index and an
    * unbounded object from a public endpoint is a denial-of-service shape, not just untidy.
    */
-  payload: z.record(z.string().max(120), z.unknown()).default({}),
+  payload: leadPayloadSchema.default({}),
 
   source: z.string().max(120).optional(),
   medium: z.string().max(120).optional(),

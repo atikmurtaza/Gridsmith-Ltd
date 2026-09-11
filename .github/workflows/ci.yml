@@ -120,6 +120,9 @@ jobs:
       - name: Row-level security is declared on every table, view and policy
         run: npm run check:rls
 
+      - name: Lead input and server-only insert boundary
+        run: npm run check:lead-security
+
       # The committed subject for check:launch's live tier — M-P1-14. That tier's only
       # subject was the live dataset, which has never held a [SEED] marker or a published
       # seed record, so the assertions behind non-negotiable #4 had never been observed to
@@ -276,5 +279,5 @@ jobs:
       # them. The 17px reading in particular cannot be taken from source — --text-base is a
       # clamp that is 16px at 375px and 17px near 1440px, so a source check that found the
       # token named would have called the phone rendering a pass.
-      - name: axe + statutory record + no horizontal overflow at 375/768/1440 + consumer terms routing + legal parity + press body type
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live"
+      - name: axe + security headers + statutory record + responsive and legal checks
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live"
