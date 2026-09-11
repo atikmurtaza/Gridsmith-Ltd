@@ -49,6 +49,23 @@ not requested under `GS-D001` and `GS-D002`.
 - **What it blocks:** affected Design claims and any higher-risk engineering launch content.
 - **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
 
+### `GS-O010` — Provide an isolated Supabase target for Vercel Preview
+
+- **Status:** ACTIONABLE NOW
+- **Why required:** GS-P02 could not prove that Preview is separated from the production Supabase
+  project. The organisation has no Supabase branch and no second accessible non-production project,
+  so a Preview submission could reach production data.
+- **Exact action:** choose and provision a clearly non-production Supabase branch/project without
+  silently enabling a paid plan; then set Preview's public Supabase variables and a distinct Preview
+  service-role secret through the secure Vercel dashboard. Never paste either service-role secret
+  into chat, documentation, source or a `NEXT_PUBLIC_` variable.
+- **What it blocks:** safe hosted Preview end-to-end testing of the server-only lead writer. Until
+  closed, do not submit test leads in Preview and do not copy the production service-role secret into
+  Preview.
+- **Evidence required:** non-production project reference and lifecycle state, secure Vercel
+  presence/scope confirmation, and an authorised synthetic Preview submission proved to land only in
+  that isolated target. If provisioning would add cost, obtain explicit approval before enabling it.
+
 ## UPCOMING
 
 ### `GS-O006` — Approve production capability/process content

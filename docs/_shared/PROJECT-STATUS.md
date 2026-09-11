@@ -2,21 +2,21 @@
 
 **Programme:** controlled production readiness
 
-**Status:** ACTIVE — GS-P01 repository hardening complete; production activation remains deferred
+**Status:** ACTIVE — GS-P02 validation complete; production migration and deployment remain deferred
 
-**Current task:** `GS-P01` — dependency, database-boundary and application security hardening
+**Current task:** `GS-P02` — security migration replay and deployment-readiness verification
 
-**Current commit:** `b0f4fee7f3300f45d2bc663a2a73d48f43ac67a6` at task start; the ending
-commit is the single GS-P01 commit containing this record
+**Current commit:** `daf192f1a6ce16f49bc0525ede6262fc198fcf8d` at task start; the ending
+commit is the single GS-P02 documentation commit containing this record
 
 **Branch:** `main`, tracking `origin/main`
 
-**Working tree:** clean at task start; GS-P01 files only after implementation
+**Working tree:** clean at task start; GS-P02 control documentation only after validation
 
-**CI/build:** local static, clean production build, secrets, bundle and served security-header
-checks pass. GitHub CI is authoritative for the two Lighthouse axes skipped on Windows.
+**CI/build:** local static, typecheck, lint, clean production build, secrets, bundle and served
+security-header checks pass. GitHub CI passed for the tested GS-P01 implementation commit.
 
-**Last updated:** 11 September 2026
+**Last updated:** 12 September 2026
 
 ## Supabase state
 
@@ -24,47 +24,77 @@ checks pass. GitHub CI is authoritative for the two Lighthouse axes skipped on W
 
 **Lifecycle state:** `ACTIVE_HEALTHY`
 
-**GS-P01 access:** read-only metadata, advisors and aggregate compatibility checks only. No
-production schema, data, RLS, Auth or credential mutation occurred.
+**GS-P02 production access:** read-only metadata, aggregate constraint-compatibility and environment
+inspection only. No production schema, data, RLS, Auth or credential mutation occurred.
 
-The repository now contains
-`supabase/migrations/20260911203125_gs_p01_security_hardening.sql`. It revokes all direct
-`anon`/`authenticated` privileges from the five reviewed public tables, drops the permissive lead
-insert policy, enables RLS on the migration ledger, adds durable lead bounds, and prevents future
-automatic public table/sequence grants. It has **not** been applied to production.
+### Repository state
 
-All 63 existing production leads passed aggregate, read-only compatibility checks for the proposed
-constraints. This is not a clean migration replay. Docker is unavailable and the project has no
-non-production Supabase branch, so replay/application remains a later controlled operation.
+The repository contains the complete four-migration chain through
+`20260911203125_gs_p01_security_hardening.sql`. It declares the intended server-only table model,
+lead constraints, migration-ledger RLS and public grant revocations. The application validates and
+maps public enquiry input before using a server-only service-role writer.
+
+### Disposable replay state
+
+GS-P02 replayed the complete migration chain in an isolated local Supabase stack. Clean replay,
+runner repeatability, a representative pre-GS-P01 upgrade, effective role tests and the application
+submission path all passed. The stack used synthetic data only, required no paid infrastructure and
+was destroyed after verification. Full evidence is in
+`docs/_shared/GS-P02-SECURITY-MIGRATION-REPLAY.md`.
+
+### Production database state
+
+Production still records only migrations `0001`–`0003`. The GS-P01 migration has not been applied:
+the migration ledger does not yet have RLS, public grants remain, and the old anonymous lead-insert
+policy remains. All 63 production leads passed read-only aggregate checks against the proposed
+constraints. No personal lead contents were reproduced.
+
+`GS-T004` is therefore **REMEDIATED IN REPOSITORY / OPEN IN PRODUCTION** and **READY FOR CONTROLLED
+ACTIVATION**. It is not closed until production migration and effective-access verification occur in
+an explicitly authorised release phase.
+
+## Vercel state
+
+**Project:** `gridsmith-ltd` (`prj_kfFxGWf0ai1VYAGICYfVvNn0QYYN`), Node `24.x`
+
+- Public Supabase variables are present in Development, Preview and Production.
+- `SUPABASE_SERVICE_ROLE_KEY` is present only in Production.
+- No value was printed, copied or changed.
+- Development points to the production Supabase project.
+- Preview could not be positively tied to an isolated backend; there is no Supabase branch or second
+  accessible non-production project. Treat it as non-isolated and do not submit Preview test leads.
+- The latest GS-P01 production-target deployment is `ERROR`, consistent with the intentional failure
+  caused by the empty production Sanity dataset.
+- No Preview or production deployment was created, promoted or changed in GS-P02.
 
 ## Production state
 
 | Control | State |
 |---|---|
 | Production readiness | **NOT READY** |
+| `GS-T004` migration suitability | **READY FOR CONTROLLED ACTIVATION** |
+| `GS-T004` live remediation | **OPEN — PRODUCTION UNCHANGED** |
 | Production deployment authorisation | **NOT AUTHORISED** |
 | `gridsmith.uk` cutover | **PROHIBITED until a dedicated production-release phase** |
-| Latest completed phase | `GS-P01` when its commit and push are complete |
-| Next recommended phase | Service-definition/content architecture planning after controller approval |
+| Latest completed phase | `GS-P02` when its commit and push are complete |
+| Next recommended phase | Service-definition/content architecture work after controller approval |
 
-## GS-P01 outcome
+## GS-P02 outcome
 
-- `GS-T006`: **REMEDIATED** in the repository. Next.js moved from `15.5.23` to `15.5.25`,
-  PostCSS resolves to `8.5.28`, Sharp resolves to `0.35.4`, and `npm audit --omit=dev` reports zero
-  vulnerabilities.
-- Lead intake: **REMEDIATED IN REPOSITORY**. The existing Server Action is the sole write boundary;
-  it validates and explicitly maps public input before a server-only service-role insert. Direct
-  anonymous table insertion is removed by the pending migration.
-- `GS-T004`: **REMEDIATED IN REPOSITORY / OPEN IN PRODUCTION**. The migration-ledger exposure and
-  broad public grants are fixed by the pending migration, but the live database is intentionally
-  unchanged until a controlled migration phase.
-- Security headers: **REMEDIATED IN REPOSITORY** with an enforced staged CSP, referrer/MIME/framing/
-  permissions/HSTS policy and removal of `X-Powered-By`. Deployment verification remains later.
-- Vercel credential presence: **UNVERIFIED** because CLI authentication was unavailable. The code
-  requires `SUPABASE_SERVICE_ROLE_KEY` for public lead submission after the migration is applied;
-  environment configuration and migration/deployment must be coordinated in a later release phase.
-- Notification retry/reconciliation and live email delivery remain outside GS-P01 and were not
-  changed.
+- Complete clean replay: **PASS**; all four migrations applied in order without SQL errors.
+- Repeatability: **PASS**; the repository runner's second run applied zero migrations.
+- Upgrade behaviour: **PASS** with two synthetic pre-GS-P01 rows retained.
+- Existing data: **PASS read-only**; 63/63 production leads satisfy the proposed constraints.
+- Effective security: **PASS in replay**; all five tables have RLS and zero policies, public table,
+  sequence and view access is denied, and the service role can persist and read a lead.
+- Application boundary: **PASS**; one synthetic local submission reached the disposable backend via
+  the Server Action and protected fields remained server/database controlled. The row was removed.
+- Migration quality: **PASS**; each file and ledger entry are transactional. The SQL is intentionally
+  runner-repeatable rather than independently idempotent. Constraint validation takes an `ALTER
+  TABLE` lock but no rewrite is expected at the current 63-row volume.
+- Security headers: **PASS** on `/`, `/contact` and 404 responses with no visible browser breakage.
+- Migration correction: **NOT REQUIRED**.
+- Preview isolation: **NOT PROVED**; recorded as owner action `GS-O010`.
 
 ## Authoritative decisions
 
@@ -82,22 +112,23 @@ non-production Supabase branch, so replay/application remains a later controlled
 - `GS-O003` — complete solicitor review and resolve legal launch actions.
 - `GS-O004` — confirm operational/company facts and make required contact routes operational.
 - `GS-O005` — confirm engineering/CAD professional-indemnity scope.
+- `GS-O010` — provision and securely connect a clearly isolated non-production Supabase target for
+  safe hosted Preview lead testing; approve any cost before enabling paid infrastructure.
 
 ### Technical blockers
 
 - `GS-T001` — public service rendering and CMS schemas currently require and display pricing; a
   later implementation phase must make price publication optional and replace price-first CTAs.
-- `GS-T002` — the Digital estimator is price-producing by design; it must be removed, kept
-  internal, deferred, or converted to non-price project scoping before production.
+- `GS-T002` — the Digital estimator is price-producing by design; it must be removed, kept internal,
+  deferred, or converted to non-price project scoping before production.
 - `GS-T003` — public work/case-study/book surfaces and related launch gates still exist in code and
   older specifications; production content and navigation must not depend on them under `GS-D001`.
-- `GS-T004` — apply and verify the GS-P01 Supabase migration in a controlled release sequence,
-  coordinated with the server-only service-role environment and deployment. Until then the live
-  migration ledger and broad grants retain their pre-GS-P01 state.
+- `GS-T004` — execute the reviewed activation sequence in an authorised controlled window: deploy and
+  prove the server writer first, then migrate and verify production effective access.
 - `GS-T005` — the production Sanity dataset/content path remains incomplete and seed content must
   never be promoted as production content.
 - Notification reconciliation and live RLS-drift scheduling/credential verification remain later
-  operational work; GS-P01 did not broaden into those systems.
+  operational work; GS-P02 did not broaden into those systems.
 
 ### External-review blockers
 
@@ -113,6 +144,7 @@ non-production Supabase branch, so replay/application remains a later controlled
 
 ## Detailed registers
 
+- GS-P02 evidence and activation plan: `docs/_shared/GS-P02-SECURITY-MIGRATION-REPLAY.md`
 - Owner dependencies: `docs/_shared/OWNER-ACTIONS.md`
 - Current phase handoff and verification: `docs/_shared/AI-HANDOFF.md`
 - Permanent agent controls: `docs/_shared/AI-DEVELOPMENT-PROTOCOL.md`
