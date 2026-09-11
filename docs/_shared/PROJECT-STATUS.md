@@ -2,29 +2,36 @@
 
 **Programme:** controlled production readiness
 
-**Status:** ACTIVE — control baseline established; implementation not authorised by this phase
+**Status:** ACTIVE — Supabase availability verified; implementation not authorised by this task
 
-**Current phase:** `GS-P00` — Establish production-control system and reconcile owner-approved launch strategy
+**Current task:** `GS-O001-R2` — restore and verify availability of the Gridsmith Supabase project
 
-**Current commit:** `fb05dcc184c993858577e1d3ef0214b1e6527102` at phase start; the ending commit is the single `GS-P00` commit containing this record
+**Current commit:** `a5d7773f45567b18ed858ab4c25193949b33498d` at task start; the ending commit is the single `GS-O001-R2` documentation commit containing this record
 
 **Branch:** `main`, tracking `origin/main`
 
-**Working tree:** clean at phase start; GS-P00 documentation changes only
+**Working tree:** clean at task start; GS-O001-R2 documentation changes only
 
-**CI/build:** local `npm run verify:static` passed before and after the documentation change;
-`npm audit --omit=dev --audit-level=high` failed on 3 production vulnerabilities (1 critical,
-2 high); no application build was required for documentation-only changes
+**CI/build:** see `AI-HANDOFF.md` for the GS-O001-R2 verification record; no application build or
+integration test is required for documentation-only lifecycle verification
 
 **Last updated:** 11 September 2026
 
 ## Supabase state
 
-`SUPABASE_OWNER_ACTION_REQUIRED`. The connected Supabase integration did not expose projects named
-`Gridsmith` or `Pyramid Design`; it exposed only `CRM Project v2`
-(`jgozxgyscfnitgusyqrx`, `ACTIVE_HEALTHY`) and `atikmurtaza's Project`
-(`dtrgxkalfgfyjsxquhff`, `INACTIVE`). No Supabase project was paused, restored or otherwise changed.
-See `OWNER-ACTIONS.md` `GS-O001`.
+**Project:** `dqiutgmxillhsbzgnlsx` (`Gridsmith Project`)
+
+**Lifecycle state:** `ACTIVE_HEALTHY`
+
+**Identity:** verified by exact project reference through the Supabase connector; repository records
+name the same reference.
+
+**Reachability:** PASS — connector project lookup, project URL lookup and read-only database metadata
+query succeeded. Expected Supabase schemas and the repository's migrated public tables were present.
+The project was already active, so no resume or other lifecycle mutation occurred.
+
+`GS-O001`: **COMPLETE**. The generic Supabase project-switching blocker is removed. Lifecycle
+management of projects in other organisations is outside the Gridsmith production critical path.
 
 ## Production state
 
@@ -51,7 +58,6 @@ GS-P00 reconciliation notes at the top of each project tracker.
 
 ### Owner blockers
 
-- `GS-O001` — positively identify and switch the intended Supabase projects.
 - `GS-O002` — provide the definitive, truthful list of services Gridsmith offers.
 - `GS-O003` — complete solicitor review and resolve legal launch actions.
 - `GS-O004` — confirm operational/company facts and make required contact routes operational.
@@ -67,6 +73,9 @@ GS-P00 reconciliation notes at the top of each project tracker.
   older specifications; production content and navigation must not depend on them under `GS-D001`.
 - `GS-T004` — security/operations findings remain open, including security headers, public lead
   boundary hardening, durable notification reconciliation and live RLS-drift credentials/checks.
+  Read-only verification on 11 September 2026 additionally found RLS disabled on
+  `public._gridsmith_migrations`; do not enable it without first defining and validating the intended
+  access/policy model in `GS-P01`.
 - `GS-T005` — the production Sanity dataset/content path remains incomplete and seed content must
   never be promoted as production content.
 - `GS-T006` — the production dependency audit reports 3 vulnerabilities: 1 critical in the

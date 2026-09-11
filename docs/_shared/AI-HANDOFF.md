@@ -2,97 +2,91 @@
 
 ## Execution
 
-- **Task ID:** `GS-P00`
-- **Task:** Establish production-control system and reconcile owner-approved launch strategy
+- **Task ID:** `GS-O001-R2`
+- **Task:** Restore and verify availability of the Gridsmith Supabase project
 - **Agent/model:** Codex
-- **Effort:** controlled repository and external-state reconciliation
 - **Status:** COMPLETE
 - **Date:** 11 September 2026
+- **Access method used:** CONNECTOR
+- **Computer Use:** not used; the functioning connector succeeded
 
 ## Repository state
 
-- **Starting commit:** `fb05dcc184c993858577e1d3ef0214b1e6527102`
-- **Ending commit:** the single GS-P00 commit containing this handoff; use `git rev-parse HEAD`
-- **Branch:** `main`
-- **Working tree:** clean at start; documentation/control files only in this phase
-- **Pushed:** YES — the single GS-P00 documentation commit to `origin/main`
+- **Starting commit:** `a5d7773f45567b18ed858ab4c25193949b33498d`
+- **Ending commit:** the single GS-O001-R2 documentation commit containing this handoff; use
+  `git rev-parse HEAD`
+- **Branch:** `main`, tracking `origin/main`
+- **Working tree:** clean at start; documentation/control files only in this task
+- **Pushed:** YES when the authorised GS-O001-R2 commit is present on `origin/main`
 
-## Changes
+## Supabase lifecycle and identity
 
-- Established `PROJECT-STATUS.md`, `AI-HANDOFF.md`, `OWNER-ACTIONS.md` and
-  `AI-DEVELOPMENT-PROTOCOL.md` as the permanent programme control set.
-- Recorded `GS-D001` (no public portfolio dependency without permission) and `GS-D002` (bespoke
-  quotations; no public price dependency).
-- Preserved historical requirements while marking portfolio, author-consent, retailer-link,
-  public-pricing and price-estimator requirements as superseded or requiring resequencing.
-- Reconciled the four project trackers, the build sequence, handover, pre-deployment checklist,
-  legal launch checklist and standing repository instructions.
-- Kept the Press Path Finder on the roadmap as a recommendation/scoping tool independent of
-  public price publication. Its existing seed rules still require owner validation.
+- **Project reference:** `dqiutgmxillhsbzgnlsx`
+- **Project name reported by connector:** `Gridsmith Project`
+- **Repository reference match:** PASS
+- **Initial state:** `ACTIVE_HEALTHY`
+- **Resume occurred:** NO — the project was already active
+- **Final state:** `ACTIVE_HEALTHY`
+- **Backend reachability:** PASS — project lookup, project URL lookup and read-only SQL metadata
+  query succeeded
 
-## Database
+## Read-only backend verification
 
-- **Migrations created:** none
-- **Migrations tested:** none
-- **Production mutations:** none
-- **Remote data changes:** none
-- **Supabase account state:** no project changed; see `GS-O001`
+- Confirmed expected high-level schemas: `auth`, `extensions`, `graphql_public`, `public`,
+  `realtime`, `storage` and `vault`.
+- Confirmed the repository's migrated public tables: `_gridsmith_migrations`, `leads`,
+  `sample_grants`, `events` and `press_path_results`.
+- Inspected metadata only. No sensitive records were selected or reproduced.
+- The connector reported RLS enabled on `leads`, `sample_grants`, `events` and
+  `press_path_results`, but disabled on `_gridsmith_migrations`. This remains a `GS-T004`
+  security-hardening finding for `GS-P01`; no policy or schema change was authorised here.
+
+## Remote changes
+
+- **Supabase lifecycle:** none
+- **Schema/data/migrations/RLS/Auth/credentials/billing:** none
+- **Unrelated Supabase projects:** not inspected or changed
+- **Vercel/Hostinger/DNS/production deployment:** none
+- **GitHub:** the single GS-O001-R2 documentation commit is authorised for push after verification
 
 ## Verification
 
 | Check | Result |
 |---|---|
-| Connected Supabase project inventory | **BLOCKED** — intended Gridsmith/Pyramid projects not exposed |
-| Starting branch/HEAD/tracking relationship | **PASS** — `main`, `fb05dcc...`, `origin/main` |
+| Branch/HEAD/tracking relationship | **PASS** — `main`, `a5d7773f...`, `origin/main` |
 | Starting working tree | **PASS** — clean |
-| `npm run verify:static` before edits | **PASS** |
-| Documentation/control review | **PASS** — GS-D001/GS-D002 references and tracker annotations inspected |
-| `git diff --check` | **PASS** |
-| Post-change `npm run verify:static` | **PASS** |
-| `npm run lint:secrets` | **PASS** — service-role value unavailable locally and no secret exposure found |
-| `npm audit --omit=dev --audit-level=high` | **FAIL** — 3 production vulnerabilities: 1 critical, 2 high (`GS-T006`) |
-| Application build | **NOT RUN** — documentation/control changes do not affect the application bundle; static suite passed |
+| Supabase project identity | **PASS** — exact reference `dqiutgmxillhsbzgnlsx` |
+| Supabase lifecycle | **PASS** — `ACTIVE_HEALTHY` before and after read-only checks |
+| Backend reachability | **PASS** — connector metadata query succeeded |
+| Expected schemas/tables | **PASS** — high-level schemas and migrated public tables present |
+| `npm run verify:static` | **PASS** |
+| `git diff --check` | **PASS** when this handoff is committed |
+| `npm run lint:secrets` | **PASS** when this handoff is committed |
+| Mutating Supabase integration tests | **NOT RUN** — prohibited by task scope |
 
-## Remote systems changed
+## Programme outcome
 
-- **GitHub:** single GS-P00 documentation commit pushed to `origin/main`
-- **Vercel:** no change
-- **Supabase:** no change
-- **Hostinger/DNS:** no change
-- **Email provider:** no change
-- **Other external systems:** no change
-
-## Outstanding technical issues
-
-- `GS-T001` — make public pricing optional across Sanity queries/schemas and public components.
-- `GS-T002` — decide and implement the Digital estimator treatment.
-- `GS-T003` — remove public portfolio/catalogue content from the production critical path without
-  deleting future-capability code unnecessarily.
-- `GS-T004` — complete security and operational hardening.
-- `GS-T005` — prepare real production content and dataset without copying seed content.
-- `GS-T006` — remediate the critical/high production dependency advisories and re-run the audit.
-
-## Owner actions required
-
-See `OWNER-ACTIONS.md`: `GS-O001` through `GS-O005` are the current launch-relevant owner actions.
-No public pricing or public portfolio content is requested.
+- `GS-O001`: COMPLETE — Gridsmith Supabase project restored and verified available.
+- Pyramid Design is not part of the completion criterion. Lifecycle management of projects in other
+  organisations is outside the Gridsmith production critical path.
+- Generic Supabase project switching is no longer a blocker.
+- Existing future blockers for RLS/security, monitoring, migrations, lead protection, production
+  data/content and backup/recovery remain open.
 
 ## New findings
 
-- The Supabase integration is authenticated to an account/organisation view that does not expose
-  either intended project, so the requested pause/resume operation cannot be performed safely.
-- Repository source still structurally requires pricing (`pricingModel`) and the public Digital
-  estimator route already renders price bands; `GS-D002` therefore needs a later code/schema phase,
-  not only a documentation edit.
-- Historical legal and commercial copy includes portfolio-use and public-price assumptions. The
-  legal instruments were not rewritten in GS-P00; solicitor review is required before publication.
-- The current public/live website is no longer authoritative for the definitive service list. The
-  owner-supplied list required by `GS-O002` supersedes that older handover assumption.
+- `public._gridsmith_migrations` has RLS disabled. Resolve deliberately in `GS-P01`; do not apply an
+  automatic policy change without confirming the intended access model.
 
-## Recommended next task
+## Owner actions
 
-`GS-P01` — perform the unblocked security and operational hardening pass, limited to controls that
-do not require the Gridsmith Supabase project to be active and do not require owner service facts.
+- No new owner action is required for Supabase availability.
+- Existing owner actions `GS-O002` through `GS-O005` remain unchanged.
+
+## Recommended next phase
+
+`GS-P01` — unblocked security and operational hardening.
+
 Do not begin it automatically.
 
 ## Production readiness

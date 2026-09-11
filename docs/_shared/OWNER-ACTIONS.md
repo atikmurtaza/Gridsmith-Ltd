@@ -6,21 +6,6 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## ACTIONABLE NOW
 
-### `GS-O001` — Put the intended Supabase projects in the required state
-
-- **Status:** ACTIONABLE NOW — `SUPABASE_OWNER_ACTION_REQUIRED`
-- **Why required:** the connected integration does not expose projects named Gridsmith or Pyramid
-  Design, so an agent cannot positively identify the authorised targets.
-- **Exact action:** sign in to the Supabase Dashboard with the account/organisation that owns both
-  projects. On the organisation Projects page, record the exact project name and project reference
-  for each. Open the `Pyramid Design` project, go to **Project Settings -> General**, choose
-  **Pause project**, and confirm only after verifying its project reference. Return to the Projects
-  page, open the paused `Gridsmith` project, choose **Resume project**, and confirm. Do not delete,
-  transfer, reset, upgrade or change billing. Do not alter schema, data, Auth, RLS or credentials.
-- **What it blocks:** remote Gridsmith Supabase inspection and any later database-dependent phase.
-- **Evidence required:** screenshot or dashboard record showing exact names/references and final
-  states: Gridsmith active; Pyramid Design paused.
-
 ### `GS-O002` — Provide the definitive Gridsmith service list
 
 - **Status:** ACTIONABLE NOW
@@ -94,6 +79,12 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## COMPLETED
 
+- `GS-O001` — completed 11 September 2026. The Gridsmith Supabase project
+  `dqiutgmxillhsbzgnlsx` was positively identified through the Supabase connector and verified
+  `ACTIVE_HEALTHY` and queryable. It was already active, so no resume operation was required. The
+  completion criterion is only: **Gridsmith Supabase project restored and verified available.**
+  Lifecycle management of projects in other organisations is outside the Gridsmith production
+  critical path; Pyramid Design is not part of this completion criterion.
 - `GS-D001` — public portfolio policy approved 11 September 2026.
 - `GS-D002` — bespoke quotation policy approved 11 September 2026.
 - Single-launch policy retained: Master, Design, Digital and Press launch together.
