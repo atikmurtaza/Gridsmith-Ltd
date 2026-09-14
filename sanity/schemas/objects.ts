@@ -1,4 +1,4 @@
-import { defineArrayMember, defineField, defineType } from 'sanity';
+import { defineField, defineType } from 'sanity';
 import { CANONICAL_TITLES } from '../../lib/process/canonical.ts';
 
 /** `SCHEMA-CORE.md` §2. One definition, shared by every division — never duplicated. */
@@ -30,27 +30,11 @@ export const metric = defineType({
   ],
 });
 
-export const ctaBlock = defineType({
-  name: 'ctaBlock',
-  type: 'object',
-  fields: [
-    defineField({ name: 'label', type: 'string', validation: (r) => r.required() }),
-    defineField({ name: 'href', type: 'string', validation: (r) => r.required() }),
-    defineField({
-      name: 'style',
-      type: 'string',
-      options: { list: ['primary', 'secondary'] },
-      initialValue: 'primary',
-    }),
-    // Contact-form prefill. Free-form by design: which fields a CTA prefills depends on the
-    // form it points at, and those forms are division work (A-08, K-14).
-    defineField({
-      name: 'prefill',
-      type: 'object',
-      fields: [defineField({ name: 'json', type: 'text', rows: 3 })],
-    }),
-  ],
-});
+/*
+ * `ctaBlock` was removed at `GS-P03`. Its only consumer was `service`, and an editable `href`
+ * let a record point a service CTA anywhere — including at a price page. The label is now
+ * `service.ctaLabel`; the destination is derived (`lib/services/architecture.ts`).
+ */
 
 export const seoBlock = defineType({
   name: 'seoBlock',
@@ -64,53 +48,15 @@ export const seoBlock = defineType({
   ],
 });
 
-/**
- * **CLAUDE.md non-negotiable #3 — "never publish a service page without pricing" — is
- * enforced here, structurally.** `service.pricingModel` is `required`, so a service page
- * physically cannot be saved without one (`SCHEMA-CORE.md`, SC-6).
+/*
+ * `pricingBlock` was removed at `GS-P03` (`GS-D002`, closing `GS-T001`). It enforced SC-6 —
+ * "a service page physically cannot be saved without pricing" — which the bespoke-quotation
+ * decision superseded. `check:schemas` now refuses a price, cost, fee or amount field on any
+ * type, so the removal cannot quietly be undone by re-adding an optional one.
  *
- * `variables` carries a `min(2)` rule straight from the spec: *"what moves this number —
- * required, min 2"*. A price with no stated variables is a quote pretending to be a price.
- *
- * **No net/gross field, and `M-P2-3` is closed rather than deferred.** Gridsmith is not VAT
- * registered, so there is no VAT to state and no tax-treatment label to choose: a price here
- * is the amount charged, stated plainly. SI 2002/2013 reg. 6(2) requires prices to be clear
- * and unambiguous and to indicate whether they include tax — a price from a non-registered
- * trader that adds nothing at checkout is exactly that. **Nothing on this site may present a
- * price as VAT-exclusive.** If registration ever completes, the net/gross field, the display
- * rule per division audience and the legal copy change together.
+ * The VAT position it carried survives on its own terms: Gridsmith is not VAT registered,
+ * nothing may be presented as VAT-exclusive, and `check:vat` asserts that against served pages.
  */
-export const pricingBlock = defineType({
-  name: 'pricingBlock',
-  type: 'object',
-  fields: [
-    defineField({
-      name: 'model',
-      type: 'string',
-      options: { list: ['fixed', 'from', 'range', 'retainer', 'per-unit', 'day-rate'] },
-      validation: (r) => r.required(),
-    }),
-    defineField({
-      name: 'currency',
-      type: 'string',
-      options: { list: ['GBP'] },
-      initialValue: 'GBP',
-      validation: (r) => r.required(),
-    }),
-    defineField({ name: 'fromAmount', type: 'number' }),
-    defineField({ name: 'toAmount', type: 'number' }),
-    defineField({ name: 'unit', type: 'string' }),
-    defineField({ name: 'includes', type: 'array', of: [defineArrayMember({ type: 'string' })] }),
-    defineField({
-      name: 'variables',
-      type: 'array',
-      of: [defineArrayMember({ type: 'string' })],
-      description: 'What moves this number.',
-      validation: (r) => r.min(2),
-    }),
-    defineField({ name: 'note', type: 'string' }),
-  ],
-});
 
 /** `alt` is required — WCAG 1.1.1, and the CMS is the only place it can be enforced. */
 export const protectedImage = defineType({
@@ -195,9 +141,7 @@ export const processStep = defineType({
 export const objectTypes = [
   deliverable,
   metric,
-  ctaBlock,
   seoBlock,
-  pricingBlock,
   protectedImage,
   protectedVideo,
   processStep,

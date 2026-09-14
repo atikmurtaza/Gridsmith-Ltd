@@ -1,9 +1,12 @@
 # Core Schema — shared across all three divisions
 
-> **GS-P00 schema note — 11 September 2026.** The current `pricingModel` requirement documents
-> implemented source, not the approved production policy. `GS-D002` requires a later forward-only
-> change that makes public price publication optional (`GS-T001`). No schema change occurs in GS-P00.
-> Public project/case-study records are optional future capability under `GS-D001`, not launch data.
+> **GS-P03 schema note — 14 September 2026 (supersedes the GS-P00 note).** `GS-D002` is now
+> implemented: `service.pricingModel`, `pricingBlock`, `ctaBlock` and `service.track` were removed,
+> and `service` gained `capabilityGroup` (closed, division-bound), `description`, `relatedServices`,
+> `collaborators`, `ctaLabel` and the technical `professionalScopeConfirmed` gate. `project.metrics`
+> no longer requires a figure and the type is dormant under `GS-D001`. The blocks below are kept as
+> the historical specification with the superseded lines struck; `sanity/schemas/` and
+> `_shared/SERVICE-ARCHITECTURE.md` §5 are the current model.
 
 Authoritative definition of types used by every division. Each division's `SCHEMA.md` defines its own document types and the extensions it adds to these. Nothing here is duplicated per division — one CMS, one database.
 
@@ -19,23 +22,23 @@ Authoritative definition of types used by every division. Each division's `SCHEM
     { name: 'title',        type: 'string', validation: required },
     { name: 'slug',         type: 'slug', options: { source: 'title' } },
     { name: 'division',     type: 'string', options: { list: ['design','digital','press'] } },
-    { name: 'track',        type: 'string' },        // division-specific taxonomy
+    { name: 'track',        type: 'string' },        // SUPERSEDED at GS-P03 by capabilityGroup (closed, division-bound)
     { name: 'searchIntent', type: 'string' },        // the exact query this page targets
     { name: 'problem',      type: 'text', rows: 4 }, // the buyer's situation
     { name: 'deliverables', type: 'array', of: [{ type: 'deliverable' }] },
     { name: 'process',      type: 'array', of: [{ type: 'processStep' }] },
-    { name: 'pricingModel', type: 'pricingBlock', validation: required },  // SC-6: never optional
+    { name: 'pricingModel', type: 'pricingBlock', validation: required },  // SUPERSEDED — removed at GS-P03 (GS-D002)
     { name: 'faqs',         type: 'array', of: [{ type: 'reference', to: 'faq' }] },
     { name: 'relatedProjects', type: 'array', of: [{ type: 'reference', to: 'project' }] },
-    { name: 'ctaPrimary',   type: 'ctaBlock' },
-    { name: 'ctaSecondary', type: 'ctaBlock' },
+    { name: 'ctaPrimary',   type: 'ctaBlock' },      // SUPERSEDED — replaced by ctaLabel at GS-P03; destination derived
+    { name: 'ctaSecondary', type: 'ctaBlock' },      // SUPERSEDED — universal "Contact Gridsmith" at GS-P03
     { name: 'seo',          type: 'seoBlock' },
     { name: 'order',        type: 'number' },
     { name: 'published',    type: 'boolean', initialValue: false }
   ]
 }
 ```
-`pricingModel` is `validation: required` at the schema level. This is how SC-6 is enforced structurally rather than by discipline — a service page physically cannot be published without pricing.
+~~`pricingModel` is `validation: required` at the schema level. This is how SC-6 is enforced structurally rather than by discipline — a service page physically cannot be published without pricing.~~ **Superseded by `GS-D002` at `GS-P03`:** no price field exists on any type and `check:schemas` refuses one. A service is publishable with no price and no portfolio relationship.
 
 ### `project` (portfolio / case study)
 ```ts
@@ -57,7 +60,7 @@ Authoritative definition of types used by every division. Each division's `SCHEM
     { name: 'approach',      type: 'array', of: [{type:'block'}] },
     { name: 'outcome',       type: 'array', of: [{type:'block'}] },
     { name: 'metrics',       type: 'array', of: [{ type:'metric' }],
-      validation: r => r.min(1) },                   // ≥1 quantified metric enforced
+      validation: r => r.min(1) },                   // SUPERSEDED at GS-P03 — optional; a required figure invites invention
     { name: 'media',         type: 'array', of: [{ type:'protectedImage' }, { type:'protectedVideo' }] },
     { name: 'coverImage',    type: 'protectedImage' },
     { name: 'testimonial',   type: 'reference', to: 'testimonial' },
@@ -85,9 +88,10 @@ When `confidential` is true, `clientName` is never returned by any public GROQ q
 ```ts
 deliverable   { label: string, detail: text, included: boolean }
 metric        { label: string, value: string, context: string }
-ctaBlock      { label: string, href: string, style: 'primary'|'secondary', prefill: object }
+ctaBlock      { label: string, href: string, style: 'primary'|'secondary', prefill: object }   // SUPERSEDED — removed at GS-P03
 seoBlock      { metaTitle, metaDescription, ogImage, canonical, noIndex: boolean }
 
+// SUPERSEDED — pricingBlock was removed at GS-P03 (GS-D002). Kept below as history only.
 pricingBlock {
   model:      'fixed' | 'from' | 'range' | 'retainer' | 'per-unit' | 'day-rate',
   currency:   'GBP',

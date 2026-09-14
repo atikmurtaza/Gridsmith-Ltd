@@ -2,201 +2,161 @@
 
 ## Execution
 
-- **Task ID:** `GS-P02`
-- **Task:** Security migration replay and deployment-readiness verification
-- **Agent/model:** Codex
-- **Status:** VALIDATION COMPLETE; `GS-T004` ready for controlled activation and still open live
-- **Date:** 12 September 2026
+- **Task ID:** `GS-P03`
+- **Task:** Service architecture and commercial-model reconciliation
+- **Agent/model:** Claude Code (Opus 5)
+- **Status:** COMPLETE IN REPOSITORY; production content, migration and deployment untouched
+- **Date:** 14 September 2026
 
 ## Repository state
 
-- **Starting commit:** `daf192f1a6ce16f49bc0525ede6262fc198fcf8d`
-- **Ending commit:** the single GS-P02 documentation commit containing this handoff; use
-  `git rev-parse HEAD`
+- **Starting commit:** `9a804c4f2305fed208007778264b9895a69e80a8`
+- **Ending commit:** the GS-P03 commit containing this handoff; use `git rev-parse HEAD`
 - **Branch:** `main`, tracking `origin/main`
-- **Starting working tree:** clean
-- **Scope:** migration replay, effective access checks, Vercel environment/deployment inspection,
-  served-header verification, activation planning and control documentation only
-- **Pushed:** YES when the GS-P02 commit is present on `origin/main`
+- **Starting working tree:** clean, in sync with `origin/main`
+- **Scope:** schemas, query layer, service/landing/master/contact UI, gates, seed script and
+  documentation for `GS-D001`/`GS-D002` and the owner-approved service model
+- **Pushed:** YES when the GS-P03 commit is present on `origin/main`
 
 ## Hard scope boundaries preserved
 
-- The production GS-P01 migration was not applied.
-- Production data, RLS, policies, grants, Auth and credentials were not changed.
-- No Preview or production Vercel deployment was created, promoted or changed.
-- No Vercel environment variable was added, changed, removed or revealed.
-- Hostinger, DNS and `gridsmith.uk` were untouched.
-- No product, service, legal or content implementation phase was started.
+- No Supabase call of any kind; the GS-P01 production migration was not applied.
+- No Sanity write. The development dataset was **read** by gates and builds; it was not re-seeded.
+  The production dataset was not touched.
+- No Vercel action, no deployment, no environment change.
+- Hostinger, DNS and `gridsmith.uk` untouched; no redirect work.
+- No legal clause drafted or amended. No company fact, price, client evidence, credential,
+  turnaround or guarantee invented. No external profile link added.
+- The GS-P01 lead-submission architecture was not redesigned; the Server Action maps one more named,
+  schema-bounded field (`service_slug`).
+- The contact form was never submitted during verification (Development points at production
+  Supabase).
 
-## Migration replay
+## What changed
 
-An isolated local Supabase stack was created with dedicated ports and a unique temporary project
-identifier. It did not use the production project, did not require a hosted branch or paid plan, and
-did not affect existing CRM/attendance containers. Notification-provider variables were blank and
-all inserted data was synthetic. The stack and its generated local credentials were destroyed after
-verification.
+### Architecture and CMS
 
-The complete chain applied cleanly in order:
+- `lib/services/architecture.ts` (new): closed, division-bound capability groups; the
+  professional-review group list; division CTA wording; `enquiryHref`/`readEnquiryContext`; the
+  private-examples statement.
+- `service` schema: removed `pricingModel`, `track`, `ctaPrimary`, `ctaSecondary`. Added
+  `capabilityGroup` (required, closed, division-bound), `description`, `relatedServices`,
+  `collaborators`, `ctaLabel` and `professionalScopeConfirmed` (Studio warning).
+- Removed object types `pricingBlock` and `ctaBlock`.
+- `publishingPackage`: removed `price`, `priceNote`, `priceIsFrom`, `scalingFactors` and
+  `extraRevisionCost`. `excludes`, `notFor` and `revisionRounds` retained. Type dormant.
+- `project.metrics` no longer requires a figure; `project` dormant. `book` unchanged and dormant.
+- Query layer: service projections carry the new fields and no price; every project query removed,
+  with a pointer to restore the confidentiality projection from `9a804c4f` if a route ever returns.
 
-1. `0001_core.sql`
-2. `0002_view_security_invoker.sql`
-3. `0003_press_path_results.sql`
-4. `20260911203125_gs_p01_security_hardening.sql`
+### UI and routes
 
-A second run applied zero files, proving repeatability through the repository migration ledger and
-SHA checks. A representative pre-GS-P01 database containing two synthetic compatible leads upgraded
-successfully and retained both rows.
+- **Removed:** `components/content/Price.tsx`, `ProjectGrid.tsx`, `components/master/SelectedWork.tsx`,
+  `/digital/estimate`, `/work`, `/work/[slug]`, and the master `Work` nav item.
+- **Division landings:** services grouped by capability group, no prices; "Selected work" replaced by
+  "Examples of our work" (the private-examples statement); CTA wording and destination per division.
+  Verified external reviews retained.
+- **Digital service page:** renders with no price; adds capability-group eyebrow, description,
+  collaborators and related services; CTA with service context plus **Contact Gridsmith**.
+- **Homepage:** selected-work block removed; CTA band button **Discuss Your Requirements**.
+- **`/approach`:** cross-division project grid removed.
+- **Contact form:** reads `division` and `service` after mount, preselects the division and submits
+  a hidden `service_slug`; malformed context is dropped. Budget select remains non-price.
+- **`/_master-sink`:** committed specimens for the grouped, flat and empty `ServiceList` branches.
 
-## Migration quality
+### Gates
 
-- Every migration file and its ledger insert execute in one transaction. A per-file error rolls back
-  both schema work and ledger entry, so partial application of that file is not retained.
-- The GS-P01 SQL is not independently idempotent because its named constraints would collide on a
-  manual second execution. The established runner is repeatable and rejects content/SHA drift.
-- GS-P01 deliberately depends on the runner-created ledger, migrations `0001`–`0003`, and the
-  `postgres` migration role used for default privileges.
-- Adding validated constraints scans `leads` and holds an `ALTER TABLE` lock. No table rewrite is
-  expected. Current production volume is 63 compatible rows, making a short controlled low-traffic
-  window proportionate.
-- No replay defect was found and no migration correction was required.
-
-## Production compatibility and current live state
-
-The verified Supabase project is `dqiutgmxillhsbzgnlsx` (`Gridsmith Project`) and remains
-`ACTIVE_HEALTHY`.
-
-Read-only aggregate checks found 63 production leads and zero violations for every proposed GS-P01
-constraint. No lead contents were printed, copied or changed.
-
-Production still records only migrations `0001`–`0003`. It remains intentionally pre-GS-P01:
-
-- `_gridsmith_migrations` RLS is disabled;
-- `anon`/`authenticated` grants remain on the reviewed objects;
-- the anonymous lead-insert policy remains;
-- the GS-P01 constraints and default-privilege revocations are not live.
-
-Repository, replay and production states are deliberately reported separately in
-`docs/_shared/GS-P02-SECURITY-MIGRATION-REPLAY.md`.
-
-## Effective replay security
-
-| Subject | Effective result after replay |
+| Gate | Change |
 |---|---|
-| `_gridsmith_migrations` | RLS on, zero policies, public reads/writes denied |
-| `leads` | RLS on, zero policies, direct public reads/writes denied |
-| `sample_grants` | RLS on, zero policies, direct public reads/writes denied |
-| `events` and `events_id_seq` | RLS on table, zero policies, table and sequence public access denied |
-| `press_path_results` | RLS on, zero policies, direct public reads/writes denied |
-| Reporting views | `security_invoker=true`; public access denied |
-| Future objects | default public table/sequence privileges revoked |
+| `check:schemas` | SC-6 assertions removed. **New:** a price-field walk over every field name, with its own specimens; `service.capabilityGroup` closed-list entry; 8 document-context cases proving the division limb and the technical warning limb |
+| `check:launch` + selftest | **New technical publication gate**: unmeasured/non-number/no-group are failures in every dataset; unconfirmed published technical services refused on production. Specimens 11 → 16 |
+| `check:lead-security` | **New:** 7 CTA-context round-trip/drop cases plus source assertions on the form and the Server Action |
+| `check:vat` | Zero-price guard replaced with a served-text guard (`MIN_TEXT`), because zero prices is now correct; `/work` removed |
+| `check:axe`, `check:responsive` | `/work`, `/work/[slug]`, `/digital/estimate` removed from `ROUTES` and `INCOMPLETE_ALLOWED` |
+| `check-bundle-size` | `/digital/estimate` and `/design/estimate` budgets removed |
+| `check:struck` + selftest | Four struck rules registered (`GS-D002-*`); every matching spec line annotated in place; specimens +5 |
 
-Direct anonymous and authenticated attempts failed with PostgreSQL `42501`. Anonymous PostgREST
-reads/inserts returned `401`. The service role inserted and read a lead with `201` and `200`.
+### Seed and documentation
 
-## Application boundary
-
-The verified flow is:
-
-public enquiry → Next.js Server Action → strict Zod parsing and 16 KiB payload limit → explicit
-public-field mapping → server-only service-role client → `leads`.
-
-Against the disposable backend, one synthetic form submission displayed the expected success state
-and created exactly one lead. `status` retained its database default `new`; protected/internal fields
-were not supplied through the public boundary. The row was deleted after inspection. Direct anonymous
-insertion remained denied.
-
-## Vercel readiness
-
-- **Project:** `gridsmith-ltd` (`prj_kfFxGWf0ai1VYAGICYfVvNn0QYYN`)
-- **Runtime:** Node `24.x`
-- **Public Supabase variables:** present in Development, Preview and Production
-- **Service-role Development:** absent
-- **Service-role Preview:** absent
-- **Service-role Production:** present
-- **Secrets exposed:** none
-- **Environment changes:** none
-
-Development's public values point to the production Supabase project. Preview's stored target could
-not be positively read through the authorised tooling, and no Supabase branch or second accessible
-non-production project exists. Treat Preview as non-isolated until proved otherwise: do not submit
-synthetic leads there and do not copy the production service-role key into Preview. Owner action
-`GS-O010` requests a securely connected isolated backend and explicitly requires approval before any
-paid infrastructure is enabled.
-
-The latest GS-P01 production-target deployment is `ERROR`, consistent with the intentional empty
-production Sanity dataset failure. No deployment was triggered. Production service-role presence is
-ready, but production artifact readiness remains blocked by content and later release gates.
-
-## Security headers
-
-A clean build was served locally and actual responses on `/`, `/contact` and a 404 were checked.
-CSP, Referrer-Policy, X-Content-Type-Options, framing policy, Permissions-Policy and HSTS were present;
-`X-Powered-By` was absent. Browser verification showed meaningful content, no framework overlay and
-no page/console errors. HSTS becomes effective on HTTPS; the real Sanity, Supabase and notification
-origins still require final production verification.
-
-## Controlled activation sequence
-
-This is a future plan, not GS-P02 authority:
-
-1. Satisfy the production-content and release gates; obtain explicit production deployment and
-   migration approval.
-2. Reconfirm Production presence/scope for the public Supabase variables and service-role secret
-   without viewing or rotating values.
-3. Prepare reviewed minimum recovery SQL and capture the pre-change ledger, grants, RLS and policies.
-4. Deploy GS-P01's server-writer code while the old anonymous insert path still works.
-5. Prove one authorised synthetic production submission uses the server writer and remove the probe.
-6. In a short low-traffic window, run the repository migration runner; it must apply GS-P01 only.
-7. Verify ledger/SHA, constraints, RLS, zero policies, revocations, anonymous denial and service-role
-   persistence immediately.
-8. Run and remove one authorised synthetic website probe; inspect runtime errors.
-9. Close `GS-T004` only after production effective-access and application verification pass.
-
-Rollback conditions and exact recovery boundaries are recorded in
-`docs/_shared/GS-P02-SECURITY-MIGRATION-REPLAY.md`. The key rule is that old browser-only code must not
-be restored while the database remains hardened. Prefer a server-writer repair/roll-forward; if app
-rollback is unavoidable, restore only the reviewed former lead privilege/policy transactionally
-before switching application traffic.
+- `scripts/seed-content.mjs` rewritten to the capability groups with `[SEED]` services, collaborators
+  and `professionalScopeConfirmed: false`; pricing, CTA blocks and all 24 seed projects removed.
+  **Not run** (`GS-T007`).
+- New ADR `docs/_shared/SERVICE-ARCHITECTURE.md`. Updated `PROJECT-STATUS.md`, `OWNER-ACTIONS.md`,
+  `05-HANDOVER.md`, `02-BUILD-SEQUENCE.md`, `SCHEMA-CORE.md`, `PRE-DEPLOYMENT-CHECKLIST.md`,
+  `CLAUDE.md`, all four `PROJECT-TRACKER.md` files, and the struck lines in `design/PROJECT-RULES.md`,
+  `press/PROJECT-RULES.md`, `press/SCHEMA.md`, `digital/APP-FLOW.md` and both implementation plans.
 
 ## Verification
 
 | Check | Result |
 |---|---|
-| Complete clean migration replay | **PASS** — all four files applied in order |
-| Runner repeatability | **PASS** — second run applied zero files |
-| Representative upgrade | **PASS** — two synthetic rows retained |
-| Production data compatibility | **PASS READ-ONLY** — 63/63 rows compatible |
-| Effective access/RLS/grant probes | **PASS** |
-| Application submission against disposable backend | **PASS**; synthetic row removed |
-| `npm run verify:static` | **PASS** — 37-gate chain, including typecheck/lint/RLS/lead security |
-| `npm run verify:build` | **PASS** — 69 pages, secrets/tokens/theme and 67 bundle budgets |
-| Served header/browser checks | **PASS** on `/`, `/contact` and 404 |
-| `npm audit --omit=dev` | **PASS** — zero vulnerabilities |
-| GitHub CI for `daf192f1` | **PASS** — run `34647006964` |
-| Hosted Preview E2E | **BLOCKED** — isolated backend not proved |
-| Production migration/deployment | **NOT RUN** — prohibited in GS-P02 |
+| `npm run verify:static` (37-gate chain incl. typecheck, lint, colours, contrast, content, claims, schemas, RLS, lead security, all selftests, struck, lists) | **PASS** on a clean `.next` (the first run failed only on stale `.next/types` for the deleted routes; `.next` removed and re-run) |
+| `npm run verify:build` (prebuild `check:launch --build`, clean `next build`, secrets, tokens, theme flash, bundle size) | **PASS** — 41 routes within delta budgets |
+| `check:axe` | **PASS** — 68 analyses (17 routes × 2 viewports × 2 phases), 0 violations, 59 allowed incompletes, 0 unresolved, 35 link targets resolve |
+| `check:responsive` | **PASS** — 45 combinations (15 routes × 375/768/1440px), no overflow |
+| `check:security-headers`, `check:consumer-terms`, `check:legal:parity`, `check:press:type`, `check:path:live` | **PASS** |
+| `check:vat` | **PASS** — 14 routes, 527,607 characters scanned, 0 price figures |
+| `check:launch` (served) | **PASS** — dataset `development`; 0 unconfirmed technical services counted |
+| Served GS-P03 assertions (scratch harness, not committed) | **PASS 14/14** — CTAs and destinations, no price/work on landings and service page, grouped specimens in architecture order, removed routes 404, Path Finder served, contact-form context preselected/carried/dropped in a real browser without submitting |
+| `npm audit --omit=dev` | **PASS** — 0 vulnerabilities |
+| `lint:secrets` | **PASS** — 177 source files, 39 client chunks |
+| `git diff --check` / `--cached --check` | **PASS** |
+| Lighthouse CI (desktop/mobile) | **NOT RUN locally** — the local chrome-launcher EPERM cleanup failure is known; CI is the arbiter |
+| Manual screen-reader and cross-browser review | **NOT RUN** — `GS-R001` |
+
+### Deliberate-failure proofs
+
+Each proof was run alone. The subject's bytes were captured, the injection was confirmed to have
+applied, the gate was run, and the original bytes were restored and verified by SHA-256 before the
+next proof. Every result is a red that names its injection, so each probe is established as a subject.
+
+| # | Gate | Injection | Named in the red |
+|---|---|---|---|
+| P1 | `check:schemas` | optional `price` field on `publishingPackage` | `publishingPackage.price is a price field` |
+| P2 | `check:schemas` | `digital-marketing` group added to the architecture | `service.capabilityGroup allows "digital-marketing"` |
+| P3 | `check:schemas` | division limb disabled | `service.capabilityGroup = "writing" on {"division":"digital"} … got true` |
+| P4 | `check:schemas` | professional-scope rule made always-true | `service.professionalScopeConfirmed = undefined … got true` |
+| P5 | `check:lead-security` | `service_slug` mapping removed from the Server Action | `the Server Action drops CTA service context` |
+| P6 | `check:lead-security` | slug validation removed | `enquiry context for /contact?division=digital&service=Not+A+Slug` |
+| P7 | `check:launch:selftest` | live technical limb disabled | `✗ TECHNICAL — an unconfirmed published technical service on a live dataset` |
+| P8 | `check:struck` | annotation stripped from `digital/APP-FLOW.md:39` | `GS-D002-VISIBLE-PRICE-BAND STANDS at docs/digital/APP-FLOW.md:39` |
+| P9 | `check:vat` (served) | `MIN_TEXT` raised above every route | `14 route(s) served under 100000000 characters of text: …` |
+
+The committed, value-based specimens (launch selftest, struck selftest, schema price-field specimens
+and document-context cases, lead-security context cases, master-sink `ServiceList` specimens) are
+the permanent subjects; the mutation proofs above established that the assertions reach them.
 
 ## Findings and programme state
 
-- `GS-T004`: **READY FOR CONTROLLED ACTIVATION / OPEN IN PRODUCTION**.
-- GS-P01 migration correction: **NOT REQUIRED**.
-- New finding: Preview backend isolation is not proved; tracked as `GS-O010`.
-- `GS-T005`: production Sanity/content path remains incomplete; the production-target build failure
-  is expected until truthful real content is available.
-- Notification retry/reconciliation and live delivery remain outside GS-P02.
-- Overall production readiness remains **NOT READY**. Green replay, build and CI evidence do not prove
-  owner acceptance, production content, external review, live deployment or cutover readiness.
+- **Closed:** `GS-O002` (completed), `GS-T001`, `GS-T002`, `GS-T003` (closed in repository).
+- **Remaining:** `GS-T004`, `GS-T005`, `GS-O003`, `GS-O004`, `GS-O005`, `GS-O006` (now actionable),
+  `GS-O007`, `GS-O010`, `GS-X001`, `GS-X002`, `GS-R001`–`GS-R003`.
+- **New:**
+  - `GS-T007` — the development dataset holds the pre-GS-P03 seed; re-seeding needs orphan deletion
+    and explicit authorisation.
+  - `GS-O011` — owner decision on legacy "digital marketing", Google Ads and Google Business Profile
+    services, and on continued display of Freelancer project titles under `GS-D001`.
+- **Recorded, not new IDs:** Design and Press still have no per-service routes (`B-09` and the Press
+  equivalents); Master engagement models need approved copy before any CMS type (`GS-O006`); a
+  non-price Digital Project Scoper and representative-engagement type are deferred enhancements
+  (`SERVICE-ARCHITECTURE.md` §9, §11).
+- **Production readiness:** **NOT READY.**
 
 ## Remote changes
 
-- **GitHub:** one GS-P02 documentation commit pushed to `main` when release checks complete
-- **Supabase production:** none
-- **Supabase non-production:** disposable local stack only; destroyed
-- **Vercel:** none
-- **Hostinger/DNS/`gridsmith.uk`:** none
+- **GitHub:** the GS-P03 commit pushed to `main`.
+- **Supabase:** none.
+- **Sanity:** read-only queries against `development` by builds and gates; no writes; production untouched.
+- **Resend:** the existing `check:axe` notification probe sent one development notification through
+  Resend's shared sender to the account owner. This is established gate behaviour, not new in GS-P03;
+  no lead row was written.
+- **Vercel:** none initiated. The push may trigger the normal Git integration.
+- **Hostinger/DNS/`gridsmith.uk`:** none.
 
 ## Recommended next phase
 
-Proceed only after controller approval with the service-definition/content architecture work that
-implements `GS-D001` and `GS-D002`. Keep `GS-T004` activation for a later explicitly authorised
-production-release phase. Do not begin either phase from this handoff alone.
+Recommendation only. A **content-population phase against the approved architecture** once
+`GS-O006` copy (and `GS-O011` decisions) arrive: authorised development-dataset re-seed with orphan
+deletion (`GS-T007`), real service records per capability group, and Design/Press per-service routes
+if approved. Technical-group content stays gated on `GS-O005`/`GS-X002`. Keep `GS-T004` activation for a
+separately authorised production-release phase. Do not begin either from this handoff alone.

@@ -49,6 +49,7 @@
  */
 import { SANITY_API_VERSION, SANITY_PROJECT_ID, PRODUCTION_DATASET } from '../sanity/project.ts';
 import { evaluate, ALWAYS_REQUIRED, LIVE_REQUIRED } from './launch-content-rules.mjs';
+import { PROFESSIONAL_REVIEW_GROUPS } from '../lib/services/architecture.ts';
 
 /**
  * ## Two modes, because there are two different questions — `M-P1-14`
@@ -162,12 +163,24 @@ const result = res.ok ? (await res.json()).result : null;
 const seedRes = await fetch(query('count(*[isSeed == true && !(_id in path("drafts.**"))])'));
 const publishedSeeds = seedRes.ok ? (await seedRes.json()).result : null;
 
+/** `GS-P03`. Published technical services lacking professional-scope confirmation. */
+const technicalRes = await fetch(
+  query(
+    'count(*[_type == "service" && published == true && capabilityGroup in $groups ' +
+      '&& professionalScopeConfirmed != true && !(_id in path("drafts.**"))])',
+  ) + `&$groups=${encodeURIComponent(JSON.stringify(PROFESSIONAL_REVIEW_GROUPS))}`,
+);
+const unreviewedTechnical = technicalRes.ok ? (await technicalRes.json()).result : null;
+
 const problems = evaluate({
   dataset: SANITY_DATASET,
   queryStatus: res.status,
   result,
   seedStatus: seedRes.status,
   publishedSeeds,
+  reviewGroups: PROFESSIONAL_REVIEW_GROUPS,
+  technicalStatus: technicalRes.status,
+  unreviewedTechnical,
 });
 
 if (problems.length > 0) {
@@ -189,5 +202,10 @@ check-launch-content: ${problems.length} problem(s) in dataset "${SANITY_DATASET
       (isLive
         ? ' — must be 0 on a live dataset, and is'
         : `; the zero-tolerance rule applies to "${PRODUCTION_DATASET}" only`),
+  );
+  console.log(
+    `check-launch-content: ${unreviewedTechnical} published technical service(s) without ` +
+      `professional-scope confirmation (groups: ${PROFESSIONAL_REVIEW_GROUPS.join(', ')})` +
+      (isLive ? ' — must be 0 on a live dataset, and is' : `; refused on "${PRODUCTION_DATASET}" only`),
   );
 }

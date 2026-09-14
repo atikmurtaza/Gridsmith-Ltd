@@ -12,8 +12,12 @@
  *
  * It imports the registry rather than parsing it, which is what makes the last assertion
  * possible: `validation` is a function, and calling it with a recording stand-in for Sanity's
- * `Rule` is the only way to establish that `service.pricingModel` is actually required rather
- * than merely documented as required.
+ * `Rule` is the only way to establish that `service.capabilityGroup` is actually closed rather
+ * than merely documented as closed.
+ *
+ * **`GS-P03` inverted one of its oldest assertions.** This gate used to prove SC-6 — that a
+ * service could not be saved without a price. `GS-D002` superseded that, and the gate now proves
+ * the opposite at the same layer: no type declares a price, cost, fee or amount field at all.
  */
 import { readFileSync } from 'node:fs';
 import { CANONICAL_PROCESS } from '../lib/process/canonical.ts';
@@ -31,9 +35,8 @@ import { schemaTypes } from '../sanity/schemas/index.ts';
 const EXPECTED_OBJECTS = [
   'deliverable',
   'metric',
-  'ctaBlock',
+  // `ctaBlock` and `pricingBlock` were removed at `GS-P03` (`GS-D002`).
   'seoBlock',
-  'pricingBlock',
   'protectedImage',
   'protectedVideo',
   'processStep',
@@ -99,6 +102,28 @@ const CLOSED_LISTS = [
   // `R-04` reports per retailer, so a free-text value opens a partition nothing reports on.
   // `other` is inside the closed set, which is why the set can be closed at all.
   ['retailerLink', 'retailer', ['amazon-uk', 'amazon-us', 'waterstones', 'ingram', 'kobo', 'apple-books', 'bookshop-org', 'other'], (v) => v],
+  // `GS-P03`. The approved capability groups, transcribed here from the owner-approved model in
+  // `_shared/SERVICE-ARCHITECTURE.md` rather than imported from `lib/services/architecture.ts`:
+  // importing the subject's own list would let a widened architecture pass silently.
+  ['service', 'capabilityGroup', [
+    'brand-visual', 'illustration', 'motion', '3d-visualisation', 'technical',
+    'web', 'software', 'apps-interactive', 'automation-intelligence', 'operate-improve',
+    'writing', 'editorial', 'publishing', 'content-promotion',
+  ], (v) => v],
+];
+
+/**
+ * **`GS-D002`: no type may declare a price field** (`GS-P03`, closing `GS-T001`).
+ *
+ * Asserted over field *names* at every depth, so an optional `price` on a new type fails as
+ * surely as a required one — an optional price field is an invitation to publish a price. The
+ * predicate is proved against its own specimens before the walk uses it: each limb of the
+ * alternation has a name that must match, and the neighbours that must not.
+ */
+const COMMERCIAL_FIELD = /pric|cost|fee|amount/i;
+const COMMERCIAL_SPECIMENS = [
+  ['pricingModel', true], ['price', true], ['extraRevisionCost', true], ['feeNote', true], ['fromAmount', true],
+  ['revisionRounds', false], ['featured', false], ['specCheckedOn', false], ['authorConsent', false],
 ];
 
 /**
@@ -131,7 +156,16 @@ const problems = [];
  * difference between a summary that reports and a summary that asserts, and it is what makes
  * `npm run check:schemas` output evidence rather than decoration.
  */
-const counted = { expectations: 0, fields: 0, seedable: 0, stages: 0, ethics: 0 };
+const counted = { expectations: 0, fields: 0, seedable: 0, stages: 0, ethics: 0, commercial: 0, serviceRules: 0 };
+
+for (const [name, shouldMatch] of COMMERCIAL_SPECIMENS) {
+  if (COMMERCIAL_FIELD.test(name) !== shouldMatch) {
+    problems.push(
+      `COMMERCIAL_FIELD ${shouldMatch ? 'misses' : 'matches'} the specimen field name "${name}" — ` +
+        'the GS-D002 walk below would measure the wrong thing',
+    );
+  }
+}
 
 const byName = new Map(schemaTypes.map((t) => [t.name, t]));
 const documents = schemaTypes.filter((t) => t.type === 'document').map((t) => t.name);
@@ -167,6 +201,13 @@ function walkFields(typeName, fields, path = '') {
   for (const field of fields ?? []) {
     counted.fields += 1;
     const where = `${typeName}${path}.${field.name ?? '(unnamed)'}`;
+    counted.commercial += 1;
+    if (COMMERCIAL_FIELD.test(field.name ?? '')) {
+      problems.push(
+        `${where} is a price field. GS-D002: Gridsmith publishes no fixed, starting, package or ` +
+          'revision price, and an optional price field is an invitation to publish one',
+      );
+    }
     if (!field.type) {
       problems.push(`${where} declares no type`);
       continue;
@@ -224,12 +265,13 @@ for (const name of documents) {
 }
 
 /**
- * 4. **`service.pricingModel` is actually required** — CLAUDE.md non-negotiable #3, SC-6.
+ * 4. **Required rules are actually installed.**
  *
- * *"Never publish a service page without pricing. Schema-enforced."* Nothing had ever checked
- * that the enforcement exists. `validation` is a function, so the only way to establish what
- * it does is to run it: `Rule` is replaced with a recorder that returns itself from every
- * method and logs the names, which is exactly how Sanity's fluent rules are used.
+ * This section was written to prove SC-6 — *"never publish a service page without pricing"* —
+ * which `GS-D002` struck at `GS-P03`; that assertion was removed with the field. `validation` is
+ * a function, so the only way to establish what it does is to run it: `Rule` is replaced with a
+ * recorder that returns itself from every method and logs the names, which is exactly how
+ * Sanity's fluent rules are used.
  */
 function recordingRule() {
   const calls = [];
@@ -266,12 +308,15 @@ function rulesFor(typeName, fieldName) {
 }
 
 const REQUIRED_FIELDS = [
-  ['service', 'pricingModel', 'required', 'CLAUDE.md non-negotiable #3 / SC-6 — a service page cannot be published without pricing'],
   ['service', 'title', 'required', 'a service with no title cannot render'],
-  ['project', 'metrics', 'min', 'SCHEMA-CORE §1 — at least one quantified metric'],
+  // `GS-P03`. A service belongs to exactly one approved capability group of its own division.
+  ['service', 'capabilityGroup', 'required', 'GS-P03 — every service sits in an approved capability group'],
+  ['service', 'capabilityGroup', 'custom', 'GS-P03 — the group list is closed and division-bound'],
+  // `GS-P03`. The technical publication gate: present, and a warning so development is not blocked.
+  ['service', 'professionalScopeConfirmed', 'custom', 'GS-O005 / GS-X002 — technical services need professional-scope confirmation'],
+  ['service', 'professionalScopeConfirmed', 'warning', 'non-blocking in the Studio; check:launch refuses it on production'],
   ['protectedImage', 'alt', 'required', 'WCAG 1.1.1 — the CMS is the only place alt text can be enforced'],
   ['protectedVideo', 'alt', 'required', 'WCAG 1.1.1'],
-  ['pricingBlock', 'variables', 'min', 'SCHEMA-CORE §2 — "what moves this number", min 2'],
   ['processStep', 'title', 'custom', 'the canonical six — _shared/00-PROCESS.md'],
   ['continuityExample', 'rows', 'min', 'master/SCHEMA.md §2 — at least four rows; two do not show continuity'],
   ['continuityExample', 'divisionsInvolved', 'min', 'at least two divisions, or it is not cross-division'],
@@ -282,13 +327,11 @@ const REQUIRED_FIELDS = [
   ['book', 'authorConsent', 'custom', 'ETH-06 — hard-true; required() alone accepts false'],
   ['book', 'cover', 'required', 'the shelf is a fixed 2:3 grid and a missing cover is the CLS'],
   ['retailerLink', 'url', 'custom', 'press/PROJECT-RULES.md §1.7 — no affiliate links on retailer URLs'],
-  // `R-10`. Non-negotiable #3 / FR-P06 / ETH-03.
-  ['publishingPackage', 'price', 'required', 'CLAUDE.md non-negotiable #3 — there is no POA path'],
-  ['publishingPackage', 'scalingFactors', 'min', 'a price with no stated variables is a quote pretending to be a price'],
+  // `R-10`. FR-P06 / ETH-03. The price, scaling-factor and extra-revision-cost rules were
+  // removed with their fields at `GS-P03` (`GS-D002`); the honesty rules did not depend on them.
   ['publishingPackage', 'includes', 'min', 'press/SCHEMA.md §2 — at least five lines'],
   ['publishingPackage', 'excludes', 'min', 'ETH-03 / FR-P06 — exclusions carry equal weight to inclusions'],
-  ['publishingPackage', 'revisionRounds', 'custom', 'unexplained later fees are the vanity-press behaviour buyers are warned about'],
-  ['publishingPackage', 'extraRevisionCost', 'custom', 'required by §2 prose and not by its code block; the prose carries the reason'],
+  ['publishingPackage', 'revisionRounds', 'custom', 'unexplained later rounds are the vanity-press behaviour buyers are warned about'],
   ['publishingPackage', 'authorTimeCommitment', 'required', 'press/SCHEMA.md §2'],
   ['publishingPackage', 'notFor', 'required', 'the honesty requirement — a package that never says who it is wrong for is a funnel'],
   // `R-15`. FR-P07a.
@@ -329,9 +372,7 @@ const HARD_VALUES = [
     ['https://www.example-retailer.test/book/placeholder?utm_source=placeholder', 'utm_source'],
   ]],
   // `R-10`. `0` is a legitimate answer and absence is not; `required()` cannot tell them apart.
-  ['publishingPackage', 'price', [0, 1], [undefined, null, '1200', NaN]],
   ['publishingPackage', 'revisionRounds', [0, 2], [undefined, '2']],
-  ['publishingPackage', 'extraRevisionCost', [0, 150], [undefined, '150']],
   // `R-15`. The 90-day surfacing. Fresh accepted, ancient refused — provable to move.
   ['publishingPlatform', 'specCheckedOn', [TODAY, '', undefined], [['2000-01-01', 'days ago']]],
 ];
@@ -499,6 +540,43 @@ for (const [typeName, fieldName, mustAccept, mustRefuse] of HARD_VALUES) {
 }
 
 /**
+ * 6b. **The service architecture rules, run limb by limb with a document context** (`GS-P03`).
+ *
+ * Both rules decide on *another* field of the same document — the division a group must belong
+ * to, and whether a published service is in a group needing professional review — so running
+ * them with an empty context (as the closed-list pass above does) proves only the closure limb.
+ * Each case below supplies the document and names the message its limb must produce.
+ */
+const TECHNICAL = { division: 'design', capabilityGroup: 'technical', published: true };
+const SERVICE_RULE_CASES = [
+  ['capabilityGroup', 'brand-visual', { division: 'design' }, true],
+  ['capabilityGroup', 'writing', { division: 'digital' }, 'belongs to Gridsmith Press, not Gridsmith Digital'],
+  ['capabilityGroup', 'digital-marketing', { division: 'digital' }, 'must be one of:'],
+  ['professionalScopeConfirmed', undefined, TECHNICAL, 'professional scope and PI cover'],
+  ['professionalScopeConfirmed', false, TECHNICAL, 'professional scope and PI cover'],
+  ['professionalScopeConfirmed', true, TECHNICAL, true],
+  ['professionalScopeConfirmed', undefined, { ...TECHNICAL, published: false }, true],
+  ['professionalScopeConfirmed', undefined, { ...TECHNICAL, capabilityGroup: '3d-visualisation' }, true],
+];
+for (const [fieldName, value, document, expected] of SERVICE_RULE_CASES) {
+  const field = byName.get('service')?.fields?.find((f) => f.name === fieldName);
+  const { rule, customFns } = recordingRule();
+  if (typeof field?.validation !== 'function' || (field.validation(rule), customFns.length === 0)) {
+    problems.push(`service.${fieldName} has no custom rule — GS-P03's service architecture is not enforced`);
+    continue;
+  }
+  counted.serviceRules += 1;
+  const verdict = customFns.map((fn) => fn(value, { document })).find((r) => r !== true) ?? true;
+  const pass = expected === true ? verdict === true : typeof verdict === 'string' && verdict.includes(expected);
+  if (!pass) {
+    problems.push(
+      `service.${fieldName} = ${JSON.stringify(value)} on ${JSON.stringify(document)}: expected ` +
+        `${JSON.stringify(expected)}, got ${JSON.stringify(verdict)}`,
+    );
+  }
+}
+
+/**
  * 6a. **ETH-04 is run limb by limb, and each limb is identified by its own message** (`K-02`).
  *
  * `pathFinderConfig.outcomes` carries a three-limb custom rule. Running it against one bad set
@@ -641,5 +719,9 @@ console.log(
 );
 console.log(
   `check-schemas: isSeed on all ${counted.seedable} seedable document type(s); ` +
-    `${REQUIRED_FIELDS.length} validation rule(s) asserted by running them, including SC-6`,
+    `${REQUIRED_FIELDS.length} validation rule(s) asserted by running them`,
+);
+console.log(
+  `check-schemas: GS-D002 — ${counted.commercial} field name(s) checked, none is a price field; ` +
+    `GS-P03 service architecture run as ${counted.serviceRules} case(s) with a document context`,
 );

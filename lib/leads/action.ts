@@ -37,6 +37,8 @@ export async function submitLeadAction(_prev: FormState, formData: FormData): Pr
   const result: SubmitResult = await submitLead({
     division: str(formData, 'division') ?? 'unsure',
     lead_type: 'enquiry',
+    // `GS-P03`: the service a CTA was about. Attribution only; `leadSchema` bounds it to 200.
+    service_slug: str(formData, 'service_slug'),
     full_name: str(formData, 'full_name') ?? '',
     email: str(formData, 'email') ?? '',
     company: str(formData, 'company'),

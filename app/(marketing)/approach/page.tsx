@@ -5,8 +5,7 @@ import { Heading } from '@/components/primitives/Heading';
 import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { GroupSections } from '@/components/content/GroupSections';
-import { ProjectGrid } from '@/components/content/ProjectGrid';
-import { getGroupPage, listProjects } from '@/lib/sanity/queries';
+import { getGroupPage } from '@/lib/sanity/queries';
 
 export const metadata: Metadata = {
   title: 'How we work — Gridsmith Ltd',
@@ -33,13 +32,16 @@ export const metadata: Metadata = {
  * are content questions with the owner, and inventing either would be the exact failure
  * non-negotiable #2 describes: a plausible claim nobody can check.
  *
- * The cross-division work below them is the evidence that *is* available, so it is used.
+ * ## No cross-division work grid — `GS-P03`
+ *
+ * This page used to close on a grid of cross-division projects. `GS-D001` removed it: Gridsmith
+ * does not hold permission to publish client work, so the grid could only ever be empty or
+ * fabricated. The page argues from the process and the structure instead, which it can do
+ * truthfully.
  */
 export default async function Page() {
   const page = await getGroupPage('approach');
   if (!page) notFound();
-
-  const crossDivision = (await listProjects()).filter((p) => p.isCrossDivision);
 
   return (
     <main id="main" tabIndex={-1}>
@@ -57,25 +59,6 @@ export default async function Page() {
       </Section>
 
       <GroupSections sections={page.sections} />
-
-      <Section labelledBy="cross-division">
-        <Container>
-          <Heading level={2} id="cross-division">
-            Work that spanned more than one studio
-          </Heading>
-          <Prose>
-            <p>
-              The argument above is only worth making if it produces work. These are the
-              projects where more than one studio was involved.
-            </p>
-          </Prose>
-          <ProjectGrid
-            projects={crossDivision}
-            emptyTitle="No cross-division work published yet"
-            emptyBody="Work that spans two studios appears here as it is published."
-          />
-        </Container>
-      </Section>
     </main>
   );
 }

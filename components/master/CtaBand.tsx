@@ -3,6 +3,7 @@ import { Container } from '@/components/primitives/Container';
 import { Heading } from '@/components/primitives/Heading';
 import { Section } from '@/components/primitives/Section';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
+import { ENQUIRY_CTA, enquiryHref } from '@/lib/services/architecture';
 import styles from './master.module.css';
 
 /**
@@ -22,10 +23,10 @@ import styles from './master.module.css';
  * get back to you within the hour" without thinking, so the sentence is fetched rather than
  * typed. `H-07` audits every confirmation surface in all four route groups against this.
  *
- * The label is `APP-FLOW.md` §2's own — "Tell us what you need" — and it is deliberately not
- * "Get a quote" or "Book a call": the first question the form asks is *what do you need*, and a
- * button promising a quote would be promising something stage 2 of the process produces, not
- * something the form does.
+ * The heading stays `APP-FLOW.md` §2's own. **The button wording is the master CTA from
+ * `lib/services/architecture.ts`** (`GS-P03`): Master holds the relationship rather than a
+ * production service, so its action is to discuss requirements, and the destination is the one
+ * enquiry form every division's CTA also reaches — with no division preselected.
  */
 export async function CtaBand() {
   const company = await getCompanyDetails();
@@ -41,7 +42,7 @@ export async function CtaBand() {
             One form, all three studios. If what you need spans more than one of them, that is
             the first option on it.
           </p>
-          <Button href="/contact">Tell us what you need</Button>
+          <Button href={enquiryHref()}>{ENQUIRY_CTA.master}</Button>
           <p className={styles.ctaCommitment}>{company.responseCommitment}</p>
         </div>
       </Container>

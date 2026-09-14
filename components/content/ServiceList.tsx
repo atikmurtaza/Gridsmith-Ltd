@@ -1,30 +1,31 @@
 import { Card } from '@/components/primitives/Card';
 import { EmptyState } from '@/components/primitives/EmptyState';
 import { Heading } from '@/components/primitives/Heading';
-import { Price } from '@/components/content/Price';
+import { CAPABILITY_GROUPS } from '@/lib/services/architecture';
 import type { ServiceCard } from '@/lib/sanity/queries';
 import styles from './content.module.css';
 
 /**
- * The services list on a division landing page.
+ * The services list on a division landing page, grouped by capability group (`GS-P03`).
  *
  * Server Component, zero client JS.
  *
- * **Every card carries its price**, because a service without one cannot be published at all —
- * `service.pricingModel` is `required` in the schema and `check:schemas` proves the rule runs.
- * The list renders the same fact at the summary level so that a visitor never has to open a page
- * to find out whether a number exists.
+ * ## Grouped by the architecture, never by the record
  *
- * ## `basePath` is opt-in per division, and that is the whole of the linking policy
+ * Group names and their order come from `lib/services/architecture.ts`, not from the CMS, so a
+ * division always presents its groups in the approved order and an editor cannot invent a
+ * heading. A record with no recognised group is not dropped — content silently vanishing is the
+ * worst CMS failure — it renders under "Other services", and if no record has a group at all the
+ * list renders flat, which is what a dataset seeded before `GS-P03` looks like.
  *
- * Per-service routes belong to each division's own shell epic (`B-*`, `U-*`, `P-*`), and only
- * Digital has one — `/digital/services/[slug]`, `U-08`. This component is shared by all three
- * landings, so a link hardcoded here would 404 on `/design` and `/press`; `check-axe` resolves
- * every same-origin link on every audited route, so it would fail the build rather than ship
- * quietly, which is the good outcome but still the wrong design. **The caller supplies the base
- * path or supplies nothing**, and a division with no service routes passes nothing and gets the
- * card it had before: the card is the service until then, which is why it carries the problem
- * statement and the price rather than a teaser.
+ * **No price and no proof on the card.** `GS-D002` and `GS-D001`: the card is what the service
+ * is, and the conversion is a contextual enquiry on the page or the landing's CTA.
+ *
+ * ## `basePath` is opt-in per division
+ *
+ * Only Digital has per-service routes (`U-08`). A link hardcoded here would 404 on `/design` and
+ * `/press`, and `check-axe` resolves every same-origin link, so the caller supplies the base path
+ * or nothing.
  */
 export function ServiceList({
   services,
@@ -32,7 +33,8 @@ export function ServiceList({
   basePath,
 }: {
   services: ServiceCard[];
-  headingLevel?: 2 | 3 | 4;
+  /** The level of the group headings. Cards sit one level below them. */
+  headingLevel?: 2 | 3;
   /** e.g. `/digital/services`. Omit where the division has no per-service routes. */
   basePath?: string;
 }) {
@@ -44,6 +46,46 @@ export function ServiceList({
     );
   }
 
+  const groups = CAPABILITY_GROUPS.map((group) => ({
+    key: group.key,
+    label: group.label,
+    items: services.filter((s) => s.capabilityGroup === group.key),
+  })).filter((group) => group.items.length > 0);
+  const grouped = new Set(groups.flatMap((group) => group.items));
+  const other = services.filter((s) => !grouped.has(s));
+
+  if (groups.length === 0) {
+    return <Cards services={other} headingLevel={headingLevel} basePath={basePath} />;
+  }
+  if (other.length > 0) groups.push({ key: 'other', label: 'Other services', items: other });
+
+  return (
+    <div className={styles.serviceGroups}>
+      {groups.map((group) => (
+        <div key={group.key} className={styles.serviceGroup}>
+          <Heading level={headingLevel} size="d3">
+            {group.label}
+          </Heading>
+          <Cards
+            services={group.items}
+            headingLevel={headingLevel === 2 ? 3 : 4}
+            basePath={basePath}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Cards({
+  services,
+  headingLevel,
+  basePath,
+}: {
+  services: ServiceCard[];
+  headingLevel: 2 | 3 | 4;
+  basePath?: string;
+}) {
   return (
     <ul className={styles.serviceList}>
       {services.map((service) => (
@@ -58,7 +100,6 @@ export function ServiceList({
             )}
           </Heading>
           {service.problem ? <p className={styles.serviceProblem}>{service.problem}</p> : null}
-          <Price pricing={service.pricingModel} />
         </Card>
       ))}
     </ul>

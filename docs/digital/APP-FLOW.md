@@ -36,7 +36,7 @@ Sarah's decisive page is `/digital/stack`. She is checking whether you build on 
 Organic/referral → /digital/websites → price range within 30 seconds
   → portfolio → short contact form
 ```
-Marcus is the fastest cycle and lowest value. Give him a visible price band on the group landing itself so he does not need the estimator.
+Marcus is the fastest cycle and lowest value. ~~Give him a visible price band on the group landing itself so he does not need the estimator.~~ **Superseded by `GS-D002` (`GS-P03`):** there is no public price band and no estimator; give him a short, clear group landing and a contextual enquiry.
 
 ### J4 — Ellie (Technical Evaluator)
 ```

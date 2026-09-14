@@ -59,9 +59,21 @@ export const LIVE_REQUIRED = [
  * @param {object|null}     input.result         the companyDetails singleton, or null
  * @param {number|null}     input.seedStatus     HTTP status of the seed-count query, or null if it threw
  * @param {unknown}         input.publishedSeeds whatever the seed count query returned — deliberately unknown
+ * @param {string[]}        input.reviewGroups   capability groups whose services need professional review
+ * @param {number|null}     input.technicalStatus HTTP status of the technical-publication query
+ * @param {unknown}         input.unreviewedTechnical published technical services lacking confirmation
  * @returns {string[]} problems; empty means clean
  */
-export function evaluate({ dataset, queryStatus, result, seedStatus, publishedSeeds }) {
+export function evaluate({
+  dataset,
+  queryStatus,
+  result,
+  seedStatus,
+  publishedSeeds,
+  reviewGroups,
+  technicalStatus,
+  unreviewedTechnical,
+}) {
   const isLive = dataset === PRODUCTION_DATASET;
   const problems = [];
 
@@ -109,6 +121,39 @@ export function evaluate({ dataset, queryStatus, result, seedStatus, publishedSe
         'studies reaching production is the most damaging content failure available to this ' +
         'project (TECH-SPEC §6). Delete and replace them — seed records are never edited into ' +
         'real content (PROJECT-RULES §5)',
+    );
+  }
+
+  /**
+   * **The technical publication gate — `GS-P03`, for `GS-O005` / `GS-X002`.**
+   *
+   * CAD drafting and engineering drawings are real Design capabilities whose public description
+   * could be read as a claim of professional engineering responsibility that neither the owner
+   * nor an insurer has confirmed. The Studio only *warns* (development must stay testable); this
+   * is where a published, unconfirmed technical service is refused on the live dataset.
+   *
+   * Same three-way shape as the seed count, for the same reason: an unmeasured count and a
+   * non-number are failures in every dataset, and only the comparison is live-only. An empty group
+   * list is a failure too — it would make the query count nothing and report clean.
+   */
+  if (!Array.isArray(reviewGroups) || reviewGroups.length === 0) {
+    problems.push(
+      'no capability group requires professional review — the technical publication gate has no subject',
+    );
+  } else if (technicalStatus !== 200) {
+    problems.push(
+      `the technical-publication query returned HTTP ${technicalStatus} — the professional-review gate measured nothing`,
+    );
+  } else if (typeof unreviewedTechnical !== 'number') {
+    problems.push(
+      `the technical-publication query returned ${JSON.stringify(unreviewedTechnical)}, not a number — ` +
+        'anything but a number makes the comparison below false and reports clean',
+    );
+  } else if (isLive && unreviewedTechnical > 0) {
+    problems.push(
+      `${unreviewedTechnical} published technical service(s) in the live dataset without ` +
+        'professionalScopeConfirmed. Engineering and CAD services may not be published until ' +
+        'professional scope and PI cover are confirmed (GS-O005, GS-X002)',
     );
   }
 

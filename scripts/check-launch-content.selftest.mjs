@@ -41,6 +41,9 @@ const ok = (over = {}) => ({
   result: CLEAN_RECORD,
   seedStatus: 200,
   publishedSeeds: 0,
+  reviewGroups: ['technical'],
+  technicalStatus: 200,
+  unreviewedTechnical: 0,
   ...over,
 });
 
@@ -94,6 +97,27 @@ const SPECIMENS = [
     input: ok({ result: { ...CLEAN_RECORD, contactEmail: '' } }),
     expect: ['contactEmail is empty and the dataset is live'],
   },
+  // `GS-P03` — the technical publication gate, one specimen per limb.
+  {
+    name: 'TECHNICAL — an unconfirmed published technical service on a live dataset',
+    input: ok({ unreviewedTechnical: 2 }),
+    expect: ['2 published technical service(s) in the live dataset without professionalScopeConfirmed'],
+  },
+  {
+    name: 'TECHNICAL-QUERY-DOWN — an unmeasured technical count is a failure, never a skip',
+    input: ok({ technicalStatus: 503 }),
+    expect: ['the technical-publication query returned HTTP 503'],
+  },
+  {
+    name: 'TECHNICAL-NOT-A-NUMBER — a technical count that is not a number must not report clean',
+    input: ok({ unreviewedTechnical: null }),
+    expect: ['the technical-publication query returned null, not a number'],
+  },
+  {
+    name: 'NO-REVIEW-GROUPS — a gate with no group to count has no subject',
+    input: ok({ reviewGroups: [] }),
+    expect: ['no capability group requires professional review'],
+  },
 
   // ── must PASS ───────────────────────────────────────────────────────────────────────────
   {
@@ -106,6 +130,12 @@ const SPECIMENS = [
     // is legitimate in `development`, which is the entire reason the gate has two tiers.
     name: 'DEV — [SEED] markers and 121 seed records are fine off production',
     input: ok({ dataset: 'development', result: SEEDED_RECORD, publishedSeeds: 121 }),
+    expect: [],
+  },
+  {
+    // The Studio only warns so the architecture stays testable off production; this is that half.
+    name: 'DEV-TECHNICAL — unconfirmed technical services are fine off production',
+    input: ok({ dataset: 'development', unreviewedTechnical: 3 }),
     expect: [],
   },
 ];
@@ -132,7 +162,8 @@ for (const { name, input, expect } of SPECIMENS) {
  * *"an expectation derived from its own subject cannot fail when the subject is removed"*.
  * Deleting a specimen must fail this file, not shrink its report.
  */
-const EXPECTED_SPECIMENS = 11;
+// 11 → 16 at `GS-P03`: four technical-gate failures and one development pass.
+const EXPECTED_SPECIMENS = 16;
 if (SPECIMENS.length !== EXPECTED_SPECIMENS) {
   console.error(
     `\ncheck-launch-content.selftest: ${SPECIMENS.length} specimens, expected ${EXPECTED_SPECIMENS}.` +

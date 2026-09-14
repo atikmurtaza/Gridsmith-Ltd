@@ -6,18 +6,6 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## ACTIONABLE NOW
 
-### `GS-O002` — Provide the definitive Gridsmith service list
-
-- **Status:** ACTIONABLE NOW
-- **Why required:** public capability and quotation journeys must describe services truthfully; the
-  older live-site list is reference material, not the final authority.
-- **Exact information needed:** for Master, Design, Digital and Press, list each service Gridsmith
-  actually offers, a plain description, principal deliverables, material exclusions, intended
-  client type and the appropriate CTA wording.
-- **What it blocks:** final information architecture, service content, quote/request flows and
-  removal of unoffered seed services.
-- **Evidence required:** owner-approved service inventory. No public price is required.
-
 ### `GS-O003` — Complete legal review and resolve launch actions
 
 - **Status:** ACTIONABLE NOW
@@ -46,8 +34,43 @@ not requested under `GS-D001` and `GS-D002`.
   professional-review position.
 - **Exact action:** obtain written broker/insurer confirmation of whether the policy covers the
   intended engineering/CAD services, exclusions and limits.
-- **What it blocks:** affected Design claims and any higher-risk engineering launch content.
+- **What it blocks:** affected Design claims and any higher-risk engineering launch content. Since
+  `GS-P03` this is enforced: `check:launch` refuses a production dataset containing a published
+  Technical-group service without `professionalScopeConfirmed`. That flag may be set only once this
+  action and `GS-X002` are closed.
 - **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
+
+### `GS-O006` — Approve production capability/process content
+
+- **Status:** ACTIONABLE NOW (its dependency `GS-O002` closed 14 September 2026)
+- **Why required:** `GS-D001` replaces public portfolio proof with truthful capability, process,
+  quality and methodology content, and the `GS-P03` model has fields for it but no approved copy.
+- **Exact information/action needed:** per service in `_shared/SERVICE-ARCHITECTURE.md` §2, approve
+  a summary, description, deliverables and exclusions, per-stage process detail and any client time
+  you are willing to state; approve Master engagement-model copy if those are to be presented;
+  identify any privately shareable examples without promising that every request can be fulfilled.
+  Technical-group wording additionally waits on `GS-O005`/`GS-X002`.
+- **What it blocks:** production service content and content acceptance.
+- **Evidence required:** owner-approved content set.
+
+### `GS-O011` — Decide on legacy marketing services and testimonial project titles
+
+- **Status:** ACTIONABLE NOW
+- **Why required:** `GS-P03` found two items the approved model does not settle, and neither may
+  be decided by the coding agent.
+  1. The live site advertises *digital marketing support*, *Google Ads setup or support* and
+     *Google Business Profile support*. None is in the approved service model. They were **not**
+     carried into the new architecture (`SERVICE-ARCHITECTURE.md` §4).
+  2. The six Freelancer reviews shown on the site are verified and traceable, and are kept. Each
+     renders its Freelancer project title, and at least one title names a client's brand. Under
+     `GS-D001` that may count as an identifiable client project.
+- **Exact information/action needed:** (1) confirm whether Gridsmith actually sells any of those
+  three services; for any it does, state the division, the scope and what is excluded. For any it
+  does not, no action is needed. (2) Confirm the reviews may continue to show their project titles,
+  or instruct that the titles be hidden while the quotes and source link stay.
+- **What it blocks:** final service content and redirect planning for the legacy service pages;
+  final treatment of the testimonials block. It does not block the architecture.
+- **Evidence required:** written owner decision for each item.
 
 ### `GS-O010` — Provide an isolated Supabase target for Vercel Preview
 
@@ -68,16 +91,6 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## UPCOMING
 
-### `GS-O006` — Approve production capability/process content
-
-- **Status:** UPCOMING; depends on `GS-O002`
-- **Why required:** `GS-D001` replaces public portfolio proof with truthful capability, process,
-  quality and methodology content.
-- **Exact information/action needed:** approve final copy and identify any privately shareable
-  examples without promising that every request can be fulfilled.
-- **What it blocks:** production content acceptance.
-- **Evidence required:** owner-approved content set.
-
 ### `GS-O007` — Supply production assets, SEO facts and redirect inventory
 
 - **Status:** UPCOMING
@@ -96,6 +109,13 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## COMPLETED
 
+- `GS-O002` — completed 14 September 2026. The owner supplied the definitive division and service
+  architecture — Master as relationship layer; Design, Digital and Press capability groups and
+  services; cross-division boundaries; CTA directions — in the `GS-P03` brief. It is recorded in
+  `docs/_shared/SERVICE-ARCHITECTURE.md` and enforced by `service.capabilityGroup`. Adding or
+  removing an individual service inside an approved group is normal CMS content work and does not
+  reopen this action. Approved *copy* for those services is `GS-O006`; the open legacy-service
+  questions are `GS-O011`; engineering claims remain `GS-O005`/`GS-X002`.
 - `GS-O001` — completed 11 September 2026. The Gridsmith Supabase project
   `dqiutgmxillhsbzgnlsx` was positively identified through the Supabase connector and verified
   `ACTIVE_HEALTHY` and queryable. It was already active, so no resume operation was required. The
@@ -112,3 +132,6 @@ not requested under `GS-D001` and `GS-D002`.
   bands/calibration prices, Press packages, assessments, revisions and marketing-package prices.
 - Public portfolio collection as a launch dependency: eight Design case studies, eight Digital case
   studies, twelve Press titles, public covers, retailer links and author consent for those surfaces.
+- Implemented at `GS-P03` (14 September 2026): every price field, price renderer and the
+  `/digital/estimate` price-band route removed; `/work` routes and all portfolio blocks removed.
+  Nothing about prices or portfolio evidence is requested from the owner.

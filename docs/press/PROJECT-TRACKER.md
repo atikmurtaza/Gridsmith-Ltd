@@ -16,6 +16,17 @@ sequencing follows this table.
 Rights, consumer flows, truthful service scope, accessibility, security and operational hardening
 remain active.
 
+## GS-P03 service architecture — 14 September 2026
+
+| Item | Outcome |
+|---|---|
+| Capability groups | Writing · Editorial · Publishing · Content & Promotion (`_shared/SERVICE-ARCHITECTURE.md`) |
+| Landing | Services grouped, no prices, no "Selected work"; CTA **Discuss Your Book or Content** → `/contact?division=press`. Rights statement unchanged |
+| `R-10` `publishingPackage` | `price`, `priceNote`, `priceIsFrom`, `scalingFactors`, `extraRevisionCost` **removed**; `excludes`, `notFor`, `revisionRounds` retained; type dormant |
+| `R-01` `book` / catalogue | Dormant; consent and retailer validators retained for future consented use; `/press/books` not a launch row |
+| Path Finder (`K-01`–`K-08`) | **Unchanged** — rules, honest outcomes and `check:path:*` all green |
+| Boundaries | Cover design is Press-journey / Design-craft (Press lists *coordination*). Website copy is a Press discipline even when the project starts in Digital. Content SEO is Press; technical SEO is Digital. No author-website service in Press (web is Digital) |
+
 **Status:** `TODO` · `WIP` · `BLOCKED` · `REVIEW` · `DONE` · **Priority:** P0 blocks launch · P1 desirable · P2 post-launch
 
 Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, including
@@ -71,7 +82,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | R-07 | **Rights wording legal sign-off** | P0 | — | R-06 | TODO | Atik + solicitor | **HARD GATE** |
 | R-08 | "What we are and are not" module | P0 | 1d | P-03 | TODO | Dev | Three-way honest comparison |
 | R-09 | Commercial expectations statement | P0 | 0.5d | P-03 | TODO | Dev | Undesigned, before pricing |
-| R-10 | `publishingPackage` schema | P0 | 1d | A-06 | **DONE** | Dev | `sanity/schemas/publishingPackage.ts`. Non-negotiable #3 is structural: no POA path. **`price`, `revisionRounds` and `extraRevisionCost` use a custom rule, not `required()`** — Sanity's `required()` accepts `0` on a number, and `0` is a legitimate answer, so `required()` alone cannot tell *"free"* from *"blank"*. **`extraRevisionCost` was required in §2's prose and unmarked in its code block**; the prose won and `SCHEMA.md` is corrected in this commit. **10 proofs.** Needs no price — `Q-P3`/`Q-P4` and `O-05` are the content |
+| R-10 | `publishingPackage` schema | P0 | 1d | A-06 | **DONE** | Dev | `sanity/schemas/publishingPackage.ts`. ~~Non-negotiable #3 is structural: no POA path.~~ *(Superseded at `GS-P03` by `GS-D002`: `price`, `priceNote`, `priceIsFrom`, `scalingFactors` and `extraRevisionCost` were removed.)* **`price`, `revisionRounds` and `extraRevisionCost` use a custom rule, not `required()`** — Sanity's `required()` accepts `0` on a number, and `0` is a legitimate answer, so `required()` alone cannot tell *"free"* from *"blank"*. **`extraRevisionCost` was required in §2's prose and unmarked in its code block**; the prose won and `SCHEMA.md` is corrected in this commit. **10 proofs.** Needs no price — `Q-P3`/`Q-P4` and `O-05` are the content |
 | R-11 | `/press/packages` matrix | P0 | 2d | R-10 | TODO | Dev | Real table; exclusions equal weight |
 | R-12 | Packages mobile: pinned column | P0 | 0.5d | R-11 | TODO | Dev | |
 | R-13 | Named distribution module | P0 | 0.5d | P-03 | TODO | Dev | Names platforms honestly |

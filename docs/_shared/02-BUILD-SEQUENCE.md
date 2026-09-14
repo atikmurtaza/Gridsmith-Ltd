@@ -8,15 +8,14 @@ them as programme history. Do not use the old week estimates as dates.
 1. `GS-P00` baseline/control reconciliation and owner-decision mapping.
 2. `GS-P01` unblocked security and operational hardening: headers, public lead boundary, durable
    notification/reconciliation controls, secret/configuration verification and live RLS-drift path.
-3. Owner supplies the definitive service inventory (`GS-O002`) while legal, insurance and Supabase
-   actions proceed in parallel.
-4. Reconcile Master, Digital, Press and Design around truthful services, capabilities, process,
-   methodology, quality and bespoke-quote CTAs.
-5. Implement `GS-D002`: make public pricing optional; remove/rescope price-first components and
-   decide the Digital estimator treatment. Retain the Press Path Finder as non-price recommendation
-   and scoping unless a later owner decision removes it.
-6. Implement `GS-D001`: remove public portfolio/catalogue evidence from production dependencies;
-   keep reusable future functionality dormant or post-launch where safe.
+3. **DONE 14 Sep 2026.** Owner supplies the definitive service inventory (`GS-O002`) while legal,
+   insurance and Supabase actions proceed in parallel.
+4. **ARCHITECTURE DONE at `GS-P03`; content open (`GS-O006`).** Reconcile Master, Digital, Press and
+   Design around truthful services, capabilities, process, methodology, quality and bespoke-quote CTAs.
+5. **DONE at `GS-P03`.** Implement `GS-D002`: public pricing removed at the schema and renderer
+   level; `/digital/estimate` removed; Press Path Finder retained unchanged.
+6. **DONE at `GS-P03`.** Implement `GS-D001`: `/work` routes and portfolio blocks removed; `project`,
+   `book` and `publishingPackage` dormant. See `_shared/SERVICE-ARCHITECTURE.md`.
 7. Complete applicable legal/consumer flows after owner and professional review.
 8. Load real production service/company/legal/SEO/assets/email/redirect content. Never copy seed
    records as production content.

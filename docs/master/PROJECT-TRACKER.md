@@ -16,6 +16,20 @@ The master layer owns the shared foundation (Epic A, previously in the Design tr
 The shared foundation, company/legal facts, contact flow, security, performance, accessibility,
 single-launch model and production seed protections remain active.
 
+## GS-P03 service architecture — 14 September 2026
+
+| Item | Outcome |
+|---|---|
+| Master role | Relationship layer, not a production studio. Engagement models (roadmap/discovery, advisory, programme management, ongoing relationship) recorded in `_shared/SERVICE-ARCHITECTURE.md`; **no CMS type or route until approved copy exists** |
+| `N-08`–`N-10` `/work`, `/work/[slug]` | **REMOVED** with the `Work` nav item; `project` type dormant; confidentiality projection recoverable from `9a804c4f` |
+| `N-01` block 4 selected work | **REMOVED** from the homepage |
+| `N-04` `/approach` cross-division grid | **REMOVED** |
+| Homepage CTA band | **Discuss Your Requirements** → `/contact` |
+| Contact form | Reads CTA context (`division`, `service`) after mount; `service_slug` mapped by name in the Server Action; GS-P01 writer unchanged |
+| `S-01` seed script | Rewritten to the capability groups; no prices, no projects. **Not run** — development dataset re-seed needs orphan deletion (`GS-T007`) |
+| Gates | `check:schemas` refuses price fields and proves the group rules; `check:launch` gains the technical publication gate; `check:vat` guard moved from price count to served text; `check:struck` +4 rules; axe/responsive/VAT/bundle lists drop removed routes |
+| `GS-O002` | **COMPLETED** |
+
 ---
 
 ## GS-P01 security hardening — 11 September 2026

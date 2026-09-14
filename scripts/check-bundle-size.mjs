@@ -174,8 +174,8 @@ if (!(SHARED_BASELINE_BUDGET_KB < FLOOR_TOLERANCE_KB)) {
  * route overrides its group.
  */
 const BUDGETS = [
-  ['/design/estimate', 40],
-  ['/digital/estimate', 40],
+  // `/design/estimate` and `/digital/estimate` were removed at `GS-P03`: under `GS-D002` there is
+  // no public price estimator. A future non-price scoping island takes the same 40KB when built.
   ['/press/path-finder', 40],
   ['/design', 25],
   ['/press', 20],

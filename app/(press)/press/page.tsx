@@ -49,12 +49,10 @@ const COPY: DivisionCopy = {
   ],
   servicesHeading: 'What we do',
   servicesLede:
-    'Every price here is a starting point, not a quotation — what moves it is listed against each one.',
-  workHeading: 'Selected work',
+    'Every engagement is scoped and quoted for the work in front of us, so no prices are published here.',
   ctaHeading: 'Tell us about the book.',
   ctaLede:
     'Finished manuscript, half a draft, or an idea you have been carrying for three years — all three are a reasonable place to start, and we will tell you honestly which one you are at.',
-  ctaLabel: 'Start a publishing project',
 };
 
 export default function Page() {

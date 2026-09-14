@@ -59,3 +59,12 @@
   flex-wrap: wrap;
   gap: var(--space-4);
 }
+
+.relatedList {
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}

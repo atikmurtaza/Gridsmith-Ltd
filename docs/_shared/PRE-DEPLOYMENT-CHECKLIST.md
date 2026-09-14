@@ -9,6 +9,11 @@
 > D3/D4 and the portfolio/book-cover parts of Group E are not replacement-content requests; public
 > portfolio evidence is deferred unless explicit permission is obtained. The Path Finder rows remain
 > relevant to recommendation/scoping and honesty, independently of public price publication.
+>
+> **GS-P03 — 14 September 2026.** B1 and B2 are **removed from the build** (no price field, no price
+> renderer, no `/digital/estimate`). The `/work` routes and every portfolio block are gone, so E2's
+> `work/[slug]` and `ProjectGrid` call sites no longer exist, and G3's price sentence is replaced. The
+> development dataset still holds the old seed services and projects (`GS-T007`).
 
 ## What this is, and what it is not
 
@@ -79,8 +84,8 @@ not a gap — `sanity/schemas/companyDetails.ts` and `check:vat:display` both en
 
 | # | Item | Where | What is there now |
 |---|---|---|---|
-| B1 | **Every price on the site** | `scripts/seed-content.mjs:90`, `pricingBlock.fromAmount` | **SUPERSEDED production requirement.** Locate and remove/rescope public price rendering in `GS-T001`; do not replace zeroes with real public figures |
-| B2 | **Every "from" price on every service page** | the seeded `service` records | **SUPERSEDED.** Service pages may lead to a bespoke quotation without displaying a price |
+| B1 | **Every price on the site** | ~~`scripts/seed-content.mjs:90`, `pricingBlock.fromAmount`~~ | **REMOVED at `GS-P03`.** `pricingBlock`, `Price.tsx` and the seed pricing helper are deleted; `check:schemas` refuses any price field |
+| B2 | **Every "from" price on every service page** | ~~the seeded `service` records~~ | **REMOVED at `GS-P03`.** Service pages lead to a contextual enquiry; the development dataset's stored prices are never projected |
 | B3 | **Press budget bands** | `lib/path/seedConfig.ts` question 3 | **REVIEW FOR SCOPING ONLY.** A budget question may help route an enquiry, but must not imply published package prices and still requires owner validation |
 | B4 | **The Press contact flow's budget bands** | `PressContactFlow.tsx` | **RETAIN AS NON-PRICE SHAPE-OF-ENGAGEMENT INPUT** unless a later owner decision changes it |
 
@@ -133,7 +138,7 @@ reworded, never `[SEED]`. Do not delete them with the seed.
 | # | Surface | What renders | Source and licence |
 |---|---|---|---|
 | E1 | Project and post cards (`3:2`), case-study lead media (`16:9`), portraits (`1:1`), book covers (`2:3`) | `components/content/Placeholder.tsx` — a bordered box with a CSS `repeating-linear-gradient` hatch, drawn from tokens | **Generated block. Written in this repository, no third-party licence involved.** There is no file, no `<img>`, no Sanity asset and no network request |
-| E2 | Call sites | `about/page.tsx:137` (portrait), `work/[slug]/page.tsx:104` (wide), `ProjectGrid.tsx:57` (card) | as above |
+| E2 | Call sites | `about/page.tsx:137` (portrait). ~~`work/[slug]/page.tsx:104` (wide), `ProjectGrid.tsx:57` (card)~~ — deleted at `GS-P03` with the portfolio routes | as above |
 | E3 | `public/` | **one file, `500.html`** — no images at all | n/a |
 
 ### Why no Unsplash or Pexels photograph was added, stated plainly because it is a deviation
@@ -193,7 +198,7 @@ is still a claim.
 |---|---|---|
 | G1 | *"Your book, published properly, and still yours."* and the Press positioning copy | `app/(press)/press/page.tsx` `COPY` |
 | G2 | *"We are not your publisher. We are the people who make the book, and the rights stay where they started."* | same. It **is** consistent with `CONSUMER-TERMS` clause 10.1, which the page links to — but it is a marketing sentence, not the clause |
-| G3 | *"Every price here is a starting point, not a quotation"* | same. Depends on B1/B2 being true when real prices land |
+| G3 | ~~*"Every price here is a starting point, not a quotation"*~~ → *"Every engagement is scoped and quoted for the work in front of us, so no prices are published here."* | all three division landings (`GS-P03`). A statement of the `GS-D002` policy; confirm the wording under `GS-O006` |
 | G4 | *"We take manuscripts as a link, never as an upload — nothing of yours ends up sitting on our servers."* | `app/(press)/press/contact/page.tsx`. **This one is an operational commitment**, and the flow is built to honour it — confirm you will keep it |
 | G5 | The Path Finder's six outcome explanations and both guidance texts | `lib/path/seedConfig.ts` — also C3, listed here because they read as the company's voice rather than as data. Since `K-07` they are also spoken **to one visitor about their own book**, which is a different register from a row in a table |
 

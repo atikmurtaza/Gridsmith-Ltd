@@ -20,6 +20,17 @@ owner dependencies under `GS-D001` and `GS-D002`.
 Unaffected Design dependencies, including service truth, accessible UX, QA/process content,
 professional review and security, remain active.
 
+## GS-P03 service architecture — 14 September 2026
+
+| Item | Outcome |
+|---|---|
+| Capability groups | Brand & Visual · Illustration · Motion · 3D & Visualisation · Technical (`_shared/SERVICE-ARCHITECTURE.md`). `Q-01`'s Track A/B split is superseded by these groups |
+| Landing | Services grouped by capability group, no prices, no "Selected work"; CTA **Get a Design Quote** → `/contact?division=design` |
+| `B-09` | Remains TODO (Design has no per-service route); rescoped — no price, contextual quote CTA |
+| `B-10`, `D-01`–`D-05`, `E-03`, `E-04` | Not launch rows (`GS-D001`); `project` type dormant |
+| `C-13`–`C-17` | No `/design/estimate`; its bundle budget entry was removed |
+| **Technical publication gate** | **ACTIVE.** Published Technical-group services require `professionalScopeConfirmed`; the Studio warns, `check:launch` refuses on production. **Blocked on `GS-O005` (PI scope) and `GS-X002` (professional review).** Visualisation does not imply engineering responsibility; no certified, structural or regulated engineering claim may be published |
+
 ---
 
 ## Epic A — Shared foundation · *moved to `master/PROJECT-TRACKER.md`*
@@ -46,7 +57,7 @@ including Design's.
 | B-06 | **Track fork component** | P0 | 2d | B-05 | TODO | Dev | Cookie-based, SSR-correct |
 | B-07 | Track A landing | P0 | 1.5d | B-06 | TODO | Dev | Work-first ordering |
 | B-08 | Track B landing | P0 | 2d | B-06 | TODO | Dev | 13 blocks |
-| B-09 | Service page template | P0 | 2d | A-06 | TODO | Dev | Pricing required |
+| B-09 | Service page template | P0 | 2d | A-06 | TODO | Dev | ~~Pricing required~~ superseded by `GS-D002` (`GS-P03`) — contextual quote CTA, capability group, technical publication gate |
 | B-10 | Case study template | P0 | 1.5d | A-06 | TODO | Dev | Metric + confidential guard |
 
 ## Epic C — Conversion machinery

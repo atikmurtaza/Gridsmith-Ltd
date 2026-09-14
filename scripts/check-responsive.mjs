@@ -36,23 +36,10 @@ const ROUTES = [
   // the site outside the kitchen sink — `Table` wraps in an `overflow-x: auto` region, and
   // whether that region actually contains the overflow is a layout-time fact.
   { path: '/press/path-finder', status: 200 },
-  // Epic N routes. Seven of the eight new master pages, chosen to cover every distinct
-  // template rather than every URL: a grid, a canonical case study, both `groupPage` layouts,
-  // the insights hub, a legal document and the one route with a form. The per-slug routes are
-  // represented by one instance each - 24 case studies share one template, and auditing all of
-  // them would multiply the run without adding a subject.
-  // `U-08`'s subject. One instance of the template, chosen the same way the case study was:
-  // ten Digital services share it. `website-design-build` is the one with the fullest record —
-  // four deliverables and three pricing variables — so it exercises every block the template
-  // has rather than the smallest.
+  // Epic N routes, chosen to cover every distinct template rather than every URL. `/work`,
+  // `/work/[slug]` and `/digital/estimate` were removed at `GS-P03` with their routes.
+  // `U-08`'s subject. One instance of the template, the record with the fullest content.
   { path: '/digital/services/website-design-build', status: 200 },
-  // `V-06`'s subject: the static pricing bands, the one Digital route that must be fully
-  // readable with JS disabled. It is also the only route on the site whose entire content is
-  // a data table, so it is the only place `Table`'s focusable scroll region is audited on a
-  // production route rather than on the kitchen sink.
-  { path: '/digital/estimate', status: 200 },
-  { path: '/work', status: 200 },
-  { path: '/work/brand-website-and-launch-book', status: 200 },
   { path: '/about', status: 200 },
   { path: '/approach', status: 200 },
   { path: '/insights', status: 200 },

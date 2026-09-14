@@ -19,7 +19,13 @@ export const metadata: Metadata = {
  * between Brand & Visual and Technical & Engineering, a standards and capability strip, and a
  * Design Desk teaser. Those are Epic `B` rows and they need division content and a founder
  * decision on the track taxonomy. What ships here is real and usable: what the studio is, what
- * it does with a price against each service, the work, the process and one way to get in touch.
+ * it does grouped by capability, the process and one way to get in touch (`GS-P03`: no prices,
+ * no public portfolio).
+ *
+ * **Technical services carry a publication gate.** CAD drafting and engineering drawings may
+ * not be published to production until professional scope and PI cover are confirmed
+ * (`GS-O005`, `GS-X002`); `check:launch` enforces it. Nothing on this page claims certified,
+ * structural or otherwise regulated engineering design responsibility.
  *
  * ## The copy
  *
@@ -39,12 +45,10 @@ const COPY: DivisionCopy = {
   ],
   servicesHeading: 'What we do',
   servicesLede:
-    'Every price here is a starting point, not a quotation — what moves it is listed against each one.',
-  workHeading: 'Selected work',
+    'Every engagement is scoped and quoted for the work in front of us, so no prices are published here.',
   ctaHeading: 'Tell us what you are making.',
   ctaLede:
     'A sketch, a photograph of the part, a competitor’s catalogue page — whatever you have is enough to start with.',
-  ctaLabel: 'Start a design project',
 };
 
 export default function Page() {

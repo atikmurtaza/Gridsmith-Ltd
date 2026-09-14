@@ -1,4 +1,9 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
+import {
+  CAPABILITY_GROUPS,
+  capabilityGroupRule,
+  professionalScopeRule,
+} from '../../lib/services/architecture.ts';
 
 /**
  * Core document types — `SCHEMA-CORE.md` §1. **One CMS, one definition.** Each division's
@@ -25,6 +30,22 @@ const isSeed = defineField({
   description: 'Placeholder content. Cannot be published in production.',
 });
 
+/**
+ * A service — `GS-P03`, reconciled to `GS-D001`/`GS-D002` and `_shared/SERVICE-ARCHITECTURE.md`.
+ *
+ * **There is no price field, and `check:schemas` refuses one on any type.** SC-6 — "a service
+ * page physically cannot be saved without pricing" — was superseded by `GS-D002`: Gridsmith
+ * quotes bespoke work, so a public service leads to a contextual enquiry, not to a figure. The
+ * old `pricingModel` was removed rather than made optional, because an optional price field is
+ * an invitation to publish one.
+ *
+ * **Nothing about proof is required either.** `relatedProjects` stays optional for work
+ * Gridsmith holds permission to publish; a service is publishable with none (`GS-D001`).
+ *
+ * `capabilityGroup` is a closed list owned by `lib/services/architecture.ts`, and the rule
+ * refuses a group from another division. `ctaLabel` is copy; the CTA destination is not
+ * editable — it is always the enquiry form, carrying this service as context.
+ */
 export const service = defineType({
   name: 'service',
   type: 'document',
@@ -32,17 +53,39 @@ export const service = defineType({
     defineField({ name: 'title', type: 'string', validation: (r) => r.required() }),
     defineField({ name: 'slug', type: 'slug', options: { source: 'title' }, validation: (r) => r.required() }),
     defineField({ name: 'division', type: 'string', options: { list: DIVISIONS }, validation: (r) => r.required() }),
-    defineField({ name: 'track', type: 'string', description: 'Division-specific taxonomy.' }),
+    defineField({
+      name: 'capabilityGroup',
+      type: 'string',
+      description:
+        'The approved capability group. A new service inside a group is content; a new group is an architecture decision (lib/services/architecture.ts).',
+      options: {
+        list: CAPABILITY_GROUPS.map((g) => ({ title: `${g.division} — ${g.label}`, value: g.key })),
+      },
+      validation: (r) => r.required().custom((value, context) => capabilityGroupRule(value, context)),
+    }),
+    defineField({ name: 'problem', type: 'text', rows: 4, title: 'Summary', description: "Concise summary — the buyer's situation." }),
+    defineField({
+      name: 'description',
+      type: 'array',
+      of: [defineArrayMember({ type: 'block' })],
+      description: 'Detailed description. No prices, guarantees, turnaround promises or unconfirmed credentials.',
+    }),
     defineField({ name: 'searchIntent', type: 'string', description: 'The exact query this page targets.' }),
-    defineField({ name: 'problem', type: 'text', rows: 4, description: "The buyer's situation." }),
     defineField({ name: 'deliverables', type: 'array', of: [defineArrayMember({ type: 'deliverable' })] }),
     defineField({ name: 'process', type: 'array', of: [defineArrayMember({ type: 'processStep' })] }),
-    /**
-     * **SC-6 and CLAUDE.md non-negotiable #3, enforced structurally rather than by
-     * discipline.** A service page physically cannot be saved without pricing. This one
-     * `required` is the difference between a rule people remember and a rule that holds.
-     */
-    defineField({ name: 'pricingModel', type: 'pricingBlock', validation: (r) => r.required() }),
+    defineField({
+      name: 'relatedServices',
+      type: 'array',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'service' }] })],
+    }),
+    defineField({
+      name: 'collaborators',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      options: { list: DIVISIONS },
+      description:
+        'Other divisions whose discipline this service draws on. The client relationship stays with this division.',
+    }),
     defineField({
       name: 'faqs',
       type: 'array',
@@ -52,9 +95,21 @@ export const service = defineType({
       name: 'relatedProjects',
       type: 'array',
       of: [defineArrayMember({ type: 'reference', to: [{ type: 'project' }] })],
+      description: 'Optional. Only work Gridsmith holds written permission to publish (GS-D001).',
     }),
-    defineField({ name: 'ctaPrimary', type: 'ctaBlock' }),
-    defineField({ name: 'ctaSecondary', type: 'ctaBlock' }),
+    defineField({
+      name: 'ctaLabel',
+      type: 'string',
+      description: 'Overrides the division CTA wording. The destination is always the enquiry form.',
+    }),
+    defineField({
+      name: 'professionalScopeConfirmed',
+      type: 'boolean',
+      initialValue: false,
+      description:
+        'Technical group only. Set only when professional scope and PI cover are confirmed in writing (GS-O005, GS-X002). Production refuses an unconfirmed published technical service.',
+      validation: (r) => r.custom((value, context) => professionalScopeRule(value, context)).warning(),
+    }),
     defineField({ name: 'seo', type: 'seoBlock' }),
     defineField({ name: 'order', type: 'number' }),
     defineField({ name: 'published', type: 'boolean', initialValue: false }),
@@ -64,7 +119,11 @@ export const service = defineType({
 });
 
 /**
- * Portfolio / case study.
+ * Portfolio / case study — **dormant since `GS-P03`.** `GS-D001`: no public route renders this
+ * type, and none may until publication permission exists for the work it would hold. The type is
+ * kept so consented work has somewhere to go; restoring a public route must restore the
+ * `confidential` projection guard described below (removed from `lib/sanity/queries.ts` with the
+ * routes, recoverable from `9a804c4f`).
  *
  * `divisions` is an **array**, and that is the point of the type: cross-division work is the
  * best proof the group structure is real, so a project belongs to as many as it belongs to.
@@ -106,12 +165,13 @@ export const project = defineType({
     defineField({ name: 'approach', type: 'array', of: [defineArrayMember({ type: 'block' })] }),
     defineField({ name: 'outcome', type: 'array', of: [defineArrayMember({ type: 'block' })] }),
     /**
-     * At least one quantified metric, per the spec. This is also why seed case studies
-     * necessarily carry invented numbers and why `FOUNDATION` §7.6 requires them zeroed and
-     * marked — the schema forces a figure to exist, so the marker is what stops a human
-     * reading staging from mistaking one for a real outcome.
+     * **Optional since `GS-P03`.** This used to require at least one quantified metric, which
+     * forced every seed case study to carry an invented figure. Under `GS-D001` this type is
+     * dormant capability for work Gridsmith has permission to publish, and real permitted work
+     * may have no measured outcome — a schema that demands one is a schema that asks for one to
+     * be made up.
      */
-    defineField({ name: 'metrics', type: 'array', of: [defineArrayMember({ type: 'metric' })], validation: (r) => r.min(1) }),
+    defineField({ name: 'metrics', type: 'array', of: [defineArrayMember({ type: 'metric' })] }),
     defineField({
       name: 'media',
       type: 'array',

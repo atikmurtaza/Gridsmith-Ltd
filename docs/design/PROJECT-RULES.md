@@ -11,7 +11,7 @@ Binding rules for anyone (human or AI coding agent) working on this codebase. Re
 ## 1. Non-negotiables
 
 1. **Never hardcode a colour.** Every colour reads from a CSS custom property. CI lint rule `no-hardcoded-colors` fails the build on any hex, `rgb()`, or Tailwind colour utility outside the token files.
-2. **Never publish a service page without pricing.** Enforced at the Sanity schema level. Do not add a bypass.
+2. ~~**Never publish a service page without pricing.** Enforced at the Sanity schema level. Do not add a bypass.~~ **Superseded by `GS-D002` at `GS-P03`:** services lead to a bespoke quote, no schema carries a price, and `check:schemas` refuses a price field. Technical (CAD/engineering) services carry a production publication gate instead (`GS-O005`, `GS-X002`).
 3. **Never render a confidential client's name.** The guard lives in the GROQ query. Do not move it into a component.
 4. **Never invent a standards code.** BS/ISO/EN references come from `lib/cms/standards.ts` only. If a standard is not on the list, it does not go on the site until a qualified engineer adds it.
 5. **Never ship an un-redacted or un-watermarked sample asset.** Schema validates both as hard-true.

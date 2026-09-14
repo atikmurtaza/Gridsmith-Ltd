@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ServiceList } from '@/components/content/ServiceList';
 import { ContinuityExample } from '@/components/master/ContinuityExample';
 import { ProcessStages } from '@/components/master/ProcessStages';
 import { Container } from '@/components/primitives/Container';
@@ -30,7 +31,7 @@ export default function MasterSinkPage() {
     <main id="main" tabIndex={-1}>
       <Container>
         <Section rhythm="tight">
-          <Eyebrow>N-05 · N-06</Eyebrow>
+          <Eyebrow>N-05 · N-06 · GS-P03</Eyebrow>
           <Heading level={1} size="d2">Master sink</Heading>
           <Prose>
             <p>
@@ -60,6 +61,34 @@ export default function MasterSinkPage() {
           {/* What the site shows today: `verified` is hard-true, so no seed example can exist
               and `Q-M6` blocks a real one. */}
           <ContinuityExample example={null} />
+        </Section>
+
+        {/* `GS-P03`. The development dataset predates capability groups, so no served division
+            landing reaches the grouped branch of ServiceList. These three specimens are its
+            committed subjects: grouped with a trailing "Other services", flat, and empty. */}
+        <Section rhythm="tight">
+          <Heading level={2}>ServiceList — grouped by capability group</Heading>
+          <ServiceList
+            services={[
+              { title: '[SEED] Engineering drawings', slug: 'sink-engineering-drawings', division: 'design', capabilityGroup: 'technical', problem: '[SEED] Placeholder summary.', order: 2 },
+              { title: '[SEED] Brand identity', slug: 'sink-brand-identity', division: 'design', capabilityGroup: 'brand-visual', problem: '[SEED] Placeholder summary.', order: 1 },
+              { title: '[SEED] A record with no group', slug: 'sink-ungrouped', division: 'design', capabilityGroup: null, problem: null, order: 3 },
+            ]}
+          />
+        </Section>
+
+        <Section rhythm="tight">
+          <Heading level={2}>ServiceList — no capability groups recorded</Heading>
+          <ServiceList
+            services={[
+              { title: '[SEED] A pre-GS-P03 record', slug: 'sink-flat', division: 'digital', capabilityGroup: null, problem: '[SEED] Placeholder summary.', order: 1 },
+            ]}
+          />
+        </Section>
+
+        <Section rhythm="tight">
+          <Heading level={2}>ServiceList — empty</Heading>
+          <ServiceList services={[]} />
         </Section>
 
         <Section rhythm="tight">

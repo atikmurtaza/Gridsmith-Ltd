@@ -4,13 +4,14 @@
 // when validation fails is a form people abandon — a server redirect back with `?error=`
 // costs nothing to build and costs a lead every time it fires.
 
-import { useActionState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { Field } from '@/components/primitives/Field';
 import { Heading } from '@/components/primitives/Heading';
 import { RadioGroup } from '@/components/primitives/RadioGroup';
 import { Select } from '@/components/primitives/Select';
 import { submitLeadAction, type FormState } from '@/lib/leads/action';
+import { readEnquiryContext } from '@/lib/services/architecture';
 import styles from './leads.module.css';
 
 /**
@@ -36,6 +37,14 @@ import styles from './leads.module.css';
  * `role="alert"` on the failure summary, and per-field messages wired through `Field`'s
  * `error` prop, which puts them in `aria-describedby` and sets `aria-invalid`. Colour alone
  * would fail WCAG 1.4.1; a message that only appears visually fails 3.3.1.
+ *
+ * ## Arriving from a CTA keeps its context (`GS-P03`)
+ *
+ * Every division CTA points here as `/contact?division=…&service=…`. The page is static, so the
+ * query is read after mount: the division is preselected (the visitor can still change it) and
+ * the service travels as a hidden `service_slug`, which the Server Action maps by name and
+ * `leadSchema` bounds. Without JavaScript nothing is preselected and the form still works.
+ * `readEnquiryContext` drops anything malformed rather than repairing it.
  */
 const INITIAL: FormState = { status: 'idle' };
 
@@ -47,17 +56,12 @@ const DIVISIONS = [
 ];
 
 /**
- * **Shaped, not priced — and that is a decision rather than a placeholder.**
+ * **Shaped, not priced — and since `GS-D002` that is permanent rather than provisional.**
  *
- * The obvious form of this control is four money bands. Every one of them would be an invented
- * figure: Gridsmith's real prices are not set (they are `[SEED] INDICATIVE` everywhere on this
- * site today), so a band here would be the first hard number on the site and a reader would
- * reasonably take it as the shape of what we charge. `check:content` would reject it, and it
- * would be right to.
- *
- * Bands by *shape of engagement* qualify a lead just as well and assert nothing. They are
- * replaced with money bands when there is money to put in them — that is a row in
- * `BEFORE-LAUNCH.md`, not a decision for a later session to make quietly.
+ * Gridsmith quotes bespoke work and publishes no prices, so money bands here would be the only
+ * figures on the site and a reader would reasonably take them as the shape of what we charge.
+ * Bands by *shape of engagement* qualify a lead just as well and assert nothing. They are not
+ * waiting to be replaced with money bands.
  */
 const BUDGETS = [
   { value: 'not-sure', label: 'Not sure yet' },
@@ -75,6 +79,8 @@ const TIMELINES = [
 
 export function ContactForm({ responseCommitment }: { responseCommitment: string }) {
   const [state, formAction, pending] = useActionState(submitLeadAction, INITIAL);
+  const [context, setContext] = useState<ReturnType<typeof readEnquiryContext>>({});
+  useEffect(() => setContext(readEnquiryContext(window.location.search)), []);
 
   if (state.status === 'ok') {
     return (
@@ -112,14 +118,17 @@ export function ContactForm({ responseCommitment }: { responseCommitment: string
         </p>
       ) : null}
 
+      {/* `key` remounts the uncontrolled group once the CTA context has been read. */}
       <RadioGroup
+        key={context.division ?? 'none'}
         name="division"
         legend="What do you need?"
         options={DIVISIONS}
-        defaultValue="unsure"
+        defaultValue={context.division ?? 'unsure'}
         required
         error={firstError('division')}
       />
+      {context.service ? <input type="hidden" name="service_slug" value={context.service} /> : null}
 
       <Field
         name="full_name"

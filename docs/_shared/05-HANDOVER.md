@@ -9,7 +9,29 @@ touching anything; delete the sections that go stale as they are resolved.
 
 ---
 
-## ⇢ 11 September 2026 (latest) — `GS-P00` establishes the production-control system
+## ⇢ 14 September 2026 (latest) — `GS-P03` reconciles the service architecture
+
+`GS-D001` and `GS-D002` are implemented in code, not only in policy. Read
+`_shared/SERVICE-ARCHITECTURE.md` before touching services, CTAs, pricing or proof surfaces.
+
+Findings that must not be rediscovered:
+
+- **There is no price field anywhere and there must not be one.** `check:schemas` walks every field
+  name on every type and refuses `pric|cost|fee|amount`. Re-adding an *optional* price is refused too.
+- **Capability groups are code, services are content.** `lib/services/architecture.ts` owns the
+  groups; the schema refuses a group from another division. A new group is an owner decision.
+- **The development dataset is stale on purpose.** It still holds priced seed services with no
+  capability group and 24 seed projects. It was not re-seeded because `seed-content.mjs` only
+  `createOrReplace`s — re-running it would publish the new seed alongside the orphans. Rendering is
+  tolerant and `/_master-sink` carries the grouped-list specimens. `GS-T007`.
+- **Technical Design services have a production gate.** `check:launch` (and the prebuild) fails a
+  production dataset with a published Technical-group service lacking `professionalScopeConfirmed`.
+- **CTA context travels as a query string and is read after mount.** Never submit that form from a
+  test: Development points at the production Supabase project.
+
+---
+
+## ⇢ 11 September 2026 — `GS-P00` establishes the production-control system
 
 Read `PROJECT-STATUS.md`, `AI-DEVELOPMENT-PROTOCOL.md`, `OWNER-ACTIONS.md` and `AI-HANDOFF.md`
 before using the historical sections below. They are now the authoritative control set.

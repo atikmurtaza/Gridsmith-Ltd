@@ -100,7 +100,7 @@ Three hard validations — the third was added at `R-01`:
 packageLine { label: string, detail: text, category: 'editorial'|'design'|'production'|'distribution'|'support' }
 ```
 
-`price` is required and is a number, not a string. **There is no "POA" path in this schema.** FR-P06 is enforced structurally: a package without a price cannot exist.
+~~`price` is required and is a number, not a string. **There is no "POA" path in this schema.** FR-P06 is enforced structurally: a package without a price cannot exist.~~ **Superseded by `GS-D002` at `GS-P03`:** `price`, `priceNote`, `priceIsFrom`, `scalingFactors` and `extraRevisionCost` were removed from the implemented schema and `check:schemas` refuses a price field on any type. The type is dormant — no route renders it.
 
 `notFor` and `excludes` are required with minimums, for the same reason.
 

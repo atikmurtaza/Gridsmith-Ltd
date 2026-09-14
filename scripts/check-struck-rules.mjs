@@ -69,6 +69,10 @@ const base = () => [
   { file: 'rule-4-subject.md', text: "~~Digital's 90KB budget~~ — struck, the budget is a 15KB delta\n" },
   { file: 'rule-5-subject.md', text: '~~Imprint name, ISBN prefix~~ — struck at Q-P8\n' },
   { file: 'rule-6-subject.md', text: "~~{ name: 'vatNumber', type: 'string' }~~ - struck 2 Sept 2026, not VAT registered\n" },
+  { file: 'rule-7-subject.md', text: '~~Never publish a service page without pricing.~~ superseded by GS-D002\n' },
+  { file: 'rule-8-subject.md', text: '| B-09 | ~~Pricing required~~ superseded |\n' },
+  { file: 'rule-9-subject.md', text: '~~Each with visible price band~~ superseded\n' },
+  { file: 'rule-10-subject.md', text: '~~There is no POA path.~~ superseded by GS-D002\n' },
 ];
 
 const SPECIMENS = [
@@ -95,7 +99,33 @@ const SPECIMENS = [
   {
     name: 'BRANCH 4 — zero subject: corpus below the floor',
     files: base().slice(MIN_FILES),
-    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 6 document(s)')),
+    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 10 document(s)')),
+  },
+  // `GS-P03` — one specimen per new rule, plus the surviving statement none of them may catch.
+  {
+    name: 'BRANCH 9 — "never publish a service page without pricing" restated, unannotated',
+    files: [...base(), { file: 'design/PROJECT-RULES.md', text: '2. **Never publish a service page without pricing.**\n' }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-D002-SERVICE-PAGE-WITHOUT-PRICING STANDS at design/PROJECT-RULES.md:1')),
+  },
+  {
+    name: 'BRANCH 10 — "Pricing required" restated on a tracker row, unannotated',
+    files: [...base(), { file: 'design/PROJECT-TRACKER.md', text: '| B-09 | Service page template | Pricing required |\n' }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-D002-PRICE-REQUIRED STANDS at design/PROJECT-TRACKER.md:1')),
+  },
+  {
+    name: 'BRANCH 11 — a visible price band restated, unannotated',
+    files: [...base(), { file: 'digital/APP-FLOW.md', text: 'Give him a visible price band on the group landing.\n' }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-D002-VISIBLE-PRICE-BAND STANDS at digital/APP-FLOW.md:1')),
+  },
+  {
+    name: 'BRANCH 12 — the Press "no POA path" rule restated, unannotated',
+    files: [...base(), { file: 'press/PROJECT-RULES.md', text: '3. Every package shows a total price. There is no "POA" path.\n' }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-D002-PACKAGE-NO-POA STANDS at press/PROJECT-RULES.md:1')),
+  },
+  {
+    name: 'NOT A SUBJECT — the surviving bespoke-quotation rule',
+    files: [...base(), { file: 'x.md', text: 'Public service journeys lead to a bespoke quote; no price is published.\n' }],
+    expect: (r) => r.ok,
   },
   {
     name: 'EXONERATION — annotation on a neighbouring line, inside the window',

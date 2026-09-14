@@ -4,65 +4,50 @@ import { sanityClient } from '@/lib/sanity/client';
  * The read layer. **Every public projection is written so that a field which must not reach
  * the browser is never selected**, rather than selected and then not rendered.
  *
- * `SCHEMA-CORE.md` §1 on `project.confidential`: *"When it is true, `clientName` must never be
- * returned by a public GROQ query — the projection substitutes `clientDisplay`. A
- * component-level check would leak the name into the RSC payload before anything decided not
- * to render it."* That is why there is no `clientName` anywhere below: the projection emits a
- * single `client` string chosen by `select()`, so there is no second value for a component to
- * get wrong.
- *
  * **Reads are unauthenticated and build-time.** Both datasets are public and the client holds
  * no token — see `lib/sanity/client.ts`. Nothing here passes `cache: 'no-store'`: it would turn
  * every route dynamic and break the SSG requirement in `TECH-SPEC.md` §1. The seed scripts
  * clear `.next/cache/fetch-cache` instead.
+ *
+ * ## No project queries, and no price projection — `GS-P03`
+ *
+ * `GS-D001` removed every public portfolio surface, so the `project` queries went with the
+ * routes. **If a public project route is ever restored, restore the confidentiality projection
+ * with it**: `"client": select(confidential == true => clientDisplay, clientName)`, resolved at
+ * the database so a confidential `clientName` never reaches the RSC payload. The last version
+ * that carried it is `9a804c4f`.
+ *
+ * `GS-D002` removed the service price, so there is no pricing projection either.
  */
 
 /** Divisions as they appear in the CMS. `unsure` is a lead-form value, not a division. */
 export type Division = 'design' | 'digital' | 'press';
 
-export type PricingModel = {
-  model: 'fixed' | 'from' | 'range' | 'retainer' | 'per-unit' | 'day-rate';
-  currency: string;
-  fromAmount: number | null;
-  toAmount: number | null;
-  unit: string | null;
-  includes: string[] | null;
-  variables: string[] | null;
-  note: string | null;
-};
-
 export type ServiceCard = {
   title: string;
   slug: string;
   division: Division;
-  track: string | null;
+  /** A key from `lib/services/architecture.ts`, or null on a record that predates it. */
+  capabilityGroup: string | null;
   problem: string | null;
-  pricingModel: PricingModel | null;
   order: number | null;
 };
 
 /**
  * One service page's full record (`U-08`).
  *
- * `pricingModel` is **not** nullable here although `ServiceCard`'s is. The schema makes it
- * `required`, so a saved service always has one — but a projection can only promise what the
- * type says, and the card type predates this and is used where a partial record is fine. The
- * page treats an absent price as a build-visible fault rather than an empty section, because
- * CLAUDE.md non-negotiable #3 is "never publish a service page without pricing" and rendering
- * the page without one would be publishing it.
- *
- * `faqs` and `relatedProjects` are in the schema and **not in this projection**. Nothing
- * populates either today — not the seed, not the CMS — so selecting them would add two empty
- * arrays, two nullable branches in the template and two states no reader can reach. They go in
- * when there is content for them.
+ * **Publishable with no price and no portfolio relationship.** `relatedProjects` is in the
+ * schema for permitted work and is not projected: no service page renders client work
+ * (`GS-D001`). `faqs` is likewise unprojected until content exists for it.
  */
 export type ServiceDetail = {
   title: string;
   slug: string;
   division: Division;
-  track: string | null;
+  capabilityGroup: string | null;
   searchIntent: string | null;
   problem: string | null;
+  description: PortableBlock[] | null;
   deliverables: { label: string; detail: string | null; included: boolean }[] | null;
   process: {
     number: number;
@@ -72,38 +57,12 @@ export type ServiceDetail = {
     duration: string | null;
     clientTime: string | null;
   }[] | null;
-  pricingModel: PricingModel;
-  ctaPrimary: { label: string; href: string } | null;
-  ctaSecondary: { label: string; href: string } | null;
+  collaborators: Division[] | null;
+  relatedServices: { title: string; slug: string; division: Division }[] | null;
+  ctaLabel: string | null;
   metaTitle: string | null;
   metaDescription: string | null;
   isSeed: boolean;
-};
-
-export type ProjectCard = {
-  title: string;
-  slug: string;
-  divisions: Division[];
-  /** Derived, never stored — `master/SCHEMA.md` §1 is explicit that `isCrossDivision` is a projection. */
-  isCrossDivision: boolean;
-  /** Already resolved against `confidential`. There is no `clientName` to leak. */
-  client: string | null;
-  confidential: boolean;
-  industry: string | null;
-  year: number | null;
-  summary: string | null;
-  isSeed: boolean;
-};
-
-export type Metric = { label: string; value: string; context: string | null };
-
-export type ProjectDetail = ProjectCard & {
-  track: string | null;
-  challenge: PortableBlock[] | null;
-  approach: PortableBlock[] | null;
-  outcome: PortableBlock[] | null;
-  metrics: Metric[] | null;
-  testimonial: TestimonialCard | null;
 };
 
 export type TestimonialCard = {
@@ -183,26 +142,6 @@ export type LegalDocument = {
   isSeed: boolean;
 };
 
-const PRICING = `pricingModel{
-  model, currency, fromAmount, toAmount, unit, includes, variables, note
-}`;
-
-/**
- * **The one projection that carries a security consequence.** `select()` resolves at the
- * database, so a confidential project's `clientName` never crosses the network — not into the
- * RSC payload, not into the build output, not into a cached response.
- */
-const PROJECT_CARD = `
-  "title": title,
-  "slug": slug.current,
-  divisions,
-  "isCrossDivision": count(divisions) > 1,
-  "client": select(confidential == true => clientDisplay, clientName),
-  "confidential": coalesce(confidential, false),
-  industry, year, summary,
-  "isSeed": coalesce(isSeed, false)
-`;
-
 const TESTIMONIAL = `
   quote, authorName, authorRole, authorCompany, division, projectTitle,
   sourceUrl, sourceLabel,
@@ -213,46 +152,12 @@ const TESTIMONIAL = `
 const q = <T,>(query: string, params: Record<string, unknown> = {}) =>
   sanityClient.fetch<T>(query, params);
 
-export const listProjects = () =>
-  q<ProjectCard[]>(
-    `*[_type == "project" && !(_id in path("drafts.**"))]
-     | order(isCrossDivision desc, year desc, title asc){${PROJECT_CARD}}`,
-  );
-
-export const listFeaturedProjects = (limit: number) =>
-  q<ProjectCard[]>(
-    `*[_type == "project" && masterFeatured == true && !(_id in path("drafts.**"))]
-     | order(count(divisions) desc, year desc)[0...$limit]{${PROJECT_CARD}}`,
-    { limit },
-  );
-
-export const listProjectsForDivision = (division: Division, limit: number) =>
-  q<ProjectCard[]>(
-    `*[_type == "project" && $division in divisions && !(_id in path("drafts.**"))]
-     | order(year desc, title asc)[0...$limit]{${PROJECT_CARD}}`,
-    { division, limit },
-  );
-
-export const getProject = (slug: string) =>
-  q<ProjectDetail | null>(
-    `*[_type == "project" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
-      ${PROJECT_CARD}, track,
-      challenge, approach, outcome,
-      metrics[]{label, value, context},
-      "testimonial": testimonial->{${TESTIMONIAL}}
-    }`,
-    { slug },
-  );
-
-export const listProjectSlugs = () =>
-  q<string[]>(`*[_type == "project" && !(_id in path("drafts.**"))].slug.current`);
-
 export const listServices = (division: Division) =>
   q<ServiceCard[]>(
     `*[_type == "service" && division == $division && published == true
        && !(_id in path("drafts.**"))]
      | order(order asc){
-       "title": title, "slug": slug.current, division, track, problem, ${PRICING}, order
+       "title": title, "slug": slug.current, division, capabilityGroup, problem, order
      }`,
     { division },
   );
@@ -261,25 +166,26 @@ export const listServices = (division: Division) =>
  * One service, by division AND slug (`U-08`).
  *
  * **The division is part of the lookup, not a filter applied afterwards.** Slugs are unique
- * per service document but nothing in the schema stops two divisions carrying the same one —
- * `copywriting` is plausible for both Digital and Press — and `/digital/services/copywriting`
- * must never resolve to a Press service because it happened to sort first. A route that can
- * serve another division's content under this division's URL is the kind of defect that reads
- * as correct in every test written against a dataset that has no collision yet.
+ * per service document but nothing in the schema stops two divisions carrying the same one,
+ * and `/digital/services/copywriting` must never resolve to a Press service because it happened
+ * to sort first.
  *
- * `published == true` matches `listServices`. An unpublished service is not 404-by-accident:
- * it is a document whose author has not said it may be public, and the group landing does not
- * list it either, so the two agree.
+ * `published == true` matches `listServices`, and related services are held to the same rule —
+ * a link to an unpublished service is a link to a page that does not exist.
  */
 export const getService = (division: Division, slug: string) =>
   q<ServiceDetail | null>(
     `*[_type == "service" && division == $division && slug.current == $slug
        && published == true && !(_id in path("drafts.**"))][0]{
-      "title": title, "slug": slug.current, division, track, searchIntent, problem,
+      "title": title, "slug": slug.current, division, capabilityGroup, searchIntent, problem,
+      description,
       deliverables[]{label, detail, "included": coalesce(included, true)},
       process[]{number, title, description, divisionDetail, duration, clientTime},
-      ${PRICING},
-      ctaPrimary{label, href}, ctaSecondary{label, href},
+      collaborators,
+      "relatedServices": relatedServices[@->published == true]->{
+        "title": title, "slug": slug.current, division
+      },
+      ctaLabel,
       "metaTitle": seo.metaTitle, "metaDescription": seo.metaDescription,
       "isSeed": coalesce(isSeed, false)
     }`,

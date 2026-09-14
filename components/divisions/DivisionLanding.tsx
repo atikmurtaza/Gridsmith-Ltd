@@ -7,16 +7,11 @@ import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { Button } from '@/components/primitives/Button';
 import { ProcessStages } from '@/components/master/ProcessStages';
-import { ProjectGrid } from '@/components/content/ProjectGrid';
 import { ServiceList } from '@/components/content/ServiceList';
 import { TestimonialList } from '@/components/content/TestimonialList';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
-import {
-  listProjectsForDivision,
-  listServices,
-  listTestimonialsForDivision,
-  type Division,
-} from '@/lib/sanity/queries';
+import { ENQUIRY_CTA, PRIVATE_EXAMPLES_NOTICE, enquiryHref } from '@/lib/services/architecture';
+import { listServices, listTestimonialsForDivision, type Division } from '@/lib/sanity/queries';
 import styles from './divisions.module.css';
 
 /**
@@ -25,40 +20,28 @@ import styles from './divisions.module.css';
  * ## One composition, four voices — and that is the architecture, not a shortcut
  *
  * `CLAUDE.md`: *"Four distinct voices, one unmistakable hand… achieved through **shared
- * structure, not shared colour**: identical grid, spacing scale, type scale, component shapes
- * and motion language, with each division supplying its own palette and display face."*
+ * structure, not shared colour**."* This component names no colour and no typeface; every rule
+ * resolves through the theme tokens the route group's root layout has already set on
+ * `<html data-division>`. What each division supplies is `copy`. Nothing structural.
  *
- * This component is that sentence made executable. It names no colour and no typeface. Every
- * rule it and its children rely on resolves through the theme tokens the route group's root
- * layout has already set on `<html data-division>` — so Design renders amber on near-black in a
- * neo-grotesque, Digital electric blue on off-white in a **monospace** display face, and Press
- * deep green on warm paper in a **serif**, from the same markup. Three separate components
- * would have been three places for the grid to drift.
+ * ## What changed at `GS-P03`
  *
- * What each division supplies is `copy`: its positioning line, what it actually does, and the
- * words on its own call to action. Nothing structural.
+ * - **Services are grouped by capability group and carry no price** (`GS-D002`).
+ * - **The "Selected work" block is gone** (`GS-D001`). Gridsmith does not hold permission to
+ *   publish client work, so a portfolio grid would either be empty or fabricated. It is
+ *   replaced by a plain statement that examples may be discussed privately — which neither
+ *   claims all unshown work is confidential nor promises an example exists.
+ * - **The CTA is contextual**: its wording is the division's, and it carries the division to
+ *   the shared enquiry form so the lead arrives already routed.
  *
- * ## What this is not
+ * The verified external reviews stay: they are evidence a reader can check at the source.
  *
- * **It is not the full division hub.** `design/APP-FLOW.md` §3 specifies a track fork, a
- * standards and capability strip and a Design Desk teaser; Digital and Press have their own
- * equivalents. Those are `B-*`, `U-*` and `P-*` rows and they depend on division content that
- * does not exist. This is the shell: hero, services with prices, work, proof, process and a
- * call to action — a real page a visitor can use and a real page to point a social profile at,
- * built from the content that does exist.
- *
- * Server Component, zero client JS.
- *
- * ## Every service card carries a price, and every price says INDICATIVE
- *
- * Non-negotiable #3 is enforced in the schema — a service cannot be saved without pricing — and
- * `Price` renders the badge unconditionally rather than only on seed records, because a reader
- * has no access to `isSeed` and every price here is indicative until a scope is agreed. See
- * `Price.tsx`.
+ * **It is not the full division hub.** Those blocks are `B-*`, `U-*` and `P-*` rows and depend
+ * on approved content. Server Component, zero client JS.
  */
 export type DivisionCopy = {
   /** The trading name, exactly as the footer's statutory block gives it. */
-  name: string;
+  name: 'Gridsmith Design' | 'Gridsmith Digital' | 'Gridsmith Press';
   /** One line. What this division is, not a services list — the same rule as the master hero. */
   positioning: string;
   /** Two or three sentences under it. */
@@ -66,12 +49,9 @@ export type DivisionCopy = {
   /** The heading over the services block. */
   servicesHeading: string;
   servicesLede: string;
-  /** The heading over the work block. */
-  workHeading: string;
-  /** The words on the conversion action. Division-specific because the ask differs. */
+  /** The words over the conversion action. The button wording is the division's CTA. */
   ctaHeading: string;
   ctaLede: string;
-  ctaLabel: string;
 };
 
 export async function DivisionLanding({
@@ -84,39 +64,23 @@ export async function DivisionLanding({
   /**
    * One slot, directly under the hero, for the thing a division cannot launch without.
    *
-   * Press uses it for the rights statement — non-negotiable #6 — and it is a *slot* rather than
-   * a `showRights` boolean because the next division to need one will need a different thing.
-   * A boolean per division turns this component into three components sharing a file.
-   *
-   * It sits inside `<main>` and must not contain an `h1`: this component owns the only one.
+   * Press uses it for the rights statement — non-negotiable #6. It sits inside `<main>` and must
+   * not contain an `h1`: this component owns the only one.
    */
   afterHero?: ReactNode;
 }) {
-  const [services, projects, testimonials, company] = await Promise.all([
+  const [services, testimonials, company] = await Promise.all([
     listServices(division),
-    listProjectsForDivision(division, 6),
     listTestimonialsForDivision(division, 3),
     getCompanyDetails(),
   ]);
 
   return (
     <main id="main" tabIndex={-1}>
-      {/* **The hero is a colour band, and this is the change the palette work exists for.**
-
-          The three division accents were demoted to `role: 'decor'` because they fail AA as
-          text on a dark canvas. That is correct and unchanged. What never followed was the
-          other half: a colour used as a SURFACE with a paired foreground passes AA easily,
-          and until now nothing on any page had one — the accents existed only as 1px rules,
-          so a visitor could not derive a palette from a page. `--accent-2` is the division's
-          second colour surface and `--accent-ink` is the foreground measured on it
-          (5.55 / 10.22 / 5.91:1). A background colour changes no geometry, so CLS is
-          unaffected and the LCP element is unchanged. */}
+      {/* The hero is a colour band: `--accent-2` as a surface with `--accent-ink` measured on
+          it. A background colour changes no geometry, so CLS and the LCP element are unaffected. */}
       <Section rhythm="loose" surface="accent">
         <Container>
-          {/* The division names itself before the positioning line. A visitor arriving from a
-              social profile or a search result needs to know which studio they are on before
-              they read what it claims — the theme tells them, but only if they already know
-              the system. */}
           <Eyebrow>{copy.name}</Eyebrow>
           <Heading level={1} size="display" className={styles.hero}>
             {copy.positioning}
@@ -139,9 +103,7 @@ export async function DivisionLanding({
             </Heading>
             <p className={styles.lede}>{copy.servicesLede}</p>
           </div>
-          {/* Only Digital has per-service routes today (`U-08`). The other two landings pass
-              nothing and render unlinked cards — see `ServiceList`'s own note on why the
-              decision is the caller's. */}
+          {/* Only Digital has per-service routes today (`U-08`). */}
           <ServiceList
             services={services}
             basePath={division === 'digital' ? '/digital/services' : undefined}
@@ -149,24 +111,14 @@ export async function DivisionLanding({
         </Container>
       </Section>
 
-      <Section labelledBy="work">
-        <Container>
-          <div className={styles.blockIntro}>
-            <Heading level={2} id="work">
-              {copy.workHeading}
-            </Heading>
-          </div>
-          <ProjectGrid
-            projects={projects}
-            emptyTitle="No work published here yet"
-            emptyBody="Projects appear here as they are published."
-          />
-          <p className={styles.more}>
-            {/* The canonical case studies live on the master layer — `N-09`, and `N-10`'s whole
-                point: three divisions each publishing the same cross-division project under
-                their own path is three URLs competing for one piece of work. */}
-            <Link href="/work">All work, across the three studios</Link>
-          </p>
+      <Section labelledBy="examples">
+        <Container width="narrow">
+          <Heading level={2} id="examples">
+            Examples of our work
+          </Heading>
+          <Prose>
+            <p>{PRIVATE_EXAMPLES_NOTICE}</p>
+          </Prose>
         </Container>
       </Section>
 
@@ -189,10 +141,7 @@ export async function DivisionLanding({
             <Heading level={2} id="process">
               How we work
             </Heading>
-            {/* The stage names come from `lib/process/canonical.ts` and never from the CMS —
-                `00-PROCESS.md` rule 1 says they are fixed and not to be reworded per division,
-                and the strongest way to hold that is to not accept them from an editor at all.
-                A visitor moving between divisions sees one company with one way of working. */}
+            {/* The stage names come from `lib/process/canonical.ts` and never from the CMS. */}
             <p className={styles.lede}>
               The same six stages in all three studios. What happens inside them differs by the
               work; the shape of the relationship does not.
@@ -205,8 +154,6 @@ export async function DivisionLanding({
         </Container>
       </Section>
 
-      {/* The conversion band takes the FULL-strength accent, not the second surface — the
-          hero opens in `--accent-2` and the page closes one step louder. */}
       <Section rhythm="loose" surface="accent" className={styles.ctaBand} labelledBy="cta">
         <Container width="narrow">
           <div className={styles.cta}>
@@ -214,9 +161,10 @@ export async function DivisionLanding({
               {copy.ctaHeading}
             </Heading>
             <p className={styles.ctaLede}>{copy.ctaLede}</p>
-            <Button href="/contact" variant="inverse">{copy.ctaLabel}</Button>
-            {/* One source of truth for what we promise — non-negotiable #5. No page on this
-                site writes this sentence itself. */}
+            <Button href={enquiryHref(division)} variant="inverse">
+              {ENQUIRY_CTA[division]}
+            </Button>
+            {/* One source of truth for what we promise — non-negotiable #5. */}
             <p className={styles.ctaCommitment}>{company.responseCommitment}</p>
           </div>
         </Container>

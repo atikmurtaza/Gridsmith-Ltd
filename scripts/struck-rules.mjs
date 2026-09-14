@@ -205,6 +205,48 @@ export const STRUCK_RULES = [
       '`scripts/check-vat-display.mjs`, in `verify:served`, proving its predicate against 13 ' +
       'specimens first. This check asserts only that no document re-specifies the field.',
   },
+  /**
+   * **`GS-D002`, registered in the `GS-P03` commit that removed the price fields.** Four
+   * wordings of one struck rule, each one pattern so no rule carries an alternation that needs
+   * per-limb proof. Every line they match was annotated in the same commit.
+   */
+  {
+    id: 'GS-D002-SERVICE-PAGE-WITHOUT-PRICING',
+    patterns: [/service page without pric/i],
+    why:
+      'SC-6 / old non-negotiable #3 — "never publish a service page without pricing" — was ' +
+      'superseded by owner decision GS-D002 (bespoke quotation). GS-P03 removed ' +
+      '`service.pricingModel` and `pricingBlock`; a service page is complete with no price.',
+    where:
+      '`CLAUDE.md` non-negotiable #3 ("never require public pricing") and ' +
+      '`_shared/SERVICE-ARCHITECTURE.md`. `check:schemas` refuses a price field on any type.',
+  },
+  {
+    id: 'GS-D002-PRICE-REQUIRED',
+    patterns: [/\bpric(?:e|ing) required\b/i],
+    why:
+      'Tracker and plan rows that made a price a required field of a service page or a Press ' +
+      'package. GS-D002 superseded both; GS-P03 removed the fields.',
+    where: '`_shared/SERVICE-ARCHITECTURE.md` §Pricing reconciliation; `check:schemas`.',
+  },
+  {
+    id: 'GS-D002-VISIBLE-PRICE-BAND',
+    patterns: [/visible price band/i],
+    why:
+      'Digital group landings were specified to show a visible price band so a buyer did not ' +
+      'need the estimator. GS-D002 removed public bands and GS-P03 removed the estimator route.',
+    where: 'Digital service groups lead to a contextual enquiry — `_shared/SERVICE-ARCHITECTURE.md`.',
+  },
+  {
+    id: 'GS-D002-PACKAGE-NO-POA',
+    patterns: [/\bPOA\b/],
+    why:
+      'Press non-negotiable #3 — "every package shows a total price; there is no POA path" — was ' +
+      'superseded by GS-D002. GS-P03 removed `publishingPackage.price` and its sibling fields.',
+    where:
+      'The honesty half survives: `excludes` and `notFor` stay required (ETH-03, FR-P06). ' +
+      '`press/PROJECT-RULES.md` §1 as annotated.',
+  },
 ];
 
 /** The standing-spec corpus. Globbed by the runner; listed here so the scope is reviewable. */

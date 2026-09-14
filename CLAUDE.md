@@ -41,9 +41,10 @@ Soft shadows, rounded-everything, gradient meshes, glassmorphism, floating 3D sh
 1. **Never hardcode a colour.** Tokens only. CI enforces this.
 2. **Never invent content.** No fabricated case study metrics, client names, standards codes, ISBNs, prices, contract clauses, statistics or credentials. Mark `[TK]` and stop.
 3. **Never require public pricing.** `GS-D002` supersedes the earlier schema-enforced rule that
-   every service page must publish a price. Until a dedicated implementation phase changes the
-   schema and renderers, treat that requirement as technical debt (`GS-T001`), not as authority to
-   ask the owner for prices or to publish placeholders. Public journeys lead to a bespoke quote.
+   every service page must publish a price. `GS-P03` removed every price field, price renderer and
+   the `/digital/estimate` price table (`GS-T001`/`GS-T002` closed), and `check:schemas` now refuses
+   a price, cost, fee or amount field on any CMS type. Public journeys lead to a contextual enquiry
+   and a bespoke quote. Never ask the owner for prices or publish placeholders.
 4. **Never let seed content reach production.** Build check blocks it.
 5. **Never promise a response faster than end of next business day.** One source of truth: `companyDetails.responseCommitment`.
 6. **Never claim more than the contract gives.** Digital's ownership module and Press's rights module cite real clauses in `_legal/`.
@@ -54,6 +55,11 @@ Soft shadows, rounded-everything, gradient meshes, glassmorphism, floating 3D sh
 11. **Never manufacture public portfolio proof.** `GS-D001` removes public client projects,
     titles, covers, retailer links and similar permission-dependent evidence from the production
     critical path. Explain real capabilities, disciplines, process, methodology and quality instead.
+    `GS-P03` removed the `/work` routes and portfolio blocks; `project` and `book` are dormant.
+12. **Never publish unconfirmed engineering claims.** Design's Technical group (CAD, engineering
+    drawings, schematics) may not be published to production until professional scope and PI cover
+    are confirmed (`GS-O005`, `GS-X002`). `check:launch` refuses it. Visualisation never implies
+    engineering responsibility. `_shared/SERVICE-ARCHITECTURE.md` is the service model.
 
 ## Stack
 
@@ -89,8 +95,9 @@ components/
   primitives/           shared, theme-agnostic, ZERO hardcoded colours — 24 of them
   chrome/               header, footer, consent, division switcher — RootShell only so far
 ✗ divisions/{design,digital,press}/
-✗ lib/
-✗   cms/ leads/ analytics/ consent/ estimate/ path/ company/
+lib/                    analytics/ company/ consent/ leads/ legal/ path/ process/ sanity/ services/
+                        (services/architecture.ts = the approved capability groups and CTA model;
+                        estimate/ was dropped from the plan at GS-P03)
 styles/
   tokens.css            base layer
   globals.css           body, .sr-only, reduced-motion reset
@@ -115,6 +122,7 @@ Read the workstream's own files before touching its code.
 |---|---|
 | `docs/_shared/00-FOUNDATION.md` | Architecture, tokens, primitives, seed policy, launch gates |
 | `docs/_shared/00-PROCESS.md` | The canonical six client stages — fixed names, all divisions |
+| `docs/_shared/SERVICE-ARCHITECTURE.md` | **The approved service model** (`GS-P03`) — divisions, capability groups, boundaries, CTA model, pricing/portfolio reconciliation |
 | `docs/_shared/00-MARKET-RESEARCH-BASIS.md` | Why every conversion decision is what it is |
 | `docs/_shared/SCHEMA-CORE.md` | Shared CMS and database schema |
 | `docs/_shared/01-VALIDATION-REPORT.md` | Known gaps and recorded decisions |
@@ -533,7 +541,7 @@ dependency upgrade shows up as *the floor moving*, not as everyone's budget shri
 | Design | ≥95 perf | ≤2.0s | **≤25KB** — work grid + matrix + filters | ~125KB |
 | **Digital** | **100/100/100** | ≤1.6s | **≤15KB** — deliberately tightest | ~115KB |
 | Press | ≥95 perf | ≤2.0s | **≤20KB** — books shelf + filters | ~120KB |
-| Estimator / path-finder routes | — | — | **≤40KB** | ~140KB |
+| Path Finder / future non-price scoping routes (no estimator since `GS-P03`) | — | — | **≤40KB** | ~140KB |
 
 All: CLS ≤0.05 (Digital 0.02, Master 0.03). INP ≤200ms (Digital 150) — a **field** target,
 proxied in CI by TBT at the same ceiling; see below.

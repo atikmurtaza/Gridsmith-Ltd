@@ -14,8 +14,8 @@ Digital inherits the shared foundation built during Design's Phase 0. It starts 
 | 1.2 | Mono display type loaded, 6-word heading rule enforced in review | 1.1 | Two families max, four weights total |
 | 1.3 | Header, footer, mobile nav, split sticky CTA | Foundation | Estimate/Talk split 60/40 |
 | 1.4 | `/digital/` hub, 11 blocks | 1.3 | Lighthouse **100/100/100** |
-| 1.5 | Four service group landings | 1.4 | Each with visible price band |
-| 1.6 | Service page template | Foundation | Pricing required; `clientTimeCommitment` rendered |
+| 1.5 | Service group landings (five groups since `GS-P03`) | 1.4 | ~~Each with visible price band~~ superseded by `GS-D002` |
+| 1.6 | Service page template | Foundation | ~~Pricing required~~ superseded by `GS-D002`; `clientTimeCommitment` rendered |
 | 1.7 | Case study template with before/after | Foundation | Metric enforced; stack rendered |
 | 1.8 | **Data row component** | 1.1 | The dominant content primitive — get it right early |
 

@@ -2,7 +2,6 @@ import { DivisionRouting } from '@/components/master/DivisionRouting';
 import { Continuity } from '@/components/master/Continuity';
 import { Hero } from '@/components/master/Hero';
 import { Process } from '@/components/master/Process';
-import { SelectedWork } from '@/components/master/SelectedWork';
 import { Testimonials } from '@/components/master/Testimonials';
 import { GroupStructure } from '@/components/master/GroupStructure';
 import { LatestInsights } from '@/components/master/LatestInsights';
@@ -34,7 +33,8 @@ export default function Page() {
       />
       <DivisionRouting />
       <Continuity />
-      <SelectedWork />
+      {/* Block 4, selected work, was removed at `GS-P03` (`GS-D001`): there is no client work
+          Gridsmith holds permission to publish, and a grid of it would be empty or invented. */}
       <Process />
       <Testimonials />
       <GroupStructure />

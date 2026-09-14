@@ -29,22 +29,26 @@
  * string must be accepted. If the pattern is ever edited into something inert, this fails here,
  * offline, before it has a chance to report a green run against the live site.
  *
- * **The price count is reported and must be non-zero.** The assertion is about prices, so a run
- * that found no price figure measured nothing — a `Price.tsx` that stopped rendering, or a
- * dataset with no pricing, would otherwise produce a green line that reads exactly like
- * compliance. That is `check:launch`'s zero-count failure in a different subject.
+ * **Every route must yield text, and a route that yields none is a failure.** This used to require
+ * a non-zero *price* count, because the assertion was about prices and a run that found none had
+ * measured nothing. `GS-D002` (`GS-P03`) removed every public price, so zero prices is now the
+ * correct state and that guard would fail a compliant site. The subject is the served text of each
+ * route — VAT labelling and a VAT number can appear in any prose, not only beside a figure — so the
+ * guard moved to the thing actually scanned: a route that serves under `MIN_TEXT` characters of
+ * text after tags are stripped measured nothing, whatever its status code says. The price count is
+ * still reported, because a figure reappearing is worth seeing.
  *
  * ## What it cannot see
  *
- * It reads the routes named below, which are the ones that render prices today plus the legal
- * set. A price on a route added later is not covered until that route is added here — the list
- * is hardcoded rather than crawled, for the same reason `check-consumer-terms.mjs` hardcodes
- * its own: an expectation derived from its subject cannot fail when the subject is removed.
+ * It reads the routes named below — the division landings, the master pages and the legal set. A
+ * route added later is not covered until it is added here — the list is hardcoded rather than
+ * crawled, for the same reason `check-consumer-terms.mjs` hardcodes its own: an expectation
+ * derived from its subject cannot fail when the subject is removed.
  */
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
 
-/** Hardcoded. Every route that renders a price, plus the instruments that describe pricing. */
+/** Hardcoded. The public master and division pages, plus the instruments that describe charging. */
 const ROUTES = [
   '/',
   '/about',
@@ -52,7 +56,7 @@ const ROUTES = [
   '/digital',
   '/press',
   '/contact',
-  '/work',
+  // `/work` was removed at `GS-P03` with the route.
   '/insights',
   '/legal/privacy',
   '/legal/cookies',
@@ -109,7 +113,11 @@ if (problems.length > 0) {
   process.exit(1);
 }
 
-const counted = { routes: 0, prices: 0 };
+/** Below this, a served route carried no text worth the name and the scan measured nothing. */
+const MIN_TEXT = 200;
+
+const counted = { routes: 0, prices: 0, chars: 0 };
+const empty = [];
 
 for (const route of ROUTES) {
   const res = await fetch(BASE_URL + route).catch((e) => ({ ok: false, status: 0, error: e }));
@@ -124,6 +132,9 @@ for (const route of ROUTES) {
 
   const text = (await res.text()).replace(/<[^>]*>/g, ' ');
   counted.prices += [...text.matchAll(/£[0-9]/g)].length;
+  const chars = text.replace(/\s+/g, ' ').trim().length;
+  counted.chars += chars;
+  if (chars < MIN_TEXT) empty.push(`${route} (${chars})`);
 
   const labelled = text.match(VAT_LABELLED);
   if (labelled) {
@@ -153,16 +164,17 @@ if (problems.length > 0) {
     `\ncheck-vat-display: measured ${counted.routes} of ${ROUTES.length} route(s).\n`,
   );
   process.exitCode = 1;
-} else if (counted.prices === 0) {
+} else if (empty.length > 0) {
   console.error(
-    '\ncheck-vat-display: 0 price figure(s) found across every route. The assertion is about ' +
-      'prices, so this run measured nothing — which reads exactly like compliance.\n',
+    `\ncheck-vat-display: ${empty.length} route(s) served under ${MIN_TEXT} characters of text: ` +
+      `${empty.join(', ')}. The assertion is about served text, so those routes measured nothing — ` +
+      'which reads exactly like compliance.\n',
   );
   process.exitCode = 1;
 } else {
   console.log(
-    `check-vat-display: ${counted.routes} route(s), ${counted.prices} price figure(s) — none ` +
-      'VAT-labelled, no VAT number published; predicate proved against ' +
-      `${SPECIMENS.length} specimens first`,
+    `check-vat-display: ${counted.routes} route(s), ${counted.chars} character(s) of served text ` +
+      `scanned, ${counted.prices} price figure(s) — no VAT labelling, no VAT number published; ` +
+      `predicate proved against ${SPECIMENS.length} specimens first`,
   );
 }

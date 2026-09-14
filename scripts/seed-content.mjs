@@ -14,14 +14,13 @@
  * (`N-05`), so a placeholder would have to assert that someone confirmed a story that did not
  * happen. The component renders its empty state until `Q-M6` supplies a real one.
  *
- * ## Why the numbers are all zeros
+ * ## No prices and no case studies — `GS-P03`
  *
- * `PROJECT-RULES.md` §5 — *never a plausible figure*. `project.metrics` requires at least one
- * quantified metric, so every seed case study necessarily carries an invented one; they are
- * written `[SEED] 00%` per `FOUNDATION` §7.6. `pricingBlock.fromAmount` is a **number**, so it
- * cannot hold a marker — it is `0`, which renders `£0,000`, and the `INDICATIVE` badge and note
- * carry the marker instead. A seed price a reader could mistake for a quote is the failure this
- * avoids; an obviously zeroed one is not.
+ * `GS-D002` removed every price field from the schema and `GS-D001` removed every public portfolio
+ * route, so this script writes neither. Services follow the approved capability groups in
+ * `lib/services/architecture.ts`. **The development dataset still holds the pre-`GS-P03` seed**
+ * (priced services, 24 seed projects) until someone authorised re-runs this script *and* deletes
+ * the orphaned seed documents it no longer writes — `createOrReplace` never removes anything.
  *
  * ## No image assets
  *
@@ -82,74 +81,67 @@ const processFor = (division) =>
     divisionDetail: `${S} What this stage looks like on a ${division} engagement. Replace before launch.`,
   }));
 
-/** Every seed price is zeroed and badged. `variables` has a `min(2)` rule — SCHEMA-CORE §2. */
-const pricing = (model, variables, unit) => ({
-  _type: 'pricingBlock',
-  model,
-  currency: 'GBP',
-  fromAmount: 0,
-  toAmount: model === 'range' ? 0 : undefined,
-  unit,
-  includes: [`${S} Placeholder inclusion`, `${S} Placeholder inclusion`],
-  variables,
-  note: `${S} INDICATIVE — this is a placeholder, not a quotation. Real pricing is set before launch.`,
-});
-
-const cta = (label, href, style = 'primary') => ({ _type: 'ctaBlock', label, href, style });
 const seo = (title, description) => ({ _type: 'seoBlock', metaTitle: title, metaDescription: description });
 
 // ---------------------------------------------------------------------------
-// Services — 10 per division (FOUNDATION §7, "realistic nav and cross-link density")
+// Services — placeholders inside the approved capability groups (`GS-P03`)
 // ---------------------------------------------------------------------------
 
-/** `[title, track, searchIntent, problem, [deliverables], pricingModel, [priceVariables]]` */
+/**
+ * `[title, capabilityGroup, searchIntent, problem, [deliverables], [collaborators]]`.
+ *
+ * **Every title is `[SEED]`.** These exercise the architecture — every group of every division,
+ * cross-division collaborators, the technical publication gate — and describe no real offer. The
+ * approved service inventory is `_shared/SERVICE-ARCHITECTURE.md`; real copy replaces these by
+ * deletion, never by editing. Technical records are published here and carry
+ * `professionalScopeConfirmed: false`, which is allowed off production and refused on it.
+ */
 const SERVICES = {
   design: [
-    ['Brand Identity', 'brand', 'brand identity designer uk', 'You have a business and no coherent visual identity — the logo, the deck and the website each look like a different company.', ['Logo suite and lockups', 'Colour and type system', 'Usage guidelines', 'Asset pack in working formats'], 'range', ['Number of applications', 'Whether existing assets are reusable', 'Rounds of revision agreed']],
-    ['Logo Design', 'brand', 'logo design uk', 'You need one mark, done properly, in the formats a printer and a developer will both accept.', ['Concept routes', 'One developed mark', 'Vector and raster exports', 'Mono and reversed variants'], 'from', ['Number of concept routes', 'Whether guidelines are included']],
-    ['Graphic Design', 'graphic', 'graphic designer for business', 'You have content and no consistent layout system to put it in.', ['Layout system', 'Source files', 'Print-ready and screen exports'], 'day-rate', ['Volume of artwork', 'Turnaround required', 'Whether copy is supplied']],
-    ['3D Modelling & Rendering', '3d', '3d product rendering service', 'You need to show a product that does not physically exist yet, or cannot be photographed economically.', ['Production 3D model', 'Photoreal renders at agreed angles', 'Turntable frames', 'Source scene file'], 'range', ['Model complexity', 'Number of angles and materials', 'Render resolution']],
-    ['Product Visualisation', '3d', 'product visualisation studio', 'Your product photography cannot show configurations, cutaways or finishes you do not yet hold in stock.', ['Configurable render set', 'Material and finish variants', 'Exploded and cutaway views'], 'range', ['Number of variants', 'Whether CAD is supplied', 'Output resolution']],
-    ['CAD Drafting', 'cad', 'cad drafting service uk', 'You have sketches, a survey or a physical part and need drawings a manufacturer can work from.', ['Parametric CAD model', '2D drawing set', 'Native and neutral file formats'], 'day-rate', ['Part count', 'Tolerancing required', 'Source material quality']],
-    ['Engineering Drawings', 'cad', 'engineering drawing service', 'You need a dimensioned, tolerated drawing set that a workshop will not send back with questions.', ['General arrangement drawings', 'Detail drawings', 'Bill of materials', 'Revision-controlled issue set'], 'range', ['Assembly complexity', 'Drawing standard required', 'Revision rounds']],
-    ['Architectural Plans & Visualisation', 'architecture', 'architectural visualisation uk', 'You need plans drawn up and something a non-technical client can actually picture.', ['Plan, section and elevation set', 'Exterior and interior visuals', 'Export set for submission'], 'range', ['Floor area', 'Level of detail', 'Number of viewpoints']],
-    ['Motion Graphics & Product Animation', 'motion', 'product animation studio', 'A still image cannot explain how the thing works.', ['Storyboard', 'Animated sequence at agreed length', 'Delivery masters for web and social'], 'range', ['Sequence length', 'Whether 3D assets exist', 'Sound design included or not']],
-    ['Packaging & Print Artwork', 'graphic', 'packaging artwork designer', 'Your printer has rejected the artwork, or you have none to send.', ['Dieline-accurate artwork', 'Print-ready PDFs', 'Pre-flight check'], 'from', ['Number of SKUs', 'Print process and finishes']],
+    ['Brand Identity', 'brand-visual', 'brand identity designer uk', 'You have a business and no coherent visual identity — the logo, the deck and the website each look like a different company.', ['Logo suite and lockups', 'Colour and type system', 'Usage guidelines', 'Asset pack in working formats']],
+    ['Graphic Design', 'brand-visual', 'graphic designer for business', 'You have content and no consistent layout system to put it in.', ['Layout system', 'Source files', 'Print-ready and screen exports']],
+    ['Packaging Design', 'brand-visual', 'packaging designer uk', 'Your printer has rejected the artwork, or you have none to send.', ['Dieline-accurate artwork', 'Print-ready PDFs', 'Pre-flight check']],
+    ['Digital Illustration', 'illustration', 'custom illustration uk', 'You need artwork made for the job rather than bought from a library.', ['Concept sketches', 'Final artwork in agreed formats']],
+    ['Motion Graphics & Animation', 'motion', 'motion graphics studio uk', 'A still image cannot explain how the thing works.', ['Storyboard', 'Animated sequence at agreed length', 'Delivery masters for web and social']],
+    ['3D Modelling & Rendering', '3d-visualisation', '3d product rendering service', 'You need to show a product that does not physically exist yet, or cannot be photographed economically.', ['3D model', 'Renders at agreed angles', 'Source scene file']],
+    ['Product Visualisation', '3d-visualisation', 'product visualisation studio', 'Your product photography cannot show configurations, cutaways or finishes you do not yet hold in stock.', ['Render set', 'Material and finish variants', 'Exploded and cutaway views']],
+    ['CAD Drafting', 'technical', 'cad drafting service uk', 'You have sketches, a survey or a physical part and need drawings prepared from them.', ['CAD model', '2D drawing set', 'Native and neutral file formats']],
+    ['Engineering Drawings', 'technical', 'engineering drawing service', 'You need a dimensioned drawing set prepared to an agreed brief.', ['General arrangement drawings', 'Detail drawings', 'Revision-controlled issue set']],
+    ['Technical Document Layout', 'technical', 'technical manual layout', 'Your manual or specification sheet is correct and hard to read.', ['Layout template', 'Typeset document', 'Print and screen exports'], ['press']],
   ],
   digital: [
-    ['Website Design & Build', 'web', 'website design agency uk', 'Your site was built by someone who has moved on, and every change is a negotiation.', ['Design system and page templates', 'Built, responsive, accessible site', 'CMS the team can actually use', 'Handover documentation'], 'range', ['Number of unique templates', 'Whether content is supplied', 'Integrations required']],
-    ['Ecommerce & Shopify', 'web', 'shopify developer uk', 'Your store works but the theme fights you every time you want to change something.', ['Theme customisation or build', 'Product and collection templates', 'Checkout and app configuration'], 'range', ['Catalogue size', 'Theme condition', 'Apps and integrations']],
-    ['WordPress Development', 'web', 'wordpress developer uk', 'You are on WordPress and want it fast and maintainable rather than replaced.', ['Custom theme or block set', 'Performance and security pass', 'Editor training'], 'range', ['Number of templates', 'Plugin footprint', 'Migration required or not']],
-    ['Web Application Development', 'software', 'custom web application development', 'A spreadsheet is running a process that has outgrown it.', ['Scoped application', 'Authentication and roles', 'Data model and migrations', 'Deployment pipeline'], 'range', ['Number of user roles', 'Integration count', 'Data migration volume']],
-    ['Mobile App Development', 'software', 'mobile app developer uk', 'You need the thing on a phone, in a store, without a team to maintain it.', ['Application build', 'Store submission assets', 'Release pipeline'], 'range', ['Platforms targeted', 'Offline requirements', 'Backend already exists or not']],
-    ['AI Integration', 'ai', 'ai integration for business', 'You want a specific job done by a model, not a chatbot bolted onto the corner of a page.', ['Use-case definition and evaluation set', 'Integration into an existing system', 'Guardrails, logging and cost controls'], 'range', ['Task complexity', 'Data readiness', 'Accuracy threshold required']],
-    ['Automation & Workflow', 'ai', 'business process automation uk', 'The same file is being copied between the same three systems every week by a person.', ['Process map', 'Automated pipeline', 'Failure alerting'], 'range', ['Number of systems', 'API availability', 'Volume and error tolerance']],
-    ['SEO & Performance', 'growth', 'technical seo audit uk', 'The site is slow, or invisible, and you have been told conflicting things about why.', ['Technical audit against measured data', 'Prioritised fix list', 'Implementation of the fixes'], 'from', ['Site size', 'Whether implementation is included']],
-    ['Hosting & Maintenance', 'support', 'website maintenance uk', 'Nobody currently owns the question of whether the site is up.', ['Managed hosting', 'Updates and backups', 'Monitoring and response'], 'retainer', ['Number of sites', 'Response time required', 'Update frequency']],
-    ['Technical Consulting', 'support', 'technical consultant for startups', 'You need someone to tell you whether the quote you have been given is reasonable.', ['Written technical assessment', 'Options with trade-offs stated', 'Follow-up session'], 'day-rate', ['Scope of the review', 'Number of stakeholders']],
+    ['Website Design & Build', 'web', 'website design agency uk', 'Your site was built by someone who has moved on, and every change is a negotiation.', ['Design system and page templates', 'Built, responsive, accessible site', 'CMS the team can actually use', 'Handover documentation'], ['press', 'design']],
+    ['Ecommerce', 'web', 'ecommerce developer uk', 'Your store works but the theme fights you every time you want to change something.', ['Store build or customisation', 'Product and collection templates', 'Checkout and app configuration']],
+    ['CMS Implementation', 'web', 'cms implementation uk', 'You want to edit your own site without breaking it.', ['Content model', 'CMS configuration', 'Editor training']],
+    ['Web Application Development', 'software', 'custom web application development', 'A spreadsheet is running a process that has outgrown it.', ['Scoped application', 'Authentication and roles', 'Data model and migrations', 'Deployment pipeline']],
+    ['Internal Tools & Dashboards', 'software', 'internal business tools', 'The information you need is spread across systems nobody has joined up.', ['Scoped tool or dashboard', 'Data connections', 'Access controls']],
+    ['Mobile App Development', 'apps-interactive', 'mobile app developer uk', 'You need the thing on a phone, in a store, without a team to maintain it.', ['Application build', 'Store submission assets', 'Release pipeline']],
+    ['AI Integration', 'automation-intelligence', 'ai integration for business', 'You want a specific job done by a model, not a chatbot bolted onto the corner of a page.', ['Use-case definition and evaluation set', 'Integration into an existing system', 'Guardrails and logging']],
+    ['Automation & Workflow', 'automation-intelligence', 'business process automation uk', 'The same file is being copied between the same three systems every week by a person.', ['Process map', 'Automated pipeline', 'Failure alerting']],
+    ['Technical SEO & Performance', 'operate-improve', 'technical seo audit uk', 'The site is slow or hard to crawl, and you have been told conflicting things about why.', ['Technical audit against measured data', 'Prioritised fix list', 'Implementation of the fixes'], ['press']],
+    ['Maintenance & Monitoring', 'operate-improve', 'website maintenance uk', 'Nobody currently owns the question of whether the site is up.', ['Hosting coordination', 'Updates and backups', 'Monitoring']],
   ],
   press: [
-    ['Book Publishing', 'publishing', 'self publishing services uk', 'You have a finished manuscript and no route to a printed, distributed book.', ['Structural and copy edit', 'Typeset interior', 'Cover design', 'Distribution setup'], 'range', ['Word count', 'Illustration and index requirements', 'Print specification']],
-    ['Ghostwriting', 'writing', 'ghostwriter uk', 'The book is in your head and it has been there for three years.', ['Interview programme', 'Chapter-by-chapter drafts', 'Full manuscript to agreed length'], 'range', ['Target word count', 'Research depth', 'Interview hours required']],
-    ['Editing & Proofreading', 'writing', 'manuscript editing service uk', 'The manuscript is done and you cannot see it clearly any more.', ['Developmental notes', 'Line and copy edit', 'Final proofread against proofs'], 'per-unit', ['Word count', 'Edit level required', 'Turnaround']],
-    ['Cover Design & Typesetting', 'publishing', 'book cover design and typesetting', 'The inside looks like a word processor and the outside looks like nothing.', ['Cover to printer specification', 'Typeset interior with running heads', 'Print-ready and ebook files'], 'range', ['Page extent', 'Image handling', 'Number of formats']],
-    ['ISBN & Distribution Setup', 'publishing', 'isbn and book distribution uk', 'You do not know what an ISBN commits you to, or who ends up owning the listing.', ['Guidance on obtaining your own ISBN', 'Metadata and listing preparation', 'Distribution account setup in your name'], 'fixed', ['Number of formats', 'Territories required']],
-    ['Author Website & Platform', 'platform', 'author website design', 'Readers find the book and then find nowhere to go.', ['Author site', 'Mailing list integration', 'Book and event pages'], 'range', ['Number of titles', 'Commerce required or not', 'Content supplied or written']],
-    ['Content Programmes', 'content', 'content marketing programme uk', 'You publish when someone remembers to, which is never.', ['Editorial plan', 'Agreed cadence of pieces', 'Performance review each cycle'], 'retainer', ['Pieces per month', 'Research depth', 'Whether distribution is included']],
-    ['Copywriting', 'writing', 'business copywriter uk', 'The words on the site were written by whoever was free.', ['Messaging framework', 'Page copy', 'One revision round'], 'per-unit', ['Number of pages', 'Research and interviews required']],
-    ['Ebook & Audiobook Production', 'publishing', 'ebook and audiobook production', 'The print book exists and the other two formats do not.', ['Reflowable ebook', 'Audiobook production management', 'Retailer-ready packages'], 'range', ['Page extent', 'Narration arrangement', 'Number of retailers']],
-    ['Manuscript Assessment', 'writing', 'manuscript assessment uk', 'You want to know whether it is any good before you spend anything else on it.', ['Written assessment', 'Structural recommendations', 'A recommendation that may be "not yet"'], 'fixed', ['Word count', 'Turnaround']],
+    ['Ghostwriting', 'writing', 'ghostwriter uk', 'The book is in your head and it has been there for three years.', ['Interview programme', 'Chapter-by-chapter drafts', 'Full manuscript to agreed length']],
+    ['Website & Business Copywriting', 'writing', 'business copywriter uk', 'The words on the site were written by whoever was free.', ['Messaging framework', 'Page copy', 'One revision round'], ['digital']],
+    ['Thought Leadership & Reports', 'writing', 'whitepaper writer uk', 'You have expertise and nothing published that shows it.', ['Outline and research plan', 'Draft document', 'Final edited copy']],
+    ['Manuscript Assessment', 'editorial', 'manuscript assessment uk', 'You want to know whether it is any good before you spend anything else on it.', ['Written assessment', 'Structural recommendations', 'A recommendation that may be "not yet"']],
+    ['Editing & Proofreading', 'editorial', 'manuscript editing service uk', 'The manuscript is done and you cannot see it clearly any more.', ['Developmental notes', 'Line and copy edit', 'Final proofread against proofs']],
+    ['Book Publishing Preparation', 'publishing', 'self publishing services uk', 'You have a finished manuscript and no route to a printed, distributed book.', ['Publishing plan', 'Typeset interior', 'Cover-design coordination', 'Distribution setup'], ['design']],
+    ['Ebook & Print Formatting', 'publishing', 'ebook formatting service', 'The inside looks like a word processor.', ['Typeset print interior', 'Reflowable ebook', 'Platform-ready files']],
+    ['ISBN & Distribution Setup', 'publishing', 'isbn and book distribution uk', 'You do not know what an ISBN commits you to, or who ends up owning the listing.', ['Guidance on obtaining your own ISBN', 'Metadata and listing preparation', 'Distribution account setup in your name']],
+    ['Content Programmes', 'content-promotion', 'content marketing programme uk', 'You publish when someone remembers to, which is never.', ['Editorial plan', 'Agreed cadence of pieces', 'Review each cycle']],
   ],
 };
 
 const serviceDocs = Object.entries(SERVICES).flatMap(([division, rows]) =>
-  rows.map(([title, track, searchIntent, problem, deliverables, model, variables], i) => ({
+  rows.map(([title, capabilityGroup, searchIntent, problem, deliverables, collaborators = []], i) => ({
     _id: `seed-service-${division}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
     _type: 'service',
     title: `${S} ${title}`,
     slug: slugOf(title.toLowerCase().replace(/[^a-z0-9]+/g, '-')),
     division,
-    track,
+    capabilityGroup,
     searchIntent,
     problem: `${S} ${problem}`,
     deliverables: deliverables.map((label, j) => ({
@@ -160,103 +152,14 @@ const serviceDocs = Object.entries(SERVICES).flatMap(([division, rows]) =>
       included: true,
     })),
     process: processFor(division),
-    pricingModel: pricing(model, variables, model === 'per-unit' ? 'per 1,000 words' : undefined),
-    ctaPrimary: cta('Tell us what you need', '/contact'),
-    ctaSecondary: cta('See how we work', '/approach', 'secondary'),
+    collaborators,
+    professionalScopeConfirmed: false,
     seo: seo(`${title} — Gridsmith ${division[0].toUpperCase()}${division.slice(1)}`, `${S} Placeholder meta description for ${title}.`),
     order: i + 1,
     published: true,
     isSeed: true,
   })),
 );
-
-// ---------------------------------------------------------------------------
-// Projects — 24, to the distribution FOUNDATION §7 requires
-// ---------------------------------------------------------------------------
-
-/**
- * Fictional client names, per `FOUNDATION` §7.2 — *"an obviously fictional convention
- * (`Northfield Engineering`, `Halcyon Press`) — never a real company name, never a
- * plausible-but-unverifiable one."* Each is additionally `[SEED]`-prefixed where it renders.
- */
-const CLIENTS = [
-  'Northfield Engineering', 'Halcyon Press', 'Marlowe & Vale', 'Ashgrove Interiors',
-  'Kestrel Instruments', 'Bramblewick Foods', 'Quillon Studios', 'Thornbury Marine',
-  'Wrenhaven Labs', 'Silverbeck Group', 'Ossory Textiles', 'Pendrake Systems',
-];
-
-const INDUSTRIES = ['Manufacturing', 'Publishing', 'Professional services', 'Retail', 'Marine', 'Food & drink'];
-
-/** `[title, divisions, track, confidential, metricCount]` */
-const PROJECT_SPEC = [
-  ['Instrument Housing Visualisation', ['design'], '3d', false, 1],
-  ['Workshop Drawing Set Rebuild', ['design'], 'cad', false, 1],
-  ['Identity for a Marine Refit Yard', ['design'], 'brand', false, 1],
-  ['Packaging Range Artwork', ['design'], 'graphic', false, 1],
-  ['Assembly Animation for a Trade Show', ['design'], 'motion', false, 1],
-  ['Residential Extension Plan Set', ['design'], 'architecture', true, 1],
-  ['Catalogue Layout System', ['design'], 'graphic', false, 1],
-  ['Product Configurator Renders', ['design'], '3d', false, 1],
-  ['Ecommerce Replatform', ['digital'], 'web', false, 4],
-  ['Field Reporting Web Application', ['digital'], 'software', false, 4],
-  ['Document Triage with a Language Model', ['digital'], 'ai', true, 4],
-  ['Marketing Site Rebuild', ['digital'], 'web', false, 4],
-  ['Quotation Workflow Automation', ['digital'], 'ai', false, 2],
-  ['Technical SEO Recovery', ['digital'], 'growth', false, 2],
-  ['Inventory Sync Integration', ['digital'], 'software', true, 2],
-  ['Booking Platform for a Marina', ['digital'], 'web', false, 2],
-  ['Founder Memoir, Ghostwritten', ['press'], 'writing', false, 2],
-  ['Technical Handbook, Second Edition', ['press'], 'publishing', false, 2],
-  ['Author Platform and Mailing List', ['press'], 'platform', false, 2],
-  ['Quarterly Content Programme', ['press'], 'content', false, 2],
-  ['Trade Title, Print and Ebook', ['press'], 'publishing', false, 2],
-  // The three cross-division records — the best evidence the group structure is real.
-  ['Brand, Website and Launch Book', ['design', 'digital', 'press'], 'brand', false, 3],
-  ['Product Renders and Storefront', ['design', 'digital'], '3d', false, 3],
-  ['Handbook and Companion Microsite', ['digital', 'press'], 'publishing', false, 3],
-];
-
-const METRIC_LABELS = [
-  'Time to first draft', 'Pages delivered', 'Load time improvement', 'Support tickets after handover',
-];
-
-const projectDocs = PROJECT_SPEC.map(([title, divisions, track, confidential, metricCount], i) => {
-  const client = CLIENTS[i % CLIENTS.length];
-  return {
-    _id: `seed-project-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-    _type: 'project',
-    title: `${S} ${title}`,
-    slug: slugOf(title.toLowerCase().replace(/[^a-z0-9]+/g, '-')),
-    divisions,
-    track,
-    // `confidential` is enforced in the query layer, never in a component — a component-level
-    // check leaks the name into the RSC payload before anything decides not to render it.
-    clientName: `${S} ${client}`,
-    clientDisplay: confidential
-      ? `${S} A UK ${INDUSTRIES[i % INDUSTRIES.length].toLowerCase()} business`
-      : `${S} ${client}`,
-    confidential,
-    industry: INDUSTRIES[i % INDUSTRIES.length],
-    year: 2026,
-    summary: `${S} Placeholder card copy for ${title}. Replaced by a real case study before launch.`,
-    challenge: blocks(`${S} The situation the client arrived with. Placeholder.`),
-    approach: blocks(`${S} What was done, and why that rather than the obvious alternative. Placeholder.`),
-    outcome: blocks(`${S} What changed for the client. Placeholder — no real outcome is claimed here.`),
-    metrics: Array.from({ length: metricCount }, (_, m) => ({
-      _type: 'metric',
-      ...key(m),
-      label: METRIC_LABELS[m % METRIC_LABELS.length],
-      // FOUNDATION §7.6 — zeroed digits and a visible marker, never a plausible figure.
-      value: `${S} 00%`,
-      context: `${S} No real measurement is asserted by this figure.`,
-    })),
-    media: [],
-    featured: i < 6,
-    masterFeatured: divisions.length > 1 || i < 4,
-    seo: seo(`${title} — Gridsmith`, `${S} Placeholder meta description.`),
-    isSeed: true,
-  };
-});
 
 // ---------------------------------------------------------------------------
 // Testimonials — REAL. Verbatim, attributed, traceable. Never reworded, never [SEED].
@@ -338,14 +241,14 @@ const teamDocs = [
 const FAQ_TEMPLATES = [
   ['How long does a typical project take?', 'timelines'],
   ['What do you need from me before we start?', 'process'],
-  ['How is pricing worked out?', 'pricing'],
+  ['How is a quote put together?', 'quotation'],
   ['Do I own the work when it is finished?', 'rights'],
   ['What happens if I need changes after delivery?', 'process'],
   ['Can you work with our existing suppliers?', 'process'],
   ['Do you take on small pieces of work?', 'scope'],
   ['What if my project spans more than one of your divisions?', 'group'],
   ['How do you handle confidential work?', 'legal'],
-  ['What are your payment terms?', 'pricing'],
+  ['What are your payment terms?', 'quotation'],
   ['Who will actually be doing the work?', 'process'],
   ['How do you keep me updated?', 'process'],
   ['What happens if the project stalls at my end?', 'process'],
@@ -465,7 +368,6 @@ const groupPageDocs = [
 
 const ALL = [
   ...serviceDocs,
-  ...projectDocs,
   ...testimonialDocs,
   ...teamDocs,
   ...faqDocs,

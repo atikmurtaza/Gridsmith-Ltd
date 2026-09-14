@@ -15,7 +15,7 @@ Binding rules for anyone (human or AI coding agent) working on the Press route g
 
 1. **No urgency, scarcity, or countdown mechanics. Ever.** No "3 slots left", no expiring offers, no timers. (ETH-01)
 2. **No claims or implications about sales, bestseller status, or income.** Not in copy, not in testimonials, not in imagery, not in case study metrics. (ETH-02)
-3. **Every package shows a total price.** There is no "POA" path and the schema will not permit one. (ETH-03, FR-P06)
+3. ~~**Every package shows a total price.** There is no "POA" path and the schema will not permit one. (ETH-03, FR-P06)~~ **Superseded by `GS-D002` at `GS-P03`:** no package, assessment or revision price is published; engagements are quoted. The honesty half survives — exclusions and `notFor` stay required.
 4. **The Path Finder must be able to recommend against Gridsmith.** The self-service and not-ready outcomes are functional requirements with schema-level enforcement. Do not remove them, do not add CTAs to them, do not tune the rules so they stop firing. (ETH-04)
 5. **The commercial expectations statement appears before pricing.** Do not move it down the page. (ETH-05, ETH-07)
 6. **No book on the shelf without recorded author consent and at least one working retailer link.** (ETH-06, FR-P08)

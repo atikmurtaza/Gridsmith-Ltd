@@ -30,9 +30,8 @@
 }
 .cardLink:hover { text-decoration: underline; text-underline-offset: 0.2em; }
 
-/* --- Work grid ---------------------------------------------------------- */
+/* --- Grids -------------------------------------------------------------- */
 
-.projectGrid,
 .serviceList,
 .postList,
 .testimonials,
@@ -44,67 +43,18 @@
   gap: var(--space-6);
 }
 
-.projectGrid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); }
 .serviceList { grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
 .postList    { grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
 .testimonials    { grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); }
 .testimonialsTwo { grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr)); }
 
-.projectCard { display: flex; flex-direction: column; gap: 0; padding: 0; overflow: hidden; }
-.projectBody {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
-}
-.projectMeta {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-2);
-  font-size: var(--text-sm);
-  color: var(--ink-muted);
-}
-/* The one badge given accent treatment. Cross-division work is the best evidence the group
-   structure is real, so it is the fact worth spending the accent on. */
-.crossDivision {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--accent-ink);
-  background: var(--accent);
-  padding: 0 var(--space-2);
-}
-.projectSummary { margin: 0; color: var(--ink); }
-.projectClient { margin: 0; font-size: var(--text-sm); color: var(--ink-subtle); }
-
 /* --- Services ----------------------------------------------------------- */
 
+/* Grouped by capability group (GS-P03). No price block: GS-D002. */
+.serviceGroups { display: flex; flex-direction: column; gap: var(--space-12); }
+.serviceGroup { display: flex; flex-direction: column; gap: var(--space-6); }
 .serviceCard { display: flex; flex-direction: column; gap: var(--space-3); }
 .serviceProblem { margin: 0; color: var(--ink-muted); }
-
-/* --- Price -------------------------------------------------------------- */
-
-.price { display: flex; flex-direction: column; gap: var(--space-1); margin-block-start: auto; }
-.priceLine {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-lg);
-  color: var(--ink);
-}
-.priceLead { font-size: var(--text-sm); color: var(--ink-muted); }
-.priceUnit { font-size: var(--text-sm); color: var(--ink-muted); }
-.priceVariables,
-.priceNote {
-  margin: 0;
-  font-size: var(--text-xs);
-  color: var(--ink-subtle);
-}
 
 /* --- Testimonials ------------------------------------------------------- */
 
@@ -140,34 +90,6 @@
 .postCard { display: flex; flex-direction: column; gap: var(--space-2); }
 .postExcerpt { margin: 0; color: var(--ink-muted); }
 .postMeta { margin: 0; font-size: var(--text-sm); color: var(--ink-subtle); }
-
-/* --- Case study --------------------------------------------------------- */
-
-.caseHeader { display: flex; flex-direction: column; gap: var(--space-4); }
-.caseMeta {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--ink-muted);
-}
-.caseSections { display: flex; flex-direction: column; gap: var(--space-12); }
-.metrics {
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
-  gap: var(--space-6);
-}
-.metric {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding-block-start: var(--space-3);
-  border-block-start: var(--border-hairline) solid var(--line-strong);
-}
-.metricValue { font-size: var(--text-xl); color: var(--ink); }
-.metricLabel { font-size: var(--text-sm); color: var(--ink-muted); }
-.metricContext { font-size: var(--text-xs); color: var(--ink-subtle); }
 
 /* --- Legal -------------------------------------------------------------- */
 
