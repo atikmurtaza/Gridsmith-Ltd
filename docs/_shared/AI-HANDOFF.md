@@ -16,11 +16,17 @@
 ## Repository state
 
 - **Starting commit:** `1ad462ff276c7d03079f5b9afbca908cbbfc0b24`
-- **Ending commit:** the `GS-R001` commit containing this handoff; use `git rev-parse HEAD`
-- **Branch:** `main`, tracking `origin/main`. The candidate is cut on a branch first — see
-  *Staging* below
+- **Ending commit:** `5049f820e9f0859ee15b7b144aac0038ee0a9bd9`. Two commits: `46b961e1` is the
+  phase, `5049f820` is the Lighthouse assertion fix CI asked for
+- **Branches:** `staging/gs-r001-release-candidate` carries the candidate and is what Vercel builds
+  as a **preview**; `main` is fast-forwarded to the same commit so the programme record is where
+  the next session starts. **Both are at `5049f820` and both are pushed**
 - **Starting working tree:** clean, 0 ahead / 0 behind `origin/main`, no unrelated owner work
+- **Ending working tree:** clean, 0 ahead / 0 behind both remotes
 - **Starting CI:** run `35084597904` **`success`** on `1ad462ff`. Verified before any work began
+- **Ending CI:** run `35145801544` **`success`** on the branch and run `35147103758`
+  **`success`** on `main`, both on `5049f820` — **all 45 steps**, both Lighthouse axes and the
+  full served chain included. The first push's run `35144458922` went `failure`; see below
 
 ## Hard scope boundaries preserved
 
@@ -258,6 +264,27 @@ Reading the condition from the config's own environment is legitimate here and w
 elsewhere: this config **starts the server itself**, so the build measured inherits the
 environment by construction. There is no second machine to be wrong about.
 
+### Lighthouse on the release candidate — CI run `35145801544`, median of 3
+
+| Axis | route | perf | a11y | b-p | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|
+| Desktop | `/` | **1.00** | **1.00** | 0.96 | 569ms | **0.000** | **0ms** |
+| Desktop | `/design` · `/digital` · `/press` | **1.00** | **1.00** | 0.96 | 520–526ms | 0.000 | 0ms |
+| Mobile (4G, 4× CPU) | `/` | 0.99 | **1.00** | 0.96 | 1605ms | **0.000** | 45ms |
+| Mobile | `/design` · `/digital` · `/press` | 0.99 | **1.00** | 0.96 | 1579–1583ms | 0.000 | 38–45ms |
+
+**Every measured LCP is inside its ceiling** (`lighthouse/routes.cjs`: `/` 1800ms, `/digital`
+1750ms, `/design` and `/press` 2000ms), CLS is **0.000** everywhere against 0.02–0.05, and TBT is
+38–45ms against 150–200ms. Desktop performance and accessibility are **1.00 on all four routes**.
+
+`seo` reads 0.66 by design and is not asserted as a category on a non-indexable build — §5.3.
+
+**TBT moved 22ms → 38–45ms against `GS-P06`, and this is reported rather than explained away.**
+`lhci-report` prints the host `benchmarkIndex` for exactly this reason: it was **3110** (range
+2635–3262 across 12 runs) here. TBT tracks runner CPU, the figure is far inside its ceiling, and
+nothing in this phase added client JavaScript — the bundle table is unchanged at master 1.9KB of
+15KB. Treat it as runner variance unless a later run with a comparable `benchmarkIndex` disagrees.
+
 ### Human acceptance — what was done, and what is not claimed
 
 **Done**, in a real Chromium browser against the served candidate: 375/768/1440/1920 with no
@@ -274,6 +301,23 @@ successful form submission**, because Preview has no isolated database (`GS-O010
 state is covered by `check:axe`'s probe-route assertion, not by a browser.
 
 ## Staging
+
+**The candidate is live and `READY`:** deployment `dpl_J9Xwajt5jHME5tH7CqVcASvGzAa5`, target
+`null` (a preview), at
+`https://gridsmith-ltd-git-staging-gs-r001-8a292a-atikmurtazas-projects.vercel.app`. It answers
+**HTTP 302 to Vercel's SSO**, and even that redirect carries `x-robots-tag: noindex` — so it is
+reachable to the owner signed in to Vercel and to nobody else. **Its served pages are therefore
+not gate-asserted**: `check:company` and the rest ran against an identical local production build
+of the same commit and the same dataset, which proves the build's behaviour, not this URL's. No
+share link was created — that would be a publication decision.
+
+**The `main` push produced production-target deployment `dpl_FD1MW6Pj7bjar77Razf5aYsxrCbx`, state
+`ERROR`, as every production-target build since `GS-P00` has.** The cause was read rather than
+assumed, because the point of predicting it is to notice when it changes: `check:launch --build`
+refused the build through npm's `prebuild` hook with *"no companyDetails document in dataset
+production — every page renders the statutory footer"*. That is `GS-T005` exactly, and it is the
+gate working — the build failed **before** rendering rather than shipping an empty statutory
+footer. Nothing was published and `gridsmith.uk` is unaffected.
 
 Project `gridsmith-ltd` has **no custom domain** and `live: false`; `gridsmith.uk` is on Hostinger.
 **A production-target deployment cannot replace the live site**, and every one since `GS-P00` has

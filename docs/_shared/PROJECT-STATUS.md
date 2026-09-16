@@ -9,13 +9,17 @@ safety). Production migration, production content activation and deployment rema
 **Current task:** `GS-R001` / `GS-O008` — staging release candidate and human-acceptance
 preparation. Evidence: `docs/_shared/GS-R001-STAGING-RC.md`
 
-**Current commit:** `1ad462ff276c7d03079f5b9afbca908cbbfc0b24` at task start; the ending commit is
-the GS-R001 commit containing this record (`git rev-parse HEAD`)
+**Current commit:** `1ad462ff276c7d03079f5b9afbca908cbbfc0b24` at task start; **`5049f820` at
+end** — `46b961e1` is the phase and `5049f820` the Lighthouse assertion fix CI asked for
 
-**Branch:** `main`, tracking `origin/main`. The candidate is cut on a **branch**, deliberately —
-a branch push produces a Vercel *preview*, which builds against the `development` dataset and
-reaches `READY`; a push to `main` produces a production-target build, which has ended `ERROR` on
-the empty production Sanity dataset since `GS-P00` and is not a candidate anybody can evaluate
+**Branches:** `staging/gs-r001-release-candidate` carries the candidate and is what Vercel builds
+as a **preview**; `main` is fast-forwarded to the same commit so the programme record is where the
+next session starts. Both are at `5049f820`, both pushed, working tree clean.
+
+**Why a branch:** a branch push produces a Vercel *preview*, which builds against the
+`development` dataset and reaches `READY`; a push to `main` produces a production-target build,
+which has ended `ERROR` on the empty production Sanity dataset since `GS-P00` and is not a
+candidate anybody can evaluate. Both happened, exactly as described.
 
 **Working tree:** clean at task start, 0 ahead / 0 behind, no unrelated owner work.
 
@@ -28,6 +32,11 @@ page `noindex` and Lighthouse's `is-crawlable` is then correctly 0. The floor wa
 and the `noindex` was **not** removed: the category assertion now applies only to an indexable
 build, and otherwise the eight substantive SEO audits are asserted individually at 1 with only
 `is-crawlable` off — stricter than the floor it replaced. `GS-R001-STAGING-RC.md` §5.3.
+
+**Ending CI:** run `35145801544` **`success`** on the branch and `35147103758` **`success`** on
+`main`, both on `5049f820` — **all 45 steps**, both Lighthouse axes included. Desktop **1.00 perf
+/ 1.00 a11y / CLS 0.000 / TBT 0ms** on all four routes; mobile 0.99 / 1.00 / CLS 0.000 / TBT
+38–45ms, every LCP inside its ceiling.
 
 **RC status:** **TECHNICALLY PASS.** **Production readiness: NOT READY.** They are different
 statuses — `GS-R001-STAGING-RC.md` §8 lists the thirteen items still owed and who owns each.
@@ -122,7 +131,11 @@ Hostinger, so **a production-target deployment cannot replace the live site**, a
 `GS-P00` has ended `ERROR` on the empty production Sanity dataset (`GS-T005`).
 
 `GS-R001` cut the staging release candidate as a **branch preview**, which builds against the
-`development` dataset and reaches `READY`. **Vercel Authentication is enabled for every deployment
+`development` dataset and reached **`READY`**: `dpl_J9Xwajt5jHME5tH7CqVcASvGzAa5`, target `null`,
+at `gridsmith-ltd-git-staging-gs-r001-8a292a-atikmurtazas-projects.vercel.app`. The `main` push
+produced production-target `dpl_FD1MW6Pj7bjar77Razf5aYsxrCbx`, state **`ERROR`** — `check:launch`
+refusing the empty production dataset through the `prebuild` hook, which is `GS-T005` and is the
+gate working. Nothing published. **Vercel Authentication is enabled for every deployment
 except custom domains**, so the candidate answers 401 to a crawler; `app/robots.ts` serves
 `Disallow: /` and every page carries `noindex, nofollow` as the second and third locks. All three
 read one `INDEXABLE` constant, so they cannot disagree.
