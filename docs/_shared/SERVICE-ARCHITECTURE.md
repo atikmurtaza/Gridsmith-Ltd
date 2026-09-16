@@ -680,14 +680,22 @@ possible is **where the category comes from**:
   divisions later rather than dropping them.
 
 **Bodies are published verbatim or withheld whole — never edited.** A genuine quotation that
-cannot be published is dropped and reported. Three deterministic rules: the reviewer's own company
-name appears in the body (drawn from the same payload, so it needs no maintained list and covers
-reviewers nobody has seen yet); the body contains a URL or email address; the body is empty.
+cannot be published is dropped and reported. **Five deterministic rules as of `GS-O015`**, in the
+order they are tested: the review id is on the manual list (see §21); the body is empty; the
+reviewer's own company name appears in the body (drawn from the same payload, so it needs no
+maintained list and covers reviewers nobody has seen yet); **the body names a business other than
+Gridsmith**; the body contains a URL or email address.
 
-**The stated ceiling:** the first rule can only see a company Freelancer actually publishes. A
-client naming an employer that is not on their profile is not detectable by any automatic rule and
-is not claimed to be — which is why `check:reviews --live` **reports** the withheld count rather
-than asserting it is zero.
+**The fourth rule is `GS-O015`'s deterministic limb and is new at `GS-R001`** —
+`namedThirdParty`, a capitalised name followed by a corporate-form token. **It does not attempt to
+detect disparagement**, which is the classification the owner ruled out and which no rule does
+reliably; it detects that a business is *named*, and over-withholds by design.
+
+**The stated ceilings**, because a clean run means what they leave out. The third rule sees only a
+company Freelancer actually publishes on a profile. The fourth sees only a business named with a
+corporate form — *"my previous developer"* satisfies neither, and no rule here claims otherwise.
+That is why `check:reviews --live` **reports** the withheld count rather than asserting it is zero,
+and why it additionally **pins the review set a person has read** (§21).
 
 **Never rendered, and never even parsed:** `paid_amount`, `bid_amount`, `price_usd`, `currency`,
 `project_id`, `review_context.seo_url` and the reviewer's `company`. A field that is not in the
@@ -748,13 +756,47 @@ different publications with different exposure, and neither the automatic withho
 is the ceiling §18 already states.
 
 Editing a quotation is not available. So the two options are publish whole or withhold whole, and
-the conservative default was taken: `WITHHELD_REVIEW_IDS` in `lib/reviews/freelancer.ts` holds two
-ids, the block publishes **10 of 12**, and `check:reviews --live` names each withheld review and
-its reason on every run. **Emptying that array publishes them** — it is one owner sentence, and it
-is `GS-O015`.
+the conservative default was taken: `WITHHELD_REVIEW_IDS` held two ids and the block published
+**10 of 12**.
 
-Note which way the default runs: nothing was deleted, no quotation was altered, and the reversible
+Note which way the default ran: nothing was deleted, no quotation was altered, and the reversible
 option was the one that does not put an unreviewed legal position on a homepage.
+
+### `GS-O015` — CLOSED at `GS-R001`, 16 September 2026, and the mechanism generalised
+
+**The owner's decision: keep them withheld.** Not deleted at source, not altered, not paraphrased,
+not republished, not exposed through hidden content. All of that was already true.
+
+**What moved is how, and that is the substance of the closure.** A list of two ids cannot reach a
+review nobody has seen, and the owner's second requirement is that *future* reviews carrying
+equivalent statements about identifiable third parties are withheld automatically where a safe
+deterministic rule can decide, and otherwise **enter a human-review state**. Both limbs now exist:
+
+**Deterministic — `namedThirdParty`, §18's fourth rule.** Measured against the live API:
+**12 returned, 10 published, 2 withheld**, each named by the business it matched — *Varnika
+Software PVT* and *Varnika Pvt* — and **no collateral withholding of the other ten**. That last
+clause is what makes it a measurement rather than a coincidence. A body naming a company nobody
+has seen is caught by the same rule.
+
+**The two ids are removed and `WITHHELD_REVIEW_IDS` is empty**, because keeping them would leave
+two mechanisms over one subject with the id branch unreachable for exactly the two reviews it was
+written for — the `A-GATE-4-3` hazard. An empty denylist is normally an inert assertion; this one
+is not, because `withholdReason` takes the list as an argument defaulting to the constant, so
+`check:reviews:selftest` drives the branch by value and reads the returned reason. Production
+behaviour is unchanged: no caller passes anything else.
+
+**Human review — the pinned set.** `check:reviews --live` asserts
+`{ total: 12, published: 10, withheld: 2 }`, hardcoded. **A changed set makes the gate red and
+names the difference**, so a review nobody has read cannot reach the homepage without someone
+seeing the run that reported it. It goes red on a welcome five-star review too, and that is not a
+defect in the assertion — the action either way is to read the new body and then move the numbers
+in a commit. Adding an id back to `WITHHELD_REVIEW_IDS` is how a person withholds what no rule
+reaches.
+
+**No sentiment or AI moderation system was built, as instructed.** Every limb is a regex or a list,
+and each is broken separately in `check:reviews:selftest` (66 cases) with the returned reason
+asserted. **Criticism of Gridsmith remains publishable and is published** — the lowest published
+rating is 4.6 and it is on the homepage.
 
 ## 19. Reviews are Master-only — `GS-O014`, the owner's amendment
 

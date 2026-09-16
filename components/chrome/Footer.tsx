@@ -1,6 +1,7 @@
 import { ConsentReopen } from '@/components/consent/ConsentReopen';
-import { getCompanyDetails } from '@/lib/company/companyDetails';
+import { getCompanyDetails, telHref } from '@/lib/company/companyDetails';
 import { LEGAL_FOOTER_SLUGS } from '@/lib/legal/slugs';
+import { SITE_URL } from '@/lib/seo/site';
 import type { Division } from './RootShell';
 import styles from './chrome.module.css';
 
@@ -41,6 +42,17 @@ const LEGAL_LINKS = LEGAL_FOOTER_SLUGS.map((s) => ({
  * That last row is why `contactEmail` renders here and why `check:launch` requires it on a
  * production dataset: reg. 6(1)(c) is a launch obligation of the same shape, and it was not
  * in the tracker row at all.
+ *
+ * **`contactPhone` joins it at `GS-O004`.** reg. 6(1)(c) asks for details that make rapid,
+ * direct and effective contact possible and names email as a floor, not a ceiling; a phone
+ * number is the other half of what a business reader looks for before enquiring. It is the
+ * number the live `gridsmith.uk` already publishes, so nothing new is being asserted about
+ * how to reach the company. The `tel:` href is derived from the displayed string rather than
+ * stored beside it — see `telHref`.
+ *
+ * **No opening hours, ever.** `GS-O004` does not authorise published business hours and the
+ * field no longer exists on the singleton. A phone number with no hours beside it is the
+ * honest state: it says how to reach us, not when we are certain to answer.
  *
  * **No VAT line.** e-commerce regs reg. 6(1)(g) requires a VAT identification number only
  * *"where the provider undertakes an activity subject to VAT"*. Gridsmith is not registered,
@@ -91,8 +103,50 @@ const LEGAL_LINKS = LEGAL_FOOTER_SLUGS.map((s) => ({
 export async function Footer() {
   const c = await getCompanyDetails();
 
+  /**
+   * **Company structured data — `G-04`, `GS-R001` §17. One record, from the same singleton.**
+   *
+   * `Organization` rather than `LocalBusiness`: Gridsmith works remotely and publishes no
+   * opening hours (`GS-O004`), and `LocalBusiness` asks for both a physical customer-facing
+   * location and hours. Declaring one would assert a premises visitors may attend, which is a
+   * claim about the business nobody has made.
+   *
+   * The values are the ones already disclosed in the statutory footer below this and nowhere
+   * else — including the registered office, which appears here because `PostalAddress` is what
+   * makes `identifier` and `legalName` resolvable to the register entry, and because a machine
+   * reading this reads the same page the footer is on. No invented `sameAs`, no logo, no
+   * `aggregateRating`: `GS-O007` has supplied no brand assets, and a rating derived from ten
+   * Freelancer reviews rendered under someone else's terms is not Gridsmith's to publish as
+   * its own structured data.
+   *
+   * It is emitted here rather than on `/` alone because the footer is the one component that
+   * already reads `companyDetails`, so there is no second copy of any value — which is the rule
+   * this whole file exists to keep.
+   */
+  const organization = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: c.legalName,
+    legalName: c.legalName,
+    url: SITE_URL,
+    identifier: c.companyNumber,
+    ...(c.contactEmail?.trim() ? { email: c.contactEmail } : {}),
+    ...(c.contactPhone?.trim() ? { telephone: c.contactPhone } : {}),
+    address: { '@type': 'PostalAddress', streetAddress: c.registeredOffice, addressCountry: 'GB' },
+    brand: DIVISIONS.map((d) => ({ '@type': 'Brand', name: d.label })),
+  };
+
   return (
     <footer className={styles.footer}>
+      {/* Not executed, so `script-src 'self' 'unsafe-inline'` is satisfied and no nonce is
+          needed. `JSON.stringify` on values that came from the CMS: the closing-tag sequence is
+          the one thing that could break out, so it is escaped. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organization).replaceAll('<', '\u003c'),
+        }}
+      />
       <div className={styles.footerInner}>
         <nav aria-label="Divisions">
           <ul className={styles.switcherList}>
@@ -142,11 +196,19 @@ export async function Footer() {
           {/* FOUNDATION requires a persistent way back into the choice. It is its own
               tiny Client Component so the footer stays a Server Component. */}
           <p><ConsentReopen /></p>
-          {c.contactEmail?.trim() ? (
+          {c.contactEmail?.trim() || c.contactPhone?.trim() ? (
             <p>
-              <a href={`mailto:${c.contactEmail}`} className={styles.statutoryLink}>
-                {c.contactEmail}
-              </a>
+              {c.contactEmail?.trim() ? (
+                <a href={`mailto:${c.contactEmail}`} className={styles.statutoryLink}>
+                  {c.contactEmail}
+                </a>
+              ) : null}
+              {c.contactEmail?.trim() && c.contactPhone?.trim() ? ' · ' : ''}
+              {c.contactPhone?.trim() ? (
+                <a href={telHref(c.contactPhone)} className={styles.statutoryLink}>
+                  {c.contactPhone}
+                </a>
+              ) : null}
             </p>
           ) : null}
         </div>

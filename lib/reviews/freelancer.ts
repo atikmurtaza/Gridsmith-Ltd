@@ -170,26 +170,89 @@ export function categorise(jobNames: readonly string[] | null | undefined) {
 }
 
 /**
- * **Reviews held back pending `GS-O015`, by Freelancer review id.**
+ * **Manual withholding, by Freelancer review id — the human-review escape hatch.**
  *
- * `GS-O014` accepted publication of all twelve, and the question it was asked was whether
- * criticism **of Gridsmith** could be published. It can, and the 4.6 is on the page. These two
- * are a different question the owner has not been asked, found at `GS-P06` by reading all twelve
- * bodies rather than by any rule: both name a third-party development company in terms
- * (*"very disgraceful"*, *"a massive mistake"*) that Gridsmith would be **republishing on its own
- * homepage**. One of them also carries the client's own product name in the body.
+ * `GS-O015` requires that a review naming an identifiable third party is withheld
+ * automatically **where a safe deterministic rule can identify the condition**, and otherwise
+ * enters a human-review state. `NAMED_THIRD_PARTY` below is the deterministic rule. This array
+ * is the second limb: a review a human has read and decided must not be republished, for a
+ * reason no rule reaches.
  *
- * Freelancer hosting a reviewer's words and Gridsmith reprinting them are different publications
- * with different exposure, and `AI-DEVELOPMENT-PROTOCOL.md` puts a legal commitment nobody has
- * taken into `OWNER-ACTIONS.md` rather than into a build. **Editing the quotation is not
- * available** (`GS-P06` §14), so the only two options are publish whole or withhold whole, and
- * withholding is the reversible one: nothing is deleted, the API is unchanged, and emptying this
- * array publishes them.
+ * **It is empty, and that is the correct state rather than an oversight.** It held `22108992`
+ * and `22100632` — the two reviews `GS-P06` found by reading all twelve bodies. Both name
+ * *Varnika Software PVT* / *Varnika Pvt*, and `NAMED_THIRD_PARTY` now withholds both **by
+ * rule**. Keeping the ids here as well would leave two mechanisms over one subject, which is
+ * how two gates come to disagree in silence and is the `A-GATE-4-3` hazard by another name: the
+ * id branch would be unreachable for exactly the two reviews it was written for, and nobody
+ * would find out until a third arrived.
  *
- * **This is a default, not a decision.** `GS-O015` is one owner sentence, and the gates report
- * the withheld count on every run so it cannot go quiet.
+ * **An empty denylist is normally an inert assertion, and this one is not** — because
+ * `withholdReason` takes the id as an argument and `check:reviews:selftest` drives the branch
+ * by value with an id of its own. The branch is proven by a returned reason, not by the array
+ * having members. `CLAUDE.md`: *prefer a probe whose validity is structural.*
+ *
+ * Adding an id here withholds a review whole. **Editing a quotation is not available** and will
+ * not be offered — a genuine review is published verbatim or not at all.
  */
-export const WITHHELD_REVIEW_IDS: readonly number[] = [22108992, 22100632];
+export const WITHHELD_REVIEW_IDS: readonly number[] = [];
+
+/**
+ * **A named business other than Gridsmith, anywhere in a review body — `GS-O015`.**
+ *
+ * The owner's decision, 16 September 2026: reviews carrying reputational or legal-risk
+ * statements about identifiable third parties are withheld, by conservative deterministic rule
+ * plus human review, and explicitly **not** by a sentiment or AI moderation system. This is
+ * that rule, and the shape of it is the whole point:
+ *
+ * **It does not attempt to detect disparagement. It detects that a business is named.**
+ * Judging whether *"the very disgraceful Varnika Software PVT"* is actionable and *"we moved
+ * from Acme Ltd"* is not, is precisely the classification that cannot be done reliably, and an
+ * unreliable classifier publishing the one it got wrong is worse than withholding both. So the
+ * predicate is structural — a capitalised word followed by a corporate-form token — and it
+ * over-withholds by design. The cost of a false positive is one review not shown on a page that
+ * carries nine others. The cost of a false negative is Gridsmith republishing a defamatory
+ * statement about a named company on its own homepage.
+ *
+ * `Gridsmith` is excluded because a reviewer writing *"Gridsmith Ltd delivered"* is naming the
+ * company whose site this is, which is not a third party.
+ *
+ * ## The ceiling, stated so a clean run is read correctly
+ *
+ * **A third party named without a corporate-form token is not detected.** *"the previous
+ * developer"*, *"my last agency"*, a bare trading name — none of those match, and none of them
+ * can be matched without guessing. That residue is what `WITHHELD_REVIEW_IDS` is for, and what
+ * the pinned expected counts in `check:reviews --live` exist to surface: a review set that has
+ * changed makes that gate red, so a new review cannot reach the homepage without a person
+ * having looked at the run that reported it.
+ *
+ * This is the same kind of honest limit as rule 1's — that one can only see a company
+ * Freelancer publishes on the reviewer's profile — and it is stated for the same reason.
+ */
+const CORPORATE_FORMS =
+  'Ltd|Limited|PLC|LLP|LLC|Inc|Incorporated|Corp|Corporation|GmbH|BV|NV|SARL|SRL|Pty|Pvt|PVT|Private Limited|Co|Company|Software|Technologies|Solutions|Systems|Studios|Agency';
+
+/**
+ * `Capitalised Word` (optionally more) immediately followed by a corporate-form token. Case
+ * matters on the leading word — a lowercase `company` in ordinary prose is not a name — and the
+ * form token is matched as a whole word so `Incorporating` and `Limitedly` do not qualify.
+ */
+const NAMED_THIRD_PARTY = new RegExp(
+  `\\b([A-Z][A-Za-z&'’.-]+(?:\\s+[A-Z][A-Za-z&'’.-]+){0,3})\\s+(?:${CORPORATE_FORMS})\\b`,
+);
+
+/** Our own name, in the forms a reviewer writes it. Never a third party. */
+const OURSELVES = /^gridsmith\b/i;
+
+/**
+ * The named business in a body, or `null`. Exported so `check:reviews` and its self-test read a
+ * **value** rather than the absence of an error.
+ */
+export function namedThirdParty(body: string): string | null {
+  const m = NAMED_THIRD_PARTY.exec(body);
+  if (!m) return null;
+  if (OURSELVES.test(m[1])) return null;
+  return m[0];
+}
 
 /** A URL or an email address anywhere in a body. Both are contact or identity leaks. */
 const CONTACT_IN_BODY = /(https?:\/\/|www\.|[\w.+-]+@[\w-]+\.[a-z]{2,})/i;
@@ -202,20 +265,25 @@ const CONTACT_IN_BODY = /(https?:\/\/|www\.|[\w.+-]+@[\w-]+\.[a-z]{2,})/i;
  * anonymising *metadata* — which this pipeline does freely, because a category is our caption —
  * and rewriting *evidence*, which it never does.
  *
- * Three rules, each deterministic:
+ * Five rules, each deterministic, each proven separately by return value:
  *
- * 1. **The reviewer's own company name appears in the body.** Two of Gridsmith's twelve
+ * 1. **The review id is in `WITHHELD_REVIEW_IDS`.** The human-review limb of `GS-O015` — a
+ *    person read the body and decided. Tested first so its reason wins.
+ * 2. **The body is empty once trimmed.** Nothing to print.
+ * 3. **The reviewer's own company name appears in the body.** Two of Gridsmith's twelve
  *    reviewers publish a company on their Freelancer profile; a body naming one is identifiable
  *    client work published without permission (`GS-D001`). The name comes from the same payload
  *    as the body, so this needs no maintained list and covers reviewers nobody has seen yet.
- * 2. **A URL or email address appears in the body.**
- * 3. **The body is empty once trimmed.** Nothing to print.
- * 4. **The review id is in `WITHHELD_REVIEW_IDS`.** `GS-O015` — see that constant.
+ * 4. **The body names a business other than Gridsmith.** The deterministic limb of `GS-O015` —
+ *    see `namedThirdParty`. This is the rule that reaches reviews nobody has seen, and it is
+ *    what withholds the two the owner's decision is about.
+ * 5. **A URL or email address appears in the body.**
  *
- * **The stated ceiling:** rule 1 can only see a company Freelancer actually publishes. A client
- * naming an employer that is not on their profile is not detectable here and is not claimed to
- * be. That is the honest limit of an automatic rule, and it is why `check:reviews` reports the
- * withheld count rather than asserting that nothing needs withholding.
+ * **The stated ceilings**, because a clean run means what they leave out. Rule 3 can only see a
+ * company Freelancer actually publishes on a profile. Rule 4 can only see a business named with
+ * a corporate-form token. A third party named as *"my previous developer"* satisfies neither,
+ * and no rule here claims otherwise — that residue is rule 1's job, reached through the pinned
+ * counts in `check:reviews --live`.
  *
  * @returns the reason, or `null` when the body is publishable verbatim
  */
@@ -223,14 +291,29 @@ export function withholdReason(
   body: string | null | undefined,
   reviewerCompany?: string | null,
   id?: number,
+  /**
+   * **The manual list, injectable — and injectable is what makes the branch provable.**
+   *
+   * `WITHHELD_REVIEW_IDS` is empty as of `GS-O015`, because the two ids it held are now caught
+   * by `namedThirdParty`. An empty denylist normally means an inert assertion: there is no
+   * member to drive the branch with, so a green says nothing about whether the branch works.
+   * Passing the list in lets `check:reviews:selftest` supply one by value and read the returned
+   * reason, which is the structural probe `CLAUDE.md` asks for. Production behaviour is
+   * unchanged — the default IS the constant, and no caller passes anything else.
+   */
+  withheldIds: readonly number[] = WITHHELD_REVIEW_IDS,
 ) {
-  if (typeof id === 'number' && WITHHELD_REVIEW_IDS.includes(id)) {
-    return 'the review is held pending GS-O015 (it names a third party)';
+  if (typeof id === 'number' && withheldIds.includes(id)) {
+    return 'a person read this review and withheld it (GS-O015, manual)';
   }
   if (typeof body !== 'string' || body.trim().length === 0) return 'the body is empty';
   const company = typeof reviewerCompany === 'string' ? reviewerCompany.trim() : '';
   if (company.length > 2 && body.toLowerCase().includes(company.toLowerCase())) {
     return `the body names the reviewer's own company ("${company}")`;
+  }
+  const thirdParty = namedThirdParty(body);
+  if (thirdParty) {
+    return `the body names a third-party business ("${thirdParty}") — GS-O015`;
   }
   if (CONTACT_IN_BODY.test(body)) return 'the body contains a URL or email address';
   return null;

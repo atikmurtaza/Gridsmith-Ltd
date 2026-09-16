@@ -185,6 +185,18 @@ const REGISTRY = [
       'REQUIRED with no budget by the same deliberate asymmetry.',
   },
   {
+    gate: 'check-company-facts.mjs',
+    kind: 'subset',
+    of: 'OFFICE_ALLOWED',
+    in: 'ROUTES',
+    keys: 'routes',
+    why:
+      'OFFICE_ALLOWED excuses the registered office appearing in the BODY of a route, because ' +
+      'the _legal/ instruments name it as the address for service. A route named there that ' +
+      'ROUTES does not visit excuses nothing and reads as coverage — the K-13 shape exactly, ' +
+      'on a gate whose question is where a home address may be published.',
+  },
+  {
     gate: 'check-tokens.mjs',
     kind: 'disjoint',
     of: 'REQUIRED',

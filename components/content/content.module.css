@@ -102,13 +102,9 @@
   .legalClause { break-inside: avoid; }
 }
 
-/* --- Team --------------------------------------------------------------- */
-
-.team { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-6);
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); }
-.teamCard { display: flex; flex-direction: column; gap: var(--space-3); }
-.teamRole { margin: 0; font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink-muted); }
-.teamBio { margin: 0; color: var(--ink); }
+/* --- Team: removed at GS-O004. There are no public team members, the query and the
+   renderer are deleted, and rules for a component nothing renders are dead weight that
+   reads as a surface waiting to be filled. --------------------------------- */
 
 /* --- FAQ ---------------------------------------------------------------- */
 

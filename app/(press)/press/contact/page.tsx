@@ -5,7 +5,7 @@ import { Numeric } from '@/components/primitives/Numeric';
 import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { PressContactFlow } from '@/components/divisions/press/PressContactFlow';
-import { getCompanyDetails } from '@/lib/company/companyDetails';
+import { getCompanyDetails, telHref } from '@/lib/company/companyDetails';
 
 export const metadata: Metadata = {
   title: 'Tell us about the book — Gridsmith Press',
@@ -30,7 +30,8 @@ export const metadata: Metadata = {
  * ## The email address, again, because reg. 6(1)(c) requires it
  *
  * Same reasoning as `/contact`: a form alone does not satisfy the Electronic Commerce (EC
- * Directive) Regulations 2002, because someone the form fails cannot reach us.
+ * Directive) Regulations 2002, because someone the form fails cannot reach us. `GS-O004` adds
+ * the phone number beside it, from the same singleton and with no opening hours.
  */
 export default async function Page() {
   const company = await getCompanyDetails();
@@ -56,14 +57,17 @@ export default async function Page() {
 
       <Section>
         <Container width="narrow">
-          <PressContactFlow responseCommitment={company.responseCommitment} />
+          <PressContactFlow
+            responseCommitment={company.responseCommitment}
+            contactEmail={company.contactEmail ?? ''}
+          />
         </Container>
       </Section>
 
       <Section surface="sunken" labelledBy="press-contact-other">
         <Container width="narrow">
           <Heading level={2} id="press-contact-other">
-            Or just email us
+            Or reach us directly
           </Heading>
           <Prose>
             <p>
@@ -76,6 +80,16 @@ export default async function Page() {
                     <Numeric>{company.contactEmail}</Numeric>
                   </a>{' '}
                   and it reaches the same place.
+                </>
+              ) : null}
+              {company.contactPhone ? (
+                <>
+                  {' '}
+                  Or call{' '}
+                  <a href={telHref(company.contactPhone)}>
+                    <Numeric>{company.contactPhone}</Numeric>
+                  </a>
+                  .
                 </>
               ) : null}
             </p>

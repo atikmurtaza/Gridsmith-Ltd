@@ -2,442 +2,295 @@
 
 ## Execution
 
-- **Task ID:** `GS-P06`
-- **Task:** owner-approved service-content remediation (`GS-O013`) and the Master Freelancer
-  review experience (`GS-O014`)
+- **Task ID:** `GS-R001` / `GS-O008`
+- **Task:** staging release candidate and human-acceptance preparation
 - **Agent/model:** Claude Code (Opus 5)
-- **Status:** COMPLETE IN REPOSITORY. The review pipeline is **activated on Master only**; the six
-  copy remediations are implemented in the canonical content source; production content, migration
-  and deployment untouched; **no Sanity, Supabase or Vercel call of any kind was made**
+- **Status:** COMPLETE IN REPOSITORY. A staging release candidate is cut as an **isolated Vercel
+  preview**; `GS-O004` and `GS-O015` are closed; production content, migration and deployment
+  untouched. **No Supabase call of any kind. No production Sanity call. No DNS, Hostinger or
+  `gridsmith.uk` change.**
 - **Date:** 16 September 2026
+- **Full evidence:** `docs/_shared/GS-R001-STAGING-RC.md` — this file is the summary and the
+  next-phase recommendation; that one is the record.
 
 ## Repository state
 
-- **Starting commit:** `6b297df92c5ca788eaf02ef2d66e816bf516f30a`
-- **Ending commit:** the GS-P06 commit containing this handoff; use `git rev-parse HEAD`
-- **Branch:** `main`, tracking `origin/main`
+- **Starting commit:** `1ad462ff276c7d03079f5b9afbca908cbbfc0b24`
+- **Ending commit:** the `GS-R001` commit containing this handoff; use `git rev-parse HEAD`
+- **Branch:** `main`, tracking `origin/main`. The candidate is cut on a branch first — see
+  *Staging* below
 - **Starting working tree:** clean, 0 ahead / 0 behind `origin/main`, no unrelated owner work
-- **GS-P05 CI baseline:** run `35047282241` **completed `success`** on `e8bdd9ba`. Verified before
-  any work began
-- **Pushed:** YES — `cf047f13` on `origin/main`
-- **GS-P06 CI:** run `35083509494` **completed `success`** on `cf047f13` — **all 43 steps**,
-  including both Lighthouse axes, which cannot run locally on Windows
+- **Starting CI:** run `35084597904` **`success`** on `1ad462ff`. Verified before any work began
 
 ## Hard scope boundaries preserved
 
-- **No Sanity call of any kind.** Neither dataset was read, written or contacted. The six genuine
-  development testimonials are untouched on disk and in the dataset; what changed is that nothing
-  the site renders reads them any more.
-- **No Supabase call of any kind.** The GS-P01 production migration is **not applied**.
-- No Vercel action, no deployment, no environment change. Hostinger, DNS and `gridsmith.uk`
-  untouched. No secret created, requested, rotated or printed.
-- **No Freelancer credential exists or was created.** Every request was an unauthenticated public
-  GET, well inside the documented `50/60s` and `1000/3600s` limits.
-- The Technical Design publication gate is unchanged and still refuses production. `GS-O005` and
-  `GS-X002` were **not** marked complete and nothing was inferred from Freelancer work history.
-- No price, portfolio, client logo, case study or author title added. `GS-D001` and `GS-D002`
-  unchanged. Freelancer **portfolio** items remain unauthorised; only reviews are in scope.
-- No legal clause drafted or amended. No analytics reintroduced.
-- **The service architecture was not redesigned.** 3 delivery divisions, Master as relationship
-  layer, 46 records, 81 approved capabilities, medium-based ownership, no public pricing, no
-  estimator, no public portfolio, 77 routes.
+- **No Supabase call of any kind.** `GS-T004` is **not** applied. No schema, data, RLS, Auth or
+  credential touched; no service-role key read or printed.
+- **No production Sanity call.** The `production` dataset was not read, written or contacted.
+- **One development Sanity write**, through the existing `npm run seed:company`, which hardcodes
+  `dataset = 'development'` and cannot reach production. It rewrote the `companyDetails` singleton
+  with the `GS-O004` facts — and removed a stale `vatNumber: "[SEED] GB123456789"` that had sat in
+  that document since 21 August, two weeks after the field left the schema.
+- **No deployment to production, no domain change, no DNS, no Hostinger.** `gridsmith.uk` was read
+  **read-only** — its `robots.txt`, `wp-sitemap.xml` and five child sitemaps — and nothing else.
+- **No synthetic lead submitted.** `GS-O010` is open, so Preview has no isolated database.
+- No legal clause drafted or amended. No analytics reintroduced. No dependency added.
+- The service architecture was not redesigned: 3 delivery divisions, Master as relationship layer,
+  46 records, 81 approved capabilities, no public pricing, no public portfolio, Technical gated.
 
 ---
 
-## 1. `GS-O013` — approved with remediation, and the remediation is in the copy
+## 1. `GS-O004` — closed, and the limb that mattered was not on the list
 
-The owner approved the 46-record catalogue **subject to corrections**. The corrections are in
-`scripts/service-content.mjs`, which is the canonical source the seed writes and the owner review
-document transcribes — not in a review document, which nobody receives.
+The owner supplied the company and contact facts. They are implemented in the one canonical source
+(`companyDetails`), and `check:company` asserts them on the **served pages** rather than in source.
 
-| # | Struck | Replaced with |
-|---|---|---|
-| 3A | *"media buying is not something Gridsmith undertakes"* | the boundary at what the service **is**: creative production, with the campaign itself a separate cross-division engagement |
-| 4 | *"Hosting, domain and CMS accounts are yours"*, *"Code, infrastructure and accounts are yours"*, *"Accounts and ISBNs are obtained and held in your name"* | *"defined in the written project agreement"*, with Gridsmith's preference for client-controlled arrangements stated **as a preference** |
-| 5 | *"Gridsmith does not resell hosting"*, *"Reselling hosting — we do not"* | *Hosting coordination and management* — configuration, deployment, maintenance, monitoring; arrangement decided per project. No product, SLA or price invented |
-| 6 | *"No one can certify accessibility"* | *"Not included unless explicitly scoped. We report the standards tested, the evidence, the findings and the residual issues."* WCAG 2.2 AA positioning, the automated/manual distinction and the residual-risk language all kept |
-| 7 | *"Not offered by anyone honestly"*, *"not promised by us or by anyone who is being straight with you"*, *"not within anyone's gift to promise"* | *"Gridsmith does not guarantee search rankings or traffic outcomes"*, *"Coverage, reviews and sales outcomes cannot be guaranteed"*. Every substantive limitation kept |
-| 8 | five accusatory summaries | client-centred need statements. The other 41 were **left alone** — the brief is explicit that strong problem-led copy is not to be rewritten for uniformity |
-| 9 | *"quoted as further work"* (Design and Press Support stages) | *"can be scoped as further work or as an ongoing engagement"*. The six-stage architecture is unchanged |
+`Gridsmith Ltd` · `17050842` · **registered in England** · `contact@gridsmith.uk` ·
+`+44 7405 448534` · **no business hours** · *"We typically respond within 48 hours."* · registered
+office in the statutory footer and `_legal/` only · **no public team**.
 
-**28 lines changed, no line added or removed.** `docs/_shared/GS-P05-OWNER-CONTENT-REVIEW.md` was
-regenerated, because the staleness guard is the thing that stops an approval attaching to wording
-that has since changed — and it did its job: `check:service-content` went red on the hash the
-moment the first summary was edited.
+**Two facts were corroborated against the public Companies House register**, read read-only, which
+closes checklist rows `A1`/`A2` that had been open since 7 September as *"confirm against the
+register"*: `GRIDSMITH LTD`, **active**, incorporated 24 February 2026, registered office
+`30 Briarfield Road, Farnworth, Bolton, England, BL4 0HD`. Same premises as the seed, with the
+**digit zero** — so the live site's `BL4 **O**HD` is the malformed one, as `LIVE-SITE-EXTRACT.md`
+§11.3 suspected but could not settle.
 
-### The media-buying correction is `GS-P05`'s reasoning overturned, and that is worth naming
+### The served `/about` was publishing four people who do not exist
 
-`GS-P05` recorded *"Media buying is still not confirmed … buying inventory puts Gridsmith between
-a client and a spend commitment."* The owner's remediation says the plainer thing: the site was
-**denying media buying while selling Google Ads and Meta account management**, and running an ad
-account is placing paid media.
+It rendered `listPublicTeam()`, filtered on `isPublic == true`. The schema defaults that field
+**false** and its docstring says why. `scripts/seed-content.mjs` set it `true` on all four seeded
+records, so four documents named `[SEED] Placeholder Name` were served under the heading *"Who you
+will work with"*.
 
-`GS-P05` had read the owner's silence at `GS-O012` as a refusal. It was silence. **Silence is not
-a refusal**, and the safe handling of an unconfirmed capability is to say nothing about it rather
-than to publish that it is not offered — a denial is a claim about the company and has to be true.
+**Nothing in the source was wrong**, which is why `GS-P03` through `GS-P06`, an accessibility audit
+and a content-integrity audit all went past it. The defect lived only in the interaction between a
+default, an override and a filter, and only a check that reads the *page* could see it. `Q-M9` is
+answered — no public team — and it is enforced by deleting the query, the type, the renderer and
+its CSS rather than by a boolean anyone can flip.
 
-`GS-P05` also half-fixed this once already. It corrected *"Gridsmith does not run ad accounts, set
-budgets or buy media"* and kept *"media buying is not something Gridsmith undertakes"* — the same
-contradiction, one clause smaller. That is why the replacement gate refuses **three** phrasings of
-the position rather than one.
+### Three smaller findings in the same family
 
-What changed in the model: **one** new `DIGITAL_MARKETING_ENGAGEMENT` row (18 → 19), owned by
-`master`, mapped to no capability. The catalogue stayed at **81**. `Media buying` stays in
-`UNCONFIRMED_CHANNEL_SERVICES` on a narrower reading — no approved entry carries standalone media
-buying, so no service **record** may claim it — which also keeps that denylist non-empty and the
-assertion alive. `SERVICE-ARCHITECTURE.md` §2, §4, §13.
+- **`ContactForm.tsx` wrote `contact@gridsmith.uk` into its markup twice** — in the confirmation
+  and the send-failure message — while its own docstring one paragraph above explained why the
+  *response commitment* must never be written that way. `PressContactFlow.tsx` had a third. All
+  three now take the address as a prop. The copy that would have drifted is the one in the error
+  path nobody renders on a good day.
+- **The response commitment was a guarantee.** *"…and always by the end of the next business day"*
+  is an unqualified undertaking, and the owner authorises none. **Non-negotiable #5 is unchanged
+  and did not need striking** — the new wording is slower than its ceiling *and* is not a promise.
+  The single-source rule is what made it one edit: **six surfaces moved and none held a copy.**
+- **Four specification documents still stated the old value.** `check:struck` found all four.
+  `master/APP-FLOW.md`'s confirmation copy carried a second defect the same annotation catches —
+  *"If it's urgent, call [number] during [hours]"*: the number is now real, the hours never will be.
 
-### `check:service-content` question 4 — the gate that keeps deletions deleted
+---
 
-A deletion has no committed subject unless something asserts the absence, and every one of these
-sentences was written in good faith by someone being truthful. *"Say plainly that the client owns
-the code"* is a natural thing for an honest agency to write; it is also exactly the absolute the
-owner removed.
+## 2. `GS-O015` — closed, and the mechanism generalised
 
-Eleven rules, **one pattern each, no alternations** — `CLAUDE.md` requires every branch of a
-multi-branch assertion to be proven separately, and a half-firing alternation reports success from
-whichever limb you happened to exercise. Each has a committed specimen that must fire **it and
-nothing else**, which is the `A-GATE-4-3` hazard closed by construction: two of the eleven are two
-phrasings of one position, so they sit closest to it.
+The two reviews stay **withheld**, unaltered, undeleted, unpublished. What moved is *how*.
 
-The gate reports the number of copy strings it read (**969**) and refuses below a hardcoded floor,
-because an absence reported over an empty walk is the "count that was never counted" failure.
+They were held by `WITHHELD_REVIEW_IDS = [22108992, 22100632]`, which by construction cannot reach
+a review nobody has seen. `namedThirdParty` now withholds any body naming a business other than
+Gridsmith — a capitalised name followed by a corporate-form token.
 
-**Its ceiling, stated so a green is read correctly:** it asserts that these specific struck
-phrasings do not stand. §8's tone remediation is editorial judgement and no regex holds it.
+**It does not attempt to detect disparagement.** That is the unreliable classification the owner
+ruled out; deciding that *"the very disgraceful Varnika Software PVT"* is actionable and *"we moved
+from Acme Ltd"* is not is a legal reading, not a pattern. So the predicate is structural and
+**over-withholds by design**: a false positive costs one review on a page carrying nine others, and
+a false negative is Gridsmith republishing a defamatory statement about a named company on its own
+homepage.
 
-## 2. `GS-O014` — approved, activated, and amended to Master only
+Measured live: **12 returned, 10 published, 2 withheld**, each named by the business it matched,
+**no collateral withholding of the other ten**. That last clause is what makes it a measurement.
 
-The switch `GS-P05` left unflipped is thrown. `components/master/Testimonials.tsx` reads the
-official API; ratings, dates and bodies are rendered exactly as the API returns them; the category
-comes from Freelancer's closed skill taxonomy and never from a project title; attribution is
-*"Verified review via Freelancer"* per card with one link to the public profile.
+**The two ids are removed and the array is empty**, because keeping them would leave two mechanisms
+over one subject with the id branch unreachable for exactly the two reviews it was written for —
+`A-GATE-4-3`. An empty denylist is normally inert; this one is not, because `withholdReason` takes
+the list as an argument defaulting to the constant, so the self-test drives the branch by value.
 
-**The site now carries one source, and that is enforced by deletion rather than by discipline.**
-`listTestimonials`, `listTestimonialsForDivision`, the `TestimonialCard` type,
-`components/content/TestimonialList.tsx` and its CSS rules are gone. Two artefacts that must agree
-with only one delivered is `01-VALIDATION-REPORT.md` §21's shape, and the cheapest place not to
-have it is before it exists.
+`check:reviews --live` now pins `{ total: 12, published: 10, withheld: 2 }`. **A changed set makes
+it red and names the difference**, which is the human-review limb: a review nobody has read cannot
+reach the homepage without someone seeing the run that reported it. It goes red on a welcome
+five-star review too — the action either way is to read the body and then move the numbers.
 
-**The six Sanity testimonials: disposition.** Genuine development data, `isSeed: false`, **left in
-the development dataset untouched**. They are no longer a runtime dependency, which is what §20 of
-the brief asks for, and `check:service-content` question 3 still asserts their anonymity — so they
-remain a live gate subject rather than dead weight. **No Sanity call was made and none is needed.**
+---
 
-### The Master-only amendment
+## 3. The SEO surface, and the staging-indexing control
 
-Freelancer's taxonomy is a marketplace skills vocabulary; it was never a map of Gridsmith's
-medium-based divisions, and ranking reviews onto division landings with it put a 3D-project review
-and a logo-design review on Press. The reviews were genuine and the placement was not.
+`G-04` and `G-05` were `TODO` and P0. Both are built, and the safety property is the point:
+**`app/robots.ts` and `app/sitemap.ts` read one `INDEXABLE` constant, so they cannot disagree.**
+The default is `Disallow: /`, an empty sitemap and `noindex, nofollow` on every page. Indexing
+requires a Vercel **production** deployment **and** an explicit `NEXT_PUBLIC_SITE_URL` — two
+conditions, so it is an act rather than a side effect.
 
-**The fix is not a better classifier** — inventing a division for a review Freelancer never
-assigned one to is the speculative metadata the pipeline was built to avoid, and it fails silently
-on the next review nobody has seen. The division review blocks are removed outright.
+Per-route canonicals come from `alternates.canonical: './'` in the four root layouts, which Next
+resolves against the current pathname — one line per group instead of twenty per page. Canonicals
+resolve to the deployment's own origin, which is correct for a preview and avoids the thing the
+brief warns about: pointing production URLs at a site this build does not serve.
 
-`check:reviews-ui` asserts both halves **in one run**, deliberately: question 2 is an absence over
-three routes, and what makes it a measurement is that question 1 fires the same selector against
-the same build and requires it to match.
+**The documented production switch is one variable:** `NEXT_PUBLIC_SITE_URL=https://gridsmith.uk`
+on the Production environment.
 
-### `GS-O015` — the one thing `GS-O014` could not answer, because nobody asked it
+`Organization` structured data is emitted from the footer — the one component that already reads
+`companyDetails`, so no value has a second copy. `brand[]` rather than `department[]`, because
+`department` asserts sub-organisations and the divisions are trading names of one legal entity.
+No `logo`, no `sameAs`, no `aggregateRating`.
 
-`GS-O014` was asked whether criticism **of Gridsmith** could be published. It can, and the 4.6 is
-on the page.
+**No `llms.txt`**, which `G-04` also names: it is an unratified convention and a file listing
+content for an AI crawler is a publication decision nobody has taken.
 
-Reading all twelve bodies word for word — rather than running a rule over them — found a different
-question. **Two of them name a third-party development company** in terms Gridsmith would be
-republishing on its own homepage: *"the very disgraceful Varnika Software PVT"* and *"initially
-developed by Varnika Pvt in India which was a massive mistake"*. One also carries the client's own
-product name in the body.
+---
 
-No automatic rule reaches this, and the pipeline says so: the withholding rules test a body
-against the **reviewer's own** company, and `GS-P05` recorded that ceiling explicitly. Freelancer
-hosting a reviewer's words and Gridsmith reprinting them are different publications with different
-exposure, and that is a legal position — which `AI-DEVELOPMENT-PROTOCOL.md` puts in
-`OWNER-ACTIONS.md`, not in a build.
+## 4. The legacy URL inventory — `G-01` was not blocked and the site was never greenfield
 
-**Editing a quotation is not available**, so the options are publish whole or withhold whole. The
-conservative default was taken: `WITHHELD_REVIEW_IDS` holds two ids, the homepage publishes **10
-of 12**, and every `check:reviews --live` run names both and why. **Emptying that array publishes
-them.** Nothing was deleted, no quotation was altered, and nothing has reached the public.
+The tracker read *"Crawl existing site, export URLs — **BLOCKED**. Deferred — greenfield, no
+existing site"*, and `next.config.ts` said the same. `LIVE-SITE-EXTRACT.md` had contradicted both
+since 7 September.
 
-The general point: **a capability decision and a publication decision are different questions**,
-and an approval of "all twelve" answers the one it was asked.
+No crawl and no owner export was needed: **WordPress publishes the inventory.**
+`gridsmith.uk/robots.txt` names `wp-sitemap.xml`; that index names five child sitemaps, and every
+`<loc>` in all five is **eight URLs**. Four are WordPress and theme defaults — `hello-world`, the
+`uncategorized` archive and two UiCore template pages — that carry no Gridsmith content.
 
-## 3. The cylinder — what was taken from the reference, and what was refused
+`redirects/legacy.json` **stays empty**, for two better reasons than the old one: cutover is
+prohibited, and one row is an owner decision rather than an implementation one.
+`/terms-and-conditions/` is a single instrument this build splits three ways, and `lib/legal/slugs.ts`
+already recorded what happens when a redirect picks a target — *"every target is wrong for half the
+people following the link."* Options are set out in `LIVE-SITE-EXTRACT.md` §13.3 and neither is
+chosen here.
 
-The owner supplied *Cylinder Carousel | Vengeance UI*. It was read, including its source.
-
-**What was taken is the geometry**, which is the well-published CSS 3D ring: children stacked in
-one grid cell, each turned `i × 360°/n`, pushed out by a radius derived from the card width, with
-the container rotated by one infinite keyframe. **No third-party source was copied.** The reference
-is an `<img>` carousel published with no licence statement on the page, it keeps rotating under
-`prefers-reduced-motion` (its "reduced" mode only slows the turn to 128s), and it has **no pause
-control at all**. Two of its three behaviours are things this site may not ship.
-
-| | |
-|---|---|
-| Direction | `rotateY` runs **negative** — positive rotation carries the near arc to the right. Measured: a card moved `499px → 456px` in 1.2s |
-| Loop | one `to` of a full turn, so the state at 360° is identical to the state at 0°. There is no boundary to reset across |
-| Front card readable | the keyframes carry `translateZ(-radius)`, putting the front card at z = 0 at true size. Without it the front card is a full radius nearer the camera and magnifies past the stage — the first thing that had to be worked out and the reason the reference pushes cards *away* instead |
-| Data-driven | `--review-count` is the only input; the step and the radius follow. It re-formed a correct cylinder on its own when the count went 12 → 10 |
-| Reduced motion | **the flat grid is the BASE and the cylinder is layered on top**, inside one `@media (prefers-reduced-motion: no-preference)` + `@supports (tan())` block |
-| Pause | WCAG 2.2 SC 2.2.2 is Level A. A hover pause does not satisfy it, so there is a real checkbox with a real label, plus hover (behind `(hover: hover)`) and `:focus-within` |
-| Keyboard | **no focusable element is ever carried behind the cylinder** — the cards hold no links |
-| Cost | **zero client JavaScript, no dependency added.** Master's delta is 1.9KB of 15KB, unchanged |
-
-**The reduced-motion inversion is the decision worth keeping.** Content parity is *structural* —
-the same DOM, the same reviews, the same order, with the 3D layer simply not applied — rather than
-a second markup path someone has to keep in step. `tokens.css`'s global reduced-motion reset is not
-sufficient on its own and this does not rely on it: stopping the rotation would leave twelve cards
-frozen at fixed 3D angles in one grid cell, most of them backface-hidden. **Stopping the animation
-is not the same as undoing the cylinder**, and only the second one leaves a readable page. The same
-block also catches a browser without CSS `tan()`, which would otherwise compute an invalid radius
-and collapse every card into one stack.
-
-**The cards carry no link, and that is a change of position with a reason.** `TestimonialList`
-rendered the source link per card and argued for it: a reader checking one quote should not have to
-work out which footnote applies. That was right while reviews could have different sources. Every
-review here resolves to the same URL — structurally, because the pipeline never reads a per-project
-link — so there is one destination and no footnote to match. What it buys is the whole
-rotating-focus problem *removed* rather than managed: rotation cannot move focus, strand it on a
-back-facing card, or need a `tabindex`/`inert` sweep.
-
-## 4. Two gates were amended, and each amendment is proven
-
-### `lint:colors` — `tan` is a named CSS colour **and** a trigonometric function
-
-`tan(15deg)` inside the radius `calc()` was flagged as a hardcoded colour. That is the gate being
-wrong, not the stylesheet: no named colour is ever followed by `(`. A `(?!\s*\()` lookahead over
-the whole alternation closes the false positive and opens no hole.
-
-**Extended rather than worked around.** Writing the radius as `cos()/sin()` would have passed a
-gate that was still wrong, and the next `tan()` would have hit it again. Proven by deliberate
-failure on **both** `border: 1px solid tan` and `border: 1px solid red`, each still named.
-
-### `check:axe` — `targetPattern`, and why an exact target list was the wrong tool
-
-The cylinder produces **73** `color-contrast` incompletes on `/` and **zero violations**. axe says
-why in its own words: 60 report *"background color could not be determined because it is overlapped
-by another element"* and 13 *"partially overlaps other elements"*. Stacking every card in one grid
-cell is what a cylinder **is**, so the overlap is not removable.
-
-An exact-target allowlist was wrong there rather than merely long: every target is a CSS-module
-selector whose hash changes with any edit to the stylesheet, and `:nth-child(n)` is keyed to how
-many reviews the API returned that day. **An allowlist that rots is worse than none** — it goes red
-for a reason unconnected to accessibility and the fix people reach for is to widen it.
-
-Two entries, one pattern each (a single regex with an alternation would be one branch nobody
-exercises). The second exists because axe names an element by the **shortest unique selector**, so
-three review dates come back as `time[datetime="2026-05-22"]` with no class in the string at all.
-Adding a class was tried and measured: axe still preferred the attribute selector.
-
-**Both premises those entries rest on are asserted by value elsewhere**, because an allowlist whose
-stated reason nothing checks is a bypass with a comment:
-
-- `check:reviews-ui` question 9 — the card background is opaque. A translucent card would put a
-  real contrast defect under an entry that no longer describes it, with axe already allowlisted
-  out of the question.
-- `check:reviews-ui` question 10 — every `<time>` on `/` is inside a review card, which is the
-  scope the second entry claims.
-
-A guard refuses an entry naming both `target` and `targetPattern`, or neither: a key the matcher
-ignores is how an allowlist stops allowing.
-
-## 5. The token layer moved, 39 → 41
-
-`check:tokens` refuses a duration literal outside the `fast`/`base`/`slow` scale, and its own
-message says a fourth duration goes into `tokens.css` first. A **continuous cycle measured in
-seconds is not a UI transition** — the three existing durations are what a control takes to answer
-a reader — so `--dur-cycle` (96s) and `--dur-cycle-narrow` (192s) are a separate pair with their
-own note. `REQUIRED` in the gate and the count in `00-FOUNDATION.md` §3 were updated in the same
-commit, which is what that gate's failure message instructs.
-
-`--dur-cycle-narrow` is deliberately the slower one: a narrow viewport shows one card at a time and
-no touch device has a hover pause, so the front dwell **is** the reading time there.
+---
 
 ## What changed
 
 | Path | |
 |---|---|
-| `scripts/service-content.mjs` | the six remediations — 28 lines changed, none added or removed |
-| `scripts/service-content-rules.mjs` | **new** `struckCopyProblems` + 11 single-pattern rules + a hardcoded scanned floor |
-| `scripts/check-service-content.mjs` | question 4 added (struck copy); 4→5, 5→6 renumbered |
-| `scripts/check-service-content.selftest.mjs` | 23 → **38** cases; one specimen per rule, each asserted to fire alone |
-| `lib/services/catalogue.ts` | one engagement row (18 → 19); `UNCONFIRMED_CHANNEL_SERVICES` re-stated on the narrower reading |
-| `lib/reviews/freelancer.ts` | `WITHHELD_REVIEW_IDS` + a fourth withholding limb (`GS-O015`) |
-| `scripts/check-reviews.selftest.mjs` | 55 → **58** cases |
-| `components/master/ReviewCylinder.tsx` | **new** — the Master presentation |
-| `components/master/Testimonials.tsx` | reads the API; renders the cylinder |
-| `components/master/master.module.css` | the cylinder: flat base, 3D layer, pause, responsive geometry |
-| `components/divisions/DivisionLanding.tsx` | review block removed (`GS-O014` amendment) |
-| `components/content/TestimonialList.tsx` | **deleted** |
-| `components/content/content.module.css` | its rules removed |
-| `lib/sanity/queries.ts` | both testimonial readers, the projection and `TestimonialCard` removed |
-| `scripts/check-reviews-ui.mjs` | **new** — ten questions over the served page |
-| `scripts/check-axe.mjs` | `targetPattern`, two entries, the one-key guard |
-| `scripts/check-no-hardcoded-colors.mjs` | the `tan(` false positive |
-| `styles/tokens.css`, `scripts/check-tokens.mjs`, `00-FOUNDATION.md` | 39 → 41 base tokens |
-| `package.json`, `ci.yml` | `check:reviews:ui`. 42 → **43 gates**, parity proven |
-| `docs/_shared/GS-P05-OWNER-CONTENT-REVIEW.md` | regenerated against the corrected copy |
+| `scripts/seed-company-details.mjs` | the `GS-O004` facts; phone added; `England`; the new response wording |
+| `sanity/schemas/companyDetails.ts` | `businessHours` **removed** (the `vatNumber` precedent) |
+| `lib/company/companyDetails.ts` | `businessHours` out of the type and the projection; **new** `telHref` |
+| `components/chrome/Footer.tsx` | phone published; `Organization` JSON-LD |
+| `app/(marketing)/about/page.tsx` | registered-office and trading-address rows removed; email and phone rows added; **the team section deleted** |
+| `app/(marketing)/contact/page.tsx`, `app/(press)/press/contact/page.tsx` | phone published; `businessHours` render removed; `contactEmail` passed down |
+| `components/leads/ContactForm.tsx`, `components/divisions/press/PressContactFlow.tsx` | three hardcoded addresses replaced by a prop |
+| `lib/sanity/queries.ts` | `listPublicTeam` and `TeamMember` **deleted**, with the reason in their place |
+| `components/content/content.module.css` | the team rules removed |
+| `scripts/seed-content.mjs` | `isPublic: false`; the `/about` people-section note rewritten |
+| `lib/reviews/freelancer.ts` | **new** `namedThirdParty`; `WITHHELD_REVIEW_IDS` emptied and made injectable; `withholdReason` at five limbs |
+| `scripts/check-reviews.mjs` | **new** pinned `EXPECTED` review set (the `GS-O015` human-review limb) |
+| `scripts/check-reviews.selftest.mjs` | 58 → **66** cases |
+| `lib/seo/site.ts` | **new** — origin resolution and `INDEXABLE` |
+| `app/robots.ts`, `app/sitemap.ts` | **new** |
+| the four root layouts | `metadataBase`, canonical, description, Open Graph, `robots` |
+| `scripts/company-facts-rules.mjs`, `check-company-facts.mjs`, `check-company-facts.selftest.mjs` | **new** — the six-question gate and its 35 specimens |
+| `scripts/struck-rules.mjs`, `check-struck-rules.mjs` | 13 → **16** rules; 27 → **32** specimens |
+| `scripts/check-list-parity.mjs` | the `OFFICE_ALLOWED` ⊂ `ROUTES` relation registered |
+| `package.json`, `ci.yml` | `check:company`, `check:company:selftest`. 43 → **45** gates, parity proven |
+| `next.config.ts`, `master/PROJECT-TRACKER.md` | the greenfield claim corrected; `G-01`, `G-04`, `G-05` closed |
+| `master/SCHEMA.md`, `master/APP-FLOW.md`, `master/PROJECT-RULES.md`, `00-FOUNDATION.md` | struck values annotated in place |
+| `docs/_shared/GS-R001-STAGING-RC.md` | **new** — the evidence |
+| `LIVE-SITE-EXTRACT.md` §13, `PRE-DEPLOYMENT-CHECKLIST.md` A1–A8, `OWNER-ACTIONS.md` | the records |
 
 ## Verification
 
-| Check | Result |
-|---|---|
-| `npm run verify:static` (**43-gate chain**) | **PASS** |
-| `npm run verify:build` | **PASS** on a wiped `.next` — **77 routes**, unchanged, all within delta budgets; master 1.9KB of 15KB; framework floor 100.2KB |
-| `/` route type | `○ Static`, `Revalidate 1d` — prerendered, refreshed daily. LCP path unchanged |
-| `check:service-content` | **PASS** — 81 approved / 46 records / each covered once; **19** engagement activities; 6 reviews, 5 categorised; **969 copy strings, 11 struck positions, none stands**; owner-document parity in agreement |
-| `check:service-content --dataset` | **PASS** — development dataset read unauthenticated: 46 published services, 6 testimonials, 0 provenance mismatches |
-| `check:service-content:selftest` | **PASS** — 38/38 |
-| `check:reviews` (static) | **PASS** — 13 labels × 9 fragments, 5 forbidden fields absent, request credential-free |
-| `check:reviews --live` | **PASS** — 12 returned, reported count 12, **10 published, 2 withheld (each named), 10 categorised, 10 distinct ids** |
-| `check:reviews:selftest` | **PASS** — 58 cases |
-| `check:reviews:ui` | **PASS** — all ten questions; `/` 10 cards, `/design` `/digital` `/press` **0** each |
-| `check:axe` | **PASS** — **zero violations**, 141 incompletes allowed, **0 unresolved**; 76 analyses; skip link on 19 themed routes × 2 viewports; zero cookies and zero analytics requests before consent |
-| `check:responsive` | **PASS** — 51 combinations, no horizontal overflow; 17 fixed bottom bars covered |
-| `check:vat` | **PASS** — 17 routes, 616,718 characters, **0 price figures** |
-| `check:launch` (served) | **PASS** — dataset `development`; 3 technical services refused on production only |
-| `check:tokens` | **PASS** — **41** base tokens; 88 token/theme combinations; 20 CSS modules carry no duration literal |
-| `check:lists` | **PASS** — 5 coupled pairs, 106 keys, **32 gates scanned**. `check-reviews-ui` holds one list, so the discovery guard correctly did not fire |
-| `check:node` | **PASS** — **43 gates**, `verify` and `ci.yml` run the same set |
-| `check:struck` | **PASS** — 34 documents, 10 rules, every one annotated wherever it appears |
-| `lint`, `typecheck`, `lint:colors`, `lint:secrets` | **PASS** — 0 warnings; 212 files; 191 source files and 41 client chunks swept |
-| `npm audit --omit=dev` | **PASS** — 0 vulnerabilities, **no dependency added** |
-| `git diff --check` / `--cached --check` | **PASS** |
-| Lighthouse CI (desktop/mobile) | **NOT RUN locally** — the known Windows chrome-launcher EPERM. CI is the arbiter, and it ran both. See below |
-| Manual screen-reader and cross-browser review | **NOT RUN** — `GS-R001`, and see the acceptance note below |
+The table is in `GS-R001-STAGING-RC.md` §5.1. Headline: **`verify:static` (45 gates) PASS**,
+**`verify:build` PASS on a wiped `.next`** (77 page routes plus `/robots.txt` and `/sitemap.xml`,
+all within delta budgets, master 1.9KB of 15KB), **the full served chain PASS**, `npm audit
+--omit=dev` clean, no dependency added. Lighthouse is CI's — it cannot run on Windows.
 
-**Which question each green answers.** `check:axe` is reported on **both** violations (zero) and
-unresolved incompletes (zero) — `K-13`'s lesson. `check:reviews` is reported separately for its
-static questions and for `--live`. `check:service-content` is reported on coverage, engagement,
-anonymity, **struck copy**, owner-document parity **and** the dataset. `check:reviews-ui` is
-reported on all ten.
+### The deliberate-failure proofs, and the two that were about the gate itself
 
-### Deliberate-failure proofs — fifteen, each alone
+**`check:company` went red twice on its own defects before it was trusted.** Round one stripped
+tags but not `<script>` *contents* and read Next's RSC flight payload — which serialises every prop
+and the footer's text, **after** `</footer>` — as page text: 22 problems on questions 3 and 4.
+Round one's fix stripped scripts before the *text* extraction and left the *href* scans on raw
+markup: 57 problems on question 2, naming a `mailto:` at `contact@gridsmith.uk\\`, an address that
+exists nowhere but in the payload's own escaping.
 
-Every subject's bytes were captured before its first mutation and restored from those bytes,
-verified by SHA-256 — never by `git checkout --`, which would have discarded this phase's own
-uncommitted work. Every result below is a red that **names its injection**.
+Fixing the symptom each round would have taken a third, and the third would have been question 3's
+`tel:` href. **The root cause is one thing — the subject is the markup a browser renders** — so
+scripts and styles come out once, at the top, and all six questions read what is left. Every other
+served gate here could have had this; `check-vat-display` and `check-legal-parity` are clean of it
+only because their subjects do not appear in props.
 
-| # | Gate / question | Injection | Named in the red |
+Then three questions that had not been observed firing on served content were made to fire, in one
+build, with the exit code verified separately from the output:
+
+| # | Q | Injection | Named in the red |
 |---|---|---|---|
-| C1 | `lint:colors` NAMED | `border: 1px solid tan` | `[named] tan` — the amended rule still catches the colour |
-| C2 | `lint:colors` NAMED | `border: 1px solid red` | `[named] red` |
-| S1 | `check:service-content` Q4 | `Gridsmith does not resell hosting.` into a summary | `STRUCK COPY: HOSTING-RESALE-PROHIBITION stands at digital/game-development.summary`, and the count moved `none stands → 1 STANDS` |
-| S2–S12 | the eleven struck-copy rules | one specimen each, in the committed self-test | each asserted to fire **and to be the only rule that fires** — the `A-GATE-4-3` hazard closed by construction |
-| B1 | `check:reviews-ui` Q1 | `Testimonials` made to return `null` | `1: / renders no review card` |
-| B2 | `check:reviews-ui` Q2 | a `<blockquote>` in an `<li>` carrying the attribution, injected into `DivisionLanding` | `2: /design renders 1 review card(s)` — and `/digital`, `/press`. The count moved `0 → 1` on each |
-| B3 | `check:reviews-ui` Q3 | keyframes flipped to `rotateY(1turn)` | `3: the ring travels LEFT TO RIGHT — a card moved from 568px to 619px` |
-| B4 | `check:reviews-ui` Q4 | the `:has()` pause selector pointed at a class that does not exist | `4: checking the pause control left the ring "running"` |
-| B5 | `check:reviews-ui` Q4 | `font-weight: 600` → `opacity: 0.99` on the checked label | `4: the checked state carries no non-colour cue — the label stays at font-weight 400` |
-| B6 | `check:reviews-ui` Q5 | the `prefers-reduced-motion: no-preference` guard widened to `min-width: 0px` | `5: the ring is still transform-style: preserve-3d under reduced motion` |
-| B7 | `check:reviews-ui` Q7 | the profile link pointed at `/contact` | `7: no link to https://www.freelancer.com/u/GridsmithLTD on /` |
-| B8 | `check:reviews-ui` Q8 | `Artistic Logo Design for a client` into a category label | the fragment, by name, with the caption it was found in |
-| A1 | `check:axe` cylinder entry | its `targetPattern` pointed at a prefix nothing emits | **68 unresolved, all naming `master_review`** — baseline was 0, so the entry is load-bearing |
-| A2 | `check:axe` one-key guard | an entry given both `target` and `targetPattern` | `entry 1 (color-contrast) names both target and targetPattern` |
-| A3 | `check:reviews-ui` Q9 | `opacity: 0.5` on the card | `9: the review card is not opaque (background rgb(255,255,255), opacity 0.5)` |
-| A4 | `check:reviews-ui` Q10 | a `<time datetime="1999-01-01">` inside `CtaBand` | `10: <time datetime="1999-01-01"> on / is NOT inside a review card` |
+| P1 | 1 | footer's `placeOfRegistration` → a literal `England & Wales` | the rule, on **18 routes** |
+| P2 | 5 | `Our opening hours are 9am to 5pm.` into `/contact` | `BUSINESS-HOURS-CLOCK` **and** `BUSINESS-HOURS-LABEL`, both named |
+| P3 | 6 | `Who you will work with` into `/about` | `TEAM-HEADING`, named |
 
-**Exit codes were verified separately from output** in every case, because a gate that prints red
-and exits `0` is a silent gate.
+Problem count moved **0 → 21**; `with-server` exit was `1`. Every branch is additionally proven by
+**return value** in the 35-case self-test, which is the structural probe. Subjects were restored
+from bytes captured before the first mutation, verified by SHA-256 — never `git checkout --`, which
+would have discarded this phase's own uncommitted work — and a residue grep found none of the three.
 
-**Two of these are worth remembering.**
+`check:struck`'s three new rules each got an annotated specimen and a separate unannotated branch
+case, and its `ZERO-SUBJECT` count expectation moved 13 → 16 deliberately, which is what proves
+that count is counted rather than printed.
 
-**B2 failed as an inert probe first, and the failure is the lesson.** The first attempt injected
-`<ReviewCylinder …/>` into `DivisionLanding` **without the import**, so the route failed to compile
-and the gate exited on a non-200 before question 2 ran. Exit 1 with no matching line is exactly the
-reading `CLAUDE.md` warns about: *the gate is broken* and *nothing was injected that the gate
-measures* are indistinguishable from an exit code. The re-run used a probe whose validity is a
-property of the probe — a `<blockquote>` inside an `<li>` carrying the attribution string, which
-**is** the gate's predicate verbatim, and which needs no import so the route still compiles.
+### Human acceptance — what was done, and what is not claimed
 
-**The scoping half of the axe allowlist needed no probe and was observed instead.** With the
-cylinder entry alone, the six `time[datetime="…"]` targets **stayed red**. That is a direct
-measurement that the pattern does not swallow everything on the route, and a red carries its own
-validity proof.
+**Done**, in a real Chromium browser against the served candidate: 375/768/1440/1920 with no
+horizontal overflow; the skip link is the first focusable with a visible ring; **36 focusable
+elements and 0 inside the cylinder**, so rotation cannot strand focus; the pause control moves
+`animation-play-state` `running → paused` and carries a real label; the ring runs at 96s on a
+`preserve-3d` container with 10 cards; both contact journeys render the right email and phone;
+invalid submission produces a `role="alert"` summary plus `aria-invalid` and `aria-describedby`
+per field with a non-colour `!` cue.
 
-### Lighthouse, with the cylinder on `/` — CI run `35083509494`, median of 3
+**Not done and not claimed: no screen-reader test** — `check:axe` passing is not one — **no
+physical device**, **no Firefox and no Safari** (neither engine is available here), and **no
+successful form submission**, because Preview has no isolated database (`GS-O010`). The success
+state is covered by `check:axe`'s probe-route assertion, not by a browser.
 
-This was the open risk in the whole phase: a continuously animating 3D element on the route with
-the least LCP headroom in the programme (`Q-M16`), on a page gated at ≥98 desktop performance.
+## Staging
 
-| Axis | route | perf | a11y | LCP | **CLS** | **TBT** |
-|---|---|---|---|---|---|---|
-| Desktop | `/` | **1.00** | **1.00** | 525ms | **0.000** | **0ms** |
-| Desktop | `/digital` | **1.00** | **1.00** | 515ms | 0.000 | 0ms |
-| Mobile (4G, 4× CPU) | `/` | 0.99 | **1.00** | 1564ms | **0.000** | **22ms** |
-| Mobile | `/digital` | 0.99 | 1.00 | 1549ms | 0.000 | 22ms |
-
-**CLS is 0.000 and TBT is 0ms on the route carrying the cylinder**, which is the pair worth
-reading rather than the score. Zero CLS is the fixed stage height doing its job — the box is the
-same size before and after the stylesheet loads and at every breakpoint. Zero TBT is the whole
-argument for CSS over an animation library: `rotateY` on a `preserve-3d` container is composited,
-so a permanently running animation costs nothing on the main thread. **Digital's 100/100/100 gate
-is unmoved.**
-
-The mobile LCP is 1564ms against Digital's 1600ms budget, which is the structural floor `Q-M16`
-already records for an *empty* page on `ubuntu-latest` (1520ms) and not a cost of this block.
-
-### Human acceptance still required — recorded rather than faked
-
-No unit test has eyes. The following are for `GS-R001` and cannot be closed here:
-
-1. **Screen-reader pass over the cylinder.** The gate proves the DOM, the pause and the parity; it
-   cannot say whether hearing twelve blockquotes in a row is a good experience.
-2. **Real-device touch behaviour.** `(hover: hover)` is asserted in CSS, not on a phone. A reader
-   with no hover pause relies on the front dwell and the checkbox.
-3. **Whether the rotation is pleasant at 96s.** It is a pace, not a threshold, and it is one line.
-4. **Whether 10 published reviews read better than 12** — which is `GS-O015`'s other half.
+Project `gridsmith-ltd` has **no custom domain** and `live: false`; `gridsmith.uk` is on Hostinger.
+**A production-target deployment cannot replace the live site**, and every one since `GS-P00` has
+ended `ERROR` on the empty production Sanity dataset (`GS-T005`). So the candidate is a **branch
+preview**, which builds against `development` and reaches `READY` — isolated by construction rather
+than by configuration. Vercel Authentication is on for all non-custom-domain deployments, so it
+answers 401 to a crawler; `robots.txt` and the `noindex` meta are the second and third locks.
 
 ## Findings and programme state
 
-- **Closed:** `GS-O013` (approved with remediation — implemented and verified in the canonical
-  source), `GS-O014` (approved with the Master-only amendment — implemented and verified).
-- **New:** `GS-O015` — two reviews naming a third party, withheld by default, one owner sentence.
-- **Remaining:** `GS-T004`, `GS-T005`, `GS-O003`, `GS-O004`, `GS-O005`, `GS-O007`, `GS-O010`,
-  `GS-X001`, `GS-X002`, `GS-R001`–`GS-R003`, `Q-P13`. Plus per-channel marketing exclusions, which
-  moved out of the closed `GS-O013` and into the production-content work rather than being dropped.
-- **Production readiness:** **NOT READY.**
-
-## Remote changes
-
-- **GitHub:** `cf047f13` pushed to `main`; CI run `35083509494` **`success`**, all 43 steps.
-- **Freelancer:** **read only, unauthenticated.** `GET /api/projects/0.1/reviews/` called a small
-  number of times, and `https://www.vengenceui.com/components/cylinder-carousel` read once for the
-  design reference. **No account signed into, no setting changed, no application created, no token
-  generated, nothing written.**
-- **Sanity development:** **none.** Not read, not written, not contacted.
-- **Sanity production:** **none.** Not read, not written, not contacted.
-- **Supabase:** **none.**
-- **Resend:** the existing `check:axe` notification probe sent one development notification through
-  Resend's shared sender to the account owner. Established gate behaviour, not new here.
-- **Vercel:** none initiated. The push triggered the normal Git integration, which produced
-  production-target deployment `dpl_EvNrr4CAaCQzAKxk1hFkNDhzUqod` — **`ERROR`, as expected**.
-  Every production-target deployment since `GS-P00` has ended the same way, on the empty production
-  Sanity dataset (`GS-T005`). **Nothing was published, `gridsmith.uk` is unaffected, and this is
-  not a regression introduced here** — observed and reported, not acted on. Preview remains
-  non-isolated (`GS-O010`).
-- **Hostinger/DNS/`gridsmith.uk`:** none.
+- **Closed:** `GS-O004`, `GS-O015`, `G-01`, `G-04`, `G-05`, `Q-M9`, checklist `A1`–`A5` and `A8`.
+- **New:** `GS-O016` — the ICO registration position, lifted out of `GS-O004`'s original wording so
+  that closing it could not silently close this.
+- **Narrowed:** `GS-O007` — the URL inventory and the SEO-metadata limbs are done; brand assets and
+  one redirect row remain.
+- **Remaining:** `GS-T004`, `GS-T005`, `GS-O003`, `GS-O005`, `GS-O007`, `GS-O010`, `GS-O016`,
+  `GS-X001`, `GS-X002`, `GS-R002`, `GS-R003`, `Q-P13`, the three `GS-R001` human tests, and the
+  production content listed in `GS-R001-STAGING-RC.md` §8.
+- **RC status:** **TECHNICALLY PASS.** **Production readiness: NOT READY.**
 
 ## Recommended next phase
 
 Recommendation only. **Do not begin it from this handoff alone.**
 
-A **staging release-candidate phase** for `GS-R001` / `GS-O008`. It is the first phase where the
-site has owner-accepted copy and its only credibility block is live, and it is the phase the four
-open human-acceptance items above belong to.
+**`GS-O008` — owner acceptance of the staging release candidate**, followed by whichever of the
+owner actions that review unblocks. It is an **owner task, not an agent phase**: the candidate is
+built, gated and deployed, and what it now needs is a person to read all four sections and say
+whether the site describes their business.
 
-- **Owner task first?** `GS-O015` should be answered before the candidate is cut, so the owner
-  reviews the review block they will actually ship. It is one sentence and blocks nothing else.
-  `GS-O004` (contact facts, a working `contact@gridsmith.uk`) is the one that genuinely gates a
-  staging candidate a human can accept.
-- **Session:** **NEW.** This one's context is the remediation and the carousel; a release candidate
-  is a different subject and starts from `PROJECT-STATUS.md`.
+- **Owner task required before it?** Yes — this *is* the owner task. Open the preview URL and read
+  Master, Design, Digital and Press end to end. `GS-R001-STAGING-RC.md` §8 is the list of what is
+  knowingly missing, so time is not spent re-finding it.
+- **Exact owner information/action required:** (1) accept or reject the candidate section by
+  section; (2) real copy for `/about` and `/approach`, which carry `[SEED]`-marked prose; (3) a
+  reading of the nine `/insights` posts, which are agent-authored and unread; (4) the `GS-O016` ICO
+  position, one sentence; (5) approved logo and favicon, and the one redirect row (`GS-O007`).
+  Items 2–5 can be answered in any order and none blocks the others.
+- **Session:** **NEW.** This one's context is company facts, review safety and SEO; the next is
+  owner-supplied content.
 - **Agent/model:** Claude Code (Opus 5).
-- **Effort:** medium-high — no new architecture, but a full accessibility, cross-browser, screen
-  reader and content pass across four sections, and the first Lighthouse readings that include the
-  cylinder.
+- **Effort:** medium — no new architecture. The work is transcribing owner-approved copy into the
+  development dataset and re-running the chain. It becomes large only if the acceptance review
+  rejects a section.
 
-`GS-T004` production activation stays in a separately authorised production-release phase.
-Technical-group content stays gated on `GS-O005` / `GS-X002`.
+**`GS-T004` production activation stays in a separately authorised production-release phase**, and
+`gridsmith.uk` cutover stays behind `GS-O009`. Technical-group content stays gated on `GS-O005` /
+`GS-X002`. **Do not treat an accepted RC as authorisation for either.**

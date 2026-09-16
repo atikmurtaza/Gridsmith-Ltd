@@ -99,15 +99,6 @@ export type PostDetail = PostCard & { body: PortableBlock[] | null; author: stri
 
 export type FaqItem = { question: string; answer: PortableBlock[] | null; category: string | null };
 
-export type TeamMember = {
-  name: string;
-  role: string | null;
-  divisions: Division[] | null;
-  bio: string | null;
-  credentials: string[] | null;
-  isSeed: boolean;
-};
-
 export type GroupSection = {
   key: string;
   heading: string;
@@ -222,12 +213,23 @@ export const listFaqs = (division: Division, limit: number) =>
     { division, limit },
   );
 
-/** `isPublic` defaults false — a person appearing on a public website is a decision. */
-export const listPublicTeam = () =>
-  q<TeamMember[]>(
-    `*[_type == "teamMember" && isPublic == true && !(_id in path("drafts.**"))]
-     | order(order asc){name, role, divisions, bio, credentials, "isSeed": coalesce(isSeed, false)}`,
-  );
+/**
+ * **There is no team query and there must not be one — `GS-O004`, 16 September 2026.**
+ *
+ * `listPublicTeam` and the `TeamMember` type were here and were read by `/about`. The owner's
+ * decision is that Gridsmith publishes no team members at all: no founder profile, no employee
+ * profiles, no placeholder staff, no stock identities. The company is represented
+ * institutionally.
+ *
+ * The guard was `isPublic == true`, and `isPublic` defaults false — which reads as safe and was
+ * not. The development dataset held four `teamMember` records named `[SEED] Placeholder Name`
+ * with `isPublic: true`, so the served `/about` published four placeholder people. A boolean in
+ * a dataset is a thing anyone can flip; a deleted query is not. This is the same choice
+ * `GS-O014` made when it deleted `listTestimonials` rather than leaving it unused.
+ *
+ * The `teamMember` schema type stays defined and dormant, like `project` and `book`. Restoring
+ * publication means writing a query, which is a visible act in a diff.
+ */
 
 export const getGroupPage = (slug: 'approach' | 'about') =>
   q<GroupPage | null>(

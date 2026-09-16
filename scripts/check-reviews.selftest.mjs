@@ -23,6 +23,7 @@ import {
   toReviews,
   withholdReason,
   WITHHELD_REVIEW_IDS,
+  namedThirdParty,
 } from '../lib/reviews/freelancer.ts';
 
 let failures = 0;
@@ -73,19 +74,76 @@ is('withhold: a whitespace body is withheld', withholdReason('   \n  '), 'the bo
 is('withhold: a null body is withheld', withholdReason(null), 'the body is empty');
 is('withhold: a very short company is not matched', withholdReason('It is ok.', 'ok'), null);
 is('withhold: no company supplied does not crash', withholdReason('Solid work.'), null);
-// `GS-O015`. Its own limb, broken on its own: an id-only rule must fire on a body that every
-// other rule publishes, or a green would only mean the body happened to be clean.
+/* -- GS-O015, both limbs, each broken on its own ---------------------------- */
+//
+// The owner's decision is that a review naming an identifiable third party is withheld by
+// conservative deterministic rule where one can decide, and by human review where none can.
+// Those are two limbs and CLAUDE.md is explicit that one firing is not evidence for the other,
+// so each is driven on a body the OTHER limb publishes. Every case reads a returned reason.
+
+// Limb 1 — manual. An id-only rule must fire on a body every other rule publishes, or a green
+// would only mean the body happened to be clean. `WITHHELD_REVIEW_IDS` is empty as of GS-O015
+// (the two ids it held are now caught by rule), so the subject is supplied here by value —
+// which is what makes an empty denylist a proven branch rather than an inert one.
 is(
-  'withhold: an id on the GS-O015 list is withheld whatever the body says',
-  withholdReason('Solid work.', null, WITHHELD_REVIEW_IDS[0]),
-  'the review is held pending GS-O015 (it names a third party)',
+  'withhold GS-O015 manual: an id on the list is withheld whatever the body says',
+  withholdReason('Solid work.', null, 99999999, [99999999]),
+  'a person read this review and withheld it (GS-O015, manual)',
 );
 is(
-  'withhold: an id NOT on the list publishes the same body',
-  withholdReason('Solid work.', null, 1),
+  'withhold GS-O015 manual: an id NOT on the list publishes the same body',
+  withholdReason('Solid work.', null, 1, [99999999]),
   null,
 );
-is('withhold: the GS-O015 list is non-empty, so the limb has a subject', WITHHELD_REVIEW_IDS.length > 0, true);
+is(
+  'withhold GS-O015 manual: the list is empty, because the two ids it held are now caught by rule',
+  WITHHELD_REVIEW_IDS.length,
+  0,
+);
+
+// Limb 2 — deterministic. The two bodies the owner's decision is actually about, verbatim
+// enough to be the real subject, plus a business nobody has seen. A rule that only matched the
+// two known strings would be an id list wearing a regex.
+is(
+  'namedThirdParty: the first GS-O015 body names its company',
+  namedThirdParty('My app started life with the very disgraceful Varnika Software PVT in India'),
+  'Varnika Software PVT',
+);
+is(
+  'namedThirdParty: the second GS-O015 body names its company',
+  namedThirdParty('initially developed by Varnika Pvt in India which was a massive mistake.'),
+  'Varnika Pvt',
+);
+is(
+  'namedThirdParty: a business nobody has seen is caught too, which is the point of a rule',
+  namedThirdParty('Previously we used Acme Technologies and it went badly.'),
+  'Acme Technologies',
+);
+is(
+  'namedThirdParty: our OWN name is not a third party',
+  namedThirdParty('Gridsmith Ltd delivered exactly what we needed, on time.'),
+  null,
+);
+is(
+  'namedThirdParty: ordinary praise names no business',
+  namedThirdParty('Great work, very responsive and professional throughout.'),
+  null,
+);
+is(
+  'namedThirdParty: a lowercase corporate word in ordinary prose is not a name',
+  namedThirdParty('We had a limited budget and the company was great.'),
+  null,
+);
+is(
+  'withhold GS-O015 rule: the reason names the matched business',
+  withholdReason('Previously we used Acme Technologies and it went badly.'),
+  'the body names a third-party business ("Acme Technologies") — GS-O015',
+);
+is(
+  'withhold GS-O015 rule: fires on a body with no URL, no email and no reviewer company',
+  typeof withholdReason('Work started at Varnika Pvt and was a mess.', null, 1),
+  'string',
+);
 
 /* -- parsePayload ---------------------------------------------------------- */
 

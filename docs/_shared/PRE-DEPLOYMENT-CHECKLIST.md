@@ -42,7 +42,7 @@ Hostinger-held domain points DNS at the existing Vercel project when the owner c
 
 | Group | Rows | What it is |
 |---|---|---|
-| **A — Company facts only you can supply** | 7 | Addresses, numbers, mailboxes, insurance |
+| **A — Company facts only you can supply** | 8 | Addresses, numbers, mailboxes, insurance, public team. **6 of 8 closed at `GS-O004`** |
 | **B — Prices and commercial terms** | 4 | Every price on the site is a placeholder |
 | **C — The Q-P13 Path Finder rules** | 6 | Drafted 7 Sept 2026, all `[SEED]`, and now applied by the island |
 | **D — Seed content in the CMS** | 6 | `isSeed: true` records and the marked strings |
@@ -51,7 +51,7 @@ Hostinger-held domain points DNS at the existing Vercel project when the owner c
 | **G — Statements about the business no one confirmed** | 5 | Sentences asserting a fact about Gridsmith |
 | **H — Environment and infrastructure** | 8 | Variables unset for production |
 | **I — Legal, already tracked elsewhere** | 3 | Pointers, not new work |
-| **Total** | **45** | |
+| **Total** | **46** | |
 
 **One row was removed on 7 September 2026: `I4`, the live site's Pakistan governing law.** The
 owner's decision is that the live `gridsmith.uk` is authoritative for the **services** and the
@@ -65,15 +65,23 @@ them as superseded. **`A3` is unaffected and survives on its own footing** — i
 
 ## Group A — Company facts only you can supply
 
-| # | Item | Where | What is there now | What is needed |
+> **`GS-O004` closed this group's first five rows on 16 September 2026 (`GS-R001`).** The owner
+> supplied the facts and two of them were corroborated against the public Companies House
+> register, which is what A1 and A2 had been asking for since 7 September. The rows are kept and
+> annotated rather than deleted, because the question each one asked is the reason the answer is
+> trustworthy. **A6 and A7 remain open**, and A7 is now its own owner action (`GS-O016`) so that
+> closing `GS-O004` could not absorb it.
+
+| # | Item | Where | What is there now | State |
 |---|---|---|---|---|
-| A1 | **Registered office string** | `scripts/seed-company-details.mjs:40` | `30 Briarfield Road, Farnworth, Bolton, BL4 0HD` | Confirm against the Companies House register. The live site publishes a **different string** for the same premises — `30, Briarfield Road, Farnworth Bolton BL4 **O**HD` — with the **letter O in the postcode**. `LIVE-SITE-EXTRACT.md` §11.3 |
-| A2 | **Company number** | `scripts/seed-company-details.mjs:38` | `17050842` | Confirm. It appears **nowhere on the live site**, so the two artefacts cannot corroborate each other and this session verified neither against the register |
-| A3 | **Contact email — the mailbox does not exist yet** | `seed-company-details.mjs:47`, `CONSUMER-TERMS.md` §6.1/§18 | `contact@gridsmith.uk` | **Create it, then confirm it receives mail.** `CONSUMER-TERMS.md` §6.1 and §18 name it as the address for serving a **statutory cancellation notice** under CCRs 2013, so a consumer must be able to reach it from the day the instrument is published. This is a requirement of the **new instrument**, not a divergence from the live site — the live site's addresses are legacy and superseded (`LIVE-SITE-EXTRACT.md` §11.2) |
-| A4 | **Contact phone** | not in the seed | absent | The live site publishes `+44 7405 448534`. Decide whether it appears on the new site; `companyDetails.contactPhone` exists and is unset |
-| A5 | **Response commitment** | `seed-company-details.mjs` | *"We'll reply as soon as we can, and always by the end of the next business day."* | Confirm you will meet it. Non-negotiable #5 makes this the single source of truth and `Z-10` is the drill that tests it |
-| A6 | **PI insurer and cover limit** | `companyDetails.piInsurer`, `piCoverLimit` | unset | Supply or decide they are not published. Fields exist because the specs expected them |
-| A7 | **ICO registration** | `companyDetails.icoRegistration` | unset | Supply, or record that registration is not required |
+| A1 | **Registered office string** | `scripts/seed-company-details.mjs` | `30 Briarfield Road, Farnworth, Bolton, BL4 0HD` | ✅ **CONFIRMED 16 Sep 2026** against the public register, read read-only: `30 Briarfield Road, Farnworth, Bolton, England, BL4 0HD`. Same premises and the **digit zero** — so the live site's `BL4 **O**HD` is the malformed one, as §11.3 suspected. The register's extra `England` component is not added here: the footer states the part of the UK separately, and the three `_legal/` instruments carry this exact string. **`GS-O004` additionally withdrew it from the marketing site** — it now renders only in the statutory footer (SI 2015/17 reg. 25(2)(c)) and in `_legal/`, enforced by `check:company` question 4 |
+| A2 | **Company number** | `scripts/seed-company-details.mjs` | `17050842` | ✅ **CONFIRMED 16 Sep 2026** by the owner and by the register: `GRIDSMITH LTD`, **active**, incorporated 24 February 2026. The row was right that the live site cannot corroborate it — the live site publishes no company number at all — so the register was read instead |
+| A3 | **Contact email** | `seed-company-details.mjs`, `CONSUMER-TERMS.md` §6.1/§18 | `contact@gridsmith.uk` | ✅ **CONFIRMED 16 Sep 2026.** The owner states the mailbox is **working and authorised for publication**. No gate can re-verify deliverability and none claims to; `check:company` question 2 asserts only that it is the single published address and that every `mailto:` points at it — which is the defect the live site has today (§11.2) |
+| A4 | **Contact phone** | `seed-company-details.mjs` | `+44 7405 448534` | ✅ **SUPPLIED AND PUBLISHED 16 Sep 2026.** The same number the live site publishes, so the two artefacts corroborate. Displayed with separators, linked as `tel:+447405448534` — derived by `telHref` from the displayed string, so the read number and the dialled number cannot diverge. **No opening hours beside it**: the `businessHours` field is removed from the schema, not merely left empty |
+| A5 | **Response commitment** | `seed-company-details.mjs` | *"We typically respond within 48 hours."* | ✅ **REPLACED 16 Sep 2026.** It was *"…and always by the end of the next business day"*, and `GS-O004` withdraws any guaranteed response time or SLA — *"always"* is an unqualified undertaking. The new value is **slower than non-negotiable #5's ceiling and is not a promise**, so the rule holds twice over. `check:company` question 5 refuses guarantee wording, SLA wording, "ASAP" and clock hours on the served pages |
+| A6 | **PI insurer and cover limit** | `companyDetails.piInsurer`, `piCoverLimit` | unset | ⬜ **OPEN — `GS-O005`.** Nothing renders them, so the site makes no insurance claim |
+| A7 | **ICO registration** | `companyDetails.icoRegistration` | unset | ⬜ **OPEN — now `GS-O016`.** Lifted into its own owner action so that closing `GS-O004` did not silently close it. Nothing renders it, so the site makes no claim either way |
+| A8 | **Public team members** | ~~`companyDetails`~~ — it was never a company-details field | none | ✅ **ANSWERED 16 Sep 2026 — there are none.** New row, because this group had no entry for it and it turned out to be the group's only *live* defect: four `teamMember` records named `[SEED] Placeholder Name` carried `isPublic: true` in the development dataset, and the served `/about` published all four under *"Who you will work with"*. `Q-M9` is closed: the owner represents the company institutionally. The roster, `listPublicTeam` and the `TeamMember` type are deleted and the seed now writes `isPublic: false` |
 
 **Not on this list, deliberately:** `vatNumber`. Its absence is a recorded compliance decision,
 not a gap — `sanity/schemas/companyDetails.ts` and `check:vat:display` both enforce it.
@@ -122,7 +130,7 @@ honest outcome.
 | D2 | `[SEED]`-marked strings in shipped code and seed scripts | 154 occurrences across 41 files; the shipped-code ones are `seedConfig.ts` (15), the `_master-sink` probe (8), `about`, `work/[slug]`, `path-finder`, `ContactForm`, `PressContactFlow`, `Price`, `Testimonials`, `SelectedWork` | **154** total, of which most are prose explaining the policy rather than seeded values |
 | D3 | Seeded client names | `seed-content.mjs:180` | Fictional by convention (`Northfield Engineering`, `Halcyon Press`) — `FOUNDATION` §7.2. **Delete rather than edit**; §"Replacing seed content" |
 | D4 | Seeded metrics | every seeded `project` | `[SEED] 00%` / `[SEED] 00 days` — zeroed digits, never a plausible number |
-| D5 | Seeded team members | `seed-content.mjs:307` | `[SEED] Placeholder Name`; `isPublic` decides whether anyone appears at all |
+| D5 | Seeded team members | `seed-content.mjs` | `[SEED] Placeholder Name` × 4. **`isPublic` did NOT decide whether anyone appears — it said `true` and four placeholder people were served on `/about`.** Corrected at `GS-R001` on both sides: the renderer and the query are deleted, and the seed writes `isPublic: false`. The four records remain in the development dataset and are now read by nothing. See A8 and `GS-O004` |
 | D6 | **The production dataset is empty** | `NEXT_PUBLIC_SANITY_DATASET` | Everything above lives in `development`. `production` holds nothing, including **no `companyDetails` singleton** — so the statutory footer has no source until it is seeded there. `check:launch` refuses a `production` dataset whose contact email is empty or whose fields carry `[SEED]` |
 
 **Testimonials are the exception and must not be swept with the rest.**
@@ -183,7 +191,7 @@ Full record and verbatim source: `docs/_shared/LIVE-SITE-EXTRACT.md`.
 | # | Item | Where in the build | Status |
 |---|---|---|---|
 | F1 | **The six process stage names and descriptions** | `docs/_shared/00-PROCESS.md`, and every route that renders the canonical process | Already in the build, near-verbatim from the live `HOW IT WORKS`. **The provenance was recorded nowhere until now.** Confirm you want them; also note stage 6 names *"SEO improvements"* inside a description that claims to be division-neutral |
-| F2 | **The registered address and phone** | `seed-company-details.mjs` — see A1, A4 | Adapted, with four differences from the live string |
+| F2 | **The registered address and phone** | `seed-company-details.mjs` — see A1, A4 | ✅ **Both confirmed at `GS-O004`.** The address matches the register (which the live site's does not — its postcode carries a letter O), and the phone is the owner's supplied number and the live site's, agreeing. The four differences §11.3 lists are punctuation and a country component; none is substantive and the substantive one ran the other way |
 | F3 | **Everything else on the live site** | **nothing** | The services list, the FAQs, the About copy, the Service Integrity list and the pricing language are **recorded in `LIVE-SITE-EXTRACT.md` and not adopted**. If any of it should carry over, that is a decision, and it lands here first. **The live legal copy is excluded entirely** — refund policy, terms, emails, consent banner and governing law are superseded by `docs/_legal/` and can never become a row here |
 
 ---

@@ -32,6 +32,16 @@ import styles from './leads.module.css';
  * the server so that this component holds no copy of it. **There is exactly one source for
  * that sentence** — non-negotiable #5 — and it is the CMS singleton.
  *
+ * ## The contact address is a prop too, as of `GS-O004`
+ *
+ * It was written into this file twice as a literal `contact@gridsmith.uk` — in the confirmation
+ * and in the send-failure message — while the paragraph above explained why the *commitment*
+ * must never be. The reasoning was always the same and only one of the two facts had been
+ * given the treatment. A duplicated company fact drifts in one of its copies, and here the
+ * copy that would drift is the one in the error path, which nobody renders on a good day. Both
+ * now come from `companyDetails` through the Server Component that already reads the
+ * singleton, so changing the address is one content edit and no code change.
+ *
  * ## Errors are announced, not merely coloured
  *
  * `role="alert"` on the failure summary, and per-field messages wired through `Field`'s
@@ -77,7 +87,13 @@ const TIMELINES = [
   { value: 'fixed-date', label: 'I have a fixed date' },
 ];
 
-export function ContactForm({ responseCommitment }: { responseCommitment: string }) {
+export function ContactForm({
+  responseCommitment,
+  contactEmail,
+}: {
+  responseCommitment: string;
+  contactEmail: string;
+}) {
   const [state, formAction, pending] = useActionState(submitLeadAction, INITIAL);
   const [context, setContext] = useState<ReturnType<typeof readEnquiryContext>>({});
   useEffect(() => setContext(readEnquiryContext(window.location.search)), []);
@@ -94,7 +110,7 @@ export function ContactForm({ responseCommitment }: { responseCommitment: string
         <p className={styles.commitment}>{responseCommitment}</p>
         <p className={styles.confirmationDetail}>
           If you need to add something, reply to the acknowledgement or write to{' '}
-          <a href="mailto:contact@gridsmith.uk">contact@gridsmith.uk</a>.
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
         </p>
       </div>
     );
@@ -114,7 +130,7 @@ export function ContactForm({ responseCommitment }: { responseCommitment: string
       {state.status === 'error' ? (
         <p className={styles.formError} role="alert">
           We could not send that. Nothing was lost — try again, or email{' '}
-          <a href="mailto:contact@gridsmith.uk">contact@gridsmith.uk</a> directly.
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a> directly.
         </p>
       ) : null}
 

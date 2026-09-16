@@ -77,6 +77,11 @@ const base = () => [
   { file: 'rule-11-subject.md', text: '~~media buying is not something Gridsmith undertakes~~ struck at GS-P06\n' },
   { file: 'rule-12-subject.md', text: '~~Gridsmith does not resell hosting.~~ struck at GS-P06\n' },
   { file: 'rule-13-subject.md', text: '~~No one can certify accessibility.~~ struck at GS-P06\n' },
+  // `GS-O004`, registered at GS-R001. One annotated subject per rule, or check:struck
+  // reports HOLLOW SUBJECT — the gate refusing to be registered with nothing to reach.
+  { file: 'rule-14-subject.md', text: "~~{ name: 'businessHours', type: 'string' }~~ - struck 16 Sept 2026, no published hours\n" },
+  { file: 'rule-15-subject.md', text: '~~always by the end of the next business day~~ - struck at GS-O004, no guaranteed response\n' },
+  { file: 'rule-16-subject.md', text: '~~Only `isPublic: true` members render on /about~~ - struck at GS-O004, no public team\n' },
 ];
 
 const SPECIMENS = [
@@ -103,7 +108,10 @@ const SPECIMENS = [
   {
     name: 'BRANCH 4 — zero subject: corpus below the floor',
     files: base().slice(MIN_FILES),
-    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 13 document(s)')),
+    // 13 -> 16 at `GS-O004`, with the three rules that added three subject files. The literal
+    // is the point: it must be changed deliberately when the corpus changes, which is how this
+    // case proves the count is counted rather than printed.
+    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 16 document(s)')),
   },
   // `GS-P03` — one specimen per new rule, plus the surviving statement none of them may catch.
   {
@@ -142,6 +150,32 @@ const SPECIMENS = [
     name: 'BRANCH 12 — the Press "no POA path" rule restated, unannotated',
     files: [...base(), { file: 'press/PROJECT-RULES.md', text: '3. Every package shows a total price. There is no "POA" path.\n' }],
     expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-D002-PACKAGE-NO-POA STANDS at press/PROJECT-RULES.md:1')),
+  },
+  // `GS-O004`. One per rule, each firing on its own id, for the `A-GATE-4-3` reason above.
+  {
+    name: 'BRANCH 15 — businessHours re-specified as a field, unannotated',
+    files: [...base(), { file: 'master/SCHEMA.md', text: "{ name: 'businessHours', type: 'string' },\n" }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-O004-BUSINESS-HOURS-FIELD STANDS at master/SCHEMA.md:1')),
+  },
+  {
+    name: 'BRANCH 16 — the response guarantee restated, unannotated',
+    files: [...base(), { file: 'master/APP-FLOW.md', text: "We'll reply as soon as we can, and always by the end of the next business day.\n" }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-O004-RESPONSE-GUARANTEE STANDS at master/APP-FLOW.md:1')),
+  },
+  {
+    name: 'BRANCH 17 — the public team roster rule restated, unannotated',
+    files: [...base(), { file: 'master/SCHEMA.md', text: 'Only `isPublic: true` members render on /about.\n' }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-O004-PUBLIC-TEAM-ROSTER STANDS at master/SCHEMA.md:1')),
+  },
+  {
+    name: 'NOT A SUBJECT — the surviving single-source rule for the response commitment',
+    files: [...base(), { file: 'x.md', text: 'The response commitment renders from companyDetails.responseCommitment and is never hardcoded.\n' }],
+    expect: (r) => r.ok,
+  },
+  {
+    name: 'NOT A SUBJECT — the new wording, which is a statement of typical behaviour',
+    files: [...base(), { file: 'x.md', text: 'We typically respond within 48 hours.\n' }],
+    expect: (r) => r.ok,
   },
   {
     name: 'NOT A SUBJECT — the surviving bespoke-quotation rule',

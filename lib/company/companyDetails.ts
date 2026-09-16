@@ -15,12 +15,29 @@ export type CompanyDetails = {
   contactEmail: string | null;
   contactPhone: string | null;
   responseCommitment: string;
-  businessHours: string | null;
 };
+
+/**
+ * The `tel:` form of a displayed phone number — `GS-O004`.
+ *
+ * RFC 3966 wants a global number with no visual separators, and `+44 7405 448534` carries
+ * two. The live `gridsmith.uk` links `tel:+44%207405%20448534`, which percent-encodes the
+ * spaces rather than removing them; that resolves on most dialers and is not what the RFC
+ * describes. Deriving the href here rather than storing a second field is what stops the
+ * displayed number and the dialed number from ever being different numbers — which is
+ * exactly the defect the live site's footer already has with its two email addresses
+ * (`LIVE-SITE-EXTRACT.md` §11.2).
+ *
+ * Everything that is not `+` or a digit is dropped, so it cannot emit a malformed href
+ * whatever the singleton holds.
+ */
+export function telHref(phone: string): string {
+  return `tel:${phone.replace(/[^+\d]/g, '')}`;
+}
 
 export const COMPANY_DETAILS_QUERY = `*[_type == "companyDetails"][0]{
   legalName, companyNumber, placeOfRegistration, registeredOffice, tradingAddress,
-  contactEmail, contactPhone, responseCommitment, businessHours
+  contactEmail, contactPhone, responseCommitment
 }`;
 
 /**

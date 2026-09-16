@@ -204,6 +204,16 @@ jobs:
       - name: A rendered Freelancer review carries no client name, amount or credential
         run: npm run check:reviews
 
+      # GS-O004 / GS-R001. Selftest first, same reason as every pair above: each RESPONSE_RULES
+      # and TEAM_RULES limb is broken separately and the returned problem set is read, so a
+      # pattern edited into inertness fails here rather than reporting a clean run against the
+      # served site. The gate itself is on the served list below — its subject is the page a
+      # visitor receives, not the singleton, because every defect it exists for (a literal typed
+      # into a component, a stale field in the dataset, a teamMember whose isPublic was flipped)
+      # is invisible in source.
+      - name: The company-fact predicates still fire (committed specimens)
+        run: npm run check:company:selftest
+
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
       # the `development` dataset. check:launch still runs against the SERVED site below;
@@ -309,4 +319,4 @@ jobs:
       # clamp that is 16px at 375px and 17px near 1440px, so a source check that found the
       # token named would have called the phone rendering a pass.
       - name: axe + security headers + statutory record + responsive and legal checks
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui"
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company"

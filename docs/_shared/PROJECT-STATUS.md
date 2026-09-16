@@ -2,29 +2,32 @@
 
 **Programme:** controlled production readiness
 
-**Status:** ACTIVE — GS-P06 implemented the two owner decisions `GS-O013` (service copy, approved
-with remediation) and `GS-O014` (Freelancer reviews, approved with a Master-only amendment). The
-review pipeline is **activated**; production migration, production content activation and
-deployment remain deferred
+**Status:** ACTIVE — GS-R001 produced a **staging release candidate** and closed the two owner
+decisions it was given: `GS-O004` (company and contact facts) and `GS-O015` (third-party review
+safety). Production migration, production content activation and deployment remain deferred
 
-**Current task:** `GS-P06` — owner-approved service-content remediation and the Master Freelancer
-review experience
+**Current task:** `GS-R001` / `GS-O008` — staging release candidate and human-acceptance
+preparation. Evidence: `docs/_shared/GS-R001-STAGING-RC.md`
 
-**Current commit:** `6b297df92c5ca788eaf02ef2d66e816bf516f30a` at task start; the ending commit is
-the GS-P06 commit containing this record (`git rev-parse HEAD`)
+**Current commit:** `1ad462ff276c7d03079f5b9afbca908cbbfc0b24` at task start; the ending commit is
+the GS-R001 commit containing this record (`git rev-parse HEAD`)
 
-**Branch:** `main`, tracking `origin/main`
+**Branch:** `main`, tracking `origin/main`. The candidate is cut on a **branch**, deliberately —
+a branch push produces a Vercel *preview*, which builds against the `development` dataset and
+reaches `READY`; a push to `main` produces a production-target build, which has ended `ERROR` on
+the empty production Sanity dataset since `GS-P00` and is not a candidate anybody can evaluate
 
 **Working tree:** clean at task start, 0 ahead / 0 behind, no unrelated owner work.
 
-**CI/build:** local **43-gate** static chain, clean production build on a wiped `.next`, bundle
-budgets, secrets lint, served accessibility/responsive/content gates and **fifteen**
-deliberate-failure proofs pass. **GitHub CI run `35083509494` completed `success` on `cf047f13` —
-all 43 steps**, Lighthouse CI included. With the cylinder on `/`: desktop **1.00 perf / 1.00 a11y
-/ CLS 0.000 / TBT 0ms**, mobile 0.99 / 1.00 / CLS 0.000 / TBT 22ms; Digital's 100/100/100 gate is
-unmoved. The Vercel production-target build errored as `GS-T005` predicts; nothing was published.
+**CI/build:** local **45-gate** static chain, clean production build on a wiped `.next`, bundle
+budgets, secrets lint and the full served chain pass. **Starting CI:** run `35084597904`
+**`success`** on `1ad462ff`, verified before any work began. Lighthouse cannot run locally on
+Windows and is CI's to answer.
 
-**Last updated:** 16 September 2026 (`GS-P06`)
+**RC status:** **TECHNICALLY PASS.** **Production readiness: NOT READY.** They are different
+statuses — `GS-R001-STAGING-RC.md` §8 lists the thirteen items still owed and who owns each.
+
+**Last updated:** 16 September 2026 (`GS-R001`)
 
 ## Service architecture (GS-P03)
 
@@ -61,12 +64,18 @@ unmoved. The Vercel production-target build errored as `GS-T005` predicts; nothi
 | Digital Marketing / campaign management | **CONFIRMED** as a cross-division engagement; no fourth discipline, no new group, type or route |
 | Marketing channel services | **CONFIRMED at GS-P05** (`GS-O012`) — 8 of 9; six new engagement rows, no new architecture |
 | Paid media | **RESOLVED at GS-P06** (`GS-O013`) — denying media buying contradicted the channels already confirmed. One nineteenth engagement row; catalogue unchanged at 81; `Media buying` stays in `UNCONFIRMED_CHANNEL_SERVICES` on the narrower reading that no service **record** may claim it |
-| Freelancer reviews | **12** available, **10 published** — two withheld pending `GS-O015`, which is the only open limb of the review work |
+| Freelancer reviews | **12** available, **10 published**, 2 withheld. `GS-O015` **CLOSED at GS-R001**: the two stay withheld, and the withholding moved from a hardcoded id list to `namedThirdParty`, a deterministic rule that reaches reviews nobody has seen. `check:reviews --live` pins the set a person has read, so a new review makes it red rather than reaching the homepage unread |
 | Freelancer review retrieval | **ACTIVATED at GS-P06** — official API, no credential, 24h cache, no stored copy, `/` revalidates daily. `GS-O014` closed |
 | Freelancer review placement | **MASTER ONLY** (`GS-O014` amendment). Division review blocks removed; `TestimonialList`, both testimonial queries and the `TestimonialCard` type deleted. `check:reviews-ui` asserts presence on `/` and absence on all three divisions in one run |
 | Master review presentation | 3D cylinder carousel, right to left, seamless, CSS only, zero client JS, pause control (WCAG 2.2 SC 2.2.2), flat grid under `prefers-reduced-motion` at full content parity |
 | Service copy remediation | **IMPLEMENTED at GS-P06** in `scripts/service-content.mjs` — media-buying denial, ownership absolutes, hosting-resale prohibition, categorical accessibility claim, combative guarantees and five accusatory summaries. `check:service-content` question 4 refuses eleven struck phrasings |
 | Base token layer | **41 tokens**, was 39 — `--dur-cycle` / `--dur-cycle-narrow` added for the ambient loop |
+| Company and contact facts | **SUPPLIED AND IMPLEMENTED at `GS-R001` (`GS-O004`)** — `Gridsmith Ltd` · `17050842` · **registered in England** · `contact@gridsmith.uk` · `+44 7405 448534` · **no business hours** · *"We typically respond within 48 hours."* · registered office in the statutory footer and `_legal/` only · **no public team**. One source (`companyDetails`), asserted on the served pages by `check:company` |
+| Public team members | **NONE.** `Q-M9` answered. `/about` was publishing four `[SEED] Placeholder Name` records because the seed set `isPublic: true`; the query, the type, the renderer and its CSS are deleted and the type is dormant |
+| SEO surface | **BUILT at `GS-R001`** (`G-04`, `G-05`) — `robots.ts`, `sitemap.ts`, per-route canonicals, Open Graph, `Organization` JSON-LD. **Default is `Disallow: /`, an empty sitemap and `noindex` on every page**; indexing needs a Vercel production deployment **and** an explicit `NEXT_PUBLIC_SITE_URL` |
+| Legacy URL inventory | **COLLECTED at `GS-R001`** (`G-01`) — **eight URLs**, read from the live site's own `wp-sitemap.xml`. Four are WordPress/theme defaults. `redirects/legacy.json` stays empty: cutover is prohibited and one row is an owner decision (`LIVE-SITE-EXTRACT.md` §13) |
+| Gate count | **45**, was 43 — `check:company` (served, six questions) and `check:company:selftest` (35 cases) |
+| Struck-rule registry | **16 rules**, was 13 — `GS-O004-BUSINESS-HOURS-FIELD`, `GS-O004-RESPONSE-GUARANTEE`, `GS-O004-PUBLIC-TEAM-ROSTER`, each annotated in place and specimen-proven |
 | Freelancer review project titles | **ANONYMISED** — 6 by hand at GS-P04, and all 12 mechanically by the GS-P05 pipeline, from Freelancer's closed skill taxonomy. No quote altered |
 
 ## Development content state (GS-P04)
@@ -93,8 +102,8 @@ second immediately afterwards deleted nothing and wrote the same 119.
 
 ## Supabase state
 
-**Project:** `dqiutgmxillhsbzgnlsx` (`Gridsmith Project`) — unchanged by GS-P03, GS-P04, GS-P05
-and GS-P06, none of which made a Supabase call of any kind.
+**Project:** `dqiutgmxillhsbzgnlsx` (`Gridsmith Project`) — unchanged by GS-P03, GS-P04, GS-P05,
+GS-P06 and **GS-R001**, none of which made a Supabase call of any kind.
 
 Production still records migrations `0001`–`0003`; the GS-P01 security migration is **not applied**.
 `GS-T004` remains **REMEDIATED IN REPOSITORY / OPEN IN PRODUCTION / READY FOR CONTROLLED ACTIVATION**.
@@ -103,20 +112,33 @@ additionally maps the already-existing, already-bounded `service_slug` column.
 
 ## Vercel state
 
-No Vercel action was taken in GS-P03, GS-P04, GS-P05 or GS-P06. The GS-P06 push produced
-production-target deployment `dpl_EvNrr4CAaCQzAKxk1hFkNDhzUqod`, state `ERROR` as expected. A push to `main` may trigger Vercel's
-normal Git integration; its outcome is reported in `AI-HANDOFF.md`. A production-target build is still expected
-to fail on the empty production Sanity dataset (`GS-T005`). Preview remains non-isolated (`GS-O010`).
+**Project `gridsmith-ltd` has no custom domain and `live: false`.** `gridsmith.uk` points at
+Hostinger, so **a production-target deployment cannot replace the live site**, and every one since
+`GS-P00` has ended `ERROR` on the empty production Sanity dataset (`GS-T005`).
+
+`GS-R001` cut the staging release candidate as a **branch preview**, which builds against the
+`development` dataset and reaches `READY`. **Vercel Authentication is enabled for every deployment
+except custom domains**, so the candidate answers 401 to a crawler; `app/robots.ts` serves
+`Disallow: /` and every page carries `noindex, nofollow` as the second and third locks. All three
+read one `INDEXABLE` constant, so they cannot disagree.
+
+**The documented production switch is one variable:** `NEXT_PUBLIC_SITE_URL=https://gridsmith.uk`
+on the Production environment. Until it is set on a production deployment nothing is indexable,
+the sitemap is empty, and canonicals resolve to the deployment's own origin — which is correct for
+a preview and avoids pointing production URLs at a site this build does not serve.
+
+Preview remains non-isolated at the **database** level (`GS-O010`), which is why no synthetic lead
+was submitted.
 
 ## Production state
 
 | Control | State |
 |---|---|
-| Production readiness | **NOT READY** |
+| Production readiness | **NOT READY** — distinct from the RC status, which is **TECHNICALLY PASS** |
 | `GS-T004` live remediation | **OPEN — PRODUCTION UNCHANGED** |
 | Production deployment authorisation | **NOT AUTHORISED** |
 | `gridsmith.uk` cutover | **PROHIBITED until a dedicated production-release phase** |
-| Latest completed phase | `GS-P06` when its commit and push are complete |
+| Latest completed phase | `GS-R001` when its commit and push are complete |
 | Next recommended phase | See `AI-HANDOFF.md` — recommendation only |
 
 ## Authoritative decisions
@@ -131,13 +153,13 @@ to fail on the empty production Sanity dataset (`GS-T005`). Preview remains non-
 ### Owner blockers
 
 - `GS-O003` — complete solicitor review and resolve legal launch actions.
-- `GS-O004` — confirm operational/company facts and make required contact routes operational.
 - `GS-O005` — confirm engineering/CAD professional-indemnity scope (now gate-enforced).
-- `GS-O015` — decide whether two genuine reviews that name a **third-party company** disparagingly
-  may be republished on Gridsmith's own homepage (new at GS-P06). One sentence, no credentials.
-  Withheld by default meanwhile; the block publishes 10 of 12 and names both withheld ids on every
-  gate run. Blocks nothing, must close before production release.
+- `GS-O007` — **narrowed at GS-R001.** Approved logo/favicon/brand imagery, and a decision on the
+  one redirect row evidence cannot settle. The URL inventory and the SEO metadata limbs are done.
 - `GS-O010` — provision an isolated non-production Supabase target for Preview.
+- `GS-O016` — **new at GS-R001.** Confirm the ICO registration position. It was a clause inside
+  `GS-O004`'s original wording that the `GS-O004` brief did not answer, lifted out so closing that
+  action could not silently close it. Blocks nothing; the site makes no claim either way.
 
 ### Technical blockers
 
@@ -145,6 +167,31 @@ to fail on the empty production Sanity dataset (`GS-T005`). Preview remains non-
 - `GS-T005` — production Sanity dataset/content path incomplete; seed content must never be promoted.
 - Notification reconciliation and live RLS-drift scheduling/credential verification remain later
   operational work.
+
+### Closed in GS-R001
+
+- `GS-O004` — **operational company and contact facts supplied, implemented and gate-asserted.**
+  One canonical source, six surfaces, and **two facts corroborated against the public Companies
+  House register**, which closes checklist rows `A1` and `A2` that had been open since 7 September
+  as *"confirm against the register"*. The register gives `GRIDSMITH LTD`, **active**, incorporated
+  24 February 2026, registered office `30 Briarfield Road, Farnworth, Bolton, England, BL4 0HD` —
+  the same premises as the seed, with the **digit zero**, so the live site's `BL4 **O**HD` is the
+  malformed one. **COMPLETED.**
+
+  **Its load-bearing limb was the one nobody had asked about.** The served `/about` was publishing
+  four people named `[SEED] Placeholder Name` under the heading *"Who you will work with"*. The
+  schema defaults `isPublic` false and the seed set it `true` on all four records, so **nothing in
+  the source was wrong** and six phases, an accessibility audit and a content audit went past it.
+  `Q-M9` is answered — no public team — and it is enforced by deleting the query and the renderer
+  rather than by a boolean anyone can flip.
+- `GS-O015` — **the two reviews stay withheld, and the withholding now reaches reviews nobody has
+  seen. COMPLETED.** A hardcoded list of two ids became `namedThirdParty`, a deterministic rule
+  that withholds any body naming a business other than Gridsmith. It does **not** attempt to
+  detect disparagement — that is the unreliable classification the owner ruled out — so it
+  over-withholds by design. Measured live: the same **10 published, 2 withheld**, each named by
+  the business it matched, with no collateral withholding of the other ten. The manual list
+  remains as the human-review limb for what no rule reaches, and `check:reviews --live` pins the
+  set a person has read so a new review makes it red rather than reaching the homepage unread.
 
 ### Closed in GS-P06
 
@@ -192,13 +239,17 @@ to fail on the empty production Sanity dataset (`GS-T005`). Preview remains non-
 
 ### Human-acceptance blockers
 
-- `GS-R001` — screen-reader, keyboard, responsive, cross-browser and content review on a staging
-  release candidate.
+- `GS-R001` — **PARTIALLY DISCHARGED, 16 September 2026.** Keyboard, responsive (375/768/1440/wide),
+  Chromium, content and accessibility-automation passes are done and recorded in
+  `GS-R001-STAGING-RC.md` §7. **Three items remain and are not claimed as done: a real
+  screen-reader pass, a physical-device touch pass, and Firefox/Safari** — none of those engines
+  or tools is available in this environment, and `check:axe` passing is not a screen-reader test.
 - `GS-R002` — owner acceptance of all four sections together before production release.
 - `GS-R003` — live post-cutover verification before any `PRODUCTION READY` declaration.
 
 ## Detailed registers
 
+- **Staging release-candidate evidence: `docs/_shared/GS-R001-STAGING-RC.md`**
 - Service model and reconciliation: `docs/_shared/SERVICE-ARCHITECTURE.md`
 - GS-P02 evidence and activation plan: `docs/_shared/GS-P02-SECURITY-MIGRATION-REPLAY.md`
 - Owner dependencies: `docs/_shared/OWNER-ACTIONS.md`

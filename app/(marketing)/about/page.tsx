@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Card } from '@/components/primitives/Card';
 import { Container } from '@/components/primitives/Container';
 import { Heading } from '@/components/primitives/Heading';
 import { Numeric } from '@/components/primitives/Numeric';
@@ -8,10 +7,8 @@ import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { Table } from '@/components/primitives/Table';
 import { GroupSections } from '@/components/content/GroupSections';
-import { Placeholder } from '@/components/content/Placeholder';
-import { getCompanyDetails } from '@/lib/company/companyDetails';
-import { getGroupPage, listPublicTeam } from '@/lib/sanity/queries';
-import styles from '@/components/content/content.module.css';
+import { getCompanyDetails, telHref } from '@/lib/company/companyDetails';
+import { getGroupPage } from '@/lib/sanity/queries';
 
 export const metadata: Metadata = {
   title: 'About — Gridsmith Ltd',
@@ -38,37 +35,48 @@ export const metadata: Metadata = {
  * registered office — in monospace, which is this site's convention for anything verifiable.
  *
  * **No VAT row.** Gridsmith is not VAT registered, so e-commerce regs reg. 6(1)(g) is not
- * engaged and there is no number to publish; the field does not exist on the singleton. This
- * page and the statutory footer are the two places the full registered office appears — the
- * reg. 25(2) disclosure — and everywhere else the site says "Bolton, United Kingdom".
+ * engaged and there is no number to publish; the field does not exist on the singleton.
  *
- * Every one of those values comes from `companyDetails`, the same singleton the statutory
- * footer reads. There is no second copy of the company number on this site.
+ * **No registered-office row either, as of `GS-O004`.** It used to be here *and* in the
+ * statutory footer, and the docstring above used to say so approvingly. The owner's decision
+ * is that the registered office is displayed only where a legal requirement or an approved
+ * legal instrument puts it: SI 2015/17 reg. 25(2)(c) puts it in the footer of every page, and
+ * `_legal/` carries it as the address for service. A second copy on a marketing page is not a
+ * further disclosure — it is a residential address published twice. The `Trading address` row
+ * went with it: it was conditional on a field that is empty precisely *because* it is the same
+ * premises, so it could only ever have rendered a duplicate of the row above it.
  *
- * ## The team listing is placeholder, and says so
+ * The rows that remain are the ones an evaluator checks against the register in ninety
+ * seconds — name, number, place of registration, trading divisions — plus the two ways to make
+ * contact. Every one of them comes from `companyDetails`, the same singleton the footer reads.
  *
- * `Q-M9` — who appears publicly — is the owner's decision. `isPublic` defaults false precisely
- * because a person appearing on a public website is a decision someone makes rather than the
- * absence of one, and the seeded records are named `[SEED] Placeholder Name` so that no reader
- * can mistake one for a real person. A plausible invented name here would be a fabricated
- * credential on a public site.
+ * ## There is no team section, and its absence is the decision
+ *
+ * `Q-M9` is answered. **`GS-O004`: there are no public team members** — no founder profile, no
+ * employee profiles, no placeholder staff. The owner's position is that the company is
+ * represented institutionally.
+ *
+ * It is enforced by deletion rather than by a flag. This page rendered `listPublicTeam()`
+ * behind `isPublic`, which defaults false — and the development dataset nevertheless carried
+ * four `teamMember` records named `[SEED] Placeholder Name` with `isPublic: true`, so the
+ * served `/about` published four placeholder people under the heading "Who you will work
+ * with". A placeholder presented as a fact on a public page is what non-negotiable #4 exists
+ * to stop, and a boolean nobody had looked at is what let it happen. The query and the
+ * renderer are gone; the `teamMember` schema type stays dormant, like `project` and `book`,
+ * for a decision that would have to be made deliberately. `check:company` question 6 asserts
+ * the absence on the served page.
  */
 export default async function Page() {
-  const [page, company, team] = await Promise.all([
-    getGroupPage('about'),
-    getCompanyDetails(),
-    listPublicTeam(),
-  ]);
+  const [page, company] = await Promise.all([getGroupPage('about'), getCompanyDetails()]);
   if (!page) notFound();
 
   const facts: [string, string | null][] = [
     ['Registered name', company.legalName],
     ['Company number', company.companyNumber],
     ['Place of registration', company.placeOfRegistration],
-    ['Registered office', company.registeredOffice],
-    ['Trading address', company.tradingAddress],
     ['Trading divisions', 'Gridsmith Design · Gridsmith Digital · Gridsmith Press'],
-    ['Contact', company.contactEmail],
+    ['Email', company.contactEmail],
+    ['Telephone', company.contactPhone],
   ];
 
   return (
@@ -101,9 +109,9 @@ export default async function Page() {
           </Heading>
           <Prose>
             <p>
-              Everything below can be verified against the Companies House register. It is read
-              from one record, which is the same record the footer of every page on this site
-              reads.
+              The registered details below can be verified against the Companies House
+              register. They are read from one record — the same record the footer of every
+              page on this site reads, which is also where the registered office is disclosed.
             </p>
           </Prose>
           <Table caption="Gridsmith Ltd — statutory and trading details">
@@ -113,7 +121,17 @@ export default async function Page() {
                   <tr key={label}>
                     <th scope="row">{label}</th>
                     <td>
-                      <Numeric>{value}</Numeric>
+                      {label === 'Email' ? (
+                        <a href={`mailto:${value}`}>
+                          <Numeric>{value}</Numeric>
+                        </a>
+                      ) : label === 'Telephone' ? (
+                        <a href={telHref(value)}>
+                          <Numeric>{value}</Numeric>
+                        </a>
+                      ) : (
+                        <Numeric>{value}</Numeric>
+                      )}
                     </td>
                   </tr>
                 ) : null,
@@ -124,28 +142,6 @@ export default async function Page() {
       </Section>
 
       <GroupSections sections={page.sections} />
-
-      {team.length > 0 ? (
-        <Section labelledBy="people">
-          <Container>
-            <Heading level={2} id="people">
-              Who you will work with
-            </Heading>
-            <ul className={styles.team}>
-              {team.map((person) => (
-                <Card as="li" key={`${person.name}-${person.role}`} className={styles.teamCard}>
-                  <Placeholder ratio="portrait" />
-                  <Heading level={3} size="d4">
-                    {person.name}
-                  </Heading>
-                  {person.role ? <p className={styles.teamRole}>{person.role}</p> : null}
-                  {person.bio ? <p className={styles.teamBio}>{person.bio}</p> : null}
-                </Card>
-              ))}
-            </ul>
-          </Container>
-        </Section>
-      ) : null}
     </main>
   );
 }

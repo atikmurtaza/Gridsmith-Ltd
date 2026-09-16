@@ -162,6 +162,29 @@ say(`  3. request: https, no credential marker in code, filtered to user ${FREEL
 
 /* -- 4. The live API ------------------------------------------------------- */
 
+/**
+ * **The review set a human has actually read — `GS-O015`, `GS-R001`.**
+ *
+ * Hardcoded, and hardcoded is the point: an expectation read from the API cannot fail when the
+ * API changes, which is the entire class `check:tokens` carries a literal `REQUIRED` list to
+ * avoid. The API is the subject; this is the expectation.
+ *
+ * `GS-O015` requires that a review naming an identifiable third party is withheld by rule where
+ * a rule can decide, and otherwise **enters a human-review state**. `namedThirdParty` is the
+ * rule. This is the human-review state, and it is the whole of it: when Freelancer returns a set
+ * that is not the one somebody read, this gate goes red and names the difference. A new review
+ * cannot reach the homepage without a person having seen a run that reported it.
+ *
+ * **It goes red on a good change too** — a new five-star review moves `total` and `published`
+ * just as a problematic one does, and that is not a defect in the assertion. The action either
+ * way is the same: read the new body, then move these numbers in a commit. That is a person
+ * deciding, which is what the owner asked for and what no predicate can do.
+ *
+ * Measured 16 September 2026: the API returns 12, ten are publishable, and two name
+ * *Varnika Software PVT* / *Varnika Pvt* and are withheld by rule.
+ */
+const EXPECTED = { total: 12, published: 10, withheld: 2 };
+
 let liveLine = '  4. live API: NOT MEASURED — run with --live to read www.freelancer.com';
 
 if (live) {
@@ -191,6 +214,22 @@ if (live) {
 
     const ids = published.map((r) => r.id);
     if (new Set(ids).size !== ids.length) problems.push('4: the published set contains a duplicate review id');
+
+    // The human-review limb. See EXPECTED.
+    for (const [key, actual] of [
+      ['total', returned],
+      ['published', published.length],
+      ['withheld', withheld.length],
+    ]) {
+      if (actual !== EXPECTED[key]) {
+        problems.push(
+          `4: ${key} is ${actual}, and the review set a person last read had ${EXPECTED[key]}. ` +
+            'GS-O015 puts a review no human has read into a human-review state rather than onto ' +
+            'the homepage. Read the changed body, decide, then move EXPECTED in a commit — do ' +
+            'not move it to make this green.',
+        );
+      }
+    }
 
     liveLine =
       `  4. live API: ${returned} review(s) returned, reported count ${count}; ` +

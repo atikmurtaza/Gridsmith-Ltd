@@ -285,10 +285,23 @@ const testimonialDocs = REVIEWS.map(([id, name, handle, projectTitle, division, 
 // ---------------------------------------------------------------------------
 
 /**
- * **Placeholder people, named as placeholders.** `Q-M9` — who appears publicly — is the
- * owner's decision and is not made here. A seed team member whose name reads like a real
- * person would be a fabricated credential on a public site, which `CLAUDE.md` #2 forbids
- * outright, so the names *are* the marker.
+ * **Placeholder people, named as placeholders, and never public — `GS-O004`.**
+ *
+ * `Q-M9` is answered: the owner publishes **no** team members. The company is represented
+ * institutionally, and there is no founder profile, employee profile or placeholder person on
+ * the site. `/about`'s roster, `listPublicTeam` and the `TeamMember` type were deleted at
+ * `GS-R001`, so nothing renders these at all.
+ *
+ * **`isPublic` was `true` here, and that is how four `[SEED] Placeholder Name` cards came to be
+ * served on `/about` under the heading "Who you will work with".** The schema defaults the field
+ * false and the docstring above it explains why — a person appearing on a public website is a
+ * decision someone makes rather than the absence of one — and this seed overrode that default
+ * on every record without saying so. The renderer is gone, which is the structural fix; this is
+ * the second half, so that re-running the seed cannot recreate the condition for whatever reads
+ * `teamMember` next.
+ *
+ * A seed team member whose name reads like a real person would be a fabricated credential on a
+ * public site, which `CLAUDE.md` #2 forbids outright, so the names *are* the marker.
  */
 const teamDocs = [
   ['founder', 'Founder & Director', ['design', 'digital', 'press'], 'Leads every engagement and is the point of contact on multi-division work.'],
@@ -303,7 +316,8 @@ const teamDocs = [
   divisions,
   bio: `${S} ${bio} This is placeholder text for a person whose public listing has not been decided (Q-M9).`,
   credentials: [`${S} Placeholder credential`],
-  isPublic: true,
+  // GS-O004: never. See the docstring above — this was `true`.
+  isPublic: false,
   order: i + 1,
   isSeed: true,
 }));
@@ -421,13 +435,12 @@ const groupPageDocs = [
     sections: [
       section(0, 'structure', 'How the company is structured', 'prose',
         `${S} Placeholder. Gridsmith Ltd is one registered company; Design, Digital and Press are trading divisions of it.`),
-      // **No 'people' section here, and that is a fix rather than an omission.** `/about`
-      // renders the team roster itself, from `teamMember`, under the heading "Who you will
-      // work with". A groupPage section with the same heading produced two <section> landmarks
-      // with the same accessible name on one page — axe `landmark-unique`, moderate, and a
-      // screen reader user hearing "Who you will work with, region" twice with different
-      // content in each. Caught by check:axe at Epic N. The roster is code, so its heading is
-      // code's to own; the CMS supplies the prose around it.
+      // **No 'people' section here.** It was excluded because `/about` rendered the roster
+      // itself and two landmarks with one accessible name is axe `landmark-unique` — caught by
+      // check:axe at Epic N. At `GS-O004` the roster is gone entirely and the reason has
+      // changed with it: there are no public team members, so there is no people section to
+      // duplicate. Do not add one back as prose either; `check:company` question 6 refuses
+      // "Who you will work with" and "Meet the team" on the served page whatever renders them.
       section(2, 'verify', 'How to check us', 'prose',
         `${S} Placeholder. Company number and registered office are in the footer of every page.`),
     ],

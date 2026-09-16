@@ -515,10 +515,15 @@ so no adapter is built — inventing an integration target is exactly the kind o
 speculative work that rots. The `leads.crm_synced_at` column stays in the schema so
 that adding a sync later is a migration-free change. Name the CRM and it becomes a
 one-task addition.
-**Response commitment (set by the founder, August 2026):** as soon as possible,
-and **always by the end of the next business day.** The 60-second *notification*
-requirement stands and is a launch gate. The 5-minute *human response* is not
-committed to and the site must never imply it.
+**Response commitment (set by the founder, August 2026):** ~~as soon as possible,
+and **always by the end of the next business day.**~~ **STRUCK 16 September 2026
+(`GS-O004`)** — the owner authorises no guaranteed response time and no SLA, and
+*"always"* is an unqualified undertaking. The value is now *"We typically respond
+within 48 hours."*, a statement of typical behaviour. Non-negotiable #5 is unchanged
+and still holds: the new wording is slower than its ceiling **and** is not a promise.
+`scripts/struck-rules.mjs` `GS-O004-RESPONSE-GUARANTEE`.
+The 60-second *notification* requirement stands and is a launch gate. The 5-minute
+*human response* is not committed to and the site must never imply it.
 
 Trade-off accepted knowingly: R2 finds a 5-minute response makes a lead 21x more
 likely to qualify. Committing to next business day forfeits most of that. The

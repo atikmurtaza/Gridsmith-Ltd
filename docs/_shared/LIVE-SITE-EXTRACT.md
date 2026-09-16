@@ -381,3 +381,80 @@ The legal copy — refund policy, terms, email addresses, consent banner and gov
 build nor the checklist. The single exception is the `contact@gridsmith.uk` mailbox, which is
 on the checklist because `CONSUMER-TERMS.md` §6.1 requires it — not because the live site
 lacks it.
+
+---
+
+# 13. The complete live URL inventory — read 16 September 2026 (`GS-R001`, `G-01`)
+
+**Method:** the live site publishes its own sitemap. `https://gridsmith.uk/robots.txt` names
+`https://gridsmith.uk/wp-sitemap.xml`; that index names five child sitemaps, and every `<loc>` in
+all five was read. Read-only, unauthenticated, nothing written, nothing changed. **This is the
+authoritative inventory, not a crawl** — it is the list WordPress itself offers to search
+engines.
+
+**The tracker said there was nothing to inventory.** `master/PROJECT-TRACKER.md` `G-01` reads
+*"Crawl existing site, export URLs — **BLOCKED**. Deferred — greenfield, no existing site"*, and
+`next.config.ts`'s `legacyRedirects` docstring says the same. Both were written before this file
+existed and both were contradicted by §0 of it on 7 September, which established that
+`gridsmith.uk` serves a live WordPress site. `G-01` is closed by this section, and the two
+docstrings are corrected in the same commit.
+
+## 13.1 Every URL the live site publishes — eight
+
+| # | Live URL | What it is | Proposed target | Basis |
+|---|---|---|---|---|
+| 1 | `https://gridsmith.uk/` | the whole site: one page, six anchors | `/` | same address, new content |
+| 2 | `https://gridsmith.uk/privacy-policy/` | the live privacy notice | `/legal/privacy` | same instrument class. `docs/_legal/PRIVACY-POLICY.md` is its successor |
+| 3 | `https://gridsmith.uk/terms-and-conditions/` | the live combined terms | **UNDECIDED — see §13.3** | the one row evidence does not settle |
+| 4 | `https://gridsmith.uk/hello-world/` | WordPress's default first post, unedited | `410 Gone`, or `/` | not content. It is the post every new WordPress install ships with |
+| 5 | `https://gridsmith.uk/category/uncategorized/` | the default taxonomy archive for #4 | `410 Gone`, or `/` | an archive of one default post |
+| 6 | `https://gridsmith.uk/uicore-cd/ui-cd-to/` | a UiCore theme "content designer" template | `410 Gone`, or `/` | theme scaffolding published by accident, not a page |
+| 7 | `https://gridsmith.uk/uicore-cd/ui-cd-wp/` | the same | `410 Gone`, or `/` | as above |
+| 8 | `https://gridsmith.uk/?uicore-tb=it-business-footer` | the theme's footer template, addressable as a query | nothing — a query string, not a path | Next matches on pathname; `/` already handles it |
+
+**Four of the eight are WordPress and theme defaults that should never have been indexed.** They
+carry no Gridsmith content, nobody has linked to them, and a redirect to `/` for each is a
+courtesy rather than a requirement. `410 Gone` is the more honest answer and costs the same.
+
+**Nothing on the live site corresponds to Press, to Design as a division, or to any service
+page.** There are no per-service URLs to map, because the live site has none — its services are
+anchors on the homepage (`#services`, `#digital-services`, `#howitworks`, `#about`, `#faqs`,
+`#contact`). A fragment is never sent to the server, so **no redirect can act on one**; a reader
+following an old `gridsmith.uk/#services` link lands on the new `/`, and that is the whole of
+what is available. Mentioning it because it looks like six missing rows and is not.
+
+## 13.2 What this means for `redirects/legacy.json`
+
+**It stays empty, and that is a decision rather than an omission.** `GS-R001` prohibits cutover;
+a redirect map is only exercised on the day the domain moves, and one row of it is undecided.
+Writing the other seven now would put a half-map in the tree that reads as finished.
+
+The mechanism is unchanged and already proven: `next.config.ts` reads the file and feeds
+`redirects()`, so populating it later is a data change with no code change (`G-02`, `G-03`).
+
+## 13.3 The one row that is not an implementation decision
+
+`/terms-and-conditions/` is a **single instrument** covering both the use of the website and the
+supply of services, and it elects the law of Pakistan (§11.4). The build splits that subject
+three ways — `/legal/terms` for website use, `/legal/business-client-terms` and
+`/legal/consumer-client-terms` for the supply — precisely because one instrument cannot carry a
+valid B2B liability cap and a CRA 2015 s. 57-compliant consumer position at once.
+
+A redirect has to pick one target, and `lib/legal/slugs.ts` already recorded what happens when
+one is picked: *"a redirect has to pick a target, and every target is wrong for half the people
+following the link — a consumer landed silently on B2B terms is the same defect with an extra
+hop."* That reasoning produced `/legal/client-terms`, a disambiguation page carrying no operative
+clause, which exists for exactly this problem.
+
+**So the options, and this file does not choose between them:**
+
+1. `/terms-and-conditions/` → **`/legal/client-terms`** — the disambiguation page. A reader
+   arrives somewhere that tells them which instrument governs them and links to both. The cost is
+   one extra click for someone who wanted the website terms.
+2. `/terms-and-conditions/` → **`/legal/terms`** — website terms. Defensible on the live
+   document's own §1, which says the terms govern *"your use of"* the site. The cost is that the
+   live document's refund and service clauses have no successor at that address.
+
+**This is an owner decision, recorded under `GS-O007`, and it belongs with `GS-O003`'s solicitor
+pass if one is being run.** Guessing it here would be improvising a legal mapping, which
+`AI-DEVELOPMENT-PROTOCOL.md` puts in the owner register rather than in a build.

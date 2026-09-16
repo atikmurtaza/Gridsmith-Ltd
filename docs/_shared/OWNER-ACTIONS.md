@@ -17,16 +17,6 @@ not requested under `GS-D001` and `GS-D002`.
 - **What it blocks:** final public legal copy and consumer/commercial flows.
 - **Evidence required:** dated written review and a closed decision list.
 
-### `GS-O004` — Confirm operational company/contact facts
-
-- **Status:** ACTIONABLE NOW
-- **Why required:** public statutory and contact information must be accurate and reachable.
-- **Exact information/action needed:** confirm the registered-office string and company number;
-  create and test `contact@gridsmith.uk` if it remains the legal/privacy contact; confirm response
-  commitment, public phone choice, business hours, ICO position and any publishable insurance facts.
-- **What it blocks:** production company singleton, legal/privacy contact and human acceptance.
-- **Evidence required:** authoritative records plus a successful inbound mailbox test.
-
 ### `GS-O005` — Confirm professional-indemnity scope for engineering/CAD work
 
 - **Status:** ACTIONABLE NOW
@@ -40,35 +30,53 @@ not requested under `GS-D001` and `GS-D002`.
   action and `GS-X002` are closed.
 - **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
 
-### `GS-O015` — Decide whether two reviews naming a third party may be republished
+### `GS-O016` — Confirm the ICO registration position
 
-- **Status:** ACTIONABLE NOW (new at `GS-P06`)
-- **Why required:** `GS-O014` accepted publication of all twelve reviews, and the question it was
-  asked was whether criticism **of Gridsmith** could be published. It can, and the 4.6 is on the
-  homepage. `GS-P06` read all twelve bodies word for word and found a different question that
-  nobody had been asked. Two of them name a **third-party development company** in terms Gridsmith
-  would be republishing on its own site:
-  - *"My app started life with the very disgraceful Varnika Software PVT in India…"* (id `22108992`)
-  - *"…initially developed by Varnika Pvt in India which was a massive mistake."* (id `22100632`)
+- **Status:** ACTIONABLE NOW (new at `GS-R001`)
+- **Why required:** it was a clause inside `GS-O004`'s original wording and the `GS-O004` brief
+  did not answer it. Closing that action without lifting this out would have dropped it, which
+  is the failure `AI-DEVELOPMENT-PROTOCOL.md` names.
+- **Exact action:** confirm whether Gridsmith Ltd is registered with the Information
+  Commissioner's Office and, if so, supply the registration number; or record that registration
+  is not required. Most UK companies processing personal data for business purposes must pay the
+  data protection fee, and the site's privacy notice is published to people whose data it takes.
+- **What it blocks:** nothing today. `companyDetails.icoRegistration` exists and is unset, and
+  nothing renders it, so the site makes **no claim either way** — which is the safe state.
+- **Evidence required:** the ICO register entry, or a dated note that registration is not
+  required. It belongs with `GS-O003`'s solicitor pass if you would rather it were answered there.
+- **Credentials required:** none. **Paid service required:** possibly the ICO fee, which is not
+  this programme's to incur.
 
-  The second also carries the client's own product name in the body. **Freelancer hosting a
-  reviewer's words and Gridsmith reprinting them are different publications**, and this one is a
-  legal position — `AI-DEVELOPMENT-PROTOCOL.md` puts a legal commitment nobody has taken into this
-  register rather than into a build.
-- **What was done meanwhile, so nothing is stuck:** the conservative default. The two are
-  **withheld**, the homepage publishes **10 of 12**, no quotation was altered (editing one is not
-  available and will not be offered), nothing was deleted, and `check:reviews --live` names both
-  withheld reviews and the reason on every run. Nothing has reached the public: production content
-  is gated and `gridsmith.uk` is untouched.
-- **Exact action:** one sentence, either way.
-  1. *"Publish them"* — the two ids come out of `WITHHELD_REVIEW_IDS` in
-     `lib/reviews/freelancer.ts` and the block publishes twelve.
-  2. *"Keep them withheld"* — nothing changes and this closes as implemented.
-  3. If you want a solicitor's view first, it belongs with `GS-O003` rather than here.
-- **What it blocks:** nothing. The homepage works either way. It must be closed before production
-  release, because the answer decides what the site says about a named company.
-- **Credentials required:** none. **Paid service required:** none.
-- **Evidence required:** a dated written decision naming which of the two options.
+### `GS-O007` — Supply production assets and confirm the redirect mapping
+
+- **Status:** ACTIONABLE NOW — **narrowed at `GS-R001`.** Two of its three limbs are now answered
+  by evidence rather than owed by the owner.
+- **Why required:** real brand assets cannot be inferred safely, and a redirect mapping decides
+  where a reader of the current site lands.
+- **Answered at `GS-R001`, so that what remains is only what is genuinely owed:**
+  - **The existing URL inventory is collected, and it is eight URLs.** Read read-only from the
+    live site's own `wp-sitemap.xml` on 16 September 2026 and recorded verbatim in
+    `LIVE-SITE-EXTRACT.md` §13 with a proposed mapping. It was never an export to request:
+    WordPress publishes it, and `G-01` had been marked **BLOCKED — greenfield, no existing
+    site**, which `LIVE-SITE-EXTRACT.md` had already contradicted since 7 September.
+  - **SEO titles and descriptions exist on every route** and need no owner fact: they describe
+    what each page is. `G-04` is implemented — `robots.ts`, `sitemap.ts`, per-route canonicals,
+    Open Graph and `Organization` structured data drawn from `companyDetails`.
+- **Exact information/action still needed, and it is two things:**
+  1. **Approved logo, favicon and any brand imagery.** The site ships none and renders geometric
+     placeholders instead (`PRE-DEPLOYMENT-CHECKLIST.md` Group E, which records why stock
+     photography was refused and must stay refused). Open Graph therefore declares **no image**;
+     a social card is a title and a description until a real asset exists.
+  2. **Confirm the redirect mapping**, in particular the one row no evidence settles: the live
+     `/terms-and-conditions/` is a single instrument covering both website use and service
+     terms, and the build splits those into `/legal/terms`, `/legal/business-client-terms` and
+     `/legal/consumer-client-terms`. `LIVE-SITE-EXTRACT.md` §13 sets out the options and does
+     **not** pick one — the `LEGAL_DOCUMENT_SLUGS` docstring already established that a redirect
+     which picks a target is wrong for half of the people following it.
+- **What it blocks:** launch-day redirects, and brand imagery. Neither blocks a staging candidate.
+- **Evidence required:** approved files; a dated decision on the mapping.
+- **Not requested:** `redirects/legacy.json` stays empty until then. `GS-R001` prohibits cutover,
+  and populating a redirect map before the mapping is confirmed would be inventing one.
 
 ### `GS-O010` — Provide an isolated Supabase target for Vercel Preview
 
@@ -87,18 +95,6 @@ not requested under `GS-D001` and `GS-D002`.
   presence/scope confirmation, and an authorised synthetic Preview submission proved to land only in
   that isolated target. If provisioning would add cost, obtain explicit approval before enabling it.
 
-## UPCOMING
-
-### `GS-O007` — Supply production assets, SEO facts and redirect inventory
-
-- **Status:** UPCOMING
-- **Why required:** real brand assets, metadata and the existing Press URL inventory cannot be
-  inferred safely.
-- **Exact information/action needed:** approved logo/favicon/assets, SEO titles/descriptions where
-  owner facts are needed, and the existing Press URL export before cutover.
-- **What it blocks:** staging release candidate and launch-day redirects.
-- **Evidence required:** approved files and URL inventory.
-
 ## BLOCKED/DEPENDENT
 
 - `GS-O008` — approve a staging release candidate after `GS-P01` and service/content phases.
@@ -106,6 +102,73 @@ not requested under `GS-D001` and `GS-D002`.
   phase after automated audit and human acceptance.
 
 ## COMPLETED
+
+- `GS-O004` — **completed 16 September 2026 at `GS-R001`.** The owner supplied the operational
+  company and contact facts, and they are implemented in the one canonical source
+  (`companyDetails`) and asserted on the served pages by `check:company`.
+
+  | Fact | Value | Where it is now |
+  |---|---|---|
+  | Registered name | `Gridsmith Ltd` | statutory footer, `/about`, `GroupStructure`, `Organization` JSON-LD |
+  | Company number | `17050842` | the same four |
+  | Registration wording | **`Registered in England`** | the footer renders *"registered in England"*. It was `England & Wales`, an agent-chosen seed value no owner and no register had confirmed |
+  | Public email | `contact@gridsmith.uk` | footer, `/contact`, `/press/contact`, both form components, `/about`, JSON-LD. **The owner confirms the mailbox works and is authorised for publication** — this closes checklist row `A3` |
+  | Public telephone | `+44 7405 448534` | footer, `/contact`, `/press/contact`, `/about`, JSON-LD. Displayed with separators, linked as `tel:+447405448534`, derived by `telHref` so the displayed and dialled numbers cannot differ |
+  | Business hours | **none published** | the `businessHours` field is **removed** from the schema, the type, the projection and `/contact`, on the `vatNumber` precedent |
+  | Response wording | *"We typically respond within 48 hours."* | `companyDetails.responseCommitment`, the single source. Presented as typical behaviour — **not a guarantee, not an SLA, not a maximum** |
+  | Registered office | displayed **only** in the statutory footer and in the `_legal/` instruments | withdrawn from `/about`, where it was a second copy of a residential address on a marketing page |
+  | Public team | **none** | `/about`'s roster, `listPublicTeam` and the `TeamMember` type are **deleted** |
+
+  **Two facts were corroborated against the public Companies House register** on 16 September
+  2026, read read-only, which closes checklist rows `A1` and `A2` that had been open since 7
+  September as *"confirm against the register"*: the entry for `17050842` is `GRIDSMITH LTD`,
+  **active**, incorporated 24 February 2026, registered office `30 Briarfield Road, Farnworth,
+  Bolton, England, BL4 0HD`. Same premises as the seed and the **digit zero** in the postcode, so
+  the live site's `BL4 **O**HD` is the malformed one, as `LIVE-SITE-EXTRACT.md` §11.3 suspected.
+  The register's country component is `England`, which corroborates the owner's wording.
+
+  **The public-team limb is the one that was not a formality.** The development dataset carried
+  four `teamMember` records named `[SEED] Placeholder Name` with `isPublic: true`, and the served
+  `/about` published all four under the heading *"Who you will work with"*. The schema defaults
+  `isPublic` false and the seed overrode it on every record. Nothing in the source was wrong,
+  which is why it survived an accessibility audit, a content audit and six phases. It is fixed by
+  deletion rather than by a flag, and `check:company` question 6 asserts the absence on the page.
+
+  **What closing this does not cover, so that nothing is dropped.** `piInsurer`, `piCoverLimit`
+  and `icoRegistration` are still unset — the first two are `GS-O005`, and the ICO position is
+  now its own row below rather than a clause inside a closed action.
+- `GS-O015` — **completed 16 September 2026 at `GS-R001`, approved: keep them withheld.** The
+  owner's decision is that the two genuine Freelancer reviews naming a third-party development
+  company disparagingly remain **withheld**, and that they are not deleted at source, not
+  altered, not paraphrased, not republished and not exposed through hidden page content. All of
+  that is the state the site was already in and it is unchanged: nothing was ever published, no
+  quotation was edited, and Freelancer still hosts both.
+
+  **The implementation moved, and the move is the substance of the closure.** They were withheld
+  by a hardcoded list of two review ids, which cannot reach a review nobody has seen. The owner's
+  second requirement — that *future* reviews carrying equivalent statements about identifiable
+  third parties are withheld automatically where a safe deterministic rule can decide, and
+  otherwise enter a human-review state — is now implemented as those two limbs:
+
+  1. **Deterministic.** `namedThirdParty` in `lib/reviews/freelancer.ts` withholds any body that
+     names a business other than Gridsmith — a capitalised name followed by a corporate-form
+     token. **It does not attempt to detect disparagement**, which is the classification the
+     owner ruled out and which no rule does reliably; it detects that a business is *named*, and
+     over-withholds by design. Measured against the live API: the same **10 published, 2
+     withheld**, with each withheld review reported by the name it matched. A body naming a
+     company nobody has seen is caught by the same rule.
+  2. **Human review.** `WITHHELD_REVIEW_IDS` remains as the manual override for what no rule
+     reaches — a third party named without a corporate form, *"my previous developer"* — and
+     `check:reviews --live` now pins the review set a person has actually read (12 total, 10
+     published, 2 withheld). **A changed set makes that gate red and names the difference**, so
+     a new review cannot reach the homepage without someone having seen the run that reported
+     it. It goes red on a welcome five-star review too; the action either way is to read it.
+
+  **No sentiment or AI moderation system was built**, as instructed. Every limb is a regex or a
+  list, and each is broken separately in `check:reviews:selftest` (66 cases) with the returned
+  reason asserted. **Negative reviews about Gridsmith remain publishable** and are published —
+  the rating on the homepage is not rounded up.
+  **Evidence:** this entry, `check:reviews --live`, `check:reviews:selftest`, `check:reviews:ui`.
 
 - `GS-O014` — **completed 16 September 2026 at `GS-P06`, approved WITH AMENDMENT.** The owner
   accepted Freelancer's API terms, accepted publication of every eligible genuine review including

@@ -290,6 +290,72 @@ export const STRUCK_RULES = [
       'No hosting product, SLA or price was invented, and the approved capability name ' +
       '"Hosting coordination" in `lib/services/catalogue.ts` is untouched.',
   },
+  /**
+   * **`GS-O004`, registered in the `GS-R001` commit that struck them.** Three rules, one pattern
+   * each. All three were struck **in place** rather than deleted: `master/SCHEMA.md` carries the
+   * annotated `businessHours` line and the annotated `teamMember` note, so this gate has a
+   * subject to reach — deleting the wording would have removed it, which is the mistake
+   * `_shared/01-VALIDATION-REPORT.md` §21 records.
+   */
+  {
+    id: 'GS-O004-BUSINESS-HOURS-FIELD',
+    /**
+     * The field name is the struck thing, exactly as `MASTER-VAT-NUMBER-FIELD` above. There is
+     * no correct un-annotated use of it left in the standing spec: `companyDetails` has no such
+     * field, so every line naming it either specifies one to build or records one that used to
+     * exist, and a reader cannot tell which without the annotation.
+     */
+    patterns: [/businessHours/],
+    why:
+      'The owner does not authorise published business hours \u2014 `GS-O004`, 16 September 2026. ' +
+      'The field was removed from the Sanity schema, the `CompanyDetails` type, the GROQ ' +
+      'projection and `/contact`, on the `vatNumber` precedent directly above it: a field that ' +
+      'does not exist cannot be filled in by an editor who did not know the decision, whereas ' +
+      'an empty optional field is a surface waiting for a value. Gridsmith works remotely and ' +
+      'has not committed to hours; publishing any would be a claim about the business.',
+    where:
+      'The published telephone number survives and is new \u2014 `+44 7405 448534`, with no hours ' +
+      'beside it, which is the honest form. `check:company` question 5 asserts on the SERVED ' +
+      'pages that no clock range and no "opening/office/business hours" label appears, proven ' +
+      'by deliberate failure on both. This check asserts only that no document re-specifies ' +
+      'the field.',
+  },
+  {
+    id: 'GS-O004-RESPONSE-GUARANTEE',
+    patterns: [/always by the end of the next business day/i],
+    why:
+      'Struck by `GS-O004`: the owner authorises no guaranteed response time and no SLA, and ' +
+      '*"always"* is an unqualified undertaking about performance \u2014 a published one is a term ' +
+      'a customer can hold the company to. `companyDetails.responseCommitment` now reads ' +
+      '*"We typically respond within 48 hours."*',
+    where:
+      '**Non-negotiable #5 is NOT struck and is unchanged**: nothing may promise a response ' +
+      'faster than the end of the next business day, and `responseCommitment` remains the one ' +
+      'source of truth. The new value is slower than that ceiling AND is not a promise, so the ' +
+      'rule holds twice over \u2014 and the single-source design is what made the change one edit ' +
+      'rather than six. `check:company` question 5 refuses guarantee wording, SLA wording and ' +
+      '"ASAP" on the served pages, each rule broken separately in the self-test.',
+  },
+  {
+    id: 'GS-O004-PUBLIC-TEAM-ROSTER',
+    patterns: [/isPublic: true. members render/i],
+    why:
+      'Struck by `GS-O004`: there are **no** public team members. No founder profile, no ' +
+      'employee profiles, no placeholder staff, no stock identities \u2014 the owner represents ' +
+      'the company institutionally. `master/SCHEMA.md` said *"Only `isPublic: true` members ' +
+      'render on `/about`"*, and that boolean was the entire control. The development dataset ' +
+      'held four `teamMember` records named `[SEED] Placeholder Name` with `isPublic: true`, ' +
+      'so the served `/about` published four placeholder people under the heading "Who you ' +
+      'will work with". **Nothing in the source was wrong**, which is why it survived six ' +
+      'phases and an accessibility audit.',
+    where:
+      '`listPublicTeam`, the `TeamMember` type, the `/about` roster and its CSS are deleted, ' +
+      'and `scripts/seed-content.mjs` writes `isPublic: false`. The `teamMember` schema type ' +
+      'stays defined and **dormant**, like `project` and `book`, so a future decision is ' +
+      'available \u2014 but restoring publication means writing a query, which shows in a diff, ' +
+      'rather than flipping a field, which does not. `check:company` question 6 asserts the ' +
+      'absence on the served page, proven by deliberate failure.',
+  },
   {
     id: 'GS-O013-ACCESSIBILITY-CERTIFY',
     patterns: [/no one can certify accessibility/i],

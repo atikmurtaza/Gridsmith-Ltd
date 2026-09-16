@@ -15,6 +15,19 @@ import { defineField, defineType } from 'sanity';
  * can put one back without a schema change. Prices are the amount charged, stated plainly;
  * they carry no VAT-inclusive or VAT-exclusive label. If registration ever completes, this
  * field, the footer line, the `/about` row and the price labelling return together.
+ *
+ * **There is no `businessHours` field either, and its absence is the same kind of decision.**
+ * `GS-O004` (16 September 2026): the owner does not authorise published opening hours. The
+ * field existed, was never populated, and every render site guarded it with `? :` — which is
+ * a surface waiting for a value rather than a decision. Removing it means a later session
+ * cannot publish hours by filling in a blank in the Studio; it would have to change the
+ * schema, which is a visible act. `check:company` question 5 asserts the absence on the
+ * served pages, because a schema check cannot see what a page renders.
+ *
+ * **`contactPhone` is populated as of `GS-O004`** and is rendered on the contact routes and
+ * in the statutory footer. It is stored in display form (`+44 7405 448534`); the `tel:` href
+ * is derived from it at render time by `lib/company/companyDetails.ts`, so the site holds one
+ * phone string and not two.
  */
 export const companyDetails = defineType({
   name: 'companyDetails',
@@ -35,7 +48,6 @@ export const companyDetails = defineType({
     defineField({ name: 'contactEmail', type: 'string' }),
     defineField({ name: 'contactPhone', type: 'string' }),
     defineField({ name: 'responseCommitment', type: 'string', validation: (r) => r.required() }),
-    defineField({ name: 'businessHours', type: 'string' }),
     defineField({ name: 'piInsurer', type: 'string' }),
     defineField({ name: 'piCoverLimit', type: 'string' }),
     defineField({ name: 'icoRegistration', type: 'string' }),

@@ -157,7 +157,7 @@ clauses are required by law and which are there because someone liked them.
   fields: [
     { name: 'legalName',     type: 'string', initialValue: 'Gridsmith Ltd' },
     { name: 'companyNumber', type: 'string', validation: required },
-    { name: 'placeOfRegistration', type: 'string', initialValue: 'England & Wales' },
+    { name: 'placeOfRegistration', type: 'string', initialValue: 'England' },
     { name: 'registeredOffice', type: 'text', validation: required },
     // ~~{ name: 'vatNumber', type: 'string' }~~ **STRUCK 2 September 2026** — Gridsmith is
     // not VAT registered, so the field was removed from the schema, the projection, the
@@ -167,7 +167,13 @@ clauses are required by law and which are there because someone liked them.
     { name: 'contactEmail',  type: 'string' },
     { name: 'contactPhone',  type: 'string' },
     { name: 'responseCommitment', type: 'string', validation: required },
-    { name: 'businessHours', type: 'string' },
+    // ~~{ name: 'businessHours', type: 'string' }~~ **STRUCK 16 September 2026 (`GS-O004`)** —
+    // the owner does not authorise published opening hours. The field was never populated and
+    // every render site guarded it with `? :`, which is a surface waiting for a value rather
+    // than a decision. Removed from the schema, the type, the projection and `/contact`, on the
+    // `vatNumber` precedent directly above: a field that does not exist cannot be filled in the
+    // Studio by someone who did not know. `check:company` question 5 asserts the absence on the
+    // served pages. `check:struck` holds the rule.
     { name: 'piInsurer',     type: 'string' },
     { name: 'piCoverLimit',  type: 'string' },
     { name: 'icoRegistration', type: 'string' }       // data protection register number
@@ -175,13 +181,34 @@ clauses are required by law and which are there because someone liked them.
 }
 ```
 
-Every statutory footer, every legal page header and every form confirmation renders from this singleton. **`responseCommitment` is stored once and rendered everywhere** — this is how the next-business-day promise is prevented from drifting into a faster claim on some template nobody re-reads.
+Every statutory footer, every legal page header and every form confirmation renders from this singleton. **`responseCommitment` is stored once and rendered everywhere** — this is how a claim about response time is prevented from drifting into a faster one on some template nobody re-reads. It earned that design at `GS-O004`: the sentence changed in one place and six surfaces moved with it.
 
-Current value: *"We'll reply as soon as we can, and always by the end of the next business day."*
+Current value: *"We typically respond within 48 hours."*
+
+**It is a statement of typical behaviour, not a commitment.** `GS-O004` withdrew the previous
+value — ~~*"We'll reply as soon as we can, and always by the end of the next business day"*~~,
+**STRUCK 16 September 2026** — because the owner authorises no guaranteed response time and no
+SLA, and *"always"* is an unqualified undertaking. Non-negotiable #5 forbids promising faster than the end of the next
+business day; this is slower than that ceiling **and** is not a promise, so it satisfies the rule
+twice over. `check:company` question 5 refuses guarantee wording, SLA wording, "ASAP" and
+published opening hours on the served pages, each rule proven separately.
 
 ### `teamMember` — extended from core
 
-Adds: `isPublic` (boolean), `divisions[]`, `order`. Only `isPublic: true` members render on `/about`.
+Fields: `isPublic` (boolean, defaults false), `divisions[]`, `order`.
+
+> **DORMANT. No team member is published — `GS-O004`, 16 September 2026.** The owner publishes
+> no founder profile, no employee profiles and no placeholder staff; the company is represented
+> institutionally. The row here used to read ~~*"Only `isPublic: true` members render on
+> `/about`"*~~ — **STRUCK 16 September 2026** — and that was the whole control: a boolean,
+> defaulting false, which the seed then set to `true` on four `[SEED] Placeholder Name` records. The served `/about` published four placeholder
+> people under the heading "Who you will work with" and nothing in the source was wrong.
+>
+> `listPublicTeam`, the `TeamMember` type, the `/about` roster and its CSS are **deleted**;
+> `scripts/seed-content.mjs` now writes `isPublic: false`. The type stays defined and dormant,
+> like `project` and `book`. Restoring publication means writing a query, which is visible in a
+> diff, rather than flipping a field, which is not. `check:company` question 6 asserts the
+> absence on the served page.
 
 ## 3. Supabase — master tables
 
@@ -253,7 +280,8 @@ from division_routing group by 1 order by 1 desc;
 *[_type == "companyDetails"][0] {
   legalName, companyNumber, placeOfRegistration, registeredOffice,
   // ~~vatNumber~~ removed 2 September 2026 — see above; not VAT registered
-  contactEmail, contactPhone, responseCommitment, businessHours
+  // ~~businessHours~~ removed 16 September 2026 (GS-O004) — see above; no published hours
+  contactEmail, contactPhone, responseCommitment
 }
 
 // Legal page — production requires solicitor approval

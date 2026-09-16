@@ -123,8 +123,17 @@ STEP 4  Contact details
 **Confirmation screen copy (FR-M18) — exact commitment, used site-wide:**
 
 > Thanks — we've got it.
-> We'll reply as soon as we can, and always by the end of the next business day.
-> If it's urgent, call [number] during [hours].
+> ~~We'll reply as soon as we can, and always by the end of the next business day.~~
+> ~~If it's urgent, call [number] during [hours].~~
+
+**Both lines STRUCK 16 September 2026 (`GS-O004`).** The commitment is now *"We
+typically respond within 48 hours."* — typical behaviour, not a guarantee or an SLA.
+The second line is struck for a second reason as well: **no business hours are
+published**, the `businessHours` field is removed from the singleton, and a phone
+number with no hours beside it is the state the owner authorised. The number itself
+is published (`+44 7405 448534`) and is in the footer of every page and on both
+contact routes. `scripts/struck-rules.mjs` `GS-O004-RESPONSE-GUARANTEE` and
+`GS-O004-BUSINESS-HOURS-FIELD`.
 
 No template anywhere on the site may promise faster. This wording is the ceiling.
 

@@ -212,9 +212,16 @@ function Check({
 
 export function PressContactFlow({
   responseCommitment,
+  contactEmail,
   expectationsStatement = null,
 }: {
   responseCommitment: string;
+  /**
+   * The address of record, from `companyDetails` — `GS-O004`. It was a literal in the
+   * send-failure message below, which is a second copy of a company fact in the one branch a
+   * good day never renders. Same reasoning as `responseCommitment` directly above it.
+   */
+  contactEmail: string;
   /** ETH-07's statement. `R-09`/`O-09` own the copy; null withholds the memoir segment. */
   expectationsStatement?: string | null;
 }) {
@@ -273,7 +280,7 @@ export function PressContactFlow({
       {state.status === 'error' ? (
         <p className={styles.formError} role="alert">
           We could not send that, and nothing you typed has been lost. Try again, or email{' '}
-          <a href="mailto:contact@gridsmith.uk">contact@gridsmith.uk</a> directly.
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a> directly.
         </p>
       ) : null}
 

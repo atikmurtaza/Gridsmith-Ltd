@@ -7,10 +7,20 @@ type LegacyRedirect = { source: string; destination: string; permanent: boolean 
 /**
  * Legacy redirect map — master/TECH-SPEC.md §5, tracker G-02.
  *
- * Currently empty and intentionally so: the programme is greenfield, there is no
- * existing site to crawl, and G-01/G-02 are BLOCKED pending a separate decision. The
- * file and the wiring exist now so the mechanism is testable before it is needed —
- * adding entries later is a data change, not a config change.
+ * Currently empty, and the reason changed at `GS-R001`. It used to say *"the programme is
+ * greenfield, there is no existing site to crawl"*, which was already false when it was
+ * written: `gridsmith.uk` serves a live WordPress site, established on 7 September 2026 in
+ * `docs/_shared/LIVE-SITE-EXTRACT.md`.
+ *
+ * **The inventory is now collected and it is eight URLs** — read from the live site's own
+ * `wp-sitemap.xml`, recorded with a proposed mapping in `LIVE-SITE-EXTRACT.md` §13. It stays
+ * empty here for two better reasons than the old one: `GS-R001` prohibits cutover, so nothing
+ * would exercise it; and one row of the eight is an owner decision rather than an implementation
+ * one (`/terms-and-conditions/` is a single instrument this build splits three ways, and a
+ * redirect has to pick a target). A half-map in the tree reads as a finished one.
+ *
+ * The wiring exists so the mechanism is testable before it is needed — adding entries later is
+ * a data change, not a config change.
  */
 const legacyRedirects: LegacyRedirect[] = JSON.parse(
   readFileSync(new URL('./redirects/legacy.json', import.meta.url), 'utf8'),
