@@ -72,8 +72,10 @@ are placeholders against these groups, not this list.
 lists it in both; a record chooses one group. Client-facing *analytics infrastructure* is a Digital
 capability and is unrelated to the deferred decision not to run analytics on this website.
 
-Nothing speculative was added. Paid-media management, advertising management and media buying are
-**not** in the model (§4).
+Nothing speculative was added at `GS-P03`. **Advertising and paid-channel management entered the
+model at `GS-P05`** — as cross-division *engagements* under Master, never as capability groups or
+services (§13, `GS-O012`). **Media buying is still not in the model** and was not inferred from
+the channels that were confirmed.
 
 ## 3. Cross-division boundaries
 
@@ -104,11 +106,13 @@ Nothing below changes the live site, DNS or redirects; that is a later release t
 | Search Engine Optimization (SEO) · On-Page & Technical SEO · Website Performance Optimization | Digital — Operate & Improve | Technical half only |
 | Keyword Research & Strategy · Content Strategy | Press — Content & Promotion | Content half only |
 | Brand Identity Support · Website Graphics & Visual Assets | Design — Brand & Visual | Maps directly |
-| Social Media Design Support | Design — Brand & Visual (social/content creative) | Design output only; **not** social media management |
+| Social Media Design Support | Design — Brand & Visual (social/content creative) | Design output only. Social media **account management** is a separate cross-division engagement confirmed at `GS-P05`, not this Design capability |
 | CRM & Workflow Setup · Email & Contact Form Automation · Online Booking & Enquiry Systems | Digital — Software / Automation & Intelligence | Maps directly |
 | **"Digital marketing support"** (§4, §8) | Decomposed per §3 | **RESOLVED at `GS-P04`** — the owner confirms campaign management. It is a cross-division *engagement*, not a service and not a discipline: §13 |
-| **Google Ads setup or support** (FAQ, §7) | None | **Still open — `GS-O012`.** `GS-P04` confirmed campaign management and explicitly did NOT infer this from it |
-| **Google Business Profile Support** (§4) | None | **Still open — `GS-O012`**, for the same reason as the row above |
+| **Google Ads setup or support** (FAQ, §7) | Cross-division engagement — Master | **RESOLVED at `GS-P05`** — confirmed by the owner (`GS-O012`), not inferred from the live site. §13 |
+| **Google Business Profile Support** (§4) | Digital — Operate & Improve (technical SEO) | **RESOLVED at `GS-P05`** — confirmed, and the one channel owned by a division. §13 |
+| **Meta/Facebook/Instagram advertising · social media management · email marketing** (§4, §8) | Cross-division engagement — Master | **RESOLVED at `GS-P05`** (`GS-O012`) |
+| **Media buying** | None | **Still open.** Not among the confirmed capabilities and not inferred from them; sole entry in `UNCONFIRMED_CHANNEL_SERVICES` |
 | Pakistan governing law, refund copy, legacy emails | — | Already superseded by `docs/_legal/`; not a service question |
 
 ## 5. CMS and content model
@@ -323,8 +327,13 @@ the model already put work of that kind.
 
 | Activity | Owner | Approved capability that carries it |
 |---|---|---|
+| Digital marketing strategy | **Master** | — orchestration, not production |
 | Campaign strategy and coordination | **Master** | — orchestration, not production |
 | Campaign management | **Master** | — orchestration, not production |
+| Google Ads / PPC management | **Master** | — cross-division managed service (`GS-O012`) |
+| Meta / Facebook / Instagram advertising management | **Master** | — cross-division managed service (`GS-O012`) |
+| Social media account management | **Master** | — cross-division managed service (`GS-O012`) |
+| Email marketing campaigns | **Master** | — cross-division managed service (`GS-O012`) |
 | Visual campaign creative | Design | Marketing and campaign creative (`brand-visual`) |
 | Advertising creative | Design | Marketing and campaign creative (`brand-visual`) |
 | Social and content creative | Design | Social/content creative (`brand-visual`) |
@@ -333,21 +342,58 @@ the model already put work of that kind.
 | Content SEO | Press | Content SEO (`content-promotion`) |
 | Landing pages | Digital | Website design and development (`web`) |
 | Technical SEO | Digital | Technical SEO (`operate-improve`) |
+| Google Business Profile setup and management | Digital | Technical SEO (`operate-improve`) |
 | Tracking and integration infrastructure | Digital | API integrations (`automation-intelligence`) |
 | Reporting and measurement infrastructure | Digital | Data/reporting systems (`automation-intelligence`) |
 
-**What the owner did *not* confirm, and what was therefore not written.** Campaign management is
-one capability; it is not a licence to infer a channel roster from it. Google Ads/PPC management,
-Meta/Facebook/Instagram advertising, social media management, Google Business Profile work, email
-marketing and media buying are **absent from the catalogue**, and `check:service-content` refuses
-any seeded record that claims one (`UNCONFIRMED_CHANNEL_SERVICES`, proven by deliberate failure).
+### The channels — confirmed at `GS-P05`, and why they added no architecture
 
-The live `gridsmith.uk` advertises three of them. That is not authority — §4, and
-`LIVE-SITE-EXTRACT.md` §4, §7, §8 — so they were not preserved on its say-so. They are
-**`GS-O012`**, a deliberately narrow follow-up rather than a vague residue of `GS-O011`.
+`GS-P04` refused to infer a channel roster from the phrase "campaign management", and recorded
+the gap as `GS-O012`. **The owner confirmed eight of the nine on 16 September 2026**, and they
+are in the table above. Confirming them changed the *catalogue of engagements* and nothing else:
+no fourth division, no capability group, no CMS type, no route, no orchestration engine.
 
-The Design service *Campaign & Social Creative* states the boundary in its own exclusions:
-*"Gridsmith does not run ad accounts, set budgets or buy media."*
+**Why the channel rows sit with Master and map to no approved capability.** A capability group is
+a *medium*. Running a Google Ads account or an email campaign is not a medium — it is the
+coordination of several, and every piece of production work it commissions (creative, copy,
+landing page, tracking) is already an approved capability under Design, Press or Digital. Filing
+"Google Ads management" inside one division would put a cross-division engagement in a
+division-bound group, which `engagementProblems` refuses by design and which a deliberate-failure
+proof at `GS-P05` confirmed still fires. `master` + no mapped capability is the shape the model
+has carried since `GS-P04` for exactly this.
+
+**Google Business Profile is the one channel owned by a division**, because its confirmed scope is
+setup and technical configuration of a local-search listing rather than campaign coordination.
+
+**Media buying is still not confirmed.** It was one of the nine and the owner's confirmation did
+not name it, so it is not inferred from its neighbours: buying inventory puts Gridsmith between a
+client and a spend commitment, which is a different commercial position from managing a campaign
+on a client's own account. It is the sole remaining entry in `UNCONFIRMED_CHANNEL_SERVICES`, which
+keeps that gate's denylist non-empty and therefore alive.
+
+**Confirming a capability is not approving copy for it.** No public wording exists for any channel
+service and none was invented. Master engagement-model copy remains unwritten and unrequested, so
+these are recorded capabilities with no page — the state campaign management has been in since
+`GS-P04`. Per-channel exclusions are needed before any of them is published, and that sits with
+the copy acceptance in `GS-O013`.
+
+The live `gridsmith.uk` advertises three of them. That was never the authority — §4, and
+`LIVE-SITE-EXTRACT.md` §4, §7, §8. The owner's direct confirmation is.
+
+**One piece of copy was corrected because the confirmation made it false**, and it is worth
+naming as a class rather than an incident. The Design service *Campaign & Social Creative* carried
+the exclusion *"Gridsmith does not run ad accounts, set budgets or buy media."* That was accurate
+when written and became a false statement about the company the moment `GS-O012` closed. It now
+draws the boundary where the boundary actually is — account and campaign management is a separate
+coordinated Gridsmith engagement rather than part of this creative service, and media buying
+remains something Gridsmith does not undertake.
+
+**An owner confirmation can invalidate existing copy, not only leave gaps in it.** A capability
+decision is usually read as "what may we now add"; this one also asked "what did we already say
+that is now wrong". Nothing automatic finds that — the exclusions are prose, and no gate knows
+which of them contradict the engagement map. It was found by re-reading the exclusions against
+the newly confirmed list, and that re-reading is the step to repeat the next time a capability is
+confirmed.
 
 ## 14. Freelancer reviews — anonymisation, and a count discrepancy
 
@@ -380,17 +426,43 @@ no field for one; inventing a rating would be inventing evidence.
 `check:service-content` refuses every removed fragment, in the source and in the dataset. Each
 fragment on the denylist is proven to match, so a dead entry cannot sit there unexercised.
 
-### The count — **6 located, 12 stated. Unresolved, and not invented.**
+### The count — **RESOLVED at `GS-P05`. There are 12, and the owner was right.**
 
-`GS-O011` states there are **12** reviews relevant to Gridsmith. The repository's authoritative
-source data — the dated verbatim transcription in `scripts/seed-content.mjs` — holds **6**, and
-the development dataset holds the same 6.
+**`GS-P04`'s finding was correct about the data and wrong about what the data meant, and the
+correction is recorded rather than quietly overwritten.** It reported *"the owner states 12;
+authoritative source data holds 6"*, and `GS-O013` asked the owner to supply the other six or
+correct the figure. Both halves were sound reasoning from what `GS-P04` could see. The reading
+laid on top of them was not: **six was the size of an incomplete ingestion, not the size of the
+evidence.** The owner challenged it, and the owner was right.
 
-The six missing reviews were **not** created. Transcribing them from a live third-party page would
-mean publishing review text that has never been through the dated, owner-verifiable transcription
-this repository requires, and `CLAUDE.md` #2 and the protocol's *Owner facts* rule both forbid it.
-The decision applies in full to all 12; it has been **implemented on the 6 that exist**, and the
-remaining 6 are **`GS-O013`**.
+Verified independently on **16 September 2026**, two ways:
+
+| Source | Reports |
+|---|---|
+| `https://www.freelancer.com/u/GridsmithLTD`, read unauthenticated | `5.0 · 12 Reviews` |
+| `GET /projects/0.1/reviews/?to_users[]=92543257`, official API, unauthenticated | `reviews_count: 12`, twelve review objects |
+
+All six transcribed in `seed-content.mjs` are in the twelve, matched by body. **Four of the six
+differ from the API text only in whitespace** — the transcription collapsed runs of spaces the
+reviewers themselves typed, so the API is not merely equivalent to the 21 August transcription, it
+is *more* faithful than it. The six absent from the repository are Karl, Remy, a second review
+from Tom and three from one repeat client.
+
+**Nothing was invented to close the gap, and nothing needed to be.** The six were never missing
+from Gridsmith's evidence — only from this repository's copy of it, which is the argument against
+keeping a hand-maintained copy at all. §18 is what replaces it.
+
+**What this changes about how a discrepancy is read.** `GS-P04` treated its own dataset as
+authoritative and the owner's figure as the thing needing proof. The dataset was a *derived*
+artefact — a hand transcription — and the authority was the platform. Where a stated figure and a
+local record disagree, establish which of them is the source before deciding which one is wrong.
+
+### The anonymisation decision survives the correction unchanged
+
+`GS-O011` applies to all twelve and now genuinely can: §18's pipeline derives a category for every
+review from Freelancer's own closed skill taxonomy and never reads a project title. The table above
+records the six that were anonymised by hand; the other six have never been published anywhere on
+this site and will be categorised by the same rule rather than by a second hand pass.
 
 ## 15. Service-page architecture — one template, three divisions
 
@@ -477,3 +549,146 @@ operational commitment no owner fact supplies.
 **Technical Design content exists and stays gated.** All three Technical records are published in
 development with `professionalScopeConfirmed: false`; `check:launch` counts them and refuses them
 on production. `GS-O005` and `GS-X002` are untouched and remain open.
+
+## 18. Freelancer review retrieval — `GS-P05`
+
+**Decision:** reviews are read from Freelancer's official API at request time and cached for 24
+hours. There is **no second copy** of them — not in Sanity, not in Supabase, not in a committed
+fixture. Built at `GS-P05`; **not yet wired into any rendered page**, which is `GS-O014`.
+
+### Why the API, and not the profile page
+
+`GS-P05` was told to establish an official route before considering anything else, and one exists:
+
+| | |
+|---|---|
+| Endpoint | `GET https://www.freelancer.com/api/projects/0.1/reviews/` |
+| Documented at | `developers.freelancer.com` → Projects → Reviews → *List Project Reviews* |
+| Filter used | `to_users[]=92543257` (the Gridsmith account), `role=freelancer` |
+| Pagination | `limit` / `offset`; twelve reviews fit one page of 100 |
+| Rate limits | documented per endpoint, e.g. `50/60s` and `1000/3600s`, returned in `RateLimit-*` headers |
+| Webhooks | **none documented anywhere in the API reference** — so synchronisation must be pull-based |
+| Authentication | documented as OAuth `basic` + `fln:project_manage`; **observed to answer `200` unauthenticated** |
+
+**No browser automation, no HTML scraping, no session reuse, no private endpoint.** The one thing
+the public HTML page does that this does not is paginate: an anonymous visitor sees five reviews
+and a *Show all 12* control that opens a sign-up modal. The API returns all twelve to the same
+anonymous caller. Nothing here defeats that control — it is a growth prompt on a web page, and the
+platform's own public API publishes the data it sits in front of. The request carries no
+credential, no cookie and no session, and `check:reviews` question 3 asserts that it cannot.
+
+**The documentation/behaviour divergence is the largest risk in this integration and is not
+papered over.** The site would depend on measured behaviour rather than documented behaviour. If
+Freelancer begins enforcing the documented scopes, the fetch returns nothing, the block stops
+rendering, and `check:reviews --live` goes red. It cannot half-work, and it cannot take a page
+down. Should that happen, the fallback is the documented OAuth path, which needs an owner action
+and is written up in `OWNER-ACTIONS.md` rather than discovered under pressure.
+
+### Why nothing is stored
+
+Freelancer's API T&Cs decide this before engineering does:
+
+- **§5.3** — *"You may not copy or store any Data … except to the extent permitted by these API T&Cs."*
+- **§5.1** — *"Where Data is cached, you should refresh the cache at least every 24 hours."*
+
+A `testimonial` document written into Sanity is a stored copy that never refreshes. A 24-hour
+revalidating fetch cache is the form the terms describe. So **the cache is the storage layer**, and
+`next: { revalidate: 86400 }` in `lib/reviews/freelancer.ts` is the term rather than a tuning knob.
+
+It also removes a defect class outright. A CMS copy and a live source that must agree, with only
+one of them reaching a reader, is `01-VALIDATION-REPORT.md` §21 exactly — the shape that let
+`seed-legal.mjs` diverge from `docs/_legal/` across nine review rounds. With one source there is
+nothing to diverge.
+
+| Option considered | Rejected because |
+|---|---|
+| **A. Cached server-side retrieval** | **chosen** |
+| B. Synchronise into Sanity | a permanent stored copy (§5.3); needs a write token, a scheduler and dedupe; re-creates the two-artefact defect; and makes genuine quotations editable, which is a liability rather than a feature |
+| C. Synchronise into Supabase | same storage objection, plus a table, a migration, RLS and a scheduled writer for data that is already public |
+| D. Committed last-known-good fixture | a permanent stored copy that by definition never refreshes; and a second artefact that must agree with the source |
+
+### The shape
+
+```
+Freelancer API  →  fetch (24h revalidate)  →  zod validation  →  withhold unsafe bodies
+                →  categorise from the skill taxonomy  →  TestimonialList
+```
+
+**Refresh** is Next's ISR revalidation. No cron, no GitHub Action, no webhook — there is no webhook
+to use, a scheduled job would need somewhere to write, and Vercel Cron availability under the
+eventual plan is unverified and was therefore not designed around. Reviews appear within 24 hours
+of Freelancer publishing them, which is the requirement and also the term.
+
+**Outage behaviour.** Next serves the previously cached entry when a revalidation fails, so the
+last-known-good set keeps rendering. With nothing ever cached the function returns an empty list
+and the block renders nothing — `Testimonials` already returns `null` on an empty list. Every
+failure mode (network, non-200, malformed body, schema rejection) takes the same path. **A
+Freelancer outage cannot take a page down.**
+
+**Performance.** Zero client JavaScript and zero client-side fetching: the request happens on the
+server during static generation and revalidation. No budget in `CLAUDE.md` moves.
+
+### Anonymisation — structural, not careful
+
+`GS-O011` applies to every review, including ones nobody has seen yet. The rule that makes that
+possible is **where the category comes from**:
+
+- **The source's project title is never read.** `review_context.context_name` is free text a
+  client typed, and `Artistic Logo Design for Casglu` names a client's brand. No cleverness makes
+  free text safe to generalise automatically, because the next title carries a name no rule
+  anticipated.
+- **The category is derived from `jobs[]`, Freelancer's own closed skill taxonomy.** A client's
+  name cannot appear in a skill tag — not because a filter removes it, but because the field
+  cannot contain it. Thirteen allowlisted labels, matched in **list order** so the same review
+  always yields the same label whatever order the payload arrives in.
+- **No match means no category and no division**, never a guess. `projectTitle` is optional,
+  `TestimonialList` omits the line, and `listTestimonialsForDivision` already sorts non-matching
+  divisions later rather than dropping them.
+
+**Bodies are published verbatim or withheld whole — never edited.** A genuine quotation that
+cannot be published is dropped and reported. Three deterministic rules: the reviewer's own company
+name appears in the body (drawn from the same payload, so it needs no maintained list and covers
+reviewers nobody has seen yet); the body contains a URL or email address; the body is empty.
+
+**The stated ceiling:** the first rule can only see a company Freelancer actually publishes. A
+client naming an employer that is not on their profile is not detectable by any automatic rule and
+is not claimed to be — which is why `check:reviews --live` **reports** the withheld count rather
+than asserting it is zero.
+
+**Never rendered, and never even parsed:** `paid_amount`, `bid_amount`, `price_usd`, `currency`,
+`project_id`, `review_context.seo_url` and the reviewer's `company`. A field that is not in the
+schema cannot be rendered by a later accident. Two of the twelve reviewers publish a company name;
+all twelve carry a project value. None reaches the site.
+
+### Attribution
+
+*"Verified review via Freelancer"* per card, plus a link to the public profile so a reader can
+check it. It claims what the platform asserts by publishing the review and nothing more — no
+endorsement, no partnership. **No Freelancer mark, logo or asset is used**: API T&Cs §2 defines
+the brand and §8 leaves its use unpermitted, so it is not used. The reviewer's `public_name` is the
+attribution, which is the same name Freelancer shows an anonymous visitor.
+
+**Reviews are not portfolio.** Freelancer portfolio items remain unauthorised for reproduction on
+`gridsmith.uk` and `GS-D001` is unchanged.
+
+### One honest consequence the owner should decide on
+
+Eleven of the twelve reviews are 5.0. **The twelfth is 4.6 and contains criticism** — it says
+communication *"could be much better"*. An automatic pipeline publishes it with the rest, which is
+the correct default for a site whose Press section is required to be able to recommend against
+Gridsmith. It is still a change from the six hand-picked reviews published today, and it is a
+decision, so it is named in `GS-O014` rather than shipped quietly.
+
+### What is built, and what is deliberately not
+
+| | |
+|---|---|
+| `lib/reviews/freelancer.ts` | the whole pipeline — request, validation, withholding, categorisation, mapping |
+| `scripts/check-reviews.mjs` | four questions, `--live` reads the real API |
+| `scripts/check-reviews.selftest.mjs` | 55 value-based cases, every rule limb broken separately |
+| **Not wired into `Testimonials` or `DivisionLanding`** | `GS-O014`. Activation is one line in each |
+
+The switch is deliberately unflipped. API T&Cs §4.1 requires anyone accessing the API to agree to
+be bound by them, and accepting terms on Gridsmith Ltd's behalf is an owner act, not an agent's.
+The six Sanity testimonials are untouched and keep rendering meanwhile; they are retired only when
+the switch is thrown, so the site never carries two sources at once.

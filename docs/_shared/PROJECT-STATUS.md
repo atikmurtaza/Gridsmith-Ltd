@@ -2,23 +2,26 @@
 
 **Programme:** controlled production readiness
 
-**Status:** ACTIVE — GS-P04 development content foundation built and the development dataset
-reconciled; production migration, production content activation and deployment remain deferred
+**Status:** ACTIVE — GS-P05 established an official, credential-free Freelancer review
+integration (built, gated, **not activated**) and produced the owner content-review candidate;
+production migration, production content activation and deployment remain deferred
 
-**Current task:** `GS-P04` — approved service content and development content foundation
+**Current task:** `GS-P05` — Freelancer review integration investigation and owner content-review
+candidate
 
-**Current commit:** `27b436f709c6e59b2250e1e0b9574e5f315d0948` at task start; the ending commit is
-the GS-P04 commit containing this record (`git rev-parse HEAD`)
+**Current commit:** `a4cb3e9df9ae7f954956eb6fd9b30ca64c0f03f1` at task start; the ending commit is
+the GS-P05 commit containing this record (`git rev-parse HEAD`)
 
 **Branch:** `main`, tracking `origin/main`
 
-**Working tree:** clean at task start; GS-P04 content, routes, gates, seed tooling and documentation only
+**Working tree:** clean at task start; GS-P05 review module, gates, content-review generator,
+one content correction and documentation only. **No component was rewired and no route changed.**
 
 **CI/build:** local static chain, clean production build, bundle budgets, secrets lint, served
 accessibility/responsive/content gates and deliberate-failure proofs pass. GitHub CI for the GS-P03
 commit is reported in `AI-HANDOFF.md`.
 
-**Last updated:** 16 September 2026
+**Last updated:** 16 September 2026 (`GS-P05`)
 
 ## Service architecture (GS-P03)
 
@@ -48,11 +51,14 @@ commit is reported in `AI-HANDOFF.md`.
 | `project`, `book`, `publishingPackage` types | **DORMANT** for future consented use |
 | Press Path Finder | **UNCHANGED** |
 | Technical Design publication gate | **ACTIVE** — production refuses unconfirmed technical services |
-| Development Sanity dataset | **RECONCILED at GS-P04** — obsolete seed deleted by provenance, 46 approved services seeded, `GS-T007` CLOSED |
+| Development Sanity dataset | **RECONCILED at GS-P04** and **untouched by GS-P05**, which made no Sanity call of any kind |
 | Per-service routes | **ALL THREE DIVISIONS** since GS-P04 — one shared template, 46 pages |
 | Approved service catalogue | `lib/services/catalogue.ts` — 81 services, coverage gate-enforced |
 | Digital Marketing / campaign management | **CONFIRMED** as a cross-division engagement; no fourth discipline, no new group, type or route |
-| Freelancer review project titles | **ANONYMISED** on all 6 located; no quote altered |
+| Marketing channel services | **CONFIRMED at GS-P05** (`GS-O012`) — 8 of 9; six new engagement rows, no new architecture. `Media buying` still unconfirmed |
+| Freelancer reviews | **12**, verified independently against the public profile and the official API. The repository's 6 were an incomplete ingestion, not the evidence |
+| Freelancer review retrieval | **BUILT, NOT ACTIVATED** — official API, no credential, 24h cache, no stored copy. `GS-O014` |
+| Freelancer review project titles | **ANONYMISED** — 6 by hand at GS-P04, and all 12 mechanically by the GS-P05 pipeline, from Freelancer's closed skill taxonomy. No quote altered |
 
 ## Development content state (GS-P04)
 
@@ -78,8 +84,8 @@ second immediately afterwards deleted nothing and wrote the same 119.
 
 ## Supabase state
 
-**Project:** `dqiutgmxillhsbzgnlsx` (`Gridsmith Project`) — unchanged by GS-P03 and by GS-P04,
-which made no Supabase call of any kind.
+**Project:** `dqiutgmxillhsbzgnlsx` (`Gridsmith Project`) — unchanged by GS-P03, GS-P04 and
+GS-P05, none of which made a Supabase call of any kind.
 
 Production still records migrations `0001`–`0003`; the GS-P01 security migration is **not applied**.
 `GS-T004` remains **REMEDIATED IN REPOSITORY / OPEN IN PRODUCTION / READY FOR CONTROLLED ACTIVATION**.
@@ -88,8 +94,8 @@ additionally maps the already-existing, already-bounded `service_slug` column.
 
 ## Vercel state
 
-No Vercel action was taken in GS-P03. The GS-P03 push to `main` may trigger Vercel's normal Git
-integration; its outcome is reported in `AI-HANDOFF.md`. A production-target build is still expected
+No Vercel action was taken in GS-P03, GS-P04 or GS-P05. A push to `main` may trigger Vercel's
+normal Git integration; its outcome is reported in `AI-HANDOFF.md`. A production-target build is still expected
 to fail on the empty production Sanity dataset (`GS-T005`). Preview remains non-isolated (`GS-O010`).
 
 ## Production state
@@ -100,7 +106,7 @@ to fail on the empty production Sanity dataset (`GS-T005`). Preview remains non-
 | `GS-T004` live remediation | **OPEN — PRODUCTION UNCHANGED** |
 | Production deployment authorisation | **NOT AUTHORISED** |
 | `gridsmith.uk` cutover | **PROHIBITED until a dedicated production-release phase** |
-| Latest completed phase | `GS-P04` when its commit and push are complete |
+| Latest completed phase | `GS-P05` when its commit and push are complete |
 | Next recommended phase | See `AI-HANDOFF.md` — recommendation only |
 
 ## Authoritative decisions
@@ -117,8 +123,10 @@ to fail on the empty production Sanity dataset (`GS-T005`). Preview remains non-
 - `GS-O003` — complete solicitor review and resolve legal launch actions.
 - `GS-O004` — confirm operational/company facts and make required contact routes operational.
 - `GS-O005` — confirm engineering/CAD professional-indemnity scope (now gate-enforced).
-- `GS-O012` — confirm or decline the platform-specific marketing channel services (new).
-- `GS-O013` — accept the development service copy, and resolve the 12-vs-6 review count (new).
+- `GS-O013` — accept the development service copy. **Narrowed at GS-P05**: the review-count limb
+  is closed, and `docs/_shared/GS-P05-OWNER-CONTENT-REVIEW.md` is the artefact to read.
+- `GS-O014` — accept Freelancer's API terms and decide what the reviews block publishes (new).
+  **No credential and no paid service required.**
 - `GS-O010` — provision an isolated non-production Supabase target for Preview.
 
 ### Technical blockers
@@ -127,6 +135,16 @@ to fail on the empty production Sanity dataset (`GS-T005`). Preview remains non-
 - `GS-T005` — production Sanity dataset/content path incomplete; seed content must never be promoted.
 - Notification reconciliation and live RLS-drift scheduling/credential verification remain later
   operational work.
+
+### Closed in GS-P05
+
+- `GS-O012` — eight of the nine marketing channel services confirmed as current capabilities and
+  represented as six new `DIGITAL_MARKETING_ENGAGEMENT` rows; no new division, group, CMS type,
+  route or orchestration. `Media buying` was not confirmed and is not inferred. **COMPLETED.**
+- **The `GS-P04` 12-vs-6 review finding, corrected.** Twelve reviews verified independently
+  against `freelancer.com/u/GridsmithLTD` and the official API. The repository's six were an
+  incomplete ingestion, not the whole of the evidence, and the owner's figure was right. No owner
+  action is owed; `GS-P04`'s record is preserved and annotated rather than overwritten.
 
 ### Closed in GS-P04
 

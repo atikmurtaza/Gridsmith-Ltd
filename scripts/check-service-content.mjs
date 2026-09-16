@@ -12,7 +12,8 @@
  * | 1 | Does the seeded content represent every approved service, exactly once? | `scripts/service-content.mjs` | always |
  * | 2 | Does the Digital Marketing decomposition resolve to approved services? | `lib/services/catalogue.ts` | always |
  * | 3 | Do the review titles carry no identifying fragment? | `scripts/seed-content.mjs` | always |
- * | 4 | Does the **dataset** agree with all three? | the live development dataset | `--dataset` only |
+ * | 4 | Is the owner review document still the copy it transcribed? | `GS-P05-OWNER-CONTENT-REVIEW.md` | always |
+ * | 5 | Does the **dataset** agree with all of them? | the live development dataset | `--dataset` only |
  *
  * ## Why 4 is opt-in, and why that is not a silent skip
  *
@@ -45,6 +46,7 @@ import {
 import { SANITY_API_VERSION, SANITY_PROJECT_ID, PRODUCTION_DATASET } from '../sanity/project.ts';
 import { SERVICES } from './service-content.mjs';
 import { anonymityProblems, coverageProblems, engagementProblems } from './service-content-rules.mjs';
+import { contentHash } from './owner-content-review.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const withDataset = process.argv.includes('--dataset');
@@ -124,7 +126,53 @@ if (reviewRows.length !== EXPECTED_REVIEWS) {
   );
 }
 
-/* -- 4. The dataset, read the way the site reads it ----------------------- */
+/* -- 4. The owner review document still transcribes this copy --------------- */
+
+/**
+ * `GS-P05`. `docs/_shared/GS-P05-OWNER-CONTENT-REVIEW.md` is what the owner reads to close
+ * `GS-O013` — 46 records transcribed verbatim out of `service-content.mjs`, because reading 46
+ * Sanity documents is not a review.
+ *
+ * Two artefacts that must agree, only one of which reaches the reader. That is
+ * `01-VALIDATION-REPORT.md` §21 exactly, and what it costs here is specific: if the copy is
+ * edited after the owner has read the document, the approval silently attaches to wording that
+ * no longer exists. **A stale approval is worse than no approval**, because it looks settled and
+ * nobody reopens it.
+ *
+ * Generating the document removes the drift; this assertion removes the *undetected* drift.
+ * Regenerating with `npm run docs:content-review` is a deliberate act that reopens the review.
+ */
+const reviewDocPath = join(root, 'docs', '_shared', 'GS-P05-OWNER-CONTENT-REVIEW.md');
+try {
+  const reviewDoc = readFileSync(reviewDocPath, 'utf8');
+  const recorded = reviewDoc.match(/\*\*Source SHA-256:\*\* `([0-9a-f]{64})`/)?.[1];
+  const actual = contentHash();
+  if (!recorded) {
+    problems.push(
+      'OWNER REVIEW: GS-P05-OWNER-CONTENT-REVIEW.md records no source hash — it cannot be shown ' +
+        'to transcribe the current copy, so this assertion measured nothing.',
+    );
+  } else if (recorded !== actual) {
+    problems.push(
+      `OWNER REVIEW: service-content.mjs now hashes to ${actual.slice(0, 12)}\u2026 but the owner ` +
+        `review document transcribes ${recorded.slice(0, 12)}\u2026. The copy changed after the ` +
+        'document was written, so any approval against it is stale. Regenerate with ' +
+        '`npm run docs:content-review`.',
+    );
+  }
+  say(
+    `ownerdoc:   the owner review document transcribes ` +
+      `${recorded ? `${recorded.slice(0, 12)}\u2026` : 'NO HASH'}; service-content.mjs is ` +
+      `${actual.slice(0, 12)}\u2026 \u2014 ${recorded === actual ? 'in agreement' : 'DIVERGED'}`,
+  );
+} catch {
+  problems.push(
+    'OWNER REVIEW: GS-P05-OWNER-CONTENT-REVIEW.md could not be read. It is the artefact ' +
+      '`GS-O013` is answered against; a missing one is a hard failure, not a skip.',
+  );
+}
+
+/* -- 5. The dataset, read the way the site reads it ----------------------- */
 
 if (!withDataset) {
   say(
@@ -196,6 +244,6 @@ if (problems.length > 0) {
 }
 
 say(
-  `\ncheck-service-content: PASS — coverage, engagement map and review anonymity` +
+  `\ncheck-service-content: PASS — coverage, engagement map, review anonymity and owner-document parity` +
     `${withDataset ? ` and the "${DATASET}" dataset` : ' (source only; the dataset was not measured)'}\n`,
 );

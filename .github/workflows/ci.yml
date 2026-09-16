@@ -190,6 +190,20 @@ jobs:
       - name: Every approved service is represented, and no review title identifies a client
         run: npm run check:service-content
 
+      # GS-P05. Selftest first, same reason: 55 value-based cases break every limb of
+      # categorise, withholdReason, parsePayload and toReviews separately, so a half-firing
+      # predicate cannot report clean off whichever branch happened to run.
+      - name: The Freelancer review rules still fire (committed specimens)
+        run: npm run check:reviews:selftest
+
+      # Static mode — the transformation, the rendered shape and the request. It SAYS in its
+      # own summary that the live Freelancer API was not measured, rather than skipping in
+      # silence. `check:reviews:live` is the half that reads www.freelancer.com; it is
+      # deliberately not wired here while the integration is unactivated (GS-O014), because a
+      # third party's outage must not redden a pull request that does not depend on it yet.
+      - name: A rendered Freelancer review carries no client name, amount or credential
+        run: npm run check:reviews
+
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
       # the `development` dataset. check:launch still runs against the SERVED site below;

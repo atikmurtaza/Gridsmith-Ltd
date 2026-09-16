@@ -139,6 +139,13 @@ t('LIMB 4 DUPLICATE — two records claiming one approved service', () => {
   assert.deepEqual(problems, ['DUPLICATE: "Logo systems" (brand-visual) is claimed by a and b']);
 });
 
+// The specimen is `Media buying`, and it changed at `GS-P05` for a reason worth recording.
+// It used to be `Google Ads`, which the owner confirmed as a Gridsmith capability at `GS-O012`
+// — so the denylist no longer contains it and this case began failing the moment the catalogue
+// was updated. **That failure is the rule working**: `CLAUDE.md` says adding a subject to a gate
+// is not done until every list the gate consults has been updated, and here the specimen list
+// was the one nobody would have thought to look at. The case now uses the only entry that is
+// still unconfirmed, which is also the entry keeping `UNCONFIRMED_CHANNEL_SERVICES` non-empty.
 t('LIMB 5 CHANNEL — a record claiming an unconfirmed channel service (GS-O012)', () => {
   const problems = coverageProblems({
     approved: APPROVED,
@@ -146,7 +153,7 @@ t('LIMB 5 CHANNEL — a record claiming an unconfirmed channel service (GS-O012)
       design: [
         {
           slug: 'x',
-          title: 'Google Ads Management',
+          title: 'Media buying desk',
           group: 'brand-visual',
           covers: ['Logo systems', 'Brand guidelines'],
         },
@@ -155,7 +162,7 @@ t('LIMB 5 CHANNEL — a record claiming an unconfirmed channel service (GS-O012)
     unconfirmed: UNCONFIRMED_CHANNEL_SERVICES,
   });
   assert.deepEqual(problems, [
-    'UNCONFIRMED CHANNEL: x claims "Google Ads", which no owner decision confirms (GS-O012)',
+    'UNCONFIRMED CHANNEL: x claims "Media buying", which no owner decision confirms (GS-O012)',
   ]);
 });
 

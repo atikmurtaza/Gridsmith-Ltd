@@ -40,45 +40,88 @@ not requested under `GS-D001` and `GS-D002`.
   action and `GS-X002` are closed.
 - **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
 
-### `GS-O012` — Confirm or decline the platform-specific marketing channel services
+### `GS-O014` — Accept Freelancer's API terms, and decide what the reviews block publishes
 
-- **Status:** ACTIONABLE NOW (new at `GS-P04`; the narrow remainder of `GS-O011`)
-- **Why required:** `GS-O011` confirmed **campaign management**, which `GS-P04` implemented as a
-  cross-division engagement (`SERVICE-ARCHITECTURE.md` §13). It did **not** confirm the individual
-  channel and platform services, and the brief was explicit that they must not be inferred from the
-  phrase. The live `gridsmith.uk` advertises three of them, but the live site is reference material
-  rather than authority, so nothing was carried forward on its say-so.
-- **Exact information/action needed:** for each of **Google Ads / PPC management**,
-  **Meta / Facebook / Instagram advertising**, **social media management**, **Google Business
-  Profile work**, **email marketing** and **media buying** — state whether Gridsmith sells it. For
-  any it does, give the division, the scope, and what is excluded. For any it does not, no action
-  is needed and the current position is already correct.
-- **What it blocks:** nothing structural. It blocks only redirect planning for the legacy service
-  pages and any future page naming a channel. `check:service-content` refuses a seeded record that
-  claims one of these until this is answered.
-- **Evidence required:** written owner decision per channel.
+- **Status:** ACTIONABLE NOW (new at `GS-P05`)
+- **Why required:** `GS-P05` built an automatic Freelancer review pipeline and **deliberately did
+  not switch it on**. Two things stop an agent throwing that switch, and neither is technical.
+  1. **The terms are a commercial commitment.** Freelancer's API T&Cs §4.1: *"Anyone who wants to
+     access our API must agree to be bound by this API T&Cs."* Making `gridsmith.uk` depend on an
+     API whose terms Gridsmith Ltd has not accepted is a legal position, and a coding agent must
+     not take one on the company's behalf. **No credential and no paid service is involved** —
+     the endpoint answers unauthenticated, so this is acceptance, not provisioning.
+  2. **The block's contents change.** The site publishes six reviews today. The pipeline publishes
+     all twelve, and **the twelfth is rated 4.6 and contains criticism** — it says communication
+     *"could be much better"*. Publishing it is the right default for this site and it is still a
+     decision about what the homepage says.
+- **Exact information/action needed:** three answers.
+  1. Read `https://www.freelancer.com/about/apiterms` and confirm Gridsmith Ltd accepts them.
+     They are short; §5.1 (cache refresh at least every 24 hours) and §5.3 (no storing beyond
+     that) are the two the architecture is built around, and it already complies with both.
+  2. Confirm that all twelve reviews may be published, **including the 4.6**, or name any review
+     to withhold. Withholding a specific review is a one-line denylist; editing one is not
+     available and will not be offered.
+  3. Confirm the attribution wording **"Verified review via Freelancer"**, shown per card with a
+     link to `https://www.freelancer.com/u/GridsmithLTD`.
+- **What it blocks:** switching the review block from the six hand-transcribed Sanity testimonials
+  to the twelve live ones. Nothing else. The pipeline, its gate and its 55-case selftest are
+  committed and green; activation is one line in `components/master/Testimonials.tsx` and one in
+  `components/divisions/DivisionLanding.tsx`.
+- **Credentials required:** **none.** Do not create a Freelancer OAuth application and do not
+  generate a Personal Access Token for this. If Freelancer later begins enforcing the documented
+  OAuth scopes, `check:reviews --live` goes red and the owner action at that point is recorded
+  under *If the API ever requires a credential* below — it is not needed now and is not requested.
+- **Paid service required:** none.
+- **Evidence required:** a written owner decision on each of the three, dated.
 
-### `GS-O013` — Accept the development service copy, and resolve the review count
+#### If the API ever requires a credential — the shape of that action, recorded now so it is not improvised
 
-- **Status:** ACTIONABLE NOW (new at `GS-P04`)
-- **Why required:** two things `GS-P04` could not close by itself.
-  1. **Copy acceptance.** `GS-O006` approved the *service list*. The 46 development service records
-     written at `GS-P04` are **agent-authored** from that list, under the constraints in
-     `scripts/service-content.mjs`. They are truthful and deliberately unpromissory, but no owner
-     has read them, and `isSeed: true` keeps them off production until one does.
-  2. **The review count.** `GS-O011` states there are **12** Freelancer reviews. The repository's
-     authoritative source — the dated verbatim transcription of 21 August 2026 — holds **6**, and
-     so does the development dataset. The missing six were **not** invented, and must not be:
-     review text has to come through the same dated transcription, not from a coding agent reading
-     a live page.
-- **Exact information/action needed:** (1) read the 46 service records on the development site and
-  approve, amend or reject the wording per record — particularly the exclusions, which is where
-  each service states what Gridsmith does *not* undertake. (2) Supply the six remaining reviews, or
-  confirm that six is the correct number and the figure of 12 counted something else.
-- **What it blocks:** promotion of any service content to production, and the completeness of the
-  `GS-O011` anonymisation decision (which is fully implemented on the six that exist).
-- **Evidence required:** an approved or amended content set; and either the additional review text
-  with its source, or a written correction of the count.
+Not actionable, and **not to be started**. Recorded because the divergence between Freelancer's
+documentation and its behaviour is the integration's main risk, and the response to it should not
+be designed while something is broken.
+
+1. Freelancer would require an OAuth client created at `developers.freelancer.com` (production,
+   not sandbox), with a redirect URI on a Gridsmith-controlled host.
+2. Scopes: `basic` plus the advanced scope `fln:project_manage`.
+3. A one-time consent at `https://accounts.freelancer.com/oauth/authorize`, exchanged at
+   `https://accounts.freelancer.com/oauth/token` for an access token and a **refresh token**.
+4. Access tokens expire after 2,592,000 seconds (30 days); the refresh token is what renews them
+   unattended. A **Personal Access Token is not suitable** — one per environment, also 30 days,
+   and no refresh, so it would need manual rotation every month for ever.
+5. The client secret and refresh token would go into Vercel's encrypted environment variables as
+   server-only values. **Never a `NEXT_PUBLIC_` variable, never in source, never pasted into
+   chat or documentation.** The `client_id` and the redirect URI are safe to share; the
+   `client_secret`, the authorisation `code`, the access token and the refresh token are not.
+
+### `GS-O013` — Accept the development service copy
+
+- **Status:** ACTIONABLE NOW (raised at `GS-P04`; **narrowed at `GS-P05`**)
+- **What changed at `GS-P05`.** This action had two limbs and **the second is closed**. It asked
+  the owner to supply six missing reviews or correct a count of 12. Neither was needed: there are
+  twelve, the owner was right, and `GS-P05` verified it independently against both the public
+  profile and the official API. `SERVICE-ARCHITECTURE.md` §14. **Do not ask the owner to prove the
+  other six exist.** What remains of the review question is a publication decision, and that is
+  `GS-O014`, not this.
+- **Why the remaining limb is required:** `GS-O006` approved the *service list*. The 46 development
+  service records are **agent-authored** from that list under the constraints in
+  `scripts/service-content.mjs`. They are truthful and deliberately unpromissory, but no owner has
+  read them, and `isSeed: true` keeps them off production until one does.
+- **Exact information/action needed:** read **`docs/_shared/GS-P05-OWNER-CONTENT-REVIEW.md`** and
+  approve, amend or reject the wording. It transcribes all 46 records verbatim — every summary,
+  sentence, deliverable and exclusion — so **Sanity does not need to be opened**, and a response
+  can be as coarse as *"Approve all Digital"* or as fine as *"Approve Design except the CAD
+  Drafting summary"*. Three things in it are worth the attention specifically:
+  - **the 35 published exclusions**, which are where each service states what Gridsmith does not
+    undertake and therefore what a client cannot later say was promised;
+  - **the 12 passages marked `⚠ VERIFY`**, which assert a named tool, a professional position or
+    a standard — the sentences where being wrong would matter most;
+  - **per-channel exclusions for the marketing capabilities confirmed at `GS-O012`**, which do not
+    exist yet. `GS-P05` corrected one exclusion that the confirmation made false; no channel has
+    published wording, and none may be published without its own boundary statement.
+- **What it blocks:** promotion of any service content to production.
+- **Evidence required:** an approved or amended content set. The document records the SHA-256 of
+  the copy it transcribes and `check:service-content` fails if the two diverge, so an approval
+  cannot silently attach to wording that has since changed.
 
 ### `GS-O010` — Provide an isolated Supabase target for Vercel Preview
 
@@ -117,6 +160,27 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## COMPLETED
 
+- `GS-O012` — **completed 16 September 2026.** The owner confirmed that **eight** of the nine open
+  channel/platform services are current Gridsmith capabilities: digital marketing strategy,
+  campaign management, Google Ads / PPC management, Meta / Facebook / Instagram advertising
+  management, social media account management, Google Business Profile setup and management, email
+  marketing campaigns, and the campaign creative, landing-page, content-SEO and technical-SEO work
+  already mapped at `GS-P04`.
+  **Represented as the leanest extension of the existing model:** six new rows in
+  `DIGITAL_MARKETING_ENGAGEMENT`, and nothing else. No fourth division, no capability group, no
+  CMS type, no route, no orchestration engine. The cross-division managed services sit with
+  Master, which `GS-P03` already defined as the orchestration layer; Google Business Profile sits
+  with Digital because its confirmed scope is technical local-search configuration.
+  `SERVICE-ARCHITECTURE.md` §13, asserted by `check:service-content` (18 activities, up from 12).
+  **`Media buying` was NOT among the confirmed capabilities and is not inferred from its
+  neighbours.** It remains the sole entry in `UNCONFIRMED_CHANNEL_SERVICES`, which is also what
+  keeps that denylist non-empty and the assertion alive.
+  **What this action does not cover, so that closing it drops nothing.** Confirming a capability is
+  not approving copy for it: no channel has public wording, none was invented, and per-channel
+  exclusions are needed before any channel page is published. That is `GS-O013`. One existing
+  exclusion was corrected in the same commit because the confirmation made it false — Design's
+  *Campaign & Social Creative* had said *"Gridsmith does not run ad accounts"*, which stopped being
+  true the moment this closed.
 - `GS-O006` — **completed 16 September 2026.** The owner approved **every** listed Design, Digital
   and Press service in the `GS-P04` brief: 81 services across the 14 capability groups, recorded
   verbatim in `lib/services/catalogue.ts` and in `SERVICE-ARCHITECTURE.md` §2 and §16. Adding or
@@ -135,10 +199,19 @@ not requested under `GS-D001` and `GS-D002`.
      decomposes into capabilities the approved catalogue already holds.
      `SERVICE-ARCHITECTURE.md` §13. The platform-specific channel services were deliberately **not**
      inferred from the phrase and are `GS-O012`.
-  2. **Identifiable project titles are anonymised on all 12 reviews.** Implemented on the **6** that
-     exist in authoritative source data; no quote was altered, none had to be withheld, and no
-     rating was invented. The 6 missing from the stated count of 12 were not fabricated and are
-     `GS-O013`. `SERVICE-ARCHITECTURE.md` §14.
+  2. **Identifiable project titles are anonymised on all 12 reviews.** Implemented on the **6**
+     held in the repository at the time; no quote was altered, none had to be withheld, and no
+     rating was invented. `SERVICE-ARCHITECTURE.md` §14.
+     **Corrected at `GS-P05`, 16 September 2026 — the original wording of this line is preserved
+     above and this is what it should have said.** It read *"the 6 missing from the stated count of
+     12 were not fabricated and are `GS-O013`"*, which treated the repository's six as the evidence
+     and the owner's twelve as the claim needing proof. That was backwards. **There are twelve, the
+     owner was right, and six was the size of an incomplete ingestion rather than the size of the
+     evidence.** Verified independently against the public profile and the official Freelancer API.
+     Nothing is owed by the owner here, the anonymisation decision stands unchanged, and it now
+     applies to all twelve mechanically — `SERVICE-ARCHITECTURE.md` §18 derives every category from
+     Freelancer's own closed skill taxonomy rather than from a project title. What remains is a
+     publication decision, `GS-O014`.
 - `GS-O002` — completed 14 September 2026. The owner supplied the definitive division and service
   architecture — Master as relationship layer; Design, Digital and Press capability groups and
   services; cross-division boundaries; CTA directions — in the `GS-P03` brief. It is recorded in

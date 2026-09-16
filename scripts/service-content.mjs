@@ -188,13 +188,13 @@ export const SERVICES = {
       description: [
         'The visual half of a campaign: adverts, social assets, banners, landing-page visuals and the sized variants each placement needs, made as one set so they read as one campaign.',
         'This is creative production. Where a campaign also needs written copy, content or technical work, those sit with Gridsmith Press and Gridsmith Digital and can run as one coordinated engagement — see the campaign engagement note on the Digital and Press pages.',
-        'We do not manage advertising accounts or buy media.',
+        'This page is the creative production. Campaign and advertising account management is a separate Gridsmith engagement coordinated across the divisions rather than part of this service; media buying is not something Gridsmith undertakes.',
       ],
       deliverables: [
         ['Campaign creative concept', 'The visual idea and how it holds together across placements.'],
         ['Asset set at required sizes', 'Each placement’s specification, produced as one consistent set.'],
         ['Editable templates', 'So routine variants can be produced without returning to us.'],
-        ['Advertising account or media management', 'Gridsmith does not run ad accounts, set budgets or buy media.', false],
+        ['Advertising account management and media buying', 'Not part of this creative service. Account and campaign management is a separate coordinated Gridsmith engagement; buying media is not something Gridsmith undertakes.', false],
       ],
       collaborators: ['press', 'digital'],
       related: ['brand-identity-systems', 'motion-graphics'],

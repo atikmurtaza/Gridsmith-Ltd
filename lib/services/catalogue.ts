@@ -164,12 +164,35 @@ export function divisionOfGroup(group: string): ServiceDivision | null {
  * already defines as the relationship, orchestration and cross-division programme layer. That
  * is why no new discipline is required: the orchestration layer already exists.
  *
- * **Channel and platform services are deliberately absent.** Google Ads/PPC management,
- * Meta/Facebook/Instagram advertising, social media management, Google Business Profile work
- * and email marketing are **not** confirmed by the phrase "campaign management" and are not in
- * the catalogue. The live `gridsmith.uk` advertises three of them, and the live site is
- * reference material rather than authority (`SERVICE-ARCHITECTURE.md` §4). They remain an open
- * owner question — `GS-O012`.
+ * ## Channel and platform services — confirmed at `GS-P05`, `GS-O012`, 16 September 2026
+ *
+ * `GS-P04` deliberately left these out, because the phrase "campaign management" does not
+ * confirm them and the live site is reference material rather than authority. The owner has now
+ * confirmed them directly, so they are here — **as engagement rows, not as new capability
+ * groups, disciplines, CMS types or routes.** Nothing about the medium-based division model
+ * changes; the orchestration layer `GS-P03` already defined is what carries them.
+ *
+ * **Why the channel rows are owned by `master` and map to no approved service.** Running a
+ * Google Ads or an email campaign is not a *medium* — it is the coordination of several, and the
+ * production work it commissions (the creative, the copy, the landing page, the tracking) is
+ * already in the catalogue under Design, Press and Digital. Filing "Google Ads management"
+ * under one of those would put a cross-division engagement inside a division-bound group, which
+ * `engagementProblems` would rightly refuse. `master` + `approved: null` is the shape the model
+ * already has for exactly this, and campaign management has used it since `GS-P04`.
+ *
+ * **Google Business Profile is the one exception and is owned by `digital`,** because its
+ * confirmed scope is setup and technical configuration of a local-search listing rather than
+ * campaign coordination. It maps to `Technical SEO`, which is the approved Digital capability
+ * that local-search configuration belongs to.
+ *
+ * **Media buying is still NOT confirmed.** It was listed as an open channel at `GS-O012` and the
+ * owner's confirmation did not name it. It is not inferred from the ones that were named, and it
+ * stays in `UNCONFIRMED_CHANNEL_SERVICES` below.
+ *
+ * **Confirming a capability is not approving copy for it.** No public wording exists for any
+ * channel service, and none is invented here. Master engagement-model copy is still unwritten
+ * and unrequested (`PROJECT-STATUS.md`), so these are recorded capabilities with no page —
+ * which is the same state campaign management has been in since `GS-P04`.
  */
 export const DIGITAL_MARKETING_ENGAGEMENT: readonly {
   /** What the client is buying within the engagement. */
@@ -179,8 +202,15 @@ export const DIGITAL_MARKETING_ENGAGEMENT: readonly {
   /** The approved catalogue entry that carries it. `null` only for the Master orchestration rows. */
   approved: ApprovedService | null;
 }[] = [
+  { activity: 'Digital marketing strategy', owner: 'master', approved: null },
   { activity: 'Campaign strategy and coordination', owner: 'master', approved: null },
   { activity: 'Campaign management', owner: 'master', approved: null },
+  // Confirmed at GS-O012, 16 September 2026. Cross-division managed services: each commissions
+  // production work that is already in the catalogue, and none of them is a medium.
+  { activity: 'Google Ads / PPC management', owner: 'master', approved: null },
+  { activity: 'Meta / Facebook / Instagram advertising management', owner: 'master', approved: null },
+  { activity: 'Social media account management', owner: 'master', approved: null },
+  { activity: 'Email marketing campaigns', owner: 'master', approved: null },
   { activity: 'Visual campaign creative', owner: 'design', approved: { group: 'brand-visual', name: 'Marketing and campaign creative' } },
   { activity: 'Advertising creative', owner: 'design', approved: { group: 'brand-visual', name: 'Marketing and campaign creative' } },
   { activity: 'Social and content creative', owner: 'design', approved: { group: 'brand-visual', name: 'Social/content creative' } },
@@ -189,23 +219,29 @@ export const DIGITAL_MARKETING_ENGAGEMENT: readonly {
   { activity: 'Content SEO', owner: 'press', approved: { group: 'content-promotion', name: 'Content SEO' } },
   { activity: 'Landing pages', owner: 'digital', approved: { group: 'web', name: 'Website design and development' } },
   { activity: 'Technical SEO', owner: 'digital', approved: { group: 'operate-improve', name: 'Technical SEO' } },
+  // Setup and technical configuration of a local-search listing — Digital, not orchestration.
+  { activity: 'Google Business Profile setup and management', owner: 'digital', approved: { group: 'operate-improve', name: 'Technical SEO' } },
   { activity: 'Tracking and integration infrastructure', owner: 'digital', approved: { group: 'automation-intelligence', name: 'API integrations' } },
   { activity: 'Reporting and measurement infrastructure', owner: 'digital', approved: { group: 'automation-intelligence', name: 'Data/reporting systems' } },
 ];
 
 /**
- * Channel/platform services the phrase "campaign management" does **not** confirm. Listed so
- * the decision is visible and gate-checkable, never so they can be rendered:
- * `check:service-content` asserts no seeded service claims one of these. `GS-O012`.
+ * Channel/platform services **no owner decision confirms**. Listed so the position is visible
+ * and gate-checkable, never so they can be rendered: `check:service-content` asserts no seeded
+ * service claims one of these.
+ *
+ * ## It is one entry now, and that is the whole list — not a leftover
+ *
+ * `GS-O012` opened with nine. The owner confirmed eight of them on 16 September 2026 and they
+ * moved into `DIGITAL_MARKETING_ENGAGEMENT` above. **Media buying was not among the confirmed
+ * capabilities**, and is not inferred from the ones that were: buying inventory places
+ * Gridsmith between a client and a spend commitment, which is a different commercial position
+ * from managing a campaign on a client's own account.
+ *
+ * Keeping the list non-empty is also what keeps this assertion alive. `coverageProblems` reads
+ * it as the denylist a seeded record may not claim; an empty list would leave the gate matching
+ * nothing while still reporting a pass — a check with no subject, which `CLAUDE.md` rates worse
+ * than a red one. If media buying is ever confirmed, the entry does not simply disappear: the
+ * rule is struck and registered in `check:struck` in the same commit.
  */
-export const UNCONFIRMED_CHANNEL_SERVICES: readonly string[] = [
-  'Google Ads',
-  'PPC management',
-  'Meta advertising',
-  'Facebook advertising',
-  'Instagram advertising',
-  'Social media management',
-  'Google Business Profile',
-  'Email marketing',
-  'Media buying',
-];
+export const UNCONFIRMED_CHANNEL_SERVICES: readonly string[] = ['Media buying'];

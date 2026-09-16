@@ -29,7 +29,7 @@ flows remain active. Price publication does not determine whether those features
 | `U-05` split sticky CTA | **Rescoped.** The "Estimate 60" half has no target. If built, it is enquiry + contact, not estimate |
 | `U-09`, `W-01`, `W-02`, `X-02` | Public case studies/work grid **not built and not launch rows** (`GS-D001`); landing "Selected work" replaced by the private-examples statement |
 | SEO boundary | Technical SEO is Digital (Operate & Improve); content SEO is Press. No generic SEO service |
-| Legacy "digital marketing", Google Ads, Google Business Profile | Not carried forward — owner review `GS-O011` |
+| Legacy "digital marketing", Google Ads, Google Business Profile | **Confirmed at `GS-P05`** (`GS-O012`). Digital owns Google Business Profile setup as technical local-search work; Google Ads and the other channels are cross-division Master engagements, not Digital services. No new Digital route, type or group. `SERVICE-ARCHITECTURE.md` §13 |
 
 ---
 
