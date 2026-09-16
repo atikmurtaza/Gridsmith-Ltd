@@ -202,7 +202,7 @@ rating the API returns.
 | `check:vat`, `check:legal:parity`, `check:consumer-terms`, `check:press:type`, `check:path:live`, `check:security-headers` | **PASS** |
 | `lint`, `typecheck`, `lint:colors`, `lint:secrets` | **PASS** — 0 warnings |
 | `npm audit --omit=dev` | **PASS** — 0 vulnerabilities, **no dependency added** |
-| Lighthouse CI | **NOT RUN locally** — the known Windows `chrome-launcher` EPERM. CI is the arbiter |
+| Lighthouse CI | **NOT RUN locally** — the known Windows `chrome-launcher` EPERM. CI is the arbiter, and it found something: see §5.3 |
 
 **Which question each green answers.** `check:axe` is reported on both violations and unresolved
 incompletes. `check:reviews` is reported separately for its static questions and for `--live`.
@@ -249,6 +249,53 @@ phase's own uncommitted work. A residue grep found none of the three injections 
 **`check:struck`'s three new rules** were each given an annotated specimen and a separate
 unannotated branch case, and the `ZERO-SUBJECT` count expectation moved 13 → 16 deliberately —
 which is what proves that count is counted rather than printed.
+
+### 5.3 CI caught a regression this phase introduced, and the fix is not a lowered bar
+
+**GitHub CI run `35144458922` on the first push went `failure`.** Thirty steps green, then
+`Lighthouse CI — desktop` red: `categories.seo` **0.66** against a `>= 0.9` floor, identically on
+all four measured routes and all three runs each.
+
+**It was real and it was mine.** `G-04` made indexing a deliberate act, so every page now carries
+`noindex, nofollow` unless the deployment is a configured production one. Lighthouse's
+`is-crawlable` audit is then correctly 0 — *the page really is blocked from indexing*.
+
+**The artefact was read rather than guessed at**, which is the part that decided the fix. Across
+**12 runs and 4 routes**, `is-crawlable` scored 0 every time and **every other SEO audit scored
+1** — `document-title`, `meta-description`, `canonical`, `http-status-code`, `crawlable-anchors`,
+`robots-txt`, `link-text`, `hreflang`. One audit, carrying ~4.04 of the category weight, is the
+whole of the drop. Performance stayed **1.00** and accessibility **1.00**: the phase's work costs
+nothing there.
+
+Three fixes were available and two of them were wrong:
+
+| | |
+|---|---|
+| Lower the floor to 0.66 | **Refused.** A 0.66 floor also accepts a missing title, a missing description, a broken canonical and unreadable link text — the things the assertion exists for. The config's own docstring says these may not be lowered further, and it is right |
+| Remove the `noindex` | **Refused.** That is the safety property `GS-R001` §17 requires, not a score problem. Deleting a control to make a score green is the exact shape `CLAUDE.md` forbids |
+| Make the assertion follow the property | **Taken** |
+
+The category assertion now applies **only when the build is actually indexable**. Otherwise the
+eight SEO audits above are asserted **individually at 1** and `is-crawlable` — only
+`is-crawlable` — is off. **That is stricter than what it replaced**: the old 0.9 floor tolerated
+exactly one failing audit, and the ratchet note beside it named `meta-description` as the one it
+was tolerating. All four route groups now declare a description and it is asserted at 1.
+
+It closes itself. Setting `NEXT_PUBLIC_SITE_URL` on a production deployment restores the category
+assertion with no edit to the config, and **both branches are proven by value** rather than by a
+clean run: evaluating the config with and without that environment returns the two different
+assertion sets, and the one for an indexable build has no `is-crawlable: off` in it.
+
+**Reading the condition from this process's own environment is legitimate here and would not be
+elsewhere.** `CLAUDE.md` warns that a gate inferring the state of a system it does not run in is
+asserting against something it cannot see — `check-axe` did that about Resend and reported
+*"Resend is not configured"* about a server that was. This config **starts the server itself**
+through `startServerCommand`, so the build being measured inherits the environment by
+construction. There is no second machine to be wrong about.
+
+**The `Mobile numbers` step also went red, and it is a cascade rather than a second defect**: the
+desktop failure skipped the mobile collection, so `lhci-report mobile` found no manifest and said
+so. That is the correct behaviour — it is the guard that stops a missing axis reading as a pass.
 
 ---
 

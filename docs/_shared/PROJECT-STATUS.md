@@ -22,7 +22,12 @@ the empty production Sanity dataset since `GS-P00` and is not a candidate anybod
 **CI/build:** local **45-gate** static chain, clean production build on a wiped `.next`, bundle
 budgets, secrets lint and the full served chain pass. **Starting CI:** run `35084597904`
 **`success`** on `1ad462ff`, verified before any work began. Lighthouse cannot run locally on
-Windows and is CI's to answer.
+Windows and is CI's to answer — **and it answered.** Run `35144458922` went `failure` on the
+first push: desktop `categories.seo` **0.66** against a `>= 0.9` floor, because `G-04` made every
+page `noindex` and Lighthouse's `is-crawlable` is then correctly 0. The floor was **not** lowered
+and the `noindex` was **not** removed: the category assertion now applies only to an indexable
+build, and otherwise the eight substantive SEO audits are asserted individually at 1 with only
+`is-crawlable` off — stricter than the floor it replaced. `GS-R001-STAGING-RC.md` §5.3.
 
 **RC status:** **TECHNICALLY PASS.** **Production readiness: NOT READY.** They are different
 statuses — `GS-R001-STAGING-RC.md` §8 lists the thirteen items still owed and who owns each.

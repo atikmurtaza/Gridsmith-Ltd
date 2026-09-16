@@ -231,6 +231,33 @@ would have discarded this phase's own uncommitted work — and a residue grep fo
 case, and its `ZERO-SUBJECT` count expectation moved 13 → 16 deliberately, which is what proves
 that count is counted rather than printed.
 
+### CI found a regression this phase introduced, and the fix is not a lowered bar
+
+Run `35144458922` on the first push went **failure**: thirty steps green, then desktop Lighthouse
+red at `categories.seo` **0.66** against a `>= 0.9` floor, on all four routes and all three runs.
+
+**Real, and mine.** Every page now carries `noindex` unless the deployment is a configured
+production one, so Lighthouse's `is-crawlable` is correctly 0 — the page really is blocked.
+
+The artefact was read rather than guessed at: across **12 runs and 4 routes**, `is-crawlable`
+scored 0 every time and **every other SEO audit scored 1**. One audit carrying ~4.04 of the
+category weight is the whole drop. Performance stayed **1.00** and accessibility **1.00**.
+
+Lowering the floor to 0.66 would also accept a missing title, a missing description, a broken
+canonical and unreadable link text. Removing the `noindex` would delete the safety property to
+make a score green. **Neither was done.** The category assertion now applies only when the build
+is actually indexable; otherwise the eight substantive SEO audits are asserted **individually at
+1** and only `is-crawlable` is off — **stricter than the 0.9 floor it replaced**, which tolerated
+exactly one failing audit and whose ratchet note named `meta-description` as the one it tolerated.
+
+It closes itself: setting `NEXT_PUBLIC_SITE_URL` on a production deployment restores the category
+assertion with no edit. Both branches are proven by **value** — evaluating the config with and
+without that environment returns the two different assertion sets.
+
+Reading the condition from the config's own environment is legitimate here and would not be
+elsewhere: this config **starts the server itself**, so the build measured inherits the
+environment by construction. There is no second machine to be wrong about.
+
 ### Human acceptance — what was done, and what is not claimed
 
 **Done**, in a real Chromium browser against the served candidate: 375/768/1440/1920 with no
