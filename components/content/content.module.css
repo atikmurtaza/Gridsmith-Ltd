@@ -33,9 +33,7 @@
 /* --- Grids -------------------------------------------------------------- */
 
 .serviceList,
-.postList,
-.testimonials,
-.testimonialsTwo {
+.postList {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -45,8 +43,6 @@
 
 .serviceList { grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
 .postList    { grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
-.testimonials    { grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); }
-.testimonialsTwo { grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr)); }
 
 /* --- Services ----------------------------------------------------------- */
 
@@ -56,34 +52,11 @@
 .serviceCard { display: flex; flex-direction: column; gap: var(--space-3); }
 .serviceProblem { margin: 0; color: var(--ink-muted); }
 
-/* --- Testimonials ------------------------------------------------------- */
-
-.testimonialCard { display: flex; }
-.testimonialFigure {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  justify-content: space-between;
-}
-/* No decorative quote glyph. DESIGN.md's register is tactile brutalism; a 6rem curly quote
-   is the soft-UI tell it exists to avoid, and it also reads to a screen reader as nothing. */
-.quote { margin: 0; }
-.quote p { margin: 0; color: var(--ink); }
-.attribution {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding-block-start: var(--space-3);
-  border-block-start: var(--border-hairline) solid var(--line);
-}
-.attributionName { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink); }
-.attributionRole,
-.attributionProject {
-  font-size: var(--text-xs);
-  color: var(--ink-subtle);
-}
-.attributionSource { font-size: var(--text-xs); }
+/* **The testimonial rules are gone — `GS-P06`.** They styled `TestimonialList`, which is
+   deleted: reviews are Master-only now (`GS-O014`) and the cylinder carries its own geometry in
+   `components/master/master.module.css`. Dead CSS in a module file is not free — Next emits per
+   module file and this one is render-blocking on `/`, the route with the least LCP headroom in
+   the programme (`Q-M16`). Left behind, it would also read as a component someone could use. */
 
 /* --- Insights ----------------------------------------------------------- */
 

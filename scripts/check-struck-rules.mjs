@@ -73,6 +73,10 @@ const base = () => [
   { file: 'rule-8-subject.md', text: '| B-09 | ~~Pricing required~~ superseded |\n' },
   { file: 'rule-9-subject.md', text: '~~Each with visible price band~~ superseded\n' },
   { file: 'rule-10-subject.md', text: '~~There is no POA path.~~ superseded by GS-D002\n' },
+  // `GS-P06` / `GS-O013`.
+  { file: 'rule-11-subject.md', text: '~~media buying is not something Gridsmith undertakes~~ struck at GS-P06\n' },
+  { file: 'rule-12-subject.md', text: '~~Gridsmith does not resell hosting.~~ struck at GS-P06\n' },
+  { file: 'rule-13-subject.md', text: '~~No one can certify accessibility.~~ struck at GS-P06\n' },
 ];
 
 const SPECIMENS = [
@@ -99,7 +103,7 @@ const SPECIMENS = [
   {
     name: 'BRANCH 4 — zero subject: corpus below the floor',
     files: base().slice(MIN_FILES),
-    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 10 document(s)')),
+    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 13 document(s)')),
   },
   // `GS-P03` — one specimen per new rule, plus the surviving statement none of them may catch.
   {
@@ -111,6 +115,23 @@ const SPECIMENS = [
     name: 'BRANCH 10 — "Pricing required" restated on a tracker row, unannotated',
     files: [...base(), { file: 'design/PROJECT-TRACKER.md', text: '| B-09 | Service page template | Pricing required |\n' }],
     expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-D002-PRICE-REQUIRED STANDS at design/PROJECT-TRACKER.md:1')),
+  },
+  // `GS-P06`. One per rule, each firing on its own id — a shared specimen would credit
+  // whichever rule the author had in mind (`A-GATE-4-3`).
+  {
+    name: 'BRANCH 12 — the media-buying denial restated, unannotated',
+    files: [...base(), { file: 'design/PROJECT-RULES.md', text: 'Note that media buying is not something Gridsmith undertakes.\n' }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-O013-MEDIA-BUYING-DENIAL STANDS at design/PROJECT-RULES.md:1')),
+  },
+  {
+    name: 'BRANCH 13 — the hosting-resale prohibition restated, unannotated',
+    files: [...base(), { file: 'digital/PROJECT-RULES.md', text: 'Gridsmith does not resell hosting.\n' }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-O013-HOSTING-RESALE STANDS at digital/PROJECT-RULES.md:1')),
+  },
+  {
+    name: 'BRANCH 14 — the categorical accessibility claim restated, unannotated',
+    files: [...base(), { file: 'digital/DESIGN.md', text: 'No one can certify accessibility.\n' }],
+    expect: (r) => !r.ok && r.problems.some((p) => p.includes('GS-O013-ACCESSIBILITY-CERTIFY STANDS at digital/DESIGN.md:1')),
   },
   {
     name: 'BRANCH 11 — a visible price band restated, unannotated',

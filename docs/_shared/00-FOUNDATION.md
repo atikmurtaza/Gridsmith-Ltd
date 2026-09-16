@@ -177,6 +177,9 @@ overruns instead of one framework fact.
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-fast: 150ms;  --dur-base: 250ms;  --dur-slow: 400ms;
 
+  /* Ambient motion — one full cycle of a continuous loop, added at GS-P06 */
+  --dur-cycle: 96s;   --dur-cycle-narrow: 192s;
+
   --container: 1280px;
   --container-narrow: 800px;
   --grid-cols: 12;
@@ -214,7 +217,10 @@ utility silently carrying a different value from the token of the same name is p
 the hazard. Primitives read `var(--text-3xl)`. Tailwind's spacing and layout utilities are
 untouched.
 
-`scripts/check-tokens.mjs` asserts all 39 base tokens survive into the built CSS. The
+`scripts/check-tokens.mjs` asserts all 41 base tokens survive into the built CSS.
+**39 until `GS-P06`**, which added the two ambient-loop durations above: the duration
+gate's own instruction is that a fourth duration goes into this layer first, and the
+Master review cylinder needed one measured in seconds rather than milliseconds. The
 failure it exists for is silent: a broken import chain leaves every `var()` resolving to
 nothing while the build still succeeds.
 

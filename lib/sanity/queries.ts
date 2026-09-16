@@ -67,18 +67,16 @@ export type ServiceDetail = {
   isSeed: boolean;
 };
 
-export type TestimonialCard = {
-  quote: string;
-  authorName: string;
-  authorRole: string | null;
-  authorCompany: string | null;
-  division: Division | null;
-  projectTitle: string | null;
-  sourceUrl: string | null;
-  sourceLabel: string | null;
-  verified: boolean;
-  isSeed: boolean;
-};
+/* **There is no `TestimonialCard` type and no testimonial reader here any more — `GS-P06`.**
+
+   The `testimonial` document type still exists in Sanity and the six genuine records still sit
+   in the development dataset; what was removed is the site's dependency on them. Reviews now
+   come from Freelancer's official API through `lib/reviews/freelancer.ts`, which is a cache
+   rather than a stored copy — the form Freelancer's API T&Cs §5.1 and §5.3 permit.
+
+   Restoring a reader here would put the site back on two sources for one claim, which is the
+   `01-VALIDATION-REPORT.md` §21 shape: two authored artefacts that must agree, only one of them
+   delivered. Do not add one back without retiring the other in the same commit. */
 
 export type PortableBlock = {
   _type: string;
@@ -144,13 +142,6 @@ export type LegalDocument = {
   isSeed: boolean;
 };
 
-const TESTIMONIAL = `
-  quote, authorName, authorRole, authorCompany, division, projectTitle,
-  sourceUrl, sourceLabel,
-  "verified": coalesce(verified, false),
-  "isSeed": coalesce(isSeed, false)
-`;
-
 const q = <T,>(query: string, params: Record<string, unknown> = {}) =>
   sanityClient.fetch<T>(query, params);
 
@@ -200,20 +191,6 @@ export const listServiceSlugs = (division: Division) =>
     `*[_type == "service" && division == $division && published == true
        && !(_id in path("drafts.**"))].slug.current`,
     { division },
-  );
-
-export const listTestimonials = (limit: number) =>
-  q<TestimonialCard[]>(
-    `*[_type == "testimonial" && !(_id in path("drafts.**"))]
-     | order(isSeed asc, authorName asc)[0...$limit]{${TESTIMONIAL}}`,
-    { limit },
-  );
-
-export const listTestimonialsForDivision = (division: Division, limit: number) =>
-  q<TestimonialCard[]>(
-    `*[_type == "testimonial" && !(_id in path("drafts.**"))]
-     | order(select(division == $division => 0, 1), isSeed asc)[0...$limit]{${TESTIMONIAL}}`,
-    { division, limit },
   );
 
 export const listPosts = (limit?: number) =>

@@ -210,6 +210,213 @@
   font-size: var(--text-lg);
 }
 
+/* --- Block 6: the Freelancer review cylinder — GS-P06, GS-O014 ------------ */
+
+/* THE BASE IS THE FLAT GRID, and the cylinder is layered on top of it inside one guarded
+   block. That inversion is the whole accessibility and robustness story in one decision:
+
+     - `prefers-reduced-motion: reduce`  -> the base, a static grid of the same twelve cards
+     - no `tan()` in CSS                 -> the base, same grid
+     - otherwise                         -> the cylinder
+
+   Content parity under reduced motion is therefore structural rather than maintained: it is
+   the same DOM, the same twelve reviews, in the same order, with the 3D layer simply not
+   applied. There is no second markup path to keep in step — which is `01-VALIDATION-REPORT.md`
+   §21's defect class, and the cheapest place to not have it is here, before it exists.
+
+   `tokens.css`'s global reduced-motion reset is not sufficient on its own and this does not
+   rely on it. That reset kills the animation, which would leave twelve cards stacked in one
+   grid cell at fixed 3D angles — most of them backface-hidden. Stopping the rotation is not
+   the same as undoing the cylinder, and only the second one leaves a readable page. */
+
+.reviewBlock { display: contents; }
+
+.reviewStage { position: relative; }
+
+.reviewRing {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-6);
+}
+
+.reviewCard {
+  display: flex;
+  background: var(--canvas);
+  border: var(--border-hairline) solid var(--line);
+  padding: var(--space-6);
+}
+
+.reviewFigure {
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* No decorative quote glyph, for the reason content.module.css already gives: a 6rem curly
+   quote is the soft-UI tell DESIGN.md's register exists to avoid. */
+.reviewQuote { margin: 0; }
+/* One step down from body size. A review card is a fixed box on a ring and the longest genuine
+   body is 466 characters; at body size that body overruns the card, and the alternatives are
+   truncating a quotation or making the card so tall it stops reading as a card. Measured
+   against every one of the twelve, not estimated — see the GS-P06 handoff. */
+.reviewQuote p { margin: 0; color: var(--ink); font-size: var(--text-sm); }
+
+/* `margin-block-start: auto` pins the attribution to the foot of a fixed-height card, so a
+   32-character review and a 466-character one line their metadata up along the ring instead
+   of floating it wherever the quote happens to end. */
+.reviewMeta {
+  margin-block-start: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block-start: var(--space-3);
+  border-block-start: var(--border-hairline) solid var(--line);
+}
+
+.reviewName { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink); }
+
+/* Monospace marks anything verifiable — CLAUDE.md's one cross-theme convention. A rating and
+   a date are both checkable against the profile the link below reaches. */
+.reviewFacts {
+  display: flex;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+}
+
+.reviewCategory,
+.reviewSource { font-size: var(--text-xs); color: var(--ink-subtle); }
+
+/* Hidden in the base layer: nothing is moving, so a pause control would be a control for
+   something that is already still. It is revealed inside the cylinder block. */
+.reviewControls { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The radius needs `tan()`. A browser without it computes an invalid `--ring-radius`, which
+     would poison the card `transform` and collapse all twelve into one stack — so the whole
+     cylinder is guarded rather than the one declaration that needs it. */
+  @supports (transform: translateZ(calc(1px / tan(30deg)))) {
+    .reviewStage {
+      overflow: hidden;
+      /* Perspective sits on the stage, not the ring: the ring is the thing being rotated, and
+         a perspective on an animated element is re-resolved every frame. */
+      perspective: 80rem;
+      height: calc(var(--review-card-h) + var(--space-8));
+      display: grid;
+      place-items: center;
+
+      --review-card-w: 24rem;
+      --review-card-h: 27rem;
+    }
+
+    .reviewRing {
+      /* One grid cell. Every card is stacked in it and then turned out to its own angle. */
+      display: grid;
+      grid-template-columns: none;
+      place-items: center;
+      gap: 0;
+      transform-style: preserve-3d;
+      animation: gsReviewRing var(--dur-cycle) linear infinite;
+      will-change: transform;
+
+      --ring-step: calc(360deg / var(--review-count));
+      /* The circumscribed radius for `n` cards of width `w` with `g` between them. Derived
+         rather than tuned, so adding a thirteenth review re-forms a true cylinder with no
+         stylesheet edit — the geometry follows the data, which is the only way this keeps
+         working for reviews nobody has seen yet. */
+      --ring-radius: calc(
+        (var(--review-card-w) / 2 + var(--space-6) / 2) / tan(calc(var(--ring-step) / 2))
+      );
+    }
+
+    .reviewCard {
+      grid-area: 1 / 1;
+      width: var(--review-card-w);
+      height: var(--review-card-h);
+      /* The far half of the ring faces away; hiding it halves what is painted per frame and
+         removes any chance of mirrored text showing through the near cards. */
+      backface-visibility: hidden;
+      transform:
+        rotateY(calc(var(--review-index) * var(--ring-step)))
+        translateZ(var(--ring-radius));
+    }
+
+    /* GS-P06 §15. Hover behind `(hover: hover)` so a touch device does not inherit a sticky
+       hover state it has no way to leave; `:focus-within` covers the keyboard. */
+    @media (hover: hover) {
+      .reviewStage:hover .reviewRing { animation-play-state: paused; }
+    }
+    /* `:focus-within` on the BLOCK, not the stage. Nothing inside the stage is focusable — that
+       is the deliberate consequence of keeping links off the cards — so a rule scoped to the
+       stage could never fire: a hollow rule that looks like keyboard support and is not. Scoped
+       to the block it covers the pause control and the profile link, which is every way a
+       keyboard reaches this region. */
+    .reviewBlock:focus-within .reviewRing { animation-play-state: paused; }
+
+    /* WCAG 2.2 SC 2.2.2 — the mechanism that does not depend on a pointer. */
+    .reviewBlock:has(.reviewPauseInput:checked) .reviewRing { animation-play-state: paused; }
+
+    /* Beneath the stage rather than over it. Inside the stage it sat on top of whichever card
+       happened to be passing the bottom-left corner, which is the one place a control must not
+       be: over moving content it is competing with. */
+    .reviewControls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin: var(--space-4) 0 0;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--ink-muted);
+    }
+    .reviewPauseInput { margin: 0; }
+    .reviewPauseInput:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+    /* WCAG 2.2 SC 1.4.1 — the checked state carries a cue a reader perceives without
+       separating hues, which is also simply the clearer control. */
+    .reviewPauseInput:checked + .reviewPauseLabel { font-weight: 600; }
+
+    /* GS-P06 §17 — the cylinder is preserved at every width and its GEOMETRY is what adapts.
+       A narrower card holds fewer characters per line and therefore needs more height, and the
+       radius follows the width automatically, so these two custom properties are the whole
+       responsive story. Compressing the desktop geometry instead would shrink the review text
+       until it was decoration, which is the one outcome §17 rules out. */
+    @media (max-width: 60rem) {
+      .reviewStage { --review-card-w: 20rem; --review-card-h: 31rem; perspective: 64rem; }
+    }
+    @media (max-width: 40rem) {
+      .reviewStage { --review-card-w: 17rem; --review-card-h: 32rem; perspective: 48rem; }
+      .reviewCard { padding: var(--space-4); }
+      /* Half speed. A narrow viewport shows one card at a time and no touch device has a
+         hover pause, so the front dwell is the whole of the reading time there. §17 authorises
+         the speed as one of the things that adapts. */
+      .reviewRing { animation-duration: var(--dur-cycle-narrow); }
+    }
+  }
+}
+
+/* `translateZ(-radius)` on the RING is what keeps the front card life-size. Without it the
+   front card sits a full radius nearer the camera than the perspective origin and is magnified
+   past the stage; with it, the card at the front is at z = 0 and renders at its true size while
+   the rest recede. It lives here rather than on the ring's own `transform` because the animation
+   owns that property and would otherwise drop it every frame.
+
+   `rotateY` runs NEGATIVE, and that is the direction requirement rather than a preference.
+   Positive rotation carries the near arc toward +x — to the right — so right-to-left travel
+   (GS-P06 §13) is the negative turn. One `to` of a full turn is also what makes the loop
+   seamless: the ring's state at 360° is identical to its state at 0°, so there is no boundary
+   to reset across and no jump to hide.
+
+   transform only — PROJECT-RULES §9. */
+@keyframes gsReviewRing {
+  from { transform: translateZ(calc(-1 * var(--ring-radius))) rotateY(0deg); }
+  to   { transform: translateZ(calc(-1 * var(--ring-radius))) rotateY(-1turn); }
+}
+
 /* Block 9. Centred is one of exactly two exceptions in DESIGN.md §4 — the hero and this. */
 .ctaBand {
   display: flex;

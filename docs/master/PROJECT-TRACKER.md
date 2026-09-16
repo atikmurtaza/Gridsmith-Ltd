@@ -32,6 +32,22 @@ single-launch model and production seed protections remain active.
 
 ---
 
+## GS-P06 — `N-01` block 6 is live, and it is Master's alone — 16 September 2026
+
+| Item | Outcome |
+|---|---|
+| `N-01` block 6 (clients and testimonials) | **LIVE and no longer blocked.** `M-P2-26` recorded it as waiting on the founder for real testimonials; the reviews were always real, and since `GS-P05` they come from Freelancer's official API rather than a hand transcription. `GS-O014` is the owner decision that switched it on |
+| Source | `lib/reviews/freelancer.ts` — official documented API, no credential, 24h revalidating cache, **no stored copy anywhere**. `/` stays prerendered static and revalidates daily |
+| Published | **10 of 12.** Two are withheld pending `GS-O015` — they name a third-party company disparagingly, which is a publication decision `GS-O014` was never asked |
+| Presentation | `components/master/ReviewCylinder.tsx` — a 3D cylinder travelling right to left, seamless, **CSS only, zero client JS**. Master's delta is unchanged at 1.9KB of 15KB |
+| Accessibility | Real pause control (WCAG 2.2 SC 2.2.2 is Level A and a hover pause does not satisfy it), hover and `:focus-within` pause, no focusable element ever carried behind the ring, flat grid at full content parity under `prefers-reduced-motion` |
+| Division pages | **No reviews at all.** `GS-O014`'s amendment: Freelancer's skill taxonomy is not a map of Design / Digital / Press, and ranking by it put a 3D review and a logo review on Press |
+| One source, enforced by deletion | `listTestimonials`, `listTestimonialsForDivision`, `TestimonialCard` and `components/content/TestimonialList.tsx` are gone. The six `testimonial` documents stay in the **development** dataset as historical data and are still a `check:service-content` subject |
+| Gates | **`check:reviews-ui`** — ten questions over the served page, each proven by deliberate failure. `check:axe` gains `targetPattern` and two entries for the ring's unavoidable `color-contrast` incompletes; **zero violations, zero unresolved**. Base tokens 39 → **41** (`--dur-cycle`, `--dur-cycle-narrow`) |
+| `GS-O013`, `GS-O014` | **COMPLETED** · `GS-O015` **NEW** |
+
+---
+
 ## GS-P01 security hardening — 11 September 2026
 
 **Status: COMPLETE IN REPOSITORY; live database migration and application deployment are not

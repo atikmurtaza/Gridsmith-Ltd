@@ -22,12 +22,15 @@ import {
   DIGITAL_MARKETING_ENGAGEMENT,
   UNCONFIRMED_CHANNEL_SERVICES,
 } from '../lib/services/catalogue.ts';
-import { SERVICES } from './service-content.mjs';
+import { PROCESS_DETAIL, SERVICES } from './service-content.mjs';
 import {
   IDENTIFYING_TITLE_FRAGMENTS,
+  MIN_COPY_STRINGS,
+  STRUCK_COPY_RULES,
   anonymityProblems,
   coverageProblems,
   engagementProblems,
+  struckCopyProblems,
 } from './service-content-rules.mjs';
 
 /** A minimal, internally consistent world: two approved services, one record covering both. */
@@ -162,7 +165,7 @@ t('LIMB 5 CHANNEL — a record claiming an unconfirmed channel service (GS-O012)
     unconfirmed: UNCONFIRMED_CHANNEL_SERVICES,
   });
   assert.deepEqual(problems, [
-    'UNCONFIRMED CHANNEL: x claims "Media buying", which no owner decision confirms (GS-O012)',
+    'UNCONFIRMED CHANNEL: x claims "Media buying" as a service record, and no approved catalogue entry carries it (GS-O012, narrowed at GS-O013)',
   ]);
 });
 
@@ -292,6 +295,96 @@ t('REAL — the committed catalogue and content module are consistent', () => {
     }),
     [],
   );
+});
+
+/* -- struckCopyProblems, one branch at a time ----------------------------- */
+
+/**
+ * `GS-P06`. One specimen per struck position, and **each specimen must fire exactly one rule**.
+ *
+ * That last clause is the point. `CLAUDE.md` records `A-GATE-4-3`: where two checks can fire on
+ * one input, a proof that only observes a red credits whichever one the author had in mind. Two
+ * of these rules are two phrasings of the same struck position, so their specimens sit closest
+ * to that hazard — the assertion below names the id it expects **and** asserts nothing else
+ * fired, which is what makes each of the eleven a separately proven branch rather than eleven
+ * readings of whichever rule happens to be greediest.
+ *
+ * Keyed by rule id, and the parity case beneath refuses a rule with no specimen: a rule added
+ * without one would otherwise be a registered position nothing has ever broken.
+ */
+const STRUCK_SPECIMENS = {
+  'MEDIA-BUYING-DENIAL': 'Gridsmith does not buy media on your behalf.',
+  'MEDIA-BUYING-NOT-UNDERTAKEN': 'Media buying is not part of this service.',
+  'AD-ACCOUNT-DENIAL': 'We do not run ad accounts or set budgets.',
+  'HOSTING-RESALE-PROHIBITION': 'Gridsmith does not resell hosting.',
+  'ACCESSIBILITY-CATEGORICAL': 'No one can certify accessibility.',
+  'COMBATIVE-ANYONE-HONEST': 'Not offered by anyone honestly.',
+  'COMBATIVE-ANYONE-PROMISE': 'Listing decisions are not within anyone’s gift to promise.',
+  'OWNERSHIP-ABSOLUTE-CODE': 'The code is yours at the end of the engagement.',
+  'OWNERSHIP-ABSOLUTE-ACCOUNTS': 'Hosting, domain and CMS accounts are yours.',
+  'OWNERSHIP-ABSOLUTE-HELD-IN-YOUR-NAME': 'Accounts and ISBNs are obtained and held in your name.',
+  'CONTINUITY-QUOTED-AS-FURTHER-WORK': 'Later amends are quoted as further work.',
+};
+
+/** Enough strings to clear the floor, so only the injection under test can be the finding. */
+const padding = Array.from({ length: MIN_COPY_STRINGS }, (_, i) => `filler ${i}, not a subject`);
+
+/** @param {string} specimen */
+const struckFor = (specimen) =>
+  struckCopyProblems({
+    services: { design: [{ slug: 'specimen', description: [...padding, specimen] }] },
+    process: {},
+  }).problems.filter((problem) => problem.startsWith('STRUCK COPY:'));
+
+for (const rule of STRUCK_COPY_RULES) {
+  t(`STRUCK ${rule.id} — fires, and nothing else does`, () => {
+    const specimen = STRUCK_SPECIMENS[rule.id];
+    assert.ok(specimen, `${rule.id} has no committed specimen — it has never been broken`);
+    const fired = struckFor(specimen);
+    assert.equal(
+      fired.length,
+      1,
+      `expected exactly one rule to fire on ${JSON.stringify(specimen)}, got ${fired.length}:\n${fired.join('\n')}`,
+    );
+    assert.ok(
+      fired[0].includes(rule.id),
+      `expected ${rule.id} to fire on ${JSON.stringify(specimen)}, got:\n${fired[0]}`,
+    );
+  });
+}
+
+t('STRUCK parity — every specimen names a registered rule', () => {
+  const ids = new Set(STRUCK_COPY_RULES.map((r) => r.id));
+  const orphans = Object.keys(STRUCK_SPECIMENS).filter((id) => !ids.has(id));
+  assert.deepEqual(orphans, [], `specimens for rules that no longer exist: ${orphans.join(', ')}`);
+});
+
+t('STRUCK ZERO-SUBJECT — an empty walk is a failure, not a pass', () => {
+  const { problems, scanned } = struckCopyProblems({ services: {}, process: {} });
+  assert.equal(scanned, 0);
+  assert.ok(
+    problems.some((p) => p.startsWith('ZERO-SUBJECT: 0 copy string(s) read')),
+    `an empty subject must fail loudly, got: ${JSON.stringify(problems)}`,
+  );
+});
+
+t('STRUCK count moves — the scanned figure is counted, not printed', () => {
+  const one = struckCopyProblems({ services: { design: [{ slug: 'a' }] }, process: {} }).scanned;
+  const two = struckCopyProblems({
+    services: { design: [{ slug: 'a', summary: 'b' }] },
+    process: {},
+  }).scanned;
+  assert.equal(one, 1);
+  assert.equal(two, 2);
+});
+
+t('REAL — no struck position stands in the committed copy', () => {
+  const { problems, scanned } = struckCopyProblems({
+    services: SERVICES,
+    process: PROCESS_DETAIL,
+  });
+  assert.ok(scanned >= MIN_COPY_STRINGS, `only ${scanned} string(s) were read`);
+  assert.deepEqual(problems, []);
 });
 
 /* -- Run ------------------------------------------------------------------ */

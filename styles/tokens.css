@@ -42,6 +42,15 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-fast: 150ms;  --dur-base: 250ms;  --dur-slow: 400ms;
 
+  /* Ambient motion — a continuous loop rather than a UI transition, and a separate pair for
+     that reason. The three durations above are what a control takes to answer a reader;
+     seconds of them would be a broken interface. These are what one full cycle of something
+     that never finishes takes, where the duration is a reading pace and not a response time.
+     `--dur-cycle-narrow` is the deliberately slower one: a narrow viewport shows one card at
+     a time and no touch device has a hover pause, so the dwell IS the reading time. Added at
+     GS-P06 for the Master review cylinder. */
+  --dur-cycle: 96s;   --dur-cycle-narrow: 192s;
+
   --container: 1280px;
   --container-narrow: 800px;
   --grid-cols: 12;

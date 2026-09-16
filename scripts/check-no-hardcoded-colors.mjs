@@ -107,8 +107,22 @@ const AMBER_AS_TEXT = {
  * The fix is a declaration mask, not a longer regex: the word is flagged anywhere inside
  * a declaration value, and nowhere else. Doing it with a lookbehind alone would flag
  * `.gold`, `#silver` and prose in comments.
+ *
+ * ## `(?!\s*\()` — a colour name is never a function call
+ *
+ * **`tan` is both a named CSS colour and a trigonometric function**, and this rule flagged
+ * `tan(15deg)` in a `calc()` as a hardcoded colour (`GS-P06`, the review cylinder's radius).
+ * That is the gate being *wrong*, not the stylesheet: `tan(` is unambiguously the function,
+ * because no named colour is ever followed by an open parenthesis — `red(...)` is not CSS.
+ * So the lookahead closes a false positive and opens no hole, and it is written over the whole
+ * alternation rather than special-casing `tan`, since the reasoning is about the shape and not
+ * about that one word.
+ *
+ * Extended here rather than worked around in the stylesheet. Writing the radius as
+ * `cos()/sin()` would have passed a gate that was still wrong, and the next `tan()` would have
+ * hit it again — `CLAUDE.md`: where an existing gate is close but wrong, extend it.
  */
-const NAMED = /(?<![\w-])(?:red|blue|green|black|white|gray|grey|orange|yellow|purple|pink|brown|cyan|magenta|silver|gold|navy|teal|olive|maroon|lime|aqua|fuchsia|crimson|coral|salmon|khaki|violet|indigo|turquoise|tan|beige|ivory)(?![\w-])/gi;
+const NAMED = /(?<![\w-])(?:red|blue|green|black|white|gray|grey|orange|yellow|purple|pink|brown|cyan|magenta|silver|gold|navy|teal|olive|maroon|lime|aqua|fuchsia|crimson|coral|salmon|khaki|violet|indigo|turquoise|tan|beige|ivory)(?![\w-])(?!\s*\()/gi;
 
 /**
  * Blanks everything that is not a declaration value, preserving offsets so line and

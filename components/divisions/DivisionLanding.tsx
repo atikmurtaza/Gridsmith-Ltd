@@ -8,11 +8,10 @@ import { Section } from '@/components/primitives/Section';
 import { Button } from '@/components/primitives/Button';
 import { ProcessStages } from '@/components/master/ProcessStages';
 import { ServiceList } from '@/components/content/ServiceList';
-import { TestimonialList } from '@/components/content/TestimonialList';
 import { SERVICE_BASE_PATH } from '@/components/content/ServiceDetail';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
 import { ENQUIRY_CTA, PRIVATE_EXAMPLES_NOTICE, enquiryHref } from '@/lib/services/architecture';
-import { listServices, listTestimonialsForDivision, type Division } from '@/lib/sanity/queries';
+import { listServices, type Division } from '@/lib/sanity/queries';
 import styles from './divisions.module.css';
 
 /**
@@ -70,11 +69,7 @@ export async function DivisionLanding({
    */
   afterHero?: ReactNode;
 }) {
-  const [services, testimonials, company] = await Promise.all([
-    listServices(division),
-    listTestimonialsForDivision(division, 3),
-    getCompanyDetails(),
-  ]);
+  const [services, company] = await Promise.all([listServices(division), getCompanyDetails()]);
 
   return (
     <main id="main" tabIndex={-1}>
@@ -121,18 +116,22 @@ export async function DivisionLanding({
         </Container>
       </Section>
 
-      {testimonials.length > 0 ? (
-        <Section surface="sunken" labelledBy="said">
-          <Container>
-            <div className={styles.blockIntro}>
-              <Heading level={2} id="said">
-                What clients have said
-              </Heading>
-            </div>
-            <TestimonialList testimonials={testimonials} />
-          </Container>
-        </Section>
-      ) : null}
+      {/* **No review block. `GS-O014`, the owner's Master-only amendment, 16 September 2026.**
+
+          Until `GS-P06` this rendered three reviews ranked by a `division` field. That field was
+          derived from Freelancer's skill taxonomy, and the taxonomy does not map onto Design /
+          Digital / Press: a 3D-project review and a logo-design review both surfaced on Press.
+          The reviews were genuine and the attribution was not — a real quote filed under the
+          wrong studio is still a claim nobody can check.
+
+          **The fix is not a better classifier.** Inventing a division for a review Freelancer
+          never assigned one to is exactly the speculative metadata `GS-P05` built the pipeline
+          to avoid, and it would fail silently on the next review nobody has seen. Master
+          represents Gridsmith as a whole, so the complete eligible feed belongs there and
+          nowhere else — `components/master/Testimonials.tsx`.
+
+          This does not rule out division-level evidence from a properly curated source later.
+          It rules out THIS source being split three ways on a guess. */}
 
       <Section labelledBy="process">
         <Container>

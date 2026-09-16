@@ -169,6 +169,28 @@ export function categorise(jobNames: readonly string[] | null | undefined) {
   return CATEGORIES.find((c) => c.jobs.some((j) => present.has(j))) ?? null;
 }
 
+/**
+ * **Reviews held back pending `GS-O015`, by Freelancer review id.**
+ *
+ * `GS-O014` accepted publication of all twelve, and the question it was asked was whether
+ * criticism **of Gridsmith** could be published. It can, and the 4.6 is on the page. These two
+ * are a different question the owner has not been asked, found at `GS-P06` by reading all twelve
+ * bodies rather than by any rule: both name a third-party development company in terms
+ * (*"very disgraceful"*, *"a massive mistake"*) that Gridsmith would be **republishing on its own
+ * homepage**. One of them also carries the client's own product name in the body.
+ *
+ * Freelancer hosting a reviewer's words and Gridsmith reprinting them are different publications
+ * with different exposure, and `AI-DEVELOPMENT-PROTOCOL.md` puts a legal commitment nobody has
+ * taken into `OWNER-ACTIONS.md` rather than into a build. **Editing the quotation is not
+ * available** (`GS-P06` §14), so the only two options are publish whole or withhold whole, and
+ * withholding is the reversible one: nothing is deleted, the API is unchanged, and emptying this
+ * array publishes them.
+ *
+ * **This is a default, not a decision.** `GS-O015` is one owner sentence, and the gates report
+ * the withheld count on every run so it cannot go quiet.
+ */
+export const WITHHELD_REVIEW_IDS: readonly number[] = [22108992, 22100632];
+
 /** A URL or an email address anywhere in a body. Both are contact or identity leaks. */
 const CONTACT_IN_BODY = /(https?:\/\/|www\.|[\w.+-]+@[\w-]+\.[a-z]{2,})/i;
 
@@ -188,6 +210,7 @@ const CONTACT_IN_BODY = /(https?:\/\/|www\.|[\w.+-]+@[\w-]+\.[a-z]{2,})/i;
  *    as the body, so this needs no maintained list and covers reviewers nobody has seen yet.
  * 2. **A URL or email address appears in the body.**
  * 3. **The body is empty once trimmed.** Nothing to print.
+ * 4. **The review id is in `WITHHELD_REVIEW_IDS`.** `GS-O015` — see that constant.
  *
  * **The stated ceiling:** rule 1 can only see a company Freelancer actually publishes. A client
  * naming an employer that is not on their profile is not detectable here and is not claimed to
@@ -196,7 +219,14 @@ const CONTACT_IN_BODY = /(https?:\/\/|www\.|[\w.+-]+@[\w-]+\.[a-z]{2,})/i;
  *
  * @returns the reason, or `null` when the body is publishable verbatim
  */
-export function withholdReason(body: string | null | undefined, reviewerCompany?: string | null) {
+export function withholdReason(
+  body: string | null | undefined,
+  reviewerCompany?: string | null,
+  id?: number,
+) {
+  if (typeof id === 'number' && WITHHELD_REVIEW_IDS.includes(id)) {
+    return 'the review is held pending GS-O015 (it names a third party)';
+  }
   if (typeof body !== 'string' || body.trim().length === 0) return 'the body is empty';
   const company = typeof reviewerCompany === 'string' ? reviewerCompany.trim() : '';
   if (company.length > 2 && body.toLowerCase().includes(company.toLowerCase())) {
@@ -258,7 +288,7 @@ export function toReviews(
     if (review.status && review.status !== 'active') continue;
 
     const user = users[String(review.from_user_id)] ?? {};
-    const reason = withholdReason(review.description, user.company);
+    const reason = withholdReason(review.description, user.company, review.id);
     if (reason) {
       withheld.push({ id: review.id, reason });
       continue;

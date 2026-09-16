@@ -185,9 +185,18 @@ export function divisionOfGroup(group: string): ServiceDivision | null {
  * campaign coordination. It maps to `Technical SEO`, which is the approved Digital capability
  * that local-search configuration belongs to.
  *
- * **Media buying is still NOT confirmed.** It was listed as an open channel at `GS-O012` and the
- * owner's confirmation did not name it. It is not inferred from the ones that were named, and it
- * stays in `UNCONFIRMED_CHANNEL_SERVICES` below.
+ * ## Paid media — the position corrected at `GS-P06`, `GS-O013`
+ *
+ * `GS-P05` read `GS-O012`'s silence on "media buying" as a refusal and let the published copy go
+ * on **denying** it. The owner's `GS-O013` remediation says that is wrong: managing a Google Ads
+ * or a Meta account is placing paid media, so denying media buying contradicts capabilities the
+ * same owner had already confirmed. The denial is struck from the copy and the capability is
+ * stated as its own engagement row above.
+ *
+ * **What did not change is the catalogue.** No approved service was added, because `GS-O013`
+ * confirms paid-media *management* and does not ask for a standalone media-buying product. That
+ * is why `Media buying` stays in `UNCONFIRMED_CHANNEL_SERVICES` below, on a narrower reading than
+ * it had — see that list's own note.
  *
  * **Confirming a capability is not approving copy for it.** No public wording exists for any
  * channel service, and none is invented here. Master engagement-model copy is still unwritten
@@ -209,6 +218,12 @@ export const DIGITAL_MARKETING_ENGAGEMENT: readonly {
   // production work that is already in the catalogue, and none of them is a medium.
   { activity: 'Google Ads / PPC management', owner: 'master', approved: null },
   { activity: 'Meta / Facebook / Instagram advertising management', owner: 'master', approved: null },
+  // `GS-O013`, 16 September 2026. The owner's remediation records that denying media buying
+  // contradicts the paid-channel capabilities confirmed at `GS-O012`: managing a Google Ads or
+  // a Meta account *is* placing paid media. This row states that position once, explicitly, so
+  // no later reader has to infer it from the two rows above — and so the copy correction has a
+  // recorded capability behind it rather than only a deleted sentence.
+  { activity: 'Paid media management and placement within managed advertising accounts', owner: 'master', approved: null },
   { activity: 'Social media account management', owner: 'master', approved: null },
   { activity: 'Email marketing campaigns', owner: 'master', approved: null },
   { activity: 'Visual campaign creative', owner: 'design', approved: { group: 'brand-visual', name: 'Marketing and campaign creative' } },
@@ -226,22 +241,26 @@ export const DIGITAL_MARKETING_ENGAGEMENT: readonly {
 ];
 
 /**
- * Channel/platform services **no owner decision confirms**. Listed so the position is visible
- * and gate-checkable, never so they can be rendered: `check:service-content` asserts no seeded
- * service claims one of these.
+ * Channel/platform phrases that **may not appear as a seeded service record's own claim** —
+ * its title or one of its `covers`. `coverageProblems` limb 5 asserts it.
  *
- * ## It is one entry now, and that is the whole list — not a leftover
+ * ## `GS-O012` opened with nine; eight were confirmed, and the ninth changed meaning at `GS-P06`
  *
- * `GS-O012` opened with nine. The owner confirmed eight of them on 16 September 2026 and they
- * moved into `DIGITAL_MARKETING_ENGAGEMENT` above. **Media buying was not among the confirmed
- * capabilities**, and is not inferred from the ones that were: buying inventory places
- * Gridsmith between a client and a spend commitment, which is a different commercial position
- * from managing a campaign on a client's own account.
+ * The eight confirmed on 16 September 2026 moved into `DIGITAL_MARKETING_ENGAGEMENT` above.
+ * `Media buying` stayed here on the reading that the owner's silence was a refusal.
  *
- * Keeping the list non-empty is also what keeps this assertion alive. `coverageProblems` reads
- * it as the denylist a seeded record may not claim; an empty list would leave the gate matching
- * nothing while still reporting a pass — a check with no subject, which `CLAUDE.md` rates worse
- * than a red one. If media buying is ever confirmed, the entry does not simply disappear: the
- * rule is struck and registered in `check:struck` in the same commit.
+ * **`GS-O013` corrected that reading, and this list survives it on a narrower one.** Paid-media
+ * management is now an explicit engagement row, and no copy denies it. What is still absent is an
+ * **approved catalogue entry** for standalone media buying: `GS-O013` also says the catalogue may
+ * not be materially expanded, so a service record titled *Media buying*, or claiming it as a
+ * capability, would be a page for something the 81-service approval does not contain. That is
+ * what this list refuses — a service **record**, not the capability.
+ *
+ * Nothing in `DIGITAL_MARKETING_ENGAGEMENT` is in scope for the assertion: limb 5's haystack is a
+ * record's title and `covers` only, and engagement activities are neither.
+ *
+ * Keeping the list non-empty is also what keeps the assertion alive. An empty list would leave
+ * the gate matching nothing while still reporting a pass — a check with no subject, which
+ * `CLAUDE.md` rates worse than a red one.
  */
 export const UNCONFIRMED_CHANNEL_SERVICES: readonly string[] = ['Media buying'];

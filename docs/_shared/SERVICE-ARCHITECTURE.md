@@ -74,8 +74,11 @@ capability and is unrelated to the deferred decision not to run analytics on thi
 
 Nothing speculative was added at `GS-P03`. **Advertising and paid-channel management entered the
 model at `GS-P05`** — as cross-division *engagements* under Master, never as capability groups or
-services (§13, `GS-O012`). **Media buying is still not in the model** and was not inferred from
-the channels that were confirmed.
+services (§13, `GS-O012`). **Paid media management and placement was added as a nineteenth
+engagement row at `GS-P06`** (`GS-O013`), because the owner's remediation records that denying
+media buying contradicts the channels already confirmed: managing a Google Ads or a Meta account
+IS placing paid media. There is still no approved catalogue entry for standalone media buying and
+none was added — the catalogue is 81 services, unchanged. §13.
 
 ## 3. Cross-division boundaries
 
@@ -112,7 +115,7 @@ Nothing below changes the live site, DNS or redirects; that is a later release t
 | **Google Ads setup or support** (FAQ, §7) | Cross-division engagement — Master | **RESOLVED at `GS-P05`** — confirmed by the owner (`GS-O012`), not inferred from the live site. §13 |
 | **Google Business Profile Support** (§4) | Digital — Operate & Improve (technical SEO) | **RESOLVED at `GS-P05`** — confirmed, and the one channel owned by a division. §13 |
 | **Meta/Facebook/Instagram advertising · social media management · email marketing** (§4, §8) | Cross-division engagement — Master | **RESOLVED at `GS-P05`** (`GS-O012`) |
-| **Media buying** | None | **Still open.** Not among the confirmed capabilities and not inferred from them; sole entry in `UNCONFIRMED_CHANNEL_SERVICES` |
+| **Media buying** | Cross-division engagement — Master | **RESOLVED at `GS-P06`** (`GS-O013`) as paid media management and placement *within managed advertising accounts*. It stays in `UNCONFIRMED_CHANNEL_SERVICES` on a narrower reading — no approved catalogue entry carries standalone media buying, so no service **record** may claim it. §13 |
 | Pakistan governing law, refund copy, legacy emails | — | Already superseded by `docs/_legal/`; not a service question |
 
 ## 5. CMS and content model
@@ -365,11 +368,38 @@ has carried since `GS-P04` for exactly this.
 **Google Business Profile is the one channel owned by a division**, because its confirmed scope is
 setup and technical configuration of a local-search listing rather than campaign coordination.
 
-**Media buying is still not confirmed.** It was one of the nine and the owner's confirmation did
-not name it, so it is not inferred from its neighbours: buying inventory puts Gridsmith between a
-client and a spend commitment, which is a different commercial position from managing a campaign
-on a client's own account. It is the sole remaining entry in `UNCONFIRMED_CHANNEL_SERVICES`, which
-keeps that gate's denylist non-empty and therefore alive.
+### Media buying — the `GS-P05` reading, and the `GS-P06` correction
+
+**`GS-P05` wrote:** *"Media buying is still not confirmed … buying inventory puts Gridsmith
+between a client and a spend commitment, which is a different commercial position from managing a
+campaign on a client's own account."* That reasoning is preserved because it is the record of what
+was decided, and **`GS-O013` overturned it.**
+
+The owner's remediation states the contradiction plainly: the site was denying media buying while
+selling Google Ads and Meta account management, and running an ad account is placing paid media.
+`GS-P05` had read the owner's silence at `GS-O012` as a refusal; it was silence.
+
+**What changed, and what did not.**
+
+- The **denial is struck from the copy.** Design's *Campaign & Social Creative* no longer says
+  media buying is not undertaken; it draws the boundary at what that service is (creative
+  production) rather than at what the company does. `check:service-content` question 4 refuses
+  three separate phrasings of the old position and each is broken separately in the self-test.
+- **One engagement row was added** — *Paid media management and placement within managed
+  advertising accounts*, owned by `master`, mapped to no capability, for the reason every channel
+  row is: running an account is the coordination of several media, not a medium.
+  `DIGITAL_MARKETING_ENGAGEMENT` is **19**, was 18.
+- **The catalogue did not move.** 81 approved services, unchanged. `GS-O013` confirms paid-media
+  *management* and explicitly forbids materially expanding the catalogue, so there is no approved
+  entry for standalone media buying and a service record claiming it would be a page for something
+  the approval does not contain.
+- `Media buying` therefore **stays** in `UNCONFIRMED_CHANNEL_SERVICES`, on that narrower reading,
+  which also keeps the denylist non-empty and the assertion alive. `coverageProblems` limb 5
+  reads a record's title and `covers` only, so no engagement activity is in its scope.
+
+**The transferable part: silence is not a refusal.** `GS-P05` turned an unanswered item into a
+published denial, and a denial is a claim about the company that has to be true. The safe handling
+of an unconfirmed capability is to say nothing about it, not to say it is not offered.
 
 **Confirming a capability is not approving copy for it.** No public wording exists for any channel
 service and none was invented. Master engagement-model copy remains unwritten and unrequested, so
@@ -383,10 +413,13 @@ The live `gridsmith.uk` advertises three of them. That was never the authority �
 **One piece of copy was corrected because the confirmation made it false**, and it is worth
 naming as a class rather than an incident. The Design service *Campaign & Social Creative* carried
 the exclusion *"Gridsmith does not run ad accounts, set budgets or buy media."* That was accurate
-when written and became a false statement about the company the moment `GS-O012` closed. It now
-draws the boundary where the boundary actually is — account and campaign management is a separate
-coordinated Gridsmith engagement rather than part of this creative service, and media buying
-remains something Gridsmith does not undertake.
+when written and became a false statement about the company the moment `GS-O012` closed.
+
+**`GS-P05` corrected half of it and left the other half standing.** The replacement kept *"media
+buying is not something Gridsmith undertakes"*, which `GS-O013` then identified as the same
+contradiction one clause smaller. It now draws the boundary at what the service is — creative
+production — and says that running the campaign is a separate cross-division engagement. Neither
+version denies a capability.
 
 **An owner confirmation can invalidate existing copy, not only leave gaps in it.** A capability
 decision is usually read as "what may we now add"; this one also asked "what did we already say
@@ -550,11 +583,12 @@ operational commitment no owner fact supplies.
 development with `professionalScopeConfirmed: false`; `check:launch` counts them and refuses them
 on production. `GS-O005` and `GS-X002` are untouched and remain open.
 
-## 18. Freelancer review retrieval — `GS-P05`
+## 18. Freelancer review retrieval — `GS-P05`, **activated at `GS-P06`**
 
 **Decision:** reviews are read from Freelancer's official API at request time and cached for 24
 hours. There is **no second copy** of them — not in Sanity, not in Supabase, not in a committed
-fixture. Built at `GS-P05`; **not yet wired into any rendered page**, which is `GS-O014`.
+fixture. Built at `GS-P05`; **wired into the Master homepage at `GS-P06`** when `GS-O014` closed,
+and **deliberately nowhere else** — §19.
 
 ### Why the API, and not the profile page
 
@@ -686,9 +720,106 @@ decision, so it is named in `GS-O014` rather than shipped quietly.
 | `lib/reviews/freelancer.ts` | the whole pipeline — request, validation, withholding, categorisation, mapping |
 | `scripts/check-reviews.mjs` | four questions, `--live` reads the real API |
 | `scripts/check-reviews.selftest.mjs` | 55 value-based cases, every rule limb broken separately |
-| **Not wired into `Testimonials` or `DivisionLanding`** | `GS-O014`. Activation is one line in each |
+| `scripts/check-reviews-ui.mjs` | **added at `GS-P06`** — ten questions over the SERVED page: Master renders the feed, no division does, the ring travels right to left, the pause control works, reduced motion is still and at content parity, nothing overflows, the link is reachable, no caption is identifying, the card is opaque, every `<time>` is a review date |
+| `components/master/ReviewCylinder.tsx` | **added at `GS-P06`** — the Master presentation. §20 |
 
-The switch is deliberately unflipped. API T&Cs §4.1 requires anyone accessing the API to agree to
-be bound by them, and accepting terms on Gridsmith Ltd's behalf is an owner act, not an agent's.
-The six Sanity testimonials are untouched and keep rendering meanwhile; they are retired only when
-the switch is thrown, so the site never carries two sources at once.
+**The switch was thrown at `GS-P06`.** API T&Cs §4.1 requires anyone accessing the API to agree to
+be bound by them, and accepting terms on Gridsmith Ltd's behalf is an owner act rather than an
+agent's; `GS-O014` is that acceptance. `Testimonials` now reads the API, `DivisionLanding` renders
+no reviews at all, and **the site carries one source**: `listTestimonials`,
+`listTestimonialsForDivision`, the `TestimonialCard` type and `components/content/TestimonialList.tsx`
+were all deleted in the same commit. The six `testimonial` documents remain in the **development**
+dataset as historical development data — genuine records, `isSeed: false`, no longer read by
+anything the site renders, and still asserted for anonymity by `check:service-content` question 3.
+No Sanity call was made to retire them and none is needed.
+
+### `GS-O015` — two reviews held back, and why that is not the owner being overruled
+
+`GS-O014` accepted publication of all twelve. The question it was asked was whether criticism **of
+Gridsmith** could be published; it can, and the 4.6 is on the page.
+
+**Reading all twelve bodies at `GS-P06` — rather than running a rule over them — found a different
+question.** Two of them name a third-party development company in terms Gridsmith would be
+**republishing on its own homepage**: *"the very disgraceful Varnika Software PVT"* and *"initially
+developed by Varnika Pvt in India which was a massive mistake"*. One also carries the client's own
+product name in the body. Freelancer hosting a reviewer's words and Gridsmith reprinting them are
+different publications with different exposure, and neither the automatic withholding rules nor
+`GS-O014`'s wording reaches it: the rules test a body against the **reviewer's own** company, which
+is the ceiling §18 already states.
+
+Editing a quotation is not available. So the two options are publish whole or withhold whole, and
+the conservative default was taken: `WITHHELD_REVIEW_IDS` in `lib/reviews/freelancer.ts` holds two
+ids, the block publishes **10 of 12**, and `check:reviews --live` names each withheld review and
+its reason on every run. **Emptying that array publishes them** — it is one owner sentence, and it
+is `GS-O015`.
+
+Note which way the default runs: nothing was deleted, no quotation was altered, and the reversible
+option was the one that does not put an unreviewed legal position on a homepage.
+
+## 19. Reviews are Master-only — `GS-O014`, the owner's amendment
+
+**Decision:** the Freelancer feed appears on the Master experience and on no division page.
+
+`GS-P04` and `GS-P05` ranked reviews onto division landings using a `division` field derived from
+Freelancer's skill taxonomy. The owner's amendment records what that produced in practice: **a
+3D-project review and a logo-design review both surfaced on Press.** The reviews were genuine and
+the placement was not, and a real quote filed under the wrong studio is still a claim nobody can
+check.
+
+**The fix is not a better classifier.** Freelancer's taxonomy is a skills vocabulary for a
+marketplace; it was never a map of Gridsmith's medium-based divisions, and inventing one would be
+exactly the speculative metadata §18 built the pipeline to avoid — it would fail silently on the
+next review nobody has seen. Master represents Gridsmith as a whole, so the complete eligible feed
+belongs there and the division pages carry none.
+
+This does **not** rule out division-level evidence from a properly curated source later. It rules
+out *this* source being split three ways on a guess.
+
+`check:reviews-ui` asserts both halves in one run, and that is deliberate: question 2 is an absence
+over three routes, and what makes it a measurement rather than a hope is that **question 1 fires
+the same selector against the same build and requires it to match**. A selector that had rotted
+fails question 1 before question 2 can report a false clean.
+
+## 20. The Master review experience — the cylinder, `GS-P06`
+
+**Decision:** the reviews are presented as a continuously rotating 3D ring travelling right to
+left, from the owner's reference (*Cylinder Carousel | Vengeance UI*).
+
+**What was taken from the reference is the geometry**, which is the well-published CSS 3D ring:
+children stacked in one grid cell, each turned `i × 360°/n` and pushed out by a radius derived from
+the card width, with the container rotated by one infinite keyframe. **No third-party source was
+copied.** The reference is an `<img>` carousel published with no licence statement on the page; it
+keeps rotating under `prefers-reduced-motion` (its "reduced" mode only slows the turn to 128s); and
+it has no pause control at all. Two of its three behaviours are things this site may not ship, so
+where the reference and `CLAUDE.md` disagree, `CLAUDE.md` wins.
+
+| Requirement | How |
+|---|---|
+| Right-to-left travel | `rotateY` runs **negative**; positive rotation carries the near arc to the right. Asserted by measuring a card's `left` twice, 1.2s apart |
+| Seamless loop | one `to` of a full turn — the ring's state at 360° is identical to its state at 0°, so there is no boundary to reset across |
+| Front card readable | the keyframes carry `translateZ(-radius)`, putting the front card at z = 0 at its true size. Without it the front card is a full radius nearer the camera and is magnified past the stage |
+| Geometry follows the data | `--review-count` is the only thing passed in; the angular step and the radius derive from it, so a thirteenth review re-forms a true cylinder with no stylesheet edit |
+| Zero client JS | everything is CSS. Master's JS delta is **1.9KB of 15KB**, unchanged by this block |
+| Reduced motion | **the flat grid is the BASE and the cylinder is layered on top**, inside one `@media (prefers-reduced-motion: no-preference)` + `@supports (tan())` block. Content parity is structural — same DOM, same reviews, same order — rather than a second markup path that must be kept in step |
+| Pause | WCAG 2.2 SC 2.2.2 is Level A and a hover pause does not satisfy it, so there is a real checkbox with a real label. Hover (behind `(hover: hover)`) and `:focus-within` pause it too |
+| Keyboard | **no focusable element is ever carried behind the cylinder** — the cards hold no links. Rotation therefore cannot move focus, strand it on a back-facing card, or need a `tabindex`/`inert` sweep |
+| Responsive | the card's width and height and the perspective adapt per breakpoint and the radius follows the width. §17's alternative — compressing desktop geometry — is what turns review text into decoration |
+
+**The cards carry no link, and that is a change of position.** `TestimonialList` rendered the
+source link per card and argued for it: a reader checking one quote should not have to work out
+which footnote applies. That was right while reviews could have different sources. Every review
+here resolves to the same URL, structurally — the pipeline never reads a per-project link — so
+there is one destination and no footnote to match. What it buys is the whole rotating-focus
+problem removed rather than managed.
+
+**`--dur-cycle` and `--dur-cycle-narrow` were added to the token layer**, 39 base tokens → 41.
+`check:tokens` refuses a duration literal outside the scale and its own message says a fourth
+duration goes into `tokens.css` first; a continuous cycle measured in seconds is not a UI
+transition and does not belong on `fast`/`base`/`slow`, so it is a separate pair.
+
+**`check:axe` reports zero violations and 73 allowed `color-contrast` incompletes on `/`.** The ring
+stacks every card in one grid cell — that is what a cylinder is — so axe cannot resolve a
+background and says so in its own words. Two `INCOMPLETE_ALLOWED` entries cover them, and **both
+premises those entries rest on are asserted elsewhere by value**: `check:reviews-ui` question 9
+proves the card background is opaque, and question 10 proves every `<time>` on the route is a
+review date. An allowlist whose stated reason nothing checks is a bypass with a comment.

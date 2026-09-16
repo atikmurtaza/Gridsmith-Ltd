@@ -163,6 +163,27 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  * entry is a decision someone wrote down and can be re-examined; a silent discard is not.
  * Entries match on rule + route + exact node target, so allowlisting the h1 of the
  * placeholder pages cannot quietly cover a different element later.
+ *
+ * ## `targetPattern`, added at `GS-P06`, and why an exact target was not enough
+ *
+ * An entry may name `target` (exact, the default and still preferred) **or** `targetPattern`
+ * (a RegExp over the same string). Exactly one of the two, asserted below — an entry with both
+ * or neither is a hard failure, because a silently ignored key is how an allowlist stops
+ * allowing and nobody notices.
+ *
+ * The Master review cylinder produces **73** `color-contrast` incompletes across two viewports
+ * and two phases, and every target is a CSS-module selector: `.master_reviewCard__CkZfh:nth-
+ * child(9) > figure > figcaption > .master_reviewName__TkgFK`. Two things make an exact list
+ * wrong there rather than merely long. The hash changes whenever the stylesheet changes, so
+ * every entry would rot on the next edit to an unrelated rule in the same file; and
+ * `:nth-child(n)` is keyed to how many reviews the API returned that day, so the set is not
+ * stable across a content change either. An allowlist that rots is worse than no allowlist:
+ * it goes red for a reason unconnected to accessibility, and the fix people reach for is to
+ * widen it.
+ *
+ * **The pattern is scoped to the cylinder and to nothing else.** It matches the CSS-module
+ * prefix `master_review`, which only the review block emits, so a new incomplete anywhere else
+ * on `/` — including anywhere else in `master.module.css` — still reports UNRESOLVED.
  */
 const INCOMPLETE_ALLOWED = [
   // **Empty, and emptied on purpose at `M-04`.** The one entry here allowlisted
@@ -236,6 +257,52 @@ const INCOMPLETE_ALLOWED = [
       'is 15.42:1 at its worst cell across all four themes and all three surfaces. That is the ' +
       'gate that owns this question. REMOVE THIS ENTRY if axe-core learns to resolve fixed ' +
       'overlays, or if the banner stops being position:fixed.',
+  },
+  // `GS-P06`. The Master review cylinder, and the first entry to use `targetPattern` — see
+  // the docstring above for why an exact target list was the wrong tool here.
+  {
+    rule: 'color-contrast',
+    routes: ['/'],
+    targetPattern: /\bmaster_review[A-Za-z]*__/,
+    why:
+      'The review cylinder stacks every card in ONE grid cell and turns each one out to its ' +
+      'own angle \u2014 that is what a cylinder is. So every card geometrically overlaps every ' +
+      'other, and axe says so in its own words: 60 of the 73 report "background color could ' +
+      'not be determined because it is overlapped by another element" and 13 report ' +
+      '"partially overlaps other elements". Not one is a contrast VIOLATION; axe declined to ' +
+      'evaluate, which is a different thing and is what this list is for.\n' +
+      '    The overlap is not removable while the block is a cylinder, and the four pairs ' +
+      'inside it are ones another gate already measures directly: --ink on --canvas (19.17:1 ' +
+      'on master), --ink-muted on --canvas and --ink-subtle on --canvas, all in master ' +
+      "DESIGN.md \u00a72's table and all asserted by check:contrast. That is the gate that owns " +
+      'this question, exactly as it owns the consent banner above.\n' +
+      '    What makes those measured ratios APPLY here is that the card background is ' +
+      'opaque. check:reviews-ui asserts that separately and by value, because a card made ' +
+      'translucent by a later edit would put a real contrast defect underneath this entry ' +
+      'and nothing else would look.\n' +
+      '    REMOVE THIS ENTRY if the review block stops being a 3D ring, or if axe-core ' +
+      'learns to resolve a background through a transformed sibling.',
+  },
+  // `GS-P06`. The same 3D overlap, on the six review DATES, and a separate entry rather than an
+  // alternation inside the one above — CLAUDE.md wants every branch of a multi-branch assertion
+  // proven separately, and two patterns in one regex is one branch nobody exercises.
+  {
+    rule: 'color-contrast',
+    routes: ['/'],
+    targetPattern: /^time\[datetime="\d{4}-\d{2}-\d{2}"\]$/,
+    why:
+      'axe names an element by the SHORTEST unique selector it can build, and three of the ' +
+      'review dates have a `datetime` no other element on the page shares \u2014 so those nodes ' +
+      'come back as `time[datetime="2026-05-22"]` with no class in the string at all, and the ' +
+      'cylinder entry above cannot see them. Giving the element a class does not help: it was ' +
+      'tried and measured, and axe still preferred the attribute selector because it is ' +
+      'shorter. Same overlap, same rule, same declined evaluation, same --ink-muted on ' +
+      '--canvas pair that check:contrast measures.\n' +
+      '    The scope risk here is real and is closed by measurement rather than by hope: this ' +
+      'pattern would also accept a contrast incomplete on some OTHER bare <time> on `/`, so ' +
+      'check:reviews-ui asserts that every <time> on that route is inside a review card. If ' +
+      'one ever is not, that gate goes red and this entry is reconsidered.\n' +
+      '    REMOVE THIS ENTRY under the same conditions as the one above.',
   },
 ];
 
@@ -576,6 +643,27 @@ let analyses = 0;
 let incompleteAllowed = 0;
 const allowedSeen = new Set();
 
+/**
+ * Exactly one of `target` / `targetPattern`, asserted before any audit runs.
+ *
+ * An entry with both, or with neither, would be silently skipped by the matcher and the
+ * incomplete it was written for would report UNRESOLVED — or worse, a typo'd `target` on an
+ * entry that also had a pattern would look like it was doing the matching when the pattern
+ * was. A key nobody reads is how an allowlist stops allowing, and this is the cheapest place
+ * to find out.
+ */
+for (const [i, a] of INCOMPLETE_ALLOWED.entries()) {
+  const keys = [a.target !== undefined, a.targetPattern !== undefined].filter(Boolean).length;
+  if (keys !== 1) {
+    console.error(
+      `\ncheck-axe: INCOMPLETE_ALLOWED entry ${i} (${a.rule}) names ` +
+        `${keys === 0 ? 'neither target nor targetPattern' : 'both target and targetPattern'}. ` +
+        'Exactly one is required — the matcher would otherwise ignore the entry silently.\n',
+    );
+    process.exit(1);
+  }
+}
+
 try {
   for (const route of ROUTES) {
     for (const viewport of VIEWPORTS) {
@@ -627,7 +715,10 @@ try {
           for (const node of inc.nodes) {
             const target = node.target.join(' ');
             const allowed = INCOMPLETE_ALLOWED.find(
-              (a) => a.rule === inc.id && a.routes.includes(route.path) && a.target === target,
+              (a) =>
+                a.rule === inc.id &&
+                a.routes.includes(route.path) &&
+                (a.target !== undefined ? a.target === target : a.targetPattern.test(target)),
             );
             if (allowed) {
               incompleteAllowed += 1;
@@ -1292,7 +1383,11 @@ if (!process.exitCode) {
       `${incompleteAllowed} axe incomplete(s) allowed, 0 unresolved`,
   );
   for (const a of allowedSeen) {
-    console.log(`\n  ALLOWED INCOMPLETE — ${a.rule} on "${a.target}" at ${a.routes.join(', ')}\n    ${a.why}`);
+    console.log(
+      `\n  ALLOWED INCOMPLETE — ${a.rule} on ` +
+        `${a.target !== undefined ? `"${a.target}"` : `/${a.targetPattern.source}/`} ` +
+        `at ${a.routes.join(', ')}\n    ${a.why}`,
+    );
   }
   console.log('');
 }

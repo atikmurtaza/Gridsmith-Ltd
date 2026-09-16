@@ -10,7 +10,7 @@ reads awkwardly, the site reads awkwardly, and that is what this document exists
 change. `check:service-content` fails while this document's recorded hash and the source
 disagree, so an approval cannot silently attach to wording that has since changed.
 
-**Source SHA-256:** `f9982291bc41a4a64ac736074cdd7e80639a39b32e1b9a3161247e07c90cceb7`
+**Source SHA-256:** `b025dc162f51865fe937d0ac2e8b57120742ef7301047d84564aadadac26b03d`
 
 ---
 
@@ -64,7 +64,7 @@ would be operational commitments nobody has given.
 - **Approval & Start** — Work starts once the written scope is agreed. Source material and any brand assets you hold are collected at this point.
 - **Design, Development & Updates** — Concepts first, then development of the direction you choose. Feedback happens at agreed points rather than continuously, so each round is a decision.
 - **Delivery** — Final artwork in the agreed formats, with working files where the scope includes them.
-- **Support** — Later amends, new formats and extensions of the system are quoted as further work.
+- **Support** — Later amends, new formats and extensions of the system can be scoped as further work or as an ongoing engagement, whichever suits how you work.
 
 ## Brand & Visual
 
@@ -191,7 +191,7 @@ would be operational commitments nobody has given.
 >
 > This is creative production. Where a campaign also needs written copy, content or technical work, those sit with Gridsmith Press and Gridsmith Digital and can run as one coordinated engagement — see the campaign engagement note on the Digital and Press pages.
 >
-> This page is the creative production. Campaign and advertising account management is a separate Gridsmith engagement coordinated across the divisions rather than part of this service; media buying is not something Gridsmith undertakes.
+> This page is the creative production. Running the campaign itself — the advertising accounts, the paid placements, the posting schedule — is a separate cross-division Gridsmith engagement rather than part of this service, and it is scoped and quoted on its own terms.
 
 **What this covers, as shown publicly**
 
@@ -200,7 +200,7 @@ would be operational commitments nobody has given.
 | Included | Campaign creative concept | The visual idea and how it holds together across placements. |
 | Included | Asset set at required sizes | Each placement’s specification, produced as one consistent set. |
 | Included | Editable templates | So routine variants can be produced without returning to us. |
-| **EXCLUDED** | Advertising account management and media buying | Not part of this creative service. Account and campaign management is a separate coordinated Gridsmith engagement; buying media is not something Gridsmith undertakes. |
+| **EXCLUDED** | Advertising account and paid-placement management | Not part of this creative service. Gridsmith does run campaigns and advertising accounts, as a separate cross-division engagement scoped with you. |
 
 **Related services:** `brand-identity-systems`, `motion-graphics`
 
@@ -654,10 +654,10 @@ would be operational commitments nobody has given.
 
 - **Consultation** — We look at the current system, who maintains it, where it is hosted and what actually needs to change.
 - **Planning & Scope** — Scope is written as what the system will do, what it will not do, and who owns each account and environment at the end.
-- **Approval & Start** — Work starts once scope is agreed. Repository, environment and access arrangements are settled first, in your name where the account is yours.
+- **Approval & Start** — Work starts once scope is agreed. Repository, environment and access arrangements are settled first, on the terms the written agreement sets out.
 - **Design, Development & Updates** — Built in reviewable increments on an environment you can see, rather than revealed at the end.
-- **Delivery** — Handover covers the running system, the code, the accounts and written documentation of how it is deployed.
-- **Support** — Maintenance, monitoring and further development are separate agreements rather than assumed.
+- **Delivery** — Handover covers the running system, written documentation of how it is deployed, and the source-code and account arrangements the written agreement sets out.
+- **Support** — Maintenance, monitoring and further development are scoped separately rather than assumed — as further work or as an ongoing engagement.
 
 ## Web
 
@@ -687,7 +687,7 @@ would be operational commitments nobody has given.
 | Included | Built, responsive, accessible site | Tested at mobile, tablet and desktop widths and with a keyboard. |
 | Included | CMS the team can use | A content model shaped around your content, not around the database. |
 | Included | Handover documentation | How it is built, where it runs, and how to deploy a change. |
-| Included | Accounts in your name | Hosting, domain and CMS accounts are yours. We work in them; we do not hold them. |
+| Included | Account and hosting arrangements | Who holds the hosting, domain and CMS accounts is set out in the written project agreement. Where it suits the engagement we prefer to work in accounts you control. |
 | **EXCLUDED** | Written content | Copy is Gridsmith Press, either supplied by you or written as part of the same engagement. |
 
 **Related services:** `cms-implementation`, `ecommerce`, `technical-seo`
@@ -825,7 +825,7 @@ would be operational commitments nobody has given.
 >
 > Scoped in writing and built in increments you can see running, so the direction is correctable while it is still cheap to correct.
 >
-> Code, infrastructure and accounts are yours. Handover includes documentation of how it is built and deployed.
+> Source-code handover, account access and infrastructure arrangements are defined in the written project agreement. Handover includes documentation of how the system is built and deployed.
 
 **What this covers, as shown publicly**
 
@@ -928,7 +928,7 @@ would be operational commitments nobody has given.
 >
 > Which of the two is right is a consultation question — offline behaviour, device features, distribution and update cadence usually decide it, and the cheaper answer is often the right one.
 >
-> Store accounts are held in your name. Store review outcomes are decided by Apple and Google and are not something Gridsmith can guarantee.
+> Publisher account arrangements are agreed in writing, and we prefer arrangements that keep the listing under your control. Store review outcomes are decided by Apple and Google and are not something Gridsmith can guarantee.
 
 **What this covers, as shown publicly**
 
@@ -937,7 +937,7 @@ would be operational commitments nobody has given.
 | Included | Application build | To the agreed platforms and functional scope. |
 | Included | Store submission assets | Listing assets and metadata prepared for submission. |
 | Included | Release pipeline | Reproducible builds and releases. |
-| Included | Store accounts in your name | Publisher accounts are yours, so the listing stays yours. |
+| Included | Store account arrangements | Who holds the publisher accounts is agreed in writing. We prefer arrangements that keep the listing under your control. |
 | **EXCLUDED** | Guaranteed store approval | Review outcomes are the platforms’ decision, not ours. |
 
 **Related services:** `web-applications`, `game-development`
@@ -1123,7 +1123,7 @@ would be operational commitments nobody has given.
 
 ## Operate & Improve
 
-### Maintenance, Hosting & Monitoring
+### Maintenance, Hosting Coordination & Monitoring
 
 `/digital/services/maintenance-and-monitoring`
 
@@ -1135,9 +1135,9 @@ would be operational commitments nobody has given.
 
 **Description**
 
-> Ongoing care of a running site or application: updates, dependency and security patching, backups, uptime and error monitoring, and coordination with whoever hosts it.
+> Ongoing care of a running site or application: updates, dependency and security patching, backups, uptime and error monitoring, and the hosting work the engagement needs.
 >
-> Hosting coordination means we work in accounts held in your name and deal with the host on your behalf. Gridsmith does not resell hosting, so you are never locked to us by an account you cannot access.
+> Hosting coordination and management covers configuration, deployment, maintenance and monitoring, and dealing with the host on your behalf. How the hosting is arranged and who holds the account is decided per project and set out in the written agreement; where it suits the engagement we prefer accounts you can access directly.
 >
 > What is covered, and how quickly we respond to what, is set out in the written agreement for the engagement rather than promised here.
 
@@ -1148,8 +1148,8 @@ would be operational commitments nobody has given.
 | Included | Updates and patching | Dependencies and platform updates applied and tested. |
 | Included | Backups | Configured, and restore tested rather than assumed. |
 | Included | Uptime and error monitoring | With alerting to an agreed contact. |
-| Included | Hosting coordination | In accounts held in your name. |
-| **EXCLUDED** | Reselling hosting | We do not. The account is yours. |
+| Included | Hosting coordination and management | Configuration, deployment and monitoring, on the arrangement agreed for the project. |
+| **EXCLUDED** | A standing service level | What is covered and how quickly we respond is set by the written agreement for the engagement, not promised here. |
 
 **Related services:** `performance-and-accessibility`, `technical-seo`
 
@@ -1187,7 +1187,7 @@ would be operational commitments nobody has given.
 | Included | Prioritised fix list | Ordered by user impact and effort. |
 | Included | Implementation of the fixes | Where implementation is in scope. |
 | Included | Regression checks | So the fixes stay fixed. |
-| **EXCLUDED** | A conformance certificate | No one can certify accessibility. We report findings, evidence and residual issues. <br>⚠ VERIFY — certifi |
+| **EXCLUDED** | Formal accessibility certification | Not included unless explicitly scoped. We report the standards tested, the evidence, the findings and the residual issues. <br>⚠ VERIFY — certifi |
 
 **Related services:** `technical-seo`, `maintenance-and-monitoring`
 
@@ -1223,7 +1223,7 @@ would be operational commitments nobody has given.
 | Included | Prioritised fix list | With the evidence behind each item. |
 | Included | Implementation | Where the fixes are in scope. |
 | Included | Structured data and redirect mapping | Where the site needs them. |
-| **EXCLUDED** | Ranking or traffic guarantees | Not offered by anyone honestly. We fix what is measurably wrong. |
+| **EXCLUDED** | Ranking or traffic guarantees | Gridsmith does not guarantee search rankings or traffic outcomes. We fix what is measurably wrong and show the measurement. |
 
 **Related services:** `performance-and-accessibility`, `website-design-build`
 
@@ -1285,7 +1285,7 @@ would be operational commitments nobody has given.
 - **Approval & Start** — Work starts once scope is agreed. Research material, interviews and source documents are arranged at this point.
 - **Design, Development & Updates** — Drafts are delivered in agreed stages so the direction can be corrected early rather than at the end.
 - **Delivery** — Final text or production files in the agreed formats. Authorship and copyright arrangements are whatever the written agreement sets out.
-- **Support** — Further rounds, later editions and ongoing programmes are quoted as further work.
+- **Support** — Further rounds, later editions and ongoing programmes can be scoped as further work or as an ongoing engagement, whichever suits how you work.
 
 ## Writing
 
@@ -1368,7 +1368,7 @@ would be operational commitments nobody has given.
 
 **Summary** *(the one line shown on cards and at the top of the page)*
 
-> The words on the site were written by whoever was free that week.
+> Your pages have been written a piece at a time and no longer say one thing.
 
 **Description**
 
@@ -1474,7 +1474,7 @@ would be operational commitments nobody has given.
 
 **Summary** *(the one line shown on cards and at the top of the page)*
 
-> The manuscript is finished and it is not working.
+> Your manuscript has reached the point where the structure needs another pair of eyes.
 
 **Description**
 
@@ -1551,7 +1551,7 @@ would be operational commitments nobody has given.
 >
 > ⚠ VERIFY — asserts: ISBN
 >
-> Accounts and ISBNs are obtained and held in your name. An ISBN registered to a service provider records that provider as the publisher of your book, which is a consequence people discover late — so we set it up so that it is yours.
+> Account and ISBN arrangements are agreed in writing before anything is registered. An ISBN registered to a service provider records that provider as the publisher of your book, which is a consequence people discover late — so unless you decide otherwise, we set these up in your name.
 >
 > ⚠ VERIFY — asserts: ISBN
 >
@@ -1564,8 +1564,8 @@ would be operational commitments nobody has given.
 | Included | Publishing plan | Formats, channels and sequence. |
 | Included | ISBN guidance | How to obtain your own, and what it commits you to. <br>⚠ VERIFY — ISBN |
 | Included | Metadata and listing preparation | Prepared to each platform’s specification. |
-| Included | Distribution account setup | In your name, so the listing and the royalties are yours. |
-| **EXCLUDED** | Retailer acceptance or sales outcomes | Listing decisions and sales are not within anyone’s gift to promise. |
+| Included | Distribution account setup | Set up on the arrangement agreed in writing — by default in your name, so the listing and the royalties stay with you. |
+| **EXCLUDED** | Retailer acceptance or sales outcomes | Listing decisions rest with the retailer and sales outcomes cannot be guaranteed. |
 
 **Related services:** `typesetting-and-formatting`, `cover-design-coordination`
 
@@ -1651,7 +1651,7 @@ would be operational commitments nobody has given.
 
 **Summary** *(the one line shown on cards and at the top of the page)*
 
-> You publish when somebody remembers to, which is never.
+> You need a reliable content rhythm rather than occasional publishing.
 
 **Description**
 
@@ -1683,7 +1683,7 @@ would be operational commitments nobody has given.
 
 **Summary** *(the one line shown on cards and at the top of the page)*
 
-> The pages are written for nobody in particular.
+> Your pages need a clear reader and a reason to rank for them.
 
 **Description**
 
@@ -1718,13 +1718,13 @@ would be operational commitments nobody has given.
 
 **Summary** *(the one line shown on cards and at the top of the page)*
 
-> The book exists and nobody knows about it.
+> Your book is ready for a structured launch and the content that supports it.
 
 **Description**
 
 > Written and editorial support around a book’s release: description and metadata copy, author platform material, announcement and outreach copy, and the supporting content a launch needs.
 >
-> This is the writing and editorial work. It is not publicity representation, and no coverage, review, chart position or sales figure is promised — none of those is within anyone’s control to promise.
+> This is the writing and editorial work. It is not publicity representation, and coverage, reviews, chart positions and sales figures cannot be guaranteed.
 
 **What this covers, as shown publicly**
 
@@ -1734,7 +1734,7 @@ would be operational commitments nobody has given.
 | Included | Author platform material | Bio, site copy and supporting pages. |
 | Included | Launch and outreach copy | Announcements and approach material. |
 | **EXCLUDED** | Publicity representation | We do not act as a publicist or pitch media on your behalf. |
-| **EXCLUDED** | Coverage, reviews or sales results | Not promised by us or by anyone who is being straight with you. |
+| **EXCLUDED** | Coverage, reviews or sales results | Coverage, reviews and sales outcomes cannot be guaranteed, and Gridsmith does not promise them. |
 
 **Related services:** `content-programmes`, `publishing-preparation`
 

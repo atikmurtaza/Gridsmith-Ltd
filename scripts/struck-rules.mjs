@@ -247,6 +247,62 @@ export const STRUCK_RULES = [
       'The honesty half survives: `excludes` and `notFor` stay required (ETH-03, FR-P06). ' +
       '`press/PROJECT-RULES.md` §1 as annotated.',
   },
+  /**
+   * **`GS-O013`, registered in the `GS-P06` commit that struck them.** Three of the six owner
+   * remediations are *normative statements about what Gridsmith does not do*, which is what this
+   * registry is for; the other three are tone and phrasing, which it is not and cannot be.
+   *
+   * **Why these need a second gate at all.** `check:service-content` question 4 refuses eleven
+   * struck phrasings and is the stronger assertion — but its subject is
+   * `scripts/service-content.mjs`, the delivered copy. These rules' subject is the **standing
+   * specification**, where a future session could restate the position and nothing would notice.
+   * Disjoint corpora, complementary gates: neither can see the other's subject, which is the
+   * opposite of the "two gates over one subject" hazard `CLAUDE.md` warns about.
+   */
+  {
+    id: 'GS-O013-MEDIA-BUYING-DENIAL',
+    /** One pattern. The other phrasing ("does not run ad accounts") was already struck at GS-P05
+     *  and is annotated on the same line; a rule per phrasing would need a proof per phrasing for
+     *  a position that is one position. */
+    patterns: [/media buying is not something/i],
+    why:
+      'The site denied media buying while selling Google Ads and Meta account management, and ' +
+      'running an ad account IS placing paid media. GS-P05 read the owner\u2019s silence at ' +
+      'GS-O012 as a refusal; it was silence, and a denial is a claim about the company that has ' +
+      'to be true. Struck by GS-O013. `_shared/SERVICE-ARCHITECTURE.md` \u00a713.',
+    where:
+      'The scope boundary survives and is the live one: campaign and advertising ACCOUNT ' +
+      'management is a separate cross-division engagement rather than part of the Design ' +
+      'creative service. `DIGITAL_MARKETING_ENGAGEMENT` carries paid media management as a ' +
+      'Master row; the 81-service catalogue is unchanged and no service record may claim ' +
+      '"Media buying" \u2014 `UNCONFIRMED_CHANNEL_SERVICES`, asserted by check:service-content.',
+  },
+  {
+    id: 'GS-O013-HOSTING-RESALE',
+    patterns: [/does not resell hosting/i],
+    why:
+      'A permanent rule against reselling hosting forecloses managed-hosting arrangements the ' +
+      'owner has not ruled out, and it was published as a client-facing promise. Struck by ' +
+      'GS-O013: hosting is project-specific and set by the written agreement.',
+    where:
+      'The capability survives and widened: Hosting Coordination & Management \u2014 coordination, ' +
+      'configuration, deployment, maintenance, monitoring and management, arranged per project. ' +
+      'No hosting product, SLA or price was invented, and the approved capability name ' +
+      '"Hosting coordination" in `lib/services/catalogue.ts` is untouched.',
+  },
+  {
+    id: 'GS-O013-ACCESSIBILITY-CERTIFY',
+    patterns: [/no one can certify accessibility/i],
+    why:
+      'Categorical and false \u2014 formal accessibility conformance certification exists. Struck by ' +
+      'GS-O013 and replaced with a scoped statement: certification is not included unless ' +
+      'explicitly scoped.',
+    where:
+      'Everything substantive survives: WCAG 2.2 AA positioning, the automated/manual testing ' +
+      'distinction, honest residual-risk language, and no unsupported guarantee of universal ' +
+      'compliance. Gridsmith reports the standards tested, the evidence, the findings and the ' +
+      'residual issues.',
+  },
 ];
 
 /** The standing-spec corpus. Globbed by the runner; listed here so the scope is reviewable. */

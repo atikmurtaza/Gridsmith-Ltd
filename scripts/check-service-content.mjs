@@ -12,18 +12,19 @@
  * | 1 | Does the seeded content represent every approved service, exactly once? | `scripts/service-content.mjs` | always |
  * | 2 | Does the Digital Marketing decomposition resolve to approved services? | `lib/services/catalogue.ts` | always |
  * | 3 | Do the review titles carry no identifying fragment? | `scripts/seed-content.mjs` | always |
- * | 4 | Is the owner review document still the copy it transcribed? | `GS-P05-OWNER-CONTENT-REVIEW.md` | always |
- * | 5 | Does the **dataset** agree with all of them? | the live development dataset | `--dataset` only |
+ * | 4 | Do the positions `GS-O013` struck stay struck? | `scripts/service-content.mjs` | always |
+ * | 5 | Is the owner review document still the copy it transcribed? | `GS-P05-OWNER-CONTENT-REVIEW.md` | always |
+ * | 6 | Does the **dataset** agree with all of them? | the live development dataset | `--dataset` only |
  *
- * ## Why 4 is opt-in, and why that is not a silent skip
+ * ## Why 6 is opt-in, and why that is not a silent skip
  *
- * 1–3 are static and run offline, which is what CI has. 4 needs a network and names a dataset,
+ * 1–5 are static and run offline, which is what CI has. 6 needs a network and names a dataset,
  * and `CLAUDE.md` is explicit that *"a gate that can skip its subject silently must treat that
  * skip as a hard failure"* — so it does not skip: without `--dataset` the gate **says in its own
  * summary that the dataset was not measured**, and with `--dataset` a failure to reach it is a
  * hard failure rather than a pass. The two modes report different sentences on purpose.
  *
- * ## Why 4 exists at all
+ * ## Why 6 exists at all
  *
  * Because the committed records and the dataset are two artefacts that must agree, and **only
  * one of them reaches a reader**. That is `01-VALIDATION-REPORT.md` §21's class exactly — the
@@ -44,8 +45,14 @@ import {
   UNCONFIRMED_CHANNEL_SERVICES,
 } from '../lib/services/catalogue.ts';
 import { SANITY_API_VERSION, SANITY_PROJECT_ID, PRODUCTION_DATASET } from '../sanity/project.ts';
-import { SERVICES } from './service-content.mjs';
-import { anonymityProblems, coverageProblems, engagementProblems } from './service-content-rules.mjs';
+import { PROCESS_DETAIL, SERVICES } from './service-content.mjs';
+import {
+  STRUCK_COPY_RULES,
+  anonymityProblems,
+  coverageProblems,
+  engagementProblems,
+  struckCopyProblems,
+} from './service-content-rules.mjs';
 import { contentHash } from './owner-content-review.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -126,7 +133,31 @@ if (reviewRows.length !== EXPECTED_REVIEWS) {
   );
 }
 
-/* -- 4. The owner review document still transcribes this copy --------------- */
+/* -- 4. The positions GS-O013 struck stay struck ---------------------------- */
+
+/**
+ * `GS-P06`. The owner approved the catalogue **with remediation**, and most of those corrections
+ * are deletions — statements the site would otherwise have published. A deletion has no
+ * committed subject unless something asserts the absence, and the reasoning that produced each
+ * of these sentences is ordinary and will produce them again: *"say plainly that the client owns
+ * the code"* is a natural thing for a truthful agency to write, and it is exactly the absolute
+ * the owner removed.
+ *
+ * `scripts/service-content-rules.mjs` holds the rules, the ceiling and the reason each position
+ * was struck; the self-test breaks every one of them separately. The only new thing here is the
+ * **scanned count**, printed so the assertion can be shown to have read something — an absence
+ * reported over an empty walk is `CLAUDE.md`'s "count that was never counted", and the rule
+ * module fails hard below its floor rather than reporting clean.
+ */
+const struck = struckCopyProblems({ services: SERVICES, process: PROCESS_DETAIL });
+problems.push(...struck.problems);
+say(
+  `copy:       ${struck.scanned} copy string(s) scanned against ` +
+    `${STRUCK_COPY_RULES.length} struck position(s) — ` +
+    `${struck.problems.length === 0 ? 'none stands' : `${struck.problems.length} STANDS`}`,
+);
+
+/* -- 5. The owner review document still transcribes this copy --------------- */
 
 /**
  * `GS-P05`. `docs/_shared/GS-P05-OWNER-CONTENT-REVIEW.md` is what the owner reads to close
@@ -172,7 +203,7 @@ try {
   );
 }
 
-/* -- 5. The dataset, read the way the site reads it ----------------------- */
+/* -- 6. The dataset, read the way the site reads it ----------------------- */
 
 if (!withDataset) {
   say(
@@ -244,6 +275,6 @@ if (problems.length > 0) {
 }
 
 say(
-  `\ncheck-service-content: PASS — coverage, engagement map, review anonymity and owner-document parity` +
+  `\ncheck-service-content: PASS — coverage, engagement map, review anonymity, struck copy and owner-document parity` +
     `${withDataset ? ` and the "${DATASET}" dataset` : ' (source only; the dataset was not measured)'}\n`,
 );

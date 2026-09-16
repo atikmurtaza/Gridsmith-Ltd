@@ -61,6 +61,9 @@ const REQUIRED = [
   '--shadow-1', '--shadow-2',
   // Motion — opacity and transform only
   '--ease-out', '--dur-fast', '--dur-base', '--dur-slow',
+  // Ambient loop durations — GS-P06. A continuous cycle is not a UI transition and does
+  // not belong on the fast/base/slow scale; see tokens.css.
+  '--dur-cycle', '--dur-cycle-narrow',
   // Layout
   '--container', '--container-narrow', '--grid-cols', '--gutter',
 ];

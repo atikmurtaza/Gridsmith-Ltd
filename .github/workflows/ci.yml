@@ -309,4 +309,4 @@ jobs:
       # clamp that is 16px at 375px and 17px near 1440px, so a source check that found the
       # token named would have called the phone rendering a pass.
       - name: axe + security headers + statutory record + responsive and legal checks
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset"
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui"

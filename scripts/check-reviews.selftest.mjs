@@ -22,6 +22,7 @@ import {
   reviewsUrl,
   toReviews,
   withholdReason,
+  WITHHELD_REVIEW_IDS,
 } from '../lib/reviews/freelancer.ts';
 
 let failures = 0;
@@ -72,6 +73,19 @@ is('withhold: a whitespace body is withheld', withholdReason('   \n  '), 'the bo
 is('withhold: a null body is withheld', withholdReason(null), 'the body is empty');
 is('withhold: a very short company is not matched', withholdReason('It is ok.', 'ok'), null);
 is('withhold: no company supplied does not crash', withholdReason('Solid work.'), null);
+// `GS-O015`. Its own limb, broken on its own: an id-only rule must fire on a body that every
+// other rule publishes, or a green would only mean the body happened to be clean.
+is(
+  'withhold: an id on the GS-O015 list is withheld whatever the body says',
+  withholdReason('Solid work.', null, WITHHELD_REVIEW_IDS[0]),
+  'the review is held pending GS-O015 (it names a third party)',
+);
+is(
+  'withhold: an id NOT on the list publishes the same body',
+  withholdReason('Solid work.', null, 1),
+  null,
+);
+is('withhold: the GS-O015 list is non-empty, so the limb has a subject', WITHHELD_REVIEW_IDS.length > 0, true);
 
 /* -- parsePayload ---------------------------------------------------------- */
 

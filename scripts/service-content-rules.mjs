@@ -142,7 +142,10 @@ export function coverageProblems({ approved, services, unconfirmed = [] }) {
     const haystack = [record.title, ...(record.covers ?? [])].join(' ').toLowerCase();
     for (const channel of unconfirmed) {
       if (haystack.includes(channel.toLowerCase())) {
-        problems.push(`UNCONFIRMED CHANNEL: ${record.slug} claims "${channel}", which no owner decision confirms (GS-O012)`);
+        problems.push(
+          `UNCONFIRMED CHANNEL: ${record.slug} claims "${channel}" as a service record, and no ` +
+            'approved catalogue entry carries it (GS-O012, narrowed at GS-O013)',
+        );
       }
     }
   }
@@ -184,4 +187,169 @@ export function engagementProblems({ engagement, approved }) {
     }
   }
   return problems;
+}
+
+/* -- GS-P06: the positions the owner struck -------------------------------- */
+
+/**
+ * **Copy positions struck by `GS-O013`, and the gate that keeps them struck.**
+ *
+ * `GS-O013` approved the 46-record catalogue **with remediation**: six statements the site was
+ * about to publish were wrong, over-promised, or written at the reader. Deleting them is one
+ * commit's work; keeping them deleted is not. Every one of these was a sentence somebody wrote
+ * in good faith, and the same reasoning that produced it the first time produces it again —
+ * *"say plainly that the client owns the code"* is a natural thing for a truthful agency to
+ * write, and it is exactly the absolute wording the owner removed.
+ *
+ * **So this is regression coverage over a permanent committed subject** — `service-content.mjs`,
+ * which is the canonical copy and the artefact the owner reviewed. `CLAUDE.md`: a fix is not
+ * fixed until a gate can reach a committed subject.
+ *
+ * ## One pattern per rule, deliberately
+ *
+ * No rule below carries an alternation over its subject, because `CLAUDE.md` requires every
+ * branch of a multi-branch assertion to get its own deliberate-failure proof, and a half-firing
+ * alternation reports success from the limb you happened to exercise (`check:rls`, twice). Where
+ * a struck position has two natural phrasings it is **two rules with two ids**, so the self-test
+ * specimen for each one names which rule it fired.
+ *
+ * ## The ceiling, stated so a green is read correctly
+ *
+ * This asserts that **these specific struck phrasings** do not stand. It cannot assert that the
+ * copy is good, that a summary is client-centred, or that a new absolute promise written in
+ * different words is caught — §8's tone remediation in particular is editorial judgement and no
+ * regex holds it. A green line here means *the struck wording is gone*, which is the same
+ * ceiling `check:legal:parity` and `check:struck` state for themselves.
+ */
+export const STRUCK_COPY_RULES = [
+  {
+    id: 'MEDIA-BUYING-DENIAL',
+    pattern: /(?:does not|do not|doesn.t|don.t|never)\s+(?:\S+\s+){0,3}buy(?:ing|s)?\s+media\b/i,
+    why:
+      'GS-O013: denying media buying contradicts the paid-channel capabilities confirmed at ' +
+      'GS-O012 — managing a Google Ads or a Meta account is placing paid media.',
+  },
+  {
+    id: 'MEDIA-BUYING-NOT-UNDERTAKEN',
+    pattern: /\bmedia buying is (?:not|never)\b/i,
+    why: 'GS-O013: the same struck position in its other phrasing.',
+  },
+  {
+    id: 'AD-ACCOUNT-DENIAL',
+    pattern: /(?:does not|do not|doesn.t|don.t|never)\s+(?:\S+\s+){0,3}run\s+(?:\S+\s+){0,2}ad(?:vertising)?\s+accounts?\b/i,
+    why:
+      'GS-O012 confirmed Google Ads, Meta and social account management. This exclusion was ' +
+      'corrected once at GS-P05 and struck outright at GS-O013.',
+  },
+  {
+    id: 'HOSTING-RESALE-PROHIBITION',
+    pattern: /\bresell(?:s|ing)?\s+hosting\b/i,
+    why:
+      'GS-O013: a permanent rule against reselling hosting forecloses managed-hosting ' +
+      'arrangements the owner has not ruled out. Hosting is project-specific and set by the ' +
+      'written agreement.',
+  },
+  {
+    id: 'ACCESSIBILITY-CATEGORICAL',
+    pattern: /\b(?:no one|no-one|nobody)\b[^.;]{0,40}\bcertif/i,
+    why:
+      'GS-O013: "no one can certify accessibility" is categorical and false — conformance ' +
+      'certification exists. The scoped statement is that it is not included unless scoped.',
+  },
+  {
+    id: 'COMBATIVE-ANYONE-HONEST',
+    pattern: /\banyone\b[^.;]{0,40}\b(?:honest(?:ly)?|being straight)/i,
+    why:
+      'GS-O013: "not offered by anyone honestly" attacks the market instead of stating the ' +
+      'limitation. Gridsmith states its own position without implying competitors lie.',
+  },
+  {
+    id: 'COMBATIVE-ANYONE-PROMISE',
+    pattern: /\banyone.{0,3}s (?:gift|control) to promise\b/i,
+    why: 'GS-O013: the same register — a rhetorical flourish where a plain limitation belongs.',
+  },
+  {
+    id: 'OWNERSHIP-ABSOLUTE-CODE',
+    pattern: /\b(?:source )?code\b[^.;]{0,40}\b(?:are|is) yours\b/i,
+    why:
+      'GS-O013: ownership, source-code handover, account access and infrastructure ' +
+      'arrangements are defined in the written project agreement, not promised in marketing ' +
+      'copy. An absolute here is a contractual statement nobody drafted.',
+  },
+  {
+    id: 'OWNERSHIP-ABSOLUTE-ACCOUNTS',
+    pattern: /\baccounts?\b[^.;]{0,40}\b(?:are|is) yours\b/i,
+    why: 'GS-O013: the same absolute, applied to hosting, domain, CMS and publisher accounts.',
+  },
+  {
+    id: 'OWNERSHIP-ABSOLUTE-HELD-IN-YOUR-NAME',
+    pattern: /\b(?:are|is)(?:\s+\S+){0,3}\s+held in your name\b/i,
+    why:
+      'GS-O013: an unconditional statement that every account is in the client\u2019s name. The ' +
+      'preference may be stated; the guarantee may not.',
+  },
+  {
+    id: 'CONTINUITY-QUOTED-AS-FURTHER-WORK',
+    pattern: /\bquoted as further work\b/i,
+    why:
+      'GS-O013: later amendments, extensions and ongoing support can be scoped as further work ' +
+      '**or an ongoing engagement**. "Quoted as further work" recognises only the first.',
+  },
+];
+
+/**
+ * A floor on how much copy was read, hardcoded from **outside** the subject.
+ *
+ * Without it this whole assertion is an absence with no cause: a traversal that walked nothing
+ * would report zero problems and print a clean line, which is `CLAUDE.md`'s "count that was
+ * never counted" exactly. The number is the order of magnitude, not the exact total, so ordinary
+ * editing does not touch it and a broken walk still cannot pass.
+ */
+export const MIN_COPY_STRINGS = 600;
+
+/**
+ * Every struck phrasing is absent from the canonical copy — `GS-O013`.
+ *
+ * @param {object} input
+ * @param {Record<string, object[]>} input.services  `SERVICES`, keyed by division
+ * @param {Record<string, Record<string, string>>} input.process  `PROCESS_DETAIL`
+ * @param {typeof STRUCK_COPY_RULES} [rules]
+ * @returns {{problems: string[], scanned: number}} `scanned` is the number of strings read
+ */
+export function struckCopyProblems({ services, process: processDetail }, rules = STRUCK_COPY_RULES) {
+  const problems = [];
+  /** @type {{where: string, text: string}[]} */
+  const strings = [];
+
+  const walk = (value, where) => {
+    if (typeof value === 'string') strings.push({ where, text: value });
+    else if (Array.isArray(value)) value.forEach((v, i) => walk(v, `${where}[${i}]`));
+    else if (value && typeof value === 'object') {
+      for (const [k, v] of Object.entries(value)) walk(v, `${where}.${k}`);
+    }
+  };
+
+  for (const [division, records] of Object.entries(services ?? {})) {
+    for (const record of records ?? []) walk(record, `${division}/${record?.slug ?? '?'}`);
+  }
+  walk(processDetail ?? {}, 'PROCESS_DETAIL');
+
+  if (strings.length < MIN_COPY_STRINGS) {
+    problems.push(
+      `ZERO-SUBJECT: ${strings.length} copy string(s) read, expected at least ` +
+        `${MIN_COPY_STRINGS}. The walk is empty or mis-rooted; nothing was measured.`,
+    );
+  }
+
+  for (const rule of rules) {
+    for (const { where, text } of strings) {
+      const hit = text.match(rule.pattern);
+      if (!hit) continue;
+      problems.push(
+        `STRUCK COPY: ${rule.id} stands at ${where}\n      "${hit[0]}"\n      ${rule.why}`,
+      );
+    }
+  }
+
+  return { problems, scanned: strings.length };
 }

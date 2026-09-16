@@ -40,88 +40,35 @@ not requested under `GS-D001` and `GS-D002`.
   action and `GS-X002` are closed.
 - **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
 
-### `GS-O014` — Accept Freelancer's API terms, and decide what the reviews block publishes
+### `GS-O015` — Decide whether two reviews naming a third party may be republished
 
-- **Status:** ACTIONABLE NOW (new at `GS-P05`)
-- **Why required:** `GS-P05` built an automatic Freelancer review pipeline and **deliberately did
-  not switch it on**. Two things stop an agent throwing that switch, and neither is technical.
-  1. **The terms are a commercial commitment.** Freelancer's API T&Cs §4.1: *"Anyone who wants to
-     access our API must agree to be bound by this API T&Cs."* Making `gridsmith.uk` depend on an
-     API whose terms Gridsmith Ltd has not accepted is a legal position, and a coding agent must
-     not take one on the company's behalf. **No credential and no paid service is involved** —
-     the endpoint answers unauthenticated, so this is acceptance, not provisioning.
-  2. **The block's contents change.** The site publishes six reviews today. The pipeline publishes
-     all twelve, and **the twelfth is rated 4.6 and contains criticism** — it says communication
-     *"could be much better"*. Publishing it is the right default for this site and it is still a
-     decision about what the homepage says.
-- **Exact information/action needed:** three answers.
-  1. Read `https://www.freelancer.com/about/apiterms` and confirm Gridsmith Ltd accepts them.
-     They are short; §5.1 (cache refresh at least every 24 hours) and §5.3 (no storing beyond
-     that) are the two the architecture is built around, and it already complies with both.
-  2. Confirm that all twelve reviews may be published, **including the 4.6**, or name any review
-     to withhold. Withholding a specific review is a one-line denylist; editing one is not
-     available and will not be offered.
-  3. Confirm the attribution wording **"Verified review via Freelancer"**, shown per card with a
-     link to `https://www.freelancer.com/u/GridsmithLTD`.
-- **What it blocks:** switching the review block from the six hand-transcribed Sanity testimonials
-  to the twelve live ones. Nothing else. The pipeline, its gate and its 55-case selftest are
-  committed and green; activation is one line in `components/master/Testimonials.tsx` and one in
-  `components/divisions/DivisionLanding.tsx`.
-- **Credentials required:** **none.** Do not create a Freelancer OAuth application and do not
-  generate a Personal Access Token for this. If Freelancer later begins enforcing the documented
-  OAuth scopes, `check:reviews --live` goes red and the owner action at that point is recorded
-  under *If the API ever requires a credential* below — it is not needed now and is not requested.
-- **Paid service required:** none.
-- **Evidence required:** a written owner decision on each of the three, dated.
+- **Status:** ACTIONABLE NOW (new at `GS-P06`)
+- **Why required:** `GS-O014` accepted publication of all twelve reviews, and the question it was
+  asked was whether criticism **of Gridsmith** could be published. It can, and the 4.6 is on the
+  homepage. `GS-P06` read all twelve bodies word for word and found a different question that
+  nobody had been asked. Two of them name a **third-party development company** in terms Gridsmith
+  would be republishing on its own site:
+  - *"My app started life with the very disgraceful Varnika Software PVT in India…"* (id `22108992`)
+  - *"…initially developed by Varnika Pvt in India which was a massive mistake."* (id `22100632`)
 
-#### If the API ever requires a credential — the shape of that action, recorded now so it is not improvised
-
-Not actionable, and **not to be started**. Recorded because the divergence between Freelancer's
-documentation and its behaviour is the integration's main risk, and the response to it should not
-be designed while something is broken.
-
-1. Freelancer would require an OAuth client created at `developers.freelancer.com` (production,
-   not sandbox), with a redirect URI on a Gridsmith-controlled host.
-2. Scopes: `basic` plus the advanced scope `fln:project_manage`.
-3. A one-time consent at `https://accounts.freelancer.com/oauth/authorize`, exchanged at
-   `https://accounts.freelancer.com/oauth/token` for an access token and a **refresh token**.
-4. Access tokens expire after 2,592,000 seconds (30 days); the refresh token is what renews them
-   unattended. A **Personal Access Token is not suitable** — one per environment, also 30 days,
-   and no refresh, so it would need manual rotation every month for ever.
-5. The client secret and refresh token would go into Vercel's encrypted environment variables as
-   server-only values. **Never a `NEXT_PUBLIC_` variable, never in source, never pasted into
-   chat or documentation.** The `client_id` and the redirect URI are safe to share; the
-   `client_secret`, the authorisation `code`, the access token and the refresh token are not.
-
-### `GS-O013` — Accept the development service copy
-
-- **Status:** ACTIONABLE NOW (raised at `GS-P04`; **narrowed at `GS-P05`**)
-- **What changed at `GS-P05`.** This action had two limbs and **the second is closed**. It asked
-  the owner to supply six missing reviews or correct a count of 12. Neither was needed: there are
-  twelve, the owner was right, and `GS-P05` verified it independently against both the public
-  profile and the official API. `SERVICE-ARCHITECTURE.md` §14. **Do not ask the owner to prove the
-  other six exist.** What remains of the review question is a publication decision, and that is
-  `GS-O014`, not this.
-- **Why the remaining limb is required:** `GS-O006` approved the *service list*. The 46 development
-  service records are **agent-authored** from that list under the constraints in
-  `scripts/service-content.mjs`. They are truthful and deliberately unpromissory, but no owner has
-  read them, and `isSeed: true` keeps them off production until one does.
-- **Exact information/action needed:** read **`docs/_shared/GS-P05-OWNER-CONTENT-REVIEW.md`** and
-  approve, amend or reject the wording. It transcribes all 46 records verbatim — every summary,
-  sentence, deliverable and exclusion — so **Sanity does not need to be opened**, and a response
-  can be as coarse as *"Approve all Digital"* or as fine as *"Approve Design except the CAD
-  Drafting summary"*. Three things in it are worth the attention specifically:
-  - **the 35 published exclusions**, which are where each service states what Gridsmith does not
-    undertake and therefore what a client cannot later say was promised;
-  - **the 12 passages marked `⚠ VERIFY`**, which assert a named tool, a professional position or
-    a standard — the sentences where being wrong would matter most;
-  - **per-channel exclusions for the marketing capabilities confirmed at `GS-O012`**, which do not
-    exist yet. `GS-P05` corrected one exclusion that the confirmation made false; no channel has
-    published wording, and none may be published without its own boundary statement.
-- **What it blocks:** promotion of any service content to production.
-- **Evidence required:** an approved or amended content set. The document records the SHA-256 of
-  the copy it transcribes and `check:service-content` fails if the two diverge, so an approval
-  cannot silently attach to wording that has since changed.
+  The second also carries the client's own product name in the body. **Freelancer hosting a
+  reviewer's words and Gridsmith reprinting them are different publications**, and this one is a
+  legal position — `AI-DEVELOPMENT-PROTOCOL.md` puts a legal commitment nobody has taken into this
+  register rather than into a build.
+- **What was done meanwhile, so nothing is stuck:** the conservative default. The two are
+  **withheld**, the homepage publishes **10 of 12**, no quotation was altered (editing one is not
+  available and will not be offered), nothing was deleted, and `check:reviews --live` names both
+  withheld reviews and the reason on every run. Nothing has reached the public: production content
+  is gated and `gridsmith.uk` is untouched.
+- **Exact action:** one sentence, either way.
+  1. *"Publish them"* — the two ids come out of `WITHHELD_REVIEW_IDS` in
+     `lib/reviews/freelancer.ts` and the block publishes twelve.
+  2. *"Keep them withheld"* — nothing changes and this closes as implemented.
+  3. If you want a solicitor's view first, it belongs with `GS-O003` rather than here.
+- **What it blocks:** nothing. The homepage works either way. It must be closed before production
+  release, because the answer decides what the site says about a named company.
+- **Credentials required:** none. **Paid service required:** none.
+- **Evidence required:** a dated written decision naming which of the two options.
 
 ### `GS-O010` — Provide an isolated Supabase target for Vercel Preview
 
@@ -160,6 +107,51 @@ be designed while something is broken.
 
 ## COMPLETED
 
+- `GS-O014` — **completed 16 September 2026 at `GS-P06`, approved WITH AMENDMENT.** The owner
+  accepted Freelancer's API terms, accepted publication of every eligible genuine review including
+  ones carrying legitimate criticism, and confirmed the attribution wording *"Verified review via
+  Freelancer"* with a link to `https://www.freelancer.com/u/GridsmithLTD`.
+  **Implemented:** `components/master/Testimonials.tsx` reads the official API through
+  `lib/reviews/freelancer.ts`; genuine ratings, dates and bodies are rendered unaltered; the
+  category comes from Freelancer's closed skill taxonomy and never from a project title; no
+  Freelancer mark, logo or asset is used and no endorsement is implied.
+  **The amendment is the load-bearing half.** Reviews appear on the **Master experience only**.
+  Division-level review blocks were removed outright, because Freelancer's taxonomy does not map
+  onto Design / Digital / Press — it had put a 3D-project review and a logo-design review on
+  Press. No speculative division classification was built to replace it.
+  `SERVICE-ARCHITECTURE.md` §18, §19, §20. Asserted by `check:reviews`, `check:reviews:live`,
+  `check:reviews:selftest` (58 cases) and the new `check:reviews-ui` (ten questions over the
+  served page), each proven by deliberate failure.
+  **What closing this does not cover, so nothing is dropped:** the *number* published is 10 of 12
+  pending `GS-O015`, which is a question this action was never asked. The reviewer-facing terms,
+  the attribution and the Master-only placement are all implemented as approved.
+- `GS-O013` — **completed 16 September 2026 at `GS-P06`, approved WITH REMEDIATION.** The owner
+  approved the 46-record development service catalogue subject to corrections, and **the approval
+  closes only because the corrections are implemented in the canonical content source**
+  (`scripts/service-content.mjs`), not in a review document:
+  - the **media-buying contradiction** removed — the site no longer denies a capability it sells;
+    paid media management and placement is a nineteenth `DIGITAL_MARKETING_ENGAGEMENT` row;
+  - **ownership absolutes** removed — source-code handover, account access and infrastructure
+    arrangements are defined in the written project agreement, with Gridsmith's preference for
+    client-controlled arrangements stated as a preference rather than a guarantee;
+  - the **hosting-resale prohibition** removed — hosting coordination and management is
+    project-specific, and no hosting product, SLA or price was invented;
+  - the **categorical accessibility claim** removed — formal certification is not included unless
+    explicitly scoped, and Gridsmith reports standards tested, evidence, findings and residual
+    issues;
+  - **combative guarantee language** professionalised, with every substantive limitation kept;
+  - five **service summaries** rewritten from accusatory to client-centred, and the strong ones
+    left alone;
+  - **continuity wording** now recognises an ongoing engagement as well as further work.
+  The architecture was **not** redesigned: 3 delivery divisions, Master as relationship layer, 46
+  records, 81 approved capabilities, medium-based ownership, no public pricing, no estimator, no
+  public portfolio, Technical Design still gated. `check:service-content` question 4 refuses
+  eleven struck phrasings over 969 copy strings, each branch broken separately in the self-test,
+  and `docs/_shared/GS-P05-OWNER-CONTENT-REVIEW.md` was regenerated so the approval attaches to
+  the corrected wording rather than the reviewed-and-since-edited wording.
+  **What closing this does not cover:** per-channel exclusions for the marketing capabilities
+  still do not exist, and no channel may be published without its own boundary statement. That is
+  now tracked under `GS-O007`'s production-content work rather than left inside a closed action.
 - `GS-O012` — **completed 16 September 2026.** The owner confirmed that **eight** of the nine open
   channel/platform services are current Gridsmith capabilities: digital marketing strategy,
   campaign management, Google Ads / PPC management, Meta / Facebook / Instagram advertising
