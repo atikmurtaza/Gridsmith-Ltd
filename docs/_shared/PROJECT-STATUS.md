@@ -19,9 +19,10 @@ the GS-P06 commit containing this record (`git rev-parse HEAD`)
 
 **CI/build:** local **43-gate** static chain, clean production build on a wiped `.next`, bundle
 budgets, secrets lint, served accessibility/responsive/content gates and **fifteen**
-deliberate-failure proofs pass. GS-P05's baseline was CI run `35047282241`, `success` on
-`e8bdd9ba`. The Vercel production-target build is still expected to error as `GS-T005` predicts;
-nothing is published.
+deliberate-failure proofs pass. **GitHub CI run `35083509494` completed `success` on `cf047f13` —
+all 43 steps**, Lighthouse CI included. With the cylinder on `/`: desktop **1.00 perf / 1.00 a11y
+/ CLS 0.000 / TBT 0ms**, mobile 0.99 / 1.00 / CLS 0.000 / TBT 22ms; Digital's 100/100/100 gate is
+unmoved. The Vercel production-target build errored as `GS-T005` predicts; nothing was published.
 
 **Last updated:** 16 September 2026 (`GS-P06`)
 
@@ -102,7 +103,8 @@ additionally maps the already-existing, already-bounded `service_slug` column.
 
 ## Vercel state
 
-No Vercel action was taken in GS-P03, GS-P04, GS-P05 or GS-P06. A push to `main` may trigger Vercel's
+No Vercel action was taken in GS-P03, GS-P04, GS-P05 or GS-P06. The GS-P06 push produced
+production-target deployment `dpl_EvNrr4CAaCQzAKxk1hFkNDhzUqod`, state `ERROR` as expected. A push to `main` may trigger Vercel's
 normal Git integration; its outcome is reported in `AI-HANDOFF.md`. A production-target build is still expected
 to fail on the empty production Sanity dataset (`GS-T005`). Preview remains non-isolated (`GS-O010`).
 

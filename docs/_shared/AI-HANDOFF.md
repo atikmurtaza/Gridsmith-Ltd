@@ -19,6 +19,9 @@
 - **Starting working tree:** clean, 0 ahead / 0 behind `origin/main`, no unrelated owner work
 - **GS-P05 CI baseline:** run `35047282241` **completed `success`** on `e8bdd9ba`. Verified before
   any work began
+- **Pushed:** YES — `cf047f13` on `origin/main`
+- **GS-P06 CI:** run `35083509494` **completed `success`** on `cf047f13` — **all 43 steps**,
+  including both Lighthouse axes, which cannot run locally on Windows
 
 ## Hard scope boundaries preserved
 
@@ -302,7 +305,7 @@ no touch device has a hover pause, so the front dwell **is** the reading time th
 | `lint`, `typecheck`, `lint:colors`, `lint:secrets` | **PASS** — 0 warnings; 212 files; 191 source files and 41 client chunks swept |
 | `npm audit --omit=dev` | **PASS** — 0 vulnerabilities, **no dependency added** |
 | `git diff --check` / `--cached --check` | **PASS** |
-| Lighthouse CI (desktop/mobile) | **NOT RUN locally** — the known Windows chrome-launcher EPERM. CI is the arbiter |
+| Lighthouse CI (desktop/mobile) | **NOT RUN locally** — the known Windows chrome-launcher EPERM. CI is the arbiter, and it ran both. See below |
 | Manual screen-reader and cross-browser review | **NOT RUN** — `GS-R001`, and see the acceptance note below |
 
 **Which question each green answers.** `check:axe` is reported on **both** violations (zero) and
@@ -354,6 +357,28 @@ cylinder entry alone, the six `time[datetime="…"]` targets **stayed red**. Tha
 measurement that the pattern does not swallow everything on the route, and a red carries its own
 validity proof.
 
+### Lighthouse, with the cylinder on `/` — CI run `35083509494`, median of 3
+
+This was the open risk in the whole phase: a continuously animating 3D element on the route with
+the least LCP headroom in the programme (`Q-M16`), on a page gated at ≥98 desktop performance.
+
+| Axis | route | perf | a11y | LCP | **CLS** | **TBT** |
+|---|---|---|---|---|---|---|
+| Desktop | `/` | **1.00** | **1.00** | 525ms | **0.000** | **0ms** |
+| Desktop | `/digital` | **1.00** | **1.00** | 515ms | 0.000 | 0ms |
+| Mobile (4G, 4× CPU) | `/` | 0.99 | **1.00** | 1564ms | **0.000** | **22ms** |
+| Mobile | `/digital` | 0.99 | 1.00 | 1549ms | 0.000 | 22ms |
+
+**CLS is 0.000 and TBT is 0ms on the route carrying the cylinder**, which is the pair worth
+reading rather than the score. Zero CLS is the fixed stage height doing its job — the box is the
+same size before and after the stylesheet loads and at every breakpoint. Zero TBT is the whole
+argument for CSS over an animation library: `rotateY` on a `preserve-3d` container is composited,
+so a permanently running animation costs nothing on the main thread. **Digital's 100/100/100 gate
+is unmoved.**
+
+The mobile LCP is 1564ms against Digital's 1600ms budget, which is the structural floor `Q-M16`
+already records for an *empty* page on `ubuntu-latest` (1520ms) and not a cost of this block.
+
 ### Human acceptance still required — recorded rather than faked
 
 No unit test has eyes. The following are for `GS-R001` and cannot be closed here:
@@ -377,7 +402,7 @@ No unit test has eyes. The following are for `GS-R001` and cannot be closed here
 
 ## Remote changes
 
-- **GitHub:** the GS-P06 commit pushed to `main`.
+- **GitHub:** `cf047f13` pushed to `main`; CI run `35083509494` **`success`**, all 43 steps.
 - **Freelancer:** **read only, unauthenticated.** `GET /api/projects/0.1/reviews/` called a small
   number of times, and `https://www.vengenceui.com/components/cylinder-carousel` read once for the
   design reference. **No account signed into, no setting changed, no application created, no token
@@ -387,9 +412,12 @@ No unit test has eyes. The following are for `GS-R001` and cannot be closed here
 - **Supabase:** **none.**
 - **Resend:** the existing `check:axe` notification probe sent one development notification through
   Resend's shared sender to the account owner. Established gate behaviour, not new here.
-- **Vercel:** none initiated. A push to `main` triggers the normal Git integration; a
-  production-target deployment is still expected to `ERROR` on the empty production Sanity dataset
-  (`GS-T005`), which is not a regression introduced here. Preview remains non-isolated (`GS-O010`).
+- **Vercel:** none initiated. The push triggered the normal Git integration, which produced
+  production-target deployment `dpl_EvNrr4CAaCQzAKxk1hFkNDhzUqod` — **`ERROR`, as expected**.
+  Every production-target deployment since `GS-P00` has ended the same way, on the empty production
+  Sanity dataset (`GS-T005`). **Nothing was published, `gridsmith.uk` is unaffected, and this is
+  not a regression introduced here** — observed and reported, not acted on. Preview remains
+  non-isolated (`GS-O010`).
 - **Hostinger/DNS/`gridsmith.uk`:** none.
 
 ## Recommended next phase
