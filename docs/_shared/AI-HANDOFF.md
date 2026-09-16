@@ -18,7 +18,9 @@
 - **Starting working tree:** clean, 0 ahead / 0 behind `origin/main`, no unrelated owner work
 - **GS-P04 CI baseline:** run `35042409312` **completed `success`** on `a4cb3e9d`. Verified
   before any work began; the baseline is sound and nothing was carried forward from a failed run
-- **Pushed:** YES when the GS-P05 commit is present on `origin/main`
+- **Pushed:** YES — `e8bdd9ba` on `origin/main`
+- **GS-P05 CI:** run `35047282241` **completed `success`** on `e8bdd9ba` — **all 42 steps**,
+  including Lighthouse CI desktop and mobile, which cannot run locally on Windows
 
 ## Hard scope boundaries preserved
 
@@ -374,8 +376,11 @@ now writes only under `import.meta.main`.
 - **Supabase:** **none.**
 - **Resend:** the existing `check:axe` notification probe sent one development notification through
   Resend's shared sender to the account owner. Established gate behaviour, not new here.
-- **Vercel:** none initiated. The push may trigger the normal Git integration. A production-target
-  build is still expected to fail on the empty production Sanity dataset (`GS-T005`), and Preview
+- **Vercel:** none initiated. The push triggered the normal Git integration, which produced
+  production-target deployment `dpl_45A72Pnr2eMtF1tr4c3Jw62LpE1x` — **`ERROR`, as expected**.
+  Every production-target deployment since `GS-P00` has ended the same way, on the empty
+  production Sanity dataset (`GS-T005`). **Nothing was published, `gridsmith.uk` is unaffected,
+  and this is not a regression introduced here** — observed and reported, not acted on. Preview
   remains non-isolated (`GS-O010`).
 - **Hostinger/DNS/`gridsmith.uk`:** none.
 

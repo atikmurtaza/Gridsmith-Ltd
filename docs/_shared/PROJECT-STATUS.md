@@ -17,9 +17,11 @@ the GS-P05 commit containing this record (`git rev-parse HEAD`)
 **Working tree:** clean at task start; GS-P05 review module, gates, content-review generator,
 one content correction and documentation only. **No component was rewired and no route changed.**
 
-**CI/build:** local static chain, clean production build, bundle budgets, secrets lint, served
-accessibility/responsive/content gates and deliberate-failure proofs pass. GitHub CI for the GS-P03
-commit is reported in `AI-HANDOFF.md`.
+**CI/build:** local 42-gate static chain, clean production build on a wiped `.next`, bundle
+budgets, secrets lint, served accessibility/responsive/content gates and ten deliberate-failure
+proofs pass. **GitHub CI run `35047282241` completed `success` on the GS-P05 commit — all 42
+steps**, Lighthouse CI included. The Vercel production-target build errored as `GS-T005` predicts;
+nothing was published.
 
 **Last updated:** 16 September 2026 (`GS-P05`)
 
