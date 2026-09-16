@@ -26,7 +26,7 @@ professional review and security, remain active.
 |---|---|
 | Capability groups | Brand & Visual · Illustration · Motion · 3D & Visualisation · Technical (`_shared/SERVICE-ARCHITECTURE.md`). `Q-01`'s Track A/B split is superseded by these groups |
 | Landing | Services grouped by capability group, no prices, no "Selected work"; CTA **Get a Design Quote** → `/contact?division=design` |
-| `B-09` | Remains TODO (Design has no per-service route); rescoped — no price, contextual quote CTA |
+| `B-09` | **DONE at GS-P04** — `/design/services/[slug]` exists. 16 records, 31 approved services, no price, contextual **Get a Design Quote** CTA carrying the service slug |
 | `B-10`, `D-01`–`D-05`, `E-03`, `E-04` | Not launch rows (`GS-D001`); `project` type dormant |
 | `C-13`–`C-17` | No `/design/estimate`; its bundle budget entry was removed |
 | **Technical publication gate** | **ACTIVE.** Published Technical-group services require `professionalScopeConfirmed`; the Studio warns, `check:launch` refuses on production. **Blocked on `GS-O005` (PI scope) and `GS-X002` (professional review).** Visualisation does not imply engineering responsibility; no certified, structural or regulated engineering claim may be published |
@@ -57,7 +57,7 @@ including Design's.
 | B-06 | **Track fork component** | P0 | 2d | B-05 | TODO | Dev | Cookie-based, SSR-correct |
 | B-07 | Track A landing | P0 | 1.5d | B-06 | TODO | Dev | Work-first ordering |
 | B-08 | Track B landing | P0 | 2d | B-06 | TODO | Dev | 13 blocks |
-| B-09 | Service page template | P0 | 2d | A-06 | TODO | Dev | ~~Pricing required~~ superseded by `GS-D002` (`GS-P03`) — contextual quote CTA, capability group, technical publication gate |
+| B-09 | Service page template | P0 | 2d | A-06 | **DONE** 16 Sep | Dev | ~~Pricing required~~ superseded by `GS-D002` (`GS-P03`). Built at GS-P04 as `app/(design)/design/services/[slug]/page.tsx` — six lines over the **shared** template `components/content/ServiceDetail.tsx`, which all three divisions use. Server Component, zero client JS, statically generated, 1.9KB gz delta against a 25KB budget. **One template rather than three** because the questions a service page answers do not vary by division and the voice is carried entirely by the theme on `<html data-division>`; three copies would be three pages drifting apart. Renders capability group, summary, description, **what this covers** (the approved capabilities), deliverables, **exclusions**, per-stage process, collaborators, related services, contextual CTA. **Technical-group records publish here with `professionalScopeConfirmed: false`** and `check:launch` refuses them on production — the gate is unchanged and `GS-O005`/`GS-X002` stay open. Subject added to `check-axe`, `check-responsive`, `check-vat` and `check-bundle-size`s `REQUIRED` |
 | B-10 | Case study template | P0 | 1.5d | A-06 | TODO | Dev | Metric + confidential guard |
 
 ## Epic C — Conversion machinery

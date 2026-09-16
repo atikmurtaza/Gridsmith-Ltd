@@ -2,13 +2,24 @@
  * `S-01` — seeds the **development** dataset with structurally complete, visibly fake content
  * for every document type that exists (`FOUNDATION` §7).
  *
- * ## What is real here, and what is not
+ * ## What is real here, and what is not — three tiers since `GS-P04`
  *
- * **Everything written by this script carries `isSeed: true` and a `[SEED]` marker in its
- * rendered text — with one deliberate exception.** The six `testimonial` documents are real,
- * public Freelancer reviews reproduced verbatim, attributed, and carrying `sourceUrl` so a
- * reader can check them. They are `isSeed: false` and `verified: true`, and they must never be
- * reworded: a paraphrased review is an invented one.
+ * **Everything this script writes carries `isSeed: true` except the testimonials**, and
+ * `isSeed` is the machine-enforced production block: `check:launch` refuses a production
+ * dataset containing a published seed record, and that assertion has a committed specimen.
+ * Non-negotiable #4 rests on the flag, not on a string.
+ *
+ * 1. **Real, not seed** — the six `testimonial` documents. Public Freelancer reviews reproduced
+ *    verbatim, attributed, carrying `sourceUrl` so a reader can check them. `isSeed: false`,
+ *    `verified: true`. **They must never be reworded**: a paraphrased review is an invented one.
+ *    Their project titles were anonymised at `GS-P04` (`GS-O011`) — titles only; no quote was
+ *    touched. See the block above `REVIEWS`.
+ * 2. **Truthful development content** — the `service` documents, written at `GS-P04` against the
+ *    owner-approved catalogue (`GS-O006`). `isSeed: true` and deliberately **not** `[SEED]`-marked:
+ *    the marker means *fabricated*, this is not, and the phase's purpose was a foundation someone
+ *    can review. The wording is still agent-authored and unapproved — `GS-O013`.
+ * 3. **Visibly fake placeholder** — everything else: team, FAQs, posts, group pages. `isSeed: true`
+ *    and `[SEED]`-marked in its rendered text, because it *is* fabricated.
  *
  * `continuityExample` is **not seeded and cannot be**. Its `verified` field is hard-true
  * (`N-05`), so a placeholder would have to assert that someone confirmed a story that did not
@@ -18,9 +29,16 @@
  *
  * `GS-D002` removed every price field from the schema and `GS-D001` removed every public portfolio
  * route, so this script writes neither. Services follow the approved capability groups in
- * `lib/services/architecture.ts`. **The development dataset still holds the pre-`GS-P03` seed**
- * (priced services, 24 seed projects) until someone authorised re-runs this script *and* deletes
- * the orphaned seed documents it no longer writes — `createOrReplace` never removes anything.
+ * `lib/services/architecture.ts`.
+ *
+ * ## It deletes, since `GS-P04` — `GS-T007`
+ *
+ * `createOrReplace` never removes anything, so until `GS-P04` every record this script had
+ * *stopped* writing stayed published: 30 pre-`GS-P03` priced services with no capability group
+ * and 24 seed projects for deleted routes. Obsolete seed is now deleted in the same transaction,
+ * **by provenance and never by type** — a candidate must carry both `isSeed: true` and an `_id`
+ * beginning `seed-`, and a disagreement between the two markers stops the run. See the block
+ * above the transaction.
  *
  * ## No image assets
  *
@@ -39,11 +57,34 @@
  */
 import { rmSync } from 'node:fs';
 import { createClient } from '@sanity/client';
-import { SANITY_API_VERSION, SANITY_PROJECT_ID } from '../sanity/project.ts';
+import { SANITY_API_VERSION, SANITY_PROJECT_ID, PRODUCTION_DATASET } from '../sanity/project.ts';
 import { CANONICAL_PROCESS } from '../lib/process/canonical.ts';
 import { LEGAL_DOCUMENTS } from './seed-legal.mjs';
+import { PROCESS_DETAIL, SERVICES } from './service-content.mjs';
+import { anonymityProblems } from './service-content-rules.mjs';
 
 const DATASET = 'development';
+
+/**
+ * **The production guard, asserted rather than assumed** — `GS-P04`.
+ *
+ * `DATASET` was already a hardcoded literal, for the reason the header gives: a seed script that
+ * followed `NEXT_PUBLIC_SANITY_DATASET` is one mis-set variable away from writing placeholder
+ * content into live. `GS-P04` added deletion to this script, which changes the cost of being
+ * wrong from "extra documents" to "missing ones", so the literal is now compared against the
+ * name that means live instead of being trusted because it looks right.
+ *
+ * It reads as unreachable code and that is the point: it is one edit away from being reachable,
+ * and the edit that would reach it is exactly the edit nobody should make. `check:service-content`
+ * proves the comparison fires by calling it with the production name.
+ */
+if (DATASET === PRODUCTION_DATASET) {
+  console.error(
+    `\nseed-content: refusing to run against "${DATASET}", which is the production dataset.` +
+      '\nThis script creates, replaces AND DELETES documents. It exists for development only.\n',
+  );
+  process.exit(1);
+}
 
 const token = process.env.SANITY_API_WRITE_TOKEN;
 if (!token) {
@@ -66,10 +107,25 @@ const blocks = (...paragraphs) =>
     children: [{ _type: 'span', _key: `s${i}`, text, marks: [] }],
   }));
 
+const seo = (title, description) => ({ _type: 'seoBlock', metaTitle: title, metaDescription: description });
+
+const DIVISION_NAME = { design: 'Gridsmith Design', digital: 'Gridsmith Digital', press: 'Gridsmith Press' };
+
+// ---------------------------------------------------------------------------
+// Services — the owner-approved catalogue (`GS-O006`), written as development content
+// ---------------------------------------------------------------------------
+
 /**
  * Division detail per stage, keyed by canonical title — rule 3 of `00-PROCESS.md`. The
  * **names come from the constant**, never from this file, so a seed record cannot introduce a
- * seventh stage or reword one of the six.
+ * seventh stage or reword one of the six. The detail itself is `PROCESS_DETAIL` in
+ * `service-content.mjs`.
+ *
+ * **`duration` and `clientTime` are left unset on purpose.** `processStep` has both fields and
+ * the service page renders them when present. A duration is an operational commitment, and no
+ * owner fact supplies one — a plausible "2–3 weeks" would be precisely the invented figure
+ * `CLAUDE.md` #2 forbids. The page reads correctly without them because every block is
+ * conditional.
  */
 const processFor = (division) =>
   CANONICAL_PROCESS.map((stage, i) => ({
@@ -78,88 +134,80 @@ const processFor = (division) =>
     number: stage.number,
     title: stage.title,
     description: stage.description,
-    divisionDetail: `${S} What this stage looks like on a ${division} engagement. Replace before launch.`,
+    divisionDetail: PROCESS_DETAIL[division][stage.title],
   }));
 
-const seo = (title, description) => ({ _type: 'seoBlock', metaTitle: title, metaDescription: description });
-
-// ---------------------------------------------------------------------------
-// Services — placeholders inside the approved capability groups (`GS-P03`)
-// ---------------------------------------------------------------------------
-
 /**
- * `[title, capabilityGroup, searchIntent, problem, [deliverables], [collaborators]]`.
+ * **These records carry `isSeed: true` and no `[SEED]` text marker, and that is deliberate.**
  *
- * **Every title is `[SEED]`.** These exercise the architecture — every group of every division,
- * cross-division collaborators, the technical publication gate — and describe no real offer. The
- * approved service inventory is `_shared/SERVICE-ARCHITECTURE.md`; real copy replaces these by
- * deletion, never by editing. Technical records are published here and carry
- * `professionalScopeConfirmed: false`, which is allowed off production and refused on it.
+ * The marker labels *visibly fabricated* text — a placeholder registered office, a
+ * `[SEED] Placeholder Name`. This content is not fabricated: it describes services the owner
+ * confirmed at `GS-O006` in plain factual terms, and the point of `GS-P04` is a foundation
+ * someone can actually review. Marking truthful copy as fake makes the development site
+ * unreadable and teaches a reviewer to ignore the marker where it still means something.
+ *
+ * What stops it reaching production is unchanged and is machine-enforced rather than textual:
+ * `isSeed: true`, and `check:launch` refusing a production dataset that contains a published
+ * seed record — an assertion with a committed specimen. Non-negotiable #4 is intact.
+ * `scripts/service-content.mjs` documents the rules the copy itself was written under.
  */
-const SERVICES = {
-  design: [
-    ['Brand Identity', 'brand-visual', 'brand identity designer uk', 'You have a business and no coherent visual identity — the logo, the deck and the website each look like a different company.', ['Logo suite and lockups', 'Colour and type system', 'Usage guidelines', 'Asset pack in working formats']],
-    ['Graphic Design', 'brand-visual', 'graphic designer for business', 'You have content and no consistent layout system to put it in.', ['Layout system', 'Source files', 'Print-ready and screen exports']],
-    ['Packaging Design', 'brand-visual', 'packaging designer uk', 'Your printer has rejected the artwork, or you have none to send.', ['Dieline-accurate artwork', 'Print-ready PDFs', 'Pre-flight check']],
-    ['Digital Illustration', 'illustration', 'custom illustration uk', 'You need artwork made for the job rather than bought from a library.', ['Concept sketches', 'Final artwork in agreed formats']],
-    ['Motion Graphics & Animation', 'motion', 'motion graphics studio uk', 'A still image cannot explain how the thing works.', ['Storyboard', 'Animated sequence at agreed length', 'Delivery masters for web and social']],
-    ['3D Modelling & Rendering', '3d-visualisation', '3d product rendering service', 'You need to show a product that does not physically exist yet, or cannot be photographed economically.', ['3D model', 'Renders at agreed angles', 'Source scene file']],
-    ['Product Visualisation', '3d-visualisation', 'product visualisation studio', 'Your product photography cannot show configurations, cutaways or finishes you do not yet hold in stock.', ['Render set', 'Material and finish variants', 'Exploded and cutaway views']],
-    ['CAD Drafting', 'technical', 'cad drafting service uk', 'You have sketches, a survey or a physical part and need drawings prepared from them.', ['CAD model', '2D drawing set', 'Native and neutral file formats']],
-    ['Engineering Drawings', 'technical', 'engineering drawing service', 'You need a dimensioned drawing set prepared to an agreed brief.', ['General arrangement drawings', 'Detail drawings', 'Revision-controlled issue set']],
-    ['Technical Document Layout', 'technical', 'technical manual layout', 'Your manual or specification sheet is correct and hard to read.', ['Layout template', 'Typeset document', 'Print and screen exports'], ['press']],
-  ],
-  digital: [
-    ['Website Design & Build', 'web', 'website design agency uk', 'Your site was built by someone who has moved on, and every change is a negotiation.', ['Design system and page templates', 'Built, responsive, accessible site', 'CMS the team can actually use', 'Handover documentation'], ['press', 'design']],
-    ['Ecommerce', 'web', 'ecommerce developer uk', 'Your store works but the theme fights you every time you want to change something.', ['Store build or customisation', 'Product and collection templates', 'Checkout and app configuration']],
-    ['CMS Implementation', 'web', 'cms implementation uk', 'You want to edit your own site without breaking it.', ['Content model', 'CMS configuration', 'Editor training']],
-    ['Web Application Development', 'software', 'custom web application development', 'A spreadsheet is running a process that has outgrown it.', ['Scoped application', 'Authentication and roles', 'Data model and migrations', 'Deployment pipeline']],
-    ['Internal Tools & Dashboards', 'software', 'internal business tools', 'The information you need is spread across systems nobody has joined up.', ['Scoped tool or dashboard', 'Data connections', 'Access controls']],
-    ['Mobile App Development', 'apps-interactive', 'mobile app developer uk', 'You need the thing on a phone, in a store, without a team to maintain it.', ['Application build', 'Store submission assets', 'Release pipeline']],
-    ['AI Integration', 'automation-intelligence', 'ai integration for business', 'You want a specific job done by a model, not a chatbot bolted onto the corner of a page.', ['Use-case definition and evaluation set', 'Integration into an existing system', 'Guardrails and logging']],
-    ['Automation & Workflow', 'automation-intelligence', 'business process automation uk', 'The same file is being copied between the same three systems every week by a person.', ['Process map', 'Automated pipeline', 'Failure alerting']],
-    ['Technical SEO & Performance', 'operate-improve', 'technical seo audit uk', 'The site is slow or hard to crawl, and you have been told conflicting things about why.', ['Technical audit against measured data', 'Prioritised fix list', 'Implementation of the fixes'], ['press']],
-    ['Maintenance & Monitoring', 'operate-improve', 'website maintenance uk', 'Nobody currently owns the question of whether the site is up.', ['Hosting coordination', 'Updates and backups', 'Monitoring']],
-  ],
-  press: [
-    ['Ghostwriting', 'writing', 'ghostwriter uk', 'The book is in your head and it has been there for three years.', ['Interview programme', 'Chapter-by-chapter drafts', 'Full manuscript to agreed length']],
-    ['Website & Business Copywriting', 'writing', 'business copywriter uk', 'The words on the site were written by whoever was free.', ['Messaging framework', 'Page copy', 'One revision round'], ['digital']],
-    ['Thought Leadership & Reports', 'writing', 'whitepaper writer uk', 'You have expertise and nothing published that shows it.', ['Outline and research plan', 'Draft document', 'Final edited copy']],
-    ['Manuscript Assessment', 'editorial', 'manuscript assessment uk', 'You want to know whether it is any good before you spend anything else on it.', ['Written assessment', 'Structural recommendations', 'A recommendation that may be "not yet"']],
-    ['Editing & Proofreading', 'editorial', 'manuscript editing service uk', 'The manuscript is done and you cannot see it clearly any more.', ['Developmental notes', 'Line and copy edit', 'Final proofread against proofs']],
-    ['Book Publishing Preparation', 'publishing', 'self publishing services uk', 'You have a finished manuscript and no route to a printed, distributed book.', ['Publishing plan', 'Typeset interior', 'Cover-design coordination', 'Distribution setup'], ['design']],
-    ['Ebook & Print Formatting', 'publishing', 'ebook formatting service', 'The inside looks like a word processor.', ['Typeset print interior', 'Reflowable ebook', 'Platform-ready files']],
-    ['ISBN & Distribution Setup', 'publishing', 'isbn and book distribution uk', 'You do not know what an ISBN commits you to, or who ends up owning the listing.', ['Guidance on obtaining your own ISBN', 'Metadata and listing preparation', 'Distribution account setup in your name']],
-    ['Content Programmes', 'content-promotion', 'content marketing programme uk', 'You publish when someone remembers to, which is never.', ['Editorial plan', 'Agreed cadence of pieces', 'Review each cycle']],
-  ],
-};
-
 const serviceDocs = Object.entries(SERVICES).flatMap(([division, rows]) =>
-  rows.map(([title, capabilityGroup, searchIntent, problem, deliverables, collaborators = []], i) => ({
-    _id: `seed-service-${division}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+  rows.map((row, i) => ({
+    _id: `seed-service-${division}-${row.slug}`,
     _type: 'service',
-    title: `${S} ${title}`,
-    slug: slugOf(title.toLowerCase().replace(/[^a-z0-9]+/g, '-')),
+    title: row.title,
+    slug: slugOf(row.slug),
     division,
-    capabilityGroup,
-    searchIntent,
-    problem: `${S} ${problem}`,
-    deliverables: deliverables.map((label, j) => ({
+    capabilityGroup: row.group,
+    capabilities: row.covers,
+    searchIntent: row.searchIntent,
+    problem: row.summary,
+    description: blocks(...row.description),
+    deliverables: row.deliverables.map(([label, detail, included = true], j) => ({
       _type: 'deliverable',
       ...key(j),
       label,
-      detail: `${S} Placeholder detail for "${label}".`,
-      included: true,
+      detail,
+      included,
     })),
     process: processFor(division),
-    collaborators,
+    collaborators: row.collaborators,
+    // Every technical record is published here and unconfirmed, which is allowed off production
+    // and refused on it. That combination is the subject `check:launch`'s technical limb needs.
     professionalScopeConfirmed: false,
-    seo: seo(`${title} — Gridsmith ${division[0].toUpperCase()}${division.slice(1)}`, `${S} Placeholder meta description for ${title}.`),
+    seo: seo(`${row.title} — ${DIVISION_NAME[division]}`, row.summary),
     order: i + 1,
     published: true,
     isSeed: true,
   })),
 );
+
+/**
+ * `relatedServices` is a reference array, so it is resolved after the ids are known rather than
+ * inline. A `related` slug naming a record that does not exist would write a dangling reference
+ * that renders as nothing, so it is a hard failure instead.
+ */
+const serviceIdBySlug = new Map(
+  Object.entries(SERVICES).flatMap(([division, rows]) =>
+    rows.map((row) => [row.slug, `seed-service-${division}-${row.slug}`]),
+  ),
+);
+const danglingRelated = [];
+for (const [division, rows] of Object.entries(SERVICES)) {
+  for (const row of rows) {
+    const doc = serviceDocs.find((d) => d._id === `seed-service-${division}-${row.slug}`);
+    doc.relatedServices = (row.related ?? []).map((slug, j) => {
+      const id = serviceIdBySlug.get(slug);
+      if (!id) danglingRelated.push(`${row.slug} -> ${slug}`);
+      return { _type: 'reference', ...key(j), _ref: id ?? slug };
+    });
+  }
+}
+if (danglingRelated.length > 0) {
+  console.error('\nseed-content: relatedServices names a slug no record defines:\n');
+  for (const d of danglingRelated) console.error(`  ${d}`);
+  process.exit(1);
+}
 
 // ---------------------------------------------------------------------------
 // Testimonials — REAL. Verbatim, attributed, traceable. Never reworded, never [SEED].
@@ -169,26 +217,52 @@ const FREELANCER_PROFILE = 'https://www.freelancer.com/u/GridsmithLTD';
 
 /**
  * Six public reviews from Gridsmith's Freelancer profile, transcribed **verbatim** on
- * 21 August 2026 — including the reviewers' own punctuation and capitalisation.
+ * 21 August 2026 — including the reviewers' own punctuation, capitalisation and typos.
  *
  * They are the only non-seed content this script writes. `verified: true` is defensible
  * because `sourceUrl` lets any reader check it; that is what the field is for.
  *
  * `authorCompany` is deliberately absent. Freelancer shows a first name and a handle, and
  * inferring an employer from that would be inventing an attribution.
+ *
+ * ## Project titles are anonymised — `GS-O011`, 16 September 2026
+ *
+ * The owner decided that identifiable project titles come off every review. They were the
+ * source's own titles, which made each one searchable straight back to a single client
+ * engagement, and `Artistic Logo Design for Casglu` named a client's brand outright — under
+ * `GS-D001` that is identifiable client work published without permission.
+ *
+ * **The rule applied, mechanically:** strip every client name, brand name and product
+ * identifier from the source title, keeping only the generic category of work; where stripping
+ * leaves nothing meaningful, the title is omitted. `Ultra-Thin Wallet-Sized Wireless Charger
+ * Design` reduces to "Design", which is not a category, so Stamos's review carries no title —
+ * and an absent title costs nothing, because the quote, the name and the source link are what
+ * make a review worth printing.
+ *
+ * **No quote was touched.** Every body below is byte-identical to the 21 August transcription,
+ * and none of the six contains a client name, so nothing had to be withheld. The reviewers'
+ * own names and public handles stay: they are the attribution that makes the review checkable
+ * at the source, not client identities. Freelancer's star ratings were never transcribed and
+ * the schema has no field for one, so none is stated — inventing a rating is inventing evidence.
+ *
+ * `check:service-content` refuses any of the removed fragments here or in the dataset.
+ *
+ * `[id, name, handle, categoryOfWork, division, quote]`
  */
 const REVIEWS = [
-  ['tom', 'Tom', '@tommyb3210', 'Shopify Theme Image & Color Edits', 'digital',
+  ['tom', 'Tom', '@tommyb3210', 'Ecommerce theme customisation', 'digital',
     "The work was completed to a high standard, and they were happy to make revisions where needed until everything was working exactly as expected. They were knowledgeable with Shopify and implemented the changes professionally and efficiently. Overall, I'm very happy with the service and wouldn't hesitate to work with them again on future Shopify projects. Highly recommended!"],
-  ['elizabeth', 'Elizabeth', null, 'Artistic Logo Design for Casglu', 'design',
+  ['elizabeth', 'Elizabeth', null, 'Logo design', 'design',
     "I didn't really have a very clear brief in mind, but GridsmithLTD managed to turn my vague idea into a selection of great logo choices for me to choose from, really added value with additional things I hadn't thought of an delivered back much more than my initial request. I would happily work with them again in future, they made the process incredibly smooth and efficient."],
-  ['chad', 'Chad', null, 'Miniature Medieval Castle Model', 'design',
+  ['chad', 'Chad', null, '3D modelling', 'design',
     'He did 3D work for me. Very good work. I love it. I have more to do and when i have the budget im going to ask him to do it.'],
-  ['stamos', 'Stamos', null, 'Ultra-Thin Wallet-Sized Wireless Charger Design', 'design',
+  // No category: the source title was a product identifier end to end, and the quote does not
+  // say what the work was. Guessing one would be inventing a fact about a client engagement.
+  ['stamos', 'Stamos', null, null, 'design',
     'Very flexible and understanding!'],
-  ['stephanie', 'Stephanie', null, 'Open Eyes Photoshop Edit', 'design',
+  ['stephanie', 'Stephanie', null, 'Photo editing', 'design',
     'They were very communicative and did an excellent job. On top of that, they were the first person for this project who was able to answer my questions and talk about their experience doing these types of projects which made me feel confident in hiring Gridsmith.'],
-  ['b-edward', 'B-Edward', null, 'Editable Circle Image in PowerPoint', 'design',
+  ['b-edward', 'B-Edward', null, 'Presentation graphics', 'design',
     'Was relieved to find a professional who was able to"get" my thinking, anticipate my needs and execute my assignment so quickly!'],
 ];
 
@@ -424,6 +498,20 @@ if (unsourced.length > 0) {
   process.exit(1);
 }
 
+/**
+ * The `GS-O011` anonymity decision, asserted where the write happens rather than only in a gate.
+ * `check:service-content` asserts the same thing over the committed source and over the dataset;
+ * this catches it one step earlier, before an identifying title can be written at all.
+ */
+const identifying = anonymityProblems(
+  testimonialDocs.map((d) => ({ id: d._id, projectTitle: d.projectTitle })),
+);
+if (identifying.length > 0) {
+  console.error('\nseed-content: a testimonial still carries an identifying project title (GS-O011)\n');
+  for (const problem of identifying) console.error(`  ${problem}`);
+  process.exit(1);
+}
+
 const client = createClient({
   projectId: SANITY_PROJECT_ID,
   dataset: DATASET,
@@ -432,16 +520,66 @@ const client = createClient({
   useCdn: false,
 });
 
+/**
+ * ## Obsolete seed is deleted, and nothing else is — `GS-T007`, authorised at `GS-P04`
+ *
+ * `createOrReplace` never removes anything, so before `GS-P04` a re-run left every record the
+ * script had *stopped* writing published alongside the new ones: the dataset held 30 pre-`GS-P03`
+ * priced services with no capability group and 24 seed projects for routes that no longer exist.
+ * That is what `GS-T007` was.
+ *
+ * **Deletion is by provenance, never by type.** A candidate must carry *both* independent seed
+ * markers this repository has always written — `isSeed: true` **and** an `_id` beginning `seed-`.
+ * Requiring both is the whole safety argument: either one alone could be wrong about a genuine
+ * record, and a disagreement between them means the assumption behind this script no longer
+ * holds, so the run stops rather than guessing which marker to believe.
+ *
+ * Everything else is left exactly where it is. The six Freelancer reviews are `isSeed: false`;
+ * `companyDetails` is a genuine record written by `seed-company-details.mjs`; Sanity's own
+ * `system.*` documents match neither marker. None of them is a candidate, and the query that
+ * builds the candidate list cannot reach them.
+ *
+ * Idempotent: a second run finds no orphans, because the first run's write set is this run's.
+ */
+const writeIds = new Set(ALL.map((d) => d._id));
+const existingSeed = await client.fetch(
+  `*[coalesce(isSeed, false) == true && !(_id in path("drafts.**"))]{_id, _type}`,
+);
+
+const mismatched = existingSeed.filter((d) => !d._id.startsWith('seed-'));
+if (mismatched.length > 0) {
+  console.error(
+    '\nseed-content: a document is marked isSeed: true but its id does not begin "seed-".' +
+      '\nThe two provenance markers disagree, so obsolete seed cannot be told from genuine' +
+      '\ncontent. Nothing was deleted and nothing was written. Resolve these by hand first.\n',
+  );
+  for (const d of mismatched) console.error(`  ${d._id} (${d._type})`);
+  process.exit(1);
+}
+
+const orphans = existingSeed.filter((d) => !writeIds.has(d._id));
+
 let tx = client.transaction();
+for (const orphan of orphans) tx = tx.delete(orphan._id);
 for (const doc of ALL) tx = tx.createOrReplace(doc);
 await tx.commit();
+
+if (orphans.length > 0) {
+  const byType = orphans.reduce((acc, d) => ({ ...acc, [d._type]: (acc[d._type] ?? 0) + 1 }), {});
+  console.log(`\nseed-content: deleted ${orphans.length} obsolete seed document(s) from "${DATASET}"`);
+  for (const [type, n] of Object.entries(byType).sort()) console.log(`  ${String(n).padStart(3)}  ${type}`);
+} else {
+  console.log(`\nseed-content: no obsolete seed documents to delete from "${DATASET}"`);
+}
 
 const counts = ALL.reduce((acc, d) => ({ ...acc, [d._type]: (acc[d._type] ?? 0) + 1 }), {});
 console.log(`\nseed-content: wrote ${ALL.length} document(s) to dataset "${DATASET}"`);
 for (const [type, n] of Object.entries(counts).sort()) console.log(`  ${String(n).padStart(3)}  ${type}`);
 console.log(
-  `\n  ${testimonialDocs.length} testimonial(s) are REAL — verbatim Freelancer reviews, isSeed: false, sourceUrl set.` +
-    `\n  Everything else is isSeed: true and [SEED]-marked. continuityExample cannot be seeded (N-05).\n`,
+  `\n  ${testimonialDocs.length} testimonial(s) are REAL — verbatim Freelancer reviews, isSeed: false,` +
+    '\n  sourceUrl set, project titles anonymised to a category of work (GS-O011).' +
+    `\n  ${serviceDocs.length} service(s) are isSeed: true truthful development content (GS-O006), not [SEED]-marked.` +
+    '\n  Everything else is isSeed: true and [SEED]-marked. continuityExample cannot be seeded (N-05).\n',
 );
 
 /**

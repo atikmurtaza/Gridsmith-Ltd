@@ -57,6 +57,15 @@ const ROUTES = [
   '/press',
   '/contact',
   // `/work` was removed at `GS-P03` with the route.
+  //
+  // The three service pages are `GS-P04` additions, and they are the routes this gate most
+  // needs: `GS-D002` removed every price FIELD, so the only way a figure returns is as prose an
+  // editor types into a summary, a description or a deliverable detail — and a service page is
+  // where someone would type it. One per division, because they are one template under three
+  // themes and the gate reads served text.
+  '/design/services/technical-documentation',
+  '/digital/services/website-design-build',
+  '/press/services/publishing-preparation',
   '/insights',
   '/legal/privacy',
   '/legal/cookies',

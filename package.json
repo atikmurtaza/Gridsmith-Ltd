@@ -31,9 +31,9 @@
     "check:legal:selftest": "node scripts/check-legal-parity.selftest.mjs",
     "check:lhci:desktop": "node scripts/check-lhci.mjs desktop",
     "check:lhci:mobile": "node scripts/check-lhci.mjs mobile",
-    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run lint:colors && npm run check:contrast && npm run check:state-cues && npm run check:headings && npm run check:content && npm run check:claims && npm run check:control && npm run check:schemas && npm run check:rls && npm run check:lead-security && npm run check:launch:selftest && npm run check:legal:selftest && npm run check:struck:selftest && npm run check:struck && npm run check:path:selftest && npm run check:press:contact:selftest && npm run check:lists:selftest && npm run check:lists",
+    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run lint:colors && npm run check:contrast && npm run check:state-cues && npm run check:headings && npm run check:content && npm run check:claims && npm run check:control && npm run check:schemas && npm run check:rls && npm run check:lead-security && npm run check:launch:selftest && npm run check:legal:selftest && npm run check:struck:selftest && npm run check:struck && npm run check:path:selftest && npm run check:press:contact:selftest && npm run check:lists:selftest && npm run check:lists && npm run check:service-content:selftest && npm run check:service-content",
     "verify:build": "npm run build && npm run lint:secrets && npm run check:tokens && npm run check:theme && npm run size",
-    "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:security-headers\" \"npm run check:launch\" \"npm run check:responsive\" \"npm run check:consumer-terms\" \"npm run check:legal:parity\" \"npm run check:vat\" \"npm run check:press:type\" \"npm run check:path:live\" \"npm run check:lhci:desktop\" \"npm run check:lhci:mobile\"",
+    "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:security-headers\" \"npm run check:launch\" \"npm run check:responsive\" \"npm run check:consumer-terms\" \"npm run check:legal:parity\" \"npm run check:vat\" \"npm run check:press:type\" \"npm run check:path:live\" \"npm run check:service-content:dataset\" \"npm run check:lhci:desktop\" \"npm run check:lhci:mobile\"",
     "verify": "npm run verify:static && npm run verify:build && npm run verify:served",
     "check:node": "node scripts/check-node-version.mjs",
     "studio": "sanity dev --port 3333",
@@ -63,7 +63,10 @@
     "check:path:selftest": "node scripts/check-path-recommend.selftest.mjs",
     "check:press:contact:selftest": "node scripts/check-press-contact.selftest.mjs",
     "check:lists": "node scripts/check-list-parity.mjs",
-    "check:lists:selftest": "node scripts/check-list-parity.mjs --selftest"
+    "check:lists:selftest": "node scripts/check-list-parity.mjs --selftest",
+    "check:service-content": "node scripts/check-service-content.mjs",
+    "check:service-content:dataset": "node scripts/check-service-content.mjs --dataset",
+    "check:service-content:selftest": "node scripts/check-service-content.selftest.mjs"
   },
   "dependencies": {
     "@sanity/client": "^8.1.0",

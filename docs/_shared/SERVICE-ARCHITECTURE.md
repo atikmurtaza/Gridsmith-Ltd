@@ -106,9 +106,9 @@ Nothing below changes the live site, DNS or redirects; that is a later release t
 | Brand Identity Support · Website Graphics & Visual Assets | Design — Brand & Visual | Maps directly |
 | Social Media Design Support | Design — Brand & Visual (social/content creative) | Design output only; **not** social media management |
 | CRM & Workflow Setup · Email & Contact Form Automation · Online Booking & Enquiry Systems | Digital — Software / Automation & Intelligence | Maps directly |
-| **"Digital marketing support"** (§4, §8) | Decomposed per §3 | **Owner review** (`GS-O011`) — not carried forward as a service |
-| **Google Ads setup or support** (FAQ, §7) | None | **Owner review** (`GS-O011`) — paid advertising is not in the approved model and is not silently preserved |
-| **Google Business Profile Support** (§4) | None | **Owner review** (`GS-O011`) — not in the approved model |
+| **"Digital marketing support"** (§4, §8) | Decomposed per §3 | **RESOLVED at `GS-P04`** — the owner confirms campaign management. It is a cross-division *engagement*, not a service and not a discipline: §13 |
+| **Google Ads setup or support** (FAQ, §7) | None | **Still open — `GS-O012`.** `GS-P04` confirmed campaign management and explicitly did NOT infer this from it |
+| **Google Business Profile Support** (§4) | None | **Still open — `GS-O012`**, for the same reason as the row above |
 | Pakistan governing law, refund copy, legacy emails | — | Already superseded by `docs/_legal/`; not a service question |
 
 ## 5. CMS and content model
@@ -119,6 +119,7 @@ Nothing below changes the live site, DNS or redirects; that is a later release t
 |---|---|---|
 | `title`, `slug`, `division` | Identity | Yes |
 | `capabilityGroup` | Closed, division-bound group (§2) | Yes |
+| `capabilities[]` | **`GS-P04`.** The approved services this record covers — names, not claims. Renders as *What this covers* | No |
 | `problem` (titled *Summary*) | Concise summary — the buyer's situation | No |
 | `description` | Detailed description (portable text) | No |
 | `searchIntent`, `seo` | SEO metadata | No |
@@ -149,14 +150,35 @@ process and collaborators render consistently across divisions.
 | `book`, `retailerLink` | No route. `authorConsent` hard-true and `retailers` min 1 retained. | A future consented catalogue; the consent rules are exactly right for that. |
 | `publishingPackage`, `packageLine` | No route. Price, price note, "from" flag, scaling factors and extra-revision cost removed. | Structured scope description if an approved package-shaped offer is ever published; `excludes` and `notFor` stay required. |
 
-### Development dataset
+### Development dataset — **reconciled at `GS-P04`; `GS-T007` CLOSED**
 
-The `development` Sanity dataset still holds the pre-`GS-P03` seed: priced services without
-capability groups and 24 seed projects. It was **not** re-seeded: `seed-content.mjs` only
-`createOrReplace`s, so re-running it would leave the old records published alongside the new ones.
-Rendering is tolerant (records without a group render in a flat list; stored price fields are
-never projected), and `/_master-sink` carries committed specimens of the grouped list. Re-seeding
-requires deleting the orphaned seed documents and is recorded as `GS-T007`.
+At `GS-P03` this dataset still held the pre-`GS-P03` seed — 30 priced services with no capability
+group and 24 seed projects — because `seed-content.mjs` only `createOrReplace`d and re-running it
+would have left the old records published alongside the new ones. That was `GS-T007`.
+
+`GS-P04` closed it under the owner's explicit development-dataset authorisation. The seed script
+now **deletes obsolete seed in the same transaction**, by provenance and never by type: a candidate
+must carry both `isSeed: true` **and** an `_id` beginning `seed-`, and a disagreement between the
+two markers stops the run rather than guessing which to believe. 46 obsolete documents were removed
+(24 `project`, 22 `service`), 119 written, and the genuine records — `companyDetails`, the six
+testimonials, Sanity's own `system.*` documents — match neither marker and were never candidates.
+
+The run is idempotent: a second immediately afterwards deleted nothing and wrote the same 119.
+
+| | Before `GS-P04` | After |
+|---|---|---|
+| Published documents | 140 | 132 |
+| `service` | 30, none with a capability group, all with `pricingModel` | 46, all grouped, no price field exists |
+| `project` | 24 | 0 |
+| `testimonial` (genuine) | 6 | 6, titles anonymised |
+| `companyDetails` (genuine) | 1 | 1 |
+| Sanity `system.*` | 12 | 12 |
+| Drafts | 0 | 0 |
+
+`check:service-content --dataset` asserts the dataset against the approved catalogue by reading it
+**unauthenticated, the way the site reads it** — not by re-reading the source that produced it.
+That is `01-VALIDATION-REPORT.md` §21's rule: where two artefacts must agree and only one reaches a
+reader, assert against the one that reaches the reader.
 
 ## 6. CTA model
 
@@ -165,7 +187,7 @@ requires deleting the orphaned seed documents and is recorded as `GS-T007`.
 | Master (homepage CTA band) | **Discuss Your Requirements** | `/contact` |
 | Design landing | **Get a Design Quote** | `/contact?division=design` |
 | Digital landing | **Discuss Your Project** | `/contact?division=digital` |
-| Digital service page | Record's `ctaLabel`, else **Discuss Your Project** | `/contact?division=digital&service=<slug>` |
+| **Any** service page | Record's `ctaLabel`, else the division's wording above | `/contact?division=<division>&service=<slug>` |
 | Press landing | **Discuss Your Book or Content** | `/contact?division=press` |
 | Universal secondary | **Contact Gridsmith** | `/contact` |
 
@@ -191,9 +213,10 @@ accessibility/performance practice and ownership/handover content fit these fiel
 approval before publication. Pages must not become software-logo inventories.
 
 **C. External / verifiable credibility.** The six existing, verbatim Freelancer reviews are preserved
-unchanged, with their source link — the only existing verified external evidence in the repository.
-No new profile or link was added. Whether their project titles should continue to be shown under
-`GS-D001` is an owner question (`GS-O011`).
+with their source link — the only verified external evidence in the repository. No new profile or
+link was added. **Their quotes remain byte-identical to the 21 August 2026 transcription.** Their
+project titles were anonymised at `GS-P04` under `GS-O011`; §14 is the record, including the count
+discrepancy the owner's decision surfaced.
 
 **Private examples statement** (division landings, `PRIVATE_EXAMPLES_NOTICE`):
 
@@ -244,7 +267,7 @@ will be shared.
 | `project` CMS type | **Dormant**, retained for consented work |
 | Press title catalogue (`book`, `/press/books` never built) | **Dormant**, consent validators retained |
 | Representative engagements | **Deferred** (§11) |
-| Testimonials (verified Freelancer reviews) | **Retained**; owner review of project titles `GS-O011` |
+| Testimonials (verified Freelancer reviews) | **Retained**; project titles **anonymised at `GS-P04`** per `GS-O011` — §14 |
 
 ## 11. Representative engagements — later enhancement
 
@@ -271,3 +294,186 @@ No scenario content may be written without owner approval.
 | VAT gate required a price on the site | `check:vat` non-zero price guard | Replaced with a served-text guard |
 | Editable CTA destinations | `ctaBlock` | Removed; destinations derived with context |
 | Book catalogue, retailer links | `book` validators | Retained for future consented use; no route; not a launch dependency |
+
+---
+
+# `GS-P04` — approved content, Digital Marketing and service-page architecture
+
+**Status:** Accepted · **Date:** 16 September 2026 · **Phase:** `GS-P04`
+**Authority:** `GS-O006` (the owner approved every listed Design, Digital and Press service) and
+`GS-O011` (campaign management confirmed; review project titles to be anonymised).
+**Amends, does not replace,** the `GS-P03` ADR above. Every `GS-P03` decision still stands.
+
+## 13. Digital Marketing — a cross-division engagement, not a fourth discipline
+
+`GS-O011` confirms Gridsmith provides **campaign management**, so Digital Marketing may be said
+client-facing. The question `GS-P04` had to answer was how to say it without corrupting the
+medium-based division model, and the answer is the leanest one available: **nothing new was
+built.**
+
+No new division. No new capability group. No new CMS type. No new route. No orchestration
+machinery. The engagement is a documented decomposition into capabilities the approved catalogue
+already contains, held in `DIGITAL_MARKETING_ENGAGEMENT` in `lib/services/catalogue.ts` and
+asserted by `check:service-content` so it cannot drift from the catalogue.
+
+**The reason no new architecture is needed is that the orchestration layer already exists.**
+§2 defines Master as the relationship, strategy, orchestration and cross-division programme
+layer. Campaign strategy and campaign management are orchestration, so they sit exactly where
+the model already put work of that kind.
+
+| Activity | Owner | Approved capability that carries it |
+|---|---|---|
+| Campaign strategy and coordination | **Master** | — orchestration, not production |
+| Campaign management | **Master** | — orchestration, not production |
+| Visual campaign creative | Design | Marketing and campaign creative (`brand-visual`) |
+| Advertising creative | Design | Marketing and campaign creative (`brand-visual`) |
+| Social and content creative | Design | Social/content creative (`brand-visual`) |
+| Written campaign copy | Press | Sales/campaign copywriting (`writing`) |
+| Content programmes | Press | Ongoing content programmes (`content-promotion`) |
+| Content SEO | Press | Content SEO (`content-promotion`) |
+| Landing pages | Digital | Website design and development (`web`) |
+| Technical SEO | Digital | Technical SEO (`operate-improve`) |
+| Tracking and integration infrastructure | Digital | API integrations (`automation-intelligence`) |
+| Reporting and measurement infrastructure | Digital | Data/reporting systems (`automation-intelligence`) |
+
+**What the owner did *not* confirm, and what was therefore not written.** Campaign management is
+one capability; it is not a licence to infer a channel roster from it. Google Ads/PPC management,
+Meta/Facebook/Instagram advertising, social media management, Google Business Profile work, email
+marketing and media buying are **absent from the catalogue**, and `check:service-content` refuses
+any seeded record that claims one (`UNCONFIRMED_CHANNEL_SERVICES`, proven by deliberate failure).
+
+The live `gridsmith.uk` advertises three of them. That is not authority — §4, and
+`LIVE-SITE-EXTRACT.md` §4, §7, §8 — so they were not preserved on its say-so. They are
+**`GS-O012`**, a deliberately narrow follow-up rather than a vague residue of `GS-O011`.
+
+The Design service *Campaign & Social Creative* states the boundary in its own exclusions:
+*"Gridsmith does not run ad accounts, set budgets or buy media."*
+
+## 14. Freelancer reviews — anonymisation, and a count discrepancy
+
+**Decision (`GS-O011`):** identifiable project titles come off every review.
+
+**The rule applied, mechanically:** strip every client name, brand name and product identifier
+from the source's project title, keeping only the generic category of work. Where stripping
+leaves nothing meaningful, the title is omitted.
+
+| Review | Source title | After |
+|---|---|---|
+| Tom | Shopify Theme Image & Color Edits | Ecommerce theme customisation |
+| Elizabeth | Artistic Logo Design for **Casglu** | Logo design |
+| Chad | Miniature Medieval Castle Model | 3D modelling |
+| Stamos | Ultra-Thin Wallet-Sized Wireless Charger Design | *(omitted)* |
+| Stephanie | Open Eyes Photoshop Edit | Photo editing |
+| B-Edward | Editable Circle Image in PowerPoint | Presentation graphics |
+
+`Casglu` is a client's brand and is what made the decision necessary. Stamos's title was a
+product identifier end to end, and the quote does not say what the work was, so a category would
+have been a guess about a client engagement — it is omitted instead, which costs nothing: the
+quote, the attribution and the source link are what make a review worth printing.
+
+**No quote was altered.** All six bodies are byte-identical to the 21 August 2026 transcription,
+and none contains a client name, so no review had to be withheld. Reviewer first names and public
+handles remain: they are the attribution that makes a review checkable at its source, not client
+identities. **No rating is stated** — Freelancer's stars were never transcribed and the schema has
+no field for one; inventing a rating would be inventing evidence.
+
+`check:service-content` refuses every removed fragment, in the source and in the dataset. Each
+fragment on the denylist is proven to match, so a dead entry cannot sit there unexercised.
+
+### The count — **6 located, 12 stated. Unresolved, and not invented.**
+
+`GS-O011` states there are **12** reviews relevant to Gridsmith. The repository's authoritative
+source data — the dated verbatim transcription in `scripts/seed-content.mjs` — holds **6**, and
+the development dataset holds the same 6.
+
+The six missing reviews were **not** created. Transcribing them from a live third-party page would
+mean publishing review text that has never been through the dated, owner-verifiable transcription
+this repository requires, and `CLAUDE.md` #2 and the protocol's *Owner facts* rule both forbid it.
+The decision applies in full to all 12; it has been **implemented on the 6 that exist**, and the
+remaining 6 are **`GS-O013`**.
+
+## 15. Service-page architecture — one template, three divisions
+
+`GS-P03` left Digital as the only division with per-service routes, which made service discovery
+inconsistent: a Design or Press visitor got a card with no page behind it. `GS-P04` gave all three
+divisions the same route.
+
+**One data-driven template, not three bespoke implementations, and not 46 page components.**
+
+- `components/content/ServiceDetail.tsx` — the page body, division-parameterised.
+- `components/content/servicePage.tsx` — a factory returning `generateStaticParams`,
+  `generateMetadata` and the page component for a division.
+- Three route files of six lines each: `/design/services/[slug]`, `/digital/services/[slug]`,
+  `/press/services/[slug]`.
+
+**Why one template is the right answer rather than a shortcut.** The *questions* a service page
+answers do not vary by division — what the service is, what Gridsmith can do within it, how the
+engagement runs, what it connects to, how to start a conversation. What varies is the voice, and
+the voice is carried entirely by the theme the route group's root layout already set on
+`<html data-division>`. The component names no colour, no typeface and no division-specific rule.
+That is `CLAUDE.md`'s *"shared structure, not shared colour"*; three copies would have been three
+pages drifting apart.
+
+The page communicates, in order: capability group · title · summary and description ·
+**what this covers** (the approved capabilities) · what you get · **what you do not get** ·
+how it runs and what it asks of you · across Gridsmith (collaborators and related services) ·
+contextual CTA plus **Contact Gridsmith**.
+
+**It requires no price, no portfolio, no case study and no client evidence.** Every block is
+conditional, so a record carrying only a title and a group renders a complete, honest page.
+
+**Exclusions render; they never disappear.** On these pages the exclusions are load-bearing —
+they are where Technical says it does not certify drawings and Press says it cannot promise a
+retailer listing.
+
+`components/content/DataRows.tsx` was promoted out of `components/divisions/digital/` in the same
+change, on the condition its own docstring had set: *"if a second division genuinely wants it."*
+Two now do. `components/divisions/digital/` is empty and gone.
+
+## 16. The approved catalogue, and what is architecture
+
+`lib/services/catalogue.ts` holds the **81 approved services** as `group` + `name`, transcribed
+from the `GS-O006` approval. **It is a record of an owner decision, not architecture.** Nothing in
+the schema, the query layer or any rendered component imports it, so adding or removing a service
+inside an approved group remains ordinary CMS content work with no code change — the promise §1.2
+makes and `GS-O006` was given.
+
+It exists for the one question a CMS cannot answer about itself: *did the development content
+foundation actually represent everything the owner approved?* The expectation therefore comes from
+outside its subject, which is `CLAUDE.md`'s rule about an expectation derived from its own subject.
+
+**81 approved services → 46 service records.** A record is a page, and 81 pages would mean pages
+like *Naming support* carrying three sentences. `service.capabilities` (`covers` in the content
+module) keeps the arithmetic honest: every approved service is named by exactly one record,
+`check:service-content` proves it in both directions, and the names render on the page.
+
+| Division | Records | Approved services covered |
+|---|---|---|
+| Design | 16 | 31 |
+| Digital | 17 | 28 |
+| Press | 13 | 22 |
+| **Total** | **46** | **81** |
+
+## 17. What the development content is, and what it still needs
+
+**Truthful development content, `isSeed: true`, and deliberately *not* `[SEED]`-marked.**
+
+The `[SEED]` text marker labels *visibly fabricated* text. This content is not fabricated: it
+describes services the owner confirmed, in plain factual terms. Marking it fake would make the
+development site unreadable and teach a reviewer to ignore the marker where it still means
+something. What blocks production is unchanged and machine-enforced: `isSeed: true`, plus
+`check:launch` refusing a production dataset containing a published seed record — an assertion
+with a committed specimen. **Non-negotiable #4 is intact.**
+
+What remains unapproved is the **wording**, which is agent-authored. That is **`GS-O013`**, and
+closing `GS-O006` does not close it. `scripts/service-content.mjs` records the rules the copy was
+written under: no price, no portfolio, no turnaround, no SLA, no revision count, no guaranteed
+outcome, no client number, no certification, no regulatory status, no years of experience.
+
+**Process detail** is per-division, keyed to the canonical six stages, and states no duration and
+no client time — `processStep` has both fields and they are left empty, because a duration is an
+operational commitment no owner fact supplies.
+
+**Technical Design content exists and stays gated.** All three Technical records are published in
+development with `professionalScopeConfirmed: false`; `check:launch` counts them and refuses them
+on production. `GS-O005` and `GS-X002` are untouched and remain open.

@@ -54,9 +54,18 @@ const ROUTES = [
   // `/work` and `/work/[slug]` were removed at `GS-P03` with the routes (`GS-D001`), and
   // `/digital/estimate` with the price table (`GS-D002`); `Table`'s scroll region is still
   // audited on a production route at `/about` and `/press/path-finder`.
-  // `U-08`'s subject. One instance of the template: `website-design-build` has the fullest
-  // record, so it exercises every block the template has rather than the smallest.
+  // `U-08`'s subject, and since `GS-P04` one per division rather than one in total: all three
+  // divisions render the SAME template (`components/content/ServiceDetail.tsx`) under three
+  // different themes, and what a shared template needs audited is exactly the part that is not
+  // shared — the tokens each theme resolves. One route would audit the markup three times and
+  // the palettes once.
+  //
+  // Each is the record that exercises every block: capabilities, included deliverables,
+  // EXCLUDED deliverables, process, collaborators, related services and the CTA pair. A record
+  // with fewer blocks would leave parts of the template unaudited on that theme.
+  { path: '/design/services/technical-documentation', status: 200 },
   { path: '/digital/services/website-design-build', status: 200 },
+  { path: '/press/services/publishing-preparation', status: 200 },
   { path: '/about', status: 200 },
   { path: '/approach', status: 200 },
   { path: '/insights', status: 200 },
@@ -191,7 +200,21 @@ const INCOMPLETE_ALLOWED = [
       // question — this is the K-13 direction, and it is decided here rather than discovered
       // by a red run two sessions later.
       '/press/path-finder',
+      // `GS-P04`'s three service routes. `website-design-build` was already here from `U-08`;
+      // the Design and Press ones went into `ROUTES` and not into this entry, and the gate went
+      // red on seven combinations — **the K-13 pair again, in the same gate, two rows above a
+      // comment describing it.** It was caught the way K-13's own note says it has to be: by
+      // running the gate, because whether a new route needs an entry depends on what the route
+      // renders and no static reading can know it. `check:lists` is green throughout, correctly:
+      // it asserts this list ⊆ ROUTES, and the missing direction is the one it says it cannot see.
+      //
+      // Which combinations decline follows page LENGTH, as the reason below already records —
+      // Design declined at all four, Press at three, Digital at three, and the colour pair is
+      // identical on all three. That is the tell that this is axe declining on a fixed overlay
+      // rather than a contrast defect. Zero violations on all three routes.
+      '/design/services/technical-documentation',
       '/digital/services/website-design-build',
+      '/press/services/publishing-preparation',
     ],
     target: '#gs-consent-heading',
     why:

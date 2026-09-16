@@ -9,6 +9,7 @@ import { Button } from '@/components/primitives/Button';
 import { ProcessStages } from '@/components/master/ProcessStages';
 import { ServiceList } from '@/components/content/ServiceList';
 import { TestimonialList } from '@/components/content/TestimonialList';
+import { SERVICE_BASE_PATH } from '@/components/content/ServiceDetail';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
 import { ENQUIRY_CTA, PRIVATE_EXAMPLES_NOTICE, enquiryHref } from '@/lib/services/architecture';
 import { listServices, listTestimonialsForDivision, type Division } from '@/lib/sanity/queries';
@@ -103,11 +104,9 @@ export async function DivisionLanding({
             </Heading>
             <p className={styles.lede}>{copy.servicesLede}</p>
           </div>
-          {/* Only Digital has per-service routes today (`U-08`). */}
-          <ServiceList
-            services={services}
-            basePath={division === 'digital' ? '/digital/services' : undefined}
-          />
+          {/* All three divisions have per-service routes since `GS-P04`; before that only
+              Digital did, and a Design visitor got a card with no page behind it. */}
+          <ServiceList services={services} basePath={SERVICE_BASE_PATH[division]} />
         </Container>
       </Section>
 

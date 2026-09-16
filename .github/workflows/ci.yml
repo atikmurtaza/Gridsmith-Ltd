@@ -175,6 +175,21 @@ jobs:
       - name: Every list a gate consults agrees with its subject list
         run: npm run check:lists
 
+      # GS-P04. Selftest first, for the same reason as every pair above: it breaks each of
+      # coverageProblems' five limbs separately and asserts the message each one returns, so a
+      # half-firing alternation cannot report clean off whichever branch happened to run.
+      - name: The service-content predicates still fire (committed specimens)
+        run: npm run check:service-content:selftest
+
+      # The expectation is lib/services/catalogue.ts — the owner-approved catalogue, which is
+      # NOT the subject. Deleting a record from scripts/service-content.mjs fails this gate
+      # instead of quietly shrinking what it expects.
+      #
+      # This is the source-only mode. It says so in its own summary rather than skipping
+      # silently, and the dataset half runs separately below against the served dataset.
+      - name: Every approved service is represented, and no review title identifies a client
+        run: npm run check:service-content
+
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
       # the `development` dataset. check:launch still runs against the SERVED site below;
@@ -280,4 +295,4 @@ jobs:
       # clamp that is 16px at 375px and 17px near 1440px, so a source check that found the
       # token named would have called the phone rendering a pass.
       - name: axe + security headers + statutory record + responsive and legal checks
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live"
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset"

@@ -26,7 +26,9 @@ Binding rules for anyone (human or AI coding agent) working on the Digital route
 ## 2. Code conventions
 
 ```
-components/divisions/digital/   Digital-only compositions
+components/content/              shared composed content patterns (ServiceDetail, DataRows)
+                               — `components/divisions/digital/` was emptied and deleted at
+                                 `GS-P04` when its last three rules were promoted there
 lib/estimate/                  Pure calculation, no side effects, no imports from components
 app/(digital)/digital/           Route segments, kebab-case
 ```

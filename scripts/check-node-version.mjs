@@ -119,7 +119,15 @@ const reachable = new Set();
 const walk = (name, seen = new Set()) => {
   if (seen.has(name)) return;
   seen.add(name);
-  for (const [, called] of (pkg.scripts?.[name] ?? '').matchAll(/npm run ([\w:]+)/g)) {
+  // `[\w:-]`, not `[\w:]`. The hyphen was missing, so every hyphenated script name was
+  // TRUNCATED at the hyphen on both sides of the comparison — `check:lead-security` read as
+  // `check:lead`, `check:security-headers` as `check:security`. Parity still held while the
+  // truncation was symmetric, which is why it survived: the two sides agreed because they were
+  // wrong the same way. What it could not survive is two scripts collapsing to one token —
+  // `check:service-content` and `check:service-content:dataset` both read as `check:service`,
+  // so one of them could sit in `verify` and the other in `ci.yml` and this gate would call it
+  // parity. Found at `GS-P04` by adding the first name long enough for the collision to matter.
+  for (const [, called] of (pkg.scripts?.[name] ?? '').matchAll(/npm run ([\w:-]+)/g)) {
     if (called.startsWith('verify')) walk(called, seen);
     else reachable.add(called);
   }
@@ -203,7 +211,7 @@ const workflow = read('.github/workflows/ci.yml')
   .split('\n')
   .filter((line) => !line.trimStart().startsWith('#'))
   .join('\n');
-const inCI = new Set([...workflow.matchAll(/npm run ([\w:]+)/g)].map((m) => m[1]));
+const inCI = new Set([...workflow.matchAll(/npm run ([\w:-]+)/g)].map((m) => m[1]));
 inCI.delete('start'); // the Lighthouse configs' own startServerCommand, not a gate
 
 const missingFromCI = [...reachable].filter((g) => !inCI.has(g));

@@ -45,6 +45,8 @@ export type ServiceDetail = {
   slug: string;
   division: Division;
   capabilityGroup: string | null;
+  /** The approved capabilities this service covers (`GS-O006`). Names, not claims. */
+  capabilities: string[] | null;
   searchIntent: string | null;
   problem: string | null;
   description: PortableBlock[] | null;
@@ -177,8 +179,8 @@ export const getService = (division: Division, slug: string) =>
   q<ServiceDetail | null>(
     `*[_type == "service" && division == $division && slug.current == $slug
        && published == true && !(_id in path("drafts.**"))][0]{
-      "title": title, "slug": slug.current, division, capabilityGroup, searchIntent, problem,
-      description,
+      "title": title, "slug": slug.current, division, capabilityGroup, capabilities, searchIntent,
+      problem, description,
       deliverables[]{label, detail, "included": coalesce(included, true)},
       process[]{number, title, description, divisionDetail, duration, clientTime},
       collaborators,

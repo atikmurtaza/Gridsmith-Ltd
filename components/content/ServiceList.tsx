@@ -21,11 +21,13 @@ import styles from './content.module.css';
  * **No price and no proof on the card.** `GS-D002` and `GS-D001`: the card is what the service
  * is, and the conversion is a contextual enquiry on the page or the landing's CTA.
  *
- * ## `basePath` is opt-in per division
+ * ## `basePath` stays a parameter even though all three divisions now have one
  *
- * Only Digital has per-service routes (`U-08`). A link hardcoded here would 404 on `/design` and
- * `/press`, and `check-axe` resolves every same-origin link, so the caller supplies the base path
- * or nothing.
+ * Until `GS-P04` only Digital had per-service routes, and a link hardcoded here would have 404ed
+ * on `/design` and `/press` — `check-axe` resolves every same-origin link. All three exist now
+ * and `SERVICE_BASE_PATH` supplies them, but the parameter is still optional: this component
+ * also renders the committed `/_master-sink` specimens, which have no routes behind them, and a
+ * card with no page is a legitimate state rather than one to design out.
  */
 export function ServiceList({
   services,

@@ -38,8 +38,13 @@ const ROUTES = [
   { path: '/press/path-finder', status: 200 },
   // Epic N routes, chosen to cover every distinct template rather than every URL. `/work`,
   // `/work/[slug]` and `/digital/estimate` were removed at `GS-P03` with their routes.
-  // `U-08`'s subject. One instance of the template, the record with the fullest content.
+  // `U-08`'s subject — one per division since `GS-P04`, because the three service pages are one
+  // template under three themes and overflow is a layout-time fact about the theme's type scale
+  // and its `--font-mono`, not about the markup. Each is the record with the fullest content.
+  // Press is the one that matters most here: a serif display face sets wider than a grotesque.
+  { path: '/design/services/technical-documentation', status: 200 },
   { path: '/digital/services/website-design-build', status: 200 },
+  { path: '/press/services/publishing-preparation', status: 200 },
   { path: '/about', status: 200 },
   { path: '/approach', status: 200 },
   { path: '/insights', status: 200 },

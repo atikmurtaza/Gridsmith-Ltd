@@ -40,37 +40,45 @@ not requested under `GS-D001` and `GS-D002`.
   action and `GS-X002` are closed.
 - **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
 
-### `GS-O006` — Approve production capability/process content
+### `GS-O012` — Confirm or decline the platform-specific marketing channel services
 
-- **Status:** ACTIONABLE NOW (its dependency `GS-O002` closed 14 September 2026)
-- **Why required:** `GS-D001` replaces public portfolio proof with truthful capability, process,
-  quality and methodology content, and the `GS-P03` model has fields for it but no approved copy.
-- **Exact information/action needed:** per service in `_shared/SERVICE-ARCHITECTURE.md` §2, approve
-  a summary, description, deliverables and exclusions, per-stage process detail and any client time
-  you are willing to state; approve Master engagement-model copy if those are to be presented;
-  identify any privately shareable examples without promising that every request can be fulfilled.
-  Technical-group wording additionally waits on `GS-O005`/`GS-X002`.
-- **What it blocks:** production service content and content acceptance.
-- **Evidence required:** owner-approved content set.
+- **Status:** ACTIONABLE NOW (new at `GS-P04`; the narrow remainder of `GS-O011`)
+- **Why required:** `GS-O011` confirmed **campaign management**, which `GS-P04` implemented as a
+  cross-division engagement (`SERVICE-ARCHITECTURE.md` §13). It did **not** confirm the individual
+  channel and platform services, and the brief was explicit that they must not be inferred from the
+  phrase. The live `gridsmith.uk` advertises three of them, but the live site is reference material
+  rather than authority, so nothing was carried forward on its say-so.
+- **Exact information/action needed:** for each of **Google Ads / PPC management**,
+  **Meta / Facebook / Instagram advertising**, **social media management**, **Google Business
+  Profile work**, **email marketing** and **media buying** — state whether Gridsmith sells it. For
+  any it does, give the division, the scope, and what is excluded. For any it does not, no action
+  is needed and the current position is already correct.
+- **What it blocks:** nothing structural. It blocks only redirect planning for the legacy service
+  pages and any future page naming a channel. `check:service-content` refuses a seeded record that
+  claims one of these until this is answered.
+- **Evidence required:** written owner decision per channel.
 
-### `GS-O011` — Decide on legacy marketing services and testimonial project titles
+### `GS-O013` — Accept the development service copy, and resolve the review count
 
-- **Status:** ACTIONABLE NOW
-- **Why required:** `GS-P03` found two items the approved model does not settle, and neither may
-  be decided by the coding agent.
-  1. The live site advertises *digital marketing support*, *Google Ads setup or support* and
-     *Google Business Profile support*. None is in the approved service model. They were **not**
-     carried into the new architecture (`SERVICE-ARCHITECTURE.md` §4).
-  2. The six Freelancer reviews shown on the site are verified and traceable, and are kept. Each
-     renders its Freelancer project title, and at least one title names a client's brand. Under
-     `GS-D001` that may count as an identifiable client project.
-- **Exact information/action needed:** (1) confirm whether Gridsmith actually sells any of those
-  three services; for any it does, state the division, the scope and what is excluded. For any it
-  does not, no action is needed. (2) Confirm the reviews may continue to show their project titles,
-  or instruct that the titles be hidden while the quotes and source link stay.
-- **What it blocks:** final service content and redirect planning for the legacy service pages;
-  final treatment of the testimonials block. It does not block the architecture.
-- **Evidence required:** written owner decision for each item.
+- **Status:** ACTIONABLE NOW (new at `GS-P04`)
+- **Why required:** two things `GS-P04` could not close by itself.
+  1. **Copy acceptance.** `GS-O006` approved the *service list*. The 46 development service records
+     written at `GS-P04` are **agent-authored** from that list, under the constraints in
+     `scripts/service-content.mjs`. They are truthful and deliberately unpromissory, but no owner
+     has read them, and `isSeed: true` keeps them off production until one does.
+  2. **The review count.** `GS-O011` states there are **12** Freelancer reviews. The repository's
+     authoritative source — the dated verbatim transcription of 21 August 2026 — holds **6**, and
+     so does the development dataset. The missing six were **not** invented, and must not be:
+     review text has to come through the same dated transcription, not from a coding agent reading
+     a live page.
+- **Exact information/action needed:** (1) read the 46 service records on the development site and
+  approve, amend or reject the wording per record — particularly the exclusions, which is where
+  each service states what Gridsmith does *not* undertake. (2) Supply the six remaining reviews, or
+  confirm that six is the correct number and the figure of 12 counted something else.
+- **What it blocks:** promotion of any service content to production, and the completeness of the
+  `GS-O011` anonymisation decision (which is fully implemented on the six that exist).
+- **Evidence required:** an approved or amended content set; and either the additional review text
+  with its source, or a written correction of the count.
 
 ### `GS-O010` — Provide an isolated Supabase target for Vercel Preview
 
@@ -109,6 +117,28 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## COMPLETED
 
+- `GS-O006` — **completed 16 September 2026.** The owner approved **every** listed Design, Digital
+  and Press service in the `GS-P04` brief: 81 services across the 14 capability groups, recorded
+  verbatim in `lib/services/catalogue.ts` and in `SERVICE-ARCHITECTURE.md` §2 and §16. Adding or
+  removing a service inside an approved group remains ordinary CMS content work and does not
+  reopen this action.
+  **What this action no longer covers, so that closing it drops nothing.** Its original wording
+  also asked for approved *copy* per service. `GS-P04` wrote that copy — 46 development records
+  covering all 81 — but it is **agent-authored and unread by the owner**, so copy acceptance moved
+  to `GS-O013` rather than being closed with the list. Technical-group wording additionally waits
+  on `GS-O005`/`GS-X002`, and Master engagement-model copy is still unwritten and unrequested.
+- `GS-O011` — **completed 16 September 2026**, on both limbs.
+  1. **Digital Marketing / campaign management is confirmed** and is represented as a
+     **cross-division commercial engagement**, not a fourth production discipline, not a capability
+     group, and not a CMS type. The medium-based `GS-P03` architecture is unchanged; Master's
+     existing orchestration role carries campaign strategy and management, and the execution
+     decomposes into capabilities the approved catalogue already holds.
+     `SERVICE-ARCHITECTURE.md` §13. The platform-specific channel services were deliberately **not**
+     inferred from the phrase and are `GS-O012`.
+  2. **Identifiable project titles are anonymised on all 12 reviews.** Implemented on the **6** that
+     exist in authoritative source data; no quote was altered, none had to be withheld, and no
+     rating was invented. The 6 missing from the stated count of 12 were not fabricated and are
+     `GS-O013`. `SERVICE-ARCHITECTURE.md` §14.
 - `GS-O002` — completed 14 September 2026. The owner supplied the definitive division and service
   architecture — Master as relationship layer; Design, Digital and Press capability groups and
   services; cross-division boundaries; CTA directions — in the `GS-P03` brief. It is recorded in

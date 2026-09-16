@@ -70,6 +70,13 @@ export const service = defineType({
       of: [defineArrayMember({ type: 'block' })],
       description: 'Detailed description. No prices, guarantees, turnaround promises or unconfirmed credentials.',
     }),
+    defineField({
+      name: 'capabilities',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      description:
+        'What Gridsmith can do within this service — the approved capabilities it covers (GS-O006). Plain names, not claims: no standards, certifications or credentials.',
+    }),
     defineField({ name: 'searchIntent', type: 'string', description: 'The exact query this page targets.' }),
     defineField({ name: 'deliverables', type: 'array', of: [defineArrayMember({ type: 'deliverable' })] }),
     defineField({ name: 'process', type: 'array', of: [defineArrayMember({ type: 'processStep' })] }),
@@ -233,7 +240,23 @@ export const testimonial = defineType({
      */
     defineField({ name: 'sourceUrl', type: 'url', description: 'Public page where this review can be read.' }),
     defineField({ name: 'sourceLabel', type: 'string', description: 'e.g. "Freelancer.com verified review".' }),
-    defineField({ name: 'projectTitle', type: 'string', description: 'The engagement, as the source names it.' }),
+    /**
+     * **A generalised category of work, never the source's own project title** — `GS-O011`,
+     * owner decision of 16 September 2026. A verbatim Freelancer project title is searchable
+     * straight back to one client engagement, and one of the six named a client's brand
+     * outright, which under `GS-D001` is identifiable client work published without permission.
+     *
+     * Leave it empty rather than write something you are unsure of: the quote, the attribution
+     * and the source link are what make a review worth printing, and none of them needs this.
+     * `check:service-content` refuses any known identifying fragment here.
+     */
+    defineField({
+      name: 'projectTitle',
+      type: 'string',
+      title: 'Category of work',
+      description:
+        'Generalised category only — no client, company, brand or product name, and never the source’s verbatim project title (GS-O011). Leave empty if generalising would leave nothing meaningful.',
+    }),
     isSeed,
   ],
   preview: { select: { title: 'authorName', subtitle: 'authorCompany' } },

@@ -208,7 +208,28 @@ const BUDGETS = [
  * pass. `check-theme-flash` already held a required list; this is the same pattern applied
  * to every gate that enumerates its own subjects.
  */
-const REQUIRED = ['/', '/design', '/digital', '/press', '/_kitchen-sink', '/_not-found'];
+/**
+ * The three service routes are the `GS-P04` additions, and they are here rather than only in
+ * `BUDGETS` for the reason above: a prefix table cannot say a route was measured. They are also
+ * the routes most exposed to the fault it describes — one `cookies()` call anywhere in a route
+ * tree makes the whole tree dynamic, and these three trees are the newest.
+ *
+ * **They have no `BUDGETS` entry and do not need one.** `budgetFor` takes the longest matching
+ * prefix, so each already answers to its own division's delta budget — Design 25KB, Digital
+ * 15KB, Press 20KB. Forty-six per-service rows would all be the same number and would say
+ * nothing the division rows do not.
+ */
+const REQUIRED = [
+  '/',
+  '/design',
+  '/digital',
+  '/press',
+  '/design/services/technical-documentation',
+  '/digital/services/website-design-build',
+  '/press/services/publishing-preparation',
+  '/_kitchen-sink',
+  '/_not-found',
+];
 
 const APP_DIR = '.next/server/app';
 
