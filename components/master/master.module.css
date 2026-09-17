@@ -575,6 +575,51 @@
   block-size: 100%;
 }
 
+/* **The one idea carried over from the owner's earlier implementation — `GS-R001-R`.**
+
+   That version (`gridsmith-working`, `GridsmithLogo.jsx`) rotated the whole assembly through
+   2pi-4pi on a GSAP ScrollTrigger inside a react-three-fiber canvas. The rotation is the part
+   worth having: it is what made the mark read as a dimensional OBJECT rather than a diagram,
+   and `GS-R001-R` §15 asks for exactly that word.
+
+   What is taken is the IDEA, not the implementation. A CSS `perspective` on the container and a
+   scroll-driven `rotateY`/`rotateX` on the one `<svg>` element buys the same apparent depth for
+   a few bytes, with no Three.js, no GSAP and no WebGL — all three of which the brief and the
+   `N-01` measurement rule out. The rotation is on a DOM element rather than on SVG children,
+   because 3D transforms on SVG child elements are unevenly supported and there is no Firefox or
+   Safari in this environment to check against.
+
+   **The magnitude is the restraint.** The old version tumbled; this turns about 9 degrees
+   either side of flat. At hairline weight that reads as the plane shifting in space, which is
+   the point, rather than as an object spinning, which is the failure mode §15 names.
+
+   `perspective` sits on the parent because a perspective on the transformed element itself
+   applies per-element and flattens the effect. */
+@supports (animation-timeline: scroll()) {
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .field {
+      perspective: 1400px;
+    }
+
+    .fieldSvg {
+      animation-name: gsFieldTilt;
+      animation-timeline: scroll(root);
+      animation-fill-mode: both;
+      animation-timing-function: linear;
+      transform-origin: center;
+    }
+  }
+}
+
+/* Flat at both ends, turned through the middle — the same shape as the pieces' own dispersal,
+   so the field opens and closes as one movement. `to: none` at 0% and 100% for `gsFieldPiece`'s
+   reason: the composed state is the one a browser that never animates will show. */
+@keyframes gsFieldTilt {
+  0% { transform: none; }
+  50% { transform: rotateY(-9deg) rotateX(4deg); }
+  100% { transform: none; }
+}
+
 /* Hairline outline on --line: the same 1px rule every border on this site is drawn with, and
    the same treatment HeroMark gives its drafting sheet. `non-scaling-stroke` pins it to one
    device pixel whatever the viewBox scale resolves to, so it reads as a rule rather than as a

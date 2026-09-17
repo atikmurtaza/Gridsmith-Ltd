@@ -74,35 +74,6 @@ not requested under `GS-D001` and `GS-D002`.
   `wp-sitemap.xml` and recorded in `LIVE-SITE-EXTRACT.md` §13; and per-route SEO titles,
   descriptions, canonicals, Open Graph and `Organization` structured data (`G-04`).
 
-### `GS-O017` — Confirm the official social channels, or confirm there are none
-
-- **Status:** ACTIONABLE NOW (new at `GS-R001-R`)
-- **Why required:** `/about` now carries a connection block, and `GS-R001-R` §9 asked for
-  Gridsmith's actual social channels. **None could be verified, and nothing was guessed.**
-
-  | Source | Result |
-  |---|---|
-  | Repository | nothing — no social URL in `companyDetails`, the schema, the seed or `LIVE-SITE-EXTRACT.md` |
-  | The live `gridsmith.uk`, read read-only | nothing — the only external links on `/`, `/about-us/`, `/contact/` and `/services/` are one `mailto:` and one `tel:` |
-  | Public search | **every result is a different company** |
-
-  That last row is the reason this is an owner action rather than a research task. *Gridsmith
-  Studio*, a surface-pattern designer in Seattle, holds the Instagram, Facebook and LinkedIn
-  handles under that name; `joingridsmith.com` (energy) and `gridsmith.io` (tabletop terrain) are
-  two further unrelated businesses. **None is Gridsmith Ltd, company 17050842**, and linking any
-  of them would put a third party's business on Gridsmith's About page.
-- **Exact action:** supply the full URL of each official Gridsmith Ltd account you want linked —
-  any of Facebook, Instagram, LinkedIn, TikTok, YouTube, Reddit — or confirm there are none. Do
-  not supply a handle; supply the URL, so there is nothing to infer.
-- **What it blocks:** nothing. `/about` links **Email, WhatsApp, Text message and Freelancer**
-  today, and each of those is verified. Adding a channel is a one-line change in
-  `components/content/Connect.tsx`.
-- **Evidence required:** the URLs. A page that names Gridsmith Ltd or links `gridsmith.uk` is
-  what makes one confirmable.
-- **Already verified and already linked:** `https://www.freelancer.com/u/GridsmithLTD`, which is
-  not a search result — it is the profile `GS-O014` approved for review attribution and the
-  account the official API returns the homepage reviews from.
-
 ### `GS-O010` — Provide an isolated Supabase target for Vercel Preview
 
 - **Status:** ACTIONABLE NOW
@@ -138,6 +109,59 @@ not requested under `GS-D001` and `GS-D002`.
   phase after automated audit and human acceptance.
 
 ## COMPLETED
+
+- `GS-O017` — **completed 18 September 2026 at `GS-R001-R`, on owner-supplied evidence.** The
+  owner identified their earlier Gridsmith implementation,
+  **`github.com/atikmurtaza/gridsmith-working`**, as the source of the configured social links.
+  It was read **read-only**, and the links were taken from
+  `app/src/components/Overlay.jsx`, where each is an **explicitly configured URL** rather than
+  something inferred from the word "Gridsmith". Nothing else was taken from that repository.
+
+  **Eight channels published, each resolved before publication:**
+
+  | Platform | URL | Verified by |
+  |---|---|---|
+  | Facebook | `facebook.com/gridsmith` | rendered page — publishes **`contact@gridsmith.uk` and `07405 448534`**, the approved company email and number |
+  | Instagram | `instagram.com/gridsmith_ltd` | rendered page — "Gridsmith Ltd (@gridsmith_ltd)", 36 followers |
+  | LinkedIn | `linkedin.com/company/gridsmith` | HTTP 200, title `Gridsmith Ltd \| LinkedIn` |
+  | X | `x.com/gridsmithltd` | rendered page — "Gridsmith Ltd (@GridsmithLtd)" |
+  | TikTok | `tiktok.com/@gridsmithltd` | oEmbed `author_name: "Gridsmith"` |
+  | YouTube | `youtube.com/@Gridsmithltd` | HTTP 200, title `Gridsmith - YouTube` |
+  | Reddit | `reddit.com/user/Gridsmithltd` | HTTP 200; a control handle returns an 8KB stub against this account's 321KB page |
+  | Freelancer | `freelancer.com/u/GridsmithLTD` | HTTP 200, `GridsmithLTD Profile` — already approved at `GS-O014` |
+
+  **This evidence corrected a conclusion reached earlier in the same phase.** Before it arrived,
+  a generic web search had found `facebook.com/gridsmith` and `linkedin.com/company/gridsmith`
+  and attributed both to *Gridsmith Studio*, an unrelated surface-pattern designer in Seattle
+  whose accounts are at different URLs entirely. The search was right that Gridsmith Studio
+  exists and wrong about who owns these two URLs, and no further searching would have settled
+  it. **A name is not an identity** — which is why the brief said not to infer accounts from
+  the name, and why the owner's own repository was the only thing that could answer it.
+
+  **Two configured links were NOT published, and both are reported rather than quietly dropped:**
+  - **The Gmail compose link** to `contact.gridsmith@gmail.com`. That address is on
+    `FORBIDDEN_EMAILS`: `GS-O004` approved `contact@gridsmith.uk` and nothing else, and
+    `check:company` question 2 refuses the legacy one on every route. Being configured in an
+    older build does not revive a superseded fact.
+  - **The Reddit *share* permalink** `reddit.com/u/Gridsmithltd/s/CsBkRtMNP8`, which redirects
+    to the profile carrying five `utm_*` tracking parameters. The canonical profile URL is
+    published instead — a **normalisation of the same account**, not a substitution.
+
+  **Facebook nearly went unpublished on a transport artefact, which is worth recording.** An
+  anonymous `curl` returned **HTTP 400** on three URL forms — indistinguishable from a dead
+  vanity URL, and the rule is to refuse a dead link. A real browser rendered the page normally:
+  the 400 was a bot block. `CLAUDE.md` warns that a probe run over a transport the real client
+  does not use can make a live thing look unreachable, and this would have removed a real
+  account.
+
+  **Implemented** in `lib/company/social.ts` (the list, the provenance and the per-channel
+  evidence) and rendered by `components/content/Connect.tsx` on `/about`. **Gate-asserted:**
+  `check:company` question 9 requires all eight on `/about` and refuses **any unapproved social
+  host on any route**, so a later session cannot add an unverified account silently. Nine
+  self-test cases, including one that refuses the Gridsmith Studio LinkedIn by name.
+
+  **What closing this does not cover:** no social account is claimed to be active or maintained.
+  X has 0 posts and Facebook 2 followers; the site links them, it does not describe them.
 
 - `GS-O016` — **completed 17 September 2026 at `GS-R001-R`.** The owner confirms:
   **Gridsmith Ltd is currently registered with the Information Commissioner's Office and is

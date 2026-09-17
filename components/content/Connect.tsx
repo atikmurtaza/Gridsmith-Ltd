@@ -2,48 +2,50 @@ import { Heading } from '@/components/primitives/Heading';
 import { Numeric } from '@/components/primitives/Numeric';
 import { Prose } from '@/components/primitives/Prose';
 import { whatsAppHref, smsHref } from '@/lib/company/companyDetails';
+import { SOCIAL_CHANNELS } from '@/lib/company/social';
 import styles from './content.module.css';
 
 /**
  * The connection block on `/about` — `GS-R001-R`.
  *
- * Server Component, zero client JS. Four channels, each of which is **verified to exist**, and
- * that is the whole editorial rule of this component.
+ * Server Component, zero client JS. Two groups: the three ways to reach Gridsmith directly, and
+ * the accounts it keeps elsewhere.
  *
- * ## What is not here, and why the absence is the finding
+ * ## Every URL here is owner-configured and was resolved before it was published
  *
- * `GS-R001-R` asked for Gridsmith's actual social channels. There are none that can be
- * confirmed. Checked, on 16 September 2026:
+ * The social channels are **not** search results. They come from the owner's own earlier
+ * Gridsmith implementation — `github.com/atikmurtaza/gridsmith-working`, supplied as owner
+ * evidence — where each is an explicitly configured link rather than something inferred from the
+ * word "Gridsmith". `lib/company/social.ts` carries the list, the provenance and the per-channel
+ * verification.
  *
- * - **The live `gridsmith.uk` links no social account at all** — its only external links are a
- *   `mailto:` and a `tel:`, read from the served pages of `/`, `/about-us/`, `/contact/` and
- *   `/services/`.
- * - **A public search for "Gridsmith" social accounts returns other companies.** Gridsmith
- *   Studio (a surface-pattern designer in Seattle) holds the Instagram, Facebook and LinkedIn
- *   handles; `joingridsmith.com` and `gridsmith.io` are two further unrelated businesses. None
- *   is Gridsmith Ltd, company `17050842`.
+ * **That evidence corrected an earlier conclusion in this same phase, and the correction is
+ * worth keeping.** Before it arrived, a generic web search had found `facebook.com/gridsmith`
+ * and `linkedin.com/company/gridsmith` and attributed them to *Gridsmith Studio*, an unrelated
+ * surface-pattern designer in Seattle. Both are in fact Gridsmith Ltd's; the Seattle accounts
+ * are different URLs entirely. A search that cannot distinguish two companies sharing a word is
+ * exactly why the brief says not to infer accounts from the name.
  *
- * Linking any of them would put a third party's business on Gridsmith's About page. The brief's
- * instruction where a channel cannot be confidently verified is to omit it and report it, and
- * that is `GS-O017` in `OWNER-ACTIONS.md`. **Adding a channel here is a one-line change once a
- * URL is confirmed** — the omission is the only thing holding it.
+ * ## The one configured link that is NOT published
  *
- * ## Freelancer is the one external channel, and it was already approved
- *
- * `https://www.freelancer.com/u/GridsmithLTD` is not a search result. It is the profile
- * `GS-O014` approved as the attribution target for the reviews on the homepage, and the
- * account the official API returns those reviews from. It is the only social or platform
- * presence this programme has evidence for.
+ * The old implementation's first social tile was a Gmail compose link to
+ * `contact.gridsmith@gmail.com`. That address is on `FORBIDDEN_EMAILS` — `GS-O004` approved
+ * `contact@gridsmith.uk` and nothing else, and `check:company` question 2 refuses the legacy one
+ * on any route. Being owner-configured in an older build does not revive a superseded fact.
  *
  * ## The icons
  *
- * Inline SVG, hairline stroke, `currentColor`, `aria-hidden` — drawn in the site's own
- * geometric register rather than imported as brand logos. Three reasons and each is
- * independent: there is no icon dependency in this build and adding one for four glyphs fails
- * non-negotiable #8 arithmetic before it reaches the taste question; brand logos are third-party
- * marks with their own usage terms, which is a licensing question nobody has asked; and a
- * platform's own colour would be the first hardcoded colour on the site. Each link's accessible
- * name is its text, so the glyph carries no meaning a screen reader needs.
+ * Inline SVG, hairline stroke, `currentColor`, `aria-hidden` — drawn in the site's own geometric
+ * register, **never platform brand marks**. Three independent reasons: there is no icon
+ * dependency in this build and adding one fails non-negotiable #8 before the taste question
+ * arises; a brand mark is a third-party trademark with its own usage terms, which is a licensing
+ * question nobody has asked; and a platform's own colour would be the first hardcoded colour on
+ * the site.
+ *
+ * **Every social row shares one glyph — two nodes joined by a rod, the site's own geometry —
+ * and the platform NAME does the identifying.** Eight invented platform-ish glyphs would either
+ * be brand marks wearing a disguise or shapes that identify nothing. The name is unambiguous and
+ * costs no trademark question.
  */
 const ICONS: Record<string, React.ReactNode> = {
   // An envelope: a rectangle and its flap.
@@ -54,11 +56,7 @@ const ICONS: Record<string, React.ReactNode> = {
     </>
   ),
   // A speech bubble with a tail — the message, not the platform's mark.
-  whatsapp: (
-    <>
-      <path d="M3 4.5 h14 v9 h-8 l-4 3.5 v-3.5 h-2 z" />
-    </>
-  ),
+  whatsapp: <path d="M3 4.5 h14 v9 h-8 l-4 3.5 v-3.5 h-2 z" />,
   // A message card with two lines of text on it.
   sms: (
     <>
@@ -66,7 +64,8 @@ const ICONS: Record<string, React.ReactNode> = {
       <path d="M6 8.5 h8 M6 11.5 h5" />
     </>
   ),
-  // Two nodes joined by a rod — the site's own geometry, and a profile held elsewhere.
+  // Two nodes joined by a rod — the Gridsmith mark's own vocabulary, standing for a profile
+  // held somewhere else. Shared by every social row.
   profile: (
     <>
       <circle cx="5.5" cy="10" r="2.5" />
@@ -90,6 +89,37 @@ function Glyph({ name }: { name: keyof typeof ICONS }) {
   );
 }
 
+type Row = {
+  key: keyof typeof ICONS;
+  href: string;
+  label: string;
+  value: string;
+  external?: true;
+};
+
+function ChannelList({ rows }: { rows: Row[] }) {
+  return (
+    <ul className={styles.connectList}>
+      {rows.map((row) => (
+        <li key={row.label} className={styles.connectItem}>
+          <Glyph name={row.key} />
+          <a
+            className={styles.connectLink}
+            href={row.href}
+            {...(row.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {row.label}
+            {row.external ? <span className="sr-only"> (opens in a new tab)</span> : null}
+          </a>
+          <span className={styles.connectValue}>
+            <Numeric>{row.value}</Numeric>
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function Connect({
   contactEmail,
   contactPhone,
@@ -99,38 +129,29 @@ export function Connect({
   contactPhone: string | null;
   responseCommitment: string;
 }) {
-  const rows: { key: keyof typeof ICONS; href: string; label: string; value: string; external?: true }[] = [];
+  const direct: Row[] = [];
 
   if (contactEmail?.trim()) {
-    rows.push({
-      key: 'email',
-      href: `mailto:${contactEmail}`,
-      label: 'Email',
-      value: contactEmail,
-    });
+    direct.push({ key: 'email', href: `mailto:${contactEmail}`, label: 'Email', value: contactEmail });
   }
   if (contactPhone?.trim()) {
-    rows.push({
+    direct.push({
       key: 'whatsapp',
       href: whatsAppHref(contactPhone),
       label: 'WhatsApp',
       value: contactPhone,
       external: true,
     });
-    rows.push({
-      key: 'sms',
-      href: smsHref(contactPhone),
-      label: 'Text message',
-      value: contactPhone,
-    });
+    direct.push({ key: 'sms', href: smsHref(contactPhone), label: 'Text message', value: contactPhone });
   }
-  rows.push({
-    key: 'profile',
-    href: 'https://www.freelancer.com/u/GridsmithLTD',
-    label: 'Freelancer',
-    value: 'freelancer.com/u/GridsmithLTD',
-    external: true,
-  });
+
+  const social: Row[] = SOCIAL_CHANNELS.map((c) => ({
+    key: 'profile' as const,
+    href: c.url,
+    label: c.platform,
+    value: c.handle,
+    external: true as const,
+  }));
 
   return (
     <>
@@ -143,24 +164,12 @@ export function Connect({
           these and is the easiest route if your enquiry needs any detail. {responseCommitment}
         </p>
       </Prose>
-      <ul className={styles.connectList}>
-        {rows.map((row) => (
-          <li key={row.label} className={styles.connectItem}>
-            <Glyph name={row.key} />
-            <a
-              className={styles.connectLink}
-              href={row.href}
-              {...(row.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            >
-              {row.label}
-              {row.external ? <span className="sr-only"> (opens in a new tab)</span> : null}
-            </a>
-            <span className={styles.connectValue}>
-              <Numeric>{row.value}</Numeric>
-            </span>
-          </li>
-        ))}
-      </ul>
+      <ChannelList rows={direct} />
+
+      <Heading level={3} id="elsewhere" className={styles.connectSubhead}>
+        Elsewhere
+      </Heading>
+      <ChannelList rows={social} />
     </>
   );
 }

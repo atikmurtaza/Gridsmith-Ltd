@@ -125,6 +125,12 @@ for (const [width, height, reduced, expectRendered, expectAnimated] of CASES) {
 
     const piece = field.querySelector('rect');
     const transformAt50 = piece ? getComputedStyle(piece).transform : null;
+    // The field's own 3D tilt — GS-R001-R, the one idea carried from the owner's earlier
+    // implementation. It is a SECOND animation on a different element, so the piece assertion
+    // above says nothing about it: if the tilt silently stopped, every other row here would
+    // still be green. A rotated element's computed transform is a 4x4 matrix (`matrix3d`);
+    // flat is `none` or the 2D identity.
+    const tiltAt50 = svg ? getComputedStyle(svg).transform : null;
     const anim = piece ? piece.getAnimations()[0] : null;
     const timelineActive = anim ? anim.currentTime !== null : false;
 
@@ -149,6 +155,7 @@ for (const [width, height, reduced, expectRendered, expectAnimated] of CASES) {
       pieces,
       transformAt0,
       transformAt50,
+      tiltAt50,
       timelineActive,
       overflow,
       widest,
@@ -210,6 +217,19 @@ for (const [width, height, reduced, expectRendered, expectAnimated] of CASES) {
           'be static here. Reduced motion and narrow widths get a composed mark, not a slow one.',
     );
   }
+  // The tilt travels with the pieces: animated cases turn, static cases stay flat.
+  if (rendered) {
+    const tilted = r.tiltAt50 !== 'none' && r.tiltAt50 !== 'matrix(1, 0, 0, 1, 0, 0)';
+    if (tilted !== expectAnimated) {
+      problems.push(
+        expectAnimated
+          ? `${label}: the field did not TILT at 50% scroll (transform ${JSON.stringify(r.tiltAt50)}). ` +
+            'The 3D turn is a second animation on the svg itself and has its own way of dying quietly.'
+          : `${label}: the field tilted at 50% scroll (${JSON.stringify(r.tiltAt50)}) and must be ` +
+            'flat here.',
+      );
+    }
+  }
   if (rendered && expectAnimated && !r.timelineActive) {
     problems.push(`${label}: the scroll timeline is inactive — currentTime is null.`);
   }
@@ -270,6 +290,7 @@ for (const [width, height, reduced, expectRendered, expectAnimated] of CASES) {
     display: r.display,
     pieces: rendered ? r.pieces : 0,
     animated: rendered ? moved : false,
+    tilted: rendered ? (r.tiltAt50 !== 'none' && r.tiltAt50 !== 'matrix(1, 0, 0, 1, 0, 0)') : false,
     timeline: rendered ? (r.timelineActive ? 'active' : 'inactive') : '—',
     overflow: r.overflow,
   });
@@ -306,6 +327,7 @@ console.log(
   `\ncheck-mark-field: PASS — ${CASES.length} case(s) over ${ROUTE}; ${EXPECTED_PIECES} pieces; ` +
     `rendered in ${renderedCases}, animated in ${animatedCases}, static in ` +
     `${renderedCases - animatedCases}; no horizontal overflow at any scroll position; ` +
-    `aria-hidden, no focusables, no pointer events; the header logo resolves to ${LOGO_ASSET} ` +
+    `aria-hidden, no focusables, no pointer events; the 3D tilt travels with them; the header ` +
+    `logo resolves to ${LOGO_ASSET} ` +
     'in a square box at every width.',
 );

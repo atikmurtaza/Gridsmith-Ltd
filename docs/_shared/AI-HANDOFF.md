@@ -149,15 +149,37 @@ against a 4.5:1 floor**. The allowlist entry names its own removal conditions.
 The hero also got an opaque `--canvas` band. It did **not** resolve the axe result — that was the
 theory it was added on — but it is kept because it is right on its own terms.
 
-## 6. Social channels — checked, and none can be verified
+## 6. Social channels — resolved by owner evidence, after a search got it wrong
 
-The live `gridsmith.uk` links **no social account at all** (only a `mailto:` and a `tel:`, read
-read-only from four of its pages). A public search returns **three unrelated companies**:
-Gridsmith Studio, a surface-pattern designer in Seattle, holds the Instagram, Facebook and
-LinkedIn handles; `joingridsmith.com` and `gridsmith.io` are two more. **None is Gridsmith Ltd.**
+**This section replaced an earlier version of itself, and the replaced conclusion is the useful
+part.** The first pass found none: the live site links no social account, and a public search
+returned three unrelated companies. On that evidence, omitting everything was right.
 
-Nothing was guessed. `/about` links the four verified channels — email, WhatsApp, SMS, and the
-Freelancer profile `GS-O014` already approved. **`GS-O017`** is the owner action.
+The owner then identified **`github.com/atikmurtaza/gridsmith-working`** — their own earlier
+implementation — as where the links are configured. Read read-only, it carries nine explicit
+social URLs.
+
+**The search had not merely missed them; it had attributed two to someone else.**
+`facebook.com/gridsmith` and `linkedin.com/company/gridsmith` are Gridsmith Ltd's; the Seattle
+studio's accounts are at different URLs. **A name is not an identity**, and only a source the
+owner controls could have settled it.
+
+**Eight published**, each resolved first — Facebook (whose Page publishes `contact@gridsmith.uk`
+and the approved number, the strongest match of the eight), Instagram, LinkedIn, X, TikTok,
+YouTube, Reddit and Freelancer.
+
+**Facebook nearly went unpublished on a transport artefact:** anonymous `curl` returned HTTP 400
+on three URL forms — indistinguishable from a dead vanity URL — and a real browser rendered the
+Page normally. It was a bot block. Instagram is the same class inverted: 200 with near-identical
+bytes for a real handle and a nonsense one, so HTTP could neither confirm nor deny.
+
+**Two configured links were not published:** the Gmail compose link to the superseded legacy
+address (`FORBIDDEN_EMAILS`, and being configured in an older build does not revive a superseded
+fact), and a Reddit *share* permalink carrying five tracking parameters, normalised to the
+canonical profile.
+
+`check:company` question 9 asserts all eight on `/about` and **refuses any unapproved social host
+on any route**. `GS-O017` is **CLOSED**.
 
 ## 7. Registered office — no conflict was found
 
@@ -180,18 +202,17 @@ delta budgets, master **1.9KB of 15KB**) · `verify:served` **15 commands PASS**
 --omit=dev` clean · no dependency added. Lighthouse is CI's — it cannot run on Windows.
 
 Counts that moved, each deliberately, which is what proves they are counted rather than printed:
-gates 45 → **46**; `check:company` self-test 35 → **57** cases; `check:struck` 16 → **18** rules
+gates 45 → **46**; `check:company` 6 → **9** questions and its self-test 35 → **66** cases; `check:struck` 16 → **18** rules
 and 32 → **36** specimens; `check:schemas` closed lists 6 → **7**; `check:mark:guard`
 `animation-timeline` declarations 1 → **2**.
 
 ## Findings and programme state
 
-- **Closed:** `GS-O016` (ICO position, recorded and published nowhere), and `GS-O007`'s
-  brand-asset limb.
-- **New:** `GS-O017` — official social channel URLs, or confirmation there are none.
+- **Closed:** `GS-O016` (ICO position, recorded and published nowhere), `GS-O017` (social
+  channels, on owner evidence), and `GS-O007`'s brand-asset limb.
 - **Narrowed:** `GS-O007` — a favicon decision, an Open Graph card composition, and the one
   redirect row, which is now cutover hygiene rather than a launch blocker.
-- **Remaining:** `GS-T004`, `GS-T005`, `GS-O003`, `GS-O005`, `GS-O010`, `GS-O017`, `GS-X001`,
+- **Remaining:** `GS-T004`, `GS-T005`, `GS-O003`, `GS-O005`, `GS-O010`, `GS-X001`,
   `GS-X002`, `GS-R002`, `GS-R003`, `Q-P13`, the three `GS-R001` human tests (screen reader,
   physical device, non-Chromium), and the production content listed in the remediation record.
 - **`GS-O008`: AWAITING OWNER RE-REVIEW.** Not closed here and not closeable by an agent.
@@ -206,9 +227,8 @@ an agent phase**. The candidate is built, gated and deployed; what it needs is a
 all four sections and say whether the site now describes their business.
 
 - **Owner action required first?** Yes — this *is* the owner task.
-- **Exact information/action required:** (1) accept or reject section by section; (2) the
-  `GS-O017` social URLs, or confirmation there are none; (3) whether a favicon is wanted; (4) the
-  Open Graph card decision. Items 2–4 are independent and none blocks the others.
+- **Exact information/action required:** (1) accept or reject section by section; (2) whether a favicon
+  is wanted; (3) the Open Graph card decision. Items 2 and 3 are independent.
 - **Session:** **NEW.** This one's context is content remediation, brand assets and a scroll
   animation; the next is whatever the review returns.
 - **Agent/model:** Claude Code (Opus 5).

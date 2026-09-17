@@ -24,6 +24,7 @@ import {
   TEAM_RULES,
   CALL_RULES,
   PLACEHOLDER_RULES,
+  SOCIAL_URLS,
   disclosureProblems,
   emailProblems,
   officeProblems,
@@ -32,6 +33,7 @@ import {
   teamProblems,
   callProblems,
   placeholderProblems,
+  socialProblems,
 } from './company-facts-rules.mjs';
 
 let passed = 0;
@@ -392,6 +394,76 @@ check(
       ? true
       : `expected SEED-MARKER and PLACEHOLDER-WORD, got ${JSON.stringify(found)}`;
   })(),
+);
+
+/* -- 9. social channels, both directions ------------------------------------- */
+
+const ALL_LINKED = SOCIAL_URLS.map((u) => `<a href="${u}">x</a>`).join(' ');
+
+check(
+  'SOCIAL CLEAN — /about linking every approved channel and nothing else',
+  none(socialProblems('/about', ALL_LINKED, true)),
+);
+
+check(
+  'SOCIAL — a missing approved channel on /about',
+  one(
+    socialProblems('/about', ALL_LINKED.replace(`<a href="${SOCIAL_URLS[0]}">x</a>`, ''), true),
+    SOCIAL_URLS[0],
+  ),
+);
+
+check(
+  'SOCIAL — an UNAPPROVED account on a social host, on the route that carries the block',
+  one(
+    socialProblems('/about', `${ALL_LINKED} <a href="https://www.instagram.com/someone_else">x</a>`, true),
+    'someone_else',
+  ),
+);
+
+check(
+  'SOCIAL — an unapproved account on a route with no connection block still fires',
+  one(
+    socialProblems('/design', '<a href="https://www.facebook.com/not-gridsmith">x</a>', false),
+    'not-gridsmith',
+  ),
+);
+
+check(
+  'SOCIAL — the Gridsmith Studio LinkedIn, which a NAME SEARCH would have suggested',
+  one(
+    socialProblems('/about', `${ALL_LINKED} <a href="https://www.linkedin.com/company/gridsmith-studio">x</a>`, true),
+    'gridsmith-studio',
+  ),
+);
+
+check(
+  "SOCIAL CLEAN — a non-social external link is not this question's business",
+  none(socialProblems('/legal/privacy', '<a href="https://www.legislation.gov.uk/uksi/2015/17">x</a>', false)),
+);
+
+check(
+  'SOCIAL CLEAN — a route with no connection block and no social link at all',
+  none(socialProblems('/contact', '<a href="mailto:contact@gridsmith.uk">x</a>', false)),
+);
+
+check(
+  // `https://` alone does throw in `new URL`, but the href scanner's `[^"]+` needs a character
+  // after the slashes, so that input never reaches the parse at all — the first specimen here
+  // was that, and it proved nothing. A space matches the scanner AND throws.
+  'SOCIAL — an unparseable external href is reported, not skipped',
+  one(socialProblems('/about', '<a href="https://exa mple.com/x">x</a>', false), 'unparseable'),
+);
+
+check(
+  'SOCIAL COUNT moves — two unapproved accounts are two problems',
+  socialProblems(
+    '/design',
+    '<a href="https://x.com/someone">a</a> <a href="https://www.tiktok.com/@other">b</a>',
+    false,
+  ).length === 2
+    ? true
+    : 'the problem count did not move with the number of defects',
 );
 
 /* -- the counts must be provable to move ------------------------------------- */

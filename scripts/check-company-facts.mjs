@@ -69,6 +69,8 @@ import {
   placeholderProblems,
   CALL_RULES,
   PLACEHOLDER_RULES,
+  socialProblems,
+  SOCIAL_URLS,
 } from './company-facts-rules.mjs';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
@@ -187,7 +189,7 @@ function splitFooter(html) {
   };
 }
 
-const problems = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [] };
+const problems = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] };
 const counted = { routes: 0, chars: 0, footers: 0, emails: 0, phones: 0, offices: 0 };
 const thin = [];
 
@@ -223,6 +225,9 @@ for (const route of ROUTES) {
   problems[6].push(...teamProblems(route, text));
   problems[7].push(...callProblems(route, text));
   problems[8].push(...placeholderProblems(route, text));
+  // `/about` is the only route carrying the connection block, so it is the only one where
+  // the channels must be PRESENT. The unapproved-host half runs on every route.
+  problems[9].push(...socialProblems(route, markup, route === '/about'));
 }
 
 const all = Object.values(problems).flat();
@@ -284,6 +289,14 @@ console.log(
     `facing text, over ${PLACEHOLDER_RULES.length} rule(s)`,
 );
 console.log(
-  `\ncheck-company-facts: PASS — 8 question(s) over ${counted.routes} route(s), ` +
+  `  9. social: all ${SOCIAL_URLS.length} approved channel(s) linked on /about (GS-O017), and ` +
+    'no unapproved social host linked on any route',
+);
+console.log(
+  // Derived from the problem map rather than typed. A hand-written count is a summary line
+  // that can disagree with what ran — and it did: this read "8" for one run after question 9
+  // was added. CLAUDE.md: a summary line is not evidence a check ran.
+  `\ncheck-company-facts: PASS — ${Object.keys(problems).length} question(s) over `
+    + `${counted.routes} route(s), ` +
     `${counted.chars} character(s) of served text`,
 );

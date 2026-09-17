@@ -26,7 +26,7 @@ candidate anybody can evaluate.
 
 **CI/build:** local **46-gate** static chain PASS, clean production build on a wiped `.next`,
 bundle budgets, secrets lint and the full served chain PASS. `check:axe` **76 analyses over 19
-routes, zero violations, 0 unresolved**. `npm audit --omit=dev` clean; **no dependency added**.
+routes, zero violations, 0 unresolved**; `check:company` is **9 questions**. `npm audit --omit=dev` clean; **no dependency added**.
 Lighthouse cannot run on Windows and is CI's to answer.
 
 **What `GS-R001-R` changed.** Visitor-visible `[SEED]` eliminated and **gate-enforced on served
@@ -183,10 +183,7 @@ was submitted.
   never been one), an Open Graph card composition, and the one redirect row — now cutover
   hygiene rather than a blocker.
 - `GS-O010` — provision an isolated non-production Supabase target for Preview.
-- `GS-O017` — **new at GS-R001-R.** Confirm the official social channel URLs, or confirm there
-  are none. Nothing was guessed: the live site links no social account, and every public search
-  result under "Gridsmith" belongs to a different company. `/about` links the four channels
-  that ARE verified — email, WhatsApp, SMS and the Freelancer profile `GS-O014` approved.
+- *(`GS-O017` was raised and closed inside `GS-R001-R` — see the closed list below.)*
 
 ### Technical blockers
 
@@ -197,6 +194,16 @@ was submitted.
 
 ### Closed in GS-R001-R
 
+- `GS-O017` — **raised and closed in the same phase, on owner-supplied evidence.** The owner
+  identified `github.com/atikmurtaza/gridsmith-working` — their own earlier implementation — as
+  where the social links are configured. **Eight channels published**, each resolved before
+  publication: Facebook, Instagram, LinkedIn, X, TikTok, YouTube, Reddit and Freelancer.
+  **It corrected an earlier conclusion in the same phase**: a generic search had attributed
+  `facebook.com/gridsmith` and `linkedin.com/company/gridsmith` to an unrelated Seattle design
+  studio, and both are Gridsmith Ltd's. Two configured links were **not** published — a Gmail
+  compose link to the superseded legacy address, and a Reddit share permalink carrying tracking
+  parameters, normalised to the canonical profile. `check:company` question 9 asserts all eight
+  on `/about` and refuses any unapproved social host on any route. **COMPLETED.**
 - `GS-O016` — **the owner confirms Gridsmith Ltd is registered with the ICO and is paying the
   applicable data-protection fee.** Recorded as owner-supplied compliance evidence and
   **published nowhere**: `GS-R001-R` §12 forbids turning it into marketing copy, and

@@ -241,6 +241,94 @@ export const TEAM_RULES = [
 const asText = (v) => (typeof v === 'string' ? v : '');
 
 /**
+ * The approved social channels — `GS-O017`, closed 18 September 2026.
+ *
+ * **Hardcoded here, and transcribed from `lib/company/social.ts` rather than imported from it.**
+ * That file is the subject; this is the expectation. An expectation read out of its own subject
+ * cannot fail when the subject gains an entry, which is the class `check:tokens` carries a
+ * hardcoded `REQUIRED` list to avoid — and the failure mode it prevents here is specific: a
+ * later session adding an unverified account to the component and this gate agreeing with it.
+ *
+ * Every URL was resolved before publication; `lib/company/social.ts` carries the per-channel
+ * evidence and the provenance, which is the owner's own earlier implementation rather than a
+ * search result.
+ */
+export const SOCIAL_URLS = [
+  'https://www.facebook.com/gridsmith',
+  'https://www.instagram.com/gridsmith_ltd',
+  'https://www.linkedin.com/company/gridsmith',
+  'https://x.com/gridsmithltd',
+  'https://www.tiktok.com/@gridsmithltd',
+  'https://www.youtube.com/@Gridsmithltd',
+  'https://www.reddit.com/user/Gridsmithltd',
+  'https://www.freelancer.com/u/GridsmithLTD',
+];
+
+/**
+ * Hosts a profile link may point at. Anything else on a social platform is an account nobody
+ * verified — the whole point of question 9.
+ *
+ * `wa.me` is here because the WhatsApp link is an external profile-shaped URL on the same page
+ * and question 3 already owns it; listing it stops question 9 reporting it twice.
+ */
+const KNOWN_SOCIAL_HOSTS = [
+  'facebook.com', 'instagram.com', 'linkedin.com', 'x.com', 'twitter.com',
+  'tiktok.com', 'youtube.com', 'youtu.be', 'reddit.com', 'freelancer.com',
+  'threads.net', 'pinterest.com', 'mastodon.social', 'bsky.app', 'github.com',
+];
+
+/**
+ * Problems with the social channels a route serves.
+ *
+ * Two directions, because either alone is half a check: every approved channel must be present
+ * on `/about`, and **no unapproved social host may appear on any route**. The second is what
+ * refuses a future session's unverified addition; the first is what stops the block silently
+ * emptying.
+ *
+ * @param {string} route
+ * @param {string} html raw served markup
+ * @param {boolean} expectPresent true on the route that carries the connection block
+ * @param {string[]} [approved] injectable for the self-test
+ * @returns {string[]}
+ */
+export function socialProblems(route, html, expectPresent, approved = SOCIAL_URLS) {
+  const problems = [];
+  const h = asText(html);
+
+  if (expectPresent) {
+    for (const url of approved) {
+      if (!h.includes(`href="${url}"`)) {
+        problems.push(
+          `${route} does not link ${url} — it is an approved channel (GS-O017) and the ` +
+            'connection block is expected to carry every one of them.',
+        );
+      }
+    }
+  }
+
+  for (const m of h.matchAll(/href="(https?:\/\/[^"]+)"/gi)) {
+    const url = m[1];
+    let host;
+    try {
+      host = new URL(url).hostname.replace(/^www\./, '');
+    } catch {
+      problems.push(`${route} has an unparseable external href ${JSON.stringify(url)}.`);
+      continue;
+    }
+    if (!KNOWN_SOCIAL_HOSTS.some((k) => host === k || host.endsWith(`.${k}`))) continue;
+    if (approved.includes(url)) continue;
+    problems.push(
+      `${route} links ${JSON.stringify(url)} on a social platform, and it is not an approved ` +
+        'channel. GS-O017 closed on owner-supplied evidence for a specific set of accounts; ' +
+        'an account nobody verified must not be published. Add it to lib/company/social.ts ' +
+        'and to SOCIAL_URLS with its verification, or remove it.',
+    );
+  }
+  return problems;
+}
+
+
+/**
  * Problems with the email addresses a route serves.
  *
  * @param {string} route

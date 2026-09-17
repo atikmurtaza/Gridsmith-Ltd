@@ -155,7 +155,7 @@ prefix; the sentences stand. `SEED_RULES` was asserted **byte-identical** before
 | `check:axe` | **76 analyses, 19 routes × 2 widths × 2 states, zero violations**; 138 incompletes allowed, **0 unresolved** |
 | `check:mark:field` | **PASS** — 7 viewport/motion cases, 14 pieces, rendered in 5, animated in 2, static in 3, no horizontal overflow at any scroll position |
 | `check:mark:guard` | **2** `animation-timeline` declarations, all inside their `@supports` — the count moved 1 → 2 with the new layer |
-| `check:company` | **8 questions over 18 routes**, 18 statutory footers, **no `tel:` on any route** |
+| `check:company` | **9 questions over 18 routes**, 18 statutory footers, **no `tel:` on any route**, all 8 social channels present and no unapproved host anywhere |
 | `check:responsive` | PASS |
 | `check:reviews:ui` | **10 cards on `/`, 0 on all three divisions** — unchanged |
 | `check:launch` | 113 published seed documents on `development`; production tier correctly inert |
@@ -207,6 +207,7 @@ with a residue grep after each:
 | F5 | `aria-hidden` removed | *field is not aria-hidden* |
 | F6 | logo path pointed at a file that does not exist | *is not /brand/gridsmith-logo.svg* |
 | F7 | logo box made non-square | *24x38.3906, not square* |
+| F8 | the field's 3D tilt disabled | *did not TILT at 50% scroll* on 1024 and 1440 |
 
 **F5 caught a defect in this gate, on its first run, and the fix is recorded because the defect
 is the interesting part.** The element selector was
@@ -423,6 +424,46 @@ would sit under the reading column on the devices least able to spare the compos
 focusable element, never participates in layout, and cannot occlude the review cylinder or the
 consent bar. **The Freelancer carousel is unaffected** — 96s ring, 10 cards, measured unchanged.
 
+### 8A.0 The old implementation, compared — and the one idea taken from it
+
+The owner supplied `github.com/atikmurtaza/gridsmith-working` as the animation reference.
+**Both files were read** (`CanvasBackground.jsx`, `GridsmithLogo.jsx`), not just the rendered
+page, and the comparison is recorded because the conclusion is mostly *"no"* and that needs a
+reason.
+
+Its stack: `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`, `three`,
+`gsap` + `ScrollTrigger`. Its structure: **8 spheres and 6 cylinders** — which independently
+confirms the 14-piece transcription here is the right reading of the mark. Its narrative:
+ScrollTrigger with `scrub: 1`, dispersing at position 0 and returning at 0.6 — **composed →
+dispersed → recomposed**, the same arc this build already had.
+
+| Aspect | Old | This build | Taken? |
+|---|---|---|---|
+| Visual depth | real lighting, `Bloom`, `Noise`, `Sparkles`, `Environment preset="city"`, metal material | 1px hairlines on `--line` | **No.** Its register is a near-black site with gold specular metal; this site is tactile brutalism on white, and `DESIGN.md` prohibits glow and gradient meshes outright |
+| **Apparent three-dimensionality** | group rotates through 2π–4π under a perspective camera | flat plane | **YES** — see below |
+| Sphere/rod relationship | rods derived from endpoint sphere pairs | rods transcribed as final rects | No change; same rendered result, and transcription is exact to the brand file |
+| Movement through scroll | `Math.random()` per piece, ±10–15 units | radial from the mark's own centre | **No.** Random per-piece motion is the "random floating particles" failure `GS-R001-R` §15 rules out **by name**; radial from a shared centre is what makes it read as one object opening |
+| Cylinder rotation | random, up to 4π | ±3–6°, alternating sign | Partly — the idea of rods reorienting is kept, the tumbling is not |
+| Idle motion | `Float` — a perpetual bob independent of scroll | none | **No.** A forever-running compositor animation on every visit, and §15 requires movement to relate to scroll progression |
+| Scale and positioning | full viewport, centred | full viewport, centred | Already the same |
+| Subtlety behind content | it *is* the page background of a dark site; not subordinate to anything | behind content, hairline weight, hero band opaque | No change |
+
+**What was taken is the rotation, and only the rotation.** It is the thing that made the old
+version read as a dimensional object rather than a diagram, and `GS-R001-R` §15 asks for exactly
+that word. It is now a CSS `perspective` on the container and a scroll-driven
+`rotateY(-9deg) rotateX(4deg)` on the one `<svg>` element, flat at both ends of the scroll — the
+same shape as the pieces' own dispersal, so the field opens and closes as one movement.
+
+**The idea, not the implementation.** No Three.js, no GSAP, no WebGL; the homepage delta is
+unchanged at **1.9KB of 15KB**. The rotation is on a DOM element rather than on SVG children,
+because 3D transforms on SVG children are unevenly supported and there is no Firefox or Safari
+in this environment to check against. The magnitude is the restraint: the old version tumbled,
+this turns nine degrees.
+
+`check:mark:field` asserts the tilt **separately** from the pieces, because it is a second
+animation on a different element and would otherwise die quietly behind seven green rows —
+proven by disabling it (F8).
+
 ### 8A.1 The defect that reported itself healthy
 
 The first build used `animation-timeline: scroll()`. That means `scroll(nearest)`, resolved
@@ -478,37 +519,77 @@ as **opaque**, so the geometry never reaches it. Worst case for hero text is `--
 The entry names its own removal conditions: if the mark stops rendering on `/`, if it is drawn
 in anything other than `--line`, or if any `--ink-subtle` or `--accent` text is placed over it.
 
-## 9. Social channels — checked, and none can be verified
+## 9. Social channels — resolved by owner evidence, after a search got it wrong
 
-`GS-R001-R` §9 says to inspect repository evidence first, verify publicly identifiable official
-accounts if the protocol allows, and **omit and report** what cannot be confirmed. All three
-steps ran.
+**This section replaces an earlier version of itself, and the replaced conclusion is kept
+because the way it was wrong is the useful part.**
 
-| Source | Result |
-|---|---|
-| Repository | **nothing.** No social URL in `companyDetails`, the schema, the seed or `LIVE-SITE-EXTRACT.md` |
-| The live `gridsmith.uk` | **nothing.** Read read-only: the only external links on `/`, `/about-us/`, `/contact/` and `/services/` are one `mailto:` and one `tel:` |
-| Public search | **every result is a different company** |
+The first pass reported that **no social channel could be verified**. Repository evidence held
+none, the live `gridsmith.uk` links none, and a public search returned three unrelated companies
+— *Gridsmith Studio* (a surface-pattern designer in Seattle), `joingridsmith.com` and
+`gridsmith.io`. On that evidence, omitting everything and raising `GS-O017` was right.
 
-The last row is the finding. *Gridsmith Studio* — a surface-pattern designer in Seattle — holds
-the Instagram, Facebook and LinkedIn handles; `joingridsmith.com` (energy) and `gridsmith.io`
-(tabletop terrain) are two further unrelated businesses. **None is Gridsmith Ltd, company
-17050842.**
+The owner then identified **`github.com/atikmurtaza/gridsmith-working`** — their own earlier
+Gridsmith implementation — as where the links are configured. Read read-only,
+`app/src/components/Overlay.jsx` carries nine explicitly configured social URLs.
 
-Linking any of them would put a third party's business on Gridsmith's About page. Nothing was
-guessed. **`GS-O017`** is the owner action, and adding a channel is a one-line change once a URL
-is confirmed.
+**The search had not merely failed to find them; it had attributed two of them to someone
+else.** `facebook.com/gridsmith` and `linkedin.com/company/gridsmith` are Gridsmith Ltd's. The
+Seattle studio's accounts are at different URLs entirely — `linkedin.com/company/gridsmith-studio`
+and a numeric Facebook id. **A name is not an identity**, and no amount of further searching
+would have separated them. Only a source the owner controls could.
 
-**Freelancer is the exception and it is not a search result.**
-`https://www.freelancer.com/u/GridsmithLTD` is the profile `GS-O014` approved as the attribution
-target for the homepage reviews, and the account the official API returns them from. It is the
-only platform presence this programme holds evidence for.
+### 9.1 Published, each resolved first
 
-**The icons are inline SVG in the site's own geometric register, not brand logos.** Three
-independent reasons: there is no icon dependency in this build and adding one for four glyphs
-fails non-negotiable #8 before it reaches the taste question; brand logos are third-party marks
-with their own usage terms; and a platform's own colour would be the first hardcoded colour on
-the site.
+| Platform | URL | Verified by |
+|---|---|---|
+| Facebook | `facebook.com/gridsmith` | rendered page — the Page publishes **`contact@gridsmith.uk` and `07405 448534`**, the approved company email and number. The strongest match of the eight |
+| Instagram | `instagram.com/gridsmith_ltd` | rendered page — "Gridsmith Ltd (@gridsmith_ltd)", 36 followers |
+| LinkedIn | `linkedin.com/company/gridsmith` | HTTP 200, title `Gridsmith Ltd \| LinkedIn` |
+| X | `x.com/gridsmithltd` | rendered page — "Gridsmith Ltd (@GridsmithLtd)" |
+| TikTok | `tiktok.com/@gridsmithltd` | oEmbed `author_name: "Gridsmith"`, `data-unique-id: gridsmithltd` |
+| YouTube | `youtube.com/@Gridsmithltd` | HTTP 200, title `Gridsmith - YouTube` |
+| Reddit | `reddit.com/user/Gridsmithltd` | HTTP 200; a control handle returns an 8KB stub against this account's 321KB page |
+| Freelancer | `freelancer.com/u/GridsmithLTD` | HTTP 200, `GridsmithLTD Profile` — already approved at `GS-O014` |
+
+### 9.2 Facebook nearly went unpublished on a transport artefact
+
+An anonymous `curl` returned **HTTP 400** on `facebook.com/gridsmith`, `.../gridsmith/` and the
+`m.` host. That is indistinguishable from a dead vanity URL, and the instruction for a dead URL
+is to refuse it. A real browser rendered the Page normally — **the 400 was a bot block.**
+
+`CLAUDE.md` records this shape for security probes: a proof run over a transport the real client
+does not use tells you about the transport, not the system. Here it would have deleted a live
+account from the site. **Instagram is the same class in the opposite direction**: it returns
+HTTP 200 with a near-identical byte count for a real handle and a nonsense one, so the HTTP
+probe could not confirm *or* deny. Only the rendered page settled either.
+
+### 9.3 Two configured links were not published
+
+- **The Gmail compose link** to `contact.gridsmith@gmail.com`. That address is on
+  `FORBIDDEN_EMAILS`; `GS-O004` approved `contact@gridsmith.uk` and nothing else. **Being
+  configured in an older build does not revive a superseded fact**, and `check:company` question
+  2 would have refused it on every route anyway.
+- **The Reddit share permalink** `reddit.com/u/Gridsmithltd/s/CsBkRtMNP8`, which redirects to
+  the profile carrying five `utm_*` tracking parameters. The canonical profile is published
+  instead — a normalisation of the same account, not a substitution of a different one.
+
+### 9.4 Gate-asserted, in both directions
+
+`check:company` question 9 requires all eight on `/about` **and refuses any unapproved social
+host on any route** — so a later session cannot add an unverified account without the gate
+naming it. The expectation is transcribed into `company-facts-rules.mjs` rather than imported
+from `lib/company/social.ts`, because an expectation read from its own subject cannot fail when
+the subject gains an entry. Nine self-test cases, one of which refuses the Gridsmith Studio
+LinkedIn by name.
+
+**The icons stay generic.** Every social row shares one glyph — two nodes joined by a rod, the
+Gridsmith mark's own vocabulary — and the platform name does the identifying. Eight invented
+platform glyphs would be either brand marks wearing a disguise (a third-party trademark question
+nobody has asked) or shapes that identify nothing.
+
+**What this does not claim:** that any account is active. X has 0 posts, Facebook 2 followers.
+The site links them; it does not describe them.
 
 ---
 
