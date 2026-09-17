@@ -17,7 +17,8 @@
 ## Repository state
 
 - **Starting commit:** `82d55ede`
-- **Ending commit:** `e59903ab` — one commit, the phase
+- **Ending commit:** `583a23bd`. Three commits: `e59903ab` the phase, `92ec2065` its commit
+  id, `583a23bd` the owner evidence that arrived afterwards (`GS-O017`, the animation tilt)
 - **Branches:** `staging/gs-r001-r-remediation` carries the candidate and is what Vercel builds as
   a **preview**; `main` is fast-forwarded to the same commit
 - **Starting working tree:** clean, 0 ahead / 0 behind `origin/main`, no unrelated owner work
