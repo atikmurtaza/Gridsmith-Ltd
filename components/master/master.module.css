@@ -61,7 +61,27 @@
 
 /* Hero — N-01 block 1. Centred is DESIGN.md §4's exception for the hero and CTA bands;
    everything else on the master layer is asymmetrically anchored. */
-.hero { text-align: center; }
+/* **Opaque, so the background mark never sits behind the hero — `GS-R001-R`.**
+
+   `--canvas` is the same colour `body` already carries, so nothing about this band LOOKS
+   different; what changes is that the fixed geometry layer does not show through it. The
+   geometry begins at the division routing block below.
+
+   This is a readability decision that a gate found rather than one taste argued for. With the
+   field showing through, `check:axe` returned **UNRESOLVED color-contrast on the `h1` and on
+   `.heroIntro`** at 1280px — axe cannot compute a ratio against a non-uniform background, and
+   an unresolved result on the LCP heading of the site's most important page is not something to
+   allowlist. CLAUDE.md: accessibility wins every conflict.
+
+   It also reads better, and the owner's brief asks for exactly this: geometry *around* the
+   hero, "always subordinate to readable content". An opaque band rather than an opacity ramp
+   because it holds at EVERY width and motion setting — 768px static, reduced motion and 1440px
+   animated all get the same clean hero, and none of them depends on an animation running. */
+.hero {
+  text-align: center;
+  position: relative;
+  background: var(--canvas);
+}
 .heroHeadline { margin: 0; }
 .heroIntro {
   margin: var(--space-6) auto 0;
@@ -518,3 +538,107 @@
   from { transform: translate(var(--fx), var(--fy)); }
   to { transform: none; }
 }
+
+/* --- The Master background mark — GS-R001-R. See BackgroundMark.tsx ------- */
+
+/* Fixed, so the field never moves with the document: the only thing that changes on scroll is
+   each piece's transform, which is compositor-only. A layer that scrolled would repaint.
+
+   `z-index: 0` against content at `z-index: 1`, and it is out of flow entirely, so it cannot
+   shift anything — `check:mark:cls` measures the homepage at 0.0000 while scrolling and this
+   is the element that would move that number.
+
+   `overflow: hidden` is what keeps a dispersed piece from producing horizontal scroll.
+   `pointer-events: none` is what keeps it from taking a click that belongs to the page. */
+.field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Below 768px the layer does not render at all. At 375px there is no region of this page
+     free of text at any scroll position (01-VALIDATION-REPORT.md §18), so the geometry would
+     sit under the reading column on the devices least able to spare the compositor work —
+     and GS-R001-R §18 puts readability, scroll performance and battery ahead of the effect. */
+  display: none;
+}
+
+/* Tablet up: the mark is present and composed, but still. The concept survives — the identity
+   is on the page — without asking a mid-range device to composite fourteen layers per frame. */
+@media (min-width: 768px) {
+  .field { display: block; }
+}
+
+.fieldSvg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* Hairline outline on --line: the same 1px rule every border on this site is drawn with, and
+   the same treatment HeroMark gives its drafting sheet. `non-scaling-stroke` pins it to one
+   device pixel whatever the viewBox scale resolves to, so it reads as a rule rather than as a
+   shape at every width.
+
+   `fill: none` is the whole contrast argument. Text sits on --canvas at 15.42:1; a 1px
+   --line hairline crossing a glyph changes nothing a filled shape would not. */
+.fieldPiece {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  /* Rotation has to happen about each piece's own centre, not the viewBox origin. */
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* The guard is not politeness — see HeroMark and check:mark:guard. An `animation-timeline` a
+   browser does not understand is DROPPED, leaving a named animation on the document timeline:
+   it would play once, on load, behind the LCP viewport. Declaring the animation only where the
+   timeline exists is the difference between "no effect" and "the wrong effect".
+
+   Above 1024px only. A tablet gets the composed mark and no motion: GS-R001-R §18 asks for the
+   concept at reduced complexity there, and "reduced" that still composites fourteen transforms
+   per frame is not reduced. */
+@supports (animation-timeline: scroll()) {
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .fieldPiece {
+      animation-name: gsFieldPiece;
+      /* **`scroll(root)`, not `scroll()` — and this was measured, not assumed.**
+
+         `scroll()` means `scroll(nearest)`, which resolves against the nearest ancestor SCROLL
+         CONTAINER. `.field` is `position: fixed`, and a fixed element does not scroll with any
+         ancestor, so it has no nearest scroll container and the timeline resolves to **nothing**.
+
+         Everything about it read as working: `CSS.supports('animation-timeline: scroll()')` was
+         true, `getAnimations()` returned one animation, `playState` was `running`, the computed
+         `animation-timeline` was `scroll()`, and the keyframes held the right transforms. The
+         only tell was `animation.currentTime === null` — an inactive timeline — and the rendered
+         `transform: none` at 50% scroll. A screenshot of the top of the page looks identical
+         either way, because at scroll 0 the correct state IS `none`.
+
+         `scroll(root)` names the document scroller explicitly, which is what a fixed background
+         layer wants regardless of where it sits in the DOM. */
+      animation-timeline: scroll(root);
+      animation-fill-mode: both;
+      /* `linear`, for HeroMark's reason: on a scrubbed timeline the easing curve applies to
+         SCROLL POSITION rather than to time, so --ease-out spends most of the travel in the
+         first fraction of the range and then sits still. The reader's scroll is the easing. */
+      animation-timing-function: linear;
+    }
+  }
+}
+
+/* Composed at the top, open through the middle, composed again at the end. `to: none` at both
+   ends rather than `translate(0,0)`: the markup carries the COMPOSED position, so an animation
+   that never runs — no support, reduced motion, tablet — leaves the mark assembled rather than
+   scattered. Every state resolves to the logo. */
+@keyframes gsFieldPiece {
+  0% { transform: none; }
+  50% { transform: translate(var(--dx), var(--dy)) rotate(var(--dr)); }
+  100% { transform: none; }
+}
+
+/* Content sits above the fixed field. One rule, on the one page that has a field — a global
+   z-index would be a rule every other route pays for and none of them needs. */
+.above { position: relative; z-index: 1; }

@@ -30,53 +30,78 @@ not requested under `GS-D001` and `GS-D002`.
   action and `GS-X002` are closed.
 - **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
 
-### `GS-O016` — Confirm the ICO registration position
+### `GS-O007` — Brand assets supplied; three small decisions remain
 
-- **Status:** ACTIONABLE NOW (new at `GS-R001`)
-- **Why required:** it was a clause inside `GS-O004`'s original wording and the `GS-O004` brief
-  did not answer it. Closing that action without lifting this out would have dropped it, which
-  is the failure `AI-DEVELOPMENT-PROTOCOL.md` names.
-- **Exact action:** confirm whether Gridsmith Ltd is registered with the Information
-  Commissioner's Office and, if so, supply the registration number; or record that registration
-  is not required. Most UK companies processing personal data for business purposes must pay the
-  data protection fee, and the site's privacy notice is published to people whose data it takes.
-- **What it blocks:** nothing today. `companyDetails.icoRegistration` exists and is unset, and
-  nothing renders it, so the site makes **no claim either way** — which is the safe state.
-- **Evidence required:** the ICO register entry, or a dated note that registration is not
-  required. It belongs with `GS-O003`'s solicitor pass if you would rather it were answered there.
-- **Credentials required:** none. **Paid service required:** possibly the ICO fee, which is not
-  this programme's to incur.
+- **Status:** ACTIONABLE NOW — **narrowed three times.** `GS-R001` answered the URL-inventory and
+  SEO-metadata limbs. `GS-R001-R` reduced the redirect limb to cutover hygiene **and closed the
+  brand-asset limb**: the owner supplied the logo at the phase's owner gate on 17 September 2026.
+- **Supplied, verified and in use.** `public/brand/` holds `gridsmith-logo.svg`,
+  `gridsmith-logo.png` and `gridsmith-logo-3d.png`. All three are the **mark alone** — no
+  wordmark, no lockup — and all three were measured against each other before any was used:
+  content aspect ratios 1.0293 / 1.0302 / 1.0302, shape IoU 0.9624 (PNG vs SVG), and **zero XOR
+  pixels surviving two erosions**, so the vector is the raster's geometry rather than an
+  approximation. `GS-R001-R-REMEDIATION.md` §8 is the record.
 
-### `GS-O007` — Supply production assets and confirm the redirect mapping
+  The **SVG** is the header logo on all 77 routes and the geometry source for the Master
+  background animation. Neither PNG is modified; neither is currently rendered.
+- **What remains, and it is three narrow decisions rather than an open action:**
+  1. **The favicon.** `GS-R001-R` §22 says to keep the existing one and not to derive it from
+     the logo. **There was never one** — the repository held zero image files before this phase.
+     A favicon is its own design decision (a 24px-legible mark is not a scaled 1024px one), and
+     nothing was created. Say whether you want one and supply it, or confirm none for now.
+  2. **An Open Graph social card.** Now unblocked and not composed. A card needs a background,
+     a decision about whether the wordmark appears, and safe margins — brand choices, not
+     implementation ones. `gridsmith-logo-3d.png` is the right source when you take them.
+     Until then Open Graph declares a title and a description and no image, which is honest.
+  3. **The one redirect row**, below.
+- **The redirect limb, reduced at `GS-R001-R` on the owner's commercial reading.** The owner
+  confirms the current `gridsmith.uk` is a basic corporate presence used for social profile
+  links, business and banking verification, and general online presence — **not** an actively
+  promoted acquisition property, not a paid-ad landing environment, not a material
+  lead-generation channel, and not known to carry valuable campaign traffic.
 
-- **Status:** ACTIONABLE NOW — **narrowed at `GS-R001`.** Two of its three limbs are now answered
-  by evidence rather than owed by the owner.
-- **Why required:** real brand assets cannot be inferred safely, and a redirect mapping decides
-  where a reader of the current site lands.
-- **Answered at `GS-R001`, so that what remains is only what is genuinely owed:**
-  - **The existing URL inventory is collected, and it is eight URLs.** Read read-only from the
-    live site's own `wp-sitemap.xml` on 16 September 2026 and recorded verbatim in
-    `LIVE-SITE-EXTRACT.md` §13 with a proposed mapping. It was never an export to request:
-    WordPress publishes it, and `G-01` had been marked **BLOCKED — greenfield, no existing
-    site**, which `LIVE-SITE-EXTRACT.md` had already contradicted since 7 September.
-  - **SEO titles and descriptions exist on every route** and need no owner fact: they describe
-    what each page is. `G-04` is implemented — `robots.ts`, `sitemap.ts`, per-route canonicals,
-    Open Graph and `Organization` structured data drawn from `companyDetails`.
-- **Exact information/action still needed, and it is two things:**
-  1. **Approved logo, favicon and any brand imagery.** The site ships none and renders geometric
-     placeholders instead (`PRE-DEPLOYMENT-CHECKLIST.md` Group E, which records why stock
-     photography was refused and must stay refused). Open Graph therefore declares **no image**;
-     a social card is a title and a description until a real asset exists.
-  2. **Confirm the redirect mapping**, in particular the one row no evidence settles: the live
-     `/terms-and-conditions/` is a single instrument covering both website use and service
-     terms, and the build splits those into `/legal/terms`, `/legal/business-client-terms` and
-     `/legal/consumer-client-terms`. `LIVE-SITE-EXTRACT.md` §13 sets out the options and does
-     **not** pick one — the `LEGAL_DOCUMENT_SLUGS` docstring already established that a redirect
-     which picks a target is wrong for half of the people following it.
-- **What it blocks:** launch-day redirects, and brand imagery. Neither blocks a staging candidate.
-- **Evidence required:** approved files; a dated decision on the mapping.
-- **Not requested:** `redirects/legacy.json` stays empty until then. `GS-R001` prohibits cutover,
-  and populating a redirect map before the mapping is confirmed would be inventing one.
+  **So a comprehensive legacy redirect programme is not a launch blocker.** What remains is
+  lightweight release hygiene *at cutover*: re-read the eight live URLs, map the obvious and
+  trivial equivalents, preserve the root domain, avoid known 404s. `redirects/legacy.json` stays
+  empty and **no redirect is activated** — cutover is `GS-O009`.
+
+  **The one row evidence cannot settle is still not settled, and is no longer urgent.** The live
+  `/terms-and-conditions/` is a single instrument this build splits into `/legal/terms`,
+  `/legal/business-client-terms` and `/legal/consumer-client-terms`; `LEGAL_DOCUMENT_SLUGS`
+  already records that a redirect picking one target is wrong for half the people following it.
+  `LIVE-SITE-EXTRACT.md` §13.3 sets out the options. Decide it at cutover.
+- **Answered at `GS-R001` and unchanged:** the eight-URL inventory, read from the live site's own
+  `wp-sitemap.xml` and recorded in `LIVE-SITE-EXTRACT.md` §13; and per-route SEO titles,
+  descriptions, canonicals, Open Graph and `Organization` structured data (`G-04`).
+
+### `GS-O017` — Confirm the official social channels, or confirm there are none
+
+- **Status:** ACTIONABLE NOW (new at `GS-R001-R`)
+- **Why required:** `/about` now carries a connection block, and `GS-R001-R` §9 asked for
+  Gridsmith's actual social channels. **None could be verified, and nothing was guessed.**
+
+  | Source | Result |
+  |---|---|
+  | Repository | nothing — no social URL in `companyDetails`, the schema, the seed or `LIVE-SITE-EXTRACT.md` |
+  | The live `gridsmith.uk`, read read-only | nothing — the only external links on `/`, `/about-us/`, `/contact/` and `/services/` are one `mailto:` and one `tel:` |
+  | Public search | **every result is a different company** |
+
+  That last row is the reason this is an owner action rather than a research task. *Gridsmith
+  Studio*, a surface-pattern designer in Seattle, holds the Instagram, Facebook and LinkedIn
+  handles under that name; `joingridsmith.com` (energy) and `gridsmith.io` (tabletop terrain) are
+  two further unrelated businesses. **None is Gridsmith Ltd, company 17050842**, and linking any
+  of them would put a third party's business on Gridsmith's About page.
+- **Exact action:** supply the full URL of each official Gridsmith Ltd account you want linked —
+  any of Facebook, Instagram, LinkedIn, TikTok, YouTube, Reddit — or confirm there are none. Do
+  not supply a handle; supply the URL, so there is nothing to infer.
+- **What it blocks:** nothing. `/about` links **Email, WhatsApp, Text message and Freelancer**
+  today, and each of those is verified. Adding a channel is a one-line change in
+  `components/content/Connect.tsx`.
+- **Evidence required:** the URLs. A page that names Gridsmith Ltd or links `gridsmith.uk` is
+  what makes one confirmable.
+- **Already verified and already linked:** `https://www.freelancer.com/u/GridsmithLTD`, which is
+  not a search result — it is the profile `GS-O014` approved for review attribution and the
+  account the official API returns the homepage reviews from.
 
 ### `GS-O010` — Provide an isolated Supabase target for Vercel Preview
 
@@ -97,11 +122,44 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## BLOCKED/DEPENDENT
 
-- `GS-O008` — approve a staging release candidate after `GS-P01` and service/content phases.
+- `GS-O008` — **ACTIONABLE NOW, and it is the live owner task. `AWAITING OWNER RE-REVIEW.`**
+  A staging release candidate exists and was reviewed once: `GS-R001` produced it,
+  `RC TECHNICALLY PASS`, and **the owner did not accept the experience.** Eleven findings were
+  recorded and `GS-R001-R` implements them — see `GS-R001-R-REMEDIATION.md`.
+
+  **This action is not closeable by an agent and was not closed by that phase.** What it needs
+  is a second reading of all four sections by a person. The one item deliberately left
+  unfinished is the **Master background logo animation**, which is blocked on the final logo
+  asset (`GS-O007`) rather than on effort — building it from an asset nobody has supplied would
+  mean inventing brand geometry.
+
+  **What to look at, and what is knowingly absent:** `GS-R001-R-REMEDIATION.md` §1 and §7.
 - `GS-O009` — authorise production deployment and DNS cutover only in a dedicated production-release
   phase after automated audit and human acceptance.
 
 ## COMPLETED
+
+- `GS-O016` — **completed 17 September 2026 at `GS-R001-R`.** The owner confirms:
+  **Gridsmith Ltd is currently registered with the Information Commissioner's Office and is
+  paying the applicable data-protection fee.**
+
+  Recorded as owner-supplied compliance evidence. **Nothing about it is published**, and that is
+  deliberate on two counts. `GS-R001-R` §12 says not to turn ICO registration into marketing
+  copy — it is a legal obligation most UK companies processing personal data have, not a
+  differentiator, and the same reasoning that took the company-number card off `/about` applies
+  to it. And `companyDetails.icoRegistration` **stays unset**, because the owner supplied the
+  *position* and not the *number*: writing a number nobody supplied is the failure
+  `AI-DEVELOPMENT-PROTOCOL.md` names, and the site making no claim either way remains the safe
+  state.
+
+  **What closing this does not cover, so that nothing is dropped.** The **registration number**,
+  the **renewal date** and the **fee tier** were not supplied and were not invented. None is
+  needed today because nothing renders any of them. If a later legal gate requires the number —
+  most likely the `GS-O003` solicitor pass, which reads the privacy notice — it is one owner
+  fact and one field, and this entry is where to start. **Closing this does not advance
+  `GS-O003`**, and no broader privacy or legal readiness is marked complete from it.
+
+  **Evidence:** the owner's statement in the `GS-R001-R` brief, 17 September 2026.
 
 - `GS-O004` — **completed 16 September 2026 at `GS-R001`.** The owner supplied the operational
   company and contact facts, and they are implemented in the one canonical source

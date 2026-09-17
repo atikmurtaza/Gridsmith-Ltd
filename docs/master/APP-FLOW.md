@@ -135,6 +135,17 @@ is published (`+44 7405 448534`) and is in the footer of every page and on both
 contact routes. `scripts/struck-rules.mjs` `GS-O004-RESPONSE-GUARANTEE` and
 `GS-O004-BUSINESS-HOURS-FIELD`.
 
+**And struck a third time, 17 September 2026 (`GS-R001-R`) — `call [number]` is
+now wrong in its first two words as well.** `GS-O004` published the number and
+linked it `tel:` on four surfaces; the owner's `GS-R001-R` decision withdraws the
+**voice channel** and only the voice channel. The number is unchanged, still
+published, and is now offered as **WhatsApp and SMS**, each named, each linked with
+the scheme that channel uses. Both are asynchronous, which is what makes them
+coherent beside *"We typically respond within 48 hours"* — a telephone is not.
+`telHref` is deleted, `whatsAppHref` and `smsHref` replace it, and `check:company`
+question 3 refuses a `tel:` href on **any** route while question 7 refuses the
+wording. `scripts/struck-rules.mjs` `GS-R001-R-CALL-CHANNEL`.
+
 No template anywhere on the site may promise faster. This wording is the ceiling.
 
 Rules:

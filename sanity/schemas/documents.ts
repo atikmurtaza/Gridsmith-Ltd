@@ -14,6 +14,31 @@ import {
 const DIVISIONS = ['design', 'digital', 'press'];
 
 /**
+ * The closed publication states for `post` — `GS-R001-R`.
+ *
+ * Exported because `check:schemas` holds the closed lists it enforces and a list it cannot
+ * import is a list it cannot check. Order is deliberate: it is the order the work happens in.
+ */
+export const POST_STATUSES = ['brief', 'draft', 'published'];
+
+/**
+ * The closed set, enforced on **write** rather than only in the Studio picker.
+ *
+ * `options.list` is an affordance: it renders a dropdown and refuses nothing written through
+ * the API, which is how every record in this dataset is written. `check:schemas` refuses a
+ * closed-list field with no `.custom()` for exactly that reason, and it refused this one.
+ *
+ * Absence is `required()`'s job, so an empty value passes here — two rules over one condition
+ * is how two rules disagree.
+ */
+export function postStatusRule(value: unknown): true | string {
+  if (value === undefined || value === null || value === '') return true;
+  return POST_STATUSES.includes(String(value))
+    ? true
+    : `Status must be one of: ${POST_STATUSES.join(', ')}`;
+}
+
+/**
  * **`isSeed` is added to every document type — `master/SCHEMA.md` §1, group-wide.**
  *
  * Set by the seed script, never by hand, which is what `readOnly` says. The production build
@@ -279,6 +304,28 @@ export const post = defineType({
     defineField({ name: 'title', type: 'string', validation: (r) => r.required() }),
     defineField({ name: 'slug', type: 'slug', options: { source: 'title' }, validation: (r) => r.required() }),
     defineField({ name: 'division', type: 'string', options: { list: DIVISIONS } }),
+    /**
+     * **The publication state — `GS-R001-R`, and it fails closed.**
+     *
+     * `POST_STATUSES` is the closed list; `brief` is the initial value, because a post that
+     * exists is being planned and a post that is public is a decision someone took.
+     *
+     * The query predicate is `status == "published"` — **strict equality, never
+     * `coalesce(status, "published")`.** A document written before this field existed has no
+     * `status`, and coalescing would publish exactly the nine records this field was added to
+     * stop publishing. An unset status is not published; that is the whole point of it.
+     */
+    defineField({
+      name: 'status',
+      type: 'string',
+      options: { list: POST_STATUSES },
+      initialValue: 'brief',
+      validation: (r) => r.required().custom(postStatusRule),
+      description:
+        'brief = an editorial plan, never public. draft = being written, still not public. published = live on /insights.',
+    }),
+    /** Internal planning only. Never rendered — see `editorialBrief`. */
+    defineField({ name: 'brief', type: 'editorialBrief' }),
     defineField({ name: 'excerpt', type: 'text', rows: 3 }),
     defineField({ name: 'body', type: 'array', of: [defineArrayMember({ type: 'block' })] }),
     defineField({ name: 'author', type: 'string' }),
@@ -293,7 +340,7 @@ export const post = defineType({
     defineField({ name: 'seo', type: 'seoBlock' }),
     isSeed,
   ],
-  preview: { select: { title: 'title', subtitle: 'division' } },
+  preview: { select: { title: 'title', subtitle: 'status' } },
 });
 
 /**

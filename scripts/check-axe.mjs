@@ -258,6 +258,45 @@ const INCOMPLETE_ALLOWED = [
       'gate that owns this question. REMOVE THIS ENTRY if axe-core learns to resolve fixed ' +
       'overlays, or if the banner stops being position:fixed.',
   },
+  // `GS-R001-R`. The Master background mark — the hero's two text blocks, and only those two.
+  {
+    rule: 'color-contrast',
+    routes: ['/'],
+    // Exact targets, not a pattern. Two elements decline and they are the two largest text
+    // blocks on the page; anything else declining on `/` is a new question and must land as
+    // UNRESOLVED so somebody reads it.
+    targetPattern: /^(h1|\.master_heroIntro__[A-Za-z0-9_-]+)$/,
+    why:
+      'GS-R001-R added a fixed, decorative geometry layer behind the homepage — the Gridsmith ' +
+      'mark as 1px --line hairlines, aria-hidden, pointer-events:none, zero JS. Its SVG shapes ' +
+      'sit under text, so axe returns elmPartiallyObscuring: "background color could not be ' +
+      'determined because it partially overlaps other elements". That is axe DECLINING to ' +
+      'evaluate, not a contrast violation, and it is the same class as the two entries above.\n' +
+      '    Three things were tried before this entry was written, and the order matters because ' +
+      'two of them were wrong for reasons worth not repeating. (1) An opaque --canvas background ' +
+      'on the hero band: it did NOT resolve the incomplete, because axe locates the SVG shapes ' +
+      'geometrically rather than respecting an opaque ancestor. It is kept anyway — it is right ' +
+      'on its own terms, and the site\u2019s largest text now sits on a clean canvas at every ' +
+      'width and every motion setting. (2) Enlarging the layer\u2019s box to 300vh, on the ' +
+      'theory that the h1 straddled its bottom edge (at 1280x800 the h1 runs 454-816px in an ' +
+      '800px viewport). It made things WORSE — three declines instead of two — which is what ' +
+      'established that the container box is not the trigger. (3) Adding --line to ' +
+      'check:contrast\u2019s SURFACES so the pair is measured rather than allowlisted. That ' +
+      'produced the measurement this entry rests on, and was then reverted: it forces ' +
+      'except-restrictions back into USE, and that file records a deliberate position that a ' +
+      'token needing a restriction to be safe is a token whose value is wrong.\n' +
+      '    THE MEASUREMENT, which is what makes this entry earned rather than asserted. Every ' +
+      'foreground token was measured against --line in all four themes. --ink and --ink-muted ' +
+      'both clear the 4.5:1 body floor on --line; --ink-subtle does not (4.14-4.39:1) and ' +
+      'neither does Digital\u2019s --accent (4.00:1). On Master the only text tokens over the ' +
+      'geometry are --ink and --ink-muted. The one --ink-subtle text on this page is ' +
+      '.reviewSource, inside review cards that check:reviews:ui measures as OPAQUE — a solid ' +
+      'card background at opacity 1 — so the geometry never reaches it. Worst case for the ' +
+      'hero text is --ink over a --line hairline, which is ~13.9:1 against a 4.5:1 floor.\n' +
+      '    REMOVE THIS ENTRY if the background mark stops rendering on /, if it is ever drawn ' +
+      'in anything other than --line, or if any --ink-subtle or --accent text is placed over ' +
+      'it. Each of those changes the measurement above, and none of them is covered by it.',
+  },
   // `GS-P06`. The Master review cylinder, and the first entry to use `targetPattern` — see
   // the docstring above for why an exact target list was the wrong tool here.
   {

@@ -22,12 +22,16 @@ import {
   FACTS,
   RESPONSE_RULES,
   TEAM_RULES,
+  CALL_RULES,
+  PLACEHOLDER_RULES,
   disclosureProblems,
   emailProblems,
   officeProblems,
   phoneProblems,
   responseProblems,
   teamProblems,
+  callProblems,
+  placeholderProblems,
 } from './company-facts-rules.mjs';
 
 let passed = 0;
@@ -133,30 +137,75 @@ check(
   ),
 );
 
-/* -- 3. phone ---------------------------------------------------------------- */
+/* -- 3. the contact number, and the schemes it may be linked with ------------ */
 
-const CLEAN_TEL = `<a href="${FACTS.telHref}">${FACTS.contactPhone}</a>`;
+/**
+ * **The `GS-R001-R` inversion, proved both ways.** Before this phase the clean specimen was a
+ * correctly-formatted `tel:` and the failing one was a malformed `tel:`. Both are now failures,
+ * and the specimen that must pass carries no `tel:` at all — which is the whole point: a gate
+ * that only checked `tel:` *formatting* would be green on a site covered in perfectly-formed
+ * call links.
+ */
+const CLEAN_CHANNELS =
+  `<a href="${FACTS.whatsAppHref}">WhatsApp</a> <a href="${FACTS.smsHref}">text</a>`;
 
 check(
-  'PHONE CLEAN — the approved number and the RFC 3966 href',
-  none(phoneProblems('/contact', FACTS.contactPhone, CLEAN_TEL)),
+  'PHONE CLEAN — the number as text, with the two authorised schemes',
+  none(phoneProblems('/contact', FACTS.contactPhone, CLEAN_CHANNELS)),
 );
 
 check(
-  'PHONE — the live site\'s percent-encoded href is not the RFC form',
+  'PHONE CLEAN — the number as plain text with no link at all (the footer treatment)',
+  none(phoneProblems('/', FACTS.contactPhone, `<p>${FACTS.contactPhone}</p>`)),
+);
+
+check(
+  'PHONE — a tel: href is refused even in the RFC 3966 form GS-O004 used to require',
+  one(
+    phoneProblems('/contact', FACTS.contactPhone, '<a href="tel:+447405448534">call</a>'),
+    'withdraws the voice channel',
+  ),
+);
+
+check(
+  'PHONE — the live site\'s percent-encoded tel: is refused too, and for the new reason',
   one(
     phoneProblems(
       '/contact',
       FACTS.contactPhone,
       '<a href="tel:+44%207405%20448534">+44 7405 448534</a>',
     ),
-    '+44%207405%20448534',
+    'withdraws the voice channel',
   ),
 );
 
 check(
-  'PHONE — a second, unapproved number',
-  one(phoneProblems('/contact', 'call +44 20 7946 0000', CLEAN_TEL), '+44 20 7946 0000'),
+  'PHONE — a wa.me link on the wrong number',
+  one(
+    phoneProblems('/contact', FACTS.contactPhone, '<a href="https://wa.me/447000000000">w</a>'),
+    'not https://wa.me/447405448534',
+  ),
+);
+
+check(
+  'PHONE — wa.me with the plus retained, which wa.me does not accept',
+  one(
+    phoneProblems('/contact', FACTS.contactPhone, '<a href="https://wa.me/+447405448534">w</a>'),
+    'no plus and no separators',
+  ),
+);
+
+check(
+  'PHONE — an sms: href that is not the global form',
+  one(
+    phoneProblems('/contact', FACTS.contactPhone, '<a href="sms:07405448534">t</a>'),
+    'RFC 5724',
+  ),
+);
+
+check(
+  'PHONE — a second, unapproved number in the text',
+  one(phoneProblems('/contact', 'or try +44 20 7946 0000', CLEAN_CHANNELS), '+44 20 7946 0000'),
 );
 
 /* -- 4. the registered office ------------------------------------------------ */
@@ -245,6 +294,104 @@ check(
   Object.keys(TEAM_SPECIMENS).every((id) => TEAM_RULES.some((r) => r.id === id))
     ? true
     : 'a specimen names a rule that does not exist, so it proves nothing',
+);
+
+/* -- 7. the call channel, every rule alone ----------------------------------- */
+
+const CALL_SPECIMENS = {
+  'CALL-CTA-IMPERATIVE': 'Call us on the number below.',
+  'CALL-CTA-GIVE-US': 'Give us a call any time.',
+  'CALL-CTA-OR-CALL': 'Or call the office.',
+  'CALL-SPEAK-TO': 'Speak to us on the number below.',
+};
+
+check(
+  'CALL CLEAN — the wording GS-R001-R authorises',
+  none(callProblems('/contact', 'The same number takes WhatsApp and text messages.')),
+);
+
+check(
+  'CALL CLEAN — the noun "phone" alone is not an invitation and must not fire',
+  none(callProblems('/contact', 'The number is not answered as a phone line.')),
+);
+
+for (const rule of CALL_RULES) {
+  const specimen = CALL_SPECIMENS[rule.id];
+  check(
+    `CALL ${rule.id} — fires, and nothing else does`,
+    specimen === undefined
+      ? `no specimen registered for ${rule.id} — a rule with no specimen has never been proven`
+      : one(callProblems('/contact', specimen), rule.id),
+  );
+}
+
+check(
+  'CALL parity — every specimen names a registered rule',
+  Object.keys(CALL_SPECIMENS).every((id) => CALL_RULES.some((r) => r.id === id))
+    ? true
+    : 'a specimen names a rule that does not exist, so it proves nothing',
+);
+
+/* -- 8. placeholders, every rule alone --------------------------------------- */
+
+const PLACEHOLDER_SPECIMENS = {
+  'SEED-MARKER': '[SEED] An introduction to the group.',
+  'TK-MARKER': 'Revision code [TK] pending.',
+  'PLACEHOLDER-WORD': 'This is placeholder copy.',
+  LOREM: 'Lorem ipsum and so on.',
+  TODO: 'TODO write this section',
+  'SAMPLE-COMPANY': 'A case study with Acme Ltd.',
+  'LATIN-FILLER': 'consectetur adipiscing, dolor sit amet, and the rest',
+};
+
+check(
+  'PLACEHOLDER CLEAN — real copy from the rebuilt /about',
+  none(
+    placeholderProblems(
+      '/about',
+      'Gridsmith Design handles brand and visual work, illustration, motion, 3D visualisation ' +
+        'and technical drawing.',
+    ),
+  ),
+);
+
+for (const rule of PLACEHOLDER_RULES) {
+  const specimen = PLACEHOLDER_SPECIMENS[rule.id];
+  check(
+    `PLACEHOLDER ${rule.id} — fires, and nothing else does`,
+    specimen === undefined
+      ? `no specimen registered for ${rule.id} — a rule with no specimen has never been proven`
+      : one(placeholderProblems('/about', specimen), rule.id),
+  );
+}
+
+check(
+  'PLACEHOLDER parity — every specimen names a registered rule',
+  Object.keys(PLACEHOLDER_SPECIMENS).every((id) => PLACEHOLDER_RULES.some((r) => r.id === id))
+    ? true
+    : 'a specimen names a rule that does not exist, so it proves nothing',
+);
+
+/**
+ * **The exact string the owner saw on staging**, kept as a specimen rather than as a memory.
+ * `/insights` served nine of these and `/about` served three; every one of them was inside a
+ * `[SEED]`-marked CMS field, and nothing on the served side was looking.
+ */
+check(
+  'PLACEHOLDER — the GS-R001 staging string itself trips TWO rules, and both are named',
+  (() => {
+    // Asserted as a set rather than with `one()`, because the real string genuinely carries
+    // both defects and a gate that reported only the first would be hiding the second. The
+    // count moving from 1 to 2 on one input is also what shows these are counted, not printed.
+    const found = placeholderProblems(
+      '/insights',
+      '[SEED] Placeholder standfirst. The article has not been written.',
+    );
+    const ids = ['SEED-MARKER', 'PLACEHOLDER-WORD'];
+    return found.length === 2 && ids.every((id) => found.some((f) => f.includes(id)))
+      ? true
+      : `expected SEED-MARKER and PLACEHOLDER-WORD, got ${JSON.stringify(found)}`;
+  })(),
 );
 
 /* -- the counts must be provable to move ------------------------------------- */

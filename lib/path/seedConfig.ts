@@ -4,6 +4,28 @@
  *
  * ## Every rule in this file is [SEED] and is to be replaced before launch
  *
+ * ## The eight rendered strings lost their `[SEED]` prefix at `GS-R001-R`, and nothing else did
+ *
+ * `check:company` question 7 — added in that phase to refuse a placeholder marker in **served
+ * text** — fired on `/press/path-finder`, which is the one route outside `/about`, `/approach`
+ * and `/insights` that was publishing one. It was a real defect and nobody was looking for it:
+ * `check:launch` reads the *dataset* and is inert on `development`, so the marker reached every
+ * visitor of every staging build.
+ *
+ * **What was done is the narrow thing.** The six `explanation` and two `externalGuidance`
+ * strings are truthful explanatory paragraphs written against the approved Press architecture:
+ * no price, no invented fact, no claim about a third party beyond its existing. They were
+ * marked because nobody had approved them, not because they were filler — which is the
+ * classification `GS-R001-R` §3 requires before a marker is removed. The marker is gone; the
+ * sentences stand, minus one wording change to `content-programme` so it uses the
+ * bespoke-quotation language `GS-D002` uses everywhere else.
+ *
+ * **`Q-P13` is NOT reopened and `SEED_RULES` is byte-for-byte unchanged.** The thirteen
+ * decision rules are the Path Finder's commercial logic and remain an owner decision. So does
+ * `isSeed: true` on the config below: it is the internal provenance flag `check:launch` reads
+ * to refuse promotion to production, and it is still correct. A marker in rendered text and a
+ * flag in a record are different things, and `GS-R001-R` removes the first and keeps the second.
+ *
  * `docs/_shared/PRE-DEPLOYMENT-CHECKLIST.md` carries the row. `isSeed` is `true` here for the
  * same reason `check:launch` refuses a published seed on production: this is scaffolding that
  * lets the chain be built and proven, not a business decision about who Gridsmith turns away.
@@ -22,8 +44,8 @@
  * | The six outcome keys | **`pathFinderConfig.PATH_OUTCOME_KEYS`** — closed at `K-01` |
  * | The six outcome titles | `APP-FLOW.md` §5's A–F box — not invented |
  * | `questionKey` / `pathOption.key` slugs | invented, because the spec gives labels and not keys |
- * | Outcome `explanation` and `externalGuidance` copy | **[SEED]** — placeholder |
- * | **`rules` — every one of them** | **[SEED]** — this is `Q-P13` |
+ * | Outcome `explanation` and `externalGuidance` copy | **written copy** since `GS-R001-R` — see below |
+ * | **`rules` — every one of them** | **[SEED]** — this is `Q-P13`, and it is unchanged |
  *
  * ## The one criterion that is NOT a placeholder
  *
@@ -173,7 +195,7 @@ export const SEED_OUTCOMES: SeedOutcome[] = [
     key: 'full-package',
     title: 'Full Publishing Package',
     explanation:
-      '[SEED] Your draft is far enough along, and your budget and timeline leave room for the full production route — editing, cover, interior, and setting the book up for readers to buy.',
+      'Your draft is far enough along, and your budget and timeline leave room for the full production route — editing, cover, interior, and setting the book up for readers to buy.',
     isGridsmithService: true,
     showCta: true,
   },
@@ -181,7 +203,7 @@ export const SEED_OUTCOMES: SeedOutcome[] = [
     key: 'ghostwriting',
     title: 'Ghostwriting',
     explanation:
-      '[SEED] The book needs writing rather than finishing, and you want that done for you. This is the longest and most involved route we offer.',
+      'The book needs writing rather than finishing, and you want that done for you. This is the longest and most involved route we offer.',
     isGridsmithService: true,
     showCta: true,
   },
@@ -189,7 +211,7 @@ export const SEED_OUTCOMES: SeedOutcome[] = [
     key: 'assessment-first',
     title: 'Manuscript Assessment first',
     explanation:
-      '[SEED] Before anyone quotes you for a full production, the sensible next step is a read of what you have and an honest account of what it needs.',
+      'Before anyone quotes you for a full production, the sensible next step is a read of what you have and an honest account of what it needs.',
     isGridsmithService: true,
     showCta: true,
   },
@@ -197,7 +219,7 @@ export const SEED_OUTCOMES: SeedOutcome[] = [
     key: 'content-programme',
     title: 'Content Programme',
     explanation:
-      '[SEED] What you have described is ongoing writing rather than a single book with a finish line. That is a different shape of engagement and it is priced differently.',
+      'What you have described is ongoing writing rather than a single book with a finish line. That is a different shape of engagement, and it is scoped and quoted differently.',
     isGridsmithService: true,
     showCta: true,
   },
@@ -205,21 +227,21 @@ export const SEED_OUTCOMES: SeedOutcome[] = [
     key: 'self-service',
     title: 'Self-service — publish it yourself',
     explanation:
-      '[SEED] You do not need us. What you have described can be done yourself, and paying someone to do it would not get you a better book.',
+      'You do not need us. What you have described can be done yourself, and paying someone to do it would not get you a better book.',
     isGridsmithService: false,
     showCta: false,
     externalGuidance:
-      '[SEED] Amazon KDP and IngramSpark both let you publish a finished manuscript yourself at no upfront cost. You keep your copyright either way, and you can come back to us later if you decide you want help with the parts you did not enjoy.',
+      'Amazon KDP and IngramSpark both let you publish a finished manuscript yourself at no upfront cost. You keep your copyright either way, and you can come back to us later if you decide you want help with the parts you did not enjoy.',
   },
   {
     key: 'not-ready',
     title: 'Not ready — finish the draft',
     explanation:
-      '[SEED] The most useful thing we can tell you is that it is too early. Nothing we sell would improve the outcome from where the manuscript is today.',
+      'The most useful thing we can tell you is that it is too early. Nothing we sell would improve the outcome from where the manuscript is today.',
     isGridsmithService: false,
     showCta: false,
     externalGuidance:
-      '[SEED] Finish the draft first, however rough. Come back when there is a complete manuscript to read — the conversation is a much better one, and the quote is a much more honest one.',
+      'Finish the draft first, however rough. Come back when there is a complete manuscript to read — the conversation is a much better one, and the quote is a much more honest one.',
   },
 ];
 

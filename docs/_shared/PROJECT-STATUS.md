@@ -2,46 +2,46 @@
 
 **Programme:** controlled production readiness
 
-**Status:** ACTIVE — GS-R001 produced a **staging release candidate** and closed the two owner
-decisions it was given: `GS-O004` (company and contact facts) and `GS-O015` (third-party review
-safety). Production migration, production content activation and deployment remain deferred
+**Status:** ACTIVE — **`GS-R001-R` is complete in the repository.** `GS-R001` produced a staging
+release candidate recorded `RC TECHNICALLY PASS`; **the owner reviewed it and did not accept the
+experience.** `GS-R001-R` is the remediation of the eleven findings that review produced, plus
+the brand assets the owner supplied at its owner gate. **`GS-O008` remains OPEN — AWAITING OWNER
+RE-REVIEW**, and is not closeable by an agent.
 
-**Current task:** `GS-R001` / `GS-O008` — staging release candidate and human-acceptance
-preparation. Evidence: `docs/_shared/GS-R001-STAGING-RC.md`
+**Current task:** `GS-R001-R` / `GS-O008` — staging content, brand and experience remediation.
+Evidence: `docs/_shared/GS-R001-R-REMEDIATION.md`
 
-**Current commit:** `1ad462ff276c7d03079f5b9afbca908cbbfc0b24` at task start; **`5049f820` at
-end** — `46b961e1` is the phase and `5049f820` the Lighthouse assertion fix CI asked for
+**Current commit:** `82d55ede` at task start; see `AI-HANDOFF.md` for the ending commit.
 
-**Branches:** `staging/gs-r001-release-candidate` carries the candidate and is what Vercel builds
-as a **preview**; `main` is fast-forwarded to the same commit so the programme record is where the
-next session starts. Both are at `5049f820`, both pushed, working tree clean.
+**Branches:** `staging/gs-r001-r-remediation` carries the candidate and is what Vercel builds as
+a **preview**; `main` is fast-forwarded to the same commit so the programme record is where the
+next session starts.
 
 **Why a branch:** a branch push produces a Vercel *preview*, which builds against the
 `development` dataset and reaches `READY`; a push to `main` produces a production-target build,
 which has ended `ERROR` on the empty production Sanity dataset since `GS-P00` and is not a
-candidate anybody can evaluate. Both happened, exactly as described.
+candidate anybody can evaluate.
 
 **Working tree:** clean at task start, 0 ahead / 0 behind, no unrelated owner work.
 
-**CI/build:** local **45-gate** static chain, clean production build on a wiped `.next`, bundle
-budgets, secrets lint and the full served chain pass. **Starting CI:** run `35084597904`
-**`success`** on `1ad462ff`, verified before any work began. Lighthouse cannot run locally on
-Windows and is CI's to answer — **and it answered.** Run `35144458922` went `failure` on the
-first push: desktop `categories.seo` **0.66** against a `>= 0.9` floor, because `G-04` made every
-page `noindex` and Lighthouse's `is-crawlable` is then correctly 0. The floor was **not** lowered
-and the `noindex` was **not** removed: the category assertion now applies only to an indexable
-build, and otherwise the eight substantive SEO audits are asserted individually at 1 with only
-`is-crawlable` off — stricter than the floor it replaced. `GS-R001-STAGING-RC.md` §5.3.
+**CI/build:** local **46-gate** static chain PASS, clean production build on a wiped `.next`,
+bundle budgets, secrets lint and the full served chain PASS. `check:axe` **76 analyses over 19
+routes, zero violations, 0 unresolved**. `npm audit --omit=dev` clean; **no dependency added**.
+Lighthouse cannot run on Windows and is CI's to answer.
 
-**Ending CI:** run `35145801544` **`success`** on the branch and `35147103758` **`success`** on
-`main`, both on `5049f820` — **all 45 steps**, both Lighthouse axes included. Desktop **1.00 perf
-/ 1.00 a11y / CLS 0.000 / TBT 0ms** on all four routes; mobile 0.99 / 1.00 / CLS 0.000 / TBT
-38–45ms, every LCP inside its ceiling.
+**What `GS-R001-R` changed.** Visitor-visible `[SEED]` eliminated and **gate-enforced on served
+text** — the assertion nothing had, which found a fifth route (`/press/path-finder`) that no
+finding had raised. `/about` rebuilt around brand rather than legal registration. `/approach`
+given supporting content with the canonical six stages unchanged. `/insights` moved from nine
+fabricated articles to nine **unpublishable editorial briefs**. The telephone withdrawn as a
+call channel and replaced by WhatsApp and SMS. A connection block on `/about`. The owner's logo
+integrated and the **Master background mark** built from its own geometry. `GS-O016` closed,
+`GS-O007` narrowed to three small decisions, `GS-O017` raised.
 
-**RC status:** **TECHNICALLY PASS.** **Production readiness: NOT READY.** They are different
-statuses — `GS-R001-STAGING-RC.md` §8 lists the thirteen items still owed and who owns each.
+**RC status:** `GS-R001`'s **TECHNICALLY PASS** stands and was never the disputed part.
+**Production readiness: NOT READY.**
 
-**Last updated:** 16 September 2026 (`GS-R001`)
+**Last updated:** 17 September 2026 (`GS-R001-R`)
 
 ## Service architecture (GS-P03)
 
@@ -83,13 +83,19 @@ statuses — `GS-R001-STAGING-RC.md` §8 lists the thirteen items still owed and
 | Freelancer review placement | **MASTER ONLY** (`GS-O014` amendment). Division review blocks removed; `TestimonialList`, both testimonial queries and the `TestimonialCard` type deleted. `check:reviews-ui` asserts presence on `/` and absence on all three divisions in one run |
 | Master review presentation | 3D cylinder carousel, right to left, seamless, CSS only, zero client JS, pause control (WCAG 2.2 SC 2.2.2), flat grid under `prefers-reduced-motion` at full content parity |
 | Service copy remediation | **IMPLEMENTED at GS-P06** in `scripts/service-content.mjs` — media-buying denial, ownership absolutes, hosting-resale prohibition, categorical accessibility claim, combative guarantees and five accusatory summaries. `check:service-content` question 4 refuses eleven struck phrasings |
+| Brand assets | **SUPPLIED AND VERIFIED at `GS-R001-R` (`GS-O007`)** — `public/brand/` holds the owner's `gridsmith-logo.svg`, `gridsmith-logo.png` and `gridsmith-logo-3d.png`. All three are the **mark alone**; measured against each other before use (shape IoU 0.9624 PNG-vs-SVG, **zero XOR pixels surviving two erosions**). The **SVG** is the header logo on all 77 routes and the geometry source for the Master animation; neither PNG is modified and neither is rendered. **No favicon** — there never was one, and `GS-R001-R` §22 forbids deriving one |
+| Master background mark | **BUILT at `GS-R001-R`** — a fixed, decorative layer on `/` only carrying the logo's 8 spheres and 6 rods as 1px `--line` hairlines. `animation-timeline: scroll(root)`, one shared keyframe, **zero JavaScript**; composed → dispersed → recomposed. `display: none` below 768px, static at 768–1023 and under `prefers-reduced-motion`. `aria-hidden`, no focusables, no pointer events. Homepage delta unchanged at **1.9KB of 15KB** |
 | Base token layer | **41 tokens**, was 39 — `--dur-cycle` / `--dur-cycle-narrow` added for the ambient loop |
 | Company and contact facts | **SUPPLIED AND IMPLEMENTED at `GS-R001` (`GS-O004`)** — `Gridsmith Ltd` · `17050842` · **registered in England** · `contact@gridsmith.uk` · `+44 7405 448534` · **no business hours** · *"We typically respond within 48 hours."* · registered office in the statutory footer and `_legal/` only · **no public team**. One source (`companyDetails`), asserted on the served pages by `check:company` |
+| Insights content model | **EDITORIAL BRIEFS since `GS-R001-R`.** `post.status` is a closed list (`brief`/`draft`/`published`) enforced on write; all three post queries filter `status == "published"` by **strict equality, never `coalesce`**. Nine briefs carry premise, reader, central question, arguments, structure and research questions. `/insights/[slug]` builds **zero** pages, so an unpublished post has no URL rather than a hidden one |
+| Public contact channels | **EMAIL, WHATSAPP, SMS since `GS-R001-R`.** `tel:` is **prohibited on every route** and `telHref` is deleted; `whatsAppHref` and `smsHref` replace it, both derived from the displayed number. The statutory footer renders the number as **text**, because that block is a legal disclosure and not a contact surface. No hours, no SLA, no guarantee — `GS-O004` unchanged |
 | Public team members | **NONE.** `Q-M9` answered. `/about` was publishing four `[SEED] Placeholder Name` records because the seed set `isPublic: true`; the query, the type, the renderer and its CSS are deleted and the type is dormant |
 | SEO surface | **BUILT at `GS-R001`** (`G-04`, `G-05`) — `robots.ts`, `sitemap.ts`, per-route canonicals, Open Graph, `Organization` JSON-LD. **Default is `Disallow: /`, an empty sitemap and `noindex` on every page**; indexing needs a Vercel production deployment **and** an explicit `NEXT_PUBLIC_SITE_URL` |
 | Legacy URL inventory | **COLLECTED at `GS-R001`** (`G-01`) — **eight URLs**, read from the live site's own `wp-sitemap.xml`. Four are WordPress/theme defaults. `redirects/legacy.json` stays empty: cutover is prohibited and one row is an owner decision (`LIVE-SITE-EXTRACT.md` §13) |
-| Gate count | **45**, was 43 — `check:company` (served, six questions) and `check:company:selftest` (35 cases) |
-| Struck-rule registry | **16 rules**, was 13 — `GS-O004-BUSINESS-HOURS-FIELD`, `GS-O004-RESPONSE-GUARANTEE`, `GS-O004-PUBLIC-TEAM-ROSTER`, each annotated in place and specimen-proven |
+| Gate count | **46** at `GS-R001-R`, was 45 — `check:mark:field` is new (7 viewport/motion cases over the background layer, reading the **rendered transform** rather than the animation's own report). `check:company` grew questions 7 and 8 rather than a new gate appearing over the same subject — `check:company` grew **questions 7 and 8** (call channel, placeholder markers in served text) rather than a 46th gate appearing over the same subject. Its self-test moved 35 → **57** cases. Question 8 found `/press/path-finder` serving `[SEED]`, a route no finding had raised |
+| Legacy gate count note | **45**, was 43 — `check:company` (served, six questions) and `check:company:selftest` (35 cases) |
+| Struck-rule registry | **18 rules**, was 16 — `GS-R001-R-CALL-CHANNEL` and `GS-R001-R-SEED-POSTS`, each annotated in place, specimen-proven, and each with its own deliberate-failure branch and a *not-a-subject* case. `ZERO-SUBJECT` count moved 16 → 18 |
+| Previous struck-rule registry | **16 rules**, was 13 — `GS-O004-BUSINESS-HOURS-FIELD`, `GS-O004-RESPONSE-GUARANTEE`, `GS-O004-PUBLIC-TEAM-ROSTER`, each annotated in place and specimen-proven |
 | Freelancer review project titles | **ANONYMISED** — 6 by hand at GS-P04, and all 12 mechanically by the GS-P05 pipeline, from Freelancer's closed skill taxonomy. No quote altered |
 
 ## Development content state (GS-P04)
@@ -172,12 +178,15 @@ was submitted.
 
 - `GS-O003` — complete solicitor review and resolve legal launch actions.
 - `GS-O005` — confirm engineering/CAD professional-indemnity scope (now gate-enforced).
-- `GS-O007` — **narrowed at GS-R001.** Approved logo/favicon/brand imagery, and a decision on the
-  one redirect row evidence cannot settle. The URL inventory and the SEO metadata limbs are done.
+- `GS-O007` — **brand-asset limb CLOSED at GS-R001-R.** The owner supplied the logo; it is
+  verified, integrated and gate-asserted. Three narrow decisions remain: a favicon (there has
+  never been one), an Open Graph card composition, and the one redirect row — now cutover
+  hygiene rather than a blocker.
 - `GS-O010` — provision an isolated non-production Supabase target for Preview.
-- `GS-O016` — **new at GS-R001.** Confirm the ICO registration position. It was a clause inside
-  `GS-O004`'s original wording that the `GS-O004` brief did not answer, lifted out so closing that
-  action could not silently close it. Blocks nothing; the site makes no claim either way.
+- `GS-O017` — **new at GS-R001-R.** Confirm the official social channel URLs, or confirm there
+  are none. Nothing was guessed: the live site links no social account, and every public search
+  result under "Gridsmith" belongs to a different company. `/about` links the four channels
+  that ARE verified — email, WhatsApp, SMS and the Freelancer profile `GS-O014` approved.
 
 ### Technical blockers
 
@@ -185,6 +194,16 @@ was submitted.
 - `GS-T005` — production Sanity dataset/content path incomplete; seed content must never be promoted.
 - Notification reconciliation and live RLS-drift scheduling/credential verification remain later
   operational work.
+
+### Closed in GS-R001-R
+
+- `GS-O016` — **the owner confirms Gridsmith Ltd is registered with the ICO and is paying the
+  applicable data-protection fee.** Recorded as owner-supplied compliance evidence and
+  **published nowhere**: `GS-R001-R` §12 forbids turning it into marketing copy, and
+  `companyDetails.icoRegistration` stays **unset** because the owner supplied the position and
+  not the number. The registration number, renewal date and fee tier were **not invented**; if
+  a later legal gate needs the number it is one owner fact and one field. **This does not
+  advance `GS-O003`** and no broader privacy readiness is marked complete from it. **COMPLETED.**
 
 ### Closed in GS-R001
 

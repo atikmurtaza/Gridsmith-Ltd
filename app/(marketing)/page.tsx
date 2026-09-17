@@ -1,3 +1,4 @@
+import { BackgroundMark } from '@/components/master/BackgroundMark';
 import { DivisionRouting } from '@/components/master/DivisionRouting';
 import { Continuity } from '@/components/master/Continuity';
 import { Hero } from '@/components/master/Hero';
@@ -6,6 +7,7 @@ import { Testimonials } from '@/components/master/Testimonials';
 import { GroupStructure } from '@/components/master/GroupStructure';
 import { LatestInsights } from '@/components/master/LatestInsights';
 import { CtaBand } from '@/components/master/CtaBand';
+import styles from '@/components/master/master.module.css';
 
 /**
  * The homepage — `N-01`, block 1 of 9 (`APP-FLOW.md` §2).
@@ -26,20 +28,31 @@ import { CtaBand } from '@/components/master/CtaBand';
  */
 export default function Page() {
   return (
-    <main id="main" tabIndex={-1}>
-      <Hero
-        headline="One company. Three specialist studios. Built to work together."
-        intro="Design, digital and publishing expertise under one roof. Start with what you need today — and keep the context when you need something else."
-      />
-      <DivisionRouting />
-      <Continuity />
-      {/* Block 4, selected work, was removed at `GS-P03` (`GS-D001`): there is no client work
-          Gridsmith holds permission to publish, and a grid of it would be empty or invented. */}
-      <Process />
-      <Testimonials />
-      <GroupStructure />
-      <LatestInsights />
-      <CtaBand />
-    </main>
+    <>
+      {/* **`GS-R001-R` — Master only, and `/` only.** The owner's brief puts the scroll
+          narrative on the Master page and §19 forbids duplicating it to Design, Digital or
+          Press. It is mounted here rather than in the route group's layout because `/about`,
+          `/approach`, `/contact` and `/insights` share that layout and are not the Master
+          experience: the narrative is hero → mid-page → closing CTA, which is this page.
+
+          Outside `<main>` on purpose. It is decorative, `aria-hidden`, and a decorative layer
+          inside the main landmark is content a screen reader has to walk past. */}
+      <BackgroundMark />
+      <main id="main" tabIndex={-1} className={styles.above}>
+        <Hero
+          headline="One company. Three specialist studios. Built to work together."
+          intro="Design, digital and publishing expertise under one roof. Start with what you need today — and keep the context when you need something else."
+        />
+        <DivisionRouting />
+        <Continuity />
+        {/* Block 4, selected work, was removed at `GS-P03` (`GS-D001`): there is no client work
+            Gridsmith holds permission to publish, and a grid of it would be empty or invented. */}
+        <Process />
+        <Testimonials />
+        <GroupStructure />
+        <LatestInsights />
+        <CtaBand />
+      </main>
+    </>
   );
 }

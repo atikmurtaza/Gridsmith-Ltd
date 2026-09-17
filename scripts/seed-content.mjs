@@ -2,7 +2,7 @@
  * `S-01` — seeds the **development** dataset with structurally complete, visibly fake content
  * for every document type that exists (`FOUNDATION` §7).
  *
- * ## What is real here, and what is not — three tiers since `GS-P04`
+ * ## What is real here, and what is not — four tiers since `GS-R001-R`
  *
  * **Everything this script writes carries `isSeed: true` except the testimonials**, and
  * `isSeed` is the machine-enforced production block: `check:launch` refuses a production
@@ -18,8 +18,21 @@
  *    owner-approved catalogue (`GS-O006`). `isSeed: true` and deliberately **not** `[SEED]`-marked:
  *    the marker means *fabricated*, this is not, and the phase's purpose was a foundation someone
  *    can review. The wording is still agent-authored and unapproved — `GS-O013`.
- * 3. **Visibly fake placeholder** — everything else: team, FAQs, posts, group pages. `isSeed: true`
- *    and `[SEED]`-marked in its rendered text, because it *is* fabricated.
+ * 3. **Written copy, not yet owner-read** — the two `groupPage` documents (`/about`,
+ *    `/approach`), rewritten at `GS-R001-R`. `isSeed: true` and **not** `[SEED]`-marked, for
+ *    tier 2's reason: the flag means *this script owns it and it may not be promoted*, and the
+ *    marker means *fabricated*. These sentences are written from the approved service
+ *    architecture, the canonical process and the recorded commercial positions, and assert no
+ *    company fact this programme has not already recorded.
+ * 4. **Visibly fake placeholder** — `teamMember` and `faq`. `isSeed: true` and `[SEED]`-marked,
+ *    because they *are* fabricated. **Neither is rendered by anything**: the team query and
+ *    renderer were deleted at `GS-O004`, and `listFaqs` has no caller. They stay so the types
+ *    have a subject and so `check:launch`'s seed tier has something to count.
+ *
+ * **The nine `post` documents are no longer in this list at all.** They were tier 4 — nine
+ * `[SEED]`-marked articles, published. At `GS-R001-R` they are **editorial briefs** carrying
+ * `status: 'brief'`, which no query serves; see the block above `BRIEFS`. The owner rejected
+ * the previous nine, and the objection was the articles rather than the marker.
  *
  * `continuityExample` is **not seeded and cannot be**. Its `verified` field is hard-true
  * (`N-05`), so a placeholder would have to assert that someone confirmed a story that did not
@@ -361,38 +374,293 @@ const faqDocs = ['design', 'digital', 'press'].flatMap((division) =>
 );
 
 // ---------------------------------------------------------------------------
-// Posts — the /insights hub needs enough to exercise its grid and its empty state
+// Insights — editorial briefs, not articles (`GS-R001-R`)
 // ---------------------------------------------------------------------------
 
-const POSTS = [
-  ['What an engineering drawing has to say before a workshop will quote it', 'design', 6],
-  ['Renders are not photographs, and clients can tell', 'design', 4],
-  ['Choosing between a rebuild and a rescue', 'digital', 7],
-  ['What AI integration costs when you count the evaluation', 'digital', 8],
-  ['Why your site is slow, measured rather than guessed', 'digital', 5],
-  ['Keeping your own ISBN, and why it matters later', 'press', 6],
-  ['Ghostwriting: what the interview programme actually involves', 'press', 9],
-  ['A content programme nobody has time to run is not a programme', 'press', 5],
-  ['One company, three studios: how work moves between them', null, 4],
+/**
+ * **Nine editorial briefs. None of them is an article and none of them is public.**
+ *
+ * `GS-R001` seeded nine `[SEED]`-marked posts and published all nine. The owner rejected them,
+ * and the objection was not the marker: a generated article presented as a company's thinking
+ * is fake whether or not it is labelled, and removing the label would have made it worse rather
+ * than better. **So the fix is not to unmark them — it is to stop them being articles.**
+ *
+ * The owner writes Insights personally. What the CMS holds until then is the preparation: the
+ * premise, who it is for, the question it answers, the points to make, a suggested order, and
+ * the facts that have to be established before a word of it is true. Every brief carries
+ * `status: 'brief'`, and `lib/sanity/queries.ts` serves only `status == "published"` — so
+ * `/insights` shows its empty state and `/insights/<slug>` is not built at all.
+ *
+ * **The topics are the owner's**, supplied in the `GS-R001-R` brief. Titles are working titles
+ * and are refined for clarity only; no subject was changed, added or dropped. Everything in a
+ * `research` array is a **question**, never a claim — it is the list of things nobody has
+ * established yet, which is the opposite of the nine articles this replaces.
+ *
+ * **A re-run of `npm run seed` rewrites these documents**, like every other `seed-` record.
+ * Once the owner starts writing, the article belongs in a document the seed script does not
+ * own — a new post created in the Studio, which carries no `seed-` id and is never a deletion
+ * candidate. That is stated here because the alternative is discovering it after losing a draft.
+ */
+const BRIEFS = [
+  {
+    title: 'Why businesses outgrow disconnected digital suppliers',
+    division: null,
+    premise:
+      'A supplier per medium works until the parts have to agree with each other. The cost is not any one supplier being bad — it is that every handover is a fresh explanation of the same business.',
+    reader:
+      'An owner-manager running three or four separate suppliers who suspects the coordination has quietly become their job',
+    centralQuestion: 'Why does this get harder as the business grows rather than easier?',
+    points: [
+      'The failure is at the seams, not inside any one supplier',
+      'Briefing cost is paid again at every handover and appears on no invoice',
+      'Nobody owns the question that spans two suppliers, so it goes unasked',
+      'Consolidating is not the only answer — continuity of context is the actual requirement',
+      'What to do about it without firing anyone competent',
+    ],
+    structure: [
+      'The symptom: work that is fine separately and wrong together',
+      'Where the cost actually sits',
+      'Why it scales badly',
+      'What continuity would have to mean to fix it',
+      'What to ask a supplier before you need the answer',
+    ],
+    research: [
+      'What is a fair way to describe the coordination burden without citing a statistic we cannot source?',
+      'Which Gridsmith engagements can be described at the pattern level without naming a client?',
+    ],
+  },
+  {
+    title: 'When custom software makes more sense than another subscription',
+    division: 'digital',
+    premise:
+      'Off-the-shelf software is the right answer far more often than custom is. The interesting question is where the line sits, and it is not where either vendor says it is.',
+    reader: 'A business paying for several tools, at least one of which nearly fits',
+    centralQuestion: 'Is my problem a subscription problem or a build problem?',
+    points: [
+      'Start from what happens when a tool nearly fits: the workaround is the real cost',
+      'Per-seat pricing changes the arithmetic at a specific headcount, not in general',
+      'Integration is usually where the money goes, custom or not',
+      'Custom carries a maintenance obligation that never ends; say so plainly',
+      'The honest recommendation is often "keep the subscription and fix the join"',
+    ],
+    structure: [
+      'Three situations where off-the-shelf is obviously right',
+      'The workaround tax',
+      'What custom actually commits you to',
+      'A test to apply before asking anyone for a quote',
+    ],
+    research: [
+      'How do we discuss total cost without publishing a price or implying a band?',
+      'Which examples can be described generically without disclosing a client arrangement?',
+    ],
+  },
+  {
+    title: 'What you should actually own when you commission a website',
+    division: 'digital',
+    premise:
+      'Most disputes about website ownership are not about intellectual property. They are about access — the domain, the DNS, the hosting account, the analytics property, the repository.',
+    reader: 'Anyone about to sign for a website build, and anyone who already has one',
+    centralQuestion: 'If this relationship ended tomorrow, what would I be left holding?',
+    points: [
+      'Separate the four things people conflate: copyright, licences, accounts, source code',
+      'Accounts in the supplier’s name are the common failure and the easiest to avoid',
+      'Some third-party licences genuinely cannot transfer — explain why rather than promise',
+      'What a handover should contain, as a checklist',
+      'Ask before signing, not at the end',
+    ],
+    structure: [
+      'The question worth asking at the start',
+      'Four things that get called ownership',
+      'What can and cannot transfer, and why',
+      'A handover checklist',
+    ],
+    research: [
+      'Gridsmith’s position is set out in the written project agreement — what exactly does it say, so this describes it rather than a preference?',
+      'Which licence categories are genuinely non-transferable, checked against a source rather than assumed?',
+    ],
+  },
+  {
+    title: 'Where AI automation genuinely helps a small business, and where it does not',
+    division: 'digital',
+    premise:
+      'Automation pays where a task is repetitive, high in volume and tolerant of being wrong occasionally. Most of what is sold as AI automation fails at least one of those three.',
+    reader: 'A small-business owner being pitched AI and unable to sort the useful pitches from the rest',
+    centralQuestion: 'Which of these tasks is actually worth automating?',
+    points: [
+      'The three-part test: repetitive, high volume, tolerant of error',
+      'Where error tolerance is zero, automation becomes a review burden rather than a saving',
+      'Evaluation is the cost everyone forgets and the one that decides whether it worked',
+      'Good fits, named concretely',
+      'Bad fits, named just as concretely — including ones we get asked for',
+    ],
+    structure: [
+      'A test you can apply in ten minutes',
+      'Three things it does well',
+      'Three things it does not',
+      'What "it works" has to mean before you commit',
+    ],
+    research: [
+      'What can be said about evaluation cost without inventing a figure or a ratio?',
+      'Which categories of automation has Gridsmith actually delivered, per the approved catalogue?',
+    ],
+  },
+  {
+    title: 'Why accessibility belongs in the design, not in the fix list',
+    division: 'digital',
+    premise:
+      'Retrofitting accessibility is expensive because the decisions that break it are structural — colour, hierarchy, interaction model — and structural decisions are cheap only while they are still decisions.',
+    reader: 'Someone commissioning a site or product who has been told accessibility is a later phase',
+    centralQuestion: 'What does doing this properly cost me, and when?',
+    points: [
+      'The expensive failures are design decisions, not code defects',
+      'Contrast, focus order and non-colour cues cost nothing at the point they are chosen',
+      'Automated testing finds a real but limited share — be specific about the limit rather than vague',
+      'Legal exposure is real but is the weaker argument; lead with the better one',
+      'What to ask for in a brief so it is not a later phase',
+    ],
+    structure: [
+      'Why "we will fix it after" is a cost decision, not a scheduling one',
+      'The decisions that matter, and when they are made',
+      'What testing can and cannot tell you',
+      'What to put in the brief',
+    ],
+    research: [
+      'Which standard should be named, and what exactly does Gridsmith commit to under it, per the approved service copy?',
+      'What share of issues does automated tooling detect, and is there a source we can cite rather than a number we half-remember?',
+    ],
+  },
+  {
+    title: 'Keeping a brand consistent when several specialists work on it',
+    division: 'design',
+    premise:
+      'A guideline document is not what keeps a brand consistent. What keeps it consistent is that the decisions behind it are written down and the people applying it have someone to ask.',
+    reader: 'A business whose designer, web developer and printer are three different people',
+    centralQuestion: 'Why does my brand drift even though everyone has the guidelines?',
+    points: [
+      'Guidelines record outcomes; drift comes from the cases they did not anticipate',
+      'The rules that break first: type scale, spacing, and the tone of the writing',
+      'Print, screen and motion each expose a different gap',
+      'The fix is a decision record and a named point of contact, not a longer PDF',
+      'What a usable brand system contains beyond the logo files',
+    ],
+    structure: [
+      'Where drift actually starts',
+      'Three rules that break first, and why',
+      'What guidelines cannot cover',
+      'What to hand a new supplier on day one',
+    ],
+    research: [
+      'What does Gridsmith Design actually deliver in a brand system, per the approved catalogue, so this is descriptive rather than aspirational?',
+    ],
+  },
+  {
+    title: 'What makes a technical drawing useful, beyond being accurate',
+    division: 'design',
+    premise:
+      'An accurate drawing a workshop cannot quote from has failed at its job. Usefulness is about what the drawing decides for its reader, not only whether the dimensions are right.',
+    reader: 'Someone commissioning drawings who has had a set come back with questions',
+    centralQuestion: 'Why did an accurate drawing still come back with questions?',
+    points: [
+      'Accuracy and sufficiency are different properties',
+      'What a fabricator needs decided before quoting: tolerances, finishes, materials, fixings',
+      'Conventions exist so a reader does not have to ask; naming the standard used matters',
+      'Revision control is part of usefulness — an undated drawing is a guess about which one is current',
+      'Where visualisation ends and engineering responsibility begins',
+    ],
+    structure: [
+      'The returned-with-questions problem',
+      'What the reader has to be able to decide',
+      'Conventions, and why naming the standard matters',
+      'Revisions',
+    ],
+    research: [
+      'Which drawing standards may be named, confirmed against a source rather than recalled?',
+      'This touches the Technical group, gated on GS-O005 and GS-X002 — what may this say, and what must it not, before that gate clears?',
+    ],
+  },
+  {
+    title: 'What to prepare before you approach an editor',
+    division: 'press',
+    premise:
+      'Most manuscripts reach an editor before the questions an editor cannot answer for you have been answered. Settling those makes the edit cheaper and better in the same move.',
+    reader: 'A first-time author with a finished or nearly finished draft',
+    centralQuestion: 'Is my manuscript ready to send to anyone yet?',
+    points: [
+      'Know which edit you are asking for: developmental, line, copy, proof — they are not stages of one thing',
+      'Decisions only the author can make: audience, scope, and what the book is for',
+      'What a sample edit tells you, and what it does not',
+      'Word count, format and consistency decisions that cost the author nothing and the editor a lot',
+      'When the honest answer is that it is not ready, and what to do then',
+    ],
+    structure: [
+      'The four edits, and which one you need',
+      'What only you can decide',
+      'A pre-submission checklist',
+      'What a sample edit is for',
+    ],
+    research: [
+      'What does Gridsmith Press actually offer at each editorial level, per the approved catalogue?',
+      'Press must be able to recommend against Gridsmith — how does that show up honestly here?',
+    ],
+  },
+  {
+    title: 'Publishing a book and marketing a book are two different problems',
+    division: 'press',
+    premise:
+      'Publishing ends when the book is available. Marketing starts before that and does not end. Treating them as one project is why authors are surprised by the silence after launch.',
+    reader: 'An author approaching publication, self-publishing or otherwise',
+    centralQuestion: 'The book is out. Why is nothing happening?',
+    points: [
+      'The two have different timelines, different skills and different endpoints',
+      'What publication delivers: availability, metadata, distribution',
+      'What it does not deliver: readers',
+      'Metadata and categories are where the two overlap, and they are decided early',
+      'Being honest about what marketing can and cannot do for a first book',
+    ],
+    structure: [
+      'The silence after launch',
+      'What publication is for',
+      'What marketing is for',
+      'The overlap, and why it is decided before publication',
+      'Expectations worth setting now',
+    ],
+    research: [
+      'Which publishing and promotion services does Gridsmith Press actually provide, per the approved catalogue?',
+      'What may be said about outcomes without implying a sales result nobody can promise?',
+    ],
+  },
 ];
 
-const postDocs = POSTS.map(([title, division, readingTime], i) => ({
-  _id: `seed-post-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 60)}`,
+const briefSlug = (title) =>
+  title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
+
+const postDocs = BRIEFS.map((b) => ({
+  _id: `seed-post-${briefSlug(b.title)}`,
   _type: 'post',
-  title: `${S} ${title}`,
-  slug: slugOf(title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 60)),
-  division: division ?? undefined,
-  excerpt: `${S} Placeholder standfirst. The article this describes has not been written.`,
-  body: blocks(
-    `${S} Placeholder body copy. Nothing here is a published position of Gridsmith Ltd.`,
-    `${S} A second paragraph, so the article template is exercised with more than one block.`,
-  ),
-  author: `${S} Placeholder Name`,
-  // Fixed dates, descending. Real dates arrive with real articles.
-  publishedAt: new Date(Date.UTC(2026, 7, 20 - i)).toISOString(),
-  readingTime,
+  title: b.title,
+  slug: slugOf(briefSlug(b.title)),
+  division: b.division ?? undefined,
+  // **Brief, never published.** This is the field the query predicate reads, so this is the
+  // field that decides. Nothing else on the document is a publication signal.
+  status: 'brief',
+  brief: {
+    _type: 'editorialBrief',
+    premise: b.premise,
+    reader: b.reader,
+    centralQuestion: b.centralQuestion,
+    arguments: b.points,
+    structure: b.structure,
+    research: b.research,
+  },
+  // No excerpt, no body, no author, no publishedAt. Each of those is the owner's to write, and
+  // seeding a placeholder for any of them is how the nine `[SEED]` articles happened.
   isSeed: true,
 }));
+
+// Legal documents (`seed-legal.mjs`) are drafted from this build's real facts and are
+// imported at the top, with the rest.
+
+// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // Group pages — the two `groupPage` slugs, and only those two
@@ -407,22 +675,58 @@ const section = (i, key_, heading, layout, ...paragraphs) => ({
   body: blocks(...paragraphs),
 });
 
+/**
+ * **The two group pages, in public-ready copy — `GS-R001-R`.**
+ *
+ * They carried `[SEED]`-marked placeholder prose, and the owner's rejection of the staging
+ * candidate named it first. **Removing the marker was not the fix.** A marker is a statement
+ * about provenance; the problem was the sentences, which said nothing a reader could use and
+ * which no marker would have made useful.
+ *
+ * So each section below is written copy, and it is written from things this repository already
+ * establishes and the owner has already approved: the three divisions and their capability
+ * groups (`_shared/SERVICE-ARCHITECTURE.md`), the canonical six stages
+ * (`_shared/00-PROCESS.md`), the bespoke-quotation position (`GS-D002`) and the no-public-
+ * portfolio position (`GS-D001`). **Nothing here asserts a fact about the company that is not
+ * already recorded somewhere in this programme** — no history, no headcount, no offices, no
+ * awards, no client names, no scale claim.
+ *
+ * `isSeed: true` stays, and it is not a contradiction. The flag means *written by the seed
+ * script and owned by it*, which is exactly what this is; `check:launch` uses it to refuse
+ * promotion to the production dataset, and that refusal is correct until the owner has read
+ * these words. It is not a claim that the sentences are placeholders.
+ *
+ * **`/approach`'s structure is unchanged.** Its six stages are fixed by `_shared/00-PROCESS.md`
+ * and are not reworded here; the owner's `Understand → Scope → Create → Review → Deliver →
+ * Continue` reading is what the six already are, so it is explained rather than substituted.
+ * What is added is the connective prose the page was missing between them.
+ */
 const groupPageDocs = [
   {
     _id: 'seed-grouppage-approach',
     _type: 'groupPage',
     slug: slugOf('approach'),
     title: 'How we work',
-    intro: `${S} Placeholder introduction to the group's way of working.`,
+    intro:
+      'Six stages, the same six whichever division does the work. The short version: we find out what you actually need before we tell you what it costs.',
     sections: [
-      section(0, 'one-company', 'One company, three studios', 'prose',
-        `${S} Placeholder. The divisions are trading divisions of one registered company, so one contract covers work that spans them.`),
-      section(1, 'process', 'The six stages', 'process',
-        `${S} The stage names below are fixed and come from the code, not from this document.`),
-      section(2, 'continuity', 'A worked example', 'continuity',
-        `${S} A real cross-division example is blocked on Q-M6 and cannot be seeded — a placeholder would have to claim it was verified.`),
-      section(3, 'limits', 'When to use a specialist instead', 'sunken-plain',
-        `${S} Placeholder for the honest-limits section (Q-M7). This block is deliberately undesigned; polishing it would sell the limits.`),
+      section(0, 'understand', 'We start with the requirement, not the service', 'prose',
+        'Most enquiries arrive as a solution — a new website, a rebrand, a book. Sometimes that is right. Often the thing behind it is different enough that building what was asked for would be a waste of your money.',
+        'So the first conversation is about the business and the problem, not about what we sell. It is also where we say if the work belongs somewhere other than Gridsmith. That happens, and telling you early is cheaper for both of us than telling you late.'),
+      section(1, 'one-company', 'One company, three studios', 'prose',
+        'Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of Gridsmith Ltd, not separate companies. One contract covers work that spans them, and you are not managing three suppliers who have never spoken.',
+        'Where a project needs two divisions, coordinating them is our job. You brief it once.'),
+      section(2, 'scope', 'Everything is scoped for the specific job', 'prose',
+        'There are no packages on this site and no price list, because we do not have work that comes in fixed sizes. What you get instead is a written scope: what is included, what is not, what we need from you and when.',
+        'That document is where the disagreements happen, which is the right place for them. A scope you have read and questioned is worth more than a number you accepted quickly.'),
+      section(3, 'process', 'The six stages', 'process',
+        'These are the same six whatever the work is. Stage 1 is understanding, stage 2 is scoping, stages 3 and 4 are making it, stage 5 is delivering it, and stage 6 only happens if continuing makes sense for you.',
+        'Review is not a stage of its own because it is not a moment — it runs through stage 4, at points agreed when the scope is written rather than whenever someone remembers.'),
+      section(4, 'continuity', 'A worked example', 'continuity',
+        'The clearest way to show what continuity is worth is a real relationship that moved between divisions. We will not illustrate it with an invented one.'),
+      section(5, 'limits', 'When to use a specialist instead', 'sunken-plain',
+        'Three divisions is not every discipline. If your work needs a structural engineer, a chartered accountant, a solicitor or a specialist agency with a decade in one narrow field, that is who you should be talking to, and we will say so.',
+        'The same applies inside our own range. Some work is too small to justify what we would charge to scope it properly, and some is far enough outside what we do well that taking it would not be fair to you.'),
     ],
     isSeed: true,
   },
@@ -431,18 +735,23 @@ const groupPageDocs = [
     _type: 'groupPage',
     slug: slugOf('about'),
     title: 'About Gridsmith',
-    intro: `${S} Placeholder introduction to the company.`,
+    intro:
+      'One company, three specialist divisions. Work with one of them or all three — it stays the same relationship either way.',
     sections: [
-      section(0, 'structure', 'How the company is structured', 'prose',
-        `${S} Placeholder. Gridsmith Ltd is one registered company; Design, Digital and Press are trading divisions of it.`),
-      // **No 'people' section here.** It was excluded because `/about` rendered the roster
-      // itself and two landmarks with one accessible name is axe `landmark-unique` — caught by
-      // check:axe at Epic N. At `GS-O004` the roster is gone entirely and the reason has
-      // changed with it: there are no public team members, so there is no people section to
-      // duplicate. Do not add one back as prose either; `check:company` question 6 refuses
-      // "Who you will work with" and "Meet the team" on the served page whatever renders them.
-      section(2, 'verify', 'How to check us', 'prose',
-        `${S} Placeholder. Company number and registered office are in the footer of every page.`),
+      section(0, 'structure', 'What Gridsmith is', 'prose',
+        'Gridsmith Design handles brand and visual work, illustration, motion, 3D visualisation and technical drawing. Gridsmith Digital builds websites, software, apps and automation, and looks after them afterwards. Gridsmith Press covers writing, editorial, publishing, and the content and promotion around a book.',
+        'All three are trading divisions of Gridsmith Ltd. Whichever one you deal with, your contract, your invoice and the company answerable to you are the same.',
+        'Most clients arrive needing one division. Some need two — occasionally at the start, more often a year later. That second case is the one this structure exists for.'),
+      section(1, 'why', 'Why it is built this way', 'prose',
+        'Different outputs need different specialists. A brand identity, a production web application and a finished manuscript are genuinely different crafts, and treating them as one is how work ends up competent in a single discipline and thin everywhere else.',
+        'The usual alternative is a supplier per medium: a designer who has never seen the site, a developer working from brand guidelines nobody explained, a writer briefed by neither. Nothing is wrong with any of them individually. What goes wrong is at the joins, and the coordination quietly becomes your job.',
+        'So the specialists stay specialists, and the relationship does not restart when the medium changes.'),
+      section(2, 'role', 'What we actually do', 'prose',
+        'We work out what the requirement is, say which discipline it belongs to, scope it for your situation rather than from a menu, and run it through the division that does that kind of work. Where it spans two, joining them up is ours to do.',
+        'Every engagement is quoted against its own scope. That is why there is no price list here: the number follows the requirement, and the requirement comes first.'),
+      section(3, 'character', 'How we approach the work', 'prose',
+        'Three things show up in everything we make. Design decisions are deliberate and can be explained — if we cannot say why something is the way it is, it is not finished. Technical work is built to be maintained by whoever comes next, including you. And the accessible version is the version we build, not an upgrade that arrives later.',
+        'We would rather tell you something is a bad idea early than deliver it well and watch it fail.'),
     ],
     isSeed: true,
   },
@@ -592,7 +901,10 @@ console.log(
   `\n  ${testimonialDocs.length} testimonial(s) are REAL — verbatim Freelancer reviews, isSeed: false,` +
     '\n  sourceUrl set, project titles anonymised to a category of work (GS-O011).' +
     `\n  ${serviceDocs.length} service(s) are isSeed: true truthful development content (GS-O006), not [SEED]-marked.` +
-    '\n  Everything else is isSeed: true and [SEED]-marked. continuityExample cannot be seeded (N-05).\n',
+    `\n  ${postDocs.length} post(s) are editorial BRIEFS (status: brief) and are not published (GS-R001-R).` +
+    `\n  ${groupPageDocs.length} group page(s) carry written copy rather than [SEED] prose (GS-R001-R).` +
+    '\n  teamMember and faq records stay isSeed: true and [SEED]-marked; nothing renders either.' +
+    '\n  continuityExample cannot be seeded (N-05).\n',
 );
 
 /**

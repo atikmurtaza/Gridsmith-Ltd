@@ -18,21 +18,41 @@ export type CompanyDetails = {
 };
 
 /**
- * The `tel:` form of a displayed phone number — `GS-O004`.
+ * The published number, in the two forms it is allowed to be linked as — `GS-R001-R`.
  *
- * RFC 3966 wants a global number with no visual separators, and `+44 7405 448534` carries
- * two. The live `gridsmith.uk` links `tel:+44%207405%20448534`, which percent-encodes the
- * spaces rather than removing them; that resolves on most dialers and is not what the RFC
- * describes. Deriving the href here rather than storing a second field is what stops the
- * displayed number and the dialed number from ever being different numbers — which is
- * exactly the defect the live site's footer already has with its two email addresses
- * (`LIVE-SITE-EXTRACT.md` §11.2).
+ * **`telHref` is gone and `tel:` is prohibited.** `GS-O004` published the number and linked it
+ * for dialling; the owner's `GS-R001-R` decision supersedes that limb and only that limb. The
+ * number is unchanged, still published, still the same number the live `gridsmith.uk` shows —
+ * what changed is that it is **not a voice-call channel**. Nobody has committed to answering a
+ * ring, there are no published hours (`GS-O004`, unchanged), and a `tel:` link on a business
+ * site is an invitation to call. `check:company` question 3 now refuses any `tel:` href on any
+ * route, and `scripts/struck-rules.mjs` carries the strike.
  *
- * Everything that is not `+` or a digit is dropped, so it cannot emit a malformed href
- * whatever the singleton holds.
+ * The number **is** authorised for WhatsApp and for SMS, which are both asynchronous — they
+ * sit correctly beside *"We typically respond within 48 hours"* in a way a phone call does not.
+ *
+ * Both hrefs are **derived from the displayed string**, for the reason `telHref` was derived:
+ * a stored second copy is how the number you read and the number you reach stop being the same
+ * number, which is the defect the live site already has with its two email addresses
+ * (`LIVE-SITE-EXTRACT.md` §11.2). Everything that is not `+` or a digit is dropped, so neither
+ * can emit a malformed href whatever the singleton holds.
  */
-export function telHref(phone: string): string {
-  return `tel:${phone.replace(/[^+\d]/g, '')}`;
+const digits = (phone: string) => phone.replace(/[^+\d]/g, '');
+
+/**
+ * `https://wa.me/<international, no plus, no separators>` — wa.me rejects the `+`, which is why
+ * this is not simply `digits()`. `447405448534`, not `+447405448534` and not `+44 7405 448534`.
+ */
+export function whatsAppHref(phone: string): string {
+  return `https://wa.me/${digits(phone).replace(/^\+/, '')}`;
+}
+
+/**
+ * `sms:` per RFC 5724 — the global form, `+` retained. Support is near-universal on mobile and
+ * absent on most desktops, which is why it is never the only route offered beside it.
+ */
+export function smsHref(phone: string): string {
+  return `sms:${digits(phone)}`;
 }
 
 export const COMPANY_DETAILS_QUERY = `*[_type == "companyDetails"][0]{

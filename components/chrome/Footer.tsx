@@ -1,5 +1,5 @@
 import { ConsentReopen } from '@/components/consent/ConsentReopen';
-import { getCompanyDetails, telHref } from '@/lib/company/companyDetails';
+import { getCompanyDetails } from '@/lib/company/companyDetails';
 import { LEGAL_FOOTER_SLUGS } from '@/lib/legal/slugs';
 import { SITE_URL } from '@/lib/seo/site';
 import type { Division } from './RootShell';
@@ -43,12 +43,20 @@ const LEGAL_LINKS = LEGAL_FOOTER_SLUGS.map((s) => ({
  * production dataset: reg. 6(1)(c) is a launch obligation of the same shape, and it was not
  * in the tracker row at all.
  *
- * **`contactPhone` joins it at `GS-O004`.** reg. 6(1)(c) asks for details that make rapid,
- * direct and effective contact possible and names email as a floor, not a ceiling; a phone
- * number is the other half of what a business reader looks for before enquiring. It is the
- * number the live `gridsmith.uk` already publishes, so nothing new is being asserted about
- * how to reach the company. The `tel:` href is derived from the displayed string rather than
- * stored beside it — see `telHref`.
+ * **`contactPhone` joins it at `GS-O004`, and stops being a link at `GS-R001-R`.** reg. 6(1)(c)
+ * asks for details that make rapid, direct and effective contact possible and names email as a
+ * floor, not a ceiling; the number is the other half of what a business reader looks for. It is
+ * the number the live `gridsmith.uk` already publishes, so nothing new is asserted about how to
+ * reach the company.
+ *
+ * **It renders as text here, with no `tel:` and no `wa.me`.** `GS-R001-R` withdraws the call
+ * channel, and `check:company` question 3 refuses a `tel:` href on any route. A WhatsApp link
+ * would satisfy that rule and still be wrong in *this* block: the statutory footer is a
+ * Companies Act and e-commerce-regs disclosure, not a contact surface, and it is on all 77
+ * routes — putting a messaging call-to-action in it is marketing inside a legal notice. The
+ * linked channels live on `/contact`, `/press/contact` and `/about`, where a reader has gone
+ * looking for them. The number being *readable* is what reg. 6(1)(c) needs; being *clickable*
+ * was never the requirement, and the email beside it is a link.
  *
  * **No opening hours, ever.** `GS-O004` does not authorise published business hours and the
  * field no longer exists on the singleton. A phone number with no hours beside it is the
@@ -204,11 +212,7 @@ export async function Footer() {
                 </a>
               ) : null}
               {c.contactEmail?.trim() && c.contactPhone?.trim() ? ' · ' : ''}
-              {c.contactPhone?.trim() ? (
-                <a href={telHref(c.contactPhone)} className={styles.statutoryLink}>
-                  {c.contactPhone}
-                </a>
-              ) : null}
+              {c.contactPhone?.trim() ? c.contactPhone : null}
             </p>
           ) : null}
         </div>

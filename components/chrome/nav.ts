@@ -35,5 +35,11 @@ export const NAV: Record<Division, NavItem[]> = {
   press: [],
 };
 
-/** The wordmark always returns to `/`, from every division (`APP-FLOW.md` §8). */
+/**
+ * The wordmark always returns to `/`, from every division (`APP-FLOW.md` §8).
+ *
+ * **The logo mark is not here.** It is decorative, so it is drawn by `.wordmark::before` in
+ * `chrome.module.css` and the path lives there — see `Header.tsx`. Putting a decorative
+ * image's URL in a nav constant would imply it is content this module decides about.
+ */
 export const WORDMARK = { href: '/', label: 'Gridsmith' };

@@ -184,9 +184,28 @@ export const listServiceSlugs = (division: Division) =>
     { division },
   );
 
+/**
+ * **The publication predicate — `GS-R001-R`. One string, three queries, and it fails closed.**
+ *
+ * `status == "published"` and nothing else. Not `coalesce(status, "published")`, not
+ * `status != "brief"`, not `defined(body)`: a document written before the field existed has no
+ * `status`, and every one of those alternatives would publish it. The nine records this
+ * predicate was written for are exactly that shape.
+ *
+ * It is a constant rather than three copies because the defect it prevents is the one
+ * `LIVE-SITE-EXTRACT.md` §11.2 describes in a different register — two surfaces disagreeing
+ * about the same fact. A brief absent from `/insights` but reachable at `/insights/<slug>` is
+ * an unfinished article on a public URL, and it would look like a working site.
+ *
+ * `listPostSlugs` feeds `generateStaticParams`, so an unpublished post is not merely hidden —
+ * **no page is built for it at all** and the route 404s. That is the property worth having:
+ * the absence is structural rather than a filter someone can forget.
+ */
+const PUBLISHED = 'status == "published"';
+
 export const listPosts = (limit?: number) =>
   q<PostCard[]>(
-    `*[_type == "post" && !(_id in path("drafts.**"))]
+    `*[_type == "post" && ${PUBLISHED} && !(_id in path("drafts.**"))]
      | order(publishedAt desc)${limit ? '[0...$limit]' : ''}{
        "title": title, "slug": slug.current, division, excerpt, publishedAt, readingTime,
        "isSeed": coalesce(isSeed, false)
@@ -196,7 +215,7 @@ export const listPosts = (limit?: number) =>
 
 export const getPost = (slug: string) =>
   q<PostDetail | null>(
-    `*[_type == "post" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
+    `*[_type == "post" && slug.current == $slug && ${PUBLISHED} && !(_id in path("drafts.**"))][0]{
       "title": title, "slug": slug.current, division, excerpt, publishedAt, readingTime,
       body, author, "isSeed": coalesce(isSeed, false)
     }`,
@@ -204,7 +223,7 @@ export const getPost = (slug: string) =>
   );
 
 export const listPostSlugs = () =>
-  q<string[]>(`*[_type == "post" && !(_id in path("drafts.**"))].slug.current`);
+  q<string[]>(`*[_type == "post" && ${PUBLISHED} && !(_id in path("drafts.**"))].slug.current`);
 
 export const listFaqs = (division: Division, limit: number) =>
   q<FaqItem[]>(

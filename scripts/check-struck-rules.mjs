@@ -82,6 +82,11 @@ const base = () => [
   { file: 'rule-14-subject.md', text: "~~{ name: 'businessHours', type: 'string' }~~ - struck 16 Sept 2026, no published hours\n" },
   { file: 'rule-15-subject.md', text: '~~always by the end of the next business day~~ - struck at GS-O004, no guaranteed response\n' },
   { file: 'rule-16-subject.md', text: '~~Only `isPublic: true` members render on /about~~ - struck at GS-O004, no public team\n' },
+  // `GS-R001-R`, 17 Sept 2026. Same obligation as the three above: one annotated subject
+  // per rule, or the gate reports HOLLOW SUBJECT and refuses to be registered with nothing
+  // to reach.
+  { file: 'rule-17-subject.md', text: "~~If it's urgent, call [number] during [hours].~~ - struck at GS-R001-R, WhatsApp and SMS only\n" },
+  { file: 'rule-18-subject.md', text: '~~45 FAQs, 9 posts, 4 team~~ - superseded at GS-R001-R, the nine posts are editorial briefs\n' },
 ];
 
 const SPECIMENS = [
@@ -108,10 +113,11 @@ const SPECIMENS = [
   {
     name: 'BRANCH 4 — zero subject: corpus below the floor',
     files: base().slice(MIN_FILES),
-    // 13 -> 16 at `GS-O004`, with the three rules that added three subject files. The literal
+    // 13 -> 16 at `GS-O004`, 16 -> 18 at `GS-R001-R`: each move adds one subject file per
+    // new rule, and the literal below moves with it. The literal
     // is the point: it must be changed deliberately when the corpus changes, which is how this
     // case proves the count is counted rather than printed.
-    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 16 document(s)')),
+    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 18 document(s)')),
   },
   // `GS-P03` — one specimen per new rule, plus the surviving statement none of them may catch.
   {
@@ -235,6 +241,41 @@ const SPECIMENS = [
   {
     name: 'NOT A SUBJECT — the surviving "no imprint is operated" statement',
     files: [...base(), { file: 'x.md', text: 'No imprint is claimed, because none is operated.\n' }],
+    expect: (r) => r.ok,
+  },
+  // `GS-R001-R` — one deliberate-failure branch per new rule. A rule proven only by its CLEAN
+  // and HOLLOW-SUBJECT cases has been shown to have a subject, not to reject anything.
+  {
+    name: 'BRANCH 18 — the call-channel invitation restated, unannotated',
+    files: [...base(), { file: 'master/APP-FLOW.md', text: 'If it is urgent, call [number] during opening hours.\n' }],
+    expect: (r) =>
+      !r.ok && r.problems.some((p) => p.includes('GS-R001-R-CALL-CHANNEL STANDS at master/APP-FLOW.md:1')),
+  },
+  {
+    // The discrimination that matters: the number itself SURVIVES and is still published, so a
+    // line naming it must not fire. A rule that caught this would refuse the sentence the strike
+    // exists to allow.
+    name: 'NOT A SUBJECT — the surviving published number with no call invitation',
+    files: [
+      ...base(),
+      { file: 'master/SCHEMA.md', text: 'The published number is +44 7405 448534, for WhatsApp and SMS.\n' },
+    ],
+    expect: (r) => r.ok,
+  },
+  {
+    name: 'BRANCH 19 — the nine-post seed volume restated, unannotated',
+    files: [...base(), { file: 'master/PROJECT-TRACKER.md', text: '45 FAQs, 9 posts, 4 team, 2 groupPages.\n' }],
+    expect: (r) =>
+      !r.ok && r.problems.some((p) => p.includes('GS-R001-R-SEED-POSTS STANDS at master/PROJECT-TRACKER.md:1')),
+  },
+  {
+    // The seed-marker convention itself is untouched for the types that still use it, so a line
+    // about seeded FAQs must not fire. This is what stops the rule being read as "no seed data".
+    name: 'NOT A SUBJECT — the surviving seed convention for the types that still use it',
+    files: [
+      ...base(),
+      { file: 'master/SCHEMA.md', text: 'Seeded FAQ and teamMember records stay [SEED]-marked; neither renders.\n' },
+    ],
     expect: (r) => r.ok,
   },
   {

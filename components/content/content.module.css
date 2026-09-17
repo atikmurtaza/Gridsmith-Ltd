@@ -206,3 +206,74 @@
   padding-inline-start: var(--space-4);
   border-inline-start: var(--border-hairline) solid var(--line);
 }
+
+/* --- The connection block on /about — GS-R001-R. See Connect.tsx ---------- */
+
+/* A list of channels, not a row of icon buttons: each line is label + value, and the value
+   is the thing a reader copies. `auto 1fr auto` keeps the glyphs and the labels in a column
+   at every width, and collapses to two lines under 30rem rather than truncating the number. */
+.connectList {
+  margin: var(--space-6) 0 0;
+  padding: 0;
+  list-style: none;
+  border-block-start: var(--border-hairline) solid var(--line);
+}
+
+.connectItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  padding-block: var(--space-4);
+  border-block-end: var(--border-hairline) solid var(--line);
+}
+
+/* Hairline stroke on `currentColor`, so the glyph is the same weight as the border it sits
+   against and inherits the theme without naming a colour. `aria-hidden` in the markup. */
+.connectGlyph {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  color: var(--ink-muted);
+}
+
+.connectLink {
+  color: var(--ink);
+  text-underline-offset: 0.2em;
+}
+
+.connectLink:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Mono, because a number and an address are verifiable — the one convention that runs across
+   all four themes. Muted and right-aligned: it is the detail, not the action. */
+.connectValue {
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  text-align: end;
+}
+
+@media (max-width: 30rem) {
+  .connectItem {
+    grid-template-columns: auto 1fr;
+  }
+
+  .connectValue {
+    grid-column: 2;
+    text-align: start;
+  }
+}
+
+/* The legal footnote at the foot of /about — GS-R001-R. Small, muted, no border, no card:
+   the point of the treatment is that it does not read as a selling point. */
+.legalNote {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  max-width: var(--measure);
+}

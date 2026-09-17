@@ -2636,7 +2636,8 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | ID | Task | P | Est | Depends | Status | Owner | Notes |
 |---|---|---|---|---|---|---|---|
 | S-01 | Seed script, all volumes | P0 | 2d | A-12 | **DONE** 21 Aug | Dev | `scripts/seed-content.mjs` — 125 documents into `development`. 30 services, 24 projects to §7's distribution, 45 FAQs, 9 posts, 4 team, 2 groupPages, 5 legal docs. **6 testimonials are REAL** (verbatim Freelancer reviews, `isSeed: false`, `sourceUrl`). `continuityExample` cannot be seeded — `verified` is hard-true |
-| S-02 | 24 seed projects incl. 3 cross-division, 3 confidential | P0 | 1d | S-01 | TODO | Content | |
+| S-01a | **The `9 posts` tier of S-01 is superseded** | P0 | — | S-01 | **SUPERSEDED** 17 Sep (`GS-R001-R`) | Dev | The row above is left verbatim as the record of what ran on 21 August and is **not rewritten**. What it describes no longer exists: the nine `[SEED]`-marked `post` documents were published on the `GS-R001` staging candidate and the owner rejected them — the objection was the articles, not the marker. Nine **editorial briefs** replace them (`status: 'brief'`, never served), and `24 projects` was already removed at `GS-P03` (`GS-D001`). `scripts/struck-rules.mjs` `GS-R001-R-SEED-POSTS` |
+| S-02 | 24 seed projects incl. 3 cross-division, 3 confidential | P0 | 1d | S-01 | **CLOSED — NOT BUILT** (`GS-P03`, `GS-D001`) | Content | Public portfolio removed from the production critical path; the `project` type is dormant |
 | S-03 | Seed pricing with `INDICATIVE` badges | P0 | 0.5d | S-01 | **DONE (data)** 21 Aug | Dev | Every seed `pricingBlock` is `fromAmount: 0` with an `INDICATIVE` note. `fromAmount` is a **number** and cannot hold a `[SEED]` marker, so the zero carries the honesty and the note carries the marker. The render-side badge is the division pricing rows |
 | S-03a | **Seed metrics render `[SEED] 00%`** | P0 | 0.5d | S-01 | **DONE (data)** 21 Aug | Dev | Every seeded `metric.value` is the literal `[SEED] 00%`. `metric.value` is a string precisely so this is possible — SCHEMA-CORE §2 |
 | S-04 | Abstract placeholder imagery | P0 | 1d | S-01 | TODO | Design | **No fabricated drawings/covers/screenshots** |
@@ -3303,7 +3304,7 @@ Three things follow, and each is recorded rather than fixed:
 | Q-M2 | Solicitor engaged and drafts sent | Atik | L-04 |
 | Q-M3 | ICO registration | Atik | L-06 |
 | Q-M4 | PI insurance scope — engineering drawings covered? | Atik + broker | L-08 |
-| Q-M5 | Business hours and phone number for the confirmation screen | Atik | N-12 |
+| Q-M5 | ~~Business hours and phone number for the confirmation screen~~ — **CLOSED**. The number is published (`GS-O004`); business hours are **struck** and will never exist (`GS-O004-BUSINESS-HOURS-FIELD`); and at `GS-R001-R` the number stopped being a call channel entirely — WhatsApp and SMS, no `tel:` on any route (`GS-R001-R-CALL-CHANNEL`) | Atik | N-12 |
 | Q-M6 | A real continuity example — a client served across divisions or over time | Atik | N-05 |
 | Q-M7 | The honest limits — when should someone use a specialist instead? | Atik | N-04 |
 | Q-M8 | **Existing Press site URL inventory** — the indexed URLs that must be mapped before the site is switched off at launch. Founder supplies before Stage 8; no crawl or planning until then | Atik | `G-08` |

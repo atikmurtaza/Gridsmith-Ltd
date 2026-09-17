@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="1200" viewBox="307.5 303 920 920" role="img" aria-labelledby="title desc">
+<title id="title">Gridsmith — polished gold logo</title>
+<desc id="desc">Editable vector recreation of the supplied logo: eight golden spheres linked by six cylindrical bars. Transparent background. All artwork is vector geometry with gradients; no embedded raster images.</desc>
+<defs>
+  <linearGradient id="barH" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+    <stop offset="0" stop-color="#654214"/><stop offset=".055" stop-color="#d5aa50"/>
+    <stop offset=".15" stop-color="#fff3b9"/><stop offset=".28" stop-color="#fff8d8"/>
+    <stop offset=".39" stop-color="#d8b266"/><stop offset=".48" stop-color="#80551e"/>
+    <stop offset=".57" stop-color="#382713"/><stop offset=".68" stop-color="#63431b"/>
+    <stop offset=".80" stop-color="#a7782c"/><stop offset=".88" stop-color="#f2d087"/>
+    <stop offset=".95" stop-color="#bb8b36"/><stop offset="1" stop-color="#4a3216"/>
+  </linearGradient>
+  <linearGradient id="barV" x1="0" y1="0" x2="1" y2="0" xlink:href="#barH"/>
+  <radialGradient id="orb" cx=".36" cy=".27" r=".76">
+    <stop offset="0" stop-color="#fff4be"/><stop offset=".22" stop-color="#e0bd70"/>
+    <stop offset=".43" stop-color="#a17c36"/><stop offset=".63" stop-color="#5c421c"/>
+    <stop offset=".78" stop-color="#8e6829"/><stop offset=".9" stop-color="#d8ad58"/>
+    <stop offset=".97" stop-color="#79551e"/><stop offset="1" stop-color="#392810"/>
+  </radialGradient>
+  <radialGradient id="softbox">
+    <stop offset="0" stop-color="#fffef0" stop-opacity=".97"/>
+    <stop offset=".6" stop-color="#fff7d2" stop-opacity=".88"/>
+    <stop offset="1" stop-color="#fff3c0" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#fff1b5"/><stop offset=".3" stop-color="#b68a39"/>
+    <stop offset=".64" stop-color="#61431d"/><stop offset="1" stop-color="#edc77a"/>
+  </linearGradient>
+  <radialGradient id="bounce"><stop stop-color="#ecc171" stop-opacity=".65"/><stop offset="1" stop-color="#b6893a" stop-opacity="0"/></radialGradient>
+  <g id="sphere">
+    <circle r="75" fill="url(#orb)" stroke="url(#rim)" stroke-width="1.6"/>
+    <ellipse cx="-8" cy="-40" rx="38" ry="28" fill="url(#softbox)"/>
+    <ellipse cx="-49" cy="-3" rx="13" ry="34" fill="url(#softbox)" opacity=".72"/>
+    <ellipse cx="51" cy="-3" rx="15" ry="36" fill="url(#softbox)" opacity=".93"/>
+    <ellipse cx="9" cy="49" rx="40" ry="15" fill="url(#bounce)"/>
+    <path d="M -64,-24 C -72,10 -50,58 -15,65" fill="none" stroke="#f0cf80" stroke-opacity=".56" stroke-width="2.1" stroke-linecap="round"/>
+    <path d="M 30,-64 C 44,-58 55,-45 60,-33" fill="none" stroke="#fff2bd" stroke-opacity=".64" stroke-width="1.7" stroke-linecap="round"/>
+  </g>
+</defs>
+<g id="cylinders">
+<rect id="cylinder-1" x="475" y="444" width="381" height="76" fill="url(#barH)"/>
+<rect id="cylinder-2" x="437" y="482" width="76" height="363" fill="url(#barV)"/>
+<rect id="cylinder-3" x="475" y="807" width="381" height="76" fill="url(#barH)"/>
+<rect id="cylinder-4" x="675" y="646" width="385" height="76" fill="url(#barH)"/>
+<rect id="cylinder-5" x="1022" y="684" width="76" height="360" fill="url(#barV)"/>
+<rect id="cylinder-6" x="675" y="1006" width="385" height="76" fill="url(#barH)"/>
+</g><g id="spheres">
+<use id="sphere-1" xlink:href="#sphere" transform="translate(475 482)"/>
+<use id="sphere-2" xlink:href="#sphere" transform="translate(856 482)"/>
+<use id="sphere-3" xlink:href="#sphere" transform="translate(475 845)"/>
+<use id="sphere-4" xlink:href="#sphere" transform="translate(856 845)"/>
+<use id="sphere-5" xlink:href="#sphere" transform="translate(675 684)"/>
+<use id="sphere-6" xlink:href="#sphere" transform="translate(1060 684)"/>
+<use id="sphere-7" xlink:href="#sphere" transform="translate(675 1044)"/>
+<use id="sphere-8" xlink:href="#sphere" transform="translate(1060 1044)"/>
+</g></svg>

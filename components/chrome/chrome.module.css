@@ -70,6 +70,34 @@
   line-height: var(--leading-tight);
   color: var(--ink);
   text-decoration: none;
+  /* The mark and the word are one link, so they align on a shared baseline box rather than
+     the word sitting on the mark's descender. `inline-flex` keeps the anchor's hit area to
+     its content — a `flex` anchor would stretch across the header. */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* GS-R001-R — the owner's logo mark, decorative, so it is a background rather than an <img>.
+   See Header.tsx for why.
+
+   Square, from the supplied file's own 1:1 viewBox — never stretched. Served **unmodified**:
+   no recolour, no filter, no mask, no crop. It is the same gold in all four themes, which is
+   correct rather than an oversight — the wordmark's own note above records that the company
+   mark reading as four different marks is the opposite of what shared structure is for.
+
+   `flex: none` so the nav wrapping at narrow widths cannot compress it; explicit box sizes so
+   the space is reserved before the file arrives, on a header that is above the fold on all 77
+   routes. `contain` is deliberate: nothing about this element can affect layout elsewhere. */
+.wordmark::before {
+  content: '';
+  flex: none;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  background-image: url('/brand/gridsmith-logo.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 .navList {
   display: flex;

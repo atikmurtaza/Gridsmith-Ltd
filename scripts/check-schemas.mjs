@@ -51,6 +51,8 @@ const EXPECTED_OBJECTS = [
   'retailerLink',
   'packageLine',
   'platformSpec',
+  // `GS-R001-R`. The Insights editorial brief — internal planning, never rendered.
+  'editorialBrief',
 ];
 const EXPECTED_DOCUMENTS = [
   'service',
@@ -105,6 +107,14 @@ const CLOSED_LISTS = [
   // `GS-P03`. The approved capability groups, transcribed here from the owner-approved model in
   // `_shared/SERVICE-ARCHITECTURE.md` rather than imported from `lib/services/architecture.ts`:
   // importing the subject's own list would let a widened architecture pass silently.
+  // `GS-R001-R`. The Insights publication state. Non-negotiable #4 says seed content must never
+  // reach production; this field is what stops an *unfinished* record reaching a visitor, which
+  // is the same failure with a different marker. A fourth value — `review`, `ready`, anything —
+  // added to the schema without being added to the query predicate would be a state that is
+  // neither brief nor published and that nothing decides about, so the set is closed here.
+  // Transcribed, not imported from `documents.ts`: an expectation read out of its own subject
+  // cannot fail when the subject widens.
+  ['post', 'status', ['brief', 'draft', 'published'], (v) => v],
   ['service', 'capabilityGroup', [
     'brand-visual', 'illustration', 'motion', '3d-visualisation', 'technical',
     'web', 'software', 'apps-interactive', 'automation-intelligence', 'operate-improve',
@@ -318,6 +328,10 @@ const REQUIRED_FIELDS = [
   ['protectedImage', 'alt', 'required', 'WCAG 1.1.1 — the CMS is the only place alt text can be enforced'],
   ['protectedVideo', 'alt', 'required', 'WCAG 1.1.1'],
   ['processStep', 'title', 'custom', 'the canonical six — _shared/00-PROCESS.md'],
+  // `GS-R001-R`. `options.list` refuses nothing written through the API, and every record in
+  // this dataset is written through the API.
+  ['post', 'status', 'required', 'GS-R001-R — an unset publication state is not a state'],
+  ['post', 'status', 'custom', 'GS-R001-R — the closed set is enforced on write, not only in the picker'],
   ['continuityExample', 'rows', 'min', 'master/SCHEMA.md §2 — at least four rows; two do not show continuity'],
   ['continuityExample', 'divisionsInvolved', 'min', 'at least two divisions, or it is not cross-division'],
   ['continuityExample', 'verified', 'custom', 'hard-true — required() alone would accept false'],

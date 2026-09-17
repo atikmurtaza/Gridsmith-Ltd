@@ -65,6 +65,10 @@ import {
   phoneProblems,
   responseProblems,
   teamProblems,
+  callProblems,
+  placeholderProblems,
+  CALL_RULES,
+  PLACEHOLDER_RULES,
 } from './company-facts-rules.mjs';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
@@ -73,6 +77,23 @@ const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
  * Hardcoded. One route per shape: the four landings, both contact journeys and their
  * confirmation, the structure disclosure, one service page per division, and the legal set —
  * which is where the address for service legitimately appears in the body.
+ *
+ * **`/_kitchen-sink` and `/_master-sink` are deliberately absent, and that is a decision rather
+ * than an oversight — `GS-R001-R`.** Both are `page.probe.tsx` specimen routes and both serve
+ * `[SEED]` strings on purpose: their job is to exercise components against placeholder content,
+ * which is what makes them honest subjects for `check:axe`, `check:contrast` and
+ * `check:state-cues`. Question 8 would fire on every one of those strings and the only way to
+ * silence it would be to remove the specimens.
+ *
+ * They are not visitor-facing on three independent counts, so the exclusion does not leave a
+ * hole: `pageExtensions` removes them from a production build entirely (`next.config.ts`);
+ * `app/sitemap.ts` is a hardcoded allowlist neither is on; and nothing in the chrome or in any
+ * page links to either, which `check-axe` asserts by resolving every same-origin link on every
+ * audited route. **On a preview deployment they DO exist** — `excludeProbes` keys off
+ * `VERCEL_ENV === 'production'` — behind Vercel Authentication, `Disallow: /` and `noindex`.
+ *
+ * **Do not add them to this list to make the gate more thorough.** The next session to notice
+ * `[SEED]` on `/_master-sink` should read this paragraph rather than file a defect.
  */
 const ROUTES = [
   '/',
@@ -166,7 +187,7 @@ function splitFooter(html) {
   };
 }
 
-const problems = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+const problems = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [] };
 const counted = { routes: 0, chars: 0, footers: 0, emails: 0, phones: 0, offices: 0 };
 const thin = [];
 
@@ -200,6 +221,8 @@ for (const route of ROUTES) {
   problems[4].push(...officeProblems(route, bodyText, OFFICE_ALLOWED.includes(route)));
   problems[5].push(...responseProblems(route, text));
   problems[6].push(...teamProblems(route, text));
+  problems[7].push(...callProblems(route, text));
+  problems[8].push(...placeholderProblems(route, text));
 }
 
 const all = Object.values(problems).flat();
@@ -242,8 +265,8 @@ console.log(
     'address, and every mailto: points at it',
 );
 console.log(
-  `  3. phone: ${FACTS.contactPhone} on ${counted.phones} route(s); every tel: is ` +
-    `${FACTS.telHref}`,
+  `  3. contact number: ${FACTS.contactPhone} on ${counted.phones} route(s); no tel: href on ` +
+    `any route, and every wa.me / sms: link is ${FACTS.whatsAppHref} / ${FACTS.smsHref}`,
 );
 console.log(
   `  4. registered office: ${counted.offices} occurrence-carrying route(s), none outside the ` +
@@ -253,6 +276,14 @@ console.log(
 console.log('  5. response wording: no guarantee, no SLA, no "ASAP", no published business hours');
 console.log('  6. public team: none');
 console.log(
-  `\ncheck-company-facts: PASS — 6 question(s) over ${counted.routes} route(s), ` +
+  `  7. call channel: no "call us", no "or call", no invitation to telephone, over ` +
+    `${CALL_RULES.length} rule(s)`,
+);
+console.log(
+  `  8. placeholders: no [SEED], [TK], "placeholder", filler or development note in visitor- ` +
+    `facing text, over ${PLACEHOLDER_RULES.length} rule(s)`,
+);
+console.log(
+  `\ncheck-company-facts: PASS — 8 question(s) over ${counted.routes} route(s), ` +
     `${counted.chars} character(s) of served text`,
 );

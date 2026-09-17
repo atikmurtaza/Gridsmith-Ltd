@@ -356,6 +356,49 @@ export const STRUCK_RULES = [
       'rather than flipping a field, which does not. `check:company` question 6 asserts the ' +
       'absence on the served page, proven by deliberate failure.',
   },
+  /**
+   * **`GS-R001-R`, registered in the commit that struck them.** Two rules, one pattern each,
+   * both struck **in place**: `master/APP-FLOW.md`'s confirmation-copy block carries the
+   * annotated `call [number]` line, and `master/PROJECT-TRACKER.md` carries the annotated
+   * nine-post seed line. Deleting either wording would remove this gate's only subject, which
+   * is `_shared/01-VALIDATION-REPORT.md` §21's mistake.
+   */
+  {
+    id: 'GS-R001-R-CALL-CHANNEL',
+    patterns: [/call \[number\]/i],
+    why:
+      'Struck by `GS-R001-R`, 17 September 2026: the published number is **not a voice-call ' +
+      'channel**. Nobody has committed to answering a ring, no business hours are published ' +
+      'and none ever will be (`GS-O004`, unchanged), and *"We typically respond within 48 ' +
+      'hours"* is a statement about asynchronous contact that a telephone contradicts. The ' +
+      '`tel:` hrefs on `/about`, `/contact`, `/press/contact` and the statutory footer are ' +
+      'removed, and `telHref` is deleted from `lib/company/companyDetails.ts`.',
+    where:
+      '**The number itself survives unchanged and is still published** \u2014 `+44 7405 448534`, ' +
+      'on the same surfaces. What changed is the scheme: `whatsAppHref` gives ' +
+      '`https://wa.me/447405448534` and `smsHref` gives `sms:+447405448534`, each derived from ' +
+      'the displayed string so the number read and the number reached cannot differ. The ' +
+      'statutory footer renders it as **text**, because that block is a Companies Act ' +
+      'disclosure rather than a contact surface and reg. 6(1)(c) needs it readable, not ' +
+      'clickable. `check:company` question 3 refuses any `tel:` href on any route and question ' +
+      '7 refuses the wording, each rule broken separately in the 57-case self-test.',
+  },
+  {
+    id: 'GS-R001-R-SEED-POSTS',
+    patterns: [/9 posts/i],
+    why:
+      'Struck by `GS-R001-R`: the nine `[SEED]`-marked `post` documents were **published** on ' +
+      'the `GS-R001` staging candidate, and the owner rejected them. The objection was not the ' +
+      'marker \u2014 a generated article presented as a company\u2019s thinking is fake whether or ' +
+      'not it is labelled, and removing the label would have made it worse rather than better.',
+    where:
+      'Nine **editorial briefs** replace them, on the owner\u2019s own topics, carrying ' +
+      '`status: \'brief\'` \u2014 premise, reader, central question, arguments, structure and the ' +
+      'research questions nobody has answered yet. `lib/sanity/queries.ts` serves only ' +
+      '`status == "published"`, by strict equality and never `coalesce`, so a brief is absent ' +
+      'from `/insights` **and** has no page built for it at all. The seed-marker convention ' +
+      'itself is untouched for `teamMember` and `faq`, neither of which renders.',
+  },
   {
     id: 'GS-O013-ACCESSIBILITY-CERTIFY',
     patterns: [/no one can certify accessibility/i],

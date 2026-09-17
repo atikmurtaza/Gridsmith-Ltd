@@ -36,8 +36,16 @@ export const FACTS = {
   placeOfRegistration: 'England',
   contactEmail: 'contact@gridsmith.uk',
   contactPhone: '+44 7405 448534',
-  /** RFC 3966 global form: `+` and digits, no visual separators. */
-  telHref: 'tel:+447405448534',
+  /**
+   * The two schemes the number may be linked with — `GS-R001-R`. `tel:` is not one of them and
+   * `telHref` is gone; question 3 refuses a `tel:` href anywhere.
+   *
+   * `wa.me` takes the international number with **no leading `+`**; `sms:` keeps it, per RFC
+   * 5724. They are different strings for the same number, which is why both are written out
+   * here rather than derived from one another inside the expectation.
+   */
+  whatsAppHref: 'https://wa.me/447405448534',
+  smsHref: 'sms:+447405448534',
   /**
    * The reg. 25(2)(c) particular. It is asserted to appear **only** in the statutory footer
    * and in the `_legal/` instruments — see `officeProblems`.
@@ -104,6 +112,102 @@ export const RESPONSE_RULES = [
     id: 'BUSINESS-HOURS-LABEL',
     pattern: /\b(?:opening|office|business)\s+hours\b/i,
     why: 'a published statement of business hours',
+  },
+];
+
+/**
+ * Wording that invites a reader to telephone — `GS-R001-R`.
+ *
+ * **`GS-O004` published the number and linked it for dialling. That limb is superseded and
+ * only that limb.** The number is unchanged and still published; what is withdrawn is the
+ * voice channel. Nobody has committed to answering a ring, there are no published hours and
+ * there never will be, and *"We typically respond within 48 hours"* is a statement about
+ * asynchronous contact that a telephone contradicts.
+ *
+ * One pattern per rule and no alternations inside a rule, for `RESPONSE_RULES`' reason: a
+ * half-firing alternation reports success from whichever limb happened to be exercised.
+ *
+ * **None of these fires on the word "phone" alone**, deliberately. A page may need to say the
+ * number is not a phone line, or that a browser will not open `sms:` on a desktop; a rule that
+ * fired on the noun would refuse the sentence that explains the decision. What is refused is
+ * the *invitation* — an imperative to call, or a `tel:` href, which is the invitation in markup.
+ */
+export const CALL_RULES = [
+  {
+    id: 'CALL-CTA-IMPERATIVE',
+    pattern: /\b(?:call|ring|phone)\s+us\b/i,
+    why: 'a call-to-action inviting a telephone call',
+  },
+  {
+    id: 'CALL-CTA-GIVE-US',
+    pattern: /\bgive\s+us\s+a\s+(?:call|ring|bell)\b/i,
+    why: 'a call-to-action inviting a telephone call',
+  },
+  {
+    id: 'CALL-CTA-OR-CALL',
+    pattern: /\bor\s+call\b/i,
+    why: 'the superseded "Or call <number>" offer from GS-O004',
+  },
+  {
+    id: 'CALL-SPEAK-TO',
+    pattern: /\bspeak\s+to\s+(?:us|someone)\s+on\b/i,
+    why: 'an invitation to speak to someone on the number',
+  },
+];
+
+/**
+ * Markers and placeholder text that must never reach a visitor — `GS-R001-R`.
+ *
+ * **This is the question the owner's rejection of the `GS-R001` candidate actually asked**, and
+ * it had no gate. `check:launch` refuses `isSeed: true` documents on the **production dataset**,
+ * which is a different assertion in two ways that both matter: it reads the *dataset* rather
+ * than the *page*, and it is inert on `development`, which is the dataset every staging
+ * candidate is built from. So the one environment a human reviews was the one environment
+ * nothing checked, and nine `[SEED]`-marked posts and two `[SEED]`-marked group pages were
+ * served to the owner.
+ *
+ * The subject here is **served text**, so it fires whatever produced the string — CMS content,
+ * a hardcoded fallback, a component's own copy. That is the property `check:launch` cannot have.
+ *
+ * `TEAM-SEED-NAME` in `TEAM_RULES` is the narrow ancestor of this list and stays where it is:
+ * it names a specific person-shaped placeholder and reports under question 6, where a reader of
+ * that output expects it.
+ */
+export const PLACEHOLDER_RULES = [
+  {
+    id: 'SEED-MARKER',
+    pattern: /\[SEED\]/i,
+    why: 'the seed-content marker, which is an internal provenance label',
+  },
+  {
+    id: 'TK-MARKER',
+    pattern: /\[TK\]/i,
+    why: 'the to-come marker CLAUDE.md non-negotiable #2 requires instead of an invented fact',
+  },
+  {
+    id: 'PLACEHOLDER-WORD',
+    pattern: /\bplaceholder\b/i,
+    why: 'copy describing itself as a placeholder',
+  },
+  {
+    id: 'LOREM',
+    pattern: /\blorem ipsum\b/i,
+    why: 'filler text',
+  },
+  {
+    id: 'TODO',
+    pattern: /\b(?:TODO|FIXME)\b/,
+    why: 'a development note in visitor-facing text',
+  },
+  {
+    id: 'SAMPLE-COMPANY',
+    pattern: /\b(?:Acme|Example)\s+(?:Ltd|Limited|Inc|Corp|Company)\b/i,
+    why: 'a placeholder company name',
+  },
+  {
+    id: 'LATIN-FILLER',
+    pattern: /\bdolor sit amet\b/i,
+    why: 'filler text',
   },
 ];
 
@@ -185,12 +289,32 @@ export function phoneProblems(route, text, html) {
   const t = asText(text).replace(/\s+/g, ' ');
   const h = asText(html);
 
+  // **The assertion is inverted at `GS-R001-R` and this is the load-bearing line.** It used to
+  // check that every `tel:` was the RFC 3966 form; a gate shaped that way is green on a site
+  // covered in correctly-formatted call links, which is now the defect rather than the fix.
   for (const m of h.matchAll(/href="tel:([^"]*)"/gi)) {
-    if (m[1] !== FACTS.telHref.slice(4)) {
+    problems.push(
+      `${route} has a tel: href (${JSON.stringify(m[1])}). GS-R001-R withdraws the voice ` +
+        'channel: the number is published and is authorised for WhatsApp and SMS only. Link ' +
+        'it with whatsAppHref or smsHref, or render it as text.',
+    );
+  }
+
+  // Each authorised scheme must point at the approved number. Same reasoning as the `mailto:`
+  // rule above: a displayed number and a linked number that differ are two numbers.
+  for (const m of h.matchAll(/href="(https:\/\/wa\.me\/[^"]*)"/gi)) {
+    if (m[1] !== FACTS.whatsAppHref) {
       problems.push(
-        `${route} has a tel: href of ${JSON.stringify(m[1])}, not ${FACTS.telHref.slice(4)}. ` +
-          'RFC 3966 wants a global number with no visual separators, and a dialled number that ' +
-          'differs from the displayed one is a second phone number.',
+        `${route} has a WhatsApp link of ${JSON.stringify(m[1])}, not ${FACTS.whatsAppHref}. ` +
+          'wa.me takes the international number with no plus and no separators.',
+      );
+    }
+  }
+  for (const m of h.matchAll(/href="(sms:[^"]*)"/gi)) {
+    if (m[1] !== FACTS.smsHref) {
+      problems.push(
+        `${route} has an sms: href of ${JSON.stringify(m[1])}, not ${FACTS.smsHref}. ` +
+          'RFC 5724 wants the global form.',
       );
     }
   }
@@ -225,6 +349,46 @@ export function responseProblems(route, text) {
       ? [
           `${route} carries ${rule.id}: ${JSON.stringify(m[0])} — ${rule.why}. GS-O004 ` +
             'authorises a statement of typical behaviour only.',
+        ]
+      : [];
+  });
+}
+
+/**
+ * Problems with call-to-action wording that invites a telephone call.
+ *
+ * @param {string} route
+ * @param {string} text
+ * @returns {string[]}
+ */
+export function callProblems(route, text) {
+  const t = asText(text);
+  return CALL_RULES.flatMap((rule) => {
+    const m = t.match(rule.pattern);
+    return m
+      ? [
+          `${route} carries ${rule.id}: ${JSON.stringify(m[0])} — ${rule.why}. GS-R001-R: the ` +
+            'number is a WhatsApp and SMS channel, not a call channel.',
+        ]
+      : [];
+  });
+}
+
+/**
+ * Problems with placeholder markers and filler in visitor-facing text.
+ *
+ * @param {string} route
+ * @param {string} text
+ * @returns {string[]}
+ */
+export function placeholderProblems(route, text) {
+  const t = asText(text);
+  return PLACEHOLDER_RULES.flatMap((rule) => {
+    const m = t.match(rule.pattern);
+    return m
+      ? [
+          `${route} serves ${rule.id}: ${JSON.stringify(m[0])} — ${rule.why}. GS-R001-R: no ` +
+            'placeholder, marker or internal content-state label reaches a visitor.',
         ]
       : [];
   });
@@ -312,7 +476,9 @@ export function disclosureProblems(route, footerText) {
     [FACTS.companyNumber, 'the registered number (reg. 25(2)(b))'],
     [FACTS.registeredOffice, 'the registered office (reg. 25(2)(c))'],
     [FACTS.contactEmail, 'an email address (e-commerce regs reg. 6(1)(c))'],
-    [FACTS.contactPhone, 'the published telephone number (GS-O004)'],
+    // Presence only. The footer renders it as text at `GS-R001-R` — see `Footer.tsx` — so
+    // this asserts the string is there, and question 3 asserts nothing links it `tel:`.
+    [FACTS.contactPhone, 'the published contact number (GS-O004)'],
   ];
   for (const [value, why] of required) {
     if (!t.includes(value)) {

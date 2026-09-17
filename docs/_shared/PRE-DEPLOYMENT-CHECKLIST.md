@@ -147,7 +147,39 @@ reworded, never `[SEED]`. Do not delete them with the seed.
 |---|---|---|---|
 | E1 | Project and post cards (`3:2`), case-study lead media (`16:9`), portraits (`1:1`), book covers (`2:3`) | `components/content/Placeholder.tsx` — a bordered box with a CSS `repeating-linear-gradient` hatch, drawn from tokens | **Generated block. Written in this repository, no third-party licence involved.** There is no file, no `<img>`, no Sanity asset and no network request |
 | E2 | Call sites | `about/page.tsx:137` (portrait). ~~`work/[slug]/page.tsx:104` (wide), `ProjectGrid.tsx:57` (card)~~ — deleted at `GS-P03` with the portfolio routes | as above |
-| E3 | `public/` | **one file, `500.html`** — no images at all | n/a |
+| E3 | `public/` | ~~**one file, `500.html`** — no images at all~~ — **superseded 17 September 2026 (`GS-R001-R`)**. `public/brand/` now holds the owner's three supplied brand assets | owner-supplied, `GS-O007` |
+| E4 | Header logo, every route | `public/brand/gridsmith-logo.svg`, drawn as a CSS background on `.wordmark::before` — **the owner's file, unmodified**: no recolour, no filter, no mask, no crop | owner-supplied at `GS-R001-R` |
+| E5 | Master background mark, `/` only | `components/master/BackgroundMark.tsx` — the logo's own 8 sphere centres and 6 rod rects, transcribed from the supplied SVG, drawn as 1px `--line` hairlines | geometry owner-supplied; the hairline rendering is this build's, and the static logo is served unmodified |
+
+### The brand assets arrived at `GS-R001-R`, and what they did and did not change
+
+The owner supplied three files on 17 September 2026 — `gridsmith-logo.png` (1536×1536 RGBA),
+`gridsmith-logo-3d.png` (2400×2400 RGBA) and `gridsmith-logo.svg` (vector, `viewBox` 920×920).
+All three carry a real alpha channel and all three are the **mark alone**; none is a wordmark or
+a lockup, and none contains the word "Gridsmith".
+
+**They were verified before use rather than trusted**, because the SVG's own `<desc>` calls
+itself a *"recreation"*. Both PNGs and the SVG were rendered to alpha masks, each normalised to
+its own bounding box, and compared shape to shape: content aspect ratios **1.0293 / 1.0302 /
+1.0302**, shape IoU **0.9624** (PNG vs SVG) and **0.9883** (SVG vs 3D), XOR area 1.84% across
+268 regions — and **zero XOR pixels surviving two erosions**, so every disagreement is a sub-2px
+antialiasing rim rather than a structural difference. `BackgroundMark.tsx` carries the table.
+
+**The SVG is the primary asset for on-page use, on measurement rather than preference.** The
+owner asked that the PNG be primary *unless inspection establishes another is more appropriate*.
+It does: 4,134 bytes against 669,476, resolution-independent, and with the mark occupying 80% of
+its frame against the PNG's 48%. The header logo renders at ~24px on all 77 routes above the
+fold, on a programme where `Q-M16` measured an empty page at 1520ms against Digital's 1600ms
+ceiling.
+
+**`gridsmith-logo-3d.png` is supplied, kept and deliberately unused.** At 3.2MB it belongs
+nowhere on a rendered route. The surface it would suit — an Open Graph social card, which a
+crawler fetches once and a visitor never does — is still open, and it is a **composition
+decision nobody has taken**: background colour, whether the wordmark appears, and safe margins
+are brand choices, not implementation ones. `GS-O007` carries it.
+
+**Group E's original subject is unchanged.** `Placeholder.tsx` still fills every content surface
+with generated geometry, and no photograph was added. The section below stands.
 
 ### Why no Unsplash or Pexels photograph was added, stated plainly because it is a deviation
 

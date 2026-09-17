@@ -5,7 +5,7 @@ import { Numeric } from '@/components/primitives/Numeric';
 import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { PressContactFlow } from '@/components/divisions/press/PressContactFlow';
-import { getCompanyDetails, telHref } from '@/lib/company/companyDetails';
+import { getCompanyDetails, whatsAppHref, smsHref } from '@/lib/company/companyDetails';
 
 export const metadata: Metadata = {
   title: 'Tell us about the book — Gridsmith Press',
@@ -82,17 +82,27 @@ export default async function Page() {
                   and it reaches the same place.
                 </>
               ) : null}
-              {company.contactPhone ? (
-                <>
-                  {' '}
-                  Or call{' '}
-                  <a href={telHref(company.contactPhone)}>
-                    <Numeric>{company.contactPhone}</Numeric>
-                  </a>
-                  .
-                </>
-              ) : null}
             </p>
+            {/* `GS-R001-R`: the number is a message channel, not a call channel. Same wording
+                and same two schemes as `/contact` — the pages are one decision, not two. */}
+            {company.contactPhone ? (
+              <p>
+                {'The same number takes '}
+                <a
+                  href={whatsAppHref(company.contactPhone)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+                {' and '}
+                <a href={smsHref(company.contactPhone)}>text messages</a>
+                {': '}
+                <Numeric>{company.contactPhone}</Numeric>. Both reach the same place as the
+                form.
+              </p>
+            ) : null}
           </Prose>
         </Container>
       </Section>

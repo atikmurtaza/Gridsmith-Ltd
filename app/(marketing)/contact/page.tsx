@@ -5,7 +5,7 @@ import { Numeric } from '@/components/primitives/Numeric';
 import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { ContactForm } from '@/components/leads/ContactForm';
-import { getCompanyDetails, telHref } from '@/lib/company/companyDetails';
+import { getCompanyDetails, whatsAppHref, smsHref } from '@/lib/company/companyDetails';
 
 export const metadata: Metadata = {
   title: 'Tell us what you need — Gridsmith Ltd',
@@ -41,12 +41,22 @@ export const metadata: Metadata = {
  * owner authorises no guaranteed response time and no SLA — and every surface that says
  * anything about timing moved with it because none of them holds its own copy.
  *
- * ## The phone number, added at `GS-O004`
+ * ## The number is a message channel, not a call channel — `GS-R001-R`
  *
- * The heading is "Or reach us directly" rather than "Or just email us" because there are now
- * two routes. **No opening hours appear beside it**: the singleton no longer has the field,
- * and a number published without hours is the honest form of a number nobody has committed
- * hours to.
+ * `GS-O004` published the number and linked it `tel:`. **That limb is superseded.** The number
+ * is unchanged and still published; what is withdrawn is the invitation to ring it. Nobody has
+ * committed to answering a call, there are no published hours and there never will be
+ * (`GS-O004`, unchanged), and *"We typically respond within 48 hours"* is a sentence about
+ * asynchronous contact — it sits correctly beside WhatsApp and SMS and incoherently beside a
+ * telephone.
+ *
+ * So the number is offered as **WhatsApp and text message**, each named, each linked with the
+ * scheme that channel actually uses. `check:company` question 3 refuses any `tel:` href and any
+ * "call us" wording on any route, and the strike is registered in `scripts/struck-rules.mjs`.
+ *
+ * **SMS is listed alongside WhatsApp rather than instead of it** because `sms:` does nothing on
+ * most desktop browsers. Neither is ever the only route on the page: the form is above it and
+ * the email address is beside it, and reg. 6(1)(c) is satisfied by the email regardless.
  */
 export default async function Page() {
   const company = await getCompanyDetails();
@@ -96,17 +106,25 @@ export default async function Page() {
                   and it reaches the same place.
                 </>
               ) : null}
-              {company.contactPhone ? (
-                <>
-                  {' '}
-                  Or call{' '}
-                  <a href={telHref(company.contactPhone)}>
-                    <Numeric>{company.contactPhone}</Numeric>
-                  </a>
-                  .
-                </>
-              ) : null}
             </p>
+            {company.contactPhone ? (
+              <p>
+                {'The same number takes '}
+                <a
+                  href={whatsAppHref(company.contactPhone)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+                {' and '}
+                <a href={smsHref(company.contactPhone)}>text messages</a>
+                {': '}
+                <Numeric>{company.contactPhone}</Numeric>. Both reach the same place as the
+                form.
+              </p>
+            ) : null}
           </Prose>
         </Container>
       </Section>

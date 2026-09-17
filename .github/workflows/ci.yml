@@ -318,5 +318,12 @@ jobs:
       # them. The 17px reading in particular cannot be taken from source — --text-base is a
       # clamp that is 16px at 375px and 17px near 1440px, so a source check that found the
       # token named would have called the phone rendering a pass.
+      #
+      # check:mark:field shares the same server because its subject is the served `/` at seven
+      # viewport/motion combinations. GS-R001-R: the Master background mark must be absent below
+      # 768px, static at 768-1023 and under prefers-reduced-motion, and animated at 1024+ — and
+      # the animated case reads the RENDERED transform at 50% scroll rather than the animation's
+      # own report, because an inactive scroll timeline reports playState "running" and renders
+      # nothing. That defect shipped and was caught by this gate; see its docstring.
       - name: axe + security headers + statutory record + responsive and legal checks
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company"
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company" "npm run check:mark:field"

@@ -26,6 +26,15 @@ import styles from './master.module.css';
  * is no second copy of it anywhere on this site**, which is the whole reason it is fetched here
  * rather than typed. Monospace, because the convention across all four themes is that monospace
  * marks anything verifiable, and a registered number is the most checkable fact available.
+ *
+ * **The link text changed at `GS-R001-R` and the block did not.** It read *"How the company is
+ * structured, and how to check it"*, which pointed at `/about`'s *"The checkable facts"*
+ * section — a table of the registered particulars presented as a credibility argument. That
+ * section is gone: the owner's decision is that incorporation is not a selling point, and every
+ * competitor has a company number. **This block survives the same decision** because it is not
+ * making that argument: it states which legal entity a client is contracting with, in prose, in
+ * one sentence, because getting that wrong has contractual consequences. The distinction
+ * `GS-R001-R` §6 draws is between a **disclosure** and a **pitch**, and this is the first.
  */
 export async function GroupStructure() {
   const company = await getCompanyDetails();
@@ -50,7 +59,7 @@ export async function GroupStructure() {
             </p>
           </Prose>
           <p className={styles.blockMore}>
-            <Link href="/about">How the company is structured, and how to check it</Link>
+            <Link href="/about">More about how Gridsmith is put together</Link>
           </p>
         </div>
       </Container>

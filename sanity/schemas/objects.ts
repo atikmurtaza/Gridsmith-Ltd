@@ -1,4 +1,4 @@
-import { defineField, defineType } from 'sanity';
+import { defineArrayMember, defineField, defineType } from 'sanity';
 import { CANONICAL_TITLES } from '../../lib/process/canonical.ts';
 
 /** `SCHEMA-CORE.md` §2. One definition, shared by every division — never duplicated. */
@@ -138,6 +138,66 @@ export const processStep = defineType({
   ],
 });
 
+/**
+ * An editorial brief — `GS-R001-R`, the Insights content model.
+ *
+ * **This is not an article and must never render as one.** The owner writes Insights
+ * personally; what the CMS holds until then is the *preparation* for a piece, not the piece.
+ * `GS-R001` shipped nine agent-authored posts marked `[SEED]` and the owner rejected them as
+ * editorial foundations — the objection was not the marker, it was that a generated article
+ * presented as thought leadership is fake whatever it is labelled.
+ *
+ * So the brief lives in its own field rather than in `body`. That separation is the safety
+ * property: a `status` flipped to `published` on a post whose `body` is empty publishes an
+ * empty article, which is visible; a brief written into `body` would publish as the article
+ * itself, which is not. `check:editorial` asserts the absence of brief text on served pages.
+ *
+ * Every field is an internal planning note. None of it is public copy and none of it is a
+ * claim about Gridsmith — which is why nothing here needs owner approval to exist.
+ */
+export const editorialBrief = defineType({
+  name: 'editorialBrief',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'premise',
+      type: 'text',
+      rows: 3,
+      description: 'What the piece argues, in one or two sentences.',
+    }),
+    defineField({
+      name: 'reader',
+      type: 'string',
+      description: 'Who this is for — the specific person, not "businesses".',
+    }),
+    defineField({
+      name: 'centralQuestion',
+      type: 'text',
+      rows: 2,
+      description: 'The question the reader arrives with and should leave answered.',
+    }),
+    defineField({
+      name: 'arguments',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      description: 'The points to make, in no particular order yet.',
+    }),
+    defineField({
+      name: 'structure',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      description: 'A suggested section order. A starting point, not a contract.',
+    }),
+    defineField({
+      name: 'research',
+      type: 'array',
+      of: [defineArrayMember({ type: 'string' })],
+      description:
+        'Facts to establish before drafting. Anything here is unverified until it is answered — it is a question, never a claim.',
+    }),
+  ],
+});
+
 export const objectTypes = [
   deliverable,
   metric,
@@ -145,4 +205,5 @@ export const objectTypes = [
   protectedImage,
   protectedVideo,
   processStep,
+  editorialBrief,
 ];
