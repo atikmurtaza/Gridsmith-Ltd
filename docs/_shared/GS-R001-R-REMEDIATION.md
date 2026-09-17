@@ -247,6 +247,49 @@ to describe the measurement instead of quoting a colour function. **No exemption
 
 ---
 
+### 5.5 CI, Lighthouse and Vercel on the final commit
+
+**CI run `35287686645` (branch) and `35287688925` (main), both `success` on `567a33da`** — 43
+steps, both Lighthouse axes and the full served chain included. The earlier `92ec2065` pair
+(`35285089008`, `35285096986`) were also `success`; the final commit is what these numbers are.
+
+| Axis | route | perf | a11y | b-p | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|
+| Desktop | `/` | **1.00** | **1.00** | 0.96 | 630ms | **0.000** | **0ms** |
+| Desktop | `/design` · `/digital` · `/press` | **1.00** | **1.00** | 0.96 | 574–583ms | **0.000** | **0ms** |
+| Mobile (4G, 4× CPU) | `/` | 0.99 | **1.00** | 0.96 | 1638ms | **0.000** | 79ms |
+| Mobile | `/design` · `/digital` · `/press` | 0.99 | **1.00** | 0.96 | 1590–1612ms | **0.000** | 77–85ms |
+
+Every LCP is inside its ceiling (`/` 1800ms, `/digital` 1750ms, `/design` and `/press` 2000ms),
+CLS is **0.000** everywhere against 0.02–0.05, and TBT is 77–85ms against 150–200ms. `seo` reads
+0.66 by design on a non-indexable build and is not asserted as a category — `GS-R001` §5.3.
+
+**TBT moved 38–45ms → 77–85ms against `GS-R001`, and this is reported rather than explained
+away.** Two things bear on it and neither is dismissed:
+
+- The runner was **slower**: `benchmarkIndex` **2410** (range 1967–2444) against `GS-R001`'s
+  **3110** (range 2635–3262). That is roughly 22% less CPU, and `lhci-report` prints the figure
+  for exactly this comparison.
+- **No client JavaScript was added.** `check-bundle-size` reports the homepage delta unchanged at
+  **1.9KB of 15KB**, so a script regression is ruled out by measurement rather than by argument.
+
+A 22% slower runner does not obviously account for a doubling, so **the honest reading is that
+some of it may be the new layer** — scroll-timeline animations are registered at load and
+`perspective` creates a compositing layer, both of which cost main-thread work a navigation run
+can see. It is far inside the ceiling and the gate passed. **Treat it as a number to watch at
+the next run with a comparable `benchmarkIndex`**, not as settled either way.
+
+**Vercel.** The branch push produced preview `dpl_9CDHUCMj8sRYHMP4yULmdu1EwkBj`, target `null`,
+state **`READY`**, at
+`gridsmith-ltd-git-staging-gs-r001-b2ffc5-atikmurtazas-projects.vercel.app`. Measured: **HTTP 302
+to Vercel SSO**, and the redirect itself carries `x-robots-tag: noindex`. The `main` push
+produced production-target `dpl_7f8QhJQTGRanzwZQP4j2tiVLc2Vs`; the previous one on `92ec2065`
+ended **`ERROR`**, as every production-target build since `GS-P00` has — `check:launch` refusing
+the empty production dataset through the `prebuild` hook, which is `GS-T005` and is the gate
+working. **`gridsmith.uk` still answers 200 from Hostinger (`Server: hcdn`), unchanged.**
+
+---
+
 ## 6. `check:struck` refused a history rewrite, correctly
 
 `GS-R001-R-SEED-POSTS` went red on `master/PROJECT-TRACKER.md`'s `S-01` row — *"45 FAQs, 9 posts,

@@ -29,7 +29,19 @@ candidate anybody can evaluate.
 **CI/build:** local **46-gate** static chain PASS, clean production build on a wiped `.next`,
 bundle budgets, secrets lint and the full served chain PASS. `check:axe` **76 analyses over 19
 routes, zero violations, 0 unresolved**; `check:company` is **9 questions**. `npm audit --omit=dev` clean; **no dependency added**.
-Lighthouse cannot run on Windows and is CI's to answer.
+Lighthouse cannot run on Windows and is CI's to answer — **and it answered.** Runs
+`35287686645` (branch) and `35287688925` (main), both **`success`** on `567a33da`, 43 steps,
+both axes. Desktop **1.00 perf / 1.00 a11y / CLS 0.000 / TBT 0ms** on all four routes; mobile
+0.99 / 1.00 / CLS 0.000 / TBT 77–85ms, every LCP inside its ceiling. TBT moved 38–45ms → 77–85ms
+against `GS-R001` on a runner with `benchmarkIndex` 2410 against 3110 — a slower machine, and no
+client JS was added (delta unchanged at 1.9KB of 15KB), but the slowdown does not obviously
+account for a doubling. Recorded as a number to watch, not as settled.
+
+**Staging:** preview `dpl_9CDHUCMj8sRYHMP4yULmdu1EwkBj` is **`READY`** at
+`gridsmith-ltd-git-staging-gs-r001-b2ffc5-atikmurtazas-projects.vercel.app` — HTTP 302 to Vercel
+SSO with `x-robots-tag: noindex` on the redirect. The production-target build ended `ERROR` on
+the empty production dataset, as every one since `GS-P00` has (`GS-T005`, the gate working).
+**`gridsmith.uk` is unchanged and still served by Hostinger.**
 
 **What `GS-R001-R` changed.** Visitor-visible `[SEED]` eliminated and **gate-enforced on served
 text** — the assertion nothing had, which found a fifth route (`/press/path-finder`) that no

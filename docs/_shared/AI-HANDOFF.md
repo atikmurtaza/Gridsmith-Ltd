@@ -200,7 +200,17 @@ because it argued that being incorporated is a reason to hire Gridsmith.
 `verify:static` **46 gates PASS** · `verify:build` PASS on a wiped `.next` (68 routes, all inside
 delta budgets, master **1.9KB of 15KB**) · `verify:served` **15 commands PASS** · `check:axe`
 **76 analyses, zero violations, 0 unresolved** · `check:mark:field` 7 cases PASS · `npm audit
---omit=dev` clean · no dependency added. Lighthouse is CI's — it cannot run on Windows.
+--omit=dev` clean · no dependency added.
+
+**CI runs `35287686645` and `35287688925`, both `success` on `567a33da`**, 43 steps, both
+Lighthouse axes. Desktop **1.00 perf / 1.00 a11y / CLS 0.000 / TBT 0ms** on all four routes;
+mobile 0.99 / 1.00 / CLS 0.000 / TBT 77–85ms with every LCP inside its ceiling. TBT moved
+38–45ms → 77–85ms on a slower runner (`benchmarkIndex` 2410 against 3110) with no client JS
+added — reported as a number to watch rather than attributed.
+
+**Staging:** preview `dpl_9CDHUCMj8sRYHMP4yULmdu1EwkBj`, **`READY`**, 302 to Vercel SSO with
+`x-robots-tag: noindex`. Production-target `ERROR` on the empty production dataset as expected
+(`GS-T005`). `gridsmith.uk` unchanged.
 
 Counts that moved, each deliberately, which is what proves they are counted rather than printed:
 gates 45 → **46**; `check:company` 6 → **9** questions and its self-test 35 → **66** cases; `check:struck` 16 → **18** rules
