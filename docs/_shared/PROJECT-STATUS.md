@@ -11,7 +11,7 @@ RE-REVIEW**, and is not closeable by an agent.
 **Current task:** `GS-R001-R` / `GS-O008` — staging content, brand and experience remediation.
 Evidence: `docs/_shared/GS-R001-R-REMEDIATION.md`
 
-**Current commit:** `82d55ede` at task start; see `AI-HANDOFF.md` for the ending commit.
+**Current commit:** `82d55ede` at task start; **`e59903ab` at end** — one commit, the phase.
 
 **Branches:** `staging/gs-r001-r-remediation` carries the candidate and is what Vercel builds as
 a **preview**; `main` is fast-forwarded to the same commit so the programme record is where the

@@ -17,7 +17,7 @@
 ## Repository state
 
 - **Starting commit:** `82d55ede`
-- **Ending commit:** see `PROJECT-STATUS.md`
+- **Ending commit:** `e59903ab` — one commit, the phase
 - **Branches:** `staging/gs-r001-r-remediation` carries the candidate and is what Vercel builds as
   a **preview**; `main` is fast-forwarded to the same commit
 - **Starting working tree:** clean, 0 ahead / 0 behind `origin/main`, no unrelated owner work
