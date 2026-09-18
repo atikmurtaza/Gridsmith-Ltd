@@ -35,6 +35,12 @@ Record: `GS-R001-M-MASTER-REDESIGN.md` §R1.
 question in one run, the other two red alone (§R1.9); s5, s10 and h5 re-proven after the final
 layout change (§R1.10).
 
+**R1 outcome:** commit `555cbf1d`; **CI `35397951081` `success`**, every step. Lighthouse `/`
+(GPU-less runner, so the fallback path): desktop **1.00 / LCP 554ms / TBT 0ms / CLS 0.000**, mobile
+**0.99 / LCP 1,636ms / TBT 81ms / CLS 0.000**. Preview `dpl_YWENAtfds2QUp8knd6UrcDFJXimu` **READY**
+(target `null`) at the same branch alias — 302 to Vercel SSO, `noindex`. `main` untouched at
+`fbecbe01`; `gridsmith.uk` unchanged on Hostinger.
+
 ## Repository state
 
 - **Starting commit:** `fbecbe01`, `main`, clean, 0 ahead / 0 behind
