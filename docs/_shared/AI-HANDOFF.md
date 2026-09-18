@@ -20,8 +20,19 @@
 - **Branch:** `staging/gs-r001-m-master-redesign` (Vercel preview). **`main` not pushed** — it stays at
   `fbecbe01`; a `main` push starts a production-target build and this phase forbids production
   deployment. Fast-forward it when the owner accepts `/`
-- **Ending commit, CI and staging URL:** recorded in the follow-up docs commit below this line
-  once they exist, as at `GS-R001-R` — not predicted here.
+- **Phase commits:** `07406d60` (the redesign), `c69fcdde` (declines software WebGL — CI's first
+  finding), `e298f576` (fallback as vector shapes — CI's second finding); this record follows.
+- **CI:** run `35308394477` on `07406d60` **failure** (Lighthouse desktop `/` 0.66, TBT 41,960ms);
+  `35314676312` on `c69fcdde` **failure** (mobile LCP 3,385ms); **`35318073725` on `e298f576`
+  `success`**, all steps. Lighthouse, median of 3, on a GPU-less runner — so **the fallback path**,
+  which is what a GPU-less visitor receives: desktop `/` **1.00 perf / 1.00 a11y / LCP 578ms /
+  TBT 0ms / CLS 0.000**; mobile `/` **0.99 / 1.00 / LCP 1,631ms (≤1,800) / TBT 88ms / CLS 0.000**.
+  SEO 0.66 is the deliberate `noindex`. The WebGL path's cost on a real GPU is not lab-measured
+  by anything available to this phase.
+- **Staging:** preview `dpl_HbdjFaGDUSYsEJetzcb3oUuD224J`, **`READY`**, target `null`, at
+  **`https://gridsmith-ltd-git-staging-gs-r001-7c084d-atikmurtazas-projects.vercel.app/`** — HTTP
+  302 to Vercel SSO with `x-robots-tag: noindex`. `gridsmith.uk`: HTTP 200, `platform: hostinger`,
+  unchanged.
 
 ## Scope held
 

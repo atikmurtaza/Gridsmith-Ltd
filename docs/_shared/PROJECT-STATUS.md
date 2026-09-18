@@ -33,7 +33,14 @@ social or review-safety work reopened.
 (68 routes, `/` delta **4.4KB of 15KB**, lazy scene **5.2KB of 8KB**); `verify:served` PASS —
 `check:axe` **zero violations, 0 unresolved**, `check:master:scene` **all 9 questions at 5 widths ×
 6 chapters**, `check:mark:cls` **0.0000** at 375/768/1440. `npm audit --omit=dev`: 0
-vulnerabilities. Lighthouse is CI's to answer (Windows), recorded in `AI-HANDOFF.md`.
+vulnerabilities. **CI `35318073725` `success`** on `e298f576` after two red runs whose findings
+changed the design (software WebGL froze the page; an image fallback became a late LCP).
+Lighthouse `/` on the GPU-less runner (the fallback path): desktop **1.00 / LCP 578ms / TBT 0ms**,
+mobile **0.99 / LCP 1,631ms / TBT 88ms**, CLS 0.000 both.
+
+**Staging:** `dpl_HbdjFaGDUSYsEJetzcb3oUuD224J` **READY** at
+`gridsmith-ltd-git-staging-gs-r001-7c084d-atikmurtazas-projects.vercel.app` — SSO-protected,
+`noindex`. `gridsmith.uk` unchanged on Hostinger.
 
 **New owner actions:** `GS-O018` (Press capability gaps), `GS-O019` (Design capability gaps),
 **`GS-O020` — a new Freelancer review arrived and needs reading** (`check:reviews --live` red, by
