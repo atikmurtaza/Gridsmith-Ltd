@@ -688,7 +688,7 @@ if (budgetsCompared === 0) {
  * become eager and is on the LCP path); and it fits `SCENE_BUDGET_KB`.
  *
  * The marker is a comment inside the shader source, which is a string literal the minifier
- * must preserve. 5.2KB at `GS-R001-M`; the ceiling leaves room for tuning, not for a library.
+ * must preserve. 5.0KB at `GS-R001-M`, 5.9KB at R1 (text attenuation, exploded formations); the ceiling leaves room for tuning, not for a library.
  */
 const SCENE_MARKER = 'Capped cylinder, after Inigo Quilez';
 const SCENE_BUDGET_KB = 8;

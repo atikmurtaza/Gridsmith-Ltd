@@ -16,6 +16,9 @@
  *  5. **narrative** — one pose per chapter, and at least four distinct formations. The rejected
  *     `GS-R001-R` animation was *logo → exploded → logo*; this is the assertion that the story
  *     has more than those two states.
+ *  6. **exploded** — R1's exploded view: all 14 pieces present, no two spheres touching and no bar
+ *     touching a sphere, the spread at least 1.8× the assembled mark's, and every piece inside
+ *     1.15× the visible frame, so the mark opens into the screen without leaving it.
  *
  * ## Proving it
  *
@@ -26,6 +29,8 @@
  */
 import {
   CHAPTERS,
+  ROD_RADIUS,
+  SPHERE_RADIUS,
   KEYS_NARROW,
   KEYS_WIDE,
   LOGO_RODS,
@@ -90,6 +95,28 @@ const CHECKS = {
     }
     return worst < 0.05 ? [] : [`a piece jumps ${worst.toFixed(3)} units per 0.001 chapter near ${at.toFixed(3)}`];
   },
+  exploded(keys, poseFn) {
+    const out = [];
+    const i = keys.findIndex((k) => k.form.startsWith('exploded'));
+    if (i < 0) return ['no chapter uses an exploded formation'];
+    const aspect = keys === KEYS_NARROW || keys.narrow ? 0.46 : ASPECT;
+    const p = poseFn(keys, i, ZERO, TAN, aspect);
+    const pieces = [...p.spheres, ...p.rodA.map((a, k) => a.map((v, j) => (v + p.rodB[k][j]) / 2))];
+    if (pieces.length !== 14) out.push(`${pieces.length} pieces, not 14`);
+    let minSS = Infinity;
+    for (let a = 0; a < 8; a++) for (let b = a + 1; b < 8; b++) minSS = Math.min(minSS, d(p.spheres[a], p.spheres[b]));
+    if (minSS < 2 * SPHERE_RADIUS) out.push(`two spheres touch (${minSS.toFixed(2)} apart)`);
+    let minRS = Infinity;
+    pieces.slice(8).forEach((m) => p.spheres.forEach((sp) => (minRS = Math.min(minRS, d(m, sp)))));
+    if (minRS < SPHERE_RADIUS + ROD_RADIUS) out.push(`a bar touches a sphere (${minRS.toFixed(2)})`);
+    const spread = (pts) => Math.max(...pts.map((q) => Math.hypot(q[0] - pts.reduce((s, r) => s + r[0], 0) / pts.length, q[1] - pts.reduce((s, r) => s + r[1], 0) / pts.length)));
+    const ratio = spread(p.spheres) / spread(LOGO_SPHERES);
+    if (ratio < 1.8) out.push(`the spread is only ${ratio.toFixed(2)}× the assembled mark`);
+    const halfH = (z) => (p.dist - z) * TAN;
+    const worst = Math.max(...pieces.map((q) => Math.max(Math.abs(q[0]) / (halfH(q[2]) * aspect), Math.abs(q[1]) / halfH(q[2]))));
+    if (worst > 1.15) out.push(`a piece lands at ${worst.toFixed(2)}× the visible half-frame`);
+    return out;
+  },
   narrative(keys) {
     const forms = new Set(keys.map((k) => k.form));
     const out = [];
@@ -118,6 +145,8 @@ const BROKEN = {
     },
   },
   narrative: { keys: KEYS_WIDE.map((k) => ({ ...k, form: k.form === 'chain' || k.form === 'ring' ? 'split' : k.form })), poseFn: pose },
+  // The joint close-up the owner rejected: the exploded chapter put back to the assembled logo.
+  exploded: { keys: KEYS_WIDE.map((k) => (k.form === 'exploded' ? { ...k, form: 'split' } : k)).map((k, i) => (i === 2 ? { ...k, form: 'exploded', dist: 4 } : k)), poseFn: pose },
 };
 
 const problems = [];
@@ -132,6 +161,20 @@ for (const [name, check] of Object.entries(CHECKS)) {
     proofs += 1;
     console.log(`  proof  ${name.padEnd(11)} red on its broken fixture: ${broken[0]}`);
   }
+}
+
+// The exploded check has four branches; one red is not evidence for the other three (CLAUDE.md).
+const at = (keys) => keys.findIndex((k) => k.form === 'exploded');
+const EXPLODED_BRANCHES = [
+  ['touching spheres', 'two spheres touch', (...a) => { const p = pose(...a); return a[1] === at(a[0]) ? { ...p, spheres: p.spheres.map((q, k) => (k === 1 ? p.spheres[0] : q)) } : p; }],
+  ['bar on a sphere', 'a bar touches a sphere', (...a) => { const p = pose(...a); if (a[1] !== at(a[0])) return p; const c = p.spheres[0]; return { ...p, rodA: p.rodA.map((q, k) => (k === 0 ? [c[0] - 1, c[1], c[2]] : q)), rodB: p.rodB.map((q, k) => (k === 0 ? [c[0] + 1, c[1], c[2]] : q)) }; }],
+  ['spread', 'the spread is only', (keys, i, ...rest) => pose(keys.map((k, j) => (j === i && k.form === 'exploded' ? { ...k, form: 'logo' } : k)), i, ...rest)],
+  ['bounds', 'visible half-frame', (keys, i, ...rest) => pose(keys.map((k, j) => (j === i && k.form === 'exploded' ? { ...k, dist: 4 } : k)), i, ...rest)],
+];
+for (const [label, message, poseFn] of EXPLODED_BRANCHES) {
+  const got = CHECKS.exploded(KEYS_WIDE, poseFn);
+  if (!got.some((m) => m.includes(message))) problems.push(`exploded/${label}: GATE DEFECT — the broken fixture did not produce "${message}" (got: ${got.join('; ') || 'nothing'})`);
+  else console.log(`  proof  exploded/${label.padEnd(16)} red: ${got.find((m) => m.includes(message))}`);
 }
 
 // The model's own geometry must still be the SVG's: 8 spheres, 6 bars, bar ends on spheres.

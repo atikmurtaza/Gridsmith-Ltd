@@ -8,7 +8,11 @@ coloured division boxes and the line-art background animation. `GS-R001-M` redes
 homepage only. **`GS-O008` remains OPEN — AWAITING OWNER RE-REVIEW**, and is not closeable by an
 agent.
 
-**Current task:** `GS-R001-M` / `GS-O008` — Master experience redesign.
+**Current task:** `GS-R001-M` / `GS-O008` — Master experience redesign, **remediation round R1
+complete**: fluid hero (3–4 lines and the CTA above the fold at 14 desktop/zoom sizes), an
+exploded-view chapter, no opaque surface over the scene on `/` (footer, header and mobile veils
+gone; the scene dims only behind text), the review cylinder restored and redesigned, `GS-O020`
+closed as PUBLISH.
 Evidence: `docs/_shared/GS-R001-M-MASTER-REDESIGN.md`
 
 **Current commit:** `fbecbe01` at task start; the phase commit and CI are recorded in
@@ -42,9 +46,8 @@ mobile **0.99 / LCP 1,631ms / TBT 88ms**, CLS 0.000 both.
 `gridsmith-ltd-git-staging-gs-r001-7c084d-atikmurtazas-projects.vercel.app` — SSO-protected,
 `noindex`. `gridsmith.uk` unchanged on Hostinger.
 
-**New owner actions:** `GS-O018` (Press capability gaps), `GS-O019` (Design capability gaps),
-**`GS-O020` — a new Freelancer review arrived and needs reading** (`check:reviews --live` red, by
-design; the agent did not move the pinned set).
+**New owner actions:** `GS-O018` (Press capability gaps), `GS-O019` (Design capability gaps).
+**`GS-O020` CLOSED — PUBLISH** at R1; the pinned review set is 13 / 11 / 2.
 
 **RC status:** `GS-R001`'s **TECHNICALLY PASS** stands. **Production readiness: NOT READY.**
 

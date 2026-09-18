@@ -17,6 +17,8 @@
  * | 6 | No horizontal overflow at any chapter. |
  * | 7 | **Fallback** — with WebGL unavailable, the owner's static logo is shown and the page is intact. |
  * | 9 | **The fallback is never the LCP element** — CI measured mobile LCP 3,385ms when the fallback was a background image that appeared after the capability check. |
+ * | 10 | **Is the scene unobscured by the page's own surfaces?** (R1 — the owner could not see it on mobile behind full-width veils, nor at the bottom behind the footer.) The share of the scene's visible gold that survives with the page's backgrounds drawn — text made transparent, so dimming behind glyphs is not counted against it. Measured at every chapter and at the very bottom, footer included. |
+ * | 11 | **Does the exploded chapter open the mark into the frame?** (R1) The rendered gold's bounding box at the exploded chapter against the hero's. |
  * | 8 | **Software WebGL is declined** — on this GPU-less browser, `/` without the test opt-in falls back, and the page carries no long main-thread task (CI measured TBT 41,960ms before this existed). |
  *
  * ## Why question 5 exists, and why axe cannot answer it
@@ -43,10 +45,21 @@ const CHAPTERS = ['hero', 'studios', 'context', 'process', 'reviews', 'close'];
 const VIEWPORTS = [
   [2560, 1440],
   [1440, 900],
+  [1280, 720],
   [1024, 768],
   [768, 1024],
+  // R1: the owner's phone widths.
+  [430, 932],
+  [412, 915],
+  [390, 844],
   [375, 812],
+  [360, 800],
+  [320, 568],
 ];
+/** Share of the scene's visible gold that must survive the page's own backgrounds (question 10). */
+const UNOBSCURED_FLOOR = 0.6;
+/** The exploded chapter's rendered gold must span at least this multiple of the hero's (question 11). */
+const EXPLODED_SPAN = 1.5;
 /** Share of the viewport that must be gold at each chapter for the mark to count as visible. */
 const VISIBLE_FLOOR = 0.01;
 /** Consecutive chapters must differ by at least this share of the viewport. */
@@ -94,7 +107,10 @@ async function analyse(pngBase64, boxes) {
         ls.sort((a, b) => a - b);
         return ls.length ? ls[Math.floor(ls.length * 0.98)] : 0;
       });
-      return { gold: gold / (width * height), mask: Array.from(mask), p98 };
+      let x0 = width, y0 = height, x1 = 0, y1 = 0;
+      for (let p = 0; p < mask.length; p++) if (mask[p]) { const x = p % width, y = (p / width) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+      const bbox = x1 >= x0 ? ((x1 - x0) * (y1 - y0)) / (width * height) : 0;
+      return { gold: gold / (width * height), mask: Array.from(mask), p98, bbox };
     },
     pngBase64,
     boxes,
@@ -142,6 +158,7 @@ async function openHome(width, height, { reduced = false, noWebGL = false, optIn
 
 async function toChapter(page, name) {
   await page.evaluate((n) => {
+    if (n === 'bottom') return scrollTo(0, document.documentElement.scrollHeight);
     const el = document.querySelector(`[data-chapter="${n}"]`);
     const r = el.getBoundingClientRect();
     scrollTo(0, r.top + scrollY + Math.min(r.height, innerHeight) / 2 - innerHeight / 2);
@@ -153,7 +170,9 @@ async function toChapter(page, name) {
 const TEXT_BOXES = () => {
   const lin = (v) => ((v /= 255) <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
   const out = [];
-  const walker = document.createTreeWalker(document.querySelector('main'), NodeFilter.SHOW_TEXT);
+  // `main` and, since R1 made it transparent over the scene on `/`, the footer.
+  for (const root of [document.querySelector('body > header'), document.querySelector('main'), document.querySelector('body > footer')].filter(Boolean)) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   while (walker.nextNode()) {
     const node = walker.currentNode;
     if (!node.textContent.trim()) continue;
@@ -165,6 +184,11 @@ const TEXT_BOXES = () => {
     range.selectNodeContents(node);
     for (const r of range.getClientRects()) {
       if (r.bottom < 0 || r.top > innerHeight || r.width < 2) continue;
+      // Only text that is actually painted on top at its own position. A review card turned away
+      // from the reader is backface-hidden — its text has boxes and no pixels — and the first R1
+      // run measured those at 1.00:1. Text covered by an opaque surface is question 10's subject.
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      if (!hit || !(el === hit || el.contains(hit) || hit.contains(el))) continue;
       const cs = getComputedStyle(el);
       const [R, G, B] = cs.color.match(/\d+(\.\d+)?/g).map(Number);
       const size = parseFloat(cs.fontSize);
@@ -176,6 +200,7 @@ const TEXT_BOXES = () => {
         text: node.textContent.trim().slice(0, 40),
       });
     }
+  }
   }
   return out;
 };
@@ -216,8 +241,10 @@ for (const [width, height] of VIEWPORTS) {
   }
 
   let previous = null;
+  let heroBox = null;
   const row = [];
-  for (const chapter of CHAPTERS) {
+  // `bottom` is the end of the page, footer in view — where the owner saw the mark cut off.
+  for (const chapter of [...CHAPTERS, 'bottom']) {
     await toChapter(page, chapter);
 
     // 6 — overflow.
@@ -236,8 +263,14 @@ for (const [width, height] of VIEWPORTS) {
       problems.push(`3 ${tag} ${chapter}: the mark covers ${(bare.gold * 100).toFixed(2)}% of the viewport, under the ${VISIBLE_FLOOR * 100}% floor — it is there and nobody would see it`);
     }
 
-    // 4 — moves between chapters.
-    if (previous) {
+    // 11 — the exploded chapter opens the mark into the frame.
+    if (chapter === 'hero') heroBox = bare.bbox;
+    if (chapter === 'context' && heroBox && bare.bbox < heroBox * EXPLODED_SPAN) {
+      problems.push(`11 ${tag} context: the exploded mark spans ${(bare.bbox * 100).toFixed(1)}% of the frame against the hero's ${(heroBox * 100).toFixed(1)}% — not opened into the space`);
+    }
+
+    // 4 — moves between chapters. The bottom holds the close's pose on purpose, so it is exempt.
+    if (previous && chapter !== 'bottom') {
       let diff = 0;
       for (let i = 0; i < bare.mask.length; i++) diff += bare.mask[i] !== previous[i];
       const share = diff / bare.mask.length;
@@ -246,8 +279,18 @@ for (const [width, height] of VIEWPORTS) {
     previous = bare.mask;
 
     // 5 — every text box against the scene behind it, glyphs transparent.
-    await page.addStyleTag({ content: 'main *, main *::before, main *::after { color: transparent !important; text-decoration-color: transparent !important; }' });
+    await page.addStyleTag({ content: ':is(header, main, footer) *, :is(header, main, footer) *::before, :is(header, main, footer) *::after { color: transparent !important; text-decoration-color: transparent !important; }' });
     const behind = await analyse(await page.screenshot({ encoding: 'base64' }), boxes.map((b) => b.box));
+
+    // 10 — the page's own surfaces leave the scene visible. Same frame, text transparent: what is
+    // left between the reader and the scene is backgrounds, veils and panels.
+    let kept = 0;
+    let seen = 0;
+    for (let i = 0; i < bare.mask.length; i++) if (bare.mask[i]) { seen++; if (behind.mask[i]) kept++; }
+    const unobscured = seen ? kept / seen : 1;
+    if (seen && unobscured < UNOBSCURED_FLOOR) {
+      problems.push(`10 ${tag} ${chapter}: only ${(unobscured * 100).toFixed(0)}% of the visible scene survives the page's own backgrounds — something opaque is covering it`);
+    }
     await page.evaluate(() => document.querySelectorAll('style').forEach((s) => s.textContent.includes('color: transparent !important') && s.remove()));
     let worst = Infinity;
     boxes.forEach((b, i) => {
@@ -255,7 +298,7 @@ for (const [width, height] of VIEWPORTS) {
       if (r < worst) worst = r;
       if (r < b.min) problems.push(`5 ${tag} ${chapter}: "${b.text}" measures ${r.toFixed(2)}:1 over the scene, needs ${b.min}:1`);
     });
-    row.push(`${chapter} ${(bare.gold * 100).toFixed(1)}%/${boxes.length ? worst.toFixed(1) : '—'}`);
+    row.push(`${chapter} ${(bare.gold * 100).toFixed(1)}%/${Math.round(unobscured * 100)}%/${boxes.length ? worst.toFixed(1) : '—'}`);
   }
   log.push(`  ${tag.padEnd(10)} ${row.join('  ')}`);
   await page.close();
@@ -326,11 +369,11 @@ for (const [width, height] of VIEWPORTS) {
 
 await browser.close();
 
-console.log('check-master-scene: gold share of viewport / worst text contrast over the scene, per chapter\n');
+console.log('check-master-scene: gold share of viewport / share unobscured by the page / worst text contrast, per position\n');
 for (const l of log) console.log(l);
 if (problems.length > 0) {
   console.error(`\ncheck-master-scene: ${problems.length} problem(s)\n`);
   for (const p of problems) console.error(`  ${p}`);
   process.exit(1);
 }
-console.log(`\ncheck-master-scene: ${VIEWPORTS.length} viewports × ${CHAPTERS.length} chapters, reduced motion, no-WebGL and software-WebGL — all 9 questions pass\n`);
+console.log(`\ncheck-master-scene: ${VIEWPORTS.length} viewports × ${CHAPTERS.length} chapters, reduced motion, no-WebGL and software-WebGL — all 11 questions pass\n`);

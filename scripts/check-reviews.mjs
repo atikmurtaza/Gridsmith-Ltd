@@ -182,8 +182,13 @@ say(`  3. request: https, no credential marker in code, filtered to user ${FREEL
  *
  * Measured 16 September 2026: the API returns 12, ten are publishable, and two name
  * *Varnika Software PVT* / *Varnika Pvt* and are withheld by rule.
+ *
+ * **Moved to 13 / 11 / 2 on 18 September 2026 by owner decision `GS-O020: PUBLISH`.** One new
+ * review arrived — James, 5/5, 17 September 2026, Illustration — and this gate went red until a
+ * person had read it, which is what it is for. The owner read it and approved it. That approval
+ * is for this review only: the next new review turns this red again and needs its own decision.
  */
-const EXPECTED = { total: 12, published: 10, withheld: 2 };
+const EXPECTED = { total: 13, published: 11, withheld: 2 };
 
 let liveLine = '  4. live API: NOT MEASURED — run with --live to read www.freelancer.com';
 

@@ -44,6 +44,15 @@
   border-block-end: var(--border-hairline) solid var(--line);
   background: var(--canvas);
 }
+/* R1 — on `/` only, the header and footer share the homepage's fluid frame, so the page has one
+   left edge at every width (home.module.css `.frame`). No other route is affected. */
+:global(body:has([data-stage="master"])) .headerInner,
+:global(body:has([data-stage="master"])) .footerInner,
+:global(body:has([data-stage="master"])) .statutoryInner {
+  max-width: none;
+  padding-inline: clamp(var(--space-6), 6vw, 9rem);
+}
+
 .headerInner {
   display: flex;
   flex-wrap: wrap;

@@ -114,7 +114,38 @@ const RING: Formation = (() => {
   };
 })();
 
-export const FORMATIONS = { logo: LOGO, split: SPLIT, chain: CHAIN, ring: RING } as const;
+/**
+ * The mark opened into space — an exploded view (R1, replacing the joint close-up the owner
+ * rejected). Every piece keeps its place in the logo's layout, scaled outward from the mark's
+ * centre, so each bar still floats between the two spheres it joins; depth and a bounded tilt
+ * per piece come from fixed tables, so the scatter is designed rather than random. Two
+ * proportions: wide screens spread the pieces sideways, narrow ones spread them down.
+ */
+const SPHERE_Z = [1.2, -0.8, -1.6, 0.9, 0.4, -1.2, 1.6, -0.3];
+const ROD_Z = [0.2, -1.4, 1.0, -0.6, 1.3, -0.9];
+const ROD_TILT: [number, number][] = [[0.5, 0.3], [-0.4, 0.6], [0.3, -0.7], [-0.6, -0.2], [0.2, 0.8], [-0.5, 0.4]];
+function exploded(sx: number, sy: number): Formation {
+  const out = (q: Vec3, z: number): Vec3 => [q[0] * sx, q[1] * sy, z];
+  return {
+    spheres: LOGO_SPHERES.map((q, i) => out(q, SPHERE_Z[i])),
+    rods: LOGO.rods.map((r, k) => ({
+      c: out(r.c, ROD_Z[k]),
+      d: rotate(r.d, [ROD_TILT[k][0], ROD_TILT[k][1], 0]),
+      len: r.len,
+    })),
+  };
+}
+
+export const FORMATIONS = {
+  logo: LOGO,
+  split: SPLIT,
+  exploded: exploded(2.9, 2.0),
+  explodedTall: exploded(1.3, 2.9),
+  chain: CHAIN,
+  ring: RING,
+} as const;
+/** Formations whose pieces drift slightly with scroll while the chapter is read. */
+const FLOATING: FormationName[] = ['exploded', 'explodedTall'];
 export type FormationName = keyof typeof FORMATIONS;
 
 /**
@@ -140,23 +171,24 @@ export const CHAPTERS = ['hero', 'studios', 'context', 'process', 'reviews', 'cl
 export const KEYS_WIDE: Key[] = [
   { form: 'logo', rot: [0.14, -0.55, 0.02], off: [0.5, 0.04], dist: 14, exposure: 1.0, shade: 0.55, edge: 0.5, light: 0, glow: 0.45 },
   { form: 'split', rot: [-0.18, 0.8, 0.1], off: [0.56, 0.0], dist: 14.5, exposure: 0.95, shade: 0.8, edge: 0.6, light: 0.9, glow: 0.3 },
-  { form: 'logo', rot: [0.42, 1.25, 0.22], off: [0.42, -0.05], dist: 5.2, exposure: 0.85, shade: 0.85, edge: 0.62, light: 1.8, glow: 0.25 },
+  { form: 'exploded', rot: [0.16, 0.32, 0.04], off: [0.04, 0.0], dist: 15, exposure: 1.0, shade: 0.2, edge: 0.55, light: 1.8, glow: 0.2 },
   { form: 'chain', rot: [0.3, -0.4, 0.0], off: [0.08, -0.6], dist: 16, exposure: 0.95, shade: 0.7, edge: 0.6, light: 2.6, glow: 0.2 },
-  { form: 'ring', rot: [0.34, 0.0, 0.0], off: [-0.55, -0.86], dist: 27, exposure: 1.0, shade: 0.5, edge: 0.44, light: 3.4, glow: 0.3 },
-  { form: 'logo', rot: [0, 0, 0], off: [0.52, 0.0], dist: 13, exposure: 1.1, shade: 0.5, edge: 0.48, light: 6.28, glow: 0.6 },
+  // R1: top right, beside the heading — the review cylinder now fills the chapter's lower half.
+  { form: 'ring', rot: [0.34, 0.0, 0.0], off: [0.55, 0.42], dist: 18, exposure: 1.0, shade: 0.0, edge: 0.44, light: 3.4, glow: 0.3 },
+  { form: 'logo', rot: [0, 0, 0], off: [0.52, 0.12], dist: 13, exposure: 1.1, shade: 0.35, edge: 0.48, light: 6.28, glow: 0.6 },
 ];
 
 /**
- * Below 1024px there is no free column. The mark sits above the hero and closing copy, and
- * mid-page it travels between sections, where copy blocks carry the stage veil
- * (`--canvas-veil`) so text never sits on bare gold. Same story, same formations.
+ * Below 1024px there is no free column. The mark sits above the hero and closing copy; mid-page
+ * it runs behind the copy at full strength and the renderer dims it only directly behind text
+ * (R1 — the full-width veil bands hid it). Same story; the exploded view spreads downward.
  */
 export const KEYS_NARROW: Key[] = [
-  { form: 'logo', rot: [0.12, -0.5, 0.02], off: [0.0, 0.4], dist: 28, exposure: 1.0, shade: 0.0, edge: 1.2, light: 0, glow: 0.4 },
-  { form: 'split', rot: [-0.18, 0.8, 0.1], off: [0.15, 0.0], dist: 22, exposure: 0.6, shade: 0.0, edge: 1.2, light: 0.9, glow: 0.25 },
-  { form: 'logo', rot: [0.42, 1.25, 0.22], off: [0.2, 0.0], dist: 9, exposure: 0.6, shade: 0.0, edge: 1.2, light: 1.8, glow: 0.2 },
-  { form: 'chain', rot: [0.3, -0.4, 0.0], off: [0.0, 0.0], dist: 17, exposure: 0.6, shade: 0.0, edge: 1.2, light: 2.6, glow: 0.2 },
-  { form: 'ring', rot: [0.3, 0.0, 0.0], off: [0.0, 0.0], dist: 17, exposure: 0.6, shade: 0.0, edge: 1.2, light: 3.4, glow: 0.2 },
+  { form: 'logo', rot: [0.12, -0.5, 0.02], off: [0.0, 0.18], dist: 28, exposure: 1.0, shade: 0.0, edge: 1.2, light: 0, glow: 0.4 },
+  { form: 'split', rot: [-0.18, 0.8, 0.1], off: [0.1, 0.0], dist: 13, exposure: 1.0, shade: 0.0, edge: 1.2, light: 0.9, glow: 0.25 },
+  { form: 'explodedTall', rot: [0.12, 0.28, 0.03], off: [0.0, 0.0], dist: 21, exposure: 0.95, shade: 0.0, edge: 1.2, light: 1.8, glow: 0.2 },
+  { form: 'chain', rot: [0.3, -0.4, 0.0], off: [0.0, -0.42], dist: 9, exposure: 1.0, shade: 0.0, edge: 1.2, light: 2.6, glow: 0.2 },
+  { form: 'ring', rot: [0.3, 0.0, 0.0], off: [0.0, 0.0], dist: 17, exposure: 0.9, shade: 0.0, edge: 1.2, light: 3.4, glow: 0.2 },
   { form: 'logo', rot: [0, 0, 0], off: [0.0, 0.4], dist: 28, exposure: 1.0, shade: 0.0, edge: 1.2, light: 6.28, glow: 0.5 },
 ];
 
@@ -224,7 +256,13 @@ export function pose(
   ];
   const place = (q: Vec3) => add(rotate(q, rot), offset);
 
-  const spheres = fa.spheres.map((s, k) => place(mix(s, fb.spheres[k], t)));
+  // Scroll-linked float while exploded: a small, deterministic drift per piece. Scroll drives
+  // it — there is no clock — so a still page is a still scene.
+  const floatW = (FLOATING.includes(a.form) ? 1 - t : 0) + (FLOATING.includes(b.form) ? t : 0);
+  const drift = (k: number): Vec3 =>
+    scale([Math.sin(clamped * 2.1 + k * 1.3), Math.cos(clamped * 1.7 + k * 0.9), 0.5 * Math.sin(clamped * 1.3 + k)], 0.3 * floatW);
+
+  const spheres = fa.spheres.map((s, k) => place(add(mix(s, fb.spheres[k], t), drift(k))));
   const rodA: Vec3[] = [];
   const rodB: Vec3[] = [];
   fa.rods.forEach((ra, k) => {
@@ -232,7 +270,7 @@ export function pose(
     // A bar has no head: align the two axes before blending, so a bar never flips through zero.
     const db = dot(ra.d, rb.d) < 0 ? scale(rb.d, -1) : rb.d;
     const d = norm(mix(ra.d, db, t));
-    const c = mix(ra.c, rb.c, t);
+    const c = add(mix(ra.c, rb.c, t), drift(k + 8));
     const h = lerp(ra.len, rb.len, t) / 2;
     rodA.push(place(sub(c, scale(d, h))));
     rodB.push(place(add(c, scale(d, h))));

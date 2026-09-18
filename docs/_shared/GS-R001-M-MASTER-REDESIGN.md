@@ -459,3 +459,152 @@ at `fbecbe01` until the owner accepts `/`.
 - **The renderer is software-verified.** The gate runs on SwiftShader; real-GPU smoothness on the
   owner's devices is the owner's review to make, alongside Firefox/Safari, which remain the open
   `GS-R001` human-test items.
+
+---
+
+## R1 — remediation after the owner's review (18 September 2026)
+
+The owner reviewed the staging candidate, accepted the direction enough to iterate on it, and
+named five visual problems and one decision. **`GS-O008` stays OPEN.** Nothing outside those six
+items was redesigned; Design, Digital and Press are untouched.
+
+### R1.1 Hero — responsive typography and zoom
+
+**Measured before any edit**, over 13 effective viewports (a browser zoom level is a different
+effective CSS viewport, so zoom was tested as viewport size — 1920×1080 at 80/90/110% is
+2400×1350, 2133×1200, 1745×982; 2560×1440 at 80/90% is 3200×1800, 2844×1600):
+
+| | Before | After |
+|---|---|---|
+| Copy column | a **fixed 665px** at every width ≥1280 (a share of the 1280px `Container`) | `48vw`, full-width frame with fluid gutters |
+| Headline | `--text-4xl` (`2.2rem + 4vw`, capped 104px) — a bigger font in the same column | `clamp(2.5rem, min(11cqi, 9svh), 11rem)` — sized by its own column, capped by height |
+| Lines | 4 at 1280 → 5 at 1536 → **7 from 1745 up** | **3–4 at all 14 sizes**, 1229 → 3200 |
+| Column's left edge | 24px → **984px** (dead space) | 5–6% of the width everywhere |
+| CTA in the first screen | **fails at 8 of 13** | **all 14** |
+
+**Root cause:** a width-capped container combined with viewport-scaled type. A wider viewport
+gave the headline more pixels without giving its column any, so line length *fell* as the screen
+grew; the hero's min-height ignored the header and nothing bounded the type by height. Nothing
+detects zoom. `check:master:hero` asserts it over 14 sizes — containment, 2–5 lines, the CTA fully
+in the first screen, the column spanning the frame, the mark beside it.
+
+### R1.2 The exploded chapter
+
+The joint close-up is replaced by an **exploded view**: every piece keeps its place in the logo's
+layout scaled outward from the centre (2.9× wide by 2.0× tall on wide screens; 1.3× by 2.9× on
+narrow), so each bar still floats between the two spheres it joins. Depth and a bounded tilt per
+piece come from fixed tables — designed, not random. While the chapter is read the pieces drift
+slightly **with scroll**, never on a clock. The model self-test asserts all 14 present, no
+sphere touching a sphere, no bar touching a sphere, a spread ≥1.8× the assembled mark and every
+piece inside 1.15× the frame — each branch proven red on its own fixture.
+`check:master:scene` question 11 measures the rendered extent against the hero's.
+
+### R1.3 The final CTA — the footer slab
+
+What the owner saw: the footer's opaque `--canvas` cut the reassembled mark in half at the bottom
+of the page. On `/`, while the live scene runs, the footer is now transparent
+(`master-stage.css`); under the static fallback it keeps its surface, because the fallback cannot
+dim behind text. The close pose also lifts the mark slightly (`off.y` 0 → 0.12).
+
+### R1.4 Mobile — the opaque veils
+
+The first redesign put every section's copy on a full-width 92% band below 1024px. They are
+removed. In their place, **the renderer dims the scene only behind text**: the page passes the
+rectangles of the on-screen text elements (up to 32, feathered) and the shader attenuates the gold
+inside them, so the environment runs at full strength everywhere else. Narrow choreography was
+enlarged where a chapter read too small (studios, process). `check:master:scene` question 10
+measures what share of the visible scene survives the page's own surfaces: **81–100% at every
+position and width**, against a 60% floor.
+
+### R1.5 Reviews — the cylinder, redesigned
+
+`ReviewCarousel`: a CSS 3D ring of review cards on the stage, stepping forward every six seconds,
+pausing on hover or focus, with **Pause rotation**, Previous and Next. Every review is verbatim and
+**whole** — a card grows to fit its text (the longest is 376 characters), so nothing is truncated,
+nothing is a disclosure, and no card is a scroll region. All reviews are in the DOM as one list for
+a screen reader; the "Review n of N" region is live only while the reader is interacting, so the
+automatic turn does not interrupt anyone elsewhere on the page. Reduced motion, or a browser
+without CSS `tan()`, gets a still grid of the same cards. Its JS cost is in §R1.8, as measured.
+
+The scene's ring moved from bottom-left (where it sat under the new controls) to top-right beside
+the heading.
+
+### R1.6 `GS-O020` — PUBLISH
+
+Owner decision recorded and closed; `EXPECTED` moved to 13 / 11 / 2 in `check:reviews`; the live
+check is green. The approval covers this review only.
+
+### R1.7 What the gates found this round
+
+- **Question 5 measured invisible text.** Cards turned away from the reader are backface-hidden
+  — text with boxes and no pixels — and read 1.00:1. The gate now measures only text that is
+  actually painted on top at its own position.
+- **axe found the long reviews scrolling inside fixed-height cards** (`scrollable-region-focusable`,
+  serious). Cards now grow to fit rather than scroll.
+- **The two new axe entries were scoped by listing every unresolved target first**, and each rests
+  on a measurement rather than an argument: `check:master:scene` question 5 now reads the footer
+  and the review cards too. A lone bracket in a comment again broke `check:lists`' bracket-counting
+  read of `check-axe.mjs` — the same trap as the first round.
+
+### R1.8 Cost, measured on a clean build
+
+| | Before R1 | After R1 |
+|---|---|---|
+| `/` initial JS delta | 4.4KB of 15KB | **4.9KB of 15KB** — `ReviewCarousel`'s client boundary, less the `Container` import the homepage no longer needs |
+| Lazy scene renderer | 5.2KB of 8KB | **5.9KB of 8KB** — text attenuation and the exploded formations |
+| Dependencies | none | none |
+
+Three.js and GSAP were reassessed as the brief asked. The exploded view is a pair of fixed tables
+and a scale in the existing model; the text attenuation is a uniform array in the existing shader;
+the cylinder is CSS 3D with a timer. None of the three would be cleaner with a library, and each
+would cost many times the bytes.
+
+### R1.9 The deliberate-failure record for R1
+
+`scripts/prove-master-scene.mjs`, extended to three gates and 23 probes, on the final source.
+**21 red on their own question in one full run.** The other two:
+
+- **s5, question 5 — the first probe stopped being a subject, because R1 fixed its class.** It
+  moved the headline over the mark and expected unreadable text; the renderer now dims the scene
+  behind text wherever the text is, so the moved headline stayed readable. The probe was replaced
+  with one that switches the dimming off — and the continuity statement over the exploded pieces
+  measured **1.79:1**, red on question 5.
+- **r11, question 11 — NOT RUN in the full run** (the harness received no output; reported as not a
+  reading, never as a pass). Run alone on the same build it was red: the flattened ring measured
+  front and neighbour cards both 194px wide.
+
+| Probe | Gate / Q | The gate said |
+|---|---|---|
+| s10 opaque bands behind every section | scene 10 | *"only 17% of the visible scene survives the page's own backgrounds"* |
+| s11 exploded collapsed to the assembled scale | scene 11 | *"spans 23.2% of the frame against the hero's 21.8%"* |
+| h1 overflow probe in the hero | hero 1 | *"1797px of horizontal overflow"* |
+| h2 headline on one unbroken line | hero 2 | *"not contained in its column and the viewport"* |
+| h3 headline pinned to 9rem | hero 3 | *"sets in 8 lines"* |
+| h4 CTA pushed below the fold | hero 4 | *"the CTA spans 1224–1274px in a 720px first screen"* |
+| h5 column pinned to 665px, centred | hero 5 | *"the copy column runs 24%–76% of the width"* |
+| h6 mark hidden | hero 6 | *"the mark covers 0.0% of the right half"* |
+| r3a no automatic turn | reviews 3 | *"did not turn on its own within 8s"* |
+| r3b Pause no longer pauses | reviews 3 | *"after Pause rotation the cylinder kept turning"* |
+| r4a Next does nothing | reviews 4 | *"brought 1 of 11 reviews to the front"* |
+| r4b front card clipped | reviews 4 | *"the front review is clipped"* |
+| r11 ring flattened (run alone) | reviews 11 | *"front card 194px and its neighbour 194px"* |
+| s1–s9 (first round's questions, re-proven on R1) | scene 1–9 | all red on their own question |
+
+### R1.10 What the visual inspection found that no gate had
+
+Every gate was green before the final look, and two things were still wrong:
+
+- **Three left edges on wide screens.** The fluid hero frame started at 6vw while the header and
+  every later chapter stayed in the 1280px container — at 2560 the hero copy began at ~144px, the
+  header's wordmark at ~660px and the sections at ~640px. Now every chapter on `/` uses the same
+  fluid frame, and the header and footer follow it **on `/` only**
+  (`:global(body:has([data-stage="master"]))` in `chrome.module.css`); no other route changes.
+- **An opaque header band across the hero mark on a phone.** At 320px the nav wraps to three rows
+  (176px) and its `--canvas` surface cut the top of the mark — the same class as the footer slab.
+  The header is now transparent on `/` while the scene runs, its text is on the renderer's dimming
+  list and in `check:master:scene` question 5, and the `/` axe entry covers its text. The narrow
+  hero pose sits a little lower.
+
+After these, probes s5, s10 and h5 — the ones whose gate scope the change touched — were re-run on
+the final build and each was red on its own question again.
+

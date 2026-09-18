@@ -543,7 +543,7 @@ dependency upgrade shows up as *the floor moving*, not as everyone's budget shri
 | Press | ≥95 perf | ≤2.0s | **≤20KB** — books shelf + filters | ~120KB |
 | Path Finder / future non-price scoping routes (no estimator since `GS-P03`) | — | — | **≤40KB** | ~140KB |
 
-**The Master scene renderer is lazy and budgeted separately — ≤8KB gz** (`GS-R001-M`, 5.2KB
+**The Master scene renderer is lazy and budgeted separately — ≤8KB gz** (`GS-R001-M` R1, 5.9KB
 measured). It is fetched by `import()` after first paint, so it is in no route's first-load JS;
 `check-bundle-size` finds it by content, asserts nothing loads it eagerly, and holds it to its
 ceiling. `/`'s own delta stays under Master's 15KB.

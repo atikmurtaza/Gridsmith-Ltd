@@ -1,11 +1,11 @@
 import { Button } from '@/components/primitives/Button';
-import { Container } from '@/components/primitives/Container';
 import { Link } from '@/components/primitives/Link';
 import { Numeric } from '@/components/primitives/Numeric';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
 import { CANONICAL_PROCESS } from '@/lib/process/canonical';
 import { FREELANCER_PROFILE, listFreelancerReviews } from '@/lib/reviews/freelancer';
 import { ENQUIRY_CTA, enquiryHref } from '@/lib/services/architecture';
+import { ReviewCarousel } from './ReviewCarousel';
 import styles from './home.module.css';
 
 /**
@@ -36,7 +36,9 @@ function Chapter({ n, label }: { n: number; label: string }) {
 export function Hero({ headline, intro }: { headline: string; intro: string }) {
   return (
     <section className={styles.hero} data-chapter="hero" aria-labelledby="hero-title">
-      <Container>
+      {/* No `Container`: its 1280px cap is what left the dead space on wide screens (R1). Every
+          chapter, and the header and footer on `/`, share this one fluid frame and left edge. */}
+      <div className={styles.frame}>
         <div className={styles.heroCopy}>
           <p className={styles.heroKicker}>
             <Numeric>Gridsmith Ltd</Numeric>
@@ -54,7 +56,7 @@ export function Hero({ headline, intro }: { headline: string; intro: string }) {
             </a>
           </div>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }
@@ -91,7 +93,7 @@ const STUDIOS = [
 export function Studios() {
   return (
     <section id="studios" className={styles.section} data-chapter="studios" aria-labelledby="studios-title">
-      <Container>
+      <div className={styles.frame}>
         <div className={styles.column}>
           <Chapter n={1} label="The studios" />
           <h2 id="studios-title" className={styles.title}>
@@ -120,7 +122,7 @@ export function Studios() {
             Not sure, or need more than one? <a href="/contact">Tell us what you need</a>.
           </p>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }
@@ -134,7 +136,7 @@ export async function Context() {
   const company = await getCompanyDetails();
   return (
     <section className={styles.section} data-chapter="context" aria-labelledby="context-title">
-      <Container>
+      <div className={styles.frame}>
         <div className={styles.column}>
           <Chapter n={2} label="One relationship" />
           <h2 id="context-title" className={styles.statement}>
@@ -157,7 +159,7 @@ export async function Context() {
             <Link href="/about">About Gridsmith</Link>
           </p>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }
@@ -169,7 +171,7 @@ export async function Context() {
 export function Process() {
   return (
     <section className={styles.section} data-chapter="process" aria-labelledby="process-title">
-      <Container>
+      <div className={styles.frame}>
         <div className={styles.column}>
           <Chapter n={3} label="Process" />
           <h2 id="process-title" className={styles.title}>
@@ -194,7 +196,7 @@ export function Process() {
         <p className={styles.more}>
           <Link href="/approach">The six stages in full</Link>
         </p>
-      </Container>
+      </div>
     </section>
   );
 }
@@ -203,11 +205,9 @@ export function Process() {
  * The genuine Freelancer reviews — `GS-O014`, `GS-O015`, Master only. Verbatim, rating and date
  * as the API returns them, attribution on every review, one link to the profile.
  *
- * **No carousel.** The cylinder rotated by itself, which made SC 2.2.2 require a pause control
- * and hid most reviews at any moment. Here the heading holds its place while the reviews pass
- * under the reader's own scroll: nothing moves unless the reader moves it, every review is in
- * the document flow, and there is nothing to pause. The scene behind turns its pieces into a
- * ring through this chapter, which is where the cylinder went.
+ * **The cylinder, again (R1).** The first redesign replaced it with a still list, and the owner
+ * rejected that as reading like articles. `ReviewCarousel` is the cylinder redesigned for the
+ * gold stage — see its docstring for the controls and the reduced-motion grid.
  *
  * An empty list renders nothing and fabricates nothing.
  */
@@ -217,7 +217,7 @@ export async function Reviews() {
 
   return (
     <section className={styles.section} data-chapter="reviews" aria-labelledby="reviews-title">
-      <Container>
+      <div className={styles.frame}>
         <div className={styles.reviews}>
           <div className={styles.reviewsHead}>
             <Chapter n={4} label="Reviews" />
@@ -234,28 +234,9 @@ export async function Reviews() {
               </Link>
             </p>
           </div>
-          <ul className={styles.reviewList}>
-            {reviews.map((review) => (
-              <li key={review.id} className={styles.review}>
-                <figure className={styles.reviewFigure}>
-                  <blockquote className={styles.reviewQuote}>
-                    <p>{review.quote}</p>
-                  </blockquote>
-                  <figcaption className={styles.reviewMeta}>
-                    <span className={styles.reviewName}>{review.authorName}</span>
-                    <span className={styles.reviewFacts}>
-                      <span>{review.rating} / 5</span>
-                      <time dateTime={review.date}>{review.date}</time>
-                    </span>
-                    {review.projectTitle ? <span>{review.projectTitle}</span> : null}
-                    <span>{review.sourceLabel}</span>
-                  </figcaption>
-                </figure>
-              </li>
-            ))}
-          </ul>
+          <ReviewCarousel reviews={reviews} />
         </div>
-      </Container>
+      </div>
     </section>
   );
 }
@@ -264,7 +245,7 @@ export async function Close() {
   const company = await getCompanyDetails();
   return (
     <section className={styles.close} data-chapter="close" aria-labelledby="close-title">
-      <Container>
+      <div className={styles.frame}>
         <div className={styles.column}>
           <Chapter n={5} label="Start" />
           <h2 id="close-title" className={styles.closeTitle}>
@@ -279,7 +260,7 @@ export async function Close() {
           </div>
           <p className={styles.commitment}>{company.responseCommitment}</p>
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

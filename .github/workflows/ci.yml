@@ -331,5 +331,7 @@ jobs:
       # is the gold mark visible at every chapter, does it move with the page, is every line of
       # text readable over the scene behind it, does reduced motion hold still, and does the
       # no-WebGL fallback show the logo. It needs SwiftShader, which it requests itself.
+      # check:master:hero (R1): the hero holds its composition over 14 desktop and zoom-equivalent
+      # viewports — contained headline, 2-5 lines, the CTA in the first screen, no dead space.
       - name: axe + security headers + statutory record + responsive and legal checks
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company" "npm run check:master:scene"
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company" "npm run check:master:scene" "npm run check:master:hero"

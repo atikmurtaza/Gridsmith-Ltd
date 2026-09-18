@@ -134,19 +134,16 @@ not requested under `GS-D001` and `GS-D002`.
   banners and emotes); and whether any work from that business is Gridsmith's to show (`GS-D001`
   requires permission). Its packages, money-back guarantee and volume claims may not be imported
   (`GS-D002`, non-negotiable #2).
-- `GS-O020` — **A new Freelancer review arrived and needs a person to read it.** Found at
-  `GS-R001-M` by `check:reviews --live`, which is correctly red: the API now returns **13**
-  reviews (the set last read had 12) and **11** publish (was 10). The new one is **James, 5 / 5,
-  17 September 2026, Illustration** — *"Very good communicator, great artwork, on time and on
-  budget. It was a great experience! Will hire them in the future for similar projects."* It names
-  no third party, so `namedThirdParty` does not withhold it, and **the staging build already
-  shows it on `/`** — the pipeline publishes by rule and the live gate is kept out of ordinary CI.
-  **Decide:** publish (then `EXPECTED` in `scripts/check-reviews.mjs` moves to 13 / 11 / 2 in its
-  own commit) or withhold (add its id to the manual list). The agent did **not** move `EXPECTED`:
-  `GS-O015` makes a person's reading the gate.
 - **Digital** — deliberately not researched. Owner: *"for digital i will tell later."*
 
 ## COMPLETED
+
+- `GS-O020` — **CLOSED — PUBLISH, 18 September 2026 (owner decision, `GS-R001-M` R1).** The new
+  Freelancer review — **James, 5 / 5, 17 September 2026, Illustration** — is approved for
+  publication. `EXPECTED` in `scripts/check-reviews.mjs` moved 12 / 10 / 2 → **13 / 11 / 2** in the
+  same commit, and `check:reviews --live` is green again. **This approval covers this review
+  only**: the genuine-review and third-party filtering rules are unchanged, and the next new review
+  turns the live check red again until a person decides it (`GS-O015`).
 
 - `GS-O017` — **completed 18 September 2026 at `GS-R001-R`, on owner-supplied evidence.** The
   owner identified their earlier Gridsmith implementation,

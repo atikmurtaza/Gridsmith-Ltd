@@ -132,20 +132,36 @@
 
 /* ---- Hero ------------------------------------------------------------------------ */
 
+/* R1 — fluid hero. Measured before this change across 13 effective viewports: the column was a
+   fixed 665px (a share of the 1280px container) while the headline grew with the viewport, so a
+   WIDER screen got MORE lines — 4 at 1280, 7 from 1745 up, i.e. 1920 at 90% zoom — and the
+   container cap left up to 984px of empty space on the left. The CTA fell below the fold at 8 of
+   13 sizes. Now: the hero spans the frame with fluid gutters, the headline is sized by its OWN
+   column (cqi), so its line length holds at any width, and it is bounded by the viewport height,
+   so the whole hero fits the first screen. `--hero-top` is the header's height. */
 .hero {
+  --hero-top: 4.75rem;
   display: grid;
-  align-content: end;
-  min-height: calc(100svh - var(--space-16));
-  padding-block: var(--space-24) var(--space-16);
+  align-content: center;
+  min-height: calc(100svh - var(--hero-top));
+  padding-block: clamp(var(--space-6), 6svh, var(--space-16));
 }
 
-.heroCopy { max-width: 46rem; }
+/* R1 — the one frame on `/`: every chapter, and the header and footer through chrome.module.css,
+   start at the same fluid left edge. With the hero alone on it, wide screens showed three
+   different left edges (hero, sections, header). */
+.frame { padding-inline: clamp(var(--space-6), 6vw, 9rem); }
+
+.heroCopy {
+  container-type: inline-size;
+  inline-size: 100%;
+}
 
 .heroKicker {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin: 0 0 var(--space-8);
+  margin: 0 0 clamp(var(--space-4), 3.5svh, var(--space-8));
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.08em;
@@ -156,9 +172,12 @@
 .rule { width: var(--space-12); height: var(--border-hairline); background: var(--accent); }
 
 .heroTitle {
-  margin: 0 0 var(--space-8);
+  margin: 0 0 clamp(var(--space-4), 3.5svh, var(--space-8));
   font-family: var(--font-display);
-  font-size: var(--text-4xl);
+  /* Sized by the column (11cqi keeps roughly 17–19 characters a line, so the approved headline
+     sets in about four lines at every width) and capped by the viewport height (9svh), so a
+     short screen shrinks the type instead of pushing the CTA below the fold. */
+  font-size: clamp(2.5rem, min(11cqi, 9svh), 11rem);
   font-weight: 500;
   line-height: 1.0;
   letter-spacing: -0.04em;
@@ -166,8 +185,8 @@
 }
 
 .heroIntro {
-  margin: 0 0 var(--space-12);
-  max-width: 34rem;
+  margin: 0 0 clamp(var(--space-6), 5svh, var(--space-12));
+  max-width: 44ch;
   font-size: var(--text-lg);
   line-height: var(--leading-normal);
   color: var(--ink-muted);
@@ -288,44 +307,126 @@
 .stageTitle { font-weight: 500; color: var(--ink); }
 .stageQualifier { font-weight: 400; color: var(--ink-muted); }
 
-/* ---- Reviews: a held heading, the reviews pass under the reader's own scroll ------------ */
+/* ---- Reviews: the cylinder (R1) --------------------------------------------------- */
 
-.reviews {
-  display: grid;
-  grid-template-columns: 5fr 7fr;
-  gap: var(--space-16);
-  align-items: start;
-}
+.reviews { display: flex; flex-direction: column; gap: var(--space-12); }
+.reviewsHead { max-width: 44rem; }
 
-.reviewsHead { position: sticky; top: 14vh; }
+.carousel { display: flex; flex-direction: column; gap: var(--space-6); }
 
-.reviewList { list-style: none; margin: 0; padding: 0; }
-
-.review {
-  padding-block: var(--space-8);
-  border-top: var(--border-hairline) solid var(--line-strong);
-}
-.review:last-child { border-bottom: var(--border-hairline) solid var(--line-strong); }
-
-.reviewFigure { margin: 0; }
-.reviewQuote { margin: 0 0 var(--space-4); }
-.reviewQuote p {
+/* THE BASE IS A STILL GRID of the same cards. The cylinder is layered on inside one guarded
+   block below — so reduced motion and a browser without CSS tan() both get every review, flat
+   and in order, from the same DOM. The controls exist only for the cylinder. */
+.carouselRing {
+  list-style: none;
   margin: 0;
-  font-size: var(--text-lg);
-  line-height: var(--leading-snug);
-  color: var(--ink);
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+  gap: var(--space-4);
 }
+.carouselControls { display: none; }
 
-.reviewMeta {
+.carouselCard {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2) var(--space-4);
+  box-sizing: border-box;
+  padding: var(--space-6);
+  background: var(--canvas-veil);
+  border: var(--border-hairline) solid var(--line-strong);
+}
+.carouselCard[data-front] { border-color: var(--accent); }
+
+.carouselFigure { display: flex; flex-direction: column; gap: var(--space-4); margin: 0; min-height: 0; width: 100%; }
+.carouselFacts {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--accent);
+}
+.carouselQuote { flex: 1; margin: 0; }
+.carouselQuote p { margin: 0; font-size: var(--text-sm); line-height: var(--leading-normal); color: var(--ink); }
+.carouselMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-top: var(--space-3);
+  border-top: var(--border-hairline) solid var(--line-strong);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--ink-muted);
 }
-.reviewName { color: var(--ink); }
-.reviewFacts { display: inline-flex; gap: var(--space-4); color: var(--accent); }
+.carouselName { color: var(--ink); }
+
+.carouselButton {
+  min-height: 2.75rem;
+  padding: 0 var(--space-4);
+  border: var(--border-hairline) solid var(--ink-subtle);
+  border-radius: var(--radius-default);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.carouselButton:hover { border-color: var(--accent); color: var(--accent-hover); }
+.carouselButton:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* The pressed state is a heavier border and weight, not a colour alone (SC 1.4.1). */
+.carouselButton[aria-pressed="true"] { border-width: 2px; border-color: var(--accent); font-weight: 600; }
+.carouselCount { margin: 0 auto 0 0; font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink-muted); }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The ring's radius needs tan(); without it the whole cylinder is skipped, not half-applied. */
+  @supports (transform: translateZ(calc(1px / tan(30deg)))) {
+    .carousel {
+      --card-w: 20rem;
+      --card-h: 25rem;
+      --step: calc(360deg / var(--n, 11));
+    }
+    .carouselStage {
+      display: grid;
+      place-items: center;
+      min-height: calc(var(--card-h) + var(--space-12));
+      padding-block: var(--space-6);
+      perspective: 90rem;
+      /* The far side of the ring is wider than the page: clipped sideways, never scrolled. The
+         vertical axis stays open, so a card taller than --card-h is never cut off. */
+      overflow-x: clip;
+      overflow-y: visible;
+    }
+    .carouselRing {
+      display: grid;
+      grid-template-columns: none;
+      place-items: center;
+      gap: 0;
+      transform-style: preserve-3d;
+      --radius: calc(var(--card-w) / 2 / tan(var(--step) / 2) + var(--space-4));
+      transform: translateZ(calc(-1 * var(--radius))) rotateY(calc(var(--turn, 0) * -1 * var(--step)));
+      transition: transform var(--dur-slow) var(--ease-out);
+    }
+    .carouselCard {
+      grid-area: 1 / 1;
+      width: var(--card-w);
+      /* A floor, not a height: a card grows to its whole review, so no card is ever a scroll
+         region (axe flagged the two longest at a fixed height). */
+      min-height: var(--card-h);
+      transform: rotateY(calc(var(--i) * var(--step))) translateZ(var(--radius));
+      /* The far half faces away: hidden, so no mirrored text shows through the near cards. */
+      backface-visibility: hidden;
+    }
+    .carouselControls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    @media (max-width: 767px) {
+      .carousel { --card-w: 16rem; --card-h: 28rem; }
+      .carouselStage { perspective: 60rem; }
+    }
+  }
+}
 
 /* ---- Close ----------------------------------------------------------------------- */
 
@@ -357,25 +458,23 @@
 
 /* Desktop: copy holds the left of the frame and the mark holds the right. */
 @media (min-width: 1024px) {
-  .column,
-  .heroCopy { max-width: min(46rem, 54%); }
+  .column { max-width: min(46rem, 54%); }
+  /* A share of the viewport, not of a capped container: the column and the mark keep the same
+     proportions of the frame from 1024px to 3200px. */
+  .heroCopy { inline-size: 48vw; }
 }
 
 @media (max-width: 1023px) {
   .stages { grid-template-columns: repeat(3, 1fr); row-gap: var(--space-8); }
-  .reviews { grid-template-columns: 1fr; gap: var(--space-8); }
-  .reviewsHead { position: static; }
 }
 
 /* Below 1024px there is no free column. The hero and close leave the top of the screen to the
-   mark; between them, each section's copy sits on the stage veil and the mark travels through
-   the gaps between sections. A veil, not a panel: it has no border and no radius, and it bleeds
-   to both edges, so the page reads as layers over the scene rather than cards on it. */
+   mark. Mid-page there is NO veil any more (R1 — the owner could not see the scene behind the
+   full-width 92% bands): the renderer dims the gold only directly behind each block of text. */
 @media (max-width: 1023px) {
   .hero { min-height: 0; padding-top: 50svh; }
   .close { min-height: 0; padding-top: 52svh; }
   .section { min-height: 0; padding-block: var(--space-24); }
-  .section > * { padding-block: var(--space-12); background: var(--canvas-veil); }
   .sceneFallback { top: 44svh; right: 50%; width: min(62vw, 18rem); transform: translate(50%, -50%); }
 }
 

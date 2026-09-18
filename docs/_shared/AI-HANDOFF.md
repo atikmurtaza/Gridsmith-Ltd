@@ -3,7 +3,7 @@
 ## Execution
 
 - **Task ID:** `GS-R001-M` / `GS-O008`
-- **Task:** Master experience redesign
+- **Task:** Master experience redesign, and its remediation round R1
 - **Agent/model:** Claude Code (Opus 5)
 - **Status:** COMPLETE IN REPOSITORY. The owner rejected the Master homepage's visual direction
   at `GS-O008`; `/` is redesigned. **`GS-O008` stays OPEN — AWAITING OWNER RE-REVIEW.** No
@@ -12,6 +12,28 @@
 - **Date:** 18 September 2026
 - **Full evidence:** `docs/_shared/GS-R001-M-MASTER-REDESIGN.md`. The previous handoff
   (`GS-R001-R`) is in git history and `GS-R001-R-REMEDIATION.md`.
+
+## R1 — remediation after the owner's review (18 September 2026)
+
+The owner reviewed the candidate and asked for six things; all are done. **`GS-O008` stays OPEN.**
+Record: `GS-R001-M-MASTER-REDESIGN.md` §R1.
+
+| Item | What changed |
+|---|---|
+| Hero at every size and zoom | Measured first: a fixed 665px column and a viewport-scaled headline gave **7 lines from 1745px up** and the CTA below the fold at **8 of 13** sizes. Now one fluid frame, a headline sized by its column and capped by height: **3–4 lines, CTA in the first screen, at all 14 sizes** (1229–3200px). New gate `check:master:hero` |
+| Joint close-up → exploded view | The mark opens into space — every piece scaled out from its place in the logo, fixed depths and tilts, a scroll-driven drift |
+| Final CTA obstruction | The footer was an opaque slab over the mark. Transparent on `/` while the scene runs; the scene dims only behind text |
+| Mobile veils | The full-width 92% bands are gone. The renderer dims the gold **only behind text** (up to 32 feathered rectangles). The header, whose wrapped nav was a band across the hero mark at 320px, is transparent on `/` too |
+| Reviews | The cylinder is back, redesigned: CSS 3D ring, every review whole, auto-steps every 6s, pause on hover/focus, **Pause rotation**, Previous/Next, still grid under reduced motion |
+| `GS-O020` | **CLOSED — PUBLISH.** `EXPECTED` 13 / 11 / 2; approval covers this review only |
+
+**Verification on the final source:** `verify:static` **48 gates PASS**; clean `verify:build` PASS —
+`/` delta **4.9KB of 15KB**, lazy scene **5.9KB of 8KB**, no dependency added; `verify:served` PASS —
+`check:axe` **zero violations, 0 unresolved**; `check:master:scene` **11 questions × 11 viewports ×
+7 positions**; `check:master:hero` **14 sizes**; `check:reviews:ui` PASS; `check:mark:cls` **0.0000**.
+**Proofs:** `scripts/prove-master-scene.mjs`, 23 probes over three gates — 21 red on their own
+question in one run, the other two red alone (§R1.9); s5, s10 and h5 re-proven after the final
+layout change (§R1.10).
 
 ## Repository state
 
@@ -83,9 +105,7 @@ measured (a digit parser, then an occupied port read as a green). Each is fixed 
 ## Findings and programme state
 
 - **`GS-O008`: OPEN — AWAITING OWNER RE-REVIEW of the redesigned `/`.**
-- **`GS-O020` (new):** a 13th Freelancer review (James, 5/5, 17 Sep 2026, Illustration) is live
-  and shows on staging by rule; `check:reviews --live` is red **by design** until a person reads it.
-  The agent did not move the pinned set.
+- **`GS-O020`: CLOSED — PUBLISH** (owner decision at R1). The pinned set is 13 / 11 / 2.
 - **`GS-O018`, `GS-O019` (new, not blocking):** Press and Design capability gaps.
 - Unchanged: `GS-T004`, `GS-T005`, `GS-O003`, `GS-O005`, `GS-O010`, `GS-X001`, `GS-X002`,
   `GS-R002`, `GS-R003`, the three `GS-R001` human tests.
@@ -98,8 +118,7 @@ Recommendation only. **Do not begin it from this handoff alone.**
 **`GS-O008` — owner re-review of the redesigned Master homepage on staging.** It is an **owner
 task, not an agent phase.**
 
-- **Owner action required first?** Yes — this *is* the owner task. Plus `GS-O020` (read one
-  review, publish or withhold), which takes a minute and can be done in the same sitting.
+- **Owner action required first?** Yes — this *is* the owner task: re-review `/` after R1.
 - **What the owner decides:** accept or reject `/`; whether the gold stage extends to the other
   Master routes; whether Master and Design read as too close; whether the reviews chapter shows
   enough of the mark.

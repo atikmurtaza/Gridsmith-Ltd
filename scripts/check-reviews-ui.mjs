@@ -14,8 +14,9 @@
  * |---|---|
  * | 1 | Does Master render the reviews at all? |
  * | 2 | Does **no** division page render them? (`GS-O014`, the Master-only amendment) |
- * | 3 | Do the reviews stay still unless the reader scrolls? (`GS-R001-M` — was *does the ring travel right to left*) |
- * | 4 | Is every review in the flow and unobscured? (`GS-R001-M` — was *does the pause control stop it*) |
+ * | 3 | Does the cylinder turn on its own, and does **Pause rotation** stop it? (R1 — the cylinder is back) |
+ * | 4 | **Is every review reachable and readable in full?** Next, pressed from the keyboard, brings each to the front, where it is on screen, hit-testable, and its whole text is shown — nothing scrolls inside the card and nothing is clipped. |
+ * | 11 | **Is it a cylinder?** Rendered, not declared: the cards are turned to different angles, so the front card renders wider than its neighbours. |
  * | 5 | Does `prefers-reduced-motion: reduce` get a still layout with the same reviews? |
  * | 6 | Does the reduced-motion layout overflow the page at any of the three widths? |
  * | 7 | Is the source link present, real and reachable by keyboard? |
@@ -124,57 +125,105 @@ try {
 
   const page = await browser.newPage();
   await page.setViewport({ width: 1440, height: 900 });
+  // The fixed cookie notice sits over the lower stage; it is not the subject of a hit-test.
+  await page.setCookie({ name: 'gs_consent', value: '1', url: BASE_URL });
   await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
 
   /**
-   * **`GS-R001-M` replaced the cylinder, so questions 3 and 4 changed with it.** The ring turned
-   * by itself, which is why it needed a direction assertion and a WCAG 2.2 SC 2.2.2 pause
-   * control. The reviews now pass under the reader's own scroll and nothing moves on its own,
-   * so SC 2.2.2 has no subject — and the assertion that keeps it that way is that they do not
-   * move. A pause control over still content would be a control that does nothing.
+   * **R1 brought the cylinder back, so questions 3 and 4 are about it** — found by rendered
+   * content and behaviour, never by class name: the cards are the `<li>`s holding a review
+   * `<blockquote>`, the front card is the one the ring presents (`data-front`), and the controls
+   * are found by their visible names.
    */
-  const travel = await page.evaluate(async (label) => {
-    const card = [...document.querySelectorAll('blockquote')]
-      .map((q) => q.closest('li'))
-      .find((li) => li?.textContent?.includes(label));
-    if (!card) return null;
-    card.scrollIntoView({ block: 'center' });
-    await new Promise((r) => setTimeout(r, 300));
-    const first = card.getBoundingClientRect();
-    await new Promise((r) => setTimeout(r, 1500));
-    const second = card.getBoundingClientRect();
-    const running = card.closest('ul').getAnimations({ subtree: true }).filter((a) => a.playState === 'running').length;
-    return { dx: Math.round(second.left - first.left), dy: Math.round(second.top - first.top), running };
-  }, SOURCE_LABEL);
-
-  if (!travel) problems.push('3: no review card was found on / — the stillness assertion measured nothing');
-  else if (travel.dx || travel.dy || travel.running) {
-    problems.push(
-      `3: a review moved by itself (${travel.dx}px, ${travel.dy}px in 1.5s, ${travel.running} running ` +
-        'animation(s)). Motion that starts on its own needs a pause control (WCAG 2.2 SC 2.2.2), ' +
-        'and GS-R001-M removed the carousel so that nothing here would.',
-    );
-  }
-  say(`  3. still:      ${travel ? `moved ${travel.dx}px/${travel.dy}px in 1.5s, ${travel.running} running animation(s)` : 'NOT MEASURED'}`);
-
-  const flow = await page.evaluate(async (label) => {
-    const cards = [...document.querySelectorAll('blockquote')]
-      .map((q) => q.closest('li'))
-      .filter((li) => li?.textContent?.includes(label));
-    const hidden = [];
-    for (const [i, card] of cards.entries()) {
-      card.scrollIntoView({ block: 'center' });
-      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-      const r = card.querySelector('blockquote').getBoundingClientRect();
-      const cs = getComputedStyle(card);
-      const hit = document.elementFromPoint(r.left + Math.min(r.width, 40) / 2, r.top + Math.min(r.height, 20) / 2);
-      if (!r.width || !r.height || cs.transform !== 'none' || cs.backfaceVisibility === 'hidden' || !card.contains(hit)) hidden.push(i);
+  const carousel = await page.evaluate(async (label) => {
+    const cards = [...document.querySelectorAll('blockquote')].map((q) => q.closest('li')).filter((li) => li?.textContent?.includes(label));
+    const ring = cards[0]?.parentElement;
+    const button = (name) => [...document.querySelectorAll('button')].find((b) => b.textContent?.trim().includes(name));
+    if (!ring || !button('Next') || !button('Pause rotation')) return null;
+    ring.scrollIntoView({ block: 'center' });
+    const front = () => cards.findIndex((c) => c.hasAttribute('data-front'));
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    // 3 — it turns on its own: the pointer is not over it and nothing inside it has focus.
+    const start = front();
+    let turned = false;
+    for (let i = 0; i < 16 && !turned; i++) {
+      await wait(500);
+      turned = front() !== start;
     }
-    return { cards: cards.length, hidden };
+    // Pause stops it, for longer than one dwell.
+    button('Pause rotation').click();
+    await wait(50);
+    const pausedAt = front();
+    await wait(7500);
+    const stayed = front() === pausedAt;
+    const pressed = button('Pause rotation').getAttribute('aria-pressed');
+    button('Pause rotation').click();
+    return { cards: cards.length, turned, stayed, pressed };
   }, SOURCE_LABEL);
-  if (flow.cards === 0) problems.push('4: no review card was found — the flow assertion measured nothing');
-  for (const i of flow.hidden) problems.push(`4: review ${i + 1} is not in the flow or is covered where a reader would start reading it`);
-  say(`  4. in flow:    ${flow.cards} review(s), each scrolled to and hit-tested at its first line; ${flow.hidden.length} obscured`);
+  if (!carousel) problems.push('3: no review carousel with Next and Pause rotation controls was found on /');
+  else {
+    if (!carousel.turned) problems.push('3: the cylinder did not turn on its own within 8s — it is not animating');
+    if (!carousel.stayed) problems.push('3: after Pause rotation the cylinder kept turning (WCAG 2.2 SC 2.2.2)');
+    if (carousel.pressed !== 'true') problems.push(`3: the pause control reports aria-pressed="${carousel.pressed}" while paused`);
+  }
+  say(`  3. motion:     ${carousel ? `turns on its own: ${carousel.turned}; paused holds still: ${carousel.stayed}; aria-pressed while paused: ${carousel.pressed}` : 'NOT MEASURED'}`);
+
+  // 4 — every review, from the keyboard: pause, focus Next, press Enter, read the front card.
+  const reach = [];
+  const total = carousel?.cards ?? 0;
+  if (total) {
+    await page.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.textContent?.trim().includes('Pause rotation'))?.click());
+    await page.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.textContent?.trim().startsWith('Next'))?.focus());
+    for (let step = 0; step < total; step++) {
+      await new Promise((r) => setTimeout(r, 1300));
+      reach.push(
+        await page.evaluate((label) => {
+          const card = [...document.querySelectorAll('li[data-front]')].find((li) => li.textContent?.includes(label));
+          if (!card) return { id: null };
+          const q = card.querySelector('blockquote');
+          const r = q.getBoundingClientRect();
+          const hit = document.elementFromPoint(r.left + r.width / 2, r.top + Math.min(r.height, 24) / 2);
+          return {
+            id: q.textContent,
+            onScreen: r.top >= 0 && r.bottom <= innerHeight && r.left >= 0 && r.right <= innerWidth,
+            hit: card.contains(hit),
+            // Whole text fits, or the body can be scrolled because it takes focus.
+            // The whole text is shown: nothing scrolls inside the card and nothing is clipped by it.
+            readable: q.scrollHeight <= q.clientHeight + 1 && card.scrollHeight <= card.clientHeight + 1,
+          };
+        }, SOURCE_LABEL),
+      );
+      await page.keyboard.press('Enter');
+    }
+    const seen = new Set(reach.map((r) => r.id).filter(Boolean));
+    if (seen.size !== total) problems.push(`4: pressing Next ${total} times brought ${seen.size} of ${total} reviews to the front`);
+    reach.forEach((r, i) => {
+      if (!r.id) problems.push(`4: step ${i + 1} has no front card`);
+      else if (!r.onScreen || !r.hit) problems.push(`4: at step ${i + 1} the front review is off screen or covered`);
+      else if (!r.readable) problems.push(`4: at step ${i + 1} the front review is clipped and cannot be scrolled`);
+    });
+  }
+  say(`  4. reachable:  ${reach.length ? `${new Set(reach.map((r) => r.id).filter(Boolean)).size} of ${total} reviews reached from the keyboard, each on screen, unobscured and readable in full` : 'NOT MEASURED'}`);
+
+  // 11 — a cylinder, rendered: the front card faces the reader; its neighbour is turned away.
+  // After the last step's turn has finished — mid-turn, no card is square to the reader.
+  await new Promise((r) => setTimeout(r, 1500));
+  const geometry = await page.evaluate((label) => {
+    const cards = [...document.querySelectorAll('li')].filter((li) => li.querySelector('blockquote') && li.textContent?.includes(label));
+    const i = cards.findIndex((c) => c.hasAttribute('data-front'));
+    if (i < 0) return null;
+    const w = (c) => c.getBoundingClientRect().width;
+    return {
+      front: Math.round(w(cards[i])),
+      neighbour: Math.round(w(cards[(i + 1) % cards.length])),
+      preserve: getComputedStyle(cards[i].parentElement).transformStyle,
+    };
+  }, SOURCE_LABEL);
+  if (!geometry) problems.push('11: no front card — the cylinder geometry measured nothing');
+  else if (!(geometry.neighbour < geometry.front * 0.95) || geometry.preserve !== 'preserve-3d') {
+    problems.push(`11: not a cylinder — the front card renders ${geometry.front}px and its neighbour ${geometry.neighbour}px (${geometry.preserve})`);
+  }
+  say(`  11. cylinder:  ${geometry ? `front card ${geometry.front}px wide, its neighbour ${geometry.neighbour}px — turned away (${geometry.preserve})` : 'NOT MEASURED'}`);
 
   const link = await page.evaluate(
     (profile) => {
@@ -308,6 +357,12 @@ try {
   const overflows = [];
   for (const width of WIDTHS) {
     await page.setViewport({ width, height: 900 });
+    // Default motion too: the cylinder is wider than the page and must be clipped, not scrolled.
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+    await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
+    const cyl = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    if (cyl > 0) overflows.push(`${width}px with the cylinder (${cyl}px)`);
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
     await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
     const measured = await page.evaluate(() => ({
       doc: document.documentElement.scrollWidth,
@@ -338,8 +393,9 @@ if (problems.length > 0) {
 }
 
 console.log(
-  '\ncheck-reviews-ui: PASS — Master renders the feed, no division does, nothing moves by ' +
-    'itself, every review is in the flow and unobscured, reduced motion is at content parity, ' +
+  '\ncheck-reviews-ui: PASS — Master renders the feed, no division does, the cylinder turns and ' +
+    'pauses, every review is reachable and readable in full from the keyboard, it renders as a ' +
+    'cylinder, reduced motion is a still grid at content parity, ' +
     'nothing overflows, the source link is reachable, no caption is identifying, every review ' +
     'is inside the chapter check:master:scene measures, and every <time> is a review date.\n',
 );

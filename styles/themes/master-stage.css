@@ -53,9 +53,9 @@
   --gold-deep:      #5C421C;
   /* --gold-deep at 22% over --canvas: the stage glow before the scene arrives. */
   --gold-glow:      #1D160C;
-  /* --canvas at 92%: behind copy blocks below 1024px, where there is no free column. The
-     figure is set by `check:master:scene` question 5, not by taste — at 90% --ink-muted over
-     the brightest gold measured under 4.5:1. */
+  /* --canvas at 92%: the review cards' surface (R1). It was the full-width band behind copy
+     below 1024px until R1 — the owner could not see the scene through it, and the renderer now
+     dims the scene behind text instead. The figure was set by `check:master:scene` question 5. */
   --canvas-veil:    #0B0907EB;
 
   /* Theme-invariant, restated so this file measures as a complete palette. Unused on `/`. */
@@ -67,4 +67,14 @@
   --accent-press-ink:   #FBF9F4;
 
   color-scheme: dark;
+}
+
+/* R1 — the footer on `/` does not interrupt the environment. Its opaque --canvas cut the
+   reassembled mark in half at the bottom of the page. Transparent only while the live scene is
+   running, because the scene dims itself behind the footer's text; the static fallback cannot,
+   so under the fallback the footer keeps its surface. */
+[data-division="master"]:has([data-stage="master"]):has([data-master-scene][data-render="ready"]) > footer,
+[data-division="master"]:has([data-stage="master"]):has([data-master-scene][data-render="ready"]) > header {
+  /* R1 — the header too: at 320px its three-row nav was an opaque band across the hero mark. */
+  background: transparent;
 }

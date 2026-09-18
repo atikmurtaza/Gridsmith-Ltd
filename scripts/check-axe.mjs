@@ -296,6 +296,46 @@ const INCOMPLETE_ALLOWED = [
       'opaque background (axe would then resolve it itself), or if check:master:scene stops ' +
       'measuring text over the scene. Each of those removes the measurement this rests on.',
   },
+  // `GS-R001-M` R1. The review cylinder's cards where axe names them by attribute rather than by
+  // class: a date by its unique `datetime`, and the front card by `data-front`. Everything else
+  // in a card is named by a `home_*` class and covered above. Same scene, same measurement.
+  {
+    rule: 'color-contrast',
+    routes: ['/'],
+    targetPattern: /^(time\x5bdatetime="\d{4}-\d{2}-\d{2}"\]|li\x5bdata-front=""\] > figure > .+)$/,
+    why:
+      'R1 put the reviews back on a CSS 3D cylinder over the WebGL scene: every card is turned to ' +
+      'its own angle in one grid cell, so axe cannot resolve a background behind any of them and ' +
+      'declines. Each card carries its own --canvas-veil surface. check:master:scene question 5 ' +
+      'measures the text of every card that is actually painted — the front card and the visible ' +
+      'side cards — against the rendered pixels behind it, at 11 widths; cards turned away are ' +
+      'backface-hidden and have no pixels to measure. check:reviews:ui questions 9 and 10 assert ' +
+      'the scope this depends on: every review, and every <time> on /, is inside the reviews ' +
+      'chapter that gate reads.\n' +
+      '    REMOVE THIS ENTRY if the reviews stop being a 3D cylinder over the scene, or if either ' +
+      'scope assertion is removed.',
+  },
+  // `GS-R001-M` R1. The footer and header on `/`, transparent over the scene while it runs: the
+  // footer so the reassembled mark is not cut off at the bottom of the page, the header so its
+  // wrapped nav is not an opaque band across the hero mark at 320px. The `why` below was written
+  // for the footer; the header is the same case — same stylesheet rule, same fallback behaviour,
+  // and `check:master:scene` question 5 reads header text as well as footer text since R1.
+  {
+    rule: 'color-contrast',
+    routes: ['/'],
+    targetPattern:
+      /^(\.chrome_(footer|statutory|navLink|wordmark)[A-Za-z]*__|nav\x5baria-label="(Company|Legal)"\] > \.chrome_footerGroupHeading__|a\x5bdata-division-accent="(design|digital|press)"\]$|a\x5bhref\$="(about|approach|insights|contact|terms|privacy|cookies|accessibility)"\]$|\.consent_reopen__)/,
+    why:
+      'R1 made the footer transparent on / while the scene is live (styles/themes/master-stage.css) ' +
+      'because its opaque --canvas cut the reassembled mark in half — the owner\u2019s complaint. ' +
+      'Its text now sits over the <canvas>, and axe declines exactly as it does for main. ' +
+      'check:master:scene question 5 measures the footer\u2019s text too since R1, at every width ' +
+      'and at the bottom of the page, where the footer is in view; the renderer dims the scene ' +
+      'behind every footer text element it lists (scene.ts, TEXT). Under the no-WebGL fallback ' +
+      'the footer keeps its opaque surface, and axe resolves it itself.\n' +
+      '    REMOVE THIS ENTRY if the footer on / becomes opaque again, or if check:master:scene ' +
+      'stops including the footer in question 5.',
+  },
 ];
 
 /**

@@ -40,6 +40,10 @@ uniform vec3 uS[8];
 uniform vec3 uA[6];
 uniform vec3 uB[6];
 uniform vec3 uBg, uHi, uGold, uDeep;
+// R1 — text rectangles in canvas pixels (x0, y0, x1, y1, y up), feathered. The scene is dimmed
+// only directly behind copy, so it can run at full strength everywhere else.
+uniform vec4 uR[32];
+uniform float uRN, uFeather;
 const float RS = ${SPHERE_RADIUS.toFixed(5)};
 const float RR = ${ROD_RADIUS.toFixed(5)};
 
@@ -146,6 +150,13 @@ void main() {
   vec3 col = mix(bg, acc, cov);
   float under = uEdge > 1.0 ? 1.0 : 1.0 - smoothstep(uEdge - 0.2, uEdge + 0.08, q.x);
   col = mix(col, bg * 0.9, uShade * under * cov);
+  float att = 0.0;
+  for (int i = 0; i < 32; i++) {
+    if (float(i) >= uRN) break;
+    vec2 e = max(uR[i].xy - px, px - uR[i].zw);
+    att = max(att, 1.0 - smoothstep(0.0, uFeather, max(e.x, e.y)));
+  }
+  col = mix(col, bg * 0.9, 0.8 * att * cov);
   gl_FragColor = vec4(col, 1.0);
 }
 `;
@@ -219,7 +230,7 @@ export function startScene(
   const U = {
     res: u('uRes'), dist: u('uDist'), tan: u('uTanHalf'), exp: u('uExposure'), shade: u('uShade'),
     edge: u('uEdge'), light: u('uLight'), glow: u('uGlow'), aa: u('uAA'), centre: u('uCentre'),
-    s: u('uS'), a: u('uA'), b: u('uB'),
+    s: u('uS'), a: u('uA'), b: u('uB'), r: u('uR'), rn: u('uRN'), feather: u('uFeather'),
   };
 
   const style = getComputedStyle(canvas);
@@ -283,7 +294,31 @@ export function startScene(
   let lastDraw = 0;
   let slow = 0;
 
+  // The copy the scene dims behind: every text block in the page and the footer that is on
+  // screen. Read at draw time, after layout, so it follows the scroll exactly.
+  // Text elements, not the rows around them: a list row's box is mostly empty space, and dimming
+  // it hid the scene for nothing.
+  const TEXT = 'main :is(h1, h2, h3, p, blockquote, figcaption, li > span), :is(header, footer) :is(p, a)';
+  const rects = new Float32Array(32 * 4);
+  const readRects = () => {
+    const sx = width / canvas.clientWidth;
+    const sy = height / canvas.clientHeight;
+    const pad = 6;
+    let n = 0;
+    for (const el of document.querySelectorAll<HTMLElement>(TEXT)) {
+      if (n === 32) break;
+      const r = el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight || r.width === 0 || r.height === 0) continue;
+      rects.set([(r.left - pad) * sx, height - (r.bottom + pad) * sy, (r.right + pad) * sx, height - (r.top - pad) * sy], n * 4);
+      n += 1;
+    }
+    gl.uniform4fv(U.r, rects);
+    gl.uniform1f(U.rn, n);
+    gl.uniform1f(U.feather, 18 * sx);
+  };
+
   const draw = (now: number) => {
+    readRects();
     const keys = narrow.matches ? KEYS_NARROW : KEYS_WIDE;
     const sway = opts.reduced
       ? 0
@@ -340,7 +375,11 @@ export function startScene(
   };
 
   const onScroll = () => {
-    if (opts.reduced) return;
+    // Reduced motion: the pose never moves, but the text moves over it, so the dimming follows.
+    if (opts.reduced) {
+      draw(performance.now());
+      return;
+    }
     target = chapterAt();
     kick();
   };
