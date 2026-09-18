@@ -173,7 +173,7 @@ export function startScene(
   // **No software rendering.** Without a GPU, Chrome runs WebGL on the CPU (SwiftShader) and every
   // frame of this shader becomes a main-thread block of about a second — measured on the CI
   // runner at GS-R001-M: TBT 41,960ms, TTI 45s, Lighthouse performance 0.66. A visitor on such a
-  // machine would get a frozen page, so the scene declines and the static logo shows instead.
+  // machine would get a frozen page, so the scene declines and `FallbackMark` shows instead.
   // `failIfMajorPerformanceCaveat` is the standard signal for exactly this. `allowSoftware` exists
   // only so `check:master:scene` can exercise the scene on a GPU-less runner (`?scene=software`).
   const gl = canvas.getContext('webgl', {

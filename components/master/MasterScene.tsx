@@ -1,6 +1,6 @@
 'use client'; // WebGL, matchMedia and a post-paint dynamic import — none of it exists on the server.
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import styles from './home.module.css';
 
 /**
@@ -18,13 +18,13 @@ import styles from './home.module.css';
  * |---|---|---|
  * | *(unset)* | before the renderer arrives | the stage colour and its glow |
  * | `ready` | WebGL rendered its first frame | the scene |
- * | `fallback` | no WebGL, **software-only WebGL**, a draw that blocks >100ms, shader failure, lost context, failed import, low-capability device | the owner's gold logo, static |
+ * | `fallback` | no WebGL, **software-only WebGL**, a draw that blocks >100ms, shader failure, lost context, failed import, low-capability device | the logo's geometry as inline gold vector shapes (`FallbackMark`), static — never an image, so never an LCP candidate |
  * | `ready` + reduced motion | `prefers-reduced-motion: reduce` | the scene, rendered once in its hero pose, never moving |
  *
  * `aria-hidden` and `pointer-events: none`: it is decorative, holds nothing focusable and
  * never takes input. Scrolling stays native — the scene reads `scrollY`, it never sets it.
  */
-export function MasterScene() {
+export function MasterScene({ fallback }: { fallback: ReactNode }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export function MasterScene() {
 
   return (
     <div className={styles.scene} aria-hidden="true" data-master-scene="">
-      <div className={styles.sceneFallback} />
+      <div className={styles.sceneFallback}>{fallback}</div>
       <canvas ref={ref} className={styles.sceneCanvas} />
     </div>
   );

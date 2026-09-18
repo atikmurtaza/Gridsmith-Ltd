@@ -19,6 +19,9 @@
 
 .stack { display: flex; flex-direction: column; gap: var(--space-16); }
 
+/* `GS-R001-M` — the opacity pass's committed subject; see the specimen in page.probe.tsx. */
+.fadedSpecimen { margin: 0; color: var(--ink); opacity: 0.85; }
+
 .specimen { display: flex; flex-direction: column; gap: var(--space-4); }
 
 .specimenName {

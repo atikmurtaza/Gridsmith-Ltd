@@ -167,8 +167,8 @@ scroll hijacking, no smooth-scroll library, no cursor follower.
 - **Reduced motion:** the scene still renders — the identity is not removed — once, in the hero
   pose, and never moves: no scroll response, no sway, no tilt.
 - **No WebGL / shader failure / lost context / failed import / low-capability device**
-  (`hardwareConcurrency ≤ 2`, `deviceMemory ≤ 2`, Save-Data): the owner's own
-  `gridsmith-logo.svg`, unmodified and static. With scripting off, the same.
+  (`hardwareConcurrency ≤ 2`, `deviceMemory ≤ 2`, Save-Data): the logo's exact
+  geometry as inline gold vector shapes (`FallbackMark`, §7.1b), static. With scripting off, the same.
 
 ### 5.3 Performance design
 
@@ -232,6 +232,21 @@ Lighthouse there now measures **the fallback** — exactly what such a visitor r
 not measure the scene's cost on a real GPU. No environment available to this phase has one under
 automation; that is the owner's review on their own devices (§13).
 
+### 7.1b The second CI finding: the fallback became the LCP element
+
+With software WebGL declined, the second CI run (`35314676312`, `c69fcdde`) passed desktop and
+went red on **mobile LCP: 3,385ms** against 1,800ms. The fallback was the logo as a CSS
+`background-image`, which **is an LCP candidate**, and on a GPU-less device it appears only after
+the idle-time capability check — under 4× CPU throttling, late enough to become the page's
+largest paint.
+
+The fallback is now **`FallbackMark`**: the logo's exact geometry — 8 circles, 6 bars, the file's
+own viewBox — as inline vector shapes with gold gradients from the stage tokens. Vector shapes are
+never LCP candidates and need no request; it is server-rendered as children of the client
+boundary, so it adds nothing to the JS bundle. `check:master:scene` question 7 now checks it is
+drawn and visible (8/6 shapes, gold on screen), and **question 9** asserts that in fallback the LCP
+element is never inside the scene layer; its probe restores the background image.
+
 ### 7.2 LCP, CLS, TBT
 
 **Lighthouse cannot run on Windows** (recorded since `GS-R001`; chrome-launcher's temp-profile
@@ -253,7 +268,7 @@ the safety net for weak integrated GPUs.
 
 | Gate | Change | Proof |
 |---|---|---|
-| `check:master:scene` **(new, served)** | Replaces `check:mark:field`. Seven questions at 2560, 1440, 1024, 768 and 375 widths × six chapters, plus reduced motion and no-WebGL, from **rendered pixels**: decorative; WebGL started; **mark visible at every chapter** (gold share of viewport ≥1%); **moves between chapters** (≥2% of the frame changes) and holds still under reduced motion; **every line of text readable over the scene** (its own colour vs the 98th-percentile luminance behind it); no overflow; fallback shows the logo | `scripts/prove-master-scene.mjs`, committed — §8.1 |
+| `check:master:scene` **(new, served)** | Replaces `check:mark:field`. **Nine** questions at 2560, 1440, 1024, 768 and 375 widths × six chapters, plus reduced motion, no-WebGL and software-WebGL, from **rendered pixels**: decorative; WebGL started; **mark visible at every chapter** (gold share of viewport ≥1%); **moves between chapters** (≥2% of the frame changes) and holds still under reduced motion; **every line of text readable over the scene** (its own colour vs the 98th-percentile luminance behind it); no overflow; the fallback mark is drawn and visible; software WebGL is declined for a real visitor; the fallback is never the LCP element | `scripts/prove-master-scene.mjs`, committed — §8.0 |
 | `check:master:scene:selftest` **(new, static)** | The model's invariants: the close **is** the logo exactly; the hero is the assembled mark; no bar ever changes length; nothing jumps; ≥4 formations | Each check run against a fixture broken to fail it, in the same run — 5 of 5 red |
 | `check:bundle-size` | Lazy scene line, three assertions; `/` leaves `BASELINE_ROUTES` | §7.1 |
 | `check:contrast` | Fifth palette; `home.module.css` scoped to it; 36→44 pairs, 148→185 cells | Scoping found a real defect on first run (§8.2) |
@@ -263,8 +278,8 @@ the safety net for weak integrated GPUs.
 
 ### 8.0 `check:master:scene` — the deliberate-failure record
 
-`scripts/prove-master-scene.mjs`, on the final build, **one run, 9 of 9 red on their own
-question**, every subject restored byte-identical (SHA-256). Each probe mutates one built
+`scripts/prove-master-scene.mjs`, on the final build, **one run, 10 of 10 red on their own
+question**, every subject restored byte-identical (SHA-256) — 10 of 10. Each probe mutates one built
 artefact and is credited only if the gate fires **the question it targets**.
 
 | Q | Probe | The gate said |
@@ -272,12 +287,13 @@ artefact and is credited only if the gate fires **the question it targets**.
 | 1 | `aria-hidden` removed from the layer | *"the scene layer is not aria-hidden"* |
 | 2 | shader made uncompilable (`gl_FragColour`) | `data-render` is `fallback`, not `ready` |
 | 3 | canvas hidden | *"the mark covers 0.00% of the viewport"*, every chapter |
-| 4 | scroll no longer drives the pose | *"only 1.06% of the frame changed since the previous chapter"* |
-| 4 reduced | reduced-motion query ignored | *"6.17% of the frame changed between hero and close — it moved"* |
-| 5 | hero `h1` moved over the mark | *"measures 2.95:1 over the scene, needs 3:1"* — a thin margin at the gate's small software render size; the same probe measured 1.31:1 at full size |
+| 4 | scroll no longer drives the pose | *"only 1.05% of the frame changed since the previous chapter"* |
+| 4 reduced | reduced-motion query ignored | *"6.16% of the frame changed between hero and close — it moved"* |
+| 5 | hero `h1` moved over the mark | *"measures 2.96:1 over the scene, needs 3:1"* — a thin margin at the gate's small software render size; the same probe measured 1.31:1 at full size |
 | 6 | a 3000×20px probe in `main` (it has height, so it can overflow) | *"440px of horizontal overflow"* |
-| 7 | fallback logo removed | *"without WebGL the static logo is not shown"* |
+| 7 | fallback mark hidden | *"the fallback mark covers 0.00% of the viewport — drawn and not seen"* |
 | 8 | software WebGL accepted for every visitor | *"without the opt-in, software WebGL left data-render ready"* |
+| 9 | fallback turned back into a background image (what CI caught) | *"the LCP element is inside the scene layer"* |
 
 Getting to one clean run took three harness fixes, each recorded in the file: a parser that read
 viewport widths as question numbers; a refused server start read as a green (now **NOT RUN**,
@@ -332,6 +348,13 @@ The opacity pass scoped every file under `components/master/` to the white `mast
 `home.module.css` renders on the stage; scoped correctly, the gate immediately found the studio
 arrow resting at `opacity: 0.5` — 3.34:1 on the stage. The arrow now rests at full opacity and
 only its position animates.
+
+**Its opacity pass then lost its subject.** It requires at least one faded-text rule to measure,
+and its subject had been the division cards' sibling fade — removed with the cards. The
+zero-subject guard fired, correctly. The fix is a **committed specimen**: `.fadedSpecimen` on the
+kitchen-sink probe route, a rendered paragraph the pass and axe both reach. Written first at 0.8,
+the pass went red on Digital (4.44:1) and Press (4.41:1) — it composites every fade with both
+`--ink` and `--ink-muted` — which proved it reaches the specimen; it now sits at 0.85.
 
 ### 8.3 `check:state-cues`
 

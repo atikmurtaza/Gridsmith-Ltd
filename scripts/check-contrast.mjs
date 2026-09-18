@@ -715,8 +715,9 @@ for (const file of globSync('{components,app}/**/*.module.css')) {
 // stylesheets are clean — DESIGN.md §5 requires at least one fade to exist.
 if (opacityRules === 0) {
   opacityProblems.push(
-    'no opacity declaration below 1 was found in any CSS module. DESIGN.md §5 requires the ' +
-      'division cards to fade their siblings, so this scan measured nothing.',
+    'no opacity declaration below 1 was found in any CSS module, so this scan measured nothing. ' +
+      'Its committed subject is `.fadedSpecimen` in the kitchen sink (GS-R001-M; the division ' +
+      'cards’ sibling fade it used to measure was removed with the cards).',
   );
 }
 

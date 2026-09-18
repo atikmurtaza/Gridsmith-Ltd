@@ -28,15 +28,17 @@
 .scene[data-render="ready"] .sceneCanvas { opacity: 1; }
 .scene[data-render="fallback"] .sceneCanvas { display: none; }
 
-/* The owner's own vector, unmodified, when there is no WebGL. `display: none` until needed, so
-   the file is never fetched on the normal path and can never become an LCP candidate. */
+/* The logo as inline vector shapes when the scene declines (`FallbackMark`). Shapes, not a
+   background image: an image here became the late LCP element on GPU-less mobile (3,385ms). */
 .sceneFallback {
   display: none;
   position: absolute;
-  inset: 0;
-  background: url('/brand/gridsmith-logo.svg') no-repeat right 8% center / min(40vw, 38rem);
-  opacity: 0.9;
+  top: 50%;
+  right: 8%;
+  width: min(40vw, 38rem);
+  transform: translateY(-50%);
 }
+.sceneFallback svg { display: block; width: 100%; height: auto; }
 .scene[data-render="fallback"] .sceneFallback { display: block; }
 @media (scripting: none) {
   .sceneFallback { display: block; }
@@ -374,7 +376,7 @@
   .close { min-height: 0; padding-top: 52svh; }
   .section { min-height: 0; padding-block: var(--space-24); }
   .section > * { padding-block: var(--space-12); background: var(--canvas-veil); }
-  .sceneFallback { background-position: center 14%; background-size: min(62vw, 18rem); }
+  .sceneFallback { top: 44svh; right: 50%; width: min(62vw, 18rem); transform: translate(50%, -50%); }
 }
 
 @media (max-width: 767px) {

@@ -41,7 +41,10 @@ const PROBES = [
   { q: '4 reduced', file: PAGE, what: 'reduced-motion query ignored', edit: (s) => s.replace('prefers-reduced-motion: reduce', 'prefers-reduced-motion: no-such') },
   { q: 5, file: HTML, what: 'hero heading moved over the mark', edit: style('main h1{transform:translateX(52vw)}') },
   { q: 6, file: HTML, what: '3000px-wide, 20px-tall probe in main', edit: style('main::after{content:"";display:block;width:3000px;height:20px}') },
-  { q: 7, file: HTML, what: 'fallback logo removed', edit: style('[data-master-scene]>div{background:none!important}') },
+  { q: 7, file: HTML, what: 'fallback mark hidden', edit: style('[data-master-scene]>div{visibility:hidden!important}') },
+  // Question 9's probe restores what CI caught: the fallback as a background IMAGE, which is an
+  // LCP candidate. Shapes hidden so only the image paints.
+  { q: 9, file: HTML, what: 'fallback turned back into a background image', edit: style('[data-master-scene]>div{background:url(/brand/gridsmith-logo.svg) no-repeat center/contain}[data-master-scene]>div svg{visibility:hidden}') },
   { q: 8, file: PAGE, what: 'software WebGL accepted for every visitor', edit: (s) => s.replace('get("scene")', 'get("scene")||"software"') },
 ];
 

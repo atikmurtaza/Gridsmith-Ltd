@@ -1,4 +1,5 @@
 import { Close, Context, Hero, Process, Reviews, Studios } from '@/components/master/Home';
+import { FallbackMark } from '@/components/master/FallbackMark';
 import { MasterScene } from '@/components/master/MasterScene';
 
 /**
@@ -17,7 +18,7 @@ import { MasterScene } from '@/components/master/MasterScene';
 export default function Page() {
   return (
     <>
-      <MasterScene />
+      <MasterScene fallback={<FallbackMark />} />
       <main id="main" tabIndex={-1} data-stage="master">
         <Hero
           headline="One company. Three specialist studios. Built to work together."

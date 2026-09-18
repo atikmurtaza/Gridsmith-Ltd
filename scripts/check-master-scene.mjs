@@ -16,6 +16,7 @@
  * | 5 | **Is every line of text readable over it?** Each text element's own colour against the 98th-percentile luminance of the rendered scene behind it. |
  * | 6 | No horizontal overflow at any chapter. |
  * | 7 | **Fallback** — with WebGL unavailable, the owner's static logo is shown and the page is intact. |
+ * | 9 | **The fallback is never the LCP element** — CI measured mobile LCP 3,385ms when the fallback was a background image that appeared after the capability check. |
  * | 8 | **Software WebGL is declined** — on this GPU-less browser, `/` without the test opt-in falls back, and the page carries no long main-thread task (CI measured TBT 41,960ms before this existed). |
  *
  * ## Why question 5 exists, and why axe cannot answer it
@@ -118,6 +119,10 @@ async function openHome(width, height, { reduced = false, noWebGL = false, optIn
   // visitors (GS-R001-M — TBT 41,960ms when it did not). The opt-in lets the gate see the scene
   // it exists to measure; the no-WebGL case below measures what a GPU-less visitor gets.
   await page.evaluateOnNewDocument(() => {
+    window.__lcpInScene = null;
+    new PerformanceObserver((l) => {
+      for (const e of l.getEntries()) window.__lcpInScene = !!e.element?.closest?.('[data-master-scene]');
+    }).observe({ type: 'largest-contentful-paint', buffered: true });
     window.__longTasks = 0;
     new PerformanceObserver((l) => {
       for (const e of l.getEntries()) window.__longTasks += Math.max(0, e.duration - 50);
@@ -286,14 +291,22 @@ for (const [width, height] of VIEWPORTS) {
     return {
       state: layer?.dataset.render,
       display: f && getComputedStyle(f).display,
-      image: f && getComputedStyle(f).backgroundImage,
+      // The logo's geometry as vector shapes — 8 spheres and 6 bars (`FallbackMark`).
+      shapes: f ? `${f.querySelectorAll('circle').length}/${f.querySelectorAll('rect').length}` : '0/0',
       h1: document.querySelector('main h1')?.textContent ?? '',
     };
   });
   if (fb.state !== 'fallback') problems.push(`7: without WebGL data-render is "${fb.state}", not "fallback"`);
-  if (fb.display === 'none' || !/gridsmith-logo\.svg/.test(fb.image ?? '')) problems.push('7: without WebGL the static logo is not shown');
+  await page.addStyleTag({ content: HIDE_CONTENT });
+  const fbFrame = await analyse(await page.screenshot({ encoding: 'base64' }), []);
+  await page.evaluate((h) => document.querySelectorAll('style').forEach((s) => s.textContent === h && s.remove()), HIDE_CONTENT);
+  if (fb.display === 'none' || fb.shapes !== '8/6') problems.push(`7: without WebGL the fallback mark is not drawn (display ${fb.display}, ${fb.shapes} spheres/bars, expected 8/6)`);
+  else if (fbFrame.gold < VISIBLE_FLOOR) problems.push(`7: without WebGL the fallback mark covers ${(fbFrame.gold * 100).toFixed(2)}% of the viewport — drawn and not seen`);
+  // 9 — a fallback that arrives late must not become the page's largest paint.
+  const lcpInScene = await page.evaluate(() => window.__lcpInScene);
+  if (lcpInScene) problems.push('9: without WebGL the LCP element is inside the scene layer — the fallback arrives after the capability check and delays LCP');
   if (!fb.h1) problems.push('7: without WebGL the page lost its content');
-  log.push(`  no WebGL   ${fb.state}, ${/gridsmith-logo\.svg/.test(fb.image ?? '') ? 'owner logo shown' : 'NO LOGO'}`);
+  log.push(`  no WebGL   ${fb.state}, fallback ${fb.shapes} spheres/bars covering ${(fbFrame.gold * 100).toFixed(1)}%, LCP ${lcpInScene ? 'IN THE SCENE LAYER' : 'outside the scene layer'}`);
   await page.close();
 }
 
@@ -320,4 +333,4 @@ if (problems.length > 0) {
   for (const p of problems) console.error(`  ${p}`);
   process.exit(1);
 }
-console.log(`\ncheck-master-scene: ${VIEWPORTS.length} viewports × ${CHAPTERS.length} chapters, reduced motion, no-WebGL and software-WebGL — all 8 questions pass\n`);
+console.log(`\ncheck-master-scene: ${VIEWPORTS.length} viewports × ${CHAPTERS.length} chapters, reduced motion, no-WebGL and software-WebGL — all 9 questions pass\n`);

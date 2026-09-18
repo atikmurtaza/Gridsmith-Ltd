@@ -45,7 +45,8 @@
    over four formations (logo, split, chain, ring); lighting rotates with scroll; subtle pointer
    tilt; renders only on change. **Lazy 5.2KB gz** against Three.js's ~150KB; GSAP not needed.
    Reduced motion: one still hero frame. No WebGL, **software-only WebGL**, a draw blocking >100ms,
-   failure or low capability: the owner's SVG. (CI's first run found the software case: TBT 41,960ms.)
+   failure or low capability: the logo as inline vector shapes (`FallbackMark`). CI found both
+   cases the hard way: TBT 41,960ms (software WebGL), then mobile LCP 3,385ms (an image fallback).
 3. **The page** — hero (left-set type, mark right), a typographic **studio index** instead of
    three cards, *One relationship* (continuity + structure disclosure merged), the six stage
    names on one rail, still reviews under a held heading, and a close where the mark resolves
@@ -56,7 +57,7 @@
 `verify:static` **47 gates PASS** · `verify:build` PASS on a wiped `.next` (68 routes; `/` delta
 **4.4KB of 15KB**, was 1.9KB; lazy scene **5.2KB of 8KB**) · `verify:served` PASS: `check:axe`
 **zero violations, 0 unresolved**; `check:master:scene` **5 widths × 6 chapters +
-reduced motion + no-WebGL + software-WebGL (8 questions)**; `check:reviews:ui`, `check:company` (9 questions), `check:responsive`,
+reduced motion + no-WebGL + software-WebGL (9 questions)**; `check:reviews:ui`, `check:company` (9 questions), `check:responsive`,
 legal parity, Press type, Path Finder — all PASS; `check:mark:cls` **0.0000** at 375/768/1440 ·
 `npm audit --omit=dev` 0 vulnerabilities · Lighthouse: CI (Windows cannot run it).
 
