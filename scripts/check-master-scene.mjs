@@ -16,6 +16,7 @@
  * | 5 | **Is every line of text readable over it?** Each text element's own colour against the 98th-percentile luminance of the rendered scene behind it. |
  * | 6 | No horizontal overflow at any chapter. |
  * | 7 | **Fallback** — with WebGL unavailable, the owner's static logo is shown and the page is intact. |
+ * | 8 | **Software WebGL is declined** — on this GPU-less browser, `/` without the test opt-in falls back, and the page carries no long main-thread task (CI measured TBT 41,960ms before this existed). |
  *
  * ## Why question 5 exists, and why axe cannot answer it
  *
@@ -60,7 +61,9 @@ const HIDE_CONTENT = 'main, header, footer { opacity: 0 !important; }';
 
 // Chrome no longer falls back to SwiftShader for WebGL on its own; a runner without a GPU needs
 // it named. It is software rendering, which is slow but exact, and that is all a gate needs.
-const browser = await launch({ args: ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'] });
+// `protocolTimeout`: software rendering competes with the browser's own protocol traffic; the
+// default 180s was enough by hand and not under the proof harness (`Network.enable timed out`).
+const browser = await launch({ args: ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'], protocolTimeout: 600_000 });
 const decoder = await browser.newPage();
 
 const problems = [];
@@ -97,7 +100,7 @@ async function analyse(pngBase64, boxes) {
   );
 }
 
-async function openHome(width, height, { reduced = false, noWebGL = false } = {}) {
+async function openHome(width, height, { reduced = false, noWebGL = false, optIn = true } = {}) {
   const page = await browser.newPage();
   await page.setViewport({ width, height, deviceScaleFactor: 1 });
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: reduced ? 'reduce' : 'no-preference' }]);
@@ -111,7 +114,20 @@ async function openHome(width, height, { reduced = false, noWebGL = false } = {}
   }
   // The consent notice is fixed over the bottom of the viewport and is not the subject.
   await page.setCookie({ name: 'gs_consent', value: '1', url: BASE_URL });
-  const res = await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
+  // `?scene=software`: this runner has no GPU, and the scene declines software WebGL for real
+  // visitors (GS-R001-M — TBT 41,960ms when it did not). The opt-in lets the gate see the scene
+  // it exists to measure; the no-WebGL case below measures what a GPU-less visitor gets.
+  await page.evaluateOnNewDocument(() => {
+    window.__longTasks = 0;
+    new PerformanceObserver((l) => {
+      for (const e of l.getEntries()) window.__longTasks += Math.max(0, e.duration - 50);
+    }).observe({ type: 'longtask', buffered: true });
+  });
+  // `load`, then the scene's own render attribute below — not `networkidle0`. The first version
+  // waited for network idle, and with the canvas hidden (the question-3 probe) the page never
+  // reached it: the gate crashed on a navigation timeout and measured nothing, which the proof
+  // harness correctly reported as NOT RUN rather than as a reading.
+  const res = await page.goto(`${BASE_URL}/${optIn ? '?scene=software' : ''}`, { waitUntil: 'load', timeout: 60000 });
   if (!res || ![200, 304].includes(res.status())) throw new Error(`/ returned ${res?.status()}`);
   await page
     .waitForFunction(() => document.querySelector('[data-master-scene]')?.dataset.render, { timeout: 15000 })
@@ -281,6 +297,20 @@ for (const [width, height] of VIEWPORTS) {
   await page.close();
 }
 
+// 8 — software WebGL declined for a real visitor.
+{
+  const page = await openHome(1440, 900, { optIn: false });
+  await new Promise((r) => setTimeout(r, 4000));
+  const sw = await page.evaluate(() => ({
+    state: document.querySelector('[data-master-scene]')?.dataset.render,
+    blocking: Math.round(window.__longTasks),
+  }));
+  if (sw.state !== 'fallback') problems.push(`8: without the opt-in, software WebGL left data-render "${sw.state}" — a GPU-less visitor gets the software scene`);
+  if (sw.blocking > 200) problems.push(`8: ${sw.blocking}ms of main-thread blocking on / without a GPU — the page is not usable`);
+  log.push(`  software   ${sw.state}, ${sw.blocking}ms blocking beyond 50ms per task`);
+  await page.close();
+}
+
 await browser.close();
 
 console.log('check-master-scene: gold share of viewport / worst text contrast over the scene, per chapter\n');
@@ -290,4 +320,4 @@ if (problems.length > 0) {
   for (const p of problems) console.error(`  ${p}`);
   process.exit(1);
 }
-console.log(`\ncheck-master-scene: ${VIEWPORTS.length} viewports × ${CHAPTERS.length} chapters, reduced motion and no-WebGL — all 7 questions pass\n`);
+console.log(`\ncheck-master-scene: ${VIEWPORTS.length} viewports × ${CHAPTERS.length} chapters, reduced motion, no-WebGL and software-WebGL — all 8 questions pass\n`);

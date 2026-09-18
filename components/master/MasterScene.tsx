@@ -18,7 +18,7 @@ import styles from './home.module.css';
  * |---|---|---|
  * | *(unset)* | before the renderer arrives | the stage colour and its glow |
  * | `ready` | WebGL rendered its first frame | the scene |
- * | `fallback` | no WebGL, shader failure, lost context, failed import, low-capability device | the owner's gold logo, static |
+ * | `fallback` | no WebGL, **software-only WebGL**, a draw that blocks >100ms, shader failure, lost context, failed import, low-capability device | the owner's gold logo, static |
  * | `ready` + reduced motion | `prefers-reduced-motion: reduce` | the scene, rendered once in its hero pose, never moving |
  *
  * `aria-hidden` and `pointer-events: none`: it is decorative, holds nothing focusable and
@@ -53,6 +53,9 @@ export function MasterScene() {
           if (cancelled) return;
           dispose = startScene(canvas, {
             reduced: matchMedia('(prefers-reduced-motion: reduce)').matches,
+            // Test affordance for `check:master:scene` on a GPU-less runner; see scene.ts.
+            allowSoftware: new URLSearchParams(location.search).get('scene') === 'software',
+            onSlow: fallback,
           });
           if (dispose) layer.dataset.render = 'ready';
           else fallback();

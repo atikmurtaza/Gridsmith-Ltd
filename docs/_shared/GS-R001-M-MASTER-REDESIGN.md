@@ -128,7 +128,7 @@ floor bounce, the same softbox device the supplied logo draws its highlights wit
 
 | | Three.js / R3F (the reference) | This |
 |---|---|---|
-| Lazy JS | ~150KB gz for three + fiber + drei + postprocessing | **5.0KB gz** |
+| Lazy JS | ~150KB gz for three + fiber + drei + postprocessing | **5.2KB gz** |
 | Silhouettes | tessellated (32-segment spheres) | exact at any zoom, including the macro close-up |
 | Inter-reflection | needs reflection probes | **native** — every sphere mirrors its neighbours |
 | Rendering | continuous render loop | **renders only when something changes** |
@@ -196,7 +196,7 @@ construction.
 | | Before (`GS-R001-R`) | After |
 |---|---|---|
 | `/` initial JS delta | 1.9KB of 15KB | **4.4KB of 15KB** (`MasterScene`, the client boundary) |
-| Lazy scene renderer | — | **5.0KB gz**, in no route's HTML, ceiling 8KB |
+| Lazy scene renderer | — | **5.2KB gz** (5.0KB before the software-WebGL checks, §7.1a), in no route's HTML, ceiling 8KB |
 | Dependencies added | — | **none** |
 
 `check-bundle-size` gained the lazy line with three assertions — exactly one chunk carries the
@@ -205,6 +205,32 @@ to 4KB, marker changed so zero chunks match, and the chunk injected into `/about
 (restored byte-identical by SHA-256). `/` left the gate's `BASELINE_ROUTES` deliberately: the
 spread assertion fired at 2.4KB because the scene boundary is on `/` alone, and the feature is
 owner-authorised.
+
+### 7.1a The CI finding that changed the design: software WebGL
+
+The first CI run of the phase commit (`35308394477`, `07406d60`) went red on Lighthouse desktop:
+**`/` performance 0.66** against a 0.98 floor. FCP 0.3s, LCP 0.6s and CLS 0 were fine; **TBT was
+41,960ms and TTI 45.2s.** The runner has no GPU, so Chrome ran the shader on the CPU through
+SwiftShader and every frame became a ~1s main-thread block from the scene chunk.
+
+That is not a lab artefact to route around: **a real visitor whose browser falls back to
+software WebGL would get a frozen page.** So the scene now declines software rendering and shows
+the static logo, by two checks, because one was measured to be insufficient:
+
+1. `failIfMajorPerformanceCaveat: true` on context creation — the standard signal.
+2. The unmasked renderer string, declining SwiftShader, llvmpipe/softpipe and the Microsoft Basic
+   Render Driver. **Needed because (1) alone does not fire when SwiftShader is the selected
+   backend** — probed locally: `strict: true` under `--use-angle=swiftshader`.
+
+Plus a runtime guard: any single draw that blocks the main thread for more than 100ms disposes
+the scene and falls back. `check:master:scene` question 8 asserts it on its GPU-less browser —
+`/` without an opt-in must fall back with under 200ms of blocking — and the gate exercises the
+scene itself through an explicit `?scene=software` test opt-in.
+
+**What this means for the Lighthouse figures:** the CI runner is a GPU-less visitor, so
+Lighthouse there now measures **the fallback** — exactly what such a visitor receives. It does
+not measure the scene's cost on a real GPU. No environment available to this phase has one under
+automation; that is the owner's review on their own devices (§13).
 
 ### 7.2 LCP, CLS, TBT
 
@@ -237,20 +263,27 @@ the safety net for weak integrated GPUs.
 
 ### 8.0 `check:master:scene` — the deliberate-failure record
 
-`scripts/prove-master-scene.mjs`, on the final build. Each probe mutates one built artefact, runs
-the gate, and is credited only if the gate fires **the question it targets**; every subject was
-restored byte-identical (SHA-256).
+`scripts/prove-master-scene.mjs`, on the final build, **one run, 9 of 9 red on their own
+question**, every subject restored byte-identical (SHA-256). Each probe mutates one built
+artefact and is credited only if the gate fires **the question it targets**.
 
-| Q | Probe | Result |
+| Q | Probe | The gate said |
 |---|---|---|
-| 1 | `aria-hidden` removed from the layer | **RED** — *"the scene layer is not aria-hidden"* |
-| 2 | shader made uncompilable (`gl_FragColour`) | **RED** — `data-render` is `fallback`, not `ready` |
-| 3 | canvas hidden | **RED** — *"the mark covers 0.00% of the viewport"* at every chapter. Run through the harness with `PROBE=3`: in the full run the port was still held after probe 2, `with-server` correctly refused, and the harness reported **NOT RUN** rather than a reading |
-| 4 | scroll no longer drives the pose | **RED** — *"only 1.22% of the frame changed since the previous chapter"* |
-| 4 reduced | reduced-motion query ignored | **RED** — *"6.35% of the frame changed between hero and close — it moved"* |
-| 5 | hero `h1` moved over the mark | **RED** — *"measures 1.31:1 over the scene, needs 3:1"* |
-| 6 | a 3000×20px probe in `main` (a probe with height, so it can overflow) | **RED** — *"440px of horizontal overflow"* |
-| 7 | fallback logo removed | **RED** — *"without WebGL the static logo is not shown"* |
+| 1 | `aria-hidden` removed from the layer | *"the scene layer is not aria-hidden"* |
+| 2 | shader made uncompilable (`gl_FragColour`) | `data-render` is `fallback`, not `ready` |
+| 3 | canvas hidden | *"the mark covers 0.00% of the viewport"*, every chapter |
+| 4 | scroll no longer drives the pose | *"only 1.06% of the frame changed since the previous chapter"* |
+| 4 reduced | reduced-motion query ignored | *"6.17% of the frame changed between hero and close — it moved"* |
+| 5 | hero `h1` moved over the mark | *"measures 2.95:1 over the scene, needs 3:1"* — a thin margin at the gate's small software render size; the same probe measured 1.31:1 at full size |
+| 6 | a 3000×20px probe in `main` (it has height, so it can overflow) | *"440px of horizontal overflow"* |
+| 7 | fallback logo removed | *"without WebGL the static logo is not shown"* |
+| 8 | software WebGL accepted for every visitor | *"without the opt-in, software WebGL left data-render ready"* |
+
+Getting to one clean run took three harness fixes, each recorded in the file: a parser that read
+viewport widths as question numbers; a refused server start read as a green (now **NOT RUN**,
+never a reading); and a gate crash under software rendering (`Network.enable timed out`) — fixed
+by navigating on `load` rather than network idle, a longer protocol timeout, and rendering the
+test-only software path small.
 
 ### 8.1 What proving the gates found
 
@@ -386,8 +419,10 @@ were touched. **Digital: unchanged and deferred.** Design and Press routes: unch
 
 No production Sanity call. No Supabase call of any kind. `GS-T004` not applied. No DNS or Hostinger
 change. `gridsmith.uk` unchanged. No production deployment: the staging candidate is a Vercel
-branch **preview**, SSO-protected and `noindex`; the `main` push produces the production-target
-build that ends `ERROR` on the empty production dataset (`GS-T005`), as every one since `GS-P00`.
+branch **preview**, SSO-protected and `noindex`. **`main` was not pushed this phase:** a `main`
+push starts a production-target build — every phase since `GS-P00` has let `GS-T005` stop it — and
+this brief forbids production deployment; the branch alone is a reviewable preview. `main` stays
+at `fbecbe01` until the owner accepts `/`.
 
 ## 13. Remaining concerns, stated plainly
 

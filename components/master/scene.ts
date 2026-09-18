@@ -166,9 +166,32 @@ function tokenSrgb(style: CSSStyleDeclaration, name: string): Vec3 {
 
 const FOV_TAN_HALF = Math.tan((32 * Math.PI) / 180 / 2);
 
-export function startScene(canvas: HTMLCanvasElement, opts: { reduced: boolean }): (() => void) | null {
-  const gl = canvas.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'high-performance' });
+export function startScene(
+  canvas: HTMLCanvasElement,
+  opts: { reduced: boolean; allowSoftware?: boolean; onSlow?: () => void },
+): (() => void) | null {
+  // **No software rendering.** Without a GPU, Chrome runs WebGL on the CPU (SwiftShader) and every
+  // frame of this shader becomes a main-thread block of about a second — measured on the CI
+  // runner at GS-R001-M: TBT 41,960ms, TTI 45s, Lighthouse performance 0.66. A visitor on such a
+  // machine would get a frozen page, so the scene declines and the static logo shows instead.
+  // `failIfMajorPerformanceCaveat` is the standard signal for exactly this. `allowSoftware` exists
+  // only so `check:master:scene` can exercise the scene on a GPU-less runner (`?scene=software`).
+  const gl = canvas.getContext('webgl', {
+    antialias: false,
+    alpha: false,
+    powerPreference: 'high-performance',
+    failIfMajorPerformanceCaveat: !opts.allowSoftware,
+  });
   if (!gl) return null;
+  // The flag is not sufficient on its own: measured at GS-R001-M, Chrome does not report a caveat
+  // when SwiftShader is the selected backend. So the renderer is read and software rasterisers
+  // are declined by name — SwiftShader, Mesa's llvmpipe/softpipe, Microsoft's Basic Render Driver.
+  const info = gl.getExtension('WEBGL_debug_renderer_info');
+  const renderer = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+  if (!opts.allowSoftware && /swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer)) {
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return null;
+  }
 
   const compile = (type: number, src: string) => {
     const s = gl.createShader(type)!;
@@ -218,7 +241,9 @@ export function startScene(canvas: HTMLCanvasElement, opts: { reduced: boolean }
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const cssW = canvas.clientWidth;
     const cssH = canvas.clientHeight;
-    const cap = narrow.matches ? 700_000 : 1_900_000;
+    // The software opt-in exists only for `check:master:scene` on a GPU-less runner. At full size
+    // software rendering starves the browser — CDP calls time out — so it renders small.
+    const cap = opts.allowSoftware ? 300_000 : narrow.matches ? 700_000 : 1_900_000;
     const s = Math.min(dpr, Math.sqrt(cap / Math.max(cssW * cssH, 1))) * quality;
     width = Math.max(1, Math.round(cssW * s));
     height = Math.max(1, Math.round(cssH * s));
@@ -294,6 +319,12 @@ export function startScene(canvas: HTMLCanvasElement, opts: { reduced: boolean }
       const t0 = performance.now();
       draw(now);
       lastDraw = now;
+      // A draw that blocks the main thread this long is hardware the scene should not be running
+      // on — slow enough to hurt input, whatever the context flag said. Hand back to the fallback.
+      if (!opts.allowSoftware && performance.now() - t0 > 100) {
+        opts.onSlow?.();
+        return;
+      }
       // Back off resolution if frames keep running long; never below 60%.
       if (performance.now() - t0 > 22 && ++slow > 20 && quality > 0.6) {
         quality -= 0.1;

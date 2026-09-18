@@ -17,7 +17,9 @@
 
 - **Starting commit:** `fbecbe01`, `main`, clean, 0 ahead / 0 behind
 - **Starting CI:** runs `35288782657` (`main`) and `35288781001` (branch), both `success`
-- **Branch:** `staging/gs-r001-m-master-redesign` (Vercel preview); `main` fast-forwarded to it
+- **Branch:** `staging/gs-r001-m-master-redesign` (Vercel preview). **`main` not pushed** — it stays at
+  `fbecbe01`; a `main` push starts a production-target build and this phase forbids production
+  deployment. Fast-forward it when the owner accepts `/`
 - **Ending commit, CI and staging URL:** recorded in the follow-up docs commit below this line
   once they exist, as at `GS-R001-R` — not predicted here.
 
@@ -41,8 +43,9 @@
 2. **`MasterScene`** — a fixed WebGL layer ray-tracing the logo's 8 spheres and 6 bars
    analytically as polished gold with inter-reflection, in one fragment shader. Six chapter poses
    over four formations (logo, split, chain, ring); lighting rotates with scroll; subtle pointer
-   tilt; renders only on change. **Lazy 5.0KB gz** against Three.js's ~150KB; GSAP not needed.
-   Reduced motion: one still hero frame. No WebGL / failure / low capability: the owner's SVG.
+   tilt; renders only on change. **Lazy 5.2KB gz** against Three.js's ~150KB; GSAP not needed.
+   Reduced motion: one still hero frame. No WebGL, **software-only WebGL**, a draw blocking >100ms,
+   failure or low capability: the owner's SVG. (CI's first run found the software case: TBT 41,960ms.)
 3. **The page** — hero (left-set type, mark right), a typographic **studio index** instead of
    three cards, *One relationship* (continuity + structure disclosure merged), the six stage
    names on one rail, still reviews under a held heading, and a close where the mark resolves
@@ -51,9 +54,9 @@
 ## Verification
 
 `verify:static` **47 gates PASS** · `verify:build` PASS on a wiped `.next` (68 routes; `/` delta
-**4.4KB of 15KB**, was 1.9KB; lazy scene **5.0KB of 8KB**) · `verify:served` PASS: `check:axe`
-**zero violations, 0 unresolved**; `check:master:scene` **7 questions × 5 widths × 6 chapters +
-reduced motion + no-WebGL**; `check:reviews:ui`, `check:company` (9 questions), `check:responsive`,
+**4.4KB of 15KB**, was 1.9KB; lazy scene **5.2KB of 8KB**) · `verify:served` PASS: `check:axe`
+**zero violations, 0 unresolved**; `check:master:scene` **5 widths × 6 chapters +
+reduced motion + no-WebGL + software-WebGL (8 questions)**; `check:reviews:ui`, `check:company` (9 questions), `check:responsive`,
 legal parity, Press type, Path Finder — all PASS; `check:mark:cls` **0.0000** at 375/768/1440 ·
 `npm audit --omit=dev` 0 vulnerabilities · Lighthouse: CI (Windows cannot run it).
 

@@ -42,6 +42,7 @@ const PROBES = [
   { q: 5, file: HTML, what: 'hero heading moved over the mark', edit: style('main h1{transform:translateX(52vw)}') },
   { q: 6, file: HTML, what: '3000px-wide, 20px-tall probe in main', edit: style('main::after{content:"";display:block;width:3000px;height:20px}') },
   { q: 7, file: HTML, what: 'fallback logo removed', edit: style('[data-master-scene]>div{background:none!important}') },
+  { q: 8, file: PAGE, what: 'software WebGL accepted for every visitor', edit: (s) => s.replace('get("scene")', 'get("scene")||"software"') },
 ];
 
 const sha = (b) => createHash('sha256').update(b).digest('hex');
@@ -77,7 +78,7 @@ for (const p of PROBES.filter((x) => !ONLY || String(x.q) === ONLY)) {
   }
   if (sha(readFileSync(p.file)) !== sha(before)) throw new Error(`${p.file} was not restored byte-identical`);
   if (!out.includes('check-master-scene:')) {
-    results.push(`NOT RUN q${p.q}: ${p.what} — the gate never executed; this is not a reading`);
+    results.push(`NOT RUN q${p.q}: ${p.what} — the gate never executed; this is not a reading. Received: ${out.trim().split('\n').filter((l) => !l.trim().startsWith('at ')).slice(-8).join(' | ').slice(0, 900)}`);
     continue;
   }
   // Only the problem list counts. The gate's summary rows start with viewport widths
