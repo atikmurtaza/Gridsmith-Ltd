@@ -1,0 +1,388 @@
+/*
+ * The Master homepage — GS-R001-M. master/DESIGN.md §4.1–§6.1.
+ *
+ * Every section is transparent. The scene is the page's surface, so no section may paint an
+ * opaque background over it — that was the defect the owner named in the previous build.
+ * Depth comes from type, hairlines and the scene; there is no card, box or panel here.
+ */
+
+/* ---- The environment ------------------------------------------------------------- */
+
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vmax 50vmax at 74% 46%, var(--gold-glow), transparent 70%),
+    var(--canvas);
+}
+
+.sceneCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+.scene[data-render="ready"] .sceneCanvas { opacity: 1; }
+.scene[data-render="fallback"] .sceneCanvas { display: none; }
+
+/* The owner's own vector, unmodified, when there is no WebGL. `display: none` until needed, so
+   the file is never fetched on the normal path and can never become an LCP candidate. */
+.sceneFallback {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: url('/brand/gridsmith-logo.svg') no-repeat right 8% center / min(40vw, 38rem);
+  opacity: 0.9;
+}
+.scene[data-render="fallback"] .sceneFallback { display: block; }
+@media (scripting: none) {
+  .sceneFallback { display: block; }
+}
+
+/* ---- Shared type ----------------------------------------------------------------- */
+
+.chapter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.chapter > :first-child { color: var(--accent); }
+.chapter > :first-child::after {
+  content: '';
+  display: inline-block;
+  width: var(--space-8);
+  height: var(--border-hairline);
+  margin-inline-start: var(--space-3);
+  vertical-align: middle;
+  background: var(--accent);
+}
+
+.section {
+  display: grid;
+  align-content: center;
+  min-height: 100svh;
+  padding-block: var(--space-24);
+}
+
+.column { max-width: 44rem; }
+
+.title {
+  margin: 0 0 var(--space-6);
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.statement {
+  margin: 0 0 var(--space-8);
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  line-height: var(--leading-snug);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.lede {
+  margin: 0 0 var(--space-6);
+  max-width: var(--measure-narrow);
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+  color: var(--ink-muted);
+}
+
+.fact {
+  margin: 0 0 var(--space-8);
+  max-width: var(--measure-narrow);
+  padding-inline-start: var(--space-4);
+  border-inline-start: var(--border-hairline) solid var(--accent-2);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+.more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-8);
+  margin: 0;
+}
+
+.textLink {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 0.3em;
+}
+.textLink:hover { color: var(--accent-hover); }
+.textLink:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* ---- Hero ------------------------------------------------------------------------ */
+
+.hero {
+  display: grid;
+  align-content: end;
+  min-height: calc(100svh - var(--space-16));
+  padding-block: var(--space-24) var(--space-16);
+}
+
+.heroCopy { max-width: 46rem; }
+
+.heroKicker {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-8);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.heroKicker > :first-child { color: var(--accent); }
+.rule { width: var(--space-12); height: var(--border-hairline); background: var(--accent); }
+
+.heroTitle {
+  margin: 0 0 var(--space-8);
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 500;
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+.heroIntro {
+  margin: 0 0 var(--space-12);
+  max-width: 34rem;
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+  color: var(--ink-muted);
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-8);
+}
+
+/* ---- Studios: a typographic index, not cards --------------------------------------- */
+
+.studios {
+  list-style: none;
+  margin: 0 0 var(--space-8);
+  padding: 0;
+  border-top: var(--border-hairline) solid var(--line-strong);
+}
+
+.studio {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--space-12) 1fr;
+  padding-block: var(--space-8);
+  border-bottom: var(--border-hairline) solid var(--line-strong);
+}
+.studio > :first-child { padding-top: var(--space-2); color: var(--accent); font-size: var(--text-sm); }
+
+/* The gold line that draws along the row on hover — the one place a bar of the mark
+   appears in the page's own drawing. `transform` only. */
+.studio::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: var(--border-hairline);
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.studio:hover::after,
+.studio:focus-within::after { transform: scaleX(1); }
+
+.studioBody { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.studioName {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.03em;
+}
+
+.studioLink {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  color: var(--ink);
+  text-decoration: none;
+}
+/* The whole row is the target; the link is still the only focusable thing in it. */
+.studioLink::before { content: ''; position: absolute; inset: 0; }
+.studioLink:hover,
+.studio:hover .studioLink { color: var(--accent-hover); }
+.studioLink:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
+
+.arrow {
+  color: var(--accent);
+  transform: translateX(calc(-1 * var(--space-2)));
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.studio:hover .arrow,
+.studio:focus-within .arrow { transform: none; }
+
+.studioServices { margin: 0; color: var(--ink); }
+.studioCharacter { margin: 0; color: var(--ink-muted); }
+
+.fallback { margin: 0; font-size: var(--text-lg); color: var(--ink); }
+.fallback a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 0.2em; }
+.fallback a:hover { color: var(--accent-hover); }
+.fallback a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- Process: the six stages as one rail ------------------------------------------ */
+
+.stages {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-6);
+  margin: var(--space-12) 0 var(--space-8);
+  padding: 0;
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-6);
+  border-top: var(--border-hairline) solid var(--line-strong);
+}
+.stage > :first-child { color: var(--accent); font-size: var(--text-sm); }
+/* A joint on the rail — the mark's sphere, at the scale of a bullet. */
+.stage::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--space-1) - 0.5px);
+  left: 0;
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background: var(--accent);
+}
+.stageTitle { font-weight: 500; color: var(--ink); }
+.stageQualifier { font-weight: 400; color: var(--ink-muted); }
+
+/* ---- Reviews: a held heading, the reviews pass under the reader's own scroll ------------ */
+
+.reviews {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: var(--space-16);
+  align-items: start;
+}
+
+.reviewsHead { position: sticky; top: 14vh; }
+
+.reviewList { list-style: none; margin: 0; padding: 0; }
+
+.review {
+  padding-block: var(--space-8);
+  border-top: var(--border-hairline) solid var(--line-strong);
+}
+.review:last-child { border-bottom: var(--border-hairline) solid var(--line-strong); }
+
+.reviewFigure { margin: 0; }
+.reviewQuote { margin: 0 0 var(--space-4); }
+.reviewQuote p {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  color: var(--ink);
+}
+
+.reviewMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-muted);
+}
+.reviewName { color: var(--ink); }
+.reviewFacts { display: inline-flex; gap: var(--space-4); color: var(--accent); }
+
+/* ---- Close ----------------------------------------------------------------------- */
+
+.close {
+  display: grid;
+  align-content: center;
+  min-height: 100svh;
+  padding-block: var(--space-24);
+}
+
+.closeTitle {
+  margin: 0 0 var(--space-6);
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 500;
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+.commitment {
+  margin: var(--space-6) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+}
+
+/* ---- Widths ---------------------------------------------------------------------- */
+
+/* Desktop: copy holds the left of the frame and the mark holds the right. */
+@media (min-width: 1024px) {
+  .column,
+  .heroCopy { max-width: min(46rem, 54%); }
+}
+
+@media (max-width: 1023px) {
+  .stages { grid-template-columns: repeat(3, 1fr); row-gap: var(--space-8); }
+  .reviews { grid-template-columns: 1fr; gap: var(--space-8); }
+  .reviewsHead { position: static; }
+}
+
+/* Below 1024px there is no free column. The hero and close leave the top of the screen to the
+   mark; between them, each section's copy sits on the stage veil and the mark travels through
+   the gaps between sections. A veil, not a panel: it has no border and no radius, and it bleeds
+   to both edges, so the page reads as layers over the scene rather than cards on it. */
+@media (max-width: 1023px) {
+  .hero { min-height: 0; padding-top: 50svh; }
+  .close { min-height: 0; padding-top: 52svh; }
+  .section { min-height: 0; padding-block: var(--space-24); }
+  .section > * { padding-block: var(--space-12); background: var(--canvas-veil); }
+  .sceneFallback { background-position: center 14%; background-size: min(62vw, 18rem); }
+}
+
+@media (max-width: 767px) {
+  .stages { grid-template-columns: 1fr 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sceneCanvas,
+  .studio::after,
+  .arrow { transition: none; }
+}

@@ -14,14 +14,14 @@
  * |---|---|
  * | 1 | Does Master render the reviews at all? |
  * | 2 | Does **no** division page render them? (`GS-O014`, the Master-only amendment) |
- * | 3 | Does the ring travel right to left? |
- * | 4 | Does the pause control stop it? |
+ * | 3 | Do the reviews stay still unless the reader scrolls? (`GS-R001-M` — was *does the ring travel right to left*) |
+ * | 4 | Is every review in the flow and unobscured? (`GS-R001-M` — was *does the pause control stop it*) |
  * | 5 | Does `prefers-reduced-motion: reduce` get a still layout with the same reviews? |
  * | 6 | Does the reduced-motion layout overflow the page at any of the three widths? |
  * | 7 | Is the source link present, real and reachable by keyboard? |
  * | 8 | Do the rendered categories carry no identifying fragment? |
- * | 9 | Is the card background opaque? (what `check:axe`'s allowlist entry rests on) |
- * | 10 | Is every `<time>` on `/` inside a review card? (what its second entry rests on) |
+ * | 9 | Is every review inside the chapter `check:master:scene` measures? (what `check:axe`'s allowlist entry rests on) |
+ * | 10 | Is every `<time>` on `/` inside a review card? (so every date on `/` is review text that question 9 places in the measured chapter) |
  *
  * ## Why question 2's absence is a measurement and not a hope
  *
@@ -126,67 +126,55 @@ try {
   await page.setViewport({ width: 1440, height: 900 });
   await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
 
+  /**
+   * **`GS-R001-M` replaced the cylinder, so questions 3 and 4 changed with it.** The ring turned
+   * by itself, which is why it needed a direction assertion and a WCAG 2.2 SC 2.2.2 pause
+   * control. The reviews now pass under the reader's own scroll and nothing moves on its own,
+   * so SC 2.2.2 has no subject — and the assertion that keeps it that way is that they do not
+   * move. A pause control over still content would be a control that does nothing.
+   */
   const travel = await page.evaluate(async (label) => {
     const card = [...document.querySelectorAll('blockquote')]
       .map((q) => q.closest('li'))
       .find((li) => li?.textContent?.includes(label));
     if (!card) return null;
     card.scrollIntoView({ block: 'center' });
-    await new Promise((r) => setTimeout(r, 200));
-    const first = card.getBoundingClientRect().left;
-    await new Promise((r) => setTimeout(r, 1200));
-    const second = card.getBoundingClientRect().left;
-    return { first: Math.round(first), second: Math.round(second) };
+    await new Promise((r) => setTimeout(r, 300));
+    const first = card.getBoundingClientRect();
+    await new Promise((r) => setTimeout(r, 1500));
+    const second = card.getBoundingClientRect();
+    const running = card.closest('ul').getAnimations({ subtree: true }).filter((a) => a.playState === 'running').length;
+    return { dx: Math.round(second.left - first.left), dy: Math.round(second.top - first.top), running };
   }, SOURCE_LABEL);
 
-  if (!travel) {
-    problems.push('3: no review card was found on / — the travel assertion measured nothing');
-  } else if (travel.second === travel.first) {
+  if (!travel) problems.push('3: no review card was found on / — the stillness assertion measured nothing');
+  else if (travel.dx || travel.dy || travel.running) {
     problems.push(
-      `3: the ring did not move in 1.2s (left stayed at ${travel.first}px). It is either not ` +
-        'animating or it is already paused, and neither is the default state.',
-    );
-  } else if (travel.second > travel.first) {
-    problems.push(
-      `3: the ring travels LEFT TO RIGHT — a card moved from ${travel.first}px to ` +
-        `${travel.second}px. GS-P06 §13 requires right to left, which is a NEGATIVE rotateY.`,
+      `3: a review moved by itself (${travel.dx}px, ${travel.dy}px in 1.5s, ${travel.running} running ` +
+        'animation(s)). Motion that starts on its own needs a pause control (WCAG 2.2 SC 2.2.2), ' +
+        'and GS-R001-M removed the carousel so that nothing here would.',
     );
   }
-  say(
-    `  3. direction:  a card moved ${travel ? `${travel.first}px → ${travel.second}px` : 'NOT MEASURED'}` +
-      (travel && travel.second < travel.first ? ' — right to left' : ''),
-  );
+  say(`  3. still:      ${travel ? `moved ${travel.dx}px/${travel.dy}px in 1.5s, ${travel.running} running animation(s)` : 'NOT MEASURED'}`);
 
-  const paused = await page.evaluate(() => {
-    const input = document.querySelector('input[type="checkbox"][id$="reviews-pause"]');
-    const ring = document.querySelector('blockquote')?.closest('ul');
-    if (!input || !ring) return null;
-    const before = getComputedStyle(ring).animationPlayState;
-    input.click();
-    const checked = getComputedStyle(ring).animationPlayState;
-    input.click();
-    const unchecked = getComputedStyle(ring).animationPlayState;
-    // WCAG 2.2 SC 1.4.1 — the state may not be carried by colour alone.
-    input.click();
-    const weight = getComputedStyle(document.querySelector(`label[for="${input.id}"]`)).fontWeight;
-    input.click();
-    const base = getComputedStyle(document.querySelector(`label[for="${input.id}"]`)).fontWeight;
-    return { before, checked, unchecked, weight, base };
-  });
-
-  if (!paused) {
-    problems.push('4: no pause control was found on / — WCAG 2.2 SC 2.2.2 needs one, and the assertion measured nothing');
-  } else {
-    if (paused.before !== 'running') problems.push(`4: the ring is "${paused.before}" before the control is touched`);
-    if (paused.checked !== 'paused') problems.push(`4: checking the pause control left the ring "${paused.checked}"`);
-    if (paused.unchecked !== 'running') problems.push(`4: unchecking it left the ring "${paused.unchecked}"`);
-    if (paused.weight === paused.base) {
-      problems.push(`4: the checked state carries no non-colour cue — the label stays at font-weight ${paused.base} (WCAG 2.2 SC 1.4.1)`);
+  const flow = await page.evaluate(async (label) => {
+    const cards = [...document.querySelectorAll('blockquote')]
+      .map((q) => q.closest('li'))
+      .filter((li) => li?.textContent?.includes(label));
+    const hidden = [];
+    for (const [i, card] of cards.entries()) {
+      card.scrollIntoView({ block: 'center' });
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      const r = card.querySelector('blockquote').getBoundingClientRect();
+      const cs = getComputedStyle(card);
+      const hit = document.elementFromPoint(r.left + Math.min(r.width, 40) / 2, r.top + Math.min(r.height, 20) / 2);
+      if (!r.width || !r.height || cs.transform !== 'none' || cs.backfaceVisibility === 'hidden' || !card.contains(hit)) hidden.push(i);
     }
-  }
-  say(
-    `  4. pause:      ${paused ? `${paused.before} → ${paused.checked} → ${paused.unchecked}, label ${paused.base} → ${paused.weight}` : 'NOT MEASURED'}`,
-  );
+    return { cards: cards.length, hidden };
+  }, SOURCE_LABEL);
+  if (flow.cards === 0) problems.push('4: no review card was found — the flow assertion measured nothing');
+  for (const i of flow.hidden) problems.push(`4: review ${i + 1} is not in the flow or is covered where a reader would start reading it`);
+  say(`  4. in flow:    ${flow.cards} review(s), each scrolled to and hit-tested at its first line; ${flow.hidden.length} obscured`);
 
   const link = await page.evaluate(
     (profile) => {
@@ -211,48 +199,35 @@ try {
   problems.push(...anonymityProblems(categories).map((p) => `8: ${p}`));
   say(`  8. anonymity:  ${categories.length} rendered caption(s) checked against the shared denylist`);
 
-  /* -- 9. The card background is opaque ------------------------------------ */
+  /* -- 9. Every review is inside the measured chapter ------------------------ */
 
   /**
    * **This one exists because of a decision taken in another gate.**
    *
-   * The cylinder stacks every card in one grid cell, so axe cannot resolve a background for
-   * anything inside it and returns 73 `color-contrast` **incompletes** \u2014 not violations.
-   * `check-axe`'s `INCOMPLETE_ALLOWED` accepts them, on the argument that the pairs involved
-   * (`--ink`, `--ink-muted`, `--ink-subtle` on `--canvas`) are measured directly by
-   * `check:contrast`.
+   * The reviews sit over the WebGL scene at `GS-R001-M`, so axe cannot resolve a background for
+   * their text and returns `color-contrast` **incompletes**. `check-axe`'s `INCOMPLETE_ALLOWED`
+   * accepts them on the argument that `check:master:scene` question 5 measures every line of
+   * text in the reviews chapter against the rendered scene behind it.
    *
-   * That argument holds **only while the card background is opaque.** Make a card
-   * translucent and the real background becomes whatever card is behind it, the measured
-   * ratios stop applying, and axe \u2014 the one tool that would have noticed \u2014 is already
-   * allowlisted out of the question. So the premise gets asserted here, by value, on the
-   * served page: an allowlist whose stated reason nothing checks is a bypass with a comment.
+   * That argument holds **only while the reviews are inside that chapter.** Until `GS-R001-M`
+   * the premise was that the cylinder's cards were opaque; the premise changed with the design,
+   * and the assertion changed with it rather than being left asserting a card that is gone.
    */
-  const opacity = await page.evaluate((label) => {
-    const card = [...document.querySelectorAll('blockquote')]
+  const scope = await page.evaluate((label) => {
+    const cards = [...document.querySelectorAll('blockquote')]
       .map((q) => q.closest('li'))
-      .find((li) => li?.textContent?.includes(label));
-    if (!card) return null;
-    const cs = getComputedStyle(card);
-    const alpha = cs.backgroundColor.match(/rgba?\(([^)]*)\)/)?.[1].split(',')[3];
-    return {
-      background: cs.backgroundColor,
-      alpha: alpha === undefined ? 1 : Number(alpha.trim()),
-      opacity: Number(cs.opacity),
-    };
+      .filter((li) => li?.textContent?.includes(label));
+    return { cards: cards.length, outside: cards.filter((c) => !c.closest('[data-chapter="reviews"]')).length };
   }, SOURCE_LABEL);
-
-  if (!opacity) problems.push('9: no review card was found — the opacity assertion measured nothing');
-  else if (opacity.alpha < 1 || opacity.opacity < 1) {
+  if (scope.cards === 0) problems.push('9: no review card was found — the scope assertion measured nothing');
+  else if (scope.outside > 0) {
     problems.push(
-      `9: the review card is not opaque (background ${opacity.background}, opacity ` +
-        `${opacity.opacity}). check:axe allowlists every color-contrast incomplete inside the ` +
-        'cylinder on the argument that check:contrast measures the pairs involved, and that ' +
-        'argument depends on this. A translucent card puts a real contrast defect under an ' +
-        'allowlist entry that no longer describes it.',
+      `9: ${scope.outside} review(s) sit outside [data-chapter="reviews"]. check:axe allowlists ` +
+        'their color-contrast incompletes on the argument that check:master:scene measures the ' +
+        'rendered scene behind every line of text in that chapter. Outside it, nothing does.',
     );
   }
-  say(`  9. opaque:     card background ${opacity ? `${opacity.background}, opacity ${opacity.opacity}` : 'NOT MEASURED'}`);
+  say(`  9. measured:   ${scope.cards} review(s), ${scope.outside} outside the chapter check:master:scene reads`);
 
   /* -- 10. Every <time> on `/` is a review date ---------------------------- */
 
@@ -280,9 +255,9 @@ try {
   if (times.length === 0) problems.push('10: / has no <time> at all — the scope assertion measured nothing');
   for (const t of stray) {
     problems.push(
-      `10: <time datetime="${t.datetime}"> on / is NOT inside a review card. check:axe ` +
-        'allowlists color-contrast incompletes on bare <time> targets for this route, on the ' +
-        'stated basis that every one of them is a review date. That basis no longer holds.',
+      `10: <time datetime="${t.datetime}"> on / is NOT inside a review card. Every date on / ` +
+        'is a review date and is measured as review text by check:master:scene; this one is ' +
+        'neither, and needs a person to look at it.',
     );
   }
   say(`  10. time scope: ${times.length} <time> element(s) on /, ${stray.length} outside a review card`);
@@ -363,8 +338,8 @@ if (problems.length > 0) {
 }
 
 console.log(
-  '\ncheck-reviews-ui: PASS — Master renders the feed, no division does, the ring travels ' +
-    'right to left, the pause control works, reduced motion is still and at content parity, ' +
-    'nothing overflows, the source link is reachable, no caption is identifying, the card ' +
-    'background is opaque and every <time> is a review date.\n',
+  '\ncheck-reviews-ui: PASS — Master renders the feed, no division does, nothing moves by ' +
+    'itself, every review is in the flow and unobscured, reduced motion is at content parity, ' +
+    'nothing overflows, the source link is reachable, no caption is identifying, every review ' +
+    'is inside the chapter check:master:scene measures, and every <time> is a review date.\n',
 );

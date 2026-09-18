@@ -25,7 +25,7 @@ A visitor moving from Design to Press should register a change of *voice* and ne
 
 | | Character | Canvas | Accent | Display face |
 |---|---|---|---|---|
-| Master | The neutral frame | White | **Ink** (no colour of its own) | Neo-grotesque |
+| Master | The neutral frame — **except `/`**, which since `GS-R001-M` is the gold stage: the mark's own polished gold on a warm near-black, owner decision at `GS-O008` | White (`/`: `#0B0907`) | **Ink** (`/`: the logo's gold) | Neo-grotesque |
 | Design | Precision instrument — a drawing sheet | Near-black | Amber | Neo-grotesque |
 | Digital | Engineered clarity — a spec sheet | Off-white | Electric blue | **Monospace** |
 | Press | The well-made book | Warm paper | Deep green | **Serif** |
@@ -542,6 +542,11 @@ dependency upgrade shows up as *the floor moving*, not as everyone's budget shri
 | **Digital** | **100/100/100** | ≤1.6s | **≤15KB** — deliberately tightest | ~115KB |
 | Press | ≥95 perf | ≤2.0s | **≤20KB** — books shelf + filters | ~120KB |
 | Path Finder / future non-price scoping routes (no estimator since `GS-P03`) | — | — | **≤40KB** | ~140KB |
+
+**The Master scene renderer is lazy and budgeted separately — ≤8KB gz** (`GS-R001-M`, 5.0KB
+measured). It is fetched by `import()` after first paint, so it is in no route's first-load JS;
+`check-bundle-size` finds it by content, asserts nothing loads it eagerly, and holds it to its
+ceiling. `/`'s own delta stays under Master's 15KB.
 
 All: CLS ≤0.05 (Digital 0.02, Master 0.03). INP ≤200ms (Digital 150) — a **field** target,
 proxied in CI by TBT at the same ceiling; see below.

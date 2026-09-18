@@ -170,5 +170,5 @@ Funnels:
 
 WCAG 2.2 AA. Master-specific:
 - The consent banner must be keyboard-trappable-and-escapable, announced on load, and must not obscure the skip link
-- Division cards are links, not click-handled divs, and are reachable in a single tab sequence
+- Division links (the studio index since `GS-R001-M`; cards before it) are links, not click-handled divs, and are reachable in a single tab sequence
 - `/legal/*` pages need a table of contents with in-page anchors and correct heading hierarchy — these documents are read by screen readers and referenced by clause number

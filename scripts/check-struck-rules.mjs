@@ -87,6 +87,8 @@ const base = () => [
   // to reach.
   { file: 'rule-17-subject.md', text: "~~If it's urgent, call [number] during [hours].~~ - struck at GS-R001-R, WhatsApp and SMS only\n" },
   { file: 'rule-18-subject.md', text: '~~45 FAQs, 9 posts, 4 team~~ - superseded at GS-R001-R, the nine posts are editorial briefs\n' },
+  // `GS-R001-M`, 18 Sept 2026. One annotated subject, same obligation.
+  { file: 'rule-19-subject.md', text: '| 2 | **Division routing** — ~~three cards~~ superseded at GS-R001-M |\n' },
 ];
 
 const SPECIMENS = [
@@ -113,11 +115,11 @@ const SPECIMENS = [
   {
     name: 'BRANCH 4 — zero subject: corpus below the floor',
     files: base().slice(MIN_FILES),
-    // 13 -> 16 at `GS-O004`, 16 -> 18 at `GS-R001-R`: each move adds one subject file per
+    // 13 -> 16 at `GS-O004`, 16 -> 18 at `GS-R001-R`, 18 -> 19 at `GS-R001-M`: each move adds one subject file per
     // new rule, and the literal below moves with it. The literal
     // is the point: it must be changed deliberately when the corpus changes, which is how this
     // case proves the count is counted rather than printed.
-    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 18 document(s)')),
+    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 19 document(s)')),
   },
   // `GS-P03` — one specimen per new rule, plus the surviving statement none of them may catch.
   {
@@ -241,6 +243,18 @@ const SPECIMENS = [
   {
     name: 'NOT A SUBJECT — the surviving "no imprint is operated" statement',
     files: [...base(), { file: 'x.md', text: 'No imprint is claimed, because none is operated.\n' }],
+    expect: (r) => r.ok,
+  },
+  // `GS-R001-M` — the rejected card layout restated, and the surviving routing requirement.
+  {
+    name: 'BRANCH 19 — the three division cards restated, unannotated',
+    files: [...base(), { file: 'master/PRD.md', text: '| FR-M02 | Division routing block, three cards, immediately below hero |\n' }],
+    expect: (r) =>
+      !r.ok && r.problems.some((p) => p.includes('GS-R001-M-DIVISION-CARDS STANDS at master/PRD.md:1')),
+  },
+  {
+    name: 'NOT A SUBJECT — the surviving routing requirement, without the cards',
+    files: [...base(), { file: 'x.md', text: 'The three studios sit immediately below the hero, each a plain link.\n' }],
     expect: (r) => r.ok,
   },
   // `GS-R001-R` — one deliberate-failure branch per new rule. A rule proven only by its CLEAN

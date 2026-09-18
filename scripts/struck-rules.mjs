@@ -412,6 +412,23 @@ export const STRUCK_RULES = [
       'compliance. Gridsmith reports the standards tested, the evidence, the findings and the ' +
       'residual issues.',
   },
+  {
+    id: 'GS-R001-M-DIVISION-CARDS',
+    // One regex: a rule's patterns must ALL match one line, so alternatives share a pattern.
+    patterns: [/three cards|Equal thirds\. 1px `--line` border/i],
+    why:
+      'Struck by `GS-R001-M`, 18 September 2026. The owner rejected the Master homepage at ' +
+      '`GS-O008`, and named this layout specifically: *"three coloured division boxes/cards"* ' +
+      'that read as generic and disconnected from Gridsmith. Recolouring or rounding them was ' +
+      'ruled out in the same instruction — the composition itself had to change.',
+    where:
+      '**The routing requirement survives unchanged** — `FR-M02`, `M-J3`: the three studios ' +
+      'are immediately below the hero and reachable in one tab sequence, each a plain `<a>`. ' +
+      'What replaced the cards is the **studio index** (`components/master/Home.tsx`, ' +
+      '`master/DESIGN.md` §5.1): the name set large, the approved lines beneath it, a ' +
+      'hairline between rows and a gold rule that draws on hover. No box, no fill, no division ' +
+      'colour.',
+  },
 ];
 
 /** The standing-spec corpus. Globbed by the runner; listed here so the scope is reviewable. */

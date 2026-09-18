@@ -504,8 +504,15 @@ if (over.length > 0) {
  * evidence and still the wrong outcome.** The gate did its job by making a person look; what
  * it cannot do is ask whether the feature should exist. Drop a route from this list only
  * after that question has been answered, not as the first move.
+ *
+ * **`/` left again at `GS-R001-M`, and this time the question was answered first.** The
+ * spread fired at 2.4KB: `MasterScene`, the client boundary that loads the WebGL scene, is on
+ * `/` and nowhere else. The owner rejected the zero-JS homepage at `GS-O008` and authorised a
+ * richer implementation (`GS-R001-M` §8), so the feature is wanted and `/` has one. It still
+ * answers to the 15KB master budget in the route table, and the lazy renderer to its own
+ * line below.
  */
-const BASELINE_ROUTES = ['/', '/design', '/digital', '/press', '/_not-found'];
+const BASELINE_ROUTES = ['/design', '/digital', '/press', '/_not-found'];
 
 const baselineRows = rows.filter((r) => BASELINE_ROUTES.includes(r.url));
 const kitchen = rows.find((r) => r.url === '/_kitchen-sink');
@@ -667,6 +674,53 @@ if (decomposition.length > 0) {
 
 if (budgetsCompared === 0) {
   console.error('\ncheck-bundle-size: compared zero routes against a budget — the check did not run.\n');
+  process.exit(1);
+}
+
+/**
+ * **The Master scene renderer — `GS-R001-M`.** `components/master/scene.ts`, fetched by
+ * `MasterScene` with `import()` after first paint. It is in no route's HTML, so the route
+ * table above cannot see it — which is the point of loading it lazily, and also exactly how a
+ * lazy chunk grows without anyone noticing. So it is found by content and measured here.
+ *
+ * Three assertions: exactly one chunk carries the renderer (zero means the marker or the
+ * split moved and nothing was measured); no route's module scripts reference it (it has
+ * become eager and is on the LCP path); and it fits `SCENE_BUDGET_KB`.
+ *
+ * The marker is a comment inside the shader source, which is a string literal the minifier
+ * must preserve. 5.0KB at `GS-R001-M`; the ceiling leaves room for tuning, not for a library.
+ */
+const SCENE_MARKER = 'Capped cylinder, after Inigo Quilez';
+const SCENE_BUDGET_KB = 8;
+const CHUNK_DIR = '.next/static/chunks';
+const sceneChunks = readdirSync(CHUNK_DIR, { recursive: true, withFileTypes: true })
+  .filter((e) => e.isFile() && e.name.endsWith('.js'))
+  .map((e) => join(e.parentPath ?? CHUNK_DIR, e.name))
+  .filter((f) => readFileSync(f, 'utf8').includes(SCENE_MARKER));
+if (sceneChunks.length !== 1) {
+  console.error(
+    `\ncheck-bundle-size: found ${sceneChunks.length} chunk(s) carrying the Master scene renderer, expected 1.\n` +
+      'Zero means it was not measured; more than one means it was duplicated into another chunk.\n',
+  );
+  process.exit(1);
+}
+const sceneFile = toPosix(relative('.next', sceneChunks[0]));
+const eager = routes().filter(({ file }) =>
+  moduleScripts(readFileSync(file, 'utf8')).some((src) => decodeURIComponent(src).endsWith(sceneFile)),
+);
+if (eager.length > 0) {
+  console.error(
+    `\ncheck-bundle-size: the Master scene renderer is loaded eagerly by ${eager.map((r) => r.url).join(', ')}.\n` +
+      'It must stay behind MasterScene\'s dynamic import — it is not on the LCP path by design.\n',
+  );
+  process.exit(1);
+}
+const sceneKb = gzipSync(readFileSync(sceneChunks[0]), { level: 9 }).length / KB;
+console.log(
+  `master scene (lazy)  ${sceneKb.toFixed(1)}KB gz  budget ${SCENE_BUDGET_KB}KB  ${sceneKb > SCENE_BUDGET_KB ? 'OVER' : 'ok'}  — ${sceneFile}, in no route's HTML`,
+);
+if (sceneKb > SCENE_BUDGET_KB) {
+  console.error('\ncheck-bundle-size: the Master scene renderer is over its budget.\n');
   process.exit(1);
 }
 console.log(`\ncheck-bundle-size: ${budgetsCompared} route(s) compared, all within their delta budget\n`);

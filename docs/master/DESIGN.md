@@ -53,7 +53,7 @@ The founder's brief for the brand is "innovative and institutionally trustworthy
 
 **The master layer has no colour of its own.** Its accent is ink. This is the central identity decision: if the master brand claimed a fourth colour, the three divisions would become sub-brands of a fourth brand. With ink as the accent, the divisions supply the colour and the master supplies the structure — which is exactly the commercial relationship.
 
-Division accents appear at master level in only three places: division routing cards, division badges on work cards, and the footer division switcher. **On the routing cards they are now a filled block rather than a 3px rule**, with `--accent-*-ink` as the foreground — see `docs/_shared/PALETTES.md`. The amber constraint is unchanged: it says the accent may never be a *foreground*, which is what 2.16:1 on white means, and it says nothing about the accent as a *surface*, where the same colour measures 9.07:1.
+**(`GS-R001-M`: the routing cards no longer exist — `/` carries no division colour at all, and the paragraph below is kept as history.)** Division accents appear at master level in only three places: division routing cards, division badges on work cards, and the footer division switcher. **On the routing cards they are now a filled block rather than a 3px rule**, with `--accent-*-ink` as the foreground — see `docs/_shared/PALETTES.md`. The amber constraint is unchanged: it says the accent may never be a *foreground*, which is what 2.16:1 on white means, and it says nothing about the accent as a *surface*, where the same colour measures 9.07:1.
 
 **Contrast verification:**
 
@@ -74,6 +74,31 @@ none changed a verdict. `--accent-digital` is the one worth noting: 5.09:1 rathe
 6.5:1 published, still AA but with less headroom than the number implied.
 
 The amber row is a real constraint. Design's accent works on its own dark canvas and fails on the master's white one. On master pages it may be a 2–3px rule or a badge background (with `--ink` text on it), never coloured text and never the only signal of a state.
+
+### 2.1 The Master stage — `/` only (`GS-R001-M`)
+
+**⚠ Owner decision, `GS-O008`.** The owner rejected the homepage and one limb was colour: the
+"neutral frame" produced a white page of three coloured boxes and did not express Gridsmith's
+own colour, which is the **polished gold of the mark**. The homepage now carries a stage palette
+derived from `public/brand/gridsmith-logo.svg` — `styles/themes/master-stage.css`, applied through
+`[data-stage="master"]`, which only `app/(marketing)/page.tsx` renders. Every other Master route
+keeps the §2 tokens above, unchanged. `GS-R001-M-MASTER-REDESIGN.md` §4.2 gives each value's
+source stop.
+
+| Pair | Measured | Pass |
+|---|---|---|
+| `--ink` on `--canvas` | 17.19:1 | AAA |
+| `--ink-muted` on `--canvas` | 10.68:1 | AAA |
+| `--ink-subtle` on `--canvas` | 6.76:1 | AA |
+| `--ink-subtle` on `--canvas-raised` | 6.39:1 | AA — the worst text cell on the stage |
+| `--accent` (gold) on `--canvas` | 11.06:1 | AAA |
+| `--accent-ink` on `--accent` | 11.06:1 | AAA — the gold button |
+| `--accent-ink` on `--accent-2` | 5.16:1 | AA |
+| `--line-strong` on `--canvas` | 2.00:1 | Decorative |
+
+Measured by `check:contrast` as a fifth palette. **Text over the rendered scene** is a different
+question — the background is a picture, not a token — and `check:master:scene` question 5
+answers it from pixels.
 
 ## 3. Typography
 
@@ -112,7 +137,7 @@ The mono-for-facts convention holds across all four layers. It is the strongest 
 
 | Component | Specification |
 |---|---|
-| **Division card** | Equal thirds. 1px `--line` border. 3px top rule in that division's accent. Name in display, then **the approved services sentence in `--ink` and the character sentence in `--ink-muted`**. Hover/focus: `--canvas-raised` background, top rule animates left→right over `--dur-base`, siblings to **80%** opacity. **Corrected at `N-01` block 2**, in three places. It said 60%, which fails WCAG AA: `--ink-muted` composited on `--canvas` at 0.6 measures **2.90:1**, against a 4.5:1 floor. 0.8 measures **4.57:1** and is the lowest value on the scale that clears it. Nothing measured this until `check:contrast` grew an opacity pass in the same commit — no earlier check composited an alpha, and axe does not evaluate hover states. This row said *"descriptor in `--ink-muted`, three example services in mono"*: the approved copy supplies two sentences, and splitting them on commas yields three items for Design, four for Digital and a broken phrase for Press. Mono would be wrong regardless — the cross-theme convention is that monospace marks anything **verifiable**, and a services description is not. It also said `300ms`, which is not a token; `--dur-base` is 250ms and `--dur-slow` is 400ms, so the literal could not be honoured exactly by anything using the scale |
+| **Division card** — ~~struck~~ superseded at `GS-R001-M`: the owner rejected the three coloured cards at `GS-O008`; `/` now uses the **studio index** in §5.1. The row below is kept as history | ~~Equal thirds. 1px `--line` border. 3px top rule~~ in that division's accent. Name in display, then **the approved services sentence in `--ink` and the character sentence in `--ink-muted`**. Hover/focus: `--canvas-raised` background, top rule animates left→right over `--dur-base`, siblings to **80%** opacity. **Corrected at `N-01` block 2**, in three places. It said 60%, which fails WCAG AA: `--ink-muted` composited on `--canvas` at 0.6 measures **2.90:1**, against a 4.5:1 floor. 0.8 measures **4.57:1** and is the lowest value on the scale that clears it. Nothing measured this until `check:contrast` grew an opacity pass in the same commit — no earlier check composited an alpha, and axe does not evaluate hover states. This row said *"descriptor in `--ink-muted`, three example services in mono"*: the approved copy supplies two sentences, and splitting them on commas yields three items for Design, four for Digital and a broken phrase for Press. Mono would be wrong regardless — the cross-theme convention is that monospace marks anything **verifiable**, and a services description is not. It also said `300ms`, which is not a token; `--dur-base` is 250ms and `--dur-slow` is 400ms, so the literal could not be honoured exactly by anything using the scale |
 | **"Not sure" link** | Directly below the cards, `--text-lg`, `--ink`. **Not styled as secondary** — it is the highest-value path. **Ships as text, not a link, until `/contact` exists** (`N-01` block 2): `M-03` set the rule that only links whose routes exist are shipped, and `check-axe` fails the build on a same-origin link that 404s. The underline returns with the href, in the commit that adds `/contact` |
 | **Work card** | Cover image, division badge(s), title, one-line summary. Multi-division projects show two or three badges — this is the proof, so make it visible |
 | **Division badge** | Small mono uppercase label, 1px border in the division accent, `--ink` text on `--canvas`. Never coloured text (see §2 amber constraint) |
@@ -127,6 +152,16 @@ The consent banner specification is a compliance requirement, not an aesthetic c
 
 **⚠ AMENDED 26 August 2026 — `M-P2-ANALYTICS`.** The bar is unchanged in every respect that DESIGN owns — bottom-anchored, `--canvas-raised`, 1px top `--line-strong`, same button class, same treatment. What changed is its content: **one control, "Got it", and no toggles**, because there are no consent categories and nothing to accept or reject. The Preferences text link is gone with the panel it opened. **The Accept/Reject pair and its parity requirement return with the analytics**, sharing the same single class — `.choice` is kept unchanged for exactly that, and the CSS says so.
 
+### 5.1 Homepage components (`GS-R001-M`)
+
+| Component | Specification |
+|---|---|
+| **Chapter label** | Mono `--text-xs` uppercase: gold two-digit number, a 2rem gold hairline, label in `--ink-muted`. One per chapter; it is the page's sense of progress |
+| **Studio index** | Replaces the division cards. An `<ol>`, hairline `--line-strong` between rows, no box and no fill. Per row: gold mono number, the studio name at `--text-2xl` weight 500 as the one link (its pseudo-element makes the row the hit area), the approved services line in `--ink`, the character line in `--ink-muted`. Hover/focus: a gold hairline draws along the row's foot (`transform`, `--dur-slow`), the name lightens to `--accent-hover`, the arrow moves into place. No division colour on `/` |
+| **Stage rail** | The six canonical stage names on one hairline, each with a gold joint (the mark's sphere at bullet scale) and a mono number. Names only — descriptions are `/approach`'s |
+| **Review list** | Held heading (sticky ≥1024px) beside a list of reviews separated by hairlines; quote at `--text-lg`, mono meta with rating and date in gold. No card, no carousel, nothing moves by itself |
+| **Stage veil** | Below 1024px only: copy blocks sit on `--canvas-veil` (the canvas at 92%), bleeding to both edges. Not a panel — no border, no radius. Its opacity is set by `check:master:scene`, not by taste |
+
 ## 6. Motion
 
 | Interaction | Spec |
@@ -136,7 +171,16 @@ The consent banner specification is a compliance requirement, not an aesthetic c
 | Route change between divisions | **No transition.** The theme change is the transition. Adding a fade on top makes it feel slow |
 | Button hover | 150ms colour |
 
-**Prohibited:** parallax, scroll-jacking, cursor followers, animated counters, hero video, entrance animation on above-the-fold content.
+**Prohibited:** ~~parallax,~~ scroll-jacking, cursor followers, animated counters, hero video, entrance animation on above-the-fold content.
+
+**⚠ Amended at `GS-R001-M` by owner decision, `/` only.** The owner authorised camera and pointer
+parallax for the Master environment. What `/` does: the WebGL scene responds to scroll position
+(chapters) and, on a fine pointer, tilts by at most ~0.1 rad; a slow sway on the hero and close.
+**Still prohibited everywhere, including `/`:** scroll-jacking (scrolling stays native — the scene
+reads `scrollY` and never writes it), cursor followers, and entrance animation on above-the-fold
+*content*. The scene's canvas fades in by opacity when it first renders; it is decoration behind
+the content, the `h1` does not move, and it is not the LCP element. Under
+`prefers-reduced-motion` the scene renders once in its hero pose and never moves.
 
 ## 7. Imagery
 
@@ -149,7 +193,7 @@ The consent banner specification is a compliance requirement, not an aesthetic c
 
 | Do | Don't |
 |---|---|
-| Keep the master accent as ink | Invent a fourth brand colour |
+| Keep the master accent as ink — **except on `/`, which carries the gold stage (§2.1, owner decision at `GS-R001-M`)** | Invent a fourth brand colour — gold is not a fourth colour, it is the mark's |
 | Let divisions supply the colour | Tint master pages with a division accent |
 | Put division routing above the second viewport | Bury it under the ecosystem argument |
 | Give "not sure / more than one" equal weight | Style it as a fallback |

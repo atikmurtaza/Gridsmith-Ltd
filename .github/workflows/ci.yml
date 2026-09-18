@@ -214,6 +214,12 @@ jobs:
       - name: The company-fact predicates still fire (committed specimens)
         run: npm run check:company:selftest
 
+      # GS-R001-M. The Master scene's narrative invariants — the close IS the logo, the hero is
+      # assembled, no bar changes length, nothing jumps, more than two formations — each run
+      # against the real model and against a fixture broken to fail it, in the same run.
+      - name: The Master scene model holds its invariants (and each check is proven red)
+        run: npm run check:master:scene:selftest
+
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
       # the `development` dataset. check:launch still runs against the SERVED site below;
@@ -319,11 +325,11 @@ jobs:
       # clamp that is 16px at 375px and 17px near 1440px, so a source check that found the
       # token named would have called the phone rendering a pass.
       #
-      # check:mark:field shares the same server because its subject is the served `/` at seven
-      # viewport/motion combinations. GS-R001-R: the Master background mark must be absent below
-      # 768px, static at 768-1023 and under prefers-reduced-motion, and animated at 1024+ — and
-      # the animated case reads the RENDERED transform at 50% scroll rather than the animation's
-      # own report, because an inactive scroll timeline reports playState "running" and renders
-      # nothing. That defect shipped and was caught by this gate; see its docstring.
+      # check:master:scene shares the same server because its subject is the served `/`.
+      # GS-R001-M: the owner rejected GS-R001-R's background mark as hard to notice, and this
+      # gate asks the owner's questions from RENDERED PIXELS at five widths and six chapters —
+      # is the gold mark visible at every chapter, does it move with the page, is every line of
+      # text readable over the scene behind it, does reduced motion hold still, and does the
+      # no-WebGL fallback show the logo. It needs SwiftShader, which it requests itself.
       - name: axe + security headers + statutory record + responsive and legal checks
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company" "npm run check:mark:field"
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company" "npm run check:master:scene"

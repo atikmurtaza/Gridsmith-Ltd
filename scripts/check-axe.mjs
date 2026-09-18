@@ -258,90 +258,43 @@ const INCOMPLETE_ALLOWED = [
       'gate that owns this question. REMOVE THIS ENTRY if axe-core learns to resolve fixed ' +
       'overlays, or if the banner stops being position:fixed.',
   },
-  // `GS-R001-R`. The Master background mark — the hero's two text blocks, and only those two.
+  // `GS-R001-M`. The Master homepage's text over the WebGL scene. Replaces three entries —
+  // the GS-R001-R line-art mark, the review cylinder and the cylinder's review dates — whose
+  // subjects were all removed in this phase; an entry kept after its subject is gone is a
+  // stated reason nothing checks.
   {
     rule: 'color-contrast',
     routes: ['/'],
-    // Exact targets, not a pattern. Two elements decline and they are the two largest text
-    // blocks on the page; anything else declining on `/` is a new question and must land as
-    // UNRESOLVED so somebody reads it.
-    targetPattern: /^(h1|\.master_heroIntro__[A-Za-z0-9_-]+)$/,
+    // Every text-bearing class on `/` comes from `components/master/home.module.css` (hashed
+    // `home_*__*`) or is the hero `h1`, which axe names by id. Anything else declining on `/` —
+    // chrome, a primitive, a future block — is not covered and lands UNRESOLVED.
+    // The first selector must be one of those; what follows it — a space, an attribute selector, `>`, `.`, `:` —
+    // is axe's own path through it (the studio arrows come back as `.home_studioLink__x[href$=…] > …`).
+    // `\x5b` is an opening square bracket, written as an escape on purpose: `check:lists`
+    // reads this file's arrays by counting brackets before it strips comments, so one
+    // unbalanced bracket in a regex OR in a comment here runs the capture on into the next
+    // array. Both happened at GS-R001-M, and each reported four foreign routes as missing.
+    targetPattern: /^(#hero-title|\.home_[A-Za-z]+__[A-Za-z0-9_-]+)(\s|\x5b|>|\.|:|$)/,
     why:
-      'GS-R001-R added a fixed, decorative geometry layer behind the homepage — the Gridsmith ' +
-      'mark as 1px --line hairlines, aria-hidden, pointer-events:none, zero JS. Its SVG shapes ' +
-      'sit under text, so axe returns elmPartiallyObscuring: "background color could not be ' +
-      'determined because it partially overlaps other elements". That is axe DECLINING to ' +
-      'evaluate, not a contrast violation, and it is the same class as the two entries above.\n' +
-      '    Three things were tried before this entry was written, and the order matters because ' +
-      'two of them were wrong for reasons worth not repeating. (1) An opaque --canvas background ' +
-      'on the hero band: it did NOT resolve the incomplete, because axe locates the SVG shapes ' +
-      'geometrically rather than respecting an opaque ancestor. It is kept anyway — it is right ' +
-      'on its own terms, and the site\u2019s largest text now sits on a clean canvas at every ' +
-      'width and every motion setting. (2) Enlarging the layer\u2019s box to 300vh, on the ' +
-      'theory that the h1 straddled its bottom edge (at 1280x800 the h1 runs 454-816px in an ' +
-      '800px viewport). It made things WORSE — three declines instead of two — which is what ' +
-      'established that the container box is not the trigger. (3) Adding --line to ' +
-      'check:contrast\u2019s SURFACES so the pair is measured rather than allowlisted. That ' +
-      'produced the measurement this entry rests on, and was then reverted: it forces ' +
-      'except-restrictions back into USE, and that file records a deliberate position that a ' +
-      'token needing a restriction to be safe is a token whose value is wrong.\n' +
-      '    THE MEASUREMENT, which is what makes this entry earned rather than asserted. Every ' +
-      'foreground token was measured against --line in all four themes. --ink and --ink-muted ' +
-      'both clear the 4.5:1 body floor on --line; --ink-subtle does not (4.14-4.39:1) and ' +
-      'neither does Digital\u2019s --accent (4.00:1). On Master the only text tokens over the ' +
-      'geometry are --ink and --ink-muted. The one --ink-subtle text on this page is ' +
-      '.reviewSource, inside review cards that check:reviews:ui measures as OPAQUE — a solid ' +
-      'card background at opacity 1 — so the geometry never reaches it. Worst case for the ' +
-      'hero text is --ink over a --line hairline, which is ~13.9:1 against a 4.5:1 floor.\n' +
-      '    REMOVE THIS ENTRY if the background mark stops rendering on /, if it is ever drawn ' +
-      'in anything other than --line, or if any --ink-subtle or --accent text is placed over ' +
-      'it. Each of those changes the measurement above, and none of them is covered by it.',
-  },
-  // `GS-P06`. The Master review cylinder, and the first entry to use `targetPattern` — see
-  // the docstring above for why an exact target list was the wrong tool here.
-  {
-    rule: 'color-contrast',
-    routes: ['/'],
-    targetPattern: /\bmaster_review[A-Za-z]*__/,
-    why:
-      'The review cylinder stacks every card in ONE grid cell and turns each one out to its ' +
-      'own angle \u2014 that is what a cylinder is. So every card geometrically overlaps every ' +
-      'other, and axe says so in its own words: 60 of the 73 report "background color could ' +
-      'not be determined because it is overlapped by another element" and 13 report ' +
-      '"partially overlaps other elements". Not one is a contrast VIOLATION; axe declined to ' +
-      'evaluate, which is a different thing and is what this list is for.\n' +
-      '    The overlap is not removable while the block is a cylinder, and the four pairs ' +
-      'inside it are ones another gate already measures directly: --ink on --canvas (19.17:1 ' +
-      'on master), --ink-muted on --canvas and --ink-subtle on --canvas, all in master ' +
-      "DESIGN.md \u00a72's table and all asserted by check:contrast. That is the gate that owns " +
-      'this question, exactly as it owns the consent banner above.\n' +
-      '    What makes those measured ratios APPLY here is that the card background is ' +
-      'opaque. check:reviews-ui asserts that separately and by value, because a card made ' +
-      'translucent by a later edit would put a real contrast defect underneath this entry ' +
-      'and nothing else would look.\n' +
-      '    REMOVE THIS ENTRY if the review block stops being a 3D ring, or if axe-core ' +
-      'learns to resolve a background through a transformed sibling.',
-  },
-  // `GS-P06`. The same 3D overlap, on the six review DATES, and a separate entry rather than an
-  // alternation inside the one above — CLAUDE.md wants every branch of a multi-branch assertion
-  // proven separately, and two patterns in one regex is one branch nobody exercises.
-  {
-    rule: 'color-contrast',
-    routes: ['/'],
-    targetPattern: /^time\[datetime="\d{4}-\d{2}-\d{2}"\]$/,
-    why:
-      'axe names an element by the SHORTEST unique selector it can build, and three of the ' +
-      'review dates have a `datetime` no other element on the page shares \u2014 so those nodes ' +
-      'come back as `time[datetime="2026-05-22"]` with no class in the string at all, and the ' +
-      'cylinder entry above cannot see them. Giving the element a class does not help: it was ' +
-      'tried and measured, and axe still preferred the attribute selector because it is ' +
-      'shorter. Same overlap, same rule, same declined evaluation, same --ink-muted on ' +
-      '--canvas pair that check:contrast measures.\n' +
-      '    The scope risk here is real and is closed by measurement rather than by hope: this ' +
-      'pattern would also accept a contrast incomplete on some OTHER bare <time> on `/`, so ' +
-      'check:reviews-ui asserts that every <time> on that route is inside a review card. If ' +
-      'one ever is not, that gate goes red and this entry is reconsidered.\n' +
-      '    REMOVE THIS ENTRY under the same conditions as the one above.',
+      'GS-R001-M put the homepage over a fixed WebGL canvas — the Gridsmith mark as lit gold ' +
+      'geometry, aria-hidden, pointer-events:none, z-index:-1 — and every section is ' +
+      'transparent by design, so the scene is the page\u2019s surface. axe cannot compute a ' +
+      'background it cannot see through a <canvas> and DECLINES to evaluate: incomplete, not a ' +
+      'violation, the same class as the consent-banner entries above.\n' +
+      '    What makes this entry earned rather than asserted: check:master:scene question 5 ' +
+      'answers exactly the question axe declines. It screenshots / twice at five widths (2560, ' +
+      '1440, 1024, 768, 375) and six chapter positions \u2014 once as served, once with every ' +
+      'glyph transparent \u2014 and measures each text box\u2019s own colour against the ' +
+      '98th-percentile luminance of the rendered scene behind it, 4.5:1 for body and 3:1 for ' +
+      'large text. At GS-R001-M every box passed; the worst reading was 5.0:1 (1024px, ' +
+      'context chapter). That gate was proven red on this question by moving the h1 over the ' +
+      'mark (1.32:1), in scripts/prove-master-scene.mjs.\n' +
+      '    check:reviews:ui question 9 asserts the premise for the reviews specifically: every ' +
+      'review sits inside [data-chapter="reviews"], which is a chapter check:master:scene ' +
+      'measures.\n' +
+      '    REMOVE THIS ENTRY if the scene stops rendering on /, if any section on / gains an ' +
+      'opaque background (axe would then resolve it itself), or if check:master:scene stops ' +
+      'measuring text over the scene. Each of those removes the measurement this rests on.',
   },
 ];
 

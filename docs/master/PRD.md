@@ -67,7 +67,7 @@ Checking legitimacy, scale, credentials, terms.
 | ID | Requirement | Priority | Traces |
 |---|---|---|---|
 | FR-M01 | Homepage with hero, division routing, ecosystem argument, cross-division proof | P0 | M1, M2 |
-| FR-M02 | **Division routing block** — three cards, immediately below hero, above the ecosystem argument | P0 | M3-P3, founder requirement |
+| FR-M02 | **Division routing block** — ~~three cards~~ (superseded at `GS-R001-M`: a typographic index, the cards were rejected at `GS-O008`), immediately below hero, above the ecosystem argument | P0 | M3-P3, founder requirement |
 | FR-M03 | `/approach` — the continuity argument, made with evidence not assertion | P0 | M2 |
 | FR-M04 | **Canonical process** rendered on `/approach` — the six stages from `00-PROCESS.md` | P0 | R4.1 |
 | FR-M05 | `/work` — master portfolio, all divisions, filterable, with **multi-division projects surfaced first** | P0 | M4 |

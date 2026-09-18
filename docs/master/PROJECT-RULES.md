@@ -10,7 +10,7 @@ Binding rules for anyone (human or AI coding agent) working on the root route gr
 
 ## 1. Non-negotiables
 
-1. **The master layer has no colour of its own.** `--accent` is ink. Do not introduce a fourth brand colour. Division accents appear only on division cards, division badges and the footer switcher.
+1. **⚠ Superseded on `/` by owner decision at `GS-R001-M` (`GS-O008`):** the homepage carries the Gridsmith gold stage derived from the owner's logo (`styles/themes/master-stage.css`, `DESIGN.md` §2.1). The rule below still binds every other Master route, and is kept as written. **The master layer has no colour of its own.** `--accent` is ink. Do not introduce a fourth brand colour. Division accents appear only on division cards, division badges and the footer switcher.
 2. **`--accent-design` (amber) is 2.16:1 on white** — the figure check:contrast measures. It may never be text, never a sole state indicator, never a link colour on master pages. Rules and badge borders only.
 3. **Division routing must sit above the second viewport** on every breakpoint. This is the founder's specialist-discovery requirement and it is testable.
 4. **"More than one" and "Not sure" are never styled as secondary.** They are the highest-value conversion path.
@@ -90,7 +90,7 @@ redirects/legacy.json       generated, version-controlled
 
 - WCAG 2.2 AA is the floor.
 - The consent banner: announced on appearance, keyboard-escapable, must not obscure the skip link, must not shift layout.
-- Division cards are `<a>` elements, not click-handled divs.
+- Division links are `<a>` elements, not click-handled divs. (Were *division cards* until `GS-R001-M`, which replaced the cards with the studio index; the rule is unchanged.)
 - Legal pages need a table of contents, correct heading hierarchy, and an anchor on every clause.
 - Focus managed on route change and on form error.
 

@@ -22,7 +22,12 @@
 import { readFileSync, globSync } from 'node:fs';
 import { sep } from 'node:path';
 
-const THEMES = ['master', 'design', 'digital', 'press'];
+/**
+ * `master-stage` is the fifth palette — `GS-R001-M`, `styles/themes/master-stage.css`, the gold
+ * stage on `/` only. It is not a fifth division and has no route group; it is measured here
+ * because every colour a reader sees must be, and `/` is the page most readers see.
+ */
+const THEMES = ['master', 'design', 'digital', 'press', 'master-stage'];
 const TOLERANCE = 0.02; // DESIGN.md now carries measured values to 2dp
 
 /**
@@ -42,8 +47,9 @@ const TOLERANCE = 0.02; // DESIGN.md now carries measured values to 2dp
  *
  * An expectation derived from its own subject is not an expectation.
  */
-const EXPECTED_PAIRS = 36;
-const EXPECTED_CELLS = 148;
+// 36 → 44 and 148 → 185 at GS-R001-M: the stage adds 8 published pairs and one full matrix (37 cells).
+const EXPECTED_PAIRS = 44;
+const EXPECTED_CELLS = 185;
 
 /**
  * Pairs as named in each DESIGN.md §2 table, with the ratio each table publishes.
@@ -67,6 +73,17 @@ const PAIRS = {
     ['--accent-digital', '--canvas', 'text', 5.09],
     ['--accent-press', '--canvas', 'text', 9.74],
     ['--line-strong', '--canvas', 'decor', 1.74],
+  ],
+  // master/DESIGN.md §2.1 — the gold stage, derived from the logo's own gradient stops.
+  'master-stage': [
+    ['--ink', '--canvas', 'text', 17.19],
+    ['--ink-muted', '--canvas', 'text', 10.68],
+    ['--ink-subtle', '--canvas', 'text', 6.76],
+    ['--ink-subtle', '--canvas-raised', 'text', 6.39],
+    ['--accent', '--canvas', 'text', 11.06],
+    ['--accent-ink', '--accent', 'text', 11.06],
+    ['--accent-ink', '--accent-2', 'text', 5.16],
+    ['--line-strong', '--canvas', 'decor', 2.00],
   ],
   design: [
     ['--ink', '--canvas', 'text', 17.92],
@@ -672,7 +689,10 @@ for (const file of globSync('{components,app}/**/*.module.css')) {
     // shared layers — primitives, chrome, app — genuinely run on all four.
     // `sep`, not a regex: a character class holding a backslash is the shape that produced
     // the U+0008 defect above, and this comparison needs no escaping at all.
-    const scoped = THEMES.find((d) => file.includes(`components${sep}${d}${sep}`));
+    // `components/master/home.module.css` is the one Master file that renders on the stage.
+    const scoped = file.endsWith(`components${sep}master${sep}home.module.css`)
+      ? 'master-stage'
+      : THEMES.find((d) => file.includes(`components${sep}${d}${sep}`));
     for (const theme of scoped ? [scoped] : THEMES) {
       const t = tokens(theme);
       for (const token of FADED_TEXT) {

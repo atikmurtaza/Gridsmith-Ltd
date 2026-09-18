@@ -105,8 +105,46 @@ not requested under `GS-D001` and `GS-D002`.
   mean inventing brand geometry.
 
   **What to look at, and what is knowingly absent:** `GS-R001-R-REMEDIATION.md` §1 and §7.
+
+  **Update, 18 September 2026 — `GS-R001-M`.** The owner reviewed the Master homepage again and
+  **rejected its visual direction**: the grid, the three coloured division boxes and the
+  `GS-R001-R` line-art background animation. `GS-R001-M` redesigned the Master homepage only — a
+  gold stage derived from the logo, a WebGL scene of the mark that travels through six chapters,
+  a typographic studio index, still reviews. **`GS-O008` stays OPEN — AWAITING OWNER RE-REVIEW of
+  the redesigned `/`.** Record: `GS-R001-M-MASTER-REDESIGN.md`. Three decisions ride on that
+  review: (1) extend the gold stage to `/about`, `/approach`, `/contact` and `/insights`, or keep
+  it on `/` only; (2) whether the Master stage and Design's dark canvas read as too close; (3)
+  whether the reviews chapter shows enough of the mark.
 - `GS-O009` — authorise production deployment and DNS cutover only in a dedicated production-release
   phase after automated audit and human acceptance.
+
+- `GS-O018` — **Press capability gaps from Book Publishers Den (owner-associated business).**
+  Raised at `GS-R001-M`, **not blocking**, for a future Press content phase. Capability evidence
+  only — `GS-R001-M-MASTER-REDESIGN.md` §10.1. Decide: add *line editing* and *metadata / listing
+  guidance* as named services; whether *translation / bilingual proofreading* is offered, and in
+  which languages; whether Gridsmith coordinates *print-on-demand / printing*; whether
+  *audiobook production* is offered and what Gridsmith itself provides versus coordinates; whether
+  *email marketing* is a confirmed channel; and whether *podcast / guest outreach* is offered
+  **without** a placement promise. No price, guarantee, testimonial or identity from that business
+  may be imported.
+- `GS-O019` — **Design capability gaps from MAD Alpha Designers (owner-associated business).**
+  Raised at `GS-R001-M`, **not blocking**, for a future Design content phase — §10.2. Decide:
+  whether *Gaming/streamer creative* should enumerate its deliverables (screens, alerts, panels,
+  banners, cam frames, chat boxes, emotes, sub badges, intros/outros, animated overlays, logos,
+  banners and emotes); and whether any work from that business is Gridsmith's to show (`GS-D001`
+  requires permission). Its packages, money-back guarantee and volume claims may not be imported
+  (`GS-D002`, non-negotiable #2).
+- `GS-O020` — **A new Freelancer review arrived and needs a person to read it.** Found at
+  `GS-R001-M` by `check:reviews --live`, which is correctly red: the API now returns **13**
+  reviews (the set last read had 12) and **11** publish (was 10). The new one is **James, 5 / 5,
+  17 September 2026, Illustration** — *"Very good communicator, great artwork, on time and on
+  budget. It was a great experience! Will hire them in the future for similar projects."* It names
+  no third party, so `namedThirdParty` does not withhold it, and **the staging build already
+  shows it on `/`** — the pipeline publishes by rule and the live gate is kept out of ordinary CI.
+  **Decide:** publish (then `EXPECTED` in `scripts/check-reviews.mjs` moves to 13 / 11 / 2 in its
+  own commit) or withhold (add its id to the manual list). The agent did **not** move `EXPECTED`:
+  `GS-O015` makes a person's reading the gate.
+- **Digital** — deliberately not researched. Owner: *"for digital i will tell later."*
 
 ## COMPLETED
 

@@ -4,6 +4,7 @@
 @import "./themes/design.css";
 @import "./themes/digital.css";
 @import "./themes/press.css";
+@import "./themes/master-stage.css";
 
 /**
  * Tailwind v4 ships its own `--text-*`, `--leading-*`, `--radius-*` and `--ease-*`
