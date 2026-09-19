@@ -10,7 +10,7 @@ reads awkwardly, the site reads awkwardly, and that is what this document exists
 change. `check:service-content` fails while this document's recorded hash and the source
 disagree, so an approval cannot silently attach to wording that has since changed.
 
-**Source SHA-256:** `b025dc162f51865fe937d0ac2e8b57120742ef7301047d84564aadadac26b03d`
+**Source SHA-256:** `bcc7f40717267987bc8cd7bbe7cfbfda4885b8a7a20c7ba83268d1bc7e4006d8`
 
 ---
 
@@ -264,8 +264,9 @@ would be operational commitments nobody has given.
 | | Item | Detail |
 |---|---|---|
 | Included | Channel identity | Logo, colour and type treatment for the channel. |
-| Included | Stream graphics set | Overlays, scene frames, alerts and panels at platform specification. |
-| Included | Emotes, badges and thumbnails | Produced at the sizes each platform requires. |
+| Included | Stream graphics set | Stream screens, overlays, alerts, panels, banners, webcam frames and chat-box treatments, selected to suit the channel. |
+| Included | Emotes, subscriber badges and thumbnails | Produced at the sizes each platform requires. |
+| Included | Animated channel assets | Intros, outros, animated overlays, logos, banners and emotes where included in the agreed scope; developed with the Motion discipline. |
 | Included | Source files | Layered files so routine edits can be made in-house. |
 
 **Related services:** `brand-identity-systems`, `motion-graphics`
@@ -405,6 +406,7 @@ would be operational commitments nobody has given.
 |---|---|---|
 | Included | Storyboard and timing | Approved before any animation is produced. |
 | Included | Animated sequence | To the agreed length and specification. |
+| Included | Animated channel identity | Streamer intros and outros, animated overlays, logos, banners and emotes, where included in the brief. |
 | Included | Delivery masters and platform encodes | Formats, aspect ratios and caption files as scoped. |
 | **EXCLUDED** | Music and stock licensing | Licences for third-party music or footage are bought in your name. <br>⚠ VERIFY — licens |
 

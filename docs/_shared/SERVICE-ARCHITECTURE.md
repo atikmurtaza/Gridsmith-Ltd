@@ -1,5 +1,7 @@
 # Service architecture and commercial model — ADR `GS-P03`
 
+> **GS-R002, 19 September 2026:** canonical ownership and counts remain unchanged. Design visitor chapters combine Illustration / Motion / 3D as Motion / Dimensional. Gaming/streamer and motion deliverables are now enumerated using current MAD Alpha capability evidence. This is child-deliverable detail, not a new service/group. See `GS-R002-DESIGN.md`.
+
 **Status:** Accepted · **Date:** 14 September 2026 · **Phase:** `GS-P03`
 **Authority:** owner decisions `GS-D001` (public portfolio policy) and `GS-D002` (bespoke
 quotation), and the owner-approved division and service model supplied in the `GS-P03` brief.

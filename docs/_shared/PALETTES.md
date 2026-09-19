@@ -1,5 +1,7 @@
 # Division palettes — published hex values
 
+> **Owner-approved family strategy, GS-R002 (19 September 2026):** Master warm near-black + existing metallic gold; Design deep navy/cobalt + the same gold (implemented); Digital **deep teal + Gridsmith gold** (future only); Press **#426953 + complementary green derivatives + Gridsmith gold** (future only). Master owns gold; divisions borrow it. Historical palettes below remain traceable. Exact Design tokens and measured contrast: `GS-R002-DESIGN.md` and `design/DESIGN.md`.
+
 Every value on this page is measured, not designed-and-hoped. The measurements are
 reproduced by `npm run check:contrast` on every commit; where this page and that gate
 disagree, **the gate is right and this page is wrong** (CLAUDE.md, *How to work*).

@@ -1,5 +1,9 @@
 # Project Tracker — Gridsmith Design
 
+> **GS-R002 override, 19 September 2026:** the approved Design experience is **From Line to Form** — one continuous workspace → identity → character → technical → convergence narrative. Deep navy/cobalt plus the exact Master gold replaces amber. Three visitor chapters present the five unchanged canonical groups; no mandatory split-track fork, public portfolio or pricing. SVG/scroll choreography and restrained pointer response are expressly authorised with static fallbacks. This supersedes conflicting historical visual/flow rules below; security, technical publication, commercial and accessibility gates remain. See `../_shared/GS-R002-DESIGN.md` for current authority and evidence.
+
+**GS-R002: REVIEW** - implementation and local rendered verification complete; CI/Preview evidence pending. Owner visual acceptance is the next phase.
+
 **Status key:** `TODO` · `WIP` · `BLOCKED` · `REVIEW` · `DONE`
 **Priority:** P0 blocks launch · P1 launch-desirable · P2 post-launch
 

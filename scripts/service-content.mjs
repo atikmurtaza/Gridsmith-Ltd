@@ -232,8 +232,9 @@ export const SERVICES = {
       ],
       deliverables: [
         ['Channel identity', 'Logo, colour and type treatment for the channel.'],
-        ['Stream graphics set', 'Overlays, scene frames, alerts and panels at platform specification.'],
-        ['Emotes, badges and thumbnails', 'Produced at the sizes each platform requires.'],
+        ['Stream graphics set', 'Stream screens, overlays, alerts, panels, banners, webcam frames and chat-box treatments, selected to suit the channel.'],
+        ['Emotes, subscriber badges and thumbnails', 'Produced at the sizes each platform requires.'],
+        ['Animated channel assets', 'Intros, outros, animated overlays, logos, banners and emotes where included in the agreed scope; developed with the Motion discipline.'],
         ['Source files', 'Layered files so routine edits can be made in-house.'],
       ],
       collaborators: [],
@@ -315,6 +316,7 @@ export const SERVICES = {
       deliverables: [
         ['Storyboard and timing', 'Approved before any animation is produced.'],
         ['Animated sequence', 'To the agreed length and specification.'],
+        ['Animated channel identity', 'Streamer intros and outros, animated overlays, logos, banners and emotes, where included in the brief.'],
         ['Delivery masters and platform encodes', 'Formats, aspect ratios and caption files as scoped.'],
         ['Music and stock licensing', 'Licences for third-party music or footage are bought in your name.', false],
       ],

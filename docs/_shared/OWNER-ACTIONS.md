@@ -1,5 +1,7 @@
 # Owner actions
 
+> **19 September 2026 — GS-R002 owner decisions:** **GS-O008 APPROVED** for the current Master direction; minor Master refinements deferred to final comparison/polish. **GS-O019 RESOLVED** for Design capability detail, on current research and the explicit GS-R002 implementation authority. No public MAD Alpha portfolio is needed or authorised. **GS-O020 CLOSED — PUBLISH** remains. Earlier open descriptions below are historical. Design visual acceptance will be the next owner review after the staging candidate passes.
+
 This register contains only decisions, evidence, credentials or external actions that require the
 owner. Implementation remains agent work. Public prices and public portfolio/case-study content are
 not requested under `GS-D001` and `GS-D002`.

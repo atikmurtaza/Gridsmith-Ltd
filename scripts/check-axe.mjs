@@ -186,6 +186,18 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  * on `/` — including anywhere else in `master.module.css` — still reports UNRESOLVED.
  */
 const INCOMPLETE_ALLOWED = [
+  {
+    rule: 'color-contrast',
+    routes: ['/design'],
+    targetPattern: /^(#(?:design-title|brand-title|motion-title|technical-title|design-close)(?: > span)?|section\x5bdata-chapter="[0-4]"\x5d > \.ds-copy > \.ds-(?:kicker|intro|note)|a\x5bhref\$="#(?:brand-visual|motion-dimensional|technical-design)"\x5d|span\x5bdata-label="[0-4]"\x5d)$/,
+    why: 'GS-R002 text shares a surface with decorative SVG. check:design:scene measures rendered background pixels under these text boxes at all five chapters and 20 viewports, with the same 2% thin-line tolerance as Master. Its contrast predicate is proven red by matching the headline colour to its background. Remove this entry if that pixel gate is removed or the scene no longer underlies the text. This does not allow any axe violation.',
+  },
+  {
+    rule: 'color-contrast',
+    routes: ['/design'],
+    targetPattern: /^g\x5bdata-art="(?:technical|convergence)".* > text\x5b/,
+    why: 'GS-R002 diagram labels are decorative SVG study details inside the aria-hidden, non-focusable stage, not service information or a usable engineering drawing. Semantic technical content and its scope gate remain HTML and are measured by check:design:scene. Remove this exemption if the diagram becomes informational or interactive.',
+  },
   // **Empty, and emptied on purpose at `M-04`.** The one entry here allowlisted
   // `color-contrast` incomplete on the `h1` of the four placeholder routes, and carried its
   // own removal condition: *"REMOVE THIS ENTRY at the first route with real chrome (Epic M):

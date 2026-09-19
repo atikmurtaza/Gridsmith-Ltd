@@ -512,7 +512,9 @@ if (over.length > 0) {
  * answers to the 15KB master budget in the route table, and the lazy renderer to its own
  * line below.
  */
-const BASELINE_ROUTES = ['/design', '/digital', '/press', '/_not-found'];
+// GS-R002: DesignScene now intentionally ships a Design-only loader (owner-approved narrative).
+// Keep /design in REQUIRED and under its unchanged 25KB route ceiling; measure lazy work below.
+const BASELINE_ROUTES = ['/digital', '/press', '/_not-found'];
 
 const baselineRows = rows.filter((r) => BASELINE_ROUTES.includes(r.url));
 const kitchen = rows.find((r) => r.url === '/_kitchen-sink');
@@ -723,4 +725,16 @@ if (sceneKb > SCENE_BUDGET_KB) {
   console.error('\ncheck-bundle-size: the Master scene renderer is over its budget.\n');
   process.exit(1);
 }
+const designChunks = readdirSync(CHUNK_DIR, { recursive: true, withFileTypes: true })
+  .filter((e) => e.isFile() && e.name.endsWith('.js'))
+  .map((e) => join(e.parentPath ?? CHUNK_DIR, e.name))
+  .filter((f) => readFileSync(f, 'utf8').includes('data-workspace-controls'));
+if (designChunks.length !== 1) throw new Error(`Design choreography: expected one lazy chunk, found ${designChunks.length}`);
+const designFile = toPosix(relative('.next', designChunks[0]));
+if (routes().some(({ file }) => moduleScripts(readFileSync(file, 'utf8')).some((src) => decodeURIComponent(src).endsWith(designFile)))) {
+  throw new Error('Design choreography must not be an eager route script');
+}
+const designKb = gzipSync(readFileSync(designChunks[0]), { level: 9 }).length / KB;
+console.log(`design scene (lazy) ${designKb.toFixed(1)}KB gz; budget 8KB; ${designFile}`);
+if (designKb > 8) throw new Error('Design lazy choreography exceeds its 8KB budget');
 console.log(`\ncheck-bundle-size: ${budgetsCompared} route(s) compared, all within their delta budget\n`);

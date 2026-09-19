@@ -1,0 +1,31 @@
+/** GS-R002 Design-only scene material and paper palette. */
+[data-division="design"] {
+  --ds-night: #071426;
+  --ds-navy: #163a70;
+  --ds-cobalt: #3268b2;
+  --ds-blue-hi: #9abce4;
+  --ds-paper: #f4f1e9;
+  --ds-paper-ink: #163052;
+  --ds-paper-muted: #425874;
+  --ds-grid: #6e8cb33b;
+  --ds-gold: #e0bd70;
+  --ds-gold-hi: #fff3b9;
+  --ds-gold-mid: #a17c36;
+  --ds-gold-deep: #5c421c;
+  --ds-shadow: #02081340;
+  --ds-slab: #749bc52b;
+  --ds-visor: #06111f;
+}
+/* Gold is material, never small text on the drafting-paper chapters. */
+[data-division="design"] .ds-story[data-tone="paper"],
+[data-division="design"]
+  .ds-story:not([data-enhanced])
+  .ds-chapter[data-paper] {
+  --ink: var(--ds-paper-ink);
+  --ink-muted: var(--ds-paper-muted);
+  --ink-subtle: var(--ds-paper-muted);
+  --ds-drawing: var(--ds-cobalt);
+  --ds-rule: var(--ds-navy);
+  --ds-surface: var(--ds-paper);
+  color-scheme: light;
+}

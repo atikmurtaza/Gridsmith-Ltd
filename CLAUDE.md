@@ -1,5 +1,7 @@
 # CLAUDE.md — Gridsmith Ltd website
 
+> **GS-R002 current override (19 September 2026):** Master direction APPROVED by owner (GS-O008), polish deferred. Design now uses the approved **From Line to Form** continuous narrative, navy/cobalt + inherited Master gold, DOM/SVG with lazy scroll choreography and restrained character pointer response. This explicitly supersedes the historical Design amber / shared-composition / animation restrictions below for Design only. Master, Digital and Press redesigns are out of scope. Main stays `fbecbe01`; staging only. See `docs/_shared/GS-R002-DESIGN.md`.
+
 Loaded every session. Keep it accurate; update it in the same commit as any deviation.
 
 ---

@@ -86,14 +86,14 @@ const PAIRS = {
     ['--line-strong', '--canvas', 'decor', 2.00],
   ],
   design: [
-    ['--ink', '--canvas', 'text', 17.92],
-    ['--ink-muted', '--canvas', 'text', 7.56],
-    ['--ink-subtle', '--canvas', 'text', 5.37],
-    ['--accent', '--canvas', 'text', 9.07],
-    ['--accent', '--canvas-raised', 'text', 8.46],
-    ['--accent-ink', '--accent', 'text', 9.07],
-    ['--accent-ink', '--accent-2', 'text', 5.55],
-    ['--line-strong', '--canvas', 'decor', 1.72],
+    ['--ink', '--canvas', 'text', 16.36],
+    ['--ink-muted', '--canvas', 'text', 10.65],
+    ['--ink-subtle', '--canvas', 'text', 8.08],
+    ['--accent', '--canvas', 'text', 10.27],
+    ['--accent', '--canvas-raised', 'text', 8.81],
+    ['--accent-ink', '--accent', 'text', 10.27],
+    ['--accent-ink', '--accent-2', 'text', 4.79],
+    ['--line-strong', '--canvas', 'decor', 2.35],
   ],
   digital: [
     ['--ink', '--canvas', 'text', 18.96],
@@ -242,6 +242,20 @@ function tokens(theme) {
 const failures = [];
 const drift = [];
 const rows = [];
+
+// GS-R002 light chapters and the borrowed material are separate from the night theme matrix.
+const designStage = tokens('design-stage');
+const masterStage = tokens('master-stage');
+for (const suffix of ['', '-hi', '-mid', '-deep']) {
+  if (designStage[`--ds-gold${suffix}`]?.toLowerCase() !== masterStage[`--gold${suffix}`]?.toLowerCase()) {
+    failures.push(`Design gold${suffix} must equal the existing Master material`);
+  }
+}
+for (const foreground of ['--ds-paper-ink', '--ds-paper-muted']) {
+  const measured = ratio(designStage[foreground], designStage['--ds-paper']);
+  if (measured < 4.5) failures.push(`Design paper ${foreground}: ${measured.toFixed(2)}:1`);
+  console.log(`Design paper ${foreground}: ${measured.toFixed(2)}:1; minimum 4.5:1`);
+}
 
 for (const theme of THEMES) {
   const t = tokens(theme);

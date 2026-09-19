@@ -1,5 +1,7 @@
 # App Flow — Gridsmith Design
 
+> **GS-R002 override, 19 September 2026:** the approved Design experience is **From Line to Form** — one continuous workspace → identity → character → technical → convergence narrative. Deep navy/cobalt plus the exact Master gold replaces amber. Three visitor chapters present the five unchanged canonical groups; no mandatory split-track fork, public portfolio or pricing. SVG/scroll choreography and restrained pointer response are expressly authorised with static fallbacks. This supersedes conflicting historical visual/flow rules below; security, technical publication, commercial and accessibility gates remain. See `../_shared/GS-R002-DESIGN.md` for current authority and evidence.
+
 ---
 
 ## 1. Primary journeys
