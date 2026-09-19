@@ -229,3 +229,47 @@ local sample is diagnostic only, not a replacement for CI's three-run median.
 The normal Windows LHCI launcher remains explicitly unavailable. The diagnostic used the installed
 Lighthouse API with an externally managed Puppeteer browser, avoiding the launcher's cleanup race.
 No CI configuration, performance budget, consent setting or scoring assertion was changed.
+
+### Remediated staging candidate — 20 September 2026
+
+Code commit: `d7a0f70f8c20e524731908df2261183144963254`.
+[CI run 35476889188](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35476889188)
+is the final-code verification record. The first failed run above remains part of the evidence.
+
+Immutable [remediated Design Preview](https://gridsmith-qsp86fg7s-atikmurtazas-projects.vercel.app/design),
+Vercel `dpl_2FH1VJ9cJeZ9Njzi2Dbr51rsKNMW`, GitHub deployment `6547014940`, environment Preview,
+status success, exact code SHA. The logged-in browser confirmed the new single-block headline,
+five chapters, technical disclosure, animated drawing and convergence. No browser errors were
+reported. Robots metadata remains `noindex, nofollow`; unauthenticated branch-alias requests
+return 302 to Vercel SSO and `X-Robots-Tag: noindex`.
+
+The final mobile composition was inspected after the scene-position adjustment; the CTA remains
+inside the viewport at 320, 360, 375, 390, 412 and 430px, with no horizontal overflow. The clean
+build, lint/type checking, 68 bundle budgets, staged whitespace and secret checks passed before
+this code was committed and pushed. No shared consent/chrome implementation was changed.
+
+Final-code Lighthouse (Ubuntu CI, median of three, both axes PASS):
+
+| Design | Performance | Accessibility | Best practices | SEO (noindex) | LCP | TBT | CLS |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Desktop | 1.00 | 1.00 | 0.96 | 0.66 | 567ms | 0ms | 0.000 |
+| Mobile 4G / h2 | 0.99 | 1.00 | 0.96 | 0.66 | 1590ms | 55ms | 0.000 |
+
+Mobile LCP samples: 1586.902, 1590.089, 1591.628ms. Raw reports are retained by CI as
+`lighthouseci-reports` (artifact `10593844755` for the code run). TBT is a lab responsiveness
+proxy, not measured field INP. Best-practices 0.96 and staging SEO 0.66 are reported honestly;
+no 100-all-categories claim or production SEO readiness is made.
+
+The best-practices deduction is the existing `/favicon.ico` 404 recorded in the Lighthouse
+console audit. It is not a Design scene exception, and is left outside the frozen shared scope.
+
+The linked code run also executes the full served chain: axe, security headers, statutory/legal
+parity, content/dataset parity, responsive views, Master scene/hero and Design scene/fallbacks.
+Its GitHub conclusion is the authoritative completion signal; Lighthouse alone is not a pass for
+that chain. Documentation-only commits after `d7a0f70f` do not change the candidate implementation
+and receive their own full branch CI run and protected Preview through the existing integration.
+
+**RC status:** staging candidate for owner visual review, not owner-approved and not a production
+release candidate. **Production readiness: NOT READY.** Remaining concerns are owner visual
+acceptance, the existing production programme gates, unresolved development-tool advisories and
+shared favicon/SSR error-shell limitations. No new commercial decision is required for GS-O019.
