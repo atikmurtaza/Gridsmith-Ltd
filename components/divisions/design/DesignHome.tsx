@@ -80,7 +80,9 @@ export async function DesignHome() {
           <div className="ds-copy">
             <p className="ds-kicker">Gridsmith Design</p>
             <h1 id="design-title">
-              From line <span>to form.</span>
+              From line
+              <br />
+              to form.
             </h1>
             <p className="ds-intro">
               Visual identity, creative design, motion, 3D and technical

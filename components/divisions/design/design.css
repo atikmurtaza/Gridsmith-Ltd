@@ -48,9 +48,6 @@
   font-size: clamp(3.5rem, 6.6vw, 8rem);
   max-width: 10ch;
 }
-.ds-chapter h1 span {
-  display: block;
-}
 .ds-chapter h2 {
   font-size: clamp(2.75rem, 4.4vw, 5.5rem);
   max-width: 12ch;
@@ -453,7 +450,7 @@
     margin-bottom: 1rem;
   }
   .ds-chapter h1 {
-    font-size: clamp(2.7rem, 12vw, 5rem);
+    font-size: clamp(2.7rem, 18vw, 5rem);
     max-width: 12ch;
   }
   .ds-chapter h2 {
@@ -477,7 +474,7 @@
     height: 44svh;
   }
   .ds-story:not([data-static])[data-active="0"] .ds-stage-art {
-    bottom: 12svh;
+    bottom: 8svh;
   }
   .ds-story:not([data-static]) .ds-copy {
     position: sticky;

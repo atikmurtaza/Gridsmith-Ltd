@@ -145,7 +145,7 @@ Implementation candidate for owner visual review. A green automated result is no
 - Bundle: 103.4KB total initial Design module scripts, **3.2KB route delta / 25KB budget**; **2.5KB lazy / 8KB budget**. Master 4.9KB delta and 5.9KB lazy. All 68 route budgets pass. No added dependencies.
 - Secret scan: source, built chunks and served assets pass. The local service-role key is absent, so that value-specific check is unavailable; the structural checks and two other configured secret values were checked. No secret values were printed.
 - Screenshots: local `node_modules/.cache/gs-r002-final-screens/`, five chapter images at every size, plus six fallback strips and desktop/mobile contact sheets. These were personally inspected; owner acceptance is still required.
-- Lighthouse: intentionally unavailable locally on Windows due the existing Chrome cleanup fault. Full final-source verification and desktop/mobile Lighthouse must pass on Ubuntu CI before handoff. Immutable CI/deployment results are attached to the staging commit on GitHub and reported in the session handoff; local green results are not substituted for those measurements.
+- Lighthouse: intentionally unavailable locally on Windows due the existing Chrome cleanup fault. Full final-source verification and desktop/mobile Lighthouse are required on Ubuntu CI before handoff. Immutable CI/deployment results are attached to the staging commit on GitHub and reported in the session handoff; local green results are not substituted for those measurements.
 
 [GS-R002 CI runs](https://github.com/atikmurtaza/Gridsmith-Ltd/actions?query=branch%3Astaging%2Fgs-r002-design). The branch is the staging delivery; no production deployment or main merge is part of this phase.
 
@@ -173,3 +173,59 @@ Production dependencies: **0 findings**. Full graph: **27 affected development p
 `GS-R002-DEPENDENCY-AUDIT.md` records advisory identifiers, ranges, exact installed paths and
 proposed upstream/root fixes. This is an unresolved tooling exposure, not a silently accepted
 risk, a production dependency finding, or a reason to run force-fix during a Design implementation.
+
+## Staging delivery
+
+Current owner-review [Design Preview](https://gridsmith-ltd-git-staging-gs-r002-design-atikmurtazas-projects.vercel.app/design).
+The branch alias follows the latest READY candidate; use its deployment metadata and the
+[branch CI runs](https://github.com/atikmurtaza/Gridsmith-Ltd/actions?query=branch%3Astaging%2Fgs-r002-design)
+to match the exact SHA. The immutable first implementation evidence below is retained for history.
+
+
+Implementation commit: `405f34652df76c9f76394614e98997ee69dd5ea9`, pushed normally to
+`staging/gs-r002-design`. Remote main was rechecked after the push and remains
+`fbecbe01e7fb594c6163dab57514997cb248fc21`.
+
+Implementation Preview: [Design](https://gridsmith-g2ixldwkm-atikmurtazas-projects.vercel.app/design),
+Vercel deployment `dpl_DvkaE2xurDgrP77R2jo14HfXizeG`, READY, target null (Preview), exact
+implementation SHA. Authenticated fetch returned HTTP 200, development dataset, five chapters,
+16 Design service links and the technical-scope gate. The response carries `X-Robots-Tag: noindex`
+and `robots=noindex, nofollow`. Unauthenticated access redirects to Vercel SSO (302).
+No hosted form submission was made. The existing local axe notification probe ran as part of the
+local programme checks; this is not evidence of hosted backend isolation or real intake readiness.
+
+Final local Design sweep passed all 20 viewports plus detail, pointer, closing and three fallback
+modes after the no-JavaScript paper-background fix. All six deliberate browser faults were caught.
+The final clean build and source/bundle secret scan passed. No test budget or threshold was lowered.
+
+### Owner review checklist
+
+1. Hero and original creative workspace.
+2. G/S construction into the Gridsmith identity.
+3. Character construction and restrained pointer response.
+4. Building assembly, drafting, electrical and water sequence.
+5. Continuity and pacing between chapters.
+6. Convergence and quote CTA.
+7. Navy/cobalt and inherited gold palette.
+8. Mobile composition and scroll behaviour.
+9. Family relationship to the approved Master direction.
+
+### First CI finding and remediation
+
+Run [35461004185](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35461004185)
+on `405f3465` passed static/build/desktop Lighthouse but failed Design mobile LCP: median
+2691ms, all three runs 2683-2703ms, against the unchanged 2000ms limit. Its LCP element was
+`#gs-consent-heading`, the shared notice mounted after hydration. TBT was 77ms and CLS 0.
+Desktop Design was performance 1.00, accessibility 1.00, best practices 0.96, LCP 575ms,
+TBT 0ms and CLS 0. SEO 0.66 is expected for protected noindex staging.
+
+Design's two-line headline is now one text block, with a stronger 18vw mobile scale (capped at
+5rem; the short-screen size stays bounded). The scene is repositioned below the mobile copy.
+The shared notice, its content, timing and accessibility behaviour are unchanged. This preserves
+the large server-rendered headline as the main visible content. A local Lighthouse API diagnostic
+with the same mobile/h2 settings reported the H1 as LCP, 1916ms, TBT 56ms and CLS 0; that single
+local sample is diagnostic only, not a replacement for CI's three-run median.
+
+The normal Windows LHCI launcher remains explicitly unavailable. The diagnostic used the installed
+Lighthouse API with an externally managed Puppeteer browser, avoiding the launcher's cleanup race.
+No CI configuration, performance budget, consent setting or scoring assertion was changed.

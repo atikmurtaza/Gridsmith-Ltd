@@ -1,6 +1,6 @@
 # AI handoff
 
-> **Current execution, 19 September 2026: GS-R002 — Design.** Implementation complete locally; staging CI/Preview verification pending on `staging/gs-r002-design` from `eda5f3ae`. Master accepted (GS-O008), minor polish deferred; no main fast-forward. GS-O019 capability detail resolved without new top-level services. Full current record: `GS-R002-DESIGN.md`. The handoff below is the preserved predecessor.
+> **Current execution, 19 September 2026: GS-R002 — Design.** Implementation complete; owner-review candidate on `staging/gs-r002-design` from `eda5f3ae`. Master accepted (GS-O008), minor polish deferred; no main fast-forward. GS-O019 capability detail resolved without new top-level services. Full current record and protected Preview: `GS-R002-DESIGN.md`. The branch-tip CI check is authoritative for final verification; do not infer approval from local passes. The handoff below is the preserved predecessor.
 
 ## Execution
 
