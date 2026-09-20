@@ -114,11 +114,13 @@ The Master harness now samples the background beneath painted glyphs for review-
 
 ### Corrected harness release checkpoint
 
-- Final application/test-source commit: `cbe3933c03c20777401ab6e6e8f54162c54564b1`.
-- Full CI: [35541806964](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35541806964). Running when this documentation checkpoint was committed; its eventual recorded conclusion, not this sentence, determines the result.
+- Harness checkpoint commit: `cbe3933c03c20777401ab6e6e8f54162c54564b1`.
+- Full CI: [35541806964](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35541806964). FAILED on two hardcoded colours in the new isolated contrast-proof fixture, before build/served checks. The fixture had been added after the earlier full static run; its local ESLint and rendered proof passed, but that did not cover the token-only gate. The follow-up now loads the existing Master theme and uses its canvas/ink custom properties. No gate exclusion or application token was added.
 - Exact immutable Preview: [GS-R002-R1 Design](https://gridsmith-gueyykv66-atikmurtazas-projects.vercel.app/design), deployment `dpl_A4h5eEWS6B3pmn4y7RgoYH62YiZD`, READY, Preview target, exact full SHA confirmed. Build completed in 53s. Build logs explicitly confirm `development`, authenticated page reports `noindex, nofollow`, and both immutable URL and branch alias redirect unauthenticated requests to Vercel authentication with `X-Robots-Tag: noindex`. Five chapters and final hero inspected.
 - Local final verification includes the full static suite, ESLint, secret scan, eight glyph-classifier proofs, real Design DOM/mobile axe check and the full corrected Master scene gate. Application build and all remaining Design checks are unchanged from the corrected implementation evidence above and are rerun in full CI.
 - This follow-up changes documentation only. Its own exact branch-tip CI/Preview must pass before handoff; the final response records that ending SHA, run and immutable URL. No pending job is treated as a pass. Main remains `fbecbe01e7fb594c6163dab57514997cb248fc21`; production is untouched.
+
+The token-only fixture correction passes its rendered positive/negative proof and a fresh complete `verify:static` run (`%TEMP%/gs-r002-r1-final-static.log`). Final branch-tip CI still owns the clean build, complete served chain and Lighthouse result. The final response must name that exact run and final Preview after success; earlier failed checkpoints remain historical evidence.
 
 Retained coverage: 20 desktop/mobile/zoom compositions × five chapters; intermediate construction states; real hybrid mouse/touch input; rendered contrast; axe; keyboard CTA/disclosure; reduced-motion, no-JS, save-data, low-memory and failed-import posters. New assertions measure early wheel progress, side placement, G/S hierarchy, four distinct storeys/windows/coordinated systems, and rendered head/body/hair response and settling.
 

@@ -38,6 +38,7 @@
  * Expects a server already running at AXE_BASE_URL (default http://127.0.0.1:3000).
  */
 import { launch } from './browser-launch.mjs';
+import { readFileSync } from 'node:fs';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
 const CHAPTERS = ['hero', 'studios', 'context', 'process', 'reviews', 'close'];
@@ -240,7 +241,10 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 {
   const page = await browser.newPage();
   await page.setViewport({ width: 375, height: 812 });
-  await page.setContent('<style>body{background:#222;color:white;font:20px Arial} .clip{width:1px;height:1px;overflow:hidden} span{display:block;width:100px;height:24px}</style><main><div data-reviews-carousel><ul><li><span id="visible">Visible</span><div class="clip"><span id="clipped">Clipped</span></div></li></ul></div></main>');
+  await page.setContent('<style>body{background:var(--canvas);color:var(--ink);font:20px Arial} .clip{width:1px;height:1px;overflow:hidden} span{display:block;width:100px;height:24px}</style><main><div data-reviews-carousel><ul><li><span id="visible">Visible</span><div class="clip"><span id="clipped">Clipped</span></div></li></ul></div></main>');
+  await page.evaluate(() => document.body.setAttribute('data-division', 'master'));
+  await page.addStyleTag({ content: readFileSync('styles/themes/master.css', 'utf8') });
+  const goodText = (await page.evaluate(TEXT_BOXES)).find((b) => b.text === 'Visible');
   const boxes = await page.$$eval('span', (els) => els.map((el) => {
     const r = el.getBoundingClientRect();
     return [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)];
@@ -250,8 +254,8 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
   const masks = await reviewGlyphMasks(page);
   const sampled = await analyse(background, boxes, masks, [true, true]);
   await transparent.evaluate((el) => el.remove());
-  const valid = sampled.p98[0] !== null && ratio(1, sampled.p98[0]) >= 4.5;
-  await page.addStyleTag({ content: '#visible { color: #222; }' });
+  const valid = goodText && sampled.p98[0] !== null && ratio(goodText.L, sampled.p98[0]) >= goodText.min;
+  await page.addStyleTag({ content: '#visible { color: var(--canvas); }' });
   const brokenText = (await page.evaluate(TEXT_BOXES)).find((b) => b.text === 'Visible');
   const broken = brokenText && sampled.p98[0] !== null && ratio(brokenText.L, sampled.p98[0]) < brokenText.min;
   if (!valid || !broken || sampled.p98[1] !== null) throw new Error('Review glyph sampling proof failed');
