@@ -1,22 +1,27 @@
-/** GS-R002 Design-only scene material and paper palette. */
+/** GS-R002-R1 owner-approved Design-only scene material and paper palette. */
 [data-division="design"] {
-  --ds-night: #071426;
-  --ds-navy: #163a70;
-  --ds-cobalt: #3268b2;
-  --ds-blue-hi: #9abce4;
-  --ds-paper: #f4f1e9;
-  --ds-paper-ink: #163052;
-  --ds-paper-muted: #425874;
-  --ds-grid: #6e8cb33b;
-  --ds-gold: #e0bd70;
-  --ds-gold-hi: #fff3b9;
-  --ds-gold-mid: #a17c36;
-  --ds-gold-deep: #5c421c;
-  --ds-shadow: #02081340;
-  --ds-slab: #749bc52b;
-  --ds-visor: #06111f;
+  --ds-face-hi: #f1e7d1;
+  --ds-face: #d8c5a3;
+  --ds-face-shade: #a18b65;
+  --ds-muted-navy: #66768a;
+  --ds-gold-muted: #aa914a;
+  --ds-night: #0a192e;
+  --ds-navy: #203650;
+  --ds-cobalt: #465e78;
+  --ds-blue-hi: #a6b5c7;
+  --ds-paper: #f3f0e8;
+  --ds-paper-ink: #152c46;
+  --ds-paper-muted: #43556c;
+  --ds-grid: #8a9bb52b;
+  --ds-gold: #d4af35;
+  --ds-gold-hi: #f2df9c;
+  --ds-gold-mid: #aa914a;
+  --ds-gold-deep: #635025;
+  --ds-shadow: #050d1940;
+  --ds-slab: #8b9bb22b;
+  --ds-visor: #060f1e;
 }
-/* Gold is material, never small text on the drafting-paper chapters. */
+/* Design uses its owner-approved Imperial treatment; Master remains unchanged. Gold is material, never small text on the drafting-paper chapters. */
 [data-division="design"] .ds-story[data-tone="paper"],
 [data-division="design"]
   .ds-story:not([data-enhanced])

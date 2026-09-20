@@ -1,3 +1,7 @@
+> **GS-R002-R1 owner remediation (20 September 2026):** The original GS-R002 candidate was not visually approved. Design alone now uses Oxford Navy `#0A192E` and Imperial British Gold `#D4AF35`. This supersedes the equal-to-Master gold rule for Design; Master remains unchanged. R1 retains From Line to Form, with centre / left / right / left / right-centre choreography. Historical specifications below are preserved.
+>
+> Current night contrast: ink/canvas 15.48:1; muted/canvas 10.30:1; subtle/canvas 7.87:1; accent/canvas 8.38:1; accent/raised 7.26:1; accent-ink/accent 8.38:1; accent-ink/accent-2 5.76:1; decorative strong rule/canvas 2.45:1. Text minima are unchanged.
+
 # Design Spec — Gridsmith Design
 
 ## GS-R002 measured palette (19 September 2026)

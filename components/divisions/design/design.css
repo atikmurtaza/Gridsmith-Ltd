@@ -12,7 +12,6 @@
 }
 .ds-stage-art {
   transition:
-    width var(--dur-base),
     height var(--dur-base),
     top var(--dur-base),
     bottom var(--dur-base);
@@ -158,8 +157,8 @@
 }
 .ds-thread {
   fill: none;
-  stroke: var(--ds-drawing);
-  stroke-width: 2;
+  stroke: var(--ds-gold);
+  stroke-width: 2.5;
   opacity: 0.65;
 }
 .ds-controls,
@@ -186,13 +185,26 @@
   stroke: var(--ds-gold);
 }
 .ds-letters {
-  fill: none;
-  stroke: var(--ds-cobalt);
-  stroke-width: 28;
-  stroke-linecap: square;
+  fill: var(--ds-navy);
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+}
+.ds-g-geometry,
+.ds-s-geometry {
+  stroke-dasharray: 100;
+  stroke-width: 14;
+  stroke-linejoin: miter;
+}
+.ds-g-geometry {
+  stroke: var(--ds-gold-deep);
+}
+.ds-s-geometry {
+  stroke: var(--ds-navy);
+  stroke-width: 23;
 }
 .ds-construction {
-  opacity: 0.5;
+  opacity: 0.75;
   stroke-dasharray: 3 5;
 }
 .ds-shadow {
@@ -236,6 +248,13 @@
 [data-finished-character][data-material="flat"] path[fill] {
   fill: var(--ds-cobalt);
 }
+[data-finished-character][data-material="flat"] path[fill$="-skin)"] {
+  fill: var(--ds-face);
+}
+[data-finished-character][data-material="flat"] path[fill$="-hair)"],
+[data-finished-character][data-material="flat"] path[fill$="-visor)"] {
+  fill: var(--ds-navy);
+}
 [data-finished-character][data-material="line"] .ds-eyes path {
   stroke: var(--ds-gold-hi);
   stroke-width: 6;
@@ -275,7 +294,7 @@
 }
 .ds-system {
   stroke: var(--ds-cobalt);
-  stroke-width: 4;
+  stroke-width: 3;
 }
 .ds-system circle,
 .ds-system rect {
@@ -285,7 +304,7 @@
 }
 .ds-water {
   stroke: var(--ds-cobalt);
-  stroke-width: 5;
+  stroke-width: 3;
   stroke-dasharray: 10 5;
 }
 .ds-convergence-path {
@@ -322,9 +341,9 @@
 }
 .ds-story:not([data-static]) .ds-stage-art {
   position: absolute;
-  width: 62%;
+  width: var(--ds-art-width, 62%);
   height: 88%;
-  right: 0;
+  left: var(--ds-art-left, 38%);
   top: 4%;
 }
 .ds-story:not([data-static]) .ds-chapter {
@@ -353,12 +372,11 @@
 /* The hero is a typesetting object inside the workspace, not a text/illustration split. */
 @media (min-width: 761px) {
   .ds-story[data-active="0"] .ds-stage-art {
-    width: 100%;
     height: 100%;
     top: 0;
   }
   .ds-story[data-active="0"] [data-workspace-form] {
-    transform: translate(320px, 0) scale(0.8);
+    transform: translate(265px, 0) scale(0.8);
     transform-origin: center;
   }
   .ds-story[data-active="0"] [data-handles] {
@@ -368,7 +386,7 @@
     filter: opacity(0.2);
   }
   .ds-story[data-active="0"] [data-thread] {
-    opacity: 0.15;
+    opacity: 0.38;
   }
   .ds-story:not([data-static]) .ds-chapter:first-of-type {
     padding-top: 14svh;
@@ -467,6 +485,7 @@
     gap: 0.75rem 1.5rem;
   }
   .ds-story:not([data-static]) .ds-stage-art {
+    left: 0;
     top: auto;
     bottom: 1svh;
     right: 0;
@@ -562,6 +581,96 @@
   .ds-story .ds-copy {
     position: relative !important;
     top: auto !important;
+    margin-left: 0 !important;
     width: 100% !important;
+  }
+}
+
+/* R1: composed sides, with the shared wave travelling between them. */
+@media (min-width: 761px) {
+  .ds-story:not([data-static]) [data-chapter="1"] .ds-copy,
+  .ds-story:not([data-static]) [data-chapter="3"] .ds-copy {
+    margin-left: 55%;
+    width: 43%;
+  }
+  .ds-story:not([data-static]) .ds-chapter:first-of-type {
+    min-height: 120svh;
+  }
+  .ds-story:not([data-static]) .ds-chapter:last-of-type .ds-copy {
+    width: 34%;
+  }
+}
+@media (max-width: 760px) {
+  .ds-story:not([data-static]) .ds-chapter:first-of-type {
+    min-height: 125svh;
+  }
+  .ds-story:not([data-static]) .ds-chapter:not(:first-of-type) {
+    min-height: 230svh;
+  }
+  .ds-stage-art [data-art="technical"] {
+    transform-origin: 500px 440px;
+  }
+}
+.ds-visor-reflection {
+  fill: var(--ds-gold-hi);
+  opacity: 0.48;
+}
+.ds-brows {
+  fill: none;
+  stroke: var(--ds-visor);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.ds-face-line {
+  fill: none;
+  stroke: var(--ds-gold-deep);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+}
+.ds-face-shade {
+  fill: none;
+  stroke: var(--ds-face-shade);
+  stroke-width: 3;
+  opacity: 0.55;
+}
+.ds-hair-strand {
+  fill: none;
+  stroke: var(--ds-blue-hi);
+  stroke-width: 3;
+  opacity: 0.32;
+}
+.ds-facade {
+  fill: var(--ds-slab);
+  stroke-width: 1.3;
+}
+.ds-core {
+  fill: var(--ds-slab);
+  stroke-dasharray: 3 3;
+}
+.ds-convergence-vector {
+  fill: none;
+  stroke: var(--ds-gold-muted);
+  stroke-width: 2;
+}
+.ds-poster [data-art="technical"] {
+  transform: translate(0 -15px) scale(0.95);
+  transform-origin: center;
+}
+/* Short phones reserve enough room to read the four floors without overlapping copy. */
+@media (max-width: 760px) and (max-height: 650px) {
+  .ds-story:not([data-static])[data-active="3"] .ds-stage-art {
+    height: 42svh;
+    bottom: 2svh;
+  }
+  .ds-story:not([data-static]) [data-chapter="3"] h2 {
+    font-size: 1.65rem;
+    max-width: 100%;
+  }
+  .ds-story:not([data-static]) [data-chapter="3"] .ds-intro {
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+  .ds-stage-label {
+    display: none;
   }
 }

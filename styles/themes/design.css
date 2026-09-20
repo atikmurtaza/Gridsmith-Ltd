@@ -1,17 +1,17 @@
-/** GS-R002: navy/cobalt + the exact Master gold. Historical amber values remain in git. */
+/** GS-R002-R1: owner-approved Oxford Navy / Imperial British Gold. Master is unchanged. */
 [data-division="design"] {
-  --canvas: #071426;
-  --canvas-raised: #10233b;
-  --canvas-sunken: #040d19;
-  --ink: #f4f1e9;
-  --ink-muted: #b8c6d8;
-  --ink-subtle: #9dadc2;
-  --accent: #e0bd70;
-  --accent-hover: #fff3b9;
-  --accent-ink: #071426;
-  --accent-2: #a17c36;
-  --line: #243b57;
-  --line-strong: #365474;
+  --canvas: #0a192e;
+  --canvas-raised: #14263d;
+  --canvas-sunken: #060f1e;
+  --ink: #f3f0e8;
+  --ink-muted: #bcc7d5;
+  --ink-subtle: #9eafc3;
+  --accent: #d4af35;
+  --accent-hover: #f2df9c;
+  --accent-ink: #0a192e;
+  --accent-2: #aa914a;
+  --line: #2b4059;
+  --line-strong: #435973;
   --font-display: var(--font-inter), system-ui, sans-serif;
   --font-body: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;

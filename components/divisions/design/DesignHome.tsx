@@ -56,7 +56,7 @@ export async function DesignHome() {
         <noscript>
           <style>
             {
-              ".ds-stage{display:none!important}.ds-poster{display:block!important}.ds-chapter{min-height:0!important;padding:3rem 6vw!important}.ds-copy{position:relative!important;top:auto!important;width:100%!important}.ds-chapter[data-paper]{background:var(--ds-paper)!important;color:var(--ds-paper-ink)}"
+              ".ds-stage{display:none!important}.ds-poster{display:block!important}.ds-chapter{min-height:0!important;padding:3rem 6vw!important}.ds-copy{position:relative!important;top:auto!important;width:100%!important;margin-left:0!important}.ds-chapter[data-paper]{background:var(--ds-paper)!important;color:var(--ds-paper-ink)}"
             }
           </style>
         </noscript>

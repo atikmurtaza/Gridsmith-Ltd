@@ -4,9 +4,9 @@
  */
 import { launch } from "./browser-launch.mjs";
 import { AxePuppeteer } from "@axe-core/puppeteer";
-import { mkdirSync, readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync } from "node:fs";
 import { createRequire } from "node:module";
-import { join } from "node:path";
+import { join, basename } from "node:path";
 
 const base = process.env.AXE_BASE_URL ?? "http://127.0.0.1:3000";
 const axeSource = readFileSync(
@@ -41,6 +41,16 @@ const errors = [];
 const out = process.env.DESIGN_SCREENSHOTS;
 if (out) mkdirSync(out, { recursive: true });
 const pause = () => new Promise((r) => setTimeout(r, 650));
+const choreographyChunk = readdirSync(".next/static/chunks", {
+  recursive: true,
+})
+  .filter((f) => f.endsWith(".js"))
+  .find((f) =>
+    readFileSync(join(".next/static/chunks", f), "utf8").includes(
+      "data-workspace-controls",
+    ),
+  );
+if (!choreographyChunk) throw new Error("Design choreography chunk missing");
 
 // Like Master's scene gate: measure the background pixels after hiding only glyphs.
 // The worst 2% of a text box is ignored for antialiasing and thin construction lines.
@@ -144,16 +154,43 @@ async function textContrast(page) {
 async function open(
   width,
   height,
-  { reduced = false, js = true, limited = false, touch = false } = {},
+  {
+    reduced = false,
+    js = true,
+    limited = false,
+    lowMemory = false,
+    failedImport = false,
+    touch = false,
+  } = {},
 ) {
   const page = await browser.newPage();
-  await page.setViewport({ width, height, deviceScaleFactor: 1, hasTouch: touch });
+  if (failedImport) {
+    await page.setRequestInterception(true);
+    page.on("request", (request) =>
+      request.url().includes(basename(choreographyChunk))
+        ? request.abort()
+        : request.continue(),
+    );
+  }
+  await page.setViewport({
+    width,
+    height,
+    deviceScaleFactor: 1,
+    hasTouch: touch,
+  });
   await page.setCookie({ name: "gs_consent", value: "1", url: base });
   if (reduced)
     await page.emulateMediaFeatures([
       { name: "prefers-reduced-motion", value: "reduce" },
     ]);
   if (!js) await page.setJavaScriptEnabled(false);
+  if (lowMemory)
+    await page.evaluateOnNewDocument(() => {
+      Object.defineProperty(navigator, "deviceMemory", {
+        value: 1,
+        configurable: true,
+      });
+    });
   if (limited)
     await page.evaluateOnNewDocument(() => {
       Object.defineProperty(navigator, "connection", {
@@ -167,9 +204,10 @@ async function open(
   });
   if (![200, 304].includes(response?.status()))
     throw new Error(`Design HTTP ${response?.status()}`);
-  if (js && !reduced && !limited)
+  if (js && !reduced && !limited && !lowMemory && !failedImport)
     await page.waitForSelector("[data-enhanced]", { timeout: 10000 });
-  if (js && (reduced || limited)) await page.waitForSelector("[data-static]");
+  if (js && (reduced || limited || lowMemory || failedImport))
+    await page.waitForSelector("[data-static]");
   return page;
 }
 async function seek(page, pos) {
@@ -186,10 +224,16 @@ async function seek(page, pos) {
     );
   }, pos);
   await pause();
-  await page.waitForFunction((pos) => {
-    const progress = Number(document.querySelector('[data-design-stage]')?.dataset.progress);
-    return pos === 0 ? progress < 0.15 : Math.abs(progress - pos) < 0.015;
-  }, { timeout: 10000 }, Math.max(0, pos));
+  await page.waitForFunction(
+    (pos) => {
+      const progress = Number(
+        document.querySelector("[data-design-stage]")?.dataset.progress,
+      );
+      return pos === 0 ? progress < 0.15 : Math.abs(progress - pos) < 0.015;
+    },
+    { timeout: 10000 },
+    Math.max(0, pos),
+  );
 }
 async function measure(page, { hero = false, expected } = {}) {
   return page.evaluate(
@@ -226,6 +270,11 @@ async function measure(page, { hero = false, expected } = {}) {
       )
         failures.push("scene");
       if (hero) {
+        if (
+          root.querySelector('[data-chapter="0"]').offsetHeight >
+          innerHeight * (innerWidth > 760 ? 1.3 : 1.4)
+        )
+          failures.push("hero-distance");
         const h = document.querySelector("h1"),
           cta = document.querySelector("[data-design-cta]");
         const r = h?.getBoundingClientRect();
@@ -243,6 +292,11 @@ async function measure(page, { hero = false, expected } = {}) {
       }
       if (expected && !visible(stage.querySelector(expected)))
         failures.push("protagonist");
+      if (
+        stage.querySelectorAll('[data-art="technical"] [data-storey]')
+          .length !== 4
+      )
+        failures.push("storeys");
       const active = Number(root.dataset.active);
       if (
         expected?.startsWith("[data-art=") &&
@@ -269,6 +323,23 @@ try {
   if (process.argv.includes("--prove")) {
     const page = await open(1440, 900);
     const probes = [
+      [
+        "hero-distance",
+        () => {
+          document.querySelector('[data-chapter="0"]').style.minHeight =
+            "300svh";
+        },
+      ],
+      [
+        "storeys",
+        () => {
+          document
+            .querySelector(
+              '[data-design-stage] [data-art="technical"] [data-storey]',
+            )
+            .remove();
+        },
+      ],
       [
         "cta",
         () => {
@@ -337,6 +408,63 @@ try {
     console.log("PROVEN RED rendered text contrast");
     await page.close();
   } else {
+    const pacing = await open(1440, 900);
+    const heroState = () =>
+      pacing.evaluate(() => ({
+        y: scrollY,
+        height: document.querySelector('[data-chapter="0"]').offsetHeight,
+        brandTop:
+          document.querySelector('[data-chapter="1"]').getBoundingClientRect()
+            .top + scrollY,
+        wave: document
+          .querySelector("[data-design-stage] [data-thread]")
+          .getAttribute("d"),
+        node: document
+          .querySelector("[data-design-stage] [data-design-node]")
+          .getAttribute("transform"),
+      }));
+    const before = await heroState();
+    await pacing.mouse.wheel({ deltaY: 180 });
+    await pause();
+    const after = await heroState();
+    if (
+      after.y - before.y < 160 ||
+      after.y - before.y > 200 ||
+      before.wave === after.wave ||
+      before.node === after.node
+    )
+      errors.push(
+        "Hero first wheel must scroll natively and visibly change both wave and construction",
+      );
+    if (after.height > 900 * 1.3 || after.brandTop > 900 * 1.4)
+      errors.push("Hero handoff exceeds proportional scroll-distance budget");
+    console.log(
+      `R1 wheel: ${after.y - before.y}px native scroll; hero ${after.height}px; Brand begins ${after.brandTop}px; wave/node changed`,
+    );
+    await pacing.close();
+    const keyboard = await open(1440, 900);
+    for (let i = 0; i < 20; i++) {
+      await keyboard.keyboard.press("Tab");
+      if (
+        await keyboard.$eval(
+          "[data-design-cta]",
+          (el) => document.activeElement === el,
+        )
+      )
+        break;
+    }
+    const focus = await keyboard.$eval("[data-design-cta]", (el) => ({
+      active: document.activeElement === el,
+      width: parseFloat(getComputedStyle(el).outlineWidth),
+      style: getComputedStyle(el).outlineStyle,
+    }));
+    if (!focus.active || focus.width < 2 || focus.style === "none")
+      errors.push("Quote CTA keyboard/focus visibility failed");
+    await keyboard.focus("#brand-visual summary");
+    await keyboard.keyboard.press("Enter");
+    if (!(await keyboard.$eval("#brand-visual details", (el) => el.open)))
+      errors.push("Service disclosure did not open with keyboard");
+    await keyboard.close();
     for (const [width, height] of process.argv.includes("--fallback-only")
       ? []
       : sizes) {
@@ -357,6 +485,14 @@ try {
           expected: `[data-art="${name}"]`,
         });
         errors.push(...m.failures.map((f) => `${label} ${name}: ${f}`));
+        if (width > 760 && [1.6, 2.53, 3.65].includes(position)) {
+          const centre = await page.$eval(".ds-stage-art", (el) => {
+            const r = el.getBoundingClientRect();
+            return (r.left + r.width / 2) / innerWidth;
+          });
+          if (name === "character" ? centre < 0.56 : centre > 0.44)
+            errors.push(`${label} ${name}: incorrect side (${centre})`);
+        }
         errors.push(
           ...(await textContrast(page)).map((f) => `${label} ${name}: ${f}`),
         );
@@ -414,15 +550,64 @@ try {
       await seek(page, pos);
       const r = await measure(page, { expected });
       errors.push(...r.failures.map((f) => `detail ${pos}: ${f}`));
+      errors.push(
+        ...(await textContrast(page)).map((f) => `detail ${pos}: ${f}`),
+      );
+      if (out) await page.screenshot({ path: join(out, `detail-${pos}.png`) });
     }
+    await seek(page, 1.1);
+    const letters = await page.evaluate(() => {
+      const g = document
+        .querySelector("[data-design-stage] [data-letter-g]")
+        .getBoundingClientRect();
+      const s = document
+        .querySelector("[data-design-stage] [data-letter-s]")
+        .getBoundingClientRect();
+      return { ratio: s.height / g.height, upperG: g.top < s.top };
+    });
+    if (letters.ratio < 1.8 || !letters.upperG)
+      errors.push("G/S hierarchy: require smaller upper G and dominant S");
+    await seek(page, 3.65);
+    const structure = await page.$eval(
+      '[data-design-stage] [data-art="technical"]',
+      (el) => ({
+        levels: [...el.querySelectorAll("[data-storey]")].map((e) =>
+          Math.round(e.getBoundingClientRect().top),
+        ),
+        windows: [
+          ...el.querySelectorAll(".ds-facade path:not(.ds-core)"),
+        ].reduce(
+          (count, path) =>
+            count + (path.getAttribute("d").match(/M/g) ?? []).length,
+          0,
+        ),
+        electrical: +getComputedStyle(el.querySelector("[data-electrical]"))
+          .opacity,
+        water: +getComputedStyle(el.querySelector("[data-water]")).opacity,
+      }),
+    );
+    if (
+      structure.levels.length !== 4 ||
+      new Set(structure.levels).size !== 4 ||
+      structure.windows < 20 ||
+      structure.electrical < 0.5 ||
+      structure.water < 0.9
+    )
+      errors.push(
+        `Four-storey coordinated drawing incomplete: ${JSON.stringify(structure)}`,
+      );
     await seek(page, 2.53);
     // Exercise a hybrid desktop: coarse primary input, but a real mouse can still move.
     await page.touchscreen.touchStart(1000, 200);
     await page.touchscreen.touchMove(1001, 201);
     await page.touchscreen.touchEnd();
     await pause();
-    const touchEyes = await page.$eval('[data-design-stage] [data-eyes]', (el) => el.getAttribute('transform'));
-    if (touchEyes !== 'translate(0 0)') errors.push('Character followed touch input');
+    const touchEyes = await page.$eval(
+      "[data-design-stage] [data-eyes]",
+      (el) => el.getAttribute("transform"),
+    );
+    if (touchEyes !== "translate(0 0)")
+      errors.push("Character followed touch input");
     await page.mouse.move(1000, 200);
     await pause();
     const left = await page.$eval("[data-design-stage] [data-eyes]", (el) =>
@@ -435,12 +620,57 @@ try {
     );
     if (left === right) {
       const state = await page.evaluate(() => ({
-        progress: document.querySelector('[data-design-stage]')?.dataset.progress,
-        fine: matchMedia('(hover: hover) and (pointer: fine)').matches,
+        progress: document.querySelector("[data-design-stage]")?.dataset
+          .progress,
+        fine: matchMedia("(hover: hover) and (pointer: fine)").matches,
         hidden: document.hidden,
       }));
-      errors.push(`Desktop eyes did not respond to pointer: ${JSON.stringify(state)}`);
+      errors.push(
+        `Desktop eyes did not respond to pointer: ${JSON.stringify(state)}`,
+      );
     }
+    const pose = () =>
+      page.evaluate(() =>
+        Object.fromEntries(
+          ["head", "hair", "character-body"].map((name) => [
+            name,
+            document
+              .querySelector(`[data-design-stage] [data-${name}]`)
+              .getAttribute("transform"),
+          ]),
+        ),
+      );
+    const initialPose = await pose();
+    await page.mouse.move(1200, 350);
+    await new Promise((r) => setTimeout(r, 70));
+    const earlyPose = await pose();
+    await pause();
+    const settledPose = await pose();
+    if (
+      initialPose.head === settledPose.head ||
+      initialPose["character-body"] === settledPose["character-body"] ||
+      earlyPose.hair === settledPose.hair
+    )
+      errors.push(
+        "Mouse must move head/body and hair must continue secondary motion",
+      );
+    const angle = (value) => Number(value.match(/rotate\(([-\d.]+)/)?.[1]);
+    await pause();
+    const stablePose = await pose();
+    if (
+      Math.abs(angle(stablePose.hair) - angle(settledPose.hair)) > 0.05 ||
+      Math.abs(angle(stablePose.hair)) > 5
+    )
+      errors.push("Hair did not settle within restrained bounds");
+    await page.mouse.move(-10, 0);
+    await pause();
+    await pause();
+    const returnedPose = await pose();
+    if (
+      Math.abs(angle(returnedPose.hair)) > 0.05 ||
+      Math.abs(angle(returnedPose.head)) > 0.05
+    )
+      errors.push("Head/hair did not return after pointer leave");
     await seek(page, 4.7);
     const closing = await page.$eval(
       '[data-design-stage] [data-art="convergence"]',
@@ -449,19 +679,32 @@ try {
           Number(getComputedStyle(child).opacity),
         ),
     );
-    if (closing[0] < 0.95 || closing.slice(1).some((opacity) => opacity > 0.2))
+    if (
+      closing[0] < 0.95 ||
+      closing.slice(1).some((opacity) => opacity < 0.6 || opacity > 0.8)
+    )
       errors.push(
-        "Closing construction did not recede around the retained gold mark",
+        "R1 closing fragments must remain visible beneath the dominant gold mark",
       );
     await page.close();
     const mobile = await open(375, 812);
     await seek(mobile, 2.53);
     await mobile.mouse.move(300, 600);
     await pause();
-    const mobileEyes = await mobile.$eval('[data-design-stage] [data-eyes]', (el) => el.getAttribute('transform'));
-    if (mobileEyes !== 'translate(0 0)') errors.push('Mobile character followed pointer input');
+    const mobileEyes = await mobile.$eval(
+      "[data-design-stage] [data-eyes]",
+      (el) => el.getAttribute("transform"),
+    );
+    if (mobileEyes !== "translate(0 0)")
+      errors.push("Mobile character followed pointer input");
     await mobile.close();
-    for (const mode of ["reduced", "no-js", "save-data"])
+    for (const mode of [
+      "reduced",
+      "no-js",
+      "save-data",
+      "low-memory",
+      "failed-import",
+    ])
       for (const [width, height] of [
         [1440, 900],
         [375, 812],
@@ -470,6 +713,8 @@ try {
           reduced: mode === "reduced",
           js: mode !== "no-js",
           limited: mode === "save-data",
+          lowMemory: mode === "low-memory",
+          failedImport: mode === "failed-import",
         });
         const m = await p.evaluate(() => ({
           posters: [...document.querySelectorAll(".ds-poster")].filter(
@@ -496,20 +741,23 @@ try {
           );
           const contrast = await textContrast(p);
           errors.push(
-            ...contrast.map(
-              (f) => `${mode} ${width} chapter ${chapter}: ${f}`,
-            ),
+            ...contrast.map((f) => `${mode} ${width} chapter ${chapter}: ${f}`),
           );
           if (contrast.length && out) {
-            await p.screenshot({ path: join(out, `${width}-${mode}-${chapter}-failure.png`) });
-            console.log(`${mode} ${width} chapter ${chapter} surfaces`, await p.evaluate(() =>
-              [...document.querySelectorAll('[data-chapter]')].map((el) => ({
-                chapter: el.dataset.chapter,
-                background: getComputedStyle(el).backgroundColor,
-                colour: getComputedStyle(el).color,
-                top: el.getBoundingClientRect().top,
-              })),
-            ));
+            await p.screenshot({
+              path: join(out, `${width}-${mode}-${chapter}-failure.png`),
+            });
+            console.log(
+              `${mode} ${width} chapter ${chapter} surfaces`,
+              await p.evaluate(() =>
+                [...document.querySelectorAll("[data-chapter]")].map((el) => ({
+                  chapter: el.dataset.chapter,
+                  background: getComputedStyle(el).backgroundColor,
+                  colour: getComputedStyle(el).color,
+                  top: el.getBoundingClientRect().top,
+                })),
+              ),
+            );
           }
         }
         if (out)

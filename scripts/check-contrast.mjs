@@ -86,14 +86,14 @@ const PAIRS = {
     ['--line-strong', '--canvas', 'decor', 2.00],
   ],
   design: [
-    ['--ink', '--canvas', 'text', 16.36],
-    ['--ink-muted', '--canvas', 'text', 10.65],
-    ['--ink-subtle', '--canvas', 'text', 8.08],
-    ['--accent', '--canvas', 'text', 10.27],
-    ['--accent', '--canvas-raised', 'text', 8.81],
-    ['--accent-ink', '--accent', 'text', 10.27],
-    ['--accent-ink', '--accent-2', 'text', 4.79],
-    ['--line-strong', '--canvas', 'decor', 2.35],
+    ['--ink', '--canvas', 'text', 15.48],
+    ['--ink-muted', '--canvas', 'text', 10.30],
+    ['--ink-subtle', '--canvas', 'text', 7.87],
+    ['--accent', '--canvas', 'text', 8.38],
+    ['--accent', '--canvas-raised', 'text', 7.26],
+    ['--accent-ink', '--accent', 'text', 8.38],
+    ['--accent-ink', '--accent-2', 'text', 5.76],
+    ['--line-strong', '--canvas', 'decor', 2.45],
   ],
   digital: [
     ['--ink', '--canvas', 'text', 18.96],
@@ -243,13 +243,11 @@ const failures = [];
 const drift = [];
 const rows = [];
 
-// GS-R002 light chapters and the borrowed material are separate from the night theme matrix.
+// GS-R002-R1 light chapters and the owner-approved material are separate from the night theme matrix.
 const designStage = tokens('design-stage');
-const masterStage = tokens('master-stage');
-for (const suffix of ['', '-hi', '-mid', '-deep']) {
-  if (designStage[`--ds-gold${suffix}`]?.toLowerCase() !== masterStage[`--gold${suffix}`]?.toLowerCase()) {
-    failures.push(`Design gold${suffix} must equal the existing Master material`);
-  }
+// R1 explicitly approves a Design treatment, without changing Master's material.
+for (const [token, expected] of [['--ds-night', [10, 25, 46]], ['--ds-gold', [212, 175, 53]]]) {
+  if (designStage[token]?.toLowerCase() !== '#' + expected.map(n => n.toString(16).padStart(2, '0')).join('')) failures.push(`R1 owner anchor ${token} must be ${expected}`);
 }
 for (const foreground of ['--ds-paper-ink', '--ds-paper-muted']) {
   const measured = ratio(designStage[foreground], designStage['--ds-paper']);
