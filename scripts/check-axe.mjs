@@ -186,6 +186,15 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  * on `/` — including anywhere else in `master.module.css` — still reports UNRESOLVED.
  */
 const INCOMPLETE_ALLOWED = [
+  ...[
+    'text[data-letter-g=""][x="340"][y="335"]',
+    'text[data-letter-s=""][x="473"][y="551"]',
+  ].map((glyph) => ({
+    rule: 'color-contrast',
+    routes: ['/design'],
+    target: `.ds-stage-art > svg > g[data-art="identity"] > .ds-letters[data-letters=""] > ${glyph}`,
+    why: 'GS-R002-R1: CI 35523226814 returned "Element content is too short to determine if it is actual text content" for these two single-letter construction glyphs. They are decorative identity artwork in an aria-hidden, non-focusable SVG, not service copy. check:design:scene asserts that boundary and their G/S hierarchy; semantic chapter copy remains pixel-contrast checked. This allows only these two incompletes, never violations. Remove if the glyphs become informational/interactive or axe resolves single-letter artwork.',
+  })),
   {
     rule: 'color-contrast',
     routes: ['/design'],

@@ -589,10 +589,19 @@ try {
       const s = document
         .querySelector("[data-design-stage] [data-letter-s]")
         .getBoundingClientRect();
-      return { ratio: s.height / g.height, upperG: g.top < s.top };
+      const svg = document.querySelector("[data-design-stage] svg");
+      return {
+        ratio: s.height / g.height,
+        upperG: g.top < s.top,
+        decorative: svg.getAttribute("aria-hidden") === "true" &&
+          svg.getAttribute("focusable") === "false" &&
+          !svg.querySelector('a,button,[tabindex]'),
+      };
     });
     if (letters.ratio < 1.8 || !letters.upperG)
       errors.push("G/S hierarchy: require smaller upper G and dominant S");
+    if (!letters.decorative)
+      errors.push("G/S artwork must remain decorative and non-focusable");
     await seek(page, 3.65);
     const structure = await page.$eval(
       '[data-design-stage] [data-art="technical"]',

@@ -57,7 +57,7 @@ Final local source passed `verify:static`, clean `verify:build`, `verify:served`
 - Nine deliberate-failure probes cover loading layout shift, hero distance, storey removal, CTA, overflow, scene, chapter count, protagonist and rendered contrast.
 - Master: 11 viewports x six chapters, reduced-motion/no-WebGL/software-WebGL pass; hero passes 14 sizes. Digital/Press responsive, typography, legal, service and interaction gates pass. Their implementation files are unchanged.
 - Bundle: Design initial 103.4KB gzip, route delta 3.2KB against 25KB; lazy choreography 2.6KB against 8KB (baseline 2.5KB). Master remains 4.9KB initial delta and 5.9KB lazy. All 68 route budgets pass. No dependency added.
-- Lighthouse: locally UNAVAILABLE on Windows under the existing explicit launcher-cleanup limitation. Ubuntu CI must supply both final three-run medians before completion.
+- Lighthouse: locally UNAVAILABLE on Windows under the existing explicit launcher-cleanup limitation. Ubuntu CI 35523226814 passes both axes against corrected implementation `33f4ffcd`; three-run medians are recorded below.
 
 Rendered screenshots were personally inspected across the six required desktop sizes, six phones and wide/zoom-equivalent states, including G/S, rig/building handoff, technical layers, convergence and static posters. Visual inspection corrected the convergence fragment/copy collision and the 320px technical composition; the final pixel gates confirm those corrections. Screenshots are retained locally in `node_modules/.cache/gs-r002-r1-final-screens` and CI retains its own Design scene evidence. Aesthetic owner approval remains separate from these checks.
 
@@ -70,6 +70,32 @@ Implementation commit `730fdef28a6e091783305566efd3168820d7b1af` produced a prot
 The CSS still reserved the previous 38%-left / 62%-wide stage before the lazy renderer applied R1's 0%-left / 100%-wide workspace. The correction makes the server-rendered frame match the initial animation frame. No budget or Lighthouse assertion changed. A browser PerformanceObserver assertion reproduced the original built defect locally (CLS 0.3555, exceeding 0.02) before rebuilding; a reversible frame-resize probe also verifies the assertion can fail. This measures initial loading as well as settled chapter screenshots.
 
 After correction: local loading CLS 0.0000; all nine deliberate-failure probes pass; full Design 20-size/intermediate/interaction/fallback sweep passes again. `verify:static` and a clean `verify:build` pass against the correction, including lint, typecheck, secrets and unchanged bundle ceilings. Correction logs are `%TEMP%/gs-r002-r1-cls-static.log`, `gs-r002-r1-cls-build.log`, `gs-r002-r1-cls-scene.log`; screenshots are in `node_modules/.cache/gs-r002-r1-cls-final-screens`. The full Ubuntu workflow must confirm Lighthouse and all served regressions before handoff.
+
+### Corrected staging evidence
+
+- Corrected implementation: `33f4ffcd47868d99f367d42752f9248c89106531`.
+- CI: [35523226814](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35523226814). Both Lighthouse axes and 14 of 15 served gates PASS; overall run failed solely on the two decorative-glyph axe incompletes described below. It is not represented as a green run.
+- Immutable Preview: [Design R1](https://gridsmith-mq3kcm1ti-atikmurtazas-projects.vercel.app/design), READY; deployment `dpl_HDPsJwAocRFgQZYpAv8uKRe3hqKb`, exact SHA confirmed through deployment metadata and its Git source link.
+- Vercel build gate explicitly reports `development`; authenticated page reports `noindex, nofollow`. Unauthenticated response redirects to Vercel authentication and carries `X-Robots-Tag: noindex`. No protection was disabled.
+- Branch alias: `https://gridsmith-ltd-git-staging-gs-r002-design-atikmurtazas-projects.vercel.app/design`.
+
+| Design Lighthouse median, 3 runs | Desktop | Mobile 4G / HTTP2 |
+|---|---:|---:|
+| Performance | 100 | 99 |
+| Accessibility | 100 | 100 |
+| Best practices | 96 | 96 |
+| SEO | 66 | 66 |
+| LCP | 584.8559ms | 1626.015ms |
+| TBT | 0ms | 81.853ms |
+| CLS | 0 | 0 |
+
+The unchanged best-practices deduction is `/favicon.ico` returning 404; SEO reflects intentional staging noindex. These are reported, not hidden or corrected outside this phase. Reports are retained in CI's `lighthouseci-reports` artifact and locally under `node_modules/.cache/gs-r002-r1-ci-35523226814`. No initial/lazy JavaScript budget changed. Compared with the approved technical baseline, performance remains 100/99 and CLS remains zero; mobile LCP/TBT movement is small and is not presented as a measured speed improvement.
+
+### Decorative glyph audit classification
+
+CI 35523226814 measured zero axe violations, but returned two unresolved `color-contrast` incompletes on the single-letter G and S SVG nodes at 375px after scrolling: **"Element content is too short to determine if it is actual text content"**. Local timing had not exposed these in the earlier general sweep. Both nodes belong to the existing `aria-hidden="true"`, `focusable="false"` identity artwork. They are illustrative glyphs rather than readable service information. The semantic Brand heading, explanation and links remain HTML.
+
+The harness correction records exactly those two selectors, on `/design` and only for `color-contrast` incompletes, with a removal condition. It does not suppress any violation or unrelated incomplete. The Design gate now also asserts that the SVG remains decorative, non-focusable and free of interactive descendants, alongside its existing smaller-G/dominant-S geometry check. No application source, CSS, performance budget or accessibility threshold changes in this classification correction. Local ESLint, the full general axe gate, and Design intermediate/interaction/fallback checks pass (`%TEMP%/gs-r002-r1-glyph-checks.log`). A fresh full CI run is required for the corrected harness.
 
 Retained coverage: 20 desktop/mobile/zoom compositions × five chapters; intermediate construction states; real hybrid mouse/touch input; rendered contrast; axe; keyboard CTA/disclosure; reduced-motion, no-JS, save-data, low-memory and failed-import posters. New assertions measure early wheel progress, side placement, G/S hierarchy, four distinct storeys/windows/coordinated systems, and rendered head/body/hair response and settling.
 
