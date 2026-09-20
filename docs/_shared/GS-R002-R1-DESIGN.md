@@ -112,6 +112,14 @@ A targeted 375x812 sweep of all 11 review positions reproduced the earlier CI fa
 
 The Master harness now samples the background beneath painted glyphs for review-card text only. Opposite-colour masks identify coverage independently of the real foreground colour; other text retains the existing rectangular sampling. The 4.5:1 / 3:1 thresholds, p98 percentile, scene visibility and motion budgets are unchanged. A rendered fixture proves visible text is measured, clipped text is absent, and an actual foreground change to the background colour fails. This proof runs in the normal gate (`--prove-review-mask-only` also runs it independently). The corrected full Master sweep passes all 11 viewports x six chapters plus bottom, reduced motion, no-WebGL and software fallback; the 375px reviews sample now measures 6.7:1 at its worst visible text. No Master application, palette or layout file changed. Diagnostic logs: `%TEMP%/r1-master-review.log`, `r1-master-glyph-review.log`; full corrected sweep: `gs-r002-r1-master-mask.log`.
 
+### Corrected harness release checkpoint
+
+- Final application/test-source commit: `cbe3933c03c20777401ab6e6e8f54162c54564b1`.
+- Full CI: [35541806964](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35541806964). Running when this documentation checkpoint was committed; its eventual recorded conclusion, not this sentence, determines the result.
+- Exact immutable Preview: [GS-R002-R1 Design](https://gridsmith-gueyykv66-atikmurtazas-projects.vercel.app/design), deployment `dpl_A4h5eEWS6B3pmn4y7RgoYH62YiZD`, READY, Preview target, exact full SHA confirmed. Build completed in 53s. Build logs explicitly confirm `development`, authenticated page reports `noindex, nofollow`, and both immutable URL and branch alias redirect unauthenticated requests to Vercel authentication with `X-Robots-Tag: noindex`. Five chapters and final hero inspected.
+- Local final verification includes the full static suite, ESLint, secret scan, eight glyph-classifier proofs, real Design DOM/mobile axe check and the full corrected Master scene gate. Application build and all remaining Design checks are unchanged from the corrected implementation evidence above and are rerun in full CI.
+- This follow-up changes documentation only. Its own exact branch-tip CI/Preview must pass before handoff; the final response records that ending SHA, run and immutable URL. No pending job is treated as a pass. Main remains `fbecbe01e7fb594c6163dab57514997cb248fc21`; production is untouched.
+
 Retained coverage: 20 desktop/mobile/zoom compositions × five chapters; intermediate construction states; real hybrid mouse/touch input; rendered contrast; axe; keyboard CTA/disclosure; reduced-motion, no-JS, save-data, low-memory and failed-import posters. New assertions measure early wheel progress, side placement, G/S hierarchy, four distinct storeys/windows/coordinated systems, and rendered head/body/hair response and settling.
 
 ## Dependency audit
