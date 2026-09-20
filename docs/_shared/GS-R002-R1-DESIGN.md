@@ -1,6 +1,6 @@
 # GS-R002-R1 — Design owner visual remediation
 
-Date: 20 September 2026. Status: staging verification in progress; owner visual acceptance pending.
+Date: 20 September 2026. Status: implementation and local verification complete; **owner visual acceptance pending**. Release handoff requires successful final branch-tip CI; exact runs and Preview checkpoints are distinguished below.
 
 ## Authority and baseline
 
@@ -61,7 +61,7 @@ Final local source passed `verify:static`, clean `verify:build`, `verify:served`
 
 Rendered screenshots were personally inspected across the six required desktop sizes, six phones and wide/zoom-equivalent states, including G/S, rig/building handoff, technical layers, convergence and static posters. Visual inspection corrected the convergence fragment/copy collision and the 320px technical composition; the final pixel gates confirm those corrections. Screenshots are retained locally in `node_modules/.cache/gs-r002-r1-final-screens` and CI retains its own Design scene evidence. Aesthetic owner approval remains separate from these checks.
 
-Local logs: `%TEMP%/gs-r002-r1-static.log`, `gs-r002-r1-final-build.log`, `gs-r002-r1-served.log`, and `gs-r002-r1-proofs.log`. Exact staging commit, CI and protected Preview are recorded below after publication.
+Local logs: `%TEMP%/gs-r002-r1-static.log`, `gs-r002-r1-final-build.log`, `gs-r002-r1-served.log`, and `gs-r002-r1-proofs.log`. Exact staging commit, CI and protected Preview checkpoints follow.
 
 ### CI-driven loading correction
 
@@ -95,7 +95,15 @@ The unchanged best-practices deduction is `/favicon.ico` returning 404; SEO refl
 
 CI 35523226814 measured zero axe violations, but returned two unresolved `color-contrast` incompletes on the single-letter G and S SVG nodes at 375px after scrolling: **"Element content is too short to determine if it is actual text content"**. Local timing had not exposed these in the earlier general sweep. Both nodes belong to the existing `aria-hidden="true"`, `focusable="false"` identity artwork. They are illustrative glyphs rather than readable service information. The semantic Brand heading, explanation and links remain HTML.
 
-The harness correction records exactly those two selectors, on `/design` and only for `color-contrast` incompletes, with a removal condition. It does not suppress any violation or unrelated incomplete. The Design gate now also asserts that the SVG remains decorative, non-focusable and free of interactive descendants, alongside its existing smaller-G/dominant-S geometry check. No application source, CSS, performance budget or accessibility threshold changes in this classification correction. Local ESLint, the full general axe gate, and Design intermediate/interaction/fallback checks pass (`%TEMP%/gs-r002-r1-glyph-checks.log`). A fresh full CI run is required for the corrected harness.
+The harness correction records exactly those two selectors, on `/design` and only for `color-contrast` incompletes, with a removal condition. It does not suppress any violation or unrelated incomplete. The Design gate now also asserts that the SVG remains decorative, non-focusable and free of interactive descendants, alongside its existing smaller-G/dominant-S geometry check. No application source, CSS, performance budget or accessibility threshold changes in this classification correction. Local ESLint, the full general axe gate, and Design intermediate/interaction/fallback checks pass (`%TEMP%/gs-r002-r1-glyph-checks.log`).
+
+### Final harness and handoff checkpoint
+
+- Tested-source commit: `3ae4bf9d560f90fc507e47da97d88c80176113d5` (application identical to `33f4ffcd`; glyph-classification tests corrected).
+- Full verification run: [35539761718](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35539761718). The live run is authoritative for its result; it was still running when this documentation checkpoint was written. Earlier failed runs are retained above, not substituted for this run.
+- Exact Preview: [Design owner review](https://gridsmith-4p87t6dth-atikmurtazas-projects.vercel.app/design). GitHub deployment `6558110439` reports success, Preview environment, exact full SHA `3ae4bf9d560f90fc507e47da97d88c80176113d5`.
+- This documentation-only follow-up changes no application or test source. Its own full CI and exact-SHA Preview must also pass before the final owner handoff. [Staging CI runs](https://github.com/atikmurtaza/Gridsmith-Ltd/actions?query=branch%3Astaging%2Fgs-r002-design) retain that branch-tip result; the final handoff names its exact ending commit, run and Preview.
+- Sole next phase: owner visual acceptance of GS-R002-R1. Technical verification is not owner aesthetic approval and does not authorize Press, Digital, main advancement or production activity.
 
 Retained coverage: 20 desktop/mobile/zoom compositions × five chapters; intermediate construction states; real hybrid mouse/touch input; rendered contrast; axe; keyboard CTA/disclosure; reduced-motion, no-JS, save-data, low-memory and failed-import posters. New assertions measure early wheel progress, side placement, G/S hierarchy, four distinct storeys/windows/coordinated systems, and rendered head/body/hair response and settling.
 
