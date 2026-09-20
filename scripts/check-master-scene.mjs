@@ -84,14 +84,21 @@ const problems = [];
 const log = [];
 
 /** Decode a PNG screenshot in a CSP-free page and hand back what the questions need. */
-async function analyse(pngBase64, boxes) {
+async function analyse(pngBase64, boxes, reviewMasks = [], reviewBoxes = []) {
   return decoder.evaluate(
-    async (b64, boxes) => {
+    async (b64, boxes, reviewMasks, reviewBoxes) => {
       const img = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob());
       const c = new OffscreenCanvas(img.width, img.height);
       const ctx = c.getContext('2d');
       ctx.drawImage(img, 0, 0);
       const { data, width, height } = ctx.getImageData(0, 0, img.width, img.height);
+      const masks = await Promise.all(reviewMasks.map(async (b64) => {
+        const img = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob());
+        const canvas = new OffscreenCanvas(img.width, img.height);
+        const context = canvas.getContext('2d');
+        context.drawImage(img, 0, 0);
+        return context.getImageData(0, 0, img.width, img.height).data;
+      }));
       const lin = (v) => ((v /= 255) <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
       const L = (i) => 0.2126 * lin(data[i]) + 0.7152 * lin(data[i + 1]) + 0.0722 * lin(data[i + 2]);
       let gold = 0;
@@ -100,12 +107,20 @@ async function analyse(pngBase64, boxes) {
         const r = data[i], g = data[i + 1], b = data[i + 2];
         if (r > 70 && r >= g && g > b && r - b > 30) { gold++; mask[p] = 1; }
       }
-      const p98 = boxes.map(([x, y, w, h]) => {
+      const p98 = boxes.map(([x, y, w, h], index) => {
         const ls = [];
         for (let yy = Math.max(0, y); yy < Math.min(height, y + h); yy++)
-          for (let xx = Math.max(0, x); xx < Math.min(width, x + w); xx++) ls.push(L((yy * width + xx) * 4));
+          for (let xx = Math.max(0, x); xx < Math.min(width, x + w); xx++) {
+            const i = (yy * width + xx) * 4;
+            // Perspective Range rectangles can extend beyond a clipped review card.
+            // Two opposite text colours identify painted glyphs independently of
+            // their real contrast; empty projected rectangles are not readable text.
+            if (reviewBoxes[index] && masks.length === 2 &&
+                ![0, 1, 2].every((c) => masks[1][i + c] - masks[0][i + c] > 16)) continue;
+            ls.push(L(i));
+          }
         ls.sort((a, b) => a - b);
-        return ls.length ? ls[Math.floor(ls.length * 0.98)] : 0;
+        return ls.length ? ls[Math.floor(ls.length * 0.98)] : null;
       });
       let x0 = width, y0 = height, x1 = 0, y1 = 0;
       for (let p = 0; p < mask.length; p++) if (mask[p]) { const x = p % width, y = (p / width) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
@@ -114,7 +129,20 @@ async function analyse(pngBase64, boxes) {
     },
     pngBase64,
     boxes,
+    reviewMasks,
+    reviewBoxes,
   );
+}
+
+/** Measure only the glyph coverage of the perspective review cards. */
+async function reviewGlyphMasks(page) {
+  const masks = [];
+  for (const colour of ['black', 'white']) {
+    const style = await page.addStyleTag({ content: `[data-reviews-carousel] li * { color: ${colour} !important; }` });
+    masks.push(await page.screenshot({ encoding: 'base64' }));
+    await style.evaluate((el) => el.remove());
+  }
+  return masks;
 }
 
 async function openHome(width, height, { reduced = false, noWebGL = false, optIn = true } = {}) {
@@ -198,6 +226,7 @@ const TEXT_BOXES = () => {
         L: 0.2126 * lin(R) + 0.7152 * lin(G) + 0.0722 * lin(B),
         min: large ? 3 : 4.5,
         text: node.textContent.trim().slice(0, 40),
+        review: !!el.closest('[data-reviews-carousel] li'),
       });
     }
   }
@@ -206,6 +235,33 @@ const TEXT_BOXES = () => {
 };
 
 const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+
+// Prove both sides of the perspective-card correction without changing application CSS.
+{
+  const page = await browser.newPage();
+  await page.setViewport({ width: 375, height: 812 });
+  await page.setContent('<style>body{background:#222;color:white;font:20px Arial} .clip{width:1px;height:1px;overflow:hidden} span{display:block;width:100px;height:24px}</style><main><div data-reviews-carousel><ul><li><span id="visible">Visible</span><div class="clip"><span id="clipped">Clipped</span></div></li></ul></div></main>');
+  const boxes = await page.$$eval('span', (els) => els.map((el) => {
+    const r = el.getBoundingClientRect();
+    return [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)];
+  }));
+  const transparent = await page.addStyleTag({ content: 'span { color: transparent !important; }' });
+  const background = await page.screenshot({ encoding: 'base64' });
+  const masks = await reviewGlyphMasks(page);
+  const sampled = await analyse(background, boxes, masks, [true, true]);
+  await transparent.evaluate((el) => el.remove());
+  const valid = sampled.p98[0] !== null && ratio(1, sampled.p98[0]) >= 4.5;
+  await page.addStyleTag({ content: '#visible { color: #222; }' });
+  const brokenText = (await page.evaluate(TEXT_BOXES)).find((b) => b.text === 'Visible');
+  const broken = brokenText && sampled.p98[0] !== null && ratio(brokenText.L, sampled.p98[0]) < brokenText.min;
+  if (!valid || !broken || sampled.p98[1] !== null) throw new Error('Review glyph sampling proof failed');
+  console.log('check-master-scene: visible text measured, clipped text excluded, low contrast proven red');
+  await page.close();
+}
+if (process.argv.includes('--prove-review-mask-only')) {
+  await browser.close();
+  process.exit(0);
+}
 
 for (const [width, height] of VIEWPORTS) {
   const tag = `${width}x${height}`;
@@ -293,7 +349,9 @@ for (const [width, height] of VIEWPORTS) {
 
     // 5 — every text box against the scene behind it, glyphs transparent.
     await page.addStyleTag({ content: ':is(header, main, footer) *, :is(header, main, footer) *::before, :is(header, main, footer) *::after { color: transparent !important; text-decoration-color: transparent !important; }' });
-    const behind = await analyse(await page.screenshot({ encoding: 'base64' }), boxes.map((b) => b.box));
+    const background = await page.screenshot({ encoding: 'base64' });
+    const masks = boxes.some((b) => b.review) ? await reviewGlyphMasks(page) : [];
+    const behind = await analyse(background, boxes.map((b) => b.box), masks, boxes.map((b) => b.review));
 
     // 10 — the page's own surfaces leave the scene visible. Same frame, text transparent: what is
     // left between the reader and the scene is backgrounds, veils and panels.
@@ -307,6 +365,10 @@ for (const [width, height] of VIEWPORTS) {
     await page.evaluate(() => document.querySelectorAll('style').forEach((s) => s.textContent.includes('color: transparent !important') && s.remove()));
     let worst = Infinity;
     boxes.forEach((b, i) => {
+      if (behind.p98[i] === null) {
+        if (!b.review) problems.push(`5 ${tag} ${chapter}: no background pixels for "${b.text}"`);
+        return;
+      }
       const r = ratio(b.L, behind.p98[i]);
       if (r < worst) worst = r;
       if (r < b.min) problems.push(`5 ${tag} ${chapter}: "${b.text}" measures ${r.toFixed(2)}:1 over the scene, needs ${b.min}:1`);

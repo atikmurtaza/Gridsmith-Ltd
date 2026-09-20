@@ -186,13 +186,10 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  * on `/` — including anywhere else in `master.module.css` — still reports UNRESOLVED.
  */
 const INCOMPLETE_ALLOWED = [
-  ...[
-    'text[data-letter-g=""][x="340"][y="335"]',
-    'text[data-letter-s=""][x="473"][y="551"]',
-  ].map((glyph) => ({
+  ...['g', 's'].map((glyph) => ({
     rule: 'color-contrast',
     routes: ['/design'],
-    target: `.ds-stage-art > svg > g[data-art="identity"] > .ds-letters[data-letters=""] > ${glyph}`,
+    target: `[data-design-stage] [data-letter-${glyph}]`,
     why: 'GS-R002-R1: CI 35523226814 returned "Element content is too short to determine if it is actual text content" for these two single-letter construction glyphs. They are decorative identity artwork in an aria-hidden, non-focusable SVG, not service copy. check:design:scene asserts that boundary and their G/S hierarchy; semantic chapter copy remains pixel-contrast checked. This allows only these two incompletes, never violations. Remove if the glyphs become informational/interactive or axe resolves single-letter artwork.',
   })),
   {
@@ -672,8 +669,59 @@ async function domIntegrity(page, route, themed = true, expect = null) {
   return found.length;
 }
 
+/** Browser-side identity normalization for axe's two single-character artwork incompletes. */
+function designGlyphTarget({ target, html, reason }) {
+  if (reason !== 'Element content is too short to determine if it is actual text content') return target;
+  const captured = new DOMParser().parseFromString(html, 'text/html').body.firstElementChild;
+  for (const letter of ['g', 's']) {
+    if (!captured?.matches(`text[data-letter-${letter}]`) || captured.textContent.trim() !== letter.toUpperCase()) continue;
+    const selector = `[data-design-stage] .ds-stage-art > svg[aria-hidden="true"][focusable="false"] > g[data-art="identity"] > .ds-letters > text[data-letter-${letter}]`;
+    const matches = document.querySelectorAll(selector);
+    if (matches.length !== 1 || matches[0].textContent.trim() !== letter.toUpperCase()) return target;
+    if (matches[0].closest('svg').querySelector('a,button,input,select,textarea,[tabindex]')) return target;
+    return `[data-design-stage] [data-letter-${letter}]`;
+  }
+  return target;
+}
+
+/** Prove that selector animation is accepted, while changed semantics remain unresolved. */
+async function proveDesignGlyphTargets(browser) {
+  const page = await browser.newPage();
+  try {
+    await page.setContent('<div data-design-stage><div class="ds-stage-art"><svg aria-hidden="true" focusable="false"><g data-art="identity"><g class="ds-letters"><text data-letter-g transform="translate(0 0)">G</text><text data-letter-s>S</text></g></g></svg></div></div>');
+    const reason = 'Element content is too short to determine if it is actual text content';
+    let cases = 0;
+    const check = async (input, expected) => {
+      const actual = await page.evaluate(designGlyphTarget, { reason, ...input });
+      if (actual !== expected) throw new Error(`Glyph classification proof failed: ${actual} != ${expected}`);
+      cases += 1;
+    };
+    for (const letter of ['g', 's']) {
+      // The captured transform no longer exists in the live DOM.
+      await check({ target: 'text[transform="translate(8 22)"]', html: `<text data-letter-${letter} transform="translate(8 22)">${letter.toUpperCase()}</text>` }, `[data-design-stage] [data-letter-${letter}]`);
+    }
+    for (const html of ['<span data-letter-g>G</span>', '<text>G</text>', '<text data-letter-g>Unrelated copy</text>']) {
+      await check({ target: '#unrelated', html }, '#unrelated');
+    }
+    const glyph = { target: '#unresolved', html: '<text data-letter-g>G</text>' };
+    await check({ ...glyph, reason: 'Different incomplete reason' }, '#unresolved');
+    await page.evaluate(() => document.querySelector('svg').removeAttribute('aria-hidden'));
+    await check(glyph, '#unresolved');
+    await page.evaluate(() => { const svg = document.querySelector('svg'); svg.setAttribute('aria-hidden', 'true'); svg.querySelector('text').setAttribute('tabindex', '0'); });
+    await check(glyph, '#unresolved');
+    console.log(`check-axe: decorative glyph classification ${cases} positive/negative proofs PASS`);
+  } finally {
+    await page.close();
+  }
+}
+
 /** Every launch in this file goes through `browser-launch.mjs`. See its docstring — M-P2-33. */
 const browser = await launch();
+await proveDesignGlyphTargets(browser);
+if (process.argv.includes('--prove-glyphs-only')) {
+  await browser.close();
+  process.exit(0);
+}
 let total = 0;
 /** Cookies present after every route load, with no interaction. Filled before close. */
 let cookiesSeen = [];
@@ -766,7 +814,15 @@ try {
         // unearned confidence as a gate that measures nothing.
         for (const inc of incomplete) {
           for (const node of inc.nodes) {
-            const target = node.target.join(' ');
+            let target = node.target.join(' ');
+            // Attribute-based axe selectors can change before the async audit returns.
+            // Match the captured node plus its current, strictly decorative DOM boundary.
+            if (route.path === '/design' && inc.id === 'color-contrast') {
+              target = await page.evaluate(designGlyphTarget, {
+                target, html: node.html,
+                reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+              });
+            }
             const allowed = INCOMPLETE_ALLOWED.find(
               (a) =>
                 a.rule === inc.id &&
