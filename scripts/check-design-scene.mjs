@@ -45,6 +45,9 @@ const pause = () => new Promise((r) => setTimeout(r, 650));
 // Like Master's scene gate: measure the background pixels after hiding only glyphs.
 // The worst 2% of a text box is ignored for antialiasing and thin construction lines.
 async function textContrast(page) {
+  // Let scrolling and media-query layout reach the compositor before pairing DOM
+  // rectangles with screenshot pixels (especially reduced motion on Linux).
+  await pause();
   const boxes = await page.evaluate(() => {
     const out = [];
     for (const root of document.querySelectorAll(".ds-copy,.ds-stage-label")) {
@@ -183,6 +186,10 @@ async function seek(page, pos) {
     );
   }, pos);
   await pause();
+  await page.waitForFunction((pos) => {
+    const progress = Number(document.querySelector('[data-design-stage]')?.dataset.progress);
+    return pos === 0 ? progress < 0.15 : Math.abs(progress - pos) < 0.015;
+  }, { timeout: 10000 }, Math.max(0, pos));
 }
 async function measure(page, { hero = false, expected } = {}) {
   return page.evaluate(
@@ -419,7 +426,14 @@ try {
     const right = await page.$eval("[data-design-stage] [data-eyes]", (el) =>
       el.getAttribute("transform"),
     );
-    if (left === right) errors.push("Desktop eyes did not respond to pointer");
+    if (left === right) {
+      const state = await page.evaluate(() => ({
+        progress: document.querySelector('[data-design-stage]')?.dataset.progress,
+        fine: matchMedia('(hover: hover) and (pointer: fine)').matches,
+        hidden: document.hidden,
+      }));
+      errors.push(`Desktop eyes did not respond to pointer: ${JSON.stringify(state)}`);
+    }
     await seek(page, 4.7);
     const closing = await page.$eval(
       '[data-design-stage] [data-art="convergence"]',
@@ -466,11 +480,23 @@ try {
                 [chapter].scrollIntoView({ behavior: "instant" }),
             chapter,
           );
+          const contrast = await textContrast(p);
           errors.push(
-            ...(await textContrast(p)).map(
+            ...contrast.map(
               (f) => `${mode} ${width} chapter ${chapter}: ${f}`,
             ),
           );
+          if (contrast.length && out) {
+            await p.screenshot({ path: join(out, `${width}-${mode}-${chapter}-failure.png`) });
+            console.log(`${mode} ${width} chapter ${chapter} surfaces`, await p.evaluate(() =>
+              [...document.querySelectorAll('[data-chapter]')].map((el) => ({
+                chapter: el.dataset.chapter,
+                background: getComputedStyle(el).backgroundColor,
+                colour: getComputedStyle(el).color,
+                top: el.getBoundingClientRect().top,
+              })),
+            ));
+          }
         }
         if (out)
           await p.screenshot({

@@ -247,6 +247,19 @@ for (const [width, height] of VIEWPORTS) {
   for (const chapter of [...CHAPTERS, 'bottom']) {
     await toChapter(page, chapter);
 
+    // A DOM rectangle and its background capture must describe the same pose.
+    // Slow software-rendered captures can span the carousel's six-second dwell.
+    // Use its shipped pause control; motion itself is checked by check:reviews:ui.
+    if (chapter === 'reviews') {
+      await page.evaluate(() => {
+        const button = [...document.querySelectorAll('button')]
+          .find((el) => el.textContent?.trim() === 'Pause rotation');
+        if (!button) throw new Error('Review pause control missing');
+        if (button.getAttribute('aria-pressed') !== 'true') button.click();
+      });
+      await new Promise((resolve) => setTimeout(resolve, SETTLE_MS));
+    }
+
     // 6 — overflow.
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     if (overflow > 0) problems.push(`6 ${tag} ${chapter}: ${overflow}px of horizontal overflow`);

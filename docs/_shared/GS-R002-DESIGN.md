@@ -273,3 +273,18 @@ and receive their own full branch CI run and protected Preview through the exist
 release candidate. **Production readiness: NOT READY.** Remaining concerns are owner visual
 acceptance, the existing production programme gates, unresolved development-tool advisories and
 shared favicon/SSR error-shell limitations. No new commercial decision is required for GS-O019.
+
+### Served-check follow-up — 20 September 2026
+
+Runs `35476889188` and `35477410117` passed both Lighthouse axes but failed the served chain.
+The Design sweep passed all 20 animated viewport compositions; the later checks reported a
+pointer response failure and reduced-motion mobile contrast failures. The harness now waits for
+the actual scene progress before interacting, allows fallback scrolling to paint before measuring,
+and retains CI chapter/fallback screenshots and computed surfaces for diagnosis. Contrast limits,
+fallback coverage and pointer assertions remain unchanged. Final CI must confirm the outcome.
+
+The Master pixel gate also sampled moving review cards: DOM rectangles were captured before two
+expensive software-rendered screenshots, which could cross the six-second carousel dwell. It now
+uses the existing Pause rotation control before comparing those captures. The separate review
+gate continues to test automatic rotation, pause and keyboard traversal. No Master implementation
+or design changes were made, and none of its pixel thresholds were reduced.
