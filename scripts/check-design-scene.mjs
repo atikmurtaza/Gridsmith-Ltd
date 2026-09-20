@@ -144,10 +144,10 @@ async function textContrast(page) {
 async function open(
   width,
   height,
-  { reduced = false, js = true, limited = false } = {},
+  { reduced = false, js = true, limited = false, touch = false } = {},
 ) {
   const page = await browser.newPage();
-  await page.setViewport({ width, height, deviceScaleFactor: 1 });
+  await page.setViewport({ width, height, deviceScaleFactor: 1, hasTouch: touch });
   await page.setCookie({ name: "gs_consent", value: "1", url: base });
   if (reduced)
     await page.emulateMediaFeatures([
@@ -396,7 +396,7 @@ try {
       );
       await page.close();
     }
-    const page = await open(1440, 900);
+    const page = await open(1440, 900, { touch: true });
     const checkpoints = [
       [1.1, "[data-letters]"],
       [1.62, "[data-resolved-mark]"],
@@ -416,6 +416,13 @@ try {
       errors.push(...r.failures.map((f) => `detail ${pos}: ${f}`));
     }
     await seek(page, 2.53);
+    // Exercise a hybrid desktop: coarse primary input, but a real mouse can still move.
+    await page.touchscreen.touchStart(1000, 200);
+    await page.touchscreen.touchMove(1001, 201);
+    await page.touchscreen.touchEnd();
+    await pause();
+    const touchEyes = await page.$eval('[data-design-stage] [data-eyes]', (el) => el.getAttribute('transform'));
+    if (touchEyes !== 'translate(0 0)') errors.push('Character followed touch input');
     await page.mouse.move(1000, 200);
     await pause();
     const left = await page.$eval("[data-design-stage] [data-eyes]", (el) =>
@@ -447,6 +454,13 @@ try {
         "Closing construction did not recede around the retained gold mark",
       );
     await page.close();
+    const mobile = await open(375, 812);
+    await seek(mobile, 2.53);
+    await mobile.mouse.move(300, 600);
+    await pause();
+    const mobileEyes = await mobile.$eval('[data-design-stage] [data-eyes]', (el) => el.getAttribute('transform'));
+    if (mobileEyes !== 'translate(0 0)') errors.push('Mobile character followed pointer input');
+    await mobile.close();
     for (const mode of ["reduced", "no-js", "save-data"])
       for (const [width, height] of [
         [1440, 900],

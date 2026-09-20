@@ -288,3 +288,11 @@ expensive software-rendered screenshots, which could cross the six-second carous
 uses the existing Pause rotation control before comparing those captures. The separate review
 gate continues to test automatic rotation, pause and keyboard traversal. No Master implementation
 or design changes were made, and none of its pixel thresholds were reduced.
+
+Run `35478848802` confirmed both Lighthouse axes, Master regression, all 20 Design viewport
+compositions and every fallback contrast check passed. Its only failure was the pointer probe:
+Linux Chrome reported primary fine-pointer media as false while receiving mouse events. The
+renderer now checks the actual pointer event's `pointerType === "mouse"`, retaining the narrow
+viewport and completed-character bounds. This also supports hybrid devices with a coarse primary
+pointer and a connected mouse. The test still requires visible desktop eye movement and now also
+asserts that a narrow viewport does not follow the pointer. No input is required to read the page.

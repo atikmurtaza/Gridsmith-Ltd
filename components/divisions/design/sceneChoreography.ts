@@ -33,7 +33,6 @@ export function startDesignScene(root: HTMLElement): () => void {
   const water = select("[data-water]");
   const eyes = select("[data-eyes]");
   const head = select("[data-head]");
-  const fine = matchMedia("(hover: hover) and (pointer: fine)");
   const narrow = matchMedia("(max-width: 760px)");
   const clamp = (n: number) => Math.max(0, Math.min(1, n));
   const smooth = (a: number, b: number, n: number) => {
@@ -236,7 +235,9 @@ export function startDesignScene(root: HTMLElement): () => void {
       schedule();
   }
   const pointer = (e: PointerEvent) => {
-    if (!fine.matches || narrow.matches || position < 2.35 || position > 2.78)
+    // The event identifies the device in use. A hybrid machine's primary-pointer
+    // media query can stay coarse/none even while a connected mouse is moving.
+    if (e.pointerType !== "mouse" || narrow.matches || position < 2.35 || position > 2.78)
       return;
     x = Math.max(-1, Math.min(1, (e.clientX / innerWidth - 0.5) * 2));
     y = Math.max(-1, Math.min(1, (e.clientY / innerHeight - 0.5) * 2));
