@@ -341,9 +341,10 @@
 }
 .ds-story:not([data-static]) .ds-stage-art {
   position: absolute;
-  width: var(--ds-art-width, 62%);
+  /* Match the first choreography frame before the deferred module loads. */
+  width: var(--ds-art-width, 100%);
   height: 88%;
-  left: var(--ds-art-left, 38%);
+  left: var(--ds-art-left, 0%);
   top: 4%;
 }
 .ds-story:not([data-static]) .ds-chapter {

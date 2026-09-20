@@ -1,6 +1,6 @@
 # GS-R002-R1 — Design owner visual remediation
 
-Date: 20 September 2026. Status: LOCAL VERIFICATION PASSED; staging CI/Preview verification pending; owner visual acceptance pending.
+Date: 20 September 2026. Status: staging verification in progress; owner visual acceptance pending.
 
 ## Authority and baseline
 
@@ -54,7 +54,7 @@ Final local source passed `verify:static`, clean `verify:build`, `verify:served`
 - Responsive: 51 combinations across 17 routes; no horizontal overflow. Fixed bottom-bar clearance passes.
 - Design: 20 viewports x five chapters, plus 11 intermediate states with rendered text contrast; all pass. Real wheel, keyboard CTA/focus/disclosure, desktop mouse/hair settling and return, hybrid touch exclusion, narrow-screen exclusion, four distinct storeys, 24 openings and both system layers pass.
 - Five fallback modes at desktop/mobile: reduced motion, no JS, save-data, low memory and deliberately blocked choreography import; five meaningful posters and readable text in every mode.
-- Eight deliberate-failure probes produce their own red: hero distance, storey removal, CTA, overflow, scene, chapter count, protagonist and rendered contrast. Clean baseline passes.
+- Nine deliberate-failure probes cover loading layout shift, hero distance, storey removal, CTA, overflow, scene, chapter count, protagonist and rendered contrast.
 - Master: 11 viewports x six chapters, reduced-motion/no-WebGL/software-WebGL pass; hero passes 14 sizes. Digital/Press responsive, typography, legal, service and interaction gates pass. Their implementation files are unchanged.
 - Bundle: Design initial 103.4KB gzip, route delta 3.2KB against 25KB; lazy choreography 2.6KB against 8KB (baseline 2.5KB). Master remains 4.9KB initial delta and 5.9KB lazy. All 68 route budgets pass. No dependency added.
 - Lighthouse: locally UNAVAILABLE on Windows under the existing explicit launcher-cleanup limitation. Ubuntu CI must supply both final three-run medians before completion.
@@ -62,6 +62,14 @@ Final local source passed `verify:static`, clean `verify:build`, `verify:served`
 Rendered screenshots were personally inspected across the six required desktop sizes, six phones and wide/zoom-equivalent states, including G/S, rig/building handoff, technical layers, convergence and static posters. Visual inspection corrected the convergence fragment/copy collision and the 320px technical composition; the final pixel gates confirm those corrections. Screenshots are retained locally in `node_modules/.cache/gs-r002-r1-final-screens` and CI retains its own Design scene evidence. Aesthetic owner approval remains separate from these checks.
 
 Local logs: `%TEMP%/gs-r002-r1-static.log`, `gs-r002-r1-final-build.log`, `gs-r002-r1-served.log`, and `gs-r002-r1-proofs.log`. Exact staging commit, CI and protected Preview are recorded below after publication.
+
+### CI-driven loading correction
+
+Implementation commit `730fdef28a6e091783305566efd3168820d7b1af` produced a protected, noindex Preview at `https://gridsmith-50asz0eqv-atikmurtazas-projects.vercel.app/design` (deployment `dpl_3EH2St2xbBU3jY3ZKJMETyVb5xnb`, development dataset confirmed in its build gate). [CI 35522419822](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35522419822) exposed a real initial-layout regression: Design desktop performance 83, with CLS 0.3566 attributed to the stage SVG. LCP remained approximately 590ms and TBT 0ms. Mobile and later served steps did not run after the desktop failure.
+
+The CSS still reserved the previous 38%-left / 62%-wide stage before the lazy renderer applied R1's 0%-left / 100%-wide workspace. The correction makes the server-rendered frame match the initial animation frame. No budget or Lighthouse assertion changed. A browser PerformanceObserver assertion reproduced the original built defect locally (CLS 0.3555, exceeding 0.02) before rebuilding; a reversible frame-resize probe also verifies the assertion can fail. This measures initial loading as well as settled chapter screenshots.
+
+After correction: local loading CLS 0.0000; all nine deliberate-failure probes pass; full Design 20-size/intermediate/interaction/fallback sweep passes again. `verify:static` and a clean `verify:build` pass against the correction, including lint, typecheck, secrets and unchanged bundle ceilings. Correction logs are `%TEMP%/gs-r002-r1-cls-static.log`, `gs-r002-r1-cls-build.log`, `gs-r002-r1-cls-scene.log`; screenshots are in `node_modules/.cache/gs-r002-r1-cls-final-screens`. The full Ubuntu workflow must confirm Lighthouse and all served regressions before handoff.
 
 Retained coverage: 20 desktop/mobile/zoom compositions × five chapters; intermediate construction states; real hybrid mouse/touch input; rendered contrast; axe; keyboard CTA/disclosure; reduced-motion, no-JS, save-data, low-memory and failed-import posters. New assertions measure early wheel progress, side placement, G/S hierarchy, four distinct storeys/windows/coordinated systems, and rendered head/body/hair response and settling.
 

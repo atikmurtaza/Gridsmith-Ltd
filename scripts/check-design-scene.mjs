@@ -164,6 +164,13 @@ async function open(
   } = {},
 ) {
   const page = await browser.newPage();
+  await page.evaluateOnNewDocument(() => {
+    window.__designLayoutShift = 0;
+    new PerformanceObserver((list) => {
+      for (const entry of list.getEntries())
+        if (!entry.hadRecentInput) window.__designLayoutShift += entry.value;
+    }).observe({ type: "layout-shift", buffered: true });
+  });
   if (failedImport) {
     await page.setRequestInterception(true);
     page.on("request", (request) =>
@@ -320,6 +327,25 @@ async function measure(page, { hero = false, expected } = {}) {
 }
 
 try {
+  // Measure loading, not just settled screenshots: a deferred scene must not
+  // move the initial SVG frame. CI caught the old 38%/62% frame expanding to 0%/100%.
+  const loading = await open(1440, 900);
+  const loadShift = () => loading.evaluate(() => window.__designLayoutShift);
+  const initialShift = await loadShift();
+  if (initialShift > 0.02)
+    throw new Error(`Design loading layout shift ${initialShift} exceeds 0.02`);
+  console.log(`Design loading layout shift: ${initialShift.toFixed(4)}`);
+  if (process.argv.includes("--prove")) {
+    await loading.$eval(".ds-stage-art", (el) => {
+      el.style.setProperty("--ds-art-left", "38%");
+      el.style.setProperty("--ds-art-width", "62%");
+    });
+    await pause();
+    if ((await loadShift()) <= 0.02)
+      throw new Error("Loading layout-shift proof did not produce its own red");
+    console.log("PROVEN RED loading layout shift");
+  }
+  await loading.close();
   if (process.argv.includes("--prove")) {
     const page = await open(1440, 900);
     const probes = [
