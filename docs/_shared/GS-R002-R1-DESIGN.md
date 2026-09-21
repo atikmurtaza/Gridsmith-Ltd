@@ -1,6 +1,19 @@
 # GS-R002-R1 — Design owner visual remediation
 
-Date: 20 September 2026. Status: implementation and local verification complete; **owner visual acceptance pending**. Release handoff requires successful final branch-tip CI; exact runs and Preview checkpoints are distinguished below.
+Updated: 21 September 2026. Status: **READY FOR OWNER VISUAL REVIEW** on fully verified application/test source `cd92e5ae`; owner acceptance remains pending. Final successful evidence follows. This documentation-only closure changes no application or test source; its own branch-tip CI/Preview are verified in the final handoff.
+
+## Successful final verification
+
+- Verified application/test source: `cd92e5ae117ae9b9e174ecb0d7b40b8b79c67a8b`.
+- Full [CI 35542025906](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35542025906): **SUCCESS**. Static, clean build, both Lighthouse axes, all 15 served gates and retained screenshot evidence pass.
+- Exact [protected Design Preview](https://gridsmith-2cayjndee-atikmurtazas-projects.vercel.app/design): READY; deployment `dpl_intzGgUsohUcjqDmJHawFatws3jR`, GitHub deployment `6558510887`, exact full SHA above, Preview environment. Vercel build logs confirm `development`; rendered page confirms five chapters and `noindex, nofollow`. Unauthenticated requests return 302 to Vercel authentication with `X-Robots-Tag: noindex`. Final rendered hero inspected again on 21 September.
+- Axe: 76 analyses, 19 routes x two widths x two scroll states, **zero violations, zero unresolved incompletes**. Existing scoped incomplete classifications remain explicit; the eight G/S classifier proofs pass.
+- Master: full 11-viewport scene/fallback sweep and hero regression pass, with rendered contrast proof. Design: full 20-viewport, five-chapter/intermediate/interaction/fallback sweep passes. No Master, Digital or Press application files changed.
+- Design Lighthouse three-run medians: desktop performance **100**, accessibility **100**, LCP **578.034ms**, TBT **0ms**, CLS **0**; mobile performance **99**, accessibility **100**, LCP **1631.419ms**, TBT **88.774ms**, CLS **0**. Both retain best practices 96 (existing favicon 404) and SEO 66 (intentional noindex). Local Windows Lighthouse remains unavailable; these are Ubuntu CI results.
+- Raw Lighthouse artifact `10614598816`; Design screenshot artifact `10614904227`. Downloaded reports: `node_modules/.cache/gs-r002-r1-ci-35542025906`; CI log `%TEMP%/gs-r002-r1-success-ci.log`.
+- Main is still `fbecbe01e7fb594c6163dab57514997cb248fc21`. No production/backend mutation or production health claim. Sole next action: **owner visual acceptance**.
+
+Historical failed attempts and their verified corrections remain below. The final handoff reports the documentation closure commit and its exact CI/Preview separately; no older green run substitutes for a changed source.
 
 ## Authority and baseline
 
