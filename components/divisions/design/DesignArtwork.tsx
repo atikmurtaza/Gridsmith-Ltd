@@ -1,3 +1,6 @@
+import { buildingCurves, buildingNodeStarts, curvePath, outline, facePoints, wirePath } from "./transitionGeometry";
+import { gOutlines, sOutlines } from "./letterGeometry";
+
 /** Original GS-R002 studio studies. Decorative vectors; no client work or engineering specification. */
 const nodes = [
   [475, 482],
@@ -38,91 +41,28 @@ function Mark({ id }: { id: string }) {
   );
 }
 
-/** Original R1 character: sculpted swept hair, wraparound visor and a tailored studio jacket. */
-function Character({ id }: { id: string }) {
+/** The owner-supplied SVG stays an image: its own CSS drives the original animation. */
+function Character({ animated = false }: { animated?: boolean }) {
   return (
-    <g data-character="">
-      <ellipse cx="500" cy="694" rx="170" ry="16" className="ds-shadow" />
-      <g data-character-body="">
-        <path
-          d="M445 477 390 497Q342 521 326 663Q498 724 674 661Q659 525 613 500L556 477Z"
-          fill={`url(#${id}-blue)`}
-        />
-        <path
-          d="M446 477 425 529 497 658 575 527 556 477Z"
-          fill="var(--ds-night)"
-        />
-        <path d="M450 431H550V496Q503 535 449 495Z" fill={`url(#${id}-skin)`} />
-        <path
-          d="m440 491-44 37 51 34-17 29 67 67m62-167 43 37-51 34 16 29-70 67M368 570l-15 83m280-83 16 83"
-          className="ds-seam"
-        />
-        <path d="M499 660v37" className="ds-seam" />
-        <rect
-          x="591"
-          y="570"
-          width="25"
-          height="7"
-          rx="2"
-          fill="var(--ds-gold)"
-        />
-      </g>
-      <g data-head="">
-        <path
-          d="M366 313Q328 293 337 350Q340 385 370 387M634 312Q669 293 661 350Q657 385 629 386"
-          fill={`url(#${id}-skin)`}
-        />
-        <path
-          d="M369 244Q386 187 496 187Q607 181 633 257L625 372Q613 439 544 466Q503 486 460 464Q393 442 376 381Z"
-          fill={`url(#${id}-skin)`}
-        />
-        <path d="M385 343Q388 423 458 455" className="ds-face-shade" />
-        <path d="M615 342Q608 423 548 451" className="ds-face-shade" />
-        <path
-          d="M398 277Q436 256 467 272M536 269Q579 249 609 273"
-          className="ds-brows"
-        />
-        <path
-          d="M360 291Q492 264 643 291L632 343Q605 382 550 366L507 347 486 348Q436 382 385 350Z"
-          fill={`url(#${id}-visor)`}
-          stroke="var(--ds-gold-muted)"
-          strokeWidth="5"
-        />
-        <g data-eyes="" className="ds-visor-reflection">
-          <path d="M380 302 423 292 398 339 378 326Z M451 290l23-2-27 52-25 9Z M537 289l18 1-25 38-15-5Z M578 290l40 6-32 52-29-3Z" />
-        </g>
-        <path
-          d="M360 291Q492 264 643 291"
-          fill="none"
-          stroke="var(--ds-gold)"
-          strokeWidth="5"
-        />
-        <path d="m498 351-9 32q10 8 22-1" className="ds-face-line" />
-        <path d="M473 412Q502 426 531 408" className="ds-face-line" />
-        <path d="M488 430q16 5 29-2" className="ds-face-shade" />
-        <path
-          d="M364 303 351 255Q345 164 431 149Q516 94 600 159Q650 190 644 273L630 313 612 240Q581 251 558 220Q478 262 401 219L382 295Z"
-          fill={`url(#${id}-hair)`}
-        />
-        <g data-hair="">
-          <path
-            d="M389 213Q330 151 376 115Q403 147 439 132Q487 95 490 64Q544 104 581 105Q629 106 643 155Q612 146 584 166Q530 213 460 219Q425 215 389 213Z"
-            fill={`url(#${id}-hair)`}
-          />
-          <path
-            d="M388 151Q426 178 480 128Q521 103 558 137M413 192Q477 188 525 153Q565 126 607 143"
-            className="ds-hair-strand"
-          />
-        </g>
-      </g>
-    </g>
+    <image
+      data-character=""
+      href={animated
+        ? "/brand/design/headshot-animated.svg"
+        : "/brand/design/headshot-transparent.svg"}
+      x="280"
+      y="80"
+      width="440"
+      height="630"
+      preserveAspectRatio="xMidYMid meet"
+    />
   );
 }
 
 const levels = [620, 525, 430, 335];
-function Building() {
+function Building({ id }: { id: string }) {
   return (
     <g data-building="" className="ds-building">
+      <g data-building-detail="">
       <g data-foundation="">
         <path d="m250 634 242-111 260 121-245 127Z" className="ds-slab" />
         <path d="M250 634v16l257 135 245-126v-15M507 771v14" />
@@ -216,6 +156,19 @@ function Building() {
           WATER
         </text>
       </g>
+      </g>
+      <g stroke={`url(#${id}-building-metal)`} fill={`url(#${id}-orb)`}>
+        <g id={`${id}-building-outline`} data-building-outline="">
+          {buildingCurves.map((curve, i) => (
+            <path key={i} data-building-edge="" d={curvePath(curve)} fill="none" strokeLinecap="butt" />
+          ))}
+          {buildingNodeStarts.map(([cx, cy], i) => (
+            <circle key={i} data-building-node="" cx={cx} cy={cy} r="0" stroke="none" />
+          ))}
+        </g>
+      </g>
+      {/* A material highlight references the same moving geometry, never a replacement logo. */}
+      <use data-metal-shine="" href={`#${id}-building-outline`} stroke={`url(#${id}-shine)`} fill={`url(#${id}-shine)`} opacity="0" />
     </g>
   );
 }
@@ -279,6 +232,27 @@ export function DesignArtwork({
           <stop offset=".48" stopColor="var(--ds-gold)" />
           <stop offset="1" stopColor="var(--ds-gold-deep)" />
         </linearGradient>
+        <linearGradient id={`${id}-brand-metal`} x1="0" y1="0" x2="0" y2="1">
+          {[
+            ["0", "--ds-gold-deep"], [".22", "--ds-gold-hi"],
+            [".48", "--ds-gold"], ["1", "--ds-gold-deep"],
+          ].map(([offset, colour]) => (
+            <stop key={offset} offset={offset} stopColor={`var(${colour.replace("--ds-", "--ds-brand-")})`} />
+          ))}
+        </linearGradient>
+        <linearGradient id={`${id}-building-metal`} gradientUnits="userSpaceOnUse" x1="320" y1="315" x2="680" y2="645">
+          {[
+            ["0", "--ds-gold-deep"], [".24", "--ds-gold-hi"],
+            [".42", "--ds-gold"], [".6", "--ds-gold-deep"], [".82", "--ds-gold"], ["1", "--ds-gold-deep"],
+          ].map(([offset, colour]) => (
+            <stop key={offset} offset={offset} stopColor={`var(${colour.replace("--ds-", "--ds-building-")})`} />
+          ))}
+        </linearGradient>
+        <linearGradient id={`${id}-shine`} data-shine-gradient="" gradientUnits="userSpaceOnUse" x1="-60" y1="0" x2="60" y2="24">
+          <stop stopColor="var(--ds-gold-hi)" stopOpacity="0" />
+          <stop offset=".5" stopColor="var(--ds-gold-hi)" stopOpacity=".65" />
+          <stop offset="1" stopColor="var(--ds-gold-hi)" stopOpacity="0" />
+        </linearGradient>
         <radialGradient id={`${id}-orb`} cx=".3" cy=".22" r=".8">
           <stop stopColor="var(--ds-gold-hi)" />
           <stop offset=".4" stopColor="var(--ds-gold)" />
@@ -289,22 +263,6 @@ export function DesignArtwork({
           <stop offset=".3" stopColor="var(--ds-cobalt)" />
           <stop offset=".7" stopColor="var(--ds-navy)" />
           <stop offset="1" stopColor="var(--ds-night)" />
-        </linearGradient>
-        <linearGradient id={`${id}-skin`} x1="0" y1="0" x2="1" y2=".65">
-          <stop stopColor="var(--ds-face-hi)" />
-          <stop offset=".48" stopColor="var(--ds-face)" />
-          <stop offset="1" stopColor="var(--ds-face-shade)" />
-        </linearGradient>
-        <linearGradient id={`${id}-hair`} x1="0" y1="0" x2=".7" y2="1">
-          <stop stopColor="var(--ds-muted-navy)" />
-          <stop offset=".48" stopColor="var(--ds-navy)" />
-          <stop offset="1" stopColor="var(--ds-visor)" />
-        </linearGradient>
-        <linearGradient id={`${id}-visor`} x1="0" y1="0" x2="1" y2=".7">
-          <stop stopColor="var(--ds-gold-deep)" />
-          <stop offset=".32" stopColor="var(--ds-navy)" />
-          <stop offset=".65" stopColor="var(--ds-visor)" />
-          <stop offset="1" stopColor="var(--ds-gold-muted)" />
         </linearGradient>
         <pattern
           id={`${id}-grid`}
@@ -320,14 +278,14 @@ export function DesignArtwork({
           />
         </pattern>
       </defs>
-      <rect
+      {(live || chapter !== 4) && <rect
         x="90"
         y="90"
         width="820"
         height="630"
         fill={`url(#${id}-grid)`}
         data-grid=""
-      />
+      />}
       {/* The same path remains present through every handoff; the controller morphs its geometry. */}
       <path
         data-thread=""
@@ -385,94 +343,49 @@ export function DesignArtwork({
       )}
       {show(1) && (
         <g data-art="identity">
-          <g data-letters="" className="ds-letters">
-            <text data-letter-g="" x="340" y="335" fontSize="170">
-              G
-            </text>
-            <text data-letter-s="" x="473" y="551" fontSize="340">
-              S
-            </text>
-          </g>
+          {live ? (
+            <g data-letters="">
+              <g data-letter-g="" fill={`url(#${id}-brand-metal)`}>
+                <path d={gOutlines.map(shape => outline(shape.from)).join(" ")} />
+              </g>
+              <g data-letter-s="" fill={`url(#${id}-brand-metal)`}>
+                <path d={sOutlines.map(shape => outline(shape.from)).join(" ")} />
+              </g>
+              {nodes.map(([x, y], i) => (
+                <circle key={i} data-brand-node="" cx={x * .5 + 110} cy={y * .5 + 95} r="0" fill={`url(#${id}-orb)`} />
+              ))}
+            </g>
+          ) : <Mark id={id} />}
           <g data-construction="" className="ds-construction">
             <path d="M290 195H710M290 340H710M290 620H710M347 170V645M640 170V645" />
-            <path
-              data-g-geometry=""
-              pathLength="100"
-              d="M538 336H347V518"
-              className="ds-g-geometry"
-            />
-            <path
-              data-s-geometry=""
-              pathLength="100"
-              d="M347 518H538M447 437H640V617H447"
-              className="ds-s-geometry"
-            />
-            {nodes.map(([x, y], i) => (
-              <rect
-                key={i}
-                x={x * 0.5 + 105}
-                y={y * 0.5 + 90}
-                width="10"
-                height="10"
-              />
-            ))}
-          </g>
-          <g data-resolved-mark="">
-            <Mark id={id} />
           </g>
         </g>
       )}
       {show(2) && (
         <g data-art="character">
           <g data-sketch="" className="ds-sketch">
-            <ellipse cx="490" cy="310" rx="142" ry="123" />
-            <path d="M340 310H650M500 110V690M345 665Q351 490 452 480M655 665Q651 490 550 480M370 220Q500 100 640 230M400 420Q500 491 610 420M370 291Q501 265 642 291M391 191Q476 141 490 64" />
-            <path d="M449 430V500L500 660 550 500V430M340 665H659" />
+            <path d="M250 160h55m-55 0v65M750 160h-55m55 0v65M250 665h55m-55 0v-65M750 665h-55m55 0v-65M220 410h60m440 0h60" />
           </g>
           <g data-finished-character="">
-            <Character id={id} />
+            <Character animated={live} />
           </g>
           <g data-rig="" className="ds-rig">
-            <path d="M490 288V480L439 591 422 640M490 480 546 591 566 640M367 535 418 451 490 423 566 451 625 522" />
-            {[
-              [490, 288],
-              [490, 423],
-              [490, 480],
-              [418, 451],
-              [566, 451],
-              [439, 591],
-              [546, 591],
-            ].map(([cx, cy], i) => (
-              <circle key={i} cx={cx} cy={cy} r="8" />
+            <path d={wirePath(facePoints)} />
+            {facePoints.map(([cx, cy], i) => (
+              <circle key={i} cx={cx} cy={cy} r="4" />
             ))}
           </g>
         </g>
       )}
       {show(3) && (
         <g data-art="technical">
-          <Building />
+          <Building id={id} />
         </g>
       )}
-      {show(4) && (
+      {show(4) && !live && (
         <g data-art="convergence">
-          <g transform="translate(-48 -53) scale(1.1)">
+          <g data-final-mark="" transform="translate(-48 -53) scale(1.1)">
             <Mark id={id} />
-          </g>
-          <g transform="translate(580 400) scale(.36)">
-            <Character id={id} />
-          </g>
-          <g transform="translate(130 480) scale(.3)">
-            <Building />
-          </g>
-          <g className="ds-convergence-vector">
-            <path d="M200 275H315V380" />
-            <rect x="193" y="268" width="14" height="14" />
-            <rect x="308" y="373" width="14" height="14" />
-          </g>
-          <g transform="translate(733 220) rotate(10)">
-            <path d="M0 0 65-32 127 0 65 35Z" fill="var(--ds-cobalt)" />
-            <path d="M0 0v76l65 36V35Z" fill="var(--ds-navy)" />
-            <path d="M65 35 127 0v76l-62 36Z" fill="var(--ds-gold)" />
           </g>
         </g>
       )}

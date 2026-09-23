@@ -1,9 +1,13 @@
-/** R1: one native-scroll timeline and a small damped character rig; no per-frame React work. */
+import { buildingCurves, buildingNodeStarts, curvePath, letterOutline, markCurves, interpolate, facePoints, architecturalPoints, wirePath, travellingWave } from "./transitionGeometry";
+import { gOutlines, sOutlines } from "./letterGeometry";
+
+/** R2: copy and artwork share native-scroll progress; the supplied mascot animates itself. */
 export function startDesignScene(root: HTMLElement): () => void {
   const stage = root.querySelector<HTMLElement>("[data-design-stage]")!;
   const stageArt = stage.querySelector<HTMLElement>(".ds-stage-art")!;
   const svg = stage.querySelector<SVGSVGElement>("svg")!;
   const chapters = [...root.querySelectorAll<HTMLElement>("[data-chapter]")];
+  const copies = chapters.map((el) => el.querySelector<HTMLElement>(".ds-copy")!);
   const select = (s: string) => svg.querySelector<SVGElement>(s)!;
   const art = [...svg.querySelectorAll<SVGElement>("[data-art]")];
   const thread = select("[data-thread]");
@@ -11,13 +15,19 @@ export function startDesignScene(root: HTMLElement): () => void {
   const form = select("[data-workspace-form]");
   const node = select("[data-design-node]");
   const handles = select("[data-handles]");
-  const letters = select("[data-letters]");
-  const letterG = select("[data-letter-g]");
-  const letterS = select("[data-letter-s]");
+  const letterG = select("[data-letter-g] path");
+  const letterS = select("[data-letter-s] path");
   const construction = select("[data-construction]");
-  const gGeometry = select("[data-g-geometry]");
-  const sGeometry = select("[data-s-geometry]");
-  const mark = select("[data-resolved-mark]");
+  const brandNodes = [...svg.querySelectorAll<SVGCircleElement>("[data-brand-node]")];
+  // The DOM contains an intermediate pose after a reduced-motion toggle. Targets
+  // must stay at the approved mark coordinates when the scene starts again.
+  const nodeTargets = [[347.5, 336], [538, 336], [347.5, 517.5], [538, 517.5], [447.5, 437], [640, 437], [447.5, 617], [640, 617]];
+  const nodeStarts = [[382, 221], [452, 232], [371, 320], [455, 310], [576, 297], [651, 321], [508, 515], [655, 482]];
+  const buildingDetail = select("[data-building-detail]");
+  const buildingEdges = [...svg.querySelectorAll<SVGPathElement>("[data-building-edge]")];
+  const buildingNodes = [...svg.querySelectorAll<SVGCircleElement>("[data-building-node]")];
+  const shine = select("[data-metal-shine]");
+  const shineGradient = select("[data-shine-gradient]");
   const sketch = select("[data-sketch]");
   const character = select("[data-finished-character]");
   const rig = select("[data-rig]");
@@ -31,15 +41,8 @@ export function startDesignScene(root: HTMLElement): () => void {
   const dimensions = select("[data-dimensions]");
   const electrical = select("[data-electrical]");
   const water = select("[data-water]");
-  const eyes = select("[data-eyes]");
-  const head = select("[data-head]");
-  const hair = select("[data-hair]");
-  const body = select("[data-character-body]");
-  const closeFragments = [
-    ...svg.querySelectorAll<SVGElement>(
-      '[data-art="convergence"] > :not(:first-child)',
-    ),
-  ];
+  const technical = select('[data-art="technical"]');
+  const grid = select('[data-grid]');
   const narrow = matchMedia("(max-width: 760px)");
   const clamp = (n: number) => Math.max(0, Math.min(1, n));
   const smooth = (a: number, b: number, n: number) => {
@@ -49,44 +52,18 @@ export function startDesignScene(root: HTMLElement): () => void {
   const opacity = (el: SVGElement, n: number) => {
     el.style.opacity = String(clamp(n));
   };
-  // Same three-cubic signal from hero through resolution. Endpoints guide each handoff.
-  const paths = [
-    [
-      100, 510, 210, 510, 225, 265, 355, 330, 485, 395, 505, 580, 650, 505, 795,
-      430, 755, 265, 905, 265,
-    ],
-    [
-      75, 440, 190, 440, 180, 255, 335, 255, 490, 255, 495, 625, 665, 580, 835,
-      535, 815, 320, 945, 320,
-    ],
-    [
-      70, 500, 220, 500, 225, 190, 400, 200, 575, 210, 600, 680, 760, 620, 920,
-      560, 815, 300, 930, 300,
-    ],
-    [
-      75, 500, 170, 500, 180, 175, 310, 180, 440, 185, 490, 720, 660, 650, 830,
-      580, 805, 360, 945, 360,
-    ],
-    [
-      85, 510, 210, 510, 225, 290, 355, 355, 485, 420, 535, 625, 685, 535, 835,
-      445, 775, 285, 930, 285,
-    ],
-  ];
   let frame = 0,
     target = 0,
-    position = 0,
-    x = 0,
-    y = 0,
-    px = 0,
-    py = 0;
-  let hairAngle = 0,
-    hairVelocity = 0,
-    lastTime = 0;
+    position = NaN;
+  let phase = 0, velocity = -0.65, waveTime = 0, lastTime = 0;
   let visible = true,
     stopped = false;
   let tops: number[] = [];
+  let end = 0;
   const measure = () => {
     tops = chapters.map((el) => el.getBoundingClientRect().top + scrollY);
+    end = tops[4] + chapters[4].offsetHeight;
+    position = NaN;
     update();
   };
   function update() {
@@ -100,19 +77,26 @@ export function startDesignScene(root: HTMLElement): () => void {
   }
   function schedule() {
     if (!frame && visible && !document.hidden && !stopped)
-      frame = requestAnimationFrame(draw);
+      frame = requestAnimationFrame(tick);
   }
-  function draw(time: number) {
+  function tick(now: number) {
     frame = 0;
-    const dt = Math.min(
-      2,
-      Math.max(0.25, (time - (lastTime || time - 16.67)) / 16.67),
-    );
-    lastTime = time;
-    const follow = 1 - Math.pow(0.84, dt);
-    position += (target - position) * follow;
-    px += (x - px) * follow;
-    py += (y - py) * follow;
+    const dt = lastTime ? Math.min((now - lastTime) / 1000, 0.05) : 0;
+    lastTime = now;
+    if (position !== target) draw();
+    const direction = target < 1 || (target >= 2 && target < 3) ? -1 : 1;
+    // Integrate one uninterrupted phase; ease velocity through zero on a reversal.
+    velocity += (direction * 0.65 - velocity) * (1 - Math.exp(-dt * 2.8));
+    phase += velocity * dt;
+    waveTime += dt;
+    thread.setAttribute("d", travellingWave(phase, waveTime, target));
+    thread.dataset.phase = phase.toFixed(4);
+    thread.dataset.velocity = velocity.toFixed(4);
+    schedule();
+  }
+  function draw() {
+    // Native scrolling is already the clock. A second easing loop makes every handoff lag.
+    position = target;
     const p = position,
       chapter = Math.min(4, Math.floor(p)),
       t = p - chapter;
@@ -121,7 +105,7 @@ export function startDesignScene(root: HTMLElement): () => void {
     // Spatial interpolation belongs to the shared stage; each study has its own composition.
     const left = [0, 0, 40, 0, 18],
       width = [100, 60, 60, 60, 82];
-    const spatial = smooth(0.68, 1, t),
+    const spatial = smooth(0.65, 1, t),
       next = Math.min(4, chapter + 1);
     if (!narrow.matches) {
       stageArt.style.setProperty(
@@ -133,15 +117,64 @@ export function startDesignScene(root: HTMLElement): () => void {
         `${width[chapter] + (width[next] - width[chapter]) * spatial}%`,
       );
     }
+    // One chapter envelope owns copy and protagonist entry/exit initiation.
+    // The outgoing visual may finish its physical handoff after its copy has left.
+    const timeline = chapters.map((_, i) => ({
+      enter: i === 0 ? 1 : smooth(i - 0.25, i + 0.02, p),
+      exit: i === 4 ? 0 : smooth(i + 0.65, i + 0.85, p),
+    }));
     art.forEach((el, i) => {
-      const enter = i === 0 ? 1 : smooth(i - 0.16, i + 0.08, p);
-      const leave = i === 4 ? 1 : 1 - smooth(i + 0.82, i + 1.08, p);
-      opacity(el, enter * leave);
-      el.setAttribute(
-        "transform",
-        `translate(0 ${(1 - enter) * 24 - (1 - leave) * 20})`,
-      );
+      const { enter, exit } = timeline[i];
+      const visible = i >= 3 ? 1 : i === 2 ? 1 - smooth(3.06, 3.2, p) : 1 - smooth(i + 0.65, i + 1, p);
+      opacity(el, enter * visible);
+      el.setAttribute("transform", `translate(0 ${(1 - enter) * 24 - exit * 20})`);
     });
+    // Copy uses that same envelope, including the 75–85% overlap with the next chapter.
+    const stageShift = Math.max(0, tops[0] - scrollY) + Math.min(0, end - scrollY - innerHeight);
+    // Release the whole scene with its copy; no extra final pin over the footer.
+    stage.style.transform = `translateY(${Math.min(0, end - scrollY - innerHeight)}px)`;
+    copies.forEach((copy, i) => {
+      const { enter, exit } = timeline[i];
+      const leave = 1 - exit;
+      const shown = enter * leave > 0.01 && scrollY < end && scrollY + innerHeight > tops[0];
+      copy.style.opacity = String(enter * leave);
+      // The original page H1 remains semantic after its visual hero exits. Keep
+      // its parent out of hidden/inert; retire only the other hero content.
+      copy.style.visibility = i === 0 || shown ? "visible" : "hidden";
+      copy.style.transform = `translateY(${stageShift + (1 - enter) * 20 - (1 - leave) * 20}px)`;
+      // Phone copy shares one column. Complementary clips prevent double-printed text
+      // during the overlap, without delaying the next chapter's entry envelope.
+      const reveal = i === 0 ? 1 : smooth(i - 0.25, i - 0.15, p);
+      const cover = i === 4 ? 0 : smooth(i + 0.75, i + 0.85, p);
+      copy.style.clipPath = narrow.matches
+        ? `inset(0 ${cover * 100}% 0 ${(1 - reveal) * 100}%)`
+        : "none";
+      copy.inert = i !== 0 && !shown;
+      if (i === 0) [...copy.children].forEach(child => {
+        if (child instanceof HTMLElement && child.tagName !== "H1") child.inert = !shown;
+      });
+    });
+    // The actual building outline stays opaque and becomes the final mark's six bars.
+    // Only secondary CAD information recedes; there is no separate live final logo.
+    const convergence = smooth(3.76, 4.28, p);
+    const travel = smooth(3.65, 4.3, p);
+    technical.setAttribute("transform", `translate(${(narrow.matches ? -48 : 112) * travel} ${-53 * travel}) scale(${1 + 0.1 * travel})`);
+    opacity(technical, timeline[3].enter);
+    opacity(buildingDetail, 1 - smooth(3.65, 3.87, p));
+    buildingEdges.forEach((el, i) => {
+      el.setAttribute("d", curvePath(interpolate(buildingCurves[i], markCurves[i], convergence)));
+      el.setAttribute("stroke-width", String(2 + 36 * convergence));
+    });
+    buildingNodes.forEach((el, i) => {
+      const point = interpolate(buildingNodeStarts[i], nodeTargets[i], convergence);
+      el.setAttribute("cx", String(point[0]));
+      el.setAttribute("cy", String(point[1]));
+      el.setAttribute("r", String(37.5 * smooth(4.08, 4.28, p)));
+    });
+    svg.style.setProperty("--ds-building-material", `${100 * smooth(3.8, 4.22, p)}%`);
+    opacity(shine, smooth(4.28, 4.32, p));
+    shineGradient.setAttribute("gradientTransform", `translate(${200 + 620 * smooth(4.3, 4.7, p)} 0)`);
+    opacity(grid, 1 - smooth(3.65, 4.2, p));
     opacity(controls, 1 - smooth(0.16, 0.82, p));
     opacity(form, 1 - smooth(0.55, 0.95, p));
     opacity(handles, 1 - smooth(0.38, 0.9, p));
@@ -150,61 +183,31 @@ export function startDesignScene(root: HTMLElement): () => void {
       "transform",
       `translate(0 ${-24 * smooth(0, 0.65, p)}) rotate(${-8 * smooth(0, 0.7, p)} 490 410)`,
     );
-    opacity(letters, 1 - smooth(1.32, 1.67, p));
-    const geometric = smooth(1.15, 1.5, p);
-    letterG.setAttribute(
-      "transform",
-      `translate(${-12 * geometric} ${-8 * geometric})`,
-    );
-    letterS.setAttribute(
-      "transform",
-      `translate(${8 * geometric} ${22 * geometric})`,
-    );
-    opacity(construction, smooth(0.94, 1.1, p) * (1 - smooth(1.64, 1.84, p)));
-    gGeometry.style.strokeDashoffset = String(
-      100 * (1 - smooth(1.17, 1.43, p)),
-    );
-    sGeometry.style.strokeDashoffset = String(
-      100 * (1 - smooth(1.25, 1.56, p)),
-    );
-    opacity(mark, smooth(1.5, 1.73, p));
-    opacity(sketch, 1 - smooth(2.15, 2.3, p));
-    opacity(character, smooth(2.16, 2.28, p) * (1 - smooth(2.75, 3.08, p)));
-    character.dataset.material =
-      p < 2.3 ? "line" : p < 2.42 ? "flat" : "shaded";
-    opacity(rig, smooth(2.64, 2.9, p));
-    const rigPoints = [
-      [500, 290],
-      [500, 430],
-      [500, 530],
-      [390, 510],
-      [612, 510],
-      [355, 660],
-      [648, 660],
-    ];
-    const buildingPoints = [
-      [495, 150],
-      [495, 335],
-      [504, 525],
-      [292, 246],
-      [709, 249],
-      [292, 619],
-      [709, 626],
-    ];
-    const handoff = smooth(2.84, 3.1, p);
-    const joint = rigPoints.map(([a, b], i) => [
-      a + (buildingPoints[i][0] - a) * handoff,
-      b + (buildingPoints[i][1] - b) * handoff,
-    ]);
+    // Exact font outlines deform in place; their internal sections become mark bars.
+    const gProgress = smooth(1.12, 1.65, p);
+    const sProgress = smooth(1.18, 1.7, p);
+    svg.style.setProperty("--ds-brand-material", `${100 * smooth(1.38, 1.7, p)}%`);
+    letterG.setAttribute("d", gOutlines.map(shape => letterOutline(shape, gProgress)).join(" "));
+    letterS.setAttribute("d", sOutlines.map(shape => letterOutline(shape, sProgress)).join(" "));
+    brandNodes.forEach((el, i) => {
+      const point = interpolate(nodeStarts[i], nodeTargets[i], sProgress);
+      el.setAttribute("cx", String(point[0]));
+      el.setAttribute("cy", String(point[1]));
+      el.setAttribute("r", String(37.5 * smooth(1.42, 1.7, p)));
+    });
+    opacity(construction, smooth(0.94, 1.1, p) * (1 - smooth(1.55, 1.72, p)));
+    opacity(sketch, 0.4 * (1 - smooth(2.5, 2.7, p)));
+    opacity(character, 1 - smooth(2.65, 2.85, p));
+    opacity(rig, smooth(2.43, 2.61, p));
+    // Hold recognisable facial proportions first, then carry those very joints into the CAD grid.
+    const handoff = smooth(2.74, 3.08, p);
+    const joint = facePoints.map((point, i) => interpolate(point, architecturalPoints[i], handoff));
     joints.forEach((el, i) => {
       el.setAttribute("cx", String(joint[i][0]));
       el.setAttribute("cy", String(joint[i][1]));
     });
-    rigPath.setAttribute(
-      "d",
-      `M${joint[0]} L${joint[1]} L${joint[2]} M${joint[5]} L${joint[3]} L${joint[1]} L${joint[4]} L${joint[6]}`,
-    );
-    const assembled = smooth(3.02, 3.2, p);
+    rigPath.setAttribute("d", wirePath(joint));
+    const assembled = smooth(2.92, 3.2, p);
     roof.setAttribute("transform", `translate(0 ${-65 * (1 - assembled)})`);
     floors.forEach((el, i) =>
       el.setAttribute("transform", `translate(0 ${-i * 22 * (1 - assembled)})`),
@@ -217,58 +220,9 @@ export function startDesignScene(root: HTMLElement): () => void {
     );
     opacity(water, smooth(3.52, 3.62, p));
     opacity(roof, 1 - 0.8 * smooth(3.23, 3.35, p));
-    const blend = smooth(chapter === 0 ? 0 : 0.6, 1, t);
-    const pts = paths[chapter].map((v, i) => v + (paths[next][i] - v) * blend);
-    thread.setAttribute(
-      "d",
-      `M${pts[0]} ${pts[1]} C${pts.slice(2, 8).join(" ")} C${pts.slice(8, 14).join(" ")} C${pts.slice(14).join(" ")}`,
-    );
-    const active = p > 2.35 && p < 2.78 && !narrow.matches;
-    const hx = active ? px : 0,
-      hy = active ? py : 0;
-    // A bounded spring on the local quiff joint trails the damped head, then settles.
-    const hairTarget = hx * 3.2;
-    hairVelocity =
-      (hairVelocity + (hairTarget - hairAngle) * 0.085 * dt) *
-      Math.pow(0.72, dt);
-    hairAngle = Math.max(-5, Math.min(5, hairAngle + hairVelocity * dt));
-    eyes.setAttribute("transform", `translate(${hx * 5} ${hy * 2})`);
-    head.setAttribute(
-      "transform",
-      `translate(${hx * 4} ${hy * 2}) rotate(${hx * 3.2} 500 460)`,
-    );
-    hair.setAttribute("transform", `rotate(${hairAngle} 500 185)`);
-    body.setAttribute("transform", `rotate(${-hx * 0.7} 500 670)`);
-    const resolution = smooth(4.35, 4.72, p);
-    closeFragments.forEach((el) => opacity(el, 1 - 0.3 * resolution));
     thread.style.strokeOpacity = String(1 - 0.65 * smooth(3.9, 4.5, p));
     stage.dataset.progress = p.toFixed(3);
-    if (
-      Math.abs(target - position) > 0.001 ||
-      Math.abs(x - px) > 0.001 ||
-      Math.abs(y - py) > 0.001 ||
-      Math.abs(hairTarget - hairAngle) > 0.002 ||
-      Math.abs(hairVelocity) > 0.002
-    )
-      schedule();
   }
-  const pointer = (e: PointerEvent) => {
-    if (
-      e.pointerType !== "mouse" ||
-      narrow.matches ||
-      position < 2.35 ||
-      position > 2.78
-    )
-      return;
-    x = Math.max(-1, Math.min(1, (e.clientX / innerWidth - 0.5) * 2));
-    y = Math.max(-1, Math.min(1, (e.clientY / innerHeight - 0.5) * 2));
-    schedule();
-  };
-  const resetPointer = () => {
-    x = 0;
-    y = 0;
-    schedule();
-  };
   const visibility = () => {
     if (document.hidden) {
       cancelAnimationFrame(frame);
@@ -293,13 +247,12 @@ export function startDesignScene(root: HTMLElement): () => void {
   chapters.forEach((el) => resize.observe(el));
   window.addEventListener("scroll", update, { passive: true });
   window.addEventListener("resize", measure, { passive: true });
-  root.addEventListener("pointermove", pointer, { passive: true });
-  root.addEventListener("pointerleave", resetPointer);
   document.addEventListener("visibilitychange", visibility);
   measure();
-  position = target;
   cancelAnimationFrame(frame);
-  draw(performance.now());
+  frame = 0;
+  draw();
+  schedule();
   root.dataset.enhanced = "true";
   return () => {
     stopped = true;
@@ -308,12 +261,21 @@ export function startDesignScene(root: HTMLElement): () => void {
     resize.disconnect();
     window.removeEventListener("scroll", update);
     window.removeEventListener("resize", measure);
-    root.removeEventListener("pointermove", pointer);
-    root.removeEventListener("pointerleave", resetPointer);
     document.removeEventListener("visibilitychange", visibility);
+    copies.forEach((copy) => {
+      copy.style.removeProperty("opacity");
+      copy.style.removeProperty("visibility");
+      copy.style.removeProperty("transform");
+      copy.style.removeProperty("clip-path");
+      copy.inert = false;
+      [...copy.children].forEach(child => {
+        if (child instanceof HTMLElement) child.inert = false;
+      });
+    });
     delete root.dataset.enhanced;
     delete root.dataset.tone;
     delete root.dataset.active;
+    stage.style.removeProperty("transform");
     stageArt.style.removeProperty("--ds-art-left");
     stageArt.style.removeProperty("--ds-art-width");
   };

@@ -34,3 +34,11 @@
   --ds-surface: var(--ds-paper);
   color-scheme: light;
 }
+[data-design-art] {
+  --ds-brand-gold-deep: color-mix(in srgb, var(--ds-navy), var(--ds-gold-deep) var(--ds-brand-material, 0%));
+  --ds-brand-gold-hi: color-mix(in srgb, var(--ds-navy), var(--ds-gold-hi) var(--ds-brand-material, 0%));
+  --ds-brand-gold: color-mix(in srgb, var(--ds-navy), var(--ds-gold) var(--ds-brand-material, 0%));
+  --ds-building-gold-deep: color-mix(in srgb, var(--ds-drawing), var(--ds-gold-deep) var(--ds-building-material, 0%));
+  --ds-building-gold-hi: color-mix(in srgb, var(--ds-drawing), var(--ds-gold-hi) var(--ds-building-material, 0%));
+  --ds-building-gold: color-mix(in srgb, var(--ds-drawing), var(--ds-gold) var(--ds-building-material, 0%));
+}

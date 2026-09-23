@@ -207,58 +207,6 @@
   opacity: 0.75;
   stroke-dasharray: 3 5;
 }
-.ds-shadow {
-  fill: var(--ds-shadow);
-}
-.ds-seam {
-  fill: none;
-  stroke: var(--ds-blue-hi);
-  stroke-width: 2;
-  opacity: 0.5;
-}
-.ds-visor {
-  fill: var(--ds-visor);
-}
-.ds-eyes {
-  fill: none;
-  stroke: var(--ds-gold-hi);
-  stroke-width: 10;
-  stroke-linecap: round;
-}
-.ds-highlight {
-  fill: none;
-  stroke: var(--ds-blue-hi);
-  stroke-width: 5;
-  opacity: 0.8;
-}
-.ds-antenna {
-  fill: none;
-  stroke: var(--ds-cobalt);
-  stroke-width: 8;
-}
-[data-finished-character][data-material="line"] path {
-  fill: none;
-  stroke: var(--ds-blue-hi);
-  stroke-width: 2;
-}
-[data-finished-character][data-material="line"] ellipse,
-[data-finished-character][data-material="flat"] ellipse {
-  opacity: 0;
-}
-[data-finished-character][data-material="flat"] path[fill] {
-  fill: var(--ds-cobalt);
-}
-[data-finished-character][data-material="flat"] path[fill$="-skin)"] {
-  fill: var(--ds-face);
-}
-[data-finished-character][data-material="flat"] path[fill$="-hair)"],
-[data-finished-character][data-material="flat"] path[fill$="-visor)"] {
-  fill: var(--ds-navy);
-}
-[data-finished-character][data-material="line"] .ds-eyes path {
-  stroke: var(--ds-gold-hi);
-  stroke-width: 6;
-}
 .ds-sketch {
   fill: none;
   stroke: var(--ds-drawing);
@@ -269,6 +217,9 @@
   fill: var(--ds-night);
   stroke: var(--ds-gold);
   stroke-width: 2;
+}
+.ds-rig path {
+  fill: none;
 }
 .ds-building {
   fill: none;
@@ -406,7 +357,7 @@
     padding-bottom: 4svh;
   }
   .ds-story:not([data-static]) .ds-chapter:last-of-type {
-    min-height: 175svh;
+    min-height: 110svh;
   }
 }
 .ds-process {
@@ -512,7 +463,7 @@
   .ds-story:not([data-static]) .ds-chapter:first-of-type {
     padding-top: 2.5svh;
   }
-  .ds-story:not([data-static]) .ds-chapter:has(details[open]) .ds-copy {
+  .ds-story:not([data-enhanced]):not([data-static]) .ds-chapter:has(details[open]) .ds-copy {
     position: relative;
   }
   .ds-services {
@@ -595,7 +546,7 @@
     width: 43%;
   }
   .ds-story:not([data-static]) .ds-chapter:first-of-type {
-    min-height: 120svh;
+    min-height: 110svh;
   }
   .ds-story:not([data-static]) .ds-chapter:last-of-type .ds-copy {
     width: 34%;
@@ -603,42 +554,9 @@
 }
 @media (max-width: 760px) {
   .ds-story:not([data-static]) .ds-chapter:first-of-type {
-    min-height: 125svh;
+    min-height: 115svh;
   }
-  .ds-story:not([data-static]) .ds-chapter:not(:first-of-type) {
-    min-height: 230svh;
-  }
-  .ds-stage-art [data-art="technical"] {
-    transform-origin: 500px 440px;
-  }
-}
-.ds-visor-reflection {
-  fill: var(--ds-gold-hi);
-  opacity: 0.48;
-}
-.ds-brows {
-  fill: none;
-  stroke: var(--ds-visor);
-  stroke-width: 10;
-  stroke-linecap: round;
-}
-.ds-face-line {
-  fill: none;
-  stroke: var(--ds-gold-deep);
-  stroke-width: 3.5;
-  stroke-linecap: round;
-}
-.ds-face-shade {
-  fill: none;
-  stroke: var(--ds-face-shade);
-  stroke-width: 3;
-  opacity: 0.55;
-}
-.ds-hair-strand {
-  fill: none;
-  stroke: var(--ds-blue-hi);
-  stroke-width: 3;
-  opacity: 0.32;
+
 }
 .ds-facade {
   fill: var(--ds-slab);
@@ -673,5 +591,61 @@
   }
   .ds-stage-label {
     display: none;
+  }
+}
+
+/* R2: one copy/visual timeline. Sections retain native document scroll and anchors. */
+.ds-story[data-enhanced] .ds-copy {
+  position: fixed;
+  left: 6vw;
+  top: 14svh;
+  width: 37.8vw;
+  margin-left: 0;
+  will-change: transform, opacity;
+}
+.ds-story[data-enhanced] .ds-copy:has(details[open]) {
+  max-height: 80svh;
+  overflow-y: auto;
+}
+@media (min-width: 761px) {
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="0"] { min-height: 90svh; }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="1"] { min-height: 95svh; }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="2"] { min-height: 90svh; }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="3"] { min-height: 105svh; }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="4"] { min-height: 100svh; }
+  .ds-story[data-enhanced] .ds-chapter[data-chapter="0"] .ds-copy {
+    left: 16vw;
+    top: 15svh;
+    width: 52.8vw;
+  }
+  .ds-story[data-enhanced] .ds-chapter[data-chapter="1"] .ds-copy,
+  .ds-story[data-enhanced] .ds-chapter[data-chapter="3"] .ds-copy {
+    left: 54.4vw;
+    width: 37.8vw;
+    margin-left: 0;
+  }
+  .ds-story[data-enhanced] .ds-chapter[data-chapter="4"]:last-of-type .ds-copy { width: 30vw; }
+}
+@media (max-width: 760px) {
+  /* G1: expanded mobile disclosures own a readable paper surface. Closed
+     chapters and desktop compositions keep their approved transparent copy. */
+  .ds-story[data-enhanced] .ds-copy:has(.ds-services[open]) {
+    --ink: var(--ds-paper-ink);
+    --ink-muted: var(--ds-paper-muted);
+    --ink-subtle: var(--ds-paper-muted);
+    color: var(--ink);
+    background: var(--ds-paper);
+    color-scheme: light;
+  }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="0"] { min-height: 105svh; }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="1"] { min-height: 115svh; }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="2"] { min-height: 110svh; }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="3"] { min-height: 130svh; }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="4"] { min-height: 110svh; }
+  .ds-story[data-enhanced] .ds-chapter .ds-copy {
+    position: fixed;
+    top: 4svh;
+    left: 6vw;
+    width: 88vw;
   }
 }
