@@ -1,6 +1,6 @@
 # GS-R002-RC — Design release candidate
 
-> **Current status, 24 September 2026: G2 owner approval implemented; local affected gates PASS.** The owner approved the closed Technical scope-note paper surface and resuming staging release. The original 760x800 contrast failure is remediated, with a measured minimum 6.69:1 across 24 viewport combinations. Exact new-SHA CI and protected Preview remain required before RC PASS. Earlier owner-gate statuses below are historical. Production remains untouched.
+> **Current status, 24 September 2026: G2 implementation verified on staging.** Implementation `c4781b0af64733313a78ea7c557a9d1393f7bb32` passes CI `35940710523` and exact-SHA protected Preview smoke checks. The corrected 760x800 note measures 6.69:1; the minimum across all 24 Linux viewport combinations is 6.62:1. The documentation-only closing checkpoint must also pass its own exact-SHA CI and Preview before the final handoff reports RC PASS. Earlier owner-gate statuses below are historical. Production remains untouched.
 
 ## Authority and frozen baseline
 
@@ -174,3 +174,45 @@ The range follows rendered evidence, not the single CI sample. Baseline probes f
 Eight pending RC/programme records were reviewed and updated with the G2 authority and evidence. Source inventory checks run against the isolated tracked checkout so local untracked tool files do not alter the release subject; `.codex/`, `AGENTS.md` and the standalone `preview.html` remain preserved and excluded. Secret checks include source, new build and served assets. No package/lockfile, CMS content, production configuration or shared application change belongs to G2.
 
 This is verified local release readiness. The new commit, successful CI and exact-SHA protected Preview will be recorded at the release checkpoint; the earlier `afe6f2da` Preview does not certify this correction.
+
+## G2 staging release verification — 24 September 2026
+
+**Implementation commit:** `c4781b0af64733313a78ea7c557a9d1393f7bb32` (`fix(design): protect Technical scope note contrast`), pushed only to `staging/gs-r002-design`. This supersedes `afe6f2da21088b03daa312681e64ca82fa0cb5ad` as the verified application candidate. The original RC starting HEAD remains `ffbd3623bc4c01acd166cd9efd49933a66ced1d9`.
+
+**CI:** https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35940710523 — **SUCCESS** on the exact implementation SHA, completed 24 September 2026 at 01:23:59 UTC. Logs and artifacts are retained in ignored `node_modules/.cache/gs-r002-rc/ci-35940710523*` and in GitHub Actions.
+
+The complete workflow passes TypeScript, ESLint, static/content/security assertions, production build, token/theme/bundle gates, both Linux Lighthouse axes and all 15 served commands. General axe reports 76 analyses, zero violations and zero unresolved incompletes. Its 244 established allowed incompletes are not represented as zero; scene text is additionally covered by the rendered pixel gates. General responsive coverage is 51 combinations without horizontal overflow. Master scene (11 viewports x six chapters and fallbacks), Master hero (14 sizes), navigation/footer/company, service content and development-dataset checks pass.
+
+G2 covers all 24 viewport combinations at four readable Technical positions. Linux minimum is **6.62:1** at 320x568 and 430x568; every other sampled viewport, including the original failing **760x800**, measures **6.69:1**. The local minimum was 6.69:1. Both exceed the unchanged 4.5:1 threshold with margin. G1's seven sizes and three disclosures, original single accessible H1, keyboard/focus/title reachability, the 25-viewport chapter sweep, exact endpoints, reduced-motion restart, native scrolling, idle/direction-aware wave, hidden/offscreen pause, route exit/back/refresh and static fallbacks all pass. Loading layout shift is 0.0000.
+
+### G2 Linux performance
+
+Median of three Design reports per axis, from this exact-SHA run's `lighthouseci-reports` artifact:
+
+| Measurement | Desktop | Mobile |
+| --- | --- | --- |
+| Performance | 100 | 99 |
+| Accessibility | 100 | 100 |
+| LCP | 588.912 ms | 1,641.210 ms |
+| CLS | 0 | 0 |
+| TBT | 0 ms | 50.740 ms |
+
+All four routes pass both Lighthouse axes. These remain lab measurements, not field INP. Design route contribution stays 3.2 KB / 25 KB and lazy choreography 6.9 KB / 8 KB. All 68 route budgets pass. G2 does not change JavaScript or geometry; all 1,380 approved coordinates and the recorded hash remain intact. The approved G/S, original mascot, Technical building, persistent building-to-logo transformation, metallic finish, wave, timing and copy are preserved.
+
+### G2 protected Preview
+
+GitHub deployment `6627746310` is `Preview`, `success`, and its API reports the exact implementation SHA `c4781b0af64733313a78ea7c557a9d1393f7bb32`.
+
+Preview: https://gridsmith-cmu1q1wo3-atikmurtazas-projects.vercel.app/design
+
+Authenticated browser smoke verifies the closed scope note at 760x800, transparent side-by-side note at 768x800, and expanded G1 Technical disclosure at 320x568. The approved paper/roof occlusion and all three expanded service titles were visually inspected. Each sampled viewport has no horizontal overflow. The original single H1 remains in the accessibility tree after native chapter navigation. Browser warnings/errors were empty. The route was refreshed again after successful CI. Temporary viewport overrides were reset.
+
+Authenticated markup contains `noindex, nofollow`; unauthenticated access returns HTTP 302 to Vercel authentication with `X-Robots-Tag: noindex`. No protection was bypassed. Reduced-motion preference toggling has local and Linux CI evidence; no independent authenticated Preview media-toggle result is claimed.
+
+### Documentation checkpoint and final receipt
+
+This closing record and the seven existing programme/Design authority headers form a documentation-only checkpoint after the verified implementation. It changes no application, asset, dependency, gate or deployment configuration. Its commit is identifiable from this section's Git history. Before reporting final RC PASS, verify the documentation checkpoint's own CI and protected Preview against its exact SHA; predecessor CI alone is insufficient. Record that final SHA, run URL/result, deployment URL/SHA and remote branch checks in the final release handoff and ignored `node_modules/.cache/gs-r002-rc/final-release-receipt.json`. This avoids embedding a commit's own hash inside itself or creating an endless chain of evidence-only commits.
+
+Only the eight intended records belong to this checkpoint. Local `.codex/`, untracked `AGENTS.md` and the standalone `public/brand/design/preview.html` remain preserved and excluded. Existing non-blockers remain the historical favicon 404 and 27 documented development-package findings (12 high, 13 moderate, two low); production dependencies have zero reported vulnerabilities and no package/lockfile change was made.
+
+Remote main was rechecked at `fbecbe01e7fb594c6163dab57514997cb248fc21`. No production deployment, main merge/push, production Sanity/Supabase action, environment change, DNS/Hostinger change, gridsmith.uk change, GS-T004 or next-division work was performed or authorised. Staging verification does not make the production programme ready to launch.
