@@ -1,5 +1,7 @@
 # GS-R002-RC — Design release candidate
 
+> **Current status, 24 September 2026: G2 owner approval implemented; local affected gates PASS.** The owner approved the closed Technical scope-note paper surface and resuming staging release. The original 760x800 contrast failure is remediated, with a measured minimum 6.69:1 across 24 viewport combinations. Exact new-SHA CI and protected Preview remain required before RC PASS. Earlier owner-gate statuses below are historical. Production remains untouched.
+
 ## Authority and frozen baseline
 
 23 September 2026: the owner explicitly approved the local GS-R002-R2 implementation at `http://localhost:3100/design`. This supersedes R1's pending visual acceptance. This phase verifies the approved design; it does not authorise creative polish, production launch, main advancement, Digital/Press work, GS-T004, DNS, production data or environment changes.
@@ -98,3 +100,77 @@ Fresh G1 TypeScript and ESLint checks PASS (`%TEMP%/gs-r002-rc-g1-typecheck.log`
 Final comparison with the captured approved baseline confirms `transitionGeometry.ts` and both mascot SVGs are byte-identical. Application differences from that baseline are limited to the documented immutable endpoints, lossless glyph encoding, token extraction, mobile expanded surface and H1 semantics. The full staging diff was reviewed, including the approved R2 work predating RC. The standalone reference `preview.html` remains excluded and preserved.
 
 The candidate is ready for the authorised staging commit/push. Exact commit, successful Linux CI/Lighthouse, protected Preview and deployment checks will be recorded at the release checkpoint; until then this is local readiness, not final RC PASS.
+
+## Staging release evidence — 23 September 2026
+
+Implementation commit: `afe6f2da21088b03daa312681e64ca82fa0cb5ad` (`feat(design): verify owner-approved R2 release candidate`), pushed only to `staging/gs-r002-design`. Local HEAD, tracking ref and remote staging ref matched after the push. The main checkpoint remains `fbecbe01e7fb594c6163dab57514997cb248fc21`.
+
+CI run: https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/35911790613 on that exact implementation SHA. **FAIL**, final run update at 20:13:29 UTC on 23 September 2026. Both Linux Lighthouse axes passed their unchanged assertions. The served suite completed with one failing command out of 15: the Design pixel-contrast gate reported the closed Technical scope note at 760x800. This failure blocks RC acceptance.
+
+### Linux Lighthouse measurements
+
+Median of three runs per route, Lighthouse 12.6.1. Desktop uses simulated throttling; mobile uses the established HTTP/2, 4G, 4x CPU setup. These are lab measurements, not field INP evidence.
+
+| Design measurement | Desktop | Mobile |
+| --- | --- | --- |
+| Performance | 100 | 99 |
+| Accessibility | 100 | 100 |
+| LCP | 589 ms | 1,633.502 ms |
+| CLS | 0 | 0 |
+| TBT | 0 ms | 50.413 ms |
+
+Desktop best practices 96 and SEO 66 are retained with the staging restrictions and existing favicon finding; no gate was relaxed. All four routes passed both axes. The mobile raw-report artifact is `lighthouseci-reports`; desktop numbers are retained in the run's Desktop numbers log (the mobile run replaces the raw report directory). Design's clean-build contribution remains 3.2 KB / 25 KB, with lazy choreography 6.9 KB / 8 KB. All 1,380 approved coordinates retain the recorded exact hash.
+
+### Protected Preview verification
+
+Exact deployment: `dpl_3uwTdB3GpHnrUPvKyyozkDGNH1Jk`, GitHub deployment `6622988705`, environment `Preview`, READY/success. Vercel's Source link and the GitHub deployment API both resolve to `afe6f2da21088b03daa312681e64ca82fa0cb5ad`.
+
+Preview: https://gridsmith-7mplnvfky-atikmurtazas-projects.vercel.app/design
+
+- Unauthenticated access returns 302 to Vercel authentication with `X-Robots-Tag: noindex`. Authenticated markup contains `noindex, nofollow`.
+- At 320x568, the expanded Technical panel uses opaque paper `rgb(243, 240, 232)` at opacity 1; the long documentation title is readable and the approved building remains below. Closing restores `rgba(0, 0, 0, 0)`.
+- The original single page H1 remains accessible after chapter navigation. Native PageDown changed scene progress from 1.211 to 1.684 and changed the G/S path. The original mascot appears, the wave phase changes continuously, and final progress 4.734 resolves to the exact six bars and eight nodes. Footer release is normal. Captured browser warnings/errors were empty.
+- Reduced-motion startup, toggle/restart, shutdown and static fallback have same-commit local production-build and Linux CI browser evidence. The authenticated Preview browser did not permit opening its accessibility settings, so no independent Preview media-toggle test is claimed. Protection was retained and no settings/security workaround was used.
+
+The approved baseline is preserved: G/S hierarchy, original mascot, face-network/building sequence, persistent building-to-logo handoff, metallic finish, wave and canonical copy. G1 changes only the authorised expanded-mobile reading surface and original H1 semantics. The earlier geometry/token/endpoint/runner corrections and clipped-text sampler correction are documented above.
+
+Production Sanity, production Supabase, environment values, DNS, gridsmith.uk, Hostinger and main were untouched. No GS-T004 or next division was started. Existing development-package findings and the historical favicon 404 remain the only recorded non-blocking issues for this RC.
+
+## Historical G2 owner gate — closed Technical scope-note contrast
+
+**Exact-SHA CI evidence:** the 25-viewport Design sweep completed, as did the lifecycle and fallback probes, but the accumulated result was a failure: `760x800 technical: pixel contrast Diagrammatic Gridsmith study, not a construction: 3.90:1; needs 4.5`. This is not an infrastructure failure or an acceptable incomplete. The retained CI screenshot `760x800-technical.png` visibly shows the building roof/facade behind the final lines of the scope note while the disclosure is closed.
+
+CI otherwise passed the seven G1 widths, the original single-H1 regression checks, native wheel/artwork progression, the full general axe suite (76 analyses, zero violations, zero unresolved incompletes), Master scene and hero, shared/content/security/served checks, build and both Lighthouse axes. The full accessibility release gate still fails because the rendered Design contrast gate fails; the general axe pass does not override it. Logs and 25-viewport screenshots are retained under ignored `node_modules/.cache/gs-r002-rc/ci-35911790613*` and in the GitHub run's artifacts.
+
+**Confirmed technical cause:** in the <=760px layout, the fixed copy and the bottom-aligned building occupy intersecting space. The closed scope note remains transparent. G1 deliberately applies paper only while a service disclosure is open, so it cannot address this closed-state collision. A local production-build probe at 760x800 and scene progress 3.150 confirmed copy opacity 1, closed disclosure, and the solid roof directly behind essential scope text. Pixel contrast there was 1.62:1. This is not a fade-out frame or an offscreen-text sampling defect. Switching only to the existing primary ink token still failed (1.15:1), so a colour-only change is not sufficient.
+
+**Proposed owner decision:** permit an existing Design-paper background tightly behind the Technical scope note in the affected mobile/tablet composition even when the service disclosure is closed. Keep note typography, position, text, border and all building geometry/choreography/timing unchanged. This masks only the artwork directly behind the note, but it is an explicit exception to G1's closed-artwork/expanded-only surface constraint. Alternatively, authorise changing the copy/artwork layout to reserve non-overlapping space; that has a broader composition impact.
+
+The narrow paper proposal was tested only with reversible browser-injected CSS and captured as `node_modules/.cache/gs-r002-rc/760-scope-3.15-paper-proposal.png`. The existing pixel sampler reported no contrast failures for the proposal at 760x800, progress 3.150 and 3.650. This is a focused proposal check, not a completed remediation or release pass. It is a review artifact, not an application change. The corresponding unchanged screenshot is `760-scope-3.15-before.png`. Application source and the approved visual baseline remain untouched since the implementation commit.
+
+Under original RC section 16 and G1 sections 3-4/18, this requires the owner's visual decision. No thresholds were relaxed, no failed CI was rerun as a substitute for remediation, and no additional commit or push was made. HEAD, tracking and remote staging remain `afe6f2da21088b03daa312681e64ca82fa0cb5ad`; the evidence/programme updates in this checkpoint remain local. There is no final verified RC SHA.
+
+The local workspace also acquired untracked `.codex/` and `AGENTS.md` tooling files during verification. They and the standalone `public/brand/design/preview.html` remain preserved and excluded. The source-root inventory gate rejects the new local `.codex/` directory; release documentation is checked in an isolated tracked checkout instead of altering the gate or deleting tool files. This local workspace condition is separate from the genuine CI contrast failure.
+
+**GS-R002-RC OWNER GATE REQUIRED. Production remains untouched.**
+
+## G2 approval and local remediation — 24 September 2026
+
+The owner explicitly approved Design-paper behind the closed Technical scope note, including a small roof occlusion, and authorised resuming from CI run `35911790613` rather than restarting the programme. That approval supersedes the expanded-only restriction for this note alone. The failure and decision trail above are retained.
+
+The only G2 application change is in `components/divisions/design/design.css`: the enhanced `.ds-gate` uses existing paper and muted-ink tokens when width is <=760px and height is >650px. It retains typography, copy, spacing, dimensions and border. Expanded G1 disclosure surfaces remain independent. Other closed disclosures remain transparent. The compact short-screen composition and >=761px side-by-side composition retain transparent notes. No building geometry, stage position, animation, chapter timing or scroll synchronisation changes were made.
+
+The range follows rendered evidence, not the single CI sample. Baseline probes found roof/note collisions at 560, 600, 640, 700, 720 and 760px at 800px height and at 760x651; 600x600, 700x600 and 760x650 were clear, as were 761, 768, 800, 900 and 1024px at 800px height. Tall stacked samples can also be clear, but an opaque note matching its existing paper background adds no artwork obstruction when nothing is behind it. Using the existing stacked and compact breakpoints avoids brittle isolated viewport exceptions and protects the full stacked composition.
+
+### G2 verification
+
+- Clean production build PASS after one Windows build worker crash during page-data collection (exit `3221226505`). A second clean build succeeded without a code/configuration change. Build log: ignored `node_modules/.cache/gs-r002-rc/g2-build-retry.log`; exit receipt `g2-build-exit.txt` is 0. Next build includes TypeScript and lint validation.
+- Extended the existing Design gate to measure the closed scope note at four readable scene positions (3.15, 3.35, 3.55, 3.65), using its existing screenshot-pixel contrast sampler with unchanged thresholds. All 24 viewport combinations PASS at minimum **6.69:1**, comfortably above 4.5:1: 320x568; 430x568/650/651/800/932; 500x700; 560x800; 600x600/800/900; 700x600/800/900; 720x800; 760x650/651/800/900; 761x800; 768x800; 800x800; 900x800; 1024x800.
+- The same run retained G1 checks at seven widths: all three disclosures, keyboard/focus, title reachability, touch targets, contrast, axe and the original single H1 throughout chapter/footer states. Native wheel movement, endpoint integrity, idle wave, direction reversal, hidden/offscreen pause, route exit/back/refresh and static fallback cases PASS. Loading layout shift remains 0.0000. Log `g2-design.log`, exit `g2-design-exit.txt` = 0; screenshots `g2-screenshots/`.
+- The permanent `--prove` specimen removes the paper in a disposable browser at 760x800, progress 3.15. The scope contrast assertion fails as intended; the clean baseline passes. All prior Design negative proofs also PASS. Log `g2-proof.log`, exit `g2-proof-exit.txt` = 0. This mutates only the disposable test page, not application source.
+- Focused ESLint, token-only colour policy, control-character checks, built tokens/theme and all 68 route budgets PASS. Design contribution remains 3.2 KB / 25 KB; lazy choreography 6.9 KB / 8 KB. G2 changes neither JavaScript nor geometry; the frozen choreography, geometry and mascot assets compare byte-for-byte with the preceding implementation commit. The coordinate hash is also checked on every Design gate run.
+- Rendered screenshot inspection confirms the approved note-only paper occlusion and unchanged building. General axe (76 analyses, zero violations and zero unresolved incompletes), Master/shared, service content, navigation/footer, security and both Linux Lighthouse axes from the preceding candidate are reused where unaffected. The required new-SHA CI will automatically rerun the established complete workflow; no gate/budget/workflow was weakened.
+
+Eight pending RC/programme records were reviewed and updated with the G2 authority and evidence. Source inventory checks run against the isolated tracked checkout so local untracked tool files do not alter the release subject; `.codex/`, `AGENTS.md` and the standalone `preview.html` remain preserved and excluded. Secret checks include source, new build and served assets. No package/lockfile, CMS content, production configuration or shared application change belongs to G2.
+
+This is verified local release readiness. The new commit, successful CI and exact-SHA protected Preview will be recorded at the release checkpoint; the earlier `afe6f2da` Preview does not certify this correction.

@@ -66,13 +66,13 @@ if (!choreographyChunk) throw new Error("Design choreography chunk missing");
 
 // Like Master's scene gate: measure the background pixels after hiding only glyphs.
 // The worst 2% of a text box is ignored for antialiasing and thin construction lines.
-async function textContrast(page) {
+async function textContrast(page, { selector = ".ds-copy,.ds-stage-label", report = false } = {}) {
   // Let scrolling and media-query layout reach the compositor before pairing DOM
   // rectangles with screenshot pixels (especially reduced motion on Linux).
   await pause();
-  const boxes = await page.evaluate(() => {
+  const boxes = await page.evaluate((selector) => {
     const out = [];
-    for (const root of document.querySelectorAll(".ds-copy,.ds-stage-label")) {
+    for (const root of document.querySelectorAll(selector)) {
       const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
       while (walker.nextNode()) {
         const node = walker.currentNode,
@@ -133,7 +133,7 @@ async function textContrast(page) {
       }
     }
     return out;
-  });
+  }, selector);
   if (!boxes.length) return ["No rendered text boxes measured"];
   const style = await page.addStyleTag({
     content:
@@ -142,7 +142,7 @@ async function textContrast(page) {
   const png = await page.screenshot({ encoding: "base64" });
   await style.evaluate((el) => el.remove());
   return decoder.evaluate(
-    async (png, boxes) => {
+    async (png, boxes, report) => {
       const img = await createImageBitmap(
         await (await fetch(`data:image/png;base64,${png}`)).blob(),
       );
@@ -170,6 +170,7 @@ async function textContrast(page) {
         const fg = lum(rgb),
           bg = values[Math.floor(values.length * (fg > 0.5 ? 0.98 : 0.02))];
         const ratio = (Math.max(fg, bg) + 0.05) / (Math.min(fg, bg) + 0.05);
+        if (report) return [{ text, ratio, min, measured: values.length > 0 }];
         return !values.length || ratio < min
           ? [`pixel contrast ${text}: ${ratio.toFixed(2)}:1; needs ${min}`]
           : [];
@@ -177,6 +178,7 @@ async function textContrast(page) {
     },
     png,
     boxes,
+    report,
   );
 }
 
@@ -391,6 +393,42 @@ try {
     console.log("PROVEN RED loading layout shift");
   }
   await loading.close();
+  if (!process.argv.includes("--prove")) {
+    // G2: sample the closed scope note through the roof/CAD sequence, including
+    // both sides of the stacked-layout and short-screen breakpoints.
+    for (const [width, height] of [
+      [320,568],[430,568],[430,650],[430,651],[430,800],[430,932],
+      [500,700],[560,800],[600,600],[600,800],[600,900],[700,600],
+      [700,800],[700,900],[720,800],[760,650],[760,651],[760,800],
+      [760,900],[761,800],[768,800],[800,800],[900,800],[1024,800],
+    ]) {
+      const page = await open(width, height);
+      let minimum = Infinity;
+      for (const position of [3.15,3.35,3.55,3.65]) {
+        await seek(page, position);
+        const samples = await textContrast(page, { selector: ".ds-gate", report: true });
+        for (const sample of samples) {
+          if (!sample.measured || !(sample.ratio >= sample.min))
+            errors.push(`G2 ${width}x${height} @${position}: scope contrast ${JSON.stringify(sample)}`);
+          minimum = Math.min(minimum, sample.ratio);
+        }
+        const state = await page.$eval('#technical-design .ds-copy', el => ({
+          open: el.querySelector('details').open,
+          copy: getComputedStyle(el).backgroundColor,
+          note: getComputedStyle(el.querySelector('.ds-gate')).backgroundColor,
+          overflow: document.documentElement.scrollWidth > innerWidth + 1,
+        }));
+        if (state.open || !state.copy.endsWith(', 0)') || state.overflow)
+          errors.push(`G2 ${width}x${height}: closed disclosure/overflow changed ${JSON.stringify(state)}`);
+        if (width <= 760 && height > 650 ? state.note.endsWith(', 0)') : !state.note.endsWith(', 0)'))
+          errors.push(`G2 ${width}x${height}: incorrect responsive scope surface`);
+        if (out && [3.15,3.65].includes(position))
+          await page.screenshot({path:join(out,`g2-${width}x${height}-${position}.png`)});
+      }
+      console.log(`G2 ${width}x${height}: scope-note minimum ${minimum.toFixed(2)}:1 across four readable Technical states`);
+      await page.close();
+    }
+  }
   if (process.argv.includes("--prove")) {
     const page = await open(1440, 900);
     const probes = [
@@ -488,7 +526,16 @@ try {
       throw new Error('Scrollport contrast proof did not fail');
     console.log('PROVEN RED visible text contrast inside clipped mobile panel');
     await mobile.close();
-  } else {
+    const scope = await open(760,800);
+    await seek(scope,3.15);
+    const cleanScope = await textContrast(scope, {selector:'.ds-gate'});
+    if (cleanScope.length) throw new Error(`Dirty G2 scope baseline: ${cleanScope}`);
+    await scope.$eval('.ds-gate', el => el.style.background = 'transparent');
+    if (!(await textContrast(scope, {selector:'.ds-gate'})).length)
+      throw new Error('G2 removed-surface proof did not fail');
+    console.log('PROVEN RED closed Technical scope contrast without paper');
+    await scope.close();
+  } else if (!process.argv.includes("--g2-only")) {
     // G1: the original H1 stays semantic throughout the story; disclosures own
     // readability on narrow screens and preserve transparent closed/desktop copy.
     for (const [width, height] of [[320,568],[360,800],[375,812],[390,844],[430,932],[768,1024],[1280,720]]) {

@@ -595,6 +595,15 @@
 }
 
 /* R2: one copy/visual timeline. Sections retain native document scroll and anchors. */
+/* G2: the stacked Technical copy can cross the roof. The compact <=650px
+   layout and the >=761px side-by-side layout already keep the note clear. */
+@media (max-width: 760px) and (height > 650px) {
+  .ds-story[data-enhanced] .ds-gate {
+    --ink-muted: var(--ds-paper-muted);
+    --ink-subtle: var(--ds-paper-muted);
+    background: var(--ds-paper);
+  }
+}
 .ds-story[data-enhanced] .ds-copy {
   position: fixed;
   left: 6vw;
