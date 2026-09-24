@@ -1,6 +1,6 @@
 # GS-R002-RC — Design release candidate
 
-> **Current status, 24 September 2026: G2 implementation verified on staging.** Implementation `c4781b0af64733313a78ea7c557a9d1393f7bb32` passes CI `35940710523` and exact-SHA protected Preview smoke checks. The corrected 760x800 note measures 6.69:1; the minimum across all 24 Linux viewport combinations is 6.62:1. The documentation-only closing checkpoint must also pass its own exact-SHA CI and Preview before the final handoff reports RC PASS. Earlier owner-gate statuses below are historical. Production remains untouched.
+> **Current status, 24 September 2026: G2 implementation verified on staging.** Implementation `c4781b0af64733313a78ea7c557a9d1393f7bb32` passes CI `35940710523` and exact-SHA protected Preview smoke checks. The corrected 760x800 note measures 6.69:1; the minimum across all 24 Linux viewport combinations is 6.62:1. The later documentation checkpoint exposed a shared test focus race; the final gate correction changes no application and must pass its own exact-SHA CI and Preview before the final handoff reports RC PASS. Earlier owner-gate statuses below are historical. Production remains untouched.
 
 ## Authority and frozen baseline
 
@@ -216,3 +216,17 @@ This closing record and the seven existing programme/Design authority headers fo
 Only the eight intended records belong to this checkpoint. Local `.codex/`, untracked `AGENTS.md` and the standalone `public/brand/design/preview.html` remain preserved and excluded. Existing non-blockers remain the historical favicon 404 and 27 documented development-package findings (12 high, 13 moderate, two low); production dependencies have zero reported vulnerabilities and no package/lockfile change was made.
 
 Remote main was rechecked at `fbecbe01e7fb594c6163dab57514997cb248fc21`. No production deployment, main merge/push, production Sanity/Supabase action, environment change, DNS/Hostinger change, gridsmith.uk change, GS-T004 or next-division work was performed or authorised. Staging verification does not make the production programme ready to launch.
+
+## Final-checkpoint focus precondition — 24 September 2026
+
+Documentation checkpoint `a7769d7044956edc3c44efab55044c982dd3556a` passed both Lighthouse axes, all G2/G1/Design contrast and lifecycle checks, and the protected Preview smoke. Its CI run `35942946808` nevertheless **FAILED** because the general accessibility runner measured the `/_kitchen-sink` skip link at `(8,-57)` while `document.activeElement` named it. This is preserved as a failed run, not discarded because the application was unchanged.
+
+The installed axe Puppeteer adapter creates and closes a foreground helper tab in `finishRun`. The subsequent DOM integrity check previously assumed the audited page had regained document focus. A deterministic local browser probe reproduced the exact symptom with a helper tab in front: `document.hasFocus()` false, `activeElement` the link, `:focus` false, link top -57.25px. Restoring page focus gives top 8px with the unchanged 0s-transition CSS. The evidence establishes the missing test precondition; the original CI log did not capture document focus directly.
+
+`scripts/check-axe.mjs` now brings the measured page to the foreground and waits for `document.hasFocus()` before its existing DOM integrity assertions. It does not wait for the link to become visible, alter site CSS, change thresholds, ignore a route or add an allowlist. The approved Design and all shared application files remain unchanged.
+
+A permanent proof in the existing gate establishes the unfocused-page precondition, calls the real DOM integrity assertion, deliberately hides the focused skip link and requires one failure, then restores the disposable browser specimen and requires zero failures. Removing the new foreground guard in an ignored copy of the gate makes the positive case fail with the original off-screen message. No application/source file is mutated by these proofs. `--prove-focus-only` permits focused verification; the normal accessibility gate runs the same proofs automatically.
+
+The final release tip includes this gate correction and the updated existing records. The earlier documentation-only checkpoint is superseded. Its own exact-SHA CI and protected Preview must pass before final acceptance, and their identifiers/results belong in the final release handoff and `final-release-receipt.json` described above. No new creative or production scope is authorised.
+
+Local verification of the focus correction: full general axe PASS (76 analyses, zero violations, zero unresolved incompletes), the foreground/hidden-link proofs PASS, focused ESLint and gate-list parity PASS, documentation control-character/struck-rule/fix-claim checks PASS, and source/build/public secret checks PASS. Logs: ignored `final-focus-axe.log`, `final-focus-axe-exit.txt` (0) and `skip-focus-without-guard.log` (expected exit 1). The production build is reused because no application, asset, dependency or build configuration changed; exact-SHA CI runs its mandated build and performance checks automatically.

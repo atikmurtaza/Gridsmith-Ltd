@@ -424,6 +424,10 @@ if (TOKEN_NAMES.base.length === 0 || Object.values(TOKEN_NAMES.byDivision).some(
  * moves here rather than waiting for axe to grow one back.
  */
 async function domIntegrity(page, route, themed = true, expect = null) {
+  // Axe finishes in a helper tab. Closing it need not restore this page's focus
+  // before activeElement is read; :focus only paints in the focused document.
+  await page.bringToFront();
+  await page.waitForFunction(() => document.hasFocus(), { timeout: 5000 });
   const found = await page.evaluate(({ tokenNames, themed, expect }) => {
     const frameOf = (el) => el.closest('[data-division]')?.dataset.division ?? '(root)';
     const problems = [];
@@ -715,10 +719,49 @@ async function proveDesignGlyphTargets(browser) {
   }
 }
 
+/** The focus check must own the foreground, and still reject a hidden focused link. */
+async function proveSkipLinkFocus(browser) {
+  const page = await browser.newPage();
+  let helper;
+  try {
+    await page.setViewport({ width: 1280, height: 900 });
+    await page.goto(`${BASE_URL}/_kitchen-sink`, { waitUntil: 'networkidle0' });
+    helper = await browser.newPage();
+    await helper.bringToFront();
+    const background = await page.evaluate(() => {
+      const link = document.querySelector('a[href="#main"]');
+      link.focus();
+      return !document.hasFocus() && document.activeElement === link &&
+        !link.matches(':focus') && link.getBoundingClientRect().bottom < 0;
+    });
+    if (!background) throw new Error('Skip-link proof did not establish the unfocused-page precondition');
+    if (await domIntegrity(page, 'focus proof: foreground') !== 0) {
+      throw new Error('DOM integrity must restore foreground focus before measuring the skip link');
+    }
+    const hidden = await page.addStyleTag({ content: 'a[href="#main"]:focus { transform: translateY(-200%) !important; }' });
+    if (await domIntegrity(page, 'focus proof: deliberately hidden') !== 1) {
+      throw new Error('DOM integrity must reject the hidden focused skip link');
+    }
+    await hidden.evaluate((element) => element.remove());
+    if (await domIntegrity(page, 'focus proof: restored') !== 0) {
+      throw new Error('Skip-link proof did not restore the clean browser specimen');
+    }
+    console.log('check-axe: foreground restoration and hidden focused skip-link proofs PASS');
+  } finally {
+    await helper?.close();
+    await page.close();
+  }
+}
+
 /** Every launch in this file goes through `browser-launch.mjs`. See its docstring — M-P2-33. */
 const browser = await launch();
 await proveDesignGlyphTargets(browser);
 if (process.argv.includes('--prove-glyphs-only')) {
+  await browser.close();
+  process.exit(0);
+}
+await proveSkipLinkFocus(browser);
+if (process.argv.includes('--prove-focus-only')) {
   await browser.close();
   process.exit(0);
 }
