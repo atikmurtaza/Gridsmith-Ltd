@@ -147,8 +147,20 @@ Local verification on the restored tree: color-literal self-test, `lint:colors` 
 `check:contrast` (44 pairs / 185 permission cells), `check:tokens`, ESLint for the modified
 gate files, `git diff --check`, and a development build passed. Puppeteer computed the
 switcher border as `rgb(53, 113, 138)` on `/about` (Master), `/design`, `/press` and
-`/digital`. Exact-SHA CI and protected Preview are tracked by the staging release receipt;
-the correction is staging-only.
+`/digital`.
+
+Adding the self-test to `verify:static` first exposed the existing required `verify:static` /
+CI parity check in `check-node-version`: CI lacked the newly required self-test step. That
+first pushed documentation checkpoint (`15552a43`) failed at `npm ci` in CI run
+`36181864743`; the matching automatic Preview failed at install for the same parity reason.
+The self-test is now listed in both `verify:static` and `.github/workflows/ci.yml`, and
+`check:node` confirms all 51 gates agree. The valid code checkpoint is `b8d437d75aec82d61baaa5e7379ce08f6e2a1061`:
+CI run [`36182083396`](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/36182083396)
+passed. Automatic protected Preview `dpl_FMJXUmzaJPkP6fe81R45Zsjha1rw` is READY for that
+exact SHA at https://gridsmith-1c04u1wtc-atikmurtazas-projects.vercel.app. Preview HTML
+requests redirected to Vercel SSO during route checks, so computed styles were verified in
+the local production build rather than claimed for the protected Preview. The correction is
+staging-only.
 
 ## Known non-blocking findings
 
