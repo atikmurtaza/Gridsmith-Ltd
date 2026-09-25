@@ -120,3 +120,28 @@ before and after: 4 → 0 stale of 46 service documents. Production Sanity was n
 - 27 development-dependency advisories (12 high, 13 moderate, 2 low), unchanged baseline;
   production dependencies report zero. No package or lockfile change.
 - Lighthouse cannot run on Windows (`lhci-availability.mjs`); both axes are asserted on CI Linux.
+
+## Release receipt
+
+- **Branch:** `staging/gs-dig-001-digital` (from `c413a471`, the GS-R002 Design RC baseline).
+- **Implementation commits:** `5770da41f3264c2e36183ccc8e1a6d943e5a9bab` (RC), then
+  `4fb9af33b71056ef7a7be23641c20a7f8474d50e` (mobile Core Web Vitals correction).
+- **CI:** `5770da41` → run `36140863700` **failed** (Lighthouse mobile `/digital`: CLS 0.285, LCP
+  1831ms) and is preserved as such. `4fb9af33` → run `36147498717` **success**, every step.
+  Lighthouse medians on that SHA, `/digital`: desktop performance 100, accessibility 100, LCP 579ms,
+  CLS 0, TBT 0; mobile (n=6) LCP 1701ms (budget 1750), CLS 0.000 (0.02), TBT 97ms (150).
+  `check:digital:scene` on Linux: 2,049 text boxes, map complete 500ms / numbers-only 0ms,
+  lifecycle, reduced motion, Save-Data and no-JS all pass; axe zero violations, 0 unresolved.
+- **Protected Preview:** GitHub deployment `6662981296`, environment `Preview`, success, SHA
+  `4fb9af33`: https://gridsmith-katbz3r6c-atikmurtazas-projects.vercel.app — unauthenticated
+  requests return 302 to Vercel SSO with `X-Robots-Tag: noindex`. The previous Preview
+  (`6661785006`, `5770da41`) was fetched authenticated through the Vercel connector: HTTP 200,
+  `noindex, nofollow` meta, production CSP, one compass, five route links, five chapters, 17
+  service links, both CTAs, and served stylesheets whose content hashes equal the local build's.
+  An authenticated runtime session on the final Preview was not available (the connector and the
+  browser pane both redirect to Vercel sign-in) and no protection was bypassed; that session is an
+  owner step and is recorded in the release handoff, not claimed here.
+- **Production:** untouched — `main` `fbecbe01`, gridsmith.uk, DNS, Hostinger, production
+  Sanity/Supabase, `GS-T004`. Development Sanity was synchronised by `npm run seed` only.
+- This documentation commit's own SHA, CI and Preview are recorded in the release handoff (a
+  commit cannot carry its own hash).
