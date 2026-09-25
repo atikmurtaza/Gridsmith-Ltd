@@ -13,6 +13,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { sourceFiles } from './source-files.mjs';
+import { invalidHexLiterals } from './color-literals.mjs';
 
 /**
  * Which trees are scanned, and the guarantee that a new one cannot arrive unscanned,
@@ -32,6 +33,8 @@ const ALLOWED = [
   /^styles\/themes\/[^/]+\.css$/,
   // This file names colours in order to detect them.
   /^scripts\/check-no-hardcoded-colors\.mjs$/,
+  // These literals are deliberate positive/negative fixtures for the canonical hex rule.
+  /^scripts\/color-literals\.selftest\.mjs$/,
 ];
 
 const RULES = [
@@ -165,6 +168,21 @@ for (const file of files) {
 
   const rules = isTokenLayer ? [AMBER_AS_TEXT] : [...RULES, AMBER_AS_TEXT];
   const source = readFileSync(file, 'utf8');
+
+  // Validate literals in the token/theme layer too: it is the one place colours belong,
+  // but every literal there still has to be valid CSS.
+  if (file.endsWith('.css')) {
+    for (const { value, index } of invalidHexLiterals(source)) {
+      const before = source.slice(0, index);
+      violations.push({
+        file,
+        line: before.split('\n').length,
+        col: index - before.lastIndexOf('\n'),
+        id: 'invalid-hex',
+        text: value,
+      });
+    }
+  }
 
   source.split(/\r?\n/).forEach((line, i) => {
     for (const { id, re } of rules) {
