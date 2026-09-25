@@ -92,6 +92,19 @@ maps the shared token contract onto it with `var()`; its retired electric-blue l
      instrument's lower edge in its map position (a layout-fixed line, so it cannot oscillate).
    - `.dg-web-layout` carried `aria-label` on a generic `div` (axe `aria-prohibited-attr`); it is
      now `role="group"`.
+8. **Mobile Core Web Vitals (first CI run `36140863700` on `5770da41`, preserved as failed).**
+   Lighthouse mobile measured `/digital` at CLS **0.285** (budget 0.02) and LCP **1831ms**
+   (budget 1750ms); desktop passed. Its own report attributed the whole shift to
+   `div.dg-compass-rail` (the compass painted before the controller positioned it), and LCP equalled
+   FCP: the first frame after the last stylesheet took 187ms against `/design`'s 101ms. Local
+   diagnosis under 4× CPU isolated the cost to style/layout of the below-fold chapters (~160ms) and
+   the compass markup (~70ms). Fix, with no visual change: `content-visibility: auto` +
+   `contain-intrinsic-size: auto 1600px` on chapters, engagement and close; the rail is
+   `content-visibility: hidden` until `data-enhanced`, which is set in the same task that positions
+   it. Local: first-render delay 557 → 297ms (`/design` 288ms), desktop CLS 0.028 → 0, long-task
+   excess 521 → 346ms. Because sections now size lazily, `check:digital:scene` resolves its
+   anchors at visit time and adds a lifecycle branch (real click on the map's 05 callout, reverse
+   scroll to the hero, resize 1440 → 390 inside a chapter with no stale state), proven red.
 
 ## Commercial wording (B2)
 

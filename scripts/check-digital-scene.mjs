@@ -61,22 +61,37 @@ const state = (page) => page.evaluate(() => {
   };
 });
 
-// Scroll anchors for every compass state. Each is a document y resolved in the page, so the
-// same list works at every size; the mode each one must produce is asserted, not assumed.
-const anchors = (page) => page.evaluate((ids) => {
-  const y = (el, offset = 0) => Math.max(0, el.getBoundingClientRect().top + scrollY + offset);
-  const q = (s) => document.querySelector(s);
-  const out = [{ name: 'hero', y: 0, mode: 'hero' }];
+// Scroll anchors for every compass state, as element + offset (in viewport heights). They are
+// resolved at visit time, not up front: offscreen sections use content-visibility, so a section's
+// final position is only known once the sections above it have rendered.
+const anchors = () => {
+  const out = [{ name: 'hero', sel: 'main.dg-home', off: 0, top: true, mode: 'hero' }];
   // Map: the reserved field's top has cleared the trigger line by a comfortable margin.
-  out.push({ name: 'map', y: y(q('.dg-map-visual-space'), -innerHeight * .1), mode: 'map' });
-  ids.forEach((id, i) => {
-    out.push({ name: `${id} header`, y: y(q(`#${id}`), innerHeight * .1), mode: 'chapter', active: String(i + 1) });
-    out.push({ name: `${id} services`, y: y(q(`#${id} .dg-service-index`), -innerHeight * .3), mode: 'chapter', active: String(i + 1) });
+  out.push({ name: 'map', sel: '.dg-map-visual-space', off: -.1, mode: 'map' });
+  DESTINATIONS.forEach((id, i) => {
+    out.push({ name: `${id} header`, sel: `#${id}`, off: .1, mode: 'chapter', active: String(i + 1) });
+    out.push({ name: `${id} services`, sel: `#${id} .dg-service-index`, off: -.3, mode: 'chapter', active: String(i + 1) });
   });
-  out.push({ name: 'process', y: y(q('.dg-engagement'), innerHeight * .1), mode: 'chapter', active: null });
-  out.push({ name: 'final', y: null, mode: 'final' });
+  out.push({ name: 'process', sel: '.dg-engagement', off: .1, mode: 'chapter', active: null });
+  out.push({ name: 'final', sel: null, mode: 'final' });
   return out;
-}, DESTINATIONS);
+};
+
+async function resolveY(page, anchor) {
+  if (anchor.top) return 0;
+  return page.evaluate(async ({ sel, off }) => {
+    const el = document.querySelector(sel);
+    const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    let y = 0;
+    // Converge: scrolling near renders the sections above, which can move the target.
+    for (let i = 0; i < 4; i++) {
+      y = Math.max(0, el.getBoundingClientRect().top + scrollY + off * innerHeight);
+      window.scrollTo(0, y);
+      await frame();
+    }
+    return y;
+  }, { sel: anchor.sel, off: anchor.off });
+}
 
 // Final is height- and layout-relative, so its anchor is found rather than computed: walk down
 // from the CTA section until the instrument reports final, then a little past. The document
@@ -152,7 +167,7 @@ async function textContrast(page) {
 }
 
 async function visit(page, anchor) {
-  const y = anchor.y ?? await findFinal(page);
+  const y = anchor.sel === null ? await findFinal(page) : await resolveY(page, anchor);
   await page.evaluate((y) => window.scrollTo(0, y), y);
   await settle();
   return state(page);
@@ -164,7 +179,7 @@ async function matrix(width, height, { fault } = {}) {
   if (fault === 'contrast') await page.addStyleTag({ content: '#web-title{color:var(--digital-dark)!important}' });
   const found = [];
   let measured = 0;
-  for (const anchor of await anchors(page)) {
+  for (const anchor of anchors()) {
     const s = await visit(page, anchor);
     if (fault === 'process' && anchor.name === 'process')
       await page.evaluate(() => { const a = document.querySelector('.dg-apertures'); a.dataset.active = '5'; a.querySelector('.dg-compass-link-5').setAttribute('data-active', ''); });
@@ -220,6 +235,41 @@ async function mapTiming({ fault } = {}) {
   return { found, r };
 }
 
+// ---- 2b. Lifecycle: anchor jump from the map, reverse scroll, resize across the breakpoint ---
+async function lifecycle({ fault } = {}) {
+  const page = await open(1440, 900);
+  const found = [];
+  await visit(page, anchors().find((a) => a.name === 'map'));
+  // A real click on the map's 05 callout: the jump lands in never-rendered content.
+  const target = await page.$('.dg-compass-link-5 .dg-compass-label');
+  await target.click();
+  await settle(1800);
+  let s = await state(page);
+  if (fault === 'stale') { await page.evaluate(() => { document.querySelector('.dg-apertures').dataset.active = '1'; }); s = await state(page); }
+  if (s.mode !== 'chapter' || s.active !== '5') found.push(`anchor jump to 05: mode ${s.mode}, active ${s.active}`);
+  // Reverse: back up to the hero, which must be interactive with a fresh sequence.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await settle(1800);
+  s = await state(page);
+  if (s.mode !== 'hero' || s.inert || s.active === null) found.push(`reverse to hero: mode ${s.mode}, inert ${s.inert}, active ${s.active}`);
+  // Resize across the stacked breakpoint inside a chapter; state must survive, nothing overflow.
+  await visit(page, anchors().find((a) => a.name === 'software header'));
+  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+  await settle(1800);
+  s = await state(page);
+  // The phone layout is taller, so the same offset shows different content. The invariant is
+  // no stale state: the instrument agrees with the chapter the content now puts at the 45% line.
+  const expected = await page.evaluate((ids) => {
+    let active = null;
+    ids.forEach((id, i) => { if (document.getElementById(id).getBoundingClientRect().top <= innerHeight * .45) active = String(i + 1); });
+    if (document.querySelector('.dg-engagement').getBoundingClientRect().top <= innerHeight * .45) active = null;
+    return active;
+  }, DESTINATIONS);
+  if (s.mode !== 'chapter' || s.active !== expected || s.overflow > 0) found.push(`resize to 390 inside a chapter: mode ${s.mode}, active ${s.active}, content says ${expected}, overflow ${s.overflow}`);
+  await page.close();
+  return found;
+}
+
 // ---- 3. Live reduced motion and Save-Data --------------------------------------------------
 async function preference(kind, { fault } = {}) {
   const page = await open(1440, 900, kind === 'reduced' ? { reduced: true } : { saveData: true });
@@ -231,7 +281,7 @@ async function preference(kind, { fault } = {}) {
   if (hero.instant !== 'true' || hero.motion !== 'inactive') found.push(`${kind}: hero motion ${hero.motion}, instant ${hero.instant}`);
   if (later.active !== hero.active) found.push(`${kind}: hero autoplayed ${hero.active} → ${later.active}`);
   if (hero.spin !== 'none') found.push(`${kind}: ambient rotation ${hero.spin}`);
-  const points = await anchors(page);
+  const points = anchors();
   for (const anchor of points.filter((a) => ['map', 'web header', 'operate-improve header', 'process', 'final'].includes(a.name))) {
     const s = await visit(page, anchor);
     if (s.mode !== anchor.mode) found.push(`${kind} ${anchor.name}: mode ${s.mode}`);
@@ -276,6 +326,7 @@ try {
       ['contrast', async () => (await matrix(1440, 900, { fault: 'contrast' })).found.some((f) => f.includes('pixel contrast') && f.includes('Help people'))],
       ['process neutral', async () => (await matrix(1280, 720, { fault: 'process' })).found.some((f) => f.includes('process: active 5'))],
       ['map timing', async () => (await mapTiming({ fault: 'late' })).found.some((f) => f.includes('complete map'))],
+      ['lifecycle state', async () => (await lifecycle({ fault: 'stale' })).some((f) => f.includes('anchor jump to 05'))],
       ['reduced-motion rotation', async () => (await preference('reduced', { fault: 'spin' })).some((f) => f.includes('ambient rotation'))],
       ['save-data rotation', async () => (await preference('save-data', { fault: 'spin' })).some((f) => f.includes('ambient rotation'))],
       ['no-JS links', async () => noJsProblems(html.replace(/href="\/digital\/services\/ecommerce"/g, 'href="/x"')).some((f) => f.includes('16 service links'))],
@@ -295,6 +346,9 @@ try {
     const timing = await mapTiming();
     errors.push(...timing.found);
     console.log(`map timing @1000px/s: map ${Math.round(timing.r.map)}ms, complete ${Math.round(timing.r.complete)}ms, numbers-only ${Math.round(timing.r.numbersOnly)}ms`);
+    const life = await lifecycle();
+    errors.push(...life);
+    console.log(`lifecycle: ${life.length ? 'FAILED' : 'map anchor jump to 05, reverse to hero, resize 1440 → 390 inside 02'}`);
     for (const kind of ['reduced', 'save-data']) {
       const found = await preference(kind);
       errors.push(...found);

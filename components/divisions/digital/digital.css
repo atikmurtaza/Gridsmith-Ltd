@@ -745,3 +745,12 @@
 @supports (backdrop-filter: blur(1px)) {
   .dg-home :is(.dg-chapter-header, .dg-service-index, .dg-engagement .dg-section-intro, .dg-engagement ol)::after { background: var(--digital-copy-veil); backdrop-filter: blur(3px); }
 }
+
+/* GS-DIG-001-RC performance. Measured on CI's mobile Lighthouse run: the first frame after
+   the last stylesheet cost 187ms here against 101ms on /design, and the compass moved after
+   hydration placed it (CLS 0.285). Offscreen sections now skip style/layout until they near
+   the viewport (rendering is identical once they do; `auto` remembers the real size), and the
+   instrument is not rendered until the controller has positioned it, so it is never painted
+   in a place it then leaves. Without JS the rail is hidden anyway (scripting: none). */
+.dg-home :is(.dg-chapter, .dg-engagement, .dg-close) { content-visibility: auto; contain-intrinsic-size: auto 1600px; }
+.dg-compass-rail:not(:has(.dg-apertures[data-enhanced='true'])) { content-visibility: hidden; }
