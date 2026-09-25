@@ -67,10 +67,12 @@ const PAIRS = {
     // The three division fills — master/DESIGN.md §2. The accent stays decorative as a
     // foreground and becomes a surface here, with its own paired ink on top.
     ['--accent-design-ink', '--accent-design', 'text', 9.07],
-    ['--accent-digital-ink', '--accent-digital', 'text', 5.09],
+    // 5.09 → 5.41 at GS-DIG-001-RC: the shared Digital accent is now the current Digital
+    // signal (`--digital-signal`), not the retired electric blue.
+    ['--accent-digital-ink', '--accent-digital', 'text', 5.41],
     ['--accent-press-ink', '--accent-press', 'text', 9.25],
     ['--accent-design', '--canvas', 'decor', 2.16],
-    ['--accent-digital', '--canvas', 'text', 5.09],
+    ['--accent-digital', '--canvas', 'text', 5.41],
     ['--accent-press', '--canvas', 'text', 9.74],
     ['--line-strong', '--canvas', 'decor', 1.74],
   ],
@@ -95,15 +97,17 @@ const PAIRS = {
     ['--accent-ink', '--accent-2', 'text', 5.76],
     ['--line-strong', '--canvas', 'decor', 2.45],
   ],
+  // digital/DESIGN.md §2 — the delivered graphite palette (GS-DIG-001), resolved through
+  // digital-stage.css. The retired electric-blue figures stay in that document as history.
   digital: [
-    ['--ink', '--canvas', 'text', 18.96],
-    ['--ink-muted', '--canvas', 'text', 7.40],
-    ['--ink-subtle', '--canvas', 'text', 5.28],
-    ['--accent', '--canvas', 'text', 4.87],
-    ['--accent', '--canvas-raised', 'text', 5.09],
-    ['--accent-ink', '--accent', 'text', 5.09],
-    ['--accent-ink', '--accent-2', 'text', 10.22],
-    ['--line-strong', '--canvas', 'decor', 1.59],
+    ['--ink', '--canvas', 'text', 14.31],
+    ['--ink-muted', '--canvas', 'text', 6.99],
+    ['--ink-subtle', '--canvas', 'text', 6.99],
+    ['--accent', '--canvas', 'text', 6.50],
+    ['--accent', '--canvas-raised', 'text', 7.04],
+    ['--accent-ink', '--accent', 'text', 7.04],
+    ['--accent-ink', '--accent-2', 'text', 14.40],
+    ['--line-strong', '--canvas', 'decor', 3.63],
   ],
   press: [
     ['--ink', '--canvas', 'text', 16.84],
@@ -232,10 +236,46 @@ function ratio(fg, bg) {
   return (a + 0.05) / (b + 0.05);
 }
 
+/**
+ * The palette layer a theme's contract resolves through, when its literals live elsewhere.
+ *
+ * **Measure what is delivered, not what is declared nearest.** Until GS-DIG-001-RC this
+ * function read hex literals out of `styles/themes/digital.css` alone. That file still held
+ * the retired electric-blue sheet while `digital-stage.css`, declared on the same
+ * `<body data-division="digital">` with a more specific selector, overrode every one of
+ * those tokens — so the Digital rows here measured a palette no route rendered, and the
+ * palette every Digital route did render was measured by nothing. Same class as
+ * 01-VALIDATION-REPORT §21: two artefacts that must agree, only one delivered, and the
+ * gate reading the other one. Digital's contract now maps onto the stage palette with
+ * `var()`, and this resolves the reference exactly as the cascade does on that body.
+ */
+const PALETTE_LAYERS = { digital: ['digital-stage'] };
+
 function tokens(theme) {
-  const css = readFileSync(`styles/themes/${theme}.css`, 'utf8');
+  const declared = {};
+  for (const file of [theme, ...(PALETTE_LAYERS[theme] ?? [])]) {
+    let css = readFileSync(`styles/themes/${file}.css`, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    // A palette layer contributes only its root body block — what the cascade gives the
+    // body. Its later descendant-scoped overrides (the dark first section of a service
+    // page) are not the theme's canvas values and must not flatten into them.
+    if (file !== theme) {
+      const root = css.match(new RegExp(`(?:^|\\})\\s*body\\[data-division="${theme}"\\]\\s*\\{([^}]*)\\}`));
+      if (!root) throw new Error(`${file}.css: no root body[data-division="${theme}"] block to resolve through`);
+      css = root[1];
+    }
+    for (const m of css.matchAll(/(--[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8}|var\(\s*--[a-z0-9-]+\s*\))\s*;/g)) {
+      declared[m[1]] = m[2];
+    }
+  }
+  const resolve = (name, seen = new Set()) => {
+    const value = declared[name];
+    if (!value || seen.has(name)) return undefined;
+    if (value.startsWith('#')) return value;
+    seen.add(name);
+    return resolve(value.match(/--[a-z0-9-]+/)[0], seen);
+  };
   return Object.fromEntries(
-    [...css.matchAll(/(--[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\s*;/g)].map((m) => [m[1], m[2]]),
+    Object.keys(declared).map((name) => [name, resolve(name)]).filter(([, hex]) => hex),
   );
 }
 

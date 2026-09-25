@@ -10,7 +10,7 @@ reads awkwardly, the site reads awkwardly, and that is what this document exists
 change. `check:service-content` fails while this document's recorded hash and the source
 disagree, so an approval cannot silently attach to wording that has since changed.
 
-**Source SHA-256:** `bcc7f40717267987bc8cd7bbe7cfbfda4885b8a7a20c7ba83268d1bc7e4006d8`
+**Source SHA-256:** `391ca540900751b792d2547ee723a371e491d0e063c86b41e825cd3ab0d84627`
 
 ---
 
@@ -727,7 +727,7 @@ would be operational commitments nobody has given.
 | Included | Store build or customisation | On the platform you use or one agreed at consultation. |
 | Included | Product and collection templates | Built for the catalogue you actually have. |
 | Included | Checkout, payment and shipping configuration | Configured against your accounts and your rates. |
-| Included | App and integration setup | The third-party pieces the store needs, in your accounts. |
+| Included | App and integration setup | The third-party pieces the store needs, set up in the accounts agreed for the store. |
 | **EXCLUDED** | Tax, payments and consumer-law advice | Configuration is ours; what is legally correct for your business is your adviser’s. |
 
 **Related services:** `website-design-build`, `integrations`
@@ -752,7 +752,7 @@ would be operational commitments nobody has given.
 
 > Applications that run in a browser and do a specific job: scheduling, quoting, tracking, submissions, member areas and the internal processes a spreadsheet has stopped coping with.
 >
-> Built with authentication, roles and a real data model, deployed on infrastructure held in your accounts, with the migrations and the pipeline documented.
+> Built with authentication, roles and a data model, with infrastructure and deployment arrangements agreed in writing and the migrations and deployment process documented.
 >
 > Scope is agreed as what the application does and what it does not do, in writing, before the build starts.
 
@@ -764,7 +764,7 @@ would be operational commitments nobody has given.
 | Included | Authentication and roles | Who can see and do what, defined with you. |
 | Included | Data model and migrations | Versioned, so the schema has a history. |
 | Included | Deployment pipeline | Reproducible deploys rather than manual uploads. |
-| Included | Source code and accounts | In your repository and your hosting accounts. |
+| Included | Source code and accounts | Source-code handover and repository, access and hosting arrangements as set out in the project agreement. |
 
 **Related services:** `custom-software`, `internal-tools-and-dashboards`
 
@@ -972,7 +972,7 @@ would be operational commitments nobody has given.
 |---|---|---|
 | Included | Playable prototype | Where the scope includes proving the mechanic first. |
 | Included | Game build | To the agreed platforms and feature scope. |
-| Included | Source project | In your repository. |
+| Included | Source project | Source project and repository access as agreed in the project scope. |
 | **EXCLUDED** | Publishing and marketing | Store publishing is scoped separately; audience and sales outcomes are not something we undertake. |
 
 **Related services:** `mobile-applications`, `animation`
@@ -1039,7 +1039,7 @@ would be operational commitments nobody has given.
 | | Item | Detail |
 |---|---|---|
 | Included | Process map | The current process, documented and agreed. |
-| Included | Automated pipeline | Built on your systems and accounts. |
+| Included | Automated pipeline | Built across the systems and accounts agreed for the workflow. |
 | Included | Failure alerting | Notification when a run does not complete. |
 | Included | Runbook | What to do when it needs human attention. |
 

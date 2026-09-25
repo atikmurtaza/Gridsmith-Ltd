@@ -60,7 +60,12 @@ Drafting pencil and warning tape, on a near-black drawing sheet.
 `--accent-2` measures 5.55:1 against the canvas and 1.63:1 against `--accent`: far enough
 from the sheet to read as a block, far enough from the accent to read as a different one.
 
-## Gridsmith Digital — electric blue
+## Gridsmith Digital — electric blue (retired at GS-DIG-001-RC; history)
+
+> **GS-DIG-001 current palette:** Digital now delivers the owner-approved graphite palette from
+> `styles/themes/digital-stage.css` (Digital signal `#35718A`, graphite `#22262B`, gold `#D2AD34`).
+> The electric-blue table below is historical. Delivered contract ratios are in
+> `docs/digital/DESIGN.md` §2 and are measured by `check:contrast`.
 
 A spec sheet: the accent for the statement, navy for the header rule.
 
@@ -113,7 +118,7 @@ homepage's routing cards, a division badge, the footer switcher.
 | Token | Fill | Ink token | Ink | Measured |
 |---|---|---|---|---|
 | `--accent-design` | **#E8A33D** | `--accent-design-ink` | **#0C0C0D** | **9.07:1** |
-| `--accent-digital` | **#1B5FFF** | `--accent-digital-ink` | **#FFFFFF** | **5.09:1** |
+| `--accent-digital` | **#35718A** (was #1B5FFF) | `--accent-digital-ink` | **#FFFFFF** | **5.41:1** |
 | `--accent-press` | **#2E4A3A** | `--accent-press-ink` | **#FBF9F4** | **9.25:1** |
 
 **The `decor` role on the three accents is unchanged.** It says they may never be a
@@ -131,7 +136,7 @@ text over it. Every one of these pairs is AA at any size.
 |---|---|---|
 | Gridsmith Ltd | `#0F0F0F` | `#FFFFFF` |
 | Gridsmith Design | `#E8A33D` | `#0C0C0D` |
-| Gridsmith Digital | `#1B5FFF` | `#FFFFFF` |
+| Gridsmith Digital | `#35718A` (was `#1B5FFF`) | `#FFFFFF` |
 | Gridsmith Press | `#2E4A3A` | `#FBF9F4` |
 
 Secondary, where a profile wants a banner behind the avatar:

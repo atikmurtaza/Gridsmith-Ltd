@@ -514,7 +514,11 @@ if (over.length > 0) {
  */
 // GS-R002: DesignScene now intentionally ships a Design-only loader (owner-approved narrative).
 // Keep /design in REQUIRED and under its unchanged 25KB route ceiling; measure lazy work below.
-const BASELINE_ROUTES = ['/digital', '/press', '/_not-found'];
+// GS-DIG-001: /digital likewise ships its own feature — the persistent compass controller
+// (HeroApertureMotion) and the chapter-entry leaf (VisualActivation), owner-approved. It is
+// no longer featureless, so it leaves the baseline set; it stays in REQUIRED and under
+// Digital's unchanged 15KB delta ceiling, which is where its cost is asserted.
+const BASELINE_ROUTES = ['/press', '/_not-found'];
 
 const baselineRows = rows.filter((r) => BASELINE_ROUTES.includes(r.url));
 const kitchen = rows.find((r) => r.url === '/_kitchen-sink');

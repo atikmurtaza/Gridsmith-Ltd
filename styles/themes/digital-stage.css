@@ -1,0 +1,97 @@
+/* GS-DIG-001: the single source of Digital identity colour. The palette below is
+   declared on the Digital root layout's body; styles/themes/digital.css maps the
+   shared token contract onto it, and check:contrast resolves and measures exactly
+   these delivered values for /digital and every /digital/services/[slug] route. */
+body[data-division="digital"] {
+  --digital-bg: #22262B;
+  --digital-dark: #22262B;
+  --digital-dark-raised: #2E343A;
+  --digital-light: #EDF0F1;
+  --digital-light-raised: #F7F9F9;
+  --digital-light-sunken: #E1E6E8;
+  --digital-ink-dark: #F7F9F9;
+  --digital-muted-dark: #BEC9CE;
+  --digital-ink-light: #1C2024;
+  --digital-muted-light: #46525C;
+  --digital-signal: #35718A;
+  --digital-signal-hover: #265B72;
+  --digital-signal-dark: #78BED0;
+  --digital-commit: #D2AD34;
+  --digital-commit-ink: #22262B;
+  --digital-commit-light: #80610F;
+  --digital-exception: #A3402A;
+  --digital-exception-dark: #E79A84;
+  --digital-line-dark: #58646D;
+  --digital-line-light: #C5CED3;
+  --digital-boundary-dark: #8FA0AA;
+  --digital-boundary-light: #6E7F88;
+  --digital-focus: #D2AD34;
+  --digital-row-hover-dark: #364048;
+  --digital-row-hover-light: #E1E6E8;
+  /* R3-F: compass leaders and the local veil that separates chapter copy from it. */
+  --digital-leader: var(--digital-commit);
+  --digital-leader-rest: color-mix(in srgb, var(--digital-commit) 55%, transparent);
+  --digital-copy-veil: color-mix(in srgb, var(--digital-bg) 45%, transparent);
+  --digital-copy-veil-flat: color-mix(in srgb, var(--digital-bg) 70%, transparent);
+  --digital-mask: var(--digital-bg);
+
+  --dg-idle: var(--digital-boundary-dark);
+  --dg-active: var(--digital-signal-hover);
+  --dg-dark: var(--digital-dark);
+  --dg-dark-idle: var(--digital-boundary-dark);
+  --dg-dark-muted: var(--digital-muted-dark);
+  --dg-brass: var(--digital-commit-light);
+  --dg-gold: var(--digital-commit);
+  --dg-exception: var(--digital-exception);
+}
+
+body[data-division="digital"] :focus-visible {
+  outline-color: var(--digital-focus);
+  outline-offset: 3px;
+}
+
+/* Shared ServiceDetail markup, scoped to Digital only. */
+body[data-division="digital"] .dg-service-detail {
+  background: var(--digital-light);
+  color: var(--digital-ink-light);
+}
+
+body[data-division="digital"] .dg-service-detail > section:first-child {
+  --ink: var(--digital-ink-dark);
+  --ink-muted: var(--digital-muted-dark);
+  --ink-subtle: var(--digital-muted-dark);
+  --accent: var(--digital-signal-dark);
+  --line: var(--digital-line-dark);
+  --line-strong: var(--digital-boundary-dark);
+  background: var(--digital-dark);
+  color: var(--digital-ink-dark);
+  border-block-end: 1px solid var(--digital-boundary-dark);
+}
+
+body[data-division="digital"] .dg-service-detail h1,
+body[data-division="digital"] .dg-service-detail h2 {
+  font-family: var(--font-display);
+  letter-spacing: -0.035em;
+}
+
+body[data-division="digital"] .dg-service-detail > section {
+  border-block-end: 1px solid var(--digital-line-light);
+}
+
+body[data-division="digital"] .dg-service-detail > section:nth-child(2n + 3) {
+  background: var(--digital-light-raised);
+}
+
+body[data-division="digital"] .dg-service-detail a:focus-visible {
+  outline: 2px solid var(--digital-focus);
+}
+
+body[data-division="digital"] .dg-service-actions a:first-child {
+  background: var(--digital-commit);
+  color: var(--digital-commit-ink);
+}
+
+body[data-division="digital"] .dg-service-actions a:first-child:hover {
+  background: var(--digital-ink-light);
+  color: var(--digital-ink-dark);
+}

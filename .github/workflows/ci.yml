@@ -336,7 +336,7 @@ jobs:
       - name: axe + security headers + statutory record + responsive and legal checks
         env:
           DESIGN_SCREENSHOTS: .artifacts/design-scenes
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company" "npm run check:master:scene" "npm run check:master:hero" "npm run check:design:scene"
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company" "npm run check:master:scene" "npm run check:master:hero" "npm run check:design:scene" "npm run check:digital:scene"
 
       - name: Retain Design scene evidence
         if: always()

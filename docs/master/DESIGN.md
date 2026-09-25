@@ -46,7 +46,7 @@ The founder's brief for the brand is "innovative and institutionally trustworthy
   /* Division accents — used ONLY on division-referencing elements.
      Each now carries the foreground it takes when used as a FILL rather than a rule. */
   --accent-design:  #E8A33D;  --accent-design-ink:  #0C0C0D;
-  --accent-digital: #1B5FFF;  --accent-digital-ink: #FFFFFF;
+  --accent-digital: #35718A;  --accent-digital-ink: #FFFFFF;   /* GS-DIG-001-RC; was #1B5FFF */
   --accent-press:   #2E4A3A;  --accent-press-ink:   #FBF9F4;
 }
 ```
@@ -64,14 +64,17 @@ The founder's brief for the brand is "innovative and institutionally trustworthy
 | `--ink-subtle` on `--canvas` | 5.52:1 | AA at any size |
 | `--accent-ink` on `--accent` | 19.17:1 | AAA |
 | `--accent-design` on `--canvas` | 2.16:1 | **Decorative rules and badges only. Never text, never a sole state indicator** |
-| `--accent-digital` on `--canvas` | 5.09:1 | AA **as a ratio; the role is decorative.** Division colour appears as a rule or a 1px badge border, never as text — §5, and the same constraint as the amber. All three accents are declared by every theme from V3, and two of them do not clear AA on Design's near-black canvas |
+| `--accent-digital` on `--canvas` | 5.41:1 | AA **as a ratio; the role is decorative.** Division colour appears as a rule or a 1px badge border, never as text — §5, and the same constraint as the amber. All three accents are declared by every theme from V3, and two of them do not clear AA on Design's near-black canvas |
 | `--accent-press` on `--canvas` | 9.74:1 | AAA **as a ratio; the role is decorative** — see the row above |
 | `--line-strong` on `--canvas` | 1.74:1 | Decorative borders only |
 
 Measured at A-03 by `scripts/check-contrast.mjs`, which recomputes these from the theme
 files on every CI run. Six of the eight figures above were wrong in the original table —
 none changed a verdict. `--accent-digital` is the one worth noting: 5.09:1 rather than the
-6.5:1 published, still AA but with less headroom than the number implied.
+6.5:1 published, still AA but with less headroom than the number implied. **GS-DIG-001-RC:**
+the shared Digital accent is now the current Digital signal `#35718A` (5.41:1, and 5.41:1 under
+`--accent-digital-ink`), replacing the retired electric blue on every theme. Its only rendered use
+is the footer division switcher's Digital rule.
 
 The amber row is a real constraint. Design's accent works on its own dark canvas and fails on the master's white one. On master pages it may be a 2–3px rule or a badge background (with `--ink` text on it), never coloured text and never the only signal of a state.
 

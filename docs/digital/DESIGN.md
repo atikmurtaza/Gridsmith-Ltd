@@ -1,3 +1,22 @@
+> **GS-DIG-001 current authority (25 September 2026):** The owner approved the Digital redesign — *Systems in Agreement*: one persistent five-point compass (Hero → Route Map → chapter/process background → Final) over a continuous graphite environment, Inter for human copy and display, JetBrains Mono for indices, system states and counts. This supersedes §1's light spec-sheet art direction, §2's electric-blue palette and §3's monospace display face for Digital. The historical text below is kept as history. Programme record: `docs/_shared/GS-DIG-001-DIGITAL.md`.
+>
+> **Delivered palette (single source `styles/themes/digital-stage.css`; `styles/themes/digital.css` maps the token contract onto it with `var()`):** graphite `#22262B`, raised `#2E343A`, light `#EDF0F1`, ink `#1C2024` / `#F7F9F9`, muted `#46525C` / `#BEC9CE`, signal `#35718A` (hover `#265B72`, on-dark `#78BED0`), commit gold `#D2AD34`, exception `#A3402A` / `#E79A84`.
+>
+> **Contract ratios as delivered, measured by `check:contrast` through the stage palette:**
+>
+> | Pair | Measured | Pass |
+> |---|---|---|
+> | `--ink` on `--canvas` | 14.31:1 | AAA |
+> | `--ink-muted` on `--canvas` | 6.99:1 | AA at any size |
+> | `--ink-subtle` on `--canvas` | 6.99:1 | AA at any size |
+> | `--accent` on `--canvas` | 6.50:1 | AA |
+> | `--accent` on `--canvas-raised` | 7.04:1 | AAA |
+> | `--accent-ink` on `--accent` | 7.04:1 | AAA |
+> | `--accent-ink` on `--accent-2` | 14.40:1 | AAA |
+> | `--line-strong` on `--canvas` | 3.63:1 | Decorative role retained |
+>
+> Until GS-DIG-001-RC the gate read `digital.css`'s own electric-blue literals while the stage layer overrode every one of them on `<body data-division="digital">`, so the figures below described a palette no route delivered. The shared `--accent-digital` is now `#35718A` in every theme (5.41:1 with white).
+
 # Design Spec — Gridsmith Digital
 
 Inherits `_shared/00-FOUNDATION.md` §3. Digital theme only.

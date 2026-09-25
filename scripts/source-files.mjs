@@ -33,6 +33,9 @@ export const ROOTS = ['app', 'components', 'lib', 'lighthouse', 'sanity', 'scrip
  */
 const NOT_SOURCE = {
   '.claude': 'agent definitions',
+  // The Codex CLI's equivalent of `.claude/agents` — TOML agent definitions, machine-local
+  // and untracked. Classified rather than committed or deleted (GS-DIG-001-RC).
+  '.codex': 'agent definitions (Codex CLI) — TOML, no source',
   '.git': 'version control',
   // Excluded from the colour and secret sweeps, which is what this list was written for.
   // It is NOT excluded from every gate: check-control-chars passes it as an extra root,

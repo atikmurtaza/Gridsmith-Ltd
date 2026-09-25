@@ -53,7 +53,8 @@ export const metadata: Metadata = {
 };
 
 /**
- * Root layout for the digital route group. JetBrains Mono is the display face here; Inter carries body copy.
+ * Root layout for the Digital route group. Inter carries human copy and display;
+ * JetBrains Mono marks system states and verifiable details.
  */
 export default function DigitalLayout({ children }: { children: ReactNode }) {
   return (

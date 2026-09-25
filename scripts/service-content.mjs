@@ -493,7 +493,7 @@ export const SERVICES = {
         ['Store build or customisation', 'On the platform you use or one agreed at consultation.'],
         ['Product and collection templates', 'Built for the catalogue you actually have.'],
         ['Checkout, payment and shipping configuration', 'Configured against your accounts and your rates.'],
-        ['App and integration setup', 'The third-party pieces the store needs, in your accounts.'],
+        ['App and integration setup', 'The third-party pieces the store needs, set up in the accounts agreed for the store.'],
         ['Tax, payments and consumer-law advice', 'Configuration is ours; what is legally correct for your business is your adviser’s.', false],
       ],
       collaborators: ['design'],
@@ -508,7 +508,7 @@ export const SERVICES = {
       summary: 'A spreadsheet is running a process that has outgrown it.',
       description: [
         'Applications that run in a browser and do a specific job: scheduling, quoting, tracking, submissions, member areas and the internal processes a spreadsheet has stopped coping with.',
-        'Built with authentication, roles and a real data model, deployed on infrastructure held in your accounts, with the migrations and the pipeline documented.',
+        'Built with authentication, roles and a data model, with infrastructure and deployment arrangements agreed in writing and the migrations and deployment process documented.',
         'Scope is agreed as what the application does and what it does not do, in writing, before the build starts.',
       ],
       deliverables: [
@@ -516,7 +516,7 @@ export const SERVICES = {
         ['Authentication and roles', 'Who can see and do what, defined with you.'],
         ['Data model and migrations', 'Versioned, so the schema has a history.'],
         ['Deployment pipeline', 'Reproducible deploys rather than manual uploads.'],
-        ['Source code and accounts', 'In your repository and your hosting accounts.'],
+        ['Source code and accounts', 'Source-code handover and repository, access and hosting arrangements as set out in the project agreement.'],
       ],
       collaborators: [],
       related: ['custom-software', 'internal-tools-and-dashboards'],
@@ -639,7 +639,7 @@ export const SERVICES = {
       deliverables: [
         ['Playable prototype', 'Where the scope includes proving the mechanic first.'],
         ['Game build', 'To the agreed platforms and feature scope.'],
-        ['Source project', 'In your repository.'],
+        ['Source project', 'Source project and repository access as agreed in the project scope.'],
         ['Publishing and marketing', 'Store publishing is scoped separately; audience and sales outcomes are not something we undertake.', false],
       ],
       collaborators: ['design'],
@@ -678,7 +678,7 @@ export const SERVICES = {
       ],
       deliverables: [
         ['Process map', 'The current process, documented and agreed.'],
-        ['Automated pipeline', 'Built on your systems and accounts.'],
+        ['Automated pipeline', 'Built across the systems and accounts agreed for the workflow.'],
         ['Failure alerting', 'Notification when a run does not complete.'],
         ['Runbook', 'What to do when it needs human attention.'],
       ],

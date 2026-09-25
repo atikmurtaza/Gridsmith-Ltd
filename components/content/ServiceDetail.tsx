@@ -84,7 +84,7 @@ export function ServiceDetail({ service }: { service: ServiceRecord }) {
   const related = service.relatedServices ?? [];
 
   return (
-    <main id="main" tabIndex={-1}>
+    <main id="main" tabIndex={-1} className={division === 'digital' ? 'dg-service-detail' : undefined}>
       <Section rhythm="loose">
         <Container>
           <Breadcrumb
@@ -221,7 +221,7 @@ export function ServiceDetail({ service }: { service: ServiceRecord }) {
 
       <Section rhythm="loose">
         <Container>
-          <div className={styles.serviceCtas}>
+          <div className={`${styles.serviceCtas}${division === 'digital' ? ' dg-service-actions' : ''}`}>
             <Button href={enquiryHref(division, service.slug)}>
               {service.ctaLabel ?? ENQUIRY_CTA[division]}
             </Button>

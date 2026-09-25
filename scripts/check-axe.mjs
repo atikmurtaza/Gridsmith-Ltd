@@ -185,6 +185,10 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  * prefix `master_review`, which only the review block emits, so a new incomplete anywhere else
  * on `/` — including anywhere else in `master.module.css` — still reports UNRESOLVED.
  */
+// GS-DIG-001 — see digitalSceneTarget() for how a /digital decline earns this target.
+const DIGITAL_SCENE = 'main.dg-home';
+const DIGITAL_SCENE_TARGET = `${DIGITAL_SCENE} (pixel-measured by check:digital:scene)`;
+
 const INCOMPLETE_ALLOWED = [
   ...['g', 's'].map((glyph) => ({
     rule: 'color-contrast',
@@ -203,6 +207,12 @@ const INCOMPLETE_ALLOWED = [
     routes: ['/design'],
     targetPattern: /^g\x5bdata-art="(?:technical|convergence)".* > text\x5b/,
     why: 'GS-R002 diagram labels are decorative SVG study details inside the aria-hidden, non-focusable stage, not service information or a usable engineering drawing. Semantic technical content and its scope gate remain HTML and are measured by check:design:scene. Remove this exemption if the diagram becomes informational or interactive.',
+  },
+  {
+    rule: 'color-contrast',
+    routes: ['/digital'],
+    target: DIGITAL_SCENE_TARGET,
+    why: 'GS-DIG-001: /digital copy shares the page with the persistent compass rail (a full-page positioned layer axe counts as overlapping despite pointer-events: none) and the chapter copy veil (a pseudo-element), so axe declines contrast for text inside main.dg-home. digitalSceneTarget() maps a decline to this target only for a node inside that region with one of the listed background/short-content reasons; its positive/negative proofs run every time. check:digital:scene measures rendered pixels under every visible, non-decorative text box in the region at every compass state across six viewports, and its contrast branch is proven red. Remove this entry if that gate is removed or the rail/veil no longer underlie the copy. This never allows a violation.',
   },
   // **Empty, and emptied on purpose at `M-04`.** The one entry here allowlisted
   // `color-contrast` incomplete on the `h1` of the four placeholder routes, and carried its
@@ -688,6 +698,52 @@ function designGlyphTarget({ target, html, reason }) {
   return target;
 }
 
+/**
+ * GS-DIG-001: /digital's text shares its page with the persistent compass rail (a positioned
+ * full-page layer axe counts as overlapping even with pointer-events: none) and the chapter
+ * copy veil (a pseudo-element). axe therefore declines colour contrast on text it cannot see
+ * behind. Those declines are normalised to one allowlist target ONLY when the node is inside
+ * the region check:digital:scene measures by rendered pixels and the reason is one of these
+ * background/short-content declines. Anything else — a node in the chrome, a missing node, a
+ * different reason — keeps its own target and reports UNRESOLVED.
+ */
+const DIGITAL_SCENE_REASONS = [
+  "Element's background color could not be determined because it is overlapped by another element",
+  "Element's background color could not be determined because it partially overlaps other elements",
+  "Element's background color could not be determined due to a pseudo element",
+  "Element's background color could not be determined because element contains an image node",
+  'Element content is too short to determine if it is actual text content',
+  'Element content contains only non-text characters',
+];
+function digitalSceneTarget({ target, reason, scope, reasons, canonical }) {
+  if (!reasons.includes(reason)) return target;
+  let node = null;
+  try { node = document.querySelector(target); } catch { return target; }
+  return node?.closest(scope) ? canonical : target;
+}
+
+async function proveDigitalSceneTargets(browser) {
+  const page = await browser.newPage();
+  try {
+    await page.setContent('<main class="dg-home"><h2 id="inside">Copy</h2></main><footer><p id="outside">Footer</p></footer>');
+    const base = { scope: DIGITAL_SCENE, reasons: DIGITAL_SCENE_REASONS, canonical: DIGITAL_SCENE_TARGET };
+    let cases = 0;
+    const check = async (input, expected) => {
+      const actual = await page.evaluate(digitalSceneTarget, { ...base, ...input });
+      if (actual !== expected) throw new Error(`Digital scene classification proof failed: ${actual} != ${expected}`);
+      cases += 1;
+    };
+    for (const reason of DIGITAL_SCENE_REASONS) await check({ target: '#inside', reason }, DIGITAL_SCENE_TARGET);
+    await check({ target: '#outside', reason: DIGITAL_SCENE_REASONS[0] }, '#outside');
+    await check({ target: '#inside', reason: 'A different incomplete reason' }, '#inside');
+    await check({ target: '#missing', reason: DIGITAL_SCENE_REASONS[0] }, '#missing');
+    await check({ target: 'div:::bad', reason: DIGITAL_SCENE_REASONS[0] }, 'div:::bad');
+    console.log(`check-axe: Digital scene classification ${cases} positive/negative proofs PASS`);
+  } finally {
+    await page.close();
+  }
+}
+
 /** Prove that selector animation is accepted, while changed semantics remain unresolved. */
 async function proveDesignGlyphTargets(browser) {
   const page = await browser.newPage();
@@ -756,6 +812,7 @@ async function proveSkipLinkFocus(browser) {
 /** Every launch in this file goes through `browser-launch.mjs`. See its docstring — M-P2-33. */
 const browser = await launch();
 await proveDesignGlyphTargets(browser);
+await proveDigitalSceneTargets(browser);
 if (process.argv.includes('--prove-glyphs-only')) {
   await browser.close();
   process.exit(0);
@@ -864,6 +921,13 @@ try {
               target = await page.evaluate(designGlyphTarget, {
                 target, html: node.html,
                 reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+              });
+            }
+            if (route.path === '/digital' && inc.id === 'color-contrast') {
+              target = await page.evaluate(digitalSceneTarget, {
+                target,
+                reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+                scope: DIGITAL_SCENE, reasons: DIGITAL_SCENE_REASONS, canonical: DIGITAL_SCENE_TARGET,
               });
             }
             const allowed = INCOMPLETE_ALLOWED.find(
