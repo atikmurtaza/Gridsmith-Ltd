@@ -80,7 +80,7 @@
      `border-block-start-color: var(--accent-design)` invalid at computed-value time and
      discarded the shorthand's colour with it. `check:tokens` now holds all four. */
   --accent-design:  #E8A33D;
-  --accent-digital: #35718A;
+  --accent-digital: #35718AF;
   --accent-press:   #2E4A3A;
 
   /**
