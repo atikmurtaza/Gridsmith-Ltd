@@ -115,6 +115,41 @@ pipeline. The development dataset held the old wording; it was synchronised with
 `npm run seed` workflow (hardcoded `development`, refuses `production`). A read-only comparison
 before and after: 4 → 0 stale of 46 service documents. Production Sanity was not addressed.
 
+## M1 maintenance correction (25 September 2026)
+
+The malformed `--accent-digital` value introduced with `5770da41` is corrected in
+`styles/themes/press.css`, `master.css`, `master-stage.css` and `design.css` from the
+seven-digit `#35718AF` / `#35718af` to the authoritative Digital signal `#35718A` in
+`digital-stage.css`. This closes the footer switcher's invalid computed border colour.
+
+Root cause: `lint:colors` deliberately exempted token/theme files and its accepted-hex
+matcher only recognized complete 3, 4, 6 or 8 digit literals, so the 7 digit token did not
+match. `check:tokens` checks token presence and delivery, not literal syntax. `check:contrast`
+matched 3–8 digits and luminance used the first six, so the malformed suffix was silently
+ignored while the measured value happened to equal `#35718A`.
+
+The existing `lint:colors` gate now validates CSS hash token lengths in declaration values,
+including theme/token declarations. Repository-supported forms remain `#RGB`, `#RGBA`,
+`#RRGGBB` and `#RRGGBBAA`; other all-hex lengths fail. Comments, strings, selectors,
+non-hex hash names and URL fragments are excluded. `check:contrast` remains the WCAG ratio
+gate, and `check:tokens` remains the declaration/delivery and parity gate; neither duplicates
+hex syntax validation. `scripts/color-literals.selftest.mjs` permanently covers the four
+accepted forms, `#12345`, `#1234567`, both original `#35718AF` spellings, and non-colour cases.
+
+The committed deliberate-failure specimen is `0db2c9869d90375c375ca9c68510dee41926bd4c`
+(Press `--accent-digital: #35718AF`). `npm run lint:colors` failed specifically with
+`styles/themes/press.css:83:21 [invalid-hex] #35718AF` (exit 1). The required restore is the
+separate revert commit `71f0b6eee92e4004bee0f07e91fa3ee6eebcf421`; the specimen remains
+reachable in history and the final source is valid. Implementation commit:
+`efec1cb1` (`fix(digital): validate theme hex colour literals`).
+
+Local verification on the restored tree: color-literal self-test, `lint:colors` (240 files),
+`check:contrast` (44 pairs / 185 permission cells), `check:tokens`, ESLint for the modified
+gate files, `git diff --check`, and a development build passed. Puppeteer computed the
+switcher border as `rgb(53, 113, 138)` on `/about` (Master), `/design`, `/press` and
+`/digital`. Exact-SHA CI and protected Preview are tracked by the staging release receipt;
+the correction is staging-only.
+
 ## Known non-blocking findings
 
 - 27 development-dependency advisories (12 high, 13 moderate, 2 low), unchanged baseline;
