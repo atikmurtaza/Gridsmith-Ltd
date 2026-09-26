@@ -39,7 +39,7 @@
  *   guarantee. Where a service touches rights or listings, the record says what Gridsmith does
  *   and what stays with the client.
  *
- * ## Granularity — 46 records for 81 approved services
+ * ## Granularity — 47 records for 88 approved capabilities after GS-PRESS-001-D
  *
  * A record is a page, and 81 pages would mean pages like "Naming support" carrying three
  * sentences each. `covers` is what keeps the arithmetic honest: every approved service is named
@@ -949,15 +949,16 @@ export const SERVICES = {
       slug: 'copy-editing-and-proofreading',
       title: 'Copy Editing & Proofreading',
       group: 'editorial',
-      covers: ['Copy editing', 'Proofreading'],
+      covers: ['Line editing', 'Copy editing', 'Mechanical editing', 'Proofreading'],
       searchIntent: 'copy editing and proofreading uk',
       summary: 'It is done and you cannot see it clearly any more.',
       description: [
-        'Copy editing for sense, consistency, grammar and style against an agreed style guide, and proofreading as the final pass against typeset proofs.',
-        'They are separate stages and are normally done at separate times. Copy editing happens to the text; proofreading happens to the laid-out pages, and catches what layout introduced.',
+        'Line editing considers clarity, flow and voice sentence by sentence. Copy editing then checks consistency, grammar and style against an agreed style guide; mechanical editing is the narrower application of those house-style decisions.',
+        'Proofreading is a separate final pass, normally against laid-out proofs. The scope can cover one stage or several, but each is agreed separately so a proofread is never presented as a structural edit.',
+        'Translation or bilingual proofreading may be coordinated only where the language, scope and suitable qualified resource are available and agreed. Neither is assumed to be included.',
       ],
       deliverables: [
-        ['Copy edit', 'Tracked changes against an agreed style guide.'],
+        ['Line or copy edit', 'Tracked changes at the editorial level agreed in scope.'],
         ['Style sheet', 'Decisions recorded so later material stays consistent.'],
         ['Proofread against proofs', 'On the typeset pages, not the manuscript.'],
         ['Fact checking', 'Only where it is explicitly scoped and the sources are supplied.', false],
@@ -969,19 +970,20 @@ export const SERVICES = {
       slug: 'publishing-preparation',
       title: 'Publishing Preparation & Distribution Setup',
       group: 'publishing',
-      covers: ['Publishing preparation', 'Distribution/platform setup', 'ISBN guidance/support'],
+      covers: ['Publishing preparation', 'Distribution/platform setup', 'ISBN guidance/support', 'Metadata preparation'],
       searchIntent: 'self publishing support uk',
       summary: 'You have a finished manuscript and no route to a published book.',
       description: [
-        'The production and administrative work between a finished manuscript and a book that exists: publishing plan, metadata, ISBN, and setting up the distribution and platform accounts.',
-        'Account and ISBN arrangements are agreed in writing before anything is registered. An ISBN registered to a service provider records that provider as the publisher of your book, which is a consequence people discover late — so unless you decide otherwise, we set these up in your name.',
+        'The production and administrative work between a finished manuscript and a publication-ready submission: publishing plan, metadata, ISBN guidance, platform readiness and distribution setup where scoped.',
+        'ISBN, imprint, publisher identity and account arrangements are agreed in writing before registration or setup. The written scope states who holds or controls each and any exceptions; the details depend on the chosen route and engagement.',
         'Acceptance by any retailer or distributor is their decision. We prepare and submit to their published requirements; we do not control the outcome, and no sales result is promised.',
       ],
       deliverables: [
         ['Publishing plan', 'Formats, channels and sequence.'],
-        ['ISBN guidance', 'How to obtain your own, and what it commits you to.'],
-        ['Metadata and listing preparation', 'Prepared to each platform’s specification.'],
-        ['Distribution account setup', 'Set up on the arrangement agreed in writing — by default in your name, so the listing and the royalties stay with you.'],
+        ['ISBN guidance', 'The available registration arrangements and their implications for the chosen route.'],
+        ['Metadata and listing preparation', 'Description, categories and keywords prepared for the destinations in scope.'],
+        ['Submission and release support', 'File checks, upload guidance and release steps where agreed; platform acceptance remains a third-party decision.'],
+        ['Distribution account setup', 'Set up or coordinated on the account arrangement agreed in writing.'],
         ['Retailer acceptance or sales outcomes', 'Listing decisions rest with the retailer and sales outcomes cannot be guaranteed.', false],
       ],
       collaborators: ['design'],
@@ -990,18 +992,20 @@ export const SERVICES = {
     {
       slug: 'typesetting-and-formatting',
       title: 'Typesetting & Formatting',
-      group: 'publishing',
-      covers: ['Typesetting', 'Ebook/print formatting', 'Platform-standard formatting'],
+      group: 'book-production',
+      covers: ['Typesetting', 'Ebook/print formatting', 'Platform-standard formatting', 'Print production coordination'],
       searchIntent: 'book typesetting and ebook formatting uk',
       summary: 'The inside of the book looks like a word processor.',
       description: [
         'Typesetting the interior of a book and producing the files each channel requires: a print interior set for the trim size and binding, and a reflowable ebook that behaves correctly on the devices people read on.',
-        'Files are built to the current published specifications of the platforms in scope and checked against their validators before submission.',
+        'Files are built to the current published specifications of the platforms in scope and checked against their validators before submission. Print specifications, print-on-demand setup and supplier handoff can be coordinated where agreed; printing itself is supplied by the chosen third party.',
       ],
       deliverables: [
         ['Typeset print interior', 'Set for the agreed trim size, margins and binding allowance.'],
         ['Reflowable ebook', 'With a working table of contents and correct structural markup.'],
         ['Platform-ready files', 'Validated against each platform’s current requirements.'],
+        ['Print production coordination', 'Print specification and supplier or print-on-demand handoff where scoped.'],
+        ['Printing or physical quality guarantees', 'The printer or platform produces the physical book and controls its availability.', false],
         ['Proof review', 'A proofreading pass on the typeset pages is scoped under Editorial.', false],
       ],
       collaborators: [],
@@ -1010,12 +1014,12 @@ export const SERVICES = {
     {
       slug: 'cover-design-coordination',
       title: 'Cover Design Coordination',
-      group: 'publishing',
+      group: 'book-production',
       covers: ['Cover-design coordination'],
       searchIntent: 'book cover design uk',
       summary: 'The cover has to work as a thumbnail and as a printed object.',
       description: [
-        'Gridsmith Press runs the publishing engagement and briefs the cover; Gridsmith Design does the visual work. That split is deliberate — the cover is a design problem, and the book is a publishing relationship.',
+        'Gridsmith Press coordinates the cover brief within publishing work; Gridsmith Design creates the visual artwork when included. The scope names each contribution before work begins.',
         'Coordination covers the brief, the category and format conventions the cover has to sit inside, the print specification from your printer, and the versions each channel needs.',
       ],
       deliverables: [
@@ -1026,6 +1030,27 @@ export const SERVICES = {
       ],
       collaborators: ['design'],
       related: ['publishing-preparation', 'typesetting-and-formatting'],
+    },
+    {
+      slug: 'audiobook-production-support',
+      title: 'Audiobook Production Support',
+      group: 'audiobook',
+      covers: ['Audiobook production support', 'Narration/voice coordination', 'Audio preparation'],
+      searchIntent: 'audiobook production support uk',
+      summary: 'Your manuscript is ready for audio, but the narration and delivery route still need planning.',
+      description: [
+        'We prepare the text for spoken delivery and coordinate the people and production steps needed to make an audiobook within an agreed scope.',
+        'The engagement may include narration or voice coordination, chapter and track planning, editing and mastering coordination, platform file checks and distribution guidance. The available resources, format and destination are agreed for the project.',
+        'Voice talent, studio work, platform submission and distribution depend on the selected suppliers and platforms. We do not promise acceptance, placement or sales.',
+      ],
+      deliverables: [
+        ['Audio script preparation', 'A manuscript prepared for narration, with pronunciation and structural decisions recorded where needed.'],
+        ['Production plan', 'Narration, chapters, tracks, review points and technical destination agreed in scope.'],
+        ['Coordinated audio files', 'Editing, mastering and file preparation through suitable suppliers where included.'],
+        ['Platform acceptance or distribution', 'Third-party approval and availability are outside our control.', false],
+      ],
+      collaborators: [],
+      related: ['publishing-preparation', 'book-marketing-support'],
     },
     {
       slug: 'content-programmes',
@@ -1076,7 +1101,7 @@ export const SERVICES = {
       summary: 'Your book is ready for a structured launch and the content that supports it.',
       description: [
         'Written and editorial support around a book’s release: description and metadata copy, author platform material, announcement and outreach copy, and the supporting content a launch needs.',
-        'This is the writing and editorial work. It is not publicity representation, and coverage, reviews, chart positions and sales figures cannot be guaranteed.',
+        'This is writing and editorial support. Gridsmith Design can create visual campaign assets, Gridsmith Digital can build landing pages and tracking, and cross-channel campaign strategy sits with Gridsmith as a whole when separately scoped. We do not promise publicity coverage, reviews, rankings or sales.',
       ],
       deliverables: [
         ['Book description and metadata copy', 'Written for the listing as well as for the reader.'],
@@ -1085,7 +1110,7 @@ export const SERVICES = {
         ['Publicity representation', 'We do not act as a publicist or pitch media on your behalf.', false],
         ['Coverage, reviews or sales results', 'Coverage, reviews and sales outcomes cannot be guaranteed, and Gridsmith does not promise them.', false],
       ],
-      collaborators: ['digital'],
+      collaborators: ['digital', 'design'],
       related: ['content-programmes', 'publishing-preparation'],
     },
   ],

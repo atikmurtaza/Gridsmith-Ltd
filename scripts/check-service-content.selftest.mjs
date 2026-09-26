@@ -23,6 +23,7 @@ import {
   UNCONFIRMED_CHANNEL_SERVICES,
 } from '../lib/services/catalogue.ts';
 import { PROCESS_DETAIL, SERVICES } from './service-content.mjs';
+import { TERRITORIES } from '../components/divisions/press/catalogue.ts';
 import {
   IDENTIFYING_TITLE_FRAGMENTS,
   MIN_COPY_STRINGS,
@@ -30,6 +31,7 @@ import {
   anonymityProblems,
   coverageProblems,
   engagementProblems,
+  pressCatalogueProblems,
   struckCopyProblems,
 } from './service-content-rules.mjs';
 
@@ -385,6 +387,21 @@ t('REAL — no struck position stands in the committed copy', () => {
   });
   assert.ok(scanned >= MIN_COPY_STRINGS, `only ${scanned} string(s) were read`);
   assert.deepEqual(problems, []);
+});
+
+t('PRESS catalogue — all 43 rows resolve to the 14 canonical services', () => {
+  assert.deepEqual(pressCatalogueProblems(TERRITORIES, SERVICES.press), []);
+});
+
+t('PRESS catalogue — a missing destination is named', () => {
+  const services = SERVICES.press.filter((s) => s.slug !== 'audiobook-production-support');
+  assert.ok(pressCatalogueProblems(TERRITORIES, services).some((p) => p.includes('points to missing audiobook-production-support')));
+});
+
+t('PRESS catalogue — duplicate service rows are rejected', () => {
+  const territories = structuredClone(TERRITORIES);
+  territories[4].primary.push({ name: 'Audio duplicate', slug: 'audiobook-production-support', kind: 'service' });
+  assert.ok(pressCatalogueProblems(territories, SERVICES.press).some((p) => p.includes('audiobook-production-support needs exactly one service row')));
 });
 
 /* -- Run ------------------------------------------------------------------ */

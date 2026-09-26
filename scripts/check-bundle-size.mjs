@@ -518,7 +518,10 @@ if (over.length > 0) {
 // (HeroApertureMotion) and the chapter-entry leaf (VisualActivation), owner-approved. It is
 // no longer featureless, so it leaves the baseline set; it stays in REQUIRED and under
 // Digital's unchanged 15KB delta ceiling, which is where its cost is asserted.
-const BASELINE_ROUTES = ['/press', '/_not-found'];
+// GS-PRESS-001-R3: /press now mounts the approved Publishing Desk client interactions. Its
+// route budget still measures them. A server-rendered Press service page keeps the Press root
+// layout in this comparison, alongside the independently rendered 404.
+const BASELINE_ROUTES = ['/press/services/publishing-preparation', '/_not-found'];
 
 const baselineRows = rows.filter((r) => BASELINE_ROUTES.includes(r.url));
 const kitchen = rows.find((r) => r.url === '/_kitchen-sink');

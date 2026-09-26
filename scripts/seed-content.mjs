@@ -842,6 +842,31 @@ const client = createClient({
   useCdn: false,
 });
 
+/** GS-PRESS-001-D: update only the existing Press seed records and add the audio seed record.
+ * This path performs no delete and never writes another division or a genuine document. */
+if (process.argv.includes('--press-only')) {
+  const existing = await client.fetch(
+    '*[_type == "service" && division == "press" && !(_id in path("drafts.**"))]{_id, _type, division, isSeed}',
+  );
+  const expectedOld = new Set(serviceDocs.filter((d) => d.division === 'press' && d.slug.current !== 'audiobook-production-support').map((d) => d._id));
+  if (existing.length !== 13 || existing.some((d) => !expectedOld.has(d._id) || d.isSeed !== true)) {
+    console.error('seed-content --press-only: development Press records differ from the expected 13 seed records; nothing written.');
+    process.exit(1);
+  }
+  const audioId = 'seed-service-press-audiobook-production-support';
+  const audio = await client.fetch('*[_id == $id][0]{_id}', { id: audioId });
+  if (audio) {
+    console.error('seed-content --press-only: audiobook id already exists; refusing to replace an uninspected document.');
+    process.exit(1);
+  }
+  const pressDocs = serviceDocs.filter((d) => d.division === 'press');
+  let tx = client.transaction();
+  for (const doc of pressDocs) tx = tx.createOrReplace(doc);
+  await tx.commit();
+  console.log(`seed-content --press-only: wrote ${pressDocs.length} Press seed services to development; deleted 0; other divisions untouched.`);
+  process.exit(0);
+}
+
 /**
  * ## Obsolete seed is deleted, and nothing else is — `GS-T007`, authorised at `GS-P04`
  *

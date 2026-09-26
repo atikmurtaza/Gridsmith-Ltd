@@ -73,7 +73,7 @@ const btn = (variant: 'primary' | 'secondary') =>
 const BUDGETS = [
   { value: 'not-sure', label: 'Not sure yet' },
   { value: 'small', label: 'A small, well-defined piece of work' },
-  { value: 'project', label: 'A full book project' },
+  { value: 'project', label: 'A defined project' },
   { value: 'programme', label: 'An ongoing programme or retainer' },
 ];
 
@@ -146,6 +146,13 @@ const WHO_WRITES = [
   { value: 'undecided', label: 'Undecided' },
 ];
 
+const PRODUCTION_TYPES = [
+  { value: 'editing', label: 'Editing or proofreading' },
+  { value: 'book-production', label: 'Book layout, files or print coordination' },
+  { value: 'publishing', label: 'Publishing or distribution preparation' },
+  { value: 'audiobook', label: 'Audiobook production support' },
+];
+
 const READERSHIPS = [
   { value: 'family-only', label: 'Family and friends' },
   { value: 'public', label: 'A general readership' },
@@ -173,6 +180,8 @@ const STEP_OF_FIELD: Record<string, number> = {
   volumePerMonth: 2,
   turnaroundNeeded: 2,
   procurementProcess: 2,
+  workType: 2,
+  currentMaterial: 2,
   manuscriptLink: 3,
   budget_band: 3,
   full_name: 4,
@@ -185,7 +194,7 @@ const STEP_OF_FIELD: Record<string, number> = {
 const STEP_TITLES = [
   'Which describes you?',
   'About the work',
-  'Budget and the manuscript',
+  'Budget and source material',
   'How to reach you',
 ];
 
@@ -255,7 +264,7 @@ export function PressContactFlow({
   };
 
   const segmentOptions = pressSegmentOptions(expectationsStatement !== null);
-  const showManuscriptLink = segment === 'author' || segment === 'memoir';
+  const showManuscriptLink = segment === 'author' || segment === 'memoir' || segment === 'production';
 
   return (
     <form action={formAction} className={styles.form} noValidate>
@@ -359,6 +368,13 @@ export function PressContactFlow({
             <Field name="volumePerMonth" label="How much, per month?" required hint="Two long articles, one newsletter a week — an estimate is fine." error={firstError('volumePerMonth')} />
             <Field name="turnaroundNeeded" label="What turnaround do you need?" required error={firstError('turnaroundNeeded')} />
             <RadioGroup name="procurementProcess" legend="Is there a procurement or contracting process to go through?" options={YES_NO} required error={firstError('procurementProcess')} />
+          </>
+        ) : null}
+
+        {segment === 'production' ? (
+          <>
+            <Select name="workType" label="What kind of support do you need?" options={PRODUCTION_TYPES} required error={firstError('workType')} />
+            <Field name="currentMaterial" label="What do you have so far?" multiline required hint="A manuscript, edited text, production files or an existing release — describe what is ready and what still needs doing." error={firstError('currentMaterial')} />
           </>
         ) : null}
 

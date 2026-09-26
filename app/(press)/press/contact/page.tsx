@@ -8,7 +8,7 @@ import { PressContactFlow } from '@/components/divisions/press/PressContactFlow'
 import { getCompanyDetails, whatsAppHref, smsHref } from '@/lib/company/companyDetails';
 
 export const metadata: Metadata = {
-  title: 'Tell us about the book — Gridsmith Press',
+  title: 'Tell us about the work — Gridsmith Press',
   description:
     'Four questions about the work, then how to reach you. Manuscripts are shared as links, never uploads.',
 };
@@ -40,15 +40,14 @@ export default async function Page() {
     <main id="main" tabIndex={-1}>
       <Section rhythm="loose">
         <Container width="narrow">
-          <Heading level={1}>Tell us about the book</Heading>
+          <Heading level={1}>Tell us about the work</Heading>
           <Prose>
             <p>
               Four short steps. The questions change after the first one, so you are only asked
               what applies to you.
             </p>
             <p>
-              We take manuscripts as a link, never as an upload — nothing of yours ends up sitting
-              on our servers.
+              If you have a manuscript or source files, share a link rather than an upload.
             </p>
             <p>{company.responseCommitment}</p>
           </Prose>

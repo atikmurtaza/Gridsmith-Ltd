@@ -1,0 +1,106 @@
+/* GS-PRESS-001-C (local visual prototype, provisional until owner review): the single
+   source of Press identity colour for "Decided in the Margin". styles/themes/press.css
+   keeps the shared token contract; everything Press-specific the landing, the service
+   detail theme and the chrome read is declared here, on the Press root layout's body.
+
+   Gold is semantic: a recorded editorial decision. It is never decoration, hover or
+   emphasis. On paper it is a rule or underline (3.66:1, non-text) and its text form is
+   --pr-gold-ink (5.9:1); on green it is the family gold itself (5.4:1). */
+body[data-division="press"] {
+  --pr-paper: #FBF9F4;
+  --pr-raised: #FFFFFF;
+  --pr-sunken: #F2EFE7;
+  --pr-ink: #1A1815;
+  --pr-muted: #57534E;
+  --pr-green: #2E4A3A;
+  --pr-green-2: #426953;
+  --pr-green-deep: #1F3428;
+  --pr-rule: #C8C2B2;
+  --pr-rule-soft: #E3DFD4;
+  --pr-mark: #2E4A3A;
+
+  /* Family gold: --gold and --gold-mid of master-stage.css, the mark's own material. */
+  --pr-gold: #A17C36;
+  --pr-gold-bright: #E0BD70;
+  --pr-gold-ink: #7A5C22;
+  --pr-gold-wash: #F5EBCF;
+
+  /* R1 tonal stages: one palette, several surfaces. */
+  --pr-table: #EEE9DD;
+  --pr-note: #F6F0DF;
+  --pr-grid: #ECE7DB;
+  --pr-night: #16201A;
+  --pr-night-2: #1F2B24;
+  --pr-audio: #141311;
+  --pr-audio-2: #201E1A;
+  --pr-on-dark: #F3EFE6;
+  --pr-on-dark-muted: #B8C2BA;
+  --pr-on-dark-rule: #3A4A40;
+  --pr-green-light: #9FC0AA;
+
+  /* R2 green-dominant hierarchy: the desk surface inside the deep-green hero, and a
+     decorative gold for fine rules on green (5.7:1 on deep green; never body text). */
+  --pr-desk: #284336;
+  --pr-desk-grid: #31503F;
+  --pr-gold-line: #C9A55A;
+
+  /* Paper foregrounds on the deep green frame. */
+  --pr-on-green: #FBF9F4;
+  --pr-on-green-muted: #C5D0C7;
+  --pr-on-green-rule: #5E7F6B;
+
+  --pr-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --pr-serif: var(--font-source-serif), Georgia, serif;
+
+  /* The margin: its width and the gap either side of its rule are shared by every section,
+     so the rule reads as one line down the page. */
+  --pr-index: 5.5rem;
+  --pr-margin: 19rem;
+  --pr-gap: 3.5rem;
+  --pr-gutter: clamp(1rem, 4vw, 3rem);
+}
+
+body[data-division="press"] :focus-visible {
+  outline: 2px solid var(--pr-green);
+  outline-offset: 3px;
+}
+
+body[data-division="press"] .pr-on-green :focus-visible {
+  outline-color: var(--pr-gold-bright);
+}
+
+/* Apparatus is Inter: the shared chrome's labels and navigation. The wordmark keeps its own face. */
+body[data-division="press"] > header,
+body[data-division="press"] > footer {
+  --font-mono: var(--pr-sans);
+  --font-body: var(--pr-sans);
+}
+
+/* Shared ServiceDetail markup, scoped to Press only: serif reading, Inter apparatus, rules. */
+body[data-division="press"] .pr-service-detail {
+  --font-mono: var(--pr-sans);
+  --accent: var(--pr-green);
+  --line-strong: var(--pr-rule);
+  background: var(--pr-paper);
+  border-block-start: 4px solid var(--pr-green);
+}
+
+body[data-division="press"] .pr-service-detail > :first-child {
+  border-block-end: 1px solid var(--pr-rule);
+}
+
+body[data-division="press"] .pr-service-detail > :first-child h1 {
+  font-family: var(--pr-serif);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  max-width: 20ch;
+  margin-block-start: var(--space-3);
+}
+
+body[data-division="press"] .pr-service-detail h2 {
+  font-family: var(--pr-serif);
+  font-weight: 500;
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--pr-ink);
+  max-width: 34rem;
+}

@@ -15,6 +15,36 @@
  */
 import { approvedKey, divisionOfGroup } from '../lib/services/catalogue.ts';
 
+/** The 43 presentation rows must resolve to the 14 canonical Press records. */
+export function pressCatalogueProblems(territories, services) {
+  const problems = [];
+  if (territories?.length !== 6) problems.push(`PRESS CATALOGUE: expected 6 territories, got ${territories?.length ?? 0}`);
+  const rows = (territories ?? []).flatMap((t) => [...t.primary, ...t.supporting].map((item) => ({ ...item, territory: t })));
+  if (rows.length !== 43) problems.push(`PRESS CATALOGUE: expected 43 rows, got ${rows.length}`);
+  const bySlug = new Map();
+  for (const service of services ?? []) {
+    if (bySlug.has(service.slug)) problems.push(`PRESS SERVICE: duplicate slug ${service.slug}`);
+    bySlug.set(service.slug, service);
+  }
+  const linkedServices = new Map();
+  for (const row of rows) {
+    const service = bySlug.get(row.slug);
+    if (!service) problems.push(`PRESS CATALOGUE: ${row.name} points to missing ${row.slug}`);
+    if (!['service', 'capability', 'coordinated', 'conditional'].includes(row.kind)) {
+      problems.push(`PRESS CATALOGUE: ${row.name} has unknown kind ${row.kind}`);
+    }
+    if (row.kind === 'service') {
+      if (service?.group !== row.territory.group) problems.push(`PRESS CATALOGUE: ${row.name} is in the wrong territory`);
+      linkedServices.set(row.slug, (linkedServices.get(row.slug) ?? 0) + 1);
+    }
+    if (row.kind === 'conditional' && !row.note) problems.push(`PRESS CATALOGUE: ${row.name} needs its qualification`);
+  }
+  for (const service of services ?? []) {
+    if (linkedServices.get(service.slug) !== 1) problems.push(`PRESS CATALOGUE: ${service.slug} needs exactly one service row`);
+  }
+  return problems;
+}
+
 /**
  * The identifying fragments that must never appear in a testimonial's title metadata again —
  * `GS-O011`, owner decision of 16 September 2026 to anonymise identifiable project titles on

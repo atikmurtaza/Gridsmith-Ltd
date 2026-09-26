@@ -1,5 +1,7 @@
 # Service architecture and commercial model — ADR `GS-P03`
 
+> **GS-PRESS-001-D (26 September 2026) Press override:** After owner visual approval of R3, Press is formalised as six territories, 14 canonical service records and 29 approved capabilities. The 13 old service URLs remain; one audiobook URL is added. The four-group Press table and 81/46/14 programme totals below record the earlier `GS-P03` baseline and are superseded for Press. See `GS-PRESS-001-D.md` for exact service and capability migration, CMS boundaries and pending RC work.
+
 > **GS-R002, 19 September 2026:** canonical ownership and counts remain unchanged. Design visitor chapters combine Illustration / Motion / 3D as Motion / Dimensional. Gaming/streamer and motion deliverables are now enumerated using current MAD Alpha capability evidence. This is child-deliverable detail, not a new service/group. See `GS-R002-DESIGN.md`.
 
 **Status:** Accepted · **Date:** 14 September 2026 · **Phase:** `GS-P03`

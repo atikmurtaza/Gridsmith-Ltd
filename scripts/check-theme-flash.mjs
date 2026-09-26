@@ -40,7 +40,7 @@ const EXPECTED = [
  * was measured and it is false.** `next/font` emits its declarations into the importing
  * layout's own CSS, not into `globals.css`, so the served sheets already scope: 15
  * `@font-face` rules and 33,411 B on `/`, `/design` and `/digital`; 14 and 33,369 B on
- * `/press`, which ships Source Serif and no Inter. No route ships all three.
+ * `/press` was measured before R3 added Inter for editorial apparatus. No route ships all three.
  *
  * So the row's work is not a refactor — it is this list. Nothing asserted the scoping, which
  * is why a claim that it had been lost could stand unchallenged for two epics, and one shared
@@ -55,7 +55,7 @@ const FACES = {
   index: ['Inter', 'JetBrains Mono'],
   design: ['Inter', 'JetBrains Mono'],
   digital: ['Inter', 'JetBrains Mono'],
-  press: ['Source Serif 4', 'JetBrains Mono'],
+  press: ['Source Serif 4', 'Inter', 'JetBrains Mono'],
 };
 
 const APP_DIR = '.next/server/app';

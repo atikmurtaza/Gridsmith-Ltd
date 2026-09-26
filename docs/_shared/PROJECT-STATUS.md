@@ -6,6 +6,8 @@
 
 # Gridsmith production programme status
 
+> **GS-PRESS-001-D current Press authority (26 September 2026):** The owner visually approved R3's Publishing Desk. Press content architecture is being formalised on `staging/gs-press-001-press`: six territories, 14 canonical service records and 29 approved capabilities replace the historical four/13/22 Press model. The 13 old URLs are preserved and an audiobook route is added. RC, production CMS migration, production deploy and cutover remain unauthorised. See `GS-PRESS-001-D.md`.
+
 > **19 September 2026 — GS-R002 superseding status:** Design is implemented as an owner-review candidate on `staging/gs-r002-design`, based on accepted `eda5f3ae`. **GS-O008 APPROVED** by the owner; minor Master polish deferred to final cross-division comparison. **GS-O020 CLOSED — PUBLISH** preserved. **GS-O019 resolved for capability detail**; two development-only service records expanded, no group/count change. Main remains `fbecbe01`; production remains NOT READY. The older GS-R001-M status below is historical. Current evidence: `GS-R002-DESIGN.md`.
 
 **Programme:** controlled production readiness

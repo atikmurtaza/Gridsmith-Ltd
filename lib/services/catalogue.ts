@@ -126,16 +126,24 @@ export const APPROVED_SERVICES: readonly ApprovedService[] = [
   { group: 'editorial', name: 'Manuscript development' },
   { group: 'editorial', name: 'Developmental/structural editing' },
   { group: 'editorial', name: 'Copy editing' },
+  { group: 'editorial', name: 'Line editing' },
+  { group: 'editorial', name: 'Mechanical editing' },
   { group: 'editorial', name: 'Proofreading' },
   { group: 'editorial', name: 'Manuscript assessment' },
 
   { group: 'publishing', name: 'Publishing preparation' },
-  { group: 'publishing', name: 'Ebook/print formatting' },
-  { group: 'publishing', name: 'Platform-standard formatting' },
+  { group: 'book-production', name: 'Ebook/print formatting' },
+  { group: 'book-production', name: 'Platform-standard formatting' },
+  { group: 'book-production', name: 'Typesetting' },
+  { group: 'book-production', name: 'Cover-design coordination' },
+  { group: 'book-production', name: 'Print production coordination' },
   { group: 'publishing', name: 'ISBN guidance/support' },
+  { group: 'publishing', name: 'Metadata preparation' },
   { group: 'publishing', name: 'Distribution/platform setup' },
-  { group: 'publishing', name: 'Typesetting' },
-  { group: 'publishing', name: 'Cover-design coordination' },
+
+  { group: 'audiobook', name: 'Audiobook production support' },
+  { group: 'audiobook', name: 'Narration/voice coordination' },
+  { group: 'audiobook', name: 'Audio preparation' },
 
   { group: 'content-promotion', name: 'Ongoing content programmes' },
   { group: 'content-promotion', name: 'Content SEO' },
@@ -253,7 +261,7 @@ export const DIGITAL_MARKETING_ENGAGEMENT: readonly {
  * management is now an explicit engagement row, and no copy denies it. What is still absent is an
  * **approved catalogue entry** for standalone media buying: `GS-O013` also says the catalogue may
  * not be materially expanded, so a service record titled *Media buying*, or claiming it as a
- * capability, would be a page for something the 81-service approval does not contain. That is
+ * capability, would be a page for something the approved catalogue does not contain. That is
  * what this list refuses — a service **record**, not the capability.
  *
  * Nothing in `DIGITAL_MARKETING_ENGAGEMENT` is in scope for the assertion: limb 5's haystack is a

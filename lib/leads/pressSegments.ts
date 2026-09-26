@@ -25,7 +25,7 @@ import {
 // same reason `sanity/schemas` uses explicit extensions (see `tsconfig.json`). Webpack and the
 // selftest both resolve this form, so the gate's subject is the shipped file.
 
-export const PRESS_SEGMENTS = ['author', 'business', 'memoir', 'content'] as const;
+export const PRESS_SEGMENTS = ['author', 'business', 'memoir', 'content', 'production'] as const;
 export type PressSegment = (typeof PRESS_SEGMENTS)[number];
 
 /**
@@ -40,6 +40,7 @@ export function pressSegmentOptions(hasExpectationsStatement: boolean) {
     { value: 'business', label: 'I am a business or a founder' },
     { value: 'memoir', label: 'I am writing a memoir or a legacy book' },
     { value: 'content', label: 'I need ongoing content' },
+    { value: 'production', label: 'I need editing, publishing or audiobook support' },
   ];
   return hasExpectationsStatement ? all : all.filter((o) => o.value !== 'memoir');
 }
@@ -61,12 +62,12 @@ export function pressSegmentOptions(hasExpectationsStatement: boolean) {
  * | `business` | business terms | *"I am a business or a founder"* states the trade purpose `MSA-BUSINESS.md` §1 requires |
  * | `author` | consumer terms | `_legal/00-LEGAL-BASIS.md` §3 and FR-P24: an individual author with a manuscript is a consumer buyer, and the instrument's own §1 corrects the minority who are not |
  * | `memoir` | consumer terms | same, and more strongly — a memoir or legacy book is outside a trade by description |
- * | `content` | **the disambiguation page** | *"I need ongoing content"* says nothing about purpose. FR-P24 does not name this segment and neither instrument's §1 resolves it, so it goes to the page that carries no operative clause and explains both. **This is a correct destination, not the closest one**: picking either instrument here would be the pre-26-August defect with an extra step. |
+ * | `content`, `production` | **the disambiguation page** | Neither answer states the purpose of purchase. The page explains both instruments without selecting one on the visitor's behalf. |
  *
  * `check:press:contact:selftest` breaks each of the four branches separately.
  */
 export function pressSegmentTerms(segment: PressSegment) {
   if (segment === 'business') return CLIENT_TERMS_BUSINESS;
-  if (segment === 'content') return CLIENT_TERMS_DISAMBIGUATION;
+  if (segment === 'content' || segment === 'production') return CLIENT_TERMS_DISAMBIGUATION;
   return CLIENT_TERMS_CONSUMER;
 }

@@ -118,7 +118,7 @@ const CLOSED_LISTS = [
   ['service', 'capabilityGroup', [
     'brand-visual', 'illustration', 'motion', '3d-visualisation', 'technical',
     'web', 'software', 'apps-interactive', 'automation-intelligence', 'operate-improve',
-    'writing', 'editorial', 'publishing', 'content-promotion',
+    'writing', 'editorial', 'book-production', 'publishing', 'audiobook', 'content-promotion',
   ], (v) => v],
 ];
 

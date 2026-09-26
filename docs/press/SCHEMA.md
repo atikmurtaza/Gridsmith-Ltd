@@ -1,5 +1,7 @@
 # Schema — Gridsmith Press
 
+> **GS-PRESS-001-D (26 September 2026):** Press services use the shared Sanity `service` type with six closed capability groups, 14 records and 29 approved capabilities. The prior group and package examples below are historical where they conflict. See `docs/_shared/GS-PRESS-001-D.md`; production dataset migration is deferred to the controlled release phase.
+
 Core types in `_shared/SCHEMA-CORE.md`. This file defines Press-specific types, extensions, and data contracts.
 
 ---

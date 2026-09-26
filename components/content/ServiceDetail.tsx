@@ -84,7 +84,7 @@ export function ServiceDetail({ service }: { service: ServiceRecord }) {
   const related = service.relatedServices ?? [];
 
   return (
-    <main id="main" tabIndex={-1} className={division === 'digital' ? 'dg-service-detail' : undefined}>
+    <main id="main" tabIndex={-1} className={division === 'digital' ? 'dg-service-detail' : division === 'press' ? 'pr-service-detail' : undefined}>
       <Section rhythm="loose">
         <Container>
           <Breadcrumb

@@ -1,5 +1,7 @@
 # Project Rules — Gridsmith Press
 
+> **GS-PRESS-001-D (26 September 2026):** The owner visually approved R3. The six-territory service architecture, 14 canonical service records and conditional offering boundaries in `docs/_shared/GS-PRESS-001-D.md` supersede older four-group and 13-service descriptions. R3 visuals remain frozen; Path Finder remains withheld. All ethics, rights, accessibility and seed restrictions below continue to apply.
+
 > **GS-P00 override — 11 September 2026.** The Press tracker reconciliation table and
 > `GS-D001`/`GS-D002` remove the public title catalogue, retailer links, author-consent volume and
 > public price tables from the launch critical path. The Path Finder's honest outcomes, rights,

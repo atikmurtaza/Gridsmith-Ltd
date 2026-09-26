@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * **`check:press:contact:selftest` — the committed subject for the Press contact flow's data
- * contract (`K-13`).**
+ * contract (`K-13`, `GS-PRESS-001-D`).**
  *
  * Subjects: `lib/leads/pressLead.ts` — the four-branch discriminated union, the `FormData`
  * mapper, and the memoir/statement coupling that decides whether step 1 offers the memoir
@@ -75,6 +75,12 @@ const CONTENT = [
   ['procurementProcess', 'no'],
 ];
 
+const PRODUCTION = [
+  ['segment', 'production'],
+  ['workType', 'audiobook'],
+  ['currentMaterial', 'A revised manuscript and narration notes'],
+];
+
 const parse = (entries) => pressLeadPayload.safeParse(pressPayloadFrom(form(entries)));
 const without = (entries, key) => entries.filter(([k]) => k !== key);
 const withValue = (entries, key, value) => [...without(entries, key), [key, value]];
@@ -102,6 +108,11 @@ const CASES = [
     name: 'VALID content — formats is an array with one entry',
     run: () => parse(CONTENT),
     expect: (r) => r.success && r.data.formats.length === 1,
+  },
+  {
+    name: 'VALID production — the expanded service enquiry parses',
+    run: () => parse(PRODUCTION),
+    expect: (r) => r.success && r.data.workType === 'audiobook',
   },
 
   // ---- ETH-07. The rule this whole flow exists under, broken three ways.
@@ -146,6 +157,16 @@ const CASES = [
     expect: (r) => !r.success && issuePaths(r).includes('formats'),
   },
   {
+    name: 'PRODUCTION BRANCH — missing current material is REJECTED',
+    run: () => parse(without(PRODUCTION, 'currentMaterial')),
+    expect: (r) => !r.success && issuePaths(r).includes('currentMaterial'),
+  },
+  {
+    name: 'PRODUCTION BRANCH — unknown work type is REJECTED',
+    run: () => parse(withValue(PRODUCTION, 'workType', 'printing')),
+    expect: (r) => !r.success && issuePaths(r).includes('workType'),
+  },
+  {
     name: 'MEMOIR BRANCH — the author-only revised-draft stage is REJECTED',
     run: () => parse(withValue(MEMOIR, 'manuscriptStage', 'revised-draft')),
     expect: (r) => !r.success && issuePaths(r).includes('manuscriptStage'),
@@ -185,12 +206,12 @@ const CASES = [
     name: 'COUPLING — with no ETH-07 statement, memoir is not offered and the other three are',
     run: () => pressSegmentOptions(false).map((o) => o.value),
     expect: (v) =>
-      !v.includes('memoir') && ['author', 'business', 'content'].every((s) => v.includes(s)),
+      !v.includes('memoir') && ['author', 'business', 'content', 'production'].every((s) => v.includes(s)),
   },
   {
     name: 'COUPLING — with a statement supplied, all four segments are offered',
     run: () => pressSegmentOptions(true).map((o) => o.value),
-    expect: (v) => v.length === 4 && v.includes('memoir'),
+    expect: (v) => v.length === 5 && v.includes('memoir'),
   },
 
   // ---- K-16 / FR-P24. Which instrument a segment is routed to is a legal-consequence
@@ -219,15 +240,20 @@ const CASES = [
     expect: (v) => v === 'client-terms',
   },
   {
+    name: 'K-16 PRODUCTION — routed to the disambiguation page; purpose is unstated',
+    run: () => pressSegmentTerms('production'),
+    expect: (v) => v === 'client-terms',
+  },
+  {
     name: 'K-16 NO CONSUMER SEGMENT REACHES THE MSA — the assertion the split exists for',
-    run: () => ['author', 'memoir', 'content'].map(pressSegmentTerms),
+    run: () => ['author', 'memoir', 'content', 'production'].map(pressSegmentTerms),
     expect: (v) => !v.includes('business-client-terms'),
   },
   {
     name: 'K-16 EVERY SEGMENT IS ROUTED — no segment falls through to undefined or an unknown slug',
     run: () => PRESS_SEGMENTS.map(pressSegmentTerms),
     expect: (v) =>
-      v.length === 4 &&
+      v.length === 5 &&
       v.every((s) =>
         ['business-client-terms', 'consumer-client-terms', 'client-terms'].includes(s),
       ),

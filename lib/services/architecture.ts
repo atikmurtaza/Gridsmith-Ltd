@@ -49,10 +49,12 @@ export const CAPABILITY_GROUPS: readonly CapabilityGroup[] = [
   { key: 'apps-interactive', division: 'digital', label: 'Apps & Interactive' },
   { key: 'automation-intelligence', division: 'digital', label: 'Automation & Intelligence' },
   { key: 'operate-improve', division: 'digital', label: 'Operate & Improve' },
-  { key: 'writing', division: 'press', label: 'Writing' },
-  { key: 'editorial', division: 'press', label: 'Editorial' },
-  { key: 'publishing', division: 'press', label: 'Publishing' },
-  { key: 'content-promotion', division: 'press', label: 'Content & Promotion' },
+  { key: 'writing', division: 'press', label: 'Writing & Development' },
+  { key: 'editorial', division: 'press', label: 'Editing' },
+  { key: 'book-production', division: 'press', label: 'Book Design & Production' },
+  { key: 'publishing', division: 'press', label: 'Publishing & Distribution' },
+  { key: 'audiobook', division: 'press', label: 'Audiobooks' },
+  { key: 'content-promotion', division: 'press', label: 'Marketing & Content' },
 ];
 
 export const CAPABILITY_GROUP_KEYS = CAPABILITY_GROUPS.map((g) => g.key);
