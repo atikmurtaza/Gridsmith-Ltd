@@ -22,7 +22,7 @@ export function DeskLoop() {
   useEffect(() => {
     const desk = ref.current?.closest<HTMLElement>('.pr-desk');
     if (!desk || !('IntersectionObserver' in window)) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const radios = STAGES.map((id) => desk.querySelector<HTMLInputElement>(`#pr-desk-${id}`));
     if (radios.some((r) => !r)) return;
 
@@ -40,7 +40,7 @@ export function DeskLoop() {
       timers.push(window.setTimeout(cycle, CYCLE));
     };
     const sync = () => {
-      const go = visible && !document.hidden && !holding && !pausedRef.current;
+      const go = visible && !document.hidden && !motion.matches && !holding && !pausedRef.current;
       if (go && !running) cycle();
       else if (!go && running) clear();
     };
@@ -52,12 +52,23 @@ export function DeskLoop() {
       clearTimeout(resume);
       resume = window.setTimeout(() => { holding = false; sync(); }, RESUME_AFTER);
     };
+    const onMotion = () => {
+      if (motion.matches) {
+        clear();
+        clearTimeout(resume);
+        holding = false;
+        radios[3]!.checked = true;
+      }
+      setActive(!motion.matches);
+      sync();
+    };
     desk.addEventListener('change', onChoice);
     const io = new IntersectionObserver(([entry]) => { visible = entry.intersectionRatio >= 0.35; sync(); }, { threshold: [0, 0.35, 1] });
     io.observe(desk);
     document.addEventListener('visibilitychange', sync);
+    motion.addEventListener('change', onMotion);
     control.current = { sync };
-    setActive(true);
+    onMotion();
 
     return () => {
       clear();
@@ -65,6 +76,7 @@ export function DeskLoop() {
       io.disconnect();
       desk.removeEventListener('change', onChoice);
       document.removeEventListener('visibilitychange', sync);
+      motion.removeEventListener('change', onMotion);
       control.current = null;
     };
   }, []);

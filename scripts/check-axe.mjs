@@ -20,6 +20,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import { launch } from './browser-launch.mjs';
+import { preparePress, pressContrast, provePressContrast } from './press-contrast.mjs';
 
 /**
  * The axe source is read and passed in explicitly rather than left to the adapter.
@@ -892,6 +893,10 @@ try {
         process.exit(1);
       }
 
+      if (route.path === '/press') {
+        await provePressContrast(browser);
+        await preparePress(page);
+      }
       for (const phase of PHASES) {
         if (phase.scrollToFoot) {
           // StickyCta only un-hides itself past 40% scroll depth and RevealOnScroll only
@@ -915,6 +920,14 @@ try {
         for (const inc of incomplete) {
           for (const node of inc.nodes) {
             let target = node.target.join(' ');
+            if (route.path === '/press' && inc.id === 'color-contrast') {
+              const measured = await pressContrast(page, target);
+              if (measured.pass) {
+                console.log(`  ${where} ${target}: ${measured.boxes ? 'pixel contrast' : 'not exposed'} ${measured.why}`);
+                continue;
+              }
+              console.error(`  ${where} ${target}: pixel check ${measured.why}`);
+            }
             // Attribute-based axe selectors can change before the async audit returns.
             // Match the captured node plus its current, strictly decorative DOM boundary.
             if (route.path === '/design' && inc.id === 'color-contrast') {

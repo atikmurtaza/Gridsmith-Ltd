@@ -84,6 +84,8 @@ const ROUTES = [
   { path: '/design', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
   { path: '/digital', perf: 1, lcp: 1750, cls: 0.02, tbt: 150 }, // re-derived, M-P1-11
   { path: '/press', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
+  { path: '/press/services/publishing-preparation', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
+  { path: '/press/contact', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
 ];
 
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

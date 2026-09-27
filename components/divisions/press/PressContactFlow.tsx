@@ -238,6 +238,7 @@ export function PressContactFlow({
   const [step, setStep] = useState(1);
   const [segment, setSegment] = useState<PressSegment | ''>('');
   const headingRef = useRef<HTMLDivElement>(null);
+  const errorField = useRef<string | null>(null);
   const moved = useRef(false);
 
   const errors = state.status === 'invalid' ? state.errors : {};
@@ -248,15 +249,26 @@ export function PressContactFlow({
   useEffect(() => {
     if (state.status !== 'invalid') return;
     const first = Object.keys(state.errors)[0];
+    errorField.current = first ?? null;
     if (first && STEP_OF_FIELD[first]) setStep(STEP_OF_FIELD[first]);
   }, [state]);
 
   // Focus the step heading on every move, so a keyboard or screen reader user is put at the top
   // of what changed rather than left wherever the button they pressed used to be (WCAG 2.4.3).
   useEffect(() => {
+    if (errorField.current && state.status === 'invalid') {
+      const name = errorField.current;
+      if (STEP_OF_FIELD[name] !== step) return;
+      const form = headingRef.current?.closest('form');
+      const control = [...(form?.querySelectorAll<HTMLElement>('[name]') ?? [])]
+        .find((field) => field.getAttribute('name') === name);
+      (control ?? headingRef.current)?.focus();
+      errorField.current = null;
+      return;
+    }
     if (!moved.current) return;
     headingRef.current?.focus();
-  }, [step]);
+  }, [step, state]);
 
   const go = (next: number) => {
     moved.current = true;
@@ -356,14 +368,14 @@ export function PressContactFlow({
 
         {segment === 'content' ? (
           <>
-            <fieldset className={styles.checks}>
+            <fieldset className={styles.checks} aria-describedby={firstError('formats') ? 'press-formats-error' : undefined} aria-invalid={firstError('formats') ? true : undefined}>
               <legend>What formats do you need?</legend>
               {FORMATS.map((f) => (
                 <Check key={f} name="formats" value={f} label={f} id={`press-format-${f.toLowerCase().replace(/\W+/g, '-')}`} />
               ))}
             </fieldset>
             {firstError('formats') ? (
-              <p className={styles.formError} role="alert">Pick at least one format.</p>
+              <p id="press-formats-error" className={styles.formError} role="alert">Pick at least one format.</p>
             ) : null}
             <Field name="volumePerMonth" label="How much, per month?" required hint="Two long articles, one newsletter a week — an estimate is fine." error={firstError('volumePerMonth')} />
             <Field name="turnaroundNeeded" label="What turnaround do you need?" required error={firstError('turnaroundNeeded')} />
@@ -438,6 +450,7 @@ export function PressContactFlow({
         ) : null}
         {step < 4 ? (
           <button
+            key="next"
             type="button"
             className={btn('primary')}
             onClick={() => go(step + 1)}
@@ -446,7 +459,7 @@ export function PressContactFlow({
             Next
           </button>
         ) : (
-          <button type="submit" className={btn('primary')} disabled={pending}>
+          <button key="submit" type="submit" className={btn('primary')} disabled={pending}>
             {pending ? 'Sending…' : 'Send this'}
           </button>
         )}

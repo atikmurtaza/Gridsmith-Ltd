@@ -15,6 +15,7 @@ import {
   enquiryHref,
 } from '@/lib/services/architecture';
 import type { Division, ServiceDetail as ServiceRecord } from '@/lib/sanity/queries';
+import { CANONICAL_PROCESS } from '@/lib/process/canonical';
 import styles from './content.module.css';
 
 /**
@@ -174,13 +175,16 @@ export function ServiceDetail({ service }: { service: ServiceRecord }) {
             </Prose>
             <DataRows
               label="Process stages and your time"
-              items={stages.map((s) => ({
-                label: `${s.number}. ${s.title}`,
-                value: [s.duration, s.clientTime ? `you: ${s.clientTime}` : null]
-                  .filter(Boolean)
-                  .join('  ·  '),
-                rationale: s.divisionDetail ?? s.description ?? undefined,
-              }))}
+              items={stages.map((s) => {
+                const canonical = CANONICAL_PROCESS.find((stage) => stage.number === s.number);
+                return {
+                  label: `${s.number}. ${canonical?.title ?? s.title}${canonical?.optional ? ' (if applicable)' : ''}`,
+                  value: [s.duration, s.clientTime ? `you: ${s.clientTime}` : null]
+                    .filter(Boolean)
+                    .join('  ·  '),
+                  rationale: s.divisionDetail ?? s.description ?? undefined,
+                };
+              })}
             />
           </Container>
         </Section>

@@ -262,7 +262,7 @@ export async function PressHome() {
             <h2 id="process-title" className="pr-h3">How an engagement runs</h2>
           </div>
           <p className="pr-swipe" aria-hidden="true">Swipe through the six stages →</p>
-          <ol className="pr-stages pr-rail">
+          <ol className="pr-stages pr-rail" tabIndex={0} aria-labelledby="process-title">
             {CANONICAL_PROCESS.map((stage) => (
               <li className="pr-stage" key={stage.number}>
                 <span className="pr-stage-n" aria-hidden="true">{stage.number}</span>
@@ -283,7 +283,7 @@ export async function PressHome() {
       <section className="pr-arrangements pr-green" aria-labelledby="arrangements-title">
         <div className="pr-wrap">
           <h2 id="arrangements-title" className="pr-h3">Rights, ISBNs and accounts</h2>
-          <div className="pr-arr-grid pr-rail">
+          <div className="pr-arr-grid pr-rail" tabIndex={0} role="group" aria-labelledby="arrangements-title">
             <p>
               Your existing manuscript, notes and source material remain yours. The written scope sets out the final work we will provide and any
               project-specific rights or licences. On full payment, rights Gridsmith owns in bespoke final work created for that scope transfer to

@@ -42,7 +42,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/design',
     '/digital',
     '/press',
-    '/press/path-finder',
     '/press/contact',
     ...LEGAL_DOCUMENT_SLUGS.map((slug) => `/legal/${slug}`),
   ];

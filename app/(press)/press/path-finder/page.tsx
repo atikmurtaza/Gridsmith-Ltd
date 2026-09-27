@@ -8,9 +8,9 @@ import { PathFinder } from '@/components/divisions/press/PathFinder';
 import { SEED_OUTCOMES, SEED_QUESTIONS, SEED_RULES, criteriaFor } from '@/lib/path/seedConfig';
 
 export const metadata: Metadata = {
-  title: 'Path Finder — Gridsmith Press',
-  description:
-    'Five questions about your book, and an honest recommendation — including the two that recommend against us.',
+  title: 'Withheld preview — Gridsmith Press',
+  description: 'This historical preview is not part of the public Press offering.',
+  robots: { index: false, follow: false },
 };
 
 /**

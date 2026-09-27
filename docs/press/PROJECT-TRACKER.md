@@ -1,3 +1,5 @@
+> **GS-PRESS-001-RC (27 September 2026):** Owner-approved R3 visuals and D architecture remain frozen (6 territories / 14 services / 29 capabilities / 43 catalogue rows). Narrow accessibility, contact-button, motion-lifecycle, process-label, withholding and performance corrections are documented in `docs/_shared/GS-PRESS-001-RC.md`. Local verification and exact-SHA CI/protected Preview are distinct gates; final acceptance is determined by that record's release receipt convention. Production, main, DNS and production CMS/database remain untouched. No launch or next phase is authorised.
+
 # Project Tracker — Gridsmith Press
 
 ## GS-P00 reconciliation — authoritative override

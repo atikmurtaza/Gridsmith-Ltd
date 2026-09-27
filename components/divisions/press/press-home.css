@@ -32,9 +32,14 @@
 .pr-green { background: var(--pr-green); --rule-c: var(--pr-on-green-rule); }
 
 .pr-home :focus-visible { outline: 2px solid var(--accent-c); outline-offset: 3px; }
-.pr-dark :focus-visible,
-.pr-night :focus-visible,
-.pr-green :focus-visible { outline-color: var(--pr-gold-bright); }
+/* Defer below-fold layout/paint; content and native anchor navigation remain available. */
+.pr-chapter,
+.pr-catalogue,
+.pr-process,
+.pr-arrangements,
+.pr-close { content-visibility: auto; contain-intrinsic-size: auto 1500px; }
+body[data-division="press"] .pr-home :is(.pr-dark, .pr-night, .pr-green, .pr-deep) :focus-visible { outline-color: var(--pr-gold-bright); }
+body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { outline-color: var(--pr-green); }
 
 /* Resets at zero specificity so every component rule below wins without !important. */
 :where(.pr-home) :where(p, h1, h2, h3, figure, ul, ol, dl, dd) { margin: 0; }
@@ -921,7 +926,7 @@
 
 .pr-switch > span + span label { border-inline-start: 0; }
 .pr-switch label:hover { background: var(--pr-sunken); }
-.pr-switch input:checked + label { background: var(--pr-ink); color: var(--pr-paper); }
+.pr-switch input:checked + label { background: var(--pr-ink); color: var(--pr-paper); text-decoration: underline; text-underline-offset: 0.2em; }
 .pr-switch input:focus-visible + label { outline: 2px solid var(--accent-c); outline-offset: 2px; }
 
 .pr-pro-size { display: none; }
@@ -1151,7 +1156,8 @@
 
 /* Voice is the default and settled state. */
 .pr-w-b i { width: 2px; height: calc(var(--b) * 100%); background: var(--pr-green-light); border-radius: 1px; }
-.pr-au:has(#pr-au-voice:checked) .pr-w-t { opacity: 0.1; }
+/* Text mode exposes the passage; Voice shows its waveform without a low-contrast text ghost. */
+.pr-au:has(#pr-au-voice:checked) .pr-w-t { opacity: 0; }
 .pr-au:has(#pr-au-voice:checked) .pr-w-b { transform: scaleY(1); opacity: 1; }
 .pr-au:has(#pr-au-voice:checked) .pr-au-marker-text { opacity: 0; }
 .pr-au:has(#pr-au-voice:checked) .pr-au-marker-voice { opacity: 1; }
