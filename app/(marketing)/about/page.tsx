@@ -1,15 +1,13 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Container } from '@/components/primitives/Container';
-import { Heading } from '@/components/primitives/Heading';
 import { Numeric } from '@/components/primitives/Numeric';
-import { Prose } from '@/components/primitives/Prose';
-import { Section } from '@/components/primitives/Section';
 import { Connect } from '@/components/content/Connect';
 import { GroupSections } from '@/components/content/GroupSections';
+import { Opening } from '@/components/shared/Opening';
+import { StudioMap } from '@/components/shared/StudioMap';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
 import { getGroupPage } from '@/lib/sanity/queries';
-import styles from '@/components/content/content.module.css';
+import styles from '@/components/shared/shared.module.css';
 
 export const metadata: Metadata = {
   title: 'About — Gridsmith Ltd',
@@ -63,46 +61,46 @@ export default async function Page() {
   const [page, company] = await Promise.all([getGroupPage('about'), getCompanyDetails()]);
   if (!page) notFound();
 
+  const hasMap = page.sections?.some((sec) => sec.key === 'structure') ?? false;
+  const connectNumber = String(2 + (page.sections?.length ?? 0) + (hasMap ? 1 : 0)).padStart(2, '0');
+
   return (
-    <main id="main" tabIndex={-1}>
-      <Section rhythm="loose">
-        <Container width="narrow">
-          <Heading level={1}>{page.title}</Heading>
-          {page.intro ? (
-            <Prose>
-              <p>{page.intro}</p>
-            </Prose>
-          ) : null}
-        </Container>
-      </Section>
+    <main id="main" tabIndex={-1} data-nav="about">
+      <Opening size="spacious" place="About" title={page.title} lead={page.intro ?? undefined} />
 
-      <GroupSections sections={page.sections} />
+      <div className={styles.sheet}>
+        <GroupSections
+          sections={page.sections}
+          pair={['role', 'character']}
+          insert={{
+            structure: (number) => (
+              <section className={`${styles.frame} ${styles.band}`} aria-labelledby="studios">
+                <div className={`${styles.wrap} ${styles.bandHead} ${styles.bandHeadOnly}`}>
+                  <div>
+                    <p className={styles.index}>{number}</p>
+                    <h2 id="studios" className={styles.rowTitle}>One company, three studios</h2>
+                  </div>
+                  <StudioMap />
+                </div>
+              </section>
+            ),
+          }}
+        />
+      </div>
 
-      <Section surface="sunken" labelledBy="connect">
-        <Container width="narrow">
-          <Connect
-            contactEmail={company.contactEmail}
-            contactPhone={company.contactPhone}
-            responseCommitment={company.responseCommitment}
-          />
-        </Container>
-      </Section>
-
-      {/* **The legal line, and it is deliberately not a section.** No heading, no table, no
-          surface of its own — it sits under the page as a footnote does, which is the
-          "visually subordinate" treatment `GS-R001-R` §6 asks for. The company number is
-          here because reg. 25(2)(b) makes it a website particular and an evaluator looks for
-          it; it is one sentence rather than a card, and the registered office is not repeated
-          because the footer below this already carries it. */}
-      <Section>
-        <Container width="narrow">
-          <p className={styles.legalNote}>
+      <Connect
+        number={connectNumber}
+        contactEmail={company.contactEmail}
+        contactPhone={company.contactPhone}
+        responseCommitment={company.responseCommitment}
+        registration={
+          <>
             {company.legalName} is registered in {company.placeOfRegistration}, company number{' '}
             <Numeric>{company.companyNumber}</Numeric>. The full statutory details, including the
             registered office, are in the footer of every page.
-          </p>
-        </Container>
-      </Section>
+          </>
+        }
+      />
     </main>
   );
 }

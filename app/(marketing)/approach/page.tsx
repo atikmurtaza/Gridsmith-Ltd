@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Container } from '@/components/primitives/Container';
-import { Heading } from '@/components/primitives/Heading';
-import { Prose } from '@/components/primitives/Prose';
-import { Section } from '@/components/primitives/Section';
 import { GroupSections } from '@/components/content/GroupSections';
+import { Opening } from '@/components/shared/Opening';
+import { ENQUIRY_CTA, enquiryHref } from '@/lib/services/architecture';
 import { getGroupPage } from '@/lib/sanity/queries';
+import styles from '@/components/shared/shared.module.css';
 
 export const metadata: Metadata = {
   title: 'How we work — Gridsmith Ltd',
@@ -39,26 +38,31 @@ export const metadata: Metadata = {
  * fabricated. The page argues from the process and the structure instead, which it can do
  * truthfully.
  */
+/**
+ * `GS-SHARED-001-B2` — Approach answers *how does Gridsmith work*, so its principal visual is the
+ * canonical six-stage rail (`ProcessRail`, rendered by the `process` section), not the studio map
+ * About uses. The continuity section keeps its honest copy and loses the visible empty-state card.
+ * Closes on the master enquiry CTA, which is `/contact`.
+ */
 export default async function Page() {
   const page = await getGroupPage('approach');
   if (!page) notFound();
 
   return (
-    <main id="main" tabIndex={-1}>
-      <Section rhythm="loose">
-        <Container width="narrow">
-          <Heading level={1}>
-            {page.title}
-          </Heading>
-          {page.intro ? (
-            <Prose>
-              <p>{page.intro}</p>
-            </Prose>
-          ) : null}
-        </Container>
-      </Section>
+    <main id="main" tabIndex={-1} data-nav="approach">
+      <Opening size="spacious" place="Approach" title={page.title} lead={page.intro ?? undefined} />
 
-      <GroupSections sections={page.sections} />
+      <div className={styles.sheet}>
+        <GroupSections sections={page.sections} pair={['one-company', 'scope']} />
+      </div>
+
+      <div className={`${styles.frame} ${styles.closing}`}>
+        <div className={styles.wrap}>
+          <a href={enquiryHref()} className={styles.cta}>
+            {ENQUIRY_CTA.master}
+          </a>
+        </div>
+      </div>
     </main>
   );
 }

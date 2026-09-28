@@ -350,11 +350,18 @@ const INCOMPLETE_ALLOWED = [
   // wrapped nav is not an opaque band across the hero mark at 320px. The `why` below was written
   // for the footer; the header is the same case — same stylesheet rule, same fallback behaviour,
   // and `check:master:scene` question 5 reads header text as well as footer text since R1.
+  //
+  // GS-SHARED-001-RC: the same entry, re-pointed at the redesigned chrome and nothing wider.
+  // `nav` (not `navLink`) is the header's new `.chrome_nav__` container path; the footer's
+  // contact links are named by their mailto:/wa.me href. Removed, because nothing matched them
+  // in the RC run: the retired switcher's `data-division-accent` links, the `Company` nav
+  // heading form, and the about/approach/insights/contact href forms (now `.chrome_footerLink__`).
+  // `check:master:scene` question 5 walks every header/footer text node, so all remain measured.
   {
     rule: 'color-contrast',
     routes: ['/'],
     targetPattern:
-      /^(\.chrome_(footer|statutory|navLink|wordmark)[A-Za-z]*__|nav\x5baria-label="(Company|Legal)"\] > \.chrome_footerGroupHeading__|a\x5bdata-division-accent="(design|digital|press)"\]$|a\x5bhref\$="(about|approach|insights|contact|terms|privacy|cookies|accessibility)"\]$|\.consent_reopen__)/,
+      /^(\.chrome_(footer|statutory|nav|wordmark)[A-Za-z]*__|nav\x5baria-label="Legal"\] > \.chrome_footerGroupHeading__|a\x5bhref\$="(terms|privacy|cookies|accessibility)"\]$|a\x5bhref="(mailto:|https:\/\/wa\.me\/)[^"]+"\]$|\.consent_reopen__)/,
     why:
       'R1 made the footer transparent on / while the scene is live (styles/themes/master-stage.css) ' +
       'because its opaque --canvas cut the reassembled mark in half — the owner\u2019s complaint. ' +

@@ -2,6 +2,9 @@
 // Next requires global-error to be a Client Component, and requires it to render its own
 // <html> and <body> — it replaces the root layout, which by definition has just failed.
 
+import '@/styles/globals.css';
+import styles from './global-error.module.css';
+
 /**
  * The uncaught-error boundary, in the master theme.
  *
@@ -16,7 +19,8 @@
  * `data-division` and no theme stylesheet, and `<h2>` as its first heading. Verified
  * present in this build before this file existed.
  *
- * **Deliberately raw elements, not primitives, and no stylesheet.** Every import here
+ * **Deliberately raw elements, not primitives** (and, since B2, only the token layer and a
+ * five-class module — `check-bundle-size` holds that cost). Every import here
  * lands in the client boundary for every route in the site — that is how the 404 quietly
  * cost 4.3KB gz everywhere by importing one `Link`. A crash page has one job and must not
  * tax the requests that never see it.
@@ -33,6 +37,12 @@
  * or an unstyled crash page. **The unstyled page is worth more than the brand colours.**
  * An exception is a precedent, and this one would have to be phrased as "except in files
  * that are allowed to set the theme on the client" — which is the assertion inverted.
+ *
+ * **`GS-SHARED-001-RC`: styled, still unthemed.** B2 gave this page the Master frame and
+ * reintroduced `data-division="master"` to select it — this defect again, caught by reading
+ * the built chunk. The frame palette is not the theme: `chrome.css` also selects Master's
+ * `--chrome-*` values by `data-frame="master"`, which sets no division token, so the gate's
+ * assertion stands unamended and the approved look is unchanged.
  *
  * `reset()` re-renders the tree; it is the only recovery Next offers here.
  *
@@ -80,14 +90,19 @@ export default function GlobalError({ reset }: { error: Error & { digest?: strin
           is what makes this reachable from a Client Component at all. Verified in the
           served DOM, not assumed — see the note below. */}
       <title>Something went wrong — Gridsmith Ltd</title>
-      <body>
-        <main>
-          <h1>Something went wrong</h1>
+      {/* `GS-SHARED-001-B2`: styled in the Master family from the token layer alone —
+          globals.css (tokens, themes, chrome contract) and its own five-class module. No header, footer,
+          CMS, database or font fetch: this boundary exists because something upstream failed,
+          so it depends on nothing that can. `data-frame="master"` selects the frame palette. */}
+      <body data-frame="master" className={styles.body}>
+        <main className={styles.main}>
+          <p className={styles.label} aria-hidden="true">Gridsmith Ltd — Error</p>
+          <h1 className={styles.title}>Something went wrong</h1>
           <p>
             An unexpected error stopped this page loading. Nothing you were doing has been
             sent anywhere.
           </p>
-          <button type="button" onClick={() => reset()}>
+          <button type="button" className={styles.button} onClick={() => reset()}>
             Try again
           </button>
         </main>

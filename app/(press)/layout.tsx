@@ -4,7 +4,7 @@ import { RootShell } from '@/components/chrome/RootShell';
 import { inter } from '@/styles/fonts/inter';
 import { jetbrainsMono } from '@/styles/fonts/jetbrains-mono';
 import { sourceSerif } from '@/styles/fonts/source-serif';
-import { INDEXABLE, SITE_ORIGIN } from '@/lib/seo/site';
+import { INDEXABLE, SITE_ICONS, SITE_ORIGIN } from '@/lib/seo/site';
 import '@/styles/globals.css';
 
 /**
@@ -39,6 +39,7 @@ import '@/styles/globals.css';
  */
 export const metadata: Metadata = {
   metadataBase: SITE_ORIGIN,
+  ...SITE_ICONS,
   title: 'Gridsmith Press',
   description: 'Writing, editorial, publishing preparation and content. Gridsmith Press is a trading division of Gridsmith Ltd.',
   alternates: { canonical: './' },

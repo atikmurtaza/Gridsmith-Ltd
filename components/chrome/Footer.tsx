@@ -1,22 +1,13 @@
 import { ConsentReopen } from '@/components/consent/ConsentReopen';
-import { getCompanyDetails } from '@/lib/company/companyDetails';
+import { getCompanyDetails, whatsAppHref } from '@/lib/company/companyDetails';
+import { SOCIAL_CHANNELS } from '@/lib/company/social';
 import { LEGAL_FOOTER_SLUGS } from '@/lib/legal/slugs';
-import { SITE_URL } from '@/lib/seo/site';
+import { listPosts } from '@/lib/sanity/queries';
+import { jsonLdHtml, SITE_URL } from '@/lib/seo/site';
 import type { Division } from './RootShell';
+import { COMPANY, STUDIOS } from './nav';
+import { PLATFORM_MARKS } from './platformMarks';
 import styles from './chrome.module.css';
-
-const DIVISIONS: { href: string; label: string; division: Division }[] = [
-  { href: '/design', label: 'Gridsmith Design', division: 'design' },
-  { href: '/digital', label: 'Gridsmith Digital', division: 'digital' },
-  { href: '/press', label: 'Gridsmith Press', division: 'press' },
-];
-
-const COMPANY_LINKS: { href: string; label: string }[] = [
-  { href: '/about', label: 'About' },
-  { href: '/approach', label: 'Approach' },
-  { href: '/insights', label: 'Insights' },
-  { href: '/contact', label: 'Contact' },
-];
 
 const LEGAL_LINKS = LEGAL_FOOTER_SLUGS.map((s) => ({
   href: `/legal/${s.slug}`,
@@ -80,7 +71,18 @@ const LEGAL_LINKS = LEGAL_FOOTER_SLUGS.map((s) => ({
  * in a shared layout would put `next/link`'s client runtime in every route's chunk.
  *
  * The division switcher lives here and only here (`TECH-SPEC.md` §3) — a header-level
- * switcher pulls buyers sideways mid-funnel.
+ * switcher pulls buyers sideways mid-funnel. Since `GS-SHARED-001-B1` it is the typographic
+ * Studios index (01 Design · 02 Digital · 03 Press); the three coloured 3px rules are retired
+ * (owner decision 4), and the current division is marked with `aria-current` plus a bar.
+ *
+ * ## `GS-SHARED-001-B1` — one component, four themes
+ *
+ * Brand and contact, three link groups, a centred row of every approved platform, and — on every route except `/` — the exact mark in
+ * the right-hand field. On `/` the Master close has already resolved into the mark directly
+ * above, so the footer's copy is hidden by CSS (owner decision 3). The contact line moved from
+ * the statutory row into the brand block; it is still inside `<footer>`, which is the element
+ * `check:company` question 1 reads. Insights is listed only when a published post exists
+ * (owner decision 5).
  *
  * **The Company and Legal link groups (`APP-FLOW.md` §8) are built — `M-P2-22`.** They were
  * absent because their routes were, and this comment went on saying so after Epics N and L
@@ -108,8 +110,15 @@ const LEGAL_LINKS = LEGAL_FOOTER_SLUGS.map((s) => ({
  * and belong in a contract flow, not in every page's chrome. `check-axe` asserts this list
  * against the SERVED footer on every audited route.
  */
-export async function Footer() {
-  const c = await getCompanyDetails();
+export async function Footer({ division }: { division: Division }) {
+  const [c, posts] = await Promise.all([getCompanyDetails(), listPosts(1)]);
+  const company = [
+    ...COMPANY,
+    ...(posts.length > 0 ? [{ href: '/insights', label: 'Insights' }] : []),
+    { href: '/contact', label: 'Contact' },
+  ];
+  const email = c.contactEmail?.trim();
+  const phone = c.contactPhone?.trim();
 
   /**
    * **Company structured data — `G-04`, `GS-R001` §17. One record, from the same singleton.**
@@ -141,38 +150,59 @@ export async function Footer() {
     ...(c.contactEmail?.trim() ? { email: c.contactEmail } : {}),
     ...(c.contactPhone?.trim() ? { telephone: c.contactPhone } : {}),
     address: { '@type': 'PostalAddress', streetAddress: c.registeredOffice, addressCountry: 'GB' },
-    brand: DIVISIONS.map((d) => ({ '@type': 'Brand', name: d.label })),
+    brand: STUDIOS.map((d) => ({ '@type': 'Brand', name: `Gridsmith ${d.label}` })),
   };
 
   return (
     <footer className={styles.footer}>
       {/* Not executed, so `script-src 'self' 'unsafe-inline'` is satisfied and no nonce is
           needed. `JSON.stringify` on values that came from the CMS: the closing-tag sequence is
-          the one thing that could break out, so it is escaped. */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organization).replaceAll('<', '\u003c'),
-        }}
-      />
+          the one thing that could break out, so `jsonLdHtml` escapes every `<`. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(organization) }} />
       <div className={styles.footerInner}>
-        <nav aria-label="Divisions">
-          <ul className={styles.switcherList}>
-            {DIVISIONS.map((d) => (
-              <li key={d.href}>
-                <a href={d.href} className={styles.switcherLink} data-division-accent={d.division}>
-                  {d.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className={styles.footerBrand}>
+          <p className={styles.footerWordmark}>Gridsmith</p>
+          <p className={styles.footerRelation}>
+            One UK company. Design, Digital and Press are its trading divisions.
+          </p>
+          {email ? (
+            <p className={styles.footerContact}>
+              <a href={`mailto:${email}`} className={styles.footerContactLink}>{email}</a>
+            </p>
+          ) : null}
+          {phone ? (
+            <p className={styles.footerContact}>
+              <span className={styles.footerContactLabel}>WhatsApp or text</span>{' '}
+              <a href={whatsAppHref(phone)} className={styles.footerContactLink}>{phone}</a>
+            </p>
+          ) : null}
+          <p className={styles.footerResponse}>{c.responseCommitment}</p>
+        </div>
 
         <div className={styles.footerGroups}>
+          <nav aria-label="Studios" className={styles.footerGroup}>
+            <p className={styles.footerGroupHeading}>Studios</p>
+            <ul className={styles.footerList}>
+              {STUDIOS.map((s, i) => (
+                <li key={s.href}>
+                  <a
+                    href={s.href}
+                    className={`${styles.footerLink} ${styles.footerStudio}`}
+                    aria-current={s.division === division ? 'true' : undefined}
+                  >
+                    <span className={styles.footerIndex} aria-hidden="true">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    {s.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
           <nav aria-label="Company" className={styles.footerGroup}>
             <p className={styles.footerGroupHeading}>Company</p>
             <ul className={styles.footerList}>
-              {COMPANY_LINKS.map((l) => (
+              {company.map((l) => (
                 <li key={l.href}>
                   <a href={l.href} className={styles.footerLink}>{l.label}</a>
                 </li>
@@ -190,6 +220,46 @@ export async function Footer() {
             </ul>
           </nav>
         </div>
+
+        {/* The exact mark, decorative: a CSS background on an aria-hidden box — outside the
+            accessibility tree, and the same file the header already requests. */}
+        <div className={styles.footerMark} aria-hidden="true" />
+
+        {/* Every approved channel (`GS-O017`, `lib/company/social.ts`) as the platform's own
+            full-colour mark (B1-R2; provenance in platformMarks.ts). No visible names: Meta's
+            guidelines forbid writing "Facebook" beside its logo, so the row is marks only and
+            each link carries its full accessible name. Marks are aria-hidden boxes. */}
+        <ul className={styles.footerSocial} aria-label="Gridsmith on other platforms">
+          {SOCIAL_CHANNELS.map((ch) => {
+            const mark = PLATFORM_MARKS[ch.platform];
+            const box = mark ? { inlineSize: mark.width, blockSize: mark.height } : undefined;
+            return (
+              <li key={ch.url}>
+                <a
+                  href={ch.url}
+                  className={styles.footerSocialLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Gridsmith on ${ch.platform} (opens in a new tab)`}
+                >
+                  {mark && 'path' in mark ? (
+                    <svg viewBox="0 0 24 24" style={box} aria-hidden="true" focusable="false">
+                      <path d={mark.path} fill="currentColor" />
+                    </svg>
+                  ) : mark ? (
+                    <span
+                      className={styles.footerSocialMark}
+                      style={{ ...box, backgroundImage: `url(${mark.src})` }}
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    ch.platform
+                  )}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
       </div>
 
       {/* Plain and permanent. A Companies Act disclosure is a legal requirement, not a
@@ -204,17 +274,6 @@ export async function Footer() {
           {/* FOUNDATION requires a persistent way back into the choice. It is its own
               tiny Client Component so the footer stays a Server Component. */}
           <p><ConsentReopen /></p>
-          {c.contactEmail?.trim() || c.contactPhone?.trim() ? (
-            <p>
-              {c.contactEmail?.trim() ? (
-                <a href={`mailto:${c.contactEmail}`} className={styles.statutoryLink}>
-                  {c.contactEmail}
-                </a>
-              ) : null}
-              {c.contactEmail?.trim() && c.contactPhone?.trim() ? ' · ' : ''}
-              {c.contactPhone?.trim() ? c.contactPhone : null}
-            </p>
-          ) : null}
         </div>
       </div>
     </footer>

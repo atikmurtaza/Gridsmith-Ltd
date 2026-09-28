@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { RootShell } from '@/components/chrome/RootShell';
 import { inter } from '@/styles/fonts/inter';
 import { jetbrainsMono } from '@/styles/fonts/jetbrains-mono';
-import { INDEXABLE, SITE_ORIGIN } from '@/lib/seo/site';
+import { INDEXABLE, SITE_ICONS, SITE_ORIGIN } from '@/lib/seo/site';
 import '@/styles/globals.css';
 
 /**
@@ -38,6 +38,7 @@ import '@/styles/globals.css';
  */
 export const metadata: Metadata = {
   metadataBase: SITE_ORIGIN,
+  ...SITE_ICONS,
   title: 'Gridsmith Design',
   description: 'Brand, visual, illustration, motion, 3D and technical design. Gridsmith Design is a trading division of Gridsmith Ltd.',
   alternates: { canonical: './' },

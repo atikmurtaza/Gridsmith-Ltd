@@ -363,6 +363,97 @@ if (rows.length !== EXPECTED_PAIRS) {
 }
 
 /* ---------------------------------------------------------------------------------
+ * The shared frame — `GS-SHARED-001-RC`, `styles/themes/chrome.css`.
+ *
+ * Header, footer, the dark openings, the 404 and global-error paint text with `--chrome-*`,
+ * a sixth set of values that none of the five theme palettes above contains: each division's
+ * block in chrome.css maps it onto that division's stage palette with `var()`, and Master's
+ * restates master-stage.css in literals. B2 shipped it unmeasured, and the size pass below
+ * reported `--chrome-accent`/`--chrome-muted` as unruled — correct, and the fix is to rule them,
+ * not to stop scanning the file.
+ *
+ * Resolved exactly as the cascade does on each `<body data-division>`: the division's own block
+ * in chrome.css, then its stage file. A referenced name declared twice with different values is
+ * ambiguous rather than resolved — a stage file's scoped override must never be mistaken for the
+ * frame's value. The published figures are chrome.css's own table, held here as literals.
+ * ------------------------------------------------------------------------------- */
+const CHROME_SOURCE = { master: null, design: 'design-stage', digital: 'digital-stage', press: 'press-stage' };
+const CHROME_PAIRS = {
+  master: [['--chrome-ink', 17.19], ['--chrome-muted', 10.68], ['--chrome-accent', 11.06]],
+  design: [['--chrome-ink', 15.48], ['--chrome-muted', 8.44], ['--chrome-accent', 8.38]],
+  digital: [['--chrome-ink', 14.40], ['--chrome-muted', 9.01], ['--chrome-accent', 7.08]],
+  press: [['--chrome-ink', 12.63], ['--chrome-muted', 8.37], ['--chrome-accent', 7.39]],
+};
+const EXPECTED_CHROME_PAIRS = 12;
+const chromeProblems = [];
+/** The frame's foregrounds and the job each may carry. `--chrome-line` is rules, never text. */
+const CHROME_USE = { '--chrome-ink': 'body', '--chrome-muted': 'body', '--chrome-accent': 'body', '--chrome-line': 'decor' };
+
+const stripComments = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '');
+const chromeCss = stripComments(readFileSync('styles/themes/chrome.css', 'utf8'));
+
+function chromeTokens(division) {
+  const block = chromeCss.match(new RegExp(`body\\[data-division="${division}"\\]\\s*\\{([^}]*)\\}`));
+  if (!block) throw new Error(`chrome.css: no body[data-division="${division}"] block`);
+  const source = {};
+  if (CHROME_SOURCE[division]) {
+    const css = stripComments(readFileSync(`styles/themes/${CHROME_SOURCE[division]}.css`, 'utf8'));
+    for (const m of css.matchAll(/(--[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\s*;/g)) {
+      (source[m[1]] ??= new Set()).add(m[2].toLowerCase());
+    }
+  }
+  const out = {};
+  for (const m of block[1].matchAll(/(--chrome-[a-z]+)\s*:\s*(#[0-9a-fA-F]{3,8}|var\(\s*(--[a-z0-9-]+)\s*\))\s*;/g)) {
+    if (!m[3]) { out[m[1]] = m[2]; continue; }
+    const values = source[m[3]];
+    if (!values || values.size !== 1) {
+      chromeProblems.push(`chrome ${division}: ${m[1]} → ${m[3]} is ${values ? 'declared with ' + values.size + ' values' : 'not declared'} in ${CHROME_SOURCE[division]}.css`);
+      continue;
+    }
+    out[m[1]] = [...values][0];
+  }
+  return out;
+}
+
+const CHROME = Object.fromEntries(Object.keys(CHROME_SOURCE).map((d) => [d, chromeTokens(d)]));
+const chromeRows = [];
+for (const [division, pairs] of Object.entries(CHROME_PAIRS)) {
+  const t = CHROME[division];
+  for (const [fg, claimed] of pairs) {
+    if (!t[fg] || !t['--chrome-canvas']) {
+      chromeProblems.push(`chrome ${division}: ${fg} or --chrome-canvas not resolved`);
+      continue;
+    }
+    const measured = ratio(t[fg], t['--chrome-canvas']);
+    chromeRows.push({ division, fg, measured, claimed });
+    if (measured < MIN.text) chromeProblems.push(`chrome ${division}: ${fg} on --chrome-canvas = ${measured.toFixed(2)}:1, needs ${MIN.text}:1`);
+    if (Math.abs(measured - claimed) > TOLERANCE) {
+      chromeProblems.push(`chrome ${division}: ${fg} — chrome.css publishes ${claimed.toFixed(2)}:1, measured ${measured.toFixed(2)}:1`);
+    }
+  }
+}
+if (chromeRows.length !== EXPECTED_CHROME_PAIRS) {
+  chromeProblems.push(`measured ${chromeRows.length} chrome pairs, expected ${EXPECTED_CHROME_PAIRS}`);
+}
+// Master's frame is master-stage.css restated (chrome.css says so); hold it to that.
+const masterStage = tokens('master-stage');
+for (const [chrome, stage] of [['--chrome-canvas', '--canvas'], ['--chrome-ink', '--ink'], ['--chrome-muted', '--ink-muted'], ['--chrome-accent', '--accent']]) {
+  if (CHROME.master[chrome]?.toLowerCase() !== masterStage[stage]?.toLowerCase()) {
+    chromeProblems.push(`chrome master: ${chrome} ${CHROME.master[chrome]} is not master-stage ${stage} ${masterStage[stage]}`);
+  }
+}
+if (chromeProblems.length > 0) {
+  console.error(`check-contrast: ${chromeProblems.length} shared-frame problem(s)\n`);
+  for (const p of chromeProblems) console.error(`  ${p}`);
+  console.error('');
+}
+for (const r of chromeRows) console.log(`  chrome ${r.division.padEnd(8)} ${r.fg.padEnd(15)} on --chrome-canvas  ${r.measured.toFixed(2)}:1`);
+
+/** Worst ratio a chrome foreground reaches across the four frames. */
+const chromeWorst = (token) =>
+  Math.min(...Object.values(CHROME).filter((t) => t[token] && t['--chrome-canvas']).map((t) => ratio(t[token], t['--chrome-canvas'])));
+
+/* ---------------------------------------------------------------------------------
  * The permission matrix. Every foreground token against every surface, in every theme.
  * ------------------------------------------------------------------------------- */
 
@@ -469,6 +560,9 @@ const SIZE_SOURCES = [
   'styles/globals.css',
   ...globSync('components/primitives/*.module.css'),
   ...globSync('app/**/*.module.css'),
+  // GS-SHARED-001-RC: the shared frame and the shared page components, on every route.
+  ...globSync('components/chrome/*.module.css'),
+  ...globSync('components/shared/*.module.css'),
 ];
 
 /** `--text-*` resolved to the SMALLEST px a clamp() can produce — the worst case. */
@@ -534,6 +628,27 @@ function scanCss(file, css, problems) {
     if (ON_ACCENT[token]) continue;
 
     declarationsSeen += 1;
+
+    // The shared frame's own foregrounds, ruled by CHROME_USE and measured on --chrome-canvas
+    // in all four frames (the worst one decides).
+    if (CHROME_USE[token]) {
+      if (CHROME_USE[token] === 'decor') {
+        problems.push(
+          `${file} — ${token} paints text at ${size[1]} (${px.toFixed(2)}px) and is declared ` +
+            "role: 'decor' in CHROME_USE. The frame's rule colour must never carry text.",
+        );
+        continue;
+      }
+      const weightMatch = body.match(/font-weight:\s*(\d+)/);
+      const weight = weightMatch ? Number(weightMatch[1]) : 400;
+      const needed = isLarge(px, weight) ? MIN.large : MIN.text;
+      const r = chromeWorst(token);
+      declarationsMeasured += 4;
+      if (r + TOLERANCE < needed) {
+        problems.push(`${file} — ${token} at ${size[1]} (${px.toFixed(2)}px) on --chrome-canvas: ${r.toFixed(2)}:1 worst, needs ${needed}:1`);
+      }
+      continue;
+    }
     const use = USE[token];
 
     if (!use) {
@@ -634,6 +749,7 @@ for (const file of SIZE_SOURCES) {
 const SELF_TEST_CSS = `
   .selfTestDecorAsText { color: var(--line-strong); font-size: var(--text-xs); }
   .selfTestUnruledAsText { color: var(--gridsmith-not-a-token); font-size: var(--text-xs); }
+  .selfTestChromeRuleAsText { color: var(--chrome-line); font-size: var(--text-xs); }
 `;
 // Captured BEFORE the self-test runs. The self-test scans two declarations of its own, so
 // reading the counter afterwards would mean the shipped stylesheets could stop pairing
@@ -644,14 +760,14 @@ const shippedDeclarations = declarationsSeen;
 const selfTestProblems = [];
 scanCss('<self-test>', SELF_TEST_CSS, selfTestProblems);
 
-const selfTestExpected = [/--line-strong .*role: 'decor'/, /--gridsmith-not-a-token .*not in the/];
+const selfTestExpected = [/--line-strong .*role: 'decor'/, /--gridsmith-not-a-token .*not in the/, /--chrome-line .*CHROME_USE/];
 if (
   selfTestProblems.length !== selfTestExpected.length ||
   !selfTestExpected.every((re) => selfTestProblems.some((p) => re.test(p)))
 ) {
   console.error(
     `\ncheck-contrast: the size pass failed its own self-test — expected ` +
-      `${selfTestExpected.length} problems (one decor, one unruled), got ${selfTestProblems.length}:\n`,
+      `${selfTestExpected.length} problems (one decor, one unruled, one chrome decor), got ${selfTestProblems.length}:\n`,
   );
   for (const p of selfTestProblems) console.error(`  ${p}`);
   console.error(
@@ -779,11 +895,12 @@ if (opacityProblems.length > 0) {
   console.error('\nRaise the opacity, or use --ink where the fade applies.\n');
 }
 
-if (failures.length > 0 || drift.length > 0 || matrixProblems.length > 0 || sizeProblems.length > 0 || opacityProblems.length > 0) {
+if (failures.length > 0 || drift.length > 0 || chromeProblems.length > 0 || matrixProblems.length > 0 || sizeProblems.length > 0 || opacityProblems.length > 0) {
   process.exit(1);
 }
 
 console.log(`check-contrast: ${rows.length} pairs across ${THEMES.length} themes, all within role minima and matching DESIGN.md`);
+console.log(`check-contrast: shared frame — ${chromeRows.length} chrome pairs across 4 frames, all body-text safe and matching chrome.css; Master's frame equals master-stage`);
 console.log(
   `check-contrast: size pass — ${declarationsMeasured} declaration/surface combinations across ` +
     `${THEMES.length} themes, every declared font-size checked against its token's measured ratio`,

@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 /**
  * The site's own origin, and whether this deployment is allowed to be indexed — `G-04`,
  * `GS-R001` §17.
@@ -76,3 +78,30 @@ export const INDEXABLE =
 
 /** An absolute URL for a site-relative path. */
 export const absolute = (path: string) => new URL(path, SITE_URL).toString();
+
+/**
+ * Browser identity — `GS-SHARED-001-B1`. One declaration, spread into every root layout's
+ * metadata (and the 404's, which has no layout), so the four groups cannot drift. The files are
+ * rendered from the exact `public/brand/gridsmith-logo.svg` geometry: `favicon.ico` (16/32/48)
+ * and `icon.svg` are the flattened small-size treatment, the PNGs the polished mark — all on a
+ * transparent background (owner-approved GS-SHARED-001; no tile). Page titles are untouched.
+ */
+export const SITE_ICONS: Pick<Metadata, 'icons' | 'manifest'> = {
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
+  },
+  manifest: '/manifest.webmanifest',
+};
+
+/**
+ * JSON for an inline `<script type="application/ld+json">` — `GS-SHARED-001-RC`. Every `<` becomes
+ * the JSON escape `<`, so CMS text can never close the script element (`</script>`) or open
+ * an HTML comment; the parsed JSON is unchanged. The footer used `replaceAll('<', '<')`, whose
+ * single backslash made the replacement the same character — a no-op since `G-04`.
+ * `check:company:selftest` asserts the return value.
+ */
+export const jsonLdHtml = (value: unknown) => JSON.stringify(value).replaceAll('<', '\\u003c');

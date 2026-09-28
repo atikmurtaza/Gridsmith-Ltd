@@ -69,13 +69,6 @@ body[data-division="press"] .pr-on-green :focus-visible {
   outline-color: var(--pr-gold-bright);
 }
 
-/* Apparatus is Inter: the shared chrome's labels and navigation. The wordmark keeps its own face. */
-body[data-division="press"] > header,
-body[data-division="press"] > footer {
-  --font-mono: var(--pr-sans);
-  --font-body: var(--pr-sans);
-}
-
 /* Shared ServiceDetail markup, scoped to Press only: serif reading, Inter apparatus, rules. */
 body[data-division="press"] .pr-service-detail {
   --font-mono: var(--pr-sans);

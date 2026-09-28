@@ -1,5 +1,6 @@
+import { CONTACT_CTA, ENQUIRY_CTA, enquiryHref } from '@/lib/services/architecture';
 import type { Division } from './RootShell';
-import { NAV, WORDMARK } from './nav';
+import { COMPANY, STUDIOS, WORDMARK } from './nav';
 import styles from './chrome.module.css';
 
 /**
@@ -14,8 +15,23 @@ import styles from './chrome.module.css';
  * delta budget that `M-06` already expects to overrun. Route-group links must not be
  * prefetched, so the correct component is the one that does less.
  *
- * No division switcher here: `TECH-SPEC.md` §3 puts it in the footer only, because a
- * header-level switcher pulls buyers sideways mid-funnel. That is `M-04`.
+ * ## Two shapes, one component — `GS-SHARED-001-B1`
+ *
+ * **Master/shared:** wordmark · Design Digital Press │ Approach About · Contact →. Below 768px
+ * the links move into a native `popover` behind a Menu button: Escape, light dismiss, top layer
+ * and the invoker's expanded state come from the platform, and `popovertarget` is declarative,
+ * so it works with JavaScript off. A browser without popover support never hides the element,
+ * so the list renders in flow under the header and the button is hidden (`@supports`).
+ *
+ * **Division:** `Gridsmith / {Division}` and that division's enquiry, and nothing else (owner
+ * decision 2). No sibling links — the footer's Studios index is the only switcher, because a
+ * header-level switcher pulls buyers sideways mid-funnel (`TECH-SPEC.md` §3). Below 768px the
+ * enquiry is dropped; the division's own hero and sticky enquiry carry it there.
+ *
+ * **Current state is marked only where the server knows it.** A root layout does not know the
+ * pathname, so the master nav carries no `aria-current` (About/Approach would need client JS or
+ * a per-page prop — deferred to B2). On a division route the division is known, so its label
+ * carries `aria-current="true"` — the current section, not necessarily the current page.
  *
  * ## The logo — `GS-R001-R`, and the SVG is the primary asset on measurement
  *
@@ -63,28 +79,74 @@ import styles from './chrome.module.css';
  * a broken path is a red build rather than a silently missing logo.
  */
 export function Header({ division }: { division: Division }) {
-  const items = NAV[division];
-
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
         <a href={WORDMARK.href} className={styles.wordmark}>
           {WORDMARK.label}
         </a>
-        {items.length > 0 && (
-          <nav aria-label="Primary">
-            <ul className={styles.navList}>
-              {items.map((item) => (
-                <li key={item.href}>
-                  <a href={item.href} className={styles.navLink}>
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
+        {division === 'master' ? <MasterNav /> : <DivisionNav division={division} />}
       </div>
     </header>
+  );
+}
+
+function MasterLinks() {
+  return (
+    <>
+      <ul className={styles.navList} aria-label="Studios">
+        {STUDIOS.map((s) => (
+          <li key={s.href}>
+            <a href={s.href} className={styles.navLink}>{s.label}</a>
+          </li>
+        ))}
+      </ul>
+      <ul className={styles.navList} aria-label="Company">
+        {COMPANY.map((l) => (
+          <li key={l.href}>
+            <a href={l.href} className={styles.navLink}>{l.label}</a>
+          </li>
+        ))}
+      </ul>
+      <a href={CONTACT_CTA.href} className={`${styles.navLink} ${styles.navLinkContact}`}>
+        Contact
+      </a>
+    </>
+  );
+}
+
+function MasterNav() {
+  return (
+    <>
+      <nav aria-label="Primary" className={styles.nav}>
+        <MasterLinks />
+      </nav>
+      <button type="button" className={styles.navLinkMenu} popoverTarget="site-menu">
+        Menu
+      </button>
+      <div id="site-menu" popover="auto" className={styles.navMenu}>
+        <nav aria-label="Primary" className={styles.navMenuInner}>
+          <MasterLinks />
+        </nav>
+      </div>
+    </>
+  );
+}
+
+function DivisionNav({ division }: { division: Exclude<Division, 'master'> }) {
+  const studio = STUDIOS.find((s) => s.division === division)!;
+  return (
+    <nav aria-label="Primary" className={styles.nav}>
+      <span className={styles.wordmarkSlash} aria-hidden="true">/</span>
+      <a href={studio.href} className={styles.wordmarkDivision} aria-current="true">
+        {studio.label}
+      </a>
+      <a
+        href={enquiryHref(division)}
+        className={`${styles.navLink} ${styles.navLinkContact} ${styles.navLinkEnquiry}`}
+      >
+        {ENQUIRY_CTA[division]}
+      </a>
+    </nav>
   );
 }

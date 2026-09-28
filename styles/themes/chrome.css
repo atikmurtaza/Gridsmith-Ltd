@@ -1,0 +1,99 @@
+/**
+ * The shared frame — `GS-SHARED-001-B1`, "The Frame and the Sheet" (owner-approved B1–B2,
+ * released at GS-SHARED-001-RC). One semantic chrome contract read by `components/chrome/`; each division maps
+ * it from palette values it already declares. No new colour is introduced here: Master's values
+ * are `master-stage.css`'s (the logo's own gold on near-black) restated because that file only
+ * applies on `/`, and the three division maps are `var()` references into their stage palettes.
+ *
+ * Measured pairs (WCAG relative luminance, text on --chrome-canvas):
+ *
+ * | Division | ink | muted | accent |
+ * |---|---|---|---|
+ * | Master  #0B0907 | 17.19:1 | 10.68:1 | 11.06:1 |
+ * | Design  #0A192E | 15.48:1 | 8.44:1  | 8.38:1  |
+ * | Digital #22262B | 14.40:1 | 9.01:1  | 7.08:1  |
+ * | Press   #1F3428 | 12.63:1 | 8.37:1  | 7.39:1  |
+ *
+ * Measured by `check:contrast` since GS-SHARED-001-RC: it resolves each block below through its
+ * stage file, asserts every figure in this table (and body-text safety), holds Master's values
+ * equal to master-stage.css, and rules `--chrome-*` text in the chrome/shared/app modules.
+ */
+
+:root {
+  /* Theme-invariant UI face for the chrome. Inter is loaded by all four root layouts. */
+  --font-ui: var(--font-inter), system-ui, sans-serif;
+  /* The one header height. Master's hero reads it (home.module.css `--hero-top`). */
+  --header-block-size: 4rem;
+  /* Print (GS-SHARED-001-B2): a kept document is black on white paper, whatever the theme. */
+  --print-paper: #FFFFFF;
+  --print-ink:   #000000;
+}
+@media (max-width: 767px) {
+  :root { --header-block-size: 3.5rem; }
+}
+
+/* `data-frame` is global-error's: a client-rendered body may not carry data-division
+   (check:theme), and the frame palette is not the theme. */
+[data-frame="master"],
+body[data-division="master"] {
+  --chrome-canvas: #0B0907;
+  --chrome-ink:    #F5EEDD;
+  --chrome-muted:  #C9BDA2;
+  --chrome-line:   #2E2619;
+  --chrome-accent: #E0BD70;
+}
+
+/* Oxford Navy, Design ink, Imperial British Gold. */
+body[data-division="design"] {
+  --chrome-canvas: var(--ds-night);
+  --chrome-ink:    var(--ds-paper);
+  --chrome-muted:  var(--ds-blue-hi);
+  --chrome-line:   var(--ds-navy);
+  --chrome-accent: var(--ds-gold);
+}
+
+/* Digital dark environment, its light ink, the commit/focus signal. */
+body[data-division="digital"] {
+  --chrome-canvas: var(--digital-dark);
+  --chrome-ink:    var(--digital-ink-dark);
+  --chrome-muted:  var(--digital-muted-dark);
+  --chrome-line:   var(--digital-line-dark);
+  --chrome-accent: var(--digital-commit);
+}
+
+/* Press deep green (the hero and close surface), on-green ink, the family gold. */
+body[data-division="press"] {
+  --chrome-canvas: var(--pr-green-deep);
+  --chrome-ink:    var(--pr-on-green);
+  --chrome-muted:  var(--pr-on-green-muted);
+  --chrome-line:   var(--pr-on-green-rule);
+  --chrome-accent: var(--pr-gold-bright);
+}
+
+/* Division stages set a body-wide focus colour (Press: green). Inside the frame that would be
+   green on green, so the chrome's own accent wins here, on every division. */
+body[data-division] > :is(header, footer) :focus-visible {
+  outline: 2px solid var(--chrome-accent);
+  outline-offset: 3px;
+}
+
+/* Print (GS-SHARED-001-B2): the frame prints as paper. Navigation, the menu, the social row and
+   the decorative mark go; the wordmark and the statutory line — the document's identity — stay. */
+@media print {
+  body > header,
+  body > footer {
+    --chrome-canvas: var(--print-paper);
+    --chrome-ink:    var(--print-ink);
+    --chrome-muted:  var(--print-ink);
+    --chrome-line:   var(--print-ink);
+    background: none !important;
+    color: var(--print-ink) !important;
+  }
+  body > header nav,
+  body > header button,
+  body > footer nav,
+  body > footer ul,
+  body > footer [aria-hidden="true"],
+  body > [role="dialog"],
+  body > a[href="#main"] { display: none !important; }
+}

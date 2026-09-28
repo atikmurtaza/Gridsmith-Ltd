@@ -1,0 +1,160 @@
+/* The opening family — GS-SHARED-001-B2. Split out of shared.module.css because the 404 is a
+   baseline route in check-bundle-size: a server component importing a CSS module ships that
+   module's class map with the route, and the whole shared module cost the 404 1.1KB gz over the
+   other baseline route. This file is what the 404 needs — the frame, the opening, the destination
+   links — and nothing else. Tokens only. */
+
+.frame {
+  --canvas: var(--chrome-canvas);
+  --canvas-raised: var(--chrome-canvas);
+  --canvas-sunken: var(--chrome-canvas);
+  --ink: var(--chrome-ink);
+  --ink-muted: var(--chrome-muted);
+  --ink-subtle: var(--chrome-muted);
+  --line: var(--chrome-line);
+  --line-strong: var(--chrome-line);
+  --accent: var(--chrome-accent);
+  --accent-hover: var(--chrome-ink);
+  --accent-ink: var(--chrome-canvas);
+  background: var(--chrome-canvas);
+  color: var(--chrome-ink);
+  color-scheme: dark;
+}
+.frame :focus-visible { outline: 2px solid var(--chrome-accent); outline-offset: 3px; }
+
+.wrap {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---- Opening ------------------------------------------------------------------- */
+
+/* Continuous with the header above it: same canvas, and the header's own hairline is the only
+   seam. Compact by default so Legal and Contact reach their content quickly; `spacious` gives
+   About and Approach more room without becoming a full-screen division hero. */
+.opening {
+  padding-block: clamp(var(--space-12), 6vw, var(--space-16)) clamp(var(--space-12), 5vw, var(--space-16));
+  border-block-end: var(--border-hairline) solid var(--chrome-line);
+}
+.opening[data-size='spacious'] {
+  padding-block: clamp(var(--space-16), 8vw, var(--space-24)) clamp(var(--space-12), 5vw, var(--space-16));
+}
+
+/* The structural label: gold company name, a gold hairline, the page's place. The same kicker
+   vocabulary as the Master hero, at a smaller scale. */
+.label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--chrome-muted);
+}
+.label > :first-child { color: var(--chrome-accent); }
+.rule {
+  flex: none;
+  inline-size: var(--space-8);
+  block-size: var(--border-hairline);
+  background: var(--chrome-accent);
+}
+
+.title {
+  margin: 0;
+  max-width: 20ch;
+  font-family: var(--font-ui);
+  font-size: clamp(2.25rem, 1.7rem + 2.2vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: var(--chrome-ink);
+}
+.opening[data-size='spacious'] .title { font-size: clamp(2.75rem, 1.9rem + 3.6vw, 4.75rem); }
+
+.lead {
+  margin: var(--space-6) 0 0;
+  max-width: 54ch;
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+  color: var(--chrome-muted);
+}
+.lead + .lead { margin-block-start: var(--space-3); }
+
+.before { margin-block-end: var(--space-8); }
+.openingExtra { margin-block-start: var(--space-8); }
+.openingExtra > * + * { margin-block-start: var(--space-4); }
+
+/* Document metadata in the opening: version, dates, reviewer. Mono, because these are facts. */
+.meta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-relaxed);
+  color: var(--chrome-muted);
+}
+
+/* The unapproved-draft notice. Calmer than the old all-caps block — a labelled note with a gold
+   rule — but it is still the first thing under the title and says exactly what it said. */
+.status {
+  max-width: 64ch;
+  margin: 0;
+  padding: var(--space-4) var(--space-6);
+  border: var(--border-hairline) solid var(--chrome-line);
+  border-inline-start: 2px solid var(--chrome-accent);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--chrome-muted);
+}
+.statusLabel {
+  display: block;
+  margin-block-end: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--chrome-accent);
+}
+
+/* ---- 404 destinations ----------------------------------------------------------- */
+
+.destinations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.destinations a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-block-size: 2.75rem;
+  padding-block: var(--space-2);
+  font-size: var(--text-lg);
+  color: var(--chrome-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--chrome-accent);
+  text-underline-offset: 0.3em;
+}
+.destinations a:hover { text-decoration-thickness: 2px; }
+
+@media print {
+  .frame {
+    --canvas: var(--print-paper);
+    --ink: var(--print-ink);
+    --ink-muted: var(--print-ink);
+    --line: var(--print-ink);
+    /* GS-SHARED-001-RC: the frame gold too — the kicker printed at ~1.8:1 on white. */
+    --chrome-accent: var(--print-ink);
+    background: none;
+    color: var(--print-ink);
+  }
+  .title, .lead, .meta, .status, .statusLabel, .label { color: var(--print-ink); }
+  .opening { padding-block: 0 var(--space-6); border-color: var(--print-ink); }
+  .rule { display: none; }
+}

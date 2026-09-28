@@ -1,3 +1,5 @@
+> **GS-SHARED-001-RC (28 September 2026):** The owner visually approved the shared experience *The Frame and the Sheet* (B1, B1-R1, B1-R2, B2): shared header/footer, transparent browser identity, About, Approach, Insights, Legal, Contact, 404 and global error. RC corrections are implementation/gate only — chrome palette under `check:contrast`, footer JSON-LD escaping (`jsonLdHtml`), global error selected by `data-frame` (no client `data-division`), generated CTA arrows, the `/` scene axe entry re-pointed, Approach rail line as a border, legal Contents heading and print gold corrected. Legal parity 6/94/339 unchanged. `GS-O010` open (no valid submission); TikTok logo permission is a final production gate (`GS-O021`); Freelancer mark provisional (`GS-O022`); `GS-O003` open. Staging only; main, production, DNS and production CMS/database untouched; no launch or next phase authorised. Evidence and the exact-SHA receipt convention: `docs/_shared/GS-SHARED-001-RC.md`.
+
 > **GS-DIG-001-RC current authority (25 September 2026):** The owner approved the Digital redesign *Systems in Agreement* (one persistent five-point compass: Hero → Route Map → chapter/process background → Final) and its two R3-G corrections — Route Map callouts arrive with the compass (complete ≈290ms into the map state, no numbers-only interval under continuous scroll) and an enlarged environmental background compass (1.7× desktop, 1.9× tablet, 1.12× phone) — then authorised RC, a dedicated `staging/gs-dig-001-digital` branch, CI and protected Preview. RC corrections are gate/theme only: `check:contrast` now measures the delivered Digital palette (single source `styles/themes/digital-stage.css`), the legacy `#1B5FFF` Digital accent is retired in every theme (footer switcher rule only), `.codex/` is classified in the source inventory, Digital motion is on the duration token scale, and `check:digital:scene` measures rendered contrast, state, map timing, reduced motion, Save-Data and no-JS. Development CMS carries the approved B2 wording; production Sanity/Supabase, `main`, DNS, Hostinger and gridsmith.uk are untouched and no next division is authorised. The exact implementation SHA, CI run and Preview are recorded in the receipt section of `docs/_shared/GS-DIG-001-DIGITAL.md`. Authoritative evidence: that file.
 
 > **GS-R002-RC-G2 current authority (24 September 2026):** The owner approved paper behind the closed Technical scope note and resuming staging release. G2 is implemented only in the enhanced stacked layout (width <=760px, height >650px); rendered note contrast passes across 24 viewport combinations (local minimum 6.69:1; Linux CI minimum 6.62:1; corrected 760x800 6.69:1). G1 disclosures/H1 and lifecycle checks remain passing. Implementation c4781b0af64733313a78ea7c557a9d1393f7bb32 passes CI 35940710523 and exact-SHA protected Preview verification. The subsequent documentation checkpoint exposed an axe-helper focus race on the unchanged kitchen-sink skip link. The gate now restores and asserts document focus, with permanent positive/negative proofs and no application change. The final verification checkpoint requires successful exact-SHA CI and Preview; its receipt is recorded in the release handoff. Original mascot, exact Inter G/S, persistent building-to-logo, metallic finish, continuous wave and copy are preserved; only the approved reading surfaces amend R2. Main and production remain untouched; no next division is authorised. Authoritative evidence: `docs/_shared/GS-R002-RC-DESIGN.md`.
@@ -95,9 +97,34 @@ not requested under `GS-D001` and `GS-D002`.
 - **What it blocks:** safe hosted Preview end-to-end testing of the server-only lead writer. Until
   closed, do not submit test leads in Preview and do not copy the production service-role secret into
   Preview.
+- **GS-SHARED-001-RC reading (28 September 2026), names/targets only:** Preview has
+  `RESEND_API_KEY` and `LEAD_NOTIFICATION_*` (live mail possible); `SUPABASE_SERVICE_ROLE_KEY` is
+  Production-only; `DIRECT_CONNECTION_STRING` and `SANITY_API_WRITE_TOKEN` are shared
+  Preview+Production records. Still not isolated — no valid Preview submission was made.
 - **Evidence required:** non-production project reference and lifecycle state, secure Vercel
   presence/scope confirmation, and an authorised synthetic Preview submission proved to land only in
   that isolated target. If provisioning would add cost, obtain explicit approval before enabling it.
+
+### `GS-O021` — TikTok written logo permission (final production gate)
+
+- **Status:** ACTIONABLE NOW — owner in progress. Raised at `GS-SHARED-001-RC`.
+- **Why required:** the owner-approved footer shows the TikTok mark, used solely as a link to
+  Gridsmith's own TikTok business account. TikTok's Brand and Use Guidelines require prior written
+  permission for any use of its logo. The owner has consulted TikTok Business support and is
+  obtaining that permission by email. It has **not** been received.
+- **What it blocks:** production cutover with the TikTok mark shown. Staging may keep it.
+- **Evidence required:** TikTok's written permission covering this use (and, if TikTok supplies
+  one, the official asset to replace the current simple-icons path). Without it, the mark must be
+  removed or replaced by a text link before cutover. Agents must not accept third-party terms.
+
+### `GS-O022` — Official Freelancer brand asset
+
+- **Status:** ACTIONABLE NOW, not blocking staging. Raised at `GS-SHARED-001-RC`.
+- **Why required:** the footer's Freelancer mark is a provisional third-party sourced mark
+  (simple-icons path, filled in Freelancer's brand blue); every other permitted platform uses an
+  official download (`components/chrome/platformMarks.ts`).
+- **Evidence required:** an official Freelancer asset and its usage terms, or an owner decision to
+  keep the provisional mark at cutover.
 
 ## BLOCKED/DEPENDENT
 

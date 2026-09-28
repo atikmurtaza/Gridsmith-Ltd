@@ -35,6 +35,7 @@ import {
   placeholderProblems,
   socialProblems,
 } from './company-facts-rules.mjs';
+import { jsonLdHtml } from '../lib/seo/site.ts';
 
 let passed = 0;
 const failures = [];
@@ -480,6 +481,21 @@ check(
   emailProblems('/x', 'info@gridsmith.uk and contact.gridsmith@gmail.com', '').length === 2
     ? true
     : 'the problem count did not move with the number of defects, so it is printed, not counted',
+);
+
+/* -- the footer's structured data (GS-SHARED-001-RC) ------------------------ */
+
+// The Organization record carries CMS text inside an inline <script>. Before RC the escape was
+// `replaceAll('<', '<')` with one backslash: the same character, so this returned `</script>`.
+const hostile = { name: 'Gridsmith </script><script>alert(1)</script><!--' };
+const ld = jsonLdHtml(hostile);
+check(
+  'JSON-LD — no raw "<" survives, so CMS text cannot close the script element',
+  !ld.includes('<') ? true : `serialised output still contains "<": ${ld}`,
+);
+check(
+  'JSON-LD — the escape is JSON, so the parsed record is unchanged',
+  JSON.parse(ld).name === hostile.name ? true : `parsed name differs: ${JSON.parse(ld).name}`,
 );
 
 if (failures.length > 0) {

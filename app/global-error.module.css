@@ -1,0 +1,46 @@
+/* global-error — GS-SHARED-001-B2. Deliberately tiny and self-contained: this boundary's chunk is
+   on every route's baseline, so it carries five classes rather than the shared page module. The
+   Master frame from the chrome contract; tokens only. */
+.body {
+  margin: 0;
+  background: var(--chrome-canvas);
+  color: var(--chrome-ink);
+  font-family: var(--font-ui);
+  line-height: var(--leading-normal);
+  color-scheme: dark;
+}
+.main {
+  box-sizing: border-box;
+  min-block-size: 100vh;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding: clamp(var(--space-16), 10vw, var(--space-32)) var(--gutter);
+}
+.label {
+  margin: 0 0 var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--chrome-accent);
+}
+.title {
+  margin: 0;
+  font-size: clamp(2.25rem, 1.7rem + 2.2vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+.main p:not(.label) { max-width: 54ch; margin: var(--space-6) 0 var(--space-8); font-size: var(--text-lg); color: var(--chrome-muted); }
+.button {
+  min-block-size: 2.75rem;
+  padding: var(--space-2) var(--space-6);
+  border: var(--border-hairline) solid var(--chrome-accent);
+  background: transparent;
+  font: inherit;
+  font-weight: 500;
+  color: var(--chrome-ink);
+  cursor: pointer;
+}
+.button:hover { border-width: 2px; }
+.button:focus-visible { outline: 2px solid var(--chrome-accent); outline-offset: 3px; }

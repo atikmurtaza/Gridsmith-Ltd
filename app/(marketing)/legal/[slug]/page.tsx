@@ -1,19 +1,18 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Breadcrumb } from '@/components/primitives/Breadcrumb';
-import { Container } from '@/components/primitives/Container';
-import { Heading } from '@/components/primitives/Heading';
 import { Numeric } from '@/components/primitives/Numeric';
 import { Prose } from '@/components/primitives/Prose';
-import { Section } from '@/components/primitives/Section';
 import { Blocks } from '@/components/content/Blocks';
+import { Opening } from '@/components/shared/Opening';
 import { getLegalDocument, listLegalDocuments } from '@/lib/sanity/queries';
 import {
   CLIENT_TERMS_COUNTERPART,
   LEGAL_DOCUMENT_SLUGS,
   type LegalSlug,
 } from '@/lib/legal/slugs';
-import styles from '@/components/content/content.module.css';
+import styles from '@/components/shared/shared.module.css';
+import opening from '@/components/shared/opening.module.css';
 
 /**
  * `/legal/[slug]` — the legal document template (`L-02`).
@@ -50,9 +49,20 @@ import styles from '@/components/content/content.module.css';
  *
  * ## Print
  *
- * `content.module.css` carries the print rules: the table of contents goes, clauses do not
- * break across pages. A legal page is a document someone keeps, which is the whole difference
- * between it and every other page on this site.
+ * `shared.module.css` carries the print rules since `GS-SHARED-001-B2`: white paper, black text,
+ * no navigation or contents, clauses kept whole where they fit. A legal page is a document
+ * someone keeps, which is the whole difference between it and every other page on this site.
+ *
+ * ## `GS-SHARED-001-B2` — presentation only; the wording is frozen
+ *
+ * Compact Master-frame opening (breadcrumb, title, the draft notice, metadata, summary), then the
+ * document on the light sheet at ~68ch, 17px, 1.7 leading, with sticky contents at 1024px+ and a
+ * native `<details>` below it — no script, no scroll spy. **Nothing the CMS serves is altered.**
+ * The markup `check:legal:parity` reads is deliberately unchanged in shape: each clause is a
+ * `<section>` whose FIRST attribute is its `id`, with no nested `<section>`; its `<h2>`'s first
+ * `<span>` is the clause number; clause prose is `<p>`; the banner still contains the exact
+ * string the gate looks for. Some list-like clause content is stored as separate paragraphs —
+ * a known data defect, recorded for a controlled later fix and not touched here.
  */
 export function generateStaticParams() {
   return LEGAL_DOCUMENT_SLUGS.map((slug) => ({ slug }));
@@ -94,106 +104,102 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     (d) => d.slug !== slug && d.slug !== counterpart,
   );
 
+  const clauses = doc.clauses ?? [];
+  const contents = (
+    <ol className={styles.contentsList}>
+      {clauses.map((clause) => (
+        <li key={clause.anchorId}>
+          <a href={`#${clause.anchorId}`}>
+            <span className={styles.contentsNo}>{clause.number}</span>
+            <span>{clause.heading}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  );
+
   return (
     <main id="main" tabIndex={-1}>
-      <Section rhythm="loose">
-        <Container width="narrow">
+      <Opening
+        place="Legal"
+        title={doc.title}
+        lead={doc.summary ?? undefined}
+        before={
           <Breadcrumb
             items={[
               { href: '/', label: 'Home' },
               { href: `/legal/${slug}`, label: doc.title },
             ]}
           />
-          <Heading level={1}>
-            {doc.title}
-          </Heading>
-
-          {!doc.solicitorApproved ? (
-            <p className={styles.legalStatus}>
-              DRAFT — NOT YET REVIEWED BY A SOLICITOR. This is the document Gridsmith Ltd
-              currently publishes and works to. It has been through internal revision but not
-              external legal review, and it will be updated when that review happens.
-            </p>
-          ) : null}
-
-          <p className={styles.legalMeta}>
-            <Numeric>
-              {[
-                doc.version ? `Version ${doc.version}` : null,
-                doc.effectiveFrom ? `Effective ${doc.effectiveFrom}` : null,
-                doc.lastReviewed ? `Reviewed ${doc.lastReviewed}` : null,
-                doc.reviewedBy,
-              ]
-                .filter(Boolean)
-                .join('  |  ')}
-            </Numeric>
+        }
+      >
+        {!doc.solicitorApproved ? (
+          <p className={opening.status}>
+            <span className={opening.statusLabel}>DRAFT — NOT YET REVIEWED BY A SOLICITOR.</span>{' '}
+            This is the document Gridsmith Ltd currently publishes and works to. It has been through
+            internal revision but not external legal review, and it will be updated when that
+            review happens.
           </p>
+        ) : null}
+        <p className={opening.meta}>
+          <Numeric>
+            {[
+              doc.version ? `Version ${doc.version}` : null,
+              doc.effectiveFrom ? `Effective ${doc.effectiveFrom}` : null,
+              doc.lastReviewed ? `Reviewed ${doc.lastReviewed}` : null,
+              doc.reviewedBy,
+            ]
+              .filter(Boolean)
+              .join('  |  ')}
+          </Numeric>
+        </p>
+      </Opening>
 
-          {doc.summary ? (
-            <Prose>
-              <p>{doc.summary}</p>
-            </Prose>
-          ) : null}
-        </Container>
-      </Section>
+      <div className={styles.sheet}>
+        <div className={`${styles.wrap} ${styles.legalGrid}`}>
+          {clauses.length > 0 ? (
+            <nav aria-labelledby="contents" className={styles.contents}>
+              <p id="contents" className={styles.connectHeading}>Contents</p>
+              {contents}
+            </nav>
+          ) : <div />}
 
-      {doc.clauses && doc.clauses.length > 0 ? (
-        <Section labelledBy="contents">
-          <Container width="narrow">
-            <Heading level={2} id="contents">
-              Contents
-            </Heading>
-            <ol className={styles.legalToc}>
-              {doc.clauses.map((clause) => (
-                <li key={clause.anchorId}>
-                  <a href={`#${clause.anchorId}`}>
-                    <span className={styles.legalTocNumber}>{clause.number}</span> {clause.heading}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </Container>
-        </Section>
-      ) : null}
-
-      <Section>
-        <Container width="narrow">
-          <div className={styles.legalClauses}>
-            {(doc.clauses ?? []).map((clause) => (
-              <section key={clause.anchorId} id={clause.anchorId} className={styles.legalClause}>
-                <Heading level={2}>
-                  <span className={styles.legalClauseNumber}>{clause.number}</span> {clause.heading}
-                </Heading>
+          <div className={styles.document}>
+            {clauses.length > 0 ? (
+              <details className={styles.contentsDetails}>
+                <summary>Contents</summary>
+                <nav aria-label="Contents">{contents}</nav>
+              </details>
+            ) : null}
+            {clauses.map((clause) => (
+              <section key={clause.anchorId} id={clause.anchorId} className={styles.clause}>
+                <h2 className={styles.clauseTitle}>
+                  <span className={styles.clauseNo}>{clause.number}</span> {clause.heading}
+                </h2>
                 <Prose>
                   <Blocks value={clause.body} />
                 </Prose>
-                {clause.basis ? (
-                  <p className={styles.legalBasis}>Basis: {clause.basis}</p>
-                ) : null}
+                {clause.basis ? <p className={styles.basis}>Basis: {clause.basis}</p> : null}
               </section>
             ))}
           </div>
-        </Container>
-      </Section>
+        </div>
+      </div>
 
       {others.length > 0 ? (
-        <Section surface="sunken" labelledBy="other-documents">
-          <Container width="narrow">
-            <Heading level={2} id="other-documents">
-              The other documents
-            </Heading>
-            <ul className={styles.legalToc}>
+        <section className={`${styles.sunken} ${styles.otherDocs}`} aria-labelledby="other-documents">
+          <div className={styles.wrap}>
+            <h2 id="other-documents" className={styles.connectHeading}>The other documents</h2>
+            <ul className={styles.others}>
               {others.map((other) => (
                 <li key={other.slug}>
                   <a href={`/legal/${other.slug}`}>{other.title}</a>
-                  {!other.solicitorApproved ? (
-                    <span className={styles.legalTocNumber}> — draft</span>
-                  ) : null}
+                  {!other.solicitorApproved ? <span className={styles.othersNote}> — draft</span> : null}
                 </li>
               ))}
             </ul>
-          </Container>
-        </Section>
+          </div>
+        </section>
       ) : null}
     </main>
   );

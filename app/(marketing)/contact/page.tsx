@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
-import { Container } from '@/components/primitives/Container';
-import { Heading } from '@/components/primitives/Heading';
 import { Numeric } from '@/components/primitives/Numeric';
-import { Prose } from '@/components/primitives/Prose';
-import { Section } from '@/components/primitives/Section';
 import { ContactForm } from '@/components/leads/ContactForm';
+import { Opening } from '@/components/shared/Opening';
+import styles from '@/components/shared/shared.module.css';
 import { getCompanyDetails, whatsAppHref, smsHref } from '@/lib/company/companyDetails';
 
 export const metadata: Metadata = {
@@ -61,73 +59,67 @@ export const metadata: Metadata = {
 export default async function Page() {
   const company = await getCompanyDetails();
 
+  // `GS-SHARED-001-B2` — presentation only. The form, its fields, validation, branching,
+  // consent and submission are `ContactForm` exactly as before; this page only places it on the
+  // light sheet beside the direct routes. Copy is unchanged apart from the aside's labels.
   return (
-    <main id="main" tabIndex={-1}>
-      <Section rhythm="loose">
-        <Container width="narrow">
-          <Heading level={1}>
-            Tell us what you need
-          </Heading>
-          <Prose>
-            <p>
-              One form for all three studios. If what you need spans more than one of them, say
-              so — it is the first option, and it comes straight to the founder rather than being
-              routed to a studio that can only do part of it.
-            </p>
-            <p>{company.responseCommitment}</p>
-          </Prose>
-        </Container>
-      </Section>
+    <main id="main" tabIndex={-1} data-nav="contact">
+      <Opening
+        place="Contact"
+        title="Tell us what you need"
+        lead={[
+          'One form for all three studios. If what you need spans more than one of them, say so — it is the first option, and it comes straight to the founder rather than being routed to a studio that can only do part of it.',
+          company.responseCommitment,
+        ]}
+      />
 
-      <Section>
-        <Container width="narrow">
-          <ContactForm
-            responseCommitment={company.responseCommitment}
-            contactEmail={company.contactEmail ?? ''}
-          />
-        </Container>
-      </Section>
+      <div className={styles.sheet}>
+        <div className={`${styles.wrap} ${styles.contactGrid}`}>
+          <div>
+            <ContactForm
+              responseCommitment={company.responseCommitment}
+              contactEmail={company.contactEmail ?? ''}
+            />
+          </div>
 
-      <Section surface="sunken" labelledBy="other-ways">
-        <Container width="narrow">
-          <Heading level={2} id="other-ways">
-            Or reach us directly
-          </Heading>
-          <Prose>
-            <p>
-              If the form is in your way, it is not the only route.
+          <aside className={styles.direct} aria-labelledby="other-ways">
+            <h2 id="other-ways" className={styles.directTitle}>
+              Or reach us directly
+            </h2>
+            <p className={styles.directNote}>If the form is in your way, it is not the only route.</p>
+            <dl className={styles.directList}>
               {company.contactEmail ? (
-                <>
-                  {' '}
-                  Write to{' '}
-                  <a href={`mailto:${company.contactEmail}`}>
-                    <Numeric>{company.contactEmail}</Numeric>
-                  </a>{' '}
-                  and it reaches the same place.
-                </>
+                <div>
+                  <dt>Email</dt>
+                  <dd>
+                    <a href={`mailto:${company.contactEmail}`}>
+                      <Numeric>{company.contactEmail}</Numeric>
+                    </a>
+                  </dd>
+                </div>
               ) : null}
+              {company.contactPhone ? (
+                <div>
+                  <dt>WhatsApp or text</dt>
+                  <dd>
+                    <Numeric>{company.contactPhone}</Numeric>
+                    <br />
+                    <a href={whatsAppHref(company.contactPhone)} target="_blank" rel="noopener noreferrer">
+                      WhatsApp
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                    {' · '}
+                    <a href={smsHref(company.contactPhone)}>text message</a>
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
+            <p className={styles.directNote}>
+              Both reach the same place as the form. {company.responseCommitment}
             </p>
-            {company.contactPhone ? (
-              <p>
-                {'The same number takes '}
-                <a
-                  href={whatsAppHref(company.contactPhone)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  WhatsApp
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-                {' and '}
-                <a href={smsHref(company.contactPhone)}>text messages</a>
-                {': '}
-                <Numeric>{company.contactPhone}</Numeric>. Both reach the same place as the
-                form.
-              </p>
-            ) : null}
-          </Prose>
-        </Container>
-      </Section>
+          </aside>
+        </div>
+      </div>
     </main>
   );
 }
