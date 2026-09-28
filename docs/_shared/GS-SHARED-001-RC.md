@@ -39,7 +39,8 @@ Supabase are outside the phase.
 | SH-RC-06 | `check:axe` UNRESOLVED on `/approach`: axe declines contrast under the rail's absolutely positioned `::before` filled box (spans the rail, larger than ¼ of short text boxes). It overlaps no text. | Same 1px line drawn as a border (horizontal and vertical forms), so axe measures the stage text. | `check:axe` 0 unresolved on `/approach`. |
 | SH-RC-07 | `check:axe` **violation** on `/legal/privacy` ≥1024px: the sticky Contents heading reused `.connectHeading` in frame `--chrome-muted` on the light sheet. | Sheet colour `--ink-muted`, as the file already did for `.otherDocs`. | `check:axe` zero violations. |
 | SH-RC-08 | Print: the opening kicker printed in frame gold (~1.8:1 on white) — the frame's print rule reset page tokens but not `--chrome-accent`. | `.frame` maps `--chrome-accent` to print ink under `@media print`. | Print emulation: every visible text node on privacy and terms is black. |
-| SH-RC-09 | Stale comments ("local prototype", "Master tile", "no stylesheet"). | Corrected; provenance table updated for `GS-O021`/`GS-O022`. | — |
+| SH-RC-10 | Lighthouse measured `/`, the division roots and two Press pages; the shared Master-group pages were bound by Master's budget and measured by nothing (the first RC CI, 36496064719 on `d7354834`, confirmed the gap). | `/about`, `/approach`, `/insights`, `/contact`, `/legal/privacy` added to `lighthouse/routes.cjs` at Master's existing budget (perf 0.98, LCP 1800 ms, CLS 0.03, TBT 200 ms), desktop and mobile. No budget changed; the 404 stays out by recorded decision. | Linux CI on the final SHA. |
+| SH-RC-09 | Stale comments ("local prototype", "Master tile", "no stylesheet"); `reddit.svg` tab-only lines failed `git diff --check`. | Corrected; provenance table updated for `GS-O021`/`GS-O022`; SVG trailing whitespace removed (render-neutral, recorded in the table). | — |
 
 ## Verification
 
@@ -57,7 +58,8 @@ The server reported notifications `skipped (unconfigured)`.
   combinations), consumer terms, legal parity (**6 documents, 94 clauses, 339 paragraphs**
   word-for-word), VAT, Press type, Path Finder, service content, reviews UI, company facts (9
   questions / 18 routes), Master scene/hero, Design, Digital and Press scene gates PASS.
-  Lighthouse runs on Linux CI (Windows skip, VALIDATION §13).
+  Lighthouse runs on Linux CI (Windows skip, VALIDATION §13) and now includes the five shared
+  routes (SH-RC-10).
 - **Responsive matrix:** 14 routes (/, about, approach, insights, contact, legal/privacy,
   legal/terms, 404, design, digital, press, three service pages) × 320/360/390/430/768/1024/1280/
   1440/1920 = 126 combinations: no overflow, no clipped text, one h1, 8 social links each ≥44px

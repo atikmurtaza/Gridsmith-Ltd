@@ -86,6 +86,13 @@ const ROUTES = [
   { path: '/press', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
   { path: '/press/services/publishing-preparation', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
   { path: '/press/contact', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
+  // GS-SHARED-001-RC: the shared Master-group pages, measured at Master's own budget (CLAUDE.md
+  // §Performance budgets). Not new numbers — they were bound by these and measured by nothing.
+  { path: '/about', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
+  { path: '/approach', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
+  { path: '/insights', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
+  { path: '/contact', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
+  { path: '/legal/privacy', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
 ];
 
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
