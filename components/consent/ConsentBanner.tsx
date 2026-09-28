@@ -36,9 +36,10 @@ const RESERVE_VAR = '--consent-block-size';
  * analytics is wired up (`docs/_shared/BEFORE-LAUNCH.md` §"Analytics"), and the Accept/Reject
  * shape must come back with it.
  *
- * **Nothing renders on the server.** `show` starts false, so the first paint is identical
- * with and without the cookie and there is no hydration mismatch. The bar is
- * `position: fixed`, so appearing after mount shifts no layout (`PROJECT-RULES.md` §7).
+ * **First visits render in the initial HTML.** Waiting for hydration made this notice the
+ * late LCP on Press contact. A small prepaint script hides the server-rendered notice for
+ * an existing cookie; mount then removes it. Only that wrapper's `hidden` attribute can
+ * differ at hydration. Without JavaScript the notice remains absent, as before.
  *
  * **It sits early in the DOM and low on the screen.** A screen reader meets it immediately
  * after the skip link, which is what "announced on appearance" asks for, without stealing
@@ -56,7 +57,7 @@ const RESERVE_VAR = '--consent-block-size';
  */
 export function ConsentBanner() {
   const ref = useRef<HTMLDivElement>(null);
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(true);
   // A constant id, not `useId()`. There is exactly one banner per document, so it cannot
   // collide, and `check-axe`'s INCOMPLETE_ALLOWED entry matches on the exact node target —
   // a generated id would change on any React or bundler change and silently stop matching,
@@ -103,10 +104,9 @@ export function ConsentBanner() {
     };
   }, [show]);
 
-  if (!show) return null;
-
   return (
-    <div ref={ref} className={styles.bar} role="region" aria-labelledby={headingId}>
+    <>
+    {show ? <div ref={ref} className={styles.bar} role="region" aria-labelledby={headingId} suppressHydrationWarning>
       <div className={styles.inner}>
         <p id={headingId} className={styles.text}>
           This site sets one cookie, <code className={styles.cookieName}>{COOKIE}</code>, which
@@ -127,6 +127,12 @@ export function ConsentBanner() {
           </button>
         </div>
       </div>
-    </div>
+    </div> : null}
+    {/* Runs during HTML parsing, before the external React chunks. Keep it outside `show`
+        so reopening mounts a fresh visible notice without executing the cookie check again.
+        The cookie name is a trusted constant; no cookie value enters markup or script. */}
+    <script dangerouslySetInnerHTML={{ __html: `try{if(document.cookie.split('; ').some(c=>c.startsWith('${COOKIE}=')))document.getElementById('${headingId}').closest('[role="region"]').hidden=true}catch{}` }} />
+    <noscript><style>{`.${styles.bar}{display:none!important}`}</style></noscript>
+    </>
   );
 }

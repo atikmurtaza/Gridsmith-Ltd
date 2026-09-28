@@ -16,6 +16,7 @@
  * Expects a server already running at BASE_URL (`npm run start`).
  */
 import { readFileSync } from 'node:fs';
+import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { AxePuppeteer } from '@axe-core/puppeteer';
@@ -1304,6 +1305,38 @@ const noticeProblems = [];
 {
   const browser2 = await launch();
   try {
+    // PRESS-RC-11: the notice must not wait for hydration to become the contact-page LCP.
+    // Block external scripts, leaving only the server HTML and its prepaint cookie check.
+    const earlyContext = await browser2.createBrowserContext();
+    const earlyPage = await earlyContext.newPage();
+    await earlyPage.setRequestInterception(true);
+    earlyPage.on('request', (r) => r.resourceType() === 'script' ? r.abort() : r.continue());
+    const readEarlyNotice = () => earlyPage.evaluate(() => {
+      const nodes = document.querySelectorAll('#gs-consent-heading');
+      return { count: nodes.length, visible: nodes[0]?.closest('[role="region"]')?.checkVisibility() ?? false };
+    });
+    const assertEarlyNotice = (state, visible) => {
+      assert.equal(state.count, 1, 'server-rendered notice missing or duplicated');
+      assert.equal(state.visible, visible, 'notice visibility before hydration');
+    };
+    assert.throws(() => assertEarlyNotice({ count: 0, visible: false }, true), /missing/);
+    assert.throws(() => assertEarlyNotice({ count: 2, visible: true }, true), /duplicated/);
+    assert.throws(() => assertEarlyNotice({ count: 1, visible: false }, true), /visibility/);
+    assert.throws(() => assertEarlyNotice({ count: 1, visible: true }, false), /visibility/);
+    await earlyPage.goto(`${BASE_URL}/press/contact`, { waitUntil: 'networkidle0' });
+    assertEarlyNotice(await readEarlyNotice(), true);
+    for (const value of ['1', '0', '', 'analytics_storage%2Cad_storage%2Cfunctionality_storage']) {
+      await earlyPage.evaluate((v) => { document.cookie = `gs_consent=${v}; Path=/; SameSite=Lax`; }, value);
+      await earlyPage.reload({ waitUntil: 'networkidle0' });
+      assertEarlyNotice(await readEarlyNotice(), false);
+    }
+    await earlyPage.setJavaScriptEnabled(false);
+    await earlyPage.reload({ waitUntil: 'networkidle0' });
+    assertEarlyNotice(await readEarlyNotice(), false);
+    assert(await earlyPage.$eval('main h1', (e) => e.checkVisibility()), 'no-JS contact content hidden');
+    await earlyContext.close();
+    console.log('check-axe: notice is present before hydration; current/legacy/empty cookies hide it before hydration; no-JS content remains unobscured; negative specimens PASS');
+
     // ---- Steps 1-3: a first visit, the press, and the reload.
     const context = await browser2.createBrowserContext();
     const page = await context.newPage();
@@ -1408,6 +1441,11 @@ const noticeProblems = [];
             'view, and the cookie would then have no strictly-necessary purpose to rest on',
         );
       }
+      await page.evaluate(() => [...document.querySelectorAll('button')]
+        .find((button) => button.textContent.trim() === 'Cookie notice')?.click());
+      await page.waitForSelector('#gs-consent-heading');
+      assert(await page.$eval('#gs-consent-heading', (e) => e.closest('[role="region"]').checkVisibility()),
+        'acknowledged notice did not reopen visibly');
     }
     await context.close();
 
