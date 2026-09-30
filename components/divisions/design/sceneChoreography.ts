@@ -218,7 +218,9 @@ export function startDesignScene(root: HTMLElement): () => void {
     const [dx, dy, dk] = footerDock(tx, ty, scale);
     technical.setAttribute("transform", `translate(${tx + dx} ${ty + dy}) scale(${scale * dk})`);
     opacity(technical, within(TECHNICAL.enter, p));
-    opacity(buildingDetail, 1 - within(FINAL.detailOut, p));
+    // Technical copy is read over the building: its detail recedes to 0.2 and returns (designTimeline).
+    const over = within(TECHNICAL.copyOver, p) * (1 - within(TECHNICAL.copyClear, p));
+    opacity(buildingDetail, (1 - within(FINAL.detailOut, p)) * (1 - 0.8 * over));
     buildingEdges.forEach((el, i) => {
       el.setAttribute("d", curvePath(interpolate(buildingCurves[i], markCurves[i], convergence)));
       el.setAttribute("stroke-width", String(2 + 36 * convergence));

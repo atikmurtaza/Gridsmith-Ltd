@@ -63,6 +63,10 @@ export const MOTION = {
 export const TECHNICAL = {
   enter: [2.66, 2.82] as Range,
   assemble: [2.72, 2.9] as Range,
+  // GS-DES-002-M1-R1: as the Technical copy crosses the building, its detail (floors, roof, columns,
+  // linework) recedes behind the copy — the outline and rig stay — and returns before the dimensions.
+  copyOver: [2.66, 2.76] as Range,
+  copyClear: [2.84, 2.9] as Range,
   dimensions: [2.9, 2.97] as Range,
   roofGhost: [2.93, 3.0] as Range,
   electrical: [2.95, 3.03] as Range,
@@ -104,7 +108,7 @@ export const resolved = () => ({
   brandHandoff: Math.min(MORPH.swap[0], MORPH.assetOut[0]),
   mascot: MORPH.mascot[1],
   mascotHandoff: MOTION.rig[0],
-  building: Math.max(TECHNICAL.assemble[1], TECHNICAL.dimensions[1], TECHNICAL.roofGhost[1], TECHNICAL.water[1], TECHNICAL.electricalDim[1]),
+  building: Math.max(TECHNICAL.assemble[1], TECHNICAL.copyClear[1], TECHNICAL.dimensions[1], TECHNICAL.roofGhost[1], TECHNICAL.water[1], TECHNICAL.electricalDim[1]),
   buildingHandoff: Math.min(FINAL.detailOut[0], FINAL.travel[0], FINAL.converge[0]),
   final: Math.max(FINAL.converge[1], FINAL.nodes[1], FINAL.asset[1]),
 });

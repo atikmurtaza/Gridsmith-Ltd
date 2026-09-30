@@ -982,6 +982,47 @@ try {
       throw new Error('G2 removed-surface proof did not fail');
     console.log('PROVEN RED closed Technical scope contrast without paper');
     await scope.close();
+    // GS-DES-002-M1: the Technical copy arrives over the building while it is still sliding into
+    // place; Linux CI read the kicker at 3.40:1 at 2.75 (locally 3.76:1 at 2.8). The kicker carries its
+    // chapter surface: the subject is that kicker over the drawing, which fails once the surface goes.
+    const kicker = await open(1440, 900, { touch: true });
+    await seek(kicker, 2.8);
+    const kickerOnly = { selector: '#technical-design .ds-kicker' };
+    const cleanKicker = await textContrast(kicker, kickerOnly);
+    if (cleanKicker.length) throw new Error(`Dirty Technical kicker baseline: ${cleanKicker}`);
+    await kicker.$eval(kickerOnly.selector, el => el.style.background = 'transparent');
+    // R1 recedes the drawing at 2.8, so without this the removed surface is inert (the first R1 run of
+    // this proof). The subject is the kicker over the drawing as CI saw it: detail at full strength.
+    await kicker.addStyleTag({ content: "[data-design-stage] [data-building-detail]{opacity:1!important}" });
+    if (!(await textContrast(kicker, kickerOnly)).some(f => f.includes('Technical Design')))
+      throw new Error('Technical kicker removed-surface proof did not fail');
+    console.log('PROVEN RED Technical kicker contrast without its surface');
+    await kicker.close();
+    // GS-DES-002-M1-R1: at 2.8 the building's detail is receded behind the arriving copy; without that
+    // its opacity there is exactly 1 (detailOut has not begun), so forcing 1 is the unreceded state.
+    // RC: 2048x1152, not 1920x1080. From 1920 the intro is large text (3:1), and 1920's unreceded 3.13
+    // cleared it by 0.13 — inert in two full --prove runs. 2048 reads 2.27–2.42 unreceded (below 1200px
+    // tall, so R2 containment plays no part): the subject R1 exists for, with margin.
+    const transit = await open(2048, 1152);
+    await seek(transit, 2.8);
+    const cleanTransit = await textContrast(transit);
+    if (cleanTransit.length) throw new Error(`Dirty Technical transit baseline: ${cleanTransit}`);
+    await transit.addStyleTag({ content: "[data-design-stage] [data-building-detail]{opacity:1!important}" });
+    if (!(await textContrast(transit)).some((f) => f.includes("Parts become")))
+      throw new Error("Technical transit unreceded-detail proof did not fail");
+    console.log("PROVEN RED Technical intro contrast with the building detail unreceded");
+    await transit.close();
+    // GS-DES-002-M1-R2: past 1200px tall the stage box stops growing (design.css). Without that the
+    // drawing grows into the copy column: 3200x1800 @2.8 read the scope note at 2.58:1.
+    const wide = await open(3200, 1800);
+    await seek(wide, 2.8);
+    const cleanWide = await textContrast(wide);
+    if (cleanWide.length) throw new Error(`Dirty ultra-wide Technical baseline: ${cleanWide}`);
+    await wide.addStyleTag({ content: ".ds-story:not([data-static]) .ds-stage-art{height:88%!important}" });
+    if (!(await textContrast(wide)).some((f) => /Diagrammatic|Parts become|Technical services/.test(f)))
+      throw new Error("Ultra-wide uncontained-stage proof did not fail");
+    console.log("PROVEN RED ultra-wide Technical contrast with the stage uncontained");
+    await wide.close();
   } else if (!process.argv.includes("--g2-only")) {
     // G1: the original H1 stays semantic throughout the story; disclosures own
     // readability on narrow screens and preserve transparent closed/desktop copy.
@@ -1143,6 +1184,15 @@ try {
         errors.push(
           `${label}: surviving path did not transform through five chapters`,
         );
+      // GS-DES-002-M1-R1: the states above are settled; this is Technical copy crossing the building,
+      // where the intro read 2.42:1 at 2048x1152 (large text, 3:1) and 4.07:1 at 390x844 before the
+      // building's detail receded behind it.
+      // R2: 2.6 (the H2 over the fading mascot) and 2.75 (the intro) failed at 2400–3200 before the
+      // stage was contained; 2.8 is the kicker's and the note's worst.
+      for (const at of [2.6, 2.75, 2.8]) {
+        await seek(page, at);
+        errors.push(...(await textContrast(page)).map((f) => `${label} technical transit ${at}: ${f}`));
+      }
       // Opening service detail is a real interaction; it must remain reachable and avoid overflow.
       await seek(page, 1.12);
       await page.$eval("#brand-visual details", (el) => {
@@ -1166,6 +1216,8 @@ try {
       [2.2, "[data-character]"],
       [2.3, "[data-finished-character]"],
       [2.75, "[data-rig]"],
+      // GS-DES-002-M1: the Technical kicker's worst crossing of the building (3.76:1 before its surface).
+      [2.8, "[data-rig]"],
       [3.05, "[data-roof]"],
       [3.2, "[data-dimensions]"],
       [3.3, "[data-electrical]"],

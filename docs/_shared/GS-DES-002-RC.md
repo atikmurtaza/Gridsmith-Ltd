@@ -160,3 +160,173 @@ final SHA, remote/main checks, CI run and Lighthouse medians, and the protected 
 deployment, SHA, protection and runtime smoke are recorded in the release handoff and
 `node_modules/.cache/gs-des-002-rc/final-release-receipt.json`. The candidate is accepted only once
 CI and Preview pass for that exact SHA. No launch or next phase is authorised.
+
+## GS-DES-002-M1 (+ R1, R2) — Technical readability and ultra-wide containment (owner-approved; RC below)
+
+**Trigger.** `GS-DIG-002-RC`'s exact-SHA CI (run `36734877438`, `f7e45436`) is the first run to reach
+`check:design:scene` on Linux: this RC's own CI (`4df670d2`) stopped earlier, at the then-failing
+`/digital` mobile LCP. **`GS-DIG-002-RC`'s Digital mobile performance passed** (1748 / 1745 /
+1733ms, median 1745ms against 1750ms). The run failed only at `detail 2.75: pixel contrast Technical
+Design: 3.40:1; needs 4.5` (1440×900, touch). Not a Digital regression; Digital is unchanged.
+
+**Cause.** At 2.75–2.8 the Technical copy arrives on the right while the building is still sliding
+from the Motion side (`--ds-art-left` 40% → 0%) and is only partly receded (stage-art opacity ≈0.64).
+The small muted mono kicker lands on the building's slab fills, a column, linework and two rig joints.
+Measured on HEAD at 1440×900 (touch and not): 2.7 4.56–4.86, 2.75 3.97–4.34, **2.8 3.76**; 1920×1080
+2.75 3.71, 2.8 3.45. Touch makes no difference. The gate sampled 2.75 but not 2.8, the worst state.
+Neither the rig joints (`fill: --ds-night`) nor the column alone set the reading: hidden together it
+still read 4.3–4.5 — the slab and line drawing does.
+
+**Correction (Design-local, CSS only).** Like the stage label, the enhanced-story kicker carries its
+own chapter surface (`--ds-surface`), sized to its line (`fit-content`, `0.5em` inline padding offset
+by a negative margin — no layout change): invisible on a plain surface, a small drafting label where
+the drawing passes behind. Geometry, timing, rig, building, colours and the scroll map are unchanged.
+Static/reduced-motion/no-JS layouts are outside `[data-enhanced]` and unchanged. Where G1 turns an
+expanded phone disclosure to paper, `--ds-surface` follows the paper too: the first full-gate run
+without it read the Motion kicker at 2.31:1 (night label on paper copy) at 360–430px — caught by the
+existing `expanded motion-dimensional` pass, fixed, re-run green.
+
+**Gate.** `check:design:scene` samples 2.8 as well as 2.75 in its detail pass, and `--prove` adds
+*PROVEN RED Technical kicker contrast without its surface* (1440×900 touch, 2.8: the kicker is
+measured clean, its surface removed, and the reading must name `Technical Design`). The red is its
+own validity proof: the subject is the kicker over the drawing. Since R1 recedes the drawing at 2.8,
+the proof also forces the building detail back to full strength — without that the removed surface
+was inert (the first R1 `--prove` run: *removed-surface proof did not fail*).
+
+**GS-DES-002-M1-R1 — the Technical intro.** M1 found the intro paragraph ("Parts become an
+assembly…") crossing the same building below 4.5:1 on HEAD too, at states the gate did not sample:
+1920×1080 @2.8 **3.43:1** (3.13 on another run), 390×844 @2.8 4.07:1; 1440×900 passes. *(RC
+correction: from 1920 wide the intro renders as large text — the gate's threshold there is 3:1 — so
+1920's 3.13–3.43 was not a failure. The real failures R1 removes are 2048×1152 @2.8 **2.42:1** and
+2133×1200 2.59:1 against 3:1, and 390×844 4.07:1 against 4.5; see GS-DES-002-M1-RC.)* Layers,
+measured by hiding each: on wide screens the building's **linework** (strokes hidden → 6.20:1); on
+phones the **solid roof** still dropping into place (assemble 2.72–2.90, ghost from 2.93; hidden →
+5.22:1). Slab fills, columns, rig and wave move nothing. The shared copy-over-art recession
+(`cover`) cannot carry it: it weighs the whole copy block against the whole art box, so the wide
+Technical column reads ~18% cover (art ≈0.7), and on phones it is already at its 0.28 floor.
+
+*Correction (Technical only):* `TECHNICAL.copyOver [2.66, 2.76]` and `copyClear [2.84, 2.90]`
+(`designTimeline`) recede the building's **detail** group — floors, roof, columns, linework,
+dimensions — to 0.2 while the Technical copy crosses it, and return it by 2.90, before the
+dimensions and roof-ghost beats; the building outline and rig stay at full strength, so the
+building reads as its contour. No other chapter, the shared `cover`, the construction sequence or
+the completed-building dwell changes (the building now resolves at `max(…, copyClear[1])`, still
+3.1). Both ranges are in the self-test's Motion → Technical placement check. The lazy scene chunk
+grows 43 B gz (8,078 → 8,121; ceiling 8KB, ~70 B left).
+
+*Gate:* every one of the 25 sizes now samples 2.8 (*technical transit*) through the same text sweep,
+and `--prove` adds *PROVEN RED Technical intro contrast with the building detail unreceded*
+(clean, then the detail forced to opacity 1 — exactly its value there without the recession — must
+name `Parts become`; subject corrected at RC from 1920×1080 to 2048×1152 @2.8, see below).
+
+**GS-DES-002-M1-R2 — ultra-wide containment (owner decision: contain the artwork, do not fade it
+away).** R1's 2.8 sampling across all 25 sizes found 2844×1600 and 3200×1800 red (scope note 2.23:1).
+Measured on R1: up to 2133×1200 every Technical line holds ≥5.31:1; from 2400 it fails — 2400 intro
+4.68, 2560 3.96, 2844 note 2.68, 3200 note 2.58 — and at 2.6 the Technical H2 crosses the fading
+mascot at 2.6–2.9:1 (3:1 floor), 1.46 at 3200 @2.5. Cause: the stage box is a percentage of the
+viewport (60% × 88svh for chapters, 100% for the hero) and the SVG is `meet`-scaled into it, so the
+drawing's scale grows linearly (chapters 0.6·vw/1000: 1.152 at 1920, 1.920 at 3200); the copy is rem
+and does not. At 2.8 the drawing reaches ~62% of the width at every size, but the paragraph sits at
+74% of the height at 1920 and 53% at 3200 — over the rig's densest middle. Deeper recession (joints on
+paper, rig and outline at 0.35, wave at 0.5) still left 3200 at ~4.8 and 2844's note at ~4.4.
+
+*Containment (CSS only, 0 B JS):* in landscape (`min-width: 761px` and `min-aspect-ratio: 3/2`) the
+stage box stops growing at its 1200px-tall size — `height: min(88%, 1056px)`, the hero
+`min(100%, 1200px)`. On a landscape screen height is the limiting axis, so the drawing's scale stops
+there (≈1.32; hero 1.5). Everything inside the SVG — the supplied 3D logos, mascot, building, final
+mark — moves together, and `footerDock` reads `getScreenCTM()`, so alignment and the footer glide
+follow. The box keeps its own top, as on every screen up to 1200px tall: a vertically centred cap was
+measured and failed (intro 4.27–4.60, H2 2.6) because it moves the drawing's dense middle to where
+the arriving copy is. *Threshold:* 1200px tall is where `min()` starts to bind, so geometry up to
+2133×1200 is identical by construction — measured identical (scale, box, SVG origin, building and copy
+positions at 0 / 1.3 / 2.25 / 2.8 / 3.3 / 4.3) at 390×844, 768×1024, 1024×768, 1440×900, 1920×1080,
+2048×1152, 2133×1200 and 1024×1366 portrait; the scale continues from 2133's 1.28 to 1.32 at ~2200
+and holds, so there is no snap in width. The aspect condition keeps portrait and near-square screens
+over 1200px tall (a 1024×1366 tablet) on their own composition; resizing a >1200px-tall window across
+3:2 moves a width-limited drawing a few tens of px. The rig joints (`--ds-night` fill) and the wave
+cause no remaining failure once contained and are unchanged.
+
+*Gate:* each size's transit sample now reads 2.6, 2.75 and 2.8 (the H2, the intro and the kicker/note
+states), and `--prove` adds *PROVEN RED ultra-wide Technical contrast with the stage uncontained*
+(3200×1800 @2.8: clean, then the box forced back to 88% must name Technical copy).
+
+**Local evidence — M1 + R1 + R2 (HEAD `f7e45436` + this change, clean worktree without the Master
+candidate, clean `.next`, Windows).** Minimum readings over 2.5 / 2.55 / 2.6 / 2.65 / 2.7 / 2.75 /
+2.8 / 2.85 / 2.9 / 3.0 at 390×844, 768×1024, 1024×768, 1440×900, 1920×1080, 2048×1152, 2133×1200,
+2400×1350, 2560×1440, 2844×1600 and 3200×1800: kicker 6.69:1 everywhere; intro 5.10 (2400×1350),
+5.32 (390×844), ≥5.69 elsewhere; scope note ≥6.55; every other line of copy (H2 included) 6.69.
+`check:design:scene` PASS (all 25 sizes sampled at 2.6 / 2.75 / 2.8 in transit; the same loop fired
+on 2844/3200 in the R1 run, so it reaches its subjects); `--prove` PASS, 31 PROVEN RED, among them
+the kicker (drawing held at full strength), the intro (detail unreceded) and the ultra-wide stage
+(uncontained). M1's kicker proof on the unchanged HEAD build stops red at *Dirty Technical kicker
+baseline: 3.62:1*. The GS-DES-002-R1 continuity/footer section (`R1_SIZES` stops at 1920×1080) was
+also run at 2400×1350, 2560×1440 and 3200×1800 from a scratch copy: dwell, flow, overlap, no blink,
+caption, 3D payoffs, morph, footer glide (one leg, 0.0px beyond pace), reversal, dock, footer
+contrast and no duplicate footer mark all hold. `tsc`, ESLint (Design files), `lint:colors`,
+`check:contrast`, `check:design:timeline:selftest` and `git diff --check` clean. `/design` JS delta
+3.7KB of 25KB; lazy Design scene 8,121 B gz (R1 +43 B; R2 0 B, CSS only; ceiling 8KB). Digital,
+Press, shared chrome/styles and the 15 Master-candidate files untouched (hashes recorded before and
+after). Linux CI has not yet run any of it. *(RC: the "31 PROVEN RED" above did not reproduce — see
+GS-DES-002-M1-RC.)*
+
+## GS-DES-002-M1-RC — release candidate (30 September 2026)
+
+**Owner approval.** The owner visually approved M1 (kicker surface), R1 (Technical detail recession,
+`copyOver [2.66, 2.76]` / `copyClear [2.84, 2.90]`, detail floor 0.2, outline and rig untouched) and
+R2 (landscape stage containment, `min(88%, 1056px)` / hero `min(100%, 1200px)`). All three are frozen;
+this RC makes no runtime or visual change to them.
+
+**RC defect found and corrected (gate only).** Two full `check:design:scene --prove` runs on the clean
+RC build stopped at *Technical transit unreceded-detail proof did not fail* — **an inert proof**, and
+the R2 proof after it never ran (29 of 31 reached). Isolated, the probe read the unreceded intro at
+1920×1080 @2.8 **3.13:1** on three fresh loads, yet the gate's own predicate returned nothing: from
+1920 wide the intro is large text (≥24px) and its threshold is 3:1, so the subject cleared its own
+predicate by 0.13 and fired or not on pixel noise. The previous session's 31-red reading was of that
+kind. Measured with the detail forced to 1 (the unreceded state), threshold in brackets:
+1920×1080 2.78/2.8/2.82 → 4.05/3.13/3.67 (3); **2048×1152 2.75/2.42/4.10 (3)**; 2133×1200
+2.65/2.59/3.72 (3); 1600×900 and 1745×982 ≥4.90 (3); 390×844 4.34/4.07/3.98 (4.5). The proof's
+subject moves to **2048×1152 @2.8** — a real HEAD failure that R1 removes, below 1200px tall so R2
+plays no part — where it reads **2.27:1 against 3** (clean baseline: no finding). The threshold, the
+predicate, the matrix and every other proof are unchanged; the R2 proof's subject was measured before
+it first ran here (3200×1800 @2.8 uncontained: scope note **2.20:1** against 4.5). The transit-loop
+comment that cited 1920 is corrected. Re-run in full on the same build: **`--prove` PASS, 31 PROVEN
+RED** — among them *Technical kicker contrast without its surface* (1440×900 touch, drawing held at
+full strength), *Technical intro contrast with the building detail unreceded* and *ultra-wide
+Technical contrast with the stage uncontained*.
+
+**Local RC verification** — clean worktree = `f7e45436` + exactly the six Design files (Master
+candidate absent), `.next` removed before the build, Windows, port 3210 (something unrelated held
+3000 and was left alone). `git diff --check` clean. `verify:static` PASS (tsc, ESLint 0 warnings,
+colour selftest, `lint:colors`, `check:contrast` 44 pairs / 543 size / 185 permission / 20 opacity
+composites, headings, content, claims, control, schemas, RLS, lead security, every selftest,
+`check:master:scene:selftest`, `check:design:timeline:selftest` 5 checks / 11 red fixtures).
+The self-test reaches both R1 ranges: `copyOver` moved to 2.3 → *Motion → Technical starts at 2.3,
+inside the dwell*; `copyClear` ended at 3.45 → *building resolves at 3.45* and *holds 0.05* (restored
+byte-identical). `verify:build` PASS (the first build attempt's worker died with Windows 0xC0000409 —
+a native crash, not a code error; the clean retry passed): `lint:secrets`, `check:tokens`,
+`check:theme`, bundle size 69 routes in budget, `/design` 3.7KB of 25KB, **lazy Design scene 8,121 B
+gz** (level 9; 8,192 B ceiling, 71 B headroom, unchanged by R2), Master lazy 6,016 B. Served suite
+PASS: `check:axe` (76 analyses, zero violations, 0 unresolved, skip link, cookie notice, deferred
+footer), security headers, launch (development dataset), responsive (51 combinations), consumer terms,
+legal parity 6/94/339, VAT, Press type/scene, Path live, service content, reviews UI, company facts,
+Master scene/hero (committed HEAD Master), **`check:design:scene`** (25-size matrix each sampled in
+transit at 2.6 / 2.75 / 2.8, detail pass incl. 2.75 and 2.8 at 1440×900 touch, G1, G2 24 sizes
+≥6.69:1, fallbacks and lifecycle, R1 continuity/footer at 7 sizes, footer scope) and
+`check:digital:scene`. Production audit 0.
+
+Scratch measurement (never committed) over 2.5 / 2.55 / 2.6 / 2.65 / 2.7 / 2.75 / 2.8 / 2.85 / 2.9 /
+3.0 — minimum kicker / intro / scope note / other Technical copy: 390×844 6.69 / 5.32 / 6.69 / 8.28;
+768×1024 6.69 / 6.58 / 6.69 / 9.61; 1024×768 6.69 / 6.58 / 6.69 / 9.12; 1440×900 (and touch) 6.69 /
+6.52 / 6.69 / 8.87; 1920×1080 6.69 / 5.77 / 6.69 / 8.42; 2048×1152 6.69 / 5.27 / 6.55 / 8.26;
+2133×1200 6.69 / 5.69 / 6.69 / 7.80; **2400×1350 6.69 / 5.10 / 6.69 / 7.43; 2560×1440 6.69 / 5.88 /
+6.69 / 7.57; 2844×1600 6.69 / 6.39 / 6.69 / 7.33; 3200×1800 6.69 / 6.69 / 6.69 / 6.90**. No failing
+line anywhere. R2 geometry: at 768×1024 → 2133×1200 the stage box with the containment is identical to
+the box forced back to its percentage at 0 and 2.8; above 1200px tall it holds 1056px (hero 1200px).
+390×844 is outside the ≥761px rule. The R1 continuity/footer section run at 2400×1350, 2560×1440 and
+3200×1800: dwell, flow, overlap, no blink, caption, 3D payoffs, morph, footer glide, reversal, dock,
+collision, footer contrast, no duplicate mark — hold.
+
+The exact-SHA receipt (SHA, CI run, Lighthouse, Preview) follows the convention above and is written to
+`node_modules/.cache/gs-des-002-m1-rc/final-release-receipt.json` and the release handoff; the
+candidate is accepted only once CI and Preview pass for that exact SHA. Staging only; no launch or
+next phase is authorised.

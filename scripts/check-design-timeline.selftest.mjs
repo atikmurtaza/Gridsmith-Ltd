@@ -36,7 +36,7 @@ const range = (a, b, step = 0.002) => Array.from({ length: Math.round((b - a) / 
 const handoffs = (t) => [
   [0, "Hero → Brand", [t.BRAND.enter, t.BRAND.guides, t.BRAND.g, t.BRAND.s, t.BRAND.nodes, t.BRAND.baseGold]],
   [1, "Brand → Motion", Object.values(t.MORPH)],
-  [2, "Motion → Technical", [...Object.values(t.MOTION), t.TECHNICAL.enter, t.TECHNICAL.assemble]],
+  [2, "Motion → Technical", [...Object.values(t.MOTION), t.TECHNICAL.enter, t.TECHNICAL.assemble, t.TECHNICAL.copyOver, t.TECHNICAL.copyClear]],
   [3, "Technical → Final", [t.FINAL.detailOut, t.FINAL.travel, t.FINAL.converge, t.FINAL.nodes]],
 ];
 
@@ -103,7 +103,7 @@ function fixture(patch) {
     brandHandoff: Math.min(t.MORPH.swap[0], t.MORPH.assetOut[0]),
     mascot: t.MORPH.mascot[1],
     mascotHandoff: t.MOTION.rig[0],
-    building: Math.max(t.TECHNICAL.assemble[1], t.TECHNICAL.dimensions[1], t.TECHNICAL.roofGhost[1], t.TECHNICAL.water[1], t.TECHNICAL.electricalDim[1]),
+    building: Math.max(t.TECHNICAL.assemble[1], t.TECHNICAL.copyClear[1], t.TECHNICAL.dimensions[1], t.TECHNICAL.roofGhost[1], t.TECHNICAL.water[1], t.TECHNICAL.electricalDim[1]),
     buildingHandoff: Math.min(t.FINAL.detailOut[0], t.FINAL.travel[0], t.FINAL.converge[0]),
     final: Math.max(t.FINAL.converge[1], t.FINAL.nodes[1], t.FINAL.asset[1]),
   };

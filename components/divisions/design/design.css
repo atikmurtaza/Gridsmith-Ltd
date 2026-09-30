@@ -35,6 +35,15 @@
   margin-bottom: 1.5rem;
   color: var(--ink-muted);
 }
+/* GS-DES-002-M1: copy in transit crosses the drawing (Technical Design at 2.75–2.8 lay on the building's
+   slabs and linework, 3.40:1 on Linux CI). Like the stage label, the kicker carries its own chapter
+   surface, sized to its line: invisible on a plain surface, a small drafting label over the drawing. */
+.ds-story[data-enhanced] .ds-kicker {
+  width: fit-content;
+  padding-inline: 0.5em;
+  margin-inline-start: -0.5em;
+  background: var(--ds-surface);
+}
 .ds-chapter h1,
 .ds-chapter h2 {
   font-family: var(--font-display);
@@ -617,6 +626,8 @@
     --ink: var(--ds-paper-ink);
     --ink-muted: var(--ds-paper-muted);
     --ink-subtle: var(--ds-paper-muted);
+    /* GS-DES-002-M1: the kicker's own surface follows the paper, not the chapter's night. */
+    --ds-surface: var(--ds-paper);
     color: var(--ink);
     background: var(--ds-paper);
     color-scheme: light;
@@ -716,4 +727,16 @@
   }
   /* The final mark sits in this space, below the copy: the footer arrives after it, not over it. */
   .ds-story:not([data-static]) .ds-chapter[data-chapter="4"] { min-height: 0; padding-bottom: 55svh; }
+}
+/* GS-DES-002-M1-R2 — ultra-wide containment. The artwork scales with the viewport and the copy does
+   not (rem), so past ~2133×1200 the drawing grew into the copy column: Technical copy read 2.58–4.68:1
+   at 2400–3200 wide, and the Technical H2 2.6:1 over the fading mascot. The stage box stops growing
+   at its 1200px-tall size (88% → 1056px; the hero 100% → 1200px): on a landscape screen height is the
+   limiting axis, so the drawing's scale stops there too (≈1.32; the hero 1.5). It stays anchored at
+   its own top, as on every screen up to 1200px tall, so arriving copy meets the same part of the
+   drawing as at 2133×1200. Up to 1200px tall min() resolves to the percentage: nothing changes; above
+   it the cap is continuous. Portrait and near-square screens keep their own composition. */
+@media (min-width: 761px) and (min-aspect-ratio: 3/2) {
+  .ds-story:not([data-static]) .ds-stage-art { height: min(88%, 1056px); }
+  .ds-story:not([data-static])[data-active="0"] .ds-stage-art { height: min(100%, 1200px); }
 }
