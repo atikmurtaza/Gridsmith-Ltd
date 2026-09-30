@@ -11,6 +11,29 @@ export const markCurves = [
   line(640, 437, 640, 617),
   line(640, 617, 447.5, 617),
 ];
+/** The mark's eight sphere centres, in the same order as `markCurves`' ends (`DesignArtwork` nodes). */
+export const markNodes = [[347.5, 336], [538, 336], [347.5, 517.5], [538, 517.5], [447.5, 437], [640, 437], [447.5, 617], [640, 617]];
+
+/**
+ * GS-DES-002 — the construction outline the mark's own bars and spheres draw on their way to the
+ * mascot, read off the supplied headshot at its placement below (`Character`: x 280, y 80, 440 ×
+ * 630). Each bar keeps its role and direction: the top bar, drawn right to left, becomes the hair
+ * sweeping right to left to the flicked tips at the left; the left bar the left of the head; the
+ * upper bracket's floor the left jaw to the chin; the lower bracket's top the visor line; the right
+ * bar the right of the head down to the ear; the lower floor the right jaw back to the chin.
+ */
+/** Hair tip, crown, jaw, chin, visor ends, lower jaw, ear — the landmarks the spheres become. */
+export const mascotNodes = [[286, 248], [652, 214], [322, 482], [470, 650], [306, 410], [634, 400], [380, 611], [668, 440]];
+// Each curve runs between two of those landmarks, with its own two control points.
+export const mascotCurves = [
+  [652, 214, 610, 128, 470, 96, 286, 248],
+  [286, 248, 318, 290, 292, 400, 322, 482],
+  [322, 482, 338, 600, 410, 652, 470, 650],
+  [306, 410, 420, 392, 540, 390, 634, 400],
+  [652, 214, 712, 262, 716, 372, 668, 440],
+  [668, 440, 672, 560, 590, 652, 470, 650],
+];
+
 // The roof, external perimeter and lowest floor plate form the six persistent edges.
 export const buildingCurves = [
   line(495, 135, 273, 238),

@@ -190,6 +190,14 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
 // GS-DIG-001 — see digitalSceneTarget() for how a /digital decline earns this target.
 const DIGITAL_SCENE = 'main.dg-home';
 const DIGITAL_SCENE_TARGET = `${DIGITAL_SCENE} (pixel-measured by check:digital:scene)`;
+// GS-DES-002-RC — the same classifier (digitalSceneTarget) over /design's footer. Only the two
+// reasons the R2 run-on produces; any other reason, or a node outside the footer, stays itself.
+const DESIGN_FOOTER = 'body > footer';
+const DESIGN_FOOTER_TARGET = `${DESIGN_FOOTER} on /design (pixel-measured by check:design:scene)`;
+const DESIGN_FOOTER_REASONS = [
+  "Element's background color could not be determined because it is overlapped by another element",
+  "Element's background color could not be determined due to a background gradient",
+];
 
 const INCOMPLETE_ALLOWED = [
   ...['g', 's'].map((glyph) => ({
@@ -209,6 +217,12 @@ const INCOMPLETE_ALLOWED = [
     routes: ['/design'],
     targetPattern: /^g\x5bdata-art="(?:technical|convergence)".* > text\x5b/,
     why: 'GS-R002 diagram labels are decorative SVG study details inside the aria-hidden, non-focusable stage, not service information or a usable engineering drawing. Semantic technical content and its scope gate remain HTML and are measured by check:design:scene. Remove this exemption if the diagram becomes informational or interactive.',
+  },
+  {
+    rule: 'color-contrast',
+    routes: ['/design'],
+    target: DESIGN_FOOTER_TARGET,
+    why: 'GS-DES-002-R2 (owner-approved): from 768px the final 3D mark docks into the footer slot, so the Design story stays pinned and its box runs on under the footer (a transparent, positioned, pointer-events:none layer; its surface is a gradient sized to stop at the story end). axe reads that layer as overlapping, or as a gradient, and declines contrast for footer text on /design only — the footer itself is unchanged and hit-tests on top. The mapping allows exactly those two reasons for a node inside body > footer on /design; its positive/negative proofs run every time. check:design:scene footer-contrast measures rendered pixels under every visible footer text box through the handoff at seven sizes, and is proven red by painting the footer in its own text colour. Remove this entry if that gate is removed or the story no longer runs on under the footer. This never allows a violation.',
   },
   {
     rule: 'color-contrast',
@@ -748,6 +762,20 @@ async function proveDigitalSceneTargets(browser) {
     await check({ target: '#missing', reason: DIGITAL_SCENE_REASONS[0] }, '#missing');
     await check({ target: 'div:::bad', reason: DIGITAL_SCENE_REASONS[0] }, 'div:::bad');
     console.log(`check-axe: Digital scene classification ${cases} positive/negative proofs PASS`);
+    // GS-DES-002-RC — the Design footer uses the same function with its own scope and reasons.
+    const footer = { scope: DESIGN_FOOTER, reasons: DESIGN_FOOTER_REASONS, canonical: DESIGN_FOOTER_TARGET };
+    await page.setContent('<main><p id="main-copy">Copy</p></main><footer><a id="footer-link" href="#">Link</a></footer>');
+    let footerCases = 0;
+    const checkFooter = async (input, expected) => {
+      const actual = await page.evaluate(digitalSceneTarget, { ...footer, ...input });
+      if (actual !== expected) throw new Error(`Design footer classification proof failed: ${actual} != ${expected}`);
+      footerCases += 1;
+    };
+    for (const reason of DESIGN_FOOTER_REASONS) await checkFooter({ target: '#footer-link', reason }, DESIGN_FOOTER_TARGET);
+    await checkFooter({ target: '#main-copy', reason: DESIGN_FOOTER_REASONS[0] }, '#main-copy');
+    await checkFooter({ target: '#footer-link', reason: "Element's background color could not be determined due to a pseudo element" }, '#footer-link');
+    await checkFooter({ target: '#missing', reason: DESIGN_FOOTER_REASONS[0] }, '#missing');
+    console.log(`check-axe: Design footer classification ${footerCases} positive/negative proofs PASS`);
   } finally {
     await page.close();
   }
@@ -942,6 +970,13 @@ try {
               target = await page.evaluate(designGlyphTarget, {
                 target, html: node.html,
                 reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+              });
+            }
+            if (route.path === '/design' && inc.id === 'color-contrast') {
+              target = await page.evaluate(digitalSceneTarget, {
+                target,
+                reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+                scope: DESIGN_FOOTER, reasons: DESIGN_FOOTER_REASONS, canonical: DESIGN_FOOTER_TARGET,
               });
             }
             if (route.path === '/digital' && inc.id === 'color-contrast') {

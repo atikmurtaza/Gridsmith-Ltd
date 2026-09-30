@@ -223,6 +223,12 @@ jobs:
       - name: The Master scene model holds its invariants (and each check is proven red)
         run: npm run check:master:scene:selftest
 
+      # GS-DES-002-RC. The Design scroll rhythm (designTimeline.ts): every transformation sits in
+      # a passing interval, each artefact resolves and dwells, Brand → Motion never goes blank.
+      # Each check runs on the real timeline and on a fixture broken to fail it, in the same run.
+      - name: The Design scroll timeline holds its rhythm (and each check is proven red)
+        run: npm run check:design:timeline:selftest
+
       # This now also runs `check:launch --build` through npm's `prebuild` hook — the same
       # wiring that puts the gate into Vercel's deploy, exercised here on every push against
       # the `development` dataset. check:launch still runs against the SERVED site below;

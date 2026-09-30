@@ -9,6 +9,12 @@ import { createRequire } from "node:module";
 import { join, basename } from "node:path";
 import { createHash } from "node:crypto";
 import { gOutlines, sOutlines } from "../components/divisions/design/letterGeometry.ts";
+import {
+  buildingCurves as BUILDING_CURVES,
+  markCurves as MARK_CURVES,
+  mascotCurves as MASCOT_CURVES,
+} from "../components/divisions/design/transitionGeometry.ts";
+import { HANDOFF } from "../components/divisions/design/designTimeline.ts";
 
 // Captured from the owner-approved numeric arrays before lossless compaction.
 if (createHash("sha256").update(JSON.stringify([gOutlines, sOutlines])).digest("hex") !==
@@ -66,7 +72,8 @@ if (!choreographyChunk) throw new Error("Design choreography chunk missing");
 
 // Like Master's scene gate: measure the background pixels after hiding only glyphs.
 // The worst 2% of a text box is ignored for antialiasing and thin construction lines.
-async function textContrast(page, { selector = ".ds-copy,.ds-stage-label", report = false } = {}) {
+// `hide` names the glyphs made transparent for the background shot; it must cover `selector`'s text.
+async function textContrast(page, { selector = ".ds-copy,.ds-stage-label", hide = ".ds-copy *,.ds-stage-label *", report = false } = {}) {
   // Let scrolling and media-query layout reach the compositor before pairing DOM
   // rectangles with screenshot pixels (especially reduced motion on Linux).
   await pause();
@@ -118,10 +125,12 @@ async function textContrast(page, { selector = ".ds-copy,.ds-stage-label", repor
               right - left,
               bottom - top,
             ],
+            // A mixed colour computes to `color(srgb r g b)` with channels in 0–1, not bytes in 0–255:
+            // read as bytes it is near-black, and the label on navy measured 1.19:1 (GS-DES-002-R1).
             rgb: c.color
               .match(/[\d.]+/g)
               .slice(0, 3)
-              .map(Number),
+              .map((v) => (c.color.startsWith("color(srgb") ? 255 * v : Number(v))),
             text: node.textContent.trim().slice(0, 48),
             min:
               parseFloat(c.fontSize) >= 24 ||
@@ -136,10 +145,9 @@ async function textContrast(page, { selector = ".ds-copy,.ds-stage-label", repor
   }, selector);
   if (!boxes.length) return ["No rendered text boxes measured"];
   const style = await page.addStyleTag({
-    content:
-      ".ds-copy *,.ds-stage-label *{color:transparent!important;text-decoration-color:transparent!important;-webkit-text-fill-color:transparent!important}",
+    content: `${hide}{color:transparent!important;text-decoration-color:transparent!important;-webkit-text-fill-color:transparent!important}`,
   });
-  const png = await page.screenshot({ encoding: "base64" });
+  const png = await page.screenshot({ encoding: "base64", captureBeyondViewport: false });
   await style.evaluate((el) => el.remove());
   return decoder.evaluate(
     async (png, boxes, report) => {
@@ -192,9 +200,31 @@ async function open(
     lowMemory = false,
     failedImport = false,
     touch = false,
+    mutate = null,
+    block = null,
   } = {},
 ) {
   const page = await browser.newPage();
+  if (block) {
+    // Off the cache too: an earlier page in this browser already holds the image, and a cached image
+    // never reaches interception — the first run of this proof blocked nothing and read as a pass.
+    await page.setCacheEnabled(false);
+    await page.setRequestInterception(true);
+    page.on("request", (request) => (request.url().includes(block) ? request.abort() : request.continue()));
+  }
+  if (mutate) {
+    // A proof serves the choreography changed in the browser only: no file is written, so there is
+    // nothing to restore. An edit that matches nothing is not a probe, and says so.
+    const original = readFileSync(join(".next/static/chunks", choreographyChunk), "utf8");
+    const changed = mutate(original);
+    if (changed === original) throw new Error("INERT proof: the mutation matched nothing in the choreography chunk");
+    await page.setRequestInterception(true);
+    page.on("request", (request) =>
+      request.url().includes(basename(choreographyChunk))
+        ? request.respond({ status: 200, contentType: "application/javascript; charset=utf-8", body: changed })
+        : request.continue(),
+    );
+  }
   await page.evaluateOnNewDocument(() => {
     window.__designLayoutShift = 0;
     new PerformanceObserver((list) => {
@@ -248,32 +278,36 @@ async function open(
     await page.waitForSelector("[data-static]");
   return page;
 }
+/**
+ * GS-DES-002-R1: progress is mapped onto where the copy actually settles and leaves, so a position is
+ * found through the renderer's own published map (`data-map`: settle, leave for each chapter) — the
+ * inverse of its piecewise scale, read, not re-derived.
+ */
 async function seek(page, pos) {
-  await page.evaluate((pos) => {
-    const sections = [...document.querySelectorAll("[data-chapter]")];
-    const i = Math.floor(pos);
-    const el = sections[i];
-    window.scrollTo(
-      0,
-      el.getBoundingClientRect().top +
-        scrollY +
-        el.offsetHeight * (pos - i) -
-        innerHeight * 0.2,
-    );
-  }, pos);
+  // GS-DES-002-RC: the map is republished by a ResizeObserver a frame after layout changes (a
+  // disclosure closing just before a seek). Reading it first seeked on the stale map — G1 at 320x568
+  // computed y 1700 for 2.15, which the settled map reads as 2.47, and the wait below timed out.
+  await page.evaluate(async () => {
+    const read = () => document.querySelector("[data-design-stage]").dataset.map;
+    const frame = () => new Promise((r) => requestAnimationFrame(() => r()));
+    let before;
+    do { before = read(); await frame(); await frame(); } while (read() !== before);
+  });
+  await page.evaluate(({ pos, H }) => {
+    const m = document.querySelector("[data-design-stage]").dataset.map.split(",").map(Number);
+    const i = Math.min(4, Math.floor(pos)), fr = pos - i;
+    const y = fr < H ? m[2 * i] + (fr / H) * (m[2 * i + 1] - m[2 * i]) : m[2 * i + 1] + ((fr - H) / (1 - H)) * ((m[2 * i + 2] ?? m[2 * i + 1]) - m[2 * i + 1]);
+    window.scrollTo(0, y);
+  }, { pos, H: HANDOFF });
   await pause();
   await page.waitForFunction(
-    (pos) => {
-      const progress = Number(
-        document.querySelector("[data-design-stage]")?.dataset.progress,
-      );
-      const first = document.querySelector('[data-chapter="0"]');
-      const initial = Math.max(0, (innerHeight * .2 - first.getBoundingClientRect().top) / first.offsetHeight);
-      return Math.abs(progress - (pos === 0 ? initial : pos)) < 0.015;
-    },
+    (pos) => Math.abs(Number(document.querySelector("[data-design-stage]")?.dataset.progress) - pos) < 0.015,
     { timeout: 10000 },
-    Math.max(0, pos),
-  );
+    Math.min(Math.max(0, pos), 4 + HANDOFF),
+  ).catch(async (error) => {
+    const at = await page.evaluate(() => ({ progress: document.querySelector("[data-design-stage]")?.dataset.progress, map: document.querySelector("[data-design-stage]")?.dataset.map, scrollY, size: `${innerWidth}x${innerHeight}`, open: [...document.querySelectorAll("details[open]")].length }));
+    throw new Error(`seek ${pos}: ${error.message} — ${JSON.stringify(at)}`);
+  });
 }
 async function measure(page, { hero = false, expected } = {}) {
   return page.evaluate(
@@ -373,6 +407,333 @@ async function pageHeading(page, label) {
     errors.push(`${label}: duplicate/missing DOM H1`);
 }
 
+
+/* ==== GS-DES-002-R1 — continuous page flow, the 3D payoff, the footer glide ======================
+ *
+ * The owner's R1 review: content waited for the animation and the chapters blinked; the resolved logo
+ * was a flat mark with drawn-on shading; the final mark jumped down into the footer. The timeline's
+ * rhythm is asserted as data by `check-design-timeline.selftest`; these ask the served page, from
+ * positions and pixels, whether the page now behaves like one.
+ *
+ * | Key | Question |
+ * |---|---|
+ * | dwell | Each chapter's copy holds still, settled, for at least a quarter of the screen of scroll (the renderer's own map). |
+ * | content-flow | Through each handoff the copy moves with the scroll, 1:1 — it is page content, not a fading layer. |
+ * | overlap | In each handoff there is a moment where the current copy is leaving, the next is arriving and the scene is mid-change. |
+ * | no-blink | Through each handoff at least one copy is substantially on screen, and no copy is faded. |
+ * | label-fade | (RC) Through each handoff the stage caption, when on screen, is whole or hidden — never held part-faded by the scroll. |
+ * | payoff-3d | At the Brand and final payoffs the supplied 3D logo is on, aligned over the exact geometry, and rendered (it changes the pixels). |
+ * | payoff-dwell | Each finished artefact — 3D logo, mascot, building, final 3D logo — is unchanged across its dwell, with its copy settled. |
+ * | morph-blank | Brand → Motion, rendered: the art is never close to empty. |
+ * | morph-outline | The strokes draw the mascot's construction outline before the mascot resolves. |
+ * | footer-glide | From the footer's edge to the bottom, sampled every 6px, the final mark's centre and size never move faster than the glide can: no jump. |
+ * | footer-duplicate / footer-collision / footer-dock | One mark, never on footer copy, docked in the footer's slot from 768px. |
+ * | footer-scope | Every other route still shows the footer's mark. |
+ * | footer-contrast | (RC) Every footer text box on screen through the handoff, pixel-measured: axe declines it where the story runs on under the footer. |
+ */
+const R1_SIZES = [[360, 740], [390, 844], [430, 932], [768, 1024], [1024, 768], [1440, 900], [1920, 1080]];
+const near = (a, b, tol = 0.05) => a.length === b.length && a.every((v, i) => Math.abs(v - b[i]) <= tol);
+const nums = (d) => (d.match(/-?\d+(\.\d+)?(e-?\d+)?/g) ?? []).map(Number);
+
+/** Everything the questions read, from the served page. */
+const pageState = (page) =>
+  page.evaluate(() => {
+    const stage = document.querySelector("[data-design-stage]");
+    const svg = stage.querySelector("svg");
+    const q = (s) => stage.querySelector(s);
+    const qa = (s) => [...stage.querySelectorAll(s)];
+    const op = (el) => (el ? +getComputedStyle(el).opacity : NaN);
+    const circle = (el) => [+el.getAttribute("cx"), +el.getAttribute("cy"), +el.getAttribute("r")];
+    const box = (el) => { const r = el.getBoundingClientRect(); return [r.left, r.top, r.width, r.height]; };
+    const copies = [...document.querySelectorAll("[data-chapter] .ds-copy")].map((el) => {
+      const r = el.getBoundingClientRect();
+      return { top: r.top, bottom: r.bottom, stick: parseFloat(getComputedStyle(el).top), opacity: +getComputedStyle(el).opacity, visible: Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)) * Math.max(0, Math.min(r.right, innerWidth) - Math.max(r.left, 0)) };
+    });
+    const [brand3d, final3d] = qa("[data-mark-3d]");
+    return {
+      scrollY, progress: +stage.dataset.progress, copies,
+      brandNodes: qa("[data-brand-node]").map(circle),
+      letters: q("[data-letter-g] path").getAttribute("d") + q("[data-letter-s] path").getAttribute("d"),
+      brand3d: { opacity: op(brand3d), box: box(brand3d) }, final3d: { opacity: op(final3d), box: box(final3d) },
+      brandNodesBox: (() => { const r = qa("[data-brand-node]").map((e) => e.getBoundingClientRect()); return [Math.min(...r.map((x) => x.left)), Math.min(...r.map((x) => x.top)), Math.max(...r.map((x) => x.right)) - Math.min(...r.map((x) => x.left))]; })(),
+      finalNodesBox: (() => { const r = qa("[data-building-node]").map((e) => e.getBoundingClientRect()); return [Math.min(...r.map((x) => x.left)), Math.min(...r.map((x) => x.top)), Math.max(...r.map((x) => x.right)) - Math.min(...r.map((x) => x.left))]; })(),
+      morph: op(q("[data-morph]")),
+      morphEdges: qa("[data-morph-edge]").map((el) => ({ d: el.getAttribute("d"), w: +el.getAttribute("stroke-width") })),
+      mascot: op(q("[data-finished-character]")),
+      rig: op(q("[data-rig]")),
+      faceToPlan: q("[data-rig] circle").getAttribute("cx"),
+      detail: op(q("[data-building-detail]")),
+      water: op(q("[data-water]")),
+      roofShift: q("[data-roof]").getAttribute("transform"),
+      edges: qa("[data-building-edge]").map((el) => el.getAttribute("d")),
+      buildingNodes: qa("[data-building-node]").map(circle),
+      svgUnit: svg.getScreenCTM().a,
+      // The caption's effective opacity (its own × the receding art's) and whether it is on screen.
+      label: (() => { const l = stage.querySelector(".ds-stage-label"), r = l.getBoundingClientRect(); return { on: getComputedStyle(l).display !== "none" && r.width > 0 && r.bottom > 0 && r.top < innerHeight, opacity: op(l) * op(stage.querySelector(".ds-stage-art")) }; })(),
+    };
+  });
+
+/** Non-surface pixels in the stage art, copy, wave, grid and label hidden (a viewport crop). */
+async function artInk(page) {
+  const style = await page.addStyleTag({ content: ".ds-copy,.ds-stage-label,[data-thread],[data-grid],[data-construction],[data-sketch]{visibility:hidden!important}" });
+  await new Promise((r) => setTimeout(r, 120));
+  const clip = await page.$eval(".ds-stage-art", (el) => {
+    const r = el.getBoundingClientRect();
+    return { x: Math.max(0, r.left), y: Math.max(0, r.top), width: Math.min(innerWidth, r.right) - Math.max(0, r.left), height: Math.min(innerHeight, r.bottom) - Math.max(0, r.top) };
+  });
+  // The art is what differs from both chapter surfaces behind it, read from the chapters themselves.
+  const surfaces = await page.evaluate(() => ["[data-chapter=\"0\"]", "[data-chapter][data-paper]"].map((s) => getComputedStyle(document.querySelector(s)).backgroundColor).map((bg) => bg.match(/[\d.]+/g).slice(0, 3).map((v) => (bg.startsWith("color(srgb") ? 255 * v : Number(v)))));
+  const png = await page.screenshot({ encoding: "base64", captureBeyondViewport: false });
+  await style.evaluate((el) => el.remove());
+  if (clip.width < 1 || clip.height < 1) return 0;
+  return decoder.evaluate(async (b64, clip, surfaces) => {
+    const img = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob());
+    const c = new OffscreenCanvas(img.width, img.height);
+    const ctx = c.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+    const { data } = ctx.getImageData(Math.round(clip.x), Math.round(clip.y), Math.round(clip.width), Math.round(clip.height));
+    let n = 0;
+    for (let i = 0; i < data.length; i += 4)
+      if (surfaces.every((s) => Math.abs(data[i] - s[0]) + Math.abs(data[i + 1] - s[1]) + Math.abs(data[i + 2] - s[2]) > 60)) n++;
+    return n;
+  }, png, clip, surfaces);
+}
+
+/**
+ * Share of the 3D logo's box whose pixels change when the image itself is hidden: it is really drawn.
+ * Everything else that moves is held still first — the wave travels on its own, and the first version
+ * of this read the wave crossing the box as the logo, with the image blocked (found by its proof).
+ */
+async function drawnShare(page, index) {
+  const still = await page.addStyleTag({ content: ".ds-copy,.ds-stage-label,[data-thread]{visibility:hidden!important}" });
+  await new Promise((r) => setTimeout(r, 120));
+  const shot = async () => page.screenshot({ encoding: "base64", captureBeyondViewport: false });
+  const box = await page.$$eval("[data-design-stage] [data-mark-3d]", (els, i) => { const r = els[i].getBoundingClientRect(); return [r.left, r.top, r.width, r.height].map(Math.round); }, index);
+  const on = await shot();
+  await page.$$eval("[data-design-stage] [data-mark-3d]", (els, i) => { els[i].style.visibility = "hidden"; }, index);
+  const off = await shot();
+  await page.$$eval("[data-design-stage] [data-mark-3d]", (els, i) => { els[i].style.removeProperty("visibility"); }, index);
+  await still.evaluate((el) => el.remove());
+  return decoder.evaluate(async (a, b, box) => {
+    const read = async (b64) => {
+      const img = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob());
+      const c = new OffscreenCanvas(img.width, img.height);
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const [x, y, w, h] = [Math.max(0, box[0]), Math.max(0, box[1]), Math.min(img.width - Math.max(0, box[0]), box[2]), Math.min(img.height - Math.max(0, box[1]), box[3])];
+      return w > 0 && h > 0 ? ctx.getImageData(x, y, w, h).data : new Uint8ClampedArray();
+    };
+    const [pa, pb] = [await read(a), await read(b)];
+    if (!pa.length) return 0;
+    let changed = 0;
+    for (let i = 0; i < pa.length; i += 4) if (Math.abs(pa[i] - pb[i]) + Math.abs(pa[i + 1] - pb[i + 1]) + Math.abs(pa[i + 2] - pb[i + 2]) > 45) changed++;
+    return changed / (pa.length / 4);
+  }, on, off, box);
+}
+
+/** The rendered R1 questions at one size; returns failures prefixed by their key. */
+async function continuity(page, { pixels = true } = {}) {
+  const f = [];
+  const ih = await page.evaluate(() => innerHeight);
+  // A position the page cannot reach is a reading, not a crash: progress no longer follows the copy.
+  const at = async (p, key) => {
+    try {
+      await seek(page, p);
+    } catch {
+      f.push(`${key}: the page never reached progress ${p} — progress no longer follows the copy`);
+    }
+    return pageState(page);
+  };
+  const settled = (s, i) => Math.abs(s.copies[i].top - s.copies[i].stick) <= 1.5;
+  const map = await page.$eval("[data-design-stage]", (el) => el.dataset.map.split(",").map(Number));
+
+  // dwell — the copy holds, settled, for a real reading distance.
+  for (let i = 1; i < 5; i++)
+    if (map[2 * i + 1] - map[2 * i] < ih * 0.25) f.push(`dwell: chapter ${i} holds its copy for ${map[2 * i + 1] - map[2 * i]}px of scroll (need ${Math.round(ih * 0.25)})`);
+
+  // content-flow, overlap, no-blink — through each handoff, sampled.
+  const transforming = [
+    (s) => s.morph > 0.01 && !s.morphEdges.every((e, k) => near(nums(e.d), MASCOT_CURVES[k], 0.5)),
+    (s) => s.rig > 0.01 && s.roofShift !== "translate(0 0)",
+    (s) => s.detail < 0.99 && !s.edges.every((d, k) => near(nums(d), MARK_CURVES[k], 0.5)),
+  ];
+  for (const i of [1, 2, 3]) {
+    const samples = [];
+    for (let k = 0; k <= 12; k++) samples.push(await at(i + HANDOFF + (k / 12) * (1 - HANDOFF), "overlap"));
+    const settledArea = Math.max(1, samples[0].copies[i].visible);
+    let overlap = false;
+    samples.forEach((s, k) => {
+      const cur = s.copies[i], next = s.copies[i + 1];
+      if (s.label.on && s.label.opacity > 0.01 && s.label.opacity < 0.99) f.push(`label-fade: at ${s.progress} the caption is on screen at ${s.label.opacity.toFixed(2)} opacity — text held part-faded`);
+      if (cur.opacity < 0.99 || next.opacity < 0.99) f.push(`no-blink: at ${s.progress} a copy is faded (${cur.opacity}, ${next.opacity})`);
+      if (cur.visible + next.visible < settledArea * 0.3) f.push(`no-blink: at ${s.progress} both copies are nearly off screen (${Math.round(((cur.visible + next.visible) / settledArea) * 100)}% of the settled copy)`);
+      if (cur.top < cur.stick - 10 && next.top < ih - 10 && next.top > next.stick + 10 && transforming[i - 1](s)) overlap = true;
+      if (k) {
+        const prev = samples[k - 1], dy = s.scrollY - prev.scrollY;
+        for (const [name, a, b] of [["current", prev.copies[i], cur], ["next", prev.copies[i + 1], next]]) {
+          const free = !settled({ copies: [a] }, 0) && !settled({ copies: [b] }, 0);
+          if (free && Math.abs(b.top - a.top + dy) > 2) f.push(`content-flow: through ${i}→${i + 1} the ${name} copy moved ${(b.top - a.top).toFixed(1)}px for ${dy.toFixed(1)}px of scroll — not moving with the page`);
+        }
+      }
+    });
+    if (!overlap) f.push(`overlap: no moment in ${i}→${i + 1} where the copy is leaving, the next arriving and the scene changing together`);
+  }
+
+  // payoff-3d and payoff-dwell.
+  const aligned = (asset, nodesBox) => {
+    // The asset's 460-unit frame starts 46.25 units left of and 52 above the spheres' 367.5 box.
+    const unit = nodesBox[2] / 367.5;
+    return near([asset.box[0], asset.box[1], asset.box[2]], [nodesBox[0] - 46.25 * unit, nodesBox[1] - 52 * unit, 460 * unit], 3);
+  };
+  for (const [name, a, b, pick, nodes, copy] of [
+    ["the Brand 3D logo", 1.15, 1.47, (s) => s.brand3d, (s) => s.brandNodesBox, 1],
+    ["the final 3D logo", 4.12, 4.45, (s) => s.final3d, (s) => s.finalNodesBox, 4],
+  ]) {
+    const [s, t] = [await at(a, "payoff-3d"), await at(b, "payoff-3d")];
+    for (const [p, x] of [[a, s], [b, t]]) {
+      if (!(pick(x).opacity >= 0.99 && aligned(pick(x), nodes(x)) && settled(x, copy)))
+        f.push(`payoff-3d: at ${p} ${name} is ${pick(x).opacity} on, ${aligned(pick(x), nodes(x)) ? "aligned" : "not aligned"}, copy ${settled(x, copy) ? "settled" : "not settled"}`);
+    }
+    await at(b, "payoff-3d");
+    // Drawn is not enough on its own: a failed SVG <image> draws Chrome's broken-image icon, which
+    // also changes the box (found by this key's proof, with the asset blocked). The page's own
+    // resource timing says whether the supplied asset itself arrived.
+    const loaded = await page.evaluate(() => performance.getEntriesByType("resource").some((e) => e.name.includes("gridsmith-logo-3d") && e.responseStatus === 200 && e.decodedBodySize > 10000));
+    if (!loaded) f.push(`payoff-3d: ${name} — the supplied 3D logo never loaded`);
+    const drawn = await drawnShare(page, copy === 1 ? 0 : 1);
+    if (drawn < 0.08) f.push(`payoff-3d: ${name} changes ${(drawn * 100).toFixed(1)}% of its box — it is not actually rendered`);
+    if (JSON.stringify(pick(s).box.map(Math.round)) !== JSON.stringify(pick(t).box.map(Math.round))) f.push(`payoff-dwell: ${name} moves during its dwell`);
+  }
+  const m1 = await at(2.02, "payoff-dwell"), m2 = await at(2.48, "payoff-dwell");
+  for (const [p, s] of [[2.02, m1], [2.48, m2]])
+    if (!(s.mascot >= 0.99 && s.rig <= 0.01 && settled(s, 2))) f.push(`payoff-dwell: at ${p} the mascot is ${s.mascot}, the rig ${s.rig}, copy ${settled(s, 2) ? "settled" : "moving"}`);
+  const b1 = await at(3.12, "payoff-dwell"), b2 = await at(3.48, "payoff-dwell");
+  for (const [p, s] of [[3.12, b1], [3.48, b2]])
+    if (!(s.detail >= 0.99 && s.water >= 0.99 && settled(s, 3) && s.edges.every((d, k) => near(nums(d), BUILDING_CURVES[k], 0.5))))
+      f.push(`payoff-dwell: at ${p} the building detail ${s.detail}, water ${s.water}, copy ${settled(s, 3) ? "settled" : "moving"} — not complete and holding`);
+  if (JSON.stringify(b1.edges) !== JSON.stringify(b2.edges)) f.push("payoff-dwell: the building changes during its dwell");
+
+  // morph-outline, morph-blank.
+  const outline = await at(1.9, "morph-outline");
+  if (!(outline.morph >= 0.99 && outline.mascot <= 0.1 && outline.morphEdges.every((e, k) => near(nums(e.d), MASCOT_CURVES[k], 0.5))))
+    f.push(`morph-outline: at 1.90 strokes ${outline.morph}, mascot ${outline.mascot} — no construction outline before the mascot`);
+  if (pixels) {
+    await at(1.3, "morph-blank");
+    const reference = await artInk(page);
+    let worst = Infinity, worstAt = 0;
+    for (let p = 1.46; p <= 2.1; p += 0.04) {
+      await at(+p.toFixed(2), "morph-blank");
+      const ink = await artInk(page);
+      if (ink < worst) [worst, worstAt] = [ink, p];
+    }
+    console.log(`  morph ink: payoff ${reference}px, lowest ${worst}px at ${worstAt.toFixed(2)} (${((worst / reference) * 100).toFixed(1)}%)`);
+    if (reference < 1000) f.push(`morph-blank: the reference payoff measured ${reference}px — the art was not measured`);
+    else if (worst < reference * 0.015) f.push(`morph-blank: the art falls to ${worst}px at ${worstAt.toFixed(2)} against ${reference} — a blank interval`);
+  }
+  return f;
+}
+
+/** The footer handoff: one continuous glide, one mark, never on footer copy, docked where it can be. */
+async function footerGlide(page) {
+  const f = [];
+  const { width: vw, start, end } = await page.evaluate(() => {
+    const top = document.querySelector("body > footer").getBoundingClientRect().top + scrollY;
+    return { width: innerWidth, start: top - innerHeight - 60, end: document.documentElement.scrollHeight - innerHeight };
+  });
+  // Arrive first: from the hero the art's height is still easing (a CSS transition), which is not the glide.
+  await page.evaluate((y) => scrollTo(0, y), start);
+  await pause();
+  let prev = null, worst = 0;
+  for (let y = start; y <= end + 6; y += 6) {
+    await page.evaluate((y) => scrollTo(0, y), Math.min(y, end));
+    await new Promise((r) => setTimeout(r, 25));
+    const s = await page.evaluate(() => {
+      const r = document.querySelectorAll("[data-design-stage] [data-mark-3d]")[1].getBoundingClientRect();
+      return { y: scrollY, cx: r.left + r.width / 2, cy: r.top + r.height / 2, w: r.width };
+    });
+    if (prev) {
+      const ds = Math.abs(s.y - prev.y), move = Math.hypot(s.cx - prev.cx, s.cy - prev.cy), dw = Math.abs(s.w - prev.w);
+      worst = Math.max(worst, move - 4.5 * ds);
+      if (move > 4.5 * ds + 2 || dw > 3 * ds + 2)
+        f.push(`footer-glide: at scroll ${Math.round(s.y)} the mark moved ${move.toFixed(0)}px and changed size ${dw.toFixed(0)}px for ${ds}px of scroll — a jump`);
+    }
+    prev = s;
+  }
+  for (const where of [0.8, 0.5, 0.2, "bottom"]) {
+    await page.evaluate((where) => {
+      const top = document.querySelector("body > footer").getBoundingClientRect().top + scrollY;
+      scrollTo(0, where === "bottom" ? document.documentElement.scrollHeight : top - innerHeight * where);
+    }, where);
+    await pause();
+    const s = await page.evaluate(() => {
+      const footer = document.querySelector("body > footer");
+      const slot = footer.querySelector("[class*='footerMark']");
+      const mark = document.querySelectorAll("[data-design-stage] [data-mark-3d]")[1].getBoundingClientRect();
+      const inView = mark.bottom > 0 && mark.top < innerHeight && mark.width > 1;
+      // The drawn mark inside the 460-unit frame: its spheres' 367.5-unit box.
+      const k = mark.width / 460;
+      const drawn = { left: mark.left + 46.25 * k, right: mark.left + 413.75 * k, top: mark.top + 52 * k, bottom: mark.top + 408 * k };
+      const boxes = [];
+      const walker = document.createTreeWalker(footer, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        if (!walker.currentNode.textContent.trim()) continue;
+        const range = document.createRange();
+        range.selectNodeContents(walker.currentNode);
+        boxes.push(...[...range.getClientRects()].map((r) => ({ r, what: walker.currentNode.textContent.trim().slice(0, 30) })));
+      }
+      for (const a of footer.querySelectorAll("a")) boxes.push({ r: a.getBoundingClientRect(), what: a.getAttribute("aria-label") ?? a.textContent.trim().slice(0, 30) });
+      const hits = inView ? boxes.filter(({ r }) => r.width > 0 && r.bottom > 0 && r.top < innerHeight && r.left < drawn.right && r.right > drawn.left && r.top < drawn.bottom && r.bottom > drawn.top).map((b) => b.what) : [];
+      const sl = slot.getBoundingClientRect();
+      const cx = (drawn.left + drawn.right) / 2, cy = (drawn.top + drawn.bottom) / 2;
+      return { slotShown: getComputedStyle(slot).visibility !== "hidden" && getComputedStyle(slot).display !== "none", inView, hits, docked: inView && cx >= sl.left && cx <= sl.right && cy >= sl.top && cy <= sl.bottom };
+    }, where);
+    if (s.slotShown) f.push(`footer-duplicate: the footer's decorative mark is shown on /design at ${where}`);
+    // RC: the story runs on under the footer (R2), so axe declines the footer's text there
+    // (check-axe DESIGN_FOOTER_TARGET); this is the measurement that allowance rests on.
+    // At 0.8 only the footer's top padding is on screen: no text to measure, so it is not asked there.
+    if (where !== 0.8)
+      for (const x of await textContrast(page, { selector: "body > footer", hide: "body > footer,body > footer *" }))
+        f.push(`footer-contrast: at ${where} ${x}`);
+    if (s.hits.length) f.push(`footer-collision: at ${where} the scene's mark covers ${s.hits.slice(0, 4).join(" | ")}`);
+    if (where === "bottom" && vw >= 768 && !s.docked) f.push(`footer-dock: at the bottom the mark is ${s.inView ? "not in" : "not near"} the footer's slot`);
+  }
+  // GS-DES-002-R2 — the owner's defect, read in the frame the owner saw. From before the story ends to
+  // the page's end, each step reads the mark twice: straight after the scroll, before any listener has
+  // run (what the compositor shows while script is a frame behind), and after the redraw. R1 passed
+  // every settled reading and still went up with the page on each keyboard step and came back down;
+  // its settled path also went down towards the rising slot, then up with it. Its centre-Y must travel
+  // one way only: a second leg (hysteresis 2px) is a reversal.
+  const trace = await page.evaluate(async () => {
+    const mark = () => { const r = document.querySelectorAll("[data-design-stage] [data-mark-3d]")[1].getBoundingClientRect(); return r.top + r.height / 2; };
+    const from = document.querySelector('[data-chapter="4"]').getBoundingClientRect().bottom + scrollY - innerHeight - 60;
+    const to = document.documentElement.scrollHeight - innerHeight;
+    const frame = () => new Promise((r) => requestAnimationFrame(r));
+    scrollTo(0, from); await frame(); await frame();
+    const out = [];
+    for (let y = from; y <= to + 12; y += 12) {
+      scrollTo(0, Math.min(y, to));
+      const raw = mark();
+      await frame(); await frame();
+      out.push([Math.round(scrollY), raw, mark()]);
+    }
+    return out;
+  });
+  const seq = trace.flatMap(([, raw, drawn]) => [raw, drawn]);
+  // A leg starts once the centre is 2px from the last extreme; continuing the same way extends it.
+  const legs = [];
+  let ext = seq[0];
+  for (const y of seq) {
+    const dir = legs.at(-1) ?? 0;
+    if (dir && Math.sign(y - ext) === dir) ext = y;
+    else if (Math.abs(y - ext) >= 2) { legs.push(Math.sign(y - ext)); ext = y; }
+  }
+  if (trace.length < 10) f.push(`footer-reversal: only ${trace.length} samples through the handoff — not measured`);
+  else if (legs.length > 1)
+    f.push(`footer-reversal: the mark's centre-Y went ${legs.map((l) => (l < 0 ? "up" : "down")).slice(0, 4).join(" then ")} (${legs.length} legs) through the footer handoff — not monotonic`);
+  console.log(`  footer glide ${vw}px: largest step beyond the glide's own pace ${Math.max(0, worst).toFixed(1)}px; centre-Y ${seq[0].toFixed(0)} → ${seq.at(-1).toFixed(0)} in ${legs.length} leg(s) over ${trace.length} steps`);
+  return f;
+}
+
 try {
   // Measure loading, not just settled screenshots: a deferred scene must not
   // move the initial SVG frame. CI caught the old 38%/62% frame expanding to 0%/100%.
@@ -393,6 +754,73 @@ try {
     console.log("PROVEN RED loading layout shift");
   }
   await loading.close();
+  // GS-DES-002-R1 — continuous flow, the 3D payoff and the footer glide (see the table above).
+  if (!process.argv.includes("--prove")) {
+    for (const [width, height] of R1_SIZES) {
+      const page = await open(width, height);
+      const found = [...(process.argv.includes("--glide-only") ? [] : await continuity(page)), ...(await footerGlide(page))];
+      errors.push(...found.map((x) => `GS-DES-002-R1 ${width}x${height} ${x}`));
+      console.log(`GS-DES-002-R1 ${width}x${height}: ${found.length ? `${found.length} failure(s)` : (process.argv.includes("--glide-only") ? "footer glide, reversal, dock, collision, contrast — hold (continuity NOT run: --glide-only)" : "dwell, content flow, overlap, no blink, caption, 3D payoffs, payoff dwell, morph, footer glide, reversal, footer contrast — hold")}`);
+      await page.close();
+    }
+    for (const route of ["/press", "/about", "/digital", "/design/services/brand-identity-systems"]) {
+      const page = await browser.newPage();
+      await page.setViewport({ width: 1440, height: 900 });
+      await page.goto(`${base}${route}`, { waitUntil: "networkidle0" });
+      const shown = await page.$eval("body > footer [class*='footerMark']", (el) => getComputedStyle(el).visibility === "visible" && getComputedStyle(el).display !== "none").catch(() => false);
+      if (!shown) errors.push(`GS-DES-002-R1 footer-scope: ${route} lost the footer's mark — the suppression is not Design-only`);
+      await page.close();
+    }
+    console.log("GS-DES-002-R1 footer-scope: /press, /about, /digital and a Design service page keep the footer's mark");
+  } else {
+    // Each question made to fail by a probe that satisfies its predicate — a red on its own key.
+    // Timing probes serve the chunk with one range moved; nothing on disk is touched.
+    const halfSpeed = () => addEventListener("scroll", () => document.querySelectorAll(".ds-copy").forEach((el) => { el.style.translate = `0 ${scrollY * 0.5}px`; }), { passive: true });
+    const PROBES = [
+      // R2: no scroll left to come — the glide completes the moment the footer enters.
+      ["footer-glide", { mutate: (js) => js.replace("document.documentElement.scrollHeight-innerHeight-scrollY", "0"), glide: true }],
+      // R2: R1's mechanism — the stage released on the compositor, held by script a frame late.
+      ["footer-reversal", { css: ".ds-story[data-enhanced]::after{display:none!important}", script: () => addEventListener("scroll", () => { const st = document.querySelector("[data-design-stage]"); st.querySelector(".ds-stage-art").style.translate = `0 ${-st.getBoundingClientRect().top}px`; }), glide: true }],
+      // RC: credit the overlap predicate itself — fixed copy also breaks seeking, whose message shares the key.
+      ["overlap", { css: ".ds-story[data-enhanced] .ds-copy{position:fixed!important}", message: "no moment" }],
+      ["content-flow", { script: halfSpeed }],
+      ["no-blink", { css: ".ds-copy{opacity:.02!important}" }],
+      // RC: the caption dimmed with the receding art (R1), and faded with the scroll at the footer (R2).
+      ["label-fade", { css: ".ds-stage-label{opacity:.5!important}" }],
+      ["payoff-3d", { block: "gridsmith-logo-3d", message: "never loaded" }],
+      ["payoff-3d", { css: "[data-mark-3d]{clip-path:inset(50%)!important}", message: "not actually rendered" }],
+      ["dwell", { css: ".ds-story:not([data-static]) .ds-chapter::after{height:0!important}" }],
+      ["payoff-dwell", { mutate: (js) => js.replace("rig:[2.5,2.58]", "rig:[2.2,2.3]") }],
+      ["morph-outline", { mutate: (js) => js.replace("mascot:[1.88,2]", "mascot:[1.7,1.8]") }],
+      ["morph-blank", { css: "[data-morph]{visibility:hidden!important}" }],
+      // RC: the footer painted in its own ink token — its ink text reads ~1:1. Not currentColor: the
+      // measurement makes the footer's colour transparent, which would take the probe with it (inert).
+      ["footer-contrast", { css: "body>footer{background:var(--chrome-ink)!important}", glide: true }],
+      ["footer-duplicate", { css: "body>footer [class*='footerMark']{visibility:visible!important}", glide: true }],
+      ["footer-collision", { css: "body>footer [class*='footerBrand']{transform:translateX(55vw)}", glide: true }],
+      ["footer-dock", { mutate: (js) => js.replace("(min-width: 768px)", "(min-width: 9999px)"), glide: true }],
+    ];
+    const only = process.env.DES002_PROBE;
+    for (const [key, probe] of PROBES.filter(([k]) => !only || k === only)) {
+      const page = await open(1440, 900, { mutate: probe.mutate, block: probe.block });
+      if (probe.css) await page.addStyleTag({ content: probe.css });
+      if (probe.script) await page.evaluate(probe.script);
+      if (probe.css || probe.script) await page.evaluate(() => dispatchEvent(new Event("resize")));
+      await pause();
+      const found = probe.glide ? await footerGlide(page) : await continuity(page, { pixels: key === "morph-blank" });
+      await page.close();
+      const own = found.filter((x) => x.startsWith(`${key}:`) && (!probe.message || x.includes(probe.message)));
+      if (!own.length) throw new Error(`Proof ${key} failed to produce its own red (got: ${found.join("; ") || "nothing"})`);
+      console.log(`PROVEN RED GS-DES-002-R1 ${key}: ${own[0].slice(key.length + 2, key.length + 150)}`);
+    }
+  }
+  if (process.argv.includes("--des002-only")) {
+    // Development convenience only: says so, so a narrowed run is never read as the whole gate.
+    if (errors.length) { console.error(errors.join("\n")); process.exit(1); }
+    console.log("check-design-scene: FILTERED --des002-only — GS-DES-002-R1 section only; the full gate was not run.");
+    await browser.close();
+    process.exit(0);
+  }
   if (!process.argv.includes("--prove")) {
     // G2: sample the closed scope note through the roof/CAD sequence, including
     // both sides of the stacked-layout and short-screen breakpoints.
@@ -404,7 +832,9 @@ try {
     ]) {
       const page = await open(width, height);
       let minimum = Infinity;
-      for (const position of [3.15,3.35,3.55,3.65]) {
+      // GS-DES-002-R1: the roof is assembled and still solid at 2.92, ghosted from 3.0 — the crossing
+      // this question exists for — then the settled Technical dwell to 3.5.
+      for (const position of [2.92,3.05,3.2,3.35,3.45]) {
         await seek(page, position);
         const samples = await textContrast(page, { selector: ".ds-gate", report: true });
         for (const sample of samples) {
@@ -420,12 +850,13 @@ try {
         }));
         if (state.open || !state.copy.endsWith(', 0)') || state.overflow)
           errors.push(`G2 ${width}x${height}: closed disclosure/overflow changed ${JSON.stringify(state)}`);
-        if (width <= 760 && height > 650 ? state.note.endsWith(', 0)') : !state.note.endsWith(', 0)'))
+        // GS-DES-002-RC: every stacked height, not only > 650px — R1's arriving copy crosses the roof at all of them.
+        if (width <= 760 ? state.note.endsWith(', 0)') : !state.note.endsWith(', 0)'))
           errors.push(`G2 ${width}x${height}: incorrect responsive scope surface`);
-        if (out && [3.15,3.65].includes(position))
+        if (out && [2.92,3.2].includes(position))
           await page.screenshot({path:join(out,`g2-${width}x${height}-${position}.png`)});
       }
-      console.log(`G2 ${width}x${height}: scope-note minimum ${minimum.toFixed(2)}:1 across four readable Technical states`);
+      console.log(`G2 ${width}x${height}: scope-note minimum ${minimum.toFixed(2)}:1 across five readable Technical states`);
       await page.close();
     }
   }
@@ -515,6 +946,17 @@ try {
     if (!(await textContrast(page)).length)
       throw new Error("Contrast proof did not fail");
     console.log("PROVEN RED rendered text contrast");
+    // The mixed-colour branch: the stage label computes to `color(srgb …)`. Readable must be clean (it
+    // read 1.19:1 when parsed as bytes); navy-on-navy through the same mix (its own tokens overridden) must be red.
+    await seek(page, 2.25);
+    const mixed = await page.$eval("[data-label='2']", (el) => getComputedStyle(el).color);
+    if (!mixed.startsWith("color(srgb")) throw new Error(`INERT proof: the stage label is not a mixed colour (${mixed})`);
+    const mixedClean = (await textContrast(page)).filter((f) => f.includes("Character / form study"));
+    if (mixedClean.length) throw new Error(`color(srgb) label misread: ${mixedClean}`);
+    await page.addStyleTag({ content: ".ds-stage-label{--ink-muted:var(--ds-night)!important;--ds-paper-muted:var(--ds-night)!important}" });
+    if (!(await textContrast(page)).some((f) => f.includes("Character / form study")))
+      throw new Error("color(srgb) contrast proof did not fail");
+    console.log("PROVEN RED rendered text contrast — mixed-colour label (and clean when readable)");
     await page.close();
     const mobile = await open(320, 568);
     await seek(mobile, 3.15);
@@ -527,7 +969,12 @@ try {
     console.log('PROVEN RED visible text contrast inside clipped mobile panel');
     await mobile.close();
     const scope = await open(760,800);
-    await seek(scope,3.15);
+    // R1 ghosts the roof before the Technical copy settles, and copy in transit is over a receded
+    // scene, so no served position has the note over solid art any more: removing the paper alone is
+    // inert (the first R1 run of this proof). The subject is a settled note over a roof held solid —
+    // the case the paper surface exists for, should the art behind it ever be dark again.
+    await seek(scope,3.2);
+    await scope.addStyleTag({ content: "[data-design-stage] [data-roof]{opacity:1!important}" });
     const cleanScope = await textContrast(scope, {selector:'.ds-gate'});
     if (cleanScope.length) throw new Error(`Dirty G2 scope baseline: ${cleanScope}`);
     await scope.$eval('.ds-gate', el => el.style.background = 'transparent');
@@ -651,9 +1098,9 @@ try {
       const label = `${width}x${height}`;
       const states = [
         [0, "workspace"],
-        [1.6, "identity"],
-        [2.53, "character"],
-        [3.65, "technical"],
+        [1.3, "identity"],
+        [2.25, "character"],
+        [3.3, "technical"],
         [4.3, "technical"],
       ];
       const paths = [];
@@ -664,7 +1111,7 @@ try {
           expected: `[data-art="${name}"]`,
         });
         errors.push(...m.failures.map((f) => `${label} ${name}: ${f}`));
-        if (width > 760 && [1.6, 2.53, 3.65].includes(position)) {
+        if (width > 760 && [1.3, 2.25, 3.3].includes(position)) {
           const centre = await page.$eval(".ds-stage-art", (el) => {
             const r = el.getBoundingClientRect();
             return (r.left + r.width / 2) / innerWidth;
@@ -713,16 +1160,16 @@ try {
     }
     const page = await open(1440, 900, { touch: true });
     const checkpoints = [
-      [1.1, "[data-letters]"],
-      [1.7, "[data-brand-node]"],
-      [2.06, "[data-sketch]"],
-      [2.28, "[data-character]"],
-      [2.53, "[data-finished-character]"],
-      [2.92, "[data-rig]"],
-      [3.1, "[data-roof]"],
-      [3.31, "[data-dimensions]"],
-      [3.46, "[data-electrical]"],
-      [3.65, "[data-water]"],
+      [0.95, "[data-letters]"],
+      [1.3, "[data-brand-node]"],
+      [1.95, "[data-sketch]"],
+      [2.2, "[data-character]"],
+      [2.3, "[data-finished-character]"],
+      [2.75, "[data-rig]"],
+      [3.05, "[data-roof]"],
+      [3.2, "[data-dimensions]"],
+      [3.3, "[data-electrical]"],
+      [3.4, "[data-water]"],
     ];
     for (const [pos, expected] of checkpoints) {
       await seek(page, pos);
@@ -733,7 +1180,8 @@ try {
       );
       if (out) await page.screenshot({ path: join(out, `detail-${pos}.png`) });
     }
-    await seek(page, 1.1);
+    // GS-DES-002-R1: the construction starts at 0.7, as the Brand copy arrives; 0.62 is before it.
+    await seek(page, 0.62);
     const letters = await page.evaluate(() => {
       const g = document
         .querySelector("[data-design-stage] [data-letter-g]")
@@ -754,7 +1202,7 @@ try {
       errors.push("G/S hierarchy: require smaller upper G and dominant S");
     if (!letters.decorative)
       errors.push("G/S artwork must remain decorative and non-focusable");
-    await seek(page, 3.65);
+    await seek(page, 3.4);
     const structure = await page.$eval(
       '[data-design-stage] [data-art="technical"]',
       (el) => ({
@@ -783,7 +1231,7 @@ try {
       errors.push(
         `Four-storey coordinated drawing incomplete: ${JSON.stringify(structure)}`,
       );
-    await seek(page, 2.53);
+    await seek(page, 2.3);
     const mascot = await page.$eval('[data-design-stage] [data-character]', el => el.outerHTML);
     await page.mouse.move(1000, 200);
     await page.mouse.move(300, 700);

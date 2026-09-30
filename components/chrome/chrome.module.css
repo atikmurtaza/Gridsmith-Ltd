@@ -454,6 +454,9 @@
 }
 /* `/` — the Master close already resolves into the mark directly above the footer. */
 :global(body:has([data-stage="master"])) .footerMark { display: none; }
+/* `/design` (GS-DES-002) — the Design scene's final mark docks into this slot as the footer
+   arrives, so the decorative mark is hidden but keeps its place: layout is unchanged. */
+:global(body:has([data-design-story])) .footerMark { visibility: hidden; }
 :global(body:has([data-stage="master"])) .footerInner {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: 'brand' 'groups' 'social';

@@ -270,6 +270,7 @@
   color: var(--ink-muted);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
+  transition: opacity var(--dur-fast);
 }
 .ds-stage-label span {
   display: none;
@@ -595,45 +596,19 @@
 }
 
 /* R2: one copy/visual timeline. Sections retain native document scroll and anchors. */
-/* G2: the stacked Technical copy can cross the roof. The compact <=650px
-   layout and the >=761px side-by-side layout already keep the note clear. */
-@media (max-width: 760px) and (height > 650px) {
+/* G2: the stacked Technical copy can cross the roof; the >=761px side-by-side layout keeps the note
+   clear. GS-DES-002-RC: since R1 the arriving copy crosses the roof at every stacked height, so the
+   compact <=650px layout carries the note's paper too (without it: 3.28:1 at 430x650). */
+@media (max-width: 760px) {
   .ds-story[data-enhanced] .ds-gate {
     --ink-muted: var(--ds-paper-muted);
     --ink-subtle: var(--ds-paper-muted);
     background: var(--ds-paper);
   }
 }
-.ds-story[data-enhanced] .ds-copy {
-  position: fixed;
-  left: 6vw;
-  top: 14svh;
-  width: 37.8vw;
-  margin-left: 0;
-  will-change: transform, opacity;
-}
-.ds-story[data-enhanced] .ds-copy:has(details[open]) {
+.ds-story:not([data-static]) .ds-copy:has(details[open]) {
   max-height: 80svh;
   overflow-y: auto;
-}
-@media (min-width: 761px) {
-  .ds-story:not([data-static]) .ds-chapter[data-chapter="0"] { min-height: 90svh; }
-  .ds-story:not([data-static]) .ds-chapter[data-chapter="1"] { min-height: 95svh; }
-  .ds-story:not([data-static]) .ds-chapter[data-chapter="2"] { min-height: 90svh; }
-  .ds-story:not([data-static]) .ds-chapter[data-chapter="3"] { min-height: 105svh; }
-  .ds-story:not([data-static]) .ds-chapter[data-chapter="4"] { min-height: 100svh; }
-  .ds-story[data-enhanced] .ds-chapter[data-chapter="0"] .ds-copy {
-    left: 16vw;
-    top: 15svh;
-    width: 52.8vw;
-  }
-  .ds-story[data-enhanced] .ds-chapter[data-chapter="1"] .ds-copy,
-  .ds-story[data-enhanced] .ds-chapter[data-chapter="3"] .ds-copy {
-    left: 54.4vw;
-    width: 37.8vw;
-    margin-left: 0;
-  }
-  .ds-story[data-enhanced] .ds-chapter[data-chapter="4"]:last-of-type .ds-copy { width: 30vw; }
 }
 @media (max-width: 760px) {
   /* G1: expanded mobile disclosures own a readable paper surface. Closed
@@ -646,15 +621,99 @@
     background: var(--ds-paper);
     color-scheme: light;
   }
-  .ds-story:not([data-static]) .ds-chapter[data-chapter="0"] { min-height: 105svh; }
-  .ds-story:not([data-static]) .ds-chapter[data-chapter="1"] { min-height: 115svh; }
-  .ds-story:not([data-static]) .ds-chapter[data-chapter="2"] { min-height: 110svh; }
-  .ds-story:not([data-static]) .ds-chapter[data-chapter="3"] { min-height: 130svh; }
-  .ds-story:not([data-static]) .ds-chapter[data-chapter="4"] { min-height: 110svh; }
-  .ds-story[data-enhanced] .ds-chapter .ds-copy {
-    position: fixed;
+}
+
+/* GS-DES-002-R1 — one continuous page. R2 fixed every chapter's copy to the screen and replaced it
+   by fading, so the copy waited while the scene changed, then blinked. Now each chapter is its copy
+   and a dwell (`::after`, `--ds-dwell`), in normal flow, on its own surface. The copy is sticky: it
+   arrives with the scroll, holds while the dwell passes, then leaves with the scroll as the next
+   chapter's copy arrives beneath it. sceneChoreography reads these same positions and changes the
+   scene while the two pass (designTimeline). The same layout serves before and after the scene
+   module loads, so enhancement moves nothing. */
+.ds-story:not([data-static]) .ds-chapter {
+  min-height: 0;
+  padding: 12svh 0 4svh;
+  background: var(--ds-surface);
+  --ds-dwell: 45svh;
+}
+.ds-story:not([data-static]) .ds-chapter::after {
+  content: "";
+  display: block;
+  height: var(--ds-dwell);
+}
+.ds-story:not([data-static]) .ds-copy {
+  position: sticky;
+  top: 14svh;
+  width: 37.8vw;
+  margin-left: 6vw;
+}
+/* The stage takes its own 100svh and the first chapter overlaps it, rather than the stage carrying a
+   -100svh margin: the same flow, but sticky now releases the stage exactly as the story's end reaches
+   the bottom of the screen, on the compositor. R2 released it with a transform written on each scroll
+   event, which could trail the page by a frame — a phone's final mark stuttered, 18px in one step. */
+.ds-story[data-enhanced] .ds-stage { margin-bottom: 0; }
+.ds-story[data-enhanced] .ds-stage + .ds-chapter { margin-top: -100svh; }
+/* GS-DES-002-R2: where the final mark docks into the footer (>=768px), the story's box runs on under
+   the footer (--ds-footer-h, measured; its negative margin leaves the layout unchanged), so the stage
+   is never released there: nothing carries the mark on the compositor while script holds it. The
+   release, cancelled a frame late, was the owner's up-then-down at every step of a keyboard scroll. */
+.ds-story[data-enhanced]::after {
+  content: "";
+  display: block;
+  height: var(--ds-footer-h, 0px);
+  margin-bottom: calc(-1 * var(--ds-footer-h, 0px));
+}
+/* The story is positioned and isolated, so the run-on would paint and take clicks over the footer:
+   its surface stops at the story's own end, and only its children are hit-tested. */
+.ds-story[data-enhanced] {
+  background: linear-gradient(var(--ds-surface), var(--ds-surface)) top / 100% calc(100% - var(--ds-footer-h, 0px)) no-repeat;
+  pointer-events: none;
+}
+.ds-story[data-enhanced] > * {
+  pointer-events: auto;
+}
+@media (min-width: 761px) {
+  /* Earlier :first-of-type / :last-of-type rules set heights and the hero inset; the dwell is the
+     only height now. */
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="0"] {
+    min-height: 0;
+    padding: 14svh 0 4svh;
+    --ds-dwell: 20svh;
+  }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="0"] .ds-copy {
+    top: 15svh;
+    width: 52.8vw;
+    margin-left: 16vw;
+  }
+  .ds-story:not([data-static]) [data-chapter="1"] .ds-copy,
+  .ds-story:not([data-static]) [data-chapter="3"] .ds-copy {
+    margin-left: 54.4vw;
+    width: 37.8vw;
+  }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="4"] .ds-copy { width: 30vw; }
+  /* The footer stays below the fold until the final copy starts to leave, so it never rises under
+     copy that is still holding; the final mark then glides into the footer's slot. */
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="4"] { min-height: 0; padding-bottom: 45svh; }
+}
+@media (max-width: 760px) {
+  /* The next chapter's copy starts far enough down to stay below the fold for the whole dwell
+     (sticky top 4svh + copy + 4svh + this ≥ 100svh): each phone dwell is its artefact and its copy
+     alone, and the passing starts after it. */
+  .ds-story:not([data-static]) .ds-chapter {
+    padding: 42svh 0 4svh;
+    --ds-dwell: 40svh;
+  }
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="0"] {
+    min-height: 0;
+    padding: 2.5svh 0 4svh;
+    --ds-dwell: 12svh;
+  }
+  .ds-story:not([data-static]) .ds-copy,
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="0"] .ds-copy {
     top: 4svh;
-    left: 6vw;
+    margin-left: 6vw;
     width: 88vw;
   }
+  /* The final mark sits in this space, below the copy: the footer arrives after it, not over it. */
+  .ds-story:not([data-static]) .ds-chapter[data-chapter="4"] { min-height: 0; padding-bottom: 55svh; }
 }

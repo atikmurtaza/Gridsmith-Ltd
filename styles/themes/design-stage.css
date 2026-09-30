@@ -22,10 +22,9 @@
   --ds-visor: #060f1e;
 }
 /* Design uses its owner-approved Imperial treatment; Master remains unchanged. Gold is material, never small text on the drafting-paper chapters. */
-[data-division="design"] .ds-story[data-tone="paper"],
-[data-division="design"]
-  .ds-story:not([data-enhanced])
-  .ds-chapter[data-paper] {
+/* GS-DES-002-R1: every chapter paints its own surface, so the page changes tone as it scrolls — the
+   edge between paper and night is a line moving up the screen, never a whole-page switch. */
+[data-division="design"] .ds-chapter[data-paper] {
   --ink: var(--ds-paper-ink);
   --ink-muted: var(--ds-paper-muted);
   --ink-subtle: var(--ds-paper-muted);
@@ -41,4 +40,19 @@
   --ds-building-gold-deep: color-mix(in srgb, var(--ds-drawing), var(--ds-gold-deep) var(--ds-building-material, 0%));
   --ds-building-gold-hi: color-mix(in srgb, var(--ds-drawing), var(--ds-gold-hi) var(--ds-building-material, 0%));
   --ds-building-gold: color-mix(in srgb, var(--ds-drawing), var(--ds-gold) var(--ds-building-material, 0%));
+}
+/* GS-DES-002-R1: the scene's drawing colours follow the share of paper behind its middle band
+   (`--ds-tone`, 0 night … 1 paper, sceneChoreography) — a blend as the surface edge passes. */
+[data-division="design"] .ds-story:not([data-static]) .ds-stage {
+  --ds-drawing: color-mix(in srgb, var(--ds-blue-hi), var(--ds-cobalt) calc(var(--ds-tone, 0) * 100%));
+  --ds-rule: color-mix(in srgb, var(--ds-blue-hi), var(--ds-navy) calc(var(--ds-tone, 0) * 100%));
+  --ds-surface: color-mix(in srgb, var(--ds-night), var(--ds-paper) calc(var(--ds-tone, 0) * 100%));
+}
+[data-division="design"] .ds-story:not([data-static]) .ds-stage-label {
+  color: color-mix(in srgb, var(--ink-muted), var(--ds-paper-muted) calc(var(--ds-label-tone, 0) * 100%));
+}
+/* A chapter edge can settle through the label (2400x1350, Character): it carries its own surface. */
+[data-division="design"] .ds-story:not([data-static]) .ds-stage-label span {
+  padding: 0.2em 0.5em;
+  background: color-mix(in srgb, var(--ds-night), var(--ds-paper) calc(var(--ds-label-tone, 0) * 100%));
 }

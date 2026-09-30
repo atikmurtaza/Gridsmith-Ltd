@@ -1,43 +1,32 @@
-import { buildingCurves, buildingNodeStarts, curvePath, outline, facePoints, wirePath } from "./transitionGeometry";
+import { buildingCurves, buildingNodeStarts, curvePath, outline, facePoints, markCurves, markNodes, wirePath } from "./transitionGeometry";
 import { gOutlines, sOutlines } from "./letterGeometry";
 
-/** Original GS-R002 studio studies. Decorative vectors; no client work or engineering specification. */
-const nodes = [
-  [475, 482],
-  [856, 482],
-  [475, 845],
-  [856, 845],
-  [675, 684],
-  [1060, 684],
-  [675, 1044],
-  [1060, 1044],
-];
-const bars = [
-  [475, 444, 381, 76],
-  [437, 482, 76, 363],
-  [475, 807, 381, 76],
-  [675, 646, 385, 76],
-  [1022, 684, 76, 360],
-  [675, 1006, 385, 76],
-];
+/**
+ * GS-DES-002-R1 — the owner's supplied 3D logo, the payoff of Brand and of the final chapter.
+ * `public/brand/gridsmith-logo-3d.png` is 2400 × 2400 and its frame is exactly the vector logo's
+ * own `viewBox 307.5 303 920 920` (measured: the spheres sit on the SVG geometry at 2.608 px a
+ * unit on both axes). The procedural mark is that geometry at `translate(110 95) scale(.5)`, so the
+ * asset aligns over it at x 263.75, y 246.5, 460 square — no fitting, no approximation.
+ *
+ * It was kept unused at 3.2MB (GS-R001-R). It is not shipped at that size: Next's image optimiser
+ * serves it at 1080px (it is drawn at up to ~550 CSS px, so 2× density), from the same origin. An
+ * SVG `<image>` has no `srcset`, so one URL, in the default loader's own form (1080 is one of the
+ * default device sizes the optimiser accepts). Not `getImageProps`: importing next/image here put
+ * its client module on the /design route, +5.3KB for a string. check:design:scene loads it.
+ */
+const LOGO_3D = "/_next/image?url=%2Fbrand%2Fgridsmith-logo-3d.png&w=1080&q=75";
 
-function Mark({ id }: { id: string }) {
+function Logo3D({ live = false }: { live?: boolean }) {
   return (
-    <g transform="translate(110 95) scale(.5)">
-      {bars.map(([x, y, width, height], i) => (
-        <rect
-          key={i}
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          fill={`url(#${id}-metal)`}
-        />
-      ))}
-      {nodes.map(([cx, cy], i) => (
-        <circle key={i} cx={cx} cy={cy} r="75" fill={`url(#${id}-orb)`} />
-      ))}
-    </g>
+    <image
+      data-mark-3d=""
+      href={LOGO_3D}
+      x="263.75"
+      y="246.5"
+      width="460"
+      height="460"
+      opacity={live ? 0 : undefined}
+    />
   );
 }
 
@@ -167,8 +156,8 @@ function Building({ id }: { id: string }) {
           ))}
         </g>
       </g>
-      {/* A material highlight references the same moving geometry, never a replacement logo. */}
-      <use data-metal-shine="" href={`#${id}-building-outline`} stroke={`url(#${id}-shine)`} fill={`url(#${id}-shine)`} opacity="0" />
+      {/* The converged outline gains its real material: the supplied 3D logo, aligned over it. */}
+      <Logo3D live />
     </g>
   );
 }
@@ -247,11 +236,6 @@ export function DesignArtwork({
           ].map(([offset, colour]) => (
             <stop key={offset} offset={offset} stopColor={`var(${colour.replace("--ds-", "--ds-building-")})`} />
           ))}
-        </linearGradient>
-        <linearGradient id={`${id}-shine`} data-shine-gradient="" gradientUnits="userSpaceOnUse" x1="-60" y1="0" x2="60" y2="24">
-          <stop stopColor="var(--ds-gold-hi)" stopOpacity="0" />
-          <stop offset=".5" stopColor="var(--ds-gold-hi)" stopOpacity=".65" />
-          <stop offset="1" stopColor="var(--ds-gold-hi)" stopOpacity="0" />
         </linearGradient>
         <radialGradient id={`${id}-orb`} cx=".3" cy=".22" r=".8">
           <stop stopColor="var(--ds-gold-hi)" />
@@ -351,11 +335,11 @@ export function DesignArtwork({
               <g data-letter-s="" fill={`url(#${id}-brand-metal)`}>
                 <path d={sOutlines.map(shape => outline(shape.from)).join(" ")} />
               </g>
-              {nodes.map(([x, y], i) => (
-                <circle key={i} data-brand-node="" cx={x * .5 + 110} cy={y * .5 + 95} r="0" fill={`url(#${id}-orb)`} />
+              {markNodes.map(([cx, cy], i) => (
+                <circle key={i} data-brand-node="" cx={cx} cy={cy} r="0" fill={`url(#${id}-orb)`} />
               ))}
             </g>
-          ) : <Mark id={id} />}
+          ) : <Logo3D />}
           <g data-construction="" className="ds-construction">
             <path d="M290 195H710M290 340H710M290 620H710M347 170V645M640 170V645" />
           </g>
@@ -377,6 +361,24 @@ export function DesignArtwork({
           </g>
         </g>
       )}
+      {live && (
+        /* GS-DES-002 — the Brand mark's own bars and spheres, thinned to strokes and nodes, drawing
+           the mascot. Swapped in under the 3D logo at the mark's exact bar centrelines, bar width
+           and sphere radius, so when the logo dissolves the same object is underneath. */
+        <g data-morph="" opacity="0">
+          <g stroke="var(--ds-gold)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            {markCurves.map((curve, i) => (
+              <path key={i} data-morph-edge="" d={curvePath(curve)} strokeWidth="38" />
+            ))}
+          </g>
+          {markNodes.map(([cx, cy], i) => (
+            <circle key={i} data-morph-node="" cx={cx} cy={cy} r="37.5" fill={`url(#${id}-orb)`} />
+          ))}
+        </g>
+      )}
+      {/* Above the procedural mark and the morph, so the 3D logo resolves over the exact geometry
+          and later dissolves onto it: the Brand payoff, the first of the two [data-mark-3d]. */}
+      {live && <Logo3D live />}
       {show(3) && (
         <g data-art="technical">
           <Building id={id} />
@@ -385,7 +387,7 @@ export function DesignArtwork({
       {show(4) && !live && (
         <g data-art="convergence">
           <g data-final-mark="" transform="translate(-48 -53) scale(1.1)">
-            <Mark id={id} />
+            <Logo3D />
           </g>
         </g>
       )}
