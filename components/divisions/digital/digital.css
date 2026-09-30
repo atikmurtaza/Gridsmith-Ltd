@@ -56,44 +56,16 @@
 .dg-diagram { position: relative; display: flex; align-items: center; justify-content: center; gap: 1.4rem; min-height: 17rem; margin-block: 3.5rem 2.5rem; padding: clamp(1.5rem, 4vw, 3.5rem); border: 1px solid var(--dg-rule); background: var(--dg-bedrock); overflow: hidden; }
 .dg-diagram-label { display: block; margin-block-end: 1rem; color: var(--dg-muted); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .08em; }
 .dg-diagram .dg-station-glyph::after { background: var(--dg-bedrock); }
-.dg-route-line, .dg-connector { flex: 1; height: 1px; min-width: 1rem; background: var(--dg-control); }
+.dg-connector { flex: 1; height: 1px; min-width: 1rem; background: var(--dg-control); }
 .dg-web-diagram { justify-content: space-between; }
-.dg-source { min-width: 10rem; }
-.dg-source-block { display: grid; grid-template-columns: auto 2rem; gap: .35rem 1rem; padding: 1rem; border-left: 2px solid var(--dg-active); background: var(--dg-raised); font-family: var(--font-mono); font-size: var(--text-xs); }
-.dg-source-block i { align-self: center; height: .35rem; background: var(--dg-rule); }
-.dg-layouts { display: flex; gap: clamp(1rem, 3vw, 3rem); }
-.dg-layout-wide, .dg-layout-narrow { display: grid; gap: .45rem; padding: .7rem; border: 1px solid var(--dg-control); background: var(--dg-raised); }
-.dg-layout-wide { width: 10rem; height: 6.5rem; grid-template-columns: 1fr 1fr; grid-template-rows: 1.5rem 1fr; }
-.dg-layout-narrow { width: 5.5rem; height: 6.5rem; grid-template-rows: 1fr 1fr 1fr; }
-.dg-layout-wide b, .dg-layout-narrow b { background: var(--dg-active); }
-.dg-layout-wide i, .dg-layout-narrow i { background: var(--dg-control); }
-.dg-layout-wide em, .dg-layout-narrow em { background: var(--dg-rule); }
-.dg-layout-wide b { grid-column: 1 / -1; }
-.dg-layout-narrow b { height: .65rem; }
 .dg-software-diagram { justify-content: space-around; }
-.dg-record { display: grid; min-width: 11rem; gap: .55rem; padding: 1rem; background: var(--dg-raised); border: 1px solid var(--dg-control); font-family: var(--font-mono); font-size: var(--text-xs); }
-.dg-record > span:not(:first-child) { display: flex; justify-content: space-between; gap: 1rem; border-block-end: 1px solid var(--dg-rule); }
-.dg-record b { font-weight: 500; color: var(--dg-active); }
-.dg-rule { display: grid; justify-items: center; gap: 1rem; text-align: center; }
-.dg-rule > span:last-child { max-width: 12ch; color: var(--dg-muted); font-size: var(--text-sm); }
-.dg-permissions { display: grid; gap: .8rem; font-family: var(--font-mono); font-size: var(--text-xs); }
-.dg-permissions span { padding: .8rem; border: 1px solid var(--dg-control); white-space: nowrap; }
-.dg-pass { color: var(--dg-active); background: var(--dg-raised); }
-.dg-stop { color: var(--dg-muted); border-style: dashed !important; }
 .dg-app-diagram { display: grid; align-content: center; gap: 1.6rem; }
-.dg-app-flow { display: flex; align-items: center; gap: .5rem; }
-.dg-app-return { display: flex; justify-content: space-between; padding: .75rem 1rem; border-top: 1px dashed var(--dg-idle); color: var(--dg-muted); font-family: var(--font-mono); font-size: var(--text-xs); }
-.dg-app-return > span:last-child { font-size: 1.5rem; line-height: .6; }
 .dg-automation-diagram { gap: .6rem; }
 .dg-boundary { display: grid; align-content: center; min-height: 8rem; gap: .5rem; padding: 1rem; border: 1px solid var(--dg-control); background: var(--dg-raised); }
 .dg-boundary .dg-diagram-label { margin: 0; }
 .dg-boundary .dg-station-glyph::after { background: var(--dg-raised); }
 .dg-boundary small { color: var(--dg-muted); }
-.dg-human-boundary { border-color: var(--dg-brass); }
 .dg-operate-diagram { display: grid; justify-content: stretch; align-content: center; gap: 2rem; }
-.dg-operate-line { display: flex; align-items: center; gap: 1rem; }
-.dg-operate-line > span:first-child { width: 7rem; flex: none; color: var(--dg-muted); font-family: var(--font-mono); font-size: var(--text-xs); }
-.dg-observation { padding-block-start: 1.2rem; border-block-start: 1px dashed var(--dg-control); }
 .dg-operate-diagram p { color: var(--dg-muted); font-size: var(--text-sm); }
 
 .dg-service-index { margin-block-start: 3.5rem; border-block-start: 1px solid var(--dg-control); }
@@ -155,27 +127,11 @@
   .dg-station-glyph { width: 1.25rem; height: 1.25rem; }
   .dg-station-glyph::after { top: .22rem; right: -.2rem; width: .65rem; height: .65rem; }
   .dg-web-diagram { gap: .5rem; }
-  .dg-source { min-width: 6.5rem; }
-  .dg-source-block { grid-template-columns: auto; padding: .5rem; font-size: .65rem; }
-  .dg-source-block i { display: none; }
-  .dg-layouts { gap: .5rem; }
-  .dg-layout-wide { width: 5.3rem; }
-  .dg-layout-narrow { width: 3.2rem; }
   .dg-software-diagram { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
-  .dg-record { min-width: 0; }
-  .dg-rule { justify-items: start; text-align: left; }
-  .dg-permissions { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
-  .dg-permissions span { white-space: normal; }
-  .dg-app-flow { flex-wrap: wrap; justify-content: center; }
-  .dg-app-flow .dg-connector { min-width: .4rem; }
   .dg-automation-diagram { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
   .dg-automation-diagram .dg-connector { display: none; }
   .dg-boundary { min-width: 0; min-height: 7rem; padding: .65rem; }
   .dg-boundary .dg-station { white-space: normal; }
-  .dg-operate-line { flex-wrap: wrap; gap: .5rem; }
-  .dg-operate-line > span:first-child { width: 100%; }
-  .dg-operate-line .dg-connector { min-width: .5rem; }
-  .dg-operate-line .dg-station { white-space: normal; }
   .dg-service-index { margin-block-start: 2rem; }
   .dg-service-index a { grid-template-columns: minmax(0, 1fr) 1rem; gap: .2rem 1rem; }
   .dg-service-index a > span:nth-child(2) { grid-column: 1; }
@@ -184,9 +140,6 @@
   .dg-switch-outcome ol { grid-template-columns: repeat(2, 1fr); }
   .dg-engagement ol { grid-template-columns: 1fr; }
   .dg-engagement li { min-height: 0; }
-  .dg-close-route { flex-wrap: wrap; gap: .7rem; margin-block: 2rem 3rem; }
-  .dg-close-route > span:not(.dg-station) { min-width: .4rem; margin-inline: 0; }
-  .dg-close-route .dg-station { font-size: .62rem; }
   .dg-close-notes { grid-template-columns: 1fr; margin-block-start: 3rem; }
   .dg-close-notes p:last-child { grid-column: 1; }
 }
@@ -228,20 +181,8 @@
 .dg-diagram { min-height: clamp(20rem, 29vw, 29rem); border-color: var(--dg-control); background: var(--dg-bedrock); }
 .dg-chapter-software .dg-diagram,
 .dg-chapter-automation-intelligence .dg-diagram { background: var(--dg-raised); }
-.dg-chapter-software .dg-record,
-.dg-chapter-software .dg-pass,
 .dg-chapter-automation-intelligence .dg-boundary { background: var(--dg-paper); }
-.dg-chapter-software .dg-record b { color: var(--digital-signal-dark); }
-.dg-chapter-software .dg-record > span:not(:first-child) { min-height: 2.4rem; align-items: center; }
-.dg-chapter-software .dg-pass { color: var(--digital-signal-dark); border-inline-start: 3px solid currentColor; }
-.dg-chapter-software .dg-stop { border-inline-start: 3px dashed currentColor !important; }
-.dg-web-diagram .dg-layouts { align-items: end; }
-.dg-web-diagram .dg-layout-wide { width: clamp(10rem, 20vw, 18rem); height: clamp(8rem, 14vw, 12rem); }
-.dg-web-diagram .dg-layout-narrow { width: clamp(5rem, 8vw, 8rem); height: clamp(8rem, 14vw, 12rem); }
-.dg-web-diagram .dg-source-block { min-height: 10rem; align-content: center; }
-.dg-app-diagram .dg-app-flow { min-height: 10rem; }
 .dg-app-diagram .dg-station { padding: 1.2rem; border: 1px solid var(--dg-control); background: var(--dg-raised); }
-.dg-app-diagram .dg-app-return { border-color: var(--digital-signal); }
 .dg-automation-diagram { display: grid; align-content: center; gap: 1.5rem; }
 .dg-automation-core { display: flex; align-items: center; gap: 1rem; }
 .dg-automation-core .dg-boundary { flex: 1; }
@@ -276,8 +217,6 @@
 
 @media (max-width: 600px) {
   .dg-diagram { min-height: 16rem; }
-  .dg-web-diagram .dg-layout-wide { width: 5.3rem; height: 8rem; }
-  .dg-web-diagram .dg-layout-narrow { width: 3.2rem; height: 8rem; }
   .dg-automation-diagram { grid-template-columns: minmax(0, 1fr); }
   .dg-automation-core { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .dg-automation-core .dg-connector { display: none; }
@@ -501,7 +440,9 @@
 .dg-home > section { position: relative; z-index: 1; }
 .dg-home :is(.dg-hero, .dg-route-map, .dg-chapter, .dg-engagement, .dg-close) { border-block: 0; }
 .dg-home .dg-chapter::before { content: none; }
-.dg-hero-stage { display: grid; grid-template-columns: 55% 45%; grid-template-areas: 'kicker visual' 'heading visual' 'lede visual' 'actions visual'; align-content: center; gap: clamp(.8rem, 1.6vw, 1.5rem) 0; min-block-size: 41rem; }
+.dg-hero-stage { display: grid; grid-template-columns: 55% 45%; grid-template-areas: 'kicker visual' 'heading visual' 'lede visual' 'actions visual'; align-content: center; gap: clamp(.8rem, 1.6vw, 1.5rem) 0; min-block-size: max(41rem, calc(100svh - var(--header-block-size))); }
+/* GS-DIG-002-R2: the Hero owns the first screen, so the Route Map begins at the fold rather than
+   inside the Hero's composition. Stacked layouts reset this below; their Hero is already taller. */
 .dg-hero .dg-kicker { grid-area: kicker; color: var(--dg-muted); }
 .dg-hero h1 { grid-area: heading; max-width: 17ch; font-size: clamp(3rem, 5.55vw, 6.75rem); line-height: .99; }
 .dg-hero-lede { grid-area: lede; max-width: 46ch; color: var(--dg-muted); font-size: clamp(1.05rem, 1.35vw, 1.35rem); }
@@ -515,7 +456,6 @@
 .dg-compass-sticky { position: sticky; top: max(10rem, calc((100svh - var(--dg-size)) / 2 - 4rem)); block-size: calc(var(--dg-size) + 14rem); }
 .dg-apertures { --dg-x: 25vw; --dg-y: 0px; position: absolute; top: 0; left: 50%; inline-size: var(--dg-size); aspect-ratio: 1; transform: translate(calc(-50% + var(--dg-x)), var(--dg-y)) scale(var(--dg-scale, 1)); transition: transform calc(var(--dur-slow) * 3) var(--ease-out); pointer-events: none; }
 .dg-apertures[data-mode='map'] { --dg-x: 0px; --dg-y: 9rem; }
-.dg-apertures[data-mode='hero'][data-transit='true'] { --dg-x: 0px; --dg-y: 9rem; }
 .dg-home .dg-apertures[data-transit='true'] .dg-compass-link :is(.dg-compass-label, .dg-compass-leader), .dg-apertures[data-transit='true'] .dg-motion-control { opacity: 0; visibility: hidden; pointer-events: none; }
 /* R3-G: behind chapters and the process the instrument becomes an environmental graphic,
    viewport-centred and enlarged by the same transform that carries it between modes. */
@@ -573,6 +513,16 @@
 .dg-apertures:not([data-preview]) .dg-compass-link[data-active] :is(.dg-compass-label, .dg-compass-leader), .dg-compass-link[data-preview] :is(.dg-compass-label, .dg-compass-leader) { opacity: 1; visibility: visible; transform: none; }
 .dg-apertures:not([data-preview]) .dg-compass-link[data-active] .dg-compass-label, .dg-compass-link[data-preview] .dg-compass-label { border-color: var(--digital-commit); pointer-events: auto; }
 .dg-apertures:not([data-preview]) .dg-compass-link[data-active] .dg-compass-number, .dg-compass-link[data-preview] .dg-compass-number { text-decoration: underline; text-decoration-color: var(--digital-commit); text-underline-offset: .25em; }
+/* GS-DIG-002-R2 handoff (Hero → Route Map, `data-transit`): the Hero's demo ends — autoplay pauses,
+   callouts and the control leave (above), numbers go neutral — and the instrument recedes behind
+   the copy, as it does beside the Route Map list, until the map state brings it forward. */
+.dg-apertures[data-transit='true'] .dg-compass-link[data-active] { color: var(--digital-muted-dark); }
+.dg-apertures[data-transit='true'] .dg-compass-link[data-active] .dg-compass-number { font-size: 1.5rem; text-decoration: none; }
+/* After the active-callout rule above it: the hand-off hide (earlier in this file) ties it on
+   specificity and so lost, which left the Hero's callout over the Route Map copy. */
+.dg-apertures[data-transit='true'] .dg-compass-link[data-active] :is(.dg-compass-label, .dg-compass-leader) { opacity: 0; visibility: hidden; pointer-events: none; }
+.dg-apertures[data-mode='hero'][data-transit='true'] :is(.dg-aperture-svg, .dg-compass-number) { opacity: .3; }
+.dg-home:has(.dg-apertures[data-mode='hero'][data-transit='true']) .dg-compass-rail { z-index: 0; }
 .dg-home .dg-compass-link:focus-visible { outline: none; }
 .dg-compass-link:focus-visible :is(.dg-compass-number, .dg-compass-label) { outline: 2px solid var(--digital-focus); outline-offset: 4px; }
 /* R3-F Route Map: two information fields either side of the centred instrument.
@@ -627,8 +577,11 @@
 .dg-route-map .dg-section-intro { display: grid; gap: 1rem; max-width: min(55%, 46rem); margin-block-end: 0; }
 .dg-route-map .dg-section-intro h2 { margin: 0; }
 .dg-route-map .dg-section-intro > p:last-child { font-size: 1rem; max-width: none; }
-/* The reserved field sets how long the complete map holds during a continuous scroll. */
-.dg-map-visual-space { block-size: calc(var(--dg-size) + 14rem + max(65svh, 36rem)); margin-block-start: 2rem; }
+/* The reserved field sets how long the complete map holds during a continuous scroll. GS-DIG-002:
+   the hold term was max(65svh, 36rem), about a viewport of map alone before 01 Web. The floor is
+   check:digital:scene's timing: the complete map starts ~400ms into the map state at 1000px/s and
+   must hold 250ms. 38svh measured 249ms; 44svh keeps a margin while Web enters sooner. */
+.dg-map-visual-space { block-size: calc(var(--dg-size) + 14rem + max(44svh, 24rem)); margin-block-start: 2rem; }
 .dg-home:has(.dg-apertures[data-enhanced='true']) .dg-map-links { display: none; }
 .dg-map-links a { grid-template-columns: 3rem minmax(10rem, 1fr) minmax(10rem, 1fr) 7rem; }
 .dg-map-links a > span:last-child { font-size: var(--text-xs); }
@@ -753,4 +706,9 @@
    instrument is not rendered until the controller has positioned it, so it is never painted
    in a place it then leaves. Without JS the rail is hidden anyway (scripting: none). */
 .dg-home :is(.dg-chapter, .dg-engagement, .dg-close) { content-visibility: auto; contain-intrinsic-size: auto 1600px; }
+/* GS-DIG-002-R1: the shared footer on this page only (its sibling selector), deferred the same way.
+   Placeholders are its measured heights either side of its own 768px breakpoint (757px at ≥1024,
+   740–786px at 768–1023, 859–901px below 768); `auto` then remembers the rendered size. */
+.dg-home ~ footer { content-visibility: auto; contain-intrinsic-size: auto 47.25rem; }
+@media (max-width: 767px) { .dg-home ~ footer { contain-intrinsic-size: auto 55rem; } }
 .dg-compass-rail:not(:has(.dg-apertures[data-enhanced='true'])) { content-visibility: hidden; }

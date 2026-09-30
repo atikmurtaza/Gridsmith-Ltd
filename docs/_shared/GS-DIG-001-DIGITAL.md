@@ -3,6 +3,13 @@
 > **Namespace.** Digital redesign and its release candidate are `GS-DIG-001`. `GS-R003` stays
 > reserved for live post-cutover verification and is not used here.
 
+**Status (30 September 2026, `GS-DIG-002-RC`):** the owner approved the Digital remediation —
+`GS-DIG-002` (content-led Route Map pacing), `GS-DIG-002-R1` (Digital-only footer deferral) and
+`GS-DIG-002-R2` (Hero / Route Map chapter separation). The experience is frozen as
+Hero → Route Map → 01 Web → 02 Software → 03 Apps → 04 Automation → 05 Operate. RC evidence is the
+`GS-DIG-002-RC` section below; its exact SHA, CI and Preview follow the receipt convention there.
+Staging only; no production cutover.
+
 **Status (25 September 2026):** owner-approved visual baseline (R3-F plus the two R3-G
 corrections), frozen for release. RC verification is local-complete; the implementation commit,
 its exact-SHA CI and the protected Preview are recorded in the receipt section appended after
@@ -17,13 +24,13 @@ One persistent, server-rendered SVG compass travels the whole page as a single i
 | State | Behaviour |
 |---|---|
 | **Hero** | Foreground, right. Finite autoplay 01→02→03→04→05→01, adjacent callout, Pause/Play/Replay, hover/focus preview, real chapter links. |
-| **Hero → Map** | Waits for composition space: the move starts only when the Route Map intro has cleared the 01 callout field (sentinel `.dg-map-visual-space`). One eased transform right → centre; no fade, no respawn. |
-| **Route Map** | Centred. Five equal 84px callouts, 01–03 right and 04–05 left, reaching the page frame; one-line titles and behaviours; count tags on the top border; 1px gold leaders (rest 55%) from each number straight to its box. Neutral by default; hover/focus previews; real links. **R3-G:** the callouts fade in 100ms after the map state begins and are complete (≥95% opacity) at ≈290ms while the compass is ≈81% of the way across — no numbers-only interval at any tested speed. The reserved field is `size + 14rem + max(65svh, 36rem)` so the complete map holds during continuous scrolling. |
+| **Hero → Map** | Waits for composition space: the move starts only when the Route Map intro has cleared the 01 callout field (sentinel `.dg-map-visual-space`). One eased transform right → centre; no fade, no respawn. **GS-DIG-002-R2 (OWNER APPROVED, released in GS-DIG-002-RC):** Hero and Route Map are separate chapters. From 1024px the Hero fills the first screen (`100svh` less the header) so the Route Map starts at the fold. A hand-off state (`data-transit`, at every width) begins when the Route Map enters — stacked: when the Hero instrument pins — and lasts until the map state: the Hero demo ends (autoplay paused, callout and control hidden, numbers neutral) and the instrument recedes behind the copy at 0.3. Stacked, the map state waits until the Route Map intro has cleared the 01 number. `check:digital:scene` asserts both relationships (`opening`). |
+| **Route Map** | Centred. Five equal 84px callouts, 01–03 right and 04–05 left, reaching the page frame; one-line titles and behaviours; count tags on the top border; 1px gold leaders (rest 55%) from each number straight to its box. Neutral by default; hover/focus previews; real links. **R3-G:** the callouts fade in 100ms after the map state begins and are complete (≥95% opacity) at ≈290ms while the compass is ≈81% of the way across — no numbers-only interval at any tested speed. The reserved field is `size + 14rem + max(65svh, 36rem)` so the complete map holds during continuous scrolling. **GS-DIG-002 (OWNER APPROVED, released in GS-DIG-002-RC):** the hold term is now `max(44svh, 24rem)` so 01 Web enters sooner on desktop; `check:digital:scene` measures the map at 709ms with the complete map held 303ms at 1000px/s (floor 250ms; 38svh measured 249ms); RC re-measured 709ms / 297ms. Stacked layouts are unchanged. |
 | **Map → chapters** | Callouts leave at once; the same compass recedes (opacity 0.22), centres in the viewport and **enlarges to 1.7× on desktop** (1.9× tablet, 1.12× phone) through the same transform, so it reads as an environmental graphic rather than a watermark. |
 | **Chapters 01–05** | Inert, aria-hidden; the current group's number highlighted (gold, 0.6), others neutral (0.3). Local copy veil: soft-masked `blur(3px)` + graphite 45% behind headers, service lists and process copy; text itself is never filtered. |
 | **Process** | The Engagement Route is unnumbered: `activeGroup = null`, all five neutral, still enlarged and turning. No fake 06. |
 | **Process → Final** | Delayed until the CTA's first paragraph has fully risen past the instrument's axis. Then one continuous transform scales 1.7× → 1× and moves centre → right while opacity rises; the rail rises in front only after the move (step-end z-index), so it never crosses the heading. Fresh 01 autoplay; interaction restored. |
-| **Exit** | Native sticky rail ends with the final section; the footer stays clear. |
+| **Exit** | Native sticky rail ends with the final section; the footer stays clear. **GS-DIG-002-R1 (OWNER APPROVED, released in GS-DIG-002-RC):** on `/digital` only, the shared footer is deferred with `content-visibility: auto` (placeholder 47.25rem ≥768px, 55rem below — its measured heights), removing ~110ms of style/layout ahead of the H1's paint at 4× CPU. It renders before reaching the fold — RC measured 831px ahead at 320×568, 1,084px at 360×740 and 1,129–2,013px from 390×844 up (sampling step 8% of the viewport height); R1's "≥1,100px" did not hold at the two smallest phones — pixel-identical to the undeferred footer; keyboard, `focus()`, find-in-page and the AT-mode accessibility tree are unchanged. `check:axe` measures the footer after reveal (`proveDeferredFooter`). |
 
 Canonical destinations: 01 Web · 02 Software · 03 Apps & Interactive · 04 Automation &
 Intelligence · 05 Operate & Improve. Not present: brand state, Gridsmith-logo takeover, Digital
@@ -162,10 +169,63 @@ requests redirected to Vercel SSO during route checks, so computed styles were v
 the local production build rather than claimed for the protected Preview. The correction is
 staging-only.
 
+## GS-DIG-002-RC — owner-approved remediation (30 September 2026)
+
+**Approved and frozen:** Hero → Route Map → 01 Web → 02 Software → 03 Apps → 04 Automation →
+05 Operate. The Hero is its own first chapter (from 1024px it fills `100svh` less the shared
+`--header-block-size`; "When one thing changes, the right things follow." unchanged); the Route
+Map is the second chapter, entered through the R2 hand-off (`data-transit`: autoplay paused,
+callout and control leave, numbers neutral, instrument recedes to 0.3 behind the entering copy;
+stacked, the map state waits for the Route Map intro to clear the 01 number). The map hold is
+`max(44svh, 24rem)` (not the old `max(65svh, 36rem)`); Route Map → Web allocation is unchanged
+by R2. `/digital`'s footer alone is `content-visibility: auto` via `.dg-home ~ footer`
+(`auto 47.25rem` ≥768px, `auto 55rem` below).
+
+**RC corrections (gate/dependency only, no runtime or visual change):**
+- `check:axe` `proveDeferredFooter` matched the red specimen with `/>s*Cookie notices*</` — the
+  backslashes of `\s` had been lost, the `check:rls` U+0008 class. It passed only because the
+  button's HTML has no whitespace around its label. Now `/>\s*Cookie notice\s*</`; the red
+  specimen is caught after reveal on the corrected expression.
+- `undici` production advisory: the root `node_modules/undici` lock entry is 7.29.0 → 7.29.1
+  (patch within `get-it`'s `^7.22.0`). `@sanity/cli-build`'s nested `dts-plugin` pins exactly
+  `7.29.0`, so npm nests that dev-only copy (`npm install --package-lock-only`). 13+/3− lockfile
+  lines; no `package.json`, framework or Sanity change. `npm audit fix` was refused: it moves
+  `sanity` 6.9.2 → 6.17.0 with ~200 package changes. Production audit: 0 (was 1 high).
+
+**Local evidence** (Windows, a worktree at `4df670d2` plus only this commit's files, clean
+`.next`, `npm ci`): `verify:static` (29 gates) and `git diff --check` pass; `verify:build` passes,
+`/digital` 105.8KB total, **5.6KB delta** of 15KB; every served CI gate except Lighthouse
+(unavailable on Windows) and the Master WebGL sweep (CI runs it) passes. `check:axe`: 76
+analyses, 0 violations, 0 unresolved, 2 post-reveal footer analyses, and the deferred-footer
+proof (set-aside touches only footer nodes; clean specimen 0 findings; 2.5:1 Cookie-notice button
+caught after reveal). `check:digital:scene`: 2,048 text boxes at 6 sizes, `opening` at 6 sizes,
+map 709ms / complete 297ms / numbers-only 0ms, lifecycle, reduced motion, Save-Data, no-JS;
+`--prove` turns all 9 branches red. An RC probe over 320×568, 360×740, 390×844, 430×932, 768×1024,
+1024×768, 1280×720, 1440×900, 1920×1080 and 2400×1350 found no overflow, no blank frame, no
+Hero-state/Route Map overlap, Route Map below the fold at load, states hero → hand-off → map →
+chapters → final, footer skipped at load and rendered before the fold, document height stable
+scrolling away and back, footer CLS 0, Tab / Shift+Tab / `focus()` into the skipped footer (on
+screen, 2px outline), 20 footer links (navigation Studios 3, Company 3, Legal 4; the rest contact and social) and a
+working Cookie-notice control. `/`, `/design`, `/press`, `/about`, `/approach`, `/insights`,
+`/contact`, `/legal/privacy` and a Digital service page keep `content-visibility: visible`.
+
+**Observation, not a defect:** settled at every position, no Hero callout overlaps the CTA or
+Route Map copy at any size. Under a continuous 1000px/s scroll at phone widths the callout, in its
+approved 220ms fade-out, crosses the CTA for 127–158ms (peak opacity 0.63–0.82); 0ms from 768px.
+
+**Performance:** Lighthouse is asserted only on CI Linux; the exact-SHA mobile/desktop results
+are recorded in the release receipt. Budget unchanged (`/digital` mobile LCP ≤1750ms); fonts and
+the cookie check untouched. `GS-DES-002-RC`'s exact SHA `4df670d2` failed CI on this gate
+(runs `36662339110` attempts 1–2, `/digital` median 1757/1753ms) and that historical result stands.
+
+**Receipt:** a commit cannot carry its own hash. Final SHA, CI run and Lighthouse medians, and the
+protected Preview are recorded in the release handoff and
+`node_modules/.cache/gs-dig-002-rc/final-release-receipt.json`.
+
 ## Known non-blocking findings
 
-- 27 development-dependency advisories (12 high, 13 moderate, 2 low), unchanged baseline;
-  production dependencies report zero. No package or lockfile change.
+- Dependency audit after `GS-DIG-002-RC`: production 0; full tree 30 (2 low, 15 moderate, 13
+  high), all development tooling, count unchanged by the `undici` patch.
 - Lighthouse cannot run on Windows (`lhci-availability.mjs`); both axes are asserted on CI Linux.
 
 ## Release receipt

@@ -812,6 +812,133 @@ async function proveDesignGlyphTargets(browser) {
   }
 }
 
+/**
+ * GS-DIG-002-R1 — a footer deferred by `content-visibility: auto` is measured after it renders.
+ *
+ * `/digital` defers the shared footer until it nears the viewport. While it is skipped Chrome has
+ * not laid it out, so axe's hit-testing finds no box under footer text and reports contrast
+ * against whatever lies behind the footer: at 375px initial that was one violation on the
+ * Cookie-notice button and one unresolved statutory line. Those are readings of an unrendered
+ * subtree, not of the footer a visitor can reach — keyboard, `focus()`, find-in-page and
+ * scrolling all render it first, and with assistive technology active Chrome exposes the full
+ * footer tree while it is skipped (GS-DIG-002-R1 browser evidence).
+ *
+ * So findings INSIDE a skipped footer are set aside, never allowlisted, and the footer is then
+ * scrolled into view, asserted rendered with real layout, and analysed on its own with every tag.
+ * Its violations count and its incompletes go through `record()` like any other. A footer that
+ * will not render is a failure. Nothing outside `body > footer` is ever set aside, and a footer
+ * that was rendered at analysis time is measured in place exactly as before.
+ * `proveDeferredFooter()` makes the post-reveal analysis fail on a real footer defect each run.
+ */
+const FOOTER = 'body > footer';
+/** 'skipped' | 'rendered' | 'absent' — skipped only when content-visibility is what hides it. */
+function footerState(selector) {
+  const probe = document.querySelector(selector)?.querySelector('a[href], button, p');
+  if (!probe) return 'absent';
+  return probe.checkVisibility() && !probe.checkVisibility({ contentVisibilityAuto: true }) ? 'skipped' : 'rendered';
+}
+function inFooter({ targets, selector }) {
+  return targets.map((target) => {
+    try { return !!document.querySelector(target)?.closest(selector); } catch { return false; }
+  });
+}
+/** Remove nodes inside the skipped footer from both buckets; everything else is untouched. */
+async function setAsideFooter(page, where, violations, incomplete) {
+  let setAside = 0;
+  const keep = async (items) => {
+    const out = [];
+    for (const item of items) {
+      const flags = await page.evaluate(inFooter, { targets: item.nodes.map((n) => n.target.join(' ')), selector: FOOTER });
+      const nodes = item.nodes.filter((_, i) => !flags[i]);
+      setAside += item.nodes.length - nodes.length;
+      if (nodes.length) out.push({ ...item, nodes });
+    }
+    return out;
+  };
+  const kept = { violations: await keep(violations), incomplete: await keep(incomplete) };
+  if (setAside) console.log(`  ${where.padEnd(40)} ${setAside} finding(s) inside the deferred footer set aside — re-measured after it renders`);
+  return kept;
+}
+/**
+ * Scroll the footer in, require real layout for every control and text block, analyse it with every
+ * tag, and restore the scroll position. One analysis is enough: axe scrolls a below-fold node into
+ * view itself when it measures contrast (proven — a 2.5:1 Cookie-notice button below the first
+ * screen is caught). What it cannot measure is a node covered by a fixed overlay, which at 375px
+ * is the notice bar over the document's last ~220px on every route, deferred footer or not.
+ */
+async function revealFooter(page) {
+  const y = await page.evaluate(() => scrollY);
+  const settle = () => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(r, 250)))));
+  await page.evaluate((selector) => document.querySelector(selector).scrollIntoView({ block: 'start' }), FOOTER);
+  await settle();
+  const rendered = await page.evaluate((selector) => {
+    const parts = [...document.querySelectorAll(`${selector} a[href], ${selector} button, ${selector} p`)];
+    return parts.length > 0 && (document.querySelector(selector).querySelector('a[href], button, p')
+      .checkVisibility({ contentVisibilityAuto: true })) &&
+      parts.every((e) => !e.checkVisibility() || e.getBoundingClientRect().height > 0);
+  }, FOOTER);
+  const { violations, incomplete } = rendered
+    ? await new AxePuppeteer(page, axeSource).withTags(TAGS).include(FOOTER).analyze()
+    : { violations: [], incomplete: [] };
+  await page.evaluate((top) => window.scrollTo(0, top), y);
+  await settle();
+  return { rendered, violations, incomplete };
+}
+
+/**
+ * The set-aside must touch only footer nodes, and the post-reveal analysis must go red on a real
+ * footer defect in a footer that really was deferred. Values, not absences: each assertion reads a
+ * returned count or target, so an inert probe cannot pass.
+ */
+async function proveDeferredFooter(browser) {
+  // Own context: the red specimen sets gs_consent, which must not reach the audited pages.
+  const context = await browser.createBrowserContext();
+  const page = await context.newPage();
+  try {
+    await page.setViewport({ width: 375, height: 812 });
+    await page.goto(`${BASE_URL}/digital`, { waitUntil: 'networkidle0' });
+    if ((await page.evaluate(footerState, FOOTER)) !== 'skipped') {
+      throw new Error('Deferred-footer proof has no subject: the /digital footer was not skipped at load');
+    }
+    // 1. Classification: a footer node is set aside, a page node and an unknown node are kept.
+    const fake = [{ id: 'x', nodes: [{ target: [`${FOOTER} button`] }, { target: ['main h1'] }, { target: ['#missing'] }] }];
+    const kept = await setAsideFooter(page, 'deferred-footer proof', fake, fake);
+    const keptTargets = kept.violations[0]?.nodes.map((n) => n.target[0]).join('|');
+    if (keptTargets !== 'main h1|#missing' || kept.incomplete[0]?.nodes.length !== 2) {
+      throw new Error(`Deferred-footer set-aside touched the wrong nodes: kept ${keptTargets}`);
+    }
+    // 2. Clean specimen: the real deferred footer renders and has no finding.
+    const clean = await revealFooter(page);
+    if (!clean.rendered || clean.violations.length || clean.incomplete.length) {
+      throw new Error(`Deferred-footer clean specimen: rendered ${clean.rendered}, ` +
+        `${clean.violations.length} violation rule(s), ${clean.incomplete.length} incomplete rule(s)`);
+    }
+    // 3. Red specimen: the Cookie-notice button painted in the footer's hairline colour (2.5:1 on
+    //    its canvas — a real 1.4.3 failure; an exact 1:1 match is reported by axe as incomplete,
+    //    "possibly hidden text", so it would not be a violation subject) while the footer is still
+    //    deferred. The post-reveal analysis must report exactly that node as a violation.
+    //    The consent cookie is set so the fixed notice bar is absent: axe measures nothing a
+    //    fixed overlay covers, and at 375px the bar covers the document's last ~220px on every
+    //    route, deferred footer or not — the subject must be somewhere axe can see.
+    await page.setCookie({ name: 'gs_consent', value: '1', url: BASE_URL });
+    await page.goto(`${BASE_URL}/digital`, { waitUntil: 'networkidle0' });
+    await page.addStyleTag({ content: `${FOOTER} button { color: var(--chrome-line) !important; }` });
+    if ((await page.evaluate(footerState, FOOTER)) !== 'skipped') {
+      throw new Error('Deferred-footer red specimen was rendered before the reveal, so it proves nothing');
+    }
+    const red = await revealFooter(page);
+    const hit = red.violations.find((v) => v.id === 'color-contrast')?.nodes
+      .some((n) => />\s*Cookie notice\s*</.test(n.html));
+    if (!red.rendered || !hit) {
+      throw new Error(`Deferred-footer red specimen was not caught after reveal: ${red.violations.map((v) => v.id).join(', ') || 'no violations'}`);
+    }
+    console.log('check-axe: deferred footer — set-aside touches only footer nodes (3 cases); ' +
+      'clean specimen renders with 0 findings; low-contrast Cookie-notice button caught after reveal PASS');
+  } finally {
+    await context.close();
+  }
+}
+
 /** The focus check must own the foreground, and still reject a hidden focused link. */
 async function proveSkipLinkFocus(browser) {
   const page = await browser.newPage();
@@ -859,6 +986,11 @@ if (process.argv.includes('--prove-focus-only')) {
   await browser.close();
   process.exit(0);
 }
+await proveDeferredFooter(browser);
+if (process.argv.includes('--prove-footer-only')) {
+  await browser.close();
+  process.exit(0);
+}
 let total = 0;
 /** Cookies present after every route load, with no interaction. Filled before close. */
 let cookiesSeen = [];
@@ -878,6 +1010,8 @@ const analyticsRequests = [];
 /** path → the routes that link to it. Filled per page load, resolved once at the end. */
 const linkedFrom = new Map();
 let analyses = 0;
+/** Post-reveal analyses of a deferred footer (GS-DIG-002-R1); reported, not part of EXPECTED. */
+let footerReveals = 0;
 let incompleteAllowed = 0;
 const allowedSeen = new Set();
 
@@ -899,6 +1033,91 @@ for (const [i, a] of INCOMPLETE_ALLOWED.entries()) {
         'Exactly one is required — the matcher would otherwise ignore the entry silently.\n',
     );
     process.exit(1);
+  }
+}
+
+/**
+ * Record one axe result set: route-specific incomplete mapping, the allowlist, and violations.
+ * The main analysis and the post-reveal footer analysis both go through here, so a deferred
+ * footer is held to exactly the same accounting as everything else — no separate allowlist.
+ */
+async function record(page, route, where, violations, incomplete) {
+  // `incomplete` is axe saying "I could not determine a result here" — not "this
+  // passed". It was destructured away and never printed, so eight unresolved
+  // 1.4.3 evaluations were being reported as `clean` on every run. A result the
+  // tool declined to give is not a pass, and discarding it silently is the same
+  // unearned confidence as a gate that measures nothing.
+  for (const inc of incomplete) {
+    for (const node of inc.nodes) {
+      let target = node.target.join(' ');
+      if (route.path === '/press' && inc.id === 'color-contrast') {
+        const measured = await pressContrast(page, target);
+        if (measured.pass) {
+          console.log(`  ${where} ${target}: ${measured.boxes ? 'pixel contrast' : 'not exposed'} ${measured.why}`);
+          continue;
+        }
+        console.error(`  ${where} ${target}: pixel check ${measured.why}`);
+      }
+      // Attribute-based axe selectors can change before the async audit returns.
+      // Match the captured node plus its current, strictly decorative DOM boundary.
+      if (route.path === '/design' && inc.id === 'color-contrast') {
+        target = await page.evaluate(designGlyphTarget, {
+          target, html: node.html,
+          reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+        });
+      }
+      if (route.path === '/design' && inc.id === 'color-contrast') {
+        target = await page.evaluate(digitalSceneTarget, {
+          target,
+          reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+          scope: DESIGN_FOOTER, reasons: DESIGN_FOOTER_REASONS, canonical: DESIGN_FOOTER_TARGET,
+        });
+      }
+      if (route.path === '/digital' && inc.id === 'color-contrast') {
+        target = await page.evaluate(digitalSceneTarget, {
+          target,
+          reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+          scope: DIGITAL_SCENE, reasons: DIGITAL_SCENE_REASONS, canonical: DIGITAL_SCENE_TARGET,
+        });
+      }
+      const allowed = INCOMPLETE_ALLOWED.find(
+        (a) =>
+          a.rule === inc.id &&
+          a.routes.includes(route.path) &&
+          (a.target !== undefined ? a.target === target : a.targetPattern.test(target)),
+      );
+      if (allowed) {
+        incompleteAllowed += 1;
+        // The reason is printed once at the end, not 24 times inline — a wall of
+        // repeated prose is how a reader learns to scroll past this gate's output,
+        // and the loud Lighthouse-skip banner has to stay readable.
+        allowedSeen.add(allowed);
+        console.log(`  ${where.padEnd(40)} incomplete ${inc.id} on ${target} — allowed`);
+      } else {
+        total += 1;
+        console.error(
+          `  ${where.padEnd(40)} UNRESOLVED ${inc.id} on ${target} — axe could not ` +
+            'determine a result and this combination is not in INCOMPLETE_ALLOWED',
+        );
+        const reason = node.any?.[0]?.message ?? node.all?.[0]?.message ?? '(no message)';
+        console.error(`      ${reason}`);
+      }
+    }
+  }
+
+  if (violations.length === 0) {
+    console.log(`  ${where.padEnd(40)} clean`);
+  } else {
+    const count = violations.reduce((n, v) => n + v.nodes.length, 0);
+    total += count;
+    console.error(`  ${where.padEnd(40)} ${count} violation(s) across ${violations.length} rule(s)`);
+    for (const v of violations) {
+      console.error(`      [${v.impact ?? 'n/a'}] ${v.id} — ${v.help}`);
+      for (const node of v.nodes.slice(0, 3)) {
+        console.error(`        ${node.target.join(' ')}`);
+      }
+      if (v.nodes.length > 3) console.error(`        …and ${v.nodes.length - 3} more`);
+    }
   }
 }
 
@@ -945,84 +1164,19 @@ try {
         }
 
         const where = `${route.path} @ ${viewport.label} ${phase.label}`;
-        const { violations, incomplete } = await new AxePuppeteer(page, axeSource).withTags(TAGS).analyze();
+        const deferred = (await page.evaluate(footerState, FOOTER)) === 'skipped';
+        let { violations, incomplete } = await new AxePuppeteer(page, axeSource).withTags(TAGS).analyze();
         analyses += 1;
-
-        // `incomplete` is axe saying "I could not determine a result here" — not "this
-        // passed". It was destructured away and never printed, so eight unresolved
-        // 1.4.3 evaluations were being reported as `clean` on every run. A result the
-        // tool declined to give is not a pass, and discarding it silently is the same
-        // unearned confidence as a gate that measures nothing.
-        for (const inc of incomplete) {
-          for (const node of inc.nodes) {
-            let target = node.target.join(' ');
-            if (route.path === '/press' && inc.id === 'color-contrast') {
-              const measured = await pressContrast(page, target);
-              if (measured.pass) {
-                console.log(`  ${where} ${target}: ${measured.boxes ? 'pixel contrast' : 'not exposed'} ${measured.why}`);
-                continue;
-              }
-              console.error(`  ${where} ${target}: pixel check ${measured.why}`);
-            }
-            // Attribute-based axe selectors can change before the async audit returns.
-            // Match the captured node plus its current, strictly decorative DOM boundary.
-            if (route.path === '/design' && inc.id === 'color-contrast') {
-              target = await page.evaluate(designGlyphTarget, {
-                target, html: node.html,
-                reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
-              });
-            }
-            if (route.path === '/design' && inc.id === 'color-contrast') {
-              target = await page.evaluate(digitalSceneTarget, {
-                target,
-                reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
-                scope: DESIGN_FOOTER, reasons: DESIGN_FOOTER_REASONS, canonical: DESIGN_FOOTER_TARGET,
-              });
-            }
-            if (route.path === '/digital' && inc.id === 'color-contrast') {
-              target = await page.evaluate(digitalSceneTarget, {
-                target,
-                reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
-                scope: DIGITAL_SCENE, reasons: DIGITAL_SCENE_REASONS, canonical: DIGITAL_SCENE_TARGET,
-              });
-            }
-            const allowed = INCOMPLETE_ALLOWED.find(
-              (a) =>
-                a.rule === inc.id &&
-                a.routes.includes(route.path) &&
-                (a.target !== undefined ? a.target === target : a.targetPattern.test(target)),
-            );
-            if (allowed) {
-              incompleteAllowed += 1;
-              // The reason is printed once at the end, not 24 times inline — a wall of
-              // repeated prose is how a reader learns to scroll past this gate's output,
-              // and the loud Lighthouse-skip banner has to stay readable.
-              allowedSeen.add(allowed);
-              console.log(`  ${where.padEnd(40)} incomplete ${inc.id} on ${target} — allowed`);
-            } else {
-              total += 1;
-              console.error(
-                `  ${where.padEnd(40)} UNRESOLVED ${inc.id} on ${target} — axe could not ` +
-                  'determine a result and this combination is not in INCOMPLETE_ALLOWED',
-              );
-              const reason = node.any?.[0]?.message ?? node.all?.[0]?.message ?? '(no message)';
-              console.error(`      ${reason}`);
-            }
-          }
-        }
-
-        if (violations.length === 0) {
-          console.log(`  ${where.padEnd(40)} clean`);
-        } else {
-          const count = violations.reduce((n, v) => n + v.nodes.length, 0);
-          total += count;
-          console.error(`  ${where.padEnd(40)} ${count} violation(s) across ${violations.length} rule(s)`);
-          for (const v of violations) {
-            console.error(`      [${v.impact ?? 'n/a'}] ${v.id} — ${v.help}`);
-            for (const node of v.nodes.slice(0, 3)) {
-              console.error(`        ${node.target.join(' ')}`);
-            }
-            if (v.nodes.length > 3) console.error(`        …and ${v.nodes.length - 3} more`);
+        if (deferred) ({ violations, incomplete } = await setAsideFooter(page, where, violations, incomplete));
+        await record(page, route, where, violations, incomplete);
+        if (deferred) {
+          const revealed = await revealFooter(page);
+          footerReveals += 1;
+          if (!revealed.rendered) {
+            total += 1;
+            console.error(`  ${where.padEnd(40)} deferred footer did not render when scrolled into view — not measured`);
+          } else {
+            await record(page, route, `${where} +footer`, revealed.violations, revealed.incomplete);
           }
         }
       }
@@ -1642,6 +1796,7 @@ if (!process.exitCode) {
       `${VIEWPORTS.map((v) => v.label).join('/')} × ${PHASES.map((p) => p.label).join('/')} — ` +
       `zero violations (${TAGS.join(', ')})`,
   );
+  console.log(`check-axe: ${footerReveals} deferred-footer analysis(es) after reveal — rendered, zero violations, 0 unresolved`);
   console.log('check-axe: no duplicate ids, no radio or exclusive-details group spanning theme frames');
   // The count comes from the same predicate the browser branched on (`route.themed !== false`),
   // not from the pages themselves — a themed route either reports a skip-link problem or

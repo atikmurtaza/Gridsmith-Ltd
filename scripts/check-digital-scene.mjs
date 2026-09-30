@@ -235,6 +235,46 @@ async function mapTiming({ fault } = {}) {
   return { found, r };
 }
 
+// ---- 2a. GS-DIG-002-R2 opening: Hero and Route Map are distinct chapters ---------------------
+// Relationships, not coordinates: at load the Route Map is below the fold (the Hero owns the first
+// screen), and the Hero-state instrument (its autoplay demo — mode hero, not handing off) never
+// shares the screen with Route Map copy in the upper 65% of the viewport. Route Map → Web keeps
+// its own guard in mapTiming. Swept in 16px steps from the top until the map state begins.
+async function opening(width, height, { fault } = {}) {
+  const page = await open(width, height);
+  if (fault === 'short-hero') await page.addStyleTag({ content: '.dg-hero-stage { min-block-size: 0 !important; }' });
+  if (fault === 'no-handoff') {
+    await page.evaluate(() => {
+      const s = document.querySelector('.dg-apertures');
+      new MutationObserver(() => { if (s.dataset.transit === 'true') s.dataset.transit = 'false'; })
+        .observe(s, { attributes: true, attributeFilter: ['data-transit'] });
+    });
+  }
+  const r = await page.evaluate(async () => {
+    const s = document.querySelector('.dg-apertures'), vh = innerHeight;
+    const kicker = document.querySelector('.dg-route-map .dg-kicker'), intro = document.querySelector('.dg-route-map .dg-section-intro');
+    const frame = () => new Promise((res) => requestAnimationFrame(() => requestAnimationFrame(res)));
+    scrollTo(0, 0); await frame();
+    const atLoad = kicker.getBoundingClientRect().top < vh;
+    let shared = 0, handoff = null, map = null;
+    const end = document.querySelector('#web').getBoundingClientRect().top + scrollY;
+    for (let y = 0; y <= end && map === null; y += 16) {
+      scrollTo(0, y); await frame();
+      if (s.dataset.transit === 'true' && handoff === null) handoff = y;
+      if (s.dataset.mode === 'map') map = y;
+      if (s.dataset.mode === 'hero' && s.dataset.transit !== 'true' && kicker.getBoundingClientRect().top < vh * .65 && intro.getBoundingClientRect().bottom > 0) shared += 16;
+    }
+    return { atLoad, shared, handoff, map };
+  });
+  await page.close();
+  const found = [];
+  const where = `${width}x${height} opening`;
+  if (r.atLoad) found.push(`${where}: Route Map copy is inside the Hero's first screen`);
+  if (r.shared > 0) found.push(`${where}: Hero-state instrument shares the screen with Route Map copy for ${r.shared}px`);
+  if (r.map === null) found.push(`${where}: map state never began`);
+  return { found, r };
+}
+
 // ---- 2b. Lifecycle: anchor jump from the map, reverse scroll, resize across the breakpoint ---
 async function lifecycle({ fault } = {}) {
   const page = await open(1440, 900);
@@ -326,6 +366,8 @@ try {
       ['contrast', async () => (await matrix(1440, 900, { fault: 'contrast' })).found.some((f) => f.includes('pixel contrast') && f.includes('Help people'))],
       ['process neutral', async () => (await matrix(1280, 720, { fault: 'process' })).found.some((f) => f.includes('process: active 5'))],
       ['map timing', async () => (await mapTiming({ fault: 'late' })).found.some((f) => f.includes('complete map'))],
+      ['opening: Hero owns first screen', async () => (await opening(1440, 900, { fault: 'short-hero' })).found.some((f) => f.includes("inside the Hero's first screen"))],
+      ['opening: hand-off before Route Map copy', async () => (await opening(390, 844, { fault: 'no-handoff' })).found.some((f) => f.includes('shares the screen with Route Map copy'))],
       ['lifecycle state', async () => (await lifecycle({ fault: 'stale' })).some((f) => f.includes('anchor jump to 05'))],
       ['reduced-motion rotation', async () => (await preference('reduced', { fault: 'spin' })).some((f) => f.includes('ambient rotation'))],
       ['save-data rotation', async () => (await preference('save-data', { fault: 'spin' })).some((f) => f.includes('ambient rotation'))],
@@ -343,6 +385,13 @@ try {
       errors.push(...found);
       console.log(`${w}x${h}: ${measured} text boxes, states hero → map → 01–05 → process → final ${found.length ? 'FAILED' : 'ok'}`);
     }
+    const openings = [];
+    for (const [w, h] of SIZES) {
+      const { found, r } = await opening(w, h);
+      errors.push(...found);
+      openings.push(`${w} hand-off ${r.handoff} → map ${r.map}`);
+    }
+    console.log(`opening: Hero owns the first screen and hands off before Route Map copy at ${SIZES.length} sizes (${openings.join('; ')})`);
     const timing = await mapTiming();
     errors.push(...timing.found);
     console.log(`map timing @1000px/s: map ${Math.round(timing.r.map)}ms, complete ${Math.round(timing.r.complete)}ms, numbers-only ${Math.round(timing.r.numbersOnly)}ms`);

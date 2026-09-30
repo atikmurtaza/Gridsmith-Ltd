@@ -32,8 +32,9 @@ export function HeroApertureMotion() {
     // Composition sentinels: the Route Map's reserved field and the CTA's first paragraph.
     const mapSpace = home?.querySelector<HTMLElement>('.dg-map-visual-space');
     const closeLead = home?.querySelector<HTMLElement>('.dg-close-copy > p');
+    const mapIntro = home?.querySelector<HTMLElement>('.dg-route-map .dg-section-intro');
     const sticky = shell?.parentElement;
-    if (!shell || !home || !ringOne || !ringTwo || !plane || !cause || !sightline || !svg || !nav || !button || !mapSpace || !closeLead || !sticky || links.length !== 5 || sections.length !== 9) return;
+    if (!shell || !home || !ringOne || !ringTwo || !plane || !cause || !sightline || !svg || !nav || !button || !mapSpace || !closeLead || !mapIntro || !sticky || links.length !== 5 || sections.length !== 9) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const mapLinks = [...(home?.querySelectorAll<HTMLAnchorElement>('.dg-map-links a') ?? [])];
@@ -57,6 +58,8 @@ export function HeroApertureMotion() {
     let mapLine = 0;
     let axisLine = 0;
     let readingLine = 0;
+    let pinLine = 0;
+    let introLine = 0;
 
     // Ambient ring rotation is pure CSS; this only pauses it while it cannot be seen.
     const showAmbient = () => { shell.dataset.ambient = onScreen && !document.hidden ? 'run' : 'paused'; };
@@ -66,7 +69,7 @@ export function HeroApertureMotion() {
       button.textContent = motion === 'done' ? 'Replay' : motion === 'paused' ? 'Play motion' : 'Pause motion';
       button.setAttribute('aria-pressed', String(motion === 'paused'));
     };
-    const runnable = () => onScreen && !document.hidden && !shell.dataset.preview && motion === 'auto';
+    const runnable = () => onScreen && !document.hidden && !shell.dataset.preview && shell.dataset.transit !== 'true' && motion === 'auto';
     const arm = () => {
       if (!pending || timer !== null || !runnable()) return;
       armedAt = performance.now();
@@ -240,7 +243,6 @@ export function HeroApertureMotion() {
       const currentLine = viewport * .45;
       const rects = sections.map((section) => section.getBoundingClientRect());
       const stacked = window.innerWidth < 1024;
-      shell.dataset.transit = String(stacked && rects[1].top <= entry && rects[1].top > viewport * .05);
       // Stacked: the rows take the foreground as soon as they reach the instrument's lower edge
       // in its map position, so they never pass under the opaque compass (GS-DIG-001-RC).
       shell.dataset.mapReading = String(stacked && !!mapList && mapList.getBoundingClientRect().top <= readingLine);
@@ -250,7 +252,17 @@ export function HeroApertureMotion() {
       const finalReady = stacked
         ? (finalVisual?.getBoundingClientRect().top ?? rects[8].top) <= viewport * .15
         : closeLead.getBoundingClientRect().bottom <= axisLine;
-      const mapReady = stacked ? rects[1].top <= viewport * .05 : mapSpace.getBoundingClientRect().top <= mapLine;
+      // Stacked: the map waits until the Route Map intro has cleared the instrument's 01 number in
+      // its map position, so the copy never sits under the brought-forward compass (GS-DIG-002-R2).
+      const mapReady = stacked ? mapIntro.getBoundingClientRect().bottom <= introLine : mapSpace.getBoundingClientRect().top <= mapLine;
+      // GS-DIG-002-R2 hand-off: the Hero's demo ends once the Hero starts leaving — stacked, when its
+      // instrument has been carried to the pinned place (Hero copy would otherwise pass beneath it);
+      // wider, when the Route Map chapter enters. It lasts until the map state takes over.
+      const handoff = !mapReady && (stacked ? !!heroVisual && heroVisual.getBoundingClientRect().top <= pinLine : rects[1].top <= entry);
+      if (String(handoff) !== shell.dataset.transit) {
+        shell.dataset.transit = String(handoff);
+        if (handoff) suspend(); else arm();
+      }
       if (finalReady) setMode('final');
       else if (rects[2].top <= entry) {
         let chapter = -1;
@@ -278,6 +290,10 @@ export function HeroApertureMotion() {
       axisLine = stickyTop + size / 2;
       // Mirrors the stacked map offset in digital.css (--dg-y: 14rem below the sticky top).
       readingLine = stickyTop + rem * 14 + size;
+      // The Hero instrument pins when the rail start (visual space + 74px, above) meets the sticky top.
+      pinLine = stickyTop - 74;
+      // Top of the 01 number in the stacked map position (52px box centred at -6.25% of the size).
+      introLine = stickyTop + rem * 14 - size * .0625 - 26 - rem * .5;
       onSections();
     };
     let sectionObservers: IntersectionObserver[] = [];
@@ -285,12 +301,12 @@ export function HeroApertureMotion() {
       sectionObservers.forEach((observer) => observer.disconnect());
       measure();
       const viewport = window.innerHeight;
-      sectionObservers = [.65, .45, .15, .05].map((line) => viewport * line).concat(mapLine, axisLine, readingLine).map((line) => {
+      sectionObservers = [.65, .45, .15, .05].map((line) => viewport * line).concat(mapLine, axisLine, readingLine, pinLine, introLine).map((line) => {
         const observer = new IntersectionObserver(onSections, {
           rootMargin: `-${line}px 0px -${Math.max(0, viewport - line - 1)}px 0px`, threshold: 0,
         });
         sections.forEach((section) => observer.observe(section));
-        [finalVisual, mapList, mapSpace, closeLead].forEach((element) => { if (element) observer.observe(element); });
+        [finalVisual, mapList, mapSpace, closeLead, heroVisual, mapIntro].forEach((element) => { if (element) observer.observe(element); });
         return observer;
       });
     };
