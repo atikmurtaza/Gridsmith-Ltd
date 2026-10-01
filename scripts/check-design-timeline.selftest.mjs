@@ -20,6 +20,12 @@
  *  5. **continuity** — Brand → Motion never goes blank: 3D logo, mark, strokes or mascot is at least
  *     90% on screen at every sampled position; the strokes finish drawing the outline before the
  *     mascot starts to resolve.
+ *  6. **yield** — Motion → Technical: the departing mascot has receded to at most 0.3 by 2.57, where
+ *     the arriving Technical H2 first crosses it (`GS-DES-002-M1-RC-R1`). Measured, not chosen: the
+ *     H2's overlap with the mascot's box starts at ~2.55 and is ~12–21% by 2.585 on wide screens,
+ *     and with the H2 at its worst alignment over the mascot (±160px) it reads 7.22:1 at mascot 0.3,
+ *     4.43 at 0.5 and 3.24 at 0.65. The shipped [2.56, 2.66] left 0.97 at 2.57 and 0.65 at
+ *     2.6, where Linux CI read the H2 at 2.54:1 (2133×1200, run 36789860893).
  *
  * ## Proving it
  *
@@ -29,7 +35,7 @@
  */
 import * as timeline from "../components/divisions/design/designTimeline.ts";
 
-const MIN = { resolve: 0.15, dwell: 0.3 };
+const MIN = { resolve: 0.15, dwell: 0.3, yieldAt: 2.57, yieldMascot: 0.3 };
 const range = (a, b, step = 0.002) => Array.from({ length: Math.round((b - a) / step) + 1 }, (_, i) => a + i * step);
 
 /** The transformations of each passing interval, by the chapter that hands off. */
@@ -85,6 +91,10 @@ const CHECKS = {
     if (t.MORPH.mascot[0] < t.MORPH.arrange[1]) out.push(`the mascot starts resolving at ${t.MORPH.mascot[0]}, before the outline is drawn (${t.MORPH.arrange[1]}) — no construction-outline state`);
     return out;
   },
+  yield(t) {
+    const m = t.handoffVisibility(MIN.yieldAt).mascot;
+    return m > MIN.yieldMascot ? [`the mascot is still ${m.toFixed(2)} on screen at ${MIN.yieldAt}, where the Technical H2 crosses it (limit ${MIN.yieldMascot})`] : [];
+  },
 };
 
 /** The module's own derivations, recomputed on a patched copy of its data. */
@@ -115,7 +125,7 @@ const real = fixture(() => {});
 const shipped = timeline.resolved();
 for (const k of Object.keys(shipped))
   if (Math.abs(real.RESOLVED[k] - shipped[k]) > 1e-12) throw new Error(`fixture derivation of ${k} disagrees with the module`);
-for (const p of range(1.0, 2.3, 0.01))
+for (const p of range(1.0, 2.7, 0.01))
   if (JSON.stringify(real.handoffVisibility(p)) !== JSON.stringify(timeline.handoffVisibility(p))) throw new Error(`fixture handoffVisibility disagrees with the module at ${p}`);
 
 const BROKEN = [
@@ -130,6 +140,8 @@ const BROKEN = [
   ["asset", "nothing under it", (t) => { t.MORPH.swap = [1.58, 1.6]; }],
   ["continuity", "blank interval", (t) => { t.override = { handoffVisibility: (p) => ({ asset: 1 - timeline.smooth([1.5, 1.55], p), mark: 0, morph: 0, mascot: timeline.smooth([1.7, 1.9], p) }) }; }],
   ["continuity", "no construction-outline", (t) => { t.MORPH.mascot = [1.7, 1.8]; }],
+  // The shipped range before GS-DES-002-M1-RC-R1 — the exact defect CI found.
+  ["yield", "where the Technical H2 crosses it", (t) => { t.MOTION.mascotOut = [2.56, 2.66]; }],
 ];
 
 const problems = [];

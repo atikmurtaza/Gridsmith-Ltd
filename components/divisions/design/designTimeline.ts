@@ -55,7 +55,9 @@ export const MORPH = {
 /** Motion: the mascot holds with its copy; as the copy passes, its face becomes the plan. */
 export const MOTION = {
   rig: [2.5, 2.58] as Range,
-  mascotOut: [2.56, 2.66] as Range,
+  // GS-DES-002-M1-RC-R1: the mascot yields as the Technical copy arrives (was [2.56, 2.66]: the H2
+  // crossed it at 0.65 opacity — 2.54:1 on Linux at 2133×1200 @2.6). Same length, cross-fading the rig.
+  mascotOut: [2.5, 2.6] as Range,
   faceToPlan: [2.6, 2.8] as Range,
 };
 

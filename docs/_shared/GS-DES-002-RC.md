@@ -330,3 +330,61 @@ The exact-SHA receipt (SHA, CI run, Lighthouse, Preview) follows the convention 
 `node_modules/.cache/gs-des-002-m1-rc/final-release-receipt.json` and the release handoff; the
 candidate is accepted only once CI and Preview pass for that exact SHA. Staging only; no launch or
 next phase is authorised.
+
+## GS-DES-002-M1-RC-R1 — Technical H2 / mascot handoff (owner-approved)
+
+**Exact-SHA result for M1-RC.** CI run `36789860893` on `e551f035` failed one served command:
+`check:design:scene` — `2133x1200 technical transit 2.6: pixel contrast Make the: 2.54:1; needs 3`
+(the Technical H2, large text). Every other step passed, including `/digital` mobile LCP 1746ms median
+(budget 1750), TBT 123ms, CLS 0, and the historical `detail 2.75` kicker reading. No Vercel Preview was
+created for that SHA (not investigated in this phase). The programme stays blocked.
+
+**Cause (measured, Windows, the RC build).** Through the Motion → Technical handoff the Technical H2
+slides up over the departing mascot while the stage art moves left: at 2133×1200 its box overlaps the
+mascot's by 2% at 2.55, 21% at 2.585 and 34% at 2.615. The mascot fade `MOTION.mascotOut [2.56, 2.66]`
+left it at 0.84 at 2.585 and 0.65 at 2.6. Hiding layers one at a time, only the mascot moves the H2
+reading in that window (2133 @2.615: 5.11 → 11.87 with it hidden; rig, sketch, building, grid and wave
+move nothing until the rig at 2.65+, where the H2 stays ≥7.4). Windows never read below 5.11 (2133
+@2.615) across 16 landscape sizes at 0.005 steps — CI's 2.54 is an alignment Windows' layout does not
+produce. Shifting the H2 over the mascot (±160px, mascot forced) gives the worst case by mascot opacity:
+1.0 → 1.21, 0.65 → 3.24, 0.5 → 4.43, 0.4 → 5.76, 0.3 → 7.22, ≤0.2 → 7.77; at the real 2.6 state the old
+fade's worst alignment reads 2.49–2.66, matching Linux. The gate's own ±0.015 seek tolerance spans
+mascot 0.84 → 0.43 around 2.6, which widens the exposure.
+
+**Correction (timeline value only).** `MOTION.mascotOut [2.56, 2.66] → [2.5, 2.6]`: the same 0.1-long
+fade, 0.06 earlier — it starts as the Technical copy begins to arrive (the Motion dwell ends at 2.5)
+and cross-fades with the rig's existing `[2.5, 2.58]`, so the mascot yields into its own construction
+rig; it is gone before the H2 meets it. No position, size, copy, stage, R2 threshold, M1 surface or R1
+recession changes; no shared CSS or runtime. Mascot opacity: 2.5 1.0 · 2.55 0.50 · 2.575 0.16 · 2.585
+0.06 · 2.6 0.
+
+**Evidence after.** With realistic layout variance (H2 shifted ±80px) the worst H2 reading from 2.53
+to 2.6 is ≥7.69 at 2048, 2133 and 2400 (old fade, ±160px: 1.10–2.66). Unshifted, 2.5–2.7 at 390×844,
+768×1024, 1024×768, 1440×900, 1920×1080, 2048×1152, 2133×1200, 2400×1350 and 2560×1440: H2 minimum
+7.43 (2400 @2.65, over the rig, mascot 0); every line of the H2 measured; kicker 6.69, intro ≥5.91,
+scope note 6.69, every on-screen line (Motion copy and caption included) ≥5.91 — no failing line.
+Ultra-wide continuity and footer glide at 2400 / 2560 / 3200 hold (one leg, 0.0px beyond pace).
+
+**Gates.** `check:design:timeline:selftest` gains a sixth check, **yield**: the mascot must be ≤0.3 at
+2.57, where the H2 first crosses it (basis in the self-test header); its broken fixture is the shipped
+`[2.56, 2.66]` (0.97). Mutating the real module also fires it — `[2.56, 2.66]` 0.97, `[2.52, 2.62]`
+0.50, `[2.53, 2.6]` 0.39 — and the fixture/module agreement now covers 1.0–2.7. `check:design:scene`
+is unchanged and still samples 2.6 / 2.75 / 2.8 at all 25 sizes, 2133×1200 among them. **No served
+proof was added:** with the old fade restored, no Windows state reads the H2 below 5.11, so a "restore
+the old mascot" proof would be inert locally and red only on Linux — the inert-probe class. The
+value-based `yield` check carries its own validity (a reading, not an absence).
+
+**Local verification** (clean worktree = `e551f035` + `designTimeline.ts` + the self-test; `.next`
+removed; Windows): `git diff --check` clean; `verify:static` PASS (tsc, ESLint 0 warnings,
+`lint:colors`, `check:contrast`, timeline self-test 6 checks / 12 red fixtures); `verify:build` PASS —
+lazy Design scene **8,120 B gz** (was 8,121; ceiling 8,192, not raised), `/design` 3.7KB of 25KB;
+`check:axe` 76 analyses, zero violations, 0 unresolved; `check:responsive` 51 combinations;
+`check:design:scene` PASS (25 sizes × 2.6/2.75/2.8, detail pass, G1 keyboard/focus/disclosures, G2,
+reduced motion, Save-Data, no-JS, failed import, lifecycle, R1 continuity and footer glide at 7 sizes,
+footer scope); `--prove` PASS, 31 PROVEN RED. Digital, Press, shared chrome and the 15 Master-candidate
+files are unchanged (hashes recorded before and after). Linux CI has not run this.
+
+**Owner approval.** The owner visually approved the Motion → Technical handoff on the local clean
+build (`mascotOut [2.5, 2.6]`); it is frozen with M1, R1 and R2. The programme remains blocked until
+the corrected exact SHA passes CI; that result and the Preview are recorded in the receipt
+(`node_modules/.cache/gs-des-002-m1-rc/final-release-receipt.json`) and the release handoff.
