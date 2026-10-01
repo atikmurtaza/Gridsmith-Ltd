@@ -459,6 +459,12 @@ record what you see:
 
 All five in one run closes VALIDATION §19.10 item 1. Fewer than five does not.
 
+**Run at `GS-PROD-002` (2 October 2026)** — the 47 non-legal, non-Technical documents are in
+`production`; the five-point record is in `_shared/GS-PROD-002.md`. 1, 2 and 5 observed literally; 3
+and 4 observed with the qualification recorded there (`check:launch` prints no total count and no
+statutory values — the same run's route table and the independent read-back supply them). Legal
+documents (`GS-O003`) and the three Technical services (`GS-O005`) are not yet in `production`.
+
 ---
 
 ## Things that need a person, not a decision
