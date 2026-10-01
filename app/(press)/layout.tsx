@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { RootShell } from '@/components/chrome/RootShell';
+import { studio } from '@/components/chrome/nav';
 import { inter } from '@/styles/fonts/inter';
 import { jetbrainsMono } from '@/styles/fonts/jetbrains-mono';
 import { sourceSerif } from '@/styles/fonts/source-serif';
@@ -37,11 +38,14 @@ import '@/styles/globals.css';
  * honestly has today. The type is `website` and the division is named as a trading division in
  * the description, because a link shared from `/press` must not read as a separate company.
  */
+/** The studio summary from its one source (`nav.ts`); the statutory clause is this layout's own. */
+const DESCRIPTION = `${studio('press').summary} Gridsmith Press is a trading division of Gridsmith Ltd.`;
+
 export const metadata: Metadata = {
   metadataBase: SITE_ORIGIN,
   ...SITE_ICONS,
   title: 'Gridsmith Press',
-  description: 'Writing, editorial, publishing preparation and content. Gridsmith Press is a trading division of Gridsmith Ltd.',
+  description: DESCRIPTION,
   alternates: { canonical: './' },
   robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: false },
   openGraph: {
@@ -50,7 +54,7 @@ export const metadata: Metadata = {
     locale: 'en_GB',
     url: './',
     title: 'Gridsmith Press',
-    description: 'Writing, editorial, publishing preparation and content. Gridsmith Press is a trading division of Gridsmith Ltd.',
+    description: DESCRIPTION,
   },
 };
 

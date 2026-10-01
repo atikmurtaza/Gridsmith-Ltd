@@ -1,3 +1,4 @@
+import { STUDIOS } from '@/components/chrome/nav';
 import { Button } from '@/components/primitives/Button';
 import { Link } from '@/components/primitives/Link';
 import { Numeric } from '@/components/primitives/Numeric';
@@ -22,6 +23,8 @@ import styles from './home.module.css';
  * All Server Components; zero client JS. The words are the approved ones from `GS-R001-R`
  * and before, re-set rather than rewritten. Three are new and are structural rather than
  * claims: the studios heading, the chapter labels, and the secondary hero link's wording.
+ * `GS-MASTER-001-F` added the owner-approved proposition, studio theses and relationship
+ * capabilities, and one structural label over the last: "Across all three studios".
  */
 
 function Chapter({ n, label }: { n: number; label: string }) {
@@ -63,33 +66,12 @@ export function Hero({ headline, intro }: { headline: string; intro: string }) {
 
 /**
  * The divisions — `M-J3`, still the most important block on the page, and no longer three
- * boxes. A typographic index: one row per studio, the name set large, the approved lines
- * beneath it. Plain `<a>`, because crossing a route group is a full document load
- * (`TECH-SPEC.md` §3) and `next/link` would prefetch three payloads it then discards.
+ * boxes. A typographic index: one row per studio — the name set large, its summary, its thesis
+ * line. Summary and thesis come from `STUDIOS` in `nav.ts`, the one source About and the division
+ * metadata also read (`GS-MASTER-001-F`); this page keeps no copy of its own. Plain `<a>`,
+ * because crossing a route group is a full document load (`TECH-SPEC.md` §3) and `next/link`
+ * would prefetch three payloads it then discards.
  */
-const STUDIOS = [
-  {
-    href: '/design',
-    name: 'Gridsmith Design',
-    services: 'Brand identity, graphic and 3D design, CAD and engineering drawings.',
-    character: 'Creative and technical design built with the same attention to detail.',
-  },
-  {
-    href: '/digital',
-    name: 'Gridsmith Digital',
-    services: 'Websites, software, applications and AI integrations.',
-    character:
-      'Custom digital products and internal systems designed around how your business actually works.',
-  },
-  {
-    href: '/press',
-    name: 'Gridsmith Press',
-    services: 'Publishing, writing and content from manuscript to market.',
-    character:
-      'Professional support for authors and businesses, while keeping ownership where it belongs.',
-  },
-] as const;
-
 export function Studios() {
   return (
     <section id="studios" className={styles.section} data-chapter="studios" aria-labelledby="studios-title">
@@ -106,14 +88,11 @@ export function Studios() {
                 <div className={styles.studioBody}>
                   <h3 className={styles.studioName}>
                     <a href={s.href} className={styles.studioLink}>
-                      {s.name}
-                      <span aria-hidden="true" className={styles.arrow}>
-                        →
-                      </span>
+                      Gridsmith {s.label}
                     </a>
                   </h3>
-                  <p className={styles.studioServices}>{s.services}</p>
-                  <p className={styles.studioCharacter}>{s.character}</p>
+                  <p className={styles.studioSummary}>{s.summary}</p>
+                  <p className={styles.studioThesis}>{s.thesis}</p>
                 </div>
               </li>
             ))}
@@ -128,9 +107,24 @@ export function Studios() {
 }
 
 /**
+ * What Master itself does across the studios (`GS-MASTER-001-F`, owner-approved wording). A
+ * relationship-level index subordinate to the chapter's argument — no links, no prices, no
+ * icons; the studios' services stay on the studio pages.
+ */
+const RELATIONSHIP = [
+  ['Digital roadmap & discovery', 'Define what needs to change before deciding what needs to be built.'],
+  ['Strategy & advisory', 'Turn business requirements into a clear direction across the right specialist areas.'],
+  ['Programme management', 'Coordinate work across Design, Digital and Press under one relationship.'],
+  ['Ongoing partnership', 'Keep context, priorities and delivery connected as requirements evolve.'],
+] as const;
+
+/**
  * The one-company argument and the structure disclosure, merged. They were two blocks making
  * one point; the disclosure stays on `/` because it names the legal entity a client contracts
  * with (`GS-R001-R` §7), and its figures stay monospace because they are checkable.
+ *
+ * `GS-MASTER-001-F`: the proposition moved to the hero, so the approved "under one relationship"
+ * sentence became this chapter's heading rather than repeating the proposition here.
  */
 export async function Context() {
   const company = await getCompanyDetails();
@@ -140,13 +134,11 @@ export async function Context() {
         <div className={styles.column}>
           <Chapter n={2} label="One relationship" />
           <h2 id="context-title" className={styles.statement}>
-            You shouldn’t have to introduce your business from scratch every time you need a
-            different kind of expertise.
+            Gridsmith brings three specialist studios together under one relationship.
           </h2>
           <p className={styles.lede}>
-            Gridsmith brings three specialist studios together under one relationship. Each has
-            its own expertise, people and standards, while sharing the context that matters: your
-            business, your goals and the work we’ve already done together.
+            Each has its own expertise, people and standards, while sharing the context that
+            matters: your business, your goals and the work we’ve already done together.
           </p>
           <p className={styles.fact}>
             Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of{' '}
@@ -154,6 +146,15 @@ export async function Context() {
             <Numeric>{company.companyNumber}</Numeric>. They are not separate companies. Work that
             spans two studios is one engagement, one scope and one invoice.
           </p>
+          <h3 className={styles.capabilitiesTitle}>Across all three studios</h3>
+          <dl className={styles.capabilities}>
+            {RELATIONSHIP.map(([name, line]) => (
+              <div key={name} className={styles.capability}>
+                <dt>{name}</dt>
+                <dd>{line}</dd>
+              </div>
+            ))}
+          </dl>
           <p className={styles.more}>
             <Link href="/approach">How three studios work as one company</Link>
             <Link href="/about">About Gridsmith</Link>
@@ -216,7 +217,7 @@ export async function Reviews() {
   if (reviews.length === 0) return null;
 
   return (
-    <section className={styles.section} data-chapter="reviews" aria-labelledby="reviews-title">
+    <section className={`${styles.section} ${styles.reviewsSection}`} data-chapter="reviews" aria-labelledby="reviews-title">
       <div className={styles.frame}>
         <div className={styles.reviews}>
           <div className={styles.reviewsHead}>

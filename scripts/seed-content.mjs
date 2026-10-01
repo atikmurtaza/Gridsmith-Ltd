@@ -736,7 +736,7 @@ const groupPageDocs = [
     slug: slugOf('about'),
     title: 'About Gridsmith',
     intro:
-      'One company, three specialist divisions. Work with one of them or all three — it stays the same relationship either way.',
+      'One company, three specialist studios. Work with one of them or all three — it stays the same relationship either way.',
     sections: [
       section(0, 'structure', 'What Gridsmith is', 'prose',
         'Gridsmith Design handles brand and visual work, illustration, motion, 3D visualisation and technical drawing. Gridsmith Digital builds websites, software, apps and automation, and looks after them afterwards. Gridsmith Press covers writing, editorial, publishing, and the content and promotion around a book.',

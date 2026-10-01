@@ -12,7 +12,7 @@ import styles from '@/components/shared/shared.module.css';
 export const metadata: Metadata = {
   title: 'About — Gridsmith Ltd',
   description:
-    'One company, three specialist divisions: Gridsmith Design, Gridsmith Digital and Gridsmith Press.',
+    'One company, three specialist studios: Gridsmith Design, Gridsmith Digital and Gridsmith Press.',
 };
 
 /**

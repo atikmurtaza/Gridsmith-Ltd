@@ -169,6 +169,9 @@ scroll hijacking, no smooth-scroll library, no cursor follower.
 - **No WebGL / shader failure / lost context / failed import / low-capability device**
   (`hardwareConcurrency ≤ 2`, `deviceMemory ≤ 2`, Save-Data): the logo's exact
   geometry as inline gold vector shapes (`FallbackMark`, §7.1b), static. With scripting off, the same.
+  *(Amended at `GS-MASTER-001-RC-R1`, owner-approved: the fallback layer is not fixed — it belongs to
+  the first screen and scrolls away with the hero, because a static mark cannot be dimmed behind the
+  copy that would otherwise cross it. No fallback closing mark. `check:master:scene` question 14.)*
 
 ### 5.3 Performance design
 

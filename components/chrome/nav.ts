@@ -18,14 +18,20 @@ export const STUDIOS: {
   href: string;
   label: string;
   division: Exclude<Division, 'master'>;
-  /** The division's own one-line description — the first sentence of its root layout's
-   *  metadata description, not new copy. Used by the About structure map (B2). */
+  /** The studio's one-line description — **the one source** (`GS-MASTER-001-F`). The About
+   *  structure map, the Master studio index and the first sentence of each division root
+   *  layout's metadata description all read it; none keeps its own copy. It names the studio's
+   *  breadth across its capability groups (`lib/services/architecture.ts`), not a service list. */
   summary: string;
+  /** The studio's thesis line, as its own home sets it. Used by the Master studio index. */
+  thesis: string;
 }[] = [
-  { href: '/design', label: 'Design', division: 'design', summary: 'Brand, visual, illustration, motion, 3D and technical design.' },
-  { href: '/digital', label: 'Digital', division: 'digital', summary: 'Websites, software, apps, automation and intelligence.' },
-  { href: '/press', label: 'Press', division: 'press', summary: 'Writing, editorial, publishing preparation and content.' },
+  { href: '/design', label: 'Design', division: 'design', summary: 'Brand, visual, illustration, motion, 3D and technical design.', thesis: 'From line to form.' },
+  { href: '/digital', label: 'Digital', division: 'digital', summary: 'Websites, software, apps, automation and AI, built and kept running.', thesis: 'When one thing changes, the right things follow.' },
+  { href: '/press', label: 'Press', division: 'press', summary: 'Writing, editing, book production, publishing, audiobooks and marketing.', thesis: 'Clear writing is a series of decisions.' },
 ];
+
+export const studio = (division: Exclude<Division, 'master'>) => STUDIOS.find((s) => s.division === division)!;
 
 export const COMPANY: NavItem[] = [
   { href: '/approach', label: 'Approach' },

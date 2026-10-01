@@ -16,6 +16,12 @@
  *  5. **narrative** — one pose per chapter, and at least four distinct formations. The rejected
  *     `GS-R001-R` animation was *logo → exploded → logo*; this is the assertion that the story
  *     has more than those two states.
+ *  7. **story** — the approved order (`GS-MASTER-001-F`): assembled → exploded (the studios) →
+ *     assembled again (one relationship) → chain → ring → the logo. A hardcoded expectation, not
+ *     read from the model, so reordering the keys cannot pass by changing both sides.
+ *  8. **still** — the ring is held still through the reviews chapter: no scroll spin (nothing
+ *     moves at all across ±0.1 chapter around it — the model's exact dwell) and no sway or pointer tilt (the pose at the
+ *     ring ignores `extra`), so the scene's ring never turns beside the turning review cylinder.
  *  6. **exploded** — R1's exploded view: all 14 pieces present, no two spheres touching and no bar
  *     touching a sphere, the spread at least 1.8× the assembled mark's, and every piece inside
  *     1.15× the visible frame, so the mark opens into the screen without leaving it.
@@ -117,6 +123,26 @@ const CHECKS = {
     if (worst > 1.15) out.push(`a piece lands at ${worst.toFixed(2)}× the visible half-frame`);
     return out;
   },
+  story(keys) {
+    const want = ['logo', 'exploded', 'logo', 'chain', 'ring', 'logo'];
+    const got = keys.map((k) => (k.form.startsWith('exploded') ? 'exploded' : k.form));
+    return got.join() === want.join() ? [] : [`the chapters run ${got.join(' → ')}, not ${want.join(' → ')}`];
+  },
+  still(keys, poseFn) {
+    const out = [];
+    const r = keys.findIndex((k) => k.form === 'ring');
+    if (r < 0) return ['no chapter uses the ring'];
+    // Bars as unordered segments: the model hands a bar over at the ring with its ends exchanged
+    // (see continuity) — the same segment, and an ordered comparison reads it as a 2.5-unit move.
+    const bar = (a, b, k) =>
+      Math.min(Math.max(d(a.rodA[k], b.rodA[k]), d(a.rodB[k], b.rodB[k])), Math.max(d(a.rodA[k], b.rodB[k]), d(a.rodB[k], b.rodA[k])));
+    const move = (a, b) => Math.max(...a.spheres.map((q, k) => d(q, b.spheres[k])), ...a.rodA.map((_, k) => bar(a, b, k)));
+    const span = move(poseFn(keys, r - 0.1, ZERO, TAN, ASPECT), poseFn(keys, r + 0.1, ZERO, TAN, ASPECT));
+    if (span > 1e-9) out.push(`the ring moves ${span.toFixed(3)} units across ±0.1 chapter — it turns with the scroll`);
+    const tilt = move(poseFn(keys, r, ZERO, TAN, ASPECT), poseFn(keys, r, [0.1, 0.3, 0], TAN, ASPECT));
+    if (tilt > 1e-9) out.push(`sway or pointer tilt moves the ring by ${tilt.toFixed(3)} units`);
+    return out;
+  },
   narrative(keys) {
     const forms = new Set(keys.map((k) => k.form));
     const out = [];
@@ -129,7 +155,7 @@ const CHECKS = {
 /** Broken in exactly the way each check exists to catch. */
 const BROKEN = {
   close: { keys: KEYS_WIDE.map((k, i, a) => (i === a.length - 1 ? { ...k, rot: [0, 0.2, 0] } : k)), poseFn: pose },
-  hero: { keys: KEYS_WIDE.map((k, i) => (i === 0 ? { ...k, form: 'split' } : k)), poseFn: pose },
+  hero: { keys: KEYS_WIDE.map((k, i) => (i === 0 ? { ...k, form: 'exploded' } : k)), poseFn: pose },
   bars: {
     keys: KEYS_WIDE,
     poseFn: (...args) => {
@@ -144,9 +170,21 @@ const BROKEN = {
       return t > 2.5 ? { ...p, spheres: p.spheres.map((s) => [s[0] + 1, s[1], s[2]]) } : p;
     },
   },
-  narrative: { keys: KEYS_WIDE.map((k) => ({ ...k, form: k.form === 'chain' || k.form === 'ring' ? 'split' : k.form })), poseFn: pose },
-  // The joint close-up the owner rejected: the exploded chapter put back to the assembled logo.
-  exploded: { keys: KEYS_WIDE.map((k) => (k.form === 'exploded' ? { ...k, form: 'split' } : k)).map((k, i) => (i === 2 ? { ...k, form: 'exploded', dist: 4 } : k)), poseFn: pose },
+  narrative: { keys: KEYS_WIDE.map((k) => ({ ...k, form: k.form === 'chain' || k.form === 'ring' ? 'exploded' : k.form })), poseFn: pose },
+  // The joint close-up the owner rejected: the exploded view pushed into the camera.
+  exploded: { keys: KEYS_WIDE.map((k) => (k.form === 'exploded' ? { ...k, dist: 4 } : k)), poseFn: pose },
+  // The GS-R001-M order this refinement replaced: the studios whole, the relationship exploded.
+  story: { keys: KEYS_WIDE.map((k, i) => (i === 1 ? { ...k, form: 'logo' } : i === 2 ? { ...k, form: 'exploded' } : k)), poseFn: pose },
+  // The ring spinning with the scroll again, as it did before GS-MASTER-001-F.
+  still: {
+    keys: KEYS_WIDE,
+    poseFn: (keys, t, ...rest) => {
+      const p = pose(keys, t, ...rest);
+      const a = Math.max(0, 1 - Math.abs(t - 4)) * (t - 4) * 1.6;
+      const spin = (q) => [q[0] * Math.cos(a) + q[2] * Math.sin(a), q[1], -q[0] * Math.sin(a) + q[2] * Math.cos(a)];
+      return { ...p, spheres: p.spheres.map(spin), rodA: p.rodA.map(spin), rodB: p.rodB.map(spin) };
+    },
+  },
 };
 
 const problems = [];
@@ -175,6 +213,20 @@ for (const [label, message, poseFn] of EXPLODED_BRANCHES) {
   const got = CHECKS.exploded(KEYS_WIDE, poseFn);
   if (!got.some((m) => m.includes(message))) problems.push(`exploded/${label}: GATE DEFECT — the broken fixture did not produce "${message}" (got: ${got.join('; ') || 'nothing'})`);
   else console.log(`  proof  exploded/${label.padEnd(16)} red: ${got.find((m) => m.includes(message))}`);
+}
+
+// `still` has two branches; the fixture above spins the ring with scroll. This one lets sway and
+// pointer tilt through again — the pose applied after the ring's hold, as a renderer might.
+{
+  const tilted = (keys, t, extra, ...rest) => {
+    const p = pose(keys, t, ZERO, ...rest);
+    const a = extra[1];
+    const turn = (q) => [q[0] * Math.cos(a) + q[2] * Math.sin(a), q[1], -q[0] * Math.sin(a) + q[2] * Math.cos(a)];
+    return { ...p, spheres: p.spheres.map(turn), rodA: p.rodA.map(turn), rodB: p.rodB.map(turn) };
+  };
+  const got = CHECKS.still(KEYS_WIDE, tilted);
+  if (!got.some((m) => m.includes('pointer tilt'))) problems.push(`still/tilt: GATE DEFECT — the broken fixture did not produce "pointer tilt" (got: ${got.join('; ') || 'nothing'})`);
+  else console.log(`  proof  still/tilt${' '.repeat(12)} red: ${got.find((m) => m.includes('pointer tilt'))}`);
 }
 
 // The model's own geometry must still be the SVG's: 8 spheres, 6 bars, bar ends on spheres.

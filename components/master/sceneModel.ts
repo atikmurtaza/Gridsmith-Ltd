@@ -60,20 +60,6 @@ const LOGO: Formation = {
 };
 
 /**
- * The two interlocking halves drawn apart in depth. The mark is two brackets — spheres 1–4
- * with bars 1–3, spheres 5–8 with bars 4–6 — and this is the only formation that says so.
- */
-const SPLIT: Formation = (() => {
-  const shiftA: Vec3 = [-0.55, 0.3, 1.1];
-  const shiftB: Vec3 = [0.55, -0.3, -1.1];
-  const shift = (i: number) => (i < 4 ? shiftA : shiftB);
-  return {
-    spheres: LOGO_SPHERES.map((p, i) => add(p, shift(i))),
-    rods: LOGO.rods.map((r, i) => ({ ...r, c: add(r.c, i < 3 ? shiftA : shiftB) })),
-  };
-})();
-
-/**
  * The six bars laid end to end as one receding path — the process section's six stages. The
  * spheres become the joints; the eighth, which has no bar to carry, sits one step beyond the
  * end. Each bar keeps its logo length, so the path is built from the mark's own parts.
@@ -97,7 +83,8 @@ const CHAIN: Formation = (() => {
 
 /**
  * All fourteen pieces standing on one circle, bars upright — the reviews section's ring, and
- * a deliberate echo of the review cylinder it replaces.
+ * a deliberate echo of the review cylinder. Held still (`GS-MASTER-001-F`): the cylinder is the
+ * ring that turns in that chapter, so this one takes no scroll spin, sway or pointer tilt.
  */
 const RING: Formation = (() => {
   const radius = 3.6;
@@ -138,7 +125,6 @@ function exploded(sx: number, sy: number): Formation {
 
 export const FORMATIONS = {
   logo: LOGO,
-  split: SPLIT,
   exploded: exploded(2.9, 2.0),
   explodedTall: exploded(1.3, 2.9),
   chain: CHAIN,
@@ -168,10 +154,15 @@ export type Key = {
 
 export const CHAPTERS = ['hero', 'studios', 'context', 'process', 'reviews', 'close'] as const;
 
+/**
+ * The story follows the argument (`GS-MASTER-001-F`): the assembled mark → the studios, the
+ * mark taken apart into its pieces → one relationship, the pieces back together → the process
+ * chain → the reviews ring, held still → the mark front on.
+ */
 export const KEYS_WIDE: Key[] = [
   { form: 'logo', rot: [0.14, -0.55, 0.02], off: [0.5, 0.04], dist: 14, exposure: 1.0, shade: 0.55, edge: 0.5, light: 0, glow: 0.45 },
-  { form: 'split', rot: [-0.18, 0.8, 0.1], off: [0.56, 0.0], dist: 14.5, exposure: 0.95, shade: 0.8, edge: 0.6, light: 0.9, glow: 0.3 },
-  { form: 'exploded', rot: [0.16, 0.32, 0.04], off: [0.04, 0.0], dist: 15, exposure: 1.0, shade: 0.2, edge: 0.55, light: 1.8, glow: 0.2 },
+  { form: 'exploded', rot: [0.16, 0.32, 0.04], off: [0.04, 0.0], dist: 15, exposure: 1.0, shade: 0.2, edge: 0.55, light: 0.9, glow: 0.2 },
+  { form: 'logo', rot: [-0.14, 0.62, 0.06], off: [0.54, 0.0], dist: 14.5, exposure: 0.95, shade: 0.55, edge: 0.55, light: 1.8, glow: 0.3 },
   { form: 'chain', rot: [0.3, -0.4, 0.0], off: [0.08, -0.6], dist: 16, exposure: 0.95, shade: 0.7, edge: 0.6, light: 2.6, glow: 0.2 },
   // R1: top right, beside the heading — the review cylinder now fills the chapter's lower half.
   { form: 'ring', rot: [0.34, 0.0, 0.0], off: [0.55, 0.42], dist: 18, exposure: 1.0, shade: 0.0, edge: 0.44, light: 3.4, glow: 0.3 },
@@ -184,16 +175,25 @@ export const KEYS_WIDE: Key[] = [
  * (R1 — the full-width veil bands hid it). Same story; the exploded view spreads downward.
  */
 export const KEYS_NARROW: Key[] = [
-  { form: 'logo', rot: [0.12, -0.5, 0.02], off: [0.0, 0.18], dist: 28, exposure: 1.0, shade: 0.0, edge: 1.2, light: 0, glow: 0.4 },
-  { form: 'split', rot: [-0.18, 0.8, 0.1], off: [0.1, 0.0], dist: 13, exposure: 1.0, shade: 0.0, edge: 1.2, light: 0.9, glow: 0.25 },
-  { form: 'explodedTall', rot: [0.12, 0.28, 0.03], off: [0.0, 0.0], dist: 21, exposure: 0.95, shade: 0.0, edge: 1.2, light: 1.8, glow: 0.2 },
+  { form: 'logo', rot: [0.12, -0.5, 0.02], off: [0.0, 0.54], dist: 31, exposure: 1.0, shade: 0.0, edge: 1.2, light: 0, glow: 0.4 },
+  { form: 'explodedTall', rot: [0.12, 0.28, 0.03], off: [0.0, 0.0], dist: 21, exposure: 0.95, shade: 0.0, edge: 1.2, light: 0.9, glow: 0.2 },
+  { form: 'logo', rot: [-0.12, 0.6, 0.05], off: [0.12, 0.0], dist: 13, exposure: 1.0, shade: 0.0, edge: 1.2, light: 1.8, glow: 0.25 },
   { form: 'chain', rot: [0.3, -0.4, 0.0], off: [0.0, -0.42], dist: 9, exposure: 1.0, shade: 0.0, edge: 1.2, light: 2.6, glow: 0.2 },
   { form: 'ring', rot: [0.3, 0.0, 0.0], off: [0.0, 0.0], dist: 17, exposure: 0.9, shade: 0.0, edge: 1.2, light: 3.4, glow: 0.2 },
   { form: 'logo', rot: [0, 0, 0], off: [0.0, 0.4], dist: 28, exposure: 1.0, shade: 0.0, edge: 1.2, light: 6.28, glow: 0.5 },
 ];
 
-/** Lingers on each pose and moves between them: most of the scroll between two chapters is travel. */
-const ease = (t: number) => t * t * t * (t * (t * 6 - 15) + 10);
+/**
+ * Lingers on each pose and moves between them: most of the scroll between two chapters is travel.
+ * `GS-MASTER-001-F`: the linger is exact — within `DWELL` of a chapter the pose does not move at
+ * all, so a chapter is read against a still scene (the reviews ring above all, beside the turning
+ * cylinder), and the travel is eased over what remains.
+ */
+const DWELL = 0.12;
+const ease = (u: number) => {
+  const t = Math.min(Math.max((u - DWELL) / (1 - 2 * DWELL), 0), 1);
+  return t * t * t * (t * (t * 6 - 15) + 10);
+};
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export type Pose = {
@@ -223,8 +223,10 @@ function rotate(p: Vec3, [rx, ry, rz]: Vec3): Vec3 {
  * The pose at chapter position `p` (0 = hero … 5 = close, fractional between them).
  *
  * `extra` carries what is not scroll: the idle sway and the pointer tilt, both added to the
- * rotation and both zero under reduced motion. `tanHalf` and `aspect` place the mark by
- * screen fraction.
+ * rotation and both zero under reduced motion. The ring takes none of it: its weight fades
+ * `extra` out, so the scene's ring is still while the review cylinder turns. `tanHalf` and
+ * `aspect` place the mark by screen fraction. `lift` raises the whole pose on screen, in
+ * half-viewports — the renderer uses it to keep the mark clear of the footer's copy.
  */
 export function pose(
   keys: Key[],
@@ -232,6 +234,7 @@ export function pose(
   extra: Vec3,
   tanHalf: number,
   aspect: number,
+  lift = 0,
 ): Pose {
   const clamped = Math.min(Math.max(p, 0), keys.length - 1);
   const i = Math.min(Math.floor(clamped), keys.length - 2);
@@ -241,19 +244,16 @@ export function pose(
   const fa = FORMATIONS[a.form];
   const fb = FORMATIONS[b.form];
 
-  const ringWeight = (a.form === 'ring' ? 1 - t : 0) + (b.form === 'ring' ? t : 0);
+  const free = 1 - ((a.form === 'ring' ? 1 - t : 0) + (b.form === 'ring' ? t : 0));
   const rot: Vec3 = [
-    lerp(a.rot[0], b.rot[0], t) + extra[0],
-    lerp(a.rot[1], b.rot[1], t) + extra[1] + ringWeight * (clamped - 4) * 1.6,
-    lerp(a.rot[2], b.rot[2], t) + extra[2],
+    lerp(a.rot[0], b.rot[0], t) + extra[0] * free,
+    lerp(a.rot[1], b.rot[1], t) + extra[1] * free,
+    lerp(a.rot[2], b.rot[2], t) + extra[2] * free,
   ];
   const dist = lerp(a.dist, b.dist, t);
   const halfH = dist * tanHalf;
-  const offset: Vec3 = [
-    lerp(a.off[0], b.off[0], t) * halfH * aspect,
-    lerp(a.off[1], b.off[1], t) * halfH,
-    0,
-  ];
+  const offY = lerp(a.off[1], b.off[1], t) + lift;
+  const offset: Vec3 = [lerp(a.off[0], b.off[0], t) * halfH * aspect, offY * halfH, 0];
   const place = (q: Vec3) => add(rotate(q, rot), offset);
 
   // Scroll-linked float while exploded: a small, deterministic drift per piece. Scroll drives
@@ -286,6 +286,6 @@ export function pose(
     edge: lerp(a.edge, b.edge, t),
     light: lerp(a.light, b.light, t),
     glow: lerp(a.glow, b.glow, t),
-    centre: [lerp(a.off[0], b.off[0], t), lerp(a.off[1], b.off[1], t)],
+    centre: [lerp(a.off[0], b.off[0], t), offY],
   };
 }

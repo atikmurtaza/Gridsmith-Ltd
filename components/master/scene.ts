@@ -1,4 +1,4 @@
-import { CHAPTERS, KEYS_NARROW, KEYS_WIDE, ROD_RADIUS, SPHERE_RADIUS, pose, type Vec3 } from './sceneModel';
+import { CHAPTERS, KEYS_NARROW, KEYS_WIDE, ROD_RADIUS, SPHERE_RADIUS, pose, type Pose, type Vec3 } from './sceneModel';
 
 /**
  * The Master scene renderer — `GS-R001-M`. Loaded by `MasterScene` with a dynamic `import()`
@@ -25,6 +25,9 @@ import { CHAPTERS, KEYS_NARROW, KEYS_WIDE, ROD_RADIUS, SPHERE_RADIUS, pose, type
  * caller then shows the static fallback.
  */
 
+/** Text rectangles the scene can dim behind at once (`uR[]`). */
+const MAX_RECTS = 48;
+
 const VERT = `attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}`;
 
 const FRAG = `
@@ -42,7 +45,7 @@ uniform vec3 uB[6];
 uniform vec3 uBg, uHi, uGold, uDeep;
 // R1 — text rectangles in canvas pixels (x0, y0, x1, y1, y up), feathered. The scene is dimmed
 // only directly behind copy, so it can run at full strength everywhere else.
-uniform vec4 uR[32];
+uniform vec4 uR[${MAX_RECTS}];
 uniform float uRN, uFeather;
 const float RS = ${SPHERE_RADIUS.toFixed(5)};
 const float RR = ${ROD_RADIUS.toFixed(5)};
@@ -151,7 +154,7 @@ void main() {
   float under = uEdge > 1.0 ? 1.0 : 1.0 - smoothstep(uEdge - 0.2, uEdge + 0.08, q.x);
   col = mix(col, bg * 0.9, uShade * under * cov);
   float att = 0.0;
-  for (int i = 0; i < 32; i++) {
+  for (int i = 0; i < ${MAX_RECTS}; i++) {
     if (float(i) >= uRN) break;
     vec2 e = max(uR[i].xy - px, px - uR[i].zw);
     att = max(att, 1.0 - smoothstep(0.0, uFeather, max(e.x, e.y)));
@@ -293,20 +296,30 @@ export function startScene(
   let last = 0;
   let lastDraw = 0;
   let slow = 0;
+  let dirty = false;
 
   // The copy the scene dims behind: every text block in the page and the footer that is on
   // screen. Read at draw time, after layout, so it follows the scroll exactly.
   // Text elements, not the rows around them: a list row's box is mostly empty space, and dimming
-  // it hid the scene for nothing.
-  const TEXT = 'main :is(h1, h2, h3, p, blockquote, figcaption, li > span), :is(header, footer) :is(p, a)';
-  const rects = new Float32Array(32 * 4);
+  // it hid the scene for nothing. `GS-MASTER-001-F`: links and controls are text too — the hero
+  // actions and the review buttons were not in this list, and gold crossed them mid-transition.
+  // An element inside another listed one is skipped: its parent's box already covers it.
+  const TEXT =
+    'main :is(h1, h2, h3, p, blockquote, figcaption, dt, dd, a, button, li > span), :is(header, footer) :is(p, a, h2, h3, li > span)';
+  const rects = new Float32Array(MAX_RECTS * 4);
   const readRects = () => {
     const sx = width / canvas.clientWidth;
     const sy = height / canvas.clientHeight;
     const pad = 6;
     let n = 0;
-    for (const el of document.querySelectorAll<HTMLElement>(TEXT)) {
-      if (n === 32) break;
+    // Test affordance for `check:master:scene` (questions 12 and 13), like `?scene=software`: with
+    // `data-scene-undim` on <html> nothing is dimmed, so the gate can measure the gold itself behind
+    // text. Acknowledged on the canvas, so the gate asserts it took effect rather than assuming it.
+    const undim = document.documentElement.hasAttribute('data-scene-undim');
+    canvas.toggleAttribute('data-undimmed', undim);
+    for (const el of undim ? [] : document.querySelectorAll<HTMLElement>(TEXT)) {
+      if (n === MAX_RECTS) break;
+      if (el.parentElement?.closest(TEXT)) continue;
       const r = el.getBoundingClientRect();
       if (r.bottom < 0 || r.top > innerHeight || r.width === 0 || r.height === 0) continue;
       rects.set([(r.left - pad) * sx, height - (r.bottom + pad) * sy, (r.right + pad) * sx, height - (r.top - pad) * sy], n * 4);
@@ -317,6 +330,40 @@ export function startScene(
     gl.uniform1f(U.feather, 18 * sx);
   };
 
+  // GS-MASTER-001-F: the mark never sits behind the footer's copy. Each frame the pose's own screen
+  // bounds are projected, and if any footer text overlaps them sideways and has risen into them, the
+  // whole pose is lifted just clear of it. On a phone the footer spans the width, so the settled
+  // close rides up and away with its chapter; on a wide screen the footer's columns leave the mark
+  // its own side and the lift is zero — the approved desktop handoff, unchanged. Not under reduced
+  // motion, whose single still composition stays exactly where it is.
+  const FOOTER_TEXT = 'body > footer :is(p, a, h2, h3, li > span)';
+  const footerLift = (p: Pose, aspect: number) => {
+    if (opts.reduced) return 0;
+    const footer = document.querySelector('body > footer');
+    if (!footer || footer.getBoundingClientRect().top >= innerHeight) return 0;
+    const [w, h] = [innerWidth, innerHeight];
+    let x0 = Infinity;
+    let x1 = -Infinity;
+    let bottom = -Infinity;
+    const piece = (q: Vec3, radius: number) => {
+      const k = 1 / ((p.dist - q[2]) * FOV_TAN_HALF);
+      const x = (w / 2) * (1 + (q[0] * k) / aspect);
+      const y = (h / 2) * (1 - q[1] * k);
+      const rr = (radius * k * h) / 2;
+      x0 = Math.min(x0, x - rr);
+      x1 = Math.max(x1, x + rr);
+      bottom = Math.max(bottom, y + rr);
+    };
+    p.spheres.forEach((q) => piece(q, SPHERE_RADIUS));
+    p.rodA.forEach((q, i) => (piece(q, ROD_RADIUS), piece(p.rodB[i], ROD_RADIUS)));
+    let top = Infinity;
+    for (const el of document.querySelectorAll(FOOTER_TEXT)) {
+      const r = el.getBoundingClientRect();
+      if (r.width && r.bottom > 0 && r.right > x0 && r.left < x1) top = Math.min(top, r.top);
+    }
+    return top === Infinity ? 0 : Math.max(0, bottom + 8 - top) * (2 / innerHeight);
+  };
+
   const draw = (now: number) => {
     readRects();
     const keys = narrow.matches ? KEYS_NARROW : KEYS_WIDE;
@@ -324,7 +371,9 @@ export function startScene(
       ? 0
       : (Math.max(0, 1 - current) + Math.max(0, current - 4)) * 0.09 * Math.sin(now / 2600);
     const extra: Vec3 = [tilt[1] * 0.1, tilt[0] * 0.16 + sway, 0];
-    const p = pose(keys, current, extra, FOV_TAN_HALF, width / height);
+    const settled = pose(keys, current, extra, FOV_TAN_HALF, width / height);
+    const lift = footerLift(settled, width / height);
+    const p = lift ? pose(keys, current, extra, FOV_TAN_HALF, width / height, lift) : settled;
     gl.uniform1f(U.dist, p.dist);
     gl.uniform1f(U.exp, p.exposure * 1.35);
     gl.uniform1f(U.shade, p.shade);
@@ -350,7 +399,8 @@ export function startScene(
       Math.abs(pointer[0] - tilt[0]) + Math.abs(pointer[1] - tilt[1]) > 0.001;
     const swaying = !opts.reduced && (current < 1 || current > 4);
 
-    if (moving || now - lastDraw > 33) {
+    if (moving || dirty || now - lastDraw > 33) {
+      dirty = false;
       const t0 = performance.now();
       draw(now);
       lastDraw = now;
@@ -367,7 +417,7 @@ export function startScene(
         resize();
       }
     }
-    if (moving || swaying) raf = requestAnimationFrame(frame);
+    if (moving || swaying || dirty) raf = requestAnimationFrame(frame);
     else last = 0;
   };
   const kick = () => {
@@ -381,6 +431,8 @@ export function startScene(
       return;
     }
     target = chapterAt();
+    // The text moved even when the pose did not: redraw so the dimming and the lift keep up.
+    dirty = true;
     kick();
   };
   const onPointer = (e: PointerEvent) => {

@@ -13,7 +13,8 @@ import { MasterScene } from '@/components/master/MasterScene';
  * inside the main landmark is content a screen reader has to walk past.
  *
  * `id="main"` is the skip link's target (`M-02`); `tabIndex={-1}` so following the fragment
- * moves focus. The hero copy is the approved copy and is hardcoded on purpose (`Q-M21`).
+ * moves focus. The hero copy is the approved copy and is hardcoded on purpose (`Q-M21`); the
+ * proposition became the H1 at `GS-MASTER-001-F`, and the kicker still carries the structure.
  */
 export default function Page() {
   return (
@@ -21,7 +22,7 @@ export default function Page() {
       <MasterScene fallback={<FallbackMark />} />
       <main id="main" tabIndex={-1} data-stage="master">
         <Hero
-          headline="One company. Three specialist studios. Built to work together."
+          headline="Most companies start over with every supplier. You shouldn’t have to."
           intro="Design, digital and publishing expertise under one roof. Start with what you need today — and keep the context when you need something else."
         />
         <Studios />

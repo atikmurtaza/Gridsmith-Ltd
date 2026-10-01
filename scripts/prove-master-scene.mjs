@@ -61,6 +61,20 @@ const PROBES = [
   // R1 — what the owner reported.
   { id: 's10', gate: SCENE_GATE, q: '10', file: HTML, what: 'opaque full-width bands behind every section (the mobile veil, at full strength)', edit: style('main section>div{background:var(--canvas)!important}') },
   { id: 's11', gate: SCENE_GATE, q: '11', file: SCENE, what: 'the exploded formation collapsed back to the assembled scale', edit: re(/exploded:(\w+)\(2\.9,2\)/, 'exploded:$1(1,1)') },
+  // GS-MASTER-001-F — the handoff and the still ring.
+  { id: 's12', gate: SCENE_GATE, q: '12', file: SCENE, what: 'the footer-aware lift switched off (the mark held behind the footer copy)', edit: (s) => s.replace('(2/innerHeight)', '(0/innerHeight)') },
+  {
+    id: 's13', gate: SCENE_GATE, q: '13', file: SCENE, what: 'the ring spins with the scroll again (the pre-GS-MASTER-001-F 1.6 rad per chapter)',
+    edit: (s) => {
+      const p = s.match(/Math\.floor\((\w)\)/)?.[1];
+      return p ? s.replace(/(\w\(\w\.rot\[1\],\w\.rot\[1\],\w\))\+(\w)\[1\]\*(\w)/, `$1+$2[1]*$3+(1-$3)*(${p}-4)*1.6`) : s;
+    },
+  },
+  // The undim affordance questions 12 and 13 rest on: a renderer that ignores it must turn them red,
+  // not let them measure dimmed gold (which read 0.0% whatever the mark did — found by s12).
+  { id: 's12u', gate: SCENE_GATE, q: '12', file: SCENE, what: 'the renderer no longer honours data-scene-undim', edit: (s) => s.replace('hasAttribute("data-scene-undim")', 'hasAttribute("data-scene-undim-x")') },
+  // GS-MASTER-001-RC — the fallback layer fixed again, so every line scrolls across the static mark.
+  { id: 's14', gate: SCENE_GATE, q: '14', file: HTML, what: 'the fallback layer held fixed (the pre-RC fallback, every line over the static mark)', edit: style('[data-master-scene]{position:fixed!important}') },
   // check:master:hero — one probe per question.
   { id: 'h1', gate: HERO_GATE, q: '1', file: HTML, what: '3000px-wide, 20px-tall probe in the hero', edit: style('[data-chapter=hero]::after{content:"";display:block;width:3000px;height:20px}') },
   { id: 'h2', gate: HERO_GATE, q: '2', file: HTML, what: 'headline forced onto one unbroken line', edit: style('#hero-title{white-space:nowrap}') },
@@ -68,6 +82,10 @@ const PROBES = [
   { id: 'h4', gate: HERO_GATE, q: '4', file: HTML, what: 'CTA pushed below the first screen', edit: style('#hero-title{margin-bottom:100vh!important}') },
   { id: 'h5', gate: HERO_GATE, q: '5', file: HTML, what: 'copy column pinned to the pre-R1 fixed 665px, centred in the frame', edit: style('[data-chapter=hero] div:has(>#hero-title){inline-size:665px!important;margin-inline:auto!important}') },
   { id: 'h6', gate: HERO_GATE, q: '6', file: HTML, what: 'mark hidden', edit: style('[data-master-scene]{visibility:hidden!important}') },
+  // GS-MASTER-001-F — phones and tablets, the proposition, the kicker.
+  { id: 'h7', gate: HERO_GATE, q: '7', file: HTML, what: 'the narrow mark band put back to 50svh (the GS-INT-001 hero)', edit: style('@media (max-width:1023px){[data-chapter=hero]{padding-top:50svh!important}}') },
+  { id: 'h8', gate: HERO_GATE, q: '8', file: HTML, what: 'the proposition paraphrased, in the HTML and the flight data both', edit: (s) => s.replaceAll('Most companies start over', 'Most firms start over') },
+  { id: 'h9', gate: HERO_GATE, q: '9', file: HTML, what: 'the kicker allowed to break inside its units (the four-fragment phone kicker)', edit: style('[data-chapter=hero] p:first-of-type{flex-wrap:nowrap!important}[data-chapter=hero] p:first-of-type>*{white-space:normal!important}') },
   // check:reviews:ui — the cylinder.
   { id: 'r3a', gate: REVIEWS_GATE, q: '3', file: PAGE, what: 'the cylinder no longer turns on its own', edit: re(/\},6e3\)/, '},6e8)') },
   { id: 'r3b', gate: REVIEWS_GATE, q: '3', file: PAGE, what: 'Pause rotation no longer pauses', edit: re(/if\((\w)\|\|(\w)\|\|(\w)\.matches\|\|(\w)<2\)return/, 'if($2||$3.matches||$4<2)return') },
