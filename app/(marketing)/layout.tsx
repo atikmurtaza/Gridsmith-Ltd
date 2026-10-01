@@ -35,12 +35,19 @@ import '@/styles/globals.css';
  * invented one would be `CLAUDE.md` #2; a card with a title and a description is what this site
  * honestly has today. The type is `website` and the division is named as a trading division in
  * the description, because a link shared from `/press` must not read as a separate company.
+ *
+ * **This group's description is public brand copy, so it says "studios" (`GS-INT-002`).** It is
+ * `/`'s description and every Master route's `og:description`. The statutory "trading divisions"
+ * wording stays where the law puts it — the footer and the legal disclosure on `/`.
+ * `check:company` question 10 asserts the taxonomy on the served metadata.
  */
+const DESCRIPTION = 'One UK company. Design, Digital and Press are its three specialist studios.';
+
 export const metadata: Metadata = {
   metadataBase: SITE_ORIGIN,
   ...SITE_ICONS,
   title: 'Gridsmith Ltd',
-  description: 'One UK company. Design, Digital and Press are its trading divisions.',
+  description: DESCRIPTION,
   alternates: { canonical: './' },
   robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: false },
   openGraph: {
@@ -49,7 +56,7 @@ export const metadata: Metadata = {
     locale: 'en_GB',
     url: './',
     title: 'Gridsmith Ltd',
-    description: 'One UK company. Design, Digital and Press are its trading divisions.',
+    description: DESCRIPTION,
   },
 };
 

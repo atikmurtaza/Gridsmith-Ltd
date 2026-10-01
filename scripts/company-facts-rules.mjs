@@ -583,3 +583,50 @@ export function disclosureProblems(route, footerText) {
   }
   return problems;
 }
+
+/**
+ * The only "division" wording public metadata may carry — the statutory clause the three division
+ * layouts and landing pages append (`app/(design|digital|press)/layout.tsx`). Exact, so the plural
+ * brand sentence `GS-INT-002` corrected ("…are its trading divisions.") is not an instance of it.
+ */
+const STATUTORY_CLAUSE = /\b(?:Gridsmith (?:Design|Digital|Press) is a|A) trading division of Gridsmith Ltd\./g;
+
+/**
+ * Problems with the brand taxonomy in a route's public metadata — `GS-INT-002`, question 10.
+ *
+ * Search results and link previews are public brand copy: the studios are **studios**. Titles,
+ * `description`, `og:*` and `twitter:*` are read; the statutory clause above is the one exemption.
+ * `/legal/` routes are exempt as a whole, as in `officeProblems`: their descriptions are the
+ * instruments' own summaries, legal context the taxonomy rule does not reach (and `_legal/` is not
+ * an agent's to amend). A metadata value that is absent is not a problem here — the brand copy is
+ * what is asserted, and `check-axe` owns whether a page has a title.
+ *
+ * @param {string} route
+ * @param {string} markup served markup with scripts removed
+ * @param {boolean} isLegalRoute
+ * @returns {string[]}
+ */
+export function taxonomyProblems(route, markup, isLegalRoute) {
+  if (isLegalRoute) return [];
+  const html = asText(markup);
+  const values = [];
+  const title = html.match(/<title>([^<]*)<\/title>/i);
+  if (title) values.push(['title', title[1]]);
+  for (const m of html.matchAll(/<meta\s[^>]*>/gi)) {
+    const key = m[0].match(/\b(?:name|property)="((?:og|twitter):(?:title|description)|description)"/i)?.[1];
+    const content = m[0].match(/\bcontent="([^"]*)"/i)?.[1];
+    if (key && content !== undefined) values.push([key, content]);
+  }
+  const problems = [];
+  for (const [key, raw] of values) {
+    const value = raw.replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"');
+    const word = value.replace(STATUTORY_CLAUSE, '').match(/\b(?:divisions?|departments?)\b/i)?.[0];
+    if (word) {
+      problems.push(
+        `${route}'s ${key} says "${word}": ${JSON.stringify(value)}. Public metadata uses the studio ` +
+          'taxonomy; "trading division" belongs only in the statutory clause (GS-INT-002).',
+      );
+    }
+  }
+  return problems;
+}

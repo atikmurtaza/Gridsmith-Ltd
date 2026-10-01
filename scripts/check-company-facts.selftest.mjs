@@ -34,6 +34,7 @@ import {
   callProblems,
   placeholderProblems,
   socialProblems,
+  taxonomyProblems,
 } from './company-facts-rules.mjs';
 import { jsonLdHtml } from '../lib/seo/site.ts';
 
@@ -496,6 +497,55 @@ check(
 check(
   'JSON-LD — the escape is JSON, so the parsed record is unchanged',
   JSON.parse(ld).name === hostile.name ? true : `parsed name differs: ${JSON.parse(ld).name}`,
+);
+
+/* -- 10. metadata taxonomy (GS-INT-002) ------------------------------------- */
+
+const head = (pairs) =>
+  pairs
+    .map(([k, v]) => (k === 'title' ? `<title>${v}</title>` : `<meta ${k.startsWith('og:') ? 'property' : 'name'}="${k}" content="${v}"/>`))
+    .join('');
+
+check(
+  'TAXONOMY CLEAN — the corrected Master description and a studio title',
+  none(taxonomyProblems('/', head([['title', 'Gridsmith Ltd'], ['description', 'One UK company. Design, Digital and Press are its three specialist studios.']]), false)),
+);
+check(
+  'TAXONOMY CLEAN — both statutory clause forms are exempt',
+  none(taxonomyProblems('/press', head([
+    ['description', 'We write and edit. A trading division of Gridsmith Ltd.'],
+    ['og:description', 'Writing and editing. Gridsmith Press is a trading division of Gridsmith Ltd.'],
+  ]), false)),
+);
+check(
+  'TAXONOMY — the pre-GS-INT-002 Master description fires (the plural is not the clause)',
+  one(taxonomyProblems('/', head([['description', 'One UK company. Design, Digital and Press are its trading divisions.']]), false), '"divisions"'),
+);
+check(
+  'TAXONOMY — og:description is read, not only description',
+  one(taxonomyProblems('/about', head([['og:description', 'One company, three specialist divisions.']]), false), 'og:description'),
+);
+check(
+  'TAXONOMY — twitter:title is read, and "department" fires',
+  one(taxonomyProblems('/x', head([['twitter:title', 'Our design department']]), false), 'twitter:title'),
+);
+check(
+  'TAXONOMY — the title is read',
+  one(taxonomyProblems('/x', head([['title', 'Gridsmith Design division']]), false), 'title'),
+);
+check(
+  'TAXONOMY — the clause exempts only itself: other division wording beside it still fires',
+  one(taxonomyProblems('/design', head([['description', 'Our three divisions. A trading division of Gridsmith Ltd.']]), false), '"divisions"'),
+);
+check(
+  'TAXONOMY CLEAN — a /legal/ route is exempt (instrument summaries are legal context)',
+  none(taxonomyProblems('/legal/terms', head([['description', 'Across all three divisions.']]), true)),
+);
+check(
+  'TAXONOMY COUNT moves — two offending values are two problems',
+  taxonomyProblems('/', head([['description', 'its trading divisions'], ['og:description', 'its trading divisions']]), false).length === 2
+    ? true
+    : 'the problem count did not move with the number of defects',
 );
 
 if (failures.length > 0) {

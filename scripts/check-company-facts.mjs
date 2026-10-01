@@ -30,6 +30,10 @@
  * 5. no response-time guarantee, no SLA, no "ASAP", no published business hours;
  * 6. no public team member.
  *
+ * (7–9 are documented at their summary lines below.) 10. public metadata — titles, `description`,
+ * `og:*`, `twitter:*` — uses the studio taxonomy; only the statutory clause says "trading
+ * division" (`GS-INT-002`).
+ *
  * ## The counts must be provable to move
  *
  * Three defences, none optional:
@@ -71,6 +75,7 @@ import {
   PLACEHOLDER_RULES,
   socialProblems,
   SOCIAL_URLS,
+  taxonomyProblems,
 } from './company-facts-rules.mjs';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
@@ -189,8 +194,8 @@ function splitFooter(html) {
   };
 }
 
-const problems = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] };
-const counted = { routes: 0, chars: 0, footers: 0, emails: 0, phones: 0, offices: 0 };
+const problems = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [] };
+const counted = { routes: 0, chars: 0, footers: 0, emails: 0, phones: 0, offices: 0, metadata: 0 };
 const thin = [];
 
 for (const route of ROUTES) {
@@ -228,6 +233,9 @@ for (const route of ROUTES) {
   // `/about` is the only route carrying the connection block, so it is the only one where
   // the channels must be PRESENT. The unapproved-host half runs on every route.
   problems[9].push(...socialProblems(route, markup, route === '/about'));
+  // Question 10 reads the head, so a route with no og:description measured nothing there.
+  if (!route.startsWith('/legal/') && /property="og:description"/.test(markup)) counted.metadata += 1;
+  problems[10].push(...taxonomyProblems(route, markup, route.startsWith('/legal/')));
 }
 
 const all = Object.values(problems).flat();
@@ -246,6 +254,14 @@ if (counted.footers !== counted.routes) {
   all.push(
     `found a statutory footer on ${counted.footers} of ${counted.routes} served route(s). ` +
       'Questions 1 and 4 both read that split, so a route without one measured neither.',
+  );
+}
+
+const metadataRoutes = ROUTES.filter((r) => !r.startsWith('/legal/')).length;
+if (counted.routes === ROUTES.length && counted.metadata !== metadataRoutes) {
+  all.push(
+    `found og:description on ${counted.metadata} of ${metadataRoutes} non-legal route(s); question 10 ` +
+      'reads the served head, so a route without it measured nothing.',
   );
 }
 
@@ -291,6 +307,10 @@ console.log(
 console.log(
   `  9. social: all ${SOCIAL_URLS.length} approved channel(s) linked on /about (GS-O017), and ` +
     'no unapproved social host linked on any route',
+);
+console.log(
+  `  10. taxonomy: titles, description, og:* and twitter:* on ${counted.metadata} non-legal route(s) say ` +
+    '"studio", never "division", outside the statutory "trading division of Gridsmith Ltd." clause',
 );
 console.log(
   // Derived from the problem map rather than typed. A hand-written count is a summary line
