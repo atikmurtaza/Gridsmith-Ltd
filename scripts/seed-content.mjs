@@ -100,7 +100,7 @@ if (DATASET === PRODUCTION_DATASET) {
 }
 
 const token = process.env.SANITY_API_WRITE_TOKEN;
-if (!token) {
+if (!token && import.meta.main) {
   console.error(
     '\nseed-content: SANITY_API_WRITE_TOKEN is not set. It lives in .env.local, which is\n' +
       'gitignored. Run via `npm run seed`, which passes --env-file=.env.local.\n',
@@ -708,14 +708,14 @@ const groupPageDocs = [
     slug: slugOf('approach'),
     title: 'How we work',
     intro:
-      'Six stages, the same six whichever division does the work. The short version: we find out what you actually need before we tell you what it costs.',
+      'Six stages, the same six whichever studio does the work. The short version: we find out what you actually need before we tell you what it costs.',
     sections: [
       section(0, 'understand', 'We start with the requirement, not the service', 'prose',
         'Most enquiries arrive as a solution — a new website, a rebrand, a book. Sometimes that is right. Often the thing behind it is different enough that building what was asked for would be a waste of your money.',
         'So the first conversation is about the business and the problem, not about what we sell. It is also where we say if the work belongs somewhere other than Gridsmith. That happens, and telling you early is cheaper for both of us than telling you late.'),
       section(1, 'one-company', 'One company, three studios', 'prose',
         'Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of Gridsmith Ltd, not separate companies. One contract covers work that spans them, and you are not managing three suppliers who have never spoken.',
-        'Where a project needs two divisions, coordinating them is our job. You brief it once.'),
+        'Where a project needs two studios, coordinating them is our job. You brief it once.'),
       section(2, 'scope', 'Everything is scoped for the specific job', 'prose',
         'There are no packages on this site and no price list, because we do not have work that comes in fixed sizes. What you get instead is a written scope: what is included, what is not, what we need from you and when.',
         'That document is where the disagreements happen, which is the right place for them. A scope you have read and questioned is worth more than a number you accepted quickly.'),
@@ -723,9 +723,9 @@ const groupPageDocs = [
         'These are the same six whatever the work is. Stage 1 is understanding, stage 2 is scoping, stages 3 and 4 are making it, stage 5 is delivering it, and stage 6 only happens if continuing makes sense for you.',
         'Review is not a stage of its own because it is not a moment — it runs through stage 4, at points agreed when the scope is written rather than whenever someone remembers.'),
       section(4, 'continuity', 'A worked example', 'continuity',
-        'The clearest way to show what continuity is worth is a real relationship that moved between divisions. We will not illustrate it with an invented one.'),
+        'The clearest way to show what continuity is worth is a real relationship that moved between studios. We will not illustrate it with an invented one.'),
       section(5, 'limits', 'When to use a specialist instead', 'sunken-plain',
-        'Three divisions is not every discipline. If your work needs a structural engineer, a chartered accountant, a solicitor or a specialist agency with a decade in one narrow field, that is who you should be talking to, and we will say so.',
+        'Three studios is not every discipline. If your work needs a structural engineer, a chartered accountant, a solicitor or a specialist agency with a decade in one narrow field, that is who you should be talking to, and we will say so.',
         'The same applies inside our own range. Some work is too small to justify what we would charge to scope it properly, and some is far enough outside what we do well that taking it would not be fair to you.'),
     ],
     isSeed: true,
@@ -741,13 +741,13 @@ const groupPageDocs = [
       section(0, 'structure', 'What Gridsmith is', 'prose',
         'Gridsmith Design handles brand and visual work, illustration, motion, 3D visualisation and technical drawing. Gridsmith Digital builds websites, software, apps and automation, and looks after them afterwards. Gridsmith Press covers writing, editorial, publishing, and the content and promotion around a book.',
         'All three are trading divisions of Gridsmith Ltd. Whichever one you deal with, your contract, your invoice and the company answerable to you are the same.',
-        'Most clients arrive needing one division. Some need two — occasionally at the start, more often a year later. That second case is the one this structure exists for.'),
+        'Most clients arrive needing one studio. Some need two — occasionally at the start, more often a year later. That second case is the one this structure exists for.'),
       section(1, 'why', 'Why it is built this way', 'prose',
         'Different outputs need different specialists. A brand identity, a production web application and a finished manuscript are genuinely different crafts, and treating them as one is how work ends up competent in a single discipline and thin everywhere else.',
         'The usual alternative is a supplier per medium: a designer who has never seen the site, a developer working from brand guidelines nobody explained, a writer briefed by neither. Nothing is wrong with any of them individually. What goes wrong is at the joins, and the coordination quietly becomes your job.',
         'So the specialists stay specialists, and the relationship does not restart when the medium changes.'),
       section(2, 'role', 'What we actually do', 'prose',
-        'We work out what the requirement is, say which discipline it belongs to, scope it for your situation rather than from a menu, and run it through the division that does that kind of work. Where it spans two, joining them up is ours to do.',
+        'We work out what the requirement is, say which discipline it belongs to, scope it for your situation rather than from a menu, and run it through the studio that does that kind of work. Where it spans two, joining them up is ours to do.',
         'Every engagement is quoted against its own scope. That is why there is no price list here: the number follows the requirement, and the requirement comes first.'),
       section(3, 'character', 'How we approach the work', 'prose',
         'Three things show up in everything we make. Design decisions are deliberate and can be explained — if we cannot say why something is the way it is, it is not finished. Technical work is built to be maintained by whoever comes next, including you. And the accessible version is the version we build, not an upgrade that arrives later.',
@@ -834,6 +834,12 @@ if (identifying.length > 0) {
   process.exit(1);
 }
 
+/**
+ * `GS-PROD-001`: `migrate-production-cms.mjs` imports the documents above to build the production
+ * payload from this source. Only running this file (`npm run seed`) writes; an import writes nothing.
+ */
+export { serviceDocs, groupPageDocs };
+if (import.meta.main) {
 const client = createClient({
   projectId: SANITY_PROJECT_ID,
   dataset: DATASET,
@@ -964,3 +970,4 @@ console.log(
 
 rmSync('.next/cache/fetch-cache', { recursive: true, force: true });
 console.log('  cleared .next/cache/fetch-cache so the next build re-reads the dataset\n');
+} // import.meta.main

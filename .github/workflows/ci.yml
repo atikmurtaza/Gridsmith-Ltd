@@ -126,6 +126,11 @@ jobs:
       - name: Lead input and server-only insert boundary
         run: npm run check:lead-security
 
+      # GS-PROD-001: the production CMS payload, built from the repository and preflighted
+      # offline (no seed ids, no [SEED], studio taxonomy, gated types excluded). Writes nothing.
+      - name: Production CMS migration dry run and manifest parity
+        run: npm run check:cms:migration
+
       # The committed subject for check:launch's live tier — M-P1-14. That tier's only
       # subject was the live dataset, which has never held a [SEED] marker or a published
       # seed record, so the assertions behind non-negotiable #4 had never been observed to
@@ -345,7 +350,7 @@ jobs:
       - name: axe + security headers + statutory record + responsive and legal checks
         env:
           DESIGN_SCREENSHOTS: .artifacts/design-scenes
-        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:press:scene" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company" "npm run check:master:scene" "npm run check:master:hero" "npm run check:design:scene" "npm run check:digital:scene"
+        run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:redirects" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:press:scene" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company" "npm run check:master:scene" "npm run check:master:hero" "npm run check:design:scene" "npm run check:digital:scene"
 
       - name: Retain Design scene evidence
         if: always()

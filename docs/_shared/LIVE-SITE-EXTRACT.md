@@ -425,6 +425,10 @@ what is available. Mentioning it because it looks like six missing rows and is n
 
 ## 13.2 What this means for `redirects/legacy.json`
 
+> **Superseded at `GS-PROD-001` (1 October 2026).** The owner chose option 1 below
+> (`/terms-and-conditions/` → `/legal/client-terms`), and the map is populated: two 308s, the
+> WordPress defaults left to 404. `docs/_shared/GS-PROD-001.md` §C. The text below is history.
+
 **It stays empty, and that is a decision rather than an omission.** `GS-R001` prohibits cutover;
 a redirect map is only exercised on the day the domain moves, and one row of it is undecided.
 Writing the other seven now would put a half-map in the tree that reads as finished.

@@ -11,6 +11,7 @@ import { Heading } from '@/components/primitives/Heading';
 import { RadioGroup } from '@/components/primitives/RadioGroup';
 import { Select } from '@/components/primitives/Select';
 import { submitLeadAction, type FormState } from '@/lib/leads/action';
+import { Honeypot } from './Honeypot';
 import { readEnquiryContext } from '@/lib/services/architecture';
 import styles from './leads.module.css';
 
@@ -180,6 +181,7 @@ export function ContactForm({
         error={firstError('budget_band')}
       />
       <Select name="timeline" label="Timeline" options={TIMELINES} error={firstError('timeline')} />
+      <Honeypot />
 
       <Button type="submit" disabled={pending}>
         {pending ? 'Sending…' : 'Send this'}

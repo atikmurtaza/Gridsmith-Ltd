@@ -185,6 +185,38 @@ const REGISTRY = [
       'REQUIRED with no budget by the same deliberate asymmetry.',
   },
   {
+    gate: 'check-redirects.mjs',
+    kind: 'unrelated',
+    of: 'MAPPED',
+    keys: 'routes',
+    why:
+      'GS-PROD-001. Four disjoint classes of URL, each asserted with its own expected status — 308 to a named destination, 404, 200, and the slash rule. No list filters, excuses or budgets another, so there is no subset to assert; a URL in two of them would be two contradictory expectations, which the gate itself reports.',
+  },
+  {
+    gate: 'check-redirects.mjs',
+    kind: 'unrelated',
+    of: 'GONE',
+    keys: 'routes',
+    why:
+      'GS-PROD-001. Four disjoint classes of URL, each asserted with its own expected status — 308 to a named destination, 404, 200, and the slash rule. No list filters, excuses or budgets another, so there is no subset to assert; a URL in two of them would be two contradictory expectations, which the gate itself reports.',
+  },
+  {
+    gate: 'check-redirects.mjs',
+    kind: 'unrelated',
+    of: 'PLAIN',
+    keys: 'routes',
+    why:
+      'GS-PROD-001. Four disjoint classes of URL, each asserted with its own expected status — 308 to a named destination, 404, 200, and the slash rule. No list filters, excuses or budgets another, so there is no subset to assert; a URL in two of them would be two contradictory expectations, which the gate itself reports.',
+  },
+  {
+    gate: 'check-redirects.mjs',
+    kind: 'unrelated',
+    of: 'SLASH',
+    keys: 'routes',
+    why:
+      'GS-PROD-001. Four disjoint classes of URL, each asserted with its own expected status — 308 to a named destination, 404, 200, and the slash rule. No list filters, excuses or budgets another, so there is no subset to assert; a URL in two of them would be two contradictory expectations, which the gate itself reports.',
+  },
+  {
     gate: 'check-company-facts.mjs',
     kind: 'subset',
     of: 'OFFICE_ALLOWED',

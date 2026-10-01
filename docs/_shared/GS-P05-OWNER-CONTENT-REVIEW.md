@@ -10,7 +10,7 @@ reads awkwardly, the site reads awkwardly, and that is what this document exists
 change. `check:service-content` fails while this document's recorded hash and the source
 disagree, so an approval cannot silently attach to wording that has since changed.
 
-**Source SHA-256:** `6c101f6ddcbb8ffa67de3eab183b74dd555b705a16eeb5bc4b226eeea734b4f4`
+**Source SHA-256:** `a2a53592aeed0f0f60e83727cddaffa5b5cbd5fdc8f63cec0ccf4c8be4a33297`
 
 ---
 
@@ -191,7 +191,7 @@ would be operational commitments nobody has given.
 >
 > This is creative production. Where a campaign also needs written copy, content or technical work, those sit with Gridsmith Press and Gridsmith Digital and can run as one coordinated engagement — see the campaign engagement note on the Digital and Press pages.
 >
-> This page is the creative production. Running the campaign itself — the advertising accounts, the paid placements, the posting schedule — is a separate cross-division Gridsmith engagement rather than part of this service, and it is scoped and quoted on its own terms.
+> This page is the creative production. Running the campaign itself — the advertising accounts, the paid placements, the posting schedule — is a separate cross-studio Gridsmith engagement rather than part of this service, and it is scoped and quoted on its own terms.
 
 **What this covers, as shown publicly**
 
@@ -200,7 +200,7 @@ would be operational commitments nobody has given.
 | Included | Campaign creative concept | The visual idea and how it holds together across placements. |
 | Included | Asset set at required sizes | Each placement’s specification, produced as one consistent set. |
 | Included | Editable templates | So routine variants can be produced without returning to us. |
-| **EXCLUDED** | Advertising account and paid-placement management | Not part of this creative service. Gridsmith does run campaigns and advertising accounts, as a separate cross-division engagement scoped with you. |
+| **EXCLUDED** | Advertising account and paid-placement management | Not part of this creative service. Gridsmith does run campaigns and advertising accounts, as a separate cross-studio engagement scoped with you. |
 
 **Related services:** `brand-identity-systems`, `motion-graphics`
 
@@ -1213,7 +1213,7 @@ would be operational commitments nobody has given.
 
 > The technical half of search: crawlability and indexing, site and URL architecture, structured data, redirects, canonicalisation, sitemaps and the page performance that search engines measure.
 >
-> The other half — what the pages say, and whether anyone wants to read them — is Gridsmith Press. Content SEO and editorial strategy sit there, and the two halves are frequently scoped as one engagement across both divisions.
+> The other half — what the pages say, and whether anyone wants to read them — is Gridsmith Press. Content SEO and editorial strategy sit there, and the two halves are frequently scoped as one engagement across both studios.
 >
 > No ranking outcome is promised. Search results are decided by search engines.
 
@@ -1737,7 +1737,7 @@ would be operational commitments nobody has given.
 
 > The editorial half of search: what to write about, what a page is actually for, how it is structured, and optimisation of existing content that is close to useful and not quite there.
 >
-> The technical half — crawling, indexing, structured data, performance — is Gridsmith Digital. Neither half works alone, and they are commonly scoped together across the two divisions.
+> The technical half — crawling, indexing, structured data, performance — is Gridsmith Digital. Neither half works alone, and they are commonly scoped together across the two studios.
 >
 > No ranking or traffic outcome is promised.
 

@@ -1,0 +1,569 @@
+{
+  "generatedBy": "scripts/migrate-production-cms.mjs",
+  "dataset": "production",
+  "eligible": 47,
+  "entries": [
+    {
+      "type": "companyDetails",
+      "id": "companyDetails",
+      "slug": null,
+      "source": "scripts/seed-company-details.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "groupPage",
+      "id": "grouppage-approach",
+      "slug": "approach",
+      "source": "scripts/seed-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "groupPage",
+      "id": "grouppage-about",
+      "slug": "about",
+      "source": "scripts/seed-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-brand-identity-systems",
+      "slug": "brand-identity-systems",
+      "division": "design",
+      "group": "brand-visual",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-graphic-design-and-collateral",
+      "slug": "graphic-design-and-collateral",
+      "division": "design",
+      "group": "brand-visual",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-packaging-design",
+      "slug": "packaging-design",
+      "division": "design",
+      "group": "brand-visual",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-campaign-and-social-creative",
+      "slug": "campaign-and-social-creative",
+      "division": "design",
+      "group": "brand-visual",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-presentation-design",
+      "slug": "presentation-design",
+      "division": "design",
+      "group": "brand-visual",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-gaming-and-streamer-creative",
+      "slug": "gaming-and-streamer-creative",
+      "division": "design",
+      "group": "brand-visual",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-illustration",
+      "slug": "illustration",
+      "division": "design",
+      "group": "illustration",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-iconography-and-infographics",
+      "slug": "iconography-and-infographics",
+      "division": "design",
+      "group": "illustration",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-technical-illustration",
+      "slug": "technical-illustration",
+      "division": "design",
+      "group": "illustration",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true,
+      "droppedTechnicalRefs": 1
+    },
+    {
+      "type": "service",
+      "id": "service-design-motion-graphics",
+      "slug": "motion-graphics",
+      "division": "design",
+      "group": "motion",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-animation",
+      "slug": "animation",
+      "division": "design",
+      "group": "motion",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-3d-modelling",
+      "slug": "3d-modelling",
+      "division": "design",
+      "group": "3d-visualisation",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true,
+      "droppedTechnicalRefs": 1
+    },
+    {
+      "type": "service",
+      "id": "service-design-product-visualisation",
+      "slug": "product-visualisation",
+      "division": "design",
+      "group": "3d-visualisation",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-design-cad-drafting",
+      "slug": "cad-drafting",
+      "division": "design",
+      "group": "technical",
+      "source": "scripts/service-content.mjs",
+      "gate": "GS-O005/GS-X002",
+      "eligible": false,
+      "reason": "Technical group: professional scope and PI cover unconfirmed"
+    },
+    {
+      "type": "service",
+      "id": "service-design-engineering-drawings",
+      "slug": "engineering-drawings",
+      "division": "design",
+      "group": "technical",
+      "source": "scripts/service-content.mjs",
+      "gate": "GS-O005/GS-X002",
+      "eligible": false,
+      "reason": "Technical group: professional scope and PI cover unconfirmed"
+    },
+    {
+      "type": "service",
+      "id": "service-design-technical-documentation",
+      "slug": "technical-documentation",
+      "division": "design",
+      "group": "technical",
+      "source": "scripts/service-content.mjs",
+      "gate": "GS-O005/GS-X002",
+      "eligible": false,
+      "reason": "Technical group: professional scope and PI cover unconfirmed"
+    },
+    {
+      "type": "service",
+      "id": "service-digital-website-design-build",
+      "slug": "website-design-build",
+      "division": "digital",
+      "group": "web",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-ecommerce",
+      "slug": "ecommerce",
+      "division": "digital",
+      "group": "web",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-web-applications",
+      "slug": "web-applications",
+      "division": "digital",
+      "group": "web",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-cms-implementation",
+      "slug": "cms-implementation",
+      "division": "digital",
+      "group": "web",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-custom-software",
+      "slug": "custom-software",
+      "division": "digital",
+      "group": "software",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-internal-tools-and-dashboards",
+      "slug": "internal-tools-and-dashboards",
+      "division": "digital",
+      "group": "software",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-crm-and-workflow-systems",
+      "slug": "crm-and-workflow-systems",
+      "division": "digital",
+      "group": "software",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-mobile-applications",
+      "slug": "mobile-applications",
+      "division": "digital",
+      "group": "apps-interactive",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-game-development",
+      "slug": "game-development",
+      "division": "digital",
+      "group": "apps-interactive",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-integrations",
+      "slug": "integrations",
+      "division": "digital",
+      "group": "automation-intelligence",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-workflow-automation",
+      "slug": "workflow-automation",
+      "division": "digital",
+      "group": "automation-intelligence",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-ai-integration",
+      "slug": "ai-integration",
+      "division": "digital",
+      "group": "automation-intelligence",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-data-and-reporting",
+      "slug": "data-and-reporting",
+      "division": "digital",
+      "group": "automation-intelligence",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-maintenance-and-monitoring",
+      "slug": "maintenance-and-monitoring",
+      "division": "digital",
+      "group": "operate-improve",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-performance-and-accessibility",
+      "slug": "performance-and-accessibility",
+      "division": "digital",
+      "group": "operate-improve",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-technical-seo",
+      "slug": "technical-seo",
+      "division": "digital",
+      "group": "operate-improve",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-digital-iterative-product-development",
+      "slug": "iterative-product-development",
+      "division": "digital",
+      "group": "operate-improve",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-ghostwriting",
+      "slug": "ghostwriting",
+      "division": "press",
+      "group": "writing",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-book-writing-and-development",
+      "slug": "book-writing-and-development",
+      "division": "press",
+      "group": "writing",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-website-and-business-copywriting",
+      "slug": "website-and-business-copywriting",
+      "division": "press",
+      "group": "writing",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-thought-leadership-and-reports",
+      "slug": "thought-leadership-and-reports",
+      "division": "press",
+      "group": "writing",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-manuscript-assessment",
+      "slug": "manuscript-assessment",
+      "division": "press",
+      "group": "editorial",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-manuscript-development",
+      "slug": "manuscript-development",
+      "division": "press",
+      "group": "editorial",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-copy-editing-and-proofreading",
+      "slug": "copy-editing-and-proofreading",
+      "division": "press",
+      "group": "editorial",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-publishing-preparation",
+      "slug": "publishing-preparation",
+      "division": "press",
+      "group": "publishing",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-typesetting-and-formatting",
+      "slug": "typesetting-and-formatting",
+      "division": "press",
+      "group": "book-production",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-cover-design-coordination",
+      "slug": "cover-design-coordination",
+      "division": "press",
+      "group": "book-production",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-audiobook-production-support",
+      "slug": "audiobook-production-support",
+      "division": "press",
+      "group": "audiobook",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-content-programmes",
+      "slug": "content-programmes",
+      "division": "press",
+      "group": "content-promotion",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-content-seo",
+      "slug": "content-seo",
+      "division": "press",
+      "group": "content-promotion",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "service",
+      "id": "service-press-book-marketing-support",
+      "slug": "book-marketing-support",
+      "division": "press",
+      "group": "content-promotion",
+      "source": "scripts/service-content.mjs",
+      "gate": null,
+      "eligible": true
+    },
+    {
+      "type": "legalDocument",
+      "id": "legal-privacy",
+      "slug": "privacy",
+      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
+      "gate": "GS-O003",
+      "eligible": false,
+      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+    },
+    {
+      "type": "legalDocument",
+      "id": "legal-cookies",
+      "slug": "cookies",
+      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
+      "gate": "GS-O003",
+      "eligible": false,
+      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+    },
+    {
+      "type": "legalDocument",
+      "id": "legal-terms",
+      "slug": "terms",
+      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
+      "gate": "GS-O003",
+      "eligible": false,
+      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+    },
+    {
+      "type": "legalDocument",
+      "id": "legal-client-terms",
+      "slug": "client-terms",
+      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
+      "gate": "GS-O003",
+      "eligible": false,
+      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+    },
+    {
+      "type": "legalDocument",
+      "id": "legal-business-client-terms",
+      "slug": "business-client-terms",
+      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
+      "gate": "GS-O003",
+      "eligible": false,
+      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+    },
+    {
+      "type": "legalDocument",
+      "id": "legal-consumer-client-terms",
+      "slug": "consumer-client-terms",
+      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
+      "gate": "GS-O003",
+      "eligible": false,
+      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+    },
+    {
+      "type": "legalDocument",
+      "id": "legal-accessibility",
+      "slug": "accessibility",
+      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
+      "gate": "GS-O003",
+      "eligible": false,
+      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+    }
+  ]
+}

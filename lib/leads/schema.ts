@@ -37,7 +37,14 @@ export const leadSchema = z.object({
   service_slug: z.string().max(200).optional(),
 
   // `full_name` and `email` are the table's only NOT NULL text columns.
-  full_name: z.string().trim().min(1, 'Tell us your name').max(200),
+  // A link in the name field is a spam signature, not a name (`GS-PROD-001`). Refused visibly,
+  // so a person who trips it can correct it; both forms reach this through `submitLead`.
+  full_name: z
+    .string()
+    .trim()
+    .min(1, 'Tell us your name')
+    .max(200)
+    .refine((name) => !/https?:\/\/|www\./i.test(name), 'Your name cannot contain a web address'),
   email: z.email('That does not look like an email address').max(320),
 
   company: z.string().max(200).optional(),

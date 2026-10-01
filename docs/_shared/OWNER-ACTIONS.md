@@ -80,6 +80,10 @@ not requested under `GS-D001` and `GS-D002`.
   `/legal/business-client-terms` and `/legal/consumer-client-terms`; `LEGAL_DOCUMENT_SLUGS`
   already records that a redirect picking one target is wrong for half the people following it.
   `LIVE-SITE-EXTRACT.md` §13.3 sets out the options. Decide it at cutover.
+
+  **Decided at `GS-PROD-001` (1 October 2026):** `/terms-and-conditions/` → `/legal/client-terms`
+  (option 1). The map is implemented (single-hop 308s, `check:redirects`); the redirect limb is
+  closed. Favicon and Open Graph card remain. `docs/_shared/GS-PROD-001.md` §C.
 - **Answered at `GS-R001` and unchanged:** the eight-URL inventory, read from the live site's own
   `wp-sitemap.xml` and recorded in `LIVE-SITE-EXTRACT.md` §13; and per-route SEO titles,
   descriptions, canonicals, Open Graph and `Organization` structured data (`G-04`).

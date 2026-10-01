@@ -5,22 +5,23 @@ import { SANITY_DATASET } from './sanity/env';
 type LegacyRedirect = { source: string; destination: string; permanent: boolean };
 
 /**
- * Legacy redirect map — master/TECH-SPEC.md §5, tracker G-02.
+ * Legacy redirect map — master/TECH-SPEC.md §5, tracker G-02, `GS-PROD-001`.
  *
- * Currently empty, and the reason changed at `GS-R001`. It used to say *"the programme is
- * greenfield, there is no existing site to crawl"*, which was already false when it was
- * written: `gridsmith.uk` serves a live WordPress site, established on 7 September 2026 in
- * `docs/_shared/LIVE-SITE-EXTRACT.md`.
+ * The live WordPress site publishes eight URLs (`LIVE-SITE-EXTRACT.md` §13). Two have a
+ * successor and are mapped; the rest need nothing, and `docs/_shared/GS-PROD-001.md` §C records each:
+ * `/` is the same address, `/?uicore-tb=…` is a query on `/`, and the four WordPress/theme
+ * defaults (`/hello-world/`, `/category/uncategorized/`, `/uicore-cd/*`) have no successor and
+ * fall to the 404 — redirecting unrelated pages to `/` would be a soft 404.
+ * `/terms-and-conditions/` → `/legal/client-terms` is the owner's decision at `GS-PROD-001`
+ * (`GS-O007`): the disambiguation page, because the old combined instrument has three successors.
  *
- * **The inventory is now collected and it is eight URLs** — read from the live site's own
- * `wp-sitemap.xml`, recorded with a proposed mapping in `LIVE-SITE-EXTRACT.md` §13. It stays
- * empty here for two better reasons than the old one: `GS-R001` prohibits cutover, so nothing
- * would exercise it; and one row of the eight is an owner decision rather than an implementation
- * one (`/terms-and-conditions/` is a single instrument this build splits three ways, and a
- * redirect has to pick a target). A half-map in the tree reads as a finished one.
- *
- * The wiring exists so the mechanism is testable before it is needed — adding entries later is
- * a data change, not a config change.
+ * **Each one is a single hop, and that needs the ordering below.** Next unshifts its own
+ * `/:path+/ → /:path+` redirect *ahead of* every custom one (`lib/load-custom-routes.js`), and
+ * every legacy URL ends in `/`, so `/privacy-policy/` would have gone 308 → `/privacy-policy` →
+ * 308 → `/legal/privacy`. `skipTrailingSlashRedirect` turns the built-in off and `redirects()`
+ * re-adds the identical rule *after* the legacy map. `check:redirects` asserts both halves on the
+ * served build: every legacy URL is one 308 to a 200, and an ordinary `/about/` still loses its
+ * slash.
  */
 const legacyRedirects: LegacyRedirect[] = JSON.parse(
   readFileSync(new URL('./redirects/legacy.json', import.meta.url), 'utf8'),
@@ -180,8 +181,13 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  skipTrailingSlashRedirect: true,
   async redirects() {
-    return legacyRedirects;
+    return [
+      ...legacyRedirects,
+      // Next's own trailing-slash rule (trailingSlash: false), verbatim, after the legacy map.
+      { source: '/:path+/', destination: '/:path+', permanent: true },
+    ];
   },
 };
 

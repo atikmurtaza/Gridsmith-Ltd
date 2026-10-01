@@ -1,6 +1,7 @@
 'use server';
 import 'server-only';
 import { redirect } from 'next/navigation';
+import { isTrapped } from './guard.ts';
 import { submitLead } from './submit.ts';
 import { pressLeadPayload, pressPayloadFrom } from './pressLead.ts';
 import type { FormState } from './action.ts';
@@ -38,6 +39,9 @@ const str = (form: FormData, name: string) => {
   return typeof value === 'string' && value.trim() !== '' ? value.trim() : undefined;
 };
 export async function submitPressLeadAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  // Bot trap (`guard.ts`): the same confirmation a person gets, nothing written, nothing sent.
+  if (isTrapped(formData)) redirect('/press/contact/thank-you');
+
   const payload = pressLeadPayload.safeParse(pressPayloadFrom(formData));
   if (!payload.success) {
     const errors: Record<string, string[]> = {};

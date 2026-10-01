@@ -1,5 +1,7 @@
 'use server';
 import 'server-only';
+import { randomUUID } from 'node:crypto';
+import { isTrapped } from './guard.ts';
 import { submitLead, type SubmitResult } from './submit.ts';
 
 export type FormState =
@@ -34,6 +36,9 @@ const str = (form: FormData, name: string) => {
 };
 
 export async function submitLeadAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  // Bot trap (`guard.ts`): answer as if it landed, write nothing, send nothing.
+  if (isTrapped(formData)) return { status: 'ok', id: randomUUID() };
+
   const result: SubmitResult = await submitLead({
     division: str(formData, 'division') ?? 'unsure',
     lead_type: 'enquiry',

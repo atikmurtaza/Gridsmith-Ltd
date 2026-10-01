@@ -22,7 +22,7 @@ import { SANITY_API_VERSION, SANITY_PROJECT_ID } from '../sanity/project.ts';
 const DATASET = 'development';
 
 const token = process.env.SANITY_API_WRITE_TOKEN;
-if (!token) {
+if (!token && import.meta.main) {
   console.error(
     '\nseed-company-details: SANITY_API_WRITE_TOKEN is not set.\n' +
       'It lives in .env.local, which is gitignored. Run via `npm run seed:company`, which\n' +
@@ -31,7 +31,7 @@ if (!token) {
   process.exit(1);
 }
 
-const doc = {
+export const doc = {
   _id: 'companyDetails',
   _type: 'companyDetails',
   legalName: 'Gridsmith Ltd',
@@ -81,6 +81,11 @@ const doc = {
   responseCommitment: 'We typically respond within 48 hours.',
 };
 
+/**
+ * `GS-PROD-001`: `migrate-production-cms.mjs` imports the documents above to build the production
+ * payload from this source. Only running this file (`npm run seed:company`) writes; an import writes nothing.
+ */
+if (import.meta.main) {
 const client = createClient({
   projectId: SANITY_PROJECT_ID,
   dataset: DATASET,
@@ -105,3 +110,4 @@ console.log('  no businessHours field: GS-O004 does not authorise published open
 // every route from static to server-rendered-on-demand. CI is unaffected: it builds clean.
 rmSync('.next/cache/fetch-cache', { recursive: true, force: true });
 console.log('  cleared .next/cache/fetch-cache so the next build re-reads the dataset');
+} // import.meta.main

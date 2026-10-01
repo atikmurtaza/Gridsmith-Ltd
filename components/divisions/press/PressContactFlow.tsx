@@ -11,6 +11,7 @@ import { Heading } from '@/components/primitives/Heading';
 import { Link } from '@/components/primitives/Link';
 import { RadioGroup } from '@/components/primitives/RadioGroup';
 import { Select } from '@/components/primitives/Select';
+import { Honeypot } from '@/components/leads/Honeypot';
 import type { FormState } from '@/lib/leads/action';
 import { submitPressLeadAction } from '@/lib/leads/pressAction';
 import { pressSegmentOptions, pressSegmentTerms, type PressSegment } from '@/lib/leads/pressSegments';
@@ -464,6 +465,7 @@ export function PressContactFlow({
           </button>
         )}
       </div>
+      <Honeypot />
     </form>
   );
 }

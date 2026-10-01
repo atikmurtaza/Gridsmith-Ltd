@@ -188,13 +188,13 @@ export const SERVICES = {
       description: [
         'The visual half of a campaign: adverts, social assets, banners, landing-page visuals and the sized variants each placement needs, made as one set so they read as one campaign.',
         'This is creative production. Where a campaign also needs written copy, content or technical work, those sit with Gridsmith Press and Gridsmith Digital and can run as one coordinated engagement — see the campaign engagement note on the Digital and Press pages.',
-        'This page is the creative production. Running the campaign itself — the advertising accounts, the paid placements, the posting schedule — is a separate cross-division Gridsmith engagement rather than part of this service, and it is scoped and quoted on its own terms.',
+        'This page is the creative production. Running the campaign itself — the advertising accounts, the paid placements, the posting schedule — is a separate cross-studio Gridsmith engagement rather than part of this service, and it is scoped and quoted on its own terms.',
       ],
       deliverables: [
         ['Campaign creative concept', 'The visual idea and how it holds together across placements.'],
         ['Asset set at required sizes', 'Each placement’s specification, produced as one consistent set.'],
         ['Editable templates', 'So routine variants can be produced without returning to us.'],
-        ['Advertising account and paid-placement management', 'Not part of this creative service. Gridsmith does run campaigns and advertising accounts, as a separate cross-division engagement scoped with you.', false],
+        ['Advertising account and paid-placement management', 'Not part of this creative service. Gridsmith does run campaigns and advertising accounts, as a separate cross-studio engagement scoped with you.', false],
       ],
       collaborators: ['press', 'digital'],
       related: ['brand-identity-systems', 'motion-graphics'],
@@ -782,7 +782,7 @@ export const SERVICES = {
       summary: 'The site is hard to crawl and you cannot get a straight answer about why.',
       description: [
         'The technical half of search: crawlability and indexing, site and URL architecture, structured data, redirects, canonicalisation, sitemaps and the page performance that search engines measure.',
-        'The other half — what the pages say, and whether anyone wants to read them — is Gridsmith Press. Content SEO and editorial strategy sit there, and the two halves are frequently scoped as one engagement across both divisions.',
+        'The other half — what the pages say, and whether anyone wants to read them — is Gridsmith Press. Content SEO and editorial strategy sit there, and the two halves are frequently scoped as one engagement across both studios.',
         'No ranking outcome is promised. Search results are decided by search engines.',
       ],
       deliverables: [
@@ -1080,7 +1080,7 @@ export const SERVICES = {
       summary: 'Your pages need a clear reader and a reason to rank for them.',
       description: [
         'The editorial half of search: what to write about, what a page is actually for, how it is structured, and optimisation of existing content that is close to useful and not quite there.',
-        'The technical half — crawling, indexing, structured data, performance — is Gridsmith Digital. Neither half works alone, and they are commonly scoped together across the two divisions.',
+        'The technical half — crawling, indexing, structured data, performance — is Gridsmith Digital. Neither half works alone, and they are commonly scoped together across the two studios.',
         'No ranking or traffic outcome is promised.',
       ],
       deliverables: [
