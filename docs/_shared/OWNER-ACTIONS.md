@@ -90,7 +90,14 @@ not requested under `GS-D001` and `GS-D002`.
 
 ### `GS-O010` — Provide an isolated Supabase target for Vercel Preview
 
-- **Status:** ACTIONABLE NOW
+- **Status:** **CLOSED — 2 October 2026 (`GS-O010-R2`).** Preview persistence is the isolated
+  `gridsmith-preview` project `qfgpwumvvtizeamkynes`; Preview holds no Production write credential; one
+  valid synthetic `/contact` and `/press/contact` submission each landed only there, both notifications
+  reached the owner's test inbox, honeypot and invalid requests wrote and sent nothing, Production lead
+  count unchanged (63) with 0 markers; synthetic rows deleted. Evidence `docs/_shared/GS-O010-R2.md`.
+  Before cutover: confirm the Production `SUPABASE_SERVICE_ROLE_KEY` value is the Gridsmith Project key
+  (edited by the owner during R2), and review the Production project's free-plan pause (it was paused).
+- **Previous status:** ACTIONABLE NOW
 - **Why required:** GS-P02 could not prove that Preview is separated from the production Supabase
   project. The organisation has no Supabase branch and no second accessible non-production project,
   so a Preview submission could reach production data.
