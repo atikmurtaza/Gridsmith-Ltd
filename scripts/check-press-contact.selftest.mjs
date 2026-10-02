@@ -29,6 +29,7 @@
  * **A green line here means the contract rejects what it should, not that the flow works.**
  */
 import { pressLeadPayload, pressPayloadFrom } from '../lib/leads/pressLead.ts';
+import { leadSchema } from '../lib/leads/schema.ts';
 import {
   PRESS_SEGMENTS,
   pressSegmentOptions,
@@ -85,6 +86,15 @@ const parse = (entries) => pressLeadPayload.safeParse(pressPayloadFrom(form(entr
 const without = (entries, key) => entries.filter(([k]) => k !== key);
 const withValue = (entries, key, value) => [...without(entries, key), [key, value]];
 const issuePaths = (r) => r.error.issues.map((i) => i.path.join('.'));
+// The second contract the payload crosses, composed exactly as `pressAction.ts` composes it.
+// `GS-O010-R2`: each half passed its own checks while every author/memoir/production enquiry with
+// a blank optional field failed here, on a key no step renders — so the visitor saw a generic error.
+const submitted = (entries) => {
+  const p = parse(entries);
+  return p.success
+    ? leadSchema.safeParse({ division: 'press', lead_type: 'enquiry', full_name: 'A', email: 'a@example.com', payload: p.data })
+    : p;
+};
 
 const CASES = [
   // ---- The four VALID specimens. Without these the rejections below prove nothing: a union
@@ -114,6 +124,22 @@ const CASES = [
     run: () => parse(PRODUCTION),
     expect: (r) => r.success && r.data.workType === 'audiobook',
   },
+
+  // ---- The payload as submitted: through `leadSchema`, with every optional field left blank.
+  // AUTHOR, MEMOIR and PRODUCTION carry blank optionals (the link; `triedElsewhere`) and were red
+  // before the fix; BUSINESS and CONTENT have none and are the controls that make that red mean
+  // the blanks, not the composition.
+  ...[
+    ['author', AUTHOR],
+    ['business', BUSINESS],
+    ['memoir', MEMOIR],
+    ['content', CONTENT],
+    ['production', PRODUCTION],
+  ].map(([segment, entries]) => ({
+    name: `SUBMITTED ${segment} — blank optional fields still pass leadSchema`,
+    run: () => submitted(entries),
+    expect: (r) => r.success && r.data.payload.segment === segment,
+  })),
 
   // ---- ETH-07. The rule this whole flow exists under, broken three ways.
   {

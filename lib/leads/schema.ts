@@ -18,8 +18,11 @@ export const DIVISIONS = ['design', 'digital', 'press', 'unsure'] as const;
 export const LEAD_TYPES = ['enquiry', 'sample_request', 'estimate', 'assessment', 'newsletter'] as const;
 export const MAX_LEAD_PAYLOAD_BYTES = 16_384;
 
+// `.optional()`: a blank optional answer reaches here as an `undefined` key (`pressPayloadFrom`),
+// which `JSON.stringify` drops on insert. Without it every Press enquiry with a blank optional
+// field failed on a key no step renders (`GS-O010-R2`; `check:press:contact:selftest`).
 const leadPayloadSchema = z
-  .record(z.string().max(120), z.json())
+  .record(z.string().max(120), z.json().optional())
   .refine(
     (value) => new TextEncoder().encode(JSON.stringify(value)).length <= MAX_LEAD_PAYLOAD_BYTES,
     `Answers are too large (maximum ${MAX_LEAD_PAYLOAD_BYTES} bytes)`,
