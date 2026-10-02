@@ -39,6 +39,24 @@ not requested under `GS-D001` and `GS-D002`.
   Technical-group service without `professionalScopeConfirmed`. That flag may be set only once this
   action and `GS-X002` are closed.
 - **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
+- **Re-examined at `GS-PROD-003` (2 October 2026): still OPEN — classification C, external/broker
+  confirmation.** No confirmation is recorded. The Technical copy already excludes design,
+  calculation, certification and sign-off, so no copy change is proposed; the open question is
+  coverage. The three Technical services stay out of Production Sanity. `GS-PROD-003.md` §B.
+
+### `GS-O023` — Production service-role credential provenance
+
+- **Status:** ACTIONABLE NOW (raised at `GS-PROD-003`, 2 October 2026)
+- **Why required:** the Production `SUPABASE_SERVICE_ROLE_KEY` was edited during `GS-O010-R2`. It is
+  a Vercel `sensitive` value (unreadable) and no READY Production deployment runs the lead code, so
+  its project cannot be proved without a Production deployment. `GS-T004` is held on it.
+- **Exact action (one of):** (1) copy the service-role/secret key from Supabase project
+  **Gridsmith Project** (`dqiutgmxillhsbzgnlsx`) → Project Settings → API Keys, paste it into Vercel
+  `gridsmith-ltd` → Settings → Environment Variables → `SUPABASE_SERVICE_ROLE_KEY` (Production) →
+  Edit → Save, and confirm the source in chat; or (2) state explicitly that `GS-T004` may run with
+  the runtime proof deferred to the cutover smoke test.
+- **What it blocks:** applying migration 0004 to Production (`GS-T004`).
+- **Evidence required:** the owner's statement; never the value.
 
 ### `GS-O007` — Brand assets supplied; three small decisions remain
 
