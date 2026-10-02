@@ -64,6 +64,15 @@ Gridsmith Press is a **service provider**.
 
 ## Engineering/design rule
 
+> **Factual note for the solicitor — 2 October 2026 (`GS-PROD-003-R1`).** No clause has been changed.
+> Gridsmith currently intends to offer the limited Technical services (CAD drafting, engineering
+> drawing/schematic preparation, technical documentation, to the client's brief) **without** professional
+> indemnity insurance covering professional engineering responsibility; the owner deferred that cover.
+> The published services exclude design responsibility, calculations, certification, approval,
+> stamping, sign-off and responsible-designer duties. Please review §12 and §16 of `MSA-BUSINESS.md`, and
+> the PI-limit `[TK]` with the cap (UCTA s. 11(4)(b)), on that basis. Liability is not assumed to be
+> excludable. Register entry: `OWNER-ACTIONS.md` `GS-O003`.
+
 - Define exactly what Gridsmith is engaged to design/draw.
 - Do not describe preliminary/draft drawings as final.
 - State what information and dimensions came from the client.

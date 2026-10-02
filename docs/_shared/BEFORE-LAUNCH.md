@@ -229,7 +229,14 @@ on. The privacy policy says the registration is pending and publishes the number
 
 ### 4. Professional indemnity insurance — check the scope, not just the cover
 
-- **Status:** Blocks production
+> **Superseded 2 October 2026 (`GS-PROD-003-R1`).** The owner decided Gridsmith does not currently
+> carry PI cover for the Technical/CAD services and will not make it a launch prerequisite; `GS-O005`
+> is closed by that owner scope/risk decision and the insurance is deferred, non-blocking (`GS-O024`).
+> No PI cover is not a claim of no liability — the business terms go to the solicitor on that factual
+> basis (`GS-O003`, note in `OWNER-ACTIONS.md`; the "clause 8.1" below is historical numbering, the
+> live provisions are `MSA-BUSINESS.md` §12 and §16). The text below is kept as history.
+
+- **Status:** ~~Blocks production~~ superseded — does not block production
 - **Where:** your broker
 - **Your time:** one conversation
 - **Elapsed:** days to weeks

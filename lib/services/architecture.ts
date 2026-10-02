@@ -30,8 +30,11 @@ export type CapabilityGroup = {
   division: ServiceDivision;
   label: string;
   /**
-   * The group's services may not be published to production until professional scope and
-   * professional-indemnity cover are confirmed (`GS-O005`, `GS-X002`). `check:launch` enforces
+   * The group's services may not be published to production until a review confirms each record
+   * stays within the approved limited scope — drafting to a client's brief, with no design,
+   * calculation, certification, approval, stamping or sign-off responsibility (`GS-X002`).
+   * Insurance is not part of this gate: the owner deferred PI cover and closed `GS-O005` at
+   * `GS-PROD-003-R1`, which is not a statement about liability. `check:launch` enforces
    * it on the production dataset; the Studio warns everywhere else so development is not blocked.
    */
   professionalReview?: true;
@@ -93,7 +96,7 @@ export function professionalScopeRule(value: unknown, context?: RuleContext): tr
   if (!PROFESSIONAL_REVIEW_GROUPS.includes(String(doc.capabilityGroup))) return true;
   return value === true
     ? true
-    : 'Technical services cannot be published to production until professional scope and PI cover are confirmed (GS-O005, GS-X002)';
+    : 'Technical services cannot be published to production until a review confirms their limited professional scope (GS-X002)';
 }
 
 /**

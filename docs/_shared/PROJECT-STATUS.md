@@ -1,3 +1,5 @@
+> **GS-PROD-003-R1 (2 October 2026) — owner scope decision + `GS-T004` applied; PARTIAL PASS:** **`GS-O005` CLOSED BY OWNER SCOPE / RISK DECISION** — Gridsmith does not currently carry PI cover for the Technical/CAD services and will not make it a launch prerequisite (deferred, non-blocking `GS-O024`); scope stays limited (drafting/preparation to a client's brief; no design, calculation, approval, certification, stamping, sign-off or responsible-designer role); **not a claim of zero liability** and never advertised as insured or uninsured; contract wording stays with `GS-O003` (solicitor note added: `MSA-BUSINESS.md` §12/§16 and the PI-limit `[TK]` under UCTA s. 11(4)(b); no clause drafted). `professionalScopeConfirmed` now means only that `GS-X002` has confirmed limited scope — messages, schema description, manifest gate (`GS-X002`) and specs updated, old wording struck and registered (`check:struck` `GS-O005-PI-COVER-PUBLICATION-GATE`); `check:launch` selftest forbids PI/GS-O005 wording (proven red by isolated mutation). **`GS-X002` retained** (owner choice): a claims review independent of insurance, now the only gate on the 3 Technical services — **not migrated**, Production Sanity stays 47. Technical copy re-checked clean, unchanged. **`GS-T004` APPLIED:** `GS-O023` closed on owner provenance (key re-entered from `dqiutgmxillhsbzgnlsx`); verified `pg_dump` backup outside the repo (restore test 5 tables / 63 leads); `npm run migrate` applied exactly 0004 (`bd761ff9b9e4`); Production now equals Preview (RLS 5/5, 0 policies, 0 public grants, 18 lead constraints, identical definition hash); leads 63, row fingerprint unchanged; anon PostgREST 401; service-role write remains a cutover smoke-test proof. No deployment, alias, DNS, Sanity write, lead or form action; main untouched. Evidence: `docs/_shared/GS-PROD-003-R1.md`.
+
 > **GS-PROD-003 (2 October 2026) — Production database security parity + `GS-O005`; OWNER ACTION REQUIRED, no production write:** Against runtime `1542f508` (docs `7969dcbd`, no runtime change). **`GS-T004` not applied.** Migration 0004 (`20260911203125_gs_p01_security_hardening.sql`, runner SHA `bd761ff9b9e4`) read in full: drops the `leads` "anon insert only" policy, revokes `anon`/`authenticated` on the 5 tables + `events_id_seq`, enables ledger RLS, adds 17 validated CHECKs on `leads`, revokes future `postgres` defaults — security-only/non-destructive, no DML. Preview recomputed as the post-0004 state (RLS 5/5, 0 policies, 0 public grants, 18 `leads` constraints, 5 indexes, views `security_invoker`). Production read-only: ledger 0001–0003 (SHAs match), ledger RLS off, 1 policy, full `anon`/`authenticated` grants, 63 leads, **0 rows violating each of the 17 checks**; only 0004 pending. **Stopped on the credential condition:** Production `SUPABASE_SERVICE_ROLE_KEY` and `PROJECT_URL` are Vercel `sensitive` (write-only), and the only READY production deployment is the `3fbc518f` scaffold with no lead code, so no server-side proof exists without a Production deployment — new owner action `GS-O023` (re-enter from the Gridsmith Project, or explicitly defer proof to the cutover smoke test). No backup taken (not eligible). The removed anon policy has no consumer in any deployable build (server-only writer since `daf192f1`). **`GS-O005` = C, external/broker confirmation** (written PI coverage for CAD drafting, drawing preparation and technical documentation; `GS-X002` also gates `professionalScopeConfirmed`); Technical copy reviewed clean (explicit no-design/no-calculation/no-certification/no-sign-off exclusions), no copy change proposed; not migrated — Production Sanity stays 47 (Technical 0, legal 0). Supabase free-plan pause recorded only. No deployment, alias, DNS, env, Supabase/Sanity write, lead or form action; main untouched. Evidence: `docs/_shared/GS-PROD-003.md`.
 
 > **GS-O010-R2 (2 October 2026) — Preview isolation and end-to-end form proof; `GS-O010` CLOSED:** New free Supabase project `gridsmith-preview` (`qfgpwumvvtizeamkynes`, eu-west-1, Gridsmith Org) with the four repository migrations and the runner's ledger (RLS on all 5 tables, 0 policies, 0 anon/authenticated grants). Vercel Preview `PROJECT_URL`/`PUBLISHABLE_KEY` → that project; a Preview-only `SUPABASE_SERVICE_ROLE_KEY` (owner-entered); Preview `LEAD_NOTIFICATION_EMAIL` = `contact@gridsmith.uk` (owner choice); `DIRECT_CONNECTION_STRING`/`SANITY_API_WRITE_TOKEN` Production-only since R1. Production project `dqiutgmxillhsbzgnlsx` was **paused** (free plan) and was restored on owner approval for read-only snapshots — a cutover-readiness item. **Runtime defect found by the first valid Press submission and fixed at `1542f508`:** a blank optional answer (manuscript link, `triedElsewhere`) reached `leadSchema.payload` as `undefined`, which `z.json()` rejected on a key no step renders — every author/memoir/production enquiry without a link failed; payload values are now `z.json().optional()` (stored row unchanged, no visible UX change), and `check:press:contact:selftest` composes each segment through `leadSchema` (red on author/memoir/production before, business/content controls; 34/34 after). Proof through the SSO-protected, noindex Preview UI: one `/contact` and one `/press/contact` synthetic submission landed only in Preview (correct division/segment, no duplicate); owner confirmed exactly those two notifications; honeypot and invalid (URL in name) wrote and sent nothing; Production 63 leads before and after, 0 rows in the test window, 0 markers; synthetic rows deleted (Preview 0). Confirm the Production service-role value before cutover (edited by the owner this phase). No Production deployment, alias, DNS, Sanity write (47/0 legal/0 Technical) or main change. Evidence: `docs/_shared/GS-O010-R2.md`.
@@ -169,7 +171,9 @@ second immediately afterwards deleted nothing and wrote the same 119.
 GS-P06 and **GS-R001**, none of which made a Supabase call of any kind.
 
 Production still records migrations `0001`–`0003`; the GS-P01 security migration is **not applied**.
-`GS-T004` remains **REMEDIATED IN REPOSITORY / OPEN IN PRODUCTION / READY FOR CONTROLLED ACTIVATION**.
+~~`GS-T004` remains **REMEDIATED IN REPOSITORY / OPEN IN PRODUCTION / READY FOR CONTROLLED ACTIVATION**.~~
+**Superseded 2 October 2026 (`GS-PROD-003-R1`): `GS-T004` APPLIED IN PRODUCTION** — ledger 0001–0004
+(`bd761ff9b9e4`), structure equal to Preview, 63 leads unchanged (row fingerprint equal before/after).
 GS-P03 made no Supabase call. The lead schema, RLS and migrations are unchanged; the Server Action
 additionally maps the already-existing, already-bounded `service_slug` column.
 
@@ -203,7 +207,7 @@ was submitted.~~ Superseded 2 October 2026: Preview writes only to `gridsmith-pr
 | Control | State |
 |---|---|
 | Production readiness | **NOT READY** — distinct from the RC status, which is **TECHNICALLY PASS** |
-| `GS-T004` live remediation | **OPEN — PRODUCTION UNCHANGED.** Re-verified eligible at `GS-PROD-003` (only 0004 pending, 63/63 compatible); held on `GS-O023` |
+| `GS-T004` live remediation | **APPLIED — `GS-PROD-003-R1`, 2 Oct 2026.** 0004 via `npm run migrate` after a verified backup; RLS 5/5, 0 policies, 0 `anon`/`authenticated` grants, 18 lead constraints; leads 63 unchanged. Service-role runtime write proven only at the cutover smoke test |
 | Production deployment authorisation | **NOT AUTHORISED** |
 | `gridsmith.uk` cutover | **PROHIBITED until a dedicated production-release phase** |
 | Latest completed phase | `GS-R001` when its commit and push are complete |
@@ -221,10 +225,10 @@ was submitted.~~ Superseded 2 October 2026: Preview writes only to `gridsmith-pr
 ### Owner blockers
 
 - `GS-O003` — complete solicitor review and resolve legal launch actions.
-- `GS-O005` — confirm engineering/CAD professional-indemnity scope (now gate-enforced). Still
-  external/broker at `GS-PROD-003`.
-- `GS-O023` — confirm the Production service-role credential's provenance, or defer its proof to
-  the cutover smoke test explicitly; holds `GS-T004` (`GS-PROD-003`).
+- ~~`GS-O005` — confirm engineering/CAD professional-indemnity scope.~~ **Closed by owner
+  scope/risk decision** at `GS-PROD-003-R1`; PI cover deferred, non-blocking (`GS-O024`). Not a claim
+  of zero liability (`GS-O003`).
+- ~~`GS-O023`~~ — closed at `GS-PROD-003-R1` (owner provenance stated).
 - `GS-O007` — **brand-asset limb CLOSED at GS-R001-R.** The owner supplied the logo; it is
   verified, integrated and gate-asserted. Three narrow decisions remain: a favicon (there has
   never been one), an Open Graph card composition, and the one redirect row — now cutover
@@ -235,7 +239,7 @@ was submitted.~~ Superseded 2 October 2026: Preview writes only to `gridsmith-pr
 
 ### Technical blockers
 
-- `GS-T004` — controlled production activation of the GS-P01 security migration.
+- ~~`GS-T004` — controlled production activation of the GS-P01 security migration.~~ Applied at `GS-PROD-003-R1`.
 - `GS-T005` — production Sanity dataset/content path incomplete; seed content must never be promoted.
 - Notification reconciliation and live RLS-drift scheduling/credential verification remain later
   operational work.
@@ -328,6 +332,8 @@ was submitted.~~ Superseded 2 October 2026: Preview writes only to `gridsmith-pr
 
 - `GS-X001` — solicitor review of the legal instruments and the impact of `GS-D001`/`GS-D002`.
 - `GS-X002` — professional review appropriate to engineering/CAD claims and the drawing matrix.
+  **Retained at `GS-PROD-003-R1`** as the only gate on the three Technical services (claims review,
+  independent of insurance; the drawing-matrix limb has no subject). `OWNER-ACTIONS.md`.
 
 ### Human-acceptance blockers
 

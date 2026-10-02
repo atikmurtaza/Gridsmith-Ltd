@@ -12,7 +12,7 @@
  *
  * Every document gets a **production id** (`service-design-<slug>`, `grouppage-about`, …): no
  * `seed-` prefix, no dot, `isSeed: false`, references rewritten to the production ids. Excluded,
- * each with its gate in the manifest: the Technical services (`GS-O005`/`GS-X002`; the reference
+ * each with its gate in the manifest: the Technical services (`GS-X002`; the reference
  * to one from another service is dropped rather than left dangling), every `legalDocument`
  * (`GS-O003` — the solicitor-reviewed text replaces `seed-legal.mjs`, so it is not this payload),
  * and the types that never migrate (`faq`, `teamMember`, `post` briefs, `testimonial`).
@@ -68,7 +68,7 @@ export function buildPayload() {
     const id = productionId(service._id);
     const base = { type: 'service', id, slug: service.slug.current, division: service.division, group: service.capabilityGroup, source: 'scripts/service-content.mjs' };
     if (technicalIds.has(service._id)) {
-      entries.push({ ...base, gate: 'GS-O005/GS-X002', eligible: false, reason: 'Technical group: professional scope and PI cover unconfirmed' });
+      entries.push({ ...base, gate: 'GS-X002', eligible: false, reason: 'Technical group: limited professional scope not yet confirmed by review' });
       continue;
     }
     const related = (service.relatedServices ?? []).filter((r) => !technicalIds.has(r._ref));
@@ -114,7 +114,7 @@ export function preflightProblems(docs) {
     if (d._id.includes('.')) problems.push(`${d._id}: dotted id (private to unauthenticated reads)`);
     if (d.isSeed !== false && d._type !== 'companyDetails') problems.push(`${d._id}: isSeed is ${d.isSeed}, must be false`);
     if (d._type === 'service' && PROFESSIONAL_REVIEW_GROUPS.includes(d.capabilityGroup)) {
-      problems.push(`${d._id}: Technical service while GS-O005 is open`);
+      problems.push(`${d._id}: Technical service while GS-X002 is open`);
     }
     if (d._type === 'legalDocument') problems.push(`${d._id}: legal document while GS-O003 is open`);
     for (const { _ref } of d.relatedServices ?? []) {

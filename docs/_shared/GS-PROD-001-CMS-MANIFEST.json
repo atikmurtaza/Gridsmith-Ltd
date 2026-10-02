@@ -166,9 +166,9 @@
       "division": "design",
       "group": "technical",
       "source": "scripts/service-content.mjs",
-      "gate": "GS-O005/GS-X002",
+      "gate": "GS-X002",
       "eligible": false,
-      "reason": "Technical group: professional scope and PI cover unconfirmed"
+      "reason": "Technical group: limited professional scope not yet confirmed by review"
     },
     {
       "type": "service",
@@ -177,9 +177,9 @@
       "division": "design",
       "group": "technical",
       "source": "scripts/service-content.mjs",
-      "gate": "GS-O005/GS-X002",
+      "gate": "GS-X002",
       "eligible": false,
-      "reason": "Technical group: professional scope and PI cover unconfirmed"
+      "reason": "Technical group: limited professional scope not yet confirmed by review"
     },
     {
       "type": "service",
@@ -188,9 +188,9 @@
       "division": "design",
       "group": "technical",
       "source": "scripts/service-content.mjs",
-      "gate": "GS-O005/GS-X002",
+      "gate": "GS-X002",
       "eligible": false,
-      "reason": "Technical group: professional scope and PI cover unconfirmed"
+      "reason": "Technical group: limited professional scope not yet confirmed by review"
     },
     {
       "type": "service",

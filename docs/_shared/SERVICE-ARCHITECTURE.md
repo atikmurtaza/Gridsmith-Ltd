@@ -249,8 +249,14 @@ will be shared.
   - the Studio shows a **warning**, so development and testing are not blocked;
   - `check:launch` (including its `--build` prebuild mode) counts published, unconfirmed technical
     services and **fails on the production dataset**. Committed specimens prove each limb.
-- **Outstanding:** `GS-O005` (PI scope) and `GS-X002` (professional review). Setting the flag
-  without that written evidence defeats the control; its field description says so.
+- ~~**Outstanding:** `GS-O005` (PI scope) and `GS-X002` (professional review).~~ **Superseded at
+  `GS-PROD-003-R1` (2 October 2026).** `GS-O005` closed by owner scope/risk decision: Gridsmith does
+  not currently carry PI cover for these services and has chosen not to make it a launch
+  prerequisite (deferred, `GS-O024`). That is not a claim of zero liability; contract wording stays
+  with `GS-O003`. The flag now means one thing — a review confirms the record stays inside the
+  claim ceiling above.
+- **Outstanding:** `GS-X002` (professional review of the Technical claims). Setting the flag
+  without that review defeats the control; its field description says so.
 
 ## 9. Pricing reconciliation
 

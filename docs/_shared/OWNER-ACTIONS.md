@@ -26,37 +26,38 @@ not requested under `GS-D001` and `GS-D002`.
   actions without asking the coding agent to invent clauses.
 - **What it blocks:** final public legal copy and consumer/commercial flows.
 - **Evidence required:** dated written review and a closed decision list.
+- **Technical services — factual note for the solicitor (added at `GS-PROD-003-R1`, 2 October
+  2026; no clause drafted).** Gridsmith intends to offer limited Technical services — CAD drafting,
+  engineering drawing/schematic preparation and technical documentation, to the client's brief —
+  **without professional indemnity insurance covering professional engineering responsibility**
+  (`GS-O005` closed by owner decision; `GS-O024` deferred). The services expressly exclude design
+  responsibility, calculations, certification, approval, stamping, sign-off and responsible-designer
+  duties (published copy: `scripts/service-content.mjs`). Please review the business terms on that
+  basis, in particular: `MSA-BUSINESS.md` §12 (written for "engineering, technical, CAD or
+  construction-related drawings **or design services**", with design/certification/sign-off available
+  "where expressly stated in the Scope" — wider than the published scope); §16 liability; the open
+  PI-limit `[TK]` and its link to the cap under UCTA s. 11(4)(b) (`07-STATE-REPORT.md` §2.2,
+  `02-CITATION-LEDGER.md`). The historical "Client Terms clause 8.1" reference (`BEFORE-LAUNCH.md`
+  §4) has no current counterpart under that number; §12 and §16 are the live provisions. Liability is
+  not assumed to be excludable.
 
-### `GS-O005` — Confirm professional-indemnity scope for engineering/CAD work
+### `GS-X002` — Professional review of the Technical claims
 
-- **Status:** ACTIONABLE NOW
-- **Why required:** engineering drawing claims and scope controls require a verified insurance and
-  professional-review position.
-- **Exact action:** obtain written broker/insurer confirmation of whether the policy covers the
-  intended engineering/CAD services, exclusions and limits.
-- **What it blocks:** affected Design claims and any higher-risk engineering launch content. Since
-  `GS-P03` this is enforced: `check:launch` refuses a production dataset containing a published
-  Technical-group service without `professionalScopeConfirmed`. That flag may be set only once this
-  action and `GS-X002` are closed.
-- **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
-- **Re-examined at `GS-PROD-003` (2 October 2026): still OPEN — classification C, external/broker
-  confirmation.** No confirmation is recorded. The Technical copy already excludes design,
-  calculation, certification and sign-off, so no copy change is proposed; the open question is
-  coverage. The three Technical services stay out of Production Sanity. `GS-PROD-003.md` §B.
-
-### `GS-O023` — Production service-role credential provenance
-
-- **Status:** ACTIONABLE NOW (raised at `GS-PROD-003`, 2 October 2026)
-- **Why required:** the Production `SUPABASE_SERVICE_ROLE_KEY` was edited during `GS-O010-R2`. It is
-  a Vercel `sensitive` value (unreadable) and no READY Production deployment runs the lead code, so
-  its project cannot be proved without a Production deployment. `GS-T004` is held on it.
-- **Exact action (one of):** (1) copy the service-role/secret key from Supabase project
-  **Gridsmith Project** (`dqiutgmxillhsbzgnlsx`) → Project Settings → API Keys, paste it into Vercel
-  `gridsmith-ltd` → Settings → Environment Variables → `SUPABASE_SERVICE_ROLE_KEY` (Production) →
-  Edit → Save, and confirm the source in chat; or (2) state explicitly that `GS-T004` may run with
-  the runtime proof deferred to the cutover smoke test.
-- **What it blocks:** applying migration 0004 to Production (`GS-T004`).
-- **Evidence required:** the owner's statement; never the value.
+- **Status:** ACTIONABLE NOW — **the only remaining gate on the three Technical services**
+  (re-examined and retained at `GS-PROD-003-R1`, 2 October 2026, owner choice).
+- **Origin:** `GS-P00` (11 September 2026): *"professional review appropriate to engineering/CAD
+  claims and the drawing matrix."* It is a review of what the public copy claims — **not** an
+  insurance question and not a licence or competence attestation; `GS-O005` closing does not touch it.
+- **Current subject:** the three Technical records (`cad-drafting`, `engineering-drawings`,
+  `technical-documentation`). The drawing-matrix limb has no subject: no drawing matrix was built
+  and no standards code is published.
+- **Exact action:** a suitably qualified professional reviews those three records in writing against
+  the approved limited scope (drafting/preparation to a client's brief; no design, calculation,
+  certification, approval, stamping, sign-off or responsible-designer role) and confirms they make
+  no misleading engineering claim. Copy changes, if any, come back for owner approval.
+- **What it blocks:** setting `professionalScopeConfirmed` and migrating the three services to
+  Production Sanity (`check:launch`, `migrate-production-cms.mjs` gate `GS-X002`).
+- **Evidence required:** the dated written review (summary in the repository, not personal data).
 
 ### `GS-O007` — Brand assets supplied; three small decisions remain
 
@@ -207,7 +208,35 @@ not requested under `GS-D001` and `GS-D002`.
   (`GS-D002`, non-negotiable #2).
 - **Digital** — deliberately not researched. Owner: *"for digital i will tell later."*
 
+## DEFERRED — NON-BLOCKING
+
+- `GS-O024` — **Professional indemnity insurance for the Technical/CAD services — DEFERRED BY
+  OWNER** (2 October 2026, `GS-PROD-003-R1`). Not required for cutover, no purchase scheduled, no
+  deadline. It becomes a requirement only if the `GS-O003` legal review advises so. When obtained,
+  record insurer and limit in `companyDetails` (`piInsurer`, `piCoverLimit`) only if the owner
+  decides to publish them.
+
 ## COMPLETED
+
+- `GS-O005` — **CLOSED BY OWNER SCOPE / RISK DECISION, 2 October 2026 (`GS-PROD-003-R1`).**
+  The expected resolution (written broker/insurer confirmation, from `Q-M4` / `L-08`) is
+  **superseded**. Owner decision, recorded as given: Gridsmith Ltd does **not** currently carry
+  professional indemnity insurance covering the Technical/CAD services, and has **chosen not to make
+  obtaining it a launch prerequisite**; it may be reconsidered later (`GS-O024`). The service scope
+  stays deliberately limited — CAD drafting, engineering drawing/schematic preparation and technical
+  documentation to a client's brief, with no engineering design responsibility, calculations,
+  regulatory approval, certification, stamping, professional sign-off or responsible-designer /
+  responsible-engineer role. **This is not a claim of zero legal liability**, it is never published
+  as "no liability" or as "uninsured", and contractual wording stays with `GS-O003`. No insurer,
+  policy, limit or coverage was recorded or invented. Gate consequence: `professionalScopeConfirmed`
+  no longer means PI cover — it means only that `GS-X002` has confirmed the record's limited scope;
+  the obsolete wording is struck and registered (`check:struck`
+  `GS-O005-PI-COVER-PUBLICATION-GATE`). Superseded entry kept below.
+- `GS-O023` — **CLOSED, 2 October 2026 (`GS-PROD-003-R1`).** The owner re-entered the Production
+  `SUPABASE_SERVICE_ROLE_KEY` (Vercel `updatedAt` 1790944740550, ~12:39 UTC) and **stated in chat
+  that the value was copied from Gridsmith Project `dqiutgmxillhsbzgnlsx`**. Owner provenance, not a
+  runtime proof — the first Production lead at the cutover smoke test is that proof. `GS-T004`
+  then applied.
 
 - `GS-O020` — **CLOSED — PUBLISH, 18 September 2026 (owner decision, `GS-R001-M` R1).** The new
   Freelancer review — **James, 5 / 5, 17 September 2026, Illustration** — is approved for
@@ -473,6 +502,41 @@ not requested under `GS-D001` and `GS-D002`.
 - Single-launch policy retained: Master, Design, Digital and Press launch together.
 
 ## SUPERSEDED
+
+> Kept verbatim at `GS-PROD-003-R1`; the current entries are under COMPLETED and DEFERRED.
+
+#### ~~`GS-O005` — Confirm professional-indemnity scope for engineering/CAD work~~ superseded
+
+- **Status:** ACTIONABLE NOW
+- **Why required:** engineering drawing claims and scope controls require a verified insurance and
+  professional-review position.
+- **Exact action:** obtain written broker/insurer confirmation of whether the policy covers the
+  intended engineering/CAD services, exclusions and limits.
+- **What it blocks:** affected Design claims and any higher-risk engineering launch content. Since
+  `GS-P03` this is enforced: `check:launch` refuses a production dataset containing a published
+  Technical-group service without `professionalScopeConfirmed`. That flag may be set only once this
+  action and `GS-X002` are closed.
+- **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
+- **Re-examined at `GS-PROD-003` (2 October 2026): still OPEN — classification C, external/broker
+  confirmation.** No confirmation is recorded. The Technical copy already excludes design,
+  calculation, certification and sign-off, so no copy change is proposed; the open question is
+  coverage. The three Technical services stay out of Production Sanity. `GS-PROD-003.md` §B.
+
+#### ~~`GS-O023` — Production service-role credential provenance~~ superseded
+
+- **Status:** ACTIONABLE NOW (raised at `GS-PROD-003`, 2 October 2026)
+- **Why required:** the Production `SUPABASE_SERVICE_ROLE_KEY` was edited during `GS-O010-R2`. It is
+  a Vercel `sensitive` value (unreadable) and no READY Production deployment runs the lead code, so
+  its project cannot be proved without a Production deployment. `GS-T004` is held on it.
+- **Exact action (one of):** (1) copy the service-role/secret key from Supabase project
+  **Gridsmith Project** (`dqiutgmxillhsbzgnlsx`) → Project Settings → API Keys, paste it into Vercel
+  `gridsmith-ltd` → Settings → Environment Variables → `SUPABASE_SERVICE_ROLE_KEY` (Production) →
+  Edit → Save, and confirm the source in chat; or (2) state explicitly that `GS-T004` may run with
+  the runtime proof deferred to the cutover smoke test.
+- **What it blocks:** applying migration 0004 to Production (`GS-T004`).
+- **Evidence required:** the owner's statement; never the value.
+
+
 
 - Public price collection as a launch dependency: Design prices, Design Desk prices, Digital base
   bands/calibration prices, Press packages, assessments, revisions and marketing-package prices.

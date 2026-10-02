@@ -125,11 +125,12 @@ export function evaluate({
   }
 
   /**
-   * **The technical publication gate — `GS-P03`, for `GS-O005` / `GS-X002`.**
+   * **The technical publication gate — `GS-P03`, for `GS-X002`.** Until `GS-PROD-003-R1` it also
+   * stood for `GS-O005` (PI cover); the owner deferred that cover and closed `GS-O005`, so the flag
+   * now means one thing — the record is reviewed as inside the approved limited scope.
    *
    * CAD drafting and engineering drawings are real Design capabilities whose public description
-   * could be read as a claim of professional engineering responsibility that neither the owner
-   * nor an insurer has confirmed. The Studio only *warns* (development must stay testable); this
+   * could be read as a claim of professional engineering responsibility Gridsmith does not take on. The Studio only *warns* (development must stay testable); this
    * is where a published, unconfirmed technical service is refused on the live dataset.
    *
    * Same three-way shape as the seed count, for the same reason: an unmeasured count and a
@@ -153,7 +154,7 @@ export function evaluate({
     problems.push(
       `${unreviewedTechnical} published technical service(s) in the live dataset without ` +
         'professionalScopeConfirmed. Engineering and CAD services may not be published until ' +
-        'professional scope and PI cover are confirmed (GS-O005, GS-X002)',
+        'a review confirms their limited professional scope (GS-X002)',
     );
   }
 

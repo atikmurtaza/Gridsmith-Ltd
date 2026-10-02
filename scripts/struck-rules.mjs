@@ -429,6 +429,21 @@ export const STRUCK_RULES = [
       'hairline between rows and a gold rule that draws on hover. No box, no fill, no division ' +
       'colour.',
   },
+  {
+    id: 'GS-O005-PI-COVER-PUBLICATION-GATE',
+    // Both on one line: the insurance term and the gating verb. "PI" alone would hit the
+    // deferral record, which is the surviving statement.
+    patterns: [/\b(PI (cover|scope)|professional[- ]indemnity)\b/i, /\b(until|blocked on|gated on|requires?)\b/i],
+    why:
+      'Struck by `GS-PROD-003-R1`, 2 October 2026. The owner decided Gridsmith does not carry PI ' +
+      'cover for the Technical/CAD services and will not make obtaining it a launch prerequisite; ' +
+      '`GS-O005` closed on that owner scope/risk decision. That is not a claim of zero liability, ' +
+      'and the contractual position stays with the solicitor (`GS-O003`).',
+    where:
+      'The Technical publication gate survives with one meaning: `professionalScopeConfirmed` is ' +
+      'set only when a review confirms the record stays inside the approved limited scope ' +
+      '(`GS-X002`). PI cover itself is the non-blocking deferred item `GS-O024`.',
+  },
 ];
 
 /** The standing-spec corpus. Globbed by the runner; listed here so the scope is reviewable. */

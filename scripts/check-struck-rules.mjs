@@ -89,6 +89,8 @@ const base = () => [
   { file: 'rule-18-subject.md', text: '~~45 FAQs, 9 posts, 4 team~~ - superseded at GS-R001-R, the nine posts are editorial briefs\n' },
   // `GS-R001-M`, 18 Sept 2026. One annotated subject, same obligation.
   { file: 'rule-19-subject.md', text: '| 2 | **Division routing** — ~~three cards~~ superseded at GS-R001-M |\n' },
+  // `GS-PROD-003-R1`, 2 Oct 2026. One annotated subject, same obligation.
+  { file: 'rule-20-subject.md', text: '~~Blocked on GS-O005 (PI scope)~~ superseded at GS-PROD-003-R1\n' },
 ];
 
 const SPECIMENS = [
@@ -115,11 +117,11 @@ const SPECIMENS = [
   {
     name: 'BRANCH 4 — zero subject: corpus below the floor',
     files: base().slice(MIN_FILES),
-    // 13 -> 16 at `GS-O004`, 16 -> 18 at `GS-R001-R`, 18 -> 19 at `GS-R001-M`: each move adds one subject file per
+    // 13 -> 16 at `GS-O004`, 16 -> 18 at `GS-R001-R`, 18 -> 19 at `GS-R001-M`, 19 -> 20 at `GS-PROD-003-R1`: each move adds one subject file per
     // new rule, and the literal below moves with it. The literal
     // is the point: it must be changed deliberately when the corpus changes, which is how this
     // case proves the count is counted rather than printed.
-    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 19 document(s)')),
+    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 20 document(s)')),
   },
   // `GS-P03` — one specimen per new rule, plus the surviving statement none of them may catch.
   {
@@ -303,6 +305,18 @@ const SPECIMENS = [
     // which is about display and never names the field.
     name: 'NOT A SUBJECT - the surviving no-VAT-exclusive-price display rule',
     files: [...base(), { file: 'x.md', text: 'No price may be presented as VAT-exclusive, and no VAT number may be published.\n' }],
+    expect: (r) => r.ok,
+  },
+  {
+    name: 'BRANCH 20 — the PI-cover publication gate restated, unannotated',
+    files: [...base(), { file: 'design/PROJECT-TRACKER.md', text: '| Technical | Blocked on GS-O005 (PI scope) and GS-X002 |\n' }],
+    expect: (r) =>
+      !r.ok && r.problems.some((p) => p.includes('GS-O005-PI-COVER-PUBLICATION-GATE STANDS at design/PROJECT-TRACKER.md:1')),
+  },
+  {
+    // The surviving statement: PI cover is recorded as deferred and blocks nothing.
+    name: 'NOT A SUBJECT - the PI-cover deferral record',
+    files: [...base(), { file: 'x.md', text: 'PI cover for Technical/CAD services: deferred by the owner, non-blocking.\n' }],
     expect: (r) => r.ok,
   },
   {
