@@ -72,6 +72,9 @@ Gridsmith Press is a **service provider**.
 > stamping, sign-off and responsible-designer duties. Please review §12 and §16 of `MSA-BUSINESS.md`, and
 > the PI-limit `[TK]` with the cap (UCTA s. 11(4)(b)), on that basis. Liability is not assumed to be
 > excludable. Register entry: `OWNER-ACTIONS.md` `GS-O003`.
+> Explicitly: PI cover is not an owner-imposed launch prerequisite; this is not a claim of zero
+> liability; §12 (written for "drawings or design services", with certification and sign-off
+> available where a Scope states them) is broader than the intended public scope.
 
 - Define exactly what Gridsmith is engaged to design/draw.
 - Do not describe preliminary/draft drawings as final.

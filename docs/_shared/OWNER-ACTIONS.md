@@ -40,6 +40,12 @@ not requested under `GS-D001` and `GS-D002`.
   `02-CITATION-LEDGER.md`). The historical "Client Terms clause 8.1" reference (`BEFORE-LAUNCH.md`
   §4) has no current counterpart under that number; §12 and §16 are the live provisions. Liability is
   not assumed to be excludable.
+  **Stated explicitly at `GS-PROD-004A`:** obtaining PI cover is **not** an owner-imposed launch
+  prerequisite; this is **not** a claim that Gridsmith has zero liability; and `MSA-BUSINESS.md` §12 is
+  **broader** than the intended public scope. One public sentence on `/design` currently says
+  Technical services "remain subject to professional-scope and insurance confirmation" — the owner is
+  considering removing "and insurance" (`GS-PROD-004A`); please flag if the public site should say
+  anything about insurance.
 
 ### `GS-X002` — Professional review of the Technical claims
 
@@ -58,6 +64,10 @@ not requested under `GS-D001` and `GS-D002`.
 - **What it blocks:** setting `professionalScopeConfirmed` and migrating the three services to
   Production Sanity (`check:launch`, `migrate-production-cms.mjs` gate `GS-X002`).
 - **Evidence required:** the dated written review (summary in the repository, not personal data).
+- **Review pack ready (`GS-PROD-004A`):** `docs/_shared/GS-X002-REVIEW-PACK.md` — self-contained brief
+  with the exact public copy (76 strings checked verbatim against the publication source), the
+  boundaries, questions A–E and the closure evidence. Send it as is; no legal or insurance review is
+  asked of the reviewer.
 
 ### `GS-O007` — Brand assets supplied; three small decisions remain
 
@@ -153,6 +163,16 @@ not requested under `GS-D001` and `GS-D002`.
 - **Evidence required:** TikTok's written permission covering this use (and, if TikTok supplies
   one, the official asset to replace the current simple-icons path). Without it, the mark must be
   removed or replaced by a text link before cutover. Agents must not accept third-party terms.
+- **Resolution prepared at `GS-PROD-004A` (2 October 2026) — awaiting owner visual approval.** No
+  permission is on record, so path B: the TikTok entry is removed from
+  `components/chrome/platformMarks.ts` (one entry deleted, provenance row rewritten). Both consumers
+  already have a no-mark fallback: the footer row prints the plain word **"TikTok"** in footer link
+  ink (16px, 57×44 target, 13.26:1 effective contrast); the `/about` Platforms row keeps its visible
+  "TikTok" label and handle with an empty icon slot. Link, destination and accessible name are
+  unchanged; the other seven marks are untouched; no overflow at 375px (4×2 grid). The change is
+  **local and uncommitted** (visually meaningful in the frozen footer). **Owner action:** approve or
+  reject the text link. Approval → commit with `check:axe`/`check:responsive` on the footer; this
+  action then closes without TikTok's permission. Permission arriving later can restore the mark.
 
 ### `GS-O022` — Official Freelancer brand asset
 
