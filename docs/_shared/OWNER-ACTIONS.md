@@ -105,6 +105,13 @@ not requested under `GS-D001` and `GS-D002`.
   `RESEND_API_KEY` and `LEAD_NOTIFICATION_*` (live mail possible); `SUPABASE_SERVICE_ROLE_KEY` is
   Production-only; `DIRECT_CONNECTION_STRING` and `SANITY_API_WRITE_TOKEN` are shared
   Preview+Production records. Still not isolated — no valid Preview submission was made.
+- **GS-O010-R1 (2 October 2026):** `DIRECT_CONNECTION_STRING` and `SANITY_API_WRITE_TOKEN` are now
+  **Production-only** (Preview scope removed; runtime never reads either). Preview holds no
+  Production write credential and no service-role key, so a Preview submission currently errors and
+  writes nothing. **Stopped:** the Supabase connector now sees only the unrelated "Food"
+  organisation, not the Gridsmith project's, and Preview mail has no designated test sink. Owner
+  action: provision the isolated project in the Gridsmith organisation (or reconnect the connector
+  to it) and designate a Preview test inbox/key. `docs/_shared/GS-O010-R1.md`.
 - **Evidence required:** non-production project reference and lifecycle state, secure Vercel
   presence/scope confirmation, and an authorised synthetic Preview submission proved to land only in
   that isolated target. If provisioning would add cost, obtain explicit approval before enabling it.
