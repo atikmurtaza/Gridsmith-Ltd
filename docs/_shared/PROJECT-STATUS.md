@@ -1,3 +1,5 @@
+> **GS-PROD-004B (2 October 2026) — TikTok mark retained by owner decision; `/design` scope note corrected:** **`GS-O021` CLOSED BY OWNER DECISION** — the owner reviewed the brand-use concern and chose to keep the TikTok mark (owner-accepted risk); **no written TikTok permission is recorded or claimed**; the `GS-PROD-004A` text-link prototype was rejected and discarded, so the TikTok implementation is byte-identical to the approved baseline (served build: footer and `/about` marks, link and accessible name unchanged). `/design` Technical note: "…professional-scope ~~and insurance~~ confirmation." (owner-approved two-word deletion; `check:design:scene` PASS, scope note 6.69:1). `e6f5691e`'s CI failure was `/press` mobile TBT 207.7ms vs 200 on a docs-only commit, with every route uniformly slower in that run than in `7f6472b2`'s (runner variance); the job was re-run, no gate altered. `GS-X002` OPEN (Technical only), `GS-O024` deferred, `GS-O003` OPEN. No production write; main untouched. Evidence: `docs/_shared/GS-PROD-004B.md`.
+
 > **GS-PROD-004A (2 October 2026) — owner-gate reduction + `GS-X002` review pack; OWNER ACTION REQUIRED, no production write:** Baseline `7f6472b2` CI `37010155414` and `028bd1d5` CI `37006558824` both success 48/48. **`GS-O021`:** no TikTok permission on record, so the fallback the record itself names is prepared **locally and uncommitted** — the `TikTok` entry removed from `platformMarks.ts`; the footer shows the plain word "TikTok" (same link and accessible name, 13.26:1, no 375px overflow) and `/about` keeps its label with an empty icon slot; awaits owner visual approval. **`GS-X002`:** self-contained reviewer brief `docs/_shared/GS-X002-REVIEW-PACK.md` (exact public copy, 76 strings verified verbatim; boundaries; questions A–E; closure evidence; no legal or insurance review); stays OPEN. **Finding:** `/design`'s Technical note still says services "remain subject to professional-scope and insurance confirmation" — proposed deletion of "and insurance" awaits owner copy approval. **`GS-O003` handoff:** three facts made explicit (insurance not a launch prerequisite; not a claim of zero liability; MSA §12 broader than the public scope). Blocker register reconciled in `PROJECT-STATUS.md`. Main, deployment, DNS, Sanity and Supabase untouched. Evidence: `docs/_shared/GS-PROD-004A.md`.
 
 > **GS-PROD-003-R1 (2 October 2026) — owner scope decision + `GS-T004` applied; PARTIAL PASS:** **`GS-O005` CLOSED BY OWNER SCOPE / RISK DECISION** — Gridsmith does not currently carry PI cover for the Technical/CAD services and will not make it a launch prerequisite (deferred, non-blocking `GS-O024`); scope stays limited (drafting/preparation to a client's brief; no design, calculation, approval, certification, stamping, sign-off or responsible-designer role); **not a claim of zero liability** and never advertised as insured or uninsured; contract wording stays with `GS-O003` (solicitor note added: `MSA-BUSINESS.md` §12/§16 and the PI-limit `[TK]` under UCTA s. 11(4)(b); no clause drafted). `professionalScopeConfirmed` now means only that `GS-X002` has confirmed limited scope — messages, schema description, manifest gate (`GS-X002`) and specs updated, old wording struck and registered (`check:struck` `GS-O005-PI-COVER-PUBLICATION-GATE`); `check:launch` selftest forbids PI/GS-O005 wording (proven red by isolated mutation). **`GS-X002` retained** (owner choice): a claims review independent of insurance, now the only gate on the 3 Technical services — **not migrated**, Production Sanity stays 47. Technical copy re-checked clean, unchanged. **`GS-T004` APPLIED:** `GS-O023` closed on owner provenance (key re-entered from `dqiutgmxillhsbzgnlsx`); verified `pg_dump` backup outside the repo (restore test 5 tables / 63 leads); `npm run migrate` applied exactly 0004 (`bd761ff9b9e4`); Production now equals Preview (RLS 5/5, 0 policies, 0 public grants, 18 lead constraints, identical definition hash); leads 63, row fingerprint unchanged; anon PostgREST 401; service-role write remains a cutover smoke-test proof. No deployment, alias, DNS, Sanity write, lead or form action; main untouched. Evidence: `docs/_shared/GS-PROD-003-R1.md`.
@@ -224,22 +226,23 @@ was submitted.~~ Superseded 2 October 2026: Preview writes only to `gridsmith-pr
 
 ## Active blockers
 
-> **Current register — reconciled at `GS-PROD-004A` (2 October 2026). This table is authoritative;
+> **Current register — reconciled at `GS-PROD-004A`, updated at `GS-PROD-004B` (2 October 2026). This table is authoritative;
 > the lists beneath it are history and are superseded where they differ.**
 >
 > | Class | Item | What closes it |
 > |---|---|---|
 > | **Blocking full cutover** | `GS-O003` — solicitor review of the legal set (legal content not in Production) | dated written review; legal migration |
-> | | `GS-O021` — TikTok mark: text-link replacement prepared locally, **awaiting owner visual approval** | owner approval, then commit; or TikTok's written permission |
-> | | `/design` Technical note says "…professional-scope **and insurance** confirmation" — inaccurate since `GS-O005` closed | owner copy approval to delete "and insurance", then `check:design:scene` |
 > | | Firewall / cutover controls (Vercel Firewall rule, `NEXT_PUBLIC_SITE_URL`, domain, `GS-T005` production build) | cutover phase |
 > | **Blocking Technical services only** | `GS-X002` — professional review of the three Technical records | written review per `GS-X002-REVIEW-PACK.md` §6 |
 > | **Cutover verification** | Production form smoke test (also proves the Production service-role key) | one controlled submission at cutover |
 > | | Supabase free-plan pause decision (Production was paused once) | owner decision: plan or accepted risk |
-> | **Deferred** | `GS-O024` — PI insurance for Technical/CAD | non-blocking unless `GS-O003` advice says otherwise |
+> | **Deferred / accepted decisions** | `GS-O024` — PI insurance for Technical/CAD | non-blocking unless `GS-O003` advice says otherwise |
+> | | `GS-O021` — TikTok mark retained by owner decision; **no written TikTok permission recorded** (owner-accepted brand-use risk) | closed — not a cutover blocker |
 > | **Optional** | `GS-O022` — official Freelancer mark | — |
 >
-> Closed and not to be reopened: `GS-O005` (owner scope/risk decision), `GS-O010`, `GS-O023`,
+> Done at `GS-PROD-004B`: the `/design` Technical note no longer mentions insurance ("…remain subject to
+> professional-scope confirmation."). Closed and not to be reopened: `GS-O005` (owner scope/risk
+> decision), `GS-O021` (owner decision, permission not obtained), `GS-O010`, `GS-O023`,
 > `GS-T004` (0004 applied; 63 leads, fingerprint unchanged).
 
 ### Owner blockers

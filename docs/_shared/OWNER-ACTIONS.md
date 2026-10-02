@@ -42,10 +42,10 @@ not requested under `GS-D001` and `GS-D002`.
   not assumed to be excludable.
   **Stated explicitly at `GS-PROD-004A`:** obtaining PI cover is **not** an owner-imposed launch
   prerequisite; this is **not** a claim that Gridsmith has zero liability; and `MSA-BUSINESS.md` §12 is
-  **broader** than the intended public scope. One public sentence on `/design` currently says
-  Technical services "remain subject to professional-scope and insurance confirmation" — the owner is
-  considering removing "and insurance" (`GS-PROD-004A`); please flag if the public site should say
-  anything about insurance.
+  **broader** than the intended public scope. The `/design` Technical note said services "remain
+  subject to professional-scope and insurance confirmation"; "and insurance" was removed on owner
+  approval at `GS-PROD-004B`, so the public site now says nothing about insurance. Please flag if it
+  should.
 
 ### `GS-X002` — Professional review of the Technical claims
 
@@ -152,28 +152,6 @@ not requested under `GS-D001` and `GS-D002`.
   presence/scope confirmation, and an authorised synthetic Preview submission proved to land only in
   that isolated target. If provisioning would add cost, obtain explicit approval before enabling it.
 
-### `GS-O021` — TikTok written logo permission (final production gate)
-
-- **Status:** ACTIONABLE NOW — owner in progress. Raised at `GS-SHARED-001-RC`.
-- **Why required:** the owner-approved footer shows the TikTok mark, used solely as a link to
-  Gridsmith's own TikTok business account. TikTok's Brand and Use Guidelines require prior written
-  permission for any use of its logo. The owner has consulted TikTok Business support and is
-  obtaining that permission by email. It has **not** been received.
-- **What it blocks:** production cutover with the TikTok mark shown. Staging may keep it.
-- **Evidence required:** TikTok's written permission covering this use (and, if TikTok supplies
-  one, the official asset to replace the current simple-icons path). Without it, the mark must be
-  removed or replaced by a text link before cutover. Agents must not accept third-party terms.
-- **Resolution prepared at `GS-PROD-004A` (2 October 2026) — awaiting owner visual approval.** No
-  permission is on record, so path B: the TikTok entry is removed from
-  `components/chrome/platformMarks.ts` (one entry deleted, provenance row rewritten). Both consumers
-  already have a no-mark fallback: the footer row prints the plain word **"TikTok"** in footer link
-  ink (16px, 57×44 target, 13.26:1 effective contrast); the `/about` Platforms row keeps its visible
-  "TikTok" label and handle with an empty icon slot. Link, destination and accessible name are
-  unchanged; the other seven marks are untouched; no overflow at 375px (4×2 grid). The change is
-  **local and uncommitted** (visually meaningful in the frozen footer). **Owner action:** approve or
-  reject the text link. Approval → commit with `check:axe`/`check:responsive` on the footer; this
-  action then closes without TikTok's permission. Permission arriving later can restore the mark.
-
 ### `GS-O022` — Official Freelancer brand asset
 
 - **Status:** ACTIONABLE NOW, not blocking staging. Raised at `GS-SHARED-001-RC`.
@@ -237,6 +215,16 @@ not requested under `GS-D001` and `GS-D002`.
   decides to publish them.
 
 ## COMPLETED
+
+- `GS-O021` — **CLOSED BY OWNER DECISION — TikTok mark retained (owner-accepted brand-use risk),
+  2 October 2026 (`GS-PROD-004B`).** The owner reviewed the recorded concern — TikTok's Brand and Use
+  Guidelines require prior written permission for logo use — and **explicitly decided to keep the
+  TikTok mark** in the footer social row and the `/about` Platforms list, linking to Gridsmith's own
+  account. **No written TikTok permission is recorded; none has been obtained, and nothing here says
+  otherwise.** The text-link fallback prepared at `GS-PROD-004A` was **rejected by the owner** and
+  discarded unapplied. Implementation unchanged from the approved baseline (`platformMarks.ts`
+  byte-identical; no recolour, redraw or derivative). Not a cutover blocker. Permission arriving
+  later is recorded here; a TikTok request to remove the mark is acted on. Superseded entry below.
 
 - `GS-O005` — **CLOSED BY OWNER SCOPE / RISK DECISION, 2 October 2026 (`GS-PROD-003-R1`).**
   The expected resolution (written broker/insurer confirmation, from `Q-M4` / `L-08`) is
@@ -522,6 +510,32 @@ not requested under `GS-D001` and `GS-D002`.
 - Single-launch policy retained: Master, Design, Digital and Press launch together.
 
 ## SUPERSEDED
+
+> `GS-O021` entry as it stood before `GS-PROD-004B`, kept verbatim.
+
+#### ~~`GS-O021` — TikTok written logo permission (final production gate)~~ superseded
+
+- **Status:** ACTIONABLE NOW — owner in progress. Raised at `GS-SHARED-001-RC`.
+- **Why required:** the owner-approved footer shows the TikTok mark, used solely as a link to
+  Gridsmith's own TikTok business account. TikTok's Brand and Use Guidelines require prior written
+  permission for any use of its logo. The owner has consulted TikTok Business support and is
+  obtaining that permission by email. It has **not** been received.
+- **What it blocks:** production cutover with the TikTok mark shown. Staging may keep it.
+- **Evidence required:** TikTok's written permission covering this use (and, if TikTok supplies
+  one, the official asset to replace the current simple-icons path). Without it, the mark must be
+  removed or replaced by a text link before cutover. Agents must not accept third-party terms.
+- **Resolution prepared at `GS-PROD-004A` (2 October 2026) — awaiting owner visual approval.** No
+  permission is on record, so path B: the TikTok entry is removed from
+  `components/chrome/platformMarks.ts` (one entry deleted, provenance row rewritten). Both consumers
+  already have a no-mark fallback: the footer row prints the plain word **"TikTok"** in footer link
+  ink (16px, 57×44 target, 13.26:1 effective contrast); the `/about` Platforms row keeps its visible
+  "TikTok" label and handle with an empty icon slot. Link, destination and accessible name are
+  unchanged; the other seven marks are untouched; no overflow at 375px (4×2 grid). The change is
+  **local and uncommitted** (visually meaningful in the frozen footer). **Owner action:** approve or
+  reject the text link. Approval → commit with `check:axe`/`check:responsive` on the footer; this
+  action then closes without TikTok's permission. Permission arriving later can restore the mark.
+
+
 
 > Kept verbatim at `GS-PROD-003-R1`; the current entries are under COMPLETED and DEFERRED.
 

@@ -200,8 +200,8 @@ export async function DesignHome() {
             />
             <p className="ds-note ds-gate">
               Diagrammatic Gridsmith study, not a construction design. Technical
-              services remain subject to professional-scope and insurance
-              confirmation. No engineering certification or regulated sign-off
+              services remain subject to professional-scope confirmation. No
+              engineering certification or regulated sign-off
               is offered.
             </p>
           </div>

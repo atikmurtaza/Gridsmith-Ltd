@@ -189,11 +189,10 @@ On the Gridsmith Design home page (`/design`), a "Technical Design" section intr
 It lists the three page titles as links, then carries this note beside an illustrative drawing:
 
 > Diagrammatic Gridsmith study, not a construction design. Technical services remain subject to
-> professional-scope and insurance confirmation. No engineering certification or regulated sign-off
-> is offered.
+> professional-scope confirmation. No engineering certification or regulated sign-off is offered.
 
-*The words "and insurance" are being reviewed separately by Gridsmith and are outside this review.
-Please assess the rest of the note.*
+*(Updated 2 October 2026, `GS-PROD-004B`: an outdated reference to insurance was removed from this
+note before the pack was sent.)*
 
 ## 5. Questions — please answer each in writing
 
