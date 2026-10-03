@@ -1,0 +1,285 @@
+{
+  "phase": "GS-PROD-005",
+  "sourceSha": "9508412e1cc2396e4deafea30d08e3ab9d606b19",
+  "dataset": "production",
+  "origin": "https://gridsmith.uk",
+  "evidenceType": "generated HTML and meta files; not served HTTP",
+  "activePages": 55,
+  "gatedLegal404": 7,
+  "companyProblems": [],
+  "canonical": 55,
+  "organizationJsonLd": 55,
+  "sitemap": 60,
+  "knownSitemapLegal404": 7,
+  "indexingCases": 4,
+  "redirectRules": [
+    {
+      "source": "/privacy-policy{/}?",
+      "destination": "/legal/privacy",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/privacy-policy(?:/)?(?:/)?$"
+    },
+    {
+      "source": "/terms-and-conditions{/}?",
+      "destination": "/legal/client-terms",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/terms-and-conditions(?:/)?(?:/)?$"
+    },
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "statusCode": 308,
+      "regex": "^(?!/_next)(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/(?:/)?$"
+    }
+  ],
+  "routeMatrix": [
+    {
+      "route": "/digital/services/ai-integration",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/cms-implementation",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/crm-and-workflow-systems",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/custom-software",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/data-and-reporting",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/ecommerce",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/game-development",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/integrations",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/internal-tools-and-dashboards",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/iterative-product-development",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/maintenance-and-monitoring",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/mobile-applications",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/performance-and-accessibility",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/technical-seo",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/web-applications",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/website-design-build",
+      "status": 200
+    },
+    {
+      "route": "/digital/services/workflow-automation",
+      "status": 200
+    },
+    {
+      "route": "/digital",
+      "status": 200
+    },
+    {
+      "route": "/design",
+      "status": 200
+    },
+    {
+      "route": "/design/services/3d-modelling",
+      "status": 200
+    },
+    {
+      "route": "/design/services/animation",
+      "status": 200
+    },
+    {
+      "route": "/design/services/brand-identity-systems",
+      "status": 200
+    },
+    {
+      "route": "/design/services/campaign-and-social-creative",
+      "status": 200
+    },
+    {
+      "route": "/design/services/gaming-and-streamer-creative",
+      "status": 200
+    },
+    {
+      "route": "/design/services/graphic-design-and-collateral",
+      "status": 200
+    },
+    {
+      "route": "/design/services/iconography-and-infographics",
+      "status": 200
+    },
+    {
+      "route": "/design/services/illustration",
+      "status": 200
+    },
+    {
+      "route": "/design/services/motion-graphics",
+      "status": 200
+    },
+    {
+      "route": "/design/services/packaging-design",
+      "status": 200
+    },
+    {
+      "route": "/design/services/presentation-design",
+      "status": 200
+    },
+    {
+      "route": "/design/services/product-visualisation",
+      "status": 200
+    },
+    {
+      "route": "/design/services/technical-illustration",
+      "status": 200
+    },
+    {
+      "route": "/press/contact/thank-you",
+      "status": 200
+    },
+    {
+      "route": "/press",
+      "status": 200
+    },
+    {
+      "route": "/press/services/audiobook-production-support",
+      "status": 200
+    },
+    {
+      "route": "/press/services/book-marketing-support",
+      "status": 200
+    },
+    {
+      "route": "/press/services/book-writing-and-development",
+      "status": 200
+    },
+    {
+      "route": "/press/services/content-programmes",
+      "status": 200
+    },
+    {
+      "route": "/press/services/content-seo",
+      "status": 200
+    },
+    {
+      "route": "/press/services/copy-editing-and-proofreading",
+      "status": 200
+    },
+    {
+      "route": "/press/services/cover-design-coordination",
+      "status": 200
+    },
+    {
+      "route": "/press/services/ghostwriting",
+      "status": 200
+    },
+    {
+      "route": "/press/services/manuscript-assessment",
+      "status": 200
+    },
+    {
+      "route": "/press/services/manuscript-development",
+      "status": 200
+    },
+    {
+      "route": "/press/services/publishing-preparation",
+      "status": 200
+    },
+    {
+      "route": "/press/services/thought-leadership-and-reports",
+      "status": 200
+    },
+    {
+      "route": "/press/services/typesetting-and-formatting",
+      "status": 200
+    },
+    {
+      "route": "/press/services/website-and-business-copywriting",
+      "status": 200
+    },
+    {
+      "route": "/press/contact",
+      "status": 200
+    },
+    {
+      "route": "/press/path-finder",
+      "status": 200
+    },
+    {
+      "route": "/",
+      "status": 200
+    },
+    {
+      "route": "/insights",
+      "status": 200
+    },
+    {
+      "route": "/about",
+      "status": 200
+    },
+    {
+      "route": "/approach",
+      "status": 200
+    },
+    {
+      "route": "/legal/accessibility",
+      "status": 404
+    },
+    {
+      "route": "/legal/business-client-terms",
+      "status": 404
+    },
+    {
+      "route": "/legal/client-terms",
+      "status": 404
+    },
+    {
+      "route": "/legal/consumer-client-terms",
+      "status": 404
+    },
+    {
+      "route": "/legal/cookies",
+      "status": 404
+    },
+    {
+      "route": "/legal/privacy",
+      "status": 404
+    },
+    {
+      "route": "/legal/terms",
+      "status": 404
+    },
+    {
+      "route": "/contact",
+      "status": 200
+    }
+  ]
+}

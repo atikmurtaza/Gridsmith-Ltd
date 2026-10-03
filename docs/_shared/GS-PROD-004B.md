@@ -38,3 +38,13 @@ wording; the `GS-O003` solicitor note records the removal. Runtime source no lon
 Technical prerequisite anywhere (remaining mentions say the opposite).
 
 `GS-X002` OPEN; `GS-O024` deferred; `GS-O003` OPEN. No production write of any kind.
+
+## Final CI receipt — independently reconciled at GS-PROD-005, 3 October 2026
+
+The original failed attempt above remains historical evidence. The final rerun of
+`37045218030` on `e6f5691e852fff12aecf94efa213329c8221e21d` completed **SUCCESS, 48/48 steps**
+at 20:44:04 UTC on 2 October 2026. This phase's `9508412e1cc2396e4deafea30d08e3ab9d606b19`
+completed CI `37056516953` **SUCCESS, 48/48 steps** at 21:07:13 UTC on 2 October 2026.
+Both were read independently from GitHub, not inferred from a commit message. The stale source
+comment described above was reconciled in the legitimate GS-PROD-005 documentation commit;
+the TikTok mark, link and accessible name remain unchanged.

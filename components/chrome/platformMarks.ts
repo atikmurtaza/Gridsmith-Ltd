@@ -17,7 +17,7 @@
  * | YouTube | brand.youtube, youtube-icon.zip, yt_icon_red_digital.png | official |
  * | Reddit | Reddit Brand System (redditbrand.lingoapp.com, Logo), Reddit_Icon_FullColor.svg — Snoo in the OrangeRed bubble | official; XML prolog, generator comment and trailing whitespace removed (render-neutral) |
  * | Freelancer | simple-icons 16.33.0 path (CC0, recorded source freelancer.com), filled in Freelancer's established brand blue inside the SVG file | **provisional third-party sourced mark pending an official Freelancer brand asset — `GS-O022`** |
- * | TikTok | simple-icons 16.33.0 path, monochrome `currentColor` (unchanged from R1) | **retained in the owner-approved row; written permission pending — `GS-O021`, a final production-cutover gate.** TikTok's Brand and Use Guidelines require prior written permission for any use of its logo; its sole use here is the mark linking to Gridsmith's own account |
+ * | TikTok | simple-icons 16.33.0 path, monochrome `currentColor` (unchanged from R1) | **GS-O021 CLOSED BY OWNER DECISION (GS-PROD-004B): mark retained with owner-accepted brand-use risk; no written TikTok permission recorded.** Its sole use here is the mark linking to Gridsmith's own account |
  */
 export type PlatformMark =
   | { src: string; width: number; height: number }

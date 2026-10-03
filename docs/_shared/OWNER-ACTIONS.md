@@ -16,6 +16,32 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## ACTIONABLE NOW
 
+### `GS-O025` — Supabase inactivity-pause decision before cutover
+
+**OPEN — owner choice, raised GS-PROD-005 (3 October 2026).** Current Gridsmith Org plan is Free.
+Choose **A:** remain Free and explicitly accept possible low-activity pausing, assign restoration
+and backup ownership; or **B:** approve the minimum paid plan preventing inactivity pausing
+(currently Pro, from USD 25/month, actual two-project organisation estimate to be reviewed).
+Occasional form writes and the existing security cron do not provide a documented guarantee.
+No artificial keepalive and no upgrade authorised. Closure: dated owner A/B decision and, if B,
+verified subscribed plan. Full evidence and recovery limits: GS-PROD-005.md §5.
+
+### `GS-O026` — Resolve commercial Vercel hosting before cutover
+
+**OPEN — owner hosting-plan action, raised GS-PROD-005 (3 October 2026).** Live team dashboard
+shows Hobby. Current official Vercel Hobby documentation restricts it to personal/non-commercial
+use; this conflicts with the historical checklist statement that Hobby is no blocker. Owner
+selects a commercial-eligible Vercel plan (normally Pro) or obtains written Vercel authorisation
+covering this company site. Closure: plan metadata or provider evidence, with owner-approved cost.
+No purchase or plan change in this phase. This does not reopen GS-O005, GS-O010, GS-O021,
+GS-O023, GS-T004 or GS-O024. Evidence: GS-PROD-005.md §§1, 6, 15.
+
+**GS-O009 execution handoff:** the pre-cutover/during-cutover/external owner matrix and numbered
+runbook are now GS-PROD-005.md §§9–14. Confirm sender/inbox and credential provenance, DNS zone/CDN
+backup, operator access, rollback and monitoring ownership, and explicit release authority there.
+Agent implementation tasks remain in that runbook, not new owner decision rows.
+
+
 ### `GS-O003` — Complete legal review and resolve launch actions
 
 - **Status:** ACTIONABLE NOW

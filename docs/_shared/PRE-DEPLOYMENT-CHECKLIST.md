@@ -1,3 +1,8 @@
+> **GS-PROD-005 current hosting qualification (3 October 2026):** The historical sentence below
+> saying Vercel Hobby is no blocker conflicts with current official personal/non-commercial-use
+> terms and the live Hobby plan. `GS-O026` in OWNER-ACTIONS.md must resolve commercial hosting
+> before cutover. No upgrade was made. Other historical content remains unchanged.
+
 # Pre-deployment checklist — everything assumed, drafted, inferred or taken from elsewhere
 
 **Written:** 7 September 2026. **Owner of every row below: Atik.**
