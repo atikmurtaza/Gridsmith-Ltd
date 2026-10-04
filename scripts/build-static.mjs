@@ -1,4 +1,4 @@
-/** H4-A local/noindex export proof; no upload, DB, mail or CMS mutation. */
+/** Local/noindex export proof; building never submits enquiries or sends mail. */
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,6 +19,10 @@ const require = createRequire(join(root, 'package.json'));
 const publication = JSON.parse(readFileSync(join(root, 'docs/_shared/GS-PROD-001-CMS-MANIFEST.json'))).entries;
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 resolveBuildTarget(process.env.GRIDSMITH_BUILD_TARGET);
+const intakeUrl = 'https://qfgpwumvvtizeamkynes.supabase.co/functions/v1/gs-lead-intake';
+if (process.env.NEXT_PUBLIC_LEAD_INTAKE_URL !== intakeUrl) {
+  throw new Error('H4-B static proof requires the explicit isolated Preview intake URL');
+}
 
 // Recursive cleanup is restricted to explicit generated paths in this checkout.
 function removeGenerated(path) {
@@ -28,7 +32,7 @@ function removeGenerated(path) {
 const environment = { ...process.env, GRIDSMITH_BUILD_TARGET: 'static', GRIDSMITH_STATIC_PROOF: '1',
   GRIDSMITH_STATIC_MANIFEST_PATH: manifestFile, NEXT_PUBLIC_SANITY_DATASET: 'production',
   NEXT_PUBLIC_SITE_URL: 'http://localhost:3236', NEXT_PUBLIC_BUNDLE_SIZE_PROBE: '', GRIDSMITH_EXCLUDE_PROBES: '1' };
-const privateNames = ['SUPABASE_SERVICE_ROLE_KEY', 'DIRECT_CONNECTION_STRING', 'RESEND_API_KEY',
+const privateNames = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'DIRECT_CONNECTION_STRING', 'RESEND_API_KEY',
   'SANITY_API_WRITE_TOKEN', 'SANITY_API_READ_TOKEN', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN',
   'FREELANCER_API_SECRET', 'SLACK_LEADS_WEBHOOK', 'CRON_SECRET'];
 for (const key of [...privateNames, 'PROJECT_URL', 'PUBLISHABLE_KEY', 'VERCEL_ENV', 'VERCEL_URL',
@@ -89,9 +93,11 @@ for (const [kind, folder] of [['post', 'app/(marketing)/insights/[slug]'], ['leg
     writeFileSync(file, readFileSync(file, 'utf8') + '\nexport const dynamicParams = false;\n');
   }
 }
-for (const [file, name] of [['components/leads/ContactForm.tsx', 'ContactForm'],
-  ['components/divisions/press/PressContactFlow.tsx', 'PressContactFlow']]) writeFileSync(join(staging, file),
-  `export { StaticContactShell as ${name} } from '@/components/leads/StaticContactShell';\n`);
+// Replace only the adapters in the disposable export tree. The real forms remain,
+// while the Server Action/runtime graph cannot enter the static browser bundle.
+for (const [file, edge, action] of [['lib/leads/action.ts', 'submitContactEdge', 'submitLeadAction'],
+  ['lib/leads/pressAction.ts', 'submitPressEdge', 'submitPressLeadAction']]) writeFileSync(join(staging, file),
+  `export { ${edge} as ${action} } from './edge-client';\nexport type { FormState } from './form-domain';\n`);
 // Disposable filtered review proof only; H4-C still owns deployed retention/refresh.
 replaceOnce('lib/reviews/freelancer.ts', 'next: { revalidate: 86400 },', "cache: 'force-cache',");
 const sharp = require('sharp');
@@ -109,7 +115,7 @@ try {
   if (result.problems.length) throw new Error(result.problems.join('\n'));
   cpSync(join(staging, 'out'), output, { recursive: true });
   const fileManifest = [...files].map(([path, data]) => ({ path, bytes: data.length, sha256: digest(data) }));
-  writeFileSync(join(root, 'build/static-receipt.json'), JSON.stringify({ phase: 'GS-HOST-H4-A', proofOnly: true,
+  writeFileSync(join(root, 'build/static-receipt.json'), JSON.stringify({ phase: 'GS-HOST-H4-B', proofOnly: true,
     buildNode: process.version,
     sourceSha: spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8', windowsHide: true }).stdout.trim(),
     sourceModified: true, manifest, exclusions, ...result, knownSecretValuesChecked: knownSecrets.length,
@@ -118,7 +124,7 @@ try {
       format: logoMetadata.format, quality: 75, alpha: logoMetadata.hasAlpha },
     files: fileManifest, manifestSha256: digest(JSON.stringify(fileManifest)) }, null, 2) + '\n');
   console.log(`Static proof: ${result.htmlRoutes} routes; ${result.fileCount} files; ${result.totalBytes} bytes. Output: out/`);
-  console.log('H4-A TECHNICAL PROOF ONLY: forms/notifications/review refresh/HTTP parity remain pending.');
+  console.log('H4-B PREVIEW PROOF ONLY: endpoint deployment/mail acceptance and later hosting gates remain separate.');
 } finally {
   removeGenerated(staging); // Discard raw provider fetch cache and copied source; never deploy/archive it.
 }

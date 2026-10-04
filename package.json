@@ -36,7 +36,7 @@
     "check:legal:selftest": "node scripts/check-legal-parity.selftest.mjs",
     "check:lhci:desktop": "node scripts/check-lhci.mjs desktop",
     "check:lhci:mobile": "node scripts/check-lhci.mjs mobile",
-    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run check:colors:selftest && npm run lint:colors && npm run check:contrast && npm run check:state-cues && npm run check:headings && npm run check:content && npm run check:claims && npm run check:control && npm run check:schemas && npm run check:rls && npm run check:lead-security && npm run check:cms:migration && npm run check:launch:selftest && npm run check:legal:selftest && npm run check:struck:selftest && npm run check:struck && npm run check:path:selftest && npm run check:press:contact:selftest && npm run check:lists:selftest && npm run check:lists && npm run check:service-content:selftest && npm run check:service-content && npm run check:reviews:selftest && npm run check:reviews && npm run check:company:selftest && npm run check:master:scene:selftest && npm run check:design:timeline:selftest && npm run check:static:selftest",
+    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run check:colors:selftest && npm run lint:colors && npm run check:contrast && npm run check:state-cues && npm run check:headings && npm run check:content && npm run check:claims && npm run check:control && npm run check:schemas && npm run check:rls && npm run check:lead-security && npm run check:cms:migration && npm run check:launch:selftest && npm run check:legal:selftest && npm run check:struck:selftest && npm run check:struck && npm run check:path:selftest && npm run check:press:contact:selftest && npm run check:lists:selftest && npm run check:lists && npm run check:service-content:selftest && npm run check:service-content && npm run check:reviews:selftest && npm run check:reviews && npm run check:company:selftest && npm run check:master:scene:selftest && npm run check:design:timeline:selftest && npm run check:static:selftest && npm run check:edge:selftest",
     "verify:build": "npm run build && npm run lint:secrets && npm run check:tokens && npm run check:theme && npm run size",
     "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:security-headers\" \"npm run check:redirects\" \"npm run check:launch\" \"npm run check:responsive\" \"npm run check:consumer-terms\" \"npm run check:legal:parity\" \"npm run check:vat\" \"npm run check:press:type\" \"npm run check:press:scene\" \"npm run check:path:live\" \"npm run check:service-content:dataset\" \"npm run check:reviews:ui\" \"npm run check:company\" \"npm run check:master:scene\" \"npm run check:master:hero\" \"npm run check:design:scene\" \"npm run check:digital:scene\" \"npm run check:lhci:desktop\" \"npm run check:lhci:mobile\"",
     "verify": "npm run verify:static && npm run verify:build && npm run verify:served",
@@ -90,7 +90,13 @@
     "prove:design:scene": "node scripts/check-design-scene.mjs --prove",
     "check:digital:scene": "node scripts/check-digital-scene.mjs",
     "prove:digital:scene": "node scripts/check-digital-scene.mjs --prove",
-    "check:press:scene": "node scripts/check-press-scene.mjs"
+    "check:press:scene": "node scripts/check-press-scene.mjs",
+    "check:edge:selftest": "node --conditions=react-server scripts/check-edge-intake.selftest.mjs",
+    "prove:edge:database": "node scripts/check-edge-database.mjs",
+    "check:edge:ui": "node scripts/check-edge-ui.mjs",
+    "check:edge:preview": "node scripts/check-edge-preview.mjs",
+    "edge:preview:health": "node scripts/reconcile-preview-outbox.mjs health",
+    "edge:preview:drain": "node scripts/reconcile-preview-outbox.mjs drain"
   },
   "dependencies": {
     "@sanity/client": "^8.1.0",

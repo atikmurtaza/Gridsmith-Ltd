@@ -45,8 +45,12 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
         !/<link\b[^>]*rel="canonical"[^>]*href="http:\/\/localhost:3236(?:\/[^\"]*)?"/i.test(text)) bad('SEO', 'heading/title/description/local canonical missing');
     if (!/<meta\b[^>]*name="robots"[^>]*content="[^\"]*noindex/i.test(text)) bad('NOINDEX', 'route missing noindex');
     if (route.path === '/' && !/application\/ld\+json/.test(text)) bad('STRUCTURED', 'Organization data missing');
-    if (['/contact', '/press/contact', '/press/contact/thank-you'].includes(route.path) && (!/data-static-contact-shell/.test(text) || /<form(?:\s|>)/i.test(text))) bad('FORM', 'runtime form not isolated');
-    if (route.path === '/press/contact/thank-you' && /That has reached us|A person reads it/.test(text)) bad('FORM', 'technical proof implies a completed submission');
+    if (['/contact', '/press/contact'].includes(route.path)) {
+      const kind = route.path === '/contact' ? 'contact' : 'press';
+      if (!new RegExp(`<form\\b[^>]*data-edge-form="${kind}"`).test(text) || /data-static-contact-shell/.test(text) ||
+          /<form\b[^>]*\baction=/i.test(text) || !/<noscript>[^]*JavaScript is required[^]*mailto:/i.test(text)) bad('FORM', 'functional Edge form/no-JS disclosure missing or runtime binding present');
+    }
+    if (route.path === '/press/contact/thank-you' && (!/That has reached us/.test(text) || /data-static-contact-shell/.test(text))) bad('FORM', 'fixed accepted confirmation missing');
   }
   const notFound = files.get('404.html')?.toString('utf8');
   if (!notFound || !/<h1(?:\s|>)/i.test(notFound) || !/Gridsmith/i.test(notFound) || !/noindex/.test(notFound)) bad('404', 'branded noindex document missing');
@@ -62,12 +66,13 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     if (/(?:^|\/)(?:api|gridsmith-[^/]*probe|%5Fkitchen-sink|%5Fmaster-sink|_kitchen-sink|_master-sink)(?:[/.]|$)/i.test(name) ||
         /(?:^|\/)(?:\.env[^/]*|node_modules|\.next|package(?:-lock)?\.json)(?:\/|$)/.test(name)) bad('RUNTIME', 'server/test/source artifact emitted');
     if (/22108992|22100632|Varnika/i.test(text)) bad('WITHHELD', 'withheld marker present');
-    if (/SUPABASE_SERVICE_ROLE_KEY|RESEND_API_KEY|SANITY_API_WRITE_TOKEN|DIRECT_CONNECTION_STRING|VERCEL_TOKEN|FREELANCER_API_(?:TOKEN|SECRET)|Freelancer-OAuth-V1|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|postgres(?:ql)?:\/\/|\bre_[A-Za-z0-9_]{24,}/.test(text) ||
+    if (/SUPABASE_SERVICE_ROLE_KEY|GRIDSMITH_WORKER_TOKEN|RESEND_API_KEY|SANITY_API_WRITE_TOKEN|DIRECT_CONNECTION_STRING|VERCEL_TOKEN|FREELANCER_API_(?:TOKEN|SECRET)|Freelancer-OAuth-V1|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|postgres(?:ql)?:\/\/|\bre_[A-Za-z0-9_]{24,}/.test(text) ||
         knownSecrets.some((value) => value.length >= 8 && data.includes(Buffer.from(value)))) bad('SECRET', 'privileged marker/value present');
     for (const token of text.match(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g) ?? []) {
       try { if (JSON.parse(Buffer.from(token.split('.')[1], 'base64url')).role === 'service_role') bad('SECRET', 'privileged JWT present'); } catch { /* Not a JSON JWT. */ }
     }
     if (/\/_next\/image\?url=/.test(text)) bad('IMAGE', 'runtime optimiser URL present');
+    if (/\$ACTION_|Next-Action|createServerReference\(/.test(text)) bad('ACTION', 'Next Server Action transport emitted');
     if (/\.(?:html|css|svg)$/.test(name)) {
       const resource = (value) => {
         if (!value || /^(?:#|data:|blob:|https?:|\/\/)/i.test(value)) return;
@@ -98,7 +103,7 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   const manifest = JSON.parse(readFileSync('build/static-route-manifest.json', 'utf8'));
   const publication = JSON.parse(readFileSync('docs/_shared/GS-PROD-001-CMS-MANIFEST.json', 'utf8')).entries;
-  const secrets = ['SUPABASE_SERVICE_ROLE_KEY', 'RESEND_API_KEY', 'SANITY_API_WRITE_TOKEN',
+  const secrets = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'RESEND_API_KEY', 'SANITY_API_WRITE_TOKEN',
     'DIRECT_CONNECTION_STRING', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN', 'FREELANCER_API_SECRET']
     .map((name) => process.env[name]).filter((value) => value?.length >= 8);
   const result = inspectStaticArtifact(readArtifact(resolve('out')), manifest, publication, secrets);

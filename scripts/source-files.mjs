@@ -24,7 +24,7 @@ import { readdirSync, existsSync, statSync } from 'node:fs';
 import { join, relative, posix, sep } from 'node:path';
 
 /** Trees that are scanned. */
-export const ROOTS = ['app', 'components', 'lib', 'lighthouse', 'sanity', 'scripts', 'styles'];
+export const ROOTS = ['app', 'components', 'lib', 'lighthouse', 'sanity', 'scripts', 'styles', 'supabase'];
 
 /**
  * Trees that are deliberately not source, each with the reason. Excluding one is a
@@ -59,7 +59,6 @@ const NOT_SOURCE = {
   // against, and it hid the tree from the one gate that most needed it. `M-P2-37`.
   public: 'served verbatim, never bundled - no colours here. SECRETS ARE SWEPT, by check-service-role-key on its own path. `public/500.html` is a platform error document that must not reference the token layer - see M-P1-1 and the comment in that file',
   redirects: 'URL mapping data (JSON)',
-  supabase: 'SQL migrations — no colours, and check-rls is the gate that reads them',
 };
 
 const toPosix = (p) => p.split(sep).join(posix.sep);

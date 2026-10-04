@@ -2,13 +2,9 @@
 import 'server-only';
 import { randomUUID } from 'node:crypto';
 import { isTrapped } from './guard.ts';
-import { submitLead, type SubmitResult } from './submit.ts';
-
-export type FormState =
-  | { status: 'idle' }
-  | { status: 'ok'; id: string }
-  | { status: 'invalid'; errors: Record<string, string[]> }
-  | { status: 'error'; detail: string };
+import { submitLead } from './submit.ts';
+import { contactLeadFrom, type FormState } from './form-domain.ts';
+export type { FormState } from './form-domain.ts';
 
 /**
  * The `useActionState` adapter for `submitLead` (`N-11`).
@@ -30,35 +26,8 @@ export type FormState =
  * an attribution signal, not an authorisation one — nothing decides anything about a lead from
  * them, which is why accepting them from the client is acceptable at all.
  */
-const str = (form: FormData, name: string) => {
-  const value = form.get(name);
-  return typeof value === 'string' && value.trim() !== '' ? value.trim() : undefined;
-};
-
 export async function submitLeadAction(_prev: FormState, formData: FormData): Promise<FormState> {
-  // Bot trap (`guard.ts`): answer as if it landed, write nothing, send nothing.
+  // Preserve the accepted bot response before any domain/DB work.
   if (isTrapped(formData)) return { status: 'ok', id: randomUUID() };
-
-  const result: SubmitResult = await submitLead({
-    division: str(formData, 'division') ?? 'unsure',
-    lead_type: 'enquiry',
-    // `GS-P03`: the service a CTA was about. Attribution only; `leadSchema` bounds it to 200.
-    service_slug: str(formData, 'service_slug'),
-    full_name: str(formData, 'full_name') ?? '',
-    email: str(formData, 'email') ?? '',
-    company: str(formData, 'company'),
-    role: str(formData, 'role'),
-    phone: str(formData, 'phone'),
-    message: str(formData, 'message'),
-    budget_band: str(formData, 'budget_band'),
-    timeline: str(formData, 'timeline'),
-    source: str(formData, 'source'),
-    medium: str(formData, 'medium'),
-    campaign: str(formData, 'campaign'),
-    referrer: str(formData, 'referrer'),
-    landing_page: str(formData, 'landing_page'),
-    is_ai_referral: str(formData, 'is_ai_referral') === 'true',
-  });
-
-  return result;
+  return submitLead(contactLeadFrom(formData));
 }

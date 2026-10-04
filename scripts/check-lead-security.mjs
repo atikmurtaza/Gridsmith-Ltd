@@ -59,7 +59,9 @@ for (const [href, expected] of contextCases) {
   assert.deepEqual(readEnquiryContext(href.split('?')[1] ?? ''), expected, `enquiry context for ${href}`);
 }
 const action = readFileSync('lib/leads/action.ts', 'utf8');
-assert.match(action, /service_slug: str\(formData, 'service_slug'\)/, 'the Server Action drops CTA service context');
+assert.match(action, /submitLead\(contactLeadFrom\(formData\)\)/, 'the Server Action bypasses shared named-field extraction');
+const domain = readFileSync('lib/leads/form-domain.ts', 'utf8');
+assert.match(domain, /service_slug: str\(formData, 'service_slug'\)/, 'shared extraction drops CTA service context');
 const form = readFileSync('components/leads/ContactForm.tsx', 'utf8');
 assert.match(form, /readEnquiryContext\(window\.location\.search\)/, 'the contact form never reads CTA context');
 assert.match(form, /name="service_slug"/, 'the contact form never submits CTA service context');

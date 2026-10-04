@@ -5,7 +5,7 @@
 // referrer header the next page sends, which is the wrong trade for a form whose whole subject
 // is discretion.
 
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { startTransition, useActionState, useEffect, useRef, useState } from 'react';
 import { Field } from '@/components/primitives/Field';
 import { Heading } from '@/components/primitives/Heading';
 import { Link } from '@/components/primitives/Link';
@@ -236,11 +236,15 @@ export function PressContactFlow({
   expectationsStatement?: string | null;
 }) {
   const [state, formAction, pending] = useActionState(submitPressLeadAction, INITIAL);
+  const staticProfile = process.env.GRIDSMITH_BUILD_TARGET === 'static';
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [step, setStep] = useState(1);
   const [segment, setSegment] = useState<PressSegment | ''>('');
   const headingRef = useRef<HTMLDivElement>(null);
   const errorField = useRef<string | null>(null);
   const moved = useRef(false);
+  const previousFocusState = useRef<FormState>(INITIAL);
 
   const errors = state.status === 'invalid' ? state.errors : {};
   const firstError = (name: string) => errors[name]?.[0];
@@ -248,6 +252,10 @@ export function PressContactFlow({
   // A rejection that leaves you on step 4 looking at a clean page is indistinguishable from a
   // rejection that did nothing. Move to the step that owns the first failing field.
   useEffect(() => {
+    if (state.status === 'error') {
+      headingRef.current?.closest('form')?.querySelector<HTMLElement>('[data-error-summary]')?.focus();
+      return;
+    }
     if (state.status !== 'invalid') return;
     const first = Object.keys(state.errors)[0];
     errorField.current = first ?? null;
@@ -257,6 +265,9 @@ export function PressContactFlow({
   // Focus the step heading on every move, so a keyboard or screen reader user is put at the top
   // of what changed rather than left wherever the button they pressed used to be (WCAG 2.4.3).
   useEffect(() => {
+    const failureArrived = state.status === 'error' && previousFocusState.current !== state;
+    previousFocusState.current = state;
+    if (failureArrived) return; // Preserve summary focus; explicit later step moves still focus their heading.
     if (errorField.current && state.status === 'invalid') {
       const name = errorField.current;
       if (STEP_OF_FIELD[name] !== step) return;
@@ -280,7 +291,18 @@ export function PressContactFlow({
   const showManuscriptLink = segment === 'author' || segment === 'memoir' || segment === 'production';
 
   return (
-    <form action={formAction} className={styles.form} noValidate>
+    <form action={staticProfile ? undefined : formAction} className={styles.form} noValidate
+      data-edge-form={staticProfile ? 'press' : undefined}
+      onSubmit={staticProfile ? (event) => {
+        event.preventDefault(); if (pending) return;
+        const data = new FormData(event.currentTarget);
+        startTransition(() => formAction(data));
+      } : undefined}>
+      {staticProfile ? <noscript><p>JavaScript is required for this enquiry journey. Email{' '}
+        <a href={`mailto:${contactEmail}`}>{contactEmail}</a> instead. No enquiry is submitted here without JavaScript.</p></noscript> : null}
+      <p className="sr-only" aria-live="polite" aria-atomic="true" data-submit-status="">
+        {pending ? 'Sending your enquiry. Please wait.' : ''}
+      </p>
       <p className={styles.progress} aria-live="polite">
         Step {step} of 4 — {STEP_TITLES[step - 1]}
       </p>
@@ -294,14 +316,15 @@ export function PressContactFlow({
       </div>
 
       {state.status === 'invalid' ? (
-        <p className={styles.formError} role="alert">
+        <p className={styles.formError} role="alert" data-error-summary="" tabIndex={-1}>
           There is a problem with {Object.keys(errors).length === 1 ? 'one answer' : 'some answers'}.
           The details are next to each one.
         </p>
       ) : null}
       {state.status === 'error' ? (
-        <p className={styles.formError} role="alert">
-          We could not send that, and nothing you typed has been lost. Try again, or email{' '}
+        <p className={styles.formError} role="alert" data-error-summary="" tabIndex={-1}>
+          {staticProfile && state.detail === 'temporarily-unavailable' ? 'The enquiry service is temporarily unavailable. ' : 'We could not confirm receipt. '}
+          Your answers are still here — try again, or email{' '}
           <a href={`mailto:${contactEmail}`}>{contactEmail}</a> directly.
         </p>
       ) : null}
@@ -460,7 +483,7 @@ export function PressContactFlow({
             Next
           </button>
         ) : (
-          <button key="submit" type="submit" className={btn('primary')} disabled={pending}>
+          <button key="submit" type="submit" className={btn('primary')} disabled={pending || (staticProfile && !ready)}>
             {pending ? 'Sending…' : 'Send this'}
           </button>
         )}

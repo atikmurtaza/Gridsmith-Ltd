@@ -3,6 +3,7 @@ node_modules/
 .sanity/
 /out/
 /build/
+/supabase/.temp/
 
 .env
 .env.*

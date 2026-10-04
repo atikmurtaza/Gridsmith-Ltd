@@ -58,10 +58,11 @@ const lower = sql.toLowerCase();
  */
 const counted = { tables: 0, views: 0 };
 
-const tables = [...lower.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?([a-z0-9_]+)/g)].map((m) => m[1]);
+const tableName = (name) => name.replace(/^public\./, '');
+const tables = [...lower.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?((?:[a-z0-9_]+\.)?[a-z0-9_]+)/g)].map((m) => tableName(m[1]));
 const views = [...lower.matchAll(/create\s+(?:or\s+replace\s+)?view\s+([a-z0-9_]+)/g)].map((m) => m[1]);
 const rlsEnabled = new Set(
-  [...lower.matchAll(/alter\s+table\s+([a-z0-9_]+)\s+enable\s+row\s+level\s+security/g)].map((m) => m[1]),
+  [...lower.matchAll(/alter\s+table\s+((?:[a-z0-9_]+\.)?[a-z0-9_]+)\s+enable\s+row\s+level\s+security/g)].map((m) => tableName(m[1])),
 );
 
 // 1. Every table has RLS. Without it PostgREST serves the table to anon by default, so a

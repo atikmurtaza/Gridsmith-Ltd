@@ -89,6 +89,9 @@ jobs:
       - name: Static foundation predicates reject permanent adverse specimens
         run: npm run check:static:selftest
 
+      - name: Shared form and Edge boundary adverse specimens
+        run: npm run check:edge:selftest
+
       - name: Malformed colour literal rules remain enforced
         run: npm run check:colors:selftest
 

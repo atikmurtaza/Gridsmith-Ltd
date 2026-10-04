@@ -57,7 +57,8 @@ const fixture = new Map();
 const set = (files, name, value) => files.set(name, Buffer.from(value));
 for (const route of manifest.routes.filter((item) => item.eligible)) {
   const file = route.path === '/' ? 'index.html' : `${route.path.slice(1)}.html`;
-  set(fixture, file, `<html lang="en"><head><title>Specimen</title><meta name="description" content="Specimen"><meta name="robots" content="noindex, nofollow"><link rel="canonical" href="http://localhost:3236${route.path === '/' ? '' : route.path}"></head><body><h1>Specimen</h1><script type="application/ld+json">{}</script><aside data-static-contact-shell></aside><script src="/_next/static/specimen.js"></script></body></html>`);
+  const form = ['/contact', '/press/contact'].includes(route.path) ? `<form data-edge-form="${route.path === '/contact' ? 'contact' : 'press'}"><noscript>JavaScript is required <a href="mailto:synthetic@example.invalid">Email</a></noscript></form>` : '';
+  set(fixture, file, `<html lang="en"><head><title>Specimen</title><meta name="description" content="Specimen"><meta name="robots" content="noindex, nofollow"><link rel="canonical" href="http://localhost:3236${route.path === '/' ? '' : route.path}"></head><body><h1>${route.path === '/press/contact/thank-you' ? 'That has reached us' : 'Specimen'}</h1><script type="application/ld+json">{}</script>${form}<script src="/_next/static/specimen.js"></script></body></html>`);
 }
 set(fixture, '404.html', '<html><head><meta name="robots" content="noindex"></head><body><h1>Gridsmith — page not found</h1></body></html>');
 set(fixture, '_next/static/specimen.js', '/* inert client specimen */');
@@ -89,10 +90,16 @@ for (const [before, after] of [['<h1>', '<span>'], ['<title>Specimen</title>', '
 }
 breakArtifact('noindex', (files) => editHome(files, 'noindex, nofollow', 'index, follow'), 'NOINDEX');
 breakArtifact('structured', (files) => editHome(files, 'application/ld+json', 'text/plain'), 'STRUCTURED');
-breakArtifact('form marker', (files) => set(files, 'contact.html', fixture.get('contact.html').toString().replace('data-static-contact-shell', 'data-other')), 'FORM');
-breakArtifact('form binding', (files) => set(files, 'press/contact.html', fixture.get('press/contact.html') + '<form action="/submit"></form>'), 'FORM');
-breakArtifact('false confirmation', (files) => set(files, 'press/contact/thank-you.html', fixture.get('press/contact/thank-you.html') + '<p>That has reached us</p>'), 'FORM');
-breakArtifact('confirmation shell missing', (files) => set(files, 'press/contact/thank-you.html', fixture.get('press/contact/thank-you.html').toString().replace('data-static-contact-shell', 'data-other')), 'FORM');
+for (const name of ['contact.html', 'press/contact.html']) {
+  for (const [before, after] of [['data-edge-form', 'data-other'], ['<form ', '<form action="/submit" '],
+    ['JavaScript is required', 'Other'], ['mailto:', 'other:']]) breakArtifact('each functional form predicate',
+    (files) => set(files, name, fixture.get(name).toString().replace(before, after)), 'FORM');
+  breakArtifact('old form shell', (files) => set(files, name, fixture.get(name) + '<aside data-static-contact-shell></aside>'), 'FORM');
+}
+breakArtifact('missing confirmation', (files) => set(files, 'press/contact/thank-you.html', fixture.get('press/contact/thank-you.html').toString().replace('That has reached us', 'Other')), 'FORM');
+breakArtifact('old confirmation shell', (files) => set(files, 'press/contact/thank-you.html', fixture.get('press/contact/thank-you.html') + '<aside data-static-contact-shell></aside>'), 'FORM');
+for (const marker of ['$ACTION_ID_specimen', 'Next-Action', 'createServerReference(']) breakArtifact('each Server Action transport marker',
+  (files) => set(files, '_next/static/specimen.js', marker), 'ACTION');
 breakArtifact('404', (files) => files.delete('404.html'), '404');
 breakArtifact('404 brand', (files) => set(files, '404.html', '<h1>Other</h1>noindex'), '404');
 breakArtifact('robots', (files) => set(files, 'robots.txt', 'User-Agent: *\nAllow: /\n'), 'ROBOTS');
@@ -104,7 +111,7 @@ for (const name of ['api/specimen.json', 'gridsmith-lead-probe.html', '_kitchen-
   breakArtifact('each runtime path', (files) => set(files, name, '{}'), 'RUNTIME');
 }
 for (const marker of ['22108992', '22100632', 'Varnika']) breakArtifact('each withheld marker', (files) => set(files, 'data.txt', marker), 'WITHHELD');
-for (const marker of ['SUPABASE_SERVICE_ROLE_KEY', 'RESEND_API_KEY', 'SANITY_API_WRITE_TOKEN', 'DIRECT_CONNECTION_STRING', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN', 'FREELANCER_API_SECRET', 'Freelancer-OAuth-V1', '-----BEGIN PRIVATE KEY-----', 'postgresql://specimen', 're_' + 'a'.repeat(24)]) {
+for (const marker of ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'RESEND_API_KEY', 'SANITY_API_WRITE_TOKEN', 'DIRECT_CONNECTION_STRING', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN', 'FREELANCER_API_SECRET', 'Freelancer-OAuth-V1', '-----BEGIN PRIVATE KEY-----', 'postgresql://specimen', 're_' + 'a'.repeat(24)]) {
   breakArtifact('each secret marker', (files) => set(files, 'data.txt', marker), 'SECRET');
 }
 const jwt = (role) => 'eyJhbGciOiJIUzI1NiJ9.' + Buffer.from(JSON.stringify({ role })).toString('base64url') + '.specimen';

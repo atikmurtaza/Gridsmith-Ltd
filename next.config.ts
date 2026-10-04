@@ -73,7 +73,7 @@ if (!Array.isArray(legacyRedirects)) {
 const excludeProbes =
   STATIC_BUILD || process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
 
-// H4-A exports contain isolated form shells and disposable review data, never a release.
+// H4-A/B exports contain Preview-only form integration and disposable review data, never a release.
 if (STATIC_BUILD && process.env.GRIDSMITH_STATIC_PROOF !== '1') {
   throw new Error('Use npm run build:static: H4-A static output is a technical proof only');
 }

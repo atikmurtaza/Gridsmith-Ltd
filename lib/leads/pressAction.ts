@@ -3,7 +3,7 @@ import 'server-only';
 import { redirect } from 'next/navigation';
 import { isTrapped } from './guard.ts';
 import { submitLead } from './submit.ts';
-import { pressLeadPayload, pressPayloadFrom } from './pressLead.ts';
+import { validateForm } from './form-domain.ts';
 import type { FormState } from './action.ts';
 
 /**
@@ -34,38 +34,12 @@ import type { FormState } from './action.ts';
  * `K-15` — is a real page with a real URL. The redirect throws, so it must be the last thing
  * in the function; nothing after it runs.
  */
-const str = (form: FormData, name: string) => {
-  const value = form.get(name);
-  return typeof value === 'string' && value.trim() !== '' ? value.trim() : undefined;
-};
 export async function submitPressLeadAction(_prev: FormState, formData: FormData): Promise<FormState> {
-  // Bot trap (`guard.ts`): the same confirmation a person gets, nothing written, nothing sent.
   if (isTrapped(formData)) redirect('/press/contact/thank-you');
-
-  const payload = pressLeadPayload.safeParse(pressPayloadFrom(formData));
-  if (!payload.success) {
-    const errors: Record<string, string[]> = {};
-    for (const issue of payload.error.issues) {
-      const key = issue.path.join('.') || 'segment';
-      (errors[key] ??= []).push(issue.message);
-    }
-    return { status: 'invalid', errors };
-  }
-
-  const result = await submitLead({
-    division: 'press',
-    lead_type: 'enquiry',
-    full_name: str(formData, 'full_name') ?? '',
-    email: str(formData, 'email') ?? '',
-    company: str(formData, 'company'),
-    phone: str(formData, 'phone'),
-    message: str(formData, 'message'),
-    budget_band: str(formData, 'budget_band'),
-    timeline: 'timeline' in payload.data ? payload.data.timeline : undefined,
-    landing_page: str(formData, 'landing_page'),
-    payload: payload.data,
-  });
-
+  const domain = validateForm('press', formData);
+  if (domain.status === 'invalid') return domain;
+  if (domain.status === 'trapped') redirect('/press/contact/thank-you');
+  const result = await submitLead(domain.lead);
   if (result.status !== 'ok') return result;
   redirect('/press/contact/thank-you');
 }

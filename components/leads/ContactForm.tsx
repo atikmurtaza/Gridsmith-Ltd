@@ -4,7 +4,7 @@
 // when validation fails is a form people abandon — a server redirect back with `?error=`
 // costs nothing to build and costs a lead every time it fires.
 
-import { useActionState, useEffect, useState } from 'react';
+import { startTransition, useActionState, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { Field } from '@/components/primitives/Field';
 import { Heading } from '@/components/primitives/Heading';
@@ -96,6 +96,18 @@ export function ContactForm({
   contactEmail: string;
 }) {
   const [state, formAction, pending] = useActionState(submitLeadAction, INITIAL);
+  const staticProfile = process.env.GRIDSMITH_BUILD_TARGET === 'static';
+  const [ready, setReady] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  useEffect(() => setReady(true), []);
+  useEffect(() => {
+    if (state.status === 'invalid') {
+      const name = Object.keys(state.errors)[0];
+      const control = [...(formRef.current?.querySelectorAll<HTMLElement>('[name]') ?? [])]
+        .find((element) => element.getAttribute('name') === name);
+      (control ?? formRef.current?.querySelector<HTMLElement>('[data-error-summary]'))?.focus();
+    } else if (state.status === 'error') formRef.current?.querySelector<HTMLElement>('[data-error-summary]')?.focus();
+  }, [state]);
   const [context, setContext] = useState<ReturnType<typeof readEnquiryContext>>({});
   useEffect(() => setContext(readEnquiryContext(window.location.search)), []);
 
@@ -121,16 +133,29 @@ export function ContactForm({
   const firstError = (name: string) => errors[name]?.[0];
 
   return (
-    <form action={formAction} className={styles.form} noValidate>
+    <form ref={formRef} action={staticProfile ? undefined : formAction} className={styles.form} noValidate
+      data-edge-form={staticProfile ? 'contact' : undefined}
+      onSubmit={staticProfile ? (event) => {
+        event.preventDefault();
+        if (pending) return;
+        const data = new FormData(event.currentTarget);
+        startTransition(() => formAction(data));
+      } : undefined}>
+      {staticProfile ? <noscript><p>JavaScript is required to submit this form. You can email{' '}
+        <a href={`mailto:${contactEmail}`}>{contactEmail}</a> instead. No enquiry is submitted here without JavaScript.</p></noscript> : null}
+      <p className="sr-only" aria-live="polite" aria-atomic="true" data-submit-status="">
+        {pending ? 'Sending your enquiry. Please wait.' : ''}
+      </p>
       {state.status === 'invalid' ? (
-        <p className={styles.formError} role="alert">
+        <p className={styles.formError} role="alert" data-error-summary="" tabIndex={-1}>
           There is a problem with {Object.keys(errors).length === 1 ? 'one field' : 'some fields'}.
           The details are next to each one below.
         </p>
       ) : null}
       {state.status === 'error' ? (
-        <p className={styles.formError} role="alert">
-          We could not send that. Nothing was lost — try again, or email{' '}
+        <p className={styles.formError} role="alert" data-error-summary="" tabIndex={-1}>
+          {staticProfile && state.detail === 'temporarily-unavailable' ? 'The enquiry service is temporarily unavailable. ' : 'We could not confirm receipt. '}
+          Your answers are still here — try again, or email{' '}
           <a href={`mailto:${contactEmail}`}>{contactEmail}</a> directly.
         </p>
       ) : null}
@@ -183,7 +208,7 @@ export function ContactForm({
       <Select name="timeline" label="Timeline" options={TIMELINES} error={firstError('timeline')} />
       <Honeypot />
 
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending || (staticProfile && !ready)}>
         {pending ? 'Sending…' : 'Send this'}
       </Button>
     </form>
