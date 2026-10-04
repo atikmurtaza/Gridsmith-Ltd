@@ -1,8 +1,8 @@
 node_modules/
 .next/
 .sanity/
-out/
-build/
+/out/
+/build/
 
 .env
 .env.*

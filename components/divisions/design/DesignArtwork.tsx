@@ -14,7 +14,10 @@ import { gOutlines, sOutlines } from "./letterGeometry";
  * default device sizes the optimiser accepts). Not `getImageProps`: importing next/image here put
  * its client module on the /design route, +5.3KB for a string. check:design:scene loads it.
  */
-const LOGO_3D = "/_next/image?url=%2Fbrand%2Fgridsmith-logo-3d.png&w=1080&q=75";
+// Public build-target constant is folded by webpack; the canonical brand PNG stays unchanged.
+const LOGO_3D = process.env.GRIDSMITH_BUILD_TARGET === 'static'
+  ? "/brand/gridsmith-logo-3d-1080.webp"
+  : "/_next/image?url=%2Fbrand%2Fgridsmith-logo-3d.png&w=1080&q=75";
 
 function Logo3D({ live = false }: { live?: boolean }) {
   return (

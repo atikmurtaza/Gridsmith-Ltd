@@ -6,9 +6,11 @@ import { Numeric } from '@/components/primitives/Numeric';
 import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
+import { STATIC_BUILD } from '@/lib/build/target';
+import { StaticContactShell } from '@/components/leads/StaticContactShell';
 
 export const metadata: Metadata = {
-  title: 'That has reached us — Gridsmith Press',
+  title: STATIC_BUILD ? 'Technical enquiry preview — Gridsmith Press' : 'That has reached us — Gridsmith Press',
   robots: { index: false, follow: false },
 };
 
@@ -38,6 +40,18 @@ export const metadata: Metadata = {
  */
 export default async function Page() {
   const company = await getCompanyDetails();
+
+  if (STATIC_BUILD) {
+    if (!company.contactEmail) throw new Error('Required static contact address unavailable');
+    return (
+      <main id="main" tabIndex={-1}>
+        <Section rhythm="loose"><Container width="narrow">
+          <Heading level={1}>Technical enquiry preview</Heading>
+          <StaticContactShell contactEmail={company.contactEmail} responseCommitment={company.responseCommitment} />
+        </Container></Section>
+      </main>
+    );
+  }
 
   return (
     <main id="main" tabIndex={-1}>

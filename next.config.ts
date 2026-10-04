@@ -1,5 +1,8 @@
 import { readFileSync } from 'node:fs';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { NextConfig } from 'next';
+import { BUILD_TARGET, STATIC_BUILD } from './lib/build/target';
 import { SANITY_DATASET } from './sanity/env';
 
 type LegacyRedirect = { source: string; destination: string; permanent: boolean };
@@ -68,7 +71,12 @@ if (!Array.isArray(legacyRedirects)) {
  * — is free for a route handler, which has no client chunk to ship. See that file.
  */
 const excludeProbes =
-  process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
+  STATIC_BUILD || process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
+
+// H4-A exports contain isolated form shells and disposable review data, never a release.
+if (STATIC_BUILD && process.env.GRIDSMITH_STATIC_PROOF !== '1') {
+  throw new Error('Use npm run build:static: H4-A static output is a technical proof only');
+}
 
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -99,6 +107,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  ...(STATIC_BUILD ? { output: 'export' as const, images: { unoptimized: true },
+    outputFileTracingRoot: dirname(fileURLToPath(import.meta.url)) } : {}),
   poweredByHeader: false,
   /**
    * **Declared here so it is always defined, which is what makes the probe cost nothing when
@@ -109,7 +119,8 @@ const nextConfig: NextConfig = {
    * build — measured, at the first attempt: `shared` read 3.0KB with the flag unset. Defining
    * it as `''` makes the condition a constant the minifier folds away.
    */
-  env: { NEXT_PUBLIC_BUNDLE_SIZE_PROBE: process.env.NEXT_PUBLIC_BUNDLE_SIZE_PROBE ?? '' },
+  env: { GRIDSMITH_BUILD_TARGET: BUILD_TARGET,
+    NEXT_PUBLIC_BUNDLE_SIZE_PROBE: process.env.NEXT_PUBLIC_BUNDLE_SIZE_PROBE ?? '' },
   pageExtensions: excludeProbes ? ['tsx', 'ts'] : ['tsx', 'ts', 'probe.tsx', 'probe.ts'],
   /**
    * `globalNotFound` is what makes the 404 load the token layer at all.
@@ -173,22 +184,22 @@ const nextConfig: NextConfig = {
    * variable fails the build at config load, which is `M-P1-2`'s rule reaching one file
    * earlier than before.
    */
-  async headers() {
+  ...(!STATIC_BUILD ? { async headers() {
     return [
       {
         source: '/:path*',
         headers: [{ key: 'x-gridsmith-dataset', value: SANITY_DATASET }, ...securityHeaders],
       },
     ];
-  },
+  } } : {}),
   skipTrailingSlashRedirect: true,
-  async redirects() {
+  ...(!STATIC_BUILD ? { async redirects() {
     return [
       ...legacyRedirects,
       // Next's own trailing-slash rule (trailingSlash: false), verbatim, after the legacy map.
       { source: '/:path+/', destination: '/:path+', permanent: true },
     ];
-  },
+  } } : {}),
 };
 
 export default nextConfig;

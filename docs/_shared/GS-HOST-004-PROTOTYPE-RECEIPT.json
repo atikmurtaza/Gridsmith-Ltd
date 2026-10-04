@@ -1,0 +1,101 @@
+{
+  "sourceSha": "9508412e1cc2396e4deafea30d08e3ab9d606b19",
+  "buildNode": "v24.21.0",
+  "routes": [
+    "/",
+    "/design",
+    "/design/services/brand-identity-systems"
+  ],
+  "dataset": "production",
+  "indexing": "disabled",
+  "overlays": [
+    {
+      "file": "components/master/ReviewCarousel.tsx",
+      "sha256": "5f74338ec08d2d9571d994115020cc4bffe8cd0080bfe9c2e42cd65cfbe70dfe"
+    },
+    {
+      "file": "components/master/home.module.css",
+      "sha256": "fd8393e20300a942fa70d4b6e3b1678ecc4b241c6e1d7c8a4b8e6a8fc61966f4"
+    }
+  ],
+  "adaptations": [
+    "fixture-only export config",
+    "three representative routes only",
+    "dynamicParams=false and one slug",
+    "review fetch build cache replaces ISR",
+    "1080px WebP logo replaces runtime image URL"
+  ],
+  "images": {
+    "originalBytes": 3317305,
+    "generatedBytes": 41742
+  },
+  "generatedAt": "2026-10-04T15:33:21.501Z",
+  "verification": {
+    "pages": [
+      {
+        "route": "/",
+        "status": 200,
+        "title": "Gridsmith Ltd",
+        "h1": "Most companies start over with every supplier. You shouldn’t have to.",
+        "division": "master",
+        "css": "#f5eedd",
+        "canonical": "http://localhost:3226",
+        "noindex": "noindex, nofollow"
+      },
+      {
+        "route": "/design",
+        "status": 200,
+        "title": "Gridsmith Design — from line to form",
+        "h1": "From lineto form.",
+        "division": "design",
+        "css": "#f3f0e8",
+        "canonical": "http://localhost:3226/design",
+        "noindex": "noindex, nofollow"
+      },
+      {
+        "route": "/design/services/brand-identity-systems",
+        "status": 200,
+        "title": "Brand Identity Systems — Gridsmith Design",
+        "h1": "Brand Identity Systems",
+        "division": "design",
+        "css": "#f3f0e8",
+        "canonical": "http://localhost:3226/design/services/brand-identity-systems",
+        "noindex": "noindex, nofollow"
+      }
+    ],
+    "masterWebGL": "ready",
+    "softwareWebGL": true,
+    "realGPU": "unverified",
+    "reviews": 11,
+    "continuousRotation": true,
+    "pause": true,
+    "drag": true,
+    "reducedMotion": "none",
+    "design": {
+      "scene": "true",
+      "active": "0",
+      "image": "/brand/gs-host-004-logo-1080.webp",
+      "activeAfterScroll": "3"
+    },
+    "navigation": "ordinary service link followed to static HTML",
+    "custom404": 404,
+    "browserErrors": [],
+    "failedRequests": [],
+    "artifactFiles": 70,
+    "artifactBytes": 6022905,
+    "artifactManifestSha256": "0ca08765130c66862ce6286e716336d937de2f267d68f4aa0fa0786f8f781420"
+  },
+  "validation": {
+    "existingNodeGate": "PASS, Node24.21.0,55 registered gates; not executed here as full suite",
+    "existingSecretGate": "PASS on byte-identical copies of 23 prototype client chunks plus committed source/public; 0 actual values available",
+    "existingControlGate": "PASS,389 source files",
+    "phaseControlScan": "PASS",
+    "sourcePreservation": "app/components/lib/styles/public/scripts/config/dependencies/CI unchanged",
+    "fullStaticExport": "NOT RUN; representative3routes only",
+    "hostingerAcceptance": "NOT RUN",
+    "productionMutation": "NONE",
+    "independentContentReview": "PASS; aggregate inventory/artifact/image/overlay evidence verified; no unsupported claims found",
+    "supplementalAxe": "NO RESULT; wrapper failed before analysis: AxePuppeteer.default is not a constructor; server stopped",
+    "accessibilityAcceptance": "PENDING; full keyboard/mobile/axe/no-JS proof, accessible no-JS form error/value recovery, inherited carousel no-JS fallback"
+  }
+}

@@ -6,6 +6,8 @@ import { Prose } from '@/components/primitives/Prose';
 import { Blocks } from '@/components/content/Blocks';
 import { Opening } from '@/components/shared/Opening';
 import { getPost, listPostSlugs } from '@/lib/sanity/queries';
+import { STATIC_BUILD } from '@/lib/build/target';
+import { staticParams } from '@/lib/build/static-routes';
 import styles from '@/components/shared/shared.module.css';
 import opening from '@/components/shared/opening.module.css';
 
@@ -21,6 +23,7 @@ import opening from '@/components/shared/opening.module.css';
  * a way nobody sees.
  */
 export async function generateStaticParams() {
+  if (STATIC_BUILD) return staticParams('post');
   const slugs = await listPostSlugs();
   return slugs.filter(Boolean).map((slug) => ({ slug }));
 }
@@ -32,6 +35,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
+  if (!post && STATIC_BUILD) throw new Error('Required static article unavailable');
   if (!post) return { title: 'Not found — Gridsmith Ltd' };
   return { title: `${post.title} — Gridsmith Ltd`, description: post.excerpt ?? undefined };
 }
@@ -44,6 +48,7 @@ const formatDate = (iso: string | null) =>
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPost(slug);
+  if (!post && STATIC_BUILD) throw new Error('Required static article unavailable');
   if (!post) notFound();
 
   // `GS-SHARED-001-B2`: dark opening, then the article on the light sheet at a ~68ch measure.

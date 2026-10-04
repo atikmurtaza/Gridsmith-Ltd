@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { STATIC_BUILD } from '../build/target.ts';
 
 /**
  * The site's own origin, and whether this deployment is allowed to be indexed — `G-04`,
@@ -74,7 +75,7 @@ export const SITE_ORIGIN = new URL(SITE_URL);
  * required, and everything that is not a configured production deployment is disallowed.
  */
 export const INDEXABLE =
-  process.env.VERCEL_ENV === 'production' && Boolean(process.env.NEXT_PUBLIC_SITE_URL?.trim());
+  !STATIC_BUILD && process.env.VERCEL_ENV === 'production' && Boolean(process.env.NEXT_PUBLIC_SITE_URL?.trim());
 
 /** An absolute URL for a site-relative path. */
 export const absolute = (path: string) => new URL(path, SITE_URL).toString();

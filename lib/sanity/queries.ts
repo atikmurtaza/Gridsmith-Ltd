@@ -1,4 +1,5 @@
 import { sanityClient } from '@/lib/sanity/client';
+import { STATIC_BUILD } from '@/lib/build/target';
 
 /**
  * The read layer. **Every public projection is written so that a field which must not reach
@@ -133,8 +134,11 @@ export type LegalDocument = {
   isSeed: boolean;
 };
 
-const q = <T,>(query: string, params: Record<string, unknown> = {}) =>
-  sanityClient.fetch<T>(query, params);
+const q = async <T,>(query: string, params: Record<string, unknown> = {}) => {
+  const value = await sanityClient.fetch<T>(query, params);
+  if (STATIC_BUILD && value === null) throw new Error('Required static CMS content unavailable');
+  return value;
+};
 
 export const listServices = (division: Division) =>
   q<ServiceCard[]>(

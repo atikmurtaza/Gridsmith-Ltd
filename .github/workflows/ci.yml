@@ -86,6 +86,9 @@ jobs:
       - name: ESLint
         run: npm run lint
 
+      - name: Static foundation predicates reject permanent adverse specimens
+        run: npm run check:static:selftest
+
       - name: Malformed colour literal rules remain enforced
         run: npm run check:colors:selftest
 

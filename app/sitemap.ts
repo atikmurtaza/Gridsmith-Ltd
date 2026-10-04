@@ -2,6 +2,9 @@ import type { MetadataRoute } from 'next';
 import { LEGAL_DOCUMENT_SLUGS } from '@/lib/legal/slugs';
 import { listPostSlugs, listServiceSlugs } from '@/lib/sanity/queries';
 import { INDEXABLE, absolute } from '@/lib/seo/site';
+import { STATIC_BUILD } from '@/lib/build/target';
+import { staticManifest } from '@/lib/build/static-routes';
+import { sitemapPaths } from '@/lib/build/route-manifest';
 
 /**
  * `/sitemap.xml` — `G-04`.
@@ -31,6 +34,10 @@ import { INDEXABLE, absolute } from '@/lib/seo/site';
  * number in a file — `CLAUDE.md` #2 applies to XML as much as to prose.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  if (STATIC_BUILD) {
+    const paths = sitemapPaths(staticManifest());
+    return INDEXABLE ? paths.map((path) => ({ url: absolute(path) })) : [];
+  }
   if (!INDEXABLE) return [];
 
   const STATIC = [

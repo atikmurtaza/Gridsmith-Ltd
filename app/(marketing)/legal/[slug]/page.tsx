@@ -6,6 +6,8 @@ import { Prose } from '@/components/primitives/Prose';
 import { Blocks } from '@/components/content/Blocks';
 import { Opening } from '@/components/shared/Opening';
 import { getLegalDocument, listLegalDocuments } from '@/lib/sanity/queries';
+import { STATIC_BUILD } from '@/lib/build/target';
+import { staticParams } from '@/lib/build/static-routes';
 import {
   CLIENT_TERMS_COUNTERPART,
   LEGAL_DOCUMENT_SLUGS,
@@ -65,6 +67,7 @@ import opening from '@/components/shared/opening.module.css';
  * a known data defect, recorded for a controlled later fix and not touched here.
  */
 export function generateStaticParams() {
+  if (STATIC_BUILD) return staticParams('legalDocument');
   return LEGAL_DOCUMENT_SLUGS.map((slug) => ({ slug }));
 }
 
