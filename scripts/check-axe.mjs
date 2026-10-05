@@ -318,7 +318,7 @@ const INCOMPLETE_ALLOWED = [
     // reads this file's arrays by counting brackets before it strips comments, so one
     // unbalanced bracket in a regex OR in a comment here runs the capture on into the next
     // array. Both happened at GS-R001-M, and each reported four foreign routes as missing.
-    targetPattern: /^(#hero-title|\.home_[A-Za-z]+__[A-Za-z0-9_-]+)(\s|\x5b|>|\.|:|$)/,
+    targetPattern: /^(#hero-title|\x5bclass\*="home_heroKicker__"\]|\.home_[A-Za-z]+__[A-Za-z0-9_-]+)(\s|\x5b|>|\.|:|$)/,
     why:
       'GS-R001-M put the homepage over a fixed WebGL canvas — the Gridsmith mark as lit gold ' +
       'geometry, aria-hidden, pointer-events:none, z-index:-1 — and every section is ' +
@@ -346,7 +346,7 @@ const INCOMPLETE_ALLOWED = [
   {
     rule: 'color-contrast',
     routes: ['/'],
-    targetPattern: /^(time\x5bdatetime="\d{4}-\d{2}-\d{2}"\]|li\x5b(?:data-front=""|data-review-key="review-(?:0[1-9]|1[01])")\] > figure > .+)$/,
+    targetPattern: /^(\x5bdata-reviews-carousel\]|time\x5bdatetime="\d{4}-\d{2}-\d{2}"\]|li\x5b(?:data-front=""|data-review-key="review-(?:0[1-9]|1[01])")\] > figure > .+)$/,
     why:
       'R1 put the reviews back on a CSS 3D cylinder over the WebGL scene: every card is turned to ' +
       'its own angle in one grid cell, so axe cannot resolve a background behind any of them and ' +
@@ -740,9 +740,55 @@ const DIGITAL_SCENE_REASONS = [
 ];
 function digitalSceneTarget({ target, reason, scope, reasons, canonical }) {
   if (!reasons.includes(reason)) return target;
-  let node = null;
-  try { node = document.querySelector(target); } catch { return target; }
+  let matches;
+  try { matches = document.querySelectorAll(target); } catch { return target; }
+  if (matches.length !== 1) return target;
+  const node = matches[0];
   return node?.closest(scope) ? canonical : target;
+}
+
+// axe sometimes shortens the unique rating/kicker selector to a generic span.
+// Resolve its actual DOM boundary before delegating to the existing pixel gate.
+const REVIEW_TEXT_SCOPE = '[data-reviews-carousel] li[data-review-key] > figure > p > span[role="img"][aria-label$=" out of 5 stars"]';
+const REVIEW_TEXT_REASONS = [
+  "Element's background color could not be determined due to a background gradient",
+  "Element's background color could not be determined because it partially overlaps other elements",
+];
+const REVIEW_TEXT_TARGET = '[data-reviews-carousel]';
+const MASTER_KICKER_SCOPE = 'p[class*="home_heroKicker__"] > span:last-child';
+const MASTER_KICKER_REASONS = [
+  "Element's background color could not be determined due to a background gradient",
+  "Element's background color could not be determined because element contains an image node",
+];
+const MASTER_KICKER_TARGET = '[class*="home_heroKicker__"]';
+
+async function proveReviewTextTargets(browser) {
+  const page = await browser.newPage();
+  try {
+    await page.setContent('<div data-reviews-carousel><ul><li data-review-key="review-01"><figure><p><span role="img" aria-label="4.6 out of 5 stars">4.6 / 5</span></p></figure></li></ul><span id="unmeasured">Outside rating</span></div><span id="outside">Outside carousel</span><p class="home_heroKicker__proof"><span>Company</span><span aria-hidden="true"></span><span id="kicker">Design · Digital · Press</span></p>');
+    const base = { scope: REVIEW_TEXT_SCOPE, reasons: REVIEW_TEXT_REASONS, canonical: REVIEW_TEXT_TARGET };
+    let cases = 0;
+    const check = async (target, reason, expected) => {
+      assert.equal(await page.evaluate(digitalSceneTarget, { ...base, target, reason }), expected);
+      cases++;
+    };
+    for (const reason of REVIEW_TEXT_REASONS) {
+      await check('span[aria-label="4.6 out of 5 stars"]', reason, REVIEW_TEXT_TARGET);
+      for (const target of ['#outside', '#unmeasured', '#missing', 'span:::bad']) await check(target, reason, target);
+    }
+    await check('span[aria-label="4.6 out of 5 stars"]', 'A different incomplete reason', 'span[aria-label="4.6 out of 5 stars"]');
+    await check('span', REVIEW_TEXT_REASONS[0], 'span');
+    console.log(`check-axe: Review rating classification ${cases} positive/negative proofs PASS`);
+    for (const reason of MASTER_KICKER_REASONS) {
+      const config = { scope: MASTER_KICKER_SCOPE, reasons: MASTER_KICKER_REASONS, canonical: MASTER_KICKER_TARGET, reason };
+      assert.equal(await page.evaluate(digitalSceneTarget, { ...config, target: '#kicker' }), MASTER_KICKER_TARGET);
+      for (const target of ['#outside', '#unmeasured', '#missing', 'span:::bad', 'span']) {
+        assert.equal(await page.evaluate(digitalSceneTarget, { ...config, target }), target);
+      }
+    }
+    assert.equal(await page.evaluate(digitalSceneTarget, { scope: MASTER_KICKER_SCOPE, reasons: MASTER_KICKER_REASONS, canonical: MASTER_KICKER_TARGET, target: '#kicker', reason: 'A different incomplete reason' }), '#kicker');
+    console.log('check-axe: Master kicker classification 13 positive/negative proofs PASS');
+  } finally { await page.close(); }
 }
 
 async function proveDigitalSceneTargets(browser) {
@@ -977,6 +1023,7 @@ async function proveSkipLinkFocus(browser) {
 const browser = await launch();
 await proveDesignGlyphTargets(browser);
 await proveDigitalSceneTargets(browser);
+await proveReviewTextTargets(browser);
 if (process.argv.includes('--prove-glyphs-only')) {
   await browser.close();
   process.exit(0);
@@ -1038,7 +1085,7 @@ for (const [i, a] of INCOMPLETE_ALLOWED.entries()) {
 
 // Frozen public keys replace provider-derived selectors; the scope must stay closed.
 const reviewContrastPattern = INCOMPLETE_ALLOWED.find((entry) => entry.why.startsWith('R1 put the reviews')).targetPattern;
-for (const target of ['li[data-front=""] > figure > blockquote > p', 'time[datetime="2026-01-01"]',
+for (const target of ['[data-reviews-carousel]', 'li[data-front=""] > figure > blockquote > p', 'time[datetime="2026-01-01"]',
   'li[data-review-key="review-01"] > figure > blockquote > p', 'li[data-review-key="review-11"] > figure > figcaption > a']) {
   if (!reviewContrastPattern.test(target)) throw new Error('Review contrast selector positive specimen failed');
 }
@@ -1060,6 +1107,16 @@ async function record(page, route, where, violations, incomplete) {
   for (const inc of incomplete) {
     for (const node of inc.nodes) {
       let target = node.target.join(' ');
+      if (route.path === '/' && inc.id === 'color-contrast') {
+        target = await page.evaluate(digitalSceneTarget, {
+          target, reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+          scope: REVIEW_TEXT_SCOPE, reasons: REVIEW_TEXT_REASONS, canonical: REVIEW_TEXT_TARGET,
+        });
+        target = await page.evaluate(digitalSceneTarget, {
+          target, reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+          scope: MASTER_KICKER_SCOPE, reasons: MASTER_KICKER_REASONS, canonical: MASTER_KICKER_TARGET,
+        });
+      }
       if (route.path === '/press' && inc.id === 'color-contrast') {
         const measured = await pressContrast(page, target);
         if (measured.pass) {

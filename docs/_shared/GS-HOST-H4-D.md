@@ -133,3 +133,35 @@ remains keyboard-focusable and existing focus promotion brings it forward; the f
 reduced-motion lists retain all pointer targets. Injected CSS passed all eleven poses. The
 permanent gate additionally measures focus promotion and the resulting hit-testable 24px target
 for each source, and requires all reduced-motion links active. Clean rebuilt proofs/CI pending.
+
+## 493f572f exact-source checkpoint and contrast-selector correction
+
+CI 37304582525 completed on 5 October 2026 with FAILURE; static artifact publication was skipped.
+Desktop Lighthouse passed (four division routes 100 performance/accessibility); mobile LCP/TBT
+budgets passed. Full Master scene/hero, Design scene and Digital scene pixel measurements passed,
+as did the review UI gate. One of the eighteen served commands failed: check:axe reported six
+UNRESOLVED contrast declines, not six violations. The selectors were the hero kicker's last span
+(`span:nth-child(3)`) and the uniquely rated 4.6 review (`span[aria-label="4.6 out of 5 stars"]`).
+The previous report's normal axe PASS must not be inferred from early clean route lines.
+
+The existing DOM-boundary classifier now requires one unique match. Only the actual review rating
+and the hero kicker's last span, for their observed background-decline reasons, map to the existing
+pixel-measured Master scope. No violation, threshold or route is exempted. Permanent proofs reject
+outside, unmeasured, missing, invalid, ambiguous selectors and different reasons: 12 review-rating
+and 13 hero-kicker cases. A new clean normal build passed. The existing 493f static server provides
+targeted diagnostic evidence: four homepage axe analyses have zero violations/UNRESOLVED findings.
+That diagnostic is not a complete normal-gate PASS; static output intentionally lacks its normal
+Technical/legal/probe subjects. Exact-source normal CI must verify the correction before deployment.
+
+The 493f clean local export is retained: 55 routes, 203 files, 10,862,847 bytes, sourceModified=false,
+identity `5a9187e2780f2d182bad6d65efdffcbabee8f4796cde4e5b8c5c0a2860f9174d`.
+All eleven review poses and pointer/focus/reduced-motion checks passed. Separate front-pointer and
+reduced-motion-pointer adverse CSS proofs produced the intended named failures and restored the
+subject byte-identically. Static browser proof: 14 routes, 13 focused axe analyses, 13 no-JS pages;
+four exact requested responsive viewports by ten routes passed. Known private-value scan passed.
+Preview HTTP negative tests passed 17 boundaries with leads/outbox remaining zero; this is not
+hosted browser form evidence. No hosted valid submissions or H4-D mail have occurred.
+
+One of three mobile Digital Lighthouse samples recorded accessibility 96 due to compass-label
+color-contrast; desktop samples and the full Digital pixel gate passed. Preserve this observation
+for hosted adjudication; do not claim blanket full AA or dismiss it as proven transient.
