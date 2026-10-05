@@ -346,7 +346,7 @@ const INCOMPLETE_ALLOWED = [
   {
     rule: 'color-contrast',
     routes: ['/'],
-    targetPattern: /^(time\x5bdatetime="\d{4}-\d{2}-\d{2}"\]|li\x5bdata-front=""\] > figure > .+)$/,
+    targetPattern: /^(time\x5bdatetime="\d{4}-\d{2}-\d{2}"\]|li\x5b(?:data-front=""|data-review-key="review-(?:0[1-9]|1[01])")\] > figure > .+)$/,
     why:
       'R1 put the reviews back on a CSS 3D cylinder over the WebGL scene: every card is turned to ' +
       'its own angle in one grid cell, so axe cannot resolve a background behind any of them and ' +
@@ -1036,6 +1036,16 @@ for (const [i, a] of INCOMPLETE_ALLOWED.entries()) {
   }
 }
 
+// Frozen public keys replace provider-derived selectors; the scope must stay closed.
+const reviewContrastPattern = INCOMPLETE_ALLOWED.find((entry) => entry.why.startsWith('R1 put the reviews')).targetPattern;
+for (const target of ['li[data-front=""] > figure > blockquote > p', 'time[datetime="2026-01-01"]',
+  'li[data-review-key="review-01"] > figure > blockquote > p', 'li[data-review-key="review-11"] > figure > figcaption > a']) {
+  if (!reviewContrastPattern.test(target)) throw new Error('Review contrast selector positive specimen failed');
+}
+for (const target of ['li[data-review-key="review-12"] > figure > p', 'li[data-review-key="review-01"] > aside > p',
+  'li[data-review-key="unrelated"] > figure > p']) {
+  if (reviewContrastPattern.test(target)) throw new Error('Review contrast selector escaped its measured scope');
+}
 /**
  * Record one axe result set: route-specific incomplete mapping, the allowlist, and violations.
  * The main analysis and the post-reveal footer analysis both go through here, so a deferred

@@ -160,7 +160,7 @@ try {
  let posts=0;page.on('request',r=>{if(r.method()==='POST')posts++;});
  await page.click('input[name="segment"][value="content"]');
  for(let i=0;i<3;i++){await page.locator('form button[type="button"]:last-child').click();await wait(200);}
- assert.match(await page.$eval('form [aria-live]',e=>e.textContent),/^Step 4/,'Next submitted before contact details');
+ assert.match(await page.$eval('form [aria-live]:not([data-submit-status])',e=>e.textContent),/^Step 4/,'Next submitted before contact details');
  assert.equal(posts,0,'Next sent a premature submission');
  await page.click('button[type="submit"]');
  await page.waitForSelector('#press-formats-error');

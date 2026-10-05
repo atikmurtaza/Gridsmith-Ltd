@@ -72,3 +72,27 @@ GitHub dispatch of a newly added workflow returned 404 because it is absent from
 default branch. The registered CI workflow now calls the branch-local reusable staging
 workflow on manual dispatch, after its exact-source verify job succeeds. Main remains
 untouched; no verification is bypassed.
+
+## CI findings and correction (5 October 2026)
+
+CI 37248951922 failed mobile Lighthouse. The later 741643b1 run, 37249337059,
+passed Lighthouse but failed axe, Press scene and Master scene checks. No artifact was deployed.
+The rating's generic span did not permit its accessible label; it now uses the image role.
+The existing contrast mapping now recognises only the eleven frozen public review keys,
+with positive/negative permanent selector specimens; the pixel measurement remains mandatory.
+The Press gate selected the new empty submission-status live region instead of step progress;
+its selector now distinguishes them without changing the submission assertions.
+
+Anonymous linked provenance shortened the former two-line caption footprint. A 390x844
+diagnostic measured 49% scene survival with the shortened caption and 68% at a 48px caption
+floor. The caption now reserves the former two-line footprint using existing typography and
+spacing tokens. No cylinder radius, card width, motion, review text or gate threshold changed.
+These diagnostic readings are not full-gate acceptance; rebuilt and CI proofs remain required.
+
+Correction checkpoint: `verify:static` passed in full and the rebuilt static artifact contains
+55 routes / 203 files / 10,877,419 bytes. The local browser smoke recorded one failed YouTube
+icon request although direct GET returned 200; it is not counted as PASS. The normal Press
+gate run against the static adapter timed out at a branch Next control before reaching its
+progress assertion; exact-source normal CI must settle that correction. Mobile scene checks
+remain in progress. Vercel Git is disconnected, but the persisted daily `/api/rls-drift` cron
+is still enabled; action-time owner confirmation is pending before disabling that security check.

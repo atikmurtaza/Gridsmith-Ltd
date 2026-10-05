@@ -82,7 +82,7 @@ export function ReviewCarousel({ reviews }: { reviews: readonly PublicReview[] }
             >
               <figure className={styles.carouselFigure}>
                 <p className={styles.carouselFacts}>
-                  <span aria-label={`${review.rating} out of 5 stars`}>{review.rating} / 5</span>
+                  <span role="img" aria-label={`${review.rating} out of 5 stars`}>{review.rating} / 5</span>
                   {review.country ? <span aria-hidden="true">{review.country.flag}</span> : null}
                 </p>
                 {/* Verbatim and whole — the card grows to fit, so there is nothing to scroll. */}
