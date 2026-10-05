@@ -43,6 +43,28 @@ noindex/security headers, exact Host, extensionless routes, branded 404, legal-s
 HTML/robots/sitemap revalidation, immutable hashed assets and short revalidated scene/image assets.
 Those declarations require actual served proof. No file contains provider credentials.
 
+The included Git panel uses manual Redeploy from the artifact branch into public_html.
+Auto-deployment is currently off. Inspected deployment history/details expose completed
+records and logs; no native historical rollback action was exposed. Use the Git-file restoration
+procedure below; do not infer a provider snapshot restore from deployment history alone.
+Automatic page caching is off. The CDN panel explicitly reports Active for the temporary
+add-on domain; its off switch controls Development mode, not CDN enablement. The earlier
+interpretation of that switch as CDN disabled was incorrect. Flush only this temporary site's
+cache after deployment/restoration; never change the parent-domain automatic-CDN opt-out.
+Actual observed transport overrides assumptions: 17f PNGs were transformed and
+lost required headers. The corrected asset policy requests no-transform; full file/hash/header
+proof is mandatory before accepting it. Do not waive changed image pixels/bytes or headers.
+HTML no-cache legitimately returns 304 on warm browser revalidation. Cold route/no-JS probes
+use disabled browser cache; performance cold samples use an isolated context per route and
+warm samples reuse it. Positive decoded document/LCP and cache evidence remain required.
+Observed on 44e (5 October 2026): auto-deployment was ON and deployed the published artifact
+commit within a minute of CI's push; until the owner decides, treat every artifact-branch push
+as a live deployment. One Flush cache click may not clear stale image entries: re-probe and
+flush again until every Accept variant is a fresh exact response. hCDN honours no-transform for
+PNG bytes but strips all origin security/noindex headers from raster images, and the edge
+serves Hostinger's own temporary-domain robots.txt instead of the artifact's. Neither is
+reachable from .htaccess.
+
 Keep each accepted artifact commit and downloaded Actions archive. To roll back, restore the exact
 last accepted artifact files in a new commit on the artifact branch, deploy that commit, clear the
 temporary site's HTTP/CDN cache if enabled, and verify identity plus critical routes/forms/assets.

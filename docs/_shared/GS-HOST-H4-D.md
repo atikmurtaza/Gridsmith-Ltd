@@ -1,12 +1,81 @@
 # GS-HOST-H4-D-R1 — implementation and staging evidence
 
-Status: IN PROGRESS. This record supersedes H4-C's historical prerequisite for H4-D, without
+Status: PARTIAL (44e hosted checkpoint below). This record supersedes H4-C's historical prerequisite for H4-D, without
 claiming provider permission or H4-C automation completion. Owner authority is the H4-D-R1 brief
 dated 5 October 2026. Production review publication remains BLOCKED PENDING WRITTEN PERMISSION.
 
 Starting branch `codex/gs-host-004`, SHA `8e6316cc5a0dda38e0de4c15fa1d8ef9c854b8a1`.
 Main remains `fbecbe01e7fb594c6163dab57514997cb248fc21`.
 Preserved all existing H4-C permission-independent hardening and three untracked H4 prototypes.
+
+## 44e hosted checkpoint — 5 October 2026 (PARTIAL)
+
+Exact-source CI 37372379784 (workflow_dispatch, 44e93c0b9d50dc31c8109f0dce21caad10f119fb)
+concluded success: verify 21:02–22:11Z, hostinger-staging/build 22:11–22:12Z, publish
+22:12–22:12Z. Its hostinger-static archive (id 11373019807) independently passes the established
+validator: 55 routes, 201 files, 29,470,397 bytes, every file hash, all eleven review hashes,
+five private-value scans, sourceModified=false, identity
+75d8bf402c73c105ff51cd2a68de8d824dca88d4c808ed81bf38d47838c060a1. Artifact-branch commit
+73b872b460794b603a5dcc9db096d1be0ae972b3 matches that manifest blob-for-blob (200 files plus
+identity; 0 mismatches). Neither withheld review ID occurs; robots.txt is Disallow-all; the
+sitemap is empty; every HTML document except 500.html (not a route; same as 17f) carries meta
+noindex; the generated-files whitespace check is clean. Archive: build/h4d-ci-clean-artifact-44e93c0b.
+
+Hostinger auto-deployment was found ON, contrary to the record above: Hostinger deployed
+73b872b4 to public_html at 22:13Z (4s, Completed), one minute after CI's publish, before the
+local validation finished. The deployed commit is exactly the validated artifact, so the
+outcome is correct; the setting was not changed and needs an owner decision. Deployment history
+holds two entries: 21:46 BST manual (17f) and 23:13 BST push-triggered (44e, Current).
+
+The CDN panel shows Active, Development mode off, Flush cache available and Manage disabled
+for this add-on domain; no image-optimisation control is exposed. The first site-specific
+Flush cache left 22 of 27 PNG probes served from stale transformed entries; a second flush
+cleared them within one minute. Served /__deployment.json equals the validated identity.
+
+PNG bytes now PASS. After the second flush, all nine PNGs under three Accept variants (none,
+image/png, browser image/avif,image/webp,...) — 27 responses, HIT and MISS — are byte-identical
+image/png with Cache-Control "public, max-age=300, must-revalidate, no-transform". Before the
+correction the same probe returned transformed PNGs and, for browser Accept headers, image/webp
+bytes under .png URLs without Vary: Accept (build/h4d-png-accept-probe-17f-before.json; after:
+build/h4d-png-accept-probe-44e-after-flush2.json).
+
+Two provider-edge deviations remain and fail the delivery contract:
+- PNG responses carry none of the required security headers (X-Robots-Tag, CSP,
+  X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy, HSTS); hCDN
+  adds access-control-allow-origin *. SVG, HTML, CSS, JS, fonts, WebP, ICO and manifest keep
+  every header, so this is hCDN's raster-image path, not the generated .htaccess.
+- /robots.txt is replaced at the edge by Hostinger's temporary-domain file (Googlebot
+  Disallow; every other agent Allow /), 58 bytes, no security or cache headers, also with a
+  query string. The artifact's Disallow-all file is never served. HTML stays noindex by meta
+  and header; PNGs are therefore crawlable by non-Google agents without noindex.
+No repository change can reach either; no hash/header exception is accepted.
+
+The non-stopping survey (build/h4d-hosted-http-survey-44e.json) passes 190 of 200 public files
+on status, exact bytes, all seven headers and cache policy; the ten failures are exactly the
+nine PNGs (headers) and robots.txt. The committed gate's route/404/redirect assertions, run as a
+diagnostic copy (build/h4d-hosted-routes.mjs, unchanged assertions): 55 routes 200 + noindex +
+headers; unknown, /api/rls-drift, both legacy legal URLs, three Technical and seven legal URLs
+branded noindex 404; /.htaccess and /.git/config 403; /about/ one 308 hop; Brotli. The
+committed scripts/check-hostinger-http.mjs itself therefore still fails (first PNG).
+
+Hosted UI on 44e (GET/navigation only, no submissions): check-static-ui PASS 14 pages, 13
+focused axe analyses 0 violations, 13 no-JS pages; check-reviews-ui PASS (11 reviews, motion,
+keyboard reach, reduced-motion parity, four widths, anonymous captions); responsive PASS 4
+viewports x 10 routes. Preview at 22:18Z: leads 0, notification outbox 0. No form was
+submitted and no mail sent; the closed 17f enquiry receipts stand (form/review source
+unchanged, build/h4d-44e-form-review-invariance.json).
+
+Post-correction Windows Chrome samples (two runs, same method as 17f; descriptive only):
+desktop cold LCP 2096–2288ms, mobile cold 1924–2964ms, warm 116–716ms; cold transfer +9,223
+bytes on PNG-bearing routes (untransformed icons). Press/Digital returned to the 17f values on
+run 2. /design desktop cold was slower in both runs; navigation timing
+(build/h4d-design-cold-nav-44e.json) puts the extra ~0.9s before responseStart, bimodal on the
+same route (1.13s vs 2.0s), so it is client connection setup, not content or the correction.
+No material delivery regression is attributed to 44e.
+
+Rollback is NOT executed: the brief gates it on a fully passing corrected deployment, and
+44e does not fully pass. 17f remains unaccepted. Production, DNS, gridsmith.uk, main
+(fbecbe01), Production Supabase/Edge and Sanity untouched; no Vercel deployment created.
 
 ## Current checkpoint — 5 October 2026
 
@@ -16,7 +85,10 @@ artifact independently passed every manifest hash, all eleven quotation hashes a
 private-value scans. Artifact branch commit 6aa18b92d64c8d238ac3c993fe22efc0bb237f44 contains
 identity 0afdc8e293bbb4b145e6d84594f905b7381d57aa6fa9652093de64eef1e559a1. Hostinger completed
 the first manual deployment to the exact temporary site's public_html, from that artifact branch.
-Auto-deployment is off; CDN and automatic page caching are displayed as off.
+Auto-deployment and automatic page caching are off. The current CDN panel explicitly says
+Active for this temporary add-on domain; its off switch controls Development mode, not CDN
+enablement. The earlier interpretation of that switch as CDN disabled was incorrect.
+The temporary domain has its own Flush cache control. No parent-domain opt-out is authorised.
 
 The served identity matches, but hosted acceptance is FAIL/PENDING: apple-touch-icon.png is
 served as 19,362 bytes rather than 20,791, with a different hash and absent security headers.
@@ -27,7 +99,152 @@ the served gate require that instruction. New exact-source CI and served proof m
 whether the provider honours it. No hash/header exception or image substitution is permitted.
 The no-JS browser proof also encountered a valid cached 304 where its cold route assertion
 requires 200; that page now disables its browser cache before the independent no-JS crawl.
-No hosted synthetic successful admission or notification has occurred; rollback remains pending.
+That first failure preceded the successful hosted enquiries recorded below; rollback remains pending.
+
+### Hosted evidence on 17f2f6ee
+
+- All 55 eligible document URLs return 200 and match their exact artifact HTML hashes, with
+  noindex and revalidation. Fifteen additional observations pass: three Technical routes and
+  seven legal routes remain branded noindex 404s; legacy legal URLs and the old runtime API
+  stay closed; /about/ redirects in one 308 hop to /about.
+- Hosted browser proof passes 14 pages, scenes/reviews/PathFinder/navigation/reduced motion,
+  skip link and 404. Thirteen focused axe analyses have zero violations; thirteen no-JS pages
+  are readable. This is focused staging evidence, not final full AA/no-JS acceptance.
+- Review UI passes all eleven cylinder poses, anonymous provenance links, visible keyboard
+  focus, accessible actual ratings, every full quotation, Master-only placement, reduced motion
+  and four widths. The existing six-second stepped motion remains; unapproved GS-VIS work is absent.
+- Responsive smoke passes 390x844, 768x1024, 1440x900 and 1920x1080 across ten routes each:
+  loaded fonts, no horizontal overflow, no browser errors and no failed asset requests.
+- Four actual browser-to-Preview adverse requests pass: Contact invalid email and URL-name
+  return 422; honeypot returns non-admitting 202; Press invalid email returns 422 and focuses
+  email. The recorded request was reconciled before resuming after cached navigation; no
+  completed request was repeated. Counts remain zero and no notifications are produced.
+- Controlled hosted form transport proves network/capacity errors, retained values, error focus,
+  pending controls, confirmation and redirects at desktop/mobile, with ten focused axe analyses.
+  These in-memory transport cases do not claim deployed worker-failure evidence.
+- Exactly two real enquiries are accepted: Contact and Press author/idea with blank optionals.
+  Contact duplicate Enter while pending produces only one POST. Both durable rows are synthetic,
+  both outbox rows are sent after one attempt, and blank Press optionals are omitted from storage.
+  Resend confirms exactly one delivered message for each form, to contact@gridsmith.uk, marked
+  SYNTHETIC/H4-B with H4-D-R1 names and matching record IDs. Two subsequent drains claim zero.
+  Exact recorded lead/outbox IDs are removed, aggregate counts return to leads0/outbox0, and
+  the UI receipt is closed. NEVER resume/repeat these cleaned successful submissions.
+- All nine PNG responses have changed bytes and lack the required security/noindex headers.
+  Eight preserve decoded pixels; brand/gridsmith-logo-3d.png does not. No byte, visual or header
+  exception is accepted. The diagnosis is retained independently of the failed full HTTP gate.
+
+Evidence is retained under build/: hosted-ui-receipt.json, hosted-axe-results.json,
+h4d-hosted-route-observations.json, h4d-hosted-responsive.json, h4d-hosted-reviews-ui-17f.txt,
+h4d-hosted-negative-ui-receipt.json, h4d-mock-ui-receipt.json, h4d-live-ui-receipt.json,
+h4d-e2e-receipt.json and h4d-image-transport-diagnostic.json. The deployment screenshot is
+h4d-evidence/hostinger-first-deploy.png; sixteen responsive screenshots are retained there.
+
+### Corrected source and verification boundary
+
+44e93c0b9d50dc31c8109f0dce21caad10f119fb requests no-transform for short-lived assets and
+uses a cold no-JS browser page. Typecheck, lint, permanent predicates, staged whitespace and
+five actual private-value scans pass. The clean local export contains 55 routes, 203 files,
+29,425,127 bytes; identity 5444fd6bf7224e294d63c6bb5ff21bf58ddf54ecbe69bf20689672d4111be803.
+Every file hash and all eleven review hashes pass; sourceModified=false, Node24.21.0.
+It is retained in build/h4d-local-clean-artifact-44e93c0b, pending exact-source CI/hosted acceptance.
+
+Authoritative run 37372379784 is running after a runner-assignment delay. GitHub's official
+status page reported an Actions major outage affecting runner assignment and workflow starts
+on 5 October 2026 (incident 3q1yb5m7ltvb); that is consistent with the delay, not proof of its
+specific cause. The duplicate push run 37372380548 was cancelled; the authoritative run remains.
+Do not deploy the correction before its complete normal/static/publication gates succeed.
+The served 17f artifact is not a last known good rollback baseline while PNG acceptance fails.
+
+Session-resumption checkpoint: source44e remains behind CI37372379784, with desktop Lighthouse
+passed and mobile Lighthouse running. Remote source/main/artifact refs remain44e/fbecbe01/6aa18b92.
+The original17f hosted receipts and screenshots are separately retained in
+build/h4d-retained-hosted-17f before further hosted probes. Both successful enquiry receipts
+remain closed; no further successful submission is permitted. After corrected deployment,
+flush only the temporary domain's CDN cache and repeat actual file/hash/header verification.
+
+The resumed run has subsequently passed both Lighthouse profiles. Its retained report archive
+contains24 unique samples (three per division/profile), all with accessibility100. Desktop
+LCP medians for Master/Design/Digital/Press are610/611/569/651ms; mobile medians are
+928/953/895/1049ms, with mobile TBT medians53/55/68/56ms. These Linux CI values are not
+Hostinger or field measurements. The full served job reports76 axe analyses with zero
+violations, two revealed-footer analyses with zero unresolved findings, responsive51 combinations
+without overflow, the complete review UI PASS and company-facts PASS. Master pixel measurements
+remain active; complete verify/static/publication acceptance is still required.
+The downloaded archive and summary are build/h4d-ci-44e-lighthouse and
+build/h4d-ci-44e-performance-summary.json. Git comparison independently confirms that app,
+components, lead/review/Supabase source, public assets and styles are unchanged from17f to44e;
+build/h4d-44e-form-review-invariance.json records that premise. The17f successful-mail proof
+is retained with its original attribution; it does not claim a new44e successful submission.
+
+### Hosted performance observations
+
+Sixteen Windows Chrome samples use a fresh isolated browser context per cold route, followed
+by warm navigation in the same context. Every cold sample has zero cached assets. Mobile uses
+600ms latency, approximately 1.47Mbps download, 675kbps upload and 4x CPU throttling; this is
+descriptive hosting evidence, not the Linux Lighthouse RC profile or field data. The earlier
+shared-context measurements retained seven cached scripts on cold mobile pages and are kept
+only as diagnostic history in h4d-performance-shared-context-diagnostic-17f.json.
+
+For Master/Design/Digital/Press respectively, desktop cold LCP is 2184/1352/2152/1368ms and
+mobile cold LCP is 2896/2860/1960/2128ms. Warm desktop is 160/124/124/104ms and warm mobile
+692/700/664/708ms. Observed navigation TTFB is 60-80ms. Every document uses h2; warm HTML
+revalidation returns 304 while decoded content and LCP remain positive. Cold asset transfer
+is 219,749/277,018/196,554/263,157 bytes, including approximately 101-109KB encoded JS.
+The slower cold Master/Design readings are retained as a limitation. These one-per-state
+observations cannot establish a statistical regression against Linux CI or an absent previous
+Hostinger baseline. Raw resource timing and before-LCP paths are in h4d-hosted-performance.json.
+
+## H4-D-R1 acceptance register — current checkpoint
+
+PASS here names the measured question only; the phase remains incomplete until every required
+question and the corrected exact-source deployment transaction pass. Evidence above concerns
+served source17f; the no-transform correction44e is still under verification.
+
+1. PASS — exactly eleven frozen approved static records.
+2. PASS — reviewer names absent from public data/captions.
+3. PASS — exact Verified Freelancer review provenance.
+4. PASS — official Gridsmith Freelancer profile destination.
+5. PASS — no authoritative approved country fields exist; no flags inferred.
+6. PASS — ten ratings5 and one4.6, with accessible labels.
+7. PASS — all eleven independent approved quotation hashes match.
+8. PASS — both permanent exclusions and withheld text absent.
+9. PASS — raw provider records absent from public artifact.
+10. PASS — real private-value scan and credential-marker rules pass.
+11. PASS — retrieval/cache/refresh automation remains inactive.
+12. PASS — written Freelancer permission remains a Production blocker.
+13. PARTIAL — 44e deployed; PNG headers and robots.txt fail at the provider edge.
+14. PASS — authorised repository/generated branch/public_html verified.
+15. PASS — exact discovered temporary domain recorded.
+16. PASS — Vercel Git/deploy coupling and daily cron retired; project retained.
+17. PASS — included PHP/HTML static site; no persistent Gridsmith application Node.
+18. PASS — 44e CI 37372379784 success; artifact published and independently validated.
+19. PARTIAL — 44e identity and 199/200 file hashes incl. all PNGs match; robots.txt replaced.
+20. PARTIAL — documents noindex; PNGs lack X-Robots-Tag; edge robots.txt allows non-Google.
+21. PASS — all three Technical URLs are hosted branded noindex404s.
+22. PASS — all seven legal URLs are hosted branded noindex404s.
+23. PASS — browser/server pipeline targets only approved Supabase Preview.
+24. PASS — exact temporary origin allowed; Production/attacker origins rejected.
+25. PASS — one real hosted Contact admission, validation and duplicate Enter proof.
+26. PASS — one real hosted Press author/idea admission with blank optionals.
+27. PASS — exact synthetic rows removed; leads0/outbox0; closed receipt.
+28. PASS — all55 hosted eligible documents return200 and exact HTML hashes.
+29. PASS — branded404/gated/legacy checks and one-hop308 redirect.
+30. PARTIAL — 190/200 files carry every header; PNGs and edge robots.txt carry none.
+31. PASS — HTML no-cache, hashed immutable, image no-transform observed on 44e.
+32. PASS — four requested exact viewports by ten routes, no overflow/errors.
+33. PASS — eleven reviews, pose/targets/focus/ratings/reduced motion/full text.
+34. PASS — thirteen document and ten controlled-form focused axe analyses; no violations.
+35. PASS — sixteen isolated cold/warm descriptive samples, limitations retained.
+36. PENDING — exact accepted-artifact restoration has not been executed.
+37. PASS — this phase performs no gridsmith.uk mutation/cutover.
+38. PASS — this phase performs no Production DNS mutation.
+39. PASS — this phase performs no Production Supabase mutation.
+40. PASS — this phase performs no Production Edge deployment.
+41. PASS — main remains unchanged; source/artifact branches only.
+42. PASS — standard Hostinger staging release/verification/rollback workflow documented.
+
+Current outcome (44e): 37PASS / 4PARTIAL / 1PENDING / 0FAIL. H4-E is not started. The site is an operational
+temporary test destination; it is not yet an accepted authoritative hosted baseline.
 
 6893d38a's normal verify job passed in full (CI 37340109924), including both Lighthouse
 axes, axe with zero unresolved findings, all four division scene gates and review UI.
