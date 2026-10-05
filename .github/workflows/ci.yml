@@ -60,8 +60,9 @@ env:
   # the state `check-axe` already reports as `"PROJECT_URL or PUBLISHABLE_KEY is not set"` —
   # so this cannot mask anything, and setting the variables is the only remaining step.
   # `M-P2-32`.
-  PROJECT_URL: ${{ vars.PROJECT_URL }}
-  PUBLISHABLE_KEY: ${{ vars.PUBLISHABLE_KEY }}
+  # H4-D-R1: even the hostile public probes must target isolated Preview, never Production.
+  PROJECT_URL: https://qfgpwumvvtizeamkynes.supabase.co
+  PUBLISHABLE_KEY: ${{ vars.GS_H4B_PREVIEW_PUBLISHABLE_KEY }}
 
 jobs:
   verify:

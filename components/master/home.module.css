@@ -407,6 +407,8 @@
   color: var(--ink-muted);
 }
 .carouselName { color: var(--ink); }
+/* A real tap target remains usable on the cylinder's foreshortened side cards. */
+.carouselMeta > a { display: block; min-height: 2.75rem; }
 
 .carouselButton {
   min-height: 2.75rem;

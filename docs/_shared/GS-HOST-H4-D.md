@@ -107,3 +107,19 @@ scene survival is 65%/68%/85% respectively, above the unchanged 60% floor. The f
 remains 448px. These are targeted diagnostic proofs; clean rebuilt/full CI gates are still required.
 Preview pre-admission baseline: zero leads/outbox, mail configured, healthy intake and empty queue;
 no hosted synthetic admission or mail has yet occurred.
+
+The clean 58928c92 static build passed: 55 routes / 203 files / 10,862,702 bytes,
+sourceModified=false; all five known private values absent. Rebuilt normal scene gate filtered
+to 430/412 passed all fourteen questions, including 65%/68% scene survival. The complete
+normal CI run 37300901862 stopped at desktop Lighthouse: homepage accessibility 96/100
+in all three samples, specifically `target-size` on an anonymous side-card provenance link
+(76.3 x 22.3px, safe clickable diameter 14.4px). Mobile/served checks did not run.
+The new link keeps its existing position inside the reserved caption, with a 44px tap area.
+The existing review UI gate now audits every cylinder pose with axe's target-size rule;
+against the unfixed artifact it correctly failed poses 6, 7, 8, 10 and 11.
+
+CI logs exposed inherited Production repository variables. This branch's workflow now selects
+only Preview qfgpwumvvtizeamkynes and the existing public publishable key in the dedicated
+GS_H4B_PREVIEW_PUBLISHABLE_KEY repository variable; no private key/new key or Production setting
+was changed. Superseded 80699551 runs and the duplicate push run on 58928c92 were cancelled,
+not counted as successful CI. Hostinger deployment remains gated on successful exact-source CI.

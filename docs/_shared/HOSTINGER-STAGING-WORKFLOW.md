@@ -22,6 +22,10 @@ successful upload or Git sync never means that HTTP, forms, accessibility or per
 Every subsequently accepted change must complete hosted verification before being integrated.
 Vercel Preview is no longer a required stage or fallback. Preserve historical Vercel evidence.
 
+The source branch's normal CI also targets isolated Supabase Preview `qfgpwumvvtizeamkynes`,
+using the existing public key in `GS_H4B_PREVIEW_PUBLISHABLE_KEY`. Production repository variables
+must not be used for hostile public/RLS probes. The dedicated variable holds no private key.
+
 ## Frozen review boundary
 
 11 existing quotations and actual ratings; anonymous linked **Verified Freelancer review**

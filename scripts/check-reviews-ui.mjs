@@ -44,10 +44,13 @@
  * things that produce it, because they need different fixes.
  */
 import { launch } from './browser-launch.mjs';
+import { AxePuppeteer } from '@axe-core/puppeteer';
+import { readFileSync } from 'node:fs';
 import { REVIEW_SOURCE_LABEL as SOURCE_LABEL, REVIEW_SOURCE_URL as FREELANCER_PROFILE } from '../lib/reviews/public-model.ts';
 import { anonymityProblems } from './service-content-rules.mjs';
 
 const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000';
+const axeSource = readFileSync('node_modules/axe-core/axe.min.js', 'utf8');
 
 /**
  * The only list this gate holds, which is why `check:lists`' discovery guard correctly does not
@@ -193,6 +196,9 @@ try {
           };
         }, SOURCE_LABEL),
       );
+      // Include the side cards: perspective can shrink a text link below the tap floor.
+      const touch = await new AxePuppeteer(page, axeSource).include('[data-reviews-carousel]').withRules(['target-size']).analyze();
+      if (touch.violations.length) problems.push(`7: review pose ${step + 1} has insufficient source-link tap targets`);
       await page.keyboard.press('Enter');
     }
     const seen = new Set(reach.map((r) => r.id).filter(Boolean));
@@ -204,6 +210,7 @@ try {
     });
   }
   say(`  4. reachable:  ${reach.length ? `${new Set(reach.map((r) => r.id).filter(Boolean)).size} of ${total} reviews reached from the keyboard, each on screen, unobscured and readable in full` : 'NOT MEASURED'}`);
+  say(`  7c. tap targets: ${reach.length} cylinder poses audited, including side-card source links`);
 
   // 11 — a cylinder, rendered: the front card faces the reader; its neighbour is turned away.
   // After the last step's turn has finished — mid-turn, no card is square to the reader.
