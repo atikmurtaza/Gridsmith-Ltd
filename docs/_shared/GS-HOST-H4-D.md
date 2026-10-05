@@ -165,3 +165,22 @@ hosted browser form evidence. No hosted valid submissions or H4-D mail have occu
 One of three mobile Digital Lighthouse samples recorded accessibility 96 due to compass-label
 color-contrast; desktop samples and the full Digital pixel gate passed. Preserve this observation
 for hosted adjudication; do not claim blanket full AA or dismiss it as proven transient.
+
+## Predeployment HTTP-contract correction
+
+875a551e's targeted homepage diagnostic passed all four analyses; permanent mapping proofs passed
+12 rating and 13 kicker cases. Exact-source run 37326743132 passed desktop Lighthouse and reached
+mobile, but is superseded before deployment because the generated HTTP contract needed correction.
+The eight exported CSS files use bare hexadecimal names; the earlier immutable FilesMatch pattern
+missed them. An independent hashed-CSS specimen produced the named rejection before correction.
+The existing config helper now covers bare/prefixed hashed JS/CSS and hashed fonts, with five
+hashed and six unversioned-name specimens. The served HTTP gate checks those same asset classes
+independently, including bare CSS names and fonts. The extensionless rewrite no longer excludes
+directories when an HTML sibling exists: /design, /digital and /press each have that export shape.
+Positive/adverse sibling-route predicate proofs are permanent. These are configuration proofs,
+not actual LiteSpeed served acceptance; every route/cache/header still requires the hosted gate.
+
+The local 875a artifact used the default Node 24.15.0 because the command PATH pointed inside
+the worktree's project directory instead of its parent proof directory. The corrected existing
+runtime is verified as 24.21.0. That artifact remains diagnostic only and must not be used for
+deployment/rollback. The next clean artifact and CI must use the corrected source and runtime.

@@ -143,4 +143,21 @@ assert(hosting.includes('noindex, nofollow, noarchive'));
 assert(hosting.includes('R=404'));
 assert(hosting.includes('max-age=31536000, immutable'));
 assert(hosting.includes('Cache-Control \"no-cache\"'));
+const immutablePattern = hosting.match(/<FilesMatch "([^"]+)">\nHeader always set Cache-Control "public, max-age=31536000, immutable"/)?.[1];
+assert(immutablePattern, 'Immutable asset rule must exist');
+const immutable = new RegExp(immutablePattern);
+for (const name of ['0123456789abcdef.css', '0123456789abcdef.js', 'chunk-0123456789abcdef.js',
+  'chunk.0123456789abcdef.js', '0123456789abcdef-s.woff2']) {
+  assert(immutable.test(name), `Immutable rule misses hashed asset ${name}`);
+}
+for (const name of ['theme.css', 'main.js', 'scene.glb', 'logo.svg', 'regular.woff2', 'index.html']) {
+  assert(!immutable.test(name), `Unversioned asset made immutable: ${name}`);
+}
+const siblingRouteAllowed = (rules) => !rules.includes('RewriteCond %{REQUEST_FILENAME} !-d\nRewriteCond %{REQUEST_FILENAME}.html -f');
+assert(siblingRouteAllowed(hosting),
+  'HTML sibling routes must not be blocked by their existing asset/service directory');
+assert.equal(siblingRouteAllowed(hosting.replace('RewriteCond %{REQUEST_FILENAME}.html -f',
+  'RewriteCond %{REQUEST_FILENAME} !-d\nRewriteCond %{REQUEST_FILENAME}.html -f')), false,
+  'Injected directory exclusion must fail the sibling-route predicate');
+console.log('Hostinger hash/cache predicates: 5 hashed and 6 unversioned names; sibling-route positive/adverse predicates PASS.');
 console.log('Hostinger static config subject: exact-origin production rejection, noindex, gated 404 and explicit cache policies. Served behaviour remains a hosted gate.');

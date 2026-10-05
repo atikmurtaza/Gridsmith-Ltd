@@ -46,7 +46,7 @@ for (const file of local.files) {
   if (file.path.endsWith('.svg')) assert.match(type, /image\/svg\+xml/);
   const cache = response.headers.get('cache-control') ?? '';
   if (file.path.endsWith('.html') || /^(?:robots\.txt|sitemap\.xml)$/.test(file.path)) assert.match(cache, /no-cache/);
-  if (/[.-][a-f0-9]{8,}\.(?:js|css)$/.test(file.path)) assert.match(cache, /immutable/);
+  if (/(?:[.-][a-f0-9]{8,}\.(?:js|css)|\/[a-f0-9]{8,}\.(?:js|css)|\/[a-f0-9]{8,}[^/]*\.woff2)$/.test(file.path)) assert.match(cache, /immutable/, file.path);
   served.set(file.path, bytes);
   receipt.files.push({ path: file.path, bytes: bytes.length, sha256: file.sha256,
     type, cache, encoding: response.headers.get('content-encoding'), elapsedMs });

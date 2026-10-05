@@ -18,7 +18,6 @@ RewriteRule ^(?:privacy-policy|terms-and-conditions)/?$ - [R=404,L]
 RewriteCond %{THE_REQUEST} \\s/+(.+?)/+[?\\s]
 RewriteRule ^(.+)/$ /$1 [R=308,L,NE]
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^(.+)$ $1.html [L]
 <IfModule mod_headers.c>
@@ -34,7 +33,7 @@ Header always set Cache-Control "no-cache"
 <FilesMatch "\\.(?:svg|png|jpe?g|webp|avif|glb|gltf|bin|woff2?)$">
 Header always set Cache-Control "public, max-age=300, must-revalidate"
 </FilesMatch>
-<FilesMatch "(?:[.-][a-f0-9]{8,}\\.(?:js|css)|^[a-f0-9]{8,}[^/]*\\.woff2)$">
+<FilesMatch "(?:(?:[.-][a-f0-9]{8,}|^[a-f0-9]{8,})\\.(?:js|css)|^[a-f0-9]{8,}[^/]*\\.woff2)$">
 Header always set Cache-Control "public, max-age=31536000, immutable"
 </FilesMatch>
 </IfModule>
