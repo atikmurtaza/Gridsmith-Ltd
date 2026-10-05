@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Something went wrong — Gridsmith Ltd</title>
+    <style>
+      /* System colours, not tokens, and deliberately so. This document is served when the
+         platform itself has failed; it must not depend on a stylesheet whose filename comes
+         from a build manifest the failing system owns. `Canvas`/`CanvasText` are CSS system
+         colours, honour the reader's light/dark setting, and are not colour literals — so
+         `no-hardcoded-colors` has nothing to object to and nothing here can drift out of
+         sync with the token layer, because it never referenced it. */
+      :root { color-scheme: light dark; }
+      body {
+        margin: 0;
+        padding: 4rem 1.5rem;
+        background: Canvas;
+        color: CanvasText;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        line-height: 1.55;
+      }
+      main { max-width: 34rem; margin-inline: auto; }
+      h1 { font-size: 1.75rem; line-height: 1.2; margin: 0 0 1rem; }
+      p { margin: 0 0 1rem; }
+      dl { font-family: ui-monospace, monospace; font-size: 0.8125rem; margin: 2rem 0 0; }
+      dt { font-weight: 600; }
+      dd { margin: 0 0 0.5rem; }
+      a { color: LinkText; }
+    </style>
+  </head>
+  <body>
+    <main id="main">
+      <h1>Something went wrong</h1>
+      <p>
+        This page could not be served. The fault is ours, not yours, and nothing you sent has
+        been lost.
+      </p>
+      <p><a href="/">Return to the Gridsmith homepage</a></p>
+      <dl>
+        <dt>Request</dt>
+        <dd>::vercel:REQUEST_ID::</dd>
+        <dt>Error</dt>
+        <dd>::vercel:ERROR_CODE::</dd>
+      </dl>
+    </main>
+  </body>
+</html>
