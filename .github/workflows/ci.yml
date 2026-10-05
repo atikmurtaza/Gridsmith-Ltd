@@ -368,3 +368,13 @@ jobs:
           name: design-scene-evidence
           path: .artifacts/design-scenes
           if-no-files-found: ignore
+
+  hostinger-staging:
+    # The registered CI dispatch runs this branch-local reusable workflow only after
+    # the exact-source normal verification job passes. No default-branch edit needed.
+    if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main' && github.ref != 'refs/heads/codex/gs-hostinger-artifact'
+    needs: verify
+    permissions:
+      contents: write
+      actions: read
+    uses: ./.github/workflows/hostinger-staging.yml

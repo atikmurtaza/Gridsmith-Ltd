@@ -67,3 +67,8 @@ Preview origin mutation completed once and verified: exact temporary origin plus
 existing loopback origins. Hosted origin preflight 204 with exact Allow-Origin; gridsmith.uk
 and an unapproved test origin 403 without Allow-Origin. No functions/schema or Production
 settings changed. Preview mail configured; queue empty before hosted tests.
+
+GitHub dispatch of a newly added workflow returned 404 because it is absent from the
+default branch. The registered CI workflow now calls the branch-local reusable staging
+workflow on manual dispatch, after its exact-source verify job succeeds. Main remains
+untouched; no verification is bypassed.

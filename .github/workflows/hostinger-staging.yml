@@ -1,6 +1,6 @@
 name: Hostinger staging artifact
 on:
-  workflow_dispatch:
+  workflow_call:
 permissions:
   contents: read
   actions: read
@@ -15,6 +15,9 @@ jobs:
   build:
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/codex/gs-hostinger-artifact'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     steps:
       - uses: actions/checkout@v5
         with:
@@ -24,11 +27,6 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - name: Require exact-source CI before staging publication
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?head_sha=${GITHUB_SHA}&per_page=30" --jq '.workflow_runs | any(.head_sha == env.GITHUB_SHA and .conclusion == "success")' | grep -qx true
       - run: npm run verify:static
       - run: npm run build:static
       - run: npm run check:static:artifact

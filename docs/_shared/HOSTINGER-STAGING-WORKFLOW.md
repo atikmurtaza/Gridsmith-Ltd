@@ -12,7 +12,8 @@ Local implementation → local checks → owner visual/content approval where re
 CI/RC verification → clean trusted static build → artifact security/privacy checks → temporary
 Hostinger deployment → actual hosted verification → accepted staging baseline.
 
-Run the manual **Hostinger staging artifact** Actions workflow on an accepted source branch.
+Dispatch the existing registered **CI** workflow on an accepted source branch. Its
+`hostinger-staging` job calls the branch-local reusable workflow after `verify` succeeds.
 It requires successful normal CI for the exact source SHA, runs the static checks, builds against
 the published production CMS read-only, excludes GS-X002/GS-O003, and archives public output only.
 The publish job updates only the artifact branch. Hostinger must be configured to deploy that
