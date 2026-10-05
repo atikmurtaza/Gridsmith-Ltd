@@ -176,9 +176,16 @@ const deployWiring = [
     'must run `npm run check:launch:build`, or the deploy build skips the seed gate',
   ],
   [
-    'vercel.json "buildCommand"',
-    JSON.parse(read('vercel.json')).buildCommand === 'npm run build',
-    'must be exactly "npm run build", or npm\'s prebuild hook never fires on Vercel',
+    'Hostinger static build launch gate',
+    /run\(\['scripts\/check-launch-content\.mjs', '--build'\]\)/.test(read('scripts/build-static.mjs')) &&
+      pkg.scripts?.['build:static'] === 'node scripts/build-static.mjs',
+    'must execute the launch-content build gate before generating the deployable artifact',
+  ],
+  [
+    'vercel.json disabled Git deployment',
+    JSON.parse(read('vercel.json')).git?.deploymentEnabled === false &&
+      !JSON.parse(read('vercel.json')).crons,
+    'must disable Git deployments and remove active cron coupling under H4-D-R1',
   ],
 ];
 

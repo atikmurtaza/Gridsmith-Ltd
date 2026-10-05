@@ -427,12 +427,12 @@
 @media (prefers-reduced-motion: no-preference) {
   /* The ring's radius needs tan(); without it the whole cylinder is skipped, not half-applied. */
   @supports (transform: translateZ(calc(1px / tan(30deg)))) {
-    .carousel {
+    .carousel[data-enhanced] {
       --card-w: 20rem;
       --card-h: 22rem;
       --step: calc(360deg / var(--n, 11));
     }
-    .carouselStage {
+    .carousel[data-enhanced] .carouselStage {
       display: grid;
       place-items: center;
       min-height: var(--card-h);
@@ -443,7 +443,7 @@
       overflow-x: clip;
       overflow-y: visible;
     }
-    .carouselRing {
+    .carousel[data-enhanced] .carouselRing {
       display: grid;
       grid-template-columns: none;
       place-items: center;
@@ -453,7 +453,7 @@
       transform: translateZ(calc(-1 * var(--radius))) rotateY(calc(var(--turn, 0) * -1 * var(--step)));
       transition: transform var(--dur-slow) var(--ease-out);
     }
-    .carouselCard {
+    .carousel[data-enhanced] .carouselCard {
       grid-area: 1 / 1;
       width: var(--card-w);
       /* A floor, not a height: a card grows to its whole review, so no card is ever a scroll
@@ -463,15 +463,15 @@
       /* The far half faces away: hidden, so no mirrored text shows through the near cards. */
       backface-visibility: hidden;
     }
-    .carouselControls {
+    .carousel[data-enhanced] .carouselControls {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: var(--space-3);
     }
     @media (max-width: 767px) {
-      .carousel { --card-w: 16rem; --card-h: 28rem; }
-      .carouselStage { perspective: 60rem; }
+      .carousel[data-enhanced] { --card-w: 16rem; --card-h: 28rem; }
+      .carousel[data-enhanced] .carouselStage { perspective: 60rem; }
     }
   }
 }

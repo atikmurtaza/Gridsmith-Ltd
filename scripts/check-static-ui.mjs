@@ -6,11 +6,13 @@ import { fileURLToPath } from 'node:url';
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import { launch } from './browser-launch.mjs';
 import { preparePress } from './press-contrast.mjs';
+import { REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
 
 const normal = process.argv.includes('--normal');
 const base = process.env.STATIC_BASE_URL ?? (normal ? 'http://127.0.0.1:3235' : 'http://127.0.0.1:3236');
 const origin = new URL(base);
-assert(['localhost', '127.0.0.1'].includes(origin.hostname), 'Proof must use loopback');
+const hosted = base === REVIEW_STAGING_ORIGIN;
+assert(hosted || ['localhost', '127.0.0.1'].includes(origin.hostname), 'Proof must use loopback or the exact authorised Hostinger staging origin');
 const publication = JSON.parse(readFileSync('docs/_shared/GS-PROD-001-CMS-MANIFEST.json', 'utf8')).entries;
 const services = ['design', 'digital', 'press'].map((division) => {
   const entry = publication.find((item) => item.type === 'service' && item.eligible && item.division === division);
@@ -28,7 +30,7 @@ page.on('response', (response) => {
   const path = new URL(response.url()).pathname;
   if (response.status() >= 400 && path !== '/h4a-unknown-route') badResponses.push({ path, status: response.status() });
 });
-const receipt = { phase: 'GS-HOST-H4-A', profile: normal ? 'normal' : 'static', pages: [],
+const receipt = { phase: 'GS-HOST-H4-D-R1', profile: hosted ? 'hosted' : normal ? 'normal' : 'static', pages: [],
   noJs: [], accessibility: [], realGpu: 'UNVERIFIED', server: normal ? 'Next runtime' : 'plain file server' };
 try {
   await page.setViewport({ width: 1440, height: 900 });
@@ -155,11 +157,23 @@ try {
       receipt.accessibility.push({ route, violations: result.violations.map((issue) => ({ id: issue.id, impact: issue.impact,
         nodes: issue.nodes.map((node) => node.target) })), incomplete: result.incomplete.map((issue) => issue.id) });
     }
-    writeFileSync('build/static-axe-results.json', JSON.stringify(rawAxe, null, 2) + '\n');
+    writeFileSync(`build/${hosted ? 'hosted' : 'static'}-axe-results.json`, JSON.stringify(rawAxe, null, 2) + '\n');
+    // No-JS reviews use the same full list, without duplicate fallback text.
     // No-JS never collects answers or invokes an endpoint.
     const noJs = await browser.newPage(); await noJs.setJavaScriptEnabled(false);
     for (const route of ['/', '/design', '/digital', '/press', ...services, '/about', '/approach', '/contact', '/insights', '/press/contact', '/press/contact/thank-you']) {
       assert.equal((await noJs.goto(base + route, { waitUntil: 'networkidle0' })).status(), 200);
+      if (route === '/') {
+        const reviews = await noJs.$eval('[data-reviews-carousel]', (root) => ({
+          count: root.querySelectorAll('blockquote').length,
+          transform: getComputedStyle(root.querySelector('ul')).transform,
+          cards: [...root.querySelectorAll('li')].every((card) => getComputedStyle(card).transform === 'none' && getComputedStyle(card).backfaceVisibility !== 'hidden'),
+          links: root.querySelectorAll('a[href=\"https://www.freelancer.com/u/GridsmithLTD\"]').length,
+        }));
+        assert.equal(reviews.count, 11); assert.equal(reviews.links, 11);
+        assert.equal(reviews.transform, 'none'); assert(reviews.cards);
+        receipt.noJsReviews = reviews;
+      }
       const state = await noJs.evaluate(() => ({ h1: Boolean(document.querySelector('h1')?.textContent.trim()),
         mainText: document.querySelector('main')?.textContent.trim().length ?? 0,
         navigation: document.querySelectorAll('header a[href]').length,
@@ -167,7 +181,7 @@ try {
         overflow: document.documentElement.scrollWidth > innerWidth + 1 }));
       assert(state.h1 && state.mainText > 100 && state.navigation > 0 && state.disclosure);
       state.reflow = [];
-      for (const width of [375, 768, 1440]) {
+      for (const width of [390, 768, 1440, 1920]) {
         await noJs.setViewport({ width, height: 900 });
         const overflow = await noJs.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
         assert(!overflow, `No-JS horizontal overflow: ${route} at ${width}px`);
@@ -188,7 +202,7 @@ try {
   }
   assert.deepEqual(errors, []); assert.deepEqual(failedRequests, []); assert.deepEqual(badResponses, []);
   receipt.browserErrors = errors; receipt.failedRequests = failedRequests; receipt.badResponses = badResponses;
-  writeFileSync(`build/${normal ? 'normal' : 'static'}-ui-receipt.json`, JSON.stringify(receipt, null, 2) + '\n');
+  writeFileSync(`build/${hosted ? 'hosted' : normal ? 'normal' : 'static'}-ui-receipt.json`, JSON.stringify(receipt, null, 2) + '\n');
   assert.equal(receipt.accessibility.reduce((sum, row) => sum + row.violations.length, 0), 0,
     'Focused axe violations require triage; see the UI receipt');
   console.log(`${receipt.profile} browser proof PASS: ${receipt.pages.length} pages, scenes/reviews/PathFinder/navigation/reduced-motion/skip link/404.`);

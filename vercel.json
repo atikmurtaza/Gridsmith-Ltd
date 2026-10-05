@@ -1,11 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "crons": [
-    {
-      "path": "/api/rls-drift",
-      "schedule": "0 4 * * *"
-    }
-  ]
+  "git": { "deploymentEnabled": false }
 }

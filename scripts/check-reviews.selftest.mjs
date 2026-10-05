@@ -11,7 +11,9 @@
  * including the ones that must return a falsy result, because a half-working predicate reports
  * success from whichever branch you happened to exercise (`check:rls` accepted an `anon` SELECT
  * policy twice for exactly that reason).
- */
+*/
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import {
   CATEGORIES,
   FREELANCER_PROFILE,
@@ -82,9 +84,8 @@ is('withhold: no company supplied does not crash', withholdReason('Solid work.')
 // so each is driven on a body the OTHER limb publishes. Every case reads a returned reason.
 
 // Limb 1 — manual. An id-only rule must fire on a body every other rule publishes, or a green
-// would only mean the body happened to be clean. `WITHHELD_REVIEW_IDS` is empty as of GS-O015
-// (the two ids it held are now caught by rule), so the subject is supplied here by value —
-// which is what makes an empty denylist a proven branch rather than an inert one.
+// would only mean another rule caught the body. Use clean synthetic quotations for the
+// permanent IDs and a separate injected ID for the additional manual branch.
 is(
   'withhold GS-O015 manual: an id on the list is withheld whatever the body says',
   withholdReason('Solid work.', null, 99999999, [99999999]),
@@ -96,23 +97,30 @@ is(
   null,
 );
 is(
-  'withhold GS-O015 manual: the list is empty, because the two ids it held are now caught by rule',
-  WITHHELD_REVIEW_IDS.length,
-  0,
+  'withhold H4-C: permanent IDs remain explicit, regardless of later source wording',
+  WITHHELD_REVIEW_IDS,
+  [22108992, 22100632],
 );
+for (const id of [22108992, 22100632]) {
+  is(`withhold H4-C: permanent ${id} rejects a clean synthetic quotation`,
+    withholdReason('Synthetic fixture: clear communication.', null, id),
+    'a person read this review and withheld it (GS-O015, manual)');
+  is(`withhold H4-C: an injected empty list cannot bypass permanent ${id}`,
+    withholdReason('Synthetic fixture: clear communication.', null, id, []),
+    'a person read this review and withheld it (GS-O015, manual)');
+}
+is('withhold H4-C: permanent list is frozen', Object.isFrozen(WITHHELD_REVIEW_IDS), true);
 
-// Limb 2 — deterministic. The two bodies the owner's decision is actually about, verbatim
-// enough to be the real subject, plus a business nobody has seen. A rule that only matched the
-// two known strings would be an id list wearing a regex.
+// Limb 2 — deterministic, driven independently with synthetic companies and non-denied IDs.
 is(
-  'namedThirdParty: the first GS-O015 body names its company',
-  namedThirdParty('My app started life with the very disgraceful Varnika Software PVT in India'),
-  'Varnika Software PVT',
+  'namedThirdParty: a synthetic business with multiple corporate tokens is caught',
+  namedThirdParty('Synthetic fixture: Example Software PVT delivered the earlier work.'),
+  'Example Software PVT',
 );
 is(
-  'namedThirdParty: the second GS-O015 body names its company',
-  namedThirdParty('initially developed by Varnika Pvt in India which was a massive mistake.'),
-  'Varnika Pvt',
+  'namedThirdParty: a synthetic private company is caught',
+  namedThirdParty('Synthetic fixture: Example Pvt delivered the earlier work.'),
+  'Example Pvt',
 );
 is(
   'namedThirdParty: a business nobody has seen is caught too, which is the point of a rule',
@@ -141,7 +149,7 @@ is(
 );
 is(
   'withhold GS-O015 rule: fires on a body with no URL, no email and no reviewer company',
-  typeof withholdReason('Work started at Varnika Pvt and was a mess.', null, 1),
+  typeof withholdReason('Synthetic fixture: work started at Example Pvt.', null, 1),
   'string',
 );
 
@@ -183,6 +191,22 @@ is('parse: zero reviews is valid, not an error', parsePayload({ status: 'success
 
 const parsedGood = parsePayload(good);
 const one = toReviews(parsedGood.data, { 1: ['Logo Design'] });
+
+// Filter-first public mapping: both permanent identities are tested together, then
+// reordered and duplicated. Clean synthetic text proves identity (not a text rule) fired.
+const permanentFixture = [22108992, 22100632, 1].map((id) => ({
+  ...good.result.reviews[0], id, description: 'Synthetic fixture: clear communication.',
+}));
+for (const [label, reviews] of [
+  ['both permanent exclusions', permanentFixture],
+  ['reordered provider result', [...permanentFixture].reverse()],
+  ['duplicate denied identities', [...permanentFixture, permanentFixture[0], permanentFixture[1]]],
+]) {
+  const mapped = toReviews(parsePayload({ ...good, result: { ...good.result, reviews } }).data);
+  is(`map H4-C: ${label} cannot enter public output`, mapped.published.map((r) => r.id), [1]);
+  is(`map H4-C: ${label} reports two distinct withheld identities`,
+    mapped.withheld.map((r) => r.id).sort((a, b) => a - b), [22100632, 22108992]);
+}
 
 is('map: zero reviews maps to zero published', toReviews(parsePayload({ status: 'success', result: { reviews: [] } }).data).published.length, 0);
 is('map: one review maps to one published', one.published.length, 1);
@@ -250,8 +274,79 @@ is('url: carries no token parameter', /token|secret|key=/i.test(reviewsUrl()), f
 
 /* -- report ---------------------------------------------------------------- */
 
+// Drive the actual --live gate over an offline fetch substitute. The explicit reached
+// marker proves the injected response was consumed; red exit plus exact safe category
+// proves the relevant failure branch ran. No real provider body or credential is used.
+for (const [name, expression, category] of [
+  ['malformed JSON', 'return new Response("SYNTHETIC_PRIVATE_SOURCE_NOT_JSON", {status:200})', 'malformed-json'],
+  ['schema rejection', 'return new Response(JSON.stringify({status:"SYNTHETIC_PRIVATE_SOURCE_NOT_JSON"}), {status:200})', 'schema'],
+  ['transport exception', 'throw new Error("SYNTHETIC_PRIVATE_SOURCE_NOT_JSON")', 'transport'],
+  ['authentication rejection', 'return new Response("SYNTHETIC_PRIVATE_SOURCE_NOT_JSON", {status:401})', 'http-401'],
+]) {
+  const preload = `globalThis.__GRIDSMITH_SYNTHETIC_REVIEW_TRANSPORT__=true;globalThis.fetch=async()=>{process.stdout.write("H4C_SYNTHETIC_FETCH_REACHED\\n");${expression}};`;
+  const result = spawnSync(process.execPath, ['--import', `data:text/javascript,${encodeURIComponent(preload)}`,
+    fileURLToPath(new URL('./check-reviews.mjs', import.meta.url)), '--live'],
+  { encoding: 'utf8', timeout: 15000, windowsHide: true });
+  const output = `${result.stdout ?? ''}${result.stderr ?? ''}`;
+  is(`logs H4-C: ${name} was actually injected`, output.includes('H4C_SYNTHETIC_FETCH_REACHED'), true);
+  is(`logs H4-C: ${name} fails the actual gate`, result.status, 1);
+  is(`logs H4-C: ${name} names the safe category`, output.includes(`${category}; source/error content suppressed`), true);
+  is(`logs H4-C: ${name} does not expose private fixture`, output.includes('SYNTHETIC_PRIVATE_SOURCE_NOT_JSON'), false);
+}
+
 if (failures > 0) {
   console.error(`\ncheck-reviews selftest: ${failures} of ${ran} case(s) FAILED\n`);
   process.exit(1);
 }
 console.log(`\ncheck-reviews selftest: PASS — ${ran} case(s), every rule limb asserted by return value.\n`);
+
+const { default: assert } = await import('node:assert/strict');
+// Permanent H4-D-R1 public-model adverse specimens, structurally measured.
+const { APPROVED_STAGING_REVIEWS } = await import('../lib/reviews/staging-approved.ts');
+const { publicReviewProblems } = await import('./review-public-rules.mjs');
+const { stagingReviewsAllowed } = await import('../lib/reviews/public-model.ts');
+const { readFileSync: readFrozenFile } = await import('node:fs');
+const frozen = JSON.parse(readFrozenFile(new URL('../docs/_shared/GS-HOST-H4-D-REVIEW-BASELINE.json', import.meta.url)));
+assert.deepEqual(publicReviewProblems(APPROVED_STAGING_REVIEWS, frozen), []);
+for (const [code, mutate] of [
+  ['COUNT', (rows) => rows.pop()],
+  ['KEY', (rows) => { rows[1].key = rows[0].key; }],
+  ['IDENTITY', (rows) => { rows[0].authorName = 'Synthetic Identity'; }],
+  ['PROVENANCE', (rows) => { rows[0].sourceLabel = 'Synthetic'; }],
+  ['PROVENANCE', (rows) => { rows[0].sourceUrl = 'https://example.invalid'; }],
+  ['RATING', (rows) => { rows[1].rating = 5; }],
+  ['TEXT', (rows) => { rows[0].reviewText += ' synthetic'; }],
+  ['COUNTRY', (rows) => { rows[0].country = { code: 'XX' }; }],
+]) {
+  const rows = structuredClone(APPROVED_STAGING_REVIEWS); mutate(rows);
+  assert(publicReviewProblems(rows, frozen).includes(code), code);
+}
+for (const site of ['https://gridsmith.uk', 'https://www.gridsmith.uk', 'https://evil.invalid', undefined]) {
+  assert.equal(stagingReviewsAllowed('owner-staging', site), false);
+}
+assert.equal(stagingReviewsAllowed(undefined, 'https://example.hostingersite.com'), false);
+assert.equal(stagingReviewsAllowed('owner-staging', 'http://localhost:3236'), true);
+console.log('H4-D-R1 frozen public model PASS: 8 adverse field/count specimens, 5 closed production-boundary specimens.');
+
+const { artifactReviewProblems } = await import('./review-public-rules.mjs');
+const escapeReview = (value) => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#x27;');
+const publicFixture = new Map([['index.html', Buffer.from(APPROVED_STAGING_REVIEWS.map((row) =>
+  `<li data-review-key=\"${row.key}\"><span aria-label=\"${row.rating} out of 5 stars\">${row.rating} / 5</span><blockquote><p>${escapeReview(row.reviewText)}</p></blockquote><figcaption><a href=\"${row.sourceUrl}\" target=\"_blank\" rel=\"noopener noreferrer\">${row.sourceLabel}<span class=\"sr-only\"> (opens in a new tab)</span></a></figcaption></li>`).join(''))]]);
+assert.deepEqual(artifactReviewProblems(publicFixture, frozen), []);
+for (const [before, after, code] of [
+  ['rel=\"noopener noreferrer\"', '', 'LINK'],
+  ['Verified Freelancer review', 'Synthetic Identity', 'CAPTION_IDENTITY'],
+  ['4.6 out of 5 stars', '5 out of 5 stars', 'RATING'],
+  ['review-01', 'missing-key', 'KEY'],
+  ['<blockquote><p>', '<blockquote><p>synthetic ', 'TEXT'],
+]) {
+  const files = new Map(publicFixture); files.set('index.html', Buffer.from(files.get('index.html').toString().replace(before, after)));
+  assert(artifactReviewProblems(files, frozen).includes(code), code);
+}
+for (const [path, text, code] of [['raw.json', '{\"from_user_id\":1}', 'PROVIDER_DATA'], ['client.js.map', 'synthetic', 'SOURCE_MAP']]) {
+  const files = new Map(publicFixture); files.set(path, Buffer.from(text));
+  assert(artifactReviewProblems(files, frozen).some((value) => value.startsWith(code)), code);
+}
+const inert = new Map(publicFixture); inert.set('drawing.svg', Buffer.from('053760000003181848172219113636_'));
+assert.deepEqual(artifactReviewProblems(inert, frozen), []);
+console.log('H4-D-R1 public artifact predicates PASS: 7 adverse subjects and benign SVG numeric subject.');

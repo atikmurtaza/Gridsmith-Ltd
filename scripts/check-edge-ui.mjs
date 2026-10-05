@@ -7,18 +7,22 @@ import { fileURLToPath } from 'node:url';
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import { createIntake } from '../lib/leads/edge-intake.ts';
 import { launch } from './browser-launch.mjs';
-const base = 'http://localhost:3236';
+import { REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
+const hosted = process.argv.includes('--hosted');
+const base = hosted ? REVIEW_STAGING_ORIGIN : 'http://localhost:3236';
+const proofPrefix = hosted ? 'h4d' : 'h4b';
+const syntheticName = (form) => `GS-HOST-H4-B ${hosted ? 'H4-D-R1 ' : ''}Synthetic ${form}`;
 const endpoint = 'https://qfgpwumvvtizeamkynes.supabase.co/functions/v1/gs-lead-intake';
 const live = process.argv.includes('--live');
-if (live && existsSync('build/h4b-live-ui-receipt.json') && !process.argv.includes('--resume')) {
+if (live && existsSync(`build/${proofPrefix}-live-ui-receipt.json`) && !process.argv.includes('--resume')) {
   throw new Error('Existing Preview requests require exact-ID reconciliation; use --resume only after inspecting them');
 }
 const axeSource = readFileSync(createRequire(fileURLToPath(import.meta.url)).resolve('axe-core/axe.min.js'),'utf8');
-const receipt = live && process.argv.includes('--resume') ? JSON.parse(readFileSync('build/h4b-live-ui-receipt.json','utf8')) :
-  { phase: 'GS-HOST-H4-B', transport: live ? 'deployed Preview Edge' : 'in-memory Edge HTTP', states: [], requests: [], accepted: [], accessibility: [] };
+const receipt = live && process.argv.includes('--resume') ? JSON.parse(readFileSync(`build/${proofPrefix}-live-ui-receipt.json`,'utf8')) :
+  { phase: hosted ? 'GS-HOST-H4-D-R1' : 'GS-HOST-H4-B', base, transport: live ? 'deployed Preview Edge' : 'in-memory Edge HTTP', states: [], requests: [], accepted: [], accessibility: [] };
 if(live&&receipt.closed)throw new Error('This Preview proof was cleaned up; its replay records no longer exist. Do not resume.');
 const browser = await launch(), page = await browser.newPage();
-const saveReceipt = () => writeFileSync(`build/h4b-${live?'live':'mock'}-ui-receipt.json`,JSON.stringify(receipt,null,2)+'\n');
+const saveReceipt = () => writeFileSync(`build/${proofPrefix}-${live?'live':'mock'}-ui-receipt.json`,JSON.stringify(receipt,null,2)+'\n');
 const accept = (item) => {
   receipt.accepted=receipt.accepted.filter(previous=>previous.form!==item.form||previous.width!==item.width);
   receipt.accepted.push(item);saveReceipt();
@@ -101,7 +105,7 @@ try {
     await page.setViewport({ width, height: width === 390 ? 844 : 900 });
     await page.goto(base+'/contact', { waitUntil: 'networkidle0' }); await settled();
     assert(await page.$('form[data-edge-form=contact]'));
-    await fill('full_name', 'GS-HOST-H4-B Synthetic Contact');
+    await fill('full_name', syntheticName('Contact'));
     await fill('email', 'contact-ui@gridsmith.invalid');
     await fill('message', 'SYNTHETIC H4-B TEST — no customer data.');
     if (!live) {
@@ -113,7 +117,7 @@ try {
       for (const failure of ['network','temporary']) {
         mode = failure; await send(); await page.waitForSelector('[data-error-summary]'); await settled();
         assert.equal(await page.evaluate(() => document.activeElement?.hasAttribute('data-error-summary')), true);
-        assert.equal(await page.$eval('[name=full_name]', (element) => element.value), 'GS-HOST-H4-B Synthetic Contact');
+        assert.equal(await page.$eval('[name=full_name]', (element) => element.value), syntheticName('Contact'));
         assert(!(await page.$('[role=status]'))); receipt.states.push({ form: 'contact', width, failure, retained: true, focus: true });
       }
     }
@@ -131,7 +135,7 @@ try {
     await page.select('[name=wordCount]','unknown'); await choose('previouslyPublished','no');
     await page.select('[name=timeline]','no-deadline'); await next();
     await page.select('[name=budget_band]','not-sure'); await next(); await settled();
-    await fill('full_name','GS-HOST-H4-B Synthetic Press'); await fill('email','press-ui@gridsmith.invalid');
+    await fill('full_name',syntheticName('Press')); await fill('email','press-ui@gridsmith.invalid');
     assert.equal(await page.$eval('[name=manuscriptLink]', (element) => element.value),'');
     assert.equal(await page.$eval('[name=triedElsewhere]', (element) => element.value),'');
     if (!live) {

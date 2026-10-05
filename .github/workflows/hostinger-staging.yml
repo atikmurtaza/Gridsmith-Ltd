@@ -1,0 +1,69 @@
+name: Hostinger staging artifact
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: gridsmith-hostinger-staging
+  cancel-in-progress: false
+env:
+  NEXT_PUBLIC_SANITY_DATASET: production
+  NEXT_PUBLIC_LEAD_INTAKE_URL: https://qfgpwumvvtizeamkynes.supabase.co/functions/v1/gs-lead-intake
+  GRIDSMITH_STAGING_ORIGIN: https://mediumaquamarine-wallaby-594070.hostingersite.com
+jobs:
+  build:
+    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/codex/gs-hostinger-artifact'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Require exact-source CI before staging publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?head_sha=${GITHUB_SHA}&per_page=30" --jq '.workflow_runs | any(.head_sha == env.GITHUB_SHA and .conclusion == "success")' | grep -qx true
+      - run: npm run verify:static
+      - run: npm run build:static
+      - run: npm run check:static:artifact
+      - name: Archive only validated public files
+        uses: actions/upload-artifact@v4
+        with:
+          name: hostinger-static
+          path: out/
+          include-hidden-files: true
+          if-no-files-found: error
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: codex/gs-hostinger-artifact
+          path: deployment
+      - uses: actions/download-artifact@v4
+        with:
+          name: hostinger-static
+          path: artifact
+      - name: Publish generated files to the isolated artifact branch
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.sha }}
+        run: |
+          node -e 'const fs=require("fs");const r=JSON.parse(fs.readFileSync("artifact/__deployment.json"));if(r.sourceModified||r.sourceSha!==process.env.EXPECTED_SOURCE_SHA||r.siteOrigin!=="https://mediumaquamarine-wallaby-594070.hostingersite.com")process.exit(1)'
+          test "$(git -C deployment branch --show-current)" = codex/gs-hostinger-artifact
+          git -C deployment rm -r --ignore-unmatch .
+          cp -a artifact/. deployment/
+          git -C deployment config user.name github-actions
+          git -C deployment config user.email github-actions@users.noreply.github.com
+          git -C deployment add .
+          git -C deployment diff --cached --check
+          git -C deployment commit -m "build(hostinger): stage ${EXPECTED_SOURCE_SHA}"
+          git -C deployment push origin HEAD:refs/heads/codex/gs-hostinger-artifact

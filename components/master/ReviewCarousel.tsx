@@ -1,7 +1,8 @@
 'use client'; // Rotation state, a timer and hover/focus pause — none of it exists on the server.
 
 import { useEffect, useState } from 'react';
-import type { FreelancerReview } from '@/lib/reviews/freelancer';
+import type { PublicReview } from '@/lib/reviews/public-model';
+import { Link } from '@/components/primitives/Link';
 import styles from './home.module.css';
 
 /**
@@ -27,12 +28,18 @@ import styles from './home.module.css';
  */
 const DWELL_MS = 6000;
 
-export function ReviewCarousel({ reviews }: { reviews: FreelancerReview[] }) {
+export function ReviewCarousel({ reviews }: { reviews: readonly PublicReview[] }) {
   const n = reviews.length;
   const [turn, setTurn] = useState(0);
   const [paused, setPaused] = useState(false);
   const [held, setHeld] = useState(false);
+  const [enhanced, setEnhanced] = useState(false);
   const front = ((turn % n) + n) % n;
+
+  useEffect(() => {
+    const ready = window.requestAnimationFrame(() => setEnhanced(true));
+    return () => window.cancelAnimationFrame(ready);
+  }, []);
 
   useEffect(() => {
     const still = matchMedia('(prefers-reduced-motion: reduce)');
@@ -47,9 +54,15 @@ export function ReviewCarousel({ reviews }: { reviews: FreelancerReview[] }) {
     <div
       className={styles.carousel}
       data-reviews-carousel=""
+      data-enhanced={enhanced ? '' : undefined}
       onPointerEnter={() => setHeld(true)}
       onPointerLeave={() => setHeld(false)}
-      onFocus={() => setHeld(true)}
+      onFocus={(event) => {
+        setHeld(true);
+        const key = (event.target as HTMLElement).closest('[data-review-key]')?.getAttribute('data-review-key');
+        const index = reviews.findIndex((review) => review.key === key);
+        if (index >= 0) setTurn((value) => value + ((index - value % n + n) % n));
+      }}
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHeld(false);
       }}
@@ -61,25 +74,25 @@ export function ReviewCarousel({ reviews }: { reviews: FreelancerReview[] }) {
         >
           {reviews.map((review, i) => (
             <li
-              key={review.id}
+              key={review.key}
+              data-review-key={review.key}
               className={styles.carouselCard}
               style={{ '--i': i } as React.CSSProperties}
               data-front={i === front ? '' : undefined}
             >
               <figure className={styles.carouselFigure}>
                 <p className={styles.carouselFacts}>
-                  {/* Monospace: both are checkable against the profile. As the API returns them. */}
-                  <span>{review.rating} / 5</span>
-                  <time dateTime={review.date}>{review.date}</time>
+                  <span aria-label={`${review.rating} out of 5 stars`}>{review.rating} / 5</span>
+                  {review.country ? <span aria-hidden="true">{review.country.flag}</span> : null}
                 </p>
                 {/* Verbatim and whole — the card grows to fit, so there is nothing to scroll. */}
                 <blockquote className={styles.carouselQuote}>
-                  <p>{review.quote}</p>
+                  <p>{review.reviewText}</p>
                 </blockquote>
                 <figcaption className={styles.carouselMeta}>
-                  <span className={styles.carouselName}>{review.authorName}</span>
-                  {review.projectTitle ? <span>{review.projectTitle}</span> : null}
-                  <span>{review.sourceLabel}</span>
+                  <Link href={review.sourceUrl} external className={styles.carouselName}>
+                    {review.sourceLabel}
+                  </Link>
                 </figcaption>
               </figure>
             </li>

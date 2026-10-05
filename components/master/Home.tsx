@@ -4,7 +4,8 @@ import { Link } from '@/components/primitives/Link';
 import { Numeric } from '@/components/primitives/Numeric';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
 import { CANONICAL_PROCESS } from '@/lib/process/canonical';
-import { FREELANCER_PROFILE, listFreelancerReviews } from '@/lib/reviews/freelancer';
+import { REVIEW_SOURCE_URL } from '@/lib/reviews/public-model';
+import { listPublicReviews } from '@/lib/reviews/source';
 import { ENQUIRY_CTA, enquiryHref } from '@/lib/services/architecture';
 import { ReviewCarousel } from './ReviewCarousel';
 import styles from './home.module.css';
@@ -213,7 +214,7 @@ export function Process() {
  * An empty list renders nothing and fabricates nothing.
  */
 export async function Reviews() {
-  const reviews = await listFreelancerReviews();
+  const reviews = listPublicReviews();
   if (reviews.length === 0) return null;
 
   return (
@@ -226,11 +227,10 @@ export async function Reviews() {
               What clients have said, where you can check it
             </h2>
             <p className={styles.lede}>
-              Every review clients have left on our Freelancer profile, reproduced word for word.
-              Nothing is selected, shortened or rewritten.
+              Selected reviews from our Freelancer profile, reproduced word for word.
             </p>
             <p className={styles.more}>
-              <Link href={FREELANCER_PROFILE} external>
+              <Link href={REVIEW_SOURCE_URL} external>
                 Read every review on our Freelancer profile
               </Link>
             </p>

@@ -8,8 +8,11 @@ import { createRequire } from 'node:module';
 import { createClient } from '@sanity/client';
 import { createStaticManifest } from '../lib/build/route-manifest.ts';
 import { resolveBuildTarget } from '../lib/build/target.ts';
+import { stagingReviewsAllowed, REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
+import { hostingerRules } from '../lib/build/hostinger.ts';
 import { SANITY_PROJECT_ID, SANITY_API_VERSION } from '../sanity/project.ts';
 import { inspectStaticArtifact, readArtifact } from './check-static-artifact.mjs';
+import { artifactReviewProblems } from './review-public-rules.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const staging = join(root, 'build/static-source');
@@ -29,9 +32,13 @@ function removeGenerated(path) {
   if (![staging, output].includes(path) || relative(root, path).startsWith('..')) throw new Error('Unsafe static cleanup path');
   if (existsSync(path)) rmSync(path, { recursive: true });
 }
+const siteOrigin = process.env.GRIDSMITH_STAGING_ORIGIN ?? 'http://localhost:3236';
+if (!stagingReviewsAllowed('owner-staging', siteOrigin) || new URL(siteOrigin).origin !== siteOrigin) {
+  throw new Error('Explicit temporary/local staging origin required; gridsmith.uk is forbidden');
+}
 const environment = { ...process.env, GRIDSMITH_BUILD_TARGET: 'static', GRIDSMITH_STATIC_PROOF: '1',
-  GRIDSMITH_STATIC_MANIFEST_PATH: manifestFile, NEXT_PUBLIC_SANITY_DATASET: 'production',
-  NEXT_PUBLIC_SITE_URL: 'http://localhost:3236', NEXT_PUBLIC_BUNDLE_SIZE_PROBE: '', GRIDSMITH_EXCLUDE_PROBES: '1' };
+  GRIDSMITH_STATIC_MANIFEST_PATH: manifestFile, GRIDSMITH_REVIEW_PRESENTATION: 'owner-staging', NEXT_PUBLIC_SANITY_DATASET: 'production',
+  NEXT_PUBLIC_SITE_URL: siteOrigin, NEXT_PUBLIC_BUNDLE_SIZE_PROBE: '', GRIDSMITH_EXCLUDE_PROBES: '1' };
 const privateNames = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'DIRECT_CONNECTION_STRING', 'RESEND_API_KEY',
   'SANITY_API_WRITE_TOKEN', 'SANITY_API_READ_TOKEN', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN',
   'FREELANCER_API_SECRET', 'SLACK_LEADS_WEBHOOK', 'CRON_SECRET'];
@@ -98,8 +105,7 @@ for (const [kind, folder] of [['post', 'app/(marketing)/insights/[slug]'], ['leg
 for (const [file, edge, action] of [['lib/leads/action.ts', 'submitContactEdge', 'submitLeadAction'],
   ['lib/leads/pressAction.ts', 'submitPressEdge', 'submitPressLeadAction']]) writeFileSync(join(staging, file),
   `export { ${edge} as ${action} } from './edge-client';\nexport type { FormState } from './form-domain';\n`);
-// Disposable filtered review proof only; H4-C still owns deployed retention/refresh.
-replaceOnce('lib/reviews/freelancer.ts', 'next: { revalidate: 86400 },', "cache: 'force-cache',");
+// H4-D-R1 uses a frozen sanitised source; no provider retrieval enters either UI build.
 const sharp = require('sharp');
 const logoSource = readFileSync(join(root, 'public/brand/gridsmith-logo-3d.png'));
 const preparedLogo = await sharp(logoSource).resize(1080, 1080).webp({ quality: 75 }).toBuffer();
@@ -109,22 +115,31 @@ try {
   run([require.resolve('next/dist/bin/next'), 'build'], staging);
   const after = createStaticManifest(await inventory(), publication);
   if (JSON.stringify(after) !== JSON.stringify(manifest)) throw new Error('CMS revisions changed during static generation');
+  if (siteOrigin === REVIEW_STAGING_ORIGIN) writeFileSync(join(staging, 'out/.htaccess'), hostingerRules(siteOrigin));
   const files = readArtifact(join(staging, 'out'));
   const knownSecrets = privateNames.map((name) => process.env[name]).filter((value) => value?.length >= 8);
-  const result = inspectStaticArtifact(files, manifest, publication, knownSecrets);
+  const result = inspectStaticArtifact(files, manifest, publication, knownSecrets, siteOrigin);
+  result.problems.push(...artifactReviewProblems(files, JSON.parse(readFileSync(join(root, 'docs/_shared/GS-HOST-H4-D-REVIEW-BASELINE.json')))));
   if (result.problems.length) throw new Error(result.problems.join('\n'));
   cpSync(join(staging, 'out'), output, { recursive: true });
   const fileManifest = [...files].map(([path, data]) => ({ path, bytes: data.length, sha256: digest(data) }));
-  writeFileSync(join(root, 'build/static-receipt.json'), JSON.stringify({ phase: 'GS-HOST-H4-B', proofOnly: true,
+  const sourceSha = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8', windowsHide: true }).stdout.trim();
+  const untracked = spawnSync('git', ['ls-files', '--others', '--exclude-standard', '-z'], { cwd: root, encoding: 'utf8', windowsHide: true }).stdout.split('\0');
+  const sourceModified = Boolean(spawnSync('git', ['status', '--porcelain', '--untracked-files=no'], { cwd: root, encoding: 'utf8', windowsHide: true }).stdout.trim()) ||
+    untracked.some((path) => /^(?:app|components|lib|styles|sanity|public|redirects|scripts|lighthouse)\//.test(path));
+  const deployment = { phase: 'GS-HOST-H4-D-R1', sourceSha, sourceModified, siteOrigin, artifactIdentity: digest(JSON.stringify(fileManifest)), files: fileManifest };
+  writeFileSync(join(output, '__deployment.json'), JSON.stringify(deployment) + '\n');
+  const finalResult = inspectStaticArtifact(readArtifact(output), manifest, publication, knownSecrets, siteOrigin);
+  if (finalResult.problems.length) throw new Error(finalResult.problems.join('\n'));
+  writeFileSync(join(root, 'build/static-receipt.json'), JSON.stringify({ phase: 'GS-HOST-H4-D-R1', stagingOnly: true, siteOrigin,
     buildNode: process.version,
-    sourceSha: spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8', windowsHide: true }).stdout.trim(),
-    sourceModified: true, manifest, exclusions, ...result, knownSecretValuesChecked: knownSecrets.length,
+    sourceSha, sourceModified, manifest, exclusions, ...finalResult, knownSecretValuesChecked: knownSecrets.length,
     image: { sourceBytes: logoSource.length, sourceSha256: digest(logoSource), deliveryBytes: preparedLogo.length,
       deliverySha256: digest(preparedLogo), width: logoMetadata.width, height: logoMetadata.height,
       format: logoMetadata.format, quality: 75, alpha: logoMetadata.hasAlpha },
     files: fileManifest, manifestSha256: digest(JSON.stringify(fileManifest)) }, null, 2) + '\n');
-  console.log(`Static proof: ${result.htmlRoutes} routes; ${result.fileCount} files; ${result.totalBytes} bytes. Output: out/`);
-  console.log('H4-B PREVIEW PROOF ONLY: endpoint deployment/mail acceptance and later hosting gates remain separate.');
+  console.log(`Static proof: ${finalResult.htmlRoutes} routes; ${finalResult.fileCount} files; ${finalResult.totalBytes} bytes. Output: out/`);
+  console.log('Owner-authorised staging artifact only. Hosted verification and production permission gates remain separate.');
 } finally {
   removeGenerated(staging); // Discard raw provider fetch cache and copied source; never deploy/archive it.
 }

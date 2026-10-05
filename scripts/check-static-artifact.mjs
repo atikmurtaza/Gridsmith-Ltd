@@ -2,6 +2,7 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { artifactReviewProblems } from './review-public-rules.mjs';
 
 export function readArtifact(root) {
   if (!existsSync(root)) throw new Error('Static artifact missing; nothing scanned');
@@ -17,7 +18,7 @@ export function readArtifact(root) {
   visit(root); return files;
 }
 
-export function inspectStaticArtifact(files, manifest, publication, knownSecrets = []) {
+export function inspectStaticArtifact(files, manifest, publication, knownSecrets = [], siteOrigin = 'http://localhost:3236') {
   const problems = [];
   const bad = (code, detail) => problems.push(`${code}: ${detail}`);
   const expected = manifest.routes.filter((route) => route.eligible);
@@ -40,9 +41,12 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     const data = files.get(htmlPath(route.path));
     if (!data) { bad('ROUTE', 'eligible route missing'); continue; }
     const text = data.toString('utf8'); htmlSizes[route.path] = data.length;
+    const canonical = text.match(/<link\b[^>]*rel="canonical"[^>]*href="([^"]+)"/i)?.[1];
+    let canonicalValid = false;
+    try { const url = new URL(canonical); canonicalValid = url.origin === siteOrigin && url.pathname === route.path; } catch { /* Missing/malformed canonical is a failure. */ }
     if (!/<h1(?:\s|>)/i.test(text) || !/<title>[^<]+<\/title>/i.test(text) ||
         !/<meta\b[^>]*name="description"[^>]*content="[^\"]+"/i.test(text) ||
-        !/<link\b[^>]*rel="canonical"[^>]*href="http:\/\/localhost:3236(?:\/[^\"]*)?"/i.test(text)) bad('SEO', 'heading/title/description/local canonical missing');
+        !canonicalValid) bad('SEO', 'heading/title/description/exact staging canonical missing');
     if (!/<meta\b[^>]*name="robots"[^>]*content="[^\"]*noindex/i.test(text)) bad('NOINDEX', 'route missing noindex');
     if (route.path === '/' && !/application\/ld\+json/.test(text)) bad('STRUCTURED', 'Organization data missing');
     if (['/contact', '/press/contact'].includes(route.path)) {
@@ -106,7 +110,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   const secrets = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'RESEND_API_KEY', 'SANITY_API_WRITE_TOKEN',
     'DIRECT_CONNECTION_STRING', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN', 'FREELANCER_API_SECRET']
     .map((name) => process.env[name]).filter((value) => value?.length >= 8);
-  const result = inspectStaticArtifact(readArtifact(resolve('out')), manifest, publication, secrets);
+  const result = inspectStaticArtifact(readArtifact(resolve('out')), manifest, publication, secrets, JSON.parse(readFileSync('build/static-receipt.json')).siteOrigin ?? 'http://localhost:3236');
+  result.problems.push(...artifactReviewProblems(readArtifact(resolve('out')), JSON.parse(readFileSync('docs/_shared/GS-HOST-H4-D-REVIEW-BASELINE.json'))));
   if (result.problems.length) { console.error(result.problems.join('\n')); process.exitCode = 1; }
   else console.log(`Static contract PASS: ${result.htmlRoutes} routes, ${result.fileCount} files, ${result.totalBytes} bytes; ${secrets.length} supplied secret values checked.`);
 }

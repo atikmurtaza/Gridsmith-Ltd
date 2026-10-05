@@ -45,6 +45,8 @@
  * disagree about what "identifying" means.
  */
 import { readFileSync } from 'node:fs';
+import { APPROVED_STAGING_REVIEWS } from '../lib/reviews/staging-approved.ts';
+import { publicReviewProblems } from './review-public-rules.mjs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
@@ -57,6 +59,12 @@ import {
   toReviews,
 } from '../lib/reviews/freelancer.ts';
 import { IDENTIFYING_TITLE_FRAGMENTS, anonymityProblems } from './service-content-rules.mjs';
+
+if (process.argv.includes('--live') && globalThis.__GRIDSMITH_SYNTHETIC_REVIEW_TRANSPORT__ !== true) throw new Error('H4-C provider retrieval blocked pending written permission');
+const frozenBaseline = JSON.parse(readFileSync(new URL('../docs/_shared/GS-HOST-H4-D-REVIEW-BASELINE.json', import.meta.url)));
+const frozenProblems = publicReviewProblems(APPROVED_STAGING_REVIEWS, frozenBaseline);
+if (frozenProblems.length) throw new Error('Frozen public reviews: ' + frozenProblems.join(', '));
+console.log('Frozen reviews: 11 exact texts/ratings/provenance; no identities or inferred flags.');
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const live = process.argv.includes('--live');
@@ -193,13 +201,18 @@ const EXPECTED = { total: 13, published: 11, withheld: 2 };
 let liveLine = '  4. live API: NOT MEASURED — run with --live to read www.freelancer.com';
 
 if (live) {
+  let failureCategory = 'transport';
   try {
     const response = await fetch(url, { headers: { accept: 'application/json' } });
+    failureCategory = `http-${response.status}`;
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    failureCategory = 'malformed-json';
     const raw = await response.json();
+    failureCategory = 'schema';
     const parsed = parsePayload(raw);
-    if (!parsed.success) throw new Error(`payload rejected: ${parsed.error.issues[0]?.message}`);
+    if (!parsed.success) throw new Error('Invalid source schema');
 
+    failureCategory = 'transformation';
     const count = parsed.data.result.reviews_count;
     const { published, withheld } = toReviews(parsed.data, jobsByReview(raw));
     const returned = parsed.data.result.reviews.length;
@@ -241,9 +254,11 @@ if (live) {
       `${published.length} published, ${withheld.length} withheld, ` +
       `${published.filter((r) => r.projectTitle).length} categorised, ` +
       `${new Set(ids).size} distinct id(s)`;
-    for (const w of withheld) say(`     withheld ${w.id}: ${w.reason}`);
-  } catch (error) {
-    problems.push(`4: the live Freelancer API could not be measured — ${error.message}`);
+    // Operational IDs only: withholding reasons can contain private source text/names.
+    for (const w of withheld) say(`     withheld ${w.id}`);
+  } catch {
+    // JSON/parser/network messages can include raw source text or request material.
+    problems.push(`4: the live Freelancer API could not be measured — ${failureCategory}; source/error content suppressed`);
     liveLine = '  4. live API: FAILED';
   }
 }

@@ -1,0 +1,78 @@
+{
+  "source": "H4-B out/index.html",
+  "sourceSha256": "44595c9632951e7aa651e71cf1683e5174613627a973308b40688ab34ee203e4",
+  "count": 11,
+  "knownSourceCount": 13,
+  "withheldCount": 2,
+  "approvedCountryFields": 0,
+  "ratings": [
+    5.0,
+    4.6,
+    5.0,
+    5.0,
+    5.0,
+    5.0,
+    5.0,
+    5.0,
+    5.0,
+    5.0,
+    5.0
+  ],
+  "records": [
+    {
+      "key": "review-01",
+      "rating": 5.0,
+      "textSha256": "831cbadd13f9d466305de08c5f7f0fb0d3e2472facc3aa56d29c2ae4231d0eed"
+    },
+    {
+      "key": "review-02",
+      "rating": 4.6,
+      "textSha256": "3f21289444fefabb1d750696dee4be65416255f409c921b95b83abbd2ab848e7"
+    },
+    {
+      "key": "review-03",
+      "rating": 5.0,
+      "textSha256": "239c731dfae5e241a3629cd47c753f2355ad6624b0b9f87a345fa64d90fc7264"
+    },
+    {
+      "key": "review-04",
+      "rating": 5.0,
+      "textSha256": "2eedaab3170b5cf398a547cdf75b5291e49c01c2de3a2e8ffa2fe698e137cd66"
+    },
+    {
+      "key": "review-05",
+      "rating": 5.0,
+      "textSha256": "696b040f8e76d84a185ac95877ed11617538d810636c0ab9720d5b49509df132"
+    },
+    {
+      "key": "review-06",
+      "rating": 5.0,
+      "textSha256": "3f80546f6fd67474387bdfdedd35f36b4454075dd2f4003d4b5bed4a7bcc18b6"
+    },
+    {
+      "key": "review-07",
+      "rating": 5.0,
+      "textSha256": "95df07fda8d852624bfdf8191bbdc94ce7f24f8ac7056271080d3d3eaa03c8da"
+    },
+    {
+      "key": "review-08",
+      "rating": 5.0,
+      "textSha256": "8aea5755c6fd2a0072d1d1e8dbc1602df9434fa53ef146d0f5d366b3ddaceee0"
+    },
+    {
+      "key": "review-09",
+      "rating": 5.0,
+      "textSha256": "daafd8cc0ee0d66d0ca61531e2f5c1ca9795868ba9499c4623a24beb5a506a7c"
+    },
+    {
+      "key": "review-10",
+      "rating": 5.0,
+      "textSha256": "14c42b7112cd5300634a5829ed1abae38e55f357574c1e9ba6e96ee800c0f85e"
+    },
+    {
+      "key": "review-11",
+      "rating": 5.0,
+      "textSha256": "dd5c638aec1106f52b788805d2b42c4e57fbcdbd6abcca873400a48b97b6b874"
+    }
+  ]
+}

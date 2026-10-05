@@ -134,3 +134,13 @@ assert.equal(inspect(changedCount).fileCount, inspect().fileCount - 1);
 assert.equal(inspect(changedCount).htmlRoutes, inspect().htmlRoutes - 1);
 assert(inspect(changedCount).totalBytes < inspect().totalBytes);
 console.log(`Static foundation selftest PASS: ${proofs} independent rejection proofs; positive/public-config/article/noindex subjects; file/route/byte counts moved.`);
+
+const { hostingerRules } = await import('../lib/build/hostinger.ts');
+const { REVIEW_STAGING_ORIGIN } = await import('../lib/reviews/public-model.ts');
+assert.throws(() => hostingerRules('https://gridsmith.uk'), /Exact isolated/);
+const hosting = hostingerRules(REVIEW_STAGING_ORIGIN);
+assert(hosting.includes('noindex, nofollow, noarchive'));
+assert(hosting.includes('R=404'));
+assert(hosting.includes('max-age=31536000, immutable'));
+assert(hosting.includes('Cache-Control \"no-cache\"'));
+console.log('Hostinger static config subject: exact-origin production rejection, noindex, gated 404 and explicit cache policies. Served behaviour remains a hosted gate.');

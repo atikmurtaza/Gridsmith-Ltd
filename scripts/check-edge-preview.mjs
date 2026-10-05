@@ -2,15 +2,18 @@
 import assert from 'node:assert/strict';
 import { writeFileSync } from 'node:fs';
 import { PREVIEW_REF, supabase, previewServiceKey, reconcile } from './reconcile-preview-outbox.mjs';
+import { REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
 const project = `https://${PREVIEW_REF}.supabase.co`, endpoint = project+'/functions/v1/gs-lead-intake';
-const origin='http://localhost:3236';
+const hosted = process.argv.includes('--hosted');
+const origin=hosted ? REVIEW_STAGING_ORIGIN : 'http://localhost:3236';
+const receiptFile=`build/${hosted ? 'h4d' : 'h4b'}-preview-negative-receipt.json`;
 const fields={full_name:'GS-HOST-H4-B Negative Probe',email:'negative@gridsmith.invalid'};
 const envelope=(changes={})=>JSON.stringify({formType:'contact',requestId:crypto.randomUUID(),fields,...changes});
 const request=(body=envelope(),extra={})=>new Request(endpoint,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body,...extra});
-const receipt={phase:'GS-HOST-H4-B',project:PREVIEW_REF,negative:[],health:null};
+const receipt={phase:hosted?'GS-HOST-H4-D-R1':'GS-HOST-H4-B',project:PREVIEW_REF,negative:[],health:null};
 const insertProbeId=crypto.randomUUID();
 receipt.insertProbeId=insertProbeId;
-writeFileSync('build/h4b-preview-negative-receipt.json',JSON.stringify(receipt,null,2)+'\n');
+writeFileSync(receiptFile,JSON.stringify(receipt,null,2)+'\n');
 const before=JSON.parse(supabase(['db','query','--linked','--project-ref',PREVIEW_REF,'--output','json',
   "select (select count(*) from public.leads) as leads,(select count(*) from gridsmith_private.notification_outbox) as outbox;"])).rows[0];
 for (const [name,input,status] of [
@@ -48,5 +51,5 @@ assert(previewServiceKey());receipt.health=await reconcile('health');assert(rece
 const after=JSON.parse(supabase(['db','query','--linked','--project-ref',PREVIEW_REF,'--output','json',
   "select (select count(*) from public.leads) as leads,(select count(*) from gridsmith_private.notification_outbox) as outbox;"])).rows[0];
 assert.deepEqual(after,before,'negative probes changed durable counts');
-receipt.unchangedCounts=true;writeFileSync('build/h4b-preview-negative-receipt.json',JSON.stringify(receipt,null,2)+'\n');
+receipt.unchangedCounts=true;writeFileSync(receiptFile,JSON.stringify(receipt,null,2)+'\n');
 console.log(`H4-B deployed Preview negative proof PASS: ${receipt.negative.length} method/origin/body/schema/spam/private-worker/public-privilege probes; lead/outbox counts unchanged.`);

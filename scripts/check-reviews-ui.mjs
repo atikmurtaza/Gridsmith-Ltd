@@ -44,7 +44,7 @@
  * things that produce it, because they need different fixes.
  */
 import { launch } from './browser-launch.mjs';
-import { SOURCE_LABEL, FREELANCER_PROFILE } from '../lib/reviews/freelancer.ts';
+import { REVIEW_SOURCE_LABEL as SOURCE_LABEL, REVIEW_SOURCE_URL as FREELANCER_PROFILE } from '../lib/reviews/public-model.ts';
 import { anonymityProblems } from './service-content-rules.mjs';
 
 const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000';
@@ -61,7 +61,7 @@ const ROUTES = [
   { path: '/press', reviews: false },
 ];
 
-const WIDTHS = [375, 768, 1440];
+const WIDTHS = [390, 768, 1440, 1920];
 
 /**
  * Found by rendered content, never by class name. CSS module classes are hashed, so a selector
@@ -238,6 +238,26 @@ try {
   else if (!link.focused) problems.push('7: the profile link cannot take keyboard focus');
   say(`  7. source:     ${link ? `"${link.text}" → ${link.href}, keyboard-focusable` : 'NOT MEASURED'}`);
 
+  await page.keyboard.press('Tab');
+  const provenance = await page.evaluate((profile) => {
+    const captions = [...document.querySelectorAll('[data-review-key] figcaption')];
+    return captions.map((caption) => {
+      const anchor = caption.querySelector('a');
+      anchor?.focus();
+      const style = anchor ? getComputedStyle(anchor) : null;
+      return {
+        correct: anchor?.href === profile && anchor?.target === '_blank' && anchor?.rel === 'noopener noreferrer' &&
+          anchor?.textContent === 'Verified Freelancer review (opens in a new tab)',
+        focus: document.activeElement === anchor && style?.outlineStyle !== 'none' && parseFloat(style?.outlineWidth ?? '0') >= 2,
+        rating: /^\d+(?:\.\d+)? out of 5 stars$/.test(caption.closest('li')?.querySelector('[aria-label]')?.getAttribute('aria-label') ?? ''),
+      };
+    });
+  }, FREELANCER_PROFILE);
+  if (provenance.length !== 11 || provenance.some((row) => !row.correct || !row.focus || !row.rating)) {
+    problems.push('7: every frozen review must have exact anonymous provenance, safe source link, visible keyboard focus and accessible rating');
+  }
+  say(`  7b. provenance: ${provenance.length} individual links/visible focus/rating labels measured`);
+
   const categories = await page.evaluate(
     (label) =>
       [...document.querySelectorAll('figcaption')]
@@ -301,7 +321,8 @@ try {
     SOURCE_LABEL,
   );
   const stray = times.filter((t) => !t.inCard);
-  if (times.length === 0) problems.push('10: / has no <time> at all — the scope assertion measured nothing');
+  if (scope.cards !== 11) problems.push('10: expected 11 frozen review cards');
+  if (times.length !== 0) problems.push('10: frozen public model must not publish review dates');
   for (const t of stray) {
     problems.push(
       `10: <time datetime="${t.datetime}"> on / is NOT inside a review card. Every date on / ` +
