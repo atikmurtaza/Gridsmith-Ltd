@@ -333,6 +333,14 @@ const escapeReview = (value) => value.replaceAll('&', '&amp;').replaceAll('<', '
 const publicFixture = new Map([['index.html', Buffer.from(APPROVED_STAGING_REVIEWS.map((row) =>
   `<li data-review-key=\"${row.key}\"><span aria-label=\"${row.rating} out of 5 stars\">${row.rating} / 5</span><blockquote><p>${escapeReview(row.reviewText)}</p></blockquote><figcaption><a href=\"${row.sourceUrl}\" target=\"_blank\" rel=\"noopener noreferrer\">${row.sourceLabel}<span class=\"sr-only\"> (opens in a new tab)</span></a></figcaption></li>`).join(''))]]);
 assert.deepEqual(artifactReviewProblems(publicFixture, frozen), []);
+const { prepareHostingerText } = await import('../lib/build/hostinger.ts');
+const preparedFixture = new Map(publicFixture);
+preparedFixture.set('index.html', Buffer.from(prepareHostingerText('index.html', publicFixture.get('index.html').toString())));
+assert(preparedFixture.get('index.html').includes(Buffer.from('&#32;')), 'The approved multiline whitespace must be encoded');
+assert.deepEqual(artifactReviewProblems(preparedFixture, frozen), [], 'All eleven approved text hashes must survive encoding');
+const tabFixture = new Map(preparedFixture);
+tabFixture.set('index.html', Buffer.from(preparedFixture.get('index.html').toString().replace('&#32;', '&#9;')));
+assert(artifactReviewProblems(tabFixture, frozen).includes('TEXT'), 'A different decoded whitespace character must reject the text hash');
 for (const [before, after, code] of [
   ['rel=\"noopener noreferrer\"', '', 'LINK'],
   ['Verified Freelancer review', 'Synthetic Identity', 'CAPTION_IDENTITY'],

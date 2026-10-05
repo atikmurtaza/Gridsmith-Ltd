@@ -9,7 +9,7 @@ import { createClient } from '@sanity/client';
 import { createStaticManifest } from '../lib/build/route-manifest.ts';
 import { resolveBuildTarget } from '../lib/build/target.ts';
 import { stagingReviewsAllowed, REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
-import { hostingerRules } from '../lib/build/hostinger.ts';
+import { hostingerRules, prepareHostingerText } from '../lib/build/hostinger.ts';
 import { SANITY_PROJECT_ID, SANITY_API_VERSION } from '../sanity/project.ts';
 import { inspectStaticArtifact, readArtifact } from './check-static-artifact.mjs';
 import { artifactReviewProblems } from './review-public-rules.mjs';
@@ -116,6 +116,11 @@ try {
   const after = createStaticManifest(await inventory(), publication);
   if (JSON.stringify(after) !== JSON.stringify(manifest)) throw new Error('CMS revisions changed during static generation');
   if (siteOrigin === REVIEW_STAGING_ORIGIN) writeFileSync(join(staging, 'out/.htaccess'), hostingerRules(siteOrigin));
+  for (const [path, bytes] of readArtifact(join(staging, 'out'))) {
+    if (path.endsWith('.html') || path === 'robots.txt') {
+      writeFileSync(join(staging, 'out', path), prepareHostingerText(path, bytes.toString('utf8')));
+    }
+  }
   const files = readArtifact(join(staging, 'out'));
   const knownSecrets = privateNames.map((name) => process.env[name]).filter((value) => value?.length >= 8);
   const result = inspectStaticArtifact(files, manifest, publication, knownSecrets, siteOrigin);

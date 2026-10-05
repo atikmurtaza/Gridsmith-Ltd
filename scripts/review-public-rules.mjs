@@ -19,8 +19,8 @@ export function publicReviewProblems(reviews, baseline) {
   return [...new Set(problems)];
 }
 
-const decode = (value) => value.replace(/&(?:amp|lt|gt|quot|apos|#x27|#39);/g,
-  (entity) => ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&apos;': "'", '&#x27;': "'", '&#39;': "'" })[entity]);
+const decode = (value) => value.replace(/&(?:amp|lt|gt|quot|apos|#x27|#39|#32|#9);/g,
+  (entity) => ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&apos;': "'", '&#x27;': "'", '&#39;': "'", '&#32;': ' ', '&#9;': '\t' })[entity]);
 export function artifactReviewProblems(files, baseline) {
   const problems = [];
   const html = files.get('index.html')?.toString('utf8') ?? '';

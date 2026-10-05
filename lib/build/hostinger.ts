@@ -1,5 +1,14 @@
 import { REVIEW_STAGING_ORIGIN } from '../reviews/public-model.ts';
 
+/** Encode quoted whitespace without changing the review's DOM text or layout. */
+export function prepareHostingerText(path: string, text: string) {
+  if (path === 'robots.txt') return text.trimEnd() + '\n';
+  if (!path.endsWith('.html')) return text;
+  return text.replace(/(<blockquote\b[^>]*><p>)([\s\S]*?)(<\/p><\/blockquote>)/g,
+    (_, start: string, quote: string, end: string) => start + quote.replace(/[ \t]+(?=\r?$)/gm,
+      whitespace => [...whitespace].map(character => character === ' ' ? '&#32;' : '&#9;').join('')) + end);
+}
+
 /** Hostinger HTTP cache policy; unrelated to prohibited review-data caching. */
 export function hostingerRules(origin: string) {
   if (origin !== REVIEW_STAGING_ORIGIN) throw new Error('Exact isolated Hostinger staging origin required');

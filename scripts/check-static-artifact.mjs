@@ -66,6 +66,8 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   for (const [name, data] of files) {
     totalBytes += data.length;
     const text = data.toString('utf8');
+    if (/\.(?:html|css|js|txt|xml|json|svg)$/.test(name) &&
+        (/[ \t]+(?=\r?$)/m.test(text) || /(?:\r?\n){2,}$/.test(text))) bad('WHITESPACE', 'generated text cannot pass publication whitespace check');
     if (/\.html$/.test(name) && !allowedHtml.has(name)) bad('EXTRA', 'unmanifested HTML emitted');
     if (/(?:^|\/)(?:api|gridsmith-[^/]*probe|%5Fkitchen-sink|%5Fmaster-sink|_kitchen-sink|_master-sink)(?:[/.]|$)/i.test(name) ||
         /(?:^|\/)(?:\.env[^/]*|node_modules|\.next|package(?:-lock)?\.json)(?:\/|$)/.test(name)) bad('RUNTIME', 'server/test/source artifact emitted');

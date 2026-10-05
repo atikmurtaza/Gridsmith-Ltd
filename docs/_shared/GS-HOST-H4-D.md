@@ -10,6 +10,24 @@ Preserved all existing H4-C permission-independent hardening and three untracked
 
 ## Current checkpoint — 5 October 2026
 
+6893d38a's normal verify job passed in full (CI 37340109924), including both Lighthouse
+axes, axe with zero unresolved findings, all four division scene gates and review UI.
+The static build also passed; its downloaded artifact has 55 routes, 201 files, 29,470,380
+bytes and identity afb52adbc8f7d57e035ae6f0d07ff2b99345e01df3ea07b0a52e7ca3e07e0316.
+All file hashes, review hashes and five real private-value scans passed independently.
+Publication failed before commit/push at the generated-files whitespace check: index.html
+contained one approved review's whitespace-only line, and robots.txt had an extra final
+blank line. The artifact branch remains bootstrap; no Hostinger deployment occurred.
+These files are not deployment/rollback eligible until the publication correction passes.
+
+The exporter now represents line-ending review whitespace as numeric HTML entities,
+preserving the quotation's DOM text and visual layout, and emits one robots final newline.
+No quotation is trimmed or rewritten; emitted CSS is unchanged. The artifact contract now
+rejects generated trailing spaces/tabs and extra final blank lines before publication.
+Permanent proofs verify all eleven frozen text hashes after encoding, reject a changed
+decoded whitespace character, and exercise each publication-whitespace rejection branch.
+Fresh exact-source verification and artifact publication remain required.
+
 Source a3eb722c was rejected for deployment: CI 37329822078 attempts 1 and 2 failed the
 unchanged 1750ms mobile Digital LCP ceiling (medians 1754.443ms and 1756.508ms). Desktop
 passed; normal served verification and artifact publication were skipped. Its retained artifact

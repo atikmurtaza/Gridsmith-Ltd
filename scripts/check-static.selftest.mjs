@@ -104,6 +104,9 @@ breakArtifact('404', (files) => files.delete('404.html'), '404');
 breakArtifact('404 brand', (files) => set(files, '404.html', '<h1>Other</h1>noindex'), '404');
 breakArtifact('robots', (files) => set(files, 'robots.txt', 'User-Agent: *\nAllow: /\n'), 'ROBOTS');
 breakArtifact('robots missing', (files) => files.delete('robots.txt'), 'ROBOTS');
+for (const text of ['synthetic \n', 'synthetic\t\r\n', 'synthetic\n\n']) {
+  breakArtifact('each publication whitespace branch', files => set(files, 'data.txt', text), 'WHITESPACE');
+}
 breakArtifact('sitemap loc', (files) => set(files, 'sitemap.xml', '<urlset><url><loc>https://example.invalid/legal/privacy</loc></url></urlset>'), 'SITEMAP');
 breakArtifact('sitemap missing', (files) => files.delete('sitemap.xml'), 'SITEMAP');
 breakArtifact('extra HTML', (files) => set(files, 'unexpected.html', '<h1>Specimen</h1>'), 'EXTRA');
@@ -135,7 +138,14 @@ assert.equal(inspect(changedCount).htmlRoutes, inspect().htmlRoutes - 1);
 assert(inspect(changedCount).totalBytes < inspect().totalBytes);
 console.log(`Static foundation selftest PASS: ${proofs} independent rejection proofs; positive/public-config/article/noindex subjects; file/route/byte counts moved.`);
 
-const { hostingerRules } = await import('../lib/build/hostinger.ts');
+const { hostingerRules, prepareHostingerText } = await import('../lib/build/hostinger.ts');
+assert.equal(prepareHostingerText('index.html', '<blockquote><p>First\n \t\nLast</p></blockquote>'),
+  '<blockquote><p>First\n&#32;&#9;\nLast</p></blockquote>');
+assert.equal(prepareHostingerText('index.html', '<blockquote><p>First \r\nLast</p></blockquote>'),
+  '<blockquote><p>First&#32;\r\nLast</p></blockquote>');
+assert.equal(prepareHostingerText('robots.txt', 'User-Agent: *\nDisallow: /\n\n'), 'User-Agent: *\nDisallow: /\n');
+assert.equal(prepareHostingerText('sheet.css', 'synthetic \n'), 'synthetic \n');
+assert.equal(prepareHostingerText('index.html', '<pre>synthetic \n</pre>'), '<pre>synthetic \n</pre>');
 const { REVIEW_STAGING_ORIGIN } = await import('../lib/reviews/public-model.ts');
 assert.throws(() => hostingerRules('https://gridsmith.uk'), /Exact isolated/);
 const hosting = hostingerRules(REVIEW_STAGING_ORIGIN);
