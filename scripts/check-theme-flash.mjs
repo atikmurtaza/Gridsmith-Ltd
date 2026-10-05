@@ -12,8 +12,8 @@
  *
  *   1. `data-division` is present, and correct, in the prerendered HTML's <body> tag.
  *      The theme selector matches before a single byte of JavaScript runs.
- *   2. The stylesheet <link> appears in <head>, ahead of <body>. It is render-blocking,
- *      so the theme rules are parsed before anything paints.
+ *   2. The stylesheet <link> or Next's inline CSS appears in <head>, ahead of <body>.
+ *      Inline bytes match the emitted sheet; theme rules precede the first paint.
  *   3. No client chunk references `data-division` at all. There is no code path that
  *      could set, change or re-set it after hydration — so there is nothing that could
  *      produce a flash later either.
@@ -23,6 +23,51 @@
  */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import assert from 'node:assert/strict';
+
+function themeStyles(html, readCss) {
+  const styles = [], problems = [];
+  const headStart = html.indexOf('<head>');
+  const headEnd = html.indexOf('</head>');
+  const tags = /<link\b[^>]*rel="stylesheet"[^>]*>|<style\b[^>]*data-href="[^"]+"[^>]*>[\s\S]*?<\/style>/g;
+  for (const match of html.matchAll(tags)) {
+    const tag = match[0], href = /(?:data-)?href="([^"]+)"/.exec(tag);
+    if (!href) continue;
+    const sheets = href[1].split(/\s+/).map((url) => /^\/_next\/static\/css\/([^/]+\.css)$/.exec(url)?.[1]);
+    if (sheets.some((sheet) => !sheet)) { problems.push('invalid Next stylesheet reference'); continue; }
+    if (headStart < 0 || headEnd < 0 || match.index < headStart || match.index > headEnd) problems.push('theme CSS appears outside <head>');
+    const contents = sheets.map(readCss);
+    if (contents.some((css) => !css)) { problems.push('missing or empty stylesheet ' + href[1]); continue; }
+    const css = contents.join('');
+    if (tag.startsWith('<style')) {
+      const inline = tag.slice(tag.indexOf('>') + 1, tag.lastIndexOf('</style>'));
+      if (inline !== css) problems.push('inline CSS differs from emitted stylesheet ' + href[1]);
+      styles.push(inline);
+    } else styles.push(css);
+  }
+  if (styles.length === 0) problems.push('no Next theme stylesheet measured');
+  return { styles, problems };
+}
+
+// Permanent positive/adverse specimens for both transports, proven on every gate run.
+const specimenCss = '@font-face{font-family:"Inter"}';
+const specimenRead = (name) => name === 'subject.css' ? specimenCss : null;
+const specimenLink = '<link rel="stylesheet" href="/_next/static/css/subject.css">';
+const specimenInline = '<style data-href="/_next/static/css/subject.css">' + specimenCss + '</style>';
+for (const tag of [specimenLink, specimenInline]) {
+  assert.deepEqual(themeStyles('<head>' + tag + '</head><body></body>', specimenRead).problems, []);
+  assert(themeStyles('<head></head><body>' + tag + '</body>', specimenRead).problems.includes('theme CSS appears outside <head>'));
+  assert(themeStyles('<head>' + tag.replace('subject.css', 'missing.css') + '</head>', specimenRead).problems.some((p) => p.includes('missing or empty')));
+}
+assert(themeStyles('<head>' + specimenInline.replace(specimenCss, '') + '</head>', specimenRead).problems.some((p) => p.includes('inline CSS differs')));
+assert(themeStyles('<head><style>unrelated</style></head>', specimenRead).problems.includes('no Next theme stylesheet measured'));
+assert(themeStyles('<head>' + specimenLink + '</head>', () => '').problems.some((p) => p.includes('missing or empty')));
+assert(themeStyles(specimenInline + '<head></head>', specimenRead).problems.includes('theme CSS appears outside <head>'));
+const mergedSpecimen = '<style data-href="/_next/static/css/subject.css /_next/static/css/second.css">' + specimenCss + '.second{display:block}</style>';
+const mergedRead = (name) => name === 'second.css' ? '.second{display:block}' : specimenRead(name);
+assert.deepEqual(themeStyles('<head>' + mergedSpecimen + '</head>', mergedRead).problems, []);
+assert(themeStyles('<head>' + mergedSpecimen.replace('subject.css /_next/static/css/second.css', 'second.css /_next/static/css/subject.css') + '</head>', mergedRead).problems.some((p) => p.includes('inline CSS differs')));
+assert(themeStyles('<head>' + specimenInline.replace('subject.css', '../subject.css') + '</head>', specimenRead).problems.includes('invalid Next stylesheet reference'));
 
 const EXPECTED = [
   ['index', 'master'],
@@ -94,29 +139,16 @@ for (const [route, division] of EXPECTED) {
     problems.push(`${route}: <body> is ${body[0]} — expected data-division="${division}"`);
   }
 
-  // 2. stylesheet render-blocking, ahead of <body>
-  const headEnd = html.indexOf('</head>');
-  const firstSheet = html.indexOf('rel="stylesheet"');
-  if (firstSheet === -1) {
-    problems.push(`${route}: no stylesheet link — theme CSS is not render-blocking`);
-  } else if (headEnd !== -1 && firstSheet > headEnd) {
-    problems.push(`${route}: stylesheet link appears after </head>, so it does not block paint`);
-  }
-
-  // 2b. only this division's typefaces are declared — M-08.
-  const sheets = [...html.matchAll(/href="\/_next\/static\/css\/([^"]+)"/g)].map((m) => m[1]);
-  if (sheets.length === 0) {
-    problems.push(`${route}: no /_next/static/css sheet to read — the @font-face sweep measured nothing`);
-    continue;
-  }
-  const faces = new Set();
-  for (const sheet of sheets) {
+  // 2. first-paint CSS, including byte parity for Next's native inline transport.
+  const result = themeStyles(html, (sheet) => {
     const cssFile = join(CSS_DIR, sheet);
-    if (!existsSync(cssFile)) {
-      problems.push(`${route}: links ${sheet}, which is not in ${CSS_DIR} — cannot read its @font-face rules`);
-      continue;
-    }
-    for (const block of readFileSync(cssFile, 'utf8').matchAll(/@font-face\s*\{[^}]*\}/g)) {
+    return existsSync(cssFile) ? readFileSync(cssFile, 'utf8') : null;
+  });
+  problems.push(...result.problems.map((problem) => route + ': ' + problem));
+  // 2b. only this division's typefaces are declared — M-08.
+  const faces = new Set();
+  for (const css of result.styles) {
+    for (const block of css.matchAll(/@font-face\s*\{[^}]*\}/g)) {
       const family = /font-family:\s*'?"?([^;'"}]+)/.exec(block[0]);
       if (family) faces.add(family[1].trim().replace(/ Fallback$/, ''));
     }

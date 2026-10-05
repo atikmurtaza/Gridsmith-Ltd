@@ -8,6 +8,39 @@ Starting branch `codex/gs-host-004`, SHA `8e6316cc5a0dda38e0de4c15fa1d8ef9c854b8
 Main remains `fbecbe01e7fb594c6163dab57514997cb248fc21`.
 Preserved all existing H4-C permission-independent hardening and three untracked H4 prototypes.
 
+## Current checkpoint — 5 October 2026
+
+Source a3eb722c was rejected for deployment: CI 37329822078 attempts 1 and 2 failed the
+unchanged 1750ms mobile Digital LCP ceiling (medians 1754.443ms and 1756.508ms). Desktop
+passed; normal served verification and artifact publication were skipped. Its retained artifact
+is diagnostic only. No Hostinger artifact deployment, successful hosted admission or H4-D mail
+has occurred. Do not infer hosted acceptance from the local static UI proofs.
+
+The latest Digital trace identifies the heading as LCP: first content at 1692.371ms, heading
+at 1751.983ms, final critical CSS response at 1655.271ms. React chunks finish later. CSS
+minification offered no useful compressed saving. Next's built-in CSS inlining is being verified
+as the minimum build correction: same CSS/theme/fonts, unchanged visual source and thresholds.
+The existing first-paint gate now accepts inline delivery only with exact emitted-sheet parity;
+linked and inline transports have permanent missing/misplaced/altered adverse specimens.
+Local clean build and exact-source CI must settle this correction before deployment.
+
+Local normal compilation PASS with explicit development dataset/local staging URL; all 11
+emitted CSS files are byte-identical to a3eb722c. Theme/font parity, 69-route bundle budgets,
+static suite, lint and control-character checks passed. Next merges consecutive inline style
+resources; the theme gate verifies ordered concatenation and rejects reordered, invalid,
+empty, missing, altered or misplaced resources. The first attempted local build correctly
+hit the closed review publication guard when the local URL was omitted; no guard was changed.
+Native inlining increases local Digital HTML gzip from 21,544 to 62,975 bytes while removing
+the three external initial stylesheet requests. This tradeoff requires CI/hosted measurement;
+it is not yet a performance PASS or accepted deployment.
+
+Both requested retirement actions were explicitly reconfirmed and completed. Vercel's daily
+04:00 UTC /api/rls-drift cron is Disabled; Git is disconnected and deploy hooks absent. The
+external project/deployments remain. Only cyan-baboon-443600.hostingersite.com was deleted;
+the exact-domain inventory is empty and /runtime returns 404. Its 1284-byte source ZIP is
+retained (SHA256 21a03af8b557b32a664d1ce55d455f09d594d38c9fec4694e719f9a00d74f223).
+These current receipts supersede historical pending-confirmation statements below.
+
 ## Source and local evidence
 
 Recovered the 11 previously accepted quotations from the existing H4-B `out/index.html`, without

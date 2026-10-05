@@ -145,6 +145,9 @@ const nextConfig: NextConfig = {
    */
   experimental: {
     globalNotFound: true,
+    // H4-D: inline the same CSS to remove a render-blocking network round trip.
+    // Theme/font parity and exact-source Lighthouse remain mandatory.
+    inlineCss: true,
     /**
      * **A Windows-only escape hatch, inert unless you set it.** Not a build setting.
      *
