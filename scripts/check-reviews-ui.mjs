@@ -265,6 +265,18 @@ try {
   }
   say(`  7b. provenance: ${provenance.length} individual links/visible focus/rating labels measured`);
 
+  // Foreshortened links cannot be safe pointer targets. Focus must promote each to a usable front link.
+  for (let index = 0; index < 11; index++) {
+    await page.$$eval('[data-review-key] figcaption a', (links, i) => links[i].focus(), index);
+    await new Promise((resolve) => setTimeout(resolve, 1300));
+    const usable = await page.$eval('[data-front] figcaption a', (anchor) => {
+      const rect = anchor.getBoundingClientRect();
+      return document.activeElement === anchor && getComputedStyle(anchor).pointerEvents !== 'none' &&
+        rect.width >= 24 && rect.height >= 24 && anchor.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2));
+    });
+    if (!usable) problems.push(`7: keyboard source ${index + 1} did not become a usable front target`);
+  }
+
   const categories = await page.evaluate(
     (label) =>
       [...document.querySelectorAll('figcaption')]
@@ -355,6 +367,7 @@ try {
       animated: ring ? getComputedStyle(ring).animationName !== 'none' : null,
       transformed: cards.filter((c) => getComputedStyle(c).transform !== 'none').length,
       stacked: cards.filter((c) => getComputedStyle(c).backfaceVisibility === 'hidden').length,
+      inactiveLinks: cards.filter((c) => getComputedStyle(c.querySelector('figcaption a')).pointerEvents === 'none').length,
     };
   }, SOURCE_LABEL);
 
@@ -376,6 +389,7 @@ try {
   }
   if (still.transformed > 0) problems.push(`5: ${still.transformed} card(s) are still 3D-transformed under reduced motion`);
   if (still.stacked > 0) problems.push(`5: ${still.stacked} card(s) are still backface-hidden under reduced motion`);
+  if (still.inactiveLinks > 0) problems.push('5: every reduced-motion source link must accept a pointer');
   say(
     `  5. reduced:    ${still.cards} review(s) (default ${counts['/']}), animation ` +
       `${still.animated ? 'STILL RUNNING' : 'none'}, transform-style ${still.ringStyle}, ` +

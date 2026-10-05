@@ -467,6 +467,8 @@
       /* The far half faces away: hidden, so no mirrored text shows through the near cards. */
       backface-visibility: hidden;
     }
+    /* Only the reading card accepts a pointer; keyboard focus brings every source forward. */
+    .carousel[data-enhanced] .carouselCard:not([data-front]) .carouselName { pointer-events: none; }
     .carousel[data-enhanced] .carouselControls {
       display: flex;
       flex-wrap: wrap;

@@ -123,3 +123,13 @@ only Preview qfgpwumvvtizeamkynes and the existing public publishable key in the
 GS_H4B_PREVIEW_PUBLISHABLE_KEY repository variable; no private key/new key or Production setting
 was changed. Superseded 80699551 runs and the duplicate push run on 58928c92 were cancelled,
 not counted as successful CI. Hostinger deployment remains gated on successful exact-source CI.
+
+The e1570081 clean artifact passed its privacy/security contract (55 routes, 203 files,
+10,862,591 bytes; five real private values absent), but exact-source CI 37303245211 failed
+desktop homepage accessibility at 96/100. The permanent all-pose target audit remained red:
+neighbouring cards partly obscure source links; increasing their boxes creates more overlap.
+The cylinder now accepts pointer activation only on its front reading card. Every source link
+remains keyboard-focusable and existing focus promotion brings it forward; the flat no-JS and
+reduced-motion lists retain all pointer targets. Injected CSS passed all eleven poses. The
+permanent gate additionally measures focus promotion and the resulting hit-testable 24px target
+for each source, and requires all reduced-motion links active. Clean rebuilt proofs/CI pending.
