@@ -45,6 +45,7 @@ for (const file of local.files) {
   if (file.path.endsWith('.woff2')) assert.match(type, /(?:font\/woff2|application\/font-woff)/);
   if (file.path.endsWith('.svg')) assert.match(type, /image\/svg\+xml/);
   const cache = response.headers.get('cache-control') ?? '';
+  if (/\.(?:svg|png|jpe?g|webp|avif|glb|gltf|bin)$/.test(file.path)) assert.match(cache, /no-transform/, file.path);
   if (file.path.endsWith('.html') || /^(?:robots\.txt|sitemap\.xml)$/.test(file.path)) assert.match(cache, /no-cache/);
   if (/(?:[.-][a-f0-9]{8,}\.(?:js|css)|\/[a-f0-9]{8,}\.(?:js|css)|\/[a-f0-9]{8,}[^/]*\.woff2)$/.test(file.path)) assert.match(cache, /immutable/, file.path);
   served.set(file.path, bytes);

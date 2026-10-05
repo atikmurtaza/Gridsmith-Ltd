@@ -161,6 +161,7 @@ try {
     // No-JS reviews use the same full list, without duplicate fallback text.
     // No-JS never collects answers or invokes an endpoint.
     const noJs = await browser.newPage(); await noJs.setJavaScriptEnabled(false);
+    await noJs.setCacheEnabled(false); // This route proof requires fresh 200 bodies, not cached 304 revalidation.
     for (const route of ['/', '/design', '/digital', '/press', ...services, '/about', '/approach', '/contact', '/insights', '/press/contact', '/press/contact/thank-you']) {
       assert.equal((await noJs.goto(base + route, { waitUntil: 'networkidle0' })).status(), 200);
       if (route === '/') {

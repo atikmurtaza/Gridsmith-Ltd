@@ -153,6 +153,10 @@ assert(hosting.includes('noindex, nofollow, noarchive'));
 assert(hosting.includes('R=404'));
 assert(hosting.includes('max-age=31536000, immutable'));
 assert(hosting.includes('Cache-Control \"no-cache\"'));
+const preservesAssetBytes = rules => rules.includes('max-age=300, must-revalidate, no-transform');
+assert(preservesAssetBytes(hosting));
+assert.equal(preservesAssetBytes(hosting.replace(', no-transform', '')), false,
+  'Image transformation opt-out must remain in the short asset cache policy');
 const immutablePattern = hosting.match(/<FilesMatch "([^"]+)">\nHeader always set Cache-Control "public, max-age=31536000, immutable"/)?.[1];
 assert(immutablePattern, 'Immutable asset rule must exist');
 const immutable = new RegExp(immutablePattern);

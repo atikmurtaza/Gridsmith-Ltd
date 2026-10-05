@@ -10,6 +10,25 @@ Preserved all existing H4-C permission-independent hardening and three untracked
 
 ## Current checkpoint — 5 October 2026
 
+Exact-source CI 37351265485 passed all normal verification, the static build and publication
+for 17f2f6ee70edbfae4cf16fbcb8fb5cdd61238c5b. Its 55-route / 201-file / 29,470,383-byte
+artifact independently passed every manifest hash, all eleven quotation hashes and five
+private-value scans. Artifact branch commit 6aa18b92d64c8d238ac3c993fe22efc0bb237f44 contains
+identity 0afdc8e293bbb4b145e6d84594f905b7381d57aa6fa9652093de64eef1e559a1. Hostinger completed
+the first manual deployment to the exact temporary site's public_html, from that artifact branch.
+Auto-deployment is off; CDN and automatic page caching are displayed as off.
+
+The served identity matches, but hosted acceptance is FAIL/PENDING: apple-touch-icon.png is
+served as 19,362 bytes rather than 20,791, with a different hash and absent security headers.
+PNG responses differ while sampled HTML/CSS/font/SVG responses retain the expected headers.
+No cause is yet established beyond that observed transport transformation. The asset cache
+policy now explicitly requests no-transform; its permanent positive/adverse predicate and
+the served gate require that instruction. New exact-source CI and served proof must determine
+whether the provider honours it. No hash/header exception or image substitution is permitted.
+The no-JS browser proof also encountered a valid cached 304 where its cold route assertion
+requires 200; that page now disables its browser cache before the independent no-JS crawl.
+No hosted synthetic successful admission or notification has occurred; rollback remains pending.
+
 6893d38a's normal verify job passed in full (CI 37340109924), including both Lighthouse
 axes, axe with zero unresolved findings, all four division scene gates and review UI.
 The static build also passed; its downloaded artifact has 55 routes, 201 files, 29,470,380
