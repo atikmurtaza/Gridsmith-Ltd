@@ -472,6 +472,26 @@ and 4 observed with the qualification recorded there (`check:launch` prints no t
 statutory values — the same run's route table and the independent read-back supply them). Legal
 documents (`GS-O003`) and the three Technical services (`GS-O005`) are not yet in `production`.
 
+
+### 24. Re-verify robots, sitemap, indexing and image headers on the production origin
+
+- **Status:** Blocks production publication
+- **Added:** `GS-HOST-H4-D-R2`, 6 October 2026
+
+The temporary Hostinger staging domain carries two owner-approved **HOSTINGER TEMPORARY-DOMAIN
+PROVIDER EXCEPTIONS** (`_shared/GS-HOST-H4-D.md` §H4-D-R2): hCDN strips every security and
+noindex header from PNG responses, and the edge serves Hostinger's own temporary-domain
+`robots.txt` instead of the repository's. **Neither carries to gridsmith.uk.** Before production
+publication, against the actual production origin:
+
+1. `robots.txt` is the repository-controlled production file, byte for byte;
+2. the sitemap is the intended production sitemap (staging's is deliberately empty);
+3. the robots/index state is the intended production state — remove the staging noindex meta and
+   `X-Robots-Tag` only where production publication requires indexing;
+4. image responses (PNG included) keep exact bytes and the full security-header set;
+5. any remaining provider deviation is a separate, explicit production decision, not an
+   inheritance from the staging exception.
+
 ---
 
 ## Things that need a person, not a decision

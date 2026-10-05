@@ -64,6 +64,12 @@ flush again until every Accept variant is a fresh exact response. hCDN honours n
 PNG bytes but strips all origin security/noindex headers from raster images, and the edge
 serves Hostinger's own temporary-domain robots.txt instead of the artifact's. Neither is
 reachable from .htaccess.
+H4-D-R2 (owner decision): both are HOSTINGER TEMPORARY-DOMAIN PROVIDER EXCEPTIONS for this
+domain only; .htaccess and robots.txt keep the stronger contract, and BEFORE-LAUNCH item 24
+re-verifies production. Auto-deployment is OFF, but hPanel's Redeploy turns it back ON: after
+every Redeploy, turn it off and confirm after a reload before pushing again. Accept a deployment
+with build/h4d-r2-acceptance.mjs <artifact-folder> <label> (exception scoped to this origin);
+scripts/check-hostinger-http.mjs remains the strict contract and is red here by design.
 
 Keep each accepted artifact commit and downloaded Actions archive. To roll back, restore the exact
 last accepted artifact files in a new commit on the artifact branch, deploy that commit, clear the
