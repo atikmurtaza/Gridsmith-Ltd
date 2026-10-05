@@ -398,8 +398,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  /* Preserve the former two-line caption footprint after anonymous provenance replaces it. */
-  min-height: calc(var(--space-3) + 2em * var(--leading-normal) + var(--space-1) + var(--border-hairline));
+  /* Preserve the former author/capability/source footprint with anonymous provenance. */
+  min-height: calc(var(--space-3) + 3em * var(--leading-normal) + 2 * var(--space-1) + var(--border-hairline));
   padding-top: var(--space-3);
   border-top: var(--border-hairline) solid var(--line-strong);
   font-family: var(--font-mono);
@@ -474,6 +474,10 @@
     @media (max-width: 767px) {
       .carousel[data-enhanced] { --card-w: 16rem; --card-h: 28rem; }
       .carousel[data-enhanced] .carouselStage { perspective: 60rem; }
+      /* The former source row wrapped to two lines inside the accepted 16rem card. */
+      .carousel[data-enhanced] .carouselMeta {
+        min-height: calc(var(--space-3) + 4em * var(--leading-normal) + 2 * var(--space-1) + var(--border-hairline));
+      }
     }
   }
 }

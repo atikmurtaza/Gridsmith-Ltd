@@ -96,3 +96,14 @@ gate run against the static adapter timed out at a branch Next control before re
 progress assertion; exact-source normal CI must settle that correction. Mobile scene checks
 remain in progress. Vercel Git is disconnected, but the persisted daily `/api/rls-drift` cron
 is still enabled; action-time owner confirmation is pending before disabling that security check.
+
+The five-phone rebuilt run passed 390/375/360 but still failed scene survival at 430/412.
+The retained H4-B HTML establishes three caption child rows on all eleven cards, not two;
+in its accepted 16rem mobile cards the source row occupies two rendered lines. Direct old-layout
+measurements give front-caption heights 96.06/95.94/95.75px at 430/412/390. The correction
+preserves three rows generally and four rendered lines on the enhanced mobile cylinder.
+Browser-local diagnostic geometry is 96.08/95.97/95.83px with the existing token formula;
+scene survival is 65%/68%/85% respectively, above the unchanged 60% floor. The front card
+remains 448px. These are targeted diagnostic proofs; clean rebuilt/full CI gates are still required.
+Preview pre-admission baseline: zero leads/outbox, mail configured, healthy intake and empty queue;
+no hosted synthetic admission or mail has yet occurred.
