@@ -45,11 +45,19 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
   OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
   enforceability.
-- **Exact action:** decide `D-1`–`D-25` in `docs/_legal/research/GS-LEGAL-001/GS-LEGAL-001-RECORD.md`
-  §7 (critical: VAT status, privacy DPAs/transfer safeguard, retention, liability cap, Technical scope,
-  early start and stage table, contracting method, international clients); then adopt each document
-  version by recording `ownerAdoptedOn` and `ownerAdoptedVersion` in the register. Only the owner sets
-  those; `check:legal:adoption` then decides whether a document may move to `PUBLISHABLE`.
+- **Exact action (reduced at `GS-LEGAL-001-R2`, 7 October 2026):** answer §4 of
+  `docs/_legal/research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md`:
+  - five decisions: O-1 retention, O-2 provider facts, O-3 consumer contracting workflow, O-4 business
+    liability cap, O-5 proposed wording changes;
+  - five one-line confirmations, C-1 to C-5;
+  - the preconditions and authorisations listed there.
+  
+  The pack classifies all of `D-1`–`D-30` in `GS-LEGAL-001-RECORD.md` §7. Most already have an owner
+  answer, are legal requirements or are safe drafted defaults.
+
+  Then adopt each document version by recording `ownerAdoptedOn` and `ownerAdoptedVersion` in the
+  register. Only the owner sets those; `check:legal:adoption` then decides whether a document may move
+  to `PUBLISHABLE`.
 - **What it blocks:** publication of `/legal/*` in production (footer links 404 until then) and real
   form submissions (the privacy notice must be live first).
 - **Evidence required:** the dated register entries and the decision answers.
