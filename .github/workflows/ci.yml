@@ -375,6 +375,15 @@ jobs:
           path: .artifacts/design-scenes
           if-no-files-found: ignore
 
+      # GS-HOST-H4-G: frames behind any question-5 failure of check:master:scene (none on a pass).
+      - name: Retain Master scene evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: master-scene-evidence
+          path: .artifacts/master-scene
+          if-no-files-found: ignore
+
   hostinger-staging:
     # The registered CI dispatch runs this branch-local reusable workflow only after
     # the exact-source normal verification job passes. No default-branch edit needed.

@@ -753,6 +753,9 @@ const REVIEW_TEXT_SCOPE = '[data-reviews-carousel] li[data-review-key] > figure 
 const REVIEW_TEXT_REASONS = [
   "Element's background color could not be determined due to a background gradient",
   "Element's background color could not be determined because it partially overlaps other elements",
+  // GS-HOST-H4-G: on the approved GS-VIS-001 drum a turned label's facets overlap the rating, the
+  // same overlap the R1 cylinder entry above covers for that card's text and caption.
+  "Element's background color could not be determined because it's partially obscured by another element",
 ];
 const REVIEW_TEXT_TARGET = '[data-reviews-carousel]';
 const MASTER_KICKER_SCOPE = 'p[class*="home_heroKicker__"] > span:last-child';

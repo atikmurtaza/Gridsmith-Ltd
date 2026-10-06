@@ -53,7 +53,7 @@
  * Expects a server already running at AXE_BASE_URL (default http://127.0.0.1:3000).
  */
 import { launch } from './browser-launch.mjs';
-import { readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
 const CHAPTERS = ['hero', 'studios', 'context', 'process', 'reviews', 'close'];
@@ -527,6 +527,16 @@ for (const [w0, h0] of RUN) {
       const r = ratio(b.L, behind.p98[i]);
       if (r < worst) worst = r;
       if (r < b.min) problems.push(`5 ${tag} ${name}: "${b.text}" measures ${r.toFixed(2)}:1 over the scene, needs ${b.min}:1`);
+      // GS-HOST-H4-G: a question-5 failure keeps the exact frame and box it measured, so a reading
+      // that only CI produces can be examined (uploaded by CI as master-scene-evidence). Evidence
+      // only — nothing here changes what passes.
+      if (r < b.min) {
+        const dir = '.artifacts/master-scene';
+        const stem = `${dir}/q5-${tag}-${name}-${i}`.replace(/[^\w./-]+/g, '_');
+        mkdirSync(dir, { recursive: true });
+        writeFileSync(`${stem}.png`, Buffer.from(background, 'base64'));
+        writeFileSync(`${stem}.json`, JSON.stringify({ tag, position: name, text: b.text, box: b.box, L: b.L, min: b.min, ratio: r, p98: behind.p98[i] }, null, 2));
+      }
     });
     if (settled) row.push(`${name} ${(bare.gold * 100).toFixed(1)}%/${Math.round(unobscured * 100)}%/${boxes.length ? worst.toFixed(1) : '—'}`);
     else transitWorst = Math.min(transitWorst, worst);
