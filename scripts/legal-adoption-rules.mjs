@@ -135,8 +135,10 @@ export function instrumentProblems(slug, markdown) {
     if (!/(?:payment on its own|payment alone)[^.]*(?:not|never)[^.]*acceptance|(?:not|never) treat payment on its own/i.test(markdown)) {
       p.push(`${slug}: does not say that payment alone is not acceptance`);
     }
-    // RAO art. 60F(2): deferred payment stays exempt credit only within these limits (G-03).
-    if (!/no more than twelve such payments, all due within 12 months/.test(markdown)) {
+    // RAO art. 60F(2): deferred payment stays exempt credit only within these limits (G-03). The
+    // period is the statute's "12 months or less (beginning on the date of the agreement)", so the
+    // looser "within 12 months of" that 3.0 used no longer passes (GS-LEGAL-001-R3, O-5(2)).
+    if (!/no more than twelve such payments, all due within the 12 months beginning with the date of/.test(markdown)) {
       p.push(`${slug}: allows payment after supply without the consumer-credit exemption limits`);
     }
   }

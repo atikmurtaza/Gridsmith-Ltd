@@ -1,7 +1,7 @@
 # Client Terms for Business Clients
 
-**Version 3.0**\
-**Draft date: 6 October 2026**
+**Version 3.1**\
+**Draft date: 7 October 2026**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
 Company number: **17050842**\
@@ -44,7 +44,7 @@ The Scope sets out, as relevant:
 - any acceptance criteria; and
 - any project-specific terms.
 
-If the Scope does not state a payment schedule, we invoice the price for each stage when that stage is delivered, or monthly in arrears for work charged by time, in each case within the limit on deferred payments in clause 5 where it applies. If the Scope does not state a revision allowance, it includes one round of reasonable revisions for each deliverable. A revision round is one consolidated set of the client's comments on a draft, which we then work into the next version.
+If the Scope does not state a payment schedule, we invoice the price for each stage when that stage is delivered, or monthly in arrears for work charged by time. Where the limit on deferred payments in clause 5 applies, any stage or month whose payment would otherwise fall due outside that limit is invoiced in advance instead. If the Scope does not state a revision allowance, it includes one round of reasonable revisions for each deliverable. A revision round is one consolidated set of the client's comments on a draft, which we then work into the next version.
 
 ## 3. Client responsibilities
 
@@ -70,7 +70,7 @@ If the parties disagree whether a request is within the Scope, we will continue 
 
 ## 5. Price, invoices and payment
 
-The price and the payment arrangement for each project are set out in its Scope. The arrangement may be payment in full in advance, an advance payment followed by a balance, payments on reaching stated milestones, instalments, a periodic retainer, or another schedule we agree. Any payment made before the related work is done is a payment on account of the price of that work, and clause 6 governs any refund. Where the client is an individual, a partnership or another unincorporated body and any payment falls due after the work it pays for has been supplied, there will be no more than twelve such payments, all due within 12 months of the date of the contract, with no interest or fee for paying that way.
+The price and the payment arrangement for each project are set out in its Scope. The arrangement may be payment in full in advance, an advance payment followed by a balance, payments on reaching stated milestones, instalments, a periodic retainer, or another schedule we agree. Any payment made before the related work is done is a payment on account of the price of that work, and clause 6 governs any refund. Where the client is an individual, a partnership or another unincorporated body and any payment falls due after the work it pays for has been supplied, there will be no more than twelve such payments, all due within the 12 months beginning with the date of the contract, with no interest or fee for paying that way.
 
 The Scope states whether VAT is added to the price. No VAT is added to a price unless the Scope or the invoice says so and VAT is legally chargeable.
 
@@ -197,11 +197,11 @@ Nothing in this clause limits any responsibility that the law does not allow us 
 
 Gridsmith Press provides professional services on the client's behalf, which may include writing, ghostwriting, editing, proofreading, formatting, design, book production and publishing support.
 
-The client's existing manuscript, articles, notes, concepts and other existing material remain the client's property. We do not acquire ownership of the client's book or content and do not receive royalties or sales income unless a separate written agreement expressly says otherwise. Rights in material we create for the project transfer under clause 9.3.
+The client's existing manuscript, articles, notes, concepts and other existing material remain the client's property. We do not acquire ownership of the client's book or content and do not receive royalties or sales income unless a separate written agreement expressly says otherwise. Rights in material we create for the project transfer under clause 9.3. Unless the Scope expressly provides otherwise, the client buys any printed copies directly from the printer, on the printer's terms; where the Scope includes it, we coordinate the print specification and files with the printer as part of our services.
 
 For ghostwriting, the Scope records how authorship and credit will be stated. Unless the Scope says otherwise, we obtain from each writer who works on the book a signed written waiver of the right to be identified as author and of the right to object to derogatory treatment, and we do not disclose that we worked on the book without the client's agreement.
 
-The client decides what to publish and is responsible for its publication decisions and for the lawfulness of the content it supplies or approves, including in relation to defamation and the privacy of other people. We do not provide legal review of content. We may decline or pause work on content we reasonably believe is unlawful. This does not reduce our responsibility for our own work.
+The client decides what to publish and is responsible for its publication decisions and for the lawfulness of the content it supplies or approves, including in relation to defamation and the privacy of other people. We do not provide legal review of content. We may decline or pause work on content we reasonably believe is unlawful. Nothing in this paragraph reduces our responsibility for the work we create, subject to clause 16.
 
 Before any registration or platform setup, the Scope states who will hold any ISBN and who will be named as publisher. Publishing and distribution accounts will be opened in the client's name or transferred to the client, unless the Scope says otherwise, and we will not keep account passwords after the task that needed them.
 
@@ -230,7 +230,7 @@ Creative, publishing and digital outcomes often depend on third parties, client 
 
 Nothing in the contract limits or excludes liability for death or personal injury caused by negligence, for fraud or fraudulent misrepresentation, or any other liability that cannot lawfully be limited or excluded.
 
-Subject to the paragraph above, our total liability to the client for all claims arising out of or in connection with a Scope, whether in contract, negligence or otherwise, will not exceed the total fees paid and payable under that Scope or, for a retainer or other periodic Scope, the fees paid and payable in the 12 months before the event giving rise to the claim. A different limit stated prominently in a Scope applies to that Scope instead.
+Subject to the paragraph above, our total liability to the client for all claims arising out of or in connection with a Scope, whether in contract, negligence or otherwise, will not exceed the total fees paid and payable under that Scope or, for a retainer or other periodic Scope, the greater of (i) the fees paid and payable in the 12 months before the event giving rise to the claim and (ii) the fees payable for the first 12 months of that Scope (or for its whole term, if shorter). A different limit stated prominently in a Scope applies to that Scope instead.
 
 Subject to the first paragraph of this clause, neither party is liable for any indirect or consequential loss, and we are not liable for loss of profit, revenue, business, anticipated savings or goodwill, whether direct or indirect.
 

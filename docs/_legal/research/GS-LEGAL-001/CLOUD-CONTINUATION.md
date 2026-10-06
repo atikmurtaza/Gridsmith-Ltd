@@ -4,6 +4,29 @@ Handoff for a fresh Claude Code cloud session, written 7 October 2026. Branch
 `staging/gs-legal-001`; the GS-LEGAL-001 work is commit `53cc4f67`, and this file is the commit
 after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` in this folder.
 
+## R3 status (7 October 2026)
+
+**GS-LEGAL-001-R3 — owner decisions applied; six documents ready for owner adoption; Privacy needs
+owner account evidence. STOPPED before adoption.** Record: `R3-OWNER-DECISIONS-APPLIED.md` in this
+folder.
+
+- **Drafts:** Client Terms for Consumers and for Business Clients are now **3.1**. The other drafts are
+  unchanged.
+- **Operations:** the adopted retention schedule, consumer contracting workflow and rights-chain
+  requirements are under `docs/_legal/operations/`.
+- **States:** all seven remain `OWNER_REVIEW_REQUIRED`. Six need only the owner's adoption. Privacy 2.1
+  keeps its three markers: it needs the owner account checks in the R3 record §5.2 and the retention
+  routine operating (P-1).
+- **Not done:** no Sanity, Supabase, Hostinger, DNS or `main` change; no lead or `pg_dump` deleted; H4-H
+  not started.
+
+**Next:** the owner adopts the six adoptable documents (R3 record §12) and answers the Privacy account
+checks. A later, separately authorised phase then:
+- runs the 63-lead cleanup;
+- activates the routine;
+- moves Privacy to 2.2;
+- reseeds development (A-1).
+
 ## R2 status (7 October 2026)
 
 **GS-LEGAL-001-R2 complete — OWNER DECISION PACK READY; STOPPED before adoption and publication.**

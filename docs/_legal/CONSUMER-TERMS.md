@@ -1,7 +1,7 @@
 # Client Terms for Consumers
 
-**Version 3.0**\
-**Draft date: 6 October 2026**
+**Version 3.1**\
+**Draft date: 7 October 2026**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
 Company number: **17050842**\
@@ -67,7 +67,7 @@ These terms and your contract are in English.
 
 Your quotation states the total price in pounds sterling unless it says otherwise. It also states whether VAT applies; where VAT applies, the total price includes it. The total price you agree will not go up during your contract unless you agree to a change under section 5.
 
-Your quotation sets out when payments are due. Depending on the project, this may be payment in full before work starts, an advance payment and a balance, payments at stages, instalments or another schedule we agree with you. Where any payment falls due after the work it pays for has been supplied, there will be no more than twelve such payments, all due within 12 months of the date of your contract, and we charge no interest or fee for paying that way.
+Your quotation sets out when payments are due. Depending on the project, this may be payment in full before work starts, an advance payment and a balance, payments at stages, instalments or another schedule we agree with you. Where any payment falls due after the work it pays for has been supplied, there will be no more than twelve such payments, all due within the 12 months beginning with the date of your contract, and we charge no interest or fee for paying that way.
 
 Any payment you make before the related work is done is a payment towards the price of that work. It is refundable as set out in sections 6, 7 and 8. We do not take non-refundable deposits.
 
@@ -95,7 +95,7 @@ A request for additional work does not affect your rights in relation to the ori
 
 If you agree your contract with us without meeting us in person, for example by email, phone or video call, or in certain other situations away from our business premises, you can cancel it within 14 days without giving any reason. The 14 days end 14 days after the day your contract is made. We make every contract under these terms by email or electronic signature, so this right normally applies.
 
-These terms cover services only. We do not supply printed copies or other goods under them; if you want printed copies, you buy them directly from the printer, on the printer's terms.
+These terms cover services only. We do not supply printed copies or other goods under them; if you want printed copies, you buy them directly from the printer, on the printer's terms. Where your quotation includes it, we coordinate the print specification and files with the printer as part of our services, but we do not sell you the printed copies.
 
 ### 6.2 How to cancel
 
@@ -171,7 +171,7 @@ You must have the right to let us use any material you give us. If something you
 
 If your material includes personal information about other people, for example in a memoir, we will use it only for your project and keep it confidential.
 
-You decide what to publish, and you are responsible for that decision. We do not give legal advice on your content, such as whether it could be defamatory or reveal private information about other people; if you are unsure, please take advice. We may decline or pause work on content we reasonably believe is unlawful, and we will tell you why. This does not reduce our responsibility for our own work.
+You decide what to publish, and you are responsible for that decision. We do not give legal advice on your content, such as whether it could be defamatory or reveal private information about other people; if you are unsure, please take advice. We may decline or pause work on content we reasonably believe is unlawful, and we will tell you why. Nothing in this paragraph reduces our responsibility for our own work, including under sections 15 and 17.
 
 ## 10. Gridsmith Press
 

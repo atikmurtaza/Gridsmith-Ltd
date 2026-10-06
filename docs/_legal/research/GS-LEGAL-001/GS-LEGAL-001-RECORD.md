@@ -288,3 +288,17 @@ the record of what GS-LEGAL-001 recommended, and five of its entries are correct
 
 N-1 to N-3 (§10) were independently verified: no defect, with two low contractual gaps in N-1 and
 proposed wording. Nothing was adopted, published or deployed; no draft was edited.
+
+## 12. GS-LEGAL-001-R3 (7 October 2026)
+
+The owner's answers to `R2-OWNER-DECISION-PACK.md` §4 are applied, and the record of that is
+`R3-OWNER-DECISIONS-APPLIED.md`. In summary:
+
+- **Client terms:** Client Terms for Consumers and for Business Clients move to **3.1**. The changes are
+  O-5 (1)–(4), the option E liability cap and the direct-to-printer model.
+- **Operational documents** under `docs/_legal/operations/`: the retention schedule is adopted but not
+  yet operating; the consumer contracting workflow is adopted; the rights-chain requirements cover P-2.
+- **C-3:** verified as "registered in England and Wales".
+- **Privacy** stays 2.1 with its three markers, pending owner account checks and the retention routine
+  operating.
+- **States:** all seven remain `OWNER_REVIEW_REQUIRED`; none is adopted.

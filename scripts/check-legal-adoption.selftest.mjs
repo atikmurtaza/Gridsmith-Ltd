@@ -70,6 +70,9 @@ expect('payment as acceptance', all('consumer-client-terms', swap(consumer, 'We 
 expect('no obligation-to-pay acknowledgement', all('consumer-client-terms', consumer.replace('accepting it means I must pay', 'I accept')), /CCR reg\. 14/);
 expect('no instalment limit (consumer)', all('consumer-client-terms', consumer.replace('no more than twelve such payments', 'any number of payments')), /consumer-credit exemption/);
 expect('no instalment limit (business)', all('business-client-terms', business.replace('no more than twelve such payments', 'any number of payments')), /consumer-credit exemption/);
+// GS-LEGAL-001-R3: the period must be the statutory "beginning with" form; 3.0's looser wording fails.
+expect('loose instalment period (consumer)', all('consumer-client-terms', consumer.replace('within the 12 months beginning with', 'within 12 months of')), /consumer-credit exemption/);
+expect('loose instalment period (business)', all('business-client-terms', business.replace('within the 12 months beginning with', 'within 12 months of')), /consumer-credit exemption/);
 expect('no cancellation form', all('consumer-client-terms', consumer.replace('I/We hereby give notice that I/We cancel', 'I cancel')), /cancellation form/);
 expect('no express request', all('consumer-client-terms', consumer.replace('I ask Gridsmith Ltd to start work now', 'Start now')), /early-start request/);
 expect('no payment acknowledgement', all('consumer-client-terms', consumer.replace('I will pay for the work carried out up to the time I tell Gridsmith Ltd', 'I may pay')), /payment on cancellation/);
@@ -108,10 +111,18 @@ expect('adopted other version', registerProblems('x', { ...entry, state: 'PUBLIS
 expect('adoption recorded early', registerProblems('x', { ...entry, ownerAdoptedOn: '2026-10-07' }, '1.0', 'docs/_legal/X.md'), /only the owner's adoption/);
 
 // stateProblems.
-const adoptedConsumer = consumer.replace('**Draft date: 6 October 2026**', '**Effective date: 8 October 2026**');
+// The draft date is matched by pattern, not by value: R3 moved the consumer draft to 7 October and a
+// literal replace silently stopped producing an adopted specimen (a hollow subject). Assert it did.
+const DRAFT_DATE = /^\*\*Draft date: [^*]+\*\*/m;
+const toEffective = (md) => {
+  const out = md.replace(DRAFT_DATE, '**Effective date: 8 October 2026**');
+  if (out === md) throw new Error('selftest premise: specimen has no "**Draft date: …**" header to replace');
+  return out;
+};
+const adoptedConsumer = toEffective(consumer);
 expect('publishable clean', stateProblems('c', 'PUBLISHABLE', adoptedConsumer, 'summary', '2026-10-07'), null);
 expect('researched may carry markers', stateProblems('p', 'RESEARCHED', privacy, 's', null), null);
-expect('publishable with owner marker', stateProblems('p', 'PUBLISHABLE', privacy.replace('**Draft date: 6 October 2026**', '**Effective date: 8 October 2026**'), 's', '2026-10-07'), /open marker/);
+expect('publishable with owner marker', stateProblems('p', 'PUBLISHABLE', toEffective(privacy), 's', '2026-10-07'), /open marker/);
 expect('verified with TK', stateProblems('c', 'VERIFIED', consumer + '\n[TK: price]\n', 's', null), /\\\[TK/);
 expect('verified with seed summary', stateProblems('c', 'OWNER_REVIEW_REQUIRED', consumer, '[SEED] summary', null), /\\\[SEED/);
 expect('publishable without effective date', stateProblems('c', 'PUBLISHABLE', consumer, 's', '2026-10-07'), /without an "Effective date"/);

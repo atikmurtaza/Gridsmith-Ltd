@@ -45,7 +45,13 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
   OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
   enforceability.
-- **Exact action (reduced at `GS-LEGAL-001-R2`, 7 October 2026):** answer §4 of
+- **R3 (7 October 2026):** the owner's answers to R2 §4 are applied
+  (`docs/_legal/research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md`).
+  - **Now owner action:** adopt the six adoptable documents (R3 record §12), and answer the 11 provider
+    account checks (R3 record §5.2) that unblock the Privacy Policy.
+  - **Operational before first use:** the rights-chain documents (`docs/_legal/operations/RIGHTS-CHAIN.md`
+    §3) and the retention routine (`docs/_legal/operations/RETENTION-SCHEDULE.md`).
+- **Exact action (reduced at `GS-LEGAL-001-R2`, 7 October 2026; answered at R3):** answer §4 of
   `docs/_legal/research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md`:
   - five decisions: O-1 retention, O-2 provider facts, O-3 consumer contracting workflow, O-4 business
     liability cap, O-5 proposed wording changes;
