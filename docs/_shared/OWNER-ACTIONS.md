@@ -22,6 +22,20 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## ACTIONABLE NOW
 
+### `GS-O027` — Authorise the Batch A About/Approach sync to Production Sanity
+
+**CLOSED — 6 October 2026 (`GS-HOST-H4-G`).** Raised at GS-VIS-SEO-RC (5 October 2026): the approved
+SEO Batch A copy for `/about` and `/approach` existed only in `seed-content.mjs`, and the Hostinger
+staging build reads the **production** dataset. Owner authority: the H4-D-R1 and H4-G briefs (narrow
+About/Approach sync; read before write; `intro`/`sections` only). Read before write (10:36Z): both
+documents still at `_rev 0BiMQiPM5rorSeZsxnHEvi` (1 October), only `intro` and `sections` differing —
+the recorded difference, no unexpected drift. Backup of both full documents outside the repository
+(`proof/gs-o027/grouppages-before-2026-10-06T10-37-17-481Z.json`), then one transaction patching only
+`intro` and `sections`, guarded by `ifRevisionID`; new rev `OYqJMxSgjqUZpSF35PObJk`. Canonical
+read-back: 0 differences from the repository payload on both; title/slug/other fields unchanged;
+47 public documents before and after, no other `_rev` changed. No Technical (`GS-X002`) or legal
+(`GS-O003`) content. Evidence: `GS-HOST-H4-G.md` §GS-O027, `GS-VIS-SEO-RC.md` §CMS.
+
 ### `GS-O003` — Complete legal review and resolve launch actions
 
 - **Status:** ACTIONABLE NOW
