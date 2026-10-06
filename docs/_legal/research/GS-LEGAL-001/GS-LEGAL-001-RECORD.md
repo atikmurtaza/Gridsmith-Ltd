@@ -273,4 +273,3 @@ owner; the drafts implement ★ where a choice was unavoidable, and say so.
   correctly. Raised as a separate task; no redeploy made.
 - **Not done, by instruction:** no publication, no `OWNER_ADOPTED`, no Sanity/Supabase/Hostinger/DNS/
   Vercel/main change, no push, no H4-H.
-
