@@ -622,11 +622,6 @@
   font-weight: 400;
   color: var(--ink-muted);
 }
-.basis {
-  margin: var(--space-4) 0 0;
-  font-size: var(--text-sm);
-  color: var(--ink-muted);
-}
 .others {
   margin: 0;
   padding: 0;

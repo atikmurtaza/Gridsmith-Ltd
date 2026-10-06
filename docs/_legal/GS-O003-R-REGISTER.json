@@ -1,0 +1,21 @@
+{
+  "gate": "GS-O003-R",
+  "title": "Legal evidence + owner adoption register",
+  "decision": "Owner decision, 6 October 2026 (GS-LEGAL-001): no solicitor is commissioned at this stage; GS-O003's mandatory solicitor approval is replaced by an evidence-based review of each document against current UK legislation and official guidance, followed by explicit owner adoption. Nothing in this register claims solicitor review, certification or guaranteed enforceability.",
+  "states": ["RESEARCHED", "VERIFIED", "OWNER_REVIEW_REQUIRED", "OWNER_ADOPTED", "PUBLISHABLE"],
+  "rules": [
+    "Only the owner moves a document to OWNER_ADOPTED, by recording ownerAdoptedOn (date) and ownerAdoptedVersion (the exact version adopted). No script sets either.",
+    "PUBLISHABLE requires OWNER_ADOPTED plus a passing check:legal:adoption run on the adopted version; ownerAdoptedVersion must equal the document's version.",
+    "scripts/migrate-production-cms.mjs admits a legal document to the production payload only at PUBLISHABLE."
+  ],
+  "stateRecord": "6 October 2026 (GS-LEGAL-001): all seven moved to OWNER_REVIEW_REQUIRED on Agent G's re-verification (research/GS-LEGAL-001/G-final-cross-check.md section 7). What remains is the owner decisions in research/GS-LEGAL-001/GS-LEGAL-001-RECORD.md section 7; the privacy policy carries three [OWNER DECISION] markers that block PUBLISHABLE. No document is OWNER_ADOPTED.",
+  "documents": {
+    "privacy": { "draft": "docs/_legal/PRIVACY-POLICY.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null },
+    "cookies": { "draft": "docs/_legal/COOKIE-POLICY.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null },
+    "terms": { "draft": "docs/_legal/WEBSITE-TERMS.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null },
+    "client-terms": { "draft": null, "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null, "note": "Disambiguation page with no operative clause; text lives in scripts/seed-legal.mjs." },
+    "business-client-terms": { "draft": "docs/_legal/MSA-BUSINESS.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null },
+    "consumer-client-terms": { "draft": "docs/_legal/CONSUMER-TERMS.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null },
+    "accessibility": { "draft": "docs/_legal/ACCESSIBILITY-STATEMENT.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null }
+  }
+}

@@ -13,8 +13,10 @@
  * Every document gets a **production id** (`service-design-<slug>`, `grouppage-about`, …): no
  * `seed-` prefix, no dot, `isSeed: false`, references rewritten to the production ids. Excluded,
  * each with its gate in the manifest: the Technical services (`GS-X002`; the reference
- * to one from another service is dropped rather than left dangling), every `legalDocument`
- * (`GS-O003` — the solicitor-reviewed text replaces `seed-legal.mjs`, so it is not this payload),
+ * to one from another service is dropped rather than left dangling), every `legalDocument` that
+ * is not `PUBLISHABLE` in `docs/_legal/GS-O003-R-REGISTER.json` (`GS-O003-R`, which replaced the
+ * solicitor-approval gate `GS-O003` on 6 October 2026 — an adopted document's payload is its
+ * `seed-legal.mjs` transcription, held word for word to the draft by `check:legal:parity`),
  * and the types that never migrate (`faq`, `teamMember`, `post` briefs, `testimonial`).
  *
  * ## Modes
@@ -36,9 +38,18 @@ import { PRODUCTION_DATASET, SANITY_API_VERSION, SANITY_PROJECT_ID } from '../sa
 import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { PROFESSIONAL_REVIEW_GROUPS } from '../lib/services/architecture.ts';
 import { doc as companyDetails } from './seed-company-details.mjs';
+import { LEGAL_DOCUMENTS } from './seed-legal.mjs';
 import { groupPageDocs, serviceDocs } from './seed-content.mjs';
 
 const MANIFEST = 'docs/_shared/GS-PROD-001-CMS-MANIFEST.json';
+/** `GS-O003-R`: the owner-adoption register. Only the owner advances a document to OWNER_ADOPTED. */
+export const LEGAL_REGISTER = JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json', 'utf8'));
+
+/** A legal document reaches production only adopted, at the adopted version, and PUBLISHABLE. */
+export function legalPublishable(slug, version) {
+  const entry = LEGAL_REGISTER.documents?.[slug];
+  return Boolean(entry && entry.state === 'PUBLISHABLE' && entry.ownerAdoptedOn && entry.ownerAdoptedVersion && entry.ownerAdoptedVersion === version);
+}
 const args = process.argv.slice(2);
 const flag = (name) => args.includes(name);
 const option = (name) => args.find((a) => a.startsWith(`${name}=`))?.slice(name.length + 1);
@@ -83,7 +94,15 @@ export function buildPayload() {
   }
 
   for (const slug of LEGAL_DOCUMENT_SLUGS) {
-    entries.push({ type: 'legalDocument', id: `legal-${slug}`, slug, source: 'solicitor-reviewed text (not scripts/seed-legal.mjs)', gate: 'GS-O003', eligible: false, reason: 'Solicitor review outstanding; the reviewed text replaces the internal draft' });
+    const seed = LEGAL_DOCUMENTS.find((d) => d.slug.current === slug);
+    const state = LEGAL_REGISTER.documents?.[slug]?.state ?? 'missing from register';
+    if (seed && legalPublishable(slug, seed.version)) {
+      const { ownerAdoptedOn } = LEGAL_REGISTER.documents[slug];
+      docs.push({ ...seed, _id: `legal-${slug}`, isSeed: false, adoptionState: 'PUBLISHABLE', ownerAdoptedOn });
+      entries.push({ type: 'legalDocument', id: `legal-${slug}`, slug, source: 'scripts/seed-legal.mjs (owner-adopted)', gate: null, eligible: true });
+    } else {
+      entries.push({ type: 'legalDocument', id: `legal-${slug}`, slug, source: 'scripts/seed-legal.mjs', gate: 'GS-O003-R', eligible: false, reason: `Owner adoption outstanding (register state ${state})` });
+    }
   }
   return { docs, entries };
 }
@@ -116,7 +135,9 @@ export function preflightProblems(docs) {
     if (d._type === 'service' && PROFESSIONAL_REVIEW_GROUPS.includes(d.capabilityGroup)) {
       problems.push(`${d._id}: Technical service while GS-X002 is open`);
     }
-    if (d._type === 'legalDocument') problems.push(`${d._id}: legal document while GS-O003 is open`);
+    if (d._type === 'legalDocument' && (d.adoptionState !== 'PUBLISHABLE' || !legalPublishable(d.slug?.current, d.version))) {
+      problems.push(`${d._id}: legal document not PUBLISHABLE in the GS-O003-R register`);
+    }
     for (const { _ref } of d.relatedServices ?? []) {
       if (!ids.has(_ref)) problems.push(`${d._id}: reference to ${_ref}, which is not in the payload`);
     }
@@ -149,7 +170,8 @@ function selftest(docs) {
     ['[SEED] marker', swap(page, { title: '[SEED] About' }), /\[SEED\] marker/],
     ['division copy', swap(page, { intro: 'One company, three specialist divisions.' }), /says "divisions"/],
     ['technical service', swap(service, { capabilityGroup: PROFESSIONAL_REVIEW_GROUPS[0] }), /Technical service/],
-    ['legal document', [...docs, { _id: 'legal-privacy', _type: 'legalDocument', isSeed: false }], /legal document/],
+    ['unadopted legal document', [...docs, { _id: 'legal-privacy', _type: 'legalDocument', isSeed: false, slug: { current: 'privacy' }, version: '0.0', adoptionState: 'PUBLISHABLE' }], /not PUBLISHABLE in the GS-O003-R register/],
+    ['legal document below PUBLISHABLE', [...docs, { _id: 'legal-privacy', _type: 'legalDocument', isSeed: false, slug: { current: 'privacy' }, version: '0.0', adoptionState: 'OWNER_ADOPTED' }], /not PUBLISHABLE in the GS-O003-R register/],
     ['dangling reference', swap(service, { relatedServices: [{ _type: 'reference', _key: 'k0', _ref: 'service-design-nowhere' }] }), /not in the payload/],
     ['lost record', docs.filter((d) => d !== service), /expected/],
   ];

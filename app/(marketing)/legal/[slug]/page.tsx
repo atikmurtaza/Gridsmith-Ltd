@@ -6,6 +6,7 @@ import { Prose } from '@/components/primitives/Prose';
 import { Blocks } from '@/components/content/Blocks';
 import { Opening } from '@/components/shared/Opening';
 import { getLegalDocument, listLegalDocuments } from '@/lib/sanity/queries';
+import { isPublishable } from '@/lib/legal/adoption';
 import { STATIC_BUILD } from '@/lib/build/target';
 import { staticParams } from '@/lib/build/static-routes';
 import {
@@ -36,7 +37,11 @@ import opening from '@/components/shared/opening.module.css';
  *
  * ## An unapproved document is announced, never hidden
  *
- * `solicitorApproved` defaults false. The query does **not** filter on it —
+ * `adoptionState` (`GS-O003-R`, `lib/legal/adoption.ts`; until 6 October 2026 the
+ * `solicitorApproved` flag) is shown, not filtered: anything short of `PUBLISHABLE` carries the
+ * "not yet adopted" banner. Production only ever receives `PUBLISHABLE` documents (the
+ * migration reads the committed register), so the banner appears on review builds only. The
+ * query does **not** filter on the state —
  * `lib/sanity/queries.ts` explains why in full. A missing privacy notice is a worse outcome
  * than a draft that says, in the first thing on the page, that it is a draft. What must not
  * happen is a draft presented as though it were reviewed, and that is prevented by rendering
@@ -82,7 +87,8 @@ export async function generateMetadata({
   return {
     title: `${doc.title} — Gridsmith Ltd`,
     description: doc.summary ?? undefined,
-    // **No `robots` gate on `solicitorApproved`, as of 2 September 2026.** It used to `noindex`
+    // **No `robots` gate on the review state, as of 2 September 2026** (then `solicitorApproved`,
+    // now `adoptionState`). It used to `noindex`
     // every legal page until the flag flipped, which made the flag a publication gate: the
     // instruments were served but withheld from search, so the company's published legal
     // position was unfindable pending a review that had not been booked. The owner's decision
@@ -136,20 +142,22 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           />
         }
       >
-        {!doc.solicitorApproved ? (
+        {!isPublishable(doc.adoptionState) ? (
           <p className={opening.status}>
-            <span className={opening.statusLabel}>DRAFT — NOT YET REVIEWED BY A SOLICITOR.</span>{' '}
-            This is the document Gridsmith Ltd currently publishes and works to. It has been through
-            internal revision but not external legal review, and it will be updated when that
-            review happens.
+            <span className={opening.statusLabel}>NOT YET ADOPTED.</span>{' '}
+            This version is under review and has not been adopted by Gridsmith Ltd. It is shown here
+            for review only and is not the version Gridsmith Ltd contracts on.
           </p>
         ) : null}
         <p className={opening.meta}>
           <Numeric>
             {[
               doc.version ? `Version ${doc.version}` : null,
-              doc.effectiveFrom ? `Effective ${doc.effectiveFrom}` : null,
-              doc.lastReviewed ? `Reviewed ${doc.lastReviewed}` : null,
+              // An unadopted version has no effective date, only the date it was drafted.
+              doc.effectiveFrom
+                ? `${isPublishable(doc.adoptionState) ? 'Effective' : 'Draft dated'} ${doc.effectiveFrom}`
+                : null,
+              isPublishable(doc.adoptionState) && doc.lastReviewed ? `Reviewed ${doc.lastReviewed}` : null,
               doc.reviewedBy,
             ]
               .filter(Boolean)
@@ -182,7 +190,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                 <Prose>
                   <Blocks value={clause.body} />
                 </Prose>
-                {clause.basis ? <p className={styles.basis}>Basis: {clause.basis}</p> : null}
               </section>
             ))}
           </div>
@@ -197,7 +204,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               {others.map((other) => (
                 <li key={other.slug}>
                   <a href={`/legal/${other.slug}`}>{other.title}</a>
-                  {!other.solicitorApproved ? <span className={styles.othersNote}> — draft</span> : null}
+                  {!isPublishable(other.adoptionState) ? <span className={styles.othersNote}> — not yet adopted</span> : null}
                 </li>
               ))}
             </ul>

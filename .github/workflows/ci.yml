@@ -160,6 +160,15 @@ jobs:
       - name: The legal-parity predicates still fire (committed specimens)
         run: npm run check:legal:selftest
 
+      # GS-O003-R (GS-LEGAL-001): the owner evidence + adoption gate that replaced mandatory
+      # solicitor approval. The selftest fires every branch against mutated copies of the real
+      # drafts; the gate holds the drafts to the decided positions and the register to honesty.
+      - name: The legal-adoption predicates still fire (committed specimens)
+        run: npm run check:legal:adoption:selftest
+
+      - name: The legal drafts keep the decided positions and the adoption register is coherent
+        run: npm run check:legal:adoption
+
       # A rule struck in one document may not stand in another. Twice now: P-01's --ink-subtle
       # 17px floor across four documents, and VALIDATION §21's 14-day refund promise. Registry
       # scope only — scripts/struck-rules.mjs states what it cannot see.

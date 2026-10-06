@@ -1,18 +1,18 @@
 # Website Terms of Use
 
-**Version 2.0**  
-**Effective date: 2 September 2026**
+**Version 2.1**\
+**Draft date: 6 October 2026**
 
-**Gridsmith Ltd**  
-Company number: **17050842**  
-Bolton, United Kingdom  
-Email: **contact@gridsmith.uk**  
+**Gridsmith Ltd**, a private limited company registered in England and Wales\
+Company number: **17050842**\
+Registered office: 30 Briarfield Road, Farnworth, Bolton, BL4 0HD\
+Email: **contact@gridsmith.uk**\
 Trading divisions: **Gridsmith Design, Gridsmith Digital and Gridsmith Press**
 
 
 ## 1. About these terms
 
-These terms govern the use of **gridsmith.uk**. They do not, by themselves, govern paid client projects. Paid work is governed by the applicable written quotation, scope, order confirmation and either our Business Client Terms or Consumer Client Terms.
+These terms govern the use of **gridsmith.uk**. They do not, by themselves, govern paid client projects. Paid work is governed by the accepted written quotation or scope and either our Client Terms for Business Clients or our Client Terms for Consumers.
 
 By using this website, you agree to use it lawfully and in accordance with these terms.
 
@@ -24,33 +24,25 @@ Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of
 
 We take reasonable care to keep information on this website accurate and current, but website content is provided for general information and may change.
 
-Portfolio work, sample work, indicative pricing, estimated timelines and examples do not constitute a binding quotation or guarantee. A binding project commitment is created only when we confirm a project in writing.
+Examples, illustrations and descriptions of our services on this website are not a quotation or a guarantee. A project is agreed only when a written quotation or scope is accepted in writing.
 
-Nothing on this website is professional engineering, legal, financial or other regulated advice to a website visitor. Engineering drawings or other technical materials displayed as portfolio examples must not be used for construction, manufacture, installation or other operational purposes.
+Nothing on this website is professional engineering, legal, financial or other regulated advice to a website visitor. Drawings, illustrations and other technical material shown on this website must not be used for construction, manufacture, installation or any other operational purpose.
 
 ## 4. Intellectual property
 
-Unless otherwise stated, website text, graphics, branding, layouts, code, illustrations and other content are owned by Gridsmith Ltd, its licensors or the relevant client.
+Unless otherwise stated, website text, graphics, branding, layouts, code, illustrations and other content are owned by Gridsmith Ltd or its licensors.
 
 You may view and print reasonable extracts for your own private or internal business reference. You must not commercially reproduce, republish, sell, scrape at scale, or present website content as your own without permission, except where the law permits otherwise.
 
-Client portfolio material remains subject to the rights of the relevant client and is displayed only for portfolio or illustrative purposes.
-
 ## 5. Prices and quotations
 
-Prices shown on this website are indicative unless expressly stated otherwise.
-
-Gridsmith Ltd is not currently registered for VAT and does not charge VAT. A price shown on this website is the amount charged. No price on this website is stated exclusive of VAT and no VAT is added to it at any later stage.
-
-For consumers, any final price we provide before an order is confirmed will include applicable taxes and mandatory charges.
-
-If Gridsmith Ltd becomes registered for VAT, this will change. VAT or other taxes would then be shown separately to business clients where applicable, consumer prices would continue to include them, and this document and the prices published on this website would be updated before any VAT was charged.
+This website does not publish prices. Every project is quoted individually, and the quotation states the total price, how it is paid and whether VAT applies.
 
 ## 6. Enquiries
 
-Submitting an enquiry does not create a contract. We may decline an enquiry or request further information before providing a quotation or scope.
+Submitting an enquiry does not create a contract. We may decline an enquiry or ask for further information before providing a quotation or scope.
 
-Please do not send confidential, highly sensitive or special-category personal information through an open website form unless we have specifically asked you to do so.
+Please do not send highly sensitive or special-category personal information through the website enquiry form, which is not designed for it, unless we have specifically asked you to do so.
 
 ## 7. Third-party links
 
@@ -82,11 +74,11 @@ For business users, Gridsmith is not responsible for indirect or consequential b
 
 ## 11. Privacy, cookies and accessibility
 
-Our handling of personal data is described in our **Privacy Policy**. Our use of cookies and similar storage is described in our **Cookie Policy**. Our current accessibility position is described in our **Accessibility Statement**.
+Our handling of personal data is described in our **Privacy Policy**. Our use of cookies is described in our **Cookie Policy**. Our current accessibility position is described in our **Accessibility Statement**.
 
 ## 12. Changes
 
-We may update these terms. The version and effective date shown at the top identify the terms currently published.
+We may update these terms. The version shown at the top identifies the terms currently published.
 
 ## 13. Governing law
 
@@ -96,4 +88,4 @@ If you are a consumer resident in another part of the United Kingdom, nothing in
 
 ## 14. Contact
 
-Questions about these terms may be sent to **contact@gridsmith.uk**.
+Questions about these terms may be sent to **contact@gridsmith.uk** or by post to Gridsmith Ltd, 30 Briarfield Road, Farnworth, Bolton, BL4 0HD.

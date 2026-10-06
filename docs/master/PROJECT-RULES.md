@@ -20,7 +20,7 @@ Binding rules for anyone (human or AI coding agent) working on the root route gr
 8. **The response commitment renders from `companyDetails.responseCommitment`.** Never hardcoded, never paraphrased, never made faster. ~~Current value: *as soon as we can, and always by the end of the next business day.*~~ **The VALUE is STRUCK 16 September 2026 (`GS-O004`); the RULE is not and is unchanged.** Current value: *"We typically respond within 48 hours."* — a statement of typical behaviour, because the owner authorises no guaranteed response time and no SLA. The single-source rule is what made that a one-line change: six surfaces moved with it and none held a copy. `scripts/struck-rules.mjs` `GS-O004-RESPONSE-GUARANTEE`; `check:company` question 5 asserts it on the served pages.
 9. **Statutory disclosure appears on every page.** Legal name, company number, place of registration, registered office. It is a legal requirement, not a footer decoration.
 10. **No seed content in production.** The build check is not to be bypassed, weakened, or excluded from a deploy pipeline.
-11. **No legal page ships without `solicitorApproved: true`.**
+11. ~~**No legal page ships without `solicitorApproved: true`.**~~ superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026): no legal page ships unless the register puts it at `PUBLISHABLE`.
 12. **Never hardcode a colour.** Tokens only.
 
 ## 2. Code conventions

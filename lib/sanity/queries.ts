@@ -131,7 +131,8 @@ export type LegalDocument = {
   effectiveFrom: string | null;
   lastReviewed: string | null;
   reviewedBy: string | null;
-  solicitorApproved: boolean;
+  /** `GS-O003-R` state (`lib/legal/adoption.ts`). Only `PUBLISHABLE` reaches production. */
+  adoptionState: string;
   summary: string | null;
   clauses: LegalClause[] | null;
   isSeed: boolean;
@@ -268,7 +269,8 @@ export const getGroupPage = (slug: 'approach' | 'about') =>
   );
 
 /**
- * **`solicitorApproved` is not filtered here, and that is deliberate.**
+ * **`adoptionState` is not filtered here, and that is deliberate.** (Until 6 October 2026 this
+ * was the `solicitorApproved` flag; `GS-O003-R` replaced it.)
  *
  * `master/SCHEMA.md` gives the query an `$allowUnapproved` parameter. Filtering an unapproved
  * document out would serve a 404 for `/legal/privacy`, and a website with no privacy notice is
@@ -281,7 +283,7 @@ export const getLegalDocument = (slug: string) =>
   q<LegalDocument | null>(
     `*[_type == "legalDocument" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
       title, version, effectiveFrom, lastReviewed, reviewedBy,
-      "solicitorApproved": coalesce(solicitorApproved, false),
+      "adoptionState": coalesce(adoptionState, "RESEARCHED"),
       summary,
       clauses[]{number, heading, anchorId, basis, body},
       "isSeed": coalesce(isSeed, false)
@@ -290,9 +292,9 @@ export const getLegalDocument = (slug: string) =>
   );
 
 export const listLegalDocuments = () =>
-  q<{ title: string; slug: string; summary: string | null; solicitorApproved: boolean }[]>(
+  q<{ title: string; slug: string; summary: string | null; adoptionState: string }[]>(
     `*[_type == "legalDocument" && !(_id in path("drafts.**"))] | order(title asc){
       title, "slug": slug.current, summary,
-      "solicitorApproved": coalesce(solicitorApproved, false)
+      "adoptionState": coalesce(adoptionState, "RESEARCHED")
     }`,
   );

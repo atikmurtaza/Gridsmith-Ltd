@@ -2612,7 +2612,7 @@ If the delta exceeds 15KB at M-06, stop and raise it rather than proceeding into
 | L-01 | `legalDocument` schema + clause anchors | P0 | 1d | A-06 | **DONE** 21 Aug | Dev | Five slugs, not the spec's four — `client-terms` split out because `anchorId` is contract-facing. `legalClause.basis` added. Closed list proven in four directions. `SCHEMA.md` corrected in the same commit |
 | L-02 | Legal page template, TOC, print CSS | P0 | 1d | L-01 | **DONE** 21 Aug | Dev | Stable `#anchor` per clause |
 | L-03 | Load **five** drafts | P0 | 0.5d | L-02 | **DONE** 21 Aug | Content | To staging |
-| L-04 | **Solicitor review of all documents** | P0 | — | L-03 | TODO | Atik + solicitor | **HARD GATE — send week 1** |
+| L-04 | ~~**Solicitor review of all documents**~~ | P0 | — | L-03 | SUPERSEDED | Atik | ~~**HARD GATE — send week 1**~~ superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026) |
 | L-05 | Statutory disclosure verification | P0 | 0.5d | M-04 | TODO | Dev | Every page |
 | L-06 | ICO registration + number recorded | P0 | — | — | TODO | Atik | |
 | L-07 | `consent_events` audit table | P0 | 0.5d | A-11 | TODO | Dev | No PII |

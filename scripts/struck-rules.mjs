@@ -444,6 +444,25 @@ export const STRUCK_RULES = [
       'set only when a review confirms the record stays inside the approved limited scope ' +
       '(`GS-X002`). PI cover itself is the non-blocking deferred item `GS-O024`.',
   },
+  {
+    id: 'GS-O003-SOLICITOR-APPROVAL-GATE',
+    // "solicitor" alone would hit every line that merely mentions one (owner columns, history);
+    // the second pattern is the gating language that made it a rule.
+    patterns: [
+      /solicitor/i,
+      /(HARD GATE|gates (production|publication)|ships? unapproved|before deployment|reviewed by a solicitor|requires? solicitor approval|solicitorApproved(: true| == true)|solicitor gate)/i,
+    ],
+    why:
+      'Struck by `GS-LEGAL-001`, 6 October 2026. The owner decided not to commission a solicitor at ' +
+      'this stage; `GS-O003` (mandatory solicitor approval before any legal page is published) is ' +
+      'replaced by `GS-O003-R`: an evidence-based review against current UK legislation and official ' +
+      'guidance (`docs/_legal/research/GS-LEGAL-001/`), then explicit owner adoption recorded in ' +
+      '`docs/_legal/GS-O003-R-REGISTER.json`. No document claims solicitor review.',
+    where:
+      '`lib/legal/adoption.ts` (states), `docs/_legal/GS-O003-R-REGISTER.json` (per-document state), ' +
+      '`scripts/check-legal-adoption.mjs` (documentary gate) and `scripts/migrate-production-cms.mjs` ' +
+      '(production admits only `PUBLISHABLE`).',
+  },
 ];
 
 /** The standing-spec corpus. Globbed by the runner; listed here so the scope is reviewable. */

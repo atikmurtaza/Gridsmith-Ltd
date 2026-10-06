@@ -36,9 +36,27 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
 47 public documents before and after, no other `_rev` changed. No Technical (`GS-X002`) or legal
 (`GS-O003`) content. Evidence: `GS-HOST-H4-G.md` §GS-O027, `GS-VIS-SEO-RC.md` §CMS.
 
-### `GS-O003` — Complete legal review and resolve launch actions
+### `GS-O003-R` — Legal evidence + owner adoption (replaces `GS-O003`, 6 October 2026)
 
-- **Status:** ACTIONABLE NOW
+- **Status:** OWNER ACTION REQUIRED — decisions, then adoption.
+- **Owner decision recorded (6 October 2026, `GS-LEGAL-001`):** no solicitor is commissioned at this
+  stage. `GS-O003`'s mandatory solicitor approval is replaced by an evidence-based review against
+  current UK legislation and official guidance plus explicit owner adoption, per document, recorded in
+  `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
+  OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
+  enforceability.
+- **Exact action:** decide `D-1`–`D-25` in `docs/_legal/research/GS-LEGAL-001/GS-LEGAL-001-RECORD.md`
+  §7 (critical: VAT status, privacy DPAs/transfer safeguard, retention, liability cap, Technical scope,
+  early start and stage table, contracting method, international clients); then adopt each document
+  version by recording `ownerAdoptedOn` and `ownerAdoptedVersion` in the register. Only the owner sets
+  those; `check:legal:adoption` then decides whether a document may move to `PUBLISHABLE`.
+- **What it blocks:** publication of `/legal/*` in production (footer links 404 until then) and real
+  form submissions (the privacy notice must be live first).
+- **Evidence required:** the dated register entries and the decision answers.
+
+### ~~`GS-O003` — Complete legal review and resolve launch actions~~ — superseded by `GS-O003-R` above
+
+- **Status:** ~~ACTIONABLE NOW~~ SUPERSEDED (6 October 2026, `GS-LEGAL-001`). Kept as history.
 - **Why required:** the repository contains solicitor-ready drafts, not confirmed legal advice, and
   some historical clauses/copy assume public portfolio use or public prices.
 - **Exact action:** send the legal set and `GS-D001`/`GS-D002` to a UK solicitor; resolve consumer

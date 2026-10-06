@@ -106,7 +106,7 @@ Point 5 is a requirement, not a suggestion. An ecosystem argument with no stated
 - Homepage, `/approach`, `/about`, `/contact` fully written
 - **3 cross-division case studies** — seed initially, real as soon as available. Without these the argument on `/approach` is unevidenced
 - Master `/work` populated from the shared project database (24 seed projects per `00-FOUNDATION.md` §7)
-- 4 legal pages, drafted per `_legal/` and reviewed by a solicitor before deployment
+- 4 legal pages, drafted per `_legal/` ~~and reviewed by a solicitor before deployment~~ — superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026)
 - 6 group-level FAQs
 - Team entries for whoever is public-facing
 
@@ -124,7 +124,7 @@ Client portal · careers application system · investor or press area · multi-l
 
 Universal gates plus:
 - Companies Act disclosure verified: registered name, number, place of registration, registered office
-- All four legal pages published and reviewed by a solicitor
+- All four legal pages published ~~and reviewed by a solicitor~~ — superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026)
 - Cookie banner verified: no non-essential cookie fires before consent
 - Redirect map complete; zero unmapped indexed URLs
 - Division routing tested: ≥70% of test users reach the correct division in one click

@@ -1,203 +1,326 @@
-# Consumer Client Terms
+# Client Terms for Consumers
 
-**Version 2.0**  
-**Effective date: 2 September 2026**
+**Version 3.0**\
+**Draft date: 6 October 2026**
 
-**Gridsmith Ltd**  
-Company number: **17050842**  
-Bolton, United Kingdom  
-Email: **contact@gridsmith.uk**  
+**Gridsmith Ltd**, a private limited company registered in England and Wales\
+Company number: **17050842**\
+Registered office: 30 Briarfield Road, Farnworth, Bolton, BL4 0HD\
+Email: **contact@gridsmith.uk** · WhatsApp or text: +44 7405 448534\
 Trading divisions: **Gridsmith Design, Gridsmith Digital and Gridsmith Press**
 
 
 ## 1. Who these terms apply to
 
-These terms apply when an individual buys services from Gridsmith Ltd wholly or mainly for purposes outside their trade, business, craft or profession.
+These terms apply when you buy services from Gridsmith Ltd as an individual, wholly or mainly for purposes outside your trade, business, craft or profession.
 
-If you are buying for a business or professional activity, our **Business Client Terms / Master Services Agreement** apply instead.
+If you are buying for a business or professional purpose, our Client Terms for Business Clients apply instead. If you tell us that you are buying for a business, we will ask you to confirm that in writing.
 
-These terms apply to services supplied by Gridsmith Design, Gridsmith Digital and Gridsmith Press.
+Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of Gridsmith Ltd and are not separate companies. Your contract is with Gridsmith Ltd.
+
+If your quotation says something different from these terms, the quotation applies. Nothing in a quotation or in these terms takes away any right you have under consumer law.
 
 ## 2. What we provide
 
-The exact services, deliverables, price, expected timetable, revision allowance and exclusions will be set out in our written quotation, scope or order confirmation.
+Every project is quoted individually. Your quotation sets out the services and deliverables, what is not included, the number of revision rounds, the timetable or how it will be fixed, the total price and when it is paid.
 
-Typical services include:
+Our services include:
 
-- graphic and visual design;
-- engineering and technical drawing services;
-- website, software and digital development;
-- writing, editing, proofreading and publishing support; and
+- brand, graphic and visual design, illustration, motion and 3D work;
+- technical drawing, technical illustration and documentation, within the limits in section 12;
+- website, software, app and other digital development, and related support;
+- writing, ghostwriting, editing, proofreading, book production and publishing support; and
 - related creative and technical services.
 
-We will perform services with reasonable care and skill.
+We will provide our services with reasonable care and skill, and as described in your quotation.
 
-## 3. Forming the contract
+We may use carefully chosen specialists or subcontractors for parts of the work. We remain responsible for their work, and they are bound by the same confidentiality obligations as we are.
 
-A website enquiry or initial discussion is not a contract.
+## 3. How the contract is made
 
-A contract is formed when we send you a written order confirmation, accepted quotation or agreed scope confirming the work and price, or when we otherwise confirm in writing that we have accepted your order.
+A website enquiry, a message or a discussion is not a contract.
 
-Before you are bound, we will provide the information required by applicable consumer law, including the main characteristics of the service, the total price or how it will be calculated, payment arrangements and applicable cancellation information.
+Before you agree to anything, we send you a written quotation by email. It includes:
+
+- the main characteristics of the services and deliverables;
+- the total price, including any taxes and any charges you will have to pay, or, where the price cannot reasonably be calculated in advance, how it will be calculated;
+- any costs payable to other suppliers, such as ISBNs, licences, hosting or platform fees;
+- the payment schedule and the timetable;
+- how long the quotation remains open for you to accept;
+- a stage table, which divides the work into stages and is used to work out what you pay if you cancel or end the project early (sections 6 and 7);
+- information about your right to cancel and the cancellation form in section 22; and
+- the version of these terms that applies, as a document you can save and print.
+
+Directly above the place where you accept, the quotation repeats the main characteristics of the services, the total price, any additional costs and how long the work will take.
+
+You accept a quotation by confirming in writing that you accept it and that you understand accepting it means you must pay, for example by replying to our email with: "I accept this quotation and understand that accepting it means I must pay the total price." If you accept by electronic signature or online, the button you use will say "Accept and agree to pay". We do not treat payment on its own, or silence, as acceptance. Your contract is made when we receive your acceptance.
+
+We do not ask for any payment until you have accepted the quotation.
+
+After you accept, and before any work starts, we send you an email confirming the contract. It records the start option you chose under section 6 and attaches these terms and the cancellation form.
+
+The version of these terms named in your quotation applies to your contract. We may update these terms for future contracts, but a new version does not apply to your existing contract unless you expressly agree to it.
+
+These terms and your contract are in English.
 
 ## 4. Price and payment
 
-The total price and payment schedule will be set out in writing before the order is confirmed. Gridsmith Ltd is not currently registered for VAT and does not charge VAT, so the price you are given is the total amount you pay. If Gridsmith Ltd becomes registered for VAT, consumer prices will include VAT where VAT is applicable.
+Your quotation states the total price in pounds sterling unless it says otherwise. It also states whether VAT applies; where VAT applies, the total price includes it. The total price you agree will not go up during your contract unless you agree to a change under section 5.
 
-We will not add an additional charge without telling you what it is for and obtaining your agreement where required.
+Your quotation sets out when payments are due. Depending on the project, this may be payment in full before work starts, an advance payment and a balance, payments at stages, instalments or another schedule we agree with you. Where any payment falls due after the work it pays for has been supplied, there will be no more than twelve such payments, all due within 12 months of the date of your contract, and we charge no interest or fee for paying that way.
 
-Where a project changes materially because you request additional work, we will explain the effect on price and timetable before carrying out the additional work.
+Any payment you make before the related work is done is a payment towards the price of that work. It is refundable as set out in sections 6, 7 and 8. We do not take non-refundable deposits.
+
+We will not charge you anything beyond the agreed price unless you have expressly agreed to that charge in writing before you are charged. We never treat a pre-ticked box or your silence as agreement.
+
+We will not commit you to a cost with another supplier unless you have agreed to it in writing first. During your 14-day cancellation period we will not buy anything for your project that cannot be cancelled or refunded.
 
 ## 5. Revisions and changes
 
-Unless the scope says otherwise, the quoted fee includes only the work and revision rounds expressly described in the scope.
+The price includes the work and the revision rounds described in your quotation. A revision round is one set of your comments on a draft, which we then work into the next version. If your quotation does not say how many revision rounds are included, it includes one round for each deliverable.
 
-We will make reasonable changes within the agreed revision allowance.
+If you ask for something outside the quotation, such as a new direction, additional deliverables or substantial reworking, we will:
 
-If you request a material change to the agreed direction, additional deliverables, substantial reworking, or work outside the original scope, we may:
+1. explain why it is outside the quotation;
+2. send you a written change quotation showing the effect on the price and the timetable; and
+3. carry out the additional work only after you accept the change quotation in writing.
 
-1. explain why it is outside the agreed scope;
-2. provide an additional price or revised quotation; and
-3. continue with the additional work only after you agree.
+If we disagree about whether a request is within your quotation, we will continue with the work that is clearly within it while we discuss it, and we will not charge for the disputed work unless you agree in writing.
 
-A request for additional work does not remove your statutory rights in relation to the original service.
+A request for additional work does not affect your rights in relation to the original service.
 
-## 6. Your statutory cancellation rights
+## 6. Your right to cancel within 14 days
 
-Where your contract is a distance or off-premises service contract and the Consumer Contracts Regulations 2013 give you a cancellation right, you will normally have **14 days from the day after the contract is made** to cancel.
+### 6.1 When you can cancel
 
-You may cancel by sending a clear statement to **contact@gridsmith.uk**.
+If you agree your contract with us without meeting us in person, for example by email, phone or video call, or in certain other situations away from our business premises, you can cancel it within 14 days without giving any reason. The 14 days end 14 days after the day your contract is made. We make every contract under these terms by email or electronic signature, so this right normally applies.
 
-### 6.1 If no work has started
+These terms cover services only. We do not supply printed copies or other goods under them; if you want printed copies, you buy them directly from the printer, on the printer's terms.
 
-If you validly cancel before we have started work, we will refund the amount you paid for that service, subject to any statutory rules that apply to your particular contract.
+### 6.2 How to cancel
 
-### 6.2 If you ask us to start during the cancellation period
+To cancel, tell us clearly, by email to contact@gridsmith.uk or by post to the address in section 21. You can use the cancellation form in section 22, but you do not have to. You have cancelled in time if you send your message before the 14 days end.
 
-We will not begin a service during a statutory cancellation period unless you have expressly asked us to begin early where the law requires that request.
+### 6.3 Your refund
 
-If you validly cancel after work has started during that period, and the law allows us to charge for work already supplied, you will pay a proportionate amount for the service supplied up to the time you told us you were cancelling. We will refund the balance.
+We will refund what you have paid, less any amount you owe under 6.5, within 14 days of the day you tell us you are cancelling. We will use the payment method you used unless you agree otherwise, and we will not charge you a fee for the refund.
 
-If the service has been fully performed during the cancellation period, you will lose the statutory right to cancel only where the legal requirements for that loss of right have been satisfied, including any required express request and acknowledgement.
+Cancelling also ends, at no cost to you, any related contract you made with us, or with another provider under an arrangement with us, as part of the same project.
 
-Nothing in this section allows us to charge you where consumer law says no payment is due.
+### 6.4 When we start work
 
-## 7. Ending a project after the statutory cancellation period
+We will not start work during the 14 days unless you ask us to in writing. When you accept a quotation, you choose one of two options:
 
-After any statutory cancellation period has expired, you may still ask us to stop a project.
+1. Standard start: we start work after the 14 days end. You can cancel at any time before then for a full refund.
+2. Early start: we start work before the 14 days end. To choose this, you confirm the three statements below in writing.
 
-If we agree to end the project:
+The three early-start statements are:
 
-- you will pay for work reasonably carried out up to the effective cancellation date;
-- you will also pay any third-party costs or commitments that we reasonably incurred for your project and cannot recover;
-- we will refund any remaining amount paid for work that has not been carried out; and
-- if the value of work already completed and unavoidable committed costs is equal to or greater than the amount you have paid, no refund will be due and any properly due outstanding balance remains payable.
+- "I ask Gridsmith Ltd to start work now, before my 14-day cancellation period ends."
+- "I understand that if I cancel during the 14-day cancellation period after work has started, I will pay for the work carried out up to the time I tell Gridsmith Ltd I am cancelling, worked out as a share of the total price using the stage table in my quotation."
+- "I understand that if Gridsmith Ltd completes all the work before my 14-day cancellation period ends, I will lose my right to cancel."
 
-This means that where a substantial part of the agreed work has already been completed, the refundable balance may be small or zero. We do not charge a cancellation penalty merely for cancelling.
+Choosing an early start is never a condition of accepting a quotation.
 
-This section does not affect any statutory remedy you have where we are in breach of contract.
+### 6.5 If you start early and then cancel
 
-## 8. Your responsibilities
+If you chose an early start and then cancel within the 14 days, you pay for the work carried out up to the time you tell us you are cancelling, and nothing more. We work this out as a share of the total price using the stage table in your quotation:
 
-You must provide information, content, access, instructions, feedback and approvals reasonably required for the project.
+- each completed stage counts at the share of the total price shown for it; and
+- the stage in progress counts in proportion to the progress measure named for that stage in your quotation, such as drafts delivered, chapters completed or hours recorded against the hours estimated for that stage.
 
-You are responsible for ensuring that materials you provide may lawfully be used for the project.
+We send you the calculation with your refund. The amount is never more than the total price.
 
-If your delay prevents us from progressing, the timetable may move accordingly.
+You pay nothing for work carried out during the 14 days if we did not give you the cancellation information described in this section before you accepted the quotation, or if you did not ask us in writing to start early.
 
-## 9. Engineering and technical drawings
+### 6.6 When you lose the right to cancel
 
-Where we provide engineering, technical or construction-related drawings or design services:
+If you chose an early start and confirmed that you would lose your right to cancel once the work was complete, and we complete all of the work within the 14 days, you can no longer cancel.
 
-- we will perform the agreed design or drawing service with reasonable care and skill;
-- the scope will state what we have and have not been engaged to do;
-- you are responsible for reviewing the deliverables and confirming that they meet your intended requirements before relying on them;
-- approvals, surveys, site verification, building control, planning approval, specialist calculations, certification and third-party professional sign-off are included only where the written scope expressly says so; and
-- you must not use preliminary, draft, marked-up or unapproved drawings as final deliverables.
+## 7. Ending a project after the 14 days
 
-Nothing in this clause excludes responsibility that the law does not allow us to exclude.
+You can end a project at any time after the 14 days by telling us in writing.
+
+If you do, you pay for:
+
+1. each stage already completed, at the share of the total price shown for it in your quotation;
+2. the stage in progress, in proportion to the progress measure named for that stage in your quotation; and
+3. any costs we have paid to other suppliers for your project with your prior written agreement that we cannot cancel or recover.
+
+We will show you how each amount is worked out, give you evidence of supplier costs if you ask, and pass on to you anything those costs paid for.
+
+You do not pay for work we have not done, and we do not charge a cancellation fee. If you have paid more than the amount above, we will refund the difference within 14 days of the day you tell us you are ending the project. If you have paid less, you pay the difference.
+
+You will receive the work you have paid for, with the rights in it described in section 13.
+
+## 8. When we may pause or end a project
+
+If a payment that is due under your quotation is unpaid, we may pause work after giving you at least 7 days' notice in writing. The timetable then moves by the length of the pause.
+
+If we cannot progress for more than 60 days because we are waiting for something we need from you, we may write to you. If we still do not hear from you within 14 days of that message, we may end the project, and section 7 then applies as if you had ended it.
+
+We may end a project by notice in writing if you seriously or repeatedly break these terms and do not put it right within 14 days of our written request, or if you ask us to do something unlawful. Section 7 then applies as if you had ended it.
+
+We may also end a project for any other reason by giving you at least 14 days' notice in writing. If we do, we will refund everything you have paid for work we have not delivered, within 14 days, and you keep the work you have paid for.
+
+## 9. Your responsibilities
+
+Please give us the information, materials, feedback and approvals we reasonably need, when we need them. If a delay on your side holds up the project, the timetable moves by the length of the delay plus any reasonable restart time we tell you about in writing.
+
+You must have the right to let us use any material you give us. If something you send appears to belong to someone else, we will tell you.
+
+If your material includes personal information about other people, for example in a memoir, we will use it only for your project and keep it confidential.
+
+You decide what to publish, and you are responsible for that decision. We do not give legal advice on your content, such as whether it could be defamatory or reveal private information about other people; if you are unsure, please take advice. We may decline or pause work on content we reasonably believe is unlawful, and we will tell you why. This does not reduce our responsibility for our own work.
 
 ## 10. Gridsmith Press
 
-Gridsmith Press provides **services on behalf of the client**, including writing, editing, proofreading, formatting, design and publishing support.
-
 ### 10.1 Your existing work
 
-Your manuscript, notes, articles, concepts and other material that existed before our work remain yours. Gridsmith does not acquire ownership merely because you provide them to us.
+Your manuscript, notes, articles, ideas and other material that existed before our work remain yours. We do not acquire any ownership of them because you give them to us.
 
-### 10.2 Work created for you
+### 10.2 Work we create for you
 
-Where we create bespoke text, design or other original final material specifically for your project, then to the extent Gridsmith owns rights in that material, those rights will transfer to you on full payment, except for:
+Ownership of the text, design and other material we create for your book or content is dealt with in section 13.
 
-- third-party material;
-- fonts, stock assets and software licensed under separate terms;
-- Gridsmith's pre-existing templates, tools, methods and reusable components; and
-- anything the written scope expressly says is licensed rather than transferred.
+For ghostwriting, your quotation records how authorship and credit will be stated. Unless your quotation says otherwise, we will obtain from each writer who works on your book a signed written waiver of their right to be identified as its author and of their right to object to changes to it, so that you can publish under your own name and edit the work freely.
 
-We will not claim royalties, sales income or ownership of your book or article merely because we supplied publishing, writing, proofreading or related services.
+We do not claim royalties, sales income or ownership of your book or content because we supplied writing, editing, production or publishing services.
 
-### 10.3 Publishing accounts and royalties
+### 10.3 ISBNs, publishing accounts and income
 
-Unless the scope says otherwise, publishing and distribution accounts should be held in your name or under your control. Royalties and sales income belong to you. We are paid the service fees agreed with you.
+Before any registration or platform setup, your quotation states who will hold any ISBN and who will be named as the publisher.
 
-## 11. Digital and software services
+Publishing and distribution accounts will be opened in your name or transferred to you, unless your quotation says otherwise. We will not keep your account passwords after the task that needed them.
 
-For websites, software and other digital work, the scope will identify the deliverables and any third-party platforms, licences, hosting or subscriptions.
+Royalties and sales income belong to you. We are paid only the fees agreed with you. A platform decides for itself whether to accept a submission or listing.
 
-We do not guarantee a particular level of sales, traffic, search ranking, conversion, revenue or other commercial outcome unless an express written guarantee appears in the scope.
+## 11. Gridsmith Digital
 
-## 12. Intellectual property generally
+Your quotation identifies the deliverables, the platforms and devices they are built for, and any third-party services, licences, hosting or subscriptions they need, with their cost.
 
-Your existing materials remain yours.
+Domains, hosting, code repositories and other accounts bought or opened for your project are registered in your name or, if that is not possible, transferred to you on request once the related costs have been paid. We hand over the access you need to run the deliverable, and we keep only the credentials for our own internal tools.
 
-On full payment, Gridsmith will transfer to you the rights it owns in bespoke final deliverables created specifically for your project, to the extent stated in the scope.
+The source code we write specifically for your project is part of the deliverables.
 
-Gridsmith retains its pre-existing tools, know-how, reusable components, frameworks, methods and background material, while granting you the rights reasonably necessary to use the final deliverable for its intended purpose.
+Websites, apps, software and files we supply must also meet the standards that consumer law sets for digital content.
 
-Third-party and open-source material remains subject to its own licence terms.
+Any ongoing support or maintenance is agreed in writing for a fixed period stated in your quotation, is paid for in a single payment before that period starts, and does not renew automatically.
 
-## 13. If something goes wrong
+We do not promise a particular level of sales, traffic, search ranking, revenue or other commercial result unless your quotation gives an express written guarantee.
 
-Please contact **contact@gridsmith.uk** and explain the problem.
+## 12. Technical drawing and documentation
 
-We will acknowledge service complaints as soon as reasonably practicable and aim to do so within **5 working days**. We will investigate and provide a substantive response within a reasonable time having regard to the issue.
+Our technical services are limited to preparing drawings, technical illustrations, drafting and documentation to your brief and from information you or your advisers provide, as described in your quotation.
 
-Your rights under the Consumer Rights Act 2015 apply regardless of this complaints procedure, including rights relating to reasonable care and skill, repeat performance and price reduction where applicable.
+We do not provide engineering design or calculations, structural or other specialist design, or the certification, approval, stamping or sign-off of any design or drawing, and we do not act as a designer or other person responsible for a design under any law or regulation. We do not accept work consisting of drawings or design details for construction or building work. If your project needs any of these things, you will need an appropriately qualified professional.
 
-Data-protection complaints are handled under the separate process in our Privacy Policy.
+We will rely on the dimensions and information you supply unless your quotation asks us to check them, and we will tell you if something you supply appears clearly wrong or incomplete.
 
-## 14. Our responsibility to you
+Drawings marked as draft, preliminary or for comment must not be used for manufacture, installation or approval. Only drawings issued as final under your quotation are deliverables.
 
-We are responsible for foreseeable loss or damage caused by our breach of contract or failure to use reasonable care and skill.
+## 13. Who owns the work
 
-Nothing in these terms excludes or limits liability where the law does not permit this, including liability for death or personal injury caused by negligence, fraud or fraudulent misrepresentation, or liability that cannot lawfully be restricted under consumer law.
+Your own material remains yours.
 
-We are not responsible for losses that were not reasonably foreseeable when the contract was made.
+Once you have paid in full for a deliverable, we transfer to you all the rights we own in the final deliverables created specifically for your project, unless your quotation expressly says that a deliverable is licensed to you rather than transferred. When you have paid in full, we will send you a short written confirmation of the transfer, signed on behalf of Gridsmith Ltd.
 
-## 15. Events outside our reasonable control
+Before you have paid in full, you may use the deliverables from each stage you have paid for, for the purpose of the project. A genuine dispute about part of a payment does not stop you using work you have paid for.
 
-We are not responsible for delay caused by events outside our reasonable control. If a material delay occurs, we will tell you and take reasonable steps to reduce its effect.
+Where a subcontractor or another person contributes to your deliverables, we obtain from them a written transfer of their rights before their work is used, so that we can transfer those rights to you.
 
-## 16. Personal data
+The transfer does not include:
 
-We handle personal data in accordance with our Privacy Policy.
+- material owned by someone else, such as fonts, stock images, software or other licensed material, which your quotation identifies and which you may use under its own licence; or
+- our own tools, templates, methods and reusable components that existed before your project or were developed separately from it.
 
-We do not treat a general enquiry as consent to marketing.
+Where any of our own material forms part of a deliverable, we give you a permanent, royalty-free licence to use, copy, change and maintain it as part of that deliverable. The licence passes with the deliverable if you transfer the deliverable to someone else.
 
-## 17. General
+Unless your quotation says otherwise, drafts and concepts you did not choose remain ours, but we will not use them for anyone else in a way that reproduces your name, branding or confidential information. Working and source files are supplied where your quotation lists them, and section 11 applies to source code.
 
-If part of these terms is found unlawful or unenforceable, the remaining provisions continue to apply.
+We take reasonable care that the work we create, and any material we choose to include in it, does not infringe anyone else's rights.
 
-If we do not enforce a term immediately, that does not mean we have waived it.
+We will tell you in the quotation or on delivery if we have used generative AI tools to create any part of a deliverable. The law on whether material created with AI tools is protected by copyright is unsettled, so we do not promise that such material is protected, but we transfer to you any rights that exist in it. We review AI-assisted work with the same care as any other work, and we never put your confidential material into an AI tool that uses it to train its models without your agreement.
 
-These terms are governed by the law of England and Wales. If consumer law gives you rights to bring proceedings elsewhere in the UK, those rights are unaffected.
+## 14. Confidentiality and your work in public
 
-## 18. Contact and cancellation notice
+We keep your material and information about your project confidential. We share it only with people who need it for your project and who are bound to keep it confidential, unless the law requires us to disclose it. This continues after your project ends.
 
-To cancel or contact us:
+We will not show your work, name you, or mention your project in our portfolio, on our website or social media, or in any marketing without your express written consent. You can limit your consent to particular work or uses, and you can withdraw it for future use at any time by telling us in writing.
 
-**Gridsmith Ltd**  
-30 Briarfield Road, Farnworth, Bolton, BL4 0HD  
-**contact@gridsmith.uk**
+For ghostwriting, we will not tell anyone that we worked on your book unless you agree.
 
-A cancellation does not need to use any particular form. A clear email identifying you, the project and your wish to cancel is sufficient.
+## 15. If something is wrong with our work
+
+This is separate from cancelling or ending a project.
+
+We must provide our services with reasonable care and skill, and as described in your quotation. If we do not, tell us and we will put it right at no cost to you within a reasonable time. If we cannot put it right, or do not do so within a reasonable time or without significant inconvenience to you, you can ask for a reduction in the price, which can be up to the full price. We will refund that amount within 14 days, beginning with the day we agree that you are entitled to it, using the payment method you used and without any fee. You may also have other legal rights.
+
+Reviewing or approving a draft does not stop you relying on these rights. The charges in sections 6 and 7 never apply to work that is wrong because of our fault.
+
+## 16. Complaints
+
+If you are unhappy with our service, please tell us by email to contact@gridsmith.uk or by post to the address in section 21.
+
+We aim to acknowledge your complaint within 5 working days. We will look into it as quickly as possible, keep you informed, and do our best to find a satisfactory solution.
+
+Complaints about how we handle personal data follow the process in our Privacy Policy.
+
+## 17. Our responsibility for loss
+
+We are responsible for loss or damage you suffer that is a foreseeable result of our breaking this contract or failing to use reasonable care and skill. Loss is foreseeable if it is obvious that it will happen or if, when the contract was made, we and you both knew it might happen.
+
+We are not responsible for loss that was not foreseeable when the contract was made.
+
+Nothing in these terms excludes or limits our liability where the law does not allow it, including liability for death or personal injury caused by negligence, for fraud or fraudulent misrepresentation, or for breach of your rights under consumer law.
+
+## 18. Events outside our control
+
+We are not responsible for delay caused by events outside our reasonable control. If such an event affects your project, we will tell you as soon as we can and take reasonable steps to reduce the delay.
+
+If the delay lasts, or is likely to last, more than 30 days, you may end the project by telling us in writing. We will then refund everything you have paid for work we have not delivered, within 14 days, and you keep the work you have paid for.
+
+## 19. Personal data
+
+We handle personal data as described in our Privacy Policy.
+
+An enquiry or a contract does not sign you up to marketing.
+
+## 20. General
+
+We may transfer our rights and obligations under your contract to another organisation as part of a sale or reorganisation of our business. We will tell you in writing if this happens. If you are unhappy with the transfer, you may end the contract by telling us, and we will refund everything you have paid for work we have not delivered.
+
+You may transfer your rights under your contract to someone else only with our written agreement, which we will not unreasonably refuse.
+
+Nobody else has any right to enforce your contract.
+
+If a court decides that part of these terms is unlawful, the rest continues to apply.
+
+If we do not enforce a term straight away, we can still enforce it later.
+
+These terms are governed by the law of England and Wales. If you live in Scotland or Northern Ireland, you may bring proceedings in your own courts, and we may bring proceedings against you only there. If you live outside the United Kingdom, you also keep any protection given to you by the mandatory consumer laws of the country where you live.
+
+## 21. Contact
+
+**Gridsmith Ltd**\
+30 Briarfield Road, Farnworth, Bolton, BL4 0HD\
+Email: contact@gridsmith.uk\
+WhatsApp or text: +44 7405 448534
+
+## 22. Cancellation form
+
+Complete and return this form only if you wish to cancel the contract. You do not have to use it.
+
+To: Gridsmith Ltd, 30 Briarfield Road, Farnworth, Bolton, BL4 0HD, contact@gridsmith.uk
+
+I/We hereby give notice that I/We cancel my/our contract for the supply of the following service:
+
+Ordered on:
+
+Name of consumer(s):
+
+Address of consumer(s):
+
+Signature of consumer(s) (only if this form is sent on paper):
+
+Date:

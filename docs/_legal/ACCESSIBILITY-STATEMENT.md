@@ -1,12 +1,12 @@
 # Accessibility Statement
 
-**Version 2.0**  
-**Effective date: 2 September 2026**
+**Version 2.1**\
+**Draft date: 6 October 2026**
 
-**Gridsmith Ltd**  
-Company number: **17050842**  
-Bolton, United Kingdom  
-Email: **contact@gridsmith.uk**  
+**Gridsmith Ltd**, a private limited company registered in England and Wales\
+Company number: **17050842**\
+Registered office: 30 Briarfield Road, Farnworth, Bolton, BL4 0HD\
+Email: **contact@gridsmith.uk**\
 Trading divisions: **Gridsmith Design, Gridsmith Digital and Gridsmith Press**
 
 
@@ -39,6 +39,8 @@ Automated testing does not detect every accessibility problem, so it is not trea
 ## 4. Known limitations
 
 Because the website is still being developed, some routes or components may not yet have received the same depth of manual or assistive-technology testing.
+
+Our enquiry forms need JavaScript to send an enquiry. If you cannot use them, email contact@gridsmith.uk instead and we will treat your email in the same way.
 
 If we identify a material accessibility issue, we will aim to correct it as part of normal site development.
 

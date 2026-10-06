@@ -1,5 +1,6 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { LEGAL_DOCUMENT_SLUGS } from '../../lib/legal/slugs.ts';
+import { ADOPTION_STATES } from '../../lib/legal/adoption.ts';
 
 /**
  * `L-01` — `master/SCHEMA.md` §"legalDocument".
@@ -64,13 +65,26 @@ export const legalDocument = defineType({
     defineField({ name: 'version', type: 'string' }),
     defineField({ name: 'effectiveFrom', type: 'date', validation: (r) => r.required() }),
     defineField({ name: 'lastReviewed', type: 'date' }),
-    defineField({ name: 'reviewedBy', type: 'string', description: '"Solicitor — [firm]" or "Internal".' }),
+    defineField({
+      name: 'reviewedBy',
+      type: 'string',
+      description: 'Who reviewed this version and how, stated plainly (e.g. "Owner — adopted after the GS-LEGAL-001 review").',
+    }),
     /**
-     * **Defaults false, and that is the gate.** `master/SCHEMA.md`: an unapproved legal
-     * document is treated by the production build check the same way seed content is. `L-04`
-     * is the hard gate that flips it.
+     * `GS-O003-R` (`lib/legal/adoption.ts`), replacing the `solicitorApproved` boolean on
+     * 6 October 2026 (owner decision, `GS-LEGAL-001`). Only `PUBLISHABLE` documents enter the
+     * production dataset — `migrate-production-cms.mjs` reads the committed register
+     * `docs/_legal/GS-O003-R-REGISTER.json`, not this field, so a Studio edit cannot publish
+     * an unadopted document. The field describes the state to the reader of the page.
      */
-    defineField({ name: 'solicitorApproved', type: 'boolean', initialValue: false }),
+    defineField({
+      name: 'adoptionState',
+      type: 'string',
+      initialValue: 'RESEARCHED',
+      options: { list: [...ADOPTION_STATES] },
+      validation: (r) => r.required(),
+    }),
+    defineField({ name: 'ownerAdoptedOn', type: 'date', description: 'Set only when the owner adopts this exact version.' }),
     defineField({ name: 'summary', type: 'text', rows: 3, description: 'Plain-English standfirst.' }),
     defineField({ name: 'clauses', type: 'array', of: [defineArrayMember({ type: 'legalClause' })] }),
     defineField({ name: 'previousVersions', type: 'array', of: [defineArrayMember({ type: 'file' })] }),

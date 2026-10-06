@@ -4,6 +4,7 @@
 // when validation fails is a form people abandon — a server redirect back with `?error=`
 // costs nothing to build and costs a lead every time it fires.
 
+import Link from 'next/link';
 import { startTransition, useActionState, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/primitives/Button';
 import { Field } from '@/components/primitives/Field';
@@ -122,7 +123,7 @@ export function ContactForm({
             way that is guaranteed is that no page writes the sentence itself. */}
         <p className={styles.commitment}>{responseCommitment}</p>
         <p className={styles.confirmationDetail}>
-          If you need to add something, reply to the acknowledgement or write to{' '}
+          If you need to add something, write to{' '}
           <a href={`mailto:${contactEmail}`}>{contactEmail}</a>.
         </p>
       </div>
@@ -207,6 +208,12 @@ export function ContactForm({
       />
       <Select name="timeline" label="Timeline" options={TIMELINES} error={firstError('timeline')} />
       <Honeypot />
+
+      {/* GS-LEGAL-001: UK GDPR Art. 13 information at the point of collection, as the Press
+          flow already gives it. */}
+      <p className={styles.confirmationDetail}>
+        What we do with what you send is in the <Link href="/legal/privacy">privacy notice</Link>.
+      </p>
 
       <Button type="submit" disabled={pending || (staticProfile && !ready)}>
         {pending ? 'Sending…' : 'Send this'}

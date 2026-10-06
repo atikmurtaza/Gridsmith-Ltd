@@ -77,11 +77,14 @@
  * drop §5A and §6A and pass B by saying less.
  *
  * **D — the subject asserts that it is still the subject.** Each page is 200, carries an `<h1>`,
- * serves at least one clause, and carries the unapproved-draft banner. Without D, deleting a
+ * serves at least one clause, and carries the adoption banner exactly when its `GS-O003-R` register
+ * state is short of `PUBLISHABLE`. Without D, deleting a
  * CMS document turns every other branch green: a 404 publishes no paragraph the draft lacks
- * (B passes vacuously) and declares no version to disagree (A is skipped). The banner is in
- * because all seven documents are `solicitorApproved: false` today, and a page that has quietly
- * stopped announcing itself as a draft is a different failure worth the same red.
+ * (B passes vacuously) and declares no version to disagree (A is skipped). The banner limb is in
+ * because a page that quietly stops announcing an unadopted document — or keeps announcing an
+ * adopted one — is a different failure worth the same red. Until 6 October 2026 it asserted the
+ * "not yet reviewed by a solicitor" banner from the `solicitorApproved` flag; `GS-O003-R` replaced
+ * that gate, and the expectation now comes from the committed register, not from the page.
  *
  * ## Counts
  *
@@ -136,6 +139,8 @@
  */
 import { readFileSync } from 'node:fs';
 import { LEGAL_DRAFT_SOURCES } from './seed-legal.mjs';
+/** `GS-O003-R` register: the expected adoption state of each served document. */
+const LEGAL_REGISTER = JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json', 'utf8'));
 import {
   containsRun,
   currentVersion,
@@ -199,13 +204,18 @@ for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
   if (!h1) {
     problems.push(`${route} serves no <h1>. The route resolves but the document did not render.`);
   }
-  if (!/DRAFT — NOT YET REVIEWED BY A SOLICITOR/i.test(html)) {
+  const adopted = LEGAL_REGISTER.documents?.[slug]?.state === 'PUBLISHABLE';
+  const bannered = /NOT YET ADOPTED/.test(html);
+  if (!adopted && !bannered) {
     problems.push(
-      `${route} does not carry the unapproved-draft banner. All seven documents are ` +
-        'solicitorApproved: false, so either one was approved without this gate being told, ' +
-        'or the banner stopped rendering — and a draft presented as reviewed is the outcome ' +
-        'that banner exists to prevent.',
+      `${route} does not carry the "not yet adopted" banner, but the GS-O003-R register puts it ` +
+        `at ${LEGAL_REGISTER.documents?.[slug]?.state ?? 'no state'}. Either it was adopted without ` +
+        'the register being told, or the banner stopped rendering — and an unadopted document ' +
+        'presented as adopted is the outcome the banner exists to prevent.',
     );
+  }
+  if (adopted && bannered) {
+    problems.push(`${route} is PUBLISHABLE in the GS-O003-R register but still carries the "not yet adopted" banner.`);
   }
 
   // Branch A — version parity, and A2, the draft agreeing with itself.
@@ -241,12 +251,13 @@ for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
     const number = decode(stripTags(heading.match(/<span[^>]*>([\s\S]*?)<\/span>/)?.[1] ?? '')).trim();
     if (number) servedNumbers.push(number);
 
-    // Branch B. Only `<p>` inside the clause body — the heading is the clause's own number and
-    // the `Basis:` line is editorial, neither of which is draft prose.
+    // Branch B. Only `<p>` inside the clause body — the heading is the clause's own number, not
+    // draft prose. (`GS-LEGAL-001` stopped rendering the editorial `Basis:` line, so nothing on
+    // the page is exempt any more: a stray `Basis:` paragraph is now held to the draft.)
     const body = inner.replace(/<h2[\s\S]*?<\/h2>/, ' ');
     for (const [, paragraph] of body.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)) {
       const text = decode(stripTags(paragraph)).trim();
-      if (!text || /^Basis:/.test(text)) continue;
+      if (!text) continue;
       counted.paragraphs += 1;
       const words = normaliseWords(text);
       if (words.length === 0) continue;

@@ -300,7 +300,7 @@ export async function PressHome() {
             </p>
           </div>
           <p className="pr-arr-note">
-            These summarise the draft client terms, which are awaiting solicitor review.{' '}
+            These summarise our client terms, which govern if anything here differs.{' '}
             <Link href="/legal/consumer-client-terms#clause-10-1">Read clause 10 of the Client Terms for Consumers</Link>.
           </p>
         </div>

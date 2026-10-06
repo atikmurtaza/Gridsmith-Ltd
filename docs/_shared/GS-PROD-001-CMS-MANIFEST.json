@@ -506,64 +506,64 @@
       "type": "legalDocument",
       "id": "legal-privacy",
       "slug": "privacy",
-      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
-      "gate": "GS-O003",
+      "source": "scripts/seed-legal.mjs",
+      "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+      "reason": "Owner adoption outstanding (register state OWNER_REVIEW_REQUIRED)"
     },
     {
       "type": "legalDocument",
       "id": "legal-cookies",
       "slug": "cookies",
-      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
-      "gate": "GS-O003",
+      "source": "scripts/seed-legal.mjs",
+      "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+      "reason": "Owner adoption outstanding (register state OWNER_REVIEW_REQUIRED)"
     },
     {
       "type": "legalDocument",
       "id": "legal-terms",
       "slug": "terms",
-      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
-      "gate": "GS-O003",
+      "source": "scripts/seed-legal.mjs",
+      "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+      "reason": "Owner adoption outstanding (register state OWNER_REVIEW_REQUIRED)"
     },
     {
       "type": "legalDocument",
       "id": "legal-client-terms",
       "slug": "client-terms",
-      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
-      "gate": "GS-O003",
+      "source": "scripts/seed-legal.mjs",
+      "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+      "reason": "Owner adoption outstanding (register state OWNER_REVIEW_REQUIRED)"
     },
     {
       "type": "legalDocument",
       "id": "legal-business-client-terms",
       "slug": "business-client-terms",
-      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
-      "gate": "GS-O003",
+      "source": "scripts/seed-legal.mjs",
+      "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+      "reason": "Owner adoption outstanding (register state OWNER_REVIEW_REQUIRED)"
     },
     {
       "type": "legalDocument",
       "id": "legal-consumer-client-terms",
       "slug": "consumer-client-terms",
-      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
-      "gate": "GS-O003",
+      "source": "scripts/seed-legal.mjs",
+      "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+      "reason": "Owner adoption outstanding (register state OWNER_REVIEW_REQUIRED)"
     },
     {
       "type": "legalDocument",
       "id": "legal-accessibility",
       "slug": "accessibility",
-      "source": "solicitor-reviewed text (not scripts/seed-legal.mjs)",
-      "gate": "GS-O003",
+      "source": "scripts/seed-legal.mjs",
+      "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Solicitor review outstanding; the reviewed text replaces the internal draft"
+      "reason": "Owner adoption outstanding (register state OWNER_REVIEW_REQUIRED)"
     }
   ]
 }

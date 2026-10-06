@@ -8,6 +8,23 @@ from `legislation.gov.uk` (current in-force text unless stated) and `w3.org`.
 solicitor can check the drafts against the instruments rather than against a summary of them. Nothing
 here is a legal opinion on whether Gridsmith Ltd complies.
 
+> **GS-LEGAL-001 — 6 October 2026: corrections and successor record.** The v3.0/v2.1 drafts are
+> supported by the dated citation matrix in `research/GS-LEGAL-001/GS-LEGAL-001-RECORD.md` §4 and the
+> workstream reports beside it; that matrix, not this ledger, is now the per-clause authority. Entries
+> here stay as history, with these corrections: (1) the regulator is the **Information Commission**
+> from 30 September 2026 (DUAA 2025 ss. 117–119, SI 2026/1015) — references to the Information
+> Commissioner or the ICO describe the earlier position; (2) the **ADR Regulations 2015 were revoked on
+> 6 April 2026** (DMCCA 2024 Sch. 27; SI 2026/284) and the Consumer Protection from Unfair Trading
+> Regulations 2008 were replaced by DMCCA 2024 Part 4 Chapter 1 on 6 April 2025 — no draft may cite
+> either as in force; (3) `L-TDR-24`'s reason for not applying Companies Act 2006 ss. 1202–1206 should
+> read "Part 41 Chapter 2 applies only to individuals and partnerships (s. 1200(1))"; (4) `L-UCTA-*`,
+> `L-LATE-PAYMENT` and `L-CDPA-90-91` point at v1.x clause numbers — in v3.0 the business terms carry
+> late payment at §5, assignment at §9.3, the cap at §16, acceptance at §8 and Technical at §12;
+> (5) `L-CRA-57` as applied on `/legal/client-terms` overstated s. 57 (restriction is barred only so
+> far as it stops the consumer recovering the price, s. 57(3)) and the page now cites ss. 57 and 62;
+> (6) Rome I is "assimilated", not "retained", law. The solicitor-review framing below is superseded
+> by `GS-O003-R` (owner evidence + adoption).
+
 ---
 
 ## Method
