@@ -273,3 +273,18 @@ owner; the drafts implement ★ where a choice was unavoidable, and say so.
   correctly. Raised as a separate task; no redeploy made.
 - **Not done, by instruction:** no publication, no `OWNER_ADOPTED`, no Sanity/Supabase/Hostinger/DNS/
   Vercel/main change, no push, no H4-H.
+
+## 11. GS-LEGAL-001-R2 follow-up (7 October 2026)
+
+`R2-OWNER-DECISION-PACK.md` in this folder supersedes §7 **as the owner's working list**. §7 stays as
+the record of what GS-LEGAL-001 recommended, and five of its entries are corrected there:
+
+- **D-1:** the owner stated "not VAT registered" on 2 September 2026 (`f666202`).
+- **D-11:** the draft no longer says "or under a separate later contract". Consumer 6.1 now reads
+  "buy them directly from the printer, on the printer's terms".
+- **D-16:** the ★ ("accept calls or voicemail") is withdrawn because it would reverse `GS-R001-R`.
+- **D-17:** `GS-O004` chose "Registered in England"; the certificate decides.
+- **D-21:** answered by `GS-O016`.
+
+N-1 to N-3 (§10) were independently verified: no defect, with two low contractual gaps in N-1 and
+proposed wording. Nothing was adopted, published or deployed; no draft was edited.

@@ -75,8 +75,8 @@ at most.**
 **Proposed wording (proposals only; no draft was edited in this phase):**
 
 - **Bus 2**, after "…for work charged by time": "Where the limit on deferred payments in clause 5
-  applies, any stage or month that would otherwise be invoiced outside that limit is invoiced in advance
-  instead."
+  applies, any stage or month whose payment would otherwise fall due outside that limit is invoiced in
+  advance instead."
 - **Cons 4 and Bus 5:** "all due within 12 months of the date of" → "all due within the 12 months
   beginning with the date of".
 - **Balancing payments.** Either adopt the template rule in §7.1 (once twelve deferred payments or 12
@@ -125,8 +125,10 @@ them its recommendation would reverse or ignore the existing answer:
 - **D-16 phone.** `GS-R001-R` (17 September) decided the published number is **not a voice-call
   channel**; `tel:` links are refused by `check:company`. The register's ★ ("accept calls or voicemail")
   would reverse that without citing it.
-- **D-17 registration wording.** `GS-O004` (16 September) chose "Registered in England", corroborated
-  against the Companies House register. The six drafts now say "registered in England and Wales".
+- **D-17 registration wording.** `GS-O004` (16 September) chose "Registered in England", taken from
+  the Companies House register entry, whose "England" is the **address** line, not the jurisdiction
+  (D report, D2). The six drafts now say "registered in England and Wales", which D2 recommends as
+  matching Companies House guidance exactly.
 - **D-21 data-protection fee.** `GS-O016` (17 September): registered and paying the fee.
 
 **Reading "owner's v2.0 set".** Commit `f666202` records the owner's own revised legal text of
@@ -137,26 +139,26 @@ adoption under `GS-O003-R`**, which did not exist until 6 October.
 |---|---|---|---|---|
 | D-1 | VAT status | **OA** (+ re-confirm) | Owner, 2 Sep 2026 (`f666202`): not registered; `lib/company/companyDetails.ts:6`; `check-vat-display.mjs`. A tracker note of 18 Aug (`master/PROJECT-TRACKER.md` Q-M1) said registration was "in progress", hence the re-confirmation. The drafts are VAT-neutral either way | One-line confirmation in §4 (C-1) |
 | D-2 | B2B liability cap | **OA** (base) + **SD** (retainer limb) | The fees-under-the-Scope cap was in the owner's v2.0 text; the 12-month retainer limb is new. No PI cover (`GS-O005`, `GS-O024`) | Choose an option in §6 (O-4) |
-| D-3 | Deposits / advance payments | **SD** + **LR** (consumer) | Matches the owner's stated refund intent (`00-BRIEF.md`). "Never non-refundable" for consumers is effectively required (CMA37 6.60–6.62; CRA s. 62) | None |
+| D-3 | Deposits / advance payments | **SD** + **LR** (consumer) | Matches the owner's stated refund intent (`00-BRIEF.md`). "Never non-refundable" for consumers is strongly indicated (CMA37 6.60–6.62; CRA s. 62); A-21 records that a small genuine deposit can be kept only in clear and narrow circumstances | None |
 | D-4 | Technical scope | **EX** (`GS-X002`) + **SD** (boundary) + **OD** (consumer limb, deferrable) | Technical is unpublished and gated by `check:launch` and the migration. The drafted "no construction drawings" boundary is not yet reflected in the `GS-X002` review pack or in `service-content.mjs:426` | Deferred (§4.5) |
 | D-5 | International clients | **OA** + **LR** | The owner's business model (`00-BRIEF.md`) accepts overseas clients; the home-law sentence follows Rome I Art. 6(2) | None |
 | D-6 | Processor terms and transfers | **EX** + **LR** | No DPA acceptance recorded for any processor (`02-CITATION-LEDGER.md`, `06-FINAL-VERIFICATION.md`); Edge Functions not region-pinned; Resend region unknown. Art. 28 terms are mandatory | Provider facts in §4 (O-2) |
 | D-7 | Retention | **OD** + **IF** | No deletion routine exists; 63 Production leads plus an off-repository `pg_dump` backup (`GS-PROD-003-R1.md`) are held | Adopt §5 (O-1) |
-| D-8 | Marketing | **IF** + **LR** | No form offers opt-in or refusal (`PressContactFlow.tsx`), so PECR reg. 22 leaves "none" as the only lawful option today | None |
+| D-8 | Marketing | **IF** + **SD** | No form offers opt-in or refusal (`PressContactFlow.tsx`). For **individual subscribers**, PECR reg. 22 therefore leaves "none" as the only lawful option today. Email to corporate subscribers is outside reg. 22 (reg. 23 still applies; `00-LEGAL-BASIS.md` `L-PECR-22`), so B2B marketing would be an owner choice. The draft's "none" is the safe default | None |
 | D-9 | Early start, stage table, templates | **SD** + **LR** (template content) | No quotation template existed anywhere in the repo; §7 supplies one | Adopt §7 (O-3) |
 | D-10 | How clients accept | **SD** + **LR** + **IF** | No portal, e-signature or payment-link integration exists; the reg. 14 acknowledgement is mandatory | Covered by O-3 |
 | D-11 | Goods (printed copies) | **SD** | Services only, consistent with published Press copy. The record's "or under a separate later contract" is stale (§2, N-3). Business limb (G-23): applying the same rule (client buys print directly) avoids the need for a goods clause | Covered by O-3 (template rule) and C-5 (Press copy) |
 | D-12 | Consumer retainers / maintenance | **SD** | Fixed term, single payment, no auto-renewal; DMCCA s. 254 announced for January 2027 | None |
-| D-13 | Gridsmith own-reason termination | **OA** | Was in the owner's v2.0 business text | None |
+| D-13 | Gridsmith own-reason termination | **OA** (business) + **SD** (consumer limb) | The business limb was in the owner's v2.0 text. The consumer limb (Cons 8 ¶4, with full refund and keep-paid-work) is new; v2.0 had no consumer equivalent (A §5) | None (Confirmation C-4 covers its 14-day notice) |
 | D-14 | AI disclosure | **SD** | — | None |
-| D-15 | Ghostwriting waivers | **SD** + **EX** | The terms promise signed waivers from each writer. No writer agreements exist in the repo. Moral rights belong to the individual author even where Gridsmith owns the copyright, so this also covers the owner's own writing (CDPA ss. 77, 87; *recorded by F, not re-read here*) | Operational precondition in §4 (P-2) |
+| D-15 | Ghostwriting waivers | **SD** + **EX** | The terms promise signed waivers from each writer. No writer agreements exist in the repo. Moral rights belong to the individual author even where Gridsmith owns the copyright, subject to the employee-works exceptions (CDPA ss. 77, 79(3), 81–82, 87; *recorded by B/F, not re-read here*). If the owner is not employed by Gridsmith Ltd, Gridsmith does not own the owner's copyright without a signed assignment (s. 90(3)) | Operational precondition in §4 (P-2) |
 | D-16 | Complaints telephone | **OA** (`GS-R001-R`) | Default: keep the number as "WhatsApp or text", which the drafts already say. The register's ★ is withdrawn. Residual risk: CCR Sch. 2(c) asks for a telephone number "where available", and the PSR reg. 7(2)(b) point is UNVERIFIED (G). Low | Confirmation C-2 |
-| D-17 | Statutory registration wording | **OA** (`GS-O004`) + **EX** (certificate) | The footer says "registered in England"; the six drafts say "registered in England and Wales". Both describe one jurisdiction, and D rates "England" "probably sufficient" (SI 2015/17 reg. 25). They should match | Confirmation C-3 |
+| D-17 | Statutory registration wording | **OA** (`GS-O004`) + **EX** (certificate) | The footer says "registered in England"; the six drafts say "registered in England and Wales". Under SI 2015/17 reg. 25, D rates "England" a partial match (medium) and recommends "England and Wales", confirmed against the certificate (D report, D2). The two should match | Confirmation C-3 |
 | D-18 | Marketplace projects | **SD** + **EX** | Freelancer terms on project contracting and off-platform payment are unread (only review use was read at H4-C) | Operational precondition P-3 |
 | D-19 | Numbers in §6 | **SD** (four are **OA** from v2.0: 5 working days for complaints/accessibility, 14-day invoices, 10 working days review) | The rest are drafted defaults | Confirmation C-4 |
 | D-20 | Site copy changed in GS-LEGAL-001 | **LR/IF** (privacy link; no acknowledgement promise) + **OD** (Press sentence) | `ContactForm.tsx` fixes correct a false statement and add the Art. 13 link. The Press "summarise our client terms" sentence and the printing copy (§2, N-3) are owner copy | Confirmation C-5 |
 | D-21 | Data-protection fee | **OA** (`GS-O016`) | Registered and paying; the number is not supplied and is not needed by any document | None |
-| D-22 | Particulars on business documents | **LR** | SI 2015/17 regs 24–26. The §7.2 template carries name, number, registered office and part of the UK, and names no director, which reg. 26 permits | None (built into §7) |
+| D-22 | Particulars on business documents | **LR** | SI 2015/17 regs 24–26. The §7.2 template and the §7.3 signature block carry name, legal form, part of the UK (per C-3), number and registered office, and name no director, which reg. 26 permits | None (built into §7) |
 | D-23 | In-flight engagements | **LR** + owner fact | Existing contracts continue on their own terms (CRA s. 50(4)); new quotations name the version | None (for information: list any live engagements when adopting) |
 | D-24 | Development dataset reseed | **IF** (phase authorisation) | Not a legal or commercial choice; development reseeds have precedent (`07-STATE-REPORT.md` §2.1). Served parity stays red until it runs | Authorisation A-1 |
 | D-25 | Adoption | **OD** | By construction: only the owner records `ownerAdoptedOn`/`ownerAdoptedVersion` | Final step, §4 |
@@ -168,13 +170,15 @@ adoption under `GS-O003-R`**, which did not exist until 6 October.
 | **N-4** (new) | Ready-made digital products | **SD** | Not sold today; Consumer 3.0 is services only. Selling templates, e-books or presets would need a reg. 37 flow and a redraft | None unless such products are planned |
 
 **Count, by primary class (first listed), across 31 items (D-1 to D-30 and N-4):** 7 OA, 12 SD, 4 LR,
-4 EX, 2 IF, 2 OD. Counting limbs as well, only **four genuine owner decisions** remain: the D-4 consumer
-limb (deferrable), D-7, the D-20 Press sentence and D-25. Every OA or SD item that still needs a word
-from the owner is bundled into the confirmations in §4.
+4 EX, 2 IF, 2 OD. Counting limbs as well, only **four genuine OD items** remain: the D-4 consumer limb
+(deferrable), D-7, the D-20 Press sentence and D-25. On top of those are the commercial choices in O-3
+and O-4, and the provider evidence in O-2. Every OA or SD item that still needs a word from the owner is
+bundled into the confirmations in §4.
 
 **Record hygiene found in passing (not changed here except as stated in §9):**
 
-- `OWNER-ACTIONS.md` says "decide D-1–D-25", but the register runs to D-30.
+- `OWNER-ACTIONS.md` said "decide D-1–D-25", but the register runs to D-30. **Corrected in this phase:**
+  the `GS-O003-R` entry now points at §4 of this pack (§9).
 - `03-REVISION-LOG.md` and `07-STATE-REPORT.md` use an **older D-1…D-11 numbering with different
   meanings** (there D-1 is the VAT number and D-5 retention), so the IDs can be confused.
 - Stale lines remain in `BEFORE-LAUNCH.md` §2 (VAT), `PRE-DEPLOYMENT-CHECKLIST.md` A7 (ICO) and
@@ -192,12 +196,15 @@ and changes what the next phase does. **Nothing here is decided on the owner's b
 | # | Decision | Options | ★ Recommendation | Blocks |
 |---|---|---|---|---|
 | **O-1** | **Retention (D-7)** | (a) adopt the §5 schedule and the §5.2 monthly routine, review the 63 leads per §5.3, then replace the Privacy §8 marker with §5.4; (b) different periods (state them); (c) criteria only, as drafted, with the marker replaced by a review commitment | **(a)** | Privacy |
-| **O-2** | **Processor and transfer facts (D-6, R12–R14)** | Supply from the provider accounts: (1) Hostinger, Supabase and Resend data-processing terms accepted on the accounts used — yes/no for each; (2) the transfer safeguard each relies on (UK adequacy, UK–US data bridge certification, or the UK IDTA/Addendum in its terms); (3) Resend's sending region and log retention; (4) Hostinger's access-log retention; (5) Supabase backup retention on the plan used | Supply all five. The two Privacy markers (§6, §7) and R12–R14 are then filled from the answers and nothing else | Privacy |
+| **O-2** | **Processor and transfer facts (D-6, R12–R14)** | Supply from the provider accounts: (1) Hostinger, Supabase and Resend data-processing terms accepted on the accounts used — yes/no for each; (2) the transfer safeguard each relies on (UK adequacy, UK–US data bridge certification, or the UK IDTA/Addendum in its terms); (3) Resend's sending region and log retention; (4) Hostinger's access-log retention; (5) Supabase backup retention on the plan used; (6) Supabase platform, API and Edge Function log retention (these logs hold IP addresses); (7) Hostinger mailbox backup retention; (8) confirmation that `SLACK_LEADS_WEBHOOK` is unset in every deployed environment (`lib/leads/notify.ts:54`), since otherwise Slack is an unlisted recipient | Supply all eight. The two Privacy markers (§6, §7) and R12–R14 are then filled from the answers and nothing else | Privacy |
 | **O-3** | **Consumer contracting workflow (D-9, D-10, D-26, D-11, D-28)** | (a) adopt §7 as the only way consumer contracts are made: email/e-signature acceptance, standard start by default, stage table in every quotation, the confirmation email before work, and the template rules (no printing bought and recharged; after twelve deferred payments or 12 months, payment in advance); (b) adopt with changes; (c) offer no early start (standard start only) | **(a)**, with a standard quotation-validity period the owner chooses | Consumer terms (the terms promise these steps; they cannot be adopted without a way to keep them) |
 | **O-4** | **Business liability cap (D-2)** | §6 options A–E | **A + E**, with D used case by case. A is the owner's existing v2.0 choice; E is one added sentence | Business terms |
 | **O-5** | **Wording changes proposed by this check** | Accept or reject each: (1) Bus 2 fallback for the deferred-payment limit; (2) "within the 12 months beginning with" in Cons 4 / Bus 5; (3) N-2 tie-in sentences in Cons 9 / Bus 13; (4) cap option E (if O-4 = A + E). Any accepted change moves Consumer or Business to **3.1** before adoption | Accept (1)–(4). (2) and the balancing-payment point are also covered operationally by O-3's template rule, so rejecting (2) is low risk | Consumer and business terms |
 
-### 4.2 One-line confirmations (each has a recorded owner answer or a safe default; say "confirmed" or give the change)
+### 4.2 One-line confirmations (say "confirmed" or give the change)
+
+C-1 to C-4 each have a recorded owner answer or a safe default. C-5 is a small owner copy decision
+(D-20, OD) together with a new proposal arising from N-3.
 
 | # | Confirm | Default if confirmed |
 |---|---|---|
@@ -212,7 +219,7 @@ and changes what the next phase does. **Nothing here is decided on the owner's b
 | # | Precondition | Why |
 |---|---|---|
 | **P-1** | The §5.2 monthly routine is running before Privacy §8 says it is | Otherwise the published sentence is false |
-| **P-2** | A signed moral-rights waiver from every person who writes ghostwritten text, including the owner personally (D-15) | Cons 10.2 and Bus 13 promise them |
+| **P-2** | A signed moral-rights waiver from every person who writes ghostwritten text, including the owner personally; and, if the owner is not employed by Gridsmith Ltd, a signed assignment to Gridsmith Ltd of copyright in work the owner creates (D-15; CDPA s. 90(3)) | Cons 10.2, 13 and Bus 9.3, 13 promise the waivers and the transfer chain |
 | **P-3** | Before moving any Freelancer project off-platform, read the platform's terms on that (D-18) | Bus 1 relies on them where they cannot be varied |
 
 ### 4.4 Authorisations for later phases (not legal decisions)
@@ -236,11 +243,11 @@ Adoption (D-25) comes last and is per document and per version. The owner record
 |---|---|---|---|
 | Website Terms | 2.1 | C-1, C-3 | 2.1 (or 2.2 if C-3 changes the header) |
 | Cookie Policy | 2.1 | C-3; A-2 before `PUBLISHABLE` | 2.1 / 2.2 |
-| Accessibility Statement | 2.1 | C-3 | 2.1 / 2.2 |
+| Accessibility Statement | 2.1 | C-3, C-4 (its 5 working days) | 2.1 / 2.2 |
 | `/legal/client-terms` (seed) | 2.1 | — | 2.1 |
-| Client Terms for Business Clients | 3.0 | C-1–C-4, O-4, O-5 | 3.0, or 3.1 if O-5 accepted |
-| Client Terms for Consumers | 3.0 | C-1–C-5, O-3, O-5 | 3.0, or 3.1 if O-5 accepted |
-| Privacy Policy | 2.1 | C-3, O-1, O-2, P-1 | 2.2 (the three markers are replaced, so the text changes) |
+| Client Terms for Business Clients | 3.0 | C-1–C-4, O-4, O-5 | 3.0, or 3.1 if O-5 is accepted **or** C-3 changes the header |
+| Client Terms for Consumers | 3.0 | C-1–C-5, O-3, O-5 | 3.0, or 3.1 if O-5 is accepted **or** C-3 changes the header |
+| Privacy Policy | 2.1 | C-3, O-1, O-2, P-1, and R17 handled | 2.2 (the three markers are replaced, so the text changes) |
 
 Any text change before adoption is made in `docs/_legal/` (never in the seed). It then needs
 `check:legal:adoption`, regeneration of the migration manifest (`--write-manifest`, because the manifest
@@ -258,10 +265,14 @@ search-result summary; the page itself is blocked here). Two external periods an
   relate to**, longer for transactions spanning accounting periods or for a late Company Tax Return
   (GOV.UK, *Running a limited company: company and accounting records*, seen as a search-result summary). The
   Companies Act 2006 s. 388 minimum for a private company is shorter (3 years), so the HMRC period
-  governs. *Primary text not re-read in this phase.*
-- **Limitation of claims:** 6 years for contract and most tort claims (Limitation Act 1980 ss. 2, 5),
-  with latent-damage negligence running up to 15 years (ss. 14A–14B). *Recorded in the A/B reports;
-  not re-read at source in this phase.*
+  governs.
+- **Limitation of claims:** 6 years for contract and most tort claims (Limitation Act 1980 ss. 2, 5);
+  latent-damage negligence runs 3 years from knowledge, with a 15-year longstop (ss. 14A–14B); 12 years
+  for a deed (s. 8).
+
+*Both bullets are **UNVERIFIED in this repository**: no A–G report or ledger entry records s. 388 or the
+Limitation Act. They are stated from search-result summaries only (GOV.UK, HMRC CH14600, law-firm
+briefings) and should be read at source before anything relies on the exact periods.*
 
 ### 5.1 The schedule
 
@@ -270,7 +281,7 @@ longer only with a reason that can be written down.
 
 | # | Data | Where it lives today | Proposed period | Trigger (clock starts) | Why this period | Action at end |
 |---|---|---|---|---|---|---|
-| R1 | **Enquiry that did not become a project** (lead row: name, email, phone, company, message, budget band, timeline, Press answers, manuscript link) | Supabase `public.leads` (Ireland) | **12 months** | Last contact with the enquirer | Lets a stalled enquiry be picked up and a quotation be re-issued; nothing in law needs longer | Delete the row (the outbox row cascades) |
+| R1 | **Enquiry that did not become a project** (lead row: name, email, phone, company, message, budget band, timeline, Press answers, manuscript link) | Supabase `public.leads` (Ireland) | **12 months** | `created_at`, extended only where `notes` records a later contact date (the table has no last-contact column; adding `last_contact_at` is a later, separately authorised task) | Lets a stalled enquiry be picked up and a quotation be re-issued; nothing in law needs longer | Delete the row (where the outbox exists, its row cascades — R10) |
 | R2 | **Enquiry marked spam / abusive** | `public.leads` with `status = 'spam'` | **30 days** | Date marked | Time to confirm the classification | Delete |
 | R3 | **Internal notification email** (name, email, company, phone, studio, enquiry type, reference) | `contact@gridsmith.uk` mailbox (Hostinger) | **Same as the lead it announces** (R1, R2 or R4) | As the lead | It duplicates the lead; keeping it longer defeats R1 | Delete from inbox and from mailbox trash |
 | R4 | **Enquiry that became a project** | `public.leads` | **Move into the client record (R5), then delete the lead row within 30 days of contract** | Contract date | The client record is the authoritative copy | Delete lead row |
@@ -279,13 +290,17 @@ longer only with a reason that can be written down.
 | R7 | **Title documents**: signed IP-transfer confirmations, writers' moral-rights waivers, subcontractor assignments, portfolio consents | Document store | **For as long as the rights or the consent are relied on, plus 6 years** | End of reliance (e.g. consent withdrawn, Gridsmith ceases trading) | They prove the chain of title Gridsmith promises the client (Cons 13; Bus 9.3) and the consent it relies on (Cons 14; Bus 9.4) | Delete |
 | R8 | **Project working files and client materials** | Working storage | **Return or delete within 90 days of project end**, unless the quotation or Scope says otherwise or the client asks Gridsmith to keep them | Project end | Purpose ends at handover; R5 keeps what proves the contract | Delete; keep only what R5/R7 require |
 | R9 | **Complaints and rights requests** (including DPA 2018 s. 164A data complaints) | Mailbox | **With the client record (R5) if there is one; otherwise 2 years after closure** | Closure | Evidence of how it was handled; 2 years is an owner choice, no statutory period | Delete |
-| R10 | **Duplicate-detection fingerprint and outbox state** (`request_digest`, attempts, timestamps) | `gridsmith_private.notification_outbox` | **Deleted with the lead** (cascade); `sent` rows may be pruned after 30 days | Lead deletion / send | Only needed to stop duplicate submissions | Cascade or prune |
-| R11 | **Press Path Finder results** | `public.press_path_results` (column `expires_at` = 90 days) | **90 days**, as the table already declares | Creation | Already the designed period | Delete — **no job deletes them today**: nothing in the repository reads `expires_at` (implementation fact) |
+| R10 | **Duplicate-detection fingerprint and outbox state** (`request_digest`, attempts, timestamps) | `gridsmith_private.notification_outbox` — **Supabase Preview only today**; Production once H4-B is promoted (`AI-HANDOFF.md` H4-B: "Production migration plan NOT applied"). The 63 Production leads have no outbox row | **Deleted with the lead** (cascade); `sent` rows may be pruned after 30 days | Lead deletion / send | Only needed to stop duplicate submissions | Cascade or prune. Preview holds only synthetic or probe rows; delete them under R2's routine |
+| R11 | **Press Path Finder results** | `public.press_path_results` (column `expires_at` = 90 days) | **90 days**, as the table already declares | Creation | Already the designed period | **No write path exists today** (0 rows recorded 2 Oct; nothing reads `expires_at`). If one is built: (a) the 90-day job must exist before results are written; (b) `lead_id references leads(id)` has **no on-delete action**, so linked results must be deleted or nulled before their lead, or the foreign key migrated to `on delete set null` |
 | R12 | **Hosting access logs** (IP address, browser details) | Hostinger | **Provider's period** | — | Not under Gridsmith's control | **External evidence required:** record Hostinger's period, then state it in Privacy §8 |
 | R13 | **Email-delivery logs** of the notification | Resend | **Provider's period** | — | As R12 | **External evidence required:** record Resend's log retention for the plan used |
 | R14 | **Database backups** | Supabase | **Provider's backup cycle** | — | Deletions reach backups when the backup rotates | **External evidence required:** record the plan's backup retention |
 | R15 | `gs_consent` cookie | Visitor's browser | **365 days** (the site's own setting, `lib/consent/state.ts`) | Set on *Got it* | Already stated in the Cookie Policy | Expires in the browser |
-| R16 | **WhatsApp / text messages** | Owner's phone | **As R1** for an enquiry; **as R5** where it forms part of a project record | As R1/R5 | Same purpose as email | Delete the chat |
+| R16 | **WhatsApp / text messages**, including WhatsApp cloud chat backups | Owner's phone; the backup provider | **As R1** for an enquiry; **as R5** where it forms part of a project record | As R1/R5 | Same purpose as email | Delete the chat (and it leaves the backup when the backup rotates) |
+| R17 | **Manual database exports (`pg_dump`) and any restore-test database** | Owner's machine, outside the repository (`GS-PROD-003-R1.md` §7: `%USERPROFILE%\gridsmith-backups\supabase-production-*.dump`, holding all 63 leads) | **Delete when superseded.** Re-take or delete after each §5.2 deletion run; delete any restore-test database when the test ends | Each deletion run | Otherwise deleted leads survive in the export and Privacy §8 becomes untrue | Delete the file |
+| R18 | **Other mailbox correspondence** (direct email enquiries, Sent items) | `contact@gridsmith.uk` | **As R1** for an enquiry; **as R5** for a project | As R1/R5 | Same purpose | Delete, including Sent and trash |
+| R19 | **Freelancer review text** shown on the site | Sanity CMS | **While displayed**, and until removal on request (Privacy §2A) | — | Already stated in §2A | Delete the document |
+| R20 | `public.events`, `public.sample_grants` | Supabase | **No data held** (0 rows on 2 Oct; no writer since analytics were removed) | — | — | If a writer is ever added, schedule it first |
 
 ### 5.2 Deletion routine (the condition the draft attaches to fixed periods)
 
@@ -294,9 +309,10 @@ recommends stating periods only once a routine exists. The smallest routine that
 true:
 
 1. **Monthly, first working day** — the owner (or a later scripted task) runs a read-only count of
-   leads past R1/R2/R4, records the count, then deletes them and records the number deleted. The same
-   session clears R3 notification emails older than R1 from the mailbox and its trash.
-2. **Quarterly** — prune R10 outbox rows and R11 Path Finder rows past their period; confirm R8 project
+   leads past R1/R2/R4, records the count, then deletes them and records the number deleted. The R1
+   clock is `created_at`, unless `notes` records a later contact (R1). The same session clears R3/R18
+   mail past its period from the mailbox, Sent items and trash, and re-takes or deletes any R17 export.
+2. **Quarterly** — prune R10 outbox rows (and R11 rows, once a writer exists; they must go before their lead — see R11); confirm R8 project
    files for projects ended more than 90 days ago have been returned or deleted.
 3. **Annually, after the financial year end** — delete R5/R6 records whose 6-year period has ended.
 4. **Log** — a one-line entry per run (date, counts, who ran it) kept with the R9 records, which is the
@@ -311,24 +327,35 @@ Production Supabase holds 63 leads (`GS-PROD-003-R1`). Before Privacy §8 states
 
 1. identify which of the 63 became projects (they move to R5 and the rows are deleted under R4);
 2. delete those whose last contact was more than 12 months ago (R1) and any spam (R2); and
-3. keep the rest and let the monthly routine take them as they pass 12 months.
+3. keep the rest and let the monthly routine take them as they pass 12 months;
+4. delete or replace the 2 October 2026 `pg_dump` (R17) once steps 1–2 are done, and record it; and
+5. identify which rows are test or probe data and what notice was shown when they were collected
+   (open question C D2(d)).
 
 **Nothing was read from or written to Production in this phase.** The count is the recorded figure,
 not a fresh reading.
 
 ### 5.4 Privacy §8 wording once the schedule is adopted (proposal)
 
-> We keep enquiries that do not lead to a project for 12 months after our last contact with you, and
-> spam for 30 days. If your enquiry leads to a project, we keep the project and contract records for
-> six years after the end of the financial year in which the project ends, because of tax law and the
-> time within which legal claims can be brought. Documents that prove who owns work we created, such as
-> signed transfers and waivers, are kept for as long as those rights are relied on. We return or delete
-> project files within 90 days after a project ends unless we agree otherwise with you. Our hosting,
-> email-delivery and database providers keep technical logs and backups for their own periods, set out
-> below. We check monthly for enquiries that have reached the end of their period and delete them.
+> We keep enquiries that do not lead to a project, including the internal email that tells us about
+> them and any messages about them, for 12 months after we receive them or after our last contact with
+> you, and spam for 30 days. If your enquiry leads to a project, we keep the project and contract
+> records for six years after the end of the financial year in which the project ends, because of tax
+> law and the time within which legal claims can be brought. Documents that prove who owns work we
+> created, such as signed transfers and waivers, are kept for as long as those rights are relied on and
+> for six years after that. Complaints are kept with the project record or, if there is none, for two
+> years after they are closed. We return or delete project files within 90 days after a project ends
+> unless we agree otherwise with you. Our hosting, email-delivery and database providers keep technical
+> logs and backups for their own periods: [R12–R14 from O-2]. We check monthly for enquiries that have
+> reached the end of their period and delete them.
 
-The last sentence must stay false-proof: adopt it only once the routine in §5.2 is actually running,
-and fill in R12–R14 first.
+It **replaces §8 ¶2 in full**, including "We do not currently delete general enquiries automatically…"
+and the marker. §8 ¶1 (criteria) and ¶3 (accounting records) are kept. The last sentence must stay
+true: adopt it only once the routine in §5.2 is running (P-1) and R17 is handled, and fill in R12–R14
+first. **R8 note:** deleting Gridsmith's own copy of the final delivered set could weaken its defence of
+a claim within R5's six years. The owner may prefer "keep the final delivered set with R5; delete
+client-supplied material and personal data within 90 days". Any future Technical work may warrant a
+longer period because of the 15-year latent-damage longstop.
 
 ## 6. Liability-cap options (for D-2)
 
@@ -337,13 +364,15 @@ and fill in R12–R14 first.
 specified sum, the court has regard in particular to the resources Gridsmith could expect to have to
 meet the liability and **how far it was open to Gridsmith to cover itself by insurance** (s. 11(4)).
 *Recorded at High confidence in `B-business-terms.md` §1/§3 (read at source 6 Oct 2026); not re-read
-in this phase.* Consumers have no cap and must not get one: Consumer §17 limits recovery to
-foreseeable loss, which is the general law, and keeps every non-excludable liability (CRA ss. 31, 57).
+in this phase.* Consumers get no cap, by design. A recommends against one, and any cap would face CRA
+s. 57(3) and the s. 62 fairness test. Consumer §17 limits recovery to foreseeable loss, which is the
+general law, and keeps every non-excludable liability (CRA ss. 47, 57, 65).
 
 **Facts that bear on reasonableness.** Gridsmith carries no PI cover and does not make it a launch
 prerequisite (`GS-O005` closed by owner; `GS-O024` deferred). Under s. 11(4)(b) the absence of
-insurance can support a lower cap — but only where insurance was not reasonably available; where it
-was available and simply not bought, the factor cuts less clearly. Technical drawing work is limited
+insurance can support a lower cap only where insurance was not reasonably available. If cover was
+available at reasonable cost and was not bought, B records that its absence **may weigh against** a low
+cap. Under s. 11(4)(a), the limited resources of a small company support a modest cap. Technical drawing work is limited
 by Business §12 and stays unpublished until `GS-X002` closes.
 
 **What the draft says now (Business §16).** Per Scope: total fees paid and payable under that Scope;
@@ -353,11 +382,16 @@ and loss of profit excluded; the cap does not reduce the client's payment obliga
 
 | Option | Shape | For the client | For Gridsmith | Reasonableness view (UCTA s. 11) |
 |---|---|---|---|---|
-| **A — as drafted** | 100% of Scope fees (12 months' fees for retainers) | Familiar; the client recovers at least what it paid | Exposure never exceeds revenue from the job | **Recommended default.** Tied to the value of the contract, mutual exclusions, no saver, clear wording, and a route to negotiate a different figure in the Scope. Strongest where the work is creative/digital and the loss a client could plausibly suffer is near the fee |
+| **A — as drafted** | 100% of Scope fees (12 months' fees for retainers) | Familiar; the cap is never below what the client paid | Exposure never exceeds revenue from the job | **Recommended default.** Tied to the value of the contract, a mutual exclusion of indirect loss, no saver, clear wording, and a route to negotiate a different figure in the Scope. Strongest where the work is creative/digital and the loss a client could plausibly suffer is near the fee |
 | **B — fees with a floor** | Greater of Scope fees and a fixed sum the owner chooses | Better protection on small jobs | Exposure on small jobs rises to the floor | More robust on very small Scopes, where a cap of the fee alone could look nominal. The floor is an owner figure; this pack proposes none |
 | **C — multiple of fees** | e.g. a stated multiple of Scope fees | More headroom | Exposure above revenue with no insurance behind it | Easier to defend as reasonable; harder to fund. Only sensible once insurance is in place |
 | **D — Scope-specific cap** (already possible under A) | A figure written prominently in a particular Scope | Negotiated | Used for high-value, Technical or data-heavy work | Individually negotiated caps carry more weight; keep the "prominently" requirement |
-| **E — retainer start-up fix** | For retainers, the greater of 12 months' fees and fees paid and payable to date | Avoids a near-zero cap in month 1 | Marginal | Small drafting improvement to A; worth adopting with A |
+| **E — retainer start-up fix** | For retainers, sentence below | Avoids a near-zero cap in the first months | Raises the cap in the first year only | Small drafting improvement to A; worth adopting with A |
+
+**Option E text (proposal):** in Business §16 ¶2, replace "the fees paid and payable in the 12 months
+before the event giving rise to the claim" with "the greater of (i) the fees paid and payable in the
+12 months before the event giving rise to the claim and (ii) the fees payable for the first 12 months
+of that Scope (or for its whole term, if shorter)".
 
 **Points the owner should know whichever option is chosen:**
 
@@ -398,12 +432,20 @@ is a policy value.** The owner sets each one in each quotation.
 
 **Template rules.** These close the §2 gaps without a redraft:
 
-1. **Deferred payments.** For a consumer, or a business client who is an individual, partnership or
-   other unincorporated body, count every payment that falls due after the work it pays for. Once
-   twelve such payments or 12 months from the contract date are reached, every further stage is paid
-   **in advance**. A balancing payment on cancellation or ending (Cons 7, 8; Bus 3, 6.2, 7, 18) can
-   then never be a thirteenth deferred payment, or fall after month 12, for work billed in arrears.
-   Never add interest or a fee for paying later (RAO art. 60F(2)).
+1. **Deferred payments.** This applies to a consumer, or to a business client who is an individual,
+   partnership or other unincorporated body. No payment for work already supplied may **fall due**
+   later than 12 months after the contract date, and there may be no more than twelve such payments.
+   Plan the schedule so that:
+   - any stage whose payment would fall due after that date (allowing for the 14-day invoice terms)
+     is invoiced in advance; and
+   - a balancing payment under Cons 7/8 or Bus 3, 6.2, 7 or 18 either falls due before that date or is
+     covered by a payment in advance.
+
+   Whether a contingent termination payment counts under art. 60F(2) is **UNVERIFIED**, which is why
+   the schedule is planned to avoid the question. Never add interest or a fee for paying later (RAO
+   art. 60F(2)). Whether statutory late-payment interest (Bus 5) on a deferred payment by an individual
+   or small partnership affects the exemption is also **UNVERIFIED**. It is a reason to keep such
+   clients on advance or on-delivery payments.
 2. **Printing.** Gridsmith never buys printed copies and recharges them to a consumer. The consumer
    contracts with and pays the printer directly (Cons 6.1). The same rule applies to business clients
    unless a later decision adds a goods clause (D-11, G-23).
@@ -417,17 +459,19 @@ consumer agrees otherwise (reg. 10) and omitting the cancellation information is
 
 **Working out the 14 days.** The period ends 14 days after the day the contract is made (Cons 6.1;
 CCR reg. 30). Contract made on [day 0] → the period ends at the end of [day 0 + 14]. Write the date in
-the confirmation.
+the confirmation. This assumes the quotation carried the cancellation information. If it did not, the
+period runs up to 12 months longer (reg. 31), and the template exists to prevent that.
 
 ### 7.2 Quotation template
 
 ```
 Gridsmith Ltd — Quotation [reference]                         Date: [date]
-Gridsmith Ltd, a private limited company registered in England and Wales, company number 17050842
+Gridsmith Ltd, a private limited company registered in [C-3 wording], company number 17050842
 Registered office: 30 Briarfield Road, Farnworth, Bolton, BL4 0HD
 contact@gridsmith.uk · WhatsApp or text +44 7405 448534 · Studio: Gridsmith [Design/Digital/Press]
 
-For: [client name], [postal address]  — buying as an individual for personal purposes
+For: [client name], [postal address]  — buying as an individual, wholly or mainly for purposes
+outside your trade, business, craft or profession
 
 This quotation is open for you to accept until [date].
 Your contract will be on our Client Terms for Consumers, version [3.0], attached as a PDF.
@@ -443,13 +487,18 @@ Your contract will be on our Client Terms for Consumers, version [3.0], attached
    construction or building work.
    [If generative AI tools will be used] We will use generative AI tools for: [what].
    [If any deliverable is licensed rather than transferred] Licensed, not transferred: [item and licence].
+   Third-party material included, used under its own licence (fonts, stock, software): [list or "none"]
+   Working/source files supplied: [list or "none"]
    [Press] ISBN holder: [you / other]. Named publisher: [you / other]. Accounts opened in: [your name].
+   [Ghostwriting] Authorship and credit will be stated as: [ ]. Writers' waivers: [obtained by us /
+   not required because …].
    [Digital] Domains, hosting and accounts registered in: [your name].
    [Support/maintenance] Fixed period [dates], paid in one payment of £[ ] before it starts,
    no automatic renewal.
 
 2. TOTAL PRICE
-   Total price: £[ ]   [VAT statement — wording depends on owner decision D-1]
+   Total price: £[ ]   [or, where it cannot reasonably be calculated in advance, how it will be
+   calculated]   [VAT statement — wording depends on confirmation C-1]
    Costs payable to other suppliers (not in the total unless stated):
      [item] — paid by [you directly / us with your written agreement] — £[ ] [or how it is calculated]
    Printed copies are not part of this contract; you buy them directly from the printer, on the
@@ -459,7 +508,7 @@ Your contract will be on our Client Terms for Consumers, version [3.0], attached
    [Schedule, e.g. on acceptance / at each stage / instalments: amount and due date of each payment]
    No payment is asked for until you accept. Any advance payment is refundable as set out in the terms.
    [If any payment falls due after the work it pays for: no more than twelve such payments, all due
-   within 12 months of the contract date, with no interest or fee.]
+   within 12 months of the contract date, with no interest or fee — plan per §7.1 rule 1.]
 
 4. TIMETABLE
    [Start date or how it is fixed — see section 7 — and the delivery date for each stage]
@@ -541,8 +590,7 @@ Subject: Contract confirmation — [reference]
 
 Dear [name],
 
-Thank you. This email confirms your contract with Gridsmith Ltd (company number 17050842,
-30 Briarfield Road, Farnworth, Bolton, BL4 0HD).
+Thank you. This email confirms your contract with Gridsmith Ltd.
 
 Contract made: [date we received your acceptance]
 Quotation: [reference] dated [date] (attached again)
@@ -567,11 +615,13 @@ to cancel.
 
 [First payment: £[ ] due [date], payable by [method]. It is refundable as set out in the terms.]
 
-Gridsmith Ltd — Gridsmith [studio]
+Gridsmith [studio]
+Gridsmith Ltd, a private limited company registered in [C-3 wording], company number 17050842,
+registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD
 Attachments: Quotation [reference] · Client Terms for Consumers v[3.0] · Cancellation form
 ```
 
-This satisfies CCR reg. 16 only because the quotation carrying the Sch. 2 information was itself sent on
+This is designed to meet CCR reg. 16, and it can do so only because the quotation carrying the Sch. 2 information was itself sent on
 a durable medium (email/PDF) and is attached again. Never send it as a WhatsApp message alone.
 
 ### 7.4 Cancellation form (Cons 22 — attach unchanged)
@@ -590,7 +640,8 @@ Date:
 
 Header line for the attachment: "Complete and return this form only if you wish to cancel the contract.
 You do not have to use it." (Cons 22). Pre-filling the service and the "ordered on" date before sending
-is allowed and helpful.
+is helpful. That it is allowed is a practical reading only (**UNVERIFIED**: no source in the repository
+addresses it).
 
 ### 7.5 On cancellation within the 14 days — refund statement
 
@@ -607,18 +658,31 @@ everything you paid: £[ ].]
 We will refund £[ ] by [the payment method you used] by [date — within 14 days of the day you told us],
 with no fee. Any related contract you made with us or another provider under an arrangement with us
 for this project has also ended at no cost to you.
+
+Gridsmith [studio]
+Gridsmith Ltd, a private limited company registered in [C-3 wording], company number 17050842,
+registered office 30 Briarfield Road, Farnworth, Bolton, BL4 0HD
 ```
 
-The amount for work carried out is **zero** if the cancellation information or the stage table was not
-given before acceptance, or if the early start was not requested in writing (Cons 6.5; CCR reg. 36(6)).
+Where a related contract is with another provider under an arrangement with Gridsmith, tell that
+provider about the cancellation straight away (CCR reg. 38; *A-15, medium confidence*).
+
+The amount for work carried out is **zero** if the cancellation information was not given before
+acceptance, or if the early start was not requested in writing (Cons 6.5; CCR reg. 36(6), Sch. 2(l) and
+(n)). Treat a missing stage table the same way. Strictly, the CCR basis is (l)/(n), not the table
+itself, so this is a safe operating rule that is more generous than the regulation requires.
 It never includes third-party costs inside the 14 days (A §7.5 item 4) — which is why Cons 4 forbids
 committing to non-cancellable supplier costs during the period.
 
 ### 7.6 Ending after the 14 days (Cons 7) — statement
 
-Same layout as §7.5, with a third line for supplier costs the client agreed to in writing and that
-cannot be cancelled or recovered (evidence on request), no cancellation fee, refund of any overpayment
-within 14 days, and delivery of the paid-for work with the rights in Cons 13.
+Same layout and signature block as §7.5, **omitting the related-contracts sentence** (Cons 7 gives no
+such right), with:
+- a third line for supplier costs the client agreed to in writing and that cannot be cancelled or
+  recovered (evidence on request);
+- no cancellation fee;
+- refund of any overpayment within 14 days, or the balance due if the client paid less; and
+- delivery of the paid-for work with the rights in Cons 13.
 
 ### 7.7 Business clients (for comparison)
 
@@ -629,13 +693,71 @@ partnership or another unincorporated body, the deferred-payment limit in Bus 5 
 
 ## 8. Final independent legal check
 
-<!-- R2:SECTION-8 -->
+A third agent, which had not drafted the pack, checked the whole pack as committed at `817b707` against:
+- the drafts (Consumer 3.0, Business 3.0, Privacy 2.1);
+- the A–G reports, `02-CITATION-LEDGER.md` and `00-LEGAL-BASIS.md`;
+- the migrations and `lib/consent/state.ts`;
+- the evidence paths cited in §3, of which it spot-checked 12.
+
+It read no primary legislation (blocked); three propositions were also checked against search-result
+summaries.
+
+**Result:** no high-severity defect, **9 medium**, **9 low** and **8 notes**. This session confirmed the
+material ones before acting on them:
+- the Limitation Act appears nowhere in `docs/_legal/` outside this pack;
+- `0003_press_path_results.sql:40` has no on-delete action;
+- `AI-HANDOFF.md` H4-B says "Production migration plan NOT applied";
+- `00-LEGAL-BASIS.md` `L-PECR-22` confines reg. 22 to individual subscribers;
+- D report D2 makes the address-line point.
+
+All 18 defects were fixed in this file. The notes were taken as stated below.
+
+| # | Sev. | Defect | Disposition |
+|---|---|---|---|
+| D1 | M | Limitation Act and s. 388 attributed to readings the repository does not hold | §5 now labels both **UNVERIFIED in this repository** (search-result summaries only) |
+| D2 | M | Off-repository `pg_dump` of the 63 leads missing from the schedule | **R17** added; §5.2 step 1 and §5.3 step 4 handle it |
+| D3 | M | R1 clock ("last contact") not computable from `public.leads` | R1 now runs from `created_at`, extended by a contact date in `notes`; a `last_contact_at` column is a later task |
+| D4 | M | Path Finder `lead_id` FK blocks lead deletion; table has no writer | R11 rewritten; §5.2 order fixed |
+| D5 | M | Outbox described as live; it is Preview-only | R1 and R10 corrected |
+| D6 | M | Template rule 1 overclaimed; Bus 2 fallback keyed on invoicing, not on the due date | Rule 1 rewritten on due dates, with the UNVERIFIED points stated; Bus 2 proposal now says "fall due" |
+| D7 | M | Option E ambiguous; O-5(4) had no text | E sentence given in §6; its exposure corrected |
+| D8 | M | Registration particulars missing from §7.3/7.5/7.6 | Shared signature block added; D-22 evidence updated |
+| D9 | M | Quotation template missing ghostwriting credit, third-party material and source files (Cons 10.2, 13), plus the "how calculated" alternative | Fields added to §7.2 |
+| D10 | M | "Consumers must not get a cap" overstated; wrong CRA section | §6 reworded; CRA ss. 47, 57, 65 |
+| D11 | L | PECR reg. 22 overstated; CMA37 overstated; "satisfies reg. 16" | D-8 reclassed IF + SD; "strongly indicated"; "designed to meet" |
+| D12 | L | Option A: "recovers at least what it paid"; "mutual exclusions" | Corrected |
+| D13 | L | UCTA s. 11(4)(b) softened | B's wording used; s. 11(4)(a) added |
+| D14 | L | §5.4 inconsistent with §5.1; replacement scope unstated | §5.4 rewritten (R3, R7 +6 years, R9), with its replacement scope stated; R8 note added |
+| D15 | L | D-17 misattributed D's view | Address-line point and D2 cited |
+| D16 | L | §7.6 would import the related-contracts right; §7.2 consumer wording narrower than Cons 1 | Both corrected |
+| D17 | L | Moral-rights proposition missed employee-works and assignment points | D-15 updated; P-2 extended (below) |
+| D18 | L | Framing: "four decisions" vs five; C-5 header; D-13 consumer limb | Reworded; §4.2 header split; D-13 reclassed OA + SD |
+| D19 | L | Record drift; readiness gaps (C-3 forces 3.1; Accessibility needs C-4; template hardcoded "England and Wales") | Hygiene line and §9 updated; §4.6 rows corrected; template uses [C-3 wording] |
+
+**Notes taken:**
+- **Note 1:** O-2 extended to eight facts.
+- **Note 2:** R16–R20 added.
+- **Note 3:** R8 caveat in §5.4.
+- **Note 4:** §5.3 step 5.
+- **Note 5:** reg. 31 in §7.1; reg. 38 provider notice in §7.5.
+- **Note 6:** pre-fill marked UNVERIFIED; stage-table basis in §7.5.
+- **Note 7:** in rule 1.
+- **Note 8:** no action.
+
+**Verdict.** In the checker's words, the pack is "a careful piece of work and is mostly faithful to the
+drafts", with no high-severity defect, and "its scope discipline holds: nothing in it adopts,
+publishes or edits a draft". With the fixes above, this phase records **no open defect in the pack**.
+That is a statement about this pack's internal accuracy against its sources. It is not a statement
+that any template or draft is compliant, approved or enforceable. The primary-text re-reads this
+session could not make are listed as UNVERIFIED where they occur.
 
 ## 9. Not done, by instruction
 
 - No document moved beyond `OWNER_REVIEW_REQUIRED`; `GS-O003-R-REGISTER.json` unchanged; no
   `ownerAdoptedOn`/`ownerAdoptedVersion` set.
 - No draft in `docs/_legal/` edited in this phase; proposed wording above is a proposal only.
+- Records changed: this pack (new), `docs/_shared/OWNER-ACTIONS.md` (`GS-O003-R` exact action now points at §4),
+  `GS-LEGAL-001-RECORD.md` §11 and `CLOUD-CONTINUATION.md` (R2 status), and the `CLAUDE.md` status banner.
 - No publication, deployment, Hostinger workflow dispatch, DNS, Vercel, Sanity (development or
   Production), Supabase (Preview or Production) or `main` change. H4-H not started.
 - The Hostinger `/contact/*` and `/about/*` HTTP 500 defect was left alone, as the handoff instructs.

@@ -4,7 +4,24 @@ Handoff for a fresh Claude Code cloud session, written 7 October 2026. Branch
 `staging/gs-legal-001`; the GS-LEGAL-001 work is commit `53cc4f67`, and this file is the commit
 after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` in this folder.
 
-## Current Status
+## R2 status (7 October 2026)
+
+**GS-LEGAL-001-R2 complete — OWNER DECISION PACK READY; STOPPED before adoption and publication.**
+`R2-OWNER-DECISION-PACK.md` in this folder answers items 1–7 of "Known Follow-up" below:
+- N-1 to N-3 independently verified;
+- D-1 to D-30 classified;
+- the list reduced to §4 of the pack;
+- the retention schedule (§5), liability-cap options (§6) and consumer workflow templates (§7);
+- a final independent check, whose 18 defects are fixed (§8).
+
+Work branch `claude/sweet-mendel-11qvli`, fast-forwarded from `main` to this branch's HEAD `02e69715`
+before the work began. No document beyond `OWNER_REVIEW_REQUIRED`, no draft edited, no deployment, no
+Sanity/Supabase/Hostinger/DNS/main change, H4-H not started.
+
+**Next:** the owner answers §4 of the pack. Only then does a phase edit the drafts (3.1/2.2 where
+answers require it), reseed development (A-1) and let the owner adopt.
+
+## Current Status (as handed over, 6 October 2026)
 
 **READY FOR OWNER LEGAL/COMMERCIAL DECISIONS.**
 
