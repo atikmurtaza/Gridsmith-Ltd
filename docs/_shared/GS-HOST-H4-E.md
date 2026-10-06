@@ -146,3 +146,14 @@ deployment the 00:04 BST manual Redeploy of 255d0e55. No deployment occurred in 
 ## Performance
 
 No source or delivery change: no Lighthouse rerun. H4-D measurements stand.
+
+## Revalidation after GS-VIS-NUM-R5 (6 October 2026)
+
+H4-E passed against 44e as recorded above. The owner then reported decorative heading numbers on
+About/Approach (not part of the H4-E brief); `GS-VIS-NUM-R5` (source `6f0ef7ce`, identity
+`997a2344…`) removed them and the same-rule numbering on Master, Design, Digital, Press and the
+Path Finder fallback. The affected scope — those seven routes plus controls `/insights` and
+`/contact` — was re-run with `h4e-nojs` (5 widths) and `h4e-features` (18 axe analyses), local and
+hosted: identical outcome, 0 violations. Path Finder's probe now counts question headings instead
+of the removed "1." prefix. H4-E remains accepted; the other 46 routes' evidence is unaffected.
+See `GS-VIS-NUM-R5.md`.
