@@ -235,7 +235,7 @@ export async function PressHome() {
                     </li>
                   ))}
                 </ul>
-                <details className="pr-cat-more">
+                <details className="pr-cat-more" open>
                   <summary>Also in this territory <span className="pr-count">{territory.supporting.length}</span></summary>
                   <ul className="pr-cat-list pr-cat-list-sub">
                     {territory.supporting.map((item) => (

@@ -51,20 +51,25 @@ try {
   await page.waitForSelector('[data-render="ready"]');
   receipt.master = 'software WebGL ready';
   assert.equal(await page.$$eval('[data-reviews-carousel] blockquote', (nodes) => nodes.length), 11);
-  const reviewTurn = () => page.$eval('[data-reviews-carousel] ul', (el) => el.style.getPropertyValue('--turn'));
-  const initialTurn = await reviewTurn();
-  await pause(6500);
-  assert.notEqual(await reviewTurn(), initialTurn, 'Committed six-second rotation did not advance');
+  // GS-HOST-H4-G: the approved GS-VIS-001 cylinder turns continuously; its angle is the ring's
+  // rotateY, and its controls are named by aria-label (the contract check:reviews:ui also reads).
+  const reviewAngle = () => page.$eval('[data-reviews-carousel] ul',
+    (el) => Number(/rotateY\((-?[\d.]+)deg\)/.exec(el.style.transform)?.[1]));
+  const reviewButton = (name) => page.$eval('[data-reviews-carousel]', (el, label) =>
+    [...el.querySelectorAll('button')].find((button) => button.getAttribute('aria-label') === label)?.focus(), name);
   await page.$eval('[data-reviews-carousel]', (el) => el.scrollIntoView({ block: 'center' }));
-  await page.$eval('[data-reviews-carousel] button[aria-pressed]', (el) => el.focus());
-  await page.keyboard.press('Enter');
-  const pausedTurn = await reviewTurn(); await pause(6500);
-  assert.equal(await reviewTurn(), pausedTurn);
-  await page.$eval('[data-reviews-carousel]', (el) => [...el.querySelectorAll('button')].find((button) => button.textContent.includes('Next')).focus());
-  await page.keyboard.press('Enter');
-  assert.notEqual(await reviewTurn(), pausedTurn);
-  receipt.reviews = { count: 11, steppedRotation: true, pause: true, next: true,
-    continuousRotationAndDrag: 'Concurrent GS-VIS work; not integrated' };
+  const initialAngle = await reviewAngle(); await pause(3000);
+  const turnedAngle = await reviewAngle();
+  assert(Number.isFinite(initialAngle) && Number.isFinite(turnedAngle), 'Review cylinder exposes no rotateY angle');
+  assert(Math.abs(turnedAngle - initialAngle) > 1, 'Continuous review rotation did not advance');
+  await reviewButton('Pause review rotation');
+  await page.keyboard.press('Enter'); await pause(1500);
+  const pausedAngle = await reviewAngle(); await pause(3000);
+  assert(Math.abs(await reviewAngle() - pausedAngle) < 0.01, 'Paused review cylinder kept turning');
+  await reviewButton('Rotate reviews right');
+  await page.keyboard.press('Enter'); await pause(1500);
+  assert(Math.abs(await reviewAngle() - pausedAngle) > 1, 'Rotate reviews right did not turn the paused cylinder');
+  receipt.reviews = { count: 11, continuousRotation: true, pause: true, arrows: true };
 
   await page.goto(base + '/design', { waitUntil: 'networkidle0' });
   await page.waitForSelector('[data-design-story][data-enhanced="true"]');
@@ -106,10 +111,16 @@ try {
 
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
   await page.goto(base + '/', { waitUntil: 'networkidle0' });
-  assert.equal(await page.$eval('[data-reviews-carousel] ul', (el) => getComputedStyle(el).transform), 'none');
+  // GS-VIS-001-R1: reduced motion keeps the drum, still — nothing turns and there is nothing to pause.
+  await page.$eval('[data-reviews-carousel]', (el) => el.scrollIntoView({ block: 'center' }));
+  await pause(500);
+  const stillAngle = await reviewAngle(); await pause(2500);
+  assert(Number.isFinite(stillAngle), 'Reduced-motion review cylinder exposes no rotateY angle');
+  assert(Math.abs(await reviewAngle() - stillAngle) < 0.01, 'Review cylinder turned on its own under reduced motion');
+  assert.equal(await page.$eval('[data-reviews-carousel] button[data-pause]', (el) => getComputedStyle(el).display), 'none');
   await page.goto(base + '/digital', { waitUntil: 'networkidle0' });
   assert.equal(await page.$eval('.dg-apertures', (el) => el.dataset.motion), 'inactive');
-  receipt.reducedMotion = 'review grid and Digital reduced state';
+  receipt.reducedMotion = 'still review cylinder without a pause control, and Digital reduced state';
   await page.emulateMediaFeatures([]);
 
   await page.goto(base + '/about', { waitUntil: 'networkidle0' });

@@ -17,7 +17,7 @@
  * | 3 | Does the cylinder turn on its own, and does **Pause rotation** stop it? (R1 — the cylinder is back) |
  * | 4 | **Is every review reachable and readable in full?** Next, pressed from the keyboard, brings each to the front, where it is on screen, hit-testable, and its whole text is shown — nothing scrolls inside the card and nothing is clipped. |
  * | 11 | **Is it a cylinder?** Rendered, not declared: the cards are turned to different angles, so the front card renders wider than its neighbours. |
- * | 5 | Does `prefers-reduced-motion: reduce` get a still layout with the same reviews? |
+ * | 5 | Does `prefers-reduced-motion: reduce` keep the **same cylinder, still**? (`GS-VIS-001-R1`, owner decision — it replaced the flat grid) Content parity; no automatic turn; no pause control (nothing to pause); each arrow press turns exactly one card, lands at once and holds — no easing tail, no coast; every review reachable by the arrows; a drag stops where it is released. |
  * | 6 | Does the reduced-motion layout overflow the page at any of the three widths? |
  * | 7 | Is the source link present, real and reachable by keyboard? |
  * | 8 | Do the rendered categories carry no identifying fragment? |
@@ -136,13 +136,13 @@ try {
    * **R1 brought the cylinder back, so questions 3 and 4 are about it** — found by rendered
    * content and behaviour, never by class name: the cards are the `<li>`s holding a review
    * `<blockquote>`, the front card is the one the ring presents (`data-front`), and the controls
-   * are found by their visible names.
+   * are found by their accessible names — icons named by `aria-label` since `GS-VIS-001`.
    */
   const carousel = await page.evaluate(async (label) => {
     const cards = [...document.querySelectorAll('blockquote')].map((q) => q.closest('li')).filter((li) => li?.textContent?.includes(label));
     const ring = cards[0]?.parentElement;
-    const button = (name) => [...document.querySelectorAll('button')].find((b) => b.textContent?.trim().includes(name));
-    if (!ring || !button('Next') || !button('Pause rotation')) return null;
+    const button = (name) => [...document.querySelectorAll('button')].find((b) => (b.getAttribute('aria-label') ?? b.textContent ?? '').trim() === name);
+    if (!ring || !button('Rotate reviews right') || !button('Pause review rotation')) return null;
     ring.scrollIntoView({ block: 'center' });
     const front = () => cards.findIndex((c) => c.hasAttribute('data-front'));
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -154,16 +154,16 @@ try {
       turned = front() !== start;
     }
     // Pause stops it, for longer than one dwell.
-    button('Pause rotation').click();
+    button('Pause review rotation').click();
     await wait(50);
     const pausedAt = front();
     await wait(7500);
     const stayed = front() === pausedAt;
-    const pressed = button('Pause rotation').getAttribute('aria-pressed');
-    button('Pause rotation').click();
+    const pressed = button('Pause review rotation').getAttribute('aria-pressed');
+    button('Pause review rotation').click();
     return { cards: cards.length, turned, stayed, pressed };
   }, SOURCE_LABEL);
-  if (!carousel) problems.push('3: no review carousel with Next and Pause rotation controls was found on /');
+  if (!carousel) problems.push('3: no review carousel with "Rotate reviews right" and "Pause review rotation" controls was found on /');
   else {
     if (!carousel.turned) problems.push('3: the cylinder did not turn on its own within 8s — it is not animating');
     if (!carousel.stayed) problems.push('3: after Pause rotation the cylinder kept turning (WCAG 2.2 SC 2.2.2)');
@@ -175,8 +175,8 @@ try {
   const reach = [];
   const total = carousel?.cards ?? 0;
   if (total) {
-    await page.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.textContent?.trim().includes('Pause rotation'))?.click());
-    await page.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.textContent?.trim().startsWith('Next'))?.focus());
+    await page.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.getAttribute('aria-label') === 'Pause review rotation')?.click());
+    await page.evaluate(() => [...document.querySelectorAll('button')].find((b) => b.getAttribute('aria-label') === 'Rotate reviews right')?.focus());
     for (let step = 0; step < total; step++) {
       await new Promise((r) => setTimeout(r, 1300));
       reach.push(
@@ -356,20 +356,73 @@ try {
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
   await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
 
-  const still = await page.evaluate((label) => {
+  /*
+   * GS-VIS-001-R1 — the owner replaced the flat grid: reduced motion keeps the cylinder, still.
+   * Every limb below reads a value (an angle, a count, a display) rather than an absence, and the
+   * angle comes from the ring's own inline transform — the one thing the drum is drawn from.
+   */
+  const still = await page.evaluate(async (label) => {
     const cards = [...document.querySelectorAll('blockquote')]
       .map((q) => q.closest('li'))
       .filter((li) => li?.textContent?.includes(label));
     const ring = cards[0]?.parentElement;
+    if (!ring) return { cards: 0 };
+    ring.scrollIntoView({ block: 'center' });
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const angle = () => Number(/rotateY\((-?[\d.]+)deg\)/.exec(ring.style.transform)?.[1] ?? NaN);
+    const front = () => cards.findIndex((c) => c.hasAttribute('data-front'));
+    const button = (name) => [...document.querySelectorAll('button')].find((b) => b.getAttribute('aria-label') === name);
+    await wait(600);
+    // No automatic turn: the angle is a number and it does not move.
+    const a0 = angle();
+    await wait(3000);
+    const a1 = angle();
+    const pause = button('Pause review rotation');
+    const right = button('Rotate reviews right');
+    // Every review by the arrows, each press landing at once and holding.
+    const seen = new Set([front()]);
+    const lags = [];
+    if (right) {
+      for (let i = 0; i < cards.length; i++) {
+        const before = angle();
+        right.click();
+        await wait(150);
+        const landed = angle();
+        await wait(450);
+        const held = angle();
+        lags.push({ moved: Math.abs(landed - before), tail: Math.abs(held - landed) });
+        seen.add(front());
+      }
+    }
     return {
       cards: cards.length,
-      ringStyle: ring ? getComputedStyle(ring).transformStyle : null,
-      animated: ring ? getComputedStyle(ring).animationName !== 'none' : null,
-      transformed: cards.filter((c) => getComputedStyle(c).transform !== 'none').length,
-      stacked: cards.filter((c) => getComputedStyle(c).backfaceVisibility === 'hidden').length,
-      inactiveLinks: cards.filter((c) => getComputedStyle(c.querySelector('figcaption a')).pointerEvents === 'none').length,
+      ringStyle: getComputedStyle(ring).transformStyle,
+      drift: Math.abs(a1 - a0),
+      measured: Number.isFinite(a0) && Number.isFinite(a1),
+      pauseShown: !!pause && getComputedStyle(pause).display !== 'none',
+      arrows: !!right && !!button('Rotate reviews left'),
+      reached: seen.size,
+      step: 360 / cards.length,
+      lags,
     };
   }, SOURCE_LABEL);
+
+  // Drag: a real pointer, released mid-movement — the drum must stop where it is let go.
+  let coast = null;
+  if (still.cards) {
+    const box = await page.evaluate(() => {
+      const r = document.querySelector('[data-reviews-carousel] > div').getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + Math.min(r.height / 2, 200) };
+    });
+    const read = () => page.evaluate(() => Number(/rotateY\((-?[\d.]+)deg\)/.exec(document.querySelector('[data-reviews-carousel] ul').style.transform)?.[1]));
+    await page.mouse.move(box.x, box.y);
+    await page.mouse.down();
+    for (let i = 1; i <= 6; i++) await page.mouse.move(box.x + i * 30, box.y);
+    const before = await read();
+    await page.mouse.up();
+    await new Promise((r) => setTimeout(r, 800));
+    coast = { dragged: before, after: await read() };
+  }
 
   if (still.cards !== counts['/']) {
     problems.push(
@@ -379,21 +432,24 @@ try {
     );
   }
   if (still.cards === 0) problems.push('5: reduced motion renders no reviews at all — the parity assertion measured nothing');
-  if (still.animated) problems.push('5: the ring still carries an animation under prefers-reduced-motion: reduce');
-  if (still.ringStyle === 'preserve-3d') {
-    problems.push(
-      '5: the ring is still `transform-style: preserve-3d` under reduced motion. Stopping the ' +
-        'rotation is not the same as undoing the cylinder: twelve cards frozen at fixed 3D ' +
-        'angles in one grid cell is not a readable page, and most of them are backface-hidden.',
-    );
+  else {
+    if (still.ringStyle !== 'preserve-3d') problems.push(`5: reduced motion lost the cylinder (ring transform-style ${still.ringStyle})`);
+    if (!still.measured) problems.push('5: the ring carries no rotateY angle under reduced motion — the stillness limb measured nothing');
+    else if (still.drift > 0.01) problems.push(`5: the drum turned ${still.drift.toFixed(2)}° on its own in 3s under prefers-reduced-motion: reduce`);
+    if (still.pauseShown) problems.push('5: the pause control is shown under reduced motion, where there is nothing to pause');
+    if (!still.arrows) problems.push('5: the left/right arrow controls are missing under reduced motion');
+    if (still.reached !== still.cards) problems.push(`5: the arrows reached ${still.reached} of ${still.cards} reviews under reduced motion`);
+    const slow = still.lags.filter((l) => Math.abs(l.moved - still.step) > 0.5);
+    const tails = still.lags.filter((l) => l.tail > 0.01);
+    if (slow.length) problems.push(`5: ${slow.length} arrow press(es) did not land one card (${still.step.toFixed(2)}°) within 150ms — reduced motion must not ease`);
+    if (tails.length) problems.push(`5: ${tails.length} arrow press(es) kept moving after landing — reduced motion must not coast`);
+    if (!coast || !Number.isFinite(coast.dragged)) problems.push('5: the drag limb measured nothing');
+    else if (Math.abs(coast.after - coast.dragged) > 0.01) problems.push(`5: after a drag was released the drum moved a further ${Math.abs(coast.after - coast.dragged).toFixed(2)}° — reduced motion must not carry inertia`);
   }
-  if (still.transformed > 0) problems.push(`5: ${still.transformed} card(s) are still 3D-transformed under reduced motion`);
-  if (still.stacked > 0) problems.push(`5: ${still.stacked} card(s) are still backface-hidden under reduced motion`);
-  if (still.inactiveLinks > 0) problems.push('5: every reduced-motion source link must accept a pointer');
   say(
-    `  5. reduced:    ${still.cards} review(s) (default ${counts['/']}), animation ` +
-      `${still.animated ? 'STILL RUNNING' : 'none'}, transform-style ${still.ringStyle}, ` +
-      `${still.transformed} card(s) transformed`,
+    `  5. reduced:    ${still.cards} review(s) (default ${counts['/']}), cylinder ${still.ringStyle}, ` +
+      `drift ${still.measured ? `${still.drift.toFixed(2)}°/3s` : 'NOT MEASURED'}, pause control ${still.pauseShown ? 'SHOWN' : 'absent'}, ` +
+      `arrows reached ${still.reached}/${still.cards}, coast after drag ${coast ? Math.abs(coast.after - coast.dragged).toFixed(2) : 'NOT MEASURED'}°`,
   );
 
   const overflows = [];
@@ -437,7 +493,7 @@ if (problems.length > 0) {
 console.log(
   '\ncheck-reviews-ui: PASS — Master renders the feed, no division does, the cylinder turns and ' +
     'pauses, every review is reachable and readable in full from the keyboard, it renders as a ' +
-    'cylinder, reduced motion is a still grid at content parity, ' +
+    'cylinder, reduced motion keeps the cylinder still at content parity with arrows and no inertia, ' +
     'nothing overflows, the source link is reachable, no caption is identifying, every review ' +
     'is inside the chapter check:master:scene measures, and every <time> is a review date.\n',
 );

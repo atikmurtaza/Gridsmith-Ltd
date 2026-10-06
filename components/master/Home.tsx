@@ -25,7 +25,8 @@ import styles from './home.module.css';
  * and before, re-set rather than rewritten. Three are new and are structural rather than
  * claims: the studios heading, the chapter labels (unnumbered since `GS-VIS-001-R3`), and the secondary hero link's wording.
  * `GS-MASTER-001-F` added the owner-approved proposition, studio theses and relationship
- * capabilities, and one structural label over the last: "Across all three studios".
+ * capabilities. `GS-SEO-001` (owner-approved Batch A copy) rewrote the supporting copy around the
+ * locked H1: `docs/_shared/GS-SEO-001-COPY-REVIEW.md` §R1 is the record.
  */
 
 /** A chapter label. Unnumbered since `GS-VIS-001-R3`: the scene finds chapters by `data-chapter`, not by this text. */
@@ -76,7 +77,7 @@ export function Studios() {
         <div className={styles.column}>
           <Chapter label="The studios" />
           <h2 id="studios-title" className={styles.title}>
-            Where would you like to start?
+            Start with the studio the work needs
           </h2>
           <ol className={styles.studios}>
             {STUDIOS.map((s, i) => (
@@ -95,7 +96,8 @@ export function Studios() {
             ))}
           </ol>
           <p className={styles.fallback}>
-            Not sure, or need more than one? <a href="/contact">Tell us what you need</a>.
+            Not sure which studio, or need more than one? <a href="/contact">Describe the project</a> and
+            we will work out which studios it needs.
           </p>
         </div>
       </div>
@@ -109,10 +111,10 @@ export function Studios() {
  * icons; the studios' services stay on the studio pages.
  */
 const RELATIONSHIP = [
-  ['Digital roadmap & discovery', 'Define what needs to change before deciding what needs to be built.'],
-  ['Strategy & advisory', 'Turn business requirements into a clear direction across the right specialist areas.'],
-  ['Programme management', 'Coordinate work across Design, Digital and Press under one relationship.'],
-  ['Ongoing partnership', 'Keep context, priorities and delivery connected as requirements evolve.'],
+  ['Digital roadmap & discovery', 'Work out what needs to change, and in what order, before deciding what to build.'],
+  ['Strategy & advisory', 'Turn a business requirement into a direction: which disciplines it needs, in what sequence, and what can wait.'],
+  ['Programme management', 'One point of coordination when work runs across Design, Digital and Press: one scope, one set of decisions.'],
+  ['Ongoing partnership', 'For clients with continuing work: priorities reviewed, context kept, and the right studio brought in when it is needed.'],
 ] as const;
 
 /**
@@ -134,8 +136,8 @@ export async function Context() {
             Gridsmith brings three specialist studios together under one relationship.
           </h2>
           <p className={styles.lede}>
-            Each has its own expertise, people and standards, while sharing the context that
-            matters: your business, your goals and the work we’ve already done together.
+            Each studio works to its own discipline and its own standards. What they share is the
+            context that matters: your business, your goals and the work already done together.
           </p>
           <p className={styles.fact}>
             Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of{' '}
@@ -143,7 +145,7 @@ export async function Context() {
             <Numeric>{company.companyNumber}</Numeric>. They are not separate companies. Work that
             spans two studios is one engagement, one scope and one invoice.
           </p>
-          <h3 className={styles.capabilitiesTitle}>Across all three studios</h3>
+          <h3 className={styles.capabilitiesTitle}>What Gridsmith does across the studios</h3>
           <dl className={styles.capabilities}>
             {RELATIONSHIP.map(([name, line]) => (
               <div key={name} className={styles.capability}>
@@ -153,7 +155,7 @@ export async function Context() {
             ))}
           </dl>
           <p className={styles.more}>
-            <Link href="/approach">How three studios work as one company</Link>
+            <Link href="/approach">How an engagement works, stage by stage</Link>
             <Link href="/about">About Gridsmith</Link>
           </p>
         </div>
@@ -173,11 +175,12 @@ export function Process() {
         <div className={styles.column}>
           <Chapter label="Process" />
           <h2 id="process-title" className={styles.title}>
-            How we work
+            Six stages, whichever studio does the work
           </h2>
           <p className={styles.lede}>
-            The same six stages in all three studios. What happens inside them differs by the
-            work; the shape of the relationship does not.
+            What happens inside each stage depends on the work. The order does not, and neither do
+            the points where you decide: approving the scope, reviewing the work and accepting the
+            delivery.
           </p>
         </div>
         <ol className={styles.stages}>
@@ -191,7 +194,7 @@ export function Process() {
           ))}
         </ol>
         <p className={styles.more}>
-          <Link href="/approach">The six stages in full</Link>
+          <Link href="/approach">What happens at each stage</Link>
         </p>
       </div>
     </section>
@@ -248,8 +251,9 @@ export async function Close() {
             Tell us what you need.
           </h2>
           <p className={styles.lede}>
-            One form, all three studios. If what you need spans more than one of them, that is the
-            first option on it.
+            One form for all three studios. Say what you are trying to do, what already exists and
+            any date you are working to — a rough outline is enough. Your enquiry starts with
+            Consultation: a conversation about the requirement before any scope or quote.
           </p>
           <div className={styles.heroActions}>
             <Button href={enquiryHref()}>{ENQUIRY_CTA.master}</Button>

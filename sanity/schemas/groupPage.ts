@@ -45,7 +45,35 @@ export const groupSection = defineType({
       validation: (r) => r.required(),
     }),
     defineField({ name: 'heading', type: 'string', validation: (r) => r.required() }),
-    defineField({ name: 'body', type: 'array', of: [defineArrayMember({ type: 'block' })] }),
+    defineField({
+      name: 'body',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'block',
+          // `GS-SEO-001`: the default `link` annotation's `url` field refuses a relative href, and
+          // contextual links here are site paths (`/approach`). Same shape and name as the default,
+          // so the renderer (`lib/content/portableLinks.ts`) reads both.
+          marks: {
+            annotations: [
+              {
+                name: 'link',
+                type: 'object',
+                title: 'Link',
+                fields: [
+                  defineField({
+                    name: 'href',
+                    type: 'url',
+                    validation: (r) =>
+                      r.required().uri({ allowRelative: true, scheme: ['https', 'http', 'mailto'] }),
+                  }),
+                ],
+              },
+            ],
+          },
+        }),
+      ],
+    }),
     defineField({
       name: 'layout',
       type: 'string',

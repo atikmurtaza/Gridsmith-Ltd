@@ -7,12 +7,18 @@ import { Opening } from '@/components/shared/Opening';
 import { StudioMap } from '@/components/shared/StudioMap';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
 import { getGroupPage } from '@/lib/sanity/queries';
+import { masterOpenGraph } from '@/lib/seo/site';
 import styles from '@/components/shared/shared.module.css';
 
+const TITLE = 'About Gridsmith Ltd — one company, three specialist studios';
+const DESCRIPTION =
+  'Gridsmith is one UK company with three studios — design, digital and publishing — under one contract, so work moves between them without starting over.';
+
+/** Own title, description and share card (`GS-SEO-001`). */
 export const metadata: Metadata = {
-  title: 'About — Gridsmith Ltd',
-  description:
-    'One company, three specialist studios: Gridsmith Design, Gridsmith Digital and Gridsmith Press.',
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: masterOpenGraph(TITLE, DESCRIPTION),
 };
 
 /**

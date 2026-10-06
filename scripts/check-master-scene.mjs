@@ -281,9 +281,26 @@ const TEXT_BOXES = () => {
     // Visually hidden text (`.sr-only`) is not on screen and has no background to measure.
     const own = el.getBoundingClientRect();
     if (own.width <= 1 || own.height <= 1) continue;
+    // GS-VIS-001-R1: text under an ancestor at opacity 0 is not painted (the review drum fades the
+    // words of a label turned past 50°) — there is nothing on screen to measure. Any opacity above
+    // zero is painted and measured as usual; the proof below holds both sides.
+    let faded = false;
+    for (let a = el; a && a !== root; a = a.parentElement) if (getComputedStyle(a).opacity === '0') { faded = true; break; }
+    if (faded) continue;
+    // ...and text beyond a sideways-clipping ancestor (the drum's stage) is not painted either: each
+    // box is trimmed to the clip, so the background is sampled only where the glyphs actually are.
+    let clip = null;
+    for (let a = el.parentElement; a && a !== root; a = a.parentElement) {
+      const ox = getComputedStyle(a).overflowX;
+      if (ox === 'clip' || ox === 'hidden') { clip = a.getBoundingClientRect(); break; }
+    }
     const range = document.createRange();
     range.selectNodeContents(node);
-    for (const r of range.getClientRects()) {
+    for (const raw of range.getClientRects()) {
+      const left = clip ? Math.max(raw.left, clip.left) : raw.left;
+      const right = clip ? Math.min(raw.right, clip.right) : raw.right;
+      if (right - left < 2) continue;
+      const r = { left, right, top: raw.top, bottom: raw.bottom, width: right - left, height: raw.height };
       if (r.bottom < 0 || r.top > innerHeight || r.width < 2) continue;
       // Only text that is actually painted on top at its own position. A review card turned away
       // from the reader is backface-hidden — its text has boxes and no pixels — and the first R1
@@ -335,6 +352,29 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
   console.log('check-master-scene: visible text measured, clipped text excluded, low contrast proven red');
   await page.close();
 }
+
+// GS-VIS-001-R1: prove the two painted-text refinements in TEXT_BOXES by value, both sides each —
+// text under opacity 0 is skipped while faded-but-painted text (opacity 0.3) is still measured, and
+// text running past a sideways clip is trimmed to the clip, not dropped and not measured beyond it.
+{
+  const page = await browser.newPage();
+  await page.setViewport({ width: 375, height: 812 });
+  await page.setContent('<style>body{margin:0;font:20px Arial} span{white-space:nowrap}</style><main>' +
+    '<div style="opacity:0"><span>Ghost</span></div>' +
+    '<div style="opacity:0.3"><span>Faint</span></div>' +
+    '<div style="overflow-x:clip;width:60px;margin-left:40px"><span>Edgeword continues past the clip</span></div>' +
+    '</main>');
+  const boxes = await page.evaluate(TEXT_BOXES);
+  const ghost = boxes.find((b) => b.text === 'Ghost');
+  const faint = boxes.find((b) => b.text === 'Faint');
+  const edge = boxes.find((b) => b.text.startsWith('Edgeword'));
+  const trimmed = edge && edge.box[0] >= 40 && edge.box[0] + edge.box[2] <= 101;
+  if (ghost || !faint || !trimmed) {
+    throw new Error(`Painted-text proof failed: ghost ${!!ghost} (want false), faint ${!!faint} (want true), edge ${JSON.stringify(edge?.box)} (want within 40–100)`);
+  }
+  console.log('check-master-scene: unpainted (opacity 0) text skipped, faded text still measured, clipped text trimmed to its clip');
+  await page.close();
+}
 if (process.argv.includes('--prove-review-mask-only')) {
   await browser.close();
   process.exit(0);
@@ -376,10 +416,10 @@ for (const [w0, h0] of RUN) {
   }
 
   // A DOM rectangle and its background capture must describe the same pose, and slow software
-  // captures can span the carousel's six-second dwell. Paused once, by its own control, before any
+  // captures can span the carousel's continuous turn (GS-VIS-001). Paused once, by its own control, before any
   // position is measured — transit positions see the carousel too. Its motion is check:reviews:ui's.
   await page.evaluate(() => {
-    const button = [...document.querySelectorAll('button')].find((el) => el.textContent?.trim() === 'Pause rotation');
+    const button = [...document.querySelectorAll('button')].find((el) => el.getAttribute('aria-label') === 'Pause review rotation');
     if (!button) throw new Error('Review pause control missing');
     if (button.getAttribute('aria-pressed') !== 'true') button.click();
   });
@@ -567,6 +607,13 @@ for (const [w, h] of [[1440, 900], [768, 1024], [390, 844]]) {
   const tag = `${w}x${h}`;
   const page = await openHome(w, h, { noWebGL: true });
   const state = await page.evaluate(() => document.querySelector('[data-master-scene]')?.dataset.render);
+  // GS-VIS-001: the review cylinder turns continuously, so the text boxes and the background
+  // capture below would describe different poses. Paused by its own control, as question 5 is.
+  await page.evaluate(() => {
+    const button = [...document.querySelectorAll('button')].find((el) => el.getAttribute('aria-label') === 'Pause review rotation');
+    if (!button) throw new Error('Review pause control missing');
+    if (button.getAttribute('aria-pressed') !== 'true') button.click();
+  });
   if (state !== 'fallback') {
     problems.push(`14 ${tag}: without WebGL data-render is "${state}" — the fallback was not the subject`);
     await page.close();

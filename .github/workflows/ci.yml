@@ -222,6 +222,11 @@ jobs:
       - name: A rendered Freelancer review carries no client name, amount or credential
         run: npm run check:reviews
 
+      # GS-SEO-001. Value-based cases over every branch of the Portable Text link sanitiser: a
+      # link annotation renders only for a site path, http(s) or mailto; anything else stays text.
+      - name: Portable Text links render only for a safe href (committed specimens)
+        run: npm run check:portable-links:selftest
+
       # GS-O004 / GS-R001. Selftest first, same reason as every pair above: each RESPONSE_RULES
       # and TEAM_RULES limb is broken separately and the returned problem set is read, so a
       # pattern edited into inertness fails here rather than reporting a clean run against the

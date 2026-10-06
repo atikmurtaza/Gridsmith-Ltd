@@ -159,8 +159,8 @@ export function Connect({
           <div>
             <h2 id="connect" className={styles.rowTitle}>Getting in touch</h2>
             <p className={styles.connectNote}>
-              The form on <a href="/contact">the contact page</a> reaches the same place as all of
-              these and is the easiest route if your enquiry needs any detail. {responseCommitment}
+              The <a href="/contact">enquiry form</a> is the easiest route if there is any detail to
+              share; every channel below reaches the same place. {responseCommitment}
             </p>
             <p className={styles.connectCta}>
               <a href={enquiryHref()} className={styles.cta}>

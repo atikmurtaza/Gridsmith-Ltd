@@ -1,5 +1,6 @@
 import { sanityClient } from '@/lib/sanity/client';
 import { STATIC_BUILD } from '@/lib/build/target';
+import type { PortableMarkDef, PortableSpan } from '@/lib/content/portableLinks';
 
 /**
  * The read layer. **Every public projection is written so that a field which must not reach
@@ -83,7 +84,9 @@ export type PortableBlock = {
   _type: string;
   _key?: string;
   style?: string;
-  children?: { _type: string; _key?: string; text?: string }[];
+  /** Annotation definitions the spans' `marks` point at — `link` only (`lib/content/portableLinks.ts`). */
+  markDefs?: PortableMarkDef[];
+  children?: PortableSpan[];
 };
 
 export type PostCard = {

@@ -292,7 +292,9 @@
 .studio:hover .studioLink::after,
 .studio:focus-within .studioLink::after { transform: none; }
 
-.studioSummary { margin: 0; color: var(--ink-muted); }
+/* GS-VIS-001-R1: no summary ends on a lone word (1280, 1440 and 1920 each had one). Local to the
+   studio summaries; where `pretty` is unsupported the browser wraps as before. */
+.studioSummary { margin: 0; color: var(--ink-muted); text-wrap: pretty; }
 .studioThesis {
   margin: 0;
   font-family: var(--font-display);
@@ -351,8 +353,9 @@
 .carousel { display: flex; flex-direction: column; gap: var(--space-3); }
 
 /* THE BASE IS A STILL GRID of the same cards. The cylinder is layered on inside one guarded
-   block below — so reduced motion and a browser without CSS tan() both get every review, flat
-   and in order, from the same DOM. The controls exist only for the cylinder. */
+   block below — so a browser without container queries or 3D transforms gets every review, flat
+   and in order, from the same DOM. The controls exist only for the cylinder. Reduced motion keeps
+   the cylinder, still (GS-VIS-001-R1). */
 .carouselRing {
   list-style: none;
   margin: 0;
@@ -371,6 +374,8 @@
   border: var(--border-hairline) solid var(--line-strong);
 }
 .carouselCard[data-front] { border-color: var(--accent); }
+/* The label's facets exist only on the drum (below). */
+.carouselStrip { display: none; }
 
 .carouselFigure { display: flex; flex-direction: column; gap: var(--space-4); margin: 0; min-height: 0; width: 100%; }
 .carouselFacts {
@@ -399,79 +404,151 @@
 /* A real tap target remains usable on the cylinder's foreshortened side cards. */
 .carouselMeta > a { display: block; min-height: 2.75rem; }
 
+/* GS-VIS-001: three bare icons — left, pause/play, right. No box and no visible words; each
+   button carries its name in aria-label, and the pressed state is drawn as well as announced. */
 .carouselButton {
-  min-height: 2.75rem;
-  padding: 0 var(--space-4);
-  border: var(--border-hairline) solid var(--ink-subtle);
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
   border-radius: var(--radius-default);
   background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: var(--text-sm);
+  color: var(--ink-muted);
   cursor: pointer;
 }
-.carouselButton:hover { border-color: var(--accent); color: var(--accent-hover); }
-.carouselButton:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-/* The pressed state is a heavier border and weight, not a colour alone (SC 1.4.1). */
-.carouselButton[aria-pressed="true"] { border-width: 2px; border-color: var(--accent); font-weight: 600; }
-/* No auto margin: Previous, the counter, Next and Pause read as one group (GS-MASTER-001-F). */
-.carouselCount { margin: 0 var(--space-2); font-family: var(--font-mono); font-size: var(--text-sm); color: var(--ink-muted); }
+.carouselButton svg {
+  width: 1.375rem;
+  height: 1.375rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+}
+.carouselButton svg [data-fill] { fill: currentColor; stroke: none; }
+.carouselButton:hover { color: var(--accent-hover); }
+.carouselButton:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; color: var(--ink); }
+/* Paused: the play glyph in the accent with a 2px rule beneath it, so the state is visible as
+   shape and line as well as colour (SC 1.4.1; `check:state-cues` reads only this rule). */
+.carouselButton[aria-pressed="true"] { color: var(--accent); border-block-end-width: 2px; border-block-end-style: solid; border-block-end-color: var(--accent); }
 
-@media (prefers-reduced-motion: no-preference) {
-  /* The ring's radius needs tan(); without it the whole cylinder is skipped, not half-applied. */
-  @supports (transform: translateZ(calc(1px / tan(30deg)))) {
-    .carousel[data-enhanced] {
-      --card-w: 20rem;
-      --card-h: 22rem;
-      --step: calc(360deg / var(--n, 11));
-    }
-    .carousel[data-enhanced] .carouselStage {
-      display: grid;
-      place-items: center;
-      min-height: var(--card-h);
-      padding-block: var(--space-1);
-      perspective: 90rem;
-      /* The far side of the ring is wider than the page: clipped sideways, never scrolled. The
-         vertical axis stays open, so a card taller than --card-h is never cut off. */
-      overflow-x: clip;
-      overflow-y: visible;
-    }
-    .carousel[data-enhanced] .carouselRing {
-      display: grid;
-      grid-template-columns: none;
-      place-items: center;
-      gap: 0;
-      transform-style: preserve-3d;
-      --radius: calc(var(--card-w) / 2 / tan(var(--step) / 2) + var(--space-4));
-      transform: translateZ(calc(-1 * var(--radius))) rotateY(calc(var(--turn, 0) * -1 * var(--step)));
-      transition: transform var(--dur-slow) var(--ease-out);
-    }
-    .carousel[data-enhanced] .carouselCard {
-      grid-area: 1 / 1;
-      width: var(--card-w);
-      /* A floor, not a height: a card grows to its whole review, so no card is ever a scroll
-         region (axe flagged the two longest at a fixed height). */
-      min-height: var(--card-h);
-      transform: rotateY(calc(var(--i) * var(--step))) translateZ(var(--radius));
-      /* The far half faces away: hidden, so no mirrored text shows through the near cards. */
-      backface-visibility: hidden;
-    }
-    /* Only the reading card accepts a pointer; keyboard focus brings every source forward. */
-    .carousel[data-enhanced] .carouselCard:not([data-front]) .carouselName { pointer-events: none; }
-    .carousel[data-enhanced] .carouselControls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: var(--space-3);
-    }
-    @media (max-width: 767px) {
-      .carousel[data-enhanced] { --card-w: 16rem; --card-h: 28rem; }
-      .carousel[data-enhanced] .carouselStage { perspective: 60rem; }
-      /* The former source row wrapped to two lines inside the accepted 16rem card. */
-      .carousel[data-enhanced] .carouselMeta {
-        min-height: calc(var(--space-3) + 4em * var(--leading-normal) + 2 * var(--space-1) + var(--border-hairline));
-      }
-    }
+/* GS-VIS-001-R1: the drum is the presentation in every motion setting — reduced motion keeps it
+   still rather than flattening it — so it is guarded only by the features it needs. Without them
+   the base above is the still grid of every review. */
+/* GS-HOST-H4-G: gated on [data-enhanced] (set after hydration) as on the hosting branch, so a
+   visitor without JavaScript keeps the still, flat list of every review (H4-E). */
+@supports (container-type: inline-size) and (transform-style: preserve-3d) {
+  /* Every length is a share of this box, so a resize or a browser zoom recomposes the drum with
+     no script. Nothing here counts cards: how many are in view is what the geometry shows. */
+  .carousel[data-enhanced] {
+    container-type: inline-size;
+    /* A readable label: 13rem at the narrowest, 30rem at the widest, a third of the stage between. */
+    --cw: clamp(13rem, 34cqi, 30rem);
+    --card-h: 20rem;
+    --step: calc(360deg / var(--n, 11));
+    /* --k is the drum radius in card widths, from the review count (ReviewCarousel geometry()). */
+    --radius: calc(var(--cw) * var(--k, 1.95));
+    /* About one and a half stages away — so the drum spans the stage — held between 1.8 and 2.6
+       radii: closer and the label distorts, further and the drum flattens. */
+    --depth: clamp(calc(var(--radius) * 1.8), 145cqi, calc(var(--radius) * 2.6));
+  }
+  .carousel[data-enhanced] .carouselStage {
+    display: grid;
+    place-items: center;
+    min-height: var(--card-h);
+    padding-block: var(--space-2);
+    perspective: var(--depth);
+    /* The far side of the ring is wider than the page: clipped sideways, never scrolled. The
+       vertical axis stays open, so a card taller than --card-h is never cut off. */
+    overflow-x: clip;
+    overflow-y: visible;
+    /* Horizontal drags turn the drum; vertical ones still scroll the page. */
+    touch-action: pan-y;
+    cursor: grab;
+  }
+  .carousel[data-enhanced] .carouselStage:active { cursor: grabbing; }
+  .carousel[data-enhanced] .carouselRing {
+    display: grid;
+    grid-template-columns: none;
+    place-items: center;
+    gap: 0;
+    transform-style: preserve-3d;
+    transform: translateZ(calc(-1 * var(--radius)));
+  }
+  /* Each card is a label: the <li> is the plane the words sit on, tangent to the drum at the
+     label's centre; its facets below are the curved surface. */
+  .carousel[data-enhanced] .carouselCard {
+    position: relative;
+    grid-area: 1 / 1;
+    width: var(--cw);
+    /* A floor, not a height: a card grows to its whole review, so no card is ever a scroll
+       region (axe flagged the two longest at a fixed height). */
+    min-height: var(--card-h);
+    background: transparent;
+    border: 0;
+    transform-style: preserve-3d;
+    transform: rotateY(calc(var(--i) * var(--step))) translateZ(var(--radius));
+    /* The words sit on a flat plane and the label curves away behind them, so the sides keep a
+       margin that grows with the label: a turned label's text never runs past its own edge. */
+    padding-inline: max(var(--space-6), calc(var(--cw) * 0.1));
+    /* The <li> paints nothing itself, but its box would still catch pointer hits on the far side of
+       the drum; only the words (and, through them, the stage's drag) take the pointer. */
+    pointer-events: none;
+  }
+  /* A facet: turned about the drum's own axis by its angle within the label, so the label's
+     top and bottom edges follow the cylinder and its sides recede. */
+  .carousel[data-enhanced] .carouselStrip {
+    display: block;
+    position: absolute;
+    inset-block: 0;
+    left: 50%;
+    width: calc(var(--cw) * var(--sw) + 1px);
+    margin-left: calc(var(--cw) * var(--sw) / -2 - 0.5px);
+    background: var(--canvas-veil);
+    border-block: var(--border-hairline) solid var(--line-strong);
+    transform: translateZ(calc(-1 * var(--radius))) rotateY(var(--phi)) translateZ(var(--radius));
+    /* Both faces: a steeply turned label's outer facets pass edge-on before its words do, and a
+       culled facet would leave words standing over the scene. The far side of the drum is hidden
+       whole instead — `data-far`, set by ReviewCarousel as each label passes 90°. */
+    backface-visibility: visible;
+  }
+  .carousel[data-enhanced] .carouselCard[data-far] .carouselStrip { visibility: hidden; }
+  .carousel[data-enhanced] .carouselStrip::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--canvas);
+    opacity: var(--shade, 0);
+  }
+  .carousel[data-enhanced] .carouselStrip[data-edge="start"] { border-inline-start: var(--border-hairline) solid var(--line-strong); }
+  .carousel[data-enhanced] .carouselStrip[data-edge="end"] { border-inline-end: var(--border-hairline) solid var(--line-strong); }
+  .carousel[data-enhanced] .carouselCard[data-front] .carouselStrip { border-color: var(--accent); }
+  /* The words: one plane, a pixel proud of the label, turned away with it. */
+  .carousel[data-enhanced] .carouselFigure {
+    position: relative;
+    transform: translateZ(1px);
+    backface-visibility: hidden;
+    pointer-events: auto;
+  }
+  /* GS-HOST-H4-G: provenance links sit on every card; only the reading card takes a pointer, and
+     keyboard focus brings any card to the front (ReviewCarousel onFocus). */
+  .carousel[data-enhanced] .carouselCard:not([data-front]) .carouselName { pointer-events: none; }
+  /* Centred under the whole drum, not under a card. */
+  .carousel[data-enhanced] .carouselControls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  @media (max-width: 767px) {
+    /* Labels hug their review on a phone: an empty floor of veil would hide the scene (q10). */
+    .carousel[data-enhanced] { --card-h: 16rem; }
+    .carousel[data-enhanced] .carouselCard { padding: var(--space-4); padding-inline: max(var(--space-4), calc(var(--cw) * 0.1)); }
+  }
+  /* Reduced motion: the same drum, still. Nothing turns on its own, so there is nothing to pause. */
+  @media (prefers-reduced-motion: reduce) {
+    .carousel[data-enhanced] .carouselButton[data-pause] { display: none; }
   }
 }
 

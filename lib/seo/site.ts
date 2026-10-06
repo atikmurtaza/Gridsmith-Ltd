@@ -99,6 +99,21 @@ export const SITE_ICONS: Pick<Metadata, 'icons' | 'manifest'> = {
 };
 
 /**
+ * A Master-group share card — `GS-SEO-001`. Next **replaces** a parent segment's `openGraph`
+ * rather than merging into it, so a page that sets its own share title and description must
+ * restate the group's constant fields too. The Master layout and every Master page with its own
+ * card call this one function, so those fields cannot drift between them.
+ */
+export const masterOpenGraph = (title: string, description: string): Metadata['openGraph'] => ({
+  type: 'website',
+  siteName: 'Gridsmith Ltd',
+  locale: 'en_GB',
+  url: './',
+  title,
+  description,
+});
+
+/**
  * JSON for an inline `<script type="application/ld+json">` — `GS-SHARED-001-RC`. Every `<` becomes
  * the JSON escape `<`, so CMS text can never close the script element (`</script>`) or open
  * an HTML comment; the parsed JSON is unchanged. The footer used `replaceAll('<', '<')`, whose

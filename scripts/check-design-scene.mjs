@@ -22,6 +22,41 @@ if (createHash("sha256").update(JSON.stringify([gOutlines, sOutlines])).digest("
   throw new Error("Approved G/S coordinates changed");
 
 const base = process.env.AXE_BASE_URL ?? "http://127.0.0.1:3000";
+
+/**
+ * GS-VIS-001-R4 — Design's service links, from the eligibility contract rather than a literal.
+ * `GS-PROD-001-CMS-MANIFEST.json` lists every Design catalogue entry, each eligible or gated (the
+ * three Technical services, `GS-X002`); `check:cms:migration` keeps it equal to the service source.
+ * Which set the page must show depends on the dataset the server reads, which this process cannot
+ * see, so the run states it: `DESIGN_SERVICE_SET=catalogue` (the default — the development
+ * dataset CI serves, gated entries included) or `eligible` (Production content, or a server filtered
+ * to it). A wrong statement fails rather than passes: each set is checked exactly, and under
+ * `eligible` any gated link is its own failure.
+ */
+const DESIGN_SERVICES = JSON.parse(readFileSync("docs/_shared/GS-PROD-001-CMS-MANIFEST.json", "utf8")).entries.filter(
+  (e) => e.type === "service" && e.division === "design",
+);
+const ELIGIBLE = DESIGN_SERVICES.filter((e) => e.eligible).map((e) => e.slug);
+const GATED = DESIGN_SERVICES.filter((e) => !e.eligible && e.gate === "GS-X002").map((e) => e.slug);
+if (!ELIGIBLE.length || ELIGIBLE.length + GATED.length !== DESIGN_SERVICES.length)
+  throw new Error(`Design manifest: ${ELIGIBLE.length} eligible + ${GATED.length} GS-X002-gated ≠ ${DESIGN_SERVICES.length} catalogue entries`);
+const SERVICE_SET = process.env.DESIGN_SERVICE_SET ?? "catalogue";
+if (!["catalogue", "eligible"].includes(SERVICE_SET)) throw new Error(`DESIGN_SERVICE_SET must be catalogue or eligible, not ${SERVICE_SET}`);
+const EXPECTED_SERVICES = SERVICE_SET === "eligible" ? ELIGIBLE : [...ELIGIBLE, ...GATED];
+/** Every way the served links can differ from the stated set; empty when they match exactly. */
+function serviceLinkProblems(hrefs) {
+  const slugs = hrefs.map((h) => h.replace(/^.*\/design\/services\//, "").replace(/[/?#].*$/, ""));
+  const out = [];
+  const gated = SERVICE_SET === "eligible" ? GATED.filter((s) => slugs.includes(s)) : [];
+  if (gated.length) out.push(`gated Technical service linked publicly (GS-X002): ${gated.join(", ")}`);
+  const missing = EXPECTED_SERVICES.filter((s) => !slugs.includes(s));
+  if (missing.length) out.push(`${SERVICE_SET} service missing: ${missing.join(", ")}`);
+  const unknown = slugs.filter((s) => !EXPECTED_SERVICES.includes(s) && !gated.includes(s));
+  if (unknown.length) out.push(`service outside the ${SERVICE_SET} set: ${unknown.join(", ")}`);
+  if (!out.length && slugs.length !== EXPECTED_SERVICES.length)
+    out.push(`expected ${EXPECTED_SERVICES.length} ${SERVICE_SET} service links, found ${slugs.length}`);
+  return out;
+}
 const axeSource = readFileSync(
   createRequire(import.meta.url).resolve("axe-core/axe.min.js"),
   "utf8",
@@ -385,8 +420,7 @@ async function measure(page, { hero = false, expected } = {}) {
         failures,
         path: stage?.querySelector("[data-thread]")?.getAttribute("d"),
         state: stage?.dataset.progress,
-        links: [...root.querySelectorAll('a[href*="/design/services/"]')]
-          .length,
+        links: [...root.querySelectorAll('a[href*="/design/services/"]')].map((a) => a.getAttribute("href")),
       };
     },
     { hero, expected },
@@ -831,6 +865,19 @@ try {
       [760,900],[761,800],[768,800],[800,800],[900,800],[1024,800],
     ]) {
       const page = await open(width, height);
+      // GS-VIS-SEO-RC: a group opens by default only when it has published services (GS-VIS-001), so
+      // Technical is closed on the eligible set (GS-X002 holds all three) and open on the catalogue
+      // set CI serves. Assert which, then close it from the keyboard as the chapter loop does, so the
+      // closed scope note below is the subject on both sets.
+      const technicalOpen = await page.$eval("#technical-design details", (d) => d.open);
+      if (technicalOpen !== (SERVICE_SET === "catalogue" && GATED.length > 0))
+        errors.push(`G2 ${width}x${height}: Technical disclosure ${technicalOpen ? "open" : "closed"} by default on the ${SERVICE_SET} set`);
+      if (technicalOpen) {
+        await page.focus("#technical-design summary");
+        await page.keyboard.press("Enter");
+        if (await page.$eval("#technical-design details", (d) => d.open))
+          errors.push(`G2 ${width}x${height}: default-open Technical disclosure did not close from the keyboard`);
+      }
       let minimum = Infinity;
       // GS-DES-002-R1: the roof is assembled and still solid at 2.92, ghosted from 3.0 — the crossing
       // this question exists for — then the settled Technical dwell to 3.5.
@@ -1033,6 +1080,14 @@ try {
         await seek(page, chapter + .15);
         await pageHeading(page, `${width} chapter ${chapter}`);
         const selector = `#${id} .ds-copy`;
+        // GS-VIS-001: a group with published services opens by default. Close it from the keyboard
+        // first — asserting that it closes — so the closed surface below is still the one measured.
+        if (await page.$eval(`#${id} details`, (d) => d.open)) {
+          await page.focus(`#${id} summary`);
+          await page.keyboard.press('Enter');
+          if (await page.$eval(`#${id} details`, (d) => d.open))
+            errors.push(`${width} ${id}: default-open disclosure did not close from the keyboard`);
+        }
         const closed = await page.$eval(selector, el => getComputedStyle(el).backgroundColor);
         await page.focus(`#${id} summary`);
         await page.keyboard.press('Enter');
@@ -1128,6 +1183,12 @@ try {
       errors.push("Quote CTA keyboard/focus visibility failed");
     await seek(keyboard, 1.12);
     await keyboard.focus("#brand-visual summary");
+    // GS-VIS-001: open by default, so the keyboard must first close it, then open it again.
+    if (!(await keyboard.$eval("#brand-visual details", (el) => el.open)))
+      errors.push("Service disclosure is not open by default (GS-VIS-001)");
+    await keyboard.keyboard.press("Enter");
+    if (await keyboard.$eval("#brand-visual details", (el) => el.open))
+      errors.push("Service disclosure did not close with keyboard");
     await keyboard.keyboard.press("Enter");
     if (!(await keyboard.$eval("#brand-visual details", (el) => el.open)))
       errors.push("Service disclosure did not open with keyboard");
@@ -1164,8 +1225,7 @@ try {
           ...(await textContrast(page)).map((f) => `${label} ${name}: ${f}`),
         );
         paths.push(m.path);
-        if (m.links !== 16)
-          errors.push(`${label}: expected 16 service links, found ${m.links}`);
+        errors.push(...serviceLinkProblems(m.links).map((f) => `${label}: ${f}`));
         if (out)
           await page.screenshot({ path: join(out, `${label}-${position >= 4 ? "final" : name}.png`) });
         if (width === 1440 || width === 375) {

@@ -178,7 +178,7 @@ export function ServiceDetail({ service }: { service: ServiceRecord }) {
               items={stages.map((s) => {
                 const canonical = CANONICAL_PROCESS.find((stage) => stage.number === s.number);
                 return {
-                  label: `${s.number}. ${canonical?.title ?? s.title}${canonical?.optional ? ' (if applicable)' : ''}`,
+                  label: `${canonical?.title ?? s.title}${canonical?.optional ? ' (if applicable)' : ''}`,
                   value: [s.duration, s.clientTime ? `you: ${s.clientTime}` : null]
                     .filter(Boolean)
                     .join('  ·  '),

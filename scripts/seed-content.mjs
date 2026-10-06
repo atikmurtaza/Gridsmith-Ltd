@@ -111,14 +111,33 @@ if (!token && import.meta.main) {
 const S = '[SEED]';
 const slugOf = (s) => ({ _type: 'slug', current: s });
 const key = (i) => ({ _key: `k${i}` });
+/**
+ * One `block` per paragraph. A paragraph is a string, or — for contextual links (`GS-SEO-001`) —
+ * an array of strings and `link(text, href)` segments, each link becoming a `link` annotation the
+ * renderer reads (`lib/content/portableLinks.ts`). A string paragraph is emitted exactly as
+ * before, so every document without links keeps a byte-identical payload.
+ */
+const link = (text, href) => ({ text, href });
 const blocks = (...paragraphs) =>
-  paragraphs.map((text, i) => ({
-    _type: 'block',
-    _key: `b${i}`,
-    style: 'normal',
-    markDefs: [],
-    children: [{ _type: 'span', _key: `s${i}`, text, marks: [] }],
-  }));
+  paragraphs.map((paragraph, i) => {
+    if (typeof paragraph === 'string') {
+      return {
+        _type: 'block',
+        _key: `b${i}`,
+        style: 'normal',
+        markDefs: [],
+        children: [{ _type: 'span', _key: `s${i}`, text: paragraph, marks: [] }],
+      };
+    }
+    const markDefs = [];
+    const children = paragraph.map((part, j) => {
+      if (typeof part === 'string') return { _type: 'span', _key: `s${i}-${j}`, text: part, marks: [] };
+      const mark = `l${i}-${j}`;
+      markDefs.push({ _type: 'link', _key: mark, href: part.href });
+      return { _type: 'span', _key: `s${i}-${j}`, text: part.text, marks: [mark] };
+    });
+    return { _type: 'block', _key: `b${i}`, style: 'normal', markDefs, children };
+  });
 
 const seo = (title, description) => ({ _type: 'seoBlock', metaTitle: title, metaDescription: description });
 
@@ -708,25 +727,34 @@ const groupPageDocs = [
     slug: slugOf('approach'),
     title: 'How we work',
     intro:
-      'Six stages, the same six whichever studio does the work. The short version: we find out what you actually need before we tell you what it costs.',
+      'Six stages, the same six whichever studio does the work. The short version: we find out what you need before we tell you what it costs, and nothing starts until you have approved a written scope.',
     sections: [
       section(0, 'understand', 'We start with the requirement, not the service', 'prose',
-        'Most enquiries arrive as a solution — a new website, a rebrand, a book. Sometimes that is right. Often the thing behind it is different enough that building what was asked for would be a waste of your money.',
-        'So the first conversation is about the business and the problem, not about what we sell. It is also where we say if the work belongs somewhere other than Gridsmith. That happens, and telling you early is cheaper for both of us than telling you late.'),
-      section(1, 'one-company', 'One company, three studios', 'prose',
-        'Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of Gridsmith Ltd, not separate companies. One contract covers work that spans them, and you are not managing three suppliers who have never spoken.',
-        'Where a project needs two studios, coordinating them is our job. You brief it once.'),
+        'Most enquiries arrive as a solution — a new website, a rebrand, a book. Sometimes that is right. Often the need behind it is different enough that building what was asked for would waste your money.',
+        'So the first conversation is about the business and the problem, not about what we sell. It is also where we say if the work belongs somewhere other than Gridsmith. That happens, and telling you early costs both of us less than telling you late.',
+        'It helps to bring what you are trying to achieve, who it is for, what already exists — files, systems, a draft, a brand — any date you are working to, and who decides on your side. None of it needs to be polished.'),
+      section(1, 'one-company', 'One brief, even across studios', 'prose',
+        [link('Gridsmith Design', '/design'), ', ', link('Gridsmith Digital', '/digital'), ' and ', link('Gridsmith Press', '/press'), ' are studios of one company, Gridsmith Ltd — not three suppliers who have never spoken. One contract covers work that spans them.'],
+        'Where a project needs two studios, coordinating them is our job. You brief it once, and the second studio starts from the decisions the first has already made.'),
       section(2, 'scope', 'Everything is scoped for the specific job', 'prose',
-        'There are no packages on this site and no price list, because we do not have work that comes in fixed sizes. What you get instead is a written scope: what is included, what is not, what we need from you and when.',
-        'That document is where the disagreements happen, which is the right place for them. A scope you have read and questioned is worth more than a number you accepted quickly.'),
+        'There are no packages on this site and no price list, because the work does not come in fixed sizes. Instead you get a written scope: what is included and what is not, the timeline, how the work is priced, and what we need from you and when.',
+        'That document is where disagreements should happen. A scope you have read and questioned is worth more than a number you accepted quickly.'),
       section(3, 'process', 'The six stages', 'process',
-        'These are the same six whatever the work is. Stage 1 is understanding, stage 2 is scoping, stages 3 and 4 are making it, stage 5 is delivering it, and stage 6 only happens if continuing makes sense for you.',
-        'Review is not a stage of its own because it is not a moment — it runs through stage 4, at points agreed when the scope is written rather than whenever someone remembers.'),
-      section(4, 'continuity', 'A worked example', 'continuity',
-        'The clearest way to show what continuity is worth is a real relationship that moved between studios. We will not illustrate it with an invented one.'),
+        'The same six, whatever the work. Stage 1 is understanding the requirement, stage 2 is writing the scope, stage 3 is your approval, stage 4 is the work itself, stage 5 is delivery against the scope, and stage 6 happens only if continuing makes sense for you.',
+        'Review is not a stage of its own because it is not a moment. It runs through stage 4, at points agreed when the scope is written rather than whenever someone remembers.',
+        'Where the work needs more than one studio, the handover happens inside stage 4 — same scope, same review points — rather than as a new project.'),
+      // `GS-SEO-001` decision 2B: an example journey, labelled as one in its first sentence. It is
+      // not a client story and must never be edited into one (`Q-M6`, non-negotiable #2).
+      section(4, 'continuity', 'What continuity looks like: an example journey', 'continuity',
+        'This is an illustration of how work moves between studios. It is not a client project and does not describe an actual engagement.',
+        ['A business commissions a ', link('new brand identity', '/design/services/brand-identity-systems'), ' from Design. Later it needs ', link('a website', '/digital/services/website-design-build'), '. Digital starts from the identity files and the reasoning behind them, so the decisions already made — the audience, the tone, what was ruled out — do not have to be rediscovered. When the site needs copy, Press writes it to the same brief.'],
+        'We do not publish client relationships without permission. Relevant examples may be discussed privately where we are permitted to share them.'),
+      // The Technical Design boundary is the owner-approved wording (`GS-SEO-001-I1`). It names the
+      // discipline, not the three `GS-X002`-gated service records, and takes no responsibility.
       section(5, 'limits', 'When to use a specialist instead', 'sunken-plain',
         'Three studios is not every discipline. If your work needs a structural engineer, a chartered accountant, a solicitor or a specialist agency with a decade in one narrow field, that is who you should be talking to, and we will say so.',
-        'The same applies inside our own range. Some work is too small to justify what we would charge to scope it properly, and some is far enough outside what we do well that taking it would not be fair to you.'),
+        'Technical Design at Gridsmith covers drafting, technical illustration and documentation within an agreed scope. It does not include engineering design or calculations; no engineering certification, approval, stamping or regulated sign-off is offered, and we do not act as the responsible designer. Where those services are required, the work needs an appropriately qualified professional.',
+        'The same applies inside our own range. Some work is too small to justify what it would cost to scope properly, and some is far enough outside what we do well that taking it on would not be fair to you.'),
     ],
     isSeed: true,
   },
@@ -736,22 +764,30 @@ const groupPageDocs = [
     slug: slugOf('about'),
     title: 'About Gridsmith',
     intro:
-      'One company, three specialist studios. Work with one of them or all three — it stays the same relationship either way.',
+      'One company, three specialist studios: Design for visual and technical form, Digital for working systems, Press for words and publishing. Work with one or several — it is the same relationship.',
     sections: [
       section(0, 'structure', 'What Gridsmith is', 'prose',
-        'Gridsmith Design handles brand and visual work, illustration, motion, 3D visualisation and technical drawing. Gridsmith Digital builds websites, software, apps and automation, and looks after them afterwards. Gridsmith Press covers writing, editorial, publishing, and the content and promotion around a book.',
-        'All three are trading divisions of Gridsmith Ltd. Whichever one you deal with, your contract, your invoice and the company answerable to you are the same.',
-        'Most clients arrive needing one studio. Some need two — occasionally at the start, more often a year later. That second case is the one this structure exists for.'),
+        'Gridsmith Design covers brand and visual work, illustration, motion, 3D visualisation and technical design. Gridsmith Digital builds websites, software, apps and automation, and keeps them running afterwards. Gridsmith Press writes, edits and prepares books and business content for publication, along with the content and promotion around them.',
+        'All three belong to one company, Gridsmith Ltd. Whichever studio you work with, the contract, the invoice and the company answerable to you are the same.',
+        'Most work starts with one studio. The structure earns its keep when a second need appears — a website after a new identity, a launch site for a book — and nobody has to brief the work from the beginning again.'),
       section(1, 'why', 'Why it is built this way', 'prose',
-        'Different outputs need different specialists. A brand identity, a production web application and a finished manuscript are genuinely different crafts, and treating them as one is how work ends up competent in a single discipline and thin everywhere else.',
-        'The usual alternative is a supplier per medium: a designer who has never seen the site, a developer working from brand guidelines nobody explained, a writer briefed by neither. Nothing is wrong with any of them individually. What goes wrong is at the joins, and the coordination quietly becomes your job.',
+        'Different work needs different specialists. A brand identity, a production web application and an edited manuscript are different crafts, and treating them as one is how work ends up strong in one discipline and thin in the rest.',
+        'The usual alternative is a separate supplier for each: a designer who has never seen the website, a developer working from brand guidelines nobody explained, a writer briefed by neither. Each may be good at their job. What goes wrong is at the joins, and coordinating them quietly becomes your job.',
         'So the specialists stay specialists, and the relationship does not restart when the medium changes.'),
-      section(2, 'role', 'What we actually do', 'prose',
-        'We work out what the requirement is, say which discipline it belongs to, scope it for your situation rather than from a menu, and run it through the studio that does that kind of work. Where it spans two, joining them up is ours to do.',
-        'Every engagement is quoted against its own scope. That is why there is no price list here: the number follows the requirement, and the requirement comes first.'),
-      section(3, 'character', 'How we approach the work', 'prose',
-        'Three things show up in everything we make. Design decisions are deliberate and can be explained — if we cannot say why something is the way it is, it is not finished. Technical work is built to be maintained by whoever comes next, including you. And the accessible version is the version we build, not an upgrade that arrives later.',
-        'We would rather tell you something is a bad idea early than deliver it well and watch it fail.'),
+      section(2, 'role', 'How we take on work', 'prose',
+        'We work out what the requirement is, say which discipline it belongs to, scope it for your situation rather than from a menu, and run it through the studio that does that kind of work. Where it spans two, joining them up is our job.',
+        'Every engagement is quoted against its own written scope. That is why there is no price list here: the number follows the requirement, and the requirement comes first.',
+        ['The six stages behind this — from the first conversation to optional support — are set out in ', link('how a Gridsmith project runs', '/approach'), '.']),
+      section(3, 'character', 'What we hold ourselves to', 'prose',
+        'Decisions can be explained. If we cannot say why a design, a system or a sentence is the way it is, it is not finished.',
+        'Work is built to be handed over. Files, code and documents should make sense to whoever picks them up next, including you.',
+        'Where accessibility applies to the work, we consider it from the start rather than treating it as a late addition.',
+        'Bad news travels early. We would rather tell you something is a bad idea at the start than deliver it well and watch it fail.'),
+      // `GS-SEO-001` decision 3A. The first paragraph's last two sentences are the approved
+      // `PRIVATE_EXAMPLES_NOTICE` (`lib/services/architecture.ts`), verbatim.
+      section(4, 'evidence', 'Evidence you can check', 'prose',
+        'There is no public portfolio here. Some of our work cannot be shown publicly, either because we do not hold permission to publish it or because it is confidential. Relevant examples may be discussed privately where we are permitted to share them.',
+        ['What can be checked publicly: the reviews clients have left on our ', link('Freelancer profile', 'https://www.freelancer.com/u/GridsmithLTD'), ', reproduced word for word on our home page, and the company itself on the public register under the number at the foot of this page.']),
     ],
     isSeed: true,
   },

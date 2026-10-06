@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { RootShell } from '@/components/chrome/RootShell';
 import { inter } from '@/styles/fonts/inter';
 import { jetbrainsMono } from '@/styles/fonts/jetbrains-mono';
-import { INDEXABLE, SITE_ICONS, SITE_ORIGIN } from '@/lib/seo/site';
+import { INDEXABLE, SITE_ICONS, SITE_ORIGIN, masterOpenGraph } from '@/lib/seo/site';
 import '@/styles/globals.css';
 
 /**
@@ -17,7 +17,7 @@ import '@/styles/globals.css';
  * **No `title.template`.** Every page in this tree already writes its own full title ending in
  * the group name — `"About — Gridsmith Ltd"`, `"Tell us about the book — Gridsmith Press"` — so
  * a template would append the group name a second time to all of them. The title below is the
- * default for a route that declares none, which today is `/` in the master group.
+ * default for a route that declares none (`/` declares its own since `GS-SEO-001`).
  *
  * `metadataBase` — the origin every relative metadata URL resolves against. Without it Next
  * emits relative Open Graph URLs and warns on every build; `lib/seo/site.ts` explains why the
@@ -37,8 +37,10 @@ import '@/styles/globals.css';
  * the description, because a link shared from `/press` must not read as a separate company.
  *
  * **This group's description is public brand copy, so it says "studios" (`GS-INT-002`).** It is
- * `/`'s description and every Master route's `og:description`. The statutory "trading divisions"
- * wording stays where the law puts it — the footer and the legal disclosure on `/`.
+ * every Master route's default `og:description`. `/`, `/about` and `/approach` set their own title,
+ * description and card (`GS-SEO-001`); the other Master routes still inherit these. The
+ * statutory "trading divisions" wording stays where the law puts it — the footer and the legal
+ * disclosure on `/`.
  * `check:company` question 10 asserts the taxonomy on the served metadata.
  */
 const DESCRIPTION = 'One UK company. Design, Digital and Press are its three specialist studios.';
@@ -50,14 +52,7 @@ export const metadata: Metadata = {
   description: DESCRIPTION,
   alternates: { canonical: './' },
   robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: false },
-  openGraph: {
-    type: 'website',
-    siteName: 'Gridsmith Ltd',
-    locale: 'en_GB',
-    url: './',
-    title: 'Gridsmith Ltd',
-    description: DESCRIPTION,
-  },
+  openGraph: masterOpenGraph('Gridsmith Ltd', DESCRIPTION),
 };
 
 /**

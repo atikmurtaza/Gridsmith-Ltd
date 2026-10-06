@@ -27,8 +27,11 @@ function Services({
   const items = services.filter((s) =>
     groups.includes(s.capabilityGroup ?? ""),
   );
+  // GS-VIS-001: open on first render so the range is visible; the visitor can still collapse it.
+  // A group with no published services stays closed — opening it would show no services, only the
+  // fallback line, and on short desktop screens push the Technical scope note out of view.
   return (
-    <details className="ds-services">
+    <details className="ds-services" open={items.length > 0}>
       <summary>{label}</summary>
       {items.length ? (
         <ul>
@@ -238,7 +241,8 @@ export async function DesignHome() {
                 ))}
               </ol>
               <p>
-                <a href="/approach">The six stages in full</a> ·{" "}
+                {/* No separator: `.ds-services a` stacks these links at every width (GS-VIS-001-R4). */}
+                <a href="/approach">The six stages in full</a>{" "}
                 <Link href="/">Meet Gridsmith</Link>
               </p>
             </details>

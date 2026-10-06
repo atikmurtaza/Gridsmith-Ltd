@@ -1,6 +1,19 @@
+import type { Metadata } from 'next';
 import { Close, Context, Hero, Process, Reviews, Studios } from '@/components/master/Home';
 import { FallbackMark } from '@/components/master/FallbackMark';
 import { MasterScene } from '@/components/master/MasterScene';
+import { masterOpenGraph } from '@/lib/seo/site';
+
+const TITLE = 'Gridsmith Ltd — design, digital and publishing studios';
+const DESCRIPTION =
+  'One UK company, three specialist studios: brand, visual and technical design; websites and software; writing and publishing. Brief once; the context stays.';
+
+/** `/`'s own title, description and share card (`GS-SEO-001`); other Master routes keep the group's. */
+export const metadata: Metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: masterOpenGraph(TITLE, DESCRIPTION),
+};
 
 /**
  * The homepage — `GS-R001-M`, the Master redesign after the owner rejected `GS-R001-R`'s at
@@ -23,7 +36,7 @@ export default function Page() {
       <main id="main" tabIndex={-1} data-stage="master">
         <Hero
           headline="Most companies start over with every supplier. You shouldn’t have to."
-          intro="Design, digital and publishing expertise under one roof. Start with what you need today — and keep the context when you need something else."
+          intro="Design, digital and publishing studios in one company. Start with what you need now, and the context carries into whatever comes next."
         />
         <Studios />
         <Context />

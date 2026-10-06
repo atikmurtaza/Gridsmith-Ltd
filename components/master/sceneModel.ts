@@ -289,3 +289,120 @@ export function pose(
     centre: [lerp(a.off[0], b.off[0], t), offY],
   };
 }
+
+/**
+ * `GS-VIS-001-R2` — the process chain on a phone whose copy fills the screen.
+ *
+ * The narrow process pose sets the chain below the middle of the screen, which on most phones is
+ * clear space under the chapter's heading and intro. On the smallest (320×568) the approved copy
+ * runs almost to the bottom edge, so the chain sat behind it, where the renderer dims the scene
+ * for the text's sake, and the chapter lost its mark. This is a rule about where the copy is, not
+ * about a device: given the copy's band on screen at the process pose, if less than `CLEAR_MIN` of
+ * the chain's visible length is clear of it, the chain is framed instead in the clear band above
+ * the chapter label — flatter (`FLAT_TILT`), so it runs across the band rather than down through
+ * the copy, and as large as the band allows. Wherever the default chain is clear, the keys come
+ * back unchanged, so every other size keeps its approved composition. Pure: called on each layout
+ * measure, never per frame.
+ */
+const CLEAR_MIN = 0.4;
+const FLAT_TILT = 0.08;
+const BAND_GAP = 10;
+/** `GS-VIS-001-R4`: on a wide screen, the share of the chain that must be on screen and clear of text. */
+const VISIBLE_MIN = 0.6;
+
+type Band = { top: number; bottom: number };
+/** A screen rectangle in CSS pixels, at the process pose's scroll. */
+export type Box = Band & { left: number; right: number };
+
+/** Points along every piece of a pose, projected to CSS pixels. */
+function projected(p: Pose, w: number, h: number, tanHalf: number): { x: number; y: number; r: number }[] {
+  const aspect = w / h;
+  const at = (q: Vec3, radius: number) => {
+    const k = 1 / ((p.dist - q[2]) * tanHalf);
+    return { x: (w / 2) * (1 + (q[0] * k) / aspect), y: (h / 2) * (1 - q[1] * k), r: (radius * k * h) / 2 };
+  };
+  const out = p.spheres.map((q) => at(q, SPHERE_RADIUS));
+  p.rodA.forEach((a, i) => {
+    const b = p.rodB[i];
+    for (let t = 0; t <= 1.0001; t += 0.1) out.push(at([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t], ROD_RADIUS));
+  });
+  return out;
+}
+
+/**
+ * The one framing both layouts use: the process key turned to `rot`, brought to the largest size
+ * (nearest the camera, never nearer than approved) whose height fits `target`, and centred in it
+ * vertically. The chain is longer than any screen is wide, so it is never fitted sideways: it keeps
+ * its approved horizontal offset (`'keep'`, the narrow composition, running off both sides) or
+ * starts at the target's left edge and runs off the right (`'left'`).
+ */
+function fitProcess(keys: Key[], target: Box, w: number, h: number, tanHalf: number, rot: Vec3, x: 'keep' | 'left'): Key[] {
+  const P = CHAPTERS.indexOf('process');
+  const still: Vec3 = [0, 0, 0];
+  const base = keys[P];
+  const framed = (dist: number, off: [number, number]): Key[] => keys.map((k, i) => (i === P ? { ...k, rot, dist, off } : k));
+  const extent = (ks: Key[]) => {
+    const pts = projected(pose(ks, P, still, tanHalf, w / h), w, h, tanHalf);
+    return {
+      left: Math.min(...pts.map((q) => q.x - q.r)),
+      right: Math.max(...pts.map((q) => q.x + q.r)),
+      top: Math.min(...pts.map((q) => q.y - q.r)),
+      bottom: Math.max(...pts.map((q) => q.y + q.r)),
+    };
+  };
+  let dist = base.dist;
+  while (dist < 40) {
+    const e = extent(framed(dist, [base.off[0], 0]));
+    if (e.bottom - e.top <= target.bottom - target.top) break;
+    dist += 0.5;
+  }
+  let off: [number, number] = [base.off[0], 0];
+  for (let i = 0; i < 3; i++) {
+    const e = extent(framed(dist, off));
+    off = [
+      x === 'left' ? off[0] - (e.left - target.left) / (w / 2) : off[0],
+      off[1] + ((e.top + e.bottom) / 2 - (target.top + target.bottom) / 2) / (h / 2),
+    ];
+  }
+  return framed(dist, off);
+}
+
+export function processFraming(keys: Key[], copy: Band, w: number, h: number, tanHalf: number): Key[] {
+  const P = CHAPTERS.indexOf('process');
+  const still: Vec3 = [0, 0, 0];
+  const onScreen = projected(pose(keys, P, still, tanHalf, w / h), w, h, tanHalf).filter((q) => q.x >= 0 && q.x <= w && q.y >= 0 && q.y <= h);
+  const clear = onScreen.filter((q) => q.y < copy.top - BAND_GAP || q.y > copy.bottom + BAND_GAP);
+  if (!onScreen.length || clear.length / onScreen.length >= CLEAR_MIN) return keys;
+
+  const band = { left: -Infinity, right: Infinity, top: BAND_GAP, bottom: copy.top - BAND_GAP };
+  if (band.bottom - band.top < 48) return keys; // No room above either: keep the approved pose.
+  const base = keys[P];
+  return fitProcess(keys, band, w, h, tanHalf, [FLAT_TILT, base.rot[1], base.rot[2]], 'keep');
+}
+
+/**
+ * `GS-VIS-001-R4` — the same rule on a wide screen (owner-approved for 1024×768).
+ *
+ * The wide process chain runs low across the screen, under the stage rail, and is never behind the
+ * heading and intro. On a screen that is short for its width (1024×768) the rail's text dims much
+ * of it and the rest runs off the bottom edge, so the chapter loses its mark. The measure is the
+ * share of the chain a reader can see — on screen and clear of every text box of the chapter
+ * (`text`, the boxes the renderer dims behind). Under `VISIBLE_MIN`, the chain is framed instead
+ * in the clear space beside the heading and intro — right of the copy column and of the shaded
+ * zone (`edge`), above the first text below the column — at its approved angle, starting at the
+ * space's left edge and running off the right, as the narrow chain runs off the sides. Above it,
+ * the keys come back unchanged. Pure; called on each layout measure, never per frame.
+ */
+export function processFramingWide(keys: Key[], column: Box, text: Box[], w: number, h: number, tanHalf: number): Key[] {
+  const P = CHAPTERS.indexOf('process');
+  const pts = projected(pose(keys, P, [0, 0, 0], tanHalf, w / h), w, h, tanHalf);
+  const hidden = (q: { x: number; y: number }) =>
+    q.x < 0 || q.x > w || q.y < 0 || q.y > h ||
+    text.some((b) => q.x > b.left - BAND_GAP && q.x < b.right + BAND_GAP && q.y > b.top - BAND_GAP && q.y < b.bottom + BAND_GAP);
+  if (!pts.length || pts.filter((q) => !hidden(q)).length / pts.length >= VISIBLE_MIN) return keys;
+
+  const below = Math.min(h, ...text.filter((b) => b.top >= column.bottom).map((b) => b.top));
+  const space = { left: Math.max(column.right, keys[P].edge * w) + BAND_GAP, right: w, top: BAND_GAP, bottom: below - BAND_GAP };
+  if (space.right - space.left < 160 || space.bottom - space.top < 160) return keys; // No room beside the copy: keep the approved pose.
+  return fitProcess(keys, space, w, h, tanHalf, keys[P].rot, 'left');
+}

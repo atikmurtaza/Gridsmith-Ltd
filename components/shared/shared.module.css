@@ -335,6 +335,9 @@
   color: var(--chrome-muted);
 }
 .connectNote a { color: var(--chrome-ink); text-decoration: underline; text-decoration-color: var(--chrome-accent); text-underline-offset: 0.2em; }
+/* Approach's closing line (GS-SEO-001): the Connect note's measure and colour, above the CTA.
+   After `.connectNote` so its margin wins. */
+.closingNote { composes: connectNote; margin: 0 0 var(--space-4); }
 .registration {
   margin: clamp(var(--space-12), 5vw, var(--space-16)) 0 0;
   padding-block-start: var(--space-6);

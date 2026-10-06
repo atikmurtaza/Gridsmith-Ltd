@@ -1,4 +1,4 @@
-import { CHAPTERS, KEYS_NARROW, KEYS_WIDE, ROD_RADIUS, SPHERE_RADIUS, pose, type Pose, type Vec3 } from './sceneModel';
+import { CHAPTERS, KEYS_NARROW, KEYS_WIDE, ROD_RADIUS, SPHERE_RADIUS, pose, processFraming, processFramingWide, type Box, type Pose, type Vec3 } from './sceneModel';
 
 /**
  * The Master scene renderer — `GS-R001-M`. Loaded by `MasterScene` with a dynamic `import()`
@@ -271,6 +271,10 @@ export function startScene(
 
   // Chapter position from the sections' centres — 0 at the hero, 5 at the close.
   let centres: number[] = [];
+  // GS-VIS-001-R2/R4: the keys, with the process chain reframed only where the copy would hide it
+  // (sceneModel `processFraming`, `processFramingWide`). Decided per layout, here, never per frame.
+  let keysNarrow = KEYS_NARROW;
+  let keysWide = KEYS_WIDE;
   const measure = () => {
     centres = CHAPTERS.map((name) => {
       const el = document.querySelector<HTMLElement>(`[data-chapter="${name}"]`);
@@ -278,6 +282,26 @@ export function startScene(
       const r = el.getBoundingClientRect();
       return r.top + scrollY + Math.min(r.height, innerHeight) / 2;
     });
+    keysNarrow = KEYS_NARROW;
+    keysWide = KEYS_WIDE;
+    const chapter = document.querySelector<HTMLElement>('[data-chapter="process"]');
+    const copy = chapter?.querySelector('h2')?.parentElement;
+    if (chapter && copy) {
+      // Boxes on screen at the scroll where the process pose is reached.
+      const r = chapter.getBoundingClientRect();
+      const at = r.top + scrollY + Math.min(r.height, innerHeight) / 2 - innerHeight / 2;
+      const box = (el: Element): Box => {
+        const b = el.getBoundingClientRect();
+        return { left: b.left, right: b.right, top: b.top + scrollY - at, bottom: b.bottom + scrollY - at };
+      };
+      const [w, h] = [canvas.clientWidth, canvas.clientHeight];
+      if (narrow.matches) keysNarrow = processFraming(KEYS_NARROW, box(copy), w, h, FOV_TAN_HALF);
+      else {
+        // The chapter's text as the renderer dims it (`readRects`): outermost text elements only.
+        const text = [...chapter.querySelectorAll<HTMLElement>(TEXT)].filter((el) => !el.parentElement?.closest(TEXT) && el.getClientRects().length > 0);
+        keysWide = processFramingWide(KEYS_WIDE, box(copy), text.map(box), w, h, FOV_TAN_HALF);
+      }
+    }
   };
   const chapterAt = () => {
     const y = scrollY + innerHeight / 2;
@@ -366,7 +390,7 @@ export function startScene(
 
   const draw = (now: number) => {
     readRects();
-    const keys = narrow.matches ? KEYS_NARROW : KEYS_WIDE;
+    const keys = narrow.matches ? keysNarrow : keysWide;
     const sway = opts.reduced
       ? 0
       : (Math.max(0, 1 - current) + Math.max(0, current - 4)) * 0.09 * Math.sin(now / 2600);

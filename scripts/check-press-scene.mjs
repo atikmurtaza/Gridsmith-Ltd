@@ -147,7 +147,7 @@ try {
   const meta=await page.evaluate(()=>({title:document.title,description:document.querySelector('meta[name="description"]')?.content,canonical:document.querySelector('link[rel="canonical"]')?.href,robots:document.querySelector('meta[name="robots"]')?.content,h1:document.querySelectorAll('h1').length,pathLinks:document.querySelectorAll('a[href*="path-finder"]').length,process:[...document.querySelectorAll('dt')].map(e=>e.textContent)}));
   assert.equal(meta.h1,1);assert.equal(meta.pathLinks,0);assert(meta.description);assert.match(meta.robots,/noindex/);assert.equal(new URL(meta.canonical).pathname,path);
   assert(!titles.has(meta.title));assert(!descriptions.has(meta.description));titles.add(meta.title);descriptions.add(meta.description);
-  if(path.includes('/services/'))for(const [i,name] of processNames.entries())assert(meta.process.includes(`${i+1}. ${name}`),`${path}: ${name}`);
+  if(path.includes('/services/'))assert.deepEqual(meta.process.filter(t=>processNames.includes(t)),processNames,`${path}: the six canonical stages, by name and in order (unnumbered since GS-VIS-001-R3)`);
  }
  for(const [segment,field] of [['author','manuscriptStage'],['business','bookPurpose'],['content','formats'],['production','workType']]){
   await page.goto(base+'/press/contact',{waitUntil:'networkidle0'});

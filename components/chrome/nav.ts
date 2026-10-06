@@ -26,9 +26,9 @@ export const STUDIOS: {
   /** The studio's thesis line, as its own home sets it. Used by the Master studio index. */
   thesis: string;
 }[] = [
-  { href: '/design', label: 'Design', division: 'design', summary: 'Brand, visual, illustration, motion, 3D and technical design.', thesis: 'From line to form.' },
-  { href: '/digital', label: 'Digital', division: 'digital', summary: 'Websites, software, apps, automation and AI, built and kept running.', thesis: 'When one thing changes, the right things follow.' },
-  { href: '/press', label: 'Press', division: 'press', summary: 'Writing, editing, book production, publishing, audiobooks and marketing.', thesis: 'Clear writing is a series of decisions.' },
+  { href: '/design', label: 'Design', division: 'design', summary: 'Visual and technical form: brand, illustration, motion, 3D and technical design.', thesis: 'From line to form.' },
+  { href: '/digital', label: 'Digital', division: 'digital', summary: 'Working systems: websites, software, apps, automation and AI, built to keep running.', thesis: 'When one thing changes, the right things follow.' },
+  { href: '/press', label: 'Press', division: 'press', summary: 'Words and publishing: writing, editing, book production, audiobooks, content and book marketing.', thesis: 'Clear writing is a series of decisions.' },
 ];
 
 export const studio = (division: Exclude<Division, 'master'>) => STUDIOS.find((s) => s.division === division)!;
