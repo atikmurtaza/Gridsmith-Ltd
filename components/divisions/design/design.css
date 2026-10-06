@@ -389,13 +389,6 @@
   border-top: 1px solid var(--line-strong);
   padding-top: 1rem;
 }
-.ds-process li span {
-  display: block;
-  color: var(--ink-muted);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  margin-bottom: 0.75rem;
-}
 .ds-process p {
   margin-top: 2rem;
   max-width: 64ch;

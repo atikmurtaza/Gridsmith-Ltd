@@ -61,9 +61,6 @@ export default async function Page() {
   const [page, company] = await Promise.all([getGroupPage('about'), getCompanyDetails()]);
   if (!page) notFound();
 
-  const hasMap = page.sections?.some((sec) => sec.key === 'structure') ?? false;
-  const connectNumber = String(2 + (page.sections?.length ?? 0) + (hasMap ? 1 : 0)).padStart(2, '0');
-
   return (
     <main id="main" tabIndex={-1} data-nav="about">
       <Opening size="spacious" place="About" title={page.title} lead={page.intro ?? undefined} />
@@ -73,11 +70,10 @@ export default async function Page() {
           sections={page.sections}
           pair={['role', 'character']}
           insert={{
-            structure: (number) => (
+            structure: () => (
               <section className={`${styles.frame} ${styles.band}`} aria-labelledby="studios">
                 <div className={`${styles.wrap} ${styles.bandHead} ${styles.bandHeadOnly}`}>
                   <div>
-                    <p className={styles.index}>{number}</p>
                     <h2 id="studios" className={styles.rowTitle}>One company, three studios</h2>
                   </div>
                   <StudioMap />
@@ -89,7 +85,6 @@ export default async function Page() {
       </div>
 
       <Connect
-        number={connectNumber}
         contactEmail={company.contactEmail}
         contactPhone={company.contactPhone}
         responseCommitment={company.responseCommitment}

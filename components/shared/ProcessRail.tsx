@@ -12,10 +12,12 @@ const BRANCH_STAGE = 4;
  * (`00-PROCESS.md`: fixed names, all divisions). A horizontal rail at 1024px+, a vertical
  * narrative below it — the same list, re-laid by CSS, so there is no second markup to drift.
  *
- * **Stage 04 branches into the studios, and the branch is conditional.** The lanes are dashed
+ * **The fourth stage branches into the studios, and the branch is conditional.** The lanes are dashed
  * and the caption says the work goes to the studio or studios it needs — one, two or all three.
  * Nothing here implies every engagement uses all three, and no example project is drawn to
  * demonstrate it. The optional sixth stage is marked in words as well as by its dashed node.
+ * Stages are unnumbered on screen since `GS-VIS-001-R3`; the `<ol>` still gives a screen reader
+ * the order.
  */
 export function ProcessRail({ headingLevel = 3 }: { headingLevel?: 3 | 4 }) {
   const H = `h${headingLevel}` as 'h3' | 'h4';
@@ -28,9 +30,6 @@ export function ProcessRail({ headingLevel = 3 }: { headingLevel?: 3 | 4 }) {
           data-branch={stage.number === BRANCH_STAGE ? '' : undefined}
           data-optional={stage.optional ? '' : undefined}
         >
-          <span className={styles.stageNo} aria-hidden="true">
-            {String(stage.number).padStart(2, '0')}
-          </span>
           <H className={styles.stageTitle}>
             {stage.title}
             {stage.optional ? <span className={styles.stageQualifier}> (if applicable)</span> : null}

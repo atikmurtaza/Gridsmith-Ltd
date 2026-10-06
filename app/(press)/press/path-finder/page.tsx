@@ -123,10 +123,10 @@ export default function Page() {
                 to each.
               </p>
             </Prose>
-            {SEED_QUESTIONS.map((q, i) => (
+            {SEED_QUESTIONS.map((q) => (
               <div key={q.key}>
                 <Heading level={3}>
-                  {i + 1}. {q.question}
+                  {q.question}
                 </Heading>
                 <Prose>
                   <p>{q.helpText}</p>

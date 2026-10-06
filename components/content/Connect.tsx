@@ -118,13 +118,11 @@ function Channels({ rows }: { rows: Row[] }) {
 }
 
 export function Connect({
-  number,
   contactEmail,
   contactPhone,
   responseCommitment,
   registration,
 }: {
-  number: string;
   contactEmail: string | null;
   contactPhone: string | null;
   responseCommitment: string;
@@ -159,7 +157,6 @@ export function Connect({
       <div className={styles.wrap}>
         <div className={styles.connect}>
           <div>
-            <p className={styles.index}>{number}</p>
             <h2 id="connect" className={styles.rowTitle}>Getting in touch</h2>
             <p className={styles.connectNote}>
               The form on <a href="/contact">the contact page</a> reaches the same place as all of

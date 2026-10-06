@@ -63,16 +63,6 @@
   text-transform: uppercase;
   color: var(--ink-muted);
 }
-.chapter > :first-child { color: var(--accent); }
-.chapter > :first-child::after {
-  content: '';
-  display: inline-block;
-  width: var(--space-8);
-  height: var(--border-hairline);
-  margin-inline-start: var(--space-3);
-  vertical-align: middle;
-  background: var(--accent);
-}
 
 .section {
   display: grid;
@@ -335,7 +325,6 @@
   padding-top: var(--space-6);
   border-top: var(--border-hairline) solid var(--line-strong);
 }
-.stage > :first-child { color: var(--accent); font-size: var(--text-sm); }
 /* A joint on the rail — the mark's sphere, at the scale of a bullet. */
 .stage::before {
   content: '';

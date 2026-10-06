@@ -23,18 +23,14 @@ import styles from './home.module.css';
  *
  * All Server Components; zero client JS. The words are the approved ones from `GS-R001-R`
  * and before, re-set rather than rewritten. Three are new and are structural rather than
- * claims: the studios heading, the chapter labels, and the secondary hero link's wording.
+ * claims: the studios heading, the chapter labels (unnumbered since `GS-VIS-001-R3`), and the secondary hero link's wording.
  * `GS-MASTER-001-F` added the owner-approved proposition, studio theses and relationship
  * capabilities, and one structural label over the last: "Across all three studios".
  */
 
-function Chapter({ n, label }: { n: number; label: string }) {
-  return (
-    <p className={styles.chapter}>
-      <Numeric>{String(n).padStart(2, '0')}</Numeric>
-      <span>{label}</span>
-    </p>
-  );
+/** A chapter label. Unnumbered since `GS-VIS-001-R3`: the scene finds chapters by `data-chapter`, not by this text. */
+function Chapter({ label }: { label: string }) {
+  return <p className={styles.chapter}>{label}</p>;
 }
 
 export function Hero({ headline, intro }: { headline: string; intro: string }) {
@@ -78,7 +74,7 @@ export function Studios() {
     <section id="studios" className={styles.section} data-chapter="studios" aria-labelledby="studios-title">
       <div className={styles.frame}>
         <div className={styles.column}>
-          <Chapter n={1} label="The studios" />
+          <Chapter label="The studios" />
           <h2 id="studios-title" className={styles.title}>
             Where would you like to start?
           </h2>
@@ -133,7 +129,7 @@ export async function Context() {
     <section className={styles.section} data-chapter="context" aria-labelledby="context-title">
       <div className={styles.frame}>
         <div className={styles.column}>
-          <Chapter n={2} label="One relationship" />
+          <Chapter label="One relationship" />
           <h2 id="context-title" className={styles.statement}>
             Gridsmith brings three specialist studios together under one relationship.
           </h2>
@@ -175,7 +171,7 @@ export function Process() {
     <section className={styles.section} data-chapter="process" aria-labelledby="process-title">
       <div className={styles.frame}>
         <div className={styles.column}>
-          <Chapter n={3} label="Process" />
+          <Chapter label="Process" />
           <h2 id="process-title" className={styles.title}>
             How we work
           </h2>
@@ -187,7 +183,6 @@ export function Process() {
         <ol className={styles.stages}>
           {CANONICAL_PROCESS.map((stage) => (
             <li key={stage.number} className={styles.stage}>
-              <Numeric>{String(stage.number).padStart(2, '0')}</Numeric>
               <span className={styles.stageTitle}>
                 {stage.title}
                 {stage.optional ? <span className={styles.stageQualifier}> (if applicable)</span> : null}
@@ -222,7 +217,7 @@ export async function Reviews() {
       <div className={styles.frame}>
         <div className={styles.reviews}>
           <div className={styles.reviewsHead}>
-            <Chapter n={4} label="Reviews" />
+            <Chapter label="Reviews" />
             <h2 id="reviews-title" className={styles.title}>
               What clients have said, where you can check it
             </h2>
@@ -248,7 +243,7 @@ export async function Close() {
     <section className={styles.close} data-chapter="close" aria-labelledby="close-title">
       <div className={styles.frame}>
         <div className={styles.column}>
-          <Chapter n={5} label="Start" />
+          <Chapter label="Start" />
           <h2 id="close-title" className={styles.closeTitle}>
             Tell us what you need.
           </h2>

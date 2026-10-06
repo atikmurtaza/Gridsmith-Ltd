@@ -5,11 +5,10 @@ import { ProcessRail } from '@/components/shared/ProcessRail';
 import styles from '@/components/shared/shared.module.css';
 import type { GroupSection } from '@/lib/sanity/queries';
 
-const pad = (n: number) => String(n).padStart(2, '0');
-
 /**
  * Renders a `groupPage`'s sections — `/approach` (`N-04`) and `/about` (`N-07`), re-laid at
- * `GS-SHARED-001-B2` as numbered editorial rows on the sheet. Server Component, zero client JS.
+ * `GS-SHARED-001-B2` as editorial rows on the sheet (unnumbered since `GS-VIS-001-R3`: a
+ * section's position on the page is not a service number). Server Component, zero client JS.
  *
  * ## `layout` is a closed list, and this switch is why
  *
@@ -18,30 +17,26 @@ const pad = (n: number) => String(n).padStart(2, '0');
  *
  * | layout | renders as |
  * |---|---|
- * | `prose`, `two-column` | a row: number and heading left, body right |
+ * | `prose`, `two-column` | a row: heading left, body right |
  * | `process` | a Master-frame band carrying the canonical six-stage rail |
  * | `continuity` | a row with the section's own honest copy and **no** empty-state card — B2 removed the visible "No verified continuity example yet" block; `ContinuityExample` still exists for the day `Q-M6` supplies a real one |
  * | `sunken-plain` | a plain row on the sunken surface. Deliberately undesigned (`master/SCHEMA.md` §2): polishing the limits would sell them |
  *
- * `start` numbers the first section (the opening is 01). `insert` places a page-owned band after
- * a section, taking the next number; `pair` sets two consecutive sections side by side, which is
- * the variation that keeps a page from being a stack of identical rows. Keys that are absent
- * simply do nothing, so a content edit cannot break either.
+ * `insert` places a page-owned band after a section; `pair` sets two consecutive sections side by
+ * side, which is the variation that keeps a page from being a stack of identical rows. Keys that
+ * are absent simply do nothing, so a content edit cannot break either.
  */
 export function GroupSections({
   sections,
-  start = 2,
   insert = {},
   pair,
 }: {
   sections: GroupSection[] | null;
-  start?: number;
-  insert?: Record<string, (number: string) => ReactNode>;
+  insert?: Record<string, () => ReactNode>;
   pair?: [string, string];
 }) {
   if (!sections || sections.length === 0) return null;
 
-  let n = start;
   const out: ReactNode[] = [];
 
   for (let i = 0; i < sections.length; i++) {
@@ -49,20 +44,17 @@ export function GroupSections({
     const next = sections[i + 1];
 
     if (pair && section.key === pair[0] && next?.key === pair[1]) {
-      const a = pad(n++);
-      const b = pad(n++);
       out.push(
         <div key={`pair-${section.key}`} className={`${styles.pair} ${styles.wrap}`}>
-          <PairItem section={section} number={a} />
-          <PairItem section={next} number={b} />
+          <PairItem section={section} />
+          <PairItem section={next} />
         </div>,
       );
       i += 1;
-      if (insert[next.key]) out.push(<Fragment key={`insert-${next.key}`}>{insert[next.key](pad(n++))}</Fragment>);
+      if (insert[next.key]) out.push(<Fragment key={`insert-${next.key}`}>{insert[next.key]()}</Fragment>);
       continue;
     }
 
-    const number = pad(n++);
     const headingId = `section-${section.key}`;
 
     if (section.layout === 'process') {
@@ -71,7 +63,6 @@ export function GroupSections({
           <div className={styles.wrap}>
             <div className={styles.bandHead}>
               <div>
-                <p className={styles.index}>{number}</p>
                 <h2 id={headingId} className={styles.rowTitle}>{section.heading}</h2>
               </div>
               <div className={styles.rowBody}>
@@ -92,7 +83,6 @@ export function GroupSections({
           aria-labelledby={headingId}
         >
           <div>
-            <p className={styles.index}>{number}</p>
             <h2 id={headingId} className={styles.rowTitle}>{section.heading}</h2>
           </div>
           <div className={styles.rowBody}>
@@ -111,17 +101,16 @@ export function GroupSections({
       );
     }
 
-    if (insert[section.key]) out.push(<Fragment key={`insert-${section.key}`}>{insert[section.key](pad(n++))}</Fragment>);
+    if (insert[section.key]) out.push(<Fragment key={`insert-${section.key}`}>{insert[section.key]()}</Fragment>);
   }
 
   return <>{out}</>;
 }
 
-function PairItem({ section, number }: { section: GroupSection; number: string }) {
+function PairItem({ section }: { section: GroupSection }) {
   const headingId = `section-${section.key}`;
   return (
     <section aria-labelledby={headingId}>
-      <p className={styles.index}>{number}</p>
       <h2 id={headingId} className={styles.rowTitle}>{section.heading}</h2>
       <div className={styles.rowBody}>
         <Prose>

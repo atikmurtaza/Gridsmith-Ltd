@@ -230,9 +230,8 @@ export async function DesignHome() {
             <details className="ds-services ds-process">
               <summary>One practice. A considered process.</summary>
               <ol>
-                {CANONICAL_PROCESS.map((stage, i) => (
+                {CANONICAL_PROCESS.map((stage) => (
                   <li key={stage.title}>
-                    <span>{String(i + 1).padStart(2, "0")}</span>
                     {stage.title}
                     {stage.optional ? " (if applicable)" : ""}
                   </li>

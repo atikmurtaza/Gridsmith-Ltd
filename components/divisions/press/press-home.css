@@ -592,7 +592,6 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
 
 .pr-bar a:hover { color: var(--pr-ink); }
 .pr-bar a[aria-current] { color: var(--pr-ink); border-block-start-color: var(--pr-green); font-weight: 700; }
-.pr-bar-n { font-size: 0.75rem; color: var(--pr-green); margin-inline-end: 0.3rem; }
 
 /* ── 01 Writing: source → structure ──────────────────────────────────────── */
 .pr-starts li {
@@ -1303,9 +1302,10 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
 .pr-stages { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1.5rem; margin-block-start: 2rem; }
 
 .pr-stage { position: relative; padding-block-start: 1.9rem; }
-.pr-stage::before { content: ""; position: absolute; top: 0.8rem; left: 2rem; right: -1.5rem; border-block-start: 1px solid var(--pr-green-2); }
+.pr-stage::before { content: ""; position: absolute; top: 0.8rem; left: 1.1rem; right: -1.5rem; border-block-start: 1px solid var(--pr-green-2); }
 .pr-stage:last-child::before { display: none; }
-.pr-stage-n { position: absolute; top: 0; left: 0; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--pr-green); color: var(--pr-on-green); font-family: var(--pr-sans); font-size: 0.8125rem; font-weight: 700; }
+/* The rail's node: a joint, not a number (GS-VIS-001-R3 — stages are unnumbered on screen). */
+.pr-stage::after { content: ""; position: absolute; top: 0.5rem; left: 0; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--pr-green); }
 .pr-stage-title { font-family: var(--pr-serif); font-size: 1.1875rem; font-weight: 500; line-height: 1.25; }
 .pr-stage-detail { margin-block-start: 0.4rem !important; font-family: var(--pr-sans); font-size: 0.875rem; line-height: 1.5; color: var(--pr-muted); }
 .pr-stage-input { margin-block-start: 0.6rem !important; padding-block-start: 0.5rem; border-block-start: 1px solid var(--pr-rule); font-family: var(--pr-sans); font-size: 0.875rem; line-height: 1.45; color: var(--pr-ink); }
@@ -1448,7 +1448,6 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
 .pr-bar a { color: var(--pr-on-green-muted); }
 .pr-bar a:hover { color: var(--pr-on-dark); }
 .pr-bar a[aria-current] { color: var(--pr-on-dark); border-block-start-color: var(--pr-gold-bright); }
-.pr-bar-n { color: var(--pr-gold-bright); }
 
 /* 01 Writing (R3: R1 surface restored). The outline keeps its paper sheet and gold resolved rule;
    on the light table, gold is the darker --pr-gold that reads there. */
@@ -1522,7 +1521,7 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
 /* Process */
 .pr-process { background: var(--pr-night); border-block-start: 0; }
 .pr-stage::before { border-block-start-color: var(--pr-gold-line); }
-.pr-stage-n { background: var(--pr-gold-bright); color: var(--pr-green-deep); }
+.pr-stage::after { background: var(--pr-gold-bright); }
 .pr-stage-detail { color: var(--fg-2); }
 .pr-stage-input { color: var(--fg); border-block-start-color: var(--rule-c); }
 .pr-stage-kicker { color: var(--accent-c); }
@@ -1607,7 +1606,6 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
   .pr-desk-caption { font-size: 1rem; }
 
   .pr-bar a { padding-inline: 0; font-size: 0.75rem; text-align: center; }
-  .pr-bar-n { display: none; }
 
   .pr-src-text { font-size: 1rem; }
   .pr-ch { grid-template-columns: 1.75rem 1fr; }

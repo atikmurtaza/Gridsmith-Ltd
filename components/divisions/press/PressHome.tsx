@@ -95,10 +95,10 @@ export async function PressHome() {
       <div className="pr-journey">
         <nav className="pr-bar" aria-label="The project, stage by stage">
           <ol className="pr-wrap">
-            {JOURNEY.map((step, i) => (
+            {JOURNEY.map((step) => (
               <li key={step.id}>
                 <a href={`#${step.id}`} data-pr-step={step.id}>
-                  <span className="pr-bar-n">{String(i + 1).padStart(2, '0')}</span> {step.short}
+                  {step.short}
                 </a>
               </li>
             ))}
@@ -265,9 +265,7 @@ export async function PressHome() {
           <ol className="pr-stages pr-rail" tabIndex={0} aria-labelledby="process-title">
             {CANONICAL_PROCESS.map((stage) => (
               <li className="pr-stage" key={stage.number}>
-                <span className="pr-stage-n" aria-hidden="true">{stage.number}</span>
                 <h3 className="pr-stage-title">
-                  <span className="sr-only">{stage.number} </span>
                   {stage.title}
                   {stage.optional ? ' (if applicable)' : ''}
                 </h3>
