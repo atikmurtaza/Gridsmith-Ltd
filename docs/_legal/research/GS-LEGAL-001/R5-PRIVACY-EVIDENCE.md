@@ -220,3 +220,24 @@ Both optional points were applied. The rule paragraph now distinguishes adoption
 be true) from publication (READY — OPERATIONAL must be true). It does not say that adoption waits on
 H4-B, because `check:legal:adoption` requires `H4-B-INTAKE-PROMOTED` to be listed at adoption and met
 only at publication. The re-check also confirmed that no adopted draft and no seed differs from HEAD.
+
+## 9. CI status (as observed on 7 October 2026)
+
+| Run | Commit | Result | Cause |
+|---|---|---|---|
+| [37553732522](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/37553732522) | R4 `bddc905` | **failure** | `check:legal:parity`, the only failing command; see below |
+| [37554454335](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/37554454335) | R4 `3c912cd` | **failure** | `check:legal:parity`: 258 problems against the **development** dataset |
+| 37615086768 | R5 `0874d17` | in progress when this was written | Expected to fail the same command |
+| 37616037618 | R5 `afb455c` | queued when this was written | Expected to fail the same command |
+
+The R4 record left CI pending. In fact both R4 runs failed in the step "axe + security headers +
+statutory record + responsive and legal checks", on **one of its 18 server-run commands**:
+`check:legal:parity`. Every other command in that step passed, as did every static step, including
+`check:legal:adoption` and `verify:static`.
+- **Cause:** CI serves the development Sanity dataset, which still holds the pre-GS-LEGAL-001 legal
+  documents (for example `/legal/privacy` at version "2.0" against the 2.1 draft).
+- **History:** this has been the case since GS-LEGAL-001, which recorded that served parity against the
+  development dataset is red until the legal documents are reseeded (owner decision D-24).
+- **Not a regression.** It is the A-1 dependency, and it clears only when A-1 runs in a trusted
+  environment with existing development credentials. The gate is not altered or bypassed.
+- **Repository parity:** the draft-mode served run (real Next app, seeds answered locally) is green.
