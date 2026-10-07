@@ -61,8 +61,8 @@ value**, except the two owner defaults above (30-day validity, no VAT charged on
      is kept.
    - **Business clients who are individuals or unincorporated bodies:** Bus 5 applies. No payment for
      work already supplied may fall due later than the day before the first anniversary of the contract
-     date, and never as a thirteenth such payment. Bus 2's automatic conversion (payment due before
-     further work from the end of month 11) applies only where the Scope states no payment schedule. A
+     date, and never as a thirteenth such payment. Bus 2's default for these clients (each stage or
+     month paid before it starts) applies only where the Scope states no payment schedule. A
      Scope that states one must itself keep within Bus 5; Bus 1 lets a Scope change a clause only by
      naming it.
    - **Counting:** G read art. 60F to count only payments made after supply. Where no payment is
