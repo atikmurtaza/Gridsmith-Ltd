@@ -11,6 +11,18 @@ Source: the twelve checks in `../research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIE
 so that each can be done without further explanation. What changes in the policy once they are answered
 is in `../research/GS-LEGAL-001/R4-PRIVACY-2.2-CHANGE-PLAN.md`.
 
+## R7 status (7 October 2026) — supersedes the R6 "only remaining owner item" below
+
+- **Hostinger's DPA** was read directly (revised 2026-09-29): SCCs Modules 2/3 and the UK Addendum
+  (§9). The P-02 primary re-read is **closed**.
+- The subscription holder is **not** a processor (`PROCESSOR-REGISTER.md`, R7).
+- **Remaining:**
+  - the one access confirmation, (a);
+  - the Hostinger Customer route, (b);
+  - both recorded as `HOSTINGER-PROCESSOR-CHAIN` evidence.
+- P-07 (the Resend DPA primary re-read) is still not re-read here. It is non-blocking, because Privacy
+  states Resend's safeguard generically.
+
 ## R6 status (7 October 2026) — supersedes the R5 status below
 
 The owner's evidence closes E-1 to E-5 (`../research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md` §2):

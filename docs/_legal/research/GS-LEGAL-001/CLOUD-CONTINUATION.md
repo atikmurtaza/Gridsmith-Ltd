@@ -4,6 +4,18 @@ Handoff for a fresh Claude Code cloud session, written 7 October 2026. Branch
 `staging/gs-legal-001`; the GS-LEGAL-001 work is commit `53cc4f67`, and this file is the commit
 after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` in this folder.
 
+## R7 status (7 October 2026) — Claude Desktop
+
+**GS-LEGAL-001-R7 — retention cleanup run; Hostinger chain corrected; A-1 done.** Record:
+`R7-HOSTINGER-RETENTION.md`.
+
+The cloud session's blockers (egress, no `.env.local`) no longer apply: R7 ran on the owner's machine.
+
+**Next:**
+- the owner's actions in `docs/_shared/OWNER-ACTIONS.md` (R7 items 1–3);
+- then a legal phase records the two evidence keys;
+- then the owner adopts Privacy 2.2.
+
 ## R6 status (7 October 2026)
 
 **GS-LEGAL-001-R6 — Privacy 2.2 drafted; owner fact required.** Record: `R6-PRIVACY-2.2-DRAFT.md`.

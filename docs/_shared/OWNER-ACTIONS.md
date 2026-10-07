@@ -45,7 +45,37 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
   OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
   enforceability.
-- **R6 (7 October 2026): Privacy 2.2 drafted; one owner fact remains**
+- **R7 (7 October 2026): cleanup run, A-1 done; the routine is not yet operating; owner actions remain**
+  (`docs/_legal/research/GS-LEGAL-001/R7-HOSTINGER-RETENTION.md`). **This supersedes R6 items 1–3.**
+  - **Done:**
+    - the 63 Production leads, all gate probes, deleted after a baseline export;
+    - operator named (you; no deputy);
+    - development legal reseed (A-1);
+    - the Privacy marker removed.
+  - **Remaining owner actions:**
+    1. **Confirm, in one message:**
+       - no person other than Atik Murtaza has a login, team-member or delegated access to the
+         Hostinger account or the contact@gridsmith.uk mailbox;
+       - the Hostinger account's contact email is controlled by you or by Gridsmith;
+       - you manage the gridsmith.uk hosting for Gridsmith.
+
+       If any part is untrue, say what is true.
+    2. **Hostinger contract:** make Gridsmith Ltd Hostinger's Customer for gridsmith.uk (recommended:
+       its own Hostinger account, or a subscription transfer), and record the date. The interim
+       alternative, an arrangement with the subscription holder under Hostinger DPA §2.2, would make that
+       business a recipient, and Privacy §6/§7 would then need revising first.
+    3. **Retention routine:**
+       - A2: confirm your access route (Supabase dashboard, mailbox, log location);
+       - run and log the first monthly review: the read-only count query in Part B; mailbox (R3/R18),
+         including any old probe notification mail; WhatsApp (R16);
+       - delete `%USERPROFILE%\gridsmith-backups\supabase-production-20261002T125412Z.dump`;
+       - after the first monthly run, delete the R7 baseline JSON beside it;
+       - with Docker running, remove any GS-PROD-003-R1 restore-test container;
+       - record your quarterly and annual review dates.
+    4. Then a legal phase records `RETENTION-ROUTINE-OPERATING` and `HOSTINGER-PROCESSOR-CHAIN`
+       evidence, and you can adopt Privacy 2.2.
+    5. **Sign template 01**, and give **cutover authority** when ready (unchanged).
+- **R6 (7 October 2026): Privacy 2.2 drafted; one owner fact remains** (items 1–3 superseded by R7)
   (`docs/_legal/research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md`).
   - **Done:** your E-1 to E-5 answers and the statutory check are applied.
   - **Remaining owner actions:**

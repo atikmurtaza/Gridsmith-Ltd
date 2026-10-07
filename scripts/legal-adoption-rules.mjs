@@ -127,7 +127,9 @@ export function requiredPrerequisites(slug) {
  */
 export const REQUIRED_ADOPTION_EVIDENCE = {
   // HOSTINGER-PROCESSOR-CHAIN (R6 review M3): removing the §6 marker alone must not unblock adoption.
-  // A signed Gridsmith–account-holder processing agreement, or the account transfer, goes on record.
+  // R7 redefinition: the subscription holder is not a processor merely by holding the plan. The record
+  // must carry the owner's confirmation that nobody else has account or mailbox access, and Gridsmith Ltd
+  // made Hostinger's Customer (or an interim DPA §2.2 arrangement). See PROCESSOR-REGISTER.md.
   privacy: ['RETENTION-ROUTINE-OPERATING', 'HOSTINGER-PROCESSOR-CHAIN'],
 };
 

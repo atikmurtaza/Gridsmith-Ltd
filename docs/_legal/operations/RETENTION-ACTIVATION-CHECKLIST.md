@@ -1,8 +1,15 @@
 # Retention routine — activation checklist
 
-**Status:** prepared at `GS-LEGAL-001-R4` (7 October 2026). **The routine is NOT operating.** No record has
-been deleted, the 63 Production leads have not been classified, and the 2 October 2026 `pg_dump` has not
-been replaced or deleted. **This checklist activates nothing.** Running any step that deletes data needs
+**Status:** prepared at `GS-LEGAL-001-R4` (7 October 2026). **R7 (same day): Part C has run.** All 63
+Production leads were probe records; all 63 were deleted; 0 remain. **The routine is still NOT
+operating:**
+- the first monthly run is not logged;
+- the 2 October 2026 `pg_dump` is not deleted;
+- the quarterly and annual steps are not scheduled.
+
+Record: `../research/GS-LEGAL-001/R7-HOSTINGER-RETENTION.md`. ~~No record has been deleted, the 63
+Production leads have not been classified, and the 2 October 2026 `pg_dump` has not been replaced or
+deleted.~~ **This checklist activates nothing by itself.** Running any step that deletes data needs
 its own owner-authorised phase permitting Production writes.
 
 The schedule (R1–R20), the routine and the cleanup plan are in `RETENTION-SCHEDULE.md`. This checklist
@@ -14,9 +21,9 @@ recorded `prerequisitesMet["RETENTION-ROUTINE-OPERATING"]` evidence.
 
 | # | Item | Owner input needed | Done |
 |---|---|---|---|
-| A1 | **Named operator** for the monthly routine, and a named **deputy** for absence | Name(s) and role | [ ] |
+| A1 | **Named operator** for the monthly routine; a **deputy** for absence is optional (R7; Part G covers absence without one) | **Operator: Atik Murtaza** (director; named by the owner, R7). **Deputy: NONE CURRENTLY APPOINTED.** A deputy is resilience, not a legal requirement (UK GDPR Art. 5(2) requires accountability, not a deputy); Part G covers absence | [x] |
 | A2 | Operator access: Supabase Production (read and delete on `public.leads`, by a route the owner approves), the `contact@gridsmith.uk` mailbox, and the document store holding the log | Confirm access route. **No secret value is recorded here or in the repository** | [ ] |
-| A3 | Owner authority for the **one-off cleanup phase** (Part C), which writes to Production Supabase | A separate phase authorisation | [ ] |
+| A3 | Owner authority for the **one-off cleanup phase** (Part C), which writes to Production Supabase | A separate phase authorisation | [x] R7 owner instruction |
 | A4 | Owner authority for **automation**, if wanted (for example a scheduled database job for R1/R2) | A separate implementation phase; optional | [ ] |
 
 ## B. Frequency and procedure
@@ -28,6 +35,22 @@ From `RETENTION-SCHEDULE.md` §2.
 | **Monthly** (first working day) | 1. Read-only count of leads past R1 (12 months), R2 (spam, 30 days) and R4 (30 days after contract, once moved to R5). 2. Check Part D for exceptions. 3. **Pre-run export** of exactly the rows about to be deleted, held outside the repository until the next monthly run and then deleted (an R17 copy). 4. Delete them in one transaction, asserting the count before commit. 5. Read back the count. 6. Clear the matching notification emails (R3) and other mailbox correspondence (R18), including Sent items and trash, and WhatsApp/text threads past their period (R16). 7. Delete the previous month's pre-run export and any other obsolete `pg_dump` (R17). 8. Write the log line (Part E) | R1, R2, R3, R4, R16, R17, R18 |
 | **Quarterly** | Prune `sent` outbox rows older than 30 days (R10; Preview today, Production once H4-B is promoted). Confirm R8 project material for projects ended over 90 days ago has been returned or deleted, and the final delivered set is in R5 | R8, R10, (R11 once a writer exists) |
 | **Annually** (after the financial year end) | Delete R5 and R6 records whose 6-year period has ended. Review R7 title documents whose reliance has ended plus 6 years. Review R9 | R5, R6, R7, R9 |
+
+**Monthly count (read-only; Supabase SQL editor on Production `dqiutgmxillhsbzgnlsx`).** It returns counts
+only:
+
+```sql
+select
+  count(*) filter (where status <> 'spam' and status <> 'won' and created_at < now() - interval '12 months') as r1_candidates,
+  count(*) filter (where status = 'spam' and created_at < now() - interval '30 days') as r2_candidates,
+  count(*) filter (where status = 'won') as r4_review,  -- delete only once moved to R5 and 30 days after contract
+  count(*) filter (where notes is not null) as notes_to_check_for_later_contact
+from public.leads;
+```
+
+R2 counts from `created_at` because there is no "marked spam" column. That is conservative only if a
+row is marked spam soon after it arrives, so check `notes` for the date it was marked. Before deleting
+any R1 candidate, read its `notes` for a later contact date (Part D item 5).
 
 **Procedure rules:**
 - Count, then delete, then read back. If the read-back count is not the expected count, stop (Part G).
@@ -42,14 +65,14 @@ Run once, before the routine starts, under its own authority (A3). The full step
 
 | # | Step | Done |
 |---|---|---|
-| C1 | Fresh verified export, held outside the repository, marked "pre-cleanup baseline" | [ ] |
-| C2 | Classify each of the 63 rows as one of:<br>(a) became a project;<br>(b) live, under 12 months;<br>(c) expired;<br>(d) spam;<br>(e) synthetic or probe.<br>**The owner confirms (a)** | [ ] |
-| C3 | For (a), move what R5 needs into the client record first | [ ] |
-| C4 | Delete only (c), (d) and (e), in one transaction, with a count assertion | [ ] |
-| C5 | **Read back**: the remaining count, and no (a) or (b) row removed | [ ] |
-| C6 | Delete the matching notification emails (R3) for deleted rows | [ ] |
-| C7 | **Only after C5 passes:** replace **the 2 October 2026 `pg_dump`** (R17; `docs/_shared/GS-PROD-003-R1.md` §7) with a post-cleanup export, or delete it, and record which. Do the same for the C1 baseline once any agreed hold period has ended. Delete **any restore-test database** left from GS-PROD-003-R1's restore test (R17), if one still exists | [ ] |
-| C8 | Write the accountability log entry (Part E) | [ ] |
+| C1 | Fresh verified export, held outside the repository, marked "pre-cleanup baseline" | [x] R7: `supabase-production-leads-pre-cleanup-20261007T140306Z.json`, 63 rows, read back |
+| C2 | Classify each of the 63 rows as one of:<br>(a) became a project;<br>(b) live, under 12 months;<br>(c) expired;<br>(d) spam;<br>(e) synthetic or probe.<br>**The owner confirms (a)** | [x] R7: 63 × (e), 0 × (a)–(d); no (a) to confirm |
+| C3 | For (a), move what R5 needs into the client record first | [x] n/a (0 × (a)) |
+| C4 | Delete only (c), (d) and (e), in one transaction, with a count assertion | [x] R7: 63 deleted, asserted before commit |
+| C5 | **Read back**: the remaining count, and no (a) or (b) row removed | [x] R7: 0 remaining; structure unchanged |
+| C6 | Delete the matching notification emails (R3) for deleted rows | [x] R7: not a personal-data deletion, because any notification for these rows carried only probe values at reserved domains. ~~`notified_at` null on all 63, so none was sent~~ (wrong: the insert path never writes `notified_at`). Any A-08 probe mail in the inbox or Resend is cleared at the first monthly run |
+| C7 | **Only after C5 passes:** replace **the 2 October 2026 `pg_dump`** (R17; `docs/_shared/GS-PROD-003-R1.md` §7) with a post-cleanup export, or delete it, and record which. Do the same for the C1 baseline once any agreed hold period has ended. Delete **any restore-test database** left from GS-PROD-003-R1's restore test (R17), if one still exists | [ ] **Owner:** delete `supabase-production-20261002T125412Z.dump`, which is superseded (R7 §4). Keep the R7 baseline until the first monthly run. With Docker running, remove any restore-test container (`docker ps -a`) |
+| C8 | Write the accountability log entry (Part E) | [x] R7: `%USERPROFILE%\gridsmith-records\RETENTION-LOG.txt` |
 
 ## D. Preservation exceptions — do not delete while any applies
 
@@ -92,7 +115,15 @@ All must be true:
   draft).
 - [x] The statutory periods verified (R6, owner-verified outside this environment; `RETENTION-SCHEDULE.md` §6).
 
-**Still open (R6):** A1 and A2; Part C; the first monthly run; R17. When all four are done, record the
+~~**Still open (R6):** A1 and A2; Part C; the first monthly run; R17.~~
+
+**Still open (R7):**
+- A2 (the operator's access route; the operator already holds it);
+- the first monthly run, logged;
+- R17 (the dump deleted, and the restore container checked);
+- the quarterly and annual dates recorded.
+
+Part C is done except C7. A1 is done. When all four are done, record the
 evidence in the register as `prerequisitesMet["RETENTION-ROUTINE-OPERATING"]` (log reference and date).
 `check:legal:adoption` refuses Privacy at `OWNER_ADOPTED` without it.
 
@@ -108,7 +139,7 @@ operator, and the quarterly and annual steps scheduled, because Privacy §8 also
 | Count assertion fails before commit | **Roll back** the transaction; nothing is deleted. Log it and tell the owner the same day |
 | Read-back count differs after commit | **Stop.** Compare with the run's pre-run export (monthly step 3, or C1 for the cleanup), log the discrepancy, and tell the owner the same day |
 | A row deleted that should have been kept (Part D) | Restore it from the run's pre-run export (monthly step 3, or C1), which exists for exactly this purpose; the provider backup is a secondary source only if P-06 shows one exists. Log it, and tell the owner. If the row was deleted in breach of a hold, treat it as a possible personal-data incident and assess it under Privacy §9 |
-| Operator unavailable on the first working day | The deputy runs it within 5 working days. If neither can, log "missed" and run it the next month. Two missed months in a row go to the owner |
+| Operator unavailable on the first working day | ~~The deputy runs it within 5 working days. If neither can, log "missed" and run it the next month. Two missed months in a row go to the owner~~ **R7 (no deputy appointed):** the operator runs it within the same month. If that is not possible, log "missed" and run it the next month, covering both periods. Two missed months in a row: appoint a deputy or automate step 1 |
 | A provider period changes (Hostinger, Supabase, Resend) | Update R12–R14 and Privacy §8 in the next legal phase |
-| An erasure request arrives | Handle it under Privacy §10 within the statutory time, not on the monthly cycle |
+| An erasure request arrives | Handle it under Privacy §10 within the statutory time, not on the monthly cycle. **R7 (no deputy):** the one-month time limit for rights requests runs during the operator's absence too. Before any planned absence of more than two weeks, arrange cover for the mailbox or appoint a deputy |
 | Uncertain whether an exception applies | Do not delete; ask the owner |

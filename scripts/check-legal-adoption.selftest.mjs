@@ -130,8 +130,13 @@ const consumerDraft = asDraft(consumer);
 if (!DRAFT_DATE.test(consumerDraft)) throw new Error('selftest premise: consumer specimen has no date header at all');
 const adoptedConsumer = toEffective(consumerDraft);
 expect('publishable clean', stateProblems('c', 'PUBLISHABLE', adoptedConsumer, 'summary', '2026-10-07'), null);
-expect('researched may carry markers', stateProblems('p', 'RESEARCHED', privacy, 's', null), null);
-expect('publishable with owner marker', stateProblems('p', 'PUBLISHABLE', toEffective(privacy), 's', '2026-10-07'), /open marker/);
+// GS-LEGAL-001-R7: the real privacy draft lost its last marker, which made these specimens hollow; the
+// two cases went red ("expected open marker, got []"). The marker is now injected, so the specimen stays a
+// subject whatever the draft carries.
+const privacyMarked = privacy.replace(/^## 6\. /m, '[OWNER DECISION: specimen marker]\n\n## 6. ');
+if (!/\[OWNER DECISION/.test(privacyMarked)) throw new Error('selftest premise: privacy specimen carries no marker');
+expect('researched may carry markers', stateProblems('p', 'RESEARCHED', privacyMarked, 's', null), null);
+expect('publishable with owner marker', stateProblems('p', 'PUBLISHABLE', toEffective(privacyMarked), 's', '2026-10-07'), /open marker/);
 expect('verified with TK', stateProblems('c', 'VERIFIED', consumerDraft + '\n[TK: price]\n', 's', null), /\\\[TK/);
 expect('verified with seed summary', stateProblems('c', 'OWNER_REVIEW_REQUIRED', consumerDraft, '[SEED] summary', null), /\\\[SEED/);
 expect('publishable without effective date', stateProblems('c', 'PUBLISHABLE', consumerDraft, 's', '2026-10-07'), /without an "Effective date"/);
@@ -140,7 +145,7 @@ expect('draft date left on', stateProblems('c', 'PUBLISHABLE', adoptedConsumer +
 
 // GS-LEGAL-001-R4 — adoption itself.
 expect('adopted clean', stateProblems('c', 'OWNER_ADOPTED', adoptedConsumer, 's', '2026-10-07'), null);
-expect('adopted with an open marker (the privacy guard)', stateProblems('p', 'OWNER_ADOPTED', toEffective(asDraft(privacy)), 's', '2026-10-07'), /OWNER_ADOPTED but carries an open marker/);
+expect('adopted with an open marker (the privacy guard)', stateProblems('p', 'OWNER_ADOPTED', toEffective(asDraft(privacyMarked)), 's', '2026-10-07'), /OWNER_ADOPTED but carries an open marker/);
 expect('adopted still headed with a draft date', stateProblems('c', 'OWNER_ADOPTED', consumerDraft, 's', '2026-10-07'), /OWNER_ADOPTED but still headed with a draft date/);
 expect('adopted without an effective date', stateProblems('c', 'OWNER_ADOPTED', consumerDraft, 's', '2026-10-07'), /OWNER_ADOPTED without an "Effective date"/);
 const PRE = (ids) => ids.map((id) => ({ id, requirement: id }));

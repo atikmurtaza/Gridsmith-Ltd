@@ -3,8 +3,18 @@
 **Status:** schedule **adopted by the owner** (`GS-LEGAL-001-R3`, decision O-1 option (a) with the R8
 modification, 7 October 2026).
 
-**Routine status: NOT YET OPERATING.** No Production record has been deleted under it. The 63
-Production leads have not been classified. The manual `pg_dump` export has not been replaced.
+**Routine status: NOT YET OPERATING** (R7, 7 October 2026). ~~No Production record has been deleted under
+it. The 63 Production leads have not been classified. The manual `pg_dump` export has not been
+replaced.~~
+- **Done (R7):** the §4 cleanup ran. All 63 Production leads were probe records written by the project's
+  own gates (3–11 September 2026, reserved-domain addresses), class (e). All 63 were deleted after a
+  verified baseline export. Production `public.leads` now holds 0 rows.
+- **Still open:**
+  - the first monthly run is not yet logged (its mailbox and WhatsApp steps are the owner's);
+  - the 2 October `pg_dump` is not yet deleted;
+  - the quarterly and annual steps are not yet scheduled.
+
+Record: `research/GS-LEGAL-001/R7-HOSTINGER-RETENTION.md` §3–§4.
 
 ~~**Privacy §8 is therefore unchanged and keeps its `[OWNER DECISION]` marker.**~~ **R6:** Privacy §8 is
 drafted in version 2.2, but Privacy may not be adopted until §4 has run once and §2 is active (P-1).
@@ -33,7 +43,7 @@ was not.
 | R14 | **Database backups and platform logs** | Supabase | **Logs: the dashboard view window on Free is the last day** (owner dashboard observation and Supabase documentation, R6). Supabase decides how long logs are actually kept. **Provider-side retention is not established:** R5 saw older records returned through the logs API, so one-day deletion cannot be asserted. Request logs carry client-IP header fields, country and user agent. Deleting a lead does not delete them. **Backups:** Free has no automatic backups or PITR; Supabase may keep copies for a period it sets | — | Described in Privacy 2.2 §6 and §8 without a deletion claim |
 | R15 | `gs_consent` cookie | Visitor's browser | **365 days** (`lib/consent/state.ts`) | Set on *Got it* | Expires in the browser |
 | R16 | **WhatsApp and text messages**, including WhatsApp cloud chat backups | Owner's phone; backup provider | As R1 for an enquiry; as R5 where part of a project record | As R1/R5 | Delete the chat; it leaves the backup when the backup rotates |
-| R17 | **Manual database exports (`pg_dump`)** and any restore-test database | Owner's machine, outside the repository (`GS-PROD-003-R1.md` §7, holding all 63 leads) | **Replace or delete obsolete exports after each authorised deletion run**, so deleted records do not survive indefinitely in manual copies. Delete any restore-test database when the test ends | Each deletion run | Replace or delete. **Not before the §4 cleanup phase** (owner instruction, R3) |
+| R17 | **Manual database exports (`pg_dump`)** and any restore-test database | Owner's machine, outside the repository (`GS-PROD-003-R1.md` §7, holding all 63 leads) | **Replace or delete obsolete exports after each authorised deletion run**, so deleted records do not survive indefinitely in manual copies. Delete any restore-test database when the test ends | Each deletion run | Replace or delete. **Not before the §4 cleanup phase** (owner instruction, R3). **R7:** the cleanup has run. The 2 October dump is superseded (its rows are a subset of the R7 baseline; the schema is in migrations 0001–0004), so the owner deletes it. The R7 baseline is kept until the first monthly run, then deleted |
 | R18 | **Other mailbox correspondence** (direct email enquiries, Sent items) | `contact@gridsmith.uk` | As R1 for an enquiry; as R5 for a project | As R1/R5 | Delete, including Sent and trash |
 | R19 | **Freelancer review text** shown on the site | Sanity CMS | While displayed, and until removal on request (Privacy §2A) | — | Delete the document |
 | R20 | `public.events`, `public.sample_grants` | Supabase | **No data held** (0 rows on 2 Oct; no writer since analytics were removed) | — | If a writer is ever added, schedule it first |
@@ -79,7 +89,7 @@ The operational checklist for this (operator, procedure, logging, exceptions, es
 
    ~~The Privacy version then moves to 2.2.~~ (R6: done as a draft.)
 
-## 4. The later controlled retention-cleanup phase (prepared; not run)
+## 4. The later controlled retention-cleanup phase (prepared R3; **run R7**, 7 October 2026: 63 class (e), 0 of every other class)
 
 **Authority needed:** an owner-authorised phase that permits a Production Supabase write. R3 authorises
 none.
