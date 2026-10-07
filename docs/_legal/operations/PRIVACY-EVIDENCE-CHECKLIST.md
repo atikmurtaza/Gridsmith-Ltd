@@ -11,6 +11,13 @@ Source: the twelve checks in `../research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIE
 so that each can be done without further explanation. What changes in the policy once they are answered
 is in `../research/GS-LEGAL-001/R4-PRIVACY-2.2-CHANGE-PLAN.md`.
 
+## R10 status (8 October 2026) — supersedes the R9 status below
+
+- **Privacy 2.3** no longer claims reliance on Hostinger's safeguards. **No owner evidence item remains
+  for adoption.**
+- `HOSTINGER-PROCESSOR-CHAIN` is a publication prerequisite: the drafted hosting processing arrangement
+  must be executed before publication (`../research/GS-LEGAL-001/R10-HOSTING-CLOSEOUT-PRIVACY-PACKAGE.md`).
+
 ## R9 status (7 October 2026) — supersedes the R8 status below
 
 - **Hostinger Terms of Service read directly** (revised 2026-09-29):

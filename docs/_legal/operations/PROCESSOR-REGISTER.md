@@ -25,8 +25,19 @@ category. Evidence references are to `../research/GS-LEGAL-001/R5-PRIVACY-EVIDEN
 - DPA Appendix 1 treats authorised users as data subjects.
 - So the current terms alone do not evidence coverage with regard to Gridsmith Ltd.
 
-**Minimum steps (owner's choice; no migration):**
-- **A. Account information:** first check what it currently lists. If it is not Gridsmith Ltd, the Account owner corrects it to list Gridsmith Ltd, with the Terms accepted on Gridsmith Ltd's behalf (needs the current owner's cooperation; Gridsmith Ltd takes on the Terms' obligations) ("correctly indicate
+**R10 closeout:**
+- **Owner decision:** the existing account stays as it is: no migration, transfer or Account-information
+  ownership change, so route A is excluded.
+- **The remaining step is route B:** the unexecuted draft `HOSTING-PROCESSING-ARRANGEMENT-DRAFT.md`,
+  signed by Gridsmith Ltd and the Account owner. If that owner is outside the UK, a UK transfer
+  mechanism is completed alongside it.
+- **Then:** Privacy §6/§7 are reviewed before publication, and `HOSTINGER-PROCESSOR-CHAIN` is recorded.
+  It is now a **publication prerequisite**, not adoption evidence.
+- The gap affects current processing on the account (the mailbox, and anything served from it) until
+  signature. The owner accepts that risk for that period. **That is not compliance.**
+
+~~**Minimum steps (owner's choice; no migration):**~~ (R9 options kept below as history)
+- **A. Account information (excluded at R10 by owner decision):** first check what it currently lists. If it is not Gridsmith Ltd, the Account owner corrects it to list Gridsmith Ltd, with the Terms accepted on Gridsmith Ltd's behalf (needs the current owner's cooperation; Gridsmith Ltd takes on the Terms' obligations) ("correctly indicate
   ownership", ToS §4). Privacy is unchanged. **First check that the Account holds only Gridsmith's sites,
   data and mail.**
 - **B. Documented chain:** a short written Art. 28(3) arrangement, held outside the repository, between

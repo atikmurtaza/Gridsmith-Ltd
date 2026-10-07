@@ -45,7 +45,18 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
   OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
   enforceability.
-- **R9 (7 October 2026): one hosting documentation step; retention routine operating**
+- **R10 (8 October 2026): Privacy 2.3 ready for your adoption; one contractual step before publication**
+  (`docs/_legal/research/GS-LEGAL-001/R10-HOSTING-CLOSEOUT-PRIVACY-PACKAGE.md`). **This supersedes R9's
+  remaining action.**
+  1. **Adopt Privacy 2.3** if you agree, using the statement in the R10 record §5.
+  2. **Before publication:**
+     - sign `docs/_legal/operations/HOSTING-PROCESSING-ARRANGEMENT-DRAFT.md` with the Account owner,
+       completing the counterparty's details only in the signed copy, kept outside the repository;
+     - add a UK transfer mechanism if that owner is outside the UK.
+
+     A short legal phase then records `HOSTINGER-PROCESSOR-CHAIN` and reviews Privacy §6/§7.
+  3. Cutover authority and H4-B promotion, when ready (unchanged).
+- **R9 (7 October 2026): one hosting documentation step; retention routine operating** (remaining action superseded by R10)
   (`docs/_legal/research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md`). **This supersedes R8 items 1–2.**
   - **Done:**
     - dump deletion confirmed;

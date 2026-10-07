@@ -109,7 +109,10 @@ export const REQUIRED_PREREQUISITES = {
   cookies: ['A-2-PRODUCTION-COOKIE-RETEST'],
   // Privacy §6/§7 describe the Supabase Edge Function intake, which runs only on Preview until H4-B
   // is promoted; cutover authority alone does not make that true (R4 review M5).
-  privacy: ['H4-B-INTAKE-PROMOTED'],
+  // HOSTINGER-PROCESSOR-CHAIN (GS-LEGAL-001-R10): moved here from REQUIRED_ADOPTION_EVIDENCE. Privacy 2.3
+  // no longer states reliance on Hostinger's safeguards, so the adopted text does not depend on it, but the
+  // Art. 28(3) arrangement for Hostinger must be evidenced before the policy is published.
+  privacy: ['H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN'],
 };
 
 /** The prerequisites an adopted entry must list. Privacy does not list itself (R4 review L1). */
@@ -121,18 +124,15 @@ export function requiredPrerequisites(slug) {
 /**
  * Operational conditions an adopted text describes as already happening (GS-LEGAL-001-R6). Unlike a
  * publication prerequisite, which is met at PUBLISHABLE, these need recorded evidence before the owner
- * can adopt. Privacy 2.2 §8 describes the retention reviews, which is true only once the routine operates
- * (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md` Part F). Its §6 describes the Hostinger
- * arrangement, which needs the processor chain documented (`docs/_legal/operations/PROCESSOR-REGISTER.md`).
+ * can adopt. Privacy §8 describes the retention reviews, which is true only once the routine operates
+ * (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md` Part F). The Hostinger processor chain
+ * (`docs/_legal/operations/PROCESSOR-REGISTER.md`) is a publication prerequisite from R10.
  */
 export const REQUIRED_ADOPTION_EVIDENCE = {
-  // HOSTINGER-PROCESSOR-CHAIN (R6 review M3): removing the §6 marker alone must not unblock adoption.
-  // R8 redefinition: the key verifies the real processing arrangement (seven elements in
-  // docs/_legal/research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md §2.3), including Gridsmith Ltd bound
-  // by Hostinger's terms (UK GDPR Art. 28(3)); no inter-company agreement or account history is required
-  // (R9 route B is one optional route). R9: element 7
-  // is an Art. 28(3) arrangement with regard to Gridsmith Ltd, with no migration (R9 record section 3.4).
-  privacy: ['RETENTION-ROUTINE-OPERATING', 'HOSTINGER-PROCESSOR-CHAIN'],
+  // HOSTINGER-PROCESSOR-CHAIN was adoption evidence from R6 to R9 and is a publication prerequisite from R10
+  // (REQUIRED_PREREQUISITES.privacy): Privacy 2.3 §7 describes Hostinger's terms without claiming reliance,
+  // so adoption no longer depends on it. Publication still does.
+  privacy: ['RETENTION-ROUTINE-OPERATING'],
 };
 
 /** sha256 hex, the form `ownerAdoptedSha256` records. */

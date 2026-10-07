@@ -4,6 +4,12 @@ Handoff for a fresh Claude Code cloud session, written 7 October 2026. Branch
 `staging/gs-legal-001`; the GS-LEGAL-001 work is commit `53cc4f67`, and this file is the commit
 after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` in this folder.
 
+## R10 status (8 October 2026) — Claude Desktop
+
+**GS-LEGAL-001-R10 — Privacy 2.3 ready for owner adoption; hosting infrastructure decision closed; Art. 28 chain open.** Record:
+`R10-HOSTING-CLOSEOUT-PRIVACY-PACKAGE.md`. Next: the owner's adoption; then legal site integration.
+`HOSTINGER-PROCESSOR-CHAIN` is a publication prerequisite (sign the drafted arrangement).
+
 ## R9 status (7 October 2026) — Claude Desktop
 
 **GS-LEGAL-001-R9 — retention routine operating; one hosting documentation step.** Record:

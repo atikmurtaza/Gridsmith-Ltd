@@ -1,3 +1,11 @@
+> **GS-LEGAL-001-R10 (8 October 2026): READY FOR OWNER PRIVACY ADOPTION — Privacy 2.3 (draft `d388e844…`), not adopted or published; one Art. 28 contractual step before publication.** Record: `docs/_legal/research/GS-LEGAL-001/R10-HOSTING-CLOSEOUT-PRIVACY-PACKAGE.md`.
+>
+> - **Closed:** retention (R9); hosting infrastructure (owner: the existing multi-domain Hostinger Business account; no new account, domain, plan, VPS, migration, transfer or ownership change; Gridsmith's admin department manages it).
+> - **Privacy 2.3:** one §7 sentence. Hostinger's terms "set out the international transfer safeguards that apply to its processing" instead of Gridsmith claiming to rely on them, which was not established. A-1: only `seed-legal-privacy` reseeded in development (2.3). Adopted sha256 if effective 8 Oct 2026: `80e67b52…`.
+> - **Gate:** `HOSTINGER-PROCESSOR-CHAIN` moved from adoption evidence to a Privacy **publication prerequisite** (selftest 105; both mutants red). Still unmet; not marked satisfied; the gap affects current processing on the account (the mailbox) until signature; the owner accepts that risk; this is not compliance.
+> - **The one Art. 28 step:** sign the unexecuted `docs/_legal/operations/HOSTING-PROCESSING-ARRANGEMENT-DRAFT.md` (the Account owner as processor appointing Hostinger under DPA §2.2), plus a UK transfer mechanism if that owner is outside the UK; then review Privacy §6/§7 and record the key before publication.
+> - **Next work after adoption:** legal site integration and production readiness under their own gates. H4-B, H4-H, Freelancer permission, GS-X002 and Path Finder unchanged. No R11 Hostinger re-analysis. Untouched: Hostinger, gridsmith.uk, DNS, Production Sanity/Supabase/Edge, `main`.
+
 > **GS-LEGAL-001-R9 (7 October 2026): HOSTING DOCUMENTATION REQUIRED — retention routine operating; Privacy 2.2 byte-identical (`2404a1cf…`), not adopted or published.** Record: `docs/_legal/research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md`.
 >
 > - **Retention:** the owner permanently deleted the 2 Oct dump (attestation; path and Recycle Bin item absent, read-only). Leads 0. **`RETENTION-ROUTINE-OPERATING` recorded** in the register's privacy `prerequisitesMet`. Next runs: 2 Nov 2026 / 4 Jan 2027 / 1 Mar 2027. R7 baseline kept until 2 Nov.

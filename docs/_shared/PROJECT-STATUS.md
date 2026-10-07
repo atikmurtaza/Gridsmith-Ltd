@@ -1,3 +1,10 @@
+> **GS-LEGAL-001-R10 (8 October 2026) — Privacy 2.3 ready for owner adoption; hosting infrastructure decision closed; Art. 28 chain open:**
+> - **Closed:** retention; the hosting infrastructure decision (existing Hostinger account, no migration).
+> - **Privacy 2.3:** one §7 sentence corrected; draft sha256 `d388e844…`; awaits the owner's explicit adoption.
+> - **Open, publication-stage only:** `HOSTINGER-PROCESSOR-CHAIN` (sign the drafted hosting processing arrangement), `H4-B-INTAKE-PROMOTED`, `CUTOVER-AUTHORITY`.
+>
+> Record: `docs/_legal/research/GS-LEGAL-001/R10-HOSTING-CLOSEOUT-PRIVACY-PACKAGE.md`.
+
 > **GS-LEGAL-001-R9 (7 October 2026) — hosting documentation required; retention routine operating:**
 > - **Retention:** `RETENTION-ROUTINE-OPERATING` evidenced (dump permanently deleted by the owner; leads 0; first review logged; cadence set).
 > - **Hostinger:** existing infrastructure kept (owner decision). Gridsmith need not be the named customer, but Hostinger's Terms §4 make the Account-information owner the owner of the Account's data. So `HOSTINGER-PROCESSOR-CHAIN` needs one documentary step: (A) the Account information lists Gridsmith Ltd, or (B) a documented processor chain. No migration or purchase.

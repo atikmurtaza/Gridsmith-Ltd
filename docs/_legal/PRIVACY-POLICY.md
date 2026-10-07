@@ -1,7 +1,7 @@
 # Privacy Policy
 
-**Version 2.2**\
-**Draft date: 7 October 2026**
+**Version 2.3**\
+**Draft date: 8 October 2026**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
 Company number: **17050842**\
@@ -109,7 +109,7 @@ Enquiries submitted through our forms are stored in Ireland, and our website is 
 
 The servers that receive a form submission run close to the person sending it, so a submission made from outside the UK or Europe may be processed briefly in that region before it is stored. Our email-notification provider, Resend, processes the notification and keeps its delivery records in the United States. Our hosting provider's content delivery network may serve the website from locations outside the UK and Europe.
 
-For transfers outside the UK and the European Economic Area, we rely on the safeguards in each provider's data processing terms: for Supabase, the UK International Data Transfer Addendum to the EU standard contractual clauses; for Resend and Hostinger, the international transfer safeguards set out in their data processing agreements. You can ask us for details of these safeguards at contact@gridsmith.uk.
+For transfers outside the UK and the European Economic Area, we rely on the safeguards in our providers' data processing terms: for Supabase, the UK International Data Transfer Addendum to the EU standard contractual clauses; for Resend, the international transfer safeguards set out in its data processing agreement. Hostinger's data processing terms for the hosting account through which we receive its service set out the international transfer safeguards that apply to its processing, including through its content delivery network. You can ask us for details of these safeguards at contact@gridsmith.uk.
 
 ## 8. How long we keep personal data
 
