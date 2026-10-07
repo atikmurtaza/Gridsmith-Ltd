@@ -85,19 +85,17 @@ All must be true:
 - [ ] Part C run once, with its log entry (C8).
 - [ ] The first monthly run (Part B) logged.
 - [ ] R17 handled: the 2 October 2026 `pg_dump` replaced or deleted, and any restore-test database deleted (C7).
-- [ ] R12–R14 set (`PRIVACY-EVIDENCE-CHECKLIST.md`, R5 status). R5 progress:
-  - **R14 backups:** no Free-plan backups or PITR (VERIFIED_PROVIDER). Provider-held copies are
-    PARTIALLY_VERIFIED: a 2024 note says "currently" up to 7 daily. The question is on E-4.
-  - **R14 logs:** still open, needs E-4. Logs carrying client-IP header fields are held ≥49 days, so the
-    "1 day" figure is not usable as a retention period.
-  - **R13:** open, needs E-3.
-  - **R12:** open, needs E-2. E-5 is optional; without it Privacy uses criteria.
-- [ ] Privacy 2.2 §8 says that deleting an enquiry does not shorten providers' own logs and backups
-  (R5: Supabase request logs record IP addresses and outlive lead deletion, and this routine cannot
-  reach them on the Free plan).
-- [ ] The statutory periods re-read at source (`RETENTION-SCHEDULE.md` §6).
+- [x] R12–R14 set (R6). R12: by criteria. R13: Resend 30 days, backups 7 days. R14: Supabase one-day
+  customer window, provider-side retention not asserted.
+- [x] Privacy 2.2 §8 says that deleting an enquiry does not shorten providers' own logs and backups (R6
+  draft).
+- [x] The statutory periods verified (R6, owner-verified outside this environment; `RETENTION-SCHEDULE.md` §6).
 
-Only then is the Privacy 2.2 §8 wording applied. **This checklist must not be marked complete to satisfy
+**Still open (R6):** A1 and A2; Part C; the first monthly run; R17. When all four are done, record the
+evidence in the register as `prerequisitesMet["RETENTION-ROUTINE-OPERATING"]` (log reference and date).
+`check:legal:adoption` refuses Privacy at `OWNER_ADOPTED` without it.
+
+The Privacy 2.2 §8 wording is drafted (R6) but may not be adopted until then. **This checklist must not be marked complete to satisfy
 a gate.** `check:legal:adoption` refuses Privacy at `OWNER_ADOPTED` while its §8 marker is open, and the
 marker comes out only when this part is true.
 

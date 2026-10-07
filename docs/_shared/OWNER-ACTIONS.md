@@ -45,6 +45,21 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
   OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
   enforceability.
+- **R6 (7 October 2026): Privacy 2.2 drafted; one owner fact remains**
+  (`docs/_legal/research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md`).
+  - **Done:** your E-1 to E-5 answers and the statutory check are applied.
+  - **Remaining owner actions:**
+    1. **Answer:** "Can the company that owns the Hostinger subscription, or its staff, access
+       Gridsmith's hosting files, mailbox, logs or other account data?"
+    2. **Put in place** either a written data processing agreement between Gridsmith Ltd and that
+       company, or a transfer of the hosting account to Gridsmith Ltd
+       (`docs/_legal/operations/PROCESSOR-REGISTER.md`).
+    3. **Authorise the retention cleanup phase.** Privacy 2.2 cannot be adopted until the routine
+       operates.
+    4. **Sign template 01** (unchanged).
+    5. **Give cutover authority** when ready.
+  - **No longer needed:** E-1 to E-5 as R5 framed them; the Supabase support ticket is optional.
+  - Earlier items below are superseded where they conflict.
 - **R5 (7 October 2026): Privacy evidence reduced; owner IP position recorded**
   (`docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`).
   - **Owner IP decision:** employee ownership is not relied on for Atik Murtaza's work. Template 01 is

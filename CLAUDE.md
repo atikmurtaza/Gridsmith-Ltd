@@ -1,3 +1,22 @@
+> **GS-LEGAL-001-R6 (7 October 2026): OWNER FACT REQUIRED — Privacy 2.2 drafted, not adopted or published.** Record: `docs/_legal/research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md`.
+>
+> - **Owner evidence applied:**
+>   - E-1: the Hostinger subscription is held by another business; Gridsmith is not Hostinger's contracting customer.
+>   - E-2: website hosted in France; email hosting through Hostinger, product not named.
+>   - E-3: Resend Free, 30 days, backups 7 days.
+>   - E-4: Supabase customer-accessible log window is the last day; provider-side retention not established.
+>   - E-5: criteria wording.
+>   - Statute (s.388, HMRC 6 years, LA s.5) verified outside this environment.
+> - **Privacy 2.2** (`docs/_legal/PRIVACY-POLICY.md`):
+>   - two 2.1 markers resolved; one `[OWNER DECISION]` marker remains on the Hostinger account-holder arrangement;
+>   - the only owner fact is whether that business or its staff can access Gridsmith account data, plus a written processing agreement or an account transfer (`docs/_legal/operations/PROCESSOR-REGISTER.md`);
+>   - `OWNER_REVIEW_REQUIRED`, no adoption fields.
+> - **Gate:** adoption also needs recorded `RETENTION-ROUTINE-OPERATING` evidence (selftest 102). The routine is not operating.
+> - **Publication prerequisites:** `H4-B-INTAKE-PROMOTED` and `CUTOVER-AUTHORITY`.
+> - **Adopted documents:** fingerprints unchanged.
+> - **CI:** `check:legal:parity` against the development dataset is expected red until A-1 (deferred); the gate is unchanged.
+> - **Untouched:** no Hostinger, gridsmith.uk, DNS, Production Sanity/Supabase/Edge or `main` change; no lead or `pg_dump` deleted; H4-H not begun.
+
 > **GS-LEGAL-001-R5 (7 October 2026): PRIVACY EVIDENCE REDUCED — OWNER CHECKS REMAIN; nothing applied, adopted, published or deployed.** Record: `docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`.
 >
 > - **Evidence for checks 1–12:**

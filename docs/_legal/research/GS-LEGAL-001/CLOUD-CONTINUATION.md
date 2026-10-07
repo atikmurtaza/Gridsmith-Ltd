@@ -4,6 +4,21 @@ Handoff for a fresh Claude Code cloud session, written 7 October 2026. Branch
 `staging/gs-legal-001`; the GS-LEGAL-001 work is commit `53cc4f67`, and this file is the commit
 after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` in this folder.
 
+## R6 status (7 October 2026)
+
+**GS-LEGAL-001-R6 — Privacy 2.2 drafted; owner fact required.** Record: `R6-PRIVACY-2.2-DRAFT.md`.
+- **Owner evidence:** E-1 to E-5 applied; statute verified.
+- **Privacy 2.2:** in `docs/_legal/PRIVACY-POLICY.md` with one marker (the Hostinger account-holder
+  arrangement); `OWNER_REVIEW_REQUIRED`.
+- **Gate:** adoption needs `RETENTION-ROUTINE-OPERATING` evidence.
+
+**Next:**
+1. The owner answers the access question and puts in place the processing agreement or the account
+   transfer (`docs/_legal/operations/PROCESSOR-REGISTER.md`).
+2. A separately authorised phase runs the retention cleanup and the first monthly review.
+3. A legal phase removes the marker, re-verifies, and the owner adopts 2.2.
+4. Publication follows H4-B promotion and cutover authority.
+
 ## R5 status (7 October 2026)
 
 **GS-LEGAL-001-R5 — Privacy evidence reduced; owner checks remain.** Record: `R5-PRIVACY-EVIDENCE.md`;

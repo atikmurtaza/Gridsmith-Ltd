@@ -118,6 +118,16 @@ export function requiredPrerequisites(slug) {
   return [...all, ...(REQUIRED_PREREQUISITES[slug] ?? [])];
 }
 
+/**
+ * Operational conditions an adopted text describes as already happening (GS-LEGAL-001-R6). Unlike a
+ * publication prerequisite, which is met at PUBLISHABLE, these need recorded evidence before the owner
+ * can adopt: Privacy 2.2 §8 says records are deleted at monthly reviews, which is true only once the
+ * retention routine operates (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md` Part F).
+ */
+export const REQUIRED_ADOPTION_EVIDENCE = {
+  privacy: ['RETENTION-ROUTINE-OPERATING'],
+};
+
 /** sha256 hex, the form `ownerAdoptedSha256` records. */
 const SHA256 = /^[0-9a-f]{64}$/;
 
@@ -154,6 +164,12 @@ export function registerProblems(slug, entry, draftVersion, expectedDraft, conte
       p.push(`${slug}: ${entry.state} without an adoptionAuthority recording the owner's instruction`);
     }
     const listed = new Set((entry.publicationPrerequisites ?? []).map((x) => x.id));
+    const met = entry.prerequisitesMet ?? {};
+    for (const id of REQUIRED_ADOPTION_EVIDENCE[slug] ?? []) {
+      if (typeof met[id] !== 'string' || !met[id].trim()) {
+        p.push(`${slug}: ${entry.state} without recorded evidence for ${id}, an operational condition the adopted text describes as true`);
+      }
+    }
     for (const id of requiredPrerequisites(slug)) {
       if (!listed.has(id)) p.push(`${slug}: adopted without the publication prerequisite ${id}`);
     }

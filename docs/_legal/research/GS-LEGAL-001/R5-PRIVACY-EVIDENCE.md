@@ -241,3 +241,19 @@ statutory record + responsive and legal checks", on **one of its 18 server-run c
 - **Not a regression.** It is the A-1 dependency, and it clears only when A-1 runs in a trusted
   environment with existing development credentials. The gate is not altered or bypassed.
 - **Repository parity:** the draft-mode served run (real Next app, seeds answered locally) is green.
+
+## 10. R6 addendum (7 October 2026)
+
+R6 applied the owner's evidence. Nothing above is rewritten; these refinements govern where they differ.
+See `R6-PRIVACY-2.2-DRAFT.md` §2–§5.
+- **E-1:** the Hostinger subscription is held by another business (bought 2024, four years, prepaid to
+  2028), so Gridsmith Ltd is not Hostinger's contracting customer. The intermediary analysis is in R6 §3.
+- **E-2:** the website is hosted in France. The mailbox is email hosting supplied through Hostinger;
+  no product is named.
+- **E-3:** Resend Free; 30 days; backups 7 days. Closed.
+- **E-4:** the customer-accessible log window is the **last day** (owner dashboard and Supabase
+  documentation). §3.3's API observation is not evidence of what a dashboard user sees. Provider-side
+  retention is **not established**: one-day deletion cannot be asserted, and neither can 49 days.
+- **E-5:** non-blocking; criteria wording.
+- **Statute:** HMRC, CA 2006 s.388 and LA 1980 s.5 verified by the owner outside this environment.
+- **Resend DPA:** incorporated into the customer agreement; Plus Five Five, Inc.

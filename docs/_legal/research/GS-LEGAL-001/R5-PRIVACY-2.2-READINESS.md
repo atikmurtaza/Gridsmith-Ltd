@@ -1,5 +1,7 @@
 # Privacy Policy 2.2 — clause readiness (R5; NOT applied)
 
+> **Superseded by the Privacy 2.2 draft in `docs/_legal/PRIVACY-POLICY.md` (GS-LEGAL-001-R6).** The record of what changed and why is `R6-PRIVACY-2.2-DRAFT.md` §6. Kept as history.
+
 **Phase:** `GS-LEGAL-001-R5`, 7 October 2026. **Nothing here is applied.**
 `docs/_legal/PRIVACY-POLICY.md` remains **2.1**: Draft date 6 October 2026, three `[OWNER DECISION]`
 markers, `OWNER_REVIEW_REQUIRED`, no adoption fields.

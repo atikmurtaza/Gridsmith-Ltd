@@ -11,7 +11,22 @@ Source: the twelve checks in `../research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIE
 so that each can be done without further explanation. What changes in the policy once they are answered
 is in `../research/GS-LEGAL-001/R4-PRIVACY-2.2-CHANGE-PLAN.md`.
 
-## R5 status (7 October 2026) — read this first
+## R6 status (7 October 2026) — supersedes the R5 status below
+
+The owner's evidence closes E-1 to E-5 (`../research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md` §2):
+
+| Check | Result |
+|---|---|
+| **E-1** Hostinger | The subscription is held by **another business**, not Gridsmith Ltd. **This opens one owner fact:** whether that business or its staff can access Gridsmith account data, plus a processor arrangement (`PROCESSOR-REGISTER.md`) |
+| **E-2** Hostinger | Website: France. Email hosting through Hostinger; product not named |
+| **E-3** Resend | Free plan; 30 days; backups 7 days |
+| **E-4** Supabase | Customer-accessible window: the last day. A support ticket is **optional** (provider-side retention only) |
+| **E-5** Hostinger logs | Non-blocking; criteria wording |
+
+**Only remaining owner item:** answer the access question and put in place either the processing
+agreement or the account transfer (`PROCESSOR-REGISTER.md`, *Open action*).
+
+## R5 status (7 October 2026) — history
 
 Evidence: `../research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`; clause plan:
 `../research/GS-LEGAL-001/R5-PRIVACY-2.2-READINESS.md`.

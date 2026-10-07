@@ -1,3 +1,11 @@
+> **GS-LEGAL-001-R6 (7 October 2026) — Privacy 2.2 drafted; owner fact required:**
+> - **Owner fact:** one marker remains, on the Hostinger account-holder arrangement (access question plus a processing agreement or an account transfer).
+> - **Adoption:** also needs the retention routine operating.
+> - **Publication:** needs H4-B promoted and cutover authority.
+> - **Untouched:** no production change.
+>
+> Record: `docs/_legal/research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md`.
+
 > **GS-LEGAL-001-R5 (7 October 2026) — Privacy evidence reduced; owner checks remain:**
 > - **Supabase:** the contract is verified; its request logs carry client-IP fields and are held ≥49 days.
 > - **Owner checks:** four remain (E-1 to E-4).

@@ -162,7 +162,11 @@ expect('adopted with a malformed hash', registerProblems('x', { ...adoptedEntry,
 expect('hash recorded before adoption', registerProblems('x', { ...entry, ownerAdoptedSha256: SHA }, '1.0', 'docs/_legal/X.md', SHA), /only the owner's adoption/);
 // R4 review M5/L1 — privacy, when adopted, needs the H4-B intake promoted and does not list itself.
 expect('privacy adopted without the H4-B prerequisite', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY']) }, '1.0', 'docs/_legal/X.md', SHA), /H4-B-INTAKE-PROMOTED/);
-expect('privacy adopted with its own prerequisites clean', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED']) }, '1.0', 'docs/_legal/X.md', SHA), null);
+expect('privacy adopted with its own prerequisites clean', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'cleanup log, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
+// R6 — Privacy 2.2 describes the retention routine as operating, so adoption needs evidence that it does.
+expect('privacy adopted while the retention routine is not operating', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED']) }, '1.0', 'docs/_legal/X.md', SHA), /without recorded evidence for RETENTION-ROUTINE-OPERATING/);
+expect('privacy adopted with empty retention evidence', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': '  ' } }, '1.0', 'docs/_legal/X.md', SHA), /without recorded evidence for RETENTION-ROUTINE-OPERATING/);
+expect('other documents need no retention evidence', registerProblems('terms', adoptedEntry, '1.0', 'docs/_legal/X.md', SHA), null);
 
 // danglingReferences — lists and sub-clauses.
 expect('reference list', danglingReferences('## 1. A\n## 2. B\nSee sections 1, 2 and 7.\n'), /^7$/);

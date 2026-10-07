@@ -330,3 +330,15 @@ Privacy evidence sweep; the record is `R5-PRIVACY-EVIDENCE.md`.
 - **Owner IP decision:** template 01 regardless; template 02 only under a verified contract.
 - **A-1:** deferred.
 - **Unchanged:** no state, version or adopted text.
+
+## 15. GS-LEGAL-001-R6 (7 October 2026)
+
+The owner's evidence is applied and Privacy 2.2 is drafted; the record is `R6-PRIVACY-2.2-DRAFT.md`.
+- **Hostinger:** the subscription is held by another business; the intermediary analysis is in R6 §3.
+- **Supabase:** the customer-accessible log window is the last day; provider-side retention is not
+  established.
+- **Resend:** 30 days, backups 7 days.
+- **Statute:** verified outside this environment.
+- **Privacy 2.2:** one marker remains (the Hostinger arrangement); adoption also needs
+  `RETENTION-ROUTINE-OPERATING`.
+- **Adopted documents:** unchanged.
