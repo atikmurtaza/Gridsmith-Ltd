@@ -33,7 +33,7 @@ on 6 October 2026 (`research/GS-LEGAL-001/A-consumer-law.md` §6–§7), and on 
 re-read at source in R2 or R3, because primary legislation was blocked in the cloud environment.
 
 Square brackets are fields filled per project. **No price, percentage, period or figure here is a policy
-value**, except the two owner defaults above (30-day validity, no VAT charged).
+value**, except the two owner defaults above (30-day validity, no VAT charged on our fees).
 
 ## 1. The sequence
 
@@ -52,19 +52,22 @@ value**, except the two owner defaults above (30-day validity, no VAT charged).
 1. **Deferred payments** (RAO art. 60F(2): no more than twelve payments, within the 12 months
    beginning with the date of the contract, with no interest or other charges). This applies to a
    consumer, and to a business client who is an individual, partnership or other unincorporated body.
-   - **Consumers: schedule every payment at or before the start of the work it pays for** (in advance
-     or on acceptance of each stage). Then no consumer payment is deferred, and neither a slipped
-     timetable (Cons 9) nor a balancing payment (Cons 7, 8) can create deferred credit. If a timetable
-     moves past month 11, invoice the remaining stages before they start. A quotation must never set a
+   - **Consumers: schedule every payment at or before the start of the work it pays for** (in full on
+     acceptance, or for each stage before that stage starts). Then no consumer payment is deferred, and
+     a slipped timetable (Cons 9) cannot create deferred credit. A balancing payment under Cons 7 or 8
+     can arise only for supplier costs Gridsmith has paid, so collect any agreed supplier cost from the
+     client before Gridsmith pays it. A quotation must never set a
      schedule that breaks Cons 4: Cons 1 lets the quotation prevail, so the quotation is where the limit
      is kept.
-   - **Business clients who are individuals or unincorporated bodies:** Bus 2 and Bus 5 apply. No payment
-     for work already supplied may fall due later than the day before the first anniversary of the
-     contract date, and never as a thirteenth such payment; anything that would is payable before the
-     work starts (Bus 2).
-   - **Counting:** G read art. 60F to count only payments made after supply. The conservative
-     alternative, which this rule also satisfies for consumers, is to keep the total number of scheduled
-     payments at twelve or fewer.
+   - **Business clients who are individuals or unincorporated bodies:** Bus 5 applies. No payment for
+     work already supplied may fall due later than the day before the first anniversary of the contract
+     date, and never as a thirteenth such payment. Bus 2's automatic conversion (payment due before
+     further work from the end of month 11) applies only where the Scope states no payment schedule. A
+     Scope that states one must itself keep within Bus 5; Bus 1 lets a Scope change a clause only by
+     naming it.
+   - **Counting:** G read art. 60F to count only payments made after supply. Where no payment is
+     deferred there is no credit, so the count does not arise. Where some are deferred, the conservative
+     course is to keep the total number of scheduled payments at twelve or fewer.
 
    Whether a contingent termination payment counts under art. 60F(2) is **UNVERIFIED**, which is why
    the schedule is planned to avoid the question. Never add interest or a fee for paying later. Whether
@@ -88,8 +91,8 @@ value**, except the two owner defaults above (30-day validity, no VAT charged).
 3. **Supplier costs in the 14 days.** Commit no consumer to a supplier cost that cannot be cancelled or
    refunded during the cancellation period (Cons 4).
 4. **Payment received before acceptance.** Hold it as refundable. Do not treat it as acceptance
-   (Cons 3). Ask for the acceptance sentence, and refund the payment in full if no valid acceptance
-   follows.
+   (Cons 3). Ask for the acceptance sentence, and if no valid acceptance follows, refund the payment in
+   full promptly and in any case within 14 days.
 5. **Notes are not template text.** Anything in round brackets beginning "default" or "plan", and every
    square-bracket field, is removed or filled before a template is sent.
 
@@ -139,7 +142,7 @@ Your contract will be on our Client Terms for Consumers, version [3.1], attached
 
 2. TOTAL PRICE
    Total price: £[ ]   [or, where it cannot reasonably be calculated in advance, how it will be
-   calculated]   No VAT is charged on our fees; supplier costs are shown as the supplier charges them.
+   calculated]   No VAT is charged on our fees; supplier costs are shown including any VAT the supplier charges.
    Costs payable to other suppliers (not in the total unless stated):
      [item] — paid by [you directly / us with your written agreement] — £[ ] [or how it is calculated]
    Printed copies are not part of this contract; you buy them directly from the printer, on the
@@ -147,10 +150,10 @@ Your contract will be on our Client Terms for Consumers, version [3.1], attached
    printer as part of our services.
 
 3. PAYMENT
-   [Schedule, e.g. on acceptance / at each stage / instalments: amount and due date of each payment]
+   [Schedule: in full on acceptance, or for each stage before that stage starts: amount and due date
+   of each payment]
    No payment is asked for until you accept. Any advance payment is refundable as set out in the terms.
-   [If any payment falls due after the work it pays for: no more than twelve such payments, all due
-   within the 12 months beginning with the contract date, with no interest or fee.]   (plan per §1, template rule 1 — remove this note)
+   (No consumer payment falls due after the work it pays for: template rule 1 — remove this note.)
 
 4. TIMETABLE
    [Start date or how it is fixed — see section 7 — and the delivery date for each stage]

@@ -47,7 +47,7 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   enforceability.
 - **R3 (7 October 2026):** the owner's answers to R2 §4 are applied
   (`docs/_legal/research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md`).
-  - **Now owner action:** adopt the six adoptable documents (R3 record §12), and answer the 11 provider
+  - **Now owner action:** adopt the six adoptable documents (R3 record §12), and answer the 12 provider
     account checks (R3 record §5.2) that unblock the Privacy Policy.
   - **Operational before first use:** the rights-chain documents (`docs/_legal/operations/RIGHTS-CHAIN.md`
     §3) and the retention routine (`docs/_legal/operations/RETENTION-SCHEDULE.md`).

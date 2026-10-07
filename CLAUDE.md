@@ -7,7 +7,7 @@
 >   - direct-to-printer model.
 > - **Operations** under `docs/_legal/operations/`: retention schedule (adopted, **not yet operating**), consumer contracting workflow (email acceptance, standard start, 30-day default validity, "No VAT is charged on our fees") and rights-chain requirements.
 > - **C-3:** "registered in England and Wales" verified; the footer change goes to a site phase.
-> - **Privacy 2.1:** unchanged, three markers; 11 owner account checks listed.
+> - **Privacy 2.1:** unchanged, three markers; 12 owner account checks listed.
 > - **Gates:** `check:legal:adoption` now also requires the "no interest or fee" limb (selftest 69). Served parity and consumer-terms green in draft mode, against the real Next app with Sanity answered locally from the repository's seeds.
 > - **Review:** final independent review 0 high, 5 medium, 10 low, all fixed; narrow re-check recorded.
 > - **States:** all seven `OWNER_REVIEW_REQUIRED`; nothing adopted, published or deployed.
