@@ -1,3 +1,13 @@
+> **GS-LEGAL-001-R5 (7 October 2026) — Privacy evidence reduced; owner checks remain:**
+> - **Supabase:** settled; its logs keep visitors' IPs ≥49 days.
+> - **Owner checks:** four remain (E-1 to E-4).
+> - **Privacy 2.2:** readiness prepared, not applied.
+> - **Rights chain:** template 01 is required regardless of employment status.
+> - **A-1:** deferred.
+> - **Untouched:** no production change.
+>
+> Record: `docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`.
+
 > **GS-LEGAL-001-R4 (7 October 2026) — six legal documents OWNER_ADOPTED; nothing PUBLISHABLE:**
 > - **Adopted:** Business 3.1, Consumers 3.1, Website Terms 2.1, Cookie 2.1, Accessibility 2.1, `/legal/client-terms` 2.1.
 > - **Publication prerequisites (outstanding):** cutover authority and Privacy publishable; Cookie also A-2.

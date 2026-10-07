@@ -47,7 +47,7 @@ such material the owner created personally or before incorporation (§3, item 1)
 | **3b. Subcontracting company** | The company, if its people are employees or have assigned to it; otherwise the individuals | As 3a, signed by the company, plus a warranty that its own chain is complete and an obligation to deliver an individual waiver (§3, item 5) from each author | A company cannot waive its people's moral rights (s. 87(2)) |
 | **4. Commissioned writer (credited)** | The writer | As 3a. The quotation or Scope records the credit; a waiver is needed only so far as the credit arrangement does not cover it | Cons 10.2 "unless your quotation says otherwise" |
 | **5. Ghostwriter** | The ghostwriter (or Gridsmith if an employee) | As 3a or 1, plus a signed waiver of both the s. 77 and s. 80 rights, no s. 78 assertion anywhere, and confidentiality (Cons 14 ¶3) | Cons 10.2; Bus 13 |
-| **6. The owner personally** | **Unknown.** No repository record says whether the owner is employed by Gridsmith Ltd under a contract of service. If not, the owner owns everything they create. If so, Gridsmith owns in-course work only. Either way, work made before incorporation (24 February 2026) or outside employment stays with the owner | A signed owner-to-company assignment of existing and future copyright, drafted "so far as not already vested under s. 11(2)", covering pre-incorporation and background material and output from AI tools the owner arranges; plus an unconditional s. 87 waiver (works generally, existing and future); a board minute | This is what makes Cons 13 / Bus 9.3 deliverable for work the owner makes, and makes "our own tools, templates…" (Bus 9.2; Cons 13 ¶6) true |
+| **6. The owner personally** | **Not relied on (owner decision, R5).** Employee ownership is not relied on for work by Atik Murtaza, whatever payroll or employment records exist, and no statement is made about whether he is legally an employee. Work made before incorporation (24 February 2026), outside any employment, or whose employee ownership cannot safely be established stays with him until assigned | A signed owner-to-company assignment of existing and future copyright, drafted "so far as not already vested under s. 11(2)", covering pre-incorporation and background material and output from AI tools the owner arranges; plus an unconditional s. 87 waiver (works generally, existing and future); a board minute | This is what makes Cons 13 / Bus 9.3 deliverable for work the owner makes, and makes "our own tools, templates…" (Bus 9.2; Cons 13 ¶6) true |
 | **7. AI-assisted work** | Human contributions follow rows 1–6. Purely AI-generated output: the person who made the arrangements (s. 9(3)), if protected at all | Cover AI-generated output in the owner, employee and subcontractor assignments; check each AI tool's output terms allow assignment; disclose AI use per Cons 13 / Bus 9.3 | The terms already say protection is not promised |
 
 ## 3. Minimum document inventory before first use
@@ -69,8 +69,18 @@ These are **contents requirements**, not drafts. None is signed; none may be rep
 
 **Templates for every item in §3 are in `rights-chain/` (`GS-LEGAL-001-R4`).** None is signed.
 
-- **Confirm** whether the owner is employed by Gridsmith Ltd under a contract of service. The answer
-  changes item 2, not item 1: item 1 is needed either way.
+- **Owner IP position (R5, owner decision):** item 1 (template 01) is **required regardless** of
+  uncertain employment status, signed with clause 1.3 option C. Item 2 (template 02) is additionally
+  required only if a written contract of service is actually used for employee-created work, and then
+  prospectively and alongside item 1.
+- **Execution order:**
+  1. owner template 01;
+  2. employee template 02 where applicable;
+  3. subcontractor templates 03, 04 and 05, before their work is used;
+  4. client template 06 after full payment;
+  5. register maintenance, template 07.
+
+  Details are in `rights-chain/README.md`. **Nothing is signed; no template is executed.**
 - **Have** items 1, 3/4 (as applicable), 5 and 6 prepared and signed before the first project that
   relies on them. Item 6 is signed for each project on full payment.
 

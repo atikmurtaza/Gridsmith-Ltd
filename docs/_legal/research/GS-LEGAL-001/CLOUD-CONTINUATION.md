@@ -4,6 +4,21 @@ Handoff for a fresh Claude Code cloud session, written 7 October 2026. Branch
 `staging/gs-legal-001`; the GS-LEGAL-001 work is commit `53cc4f67`, and this file is the commit
 after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` in this folder.
 
+## R5 status (7 October 2026)
+
+**GS-LEGAL-001-R5 — Privacy evidence reduced; owner checks remain.** Record: `R5-PRIVACY-EVIDENCE.md`;
+clause plan: `R5-PRIVACY-2.2-READINESS.md`.
+- **Supabase:** settled from its own source and the account. Its logs keep IPs ≥49 days.
+- **Hostinger and Resend:** primary re-reads of their DPAs remain (the hosts are blocked here).
+- **Owner checks:** E-1 to E-4, plus E-5 optional (`docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md`).
+- **Owner IP decision:** template 01 regardless; template 02 only under a verified contract.
+- **A-1:** deferred to a trusted environment with existing development credentials.
+
+**Next:**
+1. The owner answers E-1 to E-4.
+2. A session with unblocked access re-reads the Hostinger and Resend DPAs and the statutory periods.
+3. A legal phase applies Privacy 2.2 for owner adoption, after the retention cleanup phase.
+
 ## R4 status (7 October 2026)
 
 **GS-LEGAL-001-R4 — six documents OWNER_ADOPTED; Privacy evidence required.** Record:

@@ -1,3 +1,19 @@
+> **GS-LEGAL-001-R5 (7 October 2026): PRIVACY EVIDENCE REDUCED — OWNER CHECKS REMAIN; nothing applied, adopted, published or deployed.** Record: `docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`.
+>
+> - **Evidence for checks 1–12:**
+>   - Supabase is settled from its own source (repo HEAD `454a2329`): the DPA is incorporated automatically, with the UK Addendum B.1.0, Supabase Pte. Ltd.; the Free plan has no automatic backups (Supabase may keep up to 7 daily copies).
+>   - Account finding: Supabase logs record client IP, country and user agent, and are held **≥49 days** on Free (Production logs from 18 Aug 2026). The published "1 day" is an access window, not a deletion period, and lead deletion does not reach these logs.
+>   - Resend and Hostinger rest on search summaries of their official pages, because the hosts are blocked; their primary re-reads remain.
+>   - The DPF is non-blocking, because Privacy 2.2 relies on the UK Addendum.
+>   - Slack is housekeeping only.
+> - **Owner checks left:** E-1 to E-4 (Hostinger invoice issuer; Hostinger server location and mailbox product; Resend plan and oldest email date; Supabase support ticket on log storage), plus E-5 optional.
+> - **Privacy 2.2:** clause readiness in `R5-PRIVACY-2.2-READINESS.md`, not applied. Privacy 2.1 stays `OWNER_REVIEW_REQUIRED` with three markers.
+> - **Retention:** R12–R14 re-evidenced; the routine is not operating; no lead or `pg_dump` deleted.
+> - **Rights chain:** owner decision — employee ownership is not relied on for Atik Murtaza; template 01 is required regardless (option C); template 02 only under a verified contract. Nothing signed.
+> - **A-1:** deferred to a trusted environment with existing development credentials.
+> - **Adopted text:** none edited; all fingerprints intact.
+> - **Untouched:** no Hostinger, gridsmith.uk, DNS, Production Sanity/Supabase/Edge or `main` change; H4-H not begun.
+
 > **GS-LEGAL-001-R4 (7 October 2026): six legal documents OWNER_ADOPTED; Privacy not adopted; nothing PUBLISHABLE or published.** Record: `docs/_legal/research/GS-LEGAL-001/R4-OWNER-ADOPTION.md`.
 >
 > - **Adopted 2026-10-07 on owner instruction** (`adoptionAuthority` in the register; not solicitor review): Business 3.1 (OC-1 confirmed: Bus 16 (ii) = notional first 12 months), Consumers 3.1, Website Terms 2.1, Cookie 2.1, Accessibility 2.1, `/legal/client-terms` 2.1. Headers now `Effective date: 7 October 2026`; served banner "ADOPTED, NOT YET PUBLISHED".

@@ -4,10 +4,19 @@
 advice and has not been reviewed as a solicitor would. Fill-ins are marked `[● …]`. Notes marked
 **UNVERIFIED** rest on provisions that were not read at source (`README.md`, *Formalities*).
 
-**Use:** signed by the owner personally, in every case. If the owner is employed by Gridsmith Ltd under
-a contract of service, clause 2 operates only "so far as not already vested"; if not, it carries
-everything. **Do not fill in an employment relationship that does not exist.** Clause 1.3 is left for
-the owner to complete truthfully.
+**Use:** signed by the owner personally, in every case. **The intended assignor is Atik Murtaza.**
+
+**Owner decision (`GS-LEGAL-001-R5`, 7 October 2026):** employee copyright ownership is **not relied
+on** for his work, even though payroll or employment-related records may exist. This document therefore
+assigns all his relevant existing and future Gridsmith-related rights, so far as not already vested in
+the Company. That includes:
+- work made before incorporation (24 February 2026); and
+- any work whose employee ownership cannot safely be established.
+
+It states nothing about whether he is or is not legally an employee. Use clause 1.3 **option C**. Do
+not tick A or B unless the position has been established independently. Template 02 may later govern
+employee-created work prospectively, but only under a verified written contract of service, and only
+alongside this document, never in place of it (clause 6).
 
 **Execution:** simple signed writing (a handwritten or electronic signature), **not a deed**. Record
 it in a board minute (§ *Board minute* below) and enter it in the title register (template 07).
@@ -34,11 +43,16 @@ Digital and Gridsmith Press.
 describe the Company's tools, templates, methods and reusable components as its own. The Company can
 do that only for rights it holds.
 
-1.3 **Employment position** (complete one, truthfully):
-- [ ] The Assignor is **not** employed by the Company under a contract of service or apprenticeship.
-- [ ] The Assignor **is** employed by the Company under a contract of service dated [● date]. Work
-  made in the course of that employment already belongs to the Company under section 11(2) of the
+1.3 **Employment position** (tick one; option C is the owner's operational position at R5):
+- [ ] **A.** The Assignor is **not** employed by the Company under a contract of service or
+  apprenticeship.
+- [ ] **B.** The Assignor **is** employed by the Company under a contract of service dated [● date].
+  Work made in the course of that employment already belongs to the Company under section 11(2) of the
   Copyright, Designs and Patents Act 1988 ("CDPA"); this document covers everything else.
+- [ ] **C.** The parties do not rely on any employment relationship for the purposes of this document,
+  and make no statement about whether one exists. This document assigns every right within clause 2
+  so far as it is not already vested in the Company, whether or not any work was made in the course of
+  an employment.
 
 ### 2. Assignment
 
@@ -96,7 +110,13 @@ The Assignor confirms that, so far as the Assignor knows, the material within cl
 the Assignor or used under a licence that permits this assignment, and lists in the Schedule any
 third-party or open-source material it contains.
 
-### 6. Law
+### 6. Relationship with any employment contract
+
+Nothing in any contract of employment between the Assignor and the Company limits this document. Where
+an employment contract also deals with intellectual property, each operates so far as the other does
+not, and this document continues to apply to all work within clause 2.
+
+### 7. Law
 
 This document is governed by the law of England and Wales.
 

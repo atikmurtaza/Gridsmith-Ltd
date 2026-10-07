@@ -45,17 +45,26 @@ contributors.
 | Employee, work in the course of employment | Not needed: Gridsmith is first owner (s. 11(2)) | Not needed for in-course work | Belt and braces (ss. 79(3), 82 already limit the rights) | Yes | Per project | Yes | Yes | — | 02 |
 | Employee, related work outside employment | Yes | Yes | Yes | Yes | — | Yes | Yes | — | 02 (clause 2) |
 | Director, not employed under a contract of service | Yes | Yes | Yes | Yes | — | Yes | Yes | — | 01 adapted, or 03 |
-| **The owner personally** | Yes (pre-incorporation, background and personally owned work) | Yes | Yes | — (company's own information) | — | Yes | Yes | — | **01** in every case; plus 02 if employed |
+| **The owner personally** | Yes (pre-incorporation, background and personally owned work) | Yes | Yes | — (company's own information) | — | Yes | Yes | — | **01** in every case (clause 1.3 option C, owner decision R5); plus 02 only under a verified written contract of service |
 | Freelancer (individual) | Yes (pre-existing project material) | Yes, **before the work is used**, not conditional on payment | Yes (in 03 clause 2) | Yes | Per project | Yes | Yes | — | 03; plus a stand-alone 05 where the Scope requires one or the work is a ghostwritten book |
 | Subcontracting company | Yes | Yes | Only from its individuals (a company cannot waive for them, s. 87) | Yes | Per project | Yes | Yes | **Yes** | 04 + 05 from each individual |
 | Commissioned writer (credited) | Yes | Yes | Paternity per agreed credit; integrity waived | Yes | **Credit recorded** | Yes | Yes | — | 03 + writer addendum + 05 |
 | Ghostwriter | Yes | Yes | **Both rights waived; no assertion anywhere** | Yes, including the fact of involvement | **No credit, unless agreed** | Yes | Yes | — | 03 + ghostwriter addendum + 05 |
 | AI-assisted work | Human contributions follow the contributor's row | As the contributor's row | None for computer-generated works (ss. 79(2), 81(2)) | Yes, no confidential input to tools that train on it | Disclose to client (Cons 13 / Bus 9.3) | — | **Tool terms must allow assignment** | — | 01–04 clause on AI output; 07 tool register |
 
-## The owner employment question
+## The owner employment question — resolved operationally at R5
 
-**The repository holds no record of whether the owner is employed by Gridsmith Ltd under a contract
-of service.** A directorship is not employment. The answer changes the paperwork:
+**Owner decision (`GS-LEGAL-001-R5`, 7 October 2026):** employee copyright ownership is **not relied on**
+for work created by Atik Murtaza, even though payroll or employment-related records may exist.
+- **Template 01 is required regardless.** It is signed with clause 1.3 option C ("no employment
+  relationship relied on") and assigns all relevant existing and future Gridsmith-related rights so far
+  as not already vested, including pre-incorporation work.
+- **No document states whether he is legally an employee.**
+- **Template 02** is additionally used only if a written contract of service with suitable IP provisions
+  is actually verified, prospectively, and alongside template 01 (02 clause [●].9; 01 clause 6).
+
+The analysis below is kept because it explains why template 01 works whatever the answer. A
+directorship is not employment. The answer would change the paperwork:
 
 - **If the owner is not employed:** the owner personally is first owner of everything they create
   (s. 11(1)). Template 01 must assign existing and future work to the company, or the company owns
@@ -83,14 +92,22 @@ of service.** A directorship is not employment. The answer changes the paperwork
 
 ## Execution checklist (before the first project that relies on it)
 
-1. Answer the owner employment question above (yes/no; date of any service contract).
-2. Sign template 01 (owner); the board minute records it.
-3. If anyone is employed, put template 02 into each contract of employment.
-4. For each subcontractor, sign 03 or 04 **before their work is used**. Collect 05 from each
+1. **Owner, template 01:** Atik Murtaza signs template 01 with clause 1.3 option C, and the board
+   minute records it. This comes first, before any project relies on his work, including
+   pre-incorporation templates, code and writing.
+2. **Employees, template 02, only where applicable:** put it into a written contract of service, for any
+   employee and, for the owner, only if such a contract is verified. It applies prospectively and never
+   replaces template 01.
+3. **Subcontractors, templates 03, 04 and 05:** for each subcontractor, sign 03 or 04 **before their
+   work is used**. Collect 05 from each
    individual author of a subcontracting company's work (04 Annex A), and from an individual
    freelancer where the Scope requires a stand-alone waiver or the work is a ghostwritten book.
-5. For each writer on a book, record the credit position (writer addendum) or the ghostwriting
+   For each writer on a book, record the credit position (writer addendum) or the ghostwriting
    position (ghostwriter addendum).
-6. Record each AI tool used and confirm its terms allow assignment of output (07).
-7. On full payment of each project, sign 06 for the client.
-8. Enter every signed document in the register (07). Keep under retention row R7.
+   Record each AI tool used, and confirm its terms allow assignment of output (07).
+4. **Clients, template 06:** on full payment of the deliverables concerned, sign 06 for the client,
+   where the client terms require it (Cons 13 ¶2; Bus 9.3 ¶1).
+5. **Register maintenance, template 07:** enter every signed document as it is signed, review it before
+   each delivery (07 Part 1 checks), and keep it under retention row R7.
+
+**Nothing in this pack has been signed or executed.** No signature is to be made on the owner's behalf.

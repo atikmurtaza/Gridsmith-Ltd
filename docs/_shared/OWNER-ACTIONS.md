@@ -45,6 +45,25 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
   OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
   enforceability.
+- **R5 (7 October 2026): Privacy evidence reduced; owner IP position recorded**
+  (`docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`).
+  - **Owner IP decision:** employee ownership is not relied on for Atik Murtaza's work. Template 01 is
+    required regardless (clause 1.3 option C); template 02 applies only under a verified written
+    contract of service. Nothing is signed.
+  - **Remaining owner actions:**
+    1. **Privacy evidence, four checks** (`docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md`, R5
+       section):
+       - E-1, the Hostinger invoice issuer name;
+       - E-2, the Hostinger server location and mailbox product;
+       - E-3, the Resend plan and the date of the oldest email listed;
+       - E-4, a Supabase support ticket on the log storage period;
+       - E-5, optional: the Hostinger access-log period.
+    2. **Sign template 01** before any project relies on your work.
+    3. **Authorise the retention cleanup phase** when ready.
+    4. **Give cutover authority** when ready.
+  - **No longer asked:** a Sanity token for A-1. A-1 is deferred to a trusted environment with existing
+    development credentials.
+  - The R4 items below are superseded where they conflict.
 - **R4 (7 October 2026): six documents ADOPTED by the owner** (`docs/_legal/research/GS-LEGAL-001/R4-OWNER-ADOPTION.md`).
   - Adopted: Business 3.1 (OC-1 confirmed), Consumers 3.1, Website Terms 2.1, Cookie 2.1,
     Accessibility 2.1 and `/legal/client-terms` 2.1. All are `OWNER_ADOPTED`; none is `PUBLISHABLE`.

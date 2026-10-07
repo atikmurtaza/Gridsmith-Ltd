@@ -11,6 +11,12 @@ until assigned.
 
 It is not a complete employment contract. Other employment terms are outside this pack.
 
+**For Atik Murtaza (owner decision, `GS-LEGAL-001-R5`):** template 01 governs his work regardless of
+employment status. Use this template for him only if a written contract of service with suitable IP
+provisions is actually verified, and then only **prospectively and in addition to** template 01. Clause
+[●].9 below keeps the two consistent. Do not use it to create a second assignment that contradicts
+template 01.
+
 ---
 
 ## [●] Intellectual property and confidentiality
@@ -55,6 +61,10 @@ business.
 
 **[●].8 Further assurance.** During and after employment, the Employee will sign any document reasonably
 needed to confirm the Company's title, at the Company's cost.
+
+**[●].9 Other assignments.** This clause does not limit any assignment or waiver the Employee has given
+or gives the Company in another document. Where both apply to the same work, each operates so far as the
+other does not.
 
 ---
 

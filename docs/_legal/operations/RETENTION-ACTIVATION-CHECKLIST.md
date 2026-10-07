@@ -85,7 +85,16 @@ All must be true:
 - [ ] Part C run once, with its log entry (C8).
 - [ ] The first monthly run (Part B) logged.
 - [ ] R17 handled: the 2 October 2026 `pg_dump` replaced or deleted, and any restore-test database deleted (C7).
-- [ ] R12–R14 set from owner checks P-04, P-06, P-09 and P-12 (`PRIVACY-EVIDENCE-CHECKLIST.md`).
+- [ ] R12–R14 set (`PRIVACY-EVIDENCE-CHECKLIST.md`, R5 status). R5 progress:
+  - **R14 backups:** settled (VERIFIED_PROVIDER: no Free-plan backups; Supabase may keep up to 7
+    daily copies).
+  - **R14 logs:** still open, needs E-4. Logs are held ≥49 days and include IPs, so the "1 day" figure
+    is not usable.
+  - **R13:** open, needs E-3.
+  - **R12:** open, needs E-2. E-5 is optional; without it Privacy uses criteria.
+- [ ] Privacy 2.2 §8 says that deleting an enquiry does not shorten providers' own logs and backups
+  (R5: Supabase request logs record IP addresses and outlive lead deletion, and this routine cannot
+  reach them on the Free plan).
 - [ ] The statutory periods re-read at source (`RETENTION-SCHEDULE.md` §6).
 
 Only then is the Privacy 2.2 §8 wording applied. **This checklist must not be marked complete to satisfy

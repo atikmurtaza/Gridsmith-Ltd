@@ -317,3 +317,16 @@ The owner adopted six documents; the record is `R4-OWNER-ADOPTION.md`.
   - the rights-chain templates 01–07, none signed;
   - the retention activation checklist; nothing has been deleted.
 - **A-1 not run:** the Sanity API is unreachable from this environment.
+
+## 14. GS-LEGAL-001-R5 (7 October 2026)
+
+Privacy evidence sweep; the record is `R5-PRIVACY-EVIDENCE.md`.
+- **Supabase:** P-05 and P-06 are settled from Supabase's own published source and the account.
+- **Supabase logs (P-12):** they record client IP addresses and are held at least 49 days on the Free
+  plan. The published "1 day" is an access window.
+- **Hostinger and Resend:** they rest on search summaries of their official pages.
+- **Owner checks:** four remain.
+- **Privacy 2.2:** readiness is in `R5-PRIVACY-2.2-READINESS.md`, not applied.
+- **Owner IP decision:** template 01 regardless; template 02 only under a verified contract.
+- **A-1:** deferred.
+- **Unchanged:** no state, version or adopted text.

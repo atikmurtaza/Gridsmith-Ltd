@@ -1,5 +1,7 @@
 # Privacy Policy 2.2 — change plan (prepared; NOT applied)
 
+> **Superseded for status by `R5-PRIVACY-2.2-READINESS.md` (GS-LEGAL-001-R5).** Kept as history.
+
 **Phase:** `GS-LEGAL-001-R4`, 7 October 2026. **Nothing in this plan has been applied.**
 `docs/_legal/PRIVACY-POLICY.md` is still **Version 2.1**, with **Draft date 6 October 2026**, three
 `[OWNER DECISION]` markers (§6, §7, §8), and state `OWNER_REVIEW_REQUIRED`. It has no `ownerAdoptedOn`

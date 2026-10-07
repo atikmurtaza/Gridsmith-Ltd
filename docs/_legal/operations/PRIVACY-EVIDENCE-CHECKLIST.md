@@ -1,6 +1,8 @@
 # Privacy Policy 2.1 — owner account evidence checklist
 
-**Status:** prepared at `GS-LEGAL-001-R4` (7 October 2026). **No check below has been answered.**
+**Status:** prepared at `GS-LEGAL-001-R4` (7 October 2026); **evidence sweep at `GS-LEGAL-001-R5`** (same day). The R5
+section below supersedes the per-check instructions: **only four owner checks remain**, and only one of
+them needs a provider reply.
 Privacy Policy 2.1 stays at `OWNER_REVIEW_REQUIRED` with its three `[OWNER DECISION]` markers (§6, §7,
 §8) until these checks are answered and the retention routine operates
 (`RETENTION-ACTIVATION-CHECKLIST.md`).
@@ -8,6 +10,75 @@ Privacy Policy 2.1 stays at `OWNER_REVIEW_REQUIRED` with its three `[OWNER DECIS
 Source: the twelve checks in `../research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md` §5.2, expanded
 so that each can be done without further explanation. What changes in the policy once they are answered
 is in `../research/GS-LEGAL-001/R4-PRIVACY-2.2-CHANGE-PLAN.md`.
+
+## R5 status (7 October 2026) — read this first
+
+Evidence: `../research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`; clause plan:
+`../research/GS-LEGAL-001/R5-PRIVACY-2.2-READINESS.md`.
+
+| Check | Classification | Owner action now |
+|---|---|---|
+| P-01 Hostinger entity | OWNER_CHECK_REQUIRED | **Yes — E-1 below** |
+| P-02 Hostinger DPA / UK mechanism | PARTIALLY_VERIFIED (provider, search summary) | No; a primary re-read of hostinger.com/legal/dpa remains (any unblocked environment) |
+| P-03 Hostinger location / products | PARTIALLY_VERIFIED (CDN active for staging: account) | **Yes — E-2 below** |
+| P-04 Hostinger retention | PARTIALLY_VERIFIED (provider, search summary) | Optional (E-5): access-log period from support; otherwise Privacy uses criteria |
+| P-05 Supabase DPA / transfers | VERIFIED_PROVIDER + VERIFIED_IMPLEMENTATION + VERIFIED_ACCOUNT | **None** |
+| P-06 Supabase backups | VERIFIED_PROVIDER | **None** |
+| P-07 Resend DPA | PARTIALLY_VERIFIED (provider, search summary) | No; primary re-read remains |
+| P-08 Resend domain / region | VERIFIED_IMPLEMENTATION; production domain OPERATIONAL_NOT_YET_TRUE | None now; record the region when gridsmith.uk is added at cutover |
+| P-09 Resend plan / retention | PARTIALLY_VERIFIED (provider, search summary) | **Yes — E-3 below** |
+| P-10 DPF | PARTIALLY_VERIFIED — EXTERNAL VERIFICATION REQUIRED | None: non-blocking, because Privacy 2.2 relies on the UK Addendum, not the DPF |
+| P-11 Slack | VERIFIED_IMPLEMENTATION + VERIFIED_ACCOUNT | NON-BLOCKING HOUSEKEEPING only |
+| P-12 Supabase logs | VERIFIED_ACCOUNT (IPs logged; held ≥49 days) | **Yes — E-4 below** |
+
+### The four owner checks that remain
+
+**E-1 (P-01) — Hostinger contracting entity**
+- **Where to go:** hPanel → **Billing** → **Invoices** → open the latest Gridsmith invoice.
+- **What to report:** the legal seller or company name shown in the issuer section (for example
+  "Hostinger International Ltd", "Hostinger UK Limited" or "Hostinger Global S.à r.l.").
+- **What not to share:** the rest of the invoice, card details, amounts or billing address.
+
+**E-2 (P-03) — Hostinger server location and mailbox product**
+- **Where to go:**
+  - hPanel → **Websites** → the site → **Dashboard** (server or data-centre location).
+  - hPanel → **Emails** → gridsmith.uk (product name).
+- **What to report:** two values. The server location (country or city), and whether the mailbox is
+  **Hostinger Email** or **Titan**.
+- **What not to share:** FTP, SSH or database credentials, mailbox passwords, DNS record values.
+
+**E-3 (P-09) — Resend plan and oldest email**
+- **Where to go:** resend.com → **Settings → Billing** (plan); then **Emails**, scrolled to the end of
+  the list.
+- **What to report:** the plan name, the data-retention figure if the plan card shows one, and the
+  **date** of the oldest email still listed.
+- **What not to share:** recipients, subjects, message bodies, API keys or DNS values.
+- **Why:** Supabase's advertised "1 day" turned out to be an access window, not a deletion period.
+  The oldest date shows whether Resend's "30 days" is a real deletion period.
+
+**E-4 (P-12) — Supabase log storage period** (the only one that needs a provider reply)
+- **Where to go:** supabase.com/dashboard → **Support** → new ticket, for the Gridsmith Org.
+- **What to send:** "Our Free-plan projects dqiutgmxillhsbzgnlsx and qfgpwumvvtizeamkynes still return
+  logs from 18 August and 2 October 2026 through the logs API, although the plan lists 1-day log
+  retention. How long are project logs (including edge_logs, function_edge_logs and postgres_logs),
+  which contain client IP addresses, actually stored before deletion? Can we request deletion of logs
+  older than a chosen period?"
+- **What to report:** Supabase's answer, quoted.
+- **What not to share:** API keys, service-role keys, connection strings, or any log content.
+
+**E-5 (P-04, optional) — Hostinger access-log period**
+- **Where to go:** a Hostinger support chat.
+- **What to ask:** "How many days are website/CDN access logs and Hostinger Email access logs kept for
+  my account?"
+- **What to report:** the days quoted. If you skip this, Privacy describes the period by criteria.
+
+**Non-blocking housekeeping (P-11):** confirm that no secret **name** beginning `SLACK_` exists in
+Supabase `gridsmith-preview` → Edge Functions → Secrets, or in a local `.env.local` if you have one;
+report names only. Optionally remove the inert `NEXT_PUBLIC_POSTHOG_*` and `NEXT_PUBLIC_GA4_ID` keys
+from Vercel. No code reads them.
+
+**Everything below this point is the R4 checklist, kept as history.** Where it asks for more than the
+R5 status above, the R5 status governs.
 
 ## Rules for every check
 
