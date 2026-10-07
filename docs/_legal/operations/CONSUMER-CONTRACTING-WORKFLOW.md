@@ -1,6 +1,8 @@
 # Consumer contracting workflow
 
-**Status:** adopted by the owner as Gridsmith's required consumer contracting process (`GS-LEGAL-001-R3`,
+**Status:** adopted by the owner as Gridsmith's required consumer contracting process. **Not for use
+until Client Terms for Consumers 3.1 is `OWNER_ADOPTED` and the Privacy Policy is `PUBLISHABLE`**: the
+terms (Cons 16, 19) point to the privacy notice, which must be live first. Adopted (`GS-LEGAL-001-R3`,
 decision O-3, 7 October 2026). **Applies to:** every contract with a consumer under **Client Terms for
 Consumers v3.1** (`docs/_legal/CONSUMER-TERMS.md`). These are operational templates sent by email; they
 are not served on the website. A template that departs from the terms is wrong: change the terms first,
@@ -14,7 +16,7 @@ in an owner-authorised legal phase, or do not send it.
 - **Quotation validity** is **30 calendar days** from the quotation date unless a quotation states
   another period. This is Gridsmith's commercial default, not a legal rule.
 - **VAT:** Gridsmith Ltd is not VAT registered (owner confirmation C-1), so a quotation says "No VAT is
-  charged." Never publish or quote a VAT number. If VAT status changes, these templates, the quotations
+  charged on our fees." Never publish or quote a VAT number. If VAT status changes, these templates, the quotations
   and the invoicing must be reviewed before the next quotation is sent.
 - **Contact:** formal written contact and complaints go to contact@gridsmith.uk or by post. The number
   +44 7405 448534 is for WhatsApp and text only (C-2). Never add a `tel:` link, "call us" or a
@@ -22,7 +24,7 @@ in an owner-authorised legal phase, or do not send it.
 - **"Go ahead" is not acceptance.** If a client replies "go ahead", "agreed" or similar, or simply pays,
   obtain the written acceptance sentence before requesting payment or starting work.
 - **Company particulars** in every template read "registered in England and Wales" (C-3; see
-  `research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md` §C-3).
+  `research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md` §7).
 - **Rights paperwork:** before the first contract on these terms, the documents in `RIGHTS-CHAIN.md` §3
   must exist and be signed, or the IP promises in Cons 10.2 and 13 cannot be kept.
 
@@ -47,27 +49,49 @@ value**, except the two owner defaults above (30-day validity, no VAT charged).
 
 **Template rules.** These keep every contract inside the terms (`research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md` §2):
 
-1. **Deferred payments.** This applies to a consumer, or to a business client who is an individual,
-   partnership or other unincorporated body. No payment for work already supplied may **fall due**
-   later than 12 months after the contract date, and there may be no more than twelve such payments.
-   Plan the schedule so that:
-   - any stage whose payment would fall due after that date (allowing for the 14-day invoice terms)
-     is invoiced in advance; and
-   - a balancing payment under Cons 7/8 or Bus 3, 6.2, 7 or 18 either falls due before that date or is
-     covered by a payment in advance.
+1. **Deferred payments** (RAO art. 60F(2): no more than twelve payments, within the 12 months
+   beginning with the date of the contract, with no interest or other charges). This applies to a
+   consumer, and to a business client who is an individual, partnership or other unincorporated body.
+   - **Consumers: schedule every payment at or before the start of the work it pays for** (in advance
+     or on acceptance of each stage). Then no consumer payment is deferred, and neither a slipped
+     timetable (Cons 9) nor a balancing payment (Cons 7, 8) can create deferred credit. If a timetable
+     moves past month 11, invoice the remaining stages before they start. A quotation must never set a
+     schedule that breaks Cons 4: Cons 1 lets the quotation prevail, so the quotation is where the limit
+     is kept.
+   - **Business clients who are individuals or unincorporated bodies:** Bus 2 and Bus 5 apply. No payment
+     for work already supplied may fall due later than the day before the first anniversary of the
+     contract date, and never as a thirteenth such payment; anything that would is payable before the
+     work starts (Bus 2).
+   - **Counting:** G read art. 60F to count only payments made after supply. The conservative
+     alternative, which this rule also satisfies for consumers, is to keep the total number of scheduled
+     payments at twelve or fewer.
 
    Whether a contingent termination payment counts under art. 60F(2) is **UNVERIFIED**, which is why
-   the schedule is planned to avoid the question. Never add interest or a fee for paying later (RAO
-   art. 60F(2)). Whether statutory late-payment interest (Bus 5) on a deferred payment by an individual
-   or small partnership affects the exemption is also **UNVERIFIED**. It is a reason to keep such
-   clients on advance or on-delivery payments.
+   the schedule is planned to avoid the question. Never add interest or a fee for paying later. Whether
+   statutory late-payment interest (Bus 5) on a deferred payment by an individual or small partnership
+   affects the exemption is also **UNVERIFIED**, which is a further reason to keep such clients on
+   payment in advance.
 2. **Printing.** Gridsmith never buys printed copies and recharges them to a consumer. The client
    contracts with and pays the printer directly (Cons 6.1). Gridsmith may coordinate the specification,
    files, production requirements and communication with the printer as part of the quoted service;
-   that does not make Gridsmith the seller of the printed goods. The same model applies to business
-   clients unless a Scope expressly provides otherwise after a Scope-specific decision (Bus 13; D-11, G-23).
+   that does not make Gridsmith the seller of the printed goods.
+   - **No commission or referral arrangement** with a printer.
+   - The client places print orders **only after the cancellation period has ended or the right to
+     cancel has been lost**.
+   - If an arrangement with a printer nonetheless exists, cancellation also ends the client's printing
+     contract at no cost to them (CCR reg. 38; Cons 6.3 ¶2; A-15), so tell the printer on cancellation
+     (§5).
+
+   **Business clients** follow the same model. A Scope may provide otherwise only if it carries a goods
+   clause approved in an owner-authorised legal phase and names clause 13, as Bus 1 requires for a Scope
+   to prevail (D-11, G-23).
 3. **Supplier costs in the 14 days.** Commit no consumer to a supplier cost that cannot be cancelled or
    refunded during the cancellation period (Cons 4).
+4. **Payment received before acceptance.** Hold it as refundable. Do not treat it as acceptance
+   (Cons 3). Ask for the acceptance sentence, and refund the payment in full if no valid acceptance
+   follows.
+5. **Notes are not template text.** Anything in round brackets beginning "default" or "plan", and every
+   square-bracket field, is removed or filled before a template is sent.
 
 **Contract channel.** Make every consumer contract by email or e-signature, never at or immediately
 after an in-person meeting (A §7.1; CCR reg. 5). If a consumer insists on agreeing in person, stop and
@@ -90,7 +114,7 @@ contact@gridsmith.uk · WhatsApp or text +44 7405 448534 · Studio: Gridsmith [D
 For: [client name], [postal address]  — buying as an individual, wholly or mainly for purposes
 outside your trade, business, craft or profession
 
-This quotation is open for you to accept until [date].   (default: 30 calendar days from the quotation date)
+This quotation is open for you to accept until [date].   (default: 30 calendar days from the quotation date — remove this note)
 Your contract will be on our Client Terms for Consumers, version [3.1], attached as a PDF.
 
 1. WHAT YOU GET
@@ -115,7 +139,7 @@ Your contract will be on our Client Terms for Consumers, version [3.1], attached
 
 2. TOTAL PRICE
    Total price: £[ ]   [or, where it cannot reasonably be calculated in advance, how it will be
-   calculated]   No VAT is charged.
+   calculated]   No VAT is charged on our fees; supplier costs are shown as the supplier charges them.
    Costs payable to other suppliers (not in the total unless stated):
      [item] — paid by [you directly / us with your written agreement] — £[ ] [or how it is calculated]
    Printed copies are not part of this contract; you buy them directly from the printer, on the
@@ -126,7 +150,7 @@ Your contract will be on our Client Terms for Consumers, version [3.1], attached
    [Schedule, e.g. on acceptance / at each stage / instalments: amount and due date of each payment]
    No payment is asked for until you accept. Any advance payment is refundable as set out in the terms.
    [If any payment falls due after the work it pays for: no more than twelve such payments, all due
-   within the 12 months beginning with the contract date, with no interest or fee — plan per §1, template rule 1.]
+   within the 12 months beginning with the contract date, with no interest or fee.]   (plan per §1, template rule 1 — remove this note)
 
 4. TIMETABLE
    [Start date or how it is fixed — see section 7 — and the delivery date for each stage]

@@ -72,6 +72,8 @@ expect('no instalment limit (consumer)', all('consumer-client-terms', consumer.r
 expect('no instalment limit (business)', all('business-client-terms', business.replace('no more than twelve such payments', 'any number of payments')), /consumer-credit exemption/);
 // GS-LEGAL-001-R3: the period must be the statutory "beginning with" form; 3.0's looser wording fails.
 expect('loose instalment period (consumer)', all('consumer-client-terms', consumer.replace('within the 12 months beginning with', 'within 12 months of')), /consumer-credit exemption/);
+expect('instalment interest allowed (consumer)', all('consumer-client-terms', consumer.replace(', and we charge no interest or fee for paying that way', '')), /consumer-credit exemption/);
+expect('instalment interest allowed (business)', all('business-client-terms', business.replace(', with no interest or fee for paying that way', '')), /consumer-credit exemption/);
 expect('loose instalment period (business)', all('business-client-terms', business.replace('within the 12 months beginning with', 'within 12 months of')), /consumer-credit exemption/);
 expect('no cancellation form', all('consumer-client-terms', consumer.replace('I/We hereby give notice that I/We cancel', 'I cancel')), /cancellation form/);
 expect('no express request', all('consumer-client-terms', consumer.replace('I ask Gridsmith Ltd to start work now', 'Start now')), /early-start request/);

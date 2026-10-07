@@ -16,20 +16,20 @@ was not.
 
 | # | Data | Where it lives | Period | Clock starts | Action at end |
 |---|---|---|---|---|---|
-| R1 | **Enquiry that did not become a project**: name, email, phone, company, message, budget band, timeline, Press answers, manuscript link | Supabase `public.leads` (Ireland) | **12 months** | `created_at`, extended only where `notes` records a later contact date (no last-contact column exists; adding `last_contact_at` is a later, separately authorised task) | Delete the row; where the outbox exists, its row cascades (R10) |
-| R2 | **Enquiry marked spam or abusive** | `public.leads`, `status = 'spam'` | **30 days** | Date marked | Delete |
+| R1 | **Enquiry that did not become a project**: name, email, phone, company, message, budget band, timeline, Press answers, manuscript link | Supabase `public.leads` (Ireland) | **12 months**, deleted at the first monthly check after that | `created_at`, extended only where `notes` records a later contact date (no last-contact column exists; adding `last_contact_at` is a later, separately authorised task) | Delete the row; where the outbox exists, its row cascades (R10) |
+| R2 | **Enquiry marked spam or abusive** | `public.leads`, `status = 'spam'` | **30 days**, deleted at the first monthly check after that | Date marked | Delete |
 | R3 | **Internal notification email** (name, email, company, phone, studio, enquiry type, reference) | `contact@gridsmith.uk` mailbox (Hostinger) | **As the lead it announces** (R1, R2 or R4) | As the lead | Delete from inbox, Sent and trash |
-| R4 | **Enquiry that became a project** | `public.leads` | Move into the client record (R5), then **delete the lead row within 30 days of contract** | Contract date | Delete the lead row |
-| R5 | **Client contract record**: quotation, acceptance, early-start statements and timestamps, confirmation email, change quotations, cancellation notices and calculations, delivery records, and **the final delivered version or set of the deliverables** | Mailbox and document store | **6 years after the end of the financial year in which the project ended** | Project end (final delivery, cancellation or termination) | Delete, except R7 items |
+| R4 | **Enquiry that became a project** | `public.leads` | Move into the client record (R5), then **delete the lead row at the first monthly check at least 30 days after contract** | Contract date | Delete the lead row |
+| R5 | **Client contract record**: quotation, acceptance, early-start statements and timestamps, confirmation email, change quotations, cancellation notices and calculations, delivery records, and **the final delivered version or set of the deliverables** | Mailbox and document store | **6 years after the end of the financial year in which the project ended** | Project end (final delivery, cancellation or termination) | Delete, except R7 items. For any future Technical drawing work, consider a longer period: latent-damage negligence has a 15-year longstop (Limitation Act s. 14B, externally unverified) |
 | R6 | **Accounting records**: invoices, receipts, payment records | Accounting system, bank | **6 years from the end of the last financial year they relate to**, or longer where HMRC requires (a transaction spanning accounting periods, an open enquiry, a late return) | Financial year end | Delete |
 | R7 | **Title and consent documents**: client rights-assignment instruments, owner, employee and subcontractor assignments, moral-rights waivers, portfolio consents (`RIGHTS-CHAIN.md` §3) | Document store (title register) | **For as long as the rights or the consent are relied on, plus 6 years.** For transferred copyright, "relied on" lasts while the rights subsist and Gridsmith or its clients may need to prove title: each infringing act is a fresh cause of action | End of reliance | Delete |
 | R8 | **Project working material** (owner modification) | Working storage | **Return or delete within 90 days of project end**: unnecessary client-supplied source material, unnecessary personal data, ordinary working files, superseded drafts and temporary project material. Exception: the quotation or Scope says otherwise, or the client asks for an agreed longer period. **The final delivered version or set is not deleted here**; it is kept with R5. Title evidence is kept under R7 | Project end | Return or delete; keep only what R5 and R7 require |
 | R9 | **Complaints and rights requests**, including DPA 2018 s. 164A data complaints | Mailbox | **With the R5 record** if there is one; otherwise **2 years after closure** (owner choice; no statutory period) | Closure | Delete |
 | R10 | **Duplicate-detection fingerprint and outbox state** | `gridsmith_private.notification_outbox`: **Supabase Preview only today**; Production only once H4-B is promoted. The 63 Production leads have no outbox row | Deleted with the lead (cascade); `sent` rows may be pruned after 30 days | Lead deletion or send | Cascade or prune. Preview holds only synthetic or probe rows; delete them under R2's routine |
 | R11 | **Press Path Finder results** | `public.press_path_results` (`expires_at` = 90 days) | **90 days** | Creation | **No write path exists today** (0 rows on 2 Oct). Before one is built: the 90-day job must exist, and `lead_id references leads(id)` has no on-delete action, so linked results must be deleted or nulled before their lead (or the foreign key migrated to `on delete set null`) |
-| R12 | **Hosting, CDN and mailbox logs** (IP address, browser details) | Hostinger | **Provider's period, not yet established.** hPanel's access-log filter goes up to 7 days, and Hostinger Email access logs are available for 30 days (search summaries; neither is a stated retention period) | — | **OWNER ACCOUNT CHECK** (§5, items 1–4) |
-| R13 | **Email-delivery logs and metadata** of the notification | Resend (US storage, per Resend's region page, search summary) | **Provider's period: 30 days on Free, Pro and Scale** per Resend's pricing and security pages (search summaries; third-party pages disagree) | — | **OWNER ACCOUNT CHECK** (§5, item 9) |
-| R14 | **Database backups and platform logs** | Supabase | **Logs (API and database): 1 day on the Free plan** (Supabase's own pricing source, read on GitHub; the organisation is verified as Free). **Backups:** not documented for Free; a help note says up to 7 daily backups are taken at Supabase's discretion | — | **OWNER ACCOUNT CHECK** for backups (§5, item 6) |
+| R12 | **Hosting, CDN and mailbox logs** (IP address, browser details) | Hostinger | **Provider's period, not yet established.** hPanel's access-log filter goes up to 7 days, and Hostinger Email access logs are available for 30 days (search summaries; neither is a stated retention period) | — | **OWNER ACCOUNT CHECK** (R3 record §5.2, checks 1–4) |
+| R13 | **Email-delivery logs and metadata** of the notification | Resend (US storage, per Resend's region page, search summary) | **Provider's period: 30 days on Free, Pro and Scale** per Resend's pricing and security pages (search summaries; third-party pages disagree) | — | **OWNER ACCOUNT CHECK** (R3 record §5.2, check 9) |
+| R14 | **Database backups and platform logs** | Supabase | **Logs (API and database): 1 day on the Free plan** (Supabase's own pricing source, read on GitHub; the organisation is verified as Free). **Backups:** not documented for Free; a help note says up to 7 daily backups are taken at Supabase's discretion | — | **OWNER ACCOUNT CHECK** for backups (R3 record §5.2, check 6) |
 | R15 | `gs_consent` cookie | Visitor's browser | **365 days** (`lib/consent/state.ts`) | Set on *Got it* | Expires in the browser |
 | R16 | **WhatsApp and text messages**, including WhatsApp cloud chat backups | Owner's phone; backup provider | As R1 for an enquiry; as R5 where part of a project record | As R1/R5 | Delete the chat; it leaves the backup when the backup rotates |
 | R17 | **Manual database exports (`pg_dump`)** and any restore-test database | Owner's machine, outside the repository (`GS-PROD-003-R1.md` §7, holding all 63 leads) | **Replace or delete obsolete exports after each authorised deletion run**, so deleted records do not survive indefinitely in manual copies. Delete any restore-test database when the test ends | Each deletion run | Replace or delete. **Not before the §4 cleanup phase** (owner instruction, R3) |
@@ -48,8 +48,9 @@ was not.
    - Confirm that R8 material for projects ended more than 90 days ago has been returned or deleted, and
      that the final delivered set has moved to R5.
 3. **Annually, after the financial year end.** Delete R5 and R6 records whose 6-year period has ended.
-4. **Log every run** in one line (date, counts, who ran it), kept with the R9 records. This is the evidence
-   UK GDPR Art. 5(2) accountability asks for.
+4. **Log every run** in one line (date, counts, who ran it). The log holds no personal data beyond ids
+   and is kept for as long as the routine runs plus 6 years. It is the evidence UK GDPR Art. 5(2)
+   accountability asks for.
 
 Automating step 1, for example with a scheduled database job, is a separately authorised implementation
 task. It is not started.
@@ -63,6 +64,8 @@ task. It is not started.
    `research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md` §5.4, with:
    - R8 corrected to the owner's modification (project files are returned or deleted within 90 days;
      the final delivered set is kept with the contract record);
+   - every period stated as the routine actually achieves it (for example "deleted at our first monthly
+     check after 30 days", not "for 30 days");
    - R12–R14 filled in.
 
    The Privacy version then moves to 2.2.
@@ -92,7 +95,7 @@ none.
 
 ## 5. Owner account checks that set R12–R14
 
-These come from the R3 provider evidence (`research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md` §O-2).
+These come from the R3 provider evidence (`research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md` §5.2).
 Items 1–4, 6 and 9 there are the ones that bear on retention:
 - Hostinger access-log, CDN and mailbox backup retention;
 - Supabase backups on the Free plan;

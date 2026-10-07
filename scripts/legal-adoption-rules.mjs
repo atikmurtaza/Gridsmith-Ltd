@@ -138,7 +138,8 @@ export function instrumentProblems(slug, markdown) {
     // RAO art. 60F(2): deferred payment stays exempt credit only within these limits (G-03). The
     // period is the statute's "12 months or less (beginning on the date of the agreement)", so the
     // looser "within 12 months of" that 3.0 used no longer passes (GS-LEGAL-001-R3, O-5(2)).
-    if (!/no more than twelve such payments, all due within the 12 months beginning with the date of/.test(markdown)) {
+    // The "no interest or fee" limb is part of the same condition (art. 60F(2)); R3 review R3-07.
+    if (!/no more than twelve such payments, all due within the 12 months beginning with the date of[^.]*no interest or fee/.test(markdown)) {
       p.push(`${slug}: allows payment after supply without the consumer-credit exemption limits`);
     }
   }

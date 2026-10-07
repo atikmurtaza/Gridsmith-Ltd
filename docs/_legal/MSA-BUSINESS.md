@@ -44,7 +44,7 @@ The Scope sets out, as relevant:
 - any acceptance criteria; and
 - any project-specific terms.
 
-If the Scope does not state a payment schedule, we invoice the price for each stage when that stage is delivered, or monthly in arrears for work charged by time. Where the limit on deferred payments in clause 5 applies, any stage or month whose payment would otherwise fall due outside that limit is invoiced in advance instead. If the Scope does not state a revision allowance, it includes one round of reasonable revisions for each deliverable. A revision round is one consolidated set of the client's comments on a draft, which we then work into the next version.
+If the Scope does not state a payment schedule, we invoice the price for each stage when that stage is delivered, or monthly in arrears for work charged by time. Where the limit on deferred payments in clause 5 applies, any stage or month whose payment would otherwise fall due outside that limit is payable in full before the work it pays for begins; for work charged by time, that payment is based on the Scope's estimate for the month, and work in that month is limited to the time paid for. If the Scope does not state a revision allowance, it includes one round of reasonable revisions for each deliverable. A revision round is one consolidated set of the client's comments on a draft, which we then work into the next version.
 
 ## 3. Client responsibilities
 
@@ -201,7 +201,7 @@ The client's existing manuscript, articles, notes, concepts and other existing m
 
 For ghostwriting, the Scope records how authorship and credit will be stated. Unless the Scope says otherwise, we obtain from each writer who works on the book a signed written waiver of the right to be identified as author and of the right to object to derogatory treatment, and we do not disclose that we worked on the book without the client's agreement.
 
-The client decides what to publish and is responsible for its publication decisions and for the lawfulness of the content it supplies or approves, including in relation to defamation and the privacy of other people. We do not provide legal review of content. We may decline or pause work on content we reasonably believe is unlawful. Nothing in this paragraph reduces our responsibility for the work we create, subject to clause 16.
+The client decides what to publish and is responsible for its publication decisions and for the lawfulness of the content it supplies or approves, including in relation to defamation and the privacy of other people. We do not provide legal review of content. We may decline or pause work on content we reasonably believe is unlawful. Nothing in this paragraph, including the client's approval of content, reduces our responsibility for the work we create, which remains subject to clause 16.
 
 Before any registration or platform setup, the Scope states who will hold any ISBN and who will be named as publisher. Publishing and distribution accounts will be opened in the client's name or transferred to the client, unless the Scope says otherwise, and we will not keep account passwords after the task that needed them.
 
@@ -230,7 +230,7 @@ Creative, publishing and digital outcomes often depend on third parties, client 
 
 Nothing in the contract limits or excludes liability for death or personal injury caused by negligence, for fraud or fraudulent misrepresentation, or any other liability that cannot lawfully be limited or excluded.
 
-Subject to the paragraph above, our total liability to the client for all claims arising out of or in connection with a Scope, whether in contract, negligence or otherwise, will not exceed the total fees paid and payable under that Scope or, for a retainer or other periodic Scope, the greater of (i) the fees paid and payable in the 12 months before the event giving rise to the claim and (ii) the fees payable for the first 12 months of that Scope (or for its whole term, if shorter). A different limit stated prominently in a Scope applies to that Scope instead.
+Subject to the paragraph above, our total liability to the client for all claims arising out of or in connection with a Scope, whether in contract, negligence or otherwise, will not exceed the total fees paid and payable under that Scope or, for a retainer or other periodic Scope, the greater of (i) the fees paid or payable in the 12 months before the event giving rise to the claim and (ii) the fees that would be paid or payable for the first 12 months of that Scope at the periodic fee or rates stated in it (or for its fixed term, if shorter), whether or not the Scope continues that long. A different limit stated prominently in a Scope applies to that Scope instead.
 
 Subject to the first paragraph of this clause, neither party is liable for any indirect or consequential loss, and we are not liable for loss of profit, revenue, business, anticipated savings or goodwill, whether direct or indirect.
 

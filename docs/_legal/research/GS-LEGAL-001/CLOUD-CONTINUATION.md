@@ -106,21 +106,21 @@ State model, in order: `RESEARCHED` → `VERIFIED` → `OWNER_REVIEW_REQUIRED` �
 - **Struck rule** `GS-O003-SOLICITOR-APPROVAL-GATE` registered in `check:struck`; 11 spec lines
   annotated in place.
 
-## Current Legal State
+## Current Legal State (updated at R3, 7 October 2026)
 
 All seven at **`OWNER_REVIEW_REQUIRED`**:
 
 | Document | File | Version |
 |---|---|---|
-| Client Terms for Consumers | `docs/_legal/CONSUMER-TERMS.md` | 3.0 |
-| Client Terms for Business Clients | `docs/_legal/MSA-BUSINESS.md` | 3.0 |
+| Client Terms for Consumers | `docs/_legal/CONSUMER-TERMS.md` | 3.1 (3.0 until R3) |
+| Client Terms for Business Clients | `docs/_legal/MSA-BUSINESS.md` | 3.1 (3.0 until R3) |
 | Website Terms of Use | `docs/_legal/WEBSITE-TERMS.md` | 2.1 |
 | Privacy Policy | `docs/_legal/PRIVACY-POLICY.md` | 2.1 |
 | Cookie Policy | `docs/_legal/COOKIE-POLICY.md` | 2.1 |
 | Accessibility Statement | `docs/_legal/ACCESSIBILITY-STATEMENT.md` | 2.1 |
 | Client terms disambiguation | `scripts/seed-legal.mjs` (`/legal/client-terms`) | 2.1 |
 
-All drafts carry a **Draft date** (6 October 2026), not an effective date; on adoption the header
+All drafts carry a **Draft date** (7 October 2026 for the two client terms, 6 October 2026 for the rest), not an effective date; on adoption the header
 becomes `**Effective date: …**` and `check:legal:adoption` enforces it.
 
 The Privacy Policy still contains three `[OWNER DECISION: …]` markers, which block `PUBLISHABLE`:

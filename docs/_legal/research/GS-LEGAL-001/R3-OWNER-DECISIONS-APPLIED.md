@@ -36,8 +36,8 @@ Provider facts came from:
 | **O-1** Retention (a) + R8 modification | The schedule R1–R20 and the routine are adopted. R8 now returns or deletes unnecessary working material and keeps the final delivered set with the R5 contract record. **The routine is not operating**, so Privacy §8 is unchanged (§6). The 63-lead cleanup and the `pg_dump` replacement are prepared as a later phase, not run | `docs/_legal/operations/RETENTION-SCHEDULE.md` |
 | **O-2** Provider facts | Investigated in the order the owner set (§5). Three facts established, two partly, three need owner account checks; 11 checks are listed. **Privacy markers left in place**: nothing filled by assumption | §5 below |
 | **O-3** Consumer workflow (a) | Adopted as the required process. Email acceptance; standard start by default; three-statement early start; 30-day default validity; "No VAT is charged"; "go ahead" is not acceptance; direct-to-printer rule with coordination; deferred-payment planning rule | `docs/_legal/operations/CONSUMER-CONTRACTING-WORKFLOW.md` |
-| **O-4** Liability cap A + E | Bus 16: ordinary Scope = total fees paid and payable under it. Retainer or periodic Scope = the greater of (i) fees paid and payable in the 12 months before the event and (ii) fees payable for the first 12 months of the Scope (or its whole term, if shorter). A different cap only if prominently stated in a Scope. No floor, multiple, data super-cap or IP indemnity added. Non-excludable liabilities preserved (Bus 16 ¶1) | `MSA-BUSINESS.md` 3.1 §16 |
-| **O-5** Four wording changes | (1) Bus 2 fallback: "any stage or month whose payment would otherwise fall due outside that limit is invoiced in advance instead". (2) Cons 4 / Bus 5: "all due within the 12 months beginning with the date of [your/the] contract". (3) Cons 9: "Nothing in this paragraph reduces our responsibility for our own work, including under sections 15 and 17." Bus 13: "Nothing in this paragraph reduces our responsibility for the work we create, subject to clause 16." (4) Option E (O-4). Consumer and Business → **3.1** | Both drafts |
+| **O-4** Liability cap A + E | Bus 16: ordinary Scope = total fees paid and payable under it. Retainer or periodic Scope = the greater of (i) the fees paid or payable in the 12 months before the event and (ii) the fees that would be paid or payable for the first 12 months of the Scope at the periodic fee or rates stated in it (or for its fixed term, if shorter), whether or not the Scope continues that long. That is the owner's intended formulation, made unambiguous for rolling, terminated and time-charged retainers after the final review (R3-03). A different cap only if prominently stated in a Scope. No floor, multiple, data super-cap or IP indemnity. Non-excludable liabilities preserved (Bus 16 ¶1) | `MSA-BUSINESS.md` 3.1 §16 |
+| **O-5** Four wording changes | (1) Bus 2 fallback: "any stage or month whose payment would otherwise fall due outside that limit is payable in full before the work it pays for begins; for work charged by time, that payment is based on the Scope's estimate for the month, and work in that month is limited to the time paid for". This was tightened from "invoiced in advance" after the final review (R3-01), because 14-day invoice terms would still leave the payment deferred. (2) Cons 4 / Bus 5: "all due within the 12 months beginning with the date of [your/the] contract". (3) Cons 9: "Nothing in this paragraph reduces our responsibility for our own work, including under sections 15 and 17." Bus 13: "Nothing in this paragraph, including the client's approval of content, reduces our responsibility for the work we create, which remains subject to clause 16." (R3-08.) (4) Option E (O-4). Consumer and Business → **3.1** | Both drafts |
 | **Printing** | Cons 6.1 adds: "Where your quotation includes it, we coordinate the print specification and files with the printer as part of our services, but we do not sell you the printed copies." Bus 13 adds the same model for business clients "unless the Scope expressly provides otherwise" | Both drafts |
 | **C-1** VAT | Confirmed not registered. Documents stay VAT-neutral (`check:legal:adoption` forbids a status or number in a draft). The quotation template says "No VAT is charged." | Workflow §2 |
 | **C-2** Contact channel | Confirmed WhatsApp/text only. No draft change. No legal requirement found that forces a voice line (§7, C-2) | — |
@@ -64,7 +64,9 @@ Provider facts came from:
 
 Version references: the two client-terms drafts carry `**Version 3.1**` and `**Draft date: 7 October
 2026**`. The served text, the seed, the migration manifest and the parity gate all read the version from
-the draft. Nothing else in the repository hard-codes "3.0" for these documents (searched).
+the draft. **Correction (final review R3-04):** the first version of this record said nothing else
+hard-coded "3.0". That was false: `CLOUD-CONTINUATION.md` "Current Legal State" still listed 3.0 and a
+6 October draft date for both. It is now updated. No code or gate hard-codes the version.
 
 ## 4. Primary-source verification
 
@@ -119,18 +121,25 @@ published or proposed-for-adoption clause in R3.
 - **§8 marker** (retention): stays until the routine operates (`RETENTION-SCHEDULE.md` §3) and checks 4,
   6 and 9 set R12–R14.
 
-### 5.4 Correction to apply with Privacy 2.2 (prepared; not applied)
+### 5.4 Privacy 2.2 change list (prepared; not applied)
 
-§7 currently says: "Our email-notification provider may also process the notification outside the UK."
+Privacy 2.1 cannot be adopted until all three markers are resolved. These corrections go in at the same
+time, as Privacy 2.2. Each is confirmed or sharpened by the §5.2 check named.
 
-The evidence is that Resend stores all account data, including email metadata and logs, in the United
-States. Once check 8 confirms the sending region, replace that sentence with:
+| § | 2.1 says | 2.2 must say (from R3 evidence) | Confirm with |
+|---|---|---|---|
+| §2 ¶3 | "our providers may keep technical request logs, as described in section 6" | Name the logs: Hostinger (site, CDN and mailbox access logs); Supabase (API, database and Edge Function request logs, which include IP addresses, kept 1 day on the Free plan); Resend (delivery metadata) | Checks 3, 4, 9 |
+| §6, Hostinger | "hosts our email mailbox" | The actual mailbox product (Hostinger Email or Titan) and the contracting entity | Checks 1, 3 |
+| §6, Supabase | "stores enquiries in a database located in Ireland" | Keep. Add that Supabase (Supabase Pte. Ltd., Singapore) keeps platform logs for its own short period and uses sub-processors | Check 5 |
+| §6, Resend | notification contents as stated | Keep. Add that Resend keeps delivery records for its stated period | Check 9 |
+| §6 marker | "[OWNER DECISION: confirm … data processing terms are accepted …]" | "We use these providers under written terms that require them to protect personal data and to use it only to provide their service to us." (marker removed) | Checks 2, 5, 7 |
+| §7 ¶1 | Ireland adequacy as the Supabase position | Data is stored in Ireland. Supabase is a Singapore company with US sub-processors, so access from outside the UK is covered by the UK Addendum in Supabase's data processing agreement | Check 5 |
+| §7 ¶2 | "Our email-notification provider may also process the notification outside the UK." | "Our email-notification provider, Resend, processes the notification and keeps its delivery records in the United States." Also: Hostinger's content delivery network serves pages from locations outside the UK and Europe | Checks 8, 3 |
+| §7 marker | "[OWNER DECISION: name the safeguard …]" | Supabase: UK Addendum. Resend: UK Extension to the EU–US Data Privacy Framework (UK–US data bridge) if check 10 confirms it is active, otherwise the clauses in its DPA. Hostinger: the mechanism check 2 confirms | Checks 2, 7, 10 |
+| §8 marker | "[OWNER DECISION: set retention periods …]" | R2 §5.4 wording as amended by `RETENTION-SCHEDULE.md` §3 | Routine operating; checks 4, 6, 9 |
 
-> "Our email-notification provider, Resend, processes the notification and keeps its delivery records in
-> the United States."
-
-Name its safeguard from checks 7 and 10. Not applied now: Privacy cannot be adopted until all three
-markers are resolved, and the wording rests on a search summary that check 8 can confirm.
+"Our enquiry database does not store your IP address" (§2) stays: it is literally accurate, because the
+intake code stores none.
 
 ## 6. Retention (O-1)
 
@@ -204,7 +213,38 @@ set cookies.
 
 ## 10. Gates and the draft-mode served check
 
-<!-- R3:GATES -->
+All gates were run locally on Node 24.21.0, the version the repository requires, installed from the npm
+registry into the session scratchpad.
+
+| Gate | Result |
+|---|---|
+| `verify:static` (incl. `typecheck`, `lint`, `check:claims`, `check:struck`, `check:lists`, `check:cms:migration`) | **PASS**, exit 0, on the final tree |
+| `check:legal:adoption` | **PASS**: 6 drafts, 7 documents, register coherent, all `OWNER_REVIEW_REQUIRED` |
+| `check:legal:adoption:selftest` | **69/69**. New cases: the looser 3.0 period wording fails (consumer and business), and deleting "no interest or fee" fails (consumer and business). Proven against `HEAD` 3.0 text: both drafts red on the tightened rule. The adopted-specimen helper now replaces the draft date by pattern and throws if nothing was replaced. The old literal "6 October 2026" replace had silently stopped producing a specimen once the date moved; it went red here rather than passing |
+| Migration dry run | **PASS**: 47 eligible; 10 gated (`GS-X002`, `GS-O003-R`); manifest in agreement. No regeneration needed: the manifest embeds register **state**, which did not change |
+| `check:legal:parity` (draft mode) | **PASS**: 6 documents, 107 clauses, 429 paragraphs word for word, 107 clauses reachable |
+| `check:consumer-terms` (draft mode) | **PASS**: 2 routes, 202 links, 0 to the business terms; `/press` reaches `#clause-10-1` |
+| `git diff --check` | Clean |
+| Forbidden content and markers | No solicitor, "fully compliant", "certified" or AI-draft claims; no `[SEED]`, `[TK]`, `[DECISION REQUIRED]` or `[OWNER DECISION]` in the six adoptable documents; no VAT number or status; no `tel:`; portfolio use consent-only; Technical wording inside `GS-X002`. Privacy keeps its three `[OWNER DECISION]` markers by design |
+
+**Draft mode, and how its validity was established.** Sanity is unreachable from this environment, and
+the development dataset still serves v2.0 (A-1 not run). So the served gates ran against the **real Next
+application** (`next dev`), whose Sanity reads were answered locally:
+- a scratchpad proxy terminated `*.api.sanity.io` with a throwaway certificate authority;
+- it evaluated each GROQ query with `groq-js` over the repository's own seed documents (the seven legal
+  documents generated from the drafts, the services, the group pages and company details);
+- every other host was refused.
+
+No Sanity dataset was read or written, and the harness is not committed.
+
+**It was proven a valid subject:**
+- with the drafts already at 3.1 but the mock still loaded with 3.0, `check:legal:parity` went **red with
+  8 problems**: the version branch on both documents, and branch B on exactly the six edited clauses
+  (Bus 2, 5, 13, 16; Cons 4, 9);
+- it went green only after the mock reloaded the 3.1 drafts.
+
+CI's served `check:legal:parity` against the development dataset stays red until A-1.
+
 
 ## 11. Final independent review
 
@@ -220,7 +260,7 @@ whether it may move to `PUBLISHABLE`.
 
 | Document | Version | Canonical path | Material changes from previous version | Remaining markers | Remaining external evidence | Recommended owner action |
 |---|---|---|---|---|---|---|
-| Client Terms for Business Clients | **3.1** | `docs/_legal/MSA-BUSINESS.md` | Bus 2: deferred-payment fallback. Bus 5: "within the 12 months beginning with the date of the contract". Bus 13: direct-to-printer model; N-2 tie-in "subject to clause 16". Bus 16: option E retainer cap | None | None for adoption. Before first use: `RIGHTS-CHAIN.md` §3 documents | Adopt 3.1 |
+| Client Terms for Business Clients | **3.1** | `docs/_legal/MSA-BUSINESS.md` | Bus 2: deferred-payment fallback (payable before the work begins). Bus 5: "within the 12 months beginning with the date of the contract". Bus 13: direct-to-printer model; N-2 tie-in (client approval does not reduce our responsibility, which remains subject to clause 16). Bus 16: option E retainer cap | None | None for adoption. Before first use: `RIGHTS-CHAIN.md` §3 documents | Adopt 3.1 |
 | Client Terms for Consumers | **3.1** | `docs/_legal/CONSUMER-TERMS.md` | Cons 4: "within the 12 months beginning with the date of your contract". Cons 6.1: print coordination without selling printed copies. Cons 9: N-2 tie-in "including under sections 15 and 17" | None | None for adoption. Before first use: the workflow templates (`operations/CONSUMER-CONTRACTING-WORKFLOW.md`) and `RIGHTS-CHAIN.md` §3 documents | Adopt 3.1 |
 | Website Terms | 2.1 | `docs/_legal/WEBSITE-TERMS.md` | None since GS-LEGAL-001 | None | None | Adopt 2.1 |
 | Cookie Policy | 2.1 | `docs/_legal/COOKIE-POLICY.md` | None since GS-LEGAL-001 | None | A-2 production cookie retest before `PUBLISHABLE` | Adopt 2.1; retest at cutover |
@@ -229,7 +269,8 @@ whether it may move to `PUBLISHABLE`.
 | Privacy Policy | 2.1 | `docs/_legal/PRIVACY-POLICY.md` | — | **Three `[OWNER DECISION]` markers** (§6, §7, §8) | §5.2 checks 1–11; routine operating (`RETENTION-SCHEDULE.md` §3); §5.4 correction | **Do not adopt yet** |
 
 **What the adoption phase will do after owner approval:**
-1. Record the owner's adoption entries exactly as given.
+1. Transcribe into the register exactly the adoption the owner instructs, and nothing more. The agent
+   never chooses a date or version.
 2. Switch the adopted drafts' header to the effective date.
 3. Run `check:legal:adoption`, `verify:static`, the migration dry run and `--write-manifest` (the
    manifest embeds the register state).
