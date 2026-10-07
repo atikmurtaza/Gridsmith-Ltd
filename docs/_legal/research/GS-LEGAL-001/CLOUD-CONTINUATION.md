@@ -8,7 +8,7 @@ after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` 
 
 **GS-LEGAL-001-R5 — Privacy evidence reduced; owner checks remain.** Record: `R5-PRIVACY-EVIDENCE.md`;
 clause plan: `R5-PRIVACY-2.2-READINESS.md`.
-- **Supabase:** settled from its own source and the account. Its logs keep IPs ≥49 days.
+- **Supabase:** the contract is verified from its own source and the account. Its request logs carry client-IP fields and are held ≥49 days (E-4 asks for the real period).
 - **Hostinger and Resend:** primary re-reads of their DPAs remain (the hosts are blocked here).
 - **Owner checks:** E-1 to E-4, plus E-5 optional (`docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md`).
 - **Owner IP decision:** template 01 regardless; template 02 only under a verified contract.

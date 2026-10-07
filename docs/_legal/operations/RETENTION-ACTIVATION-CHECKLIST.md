@@ -86,10 +86,10 @@ All must be true:
 - [ ] The first monthly run (Part B) logged.
 - [ ] R17 handled: the 2 October 2026 `pg_dump` replaced or deleted, and any restore-test database deleted (C7).
 - [ ] R12–R14 set (`PRIVACY-EVIDENCE-CHECKLIST.md`, R5 status). R5 progress:
-  - **R14 backups:** settled (VERIFIED_PROVIDER: no Free-plan backups; Supabase may keep up to 7
-    daily copies).
-  - **R14 logs:** still open, needs E-4. Logs are held ≥49 days and include IPs, so the "1 day" figure
-    is not usable.
+  - **R14 backups:** no Free-plan backups or PITR (VERIFIED_PROVIDER). Provider-held copies are
+    PARTIALLY_VERIFIED: a 2024 note says "currently" up to 7 daily. The question is on E-4.
+  - **R14 logs:** still open, needs E-4. Logs carrying client-IP header fields are held ≥49 days, so the
+    "1 day" figure is not usable as a retention period.
   - **R13:** open, needs E-3.
   - **R12:** open, needs E-2. E-5 is optional; without it Privacy uses criteria.
 - [ ] Privacy 2.2 §8 says that deleting an enquiry does not shorten providers' own logs and backups

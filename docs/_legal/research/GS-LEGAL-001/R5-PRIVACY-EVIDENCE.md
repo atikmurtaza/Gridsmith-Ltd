@@ -39,11 +39,11 @@ third-party mirror or proxy was used to get round the network policy.
 | **P-02** DPA and UK transfer mechanism | Hostinger | **PARTIALLY_VERIFIED** (provider, search summary) | Search summaries of hostinger.com/legal/dpa and the Terms: the DPA is **annexed to and incorporated into the Terms of Service** for "Covered Services", including hosting and email. The data importer is Hostinger International Ltd. For UK transfers the **UK International Data Transfer Addendum (B1.0) is deemed entered into and incorporated by reference**. Sub-processors: AWS EMEA SARL, Google Cloud EMEA Ltd, Cloudflare Inc., MailChannels Corp., Proofpoint Inc., Anthropic Ireland Ltd, spectra tech UAB, Vonage B.V. | No owner support request: the contract documents answer it. A **primary re-read** of hostinger.com/legal/dpa from an unblocked environment remains before the safeguard is printed |
 | **P-03** location and products | Hostinger | **PARTIALLY_VERIFIED** | **CDN: VERIFIED_ACCOUNT** for the staging add-on domain (hPanel CDN panel "Active", `docs/_shared/GS-HOST-H4-D.md` §§110, 168–170). For gridsmith.uk the CDN is **OPERATIONAL_NOT_YET_TRUE** (cutover). Server location and mailbox product: no repository record, and DNS lookups are blocked | Owner: site server location and mailbox product (one hPanel visit) |
 | **P-04** retention | Hostinger | **PARTIALLY_VERIFIED** (provider, search summary) | **Email:** deleted mail stays in Trash up to 30 days and is then permanently deleted; Hostinger Email access logs are available for 30 days; mailboxes are not included in website backups. **Website backups (Business plan):** daily kept 7 days, weekly kept 6 weeks. The static site's files hold no personal data. **Website and CDN access logs: no retention period published.** The hPanel 7-day filter is a viewing window, not a retention period. All of this is product-specific and depends on P-03 | Owner (optional): ask Hostinger support for the access-log retention period. Without an answer, Privacy describes it by criteria ("for a period Hostinger sets") rather than inventing a figure |
-| **P-05** DPA and transfers | Supabase | **VERIFIED_PROVIDER + VERIFIED_IMPLEMENTATION + VERIFIED_ACCOUNT** | See §3.1 | None |
-| **P-06** backups | Supabase | **VERIFIED_PROVIDER** (plan); internal copies PARTIALLY_VERIFIED | `pricing.ts`: **Automatic backups — Free: false; Point-in-time recovery — Free: false.** `backups.mdx`: daily backups only for Pro/Team/Enterprise. Troubleshooting note (dated 2024): "We are currently taking up to 7 daily backups [for free projects] that will be available for you once you upgrade … we might no longer make daily backups for free projects". Account: organisation on `free` (re-verified) | None. Privacy states the conservative position: Supabase may keep backup copies for up to 7 days |
+| **P-05** DPA and transfers | Supabase | **VERIFIED_PROVIDER + VERIFIED_ACCOUNT** (the Studio panel text is Supabase's own code: provider evidence) | See §3.1 | None |
+| **P-06** backups | Supabase | **VERIFIED_PROVIDER** (no customer backups or PITR on Free); provider-held copies **PARTIALLY_VERIFIED** | `pricing.ts`: **Automatic backups — Free: false; Point-in-time recovery — Free: false.** `backups.mdx`: daily backups only for Pro/Team/Enterprise. Troubleshooting note (dated 2024): "We are currently taking up to 7 daily backups [for free projects] that will be available for you once you upgrade … we might no longer make daily backups for free projects". Account: organisation on `free` (re-verified) | No separate owner check; the backup question rides on the E-4 support ticket. Privacy states it by criteria: "may keep backup copies for a period it sets" |
 | **P-07** DPA, entity, transfer | Resend | **PARTIALLY_VERIFIED** (provider, search summary) | Search summaries of resend.com/legal/dpa, the pre-signed DPA PDF "Updated on 12/31/2025", and resend.com/security/gdpr: the DPA is between **Plus Five Five, Inc.** and the customer; it is **pre-signed by Resend and fully executed on sign-up, for every account**; Resend is processor; **primary processing in the United States**. "UK SCCs" means the **EU SCCs as amended by the UK Addendum**, deemed entered into and incorporated for ex-UK transfers. Sub-processors include AWS, Cloudflare, Google, Supabase Inc., Vercel Inc., Snowflake, Tinybird and others (resend.com/legal/subprocessors) | No owner action; a primary re-read of the DPA from an unblocked environment remains |
 | **P-08** sending domain and region | Resend | **VERIFIED_IMPLEMENTATION**; production domain **OPERATIONAL_NOT_YET_TRUE** | `lib/leads/notify.ts:14–33` and `PROJECT-TRACKER.md` Q-M20: the development sender is `onboarding@resend.dev`; `gridsmith.uk` is **deliberately unverified in Resend until deployment**, with the SPF merge a cutover step. Provider (search summary of resend.com/docs/dashboard/domains/regions): the region chosen for a domain controls where mail is **sent from**, not where it is **stored**; stored data is in the US | None now. **At cutover:** record the region chosen when `gridsmith.uk` is added. Privacy's US statement does not depend on it |
-| **P-09** plan and log retention | Resend | **PARTIALLY_VERIFIED** (provider, search summary) | Search summaries of resend.com/pricing, /security and the knowledge base: **30 days on Free, Pro and Scale**, covering email content and metadata, delivery events, logs and metrics; flexible on Enterprise; stored in the US. Caveat: Supabase's advertised "1 day" proved to be an access window, not a deletion period (§3.3), so a provider figure is not assumed to be a deletion period without an observation | Owner: plan name, and the date of the oldest email still listed (date only) |
+| **P-09** plan and log retention | Resend | **PARTIALLY_VERIFIED** (provider, search summary) | Search summaries of resend.com/pricing, /security and the knowledge base: **30 days on Free, Pro and Scale**, covering email content and metadata, delivery events, logs and metrics; flexible on Enterprise; stored in the US. Caveat: Supabase's published "1 day" did not match what was observed and is not a deletion period (§3.3), so a provider figure is not assumed to be a deletion period without an observation | Owner: plan name, and the date of the oldest email still listed (date only) |
 | **P-10** Data Privacy Framework | Resend | **PARTIALLY_VERIFIED — EXTERNAL VERIFICATION REQUIRED** | Search summary of the official list entry `dataprivacyframework.gov/participant/8907`: **Plus Five Five, Inc.** (Resend), EU-U.S. DPF and **UK Extension: "Active – Re-certification under Review"**; original certification 20 Feb 2025; next due 3 Mar 2027; non-HR data. The register itself is unreachable here | **Non-blocking:** Privacy 2.2 names the **UK Addendum in Resend's DPA** (P-07), which does not depend on DPF status. Read the register directly only if the DPF is to be named |
 | **P-11** Slack | — | **VERIFIED_IMPLEMENTATION** + **VERIFIED_ACCOUNT** (Vercel); remainder **NON-BLOCKING HOUSEKEEPING** | No `SLACK_*` key in any Vercel environment (live listing, R5). The only code reader is `lib/leads/notify.ts:54`, which runs only on a Next server. The static build strips it (`scripts/build-static.mjs:44`). Neither deployed Edge Function reads it. No workflow references `secrets.`. No `.env.local` in the repository | Housekeeping only: confirm no `SLACK_*` secret name in Supabase Preview Edge Function secrets, and in the owner's local `.env.local` if one exists. Also housekeeping: Vercel still holds inert `NEXT_PUBLIC_POSTHOG_*` and `NEXT_PUBLIC_GA4_ID` keys that no code reads |
 | **P-12** Edge, API and database logs | Supabase | **VERIFIED_ACCOUNT** (content and observed retention); **VERIFIED_PROVIDER** (published figure); actual deletion period **OWNER_CHECK_REQUIRED** | See §3.3 | Owner: one Supabase support ticket asking for the actual storage period |
@@ -54,8 +54,10 @@ third-party mirror or proxy was used to get round the network policy.
 
 - **Incorporated automatically.** The DPA "supplements and forms part of the Supabase Terms of Service
   … between the Customer and Supabase Pte. Ltd" and "is effective as of the Effective Date of the
-  Agreement" (DPA v1). The Terms define the DPA by URL, and "Supabase" as **Supabase Pte. Ltd., a
-  Singapore corporate entity**, 65 Chulia Street, Singapore (Terms v4).
+  Agreement" (DPA v1). The Terms define the DPA by URL. The contracting entity is **Supabase Pte. Ltd., a
+  Singapore corporate entity**, 65 Chulia Street, Singapore, unless the customer buys through a cloud
+  marketplace, in which case it is Supabase, Inc. of Dover, Delaware (Terms v4 §1(j)). This
+  organisation is self-serve, with no marketplace purchase recorded.
 - **The Studio Documents panel** says: *"Our Data Processing Addendum is incorporated into our Terms of
   Service, so all organizations get its protections automatically. No separate signed DPA is needed.
   If you signed a DPA with us previously, that agreement remains binding."* (`DPA.tsx`).
@@ -63,29 +65,33 @@ third-party mirror or proxy was used to get round the network policy.
   is on the self-serve `free` plan, with no Enterprise order recorded.
 - **UK transfers:** Schedule 2 §2 incorporates the **Approved Addendum, version B.1.0, issued under
   s.119A(1) DPA 2018**, for any transfer to which UK data protection laws apply. "Execution of this DPA
-  shall have the same effect as signing the Approved Addendum". The importer is Supabase Pte. Ltd.
-  Modules 2 and 3 apply; Irish law and courts govern the SCCs.
+  shall have the same effect as signing the Approved Addendum". The importer is Supabase Pte. Ltd., and
+  Modules 2 and 3 apply. (Schedule 2 §1.5–1.6 choose Irish law and courts for the **EU** SCCs. The law
+  that governs the Approved Addendum for UK transfers was not read in R5 and is not relied on here.)
 - **Location:** where the customer directs a region, data is "stored and primarily Processed in that
   region" (DPA §6.1). Both projects are in `eu-west-1` (account).
 - **Sub-processors** (list dated 1 June 2026) include **Supabase, Inc.** (support), Amazon Web
   Services, Cloudflare, Google, Fly.io, Vercel, Sentry, OpenAI and others. The list gives names and
-  purposes, not processing locations. So "US sub-processors" is supported as **US-incorporated
+  purposes, not processing locations or incorporation. The US connection rests on **Supabase, Inc.**
+  being the Delaware company named in Terms v4 §1(j), and on the US corporate names of the others (Inc.,
+  LLC). So "US sub-processors" is supported as **US-incorporated
   sub-processors**; that processing takes place in the US is not stated.
 
 ### 3.2 Supabase — backups (P-06)
 
-The Free plan has **no customer-accessible automatic backups and no PITR**. Supabase's own note says it
-may currently keep up to 7 daily backups of free projects at its discretion. A deleted lead may
-therefore survive in a provider-held copy for up to about 7 days. That is a statement Privacy can make
-without an account check.
+The Free plan has **no customer-accessible automatic backups and no PITR** (VERIFIED_PROVIDER). A 2024
+troubleshooting note says Supabase is "currently" taking up to 7 daily backups of free projects and
+"might no longer" do so. That is a dated, hedged statement, so provider-held copies are
+**PARTIALLY_VERIFIED**. Privacy 2.2 therefore states it by criteria ("may keep backup copies of the
+database for a period it sets"), and the E-4 support ticket also asks about backups.
 
-### 3.3 Supabase — logs keep visitors' IP addresses, for far longer than "1 day" (P-12)
+### 3.3 Supabase — request logs carry client-IP fields and are held far longer than "1 day" (P-12)
 
 **This finding corrects R3 and R4.**
 
 - **Published figure:** `pricing.ts` lists **"Log retention (API & Database)" — Free: 1 day**. The logs
-  guide says retention "is based on your project's pricing plan" and does not give a separate figure
-  for Edge Function logs.
+  guide says "Retention depends on your pricing plan" (`logs.mdx:65`) and gives no separate figure for
+  Edge Function logs.
 - **Observed, read-only, counts only:**
   - Production `dqiutgmxillhsbzgnlsx` still holds logs from **18 August 2026**, its first minutes
     (earliest 20:42 UTC; created 20:41). That covers `edge_logs`, `postgres_logs`, `postgrest_logs`,
@@ -94,16 +100,23 @@ without an account check.
   - Preview `qfgpwumvvtizeamkynes` still holds logs from **2 October** (its creation day) and
     **4 October**, including 101 `function_edge_logs` and 190 `function_logs` rows.
   - On 7 October, that is **at least 49 days** of logs still held on a Free project.
-- **Content (field names only):** every sampled `edge_logs` and `function_edge_logs` row carries
-  `request.headers.cf_connecting_ip`, `request.headers.x_real_ip`, `request.headers.cf_ipcountry` and
-  `request.headers.user_agent`. The provider's field reference lists the same headers as captured.
+- **Content (field names only; values not read):**
+  - **Production, 19 August 2026:** all 79 `edge_logs` rows carry `request.headers.cf_connecting_ip`,
+    `request.headers.x_real_ip`, `request.headers.cf_ipcountry` and `request.headers.user_agent`.
+  - **Preview, 4 October 2026:** all 60 `edge_logs` rows carry `cf_connecting_ip` and `user_agent`, and
+    all 101 `function_edge_logs` rows carry all four fields.
+  - Rows **carrying client-IP header fields** are therefore held from at least 19 August, which is **49
+    days** before 7 October.
+  - Supabase's field reference lists these headers (and also `referer`) as captured in **API Gateway
+    logs** (`edge_logs`). The `function_edge_logs` result is an account observation only.
 - **Implementation:** with H4-B the visitor's browser posts the form directly to the Supabase Edge
   Function (`lib/leads/edge-client.ts:23`; `NEXT_PUBLIC_LEAD_INTAKE_URL` in
   `.github/workflows/hostinger-staging.yml`). So once H4-B is live, **the enquirer's own IP address and
   browser details reach Supabase's logs.**
 - **Consequences:**
-  1. The "1 day" figure is the plan's access window, not a deletion period. It must **not** appear in
-     Privacy 2.2 or in R14 as a retention period. R3 and R4 recorded it as one.
+  1. The published "1 day" figure does not match what was observed and is **not a deletion period**.
+     What it governs is unconfirmed; E-4 asks Supabase. It must **not** appear in Privacy 2.2 or in R14
+     as a retention period. R3 and R4 recorded it as one.
   2. "Our enquiry database does not store your IP address" stays literally true of the `leads` table,
      but Privacy 2.2 must say plainly that Supabase's own logs record it.
   3. **Deleting a lead does not delete these logs.** The retention cleanup (Part C) and the monthly
@@ -158,6 +171,7 @@ not substitute for eventual parity against the development dataset.
 | `R5-PRIVACY-2.2-READINESS.md` (new) | Clause-by-clause plan: current wording, proposed wording, evidence, status, dependency. It supersedes the status column of `R4-PRIVACY-2.2-CHANGE-PLAN.md`, which stays as history |
 | `../../operations/RETENTION-SCHEDULE.md` | R12–R14 corrected to the R5 evidence (R14 "1 day" removed as a retention period). Periods unchanged |
 | `../../operations/RETENTION-ACTIVATION-CHECKLIST.md` | Part F: R12–R14 status; logs survive lead deletion |
+| `R4-PRIVACY-2.2-CHANGE-PLAN.md`, `R3-OWNER-DECISIONS-APPLIED.md` | Supersession banner (R4 plan) and two one-line correction notes on the Supabase "1 day" figure (R3, after the §5.1 and §5.4 tables), as history annotations only |
 | `../../operations/RIGHTS-CHAIN.md`, `rights-chain/README.md`, `01-…`, `02-…` | Owner IP decision; execution order |
 | Status files | CLAUDE.md, CLOUD-CONTINUATION, OWNER-ACTIONS, PROJECT-STATUS, GS-LEGAL-001-RECORD §14, register state record |
 
@@ -172,4 +186,37 @@ condition did not arise.**
 
 ## 8. Independent review
 
-See §8a, written after the review.
+One independent read-only reviewer checked this record and the files it lists against Supabase's saved
+source files, the Privacy 2.1 text, the code and the owner decision.
+- **Result:** 0 HIGH, 4 MEDIUM, 9 LOW (some LOW findings contain several points), all fixed in the
+  follow-up commit.
+- **MEDIUM:**
+  1. "Visitors' IPs" overstated the evidence; now "client-IP header fields", with the sampled dates.
+  2. "Access window" was not established; now "does not match what was observed; not a deletion
+     period; unconfirmed (E-4)".
+  3. The backup sentence relied on a dated, hedged note; now stated by criteria, with the question
+     added to E-4.
+  4. The §7 safeguard sentence covered EEA transfers that rest on adequacy; now limited to countries
+     without UK adequacy regulations, with the Hostinger limb dependent on E-1.
+- **LOW:** a misquote of the logs guide; header-capture scope; the governing-law note; the marketplace
+  entity caveat; `DPA.tsx` reclassified as provider evidence; missing §10 dependencies; the rule and
+  status-key wording reconciled; three rights-chain wording points; stale and incomplete references; the
+  R3 and R4 "1 day" history annotated.
+- **Confirmed correct by the reviewer:** every Supabase quote against the saved files; the sub-processor
+  names; all ten "Current 2.1" quotations; the implementation claims; the proposed §8 periods against
+  R1–R9 and R17; DPF non-reliance; H4-B as a publication prerequisite; the rights-chain handling of the
+  owner decision; no claim of solicitor review, signature, adoption or publication.
+- **Narrow re-check:** see §8a.
+
+### 8a. Narrow re-check
+
+A second read-only pass over the follow-up diff confirmed M1–M4 and L5–L12 fixed with nothing new
+introduced, and found:
+- a dangling `§8a` reference, fixed by this section;
+- a miscount of the R3 notes in §7, fixed;
+- two optional wording points (the rule paragraph's merged status keys, and template 01's "tick one").
+
+Both optional points were applied. The rule paragraph now distinguishes adoption (NOT YET TRUE must
+be true) from publication (READY — OPERATIONAL must be true). It does not say that adoption waits on
+H4-B, because `check:legal:adoption` requires `H4-B-INTAKE-PROMOTED` to be listed at adoption and met
+only at publication. The re-check also confirmed that no adopted draft and no seed differs from HEAD.

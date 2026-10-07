@@ -8,8 +8,13 @@ This file supersedes the *status* column of `R4-PRIVACY-2.2-CHANGE-PLAN.md`, whi
 The evidence is `R5-PRIVACY-EVIDENCE.md` (§ numbers below refer to it). The check numbers P-01 to P-12
 are those of `../../operations/PRIVACY-EVIDENCE-CHECKLIST.md`.
 
-**Rule for applying it.** A clause goes into 2.2 only when every factual dependency in its row is
-verified and any operational statement in it is already true. Square brackets `[…]` in proposed
+**Rule for applying it.** A clause is drafted into 2.2 only when every factual dependency in its row is
+verified. A clause that describes an operation not yet true may be drafted, subject to two limits:
+- a **NOT YET TRUE** clause (the retention routine) must be true before 2.2 is **adopted**, because its
+  marker cannot come out until then;
+- a **READY — OPERATIONAL** clause (the H4-B intake) must be true before 2.2 is **published**.
+  `H4-B-INTAKE-PROMOTED` is listed as a prerequisite at adoption and met at publication
+  (`check:legal:adoption`). Square brackets `[…]` in proposed
 wording are values still to be supplied. None is to be filled by inference. Privacy 2.2 as a whole can
 reach `OWNER_ADOPTED` only once **no** row is open, because `check:legal:adoption` refuses markers and
 Draft dates at adoption. Its `PUBLISHABLE` prerequisites are `CUTOVER-AUTHORITY` and
@@ -43,7 +48,7 @@ Draft dates at adoption. Its `PUBLISHABLE` prerequisites are `CUTOVER-AUTHORITY`
 |---|---|
 | **Current 2.1** | "Our enquiry database does not store your IP address or browser details; our providers may keep technical request logs, as described in section 6." |
 | **Proposed 2.2** | "Our enquiry database does not store your IP address or browser details. Our providers' own systems do record them: when you submit a form, the logs of Supabase, which receives it, record your IP address, approximate country and browser details, and our hosting provider records the same kind of technical information about each request to the website. Sections 6 to 8 say more." |
-| **Evidence** | §3.3: account-verified `cf_connecting_ip`, `x_real_ip`, `cf_ipcountry` and `user_agent` in `edge_logs` and `function_edge_logs`. Browser-to-Supabase posting (`lib/leads/edge-client.ts:23`). The host processing IP and browser details is the existing §2 wording |
+| **Evidence** | §3.3: client-IP header fields (`cf_connecting_ip`, `x_real_ip`), `cf_ipcountry` and `user_agent` are present in `edge_logs` and `function_edge_logs` (account; field names only, values not read). Once H4-B is live, the browser posts the form to Supabase directly (`lib/leads/edge-client.ts:23`), so the client is the enquirer. The host processing IP and browser details is the existing §2 wording |
 | **Status** | **READY — OPERATIONAL** |
 | **Remaining dependency** | `H4-B-INTAKE-PROMOTED` before publication |
 
@@ -62,8 +67,8 @@ Draft dates at adoption. Its `PUBLISHABLE` prerequisites are `CUTOVER-AUTHORITY`
 | | |
 |---|---|
 | **Current 2.1** | "**Supabase**, which runs the server functions that receive our enquiry forms and stores enquiries in a database located in Ireland." |
-| **Proposed 2.2** | "**Supabase** (Supabase Pte. Ltd., Singapore), which runs the server functions that receive our enquiry forms and stores enquiries in a database located in Ireland. Supabase uses its own sub-processors, including companies based in the United States. It keeps technical logs of each request, including IP addresses and browser details, and may keep backup copies of the database for up to seven days." |
-| **Evidence** | §3.1 (Terms v4 entity; DPA §6; sub-processor list 1 June 2026); §3.2 (backups); §3.3 (logs); region `eu-west-1` (account) |
+| **Proposed 2.2** | "**Supabase** (Supabase Pte. Ltd., Singapore), which runs the server functions that receive our enquiry forms and stores enquiries in a database located in Ireland. Supabase uses its own sub-processors, including companies based in the United States. It keeps technical logs of each request, including IP addresses and browser details, and may keep backup copies of the database for a period it sets." |
+| **Evidence** | §3.1 (Terms v4 §1(j) entity for a self-serve customer; Supabase, Inc. of Delaware; DPA §6; sub-processor list 1 June 2026); §3.2 (backups, stated by criteria because provider-held copies are only partially verified); §3.3 (logs); region `eu-west-1` (account) |
 | **Status** | **READY — OPERATIONAL** |
 | **Remaining dependency** | `H4-B-INTAKE-PROMOTED`. Before H4-B, Production has no Edge Functions (account, R4 and R5) |
 
@@ -83,7 +88,7 @@ Draft dates at adoption. Its `PUBLISHABLE` prerequisites are `CUTOVER-AUTHORITY`
 |---|---|
 | **Current 2.1** | "We use these providers under written terms that require them to protect personal data and to use it only to provide their service to us. [OWNER DECISION: confirm that the Hostinger, Supabase and Resend data processing terms are accepted on the accounts used before adopting this sentence.]" |
 | **Proposed 2.2** | "We use these providers under written terms that require them to protect personal data and to use it only to provide their service to us." (marker removed) |
-| **Evidence** | **Supabase:** incorporated automatically into the Terms ("No separate signed DPA is needed"), verified at provider and implementation level (§3.1). **Resend:** "pre-signed … fully executed once you sign up", for every account (search summary). **Hostinger:** the DPA is annexed to and incorporated into the Terms of Service for hosting and email (search summary) |
+| **Evidence** | **Supabase:** incorporated automatically into the Terms ("No separate signed DPA is needed"), verified from Supabase's own source (provider evidence, §3.1). **Resend:** "pre-signed … fully executed once you sign up", for every account (search summary). **Hostinger:** the DPA is annexed to and incorporated into the Terms of Service for hosting and email (search summary) |
 | **Status** | **PRIMARY RE-READ** (Hostinger, Resend); Supabase READY |
 | **Remaining dependency** | A direct read of hostinger.com/legal/dpa and of Resend's DPA. No owner support request is needed, because the contracts apply by acceptance of the providers' terms |
 
@@ -112,10 +117,10 @@ Draft dates at adoption. Its `PUBLISHABLE` prerequisites are `CUTOVER-AUTHORITY`
 | | |
 |---|---|
 | **Current 2.1** | "Where personal data is transferred outside the UK, we rely on [OWNER DECISION: name the safeguard confirmed for each provider, for example UK adequacy regulations including the UK-US data bridge for a provider certified to it, or the UK International Data Transfer Agreement or Addendum in the provider's terms]. You can ask us for details of these safeguards at contact@gridsmith.uk." |
-| **Proposed 2.2** | "Where personal data is transferred outside the UK, we rely on the UK International Data Transfer Addendum to the EU standard contractual clauses, which is included in the data processing agreements of Supabase, Resend and Hostinger. You can ask us for details of these safeguards at contact@gridsmith.uk." |
+| **Proposed 2.2** | "Where personal data is transferred to a country that does not have UK adequacy regulations, we rely on the UK International Data Transfer Addendum to the EU standard contractual clauses, which is included in the data processing agreements of Supabase and Resend[E-1: , and of Hostinger]. You can ask us for details of these safeguards at contact@gridsmith.uk." The bracketed Hostinger limb is included only if E-1 and the primary re-read show a Hostinger transfer that needs it. If the contracting entity is Hostinger UK Limited, or an EEA entity covered by UK adequacy, the limb may describe onward transfers instead, or be omitted |
 | **Evidence** | **Supabase:** verified (§3.1). **Resend:** "UK SCCs" = EU SCCs as amended by the UK Addendum, deemed incorporated (search summary). **Hostinger:** UK IDTA Addendum B1.0 deemed incorporated (search summary). **The DPF and UK Extension are deliberately not relied on:** the register is unreachable here (P-10), and the Addendum is an independent mechanism |
 | **Status** | Supabase **READY**; Resend and Hostinger **PRIMARY RE-READ** |
-| **Remaining dependency** | Direct reads of the Hostinger and Resend DPAs |
+| **Remaining dependency** | Direct reads of the Hostinger and Resend DPAs; E-1 (Hostinger contracting entity) |
 
 ## 10. §8 ¶2 — retention, and the third marker
 
@@ -125,7 +130,7 @@ Draft dates at adoption. Its `PUBLISHABLE` prerequisites are `CUTOVER-AUTHORITY`
 | **Proposed 2.2** | See the wording box below. It replaces ¶2 in full; ¶1 (the criteria) and ¶3 (accounting records) are kept |
 | **Evidence** | Periods: owner-adopted R1–R9 and R17 (`RETENTION-SCHEDULE.md`). Supabase logs and backups: §3.2–§3.3. Resend: P-09. Hostinger mail: P-04 (search summary). Statute: §4 (UNVERIFIED at source) |
 | **Status** | **NOT YET TRUE** (the routine is not operating); **OWNER CHECK** (P-04 optional, P-09, P-12); **PRIMARY RE-READ** (statute) |
-| **Remaining dependency** | `RETENTION-ACTIVATION-CHECKLIST.md` Part F in full; P-09 and P-12 answers; the statutory re-read |
+| **Remaining dependency** | `RETENTION-ACTIVATION-CHECKLIST.md` Part F in full; E-3 (P-09) and E-4 (P-12) answers; E-2 (the mailbox product, on which the Hostinger deleted-mail sentence depends); `H4-B-INTAKE-PROMOTED` for the Supabase IP sentence; the statutory re-read |
 
 **Proposed §8 ¶2 wording:**
 
@@ -143,7 +148,7 @@ Draft dates at adoption. Its `PUBLISHABLE` prerequisites are `CUTOVER-AUTHORITY`
 >
 > Our providers keep some records for their own periods, and deleting an enquiry does not shorten them:
 > - Supabase keeps technical request logs, including IP addresses, for [P-12: the period Supabase
->   confirms, or "a period it sets"], and may keep backup copies of the database for up to seven days;
+>   confirms, or "a period it sets"], and may keep backup copies of the database for a period it sets;
 > - Resend keeps notification emails and their delivery records for [P-09: 30 days];
 > - Hostinger keeps deleted email for up to 30 days and keeps website and mailbox access records for
 >   [P-04: the period, or "periods it sets"].

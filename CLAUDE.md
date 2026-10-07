@@ -1,8 +1,8 @@
 > **GS-LEGAL-001-R5 (7 October 2026): PRIVACY EVIDENCE REDUCED — OWNER CHECKS REMAIN; nothing applied, adopted, published or deployed.** Record: `docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`.
 >
 > - **Evidence for checks 1–12:**
->   - Supabase is settled from its own source (repo HEAD `454a2329`): the DPA is incorporated automatically, with the UK Addendum B.1.0, Supabase Pte. Ltd.; the Free plan has no automatic backups (Supabase may keep up to 7 daily copies).
->   - Account finding: Supabase logs record client IP, country and user agent, and are held **≥49 days** on Free (Production logs from 18 Aug 2026). The published "1 day" is an access window, not a deletion period, and lead deletion does not reach these logs.
+>   - Supabase's contract position is verified from its own source (repo HEAD `454a2329`): the DPA is incorporated automatically, with the UK Addendum B.1.0, Supabase Pte. Ltd. The Free plan has no automatic backups or PITR; provider-held copies are only partially verified.
+>   - Account finding (field names only): Supabase request logs carry client-IP header fields, country and user agent. Rows carrying them are held from 19 Aug 2026 (**≥49 days**) on Free. The published "1 day" does not match this and is not a deletion period (what it governs is unconfirmed, E-4). Lead deletion does not reach these logs.
 >   - Resend and Hostinger rest on search summaries of their official pages, because the hosts are blocked; their primary re-reads remain.
 >   - The DPF is non-blocking, because Privacy 2.2 relies on the UK Addendum.
 >   - Slack is housekeeping only.

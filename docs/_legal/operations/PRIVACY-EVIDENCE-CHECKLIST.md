@@ -22,14 +22,14 @@ Evidence: `../research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`; clause plan:
 | P-02 Hostinger DPA / UK mechanism | PARTIALLY_VERIFIED (provider, search summary) | No; a primary re-read of hostinger.com/legal/dpa remains (any unblocked environment) |
 | P-03 Hostinger location / products | PARTIALLY_VERIFIED (CDN active for staging: account) | **Yes — E-2 below** |
 | P-04 Hostinger retention | PARTIALLY_VERIFIED (provider, search summary) | Optional (E-5): access-log period from support; otherwise Privacy uses criteria |
-| P-05 Supabase DPA / transfers | VERIFIED_PROVIDER + VERIFIED_IMPLEMENTATION + VERIFIED_ACCOUNT | **None** |
-| P-06 Supabase backups | VERIFIED_PROVIDER | **None** |
+| P-05 Supabase DPA / transfers | VERIFIED_PROVIDER + VERIFIED_ACCOUNT | **None** |
+| P-06 Supabase backups | VERIFIED_PROVIDER (no customer backups or PITR on Free); provider-held copies PARTIALLY_VERIFIED | None separately; the question rides on E-4 |
 | P-07 Resend DPA | PARTIALLY_VERIFIED (provider, search summary) | No; primary re-read remains |
 | P-08 Resend domain / region | VERIFIED_IMPLEMENTATION; production domain OPERATIONAL_NOT_YET_TRUE | None now; record the region when gridsmith.uk is added at cutover |
 | P-09 Resend plan / retention | PARTIALLY_VERIFIED (provider, search summary) | **Yes — E-3 below** |
 | P-10 DPF | PARTIALLY_VERIFIED — EXTERNAL VERIFICATION REQUIRED | None: non-blocking, because Privacy 2.2 relies on the UK Addendum, not the DPF |
 | P-11 Slack | VERIFIED_IMPLEMENTATION + VERIFIED_ACCOUNT | NON-BLOCKING HOUSEKEEPING only |
-| P-12 Supabase logs | VERIFIED_ACCOUNT (IPs logged; held ≥49 days) | **Yes — E-4 below** |
+| P-12 Supabase logs | VERIFIED_ACCOUNT (client-IP header fields present; logs held ≥49 days) | **Yes — E-4 below** |
 
 ### The four owner checks that remain
 
@@ -53,7 +53,7 @@ Evidence: `../research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`; clause plan:
 - **What to report:** the plan name, the data-retention figure if the plan card shows one, and the
   **date** of the oldest email still listed.
 - **What not to share:** recipients, subjects, message bodies, API keys or DNS values.
-- **Why:** Supabase's advertised "1 day" turned out to be an access window, not a deletion period.
+- **Why:** Supabase's published "1 day" did not match what was observed, and is not a deletion period.
   The oldest date shows whether Resend's "30 days" is a real deletion period.
 
 **E-4 (P-12) — Supabase log storage period** (the only one that needs a provider reply)
@@ -61,8 +61,9 @@ Evidence: `../research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`; clause plan:
 - **What to send:** "Our Free-plan projects dqiutgmxillhsbzgnlsx and qfgpwumvvtizeamkynes still return
   logs from 18 August and 2 October 2026 through the logs API, although the plan lists 1-day log
   retention. How long are project logs (including edge_logs, function_edge_logs and postgres_logs),
-  which contain client IP addresses, actually stored before deletion? Can we request deletion of logs
-  older than a chosen period?"
+  which carry client-IP header fields, actually stored before deletion? What does the 1-day figure
+  govern? Can we request deletion of logs older than a chosen period? And do you keep backup copies of
+  Free-plan databases, and for how long?"
 - **What to report:** Supabase's answer, quoted.
 - **What not to share:** API keys, service-role keys, connection strings, or any log content.
 

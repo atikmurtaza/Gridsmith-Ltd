@@ -1,5 +1,5 @@
 > **GS-LEGAL-001-R5 (7 October 2026) — Privacy evidence reduced; owner checks remain:**
-> - **Supabase:** settled; its logs keep visitors' IPs ≥49 days.
+> - **Supabase:** the contract is verified; its request logs carry client-IP fields and are held ≥49 days.
 > - **Owner checks:** four remain (E-1 to E-4).
 > - **Privacy 2.2:** readiness prepared, not applied.
 > - **Rights chain:** template 01 is required regardless of employment status.

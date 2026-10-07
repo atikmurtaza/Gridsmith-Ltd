@@ -321,9 +321,9 @@ The owner adopted six documents; the record is `R4-OWNER-ADOPTION.md`.
 ## 14. GS-LEGAL-001-R5 (7 October 2026)
 
 Privacy evidence sweep; the record is `R5-PRIVACY-EVIDENCE.md`.
-- **Supabase:** P-05 and P-06 are settled from Supabase's own published source and the account.
-- **Supabase logs (P-12):** they record client IP addresses and are held at least 49 days on the Free
-  plan. The published "1 day" is an access window.
+- **Supabase:** P-05 is verified from Supabase's own published source and the account. P-06: no Free-plan backups or PITR (provider); provider-held copies only partially verified.
+- **Supabase logs (P-12):** they carry client-IP header fields and are held at least 49 days on the
+  Free plan. The published "1 day" is not a deletion period; what it governs is unconfirmed (E-4).
 - **Hostinger and Resend:** they rest on search summaries of their official pages.
 - **Owner checks:** four remain.
 - **Privacy 2.2:** readiness is in `R5-PRIVACY-2.2-READINESS.md`, not applied.

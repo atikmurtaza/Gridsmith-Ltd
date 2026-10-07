@@ -13,8 +13,9 @@ the Company. That includes:
 - work made before incorporation (24 February 2026); and
 - any work whose employee ownership cannot safely be established.
 
-It states nothing about whether he is or is not legally an employee. Use clause 1.3 **option C**. Do
-not tick A or B unless the position has been established independently. Template 02 may later govern
+It states nothing about whether he is or is not legally an employee. Use clause 1.3 **option C**.
+Options A and B are kept only to show the alternatives; under the R5 owner decision, they are not used
+for Atik Murtaza. Template 02 may later govern
 employee-created work prospectively, but only under a verified written contract of service, and only
 alongside this document, never in place of it (clause 6).
 
@@ -43,7 +44,7 @@ Digital and Gridsmith Press.
 describe the Company's tools, templates, methods and reusable components as its own. The Company can
 do that only for rights it holds.
 
-1.3 **Employment position** (tick one; option C is the owner's operational position at R5):
+1.3 **Employment position** (tick one; **for Atik Murtaza, tick C only**: the owner's decision at R5):
 - [ ] **A.** The Assignor is **not** employed by the Company under a contract of service or
   apprenticeship.
 - [ ] **B.** The Assignor **is** employed by the Company under a contract of service dated [● date].

@@ -97,6 +97,8 @@ published or proposed-for-adoption clause in R3.
 | 7 | **Supabase backups and logs** | PARTLY ESTABLISHED | API and database logs: **1 day on Free** (Supabase's own pricing source; plan account-verified). Backups: not documented for Free; a help note says up to 7 daily backups at Supabase's discretion |
 | 8 | **`SLACK_LEADS_WEBHOOK`** | ESTABLISHED | **Vercel:** no such key in production, preview or development (Vercel API, 7 Oct 2026). **Hostinger static build:** stripped by `scripts/build-static.mjs:42-46`; no persistent Node. **Edge Functions:** the deployed `gs-lead-intake` v8 and `gs-notification-worker` v6 read only `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GRIDSMITH_ALLOWED_ORIGINS`, `GRIDSMITH_WORKER_TOKEN`, `LEAD_NOTIFICATION_EMAIL`, `RESEND_API_KEY`, `LEAD_NOTIFICATION_FROM`, and call only Supabase RPC/functions and `api.resend.com`. Production Supabase has no Edge Functions. **GitHub workflows** reference no `secrets.`. The only reader in the code, `lib/leads/notify.ts:54`, runs only on a Next server. Residual housekeeping only (5.2, item 11) |
 
+> **R5 correction (7 October 2026):** the Supabase "1 day" figure is the published plan figure, not a deletion period. Logs carrying client-IP header fields were observed held ≥49 days (`R5-PRIVACY-EVIDENCE.md` §3.3).
+
 ### 5.2 Owner account checks
 
 | # | Provider | Where to look | Report | Why |
@@ -138,6 +140,8 @@ time, as Privacy 2.2. Each is confirmed or sharpened by the §5.2 check named.
 | §7 ¶2 | "Our email-notification provider may also process the notification outside the UK." | "Our email-notification provider, Resend, processes the notification and keeps its delivery records in the United States." Also: Hostinger's content delivery network serves pages from locations outside the UK and Europe | Checks 8, 3 |
 | §7 marker | "[OWNER DECISION: name the safeguard …]" | Supabase: UK Addendum. Resend: UK Extension to the EU–US Data Privacy Framework (UK–US data bridge) if check 10 confirms it is active, otherwise the clauses in its DPA. Hostinger: the mechanism check 2 confirms | Checks 2, 7, 10 |
 | §8 marker | "[OWNER DECISION: set retention periods …]" | R2 §5.4 wording as amended by `RETENTION-SCHEDULE.md` §3 | Routine operating; checks 4, 6, 9 |
+
+> **R5 correction (7 October 2026):** the Supabase "1 day" figure is the published plan figure, not a deletion period. Logs carrying client-IP header fields were observed held ≥49 days (`R5-PRIVACY-EVIDENCE.md` §3.3).
 
 "Our enquiry database does not store your IP address" (§2) stays: it is literally accurate, because the
 intake code stores none.
