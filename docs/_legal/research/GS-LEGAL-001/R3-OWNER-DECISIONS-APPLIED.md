@@ -249,7 +249,68 @@ CI's served `check:legal:parity` against the development dataset stays red until
 
 ## 11. Final independent review
 
-<!-- R3:REVIEW -->
+**Reviewer independence.** Each review below was a fresh agent with no part in drafting. It read the
+changed clauses, the surrounding clauses, the owner decisions, the recorded authority (A–G, the citation
+ledger), the cross-document references and the operational templates, and it ran the adoption gates.
+
+| Pass | Scope | HIGH | MEDIUM | LOW | NOTE | Outcome |
+|---|---|---|---|---|---|---|
+| **Final independent adversarial review** | All R3 changes: consumer rights, formation, early start, cancellation and refunds, payment, deferred payments, B2B liability, IP and moral rights, privacy factuality, retention, disclosures, cross-document consistency, versions, template/terms parity, gate | 0 | 5 | 10 | 9 | All justified findings fixed (below) |
+| **Narrow re-check 1** | The fixes for R3-01–R3-08 | 0 | 4 | 12 | — | Fixed |
+| **Narrow re-check 2** | The re-drafted Bus 2, Bus 13 and Bus 16 | 0 | 3 | 5 | — | Bus 2 rebuilt as prepayment; Bus 16 notional period made explicit (OC-1) |
+| **Narrow re-check 3** | The final Bus 2 and Bus 16 | 0 | 0 | 7 | — | **PASS.** Five LOW wording fixes applied (below); two recorded only |
+
+**Fixes, by finding:**
+
+- **Medium findings:**
+  - **R3-01 / re-checks — Bus 2 deferred-payment fallback.** Under the default schedule, a client who is
+    an individual, partnership or other unincorporated body now pays each stage, each month of time
+    work, any Change Order price and any third-party cost **before** it starts or is committed. So no
+    payment falls due after the work it pays for, and art. 60F(2) has nothing to count. Earlier forms
+    ("invoiced in advance"; a month-11 cut-off) left edge cases.
+  - **R3-02 — consumer slippage.** Workflow rule 1: consumers pay at or before the start of the work
+    each payment covers, and supplier costs are collected before Gridsmith pays them.
+  - **R3-03 — Bus 16 option E.** "Paid and payable" is used consistently. Limb (ii) adds a rates-only
+    measurement rule and a fixed-term reading, plus "whether or not the Scope continues for that period"
+    (owner confirmation OC-1, §12).
+  - **R3-04 — record and continuation.** The false "searched" claim is corrected, and the continuation
+    table is updated to 3.1.
+  - **R3-05 — Privacy 2.2.** The change list is complete (§5.4). It is not applied.
+- **Low findings:**
+  - **R3-06:** workflow rule 1 period wording.
+  - **R3-07:** the gate now requires the "no interest or fee" limb; selftest 69.
+  - **R3-08:** Bus 13 tie-in reworded.
+  - **R3-09 / R3-10:** printing — no commission arrangement, orders placed after the cancellation period,
+    and a business goods-supply Scope must carry an approved goods clause and name clause 13.
+  - **R3-11:** anchors fixed and §10/§11 filled.
+  - **R3-12:** retention periods stated as the monthly routine achieves them.
+  - **R3-13:** design and database right added to the rights chain, marked UNVERIFIED.
+  - **R3-14:** "No VAT is charged on our fees; supplier costs are shown including any VAT the supplier
+    charges."
+  - **R3-15:** the workflow is not for use until Consumer 3.1 is adopted and Privacy is `PUBLISHABLE`.
+- **Notes taken:**
+  - template notes marked "remove this note";
+  - a payment received before acceptance is refunded within 14 days if no acceptance follows;
+  - the run log's retention is stated;
+  - the Technical longstop is noted on R5;
+  - adoption step 1 limited to transcribing the owner's instruction.
+- **Narrow re-check 3, five LOW fixes applied:**
+  - Bus 2 now covers Change Order prices and third-party costs;
+  - unused prepaid time is refunded within 14 days;
+  - Bus 5 says "Unless the Scope or clause 2 says otherwise";
+  - Bus 16 spreads a whole-project estimate evenly;
+  - Bus 16 treats a period under a month as one month.
+
+  These are wording only, and the gates were re-run on them.
+- **Recorded only (all pre-existing, not introduced by R3):**
+  - the "payment schedule" / "payment arrangement" terminology;
+  - the undefined "periodic Scope";
+  - the conflict between Bus 1 "names the clause" and Bus 16 "stated prominently";
+  - the routes to a payment after supply under Bus 3, 4, 6.2, 7 and 18.
+
+**Verdict of the last pass:** "Both §2 and §16 achieve what they set out to do, and the routes that
+still allow a payment after the work were all there before this commit."
+
 
 ## 12. Adoption package
 

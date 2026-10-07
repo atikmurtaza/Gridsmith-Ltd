@@ -9,7 +9,7 @@
 > - **C-3:** "registered in England and Wales" verified; the footer change goes to a site phase.
 > - **Privacy 2.1:** unchanged, three markers; 12 owner account checks listed.
 > - **Gates:** `check:legal:adoption` now also requires the "no interest or fee" limb (selftest 69). Served parity and consumer-terms green in draft mode, against the real Next app with Sanity answered locally from the repository's seeds.
-> - **Review:** final independent review 0 high, 5 medium, 10 low, all fixed; narrow re-check recorded.
+> - **Review:** final independent review 0 high, 5 medium, 10 low, all fixed; three narrow re-checks, the last PASS with only low wording points.
 > - **States:** all seven `OWNER_REVIEW_REQUIRED`; nothing adopted, published or deployed.
 > - **Untouched:** no Sanity, Supabase, Hostinger, DNS or `main` change; no lead or `pg_dump` deleted; H4-H not begun.
 
