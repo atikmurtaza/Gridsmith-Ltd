@@ -29,6 +29,7 @@ import {
   emailProblems,
   officeProblems,
   phoneProblems,
+  phoneTextOf,
   responseProblems,
   teamProblems,
   callProblems,
@@ -210,6 +211,24 @@ check(
 check(
   'PHONE — a second, unapproved number in the text',
   one(phoneProblems('/contact', 'or try +44 20 7946 0000', CLEAN_CHANNELS), '+44 20 7946 0000'),
+);
+
+// GS-LEGAL-001-R7: the served consumer terms end clause 21 with the number and open clause 22 with
+// "22. Cancellation form". The flattened text read "+44 7405 448534 22". The boundary specimen must stay
+// clean, digits appended inside one block must still fire, and the unseparated flattening must fire on
+// the boundary specimen (which shows that specimen is a subject).
+const BOUNDARY_HTML = `<p>WhatsApp or text: ${FACTS.contactPhone}</p><h2 id="clause-22">22. Cancellation form</h2>`;
+check(
+  'PHONE CLEAN — the number ending a block before a numbered heading',
+  none(phoneProblems('/legal/consumer-client-terms', phoneTextOf(BOUNDARY_HTML), BOUNDARY_HTML)),
+);
+check(
+  'PHONE — digits appended to the number inside one block',
+  one(phoneProblems('/legal/x', phoneTextOf(`<p>${FACTS.contactPhone} 22</p>`), '<p></p>'), `${FACTS.contactPhone} 22`),
+);
+check(
+  'PHONE — premise: without block separation the boundary specimen fires',
+  one(phoneProblems('/legal/x', BOUNDARY_HTML.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' '), BOUNDARY_HTML), `${FACTS.contactPhone} 22`),
 );
 
 /* -- 4. the registered office ------------------------------------------------ */

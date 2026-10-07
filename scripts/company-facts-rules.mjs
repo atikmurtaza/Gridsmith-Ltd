@@ -365,6 +365,23 @@ export function emailProblems(route, text, html) {
 }
 
 /**
+ * Served markup to the text `phoneProblems` reads (GS-LEGAL-001-R7). Flattening joins blocks with a
+ * space, so a number ending one block ran into a numbered heading starting the next ("+44 7405 448534"
+ * then "22. Cancellation form" on the consumer terms) and read as "+44 7405 448534 22". A non-digit
+ * sentinel at each block end keeps a match inside its block; digits appended inside a block still fire.
+ *
+ * @param {string} markup
+ * @returns {string}
+ */
+export function phoneTextOf(markup) {
+  return asText(markup)
+    .replace(/<\/(?:p|li|h[1-6]|div|td|th|dt|dd|section)>|<br\s*\/?>/gi, '$& ¶ ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
  * Problems with the telephone number a route serves.
  *
  * @param {string} route

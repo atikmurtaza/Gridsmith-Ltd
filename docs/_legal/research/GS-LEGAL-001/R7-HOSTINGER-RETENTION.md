@@ -354,3 +354,32 @@ activation truthfulness, the `pg_dump`, adoption readiness and Sanity parity.
 |---|---|---|
 | Six adopted documents | unchanged; equal to `ownerAdoptedSha256` | none |
 | `PRIVACY-POLICY.md` (2.2, unadopted) | R6 `140ab3aa…` → R7 `2404a1cfd985ae5a2e248b605075260558b28990d999d6612795ff48050d8c1e` | marker and one sentence removed |
+
+## 9. CI
+
+**Run `37636172385`, exact SHA `b196a238`: failure, 1 of 18 served commands.**
+- `check:legal:parity` **PASS in CI** (6 documents, 107 clauses, 437 paragraphs). The development-dataset
+  drift recorded since R5 is cleared by A-1.
+- `check:press:scene` PASS. R6's `pr-au-voice contrast` failure did not recur, and it passes locally:
+  runner variance, not a defect.
+- **New: `check:company` red, exposed by A-1.** The development dataset now serves the adopted Consumer
+  Terms 3.1:
+  - clause 21 ends with the contact number;
+  - clause 22's heading begins "22.";
+  - the gate flattened the page into one line, so it read the number as "+44 7405 448534 22".
+
+  **The adopted text is correct and unchanged.** The defect is in the gate.
+
+**Fix (gate only):**
+- `phoneTextOf` (`scripts/company-facts-rules.mjs`) puts a non-digit sentinel at block ends.
+- Question 3 reads that text; the other questions are unchanged.
+- Selftest 77 → 80:
+  - the boundary specimen is clean;
+  - digits appended inside one block still fire;
+  - a premise case shows the unseparated flattening fires on the boundary specimen.
+- **Mutant:** with the sentinel removed, exactly the boundary case goes red. The file was restored
+  byte-identical.
+- **Served:** red reproduced locally on the A-1 build (port 3217) before the fix; PASS after (10
+  questions, 18 routes).
+
+The follow-up commit's CI run is the exact-SHA receipt.

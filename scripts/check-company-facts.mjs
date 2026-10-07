@@ -67,6 +67,7 @@ import {
   emailProblems,
   officeProblems,
   phoneProblems,
+  phoneTextOf,
   responseProblems,
   teamProblems,
   callProblems,
@@ -224,7 +225,8 @@ for (const route of ROUTES) {
 
   problems[1].push(...disclosureProblems(route, footerText));
   problems[2].push(...emailProblems(route, text, markup));
-  problems[3].push(...phoneProblems(route, text, markup));
+  // Block-separated, not `text`: see `phoneTextOf` (GS-LEGAL-001-R7).
+  problems[3].push(...phoneProblems(route, phoneTextOf(markup), markup));
   problems[4].push(...officeProblems(route, bodyText, OFFICE_ALLOWED.includes(route)));
   problems[5].push(...responseProblems(route, text));
   problems[6].push(...teamProblems(route, text));
