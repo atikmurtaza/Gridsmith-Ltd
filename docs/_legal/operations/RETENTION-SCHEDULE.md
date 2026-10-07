@@ -3,7 +3,14 @@
 **Status:** schedule **adopted by the owner** (`GS-LEGAL-001-R3`, decision O-1 option (a) with the R8
 modification, 7 October 2026).
 
-**Routine status (R8, 7 October 2026): NOT YET OPERATING; one owner step remains.**
+**Routine status (R9, 7 October 2026): OPERATING.**
+- The obsolete 2 October dump was permanently deleted by the owner (attestation; read-only absence
+  checks).
+- `RETENTION-ROUTINE-OPERATING` is recorded in the register.
+- Next runs: monthly Mon 2 November 2026; quarterly Mon 4 January 2027; annual Mon 1 March 2027.
+- Record: `research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md` §2.
+
+~~**Routine status (R8, 7 October 2026): NOT YET OPERATING; one owner step remains.**~~
 - The first monthly review is done and logged: leads 0, email 0, WhatsApp/SMS 0.
 - Cadence: monthly from 2 November 2026; quarterly from 4 January 2027; annual from 1 March 2027.
 - The 2 October `pg_dump` is in the Recycle Bin, pending the owner's permanent deletion.

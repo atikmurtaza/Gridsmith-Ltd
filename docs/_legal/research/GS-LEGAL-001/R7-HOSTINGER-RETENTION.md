@@ -31,8 +31,9 @@ instruction.
 **Redacted and superseded at R8** (owner instruction; git history keeps the R7 text).
 
 What R7 established, and R8 keeps:
-- Hostinger's DPA was read directly. "Customer" is the contracting party, as controller or
-  processor (§2.1–2.2), with SCCs and the UK Addendum (§9).
+- Hostinger's DPA was read directly: controller or processor customer (§2.2), SCCs and the UK Addendum
+  (§9). (R9 correction: the DPA's "Customer" is "you", defined by Hostinger's Terms §1/§3. §4 makes the
+  Account-information entity the owner of the Account's data and Services.)
 - No inter-company processor relationship is created from the account's history.
 - Privacy 2.2 §6 lost its marker and the sentence describing the account.
 

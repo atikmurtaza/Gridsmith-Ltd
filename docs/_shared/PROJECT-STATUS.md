@@ -1,3 +1,10 @@
+> **GS-LEGAL-001-R9 (7 October 2026) — hosting documentation required; retention routine operating:**
+> - **Retention:** `RETENTION-ROUTINE-OPERATING` evidenced (dump permanently deleted by the owner; leads 0; first review logged; cadence set).
+> - **Hostinger:** existing infrastructure kept (owner decision). Gridsmith need not be the named customer, but Hostinger's Terms §4 make the Account-information owner the owner of the Account's data. So `HOSTINGER-PROCESSOR-CHAIN` needs one documentary step: (A) the Account information lists Gridsmith Ltd, or (B) a documented processor chain. No migration or purchase.
+> - **Privacy 2.2:** byte-identical; `OWNER_REVIEW_REQUIRED`; not ready for adoption.
+>
+> Record: `docs/_legal/research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md`.
+
 > **GS-LEGAL-001-R8 (7 October 2026) — hosting evidence required; first monthly retention review done:**
 > - **Hosting:** Gridsmith's admin department manages the hosting account. `HOSTINGER-PROCESSOR-CHAIN` elements 1–6 met; **element 7 not met**: the account's Hostinger customer of record is not Gridsmith Ltd (UK GDPR Art. 28(3)).
 > - **Privacy 2.2:** byte-identical; `OWNER_REVIEW_REQUIRED`; not ready for adoption.

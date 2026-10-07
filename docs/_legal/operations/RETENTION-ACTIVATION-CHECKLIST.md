@@ -1,5 +1,10 @@
 # Retention routine — activation checklist
 
+**R9 (7 October 2026): the routine is OPERATING.**
+- C7 is closed: the dump was permanently deleted by the owner.
+- `RETENTION-ROUTINE-OPERATING` is recorded in the register.
+- Record: `../research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md` §2.
+
 **R8 (7 October 2026):**
 - The first monthly review is done and logged: leads 0, email 0, WhatsApp/SMS 0.
 - Cadence:
@@ -83,7 +88,7 @@ Run once, before the routine starts, under its own authority (A3). The full step
 | C4 | Delete only (c), (d) and (e), in one transaction, with a count assertion | [x] R7: 63 deleted, asserted before commit |
 | C5 | **Read back**: the remaining count, and no (a) or (b) row removed | [x] R7: 0 remaining; structure unchanged |
 | C6 | Delete the matching notification emails (R3) for deleted rows | [x] R7: not a personal-data deletion, because any notification for these rows carried only probe values at reserved domains. ~~`notified_at` null on all 63, so none was sent~~ (wrong: the insert path never writes `notified_at`). Any A-08 probe mail in the inbox or Resend is cleared at the first monthly run |
-| C7 | **Only after C5 passes:** replace **the 2 October 2026 `pg_dump`** (R17; `docs/_shared/GS-PROD-003-R1.md` §7) with a post-cleanup export, or delete it, and record which. Do the same for the C1 baseline once any agreed hold period has ended. Delete **any restore-test database** left from GS-PROD-003-R1's restore test (R17), if one still exists | [ ] **R8:** the dump was verified (sha256 `96e4885f…`, 63 probe rows, 0 genuine; schema = migrations 0001–0004) and moved to the Recycle Bin on 7 October 2026. **Owner:** delete it permanently. The R7 baseline is kept until 2 November 2026. The restore container is unverified (Docker down; probe data only; non-blocking) |
+| C7 | **Only after C5 passes:** replace **the 2 October 2026 `pg_dump`** (R17; `docs/_shared/GS-PROD-003-R1.md` §7) with a post-cleanup export, or delete it, and record which. Do the same for the C1 baseline once any agreed hold period has ended. Delete **any restore-test database** left from GS-PROD-003-R1's restore test (R17), if one still exists | [x] **R9:** permanently deleted by the owner on 7 October 2026 (attestation; read-only checks). The restore-test database is non-blocking under the R8 owner instruction (probe data only). **R8:** the dump was verified (sha256 `96e4885f…`, 63 probe rows, 0 genuine; schema = migrations 0001–0004) and moved to the Recycle Bin on 7 October 2026. **Owner:** delete it permanently. The R7 baseline is kept until 2 November 2026. The restore container is unverified (Docker down; probe data only; non-blocking) |
 | C8 | Write the accountability log entry (Part E) | [x] R7: `%USERPROFILE%\gridsmith-records\RETENTION-LOG.txt` |
 
 ## D. Preservation exceptions — do not delete while any applies
@@ -120,7 +125,7 @@ All must be true:
 - [x] A1 and A2 done (R7, R8).
 - [x] Part C run once, with its log entry (C8) (R7; C7 below).
 - [x] The first monthly run (Part B) logged (R8, 7 October 2026).
-- [ ] R17 handled: the 2 October 2026 `pg_dump` replaced or deleted (C7). **R8:** it is in the Recycle Bin, pending the owner's permanent deletion. ~~and any restore-test database deleted~~ **R8 (owner instruction, Task 6):** the restore-test container is non-blocking housekeeping while Docker is unavailable and it holds no genuine personal data (it held only the 63 probe rows).
+- [x] R17 handled: the 2 October 2026 `pg_dump` replaced or deleted (C7). **R9:** permanently deleted by the owner (attestation; path and Recycle Bin item absent). ~~**R8:** it is in the Recycle Bin, pending the owner's permanent deletion.~~ ~~and any restore-test database deleted~~ **R8 (owner instruction, Task 6):** the restore-test container is non-blocking housekeeping while Docker is unavailable and it holds no genuine personal data (it held only the 63 probe rows).
 - [x] R12–R14 set (R6). R12: by criteria. R13: Resend 30 days, backups 7 days. R14: Supabase one-day
   customer window, provider-side retention not asserted.
 - [x] Privacy 2.2 §8 says that deleting an enquiry does not shorten providers' own logs and backups (R6
@@ -129,14 +134,14 @@ All must be true:
 
 ~~**Still open (R6):** A1 and A2; Part C; the first monthly run; R17.~~
 
-**Still open (R8):** C7 only (the owner's permanent deletion of the dump from the Recycle Bin). A2, the
-first monthly run and the review dates are done. ~~**Still open (R7):**~~
-- A2 (the operator's access route; the operator already holds it);
-- the first monthly run, logged;
-- R17 (the dump deleted, and the restore container checked);
-- the quarterly and annual dates recorded.
+**Still open (R9):** none; the routine operates. ~~**Still open (R8):** C7 only (the owner's permanent deletion of the dump from the Recycle Bin). A2, the
+first monthly run and the review dates are done.~~ ~~**Still open (R7):**~~
+- ~~A2 (the operator's access route; the operator already holds it);~~
+- ~~the first monthly run, logged;~~
+- ~~R17 (the dump deleted, and the restore container checked);~~
+- ~~the quarterly and annual dates recorded.~~
 
-Part C is done except C7. A1 is done. When the R17 box above is ticked, record the
+~~Part C is done except C7. A1 is done.~~ R9: Part C is done, including C7. ~~When the R17 box above is ticked, record the~~ R9: recorded. The instruction was to record the
 evidence in the register as `prerequisitesMet["RETENTION-ROUTINE-OPERATING"]` (log reference and date).
 `check:legal:adoption` refuses Privacy at `OWNER_ADOPTED` without it.
 

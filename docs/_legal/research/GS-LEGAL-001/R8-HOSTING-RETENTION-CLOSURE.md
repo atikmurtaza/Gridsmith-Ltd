@@ -5,7 +5,7 @@
 **Environment:** Claude Desktop, the owner's machine. **Workflow:** all work, the review and its fixes, and verification were
 done locally before a single R8 commit and push.
 
-**Result: HOSTING EVIDENCE REQUIRED.**
+**Result: HOSTING EVIDENCE REQUIRED.** *(R9: element 7 restated and still not met. The R8 minimum, "under a Gridsmith Ltd Customer account", is withdrawn: no migration is required, only a documented Art. 28(3) arrangement (route A or B). See `R9-RETENTION-HOSTINGER-REASSESSMENT.md` §3.)*
 - **Hosting:** the owner's operational fact closes management. One precise contractual point remains
   (§2.3).
 - **Privacy 2.2:** **byte-identical to R7**, `OWNER_REVIEW_REQUIRED`, 0 markers, not ready for adoption.
@@ -68,7 +68,7 @@ agreement, an account history, or a transfer of the whole account.
 | 4 | Website hosting is in France | **Met** (E-2) |
 | 5 | Email hosting is supplied through Hostinger | **Met** (E-2; "Email Services" §1.1) |
 | 6 | Privacy describes the services accurately | **Met** for §6 (§2.4) |
-| 7 | Gridsmith Ltd is the Customer bound by Hostinger's terms for the gridsmith.uk website and mailbox. This makes Privacy §7's reliance on Hostinger's safeguards accurate, and sends Hostinger's notices to a Gridsmith-controlled address | **Not met:** the account's customer of record is not Gridsmith Ltd |
+| 7 | Gridsmith Ltd is the Customer bound by Hostinger's terms for the gridsmith.uk website and mailbox. This makes Privacy §7's reliance on Hostinger's safeguards accurate, and sends Hostinger's notices to a Gridsmith-controlled address | **Not met:** the account's customer of record is not Gridsmith Ltd. *(R9: restated as an Art. 28(3) arrangement with regard to Gridsmith Ltd, with no migration; see R9 §3.5)* |
 
 **The precise residual (UK GDPR Art. 28(3)):**
 - Processing by a processor must be governed by a contract that binds the processor "with regard to the
@@ -168,7 +168,7 @@ R8 instruction.
 |---|---|---|
 | 1 | Initial Production classification | Met (R7) |
 | 2 | Authorised cleanup | Met (R7) |
-| 3 | Obsolete dump safely handled | **Not met:** it is in the Recycle Bin, pending the owner's permanent deletion (the R8 brief, Task 4, asks for the file to be verified gone) |
+| 3 | Obsolete dump safely handled | **Not met:** it is in the Recycle Bin, pending the owner's permanent deletion (the R8 brief, Task 4, asks for the file to be verified gone). *(R9: met; owner permanently deleted it)* |
 | 4–6 | Database, email, WhatsApp/SMS reviews | Met (§3.2) |
 | 7 | First review logged | Met |
 | 8 | Cadence recorded | Met (§3.3) |
@@ -190,8 +190,8 @@ With the dump deleted, nothing else is outstanding for the routine.
 | Requirement | State |
 |---|---|
 | Markers | 0 |
-| `HOSTINGER-PROCESSOR-CHAIN` | **Not met:** element 7 (§2.3) |
-| `RETENTION-ROUTINE-OPERATING` | **Not met:** condition 3 (§3.3) |
+| `HOSTINGER-PROCESSOR-CHAIN` | **Not met:** element 7 (§2.3). *(R9: still not met; restated, see R9 §3.5)* |
+| `RETENTION-ROUTINE-OPERATING` | **Not met:** condition 3 (§3.3). *(R9: met and recorded)* |
 | Local legal gates | Pass (§7) |
 
 **Owner adoption: NOT READY.**

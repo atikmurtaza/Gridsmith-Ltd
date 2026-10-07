@@ -129,7 +129,9 @@ export const REQUIRED_ADOPTION_EVIDENCE = {
   // HOSTINGER-PROCESSOR-CHAIN (R6 review M3): removing the §6 marker alone must not unblock adoption.
   // R8 redefinition: the key verifies the real processing arrangement (seven elements in
   // docs/_legal/research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md §2.3), including Gridsmith Ltd bound
-  // by Hostinger's terms (UK GDPR Art. 28(3)); no inter-company agreement or account history.
+  // by Hostinger's terms (UK GDPR Art. 28(3)); no inter-company agreement or account history is required
+  // (R9 route B is one optional route). R9: element 7
+  // is an Art. 28(3) arrangement with regard to Gridsmith Ltd, with no migration (R9 record section 3.4).
   privacy: ['RETENTION-ROUTINE-OPERATING', 'HOSTINGER-PROCESSOR-CHAIN'],
 };
 

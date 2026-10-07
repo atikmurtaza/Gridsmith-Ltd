@@ -11,6 +11,17 @@ Source: the twelve checks in `../research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIE
 so that each can be done without further explanation. What changes in the policy once they are answered
 is in `../research/GS-LEGAL-001/R4-PRIVACY-2.2-CHANGE-PLAN.md`.
 
+## R9 status (7 October 2026) — supersedes the R8 status below
+
+- **Hostinger Terms of Service read directly** (revised 2026-09-29):
+  - §1 "you"/"Customer" includes users with access;
+  - §4 makes the Account-information entity "the owner of the Account and the data and Services
+    contained therein".
+- `HOSTINGER-PROCESSOR-CHAIN`: **residual documentation required.** No migration is needed.
+- **Remaining owner item:** route A (the Account information lists Gridsmith Ltd) or route B (a
+  documented processor chain)
+  (`../research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md` §3.4).
+
 ## R8 status (7 October 2026) — supersedes the R7 status below
 
 - **Hostinger DPA re-read** (revised 2026-09-29): annexed to the Terms of Service; "Email Services"

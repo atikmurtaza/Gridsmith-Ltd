@@ -45,7 +45,28 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
   OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
   enforceability.
-- **R8 (7 October 2026): hosting evidence required; first monthly retention review done**
+- **R9 (7 October 2026): one hosting documentation step; retention routine operating**
+  (`docs/_legal/research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md`). **This supersedes R8 items 1–2.**
+  - **Done:**
+    - dump deletion confirmed;
+    - `RETENTION-ROUTINE-OPERATING` recorded;
+    - the existing Hostinger infrastructure is kept, with no new account, subscription, domain, VPS or
+      migration needed.
+  - **Remaining owner action (choose one; neither moves anything):**
+    - **A (least disruptive):** in the existing Hostinger account, have the **Account information**
+      corrected to list **Gridsmith Ltd** (Hostinger Terms §4, "correctly indicate ownership").
+      - First check what Account information currently lists. If it already shows Gridsmith Ltd, tell
+        Claude, because element 7 may already be met.
+      - Confirm that the account holds only Gridsmith's sites, data and mail. The change needs the current
+        owner's cooperation, and Gridsmith Ltd takes on the Terms' obligations; domains are unaffected.
+      - Then make sure the account's contact email reaches Gridsmith's admin department.
+      - Privacy 2.2 needs no change.
+    - **B:** a short written arrangement, kept outside the repository, between Gridsmith Ltd and the
+      account's owner. The owner gives Hostinger instructions for gridsmith.uk data only as Gridsmith
+      directs (Hostinger DPA §2.2). This needs a Privacy §6/§7 edit and a re-review first.
+  - **Then:** a short legal phase records `HOSTINGER-PROCESSOR-CHAIN`, and you can adopt Privacy 2.2.
+    Next monthly retention run: Mon 2 November 2026 (then delete the R7 baseline JSON).
+- **R8 (7 October 2026): hosting evidence required; first monthly retention review done** (items 1–2 superseded by R9)
   (`docs/_legal/research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md`). **This supersedes R7 items 1–3.**
   - **Done:**
     - your hosting fact (Gridsmith's admin department manages the hosting account);
@@ -57,8 +78,9 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
     1. **Recycle Bin:** permanently delete only `supabase-production-20261002T125412Z.dump` (right-click →
        Delete → Yes), then tell Claude so it can verify read-only and record
        `RETENTION-ROUTINE-OPERATING`.
-    2. **Hostinger (recommended route):** have the gridsmith.uk website and mailbox sit under a Hostinger
-       account whose customer is Gridsmith Ltd, for example by moving them into a Gridsmith Ltd account.
+    2. ~~**Hostinger (recommended route):** have the gridsmith.uk website and mailbox sit under a Hostinger
+       account whose customer is Gridsmith Ltd, for example by moving them into a Gridsmith Ltd account.~~
+       (Withdrawn at R9: no move; see R9 route A or B.)
        Changing the existing account as a whole is not required, and no inter-company agreement is
        needed. Afterwards, confirm that hosting is still in France, that the mailbox is still Hostinger
        email hosting, and that the account's contact email is a Gridsmith address. The alternative, a

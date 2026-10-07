@@ -4,6 +4,12 @@ Handoff for a fresh Claude Code cloud session, written 7 October 2026. Branch
 `staging/gs-legal-001`; the GS-LEGAL-001 work is commit `53cc4f67`, and this file is the commit
 after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` in this folder.
 
+## R9 status (7 October 2026) — Claude Desktop
+
+**GS-LEGAL-001-R9 — retention routine operating; one hosting documentation step.** Record:
+`R9-RETENTION-HOSTINGER-REASSESSMENT.md`. Next: the owner's route A or B (§3.4); then
+`HOSTINGER-PROCESSOR-CHAIN`; then the owner's adoption.
+
 ## R8 status (7 October 2026) — Claude Desktop
 
 **GS-LEGAL-001-R8 — hosting evidence required; first monthly review done.** Record:
