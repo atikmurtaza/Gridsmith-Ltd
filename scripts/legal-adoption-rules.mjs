@@ -38,6 +38,12 @@ export const FORBIDDEN_CLAIMS = [
   /legally guaranteed/i,
   /fully compliant/i,
   /legally certified/i,
+  // GS-LEGAL-001-R4: the owner's full list, and the obsolete solicitor gate (struck as
+  // GS-O003-SOLICITOR-APPROVAL-GATE) reappearing in a document as a pending condition.
+  /lawyer[- ]approved/i,
+  /approved by (?:a |our )?lawyers?/i,
+  /guaranteed (?:to be )?(?:compliant|enforceable)/i,
+  /(?:pending|subject to|awaiting) (?:a |our )?solicitor(?:'s)? (?:review|approval|sign-off)/i,
   /enforceable in (?:every|all) circumstances?/i,
   /\bAI[- ](?:generated|drafted) (?:draft|document|terms)/i,
   /\bmerely an? (?:AI )?draft\b/i,
@@ -45,6 +51,9 @@ export const FORBIDDEN_CLAIMS = [
 
 /** Open markers. None may survive into a PUBLISHABLE document. */
 export const MARKERS = [/\[OWNER DECISION/, /\[TK\b/, /\[SEED/, /\[DECISION REQUIRED/];
+
+/** Self-description an adopted document cannot carry. */
+const ADOPTION_CONTRADICTION = /\b(?:not yet adopted|draft for (?:owner )?review|under review by Gridsmith)\b/i;
 
 /** Text the drafts must never contain again: each was a defect found by GS-LEGAL-001. */
 const VAT_STATUS = /(?:not (?:currently )?registered for VAT|is registered for VAT|\bGB ?\d{9}\b)/i;
@@ -87,6 +96,19 @@ export function danglingReferences(markdown) {
   return [...new Set(out)];
 }
 
+/**
+ * Publication prerequisites (`GS-LEGAL-001-R4`). Adoption is the owner's act; publication is a
+ * separate one. Every adopted entry lists what must be true before it may become `PUBLISHABLE`,
+ * and `PUBLISHABLE` is refused while any listed prerequisite has no recorded evidence in
+ * `prerequisitesMet`. Hardcoded expectations, because an expectation read from its own subject
+ * cannot fail: the cookie policy must always carry the A-2 production retest, and every adopted
+ * document must carry the cutover authority and the privacy co-requisite.
+ */
+export const REQUIRED_PREREQUISITES = {
+  all: ['CUTOVER-AUTHORITY', 'PRIVACY-PUBLISHABLE'],
+  cookies: ['A-2-PRODUCTION-COOKIE-RETEST'],
+};
+
 /** Register coherence for one entry. */
 export function registerProblems(slug, entry, draftVersion, expectedDraft) {
   const p = [];
@@ -103,6 +125,25 @@ export function registerProblems(slug, entry, draftVersion, expectedDraft) {
     }
   } else if (entry.ownerAdoptedOn != null || entry.ownerAdoptedVersion != null) {
     p.push(`${slug}: records an adoption date or version while at ${entry.state}; only the owner's adoption sets those`);
+  }
+  if (adopted) {
+    // The owner's instruction is recorded with the adoption, so a state flipped by a script or an
+    // agent without one is visible here rather than looking like an adoption.
+    if (typeof entry.adoptionAuthority !== 'string' || entry.adoptionAuthority.trim().length < 10) {
+      p.push(`${slug}: ${entry.state} without an adoptionAuthority recording the owner's instruction`);
+    }
+    const listed = new Set((entry.publicationPrerequisites ?? []).map((x) => x.id));
+    for (const id of [...REQUIRED_PREREQUISITES.all, ...(REQUIRED_PREREQUISITES[slug] ?? [])]) {
+      if (!listed.has(id)) p.push(`${slug}: adopted without the publication prerequisite ${id}`);
+    }
+  }
+  if (entry.state === 'PUBLISHABLE') {
+    const met = entry.prerequisitesMet ?? {};
+    for (const pre of entry.publicationPrerequisites ?? []) {
+      if (typeof met[pre.id] !== 'string' || !met[pre.id].trim()) {
+        p.push(`${slug}: PUBLISHABLE while publication prerequisite ${pre.id} has no recorded evidence`);
+      }
+    }
   }
   return p;
 }
@@ -196,12 +237,40 @@ export function stateProblems(slug, state, markdown, summary, ownerAdoptedOn) {
   if (rank(state) >= rank('VERIFIED')) {
     for (const re of [/\[TK\b/, /\[SEED/, /\[DECISION REQUIRED/]) if (re.test(text)) p.push(`${slug}: at ${state} but still carries ${re}`);
   }
+  // GS-LEGAL-001-R4: no document is adopted while it still carries an open marker. The owner cannot
+  // adopt a sentence that says "[OWNER DECISION: …]", and this is what keeps the privacy policy at
+  // OWNER_REVIEW_REQUIRED until its factual markers are truly resolved.
+  if (rank(state) >= rank('OWNER_ADOPTED')) {
+    for (const re of MARKERS) if (re.test(text)) p.push(`${slug}: ${state} but carries an open marker ${re}`);
+    if (headerDate(markdown, 'Draft date')) p.push(`${slug}: ${state} but still headed with a draft date`);
+    if (!headerDate(markdown, 'Effective date')) p.push(`${slug}: ${state} without an "Effective date" header`);
+    // An adopted document that still describes itself as unadopted contradicts its own register entry.
+    if (ADOPTION_CONTRADICTION.test(text)) p.push(`${slug}: ${state} but its text says it is not adopted (${ADOPTION_CONTRADICTION})`);
+  }
   if (state === 'PUBLISHABLE') {
     for (const re of MARKERS) if (re.test(text)) p.push(`${slug}: PUBLISHABLE but carries an open marker ${re}`);
     const effective = headerDate(markdown, 'Effective date');
     if (!effective) p.push(`${slug}: PUBLISHABLE without an "Effective date" header`);
     else if (ownerAdoptedOn && effective < ownerAdoptedOn) p.push(`${slug}: effective ${effective} is before its adoption on ${ownerAdoptedOn}`);
     if (headerDate(markdown, 'Draft date')) p.push(`${slug}: PUBLISHABLE but still headed with a draft date`);
+  }
+  return p;
+}
+
+/**
+ * Cross-entry coherence (GS-LEGAL-001-R4). `PRIVACY-PUBLISHABLE` is a prerequisite whose evidence
+ * the register itself can check: recording it as met while the privacy entry is not PUBLISHABLE is
+ * a contradiction, not evidence. Every other prerequisite is an external fact and is checked only for
+ * a recorded reference (registerProblems).
+ */
+export function crossRegisterProblems(documents) {
+  const p = [];
+  const privacyState = documents?.privacy?.state;
+  for (const [slug, entry] of Object.entries(documents ?? {})) {
+    const met = entry?.prerequisitesMet ?? {};
+    if (met['PRIVACY-PUBLISHABLE'] != null && privacyState !== 'PUBLISHABLE') {
+      p.push(`${slug}: records PRIVACY-PUBLISHABLE as met while the privacy entry is ${privacyState}`);
+    }
   }
   return p;
 }

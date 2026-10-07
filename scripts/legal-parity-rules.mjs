@@ -223,3 +223,33 @@ export function tokenReached(entry, servedNumbers) {
     (n) => n === token || (token.startsWith(n) && /^[.A-Z]/.test(token.slice(n.length))),
   );
 }
+
+/**
+ * Branch D's banner assertion, as a pure function (`GS-LEGAL-001-R4`).
+ *
+ * Three states, three pages. Below `OWNER_ADOPTED` the page must say NOT YET ADOPTED. At
+ * `OWNER_ADOPTED` it must say ADOPTED, NOT YET PUBLISHED and must NOT say "not yet adopted",
+ * which would tell a reader an adopted document had not been adopted. At `PUBLISHABLE` it carries
+ * neither. Until R4 this was a two-way check inside the runner, which would have passed an adopted
+ * document still carrying the "not yet adopted" banner. Returns problem strings; `[]` is a pass.
+ */
+export function bannerProblems(route, state, html) {
+  const unadoptedBanner = /NOT YET ADOPTED/.test(html);
+  const adoptedBanner = /ADOPTED, NOT YET PUBLISHED/.test(html);
+  const p = [];
+  if (state === 'PUBLISHABLE') {
+    if (unadoptedBanner || adoptedBanner) p.push(`${route} is PUBLISHABLE in the GS-O003-R register but still carries a pre-publication banner.`);
+  } else if (state === 'OWNER_ADOPTED') {
+    if (!adoptedBanner) p.push(`${route} is OWNER_ADOPTED in the GS-O003-R register but does not carry the "adopted, not yet published" banner.`);
+    if (unadoptedBanner) p.push(`${route} is OWNER_ADOPTED in the GS-O003-R register but tells the reader it is "not yet adopted".`);
+  } else {
+    if (!unadoptedBanner) {
+      p.push(
+        `${route} does not carry the "not yet adopted" banner, but the GS-O003-R register puts it at ` +
+          `${state ?? 'no state'}. An unadopted document presented as adopted is the outcome the banner exists to prevent.`,
+      );
+    }
+    if (adoptedBanner) p.push(`${route} claims "adopted, not yet published", but the GS-O003-R register puts it at ${state ?? 'no state'}.`);
+  }
+  return p;
+}

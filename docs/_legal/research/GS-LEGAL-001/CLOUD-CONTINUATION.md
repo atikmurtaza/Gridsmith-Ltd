@@ -4,6 +4,30 @@ Handoff for a fresh Claude Code cloud session, written 7 October 2026. Branch
 `staging/gs-legal-001`; the GS-LEGAL-001 work is commit `53cc4f67`, and this file is the commit
 after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` in this folder.
 
+## R4 status (7 October 2026)
+
+**GS-LEGAL-001-R4 — six documents OWNER_ADOPTED; Privacy evidence required.** Record:
+`R4-OWNER-ADOPTION.md` in this folder.
+
+- **Adopted on 7 October 2026:** Business 3.1 (OC-1 confirmed), Consumers 3.1, Website Terms 2.1,
+  Cookie 2.1, Accessibility 2.1 and `/legal/client-terms` 2.1. All are `OWNER_ADOPTED`, none
+  `PUBLISHABLE`.
+- **Outstanding publication prerequisites:** CUTOVER-AUTHORITY and PRIVACY-PUBLISHABLE on all six;
+  A-2 on Cookie as well.
+- **Privacy 2.1:** `OWNER_REVIEW_REQUIRED` with three markers. Owner checks P-01 to P-12 are in
+  `docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md`; the plan is `R4-PRIVACY-2.2-CHANGE-PLAN.md`.
+- **Prepared, not operating:**
+  - the rights-chain templates (`docs/_legal/operations/rights-chain/`);
+  - the retention activation checklist (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md`).
+- **A-1 not run:** the Sanity API host is blocked and there is no token.
+
+**Next:**
+1. The owner answers P-01 to P-12 and the owner-employment question, and authorises the retention
+   cleanup phase.
+2. A later legal phase applies Privacy 2.2 for owner adoption.
+3. A-1 runs once the network and token are available.
+4. Cutover authority (H4-H) is separate.
+
 ## R3 status (7 October 2026)
 
 **GS-LEGAL-001-R3 — owner decisions applied; six documents ready for owner adoption; Privacy needs
@@ -106,9 +130,10 @@ State model, in order: `RESEARCHED` → `VERIFIED` → `OWNER_REVIEW_REQUIRED` �
 - **Struck rule** `GS-O003-SOLICITOR-APPROVAL-GATE` registered in `check:struck`; 11 spec lines
   annotated in place.
 
-## Current Legal State (updated at R3, 7 October 2026)
+## Current Legal State (updated at R4, 7 October 2026)
 
-All seven at **`OWNER_REVIEW_REQUIRED`**:
+Six at **`OWNER_ADOPTED`** (adopted 7 October 2026, effective-date headers, not `PUBLISHABLE`); Privacy
+at **`OWNER_REVIEW_REQUIRED`**. Until R4 all seven were `OWNER_REVIEW_REQUIRED`:
 
 | Document | File | Version |
 |---|---|---|
@@ -120,8 +145,8 @@ All seven at **`OWNER_REVIEW_REQUIRED`**:
 | Accessibility Statement | `docs/_legal/ACCESSIBILITY-STATEMENT.md` | 2.1 |
 | Client terms disambiguation | `scripts/seed-legal.mjs` (`/legal/client-terms`) | 2.1 |
 
-All drafts carry a **Draft date** (7 October 2026 for the two client terms, 6 October 2026 for the rest), not an effective date; on adoption the header
-becomes `**Effective date: …**` and `check:legal:adoption` enforces it.
+Since R4 the five adopted drafts carry `**Effective date: 7 October 2026**`; Privacy keeps
+`**Draft date: 6 October 2026**`. `check:legal:adoption` enforces both.
 
 The Privacy Policy still contains three `[OWNER DECISION: …]` markers, which block `PUBLISHABLE`:
 processor agreements (§6), international transfer safeguard (§7), retention periods and deletion

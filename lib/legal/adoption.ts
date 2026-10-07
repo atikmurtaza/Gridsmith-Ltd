@@ -34,3 +34,10 @@ export const isAdoptionState = (value: unknown): value is AdoptionState =>
   typeof value === 'string' && (ADOPTION_STATES as readonly string[]).includes(value);
 
 export const isPublishable = (state: unknown) => state === 'PUBLISHABLE';
+
+/**
+ * Adopted by the owner but not yet `PUBLISHABLE` (`GS-LEGAL-001-R4`). The page must say this
+ * plainly: "not yet adopted" would be false, and "in force" would claim a publication that has
+ * not happened. `check:legal:parity` holds the served banner to exactly this three-way split.
+ */
+export const isAdoptedNotPublished = (state: unknown) => state === 'OWNER_ADOPTED';

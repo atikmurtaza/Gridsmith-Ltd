@@ -302,3 +302,18 @@ The owner's answers to `R2-OWNER-DECISION-PACK.md` §4 are applied, and the reco
 - **Privacy** stays 2.1 with its three markers, pending owner account checks and the retention routine
   operating.
 - **States:** all seven remain `OWNER_REVIEW_REQUIRED`; none is adopted.
+
+## 13. GS-LEGAL-001-R4 (7 October 2026)
+
+The owner adopted six documents; the record is `R4-OWNER-ADOPTION.md`.
+
+- **Adopted** on the owner's instruction, 7 October 2026: Business 3.1 (OC-1 confirmed), Consumers 3.1,
+  Website Terms 2.1, Cookie 2.1, Accessibility 2.1 and `/legal/client-terms` 2.1.
+- **States:** all six are `OWNER_ADOPTED`, with effective-date headers. None is `PUBLISHABLE`; each
+  lists its publication prerequisites.
+- **Privacy 2.1 is not adopted.** Its three markers stand. The owner checks P-01 to P-12 and the
+  Privacy 2.2 plan are prepared.
+- **Prepared, not operating:**
+  - the rights-chain templates 01–07, none signed;
+  - the retention activation checklist; nothing has been deleted.
+- **A-1 not run:** the Sanity API is unreachable from this environment.

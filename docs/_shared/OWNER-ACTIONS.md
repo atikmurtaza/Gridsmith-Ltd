@@ -45,6 +45,17 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
   OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
   enforceability.
+- **R4 (7 October 2026): six documents ADOPTED by the owner** (`docs/_legal/research/GS-LEGAL-001/R4-OWNER-ADOPTION.md`).
+  - Adopted: Business 3.1 (OC-1 confirmed), Consumers 3.1, Website Terms 2.1, Cookie 2.1,
+    Accessibility 2.1 and `/legal/client-terms` 2.1. All are `OWNER_ADOPTED`; none is `PUBLISHABLE`.
+  - **Remaining owner actions:**
+    1. Answer the Privacy checks P-01 to P-12 (`docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md`).
+    2. Say whether the owner is employed by Gridsmith Ltd under a contract of service, and sign
+       rights-chain template 01 before any project relies on the owner's work
+       (`docs/_legal/operations/rights-chain/`).
+    3. Authorise the retention cleanup phase (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md`).
+    4. Allow `spzu6y31.api.sanity.io` and provide a development token for A-1.
+    5. Give cutover authority (CUTOVER-AUTHORITY, A-2).
 - **R3 (7 October 2026):** the owner's answers to R2 §4 are applied
   (`docs/_legal/research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md`).
   - **Now owner action:** adopt the six adoptable documents (R3 record §12), and answer the 12 provider

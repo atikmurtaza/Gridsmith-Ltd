@@ -20,6 +20,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { LEGAL_DOCUMENTS, LEGAL_DRAFT_SOURCES } from './seed-legal.mjs';
 import {
+  crossRegisterProblems,
   draftProblems,
   instrumentProblems,
   parityProblems,
@@ -61,6 +62,8 @@ ${doc.summary}`;
   for (const re of FORBIDDEN_CLAIMS) if (re.test(doc.summary)) problems.push(`${slug}: summary makes a forbidden claim (${re})`);
   problems.push(...stateProblems(slug, entry?.state, markdown, doc.summary, entry?.ownerAdoptedOn));
 }
+
+problems.push(...crossRegisterProblems(register.documents));
 
 // Facts from the source, not from the policies.
 const consent = readFileSync('lib/consent/state.ts', 'utf8');

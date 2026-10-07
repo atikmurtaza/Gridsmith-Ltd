@@ -2,20 +2,142 @@
   "gate": "GS-O003-R",
   "title": "Legal evidence + owner adoption register",
   "decision": "Owner decision, 6 October 2026 (GS-LEGAL-001): no solicitor is commissioned at this stage; GS-O003's mandatory solicitor approval is replaced by an evidence-based review of each document against current UK legislation and official guidance, followed by explicit owner adoption. Nothing in this register claims solicitor review, certification or guaranteed enforceability.",
-  "states": ["RESEARCHED", "VERIFIED", "OWNER_REVIEW_REQUIRED", "OWNER_ADOPTED", "PUBLISHABLE"],
+  "states": [
+    "RESEARCHED",
+    "VERIFIED",
+    "OWNER_REVIEW_REQUIRED",
+    "OWNER_ADOPTED",
+    "PUBLISHABLE"
+  ],
   "rules": [
     "Only the owner moves a document to OWNER_ADOPTED, by recording ownerAdoptedOn (date) and ownerAdoptedVersion (the exact version adopted). No script sets either.",
     "PUBLISHABLE requires OWNER_ADOPTED plus a passing check:legal:adoption run on the adopted version; ownerAdoptedVersion must equal the document's version.",
-    "scripts/migrate-production-cms.mjs admits a legal document to the production payload only at PUBLISHABLE."
+    "scripts/migrate-production-cms.mjs admits a legal document to the production payload only at PUBLISHABLE.",
+    "An adopted entry records adoptionAuthority (the owner's instruction) and its publicationPrerequisites; PUBLISHABLE is refused while any prerequisite has no recorded evidence in prerequisitesMet. Adoption is never inferred: a document carrying an open marker cannot be OWNER_ADOPTED."
   ],
-  "stateRecord": "6 October 2026 (GS-LEGAL-001): all seven moved to OWNER_REVIEW_REQUIRED on Agent G's re-verification (research/GS-LEGAL-001/G-final-cross-check.md section 7). 7 October 2026 (GS-LEGAL-001-R3): the owner decisions in research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md section 4 were applied (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md); the client terms for consumers and for business clients moved to version 3.1, the other five are unchanged; all seven remain OWNER_REVIEW_REQUIRED, and six of them now need only the owner's adoption. The privacy policy still carries three [OWNER DECISION] markers (processor terms, transfer safeguard, retention) that wait on owner account checks and on the retention routine operating, so it is not adoptable. No document is OWNER_ADOPTED.",
+  "stateRecord": "6 October 2026 (GS-LEGAL-001): all seven moved to OWNER_REVIEW_REQUIRED on Agent G's re-verification (research/GS-LEGAL-001/G-final-cross-check.md section 7). 7 October 2026 (GS-LEGAL-001-R3): the owner decisions in research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md section 4 were applied (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md); the client terms for consumers and for business clients moved to version 3.1, the other five are unchanged; all seven remain OWNER_REVIEW_REQUIRED, and six of them now need only the owner's adoption. The privacy policy still carries three [OWNER DECISION] markers (processor terms, transfer safeguard, retention) that wait on owner account checks and on the retention routine operating, so it is not adoptable. No document is OWNER_ADOPTED. 7 October 2026 (GS-LEGAL-001-R4): on the owner's instruction, six documents are OWNER_ADOPTED (business-client-terms 3.1, consumer-client-terms 3.1, terms 2.1, cookies 2.1, accessibility 2.1, client-terms 2.1), each with its publication prerequisites listed and none met; none is PUBLISHABLE. The privacy policy is not adopted and remains OWNER_REVIEW_REQUIRED with its three markers (research/GS-LEGAL-001/R4-OWNER-ADOPTION.md).",
   "documents": {
-    "privacy": { "draft": "docs/_legal/PRIVACY-POLICY.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null },
-    "cookies": { "draft": "docs/_legal/COOKIE-POLICY.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null },
-    "terms": { "draft": "docs/_legal/WEBSITE-TERMS.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null },
-    "client-terms": { "draft": null, "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null, "note": "Disambiguation page with no operative clause; text lives in scripts/seed-legal.mjs." },
-    "business-client-terms": { "draft": "docs/_legal/MSA-BUSINESS.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null },
-    "consumer-client-terms": { "draft": "docs/_legal/CONSUMER-TERMS.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null },
-    "accessibility": { "draft": "docs/_legal/ACCESSIBILITY-STATEMENT.md", "state": "OWNER_REVIEW_REQUIRED", "ownerAdoptedOn": null, "ownerAdoptedVersion": null }
+    "privacy": {
+      "draft": "docs/_legal/PRIVACY-POLICY.md",
+      "state": "OWNER_REVIEW_REQUIRED",
+      "ownerAdoptedOn": null,
+      "ownerAdoptedVersion": null
+    },
+    "cookies": {
+      "draft": "docs/_legal/COOKIE-POLICY.md",
+      "state": "OWNER_ADOPTED",
+      "ownerAdoptedOn": "2026-10-07",
+      "ownerAdoptedVersion": "2.1",
+      "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
+      "publicationPrerequisites": [
+        {
+          "id": "CUTOVER-AUTHORITY",
+          "requirement": "Owner authority for the production cutover phase that publishes the legal routes on gridsmith.uk."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        },
+        {
+          "id": "A-2-PRODUCTION-COOKIE-RETEST",
+          "requirement": "At cutover, against https://gridsmith.uk: curl -I on / and a legal route shows no Set-Cookie before interaction; in a browser, only gs_consent (value 1, 365 days) after Got it. Amend the policy first if Hostinger features set cookies."
+        }
+      ],
+      "prerequisitesMet": {}
+    },
+    "terms": {
+      "draft": "docs/_legal/WEBSITE-TERMS.md",
+      "state": "OWNER_ADOPTED",
+      "ownerAdoptedOn": "2026-10-07",
+      "ownerAdoptedVersion": "2.1",
+      "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
+      "publicationPrerequisites": [
+        {
+          "id": "CUTOVER-AUTHORITY",
+          "requirement": "Owner authority for the production cutover phase that publishes the legal routes on gridsmith.uk."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        }
+      ],
+      "prerequisitesMet": {}
+    },
+    "client-terms": {
+      "draft": null,
+      "state": "OWNER_ADOPTED",
+      "ownerAdoptedOn": "2026-10-07",
+      "ownerAdoptedVersion": "2.1",
+      "note": "Disambiguation page with no operative clause; text lives in scripts/seed-legal.mjs.",
+      "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
+      "publicationPrerequisites": [
+        {
+          "id": "CUTOVER-AUTHORITY",
+          "requirement": "Owner authority for the production cutover phase that publishes the legal routes on gridsmith.uk."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        }
+      ],
+      "prerequisitesMet": {}
+    },
+    "business-client-terms": {
+      "draft": "docs/_legal/MSA-BUSINESS.md",
+      "state": "OWNER_ADOPTED",
+      "ownerAdoptedOn": "2026-10-07",
+      "ownerAdoptedVersion": "3.1",
+      "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
+      "ownerConfirmations": [
+        "OC-1 confirmed 7 October 2026: clause 16 limb (ii) means the notional fees for the first 12 months of the Scope even if a rolling retainer ends earlier."
+      ],
+      "publicationPrerequisites": [
+        {
+          "id": "CUTOVER-AUTHORITY",
+          "requirement": "Owner authority for the production cutover phase that publishes the legal routes on gridsmith.uk."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        }
+      ],
+      "prerequisitesMet": {}
+    },
+    "consumer-client-terms": {
+      "draft": "docs/_legal/CONSUMER-TERMS.md",
+      "state": "OWNER_ADOPTED",
+      "ownerAdoptedOn": "2026-10-07",
+      "ownerAdoptedVersion": "3.1",
+      "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
+      "publicationPrerequisites": [
+        {
+          "id": "CUTOVER-AUTHORITY",
+          "requirement": "Owner authority for the production cutover phase that publishes the legal routes on gridsmith.uk."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        }
+      ],
+      "prerequisitesMet": {}
+    },
+    "accessibility": {
+      "draft": "docs/_legal/ACCESSIBILITY-STATEMENT.md",
+      "state": "OWNER_ADOPTED",
+      "ownerAdoptedOn": "2026-10-07",
+      "ownerAdoptedVersion": "2.1",
+      "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
+      "publicationPrerequisites": [
+        {
+          "id": "CUTOVER-AUTHORITY",
+          "requirement": "Owner authority for the production cutover phase that publishes the legal routes on gridsmith.uk."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        }
+      ],
+      "prerequisitesMet": {}
+    }
   }
 }

@@ -148,6 +148,7 @@ import {
   draftClauseTokens,
   normaliseWords,
   tokenReached,
+  bannerProblems,
 } from './legal-parity-rules.mjs';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
@@ -204,19 +205,7 @@ for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
   if (!h1) {
     problems.push(`${route} serves no <h1>. The route resolves but the document did not render.`);
   }
-  const adopted = LEGAL_REGISTER.documents?.[slug]?.state === 'PUBLISHABLE';
-  const bannered = /NOT YET ADOPTED/.test(html);
-  if (!adopted && !bannered) {
-    problems.push(
-      `${route} does not carry the "not yet adopted" banner, but the GS-O003-R register puts it ` +
-        `at ${LEGAL_REGISTER.documents?.[slug]?.state ?? 'no state'}. Either it was adopted without ` +
-        'the register being told, or the banner stopped rendering — and an unadopted document ' +
-        'presented as adopted is the outcome the banner exists to prevent.',
-    );
-  }
-  if (adopted && bannered) {
-    problems.push(`${route} is PUBLISHABLE in the GS-O003-R register but still carries the "not yet adopted" banner.`);
-  }
+  problems.push(...bannerProblems(route, LEGAL_REGISTER.documents?.[slug]?.state, html));
 
   // Branch A — version parity, and A2, the draft agreeing with itself.
   const draftVersion = currentVersion(markdown);

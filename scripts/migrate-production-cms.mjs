@@ -101,7 +101,13 @@ export function buildPayload() {
       docs.push({ ...seed, _id: `legal-${slug}`, isSeed: false, adoptionState: 'PUBLISHABLE', ownerAdoptedOn });
       entries.push({ type: 'legalDocument', id: `legal-${slug}`, slug, source: 'scripts/seed-legal.mjs (owner-adopted)', gate: null, eligible: true });
     } else {
-      entries.push({ type: 'legalDocument', id: `legal-${slug}`, slug, source: 'scripts/seed-legal.mjs', gate: 'GS-O003-R', eligible: false, reason: `Owner adoption outstanding (register state ${state})` });
+      const entry = LEGAL_REGISTER.documents?.[slug];
+      // GS-LEGAL-001-R4: an adopted document is still gated until it is PUBLISHABLE, and the reason
+      // must say which of the two it is waiting for rather than calling an adoption "outstanding".
+      const reason = state === 'OWNER_ADOPTED'
+        ? `Owner-adopted ${entry.ownerAdoptedVersion} on ${entry.ownerAdoptedOn}; not PUBLISHABLE (publication prerequisites outstanding: ${(entry.publicationPrerequisites ?? []).map((x) => x.id).filter((id) => !(entry.prerequisitesMet ?? {})[id]).join(', ') || 'none listed'})`
+        : `Owner adoption outstanding (register state ${state})`;
+      entries.push({ type: 'legalDocument', id: `legal-${slug}`, slug, source: 'scripts/seed-legal.mjs', gate: 'GS-O003-R', eligible: false, reason });
     }
   }
   return { docs, entries };

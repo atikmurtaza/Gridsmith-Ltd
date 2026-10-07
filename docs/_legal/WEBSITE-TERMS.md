@@ -1,7 +1,7 @@
 # Website Terms of Use
 
 **Version 2.1**\
-**Draft date: 6 October 2026**
+**Effective date: 7 October 2026**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
 Company number: **17050842**\

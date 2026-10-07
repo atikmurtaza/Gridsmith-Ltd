@@ -336,6 +336,11 @@ months, which gives the retainer start-up fix its purpose: on a 2-month rolling 
 actual fees would both be only 2 months' fees. The owner's formulation did not say this expressly. If the
 owner intends the fees for the months actually run, the words come out before adoption (version 3.2).
 
+> **R4 addendum (7 October 2026): OC-1 — CONFIRMED BY OWNER.** For a rolling retainer, limb (ii) uses the
+> fees for the notional first 12 months of the Scope even where the Scope ends earlier. The wording above
+> is kept unchanged and Business 3.1 is adopted with it (`R4-OWNER-ADOPTION.md` §3). This addendum is the
+> only R4 change to this record.
+
 **What the adoption phase will do after owner approval:**
 1. Transcribe into the register exactly the adoption the owner instructs, and nothing more. The agent
    never chooses a date or version.

@@ -16,6 +16,7 @@ import {
   instrumentProblems,
   parityProblems,
   registerProblems,
+  crossRegisterProblems,
   stateProblems,
 } from './legal-adoption-rules.mjs';
 import { parseDraft } from './seed-legal.mjs';
@@ -121,19 +122,58 @@ const toEffective = (md) => {
   if (out === md) throw new Error('selftest premise: specimen has no "**Draft date: …**" header to replace');
   return out;
 };
-const adoptedConsumer = toEffective(consumer);
+// GS-LEGAL-001-R4: the consumer terms are now adopted and carry an effective date. State specimens
+// are built from a draft-headed form so they do not depend on the register state of the real file.
+const EFFECTIVE_DATE = /^\*\*Effective date: [^*]+\*\*/m;
+const asDraft = (md) => md.replace(EFFECTIVE_DATE, '**Draft date: 6 October 2026**');
+const consumerDraft = asDraft(consumer);
+if (!DRAFT_DATE.test(consumerDraft)) throw new Error('selftest premise: consumer specimen has no date header at all');
+const adoptedConsumer = toEffective(consumerDraft);
 expect('publishable clean', stateProblems('c', 'PUBLISHABLE', adoptedConsumer, 'summary', '2026-10-07'), null);
 expect('researched may carry markers', stateProblems('p', 'RESEARCHED', privacy, 's', null), null);
 expect('publishable with owner marker', stateProblems('p', 'PUBLISHABLE', toEffective(privacy), 's', '2026-10-07'), /open marker/);
-expect('verified with TK', stateProblems('c', 'VERIFIED', consumer + '\n[TK: price]\n', 's', null), /\\\[TK/);
-expect('verified with seed summary', stateProblems('c', 'OWNER_REVIEW_REQUIRED', consumer, '[SEED] summary', null), /\\\[SEED/);
-expect('publishable without effective date', stateProblems('c', 'PUBLISHABLE', consumer, 's', '2026-10-07'), /without an "Effective date"/);
+expect('verified with TK', stateProblems('c', 'VERIFIED', consumerDraft + '\n[TK: price]\n', 's', null), /\\\[TK/);
+expect('verified with seed summary', stateProblems('c', 'OWNER_REVIEW_REQUIRED', consumerDraft, '[SEED] summary', null), /\\\[SEED/);
+expect('publishable without effective date', stateProblems('c', 'PUBLISHABLE', consumerDraft, 's', '2026-10-07'), /without an "Effective date"/);
 expect('effective before adoption', stateProblems('c', 'PUBLISHABLE', adoptedConsumer, 's', '2026-10-09'), /before its adoption/);
 expect('draft date left on', stateProblems('c', 'PUBLISHABLE', adoptedConsumer + '\n**Draft date: 6 October 2026**\n', 's', '2026-10-07'), /draft date/);
+
+// GS-LEGAL-001-R4 — adoption itself.
+expect('adopted clean', stateProblems('c', 'OWNER_ADOPTED', adoptedConsumer, 's', '2026-10-07'), null);
+expect('adopted with an open marker (the privacy guard)', stateProblems('p', 'OWNER_ADOPTED', toEffective(asDraft(privacy)), 's', '2026-10-07'), /OWNER_ADOPTED but carries an open marker/);
+expect('adopted still headed with a draft date', stateProblems('c', 'OWNER_ADOPTED', consumerDraft, 's', '2026-10-07'), /OWNER_ADOPTED but still headed with a draft date/);
+expect('adopted without an effective date', stateProblems('c', 'OWNER_ADOPTED', consumerDraft, 's', '2026-10-07'), /OWNER_ADOPTED without an "Effective date"/);
+const PRE = (ids) => ids.map((id) => ({ id, requirement: id }));
+const adoptedEntry = { ...entry, state: 'OWNER_ADOPTED', ownerAdoptedOn: '2026-10-07', ownerAdoptedVersion: '1.0',
+  adoptionAuthority: 'Owner instruction, test specimen', publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'PRIVACY-PUBLISHABLE']), prerequisitesMet: {} };
+expect('adopted register clean', registerProblems('x', adoptedEntry, '1.0', 'docs/_legal/X.md'), null);
+expect('adopted without authority', registerProblems('x', { ...adoptedEntry, adoptionAuthority: undefined }, '1.0', 'docs/_legal/X.md'), /without an adoptionAuthority/);
+expect('adopted with an empty authority', registerProblems('x', { ...adoptedEntry, adoptionAuthority: '  ' }, '1.0', 'docs/_legal/X.md'), /without an adoptionAuthority/);
+expect('adopted without cutover prerequisite', registerProblems('x', { ...adoptedEntry, publicationPrerequisites: PRE(['PRIVACY-PUBLISHABLE']) }, '1.0', 'docs/_legal/X.md'), /CUTOVER-AUTHORITY/);
+expect('cookies adopted without A-2', registerProblems('cookies', adoptedEntry, '1.0', 'docs/_legal/X.md'), /A-2-PRODUCTION-COOKIE-RETEST/);
+expect('cookies adopted with A-2 clean', registerProblems('cookies', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'PRIVACY-PUBLISHABLE', 'A-2-PRODUCTION-COOKIE-RETEST']) }, '1.0', 'docs/_legal/X.md'), null);
+expect('publishable with an unmet prerequisite', registerProblems('x', { ...adoptedEntry, state: 'PUBLISHABLE', prerequisitesMet: { 'CUTOVER-AUTHORITY': 'owner, date' } }, '1.0', 'docs/_legal/X.md'), /PRIVACY-PUBLISHABLE has no recorded evidence/);
+expect('publishable with every prerequisite met', registerProblems('x', { ...adoptedEntry, state: 'PUBLISHABLE', prerequisitesMet: { 'CUTOVER-AUTHORITY': 'owner, date', 'PRIVACY-PUBLISHABLE': 'register, date' } }, '1.0', 'docs/_legal/X.md'), null);
 
 // danglingReferences — lists and sub-clauses.
 expect('reference list', danglingReferences('## 1. A\n## 2. B\nSee sections 1, 2 and 7.\n'), /^7$/);
 expect('sub-clause parent', danglingReferences('## 6. A\n### 6.1 B\nSee section 6 and clause 6.1.\n'), null);
+
+// GS-LEGAL-001-R4 — the owner's forbidden list, the obsolete solicitor gate, contradictory state.
+expect('lawyer approved', all('consumer-client-terms', consumer + '\nThese terms are lawyer-approved.\n'), /forbidden claim/);
+expect('guaranteed compliant', all('consumer-client-terms', consumer + '\nThis policy is guaranteed compliant.\n'), /forbidden claim/);
+expect('guaranteed enforceable', all('consumer-client-terms', consumer + '\nEvery clause is guaranteed to be enforceable.\n'), /forbidden claim/);
+expect('obsolete solicitor gate', all('consumer-client-terms', consumer + '\nThis version is subject to solicitor approval.\n'), /forbidden claim/);
+expect('adopted but says not yet adopted', stateProblems('c', 'OWNER_ADOPTED', consumer + '\nThis version is not yet adopted.\n', 's', '2026-10-07'), /says it is not adopted/);
+expect('adopted consumer draft clean', stateProblems('c', 'OWNER_ADOPTED', consumer, 's', '2026-10-07'), null);
+// crossRegisterProblems — PRIVACY-PUBLISHABLE is checkable inside the register.
+const docs = (privacyState, met) => ({ privacy: { state: privacyState }, terms: { state: 'PUBLISHABLE', prerequisitesMet: met } });
+expect('privacy-publishable claimed while privacy unadopted', crossRegisterProblems(docs('OWNER_REVIEW_REQUIRED', { 'PRIVACY-PUBLISHABLE': 'yes' })), /while the privacy entry is OWNER_REVIEW_REQUIRED/);
+expect('privacy-publishable claimed while privacy only adopted', crossRegisterProblems(docs('OWNER_ADOPTED', { 'PRIVACY-PUBLISHABLE': 'yes' })), /while the privacy entry is OWNER_ADOPTED/);
+expect('privacy-publishable met for real', crossRegisterProblems(docs('PUBLISHABLE', { 'PRIVACY-PUBLISHABLE': 'register, date' })), null);
+expect('privacy-publishable not claimed', crossRegisterProblems(docs('OWNER_REVIEW_REQUIRED', {})), null);
+// The live register: Privacy not adopted, so the cross check must be clean today.
+expect('live register cross-coherent', crossRegisterProblems(JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json', 'utf8')).documents), null);
 
 // parseDraft — the generator the served pages come from refuses malformed drafts.
 const head = '# T\n\n**Version 1.0**\\\n**Draft date: 6 October 2026**\n\n';

@@ -6,7 +6,7 @@ import { Prose } from '@/components/primitives/Prose';
 import { Blocks } from '@/components/content/Blocks';
 import { Opening } from '@/components/shared/Opening';
 import { getLegalDocument, listLegalDocuments } from '@/lib/sanity/queries';
-import { isPublishable } from '@/lib/legal/adoption';
+import { isAdoptedNotPublished, isPublishable } from '@/lib/legal/adoption';
 import { STATIC_BUILD } from '@/lib/build/target';
 import { staticParams } from '@/lib/build/static-routes';
 import {
@@ -38,8 +38,10 @@ import opening from '@/components/shared/opening.module.css';
  * ## An unapproved document is announced, never hidden
  *
  * `adoptionState` (`GS-O003-R`, `lib/legal/adoption.ts`; until 6 October 2026 the
- * `solicitorApproved` flag) is shown, not filtered: anything short of `PUBLISHABLE` carries the
- * "not yet adopted" banner. Production only ever receives `PUBLISHABLE` documents (the
+ * `solicitorApproved` flag) is shown, not filtered: anything short of `OWNER_ADOPTED` carries the
+ * "not yet adopted" banner, and an `OWNER_ADOPTED` document carries "adopted, not yet published"
+ * (`GS-LEGAL-001-R4`: once six documents were adopted, the old two-way banner would have told a
+ * reader that an adopted document had not been adopted). Production only ever receives `PUBLISHABLE` documents (the
  * migration reads the committed register), so the banner appears on review builds only. The
  * query does **not** filter on the state —
  * `lib/sanity/queries.ts` explains why in full. A missing privacy notice is a worse outcome
@@ -142,7 +144,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           />
         }
       >
-        {!isPublishable(doc.adoptionState) ? (
+        {isAdoptedNotPublished(doc.adoptionState) ? (
+          <p className={opening.status}>
+            <span className={opening.statusLabel}>ADOPTED, NOT YET PUBLISHED.</span>{' '}
+            Gridsmith Ltd has adopted this version, but it has not yet been published as the live
+            version of this document. It is shown here for review before publication.
+          </p>
+        ) : !isPublishable(doc.adoptionState) ? (
           <p className={opening.status}>
             <span className={opening.statusLabel}>NOT YET ADOPTED.</span>{' '}
             This version is under review and has not been adopted by Gridsmith Ltd. It is shown here
@@ -153,9 +161,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <Numeric>
             {[
               doc.version ? `Version ${doc.version}` : null,
-              // An unadopted version has no effective date, only the date it was drafted.
+              // An unadopted version has no effective date, only the date it was drafted. An adopted
+              // one carries its effective date from adoption, before and after publication.
               doc.effectiveFrom
-                ? `${isPublishable(doc.adoptionState) ? 'Effective' : 'Draft dated'} ${doc.effectiveFrom}`
+                ? `${isPublishable(doc.adoptionState) || isAdoptedNotPublished(doc.adoptionState) ? 'Effective' : 'Draft dated'} ${doc.effectiveFrom}`
                 : null,
               isPublishable(doc.adoptionState) && doc.lastReviewed ? `Reviewed ${doc.lastReviewed}` : null,
               doc.reviewedBy,
@@ -204,7 +213,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               {others.map((other) => (
                 <li key={other.slug}>
                   <a href={`/legal/${other.slug}`}>{other.title}</a>
-                  {!isPublishable(other.adoptionState) ? <span className={styles.othersNote}> — not yet adopted</span> : null}
+                  {isAdoptedNotPublished(other.adoptionState) ? (
+                    <span className={styles.othersNote}> — adopted, not yet published</span>
+                  ) : !isPublishable(other.adoptionState) ? (
+                    <span className={styles.othersNote}> — not yet adopted</span>
+                  ) : null}
                 </li>
               ))}
             </ul>

@@ -1,3 +1,13 @@
+> **GS-LEGAL-001-R4 (7 October 2026): six legal documents OWNER_ADOPTED; Privacy not adopted; nothing PUBLISHABLE or published.** Record: `docs/_legal/research/GS-LEGAL-001/R4-OWNER-ADOPTION.md`.
+>
+> - **Adopted 2026-10-07 on owner instruction** (`adoptionAuthority` in the register; not solicitor review): Business 3.1 (OC-1 confirmed: Bus 16 (ii) = notional first 12 months), Consumers 3.1, Website Terms 2.1, Cookie 2.1, Accessibility 2.1, `/legal/client-terms` 2.1. Headers now `Effective date: 7 October 2026`; served banner "ADOPTED, NOT YET PUBLISHED".
+> - **Publication prerequisites (all outstanding):** CUTOVER-AUTHORITY and PRIVACY-PUBLISHABLE on all six; A-2-PRODUCTION-COOKIE-RETEST on Cookie.
+> - **Privacy 2.1:** `OWNER_REVIEW_REQUIRED`, three markers; owner checks P-01–P-12 (`docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md`); 2.2 plan not applied.
+> - **Operations:** rights-chain templates 01–07 (`docs/_legal/operations/rights-chain/`, nothing signed; owner employment status unknown); retention activation checklist (routine not operating, nothing deleted).
+> - **Gates:** `check:legal:adoption` requires authority and prerequisites, refuses markers/draft dates at adoption, cross-checks PRIVACY-PUBLISHABLE, extended forbidden claims (selftest 92); parity checks the served banner against the state (selftest 39).
+> - **A-1 dev reseed NOT run:** `spzu6y31.api.sanity.io` blocked by egress (403), no token, so dataset identity unprovable; no Sanity read or write. Parity green in draft mode against local seeds.
+> - **Untouched:** no Hostinger, gridsmith.uk, DNS, Production Sanity/Supabase/Edge or `main` change; no lead or `pg_dump` deleted; H4-H not begun.
+
 > **GS-LEGAL-001-R3 (7 October 2026): owner decisions applied; six documents ready for owner adoption; Privacy needs owner account evidence; STOPPED before adoption.** Record: `docs/_legal/research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md`.
 >
 > - **Client terms 3.1** (Consumers, Business Clients):

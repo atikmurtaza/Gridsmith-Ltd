@@ -1,7 +1,7 @@
 # Client Terms for Consumers
 
 **Version 3.1**\
-**Draft date: 7 October 2026**
+**Effective date: 7 October 2026**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
 Company number: **17050842**\

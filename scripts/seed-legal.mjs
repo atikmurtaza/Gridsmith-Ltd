@@ -255,8 +255,9 @@ const clientTermsDisambiguation = shape(
   {
     title: 'Client Terms — which ones apply to you',
     version: '2.1',
-    effective: null,
-    drafted: '2026-10-06',
+    // Owner-adopted 7 October 2026 (GS-LEGAL-001-R4): the adoption date is its effective date.
+    effective: '2026-10-07',
+    drafted: null,
     clauses: [
       { number: '1.1', heading: 'If you are buying for a business', paragraphs: [
         'If you are a company, a partnership, a sole trader or anyone else buying for the purposes of a trade, business, craft or profession, the Client Terms for Business Clients apply. They are at /legal/business-client-terms and are linked at the foot of this page.',
