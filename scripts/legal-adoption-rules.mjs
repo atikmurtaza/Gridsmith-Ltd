@@ -107,10 +107,27 @@ export function danglingReferences(markdown) {
 export const REQUIRED_PREREQUISITES = {
   all: ['CUTOVER-AUTHORITY', 'PRIVACY-PUBLISHABLE'],
   cookies: ['A-2-PRODUCTION-COOKIE-RETEST'],
+  // Privacy §6/§7 describe the Supabase Edge Function intake, which runs only on Preview until H4-B
+  // is promoted; cutover authority alone does not make that true (R4 review M5).
+  privacy: ['H4-B-INTAKE-PROMOTED'],
 };
 
+/** The prerequisites an adopted entry must list. Privacy does not list itself (R4 review L1). */
+export function requiredPrerequisites(slug) {
+  const all = slug === 'privacy' ? REQUIRED_PREREQUISITES.all.filter((id) => id !== 'PRIVACY-PUBLISHABLE') : REQUIRED_PREREQUISITES.all;
+  return [...all, ...(REQUIRED_PREREQUISITES[slug] ?? [])];
+}
+
+/** sha256 hex, the form `ownerAdoptedSha256` records. */
+const SHA256 = /^[0-9a-f]{64}$/;
+
 /** Register coherence for one entry. */
-export function registerProblems(slug, entry, draftVersion, expectedDraft) {
+/**
+ * `contentSha` is the sha256 of the text the adoption covers: the draft file's bytes, or for the
+ * draftless `/legal/client-terms` its generated content. Adoption is bound to that text, not only to
+ * the version number, so an edit that keeps the version cannot keep the adoption (R4 review M1).
+ */
+export function registerProblems(slug, entry, draftVersion, expectedDraft, contentSha) {
   const p = [];
   if (!entry) return [`${slug}: no entry in the GS-O003-R register`];
   if (!STATES.includes(entry.state)) p.push(`${slug}: unknown state ${JSON.stringify(entry.state)}`);
@@ -123,7 +140,11 @@ export function registerProblems(slug, entry, draftVersion, expectedDraft) {
     if (entry.ownerAdoptedVersion !== draftVersion) {
       p.push(`${slug}: adopted version ${JSON.stringify(entry.ownerAdoptedVersion)} is not the draft's version ${draftVersion}`);
     }
-  } else if (entry.ownerAdoptedOn != null || entry.ownerAdoptedVersion != null) {
+    if (!SHA256.test(entry.ownerAdoptedSha256 ?? '')) p.push(`${slug}: ${entry.state} without an ownerAdoptedSha256 of the adopted text`);
+    else if (entry.ownerAdoptedSha256 !== contentSha) {
+      p.push(`${slug}: the text is not the adopted text (sha256 ${String(contentSha).slice(0, 12)}… is not the adopted ${String(entry.ownerAdoptedSha256).slice(0, 12)}…); a changed document needs a new version and a new adoption`);
+    }
+  } else if (entry.ownerAdoptedOn != null || entry.ownerAdoptedVersion != null || entry.ownerAdoptedSha256 != null) {
     p.push(`${slug}: records an adoption date or version while at ${entry.state}; only the owner's adoption sets those`);
   }
   if (adopted) {
@@ -133,7 +154,7 @@ export function registerProblems(slug, entry, draftVersion, expectedDraft) {
       p.push(`${slug}: ${entry.state} without an adoptionAuthority recording the owner's instruction`);
     }
     const listed = new Set((entry.publicationPrerequisites ?? []).map((x) => x.id));
-    for (const id of [...REQUIRED_PREREQUISITES.all, ...(REQUIRED_PREREQUISITES[slug] ?? [])]) {
+    for (const id of requiredPrerequisites(slug)) {
       if (!listed.has(id)) p.push(`${slug}: adopted without the publication prerequisite ${id}`);
     }
   }

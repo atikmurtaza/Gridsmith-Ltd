@@ -17,6 +17,7 @@
  * committed specimens, and a count of zero documents is itself a failure here.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { LEGAL_DOCUMENTS, LEGAL_DRAFT_SOURCES } from './seed-legal.mjs';
 import {
@@ -34,6 +35,16 @@ import {
 const EXPECTED_DRAFTS = 6;
 const EXPECTED_DOCUMENTS = 7;
 
+const sha256 = (data) => createHash('sha256').update(data).digest('hex');
+/**
+ * The text an adoption covers: a draft's bytes, or, for the draftless disambiguation page, the
+ * content the seed generates for it (title, version, effective date, summary, clauses).
+ */
+const adoptedTextSha = (doc, file) =>
+  file
+    ? sha256(readFileSync(`docs/_legal/${file}`))
+    : sha256(JSON.stringify({ title: doc.title, version: doc.version, effectiveFrom: doc.effectiveFrom, summary: doc.summary, clauses: doc.clauses }));
+
 const register = JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json', 'utf8'));
 const problems = [];
 const counted = { drafts: 0, documents: 0 };
@@ -44,7 +55,7 @@ for (const doc of LEGAL_DOCUMENTS) {
   counted.documents += 1;
   const file = LEGAL_DRAFT_SOURCES[slug];
   const entry = register.documents?.[slug];
-  problems.push(...registerProblems(slug, entry, doc.version, file ? `docs/_legal/${file}` : null));
+  problems.push(...registerProblems(slug, entry, doc.version, file ? `docs/_legal/${file}` : null, adoptedTextSha(doc, file)));
   const served = doc.clauses.flatMap((c) => c.body.map((b) => b.children[0].text)).join('\n');
   if (!file) {
     // The disambiguation page has no draft: hold its served text to the claims and markers rules.

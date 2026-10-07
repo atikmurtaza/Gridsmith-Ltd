@@ -68,7 +68,7 @@ each right vests in the Company on its creation** (CDPA section 91; for design r
 
 2.4 **Excluded:** [● any material the Assignor intends to keep personally, for example works made
 before and wholly unconnected with the business, or "none"]. Anything excluded here **cannot** be
-described to a client as the Company's own (Bus 9.2; Cons 13 ¶6) unless it is licensed to the Company
+described to a client as the Company's own (Bus 9.2; Cons 13 ¶5–6) unless it is licensed to the Company
 in writing.
 
 ### 3. Moral rights
@@ -121,8 +121,13 @@ director, as director] .................................... Date ............
 > It was noted that [● owner's name] has signed an assignment and waiver in favour of the Company dated
 > [● date], assigning existing and future copyright, design right and database right in material
 > created for the Company's business, so far as not already vested in the Company, and waiving moral
-> rights. It was resolved that the Company accept the assignment, that [● name] sign it on behalf of
-> the Company, and that it be entered in the Company's title register.
+> rights. [● The director declared an interest in the assignment as its other party.] It was resolved
+> that the Company accept the assignment, that [● name] sign it on behalf of the Company, and that it
+> be entered in the Company's title register.
+>
+> *Note: whether and how a sole director declares an interest in a transaction with the company
+> (Companies Act 2006 ss. 177 and 182, and the articles) is **UNVERIFIED** here; the owner or an adviser
+> should confirm the form.*
 
 ---
 

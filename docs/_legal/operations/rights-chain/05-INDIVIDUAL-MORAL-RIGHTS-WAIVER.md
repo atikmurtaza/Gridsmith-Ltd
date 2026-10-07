@@ -31,8 +31,8 @@ It does **not** transfer copyright. That is templates 01–04.
 Gridsmith Ltd transfers or licenses rights in the work (including its client), and their licensees and
 successors in title.
 
-I have not asserted and will not assert my right to be identified in relation to the work (CDPA
-section 78).
+Except as the credit option below provides, I have not asserted and will not assert my right to be
+identified in relation to the work (CDPA section 78).
 
 **Credit** *(tick one)*:
 - [ ] No credit. I accept that the client may publish the work under the client's own name, without

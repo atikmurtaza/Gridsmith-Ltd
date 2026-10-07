@@ -13,7 +13,8 @@
     "Only the owner moves a document to OWNER_ADOPTED, by recording ownerAdoptedOn (date) and ownerAdoptedVersion (the exact version adopted). No script sets either.",
     "PUBLISHABLE requires OWNER_ADOPTED plus a passing check:legal:adoption run on the adopted version; ownerAdoptedVersion must equal the document's version.",
     "scripts/migrate-production-cms.mjs admits a legal document to the production payload only at PUBLISHABLE.",
-    "An adopted entry records adoptionAuthority (the owner's instruction) and its publicationPrerequisites; PUBLISHABLE is refused while any prerequisite has no recorded evidence in prerequisitesMet. Adoption is never inferred: a document carrying an open marker cannot be OWNER_ADOPTED."
+    "An adopted entry records adoptionAuthority (the owner's instruction) and its publicationPrerequisites; PUBLISHABLE is refused while any prerequisite has no recorded evidence in prerequisitesMet. Adoption is never inferred: a document carrying an open marker cannot be OWNER_ADOPTED.",
+    "GS-LEGAL-001-R4 review: an adoption is bound to the adopted text by ownerAdoptedSha256 (the draft file's sha256, or for client-terms the sha256 of its generated content); check:legal:adoption refuses an adopted entry whose text no longer matches, so an edit that keeps the version number cannot keep the adoption. Privacy, when adopted, must list H4-B-INTAKE-PROMOTED and does not list itself."
   ],
   "stateRecord": "6 October 2026 (GS-LEGAL-001): all seven moved to OWNER_REVIEW_REQUIRED on Agent G's re-verification (research/GS-LEGAL-001/G-final-cross-check.md section 7). 7 October 2026 (GS-LEGAL-001-R3): the owner decisions in research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md section 4 were applied (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md); the client terms for consumers and for business clients moved to version 3.1, the other five are unchanged; all seven remain OWNER_REVIEW_REQUIRED, and six of them now need only the owner's adoption. The privacy policy still carries three [OWNER DECISION] markers (processor terms, transfer safeguard, retention) that wait on owner account checks and on the retention routine operating, so it is not adoptable. No document is OWNER_ADOPTED. 7 October 2026 (GS-LEGAL-001-R4): on the owner's instruction, six documents are OWNER_ADOPTED (business-client-terms 3.1, consumer-client-terms 3.1, terms 2.1, cookies 2.1, accessibility 2.1, client-terms 2.1), each with its publication prerequisites listed and none met; none is PUBLISHABLE. The privacy policy is not adopted and remains OWNER_REVIEW_REQUIRED with its three markers (research/GS-LEGAL-001/R4-OWNER-ADOPTION.md).",
   "documents": {
@@ -28,6 +29,7 @@
       "state": "OWNER_ADOPTED",
       "ownerAdoptedOn": "2026-10-07",
       "ownerAdoptedVersion": "2.1",
+      "ownerAdoptedSha256": "b1a04b4c9eab965d951dfe495f434d7041abfd21c32e8f7dcf825a48c573629a",
       "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
       "publicationPrerequisites": [
         {
@@ -50,6 +52,7 @@
       "state": "OWNER_ADOPTED",
       "ownerAdoptedOn": "2026-10-07",
       "ownerAdoptedVersion": "2.1",
+      "ownerAdoptedSha256": "9bc00779b0c79d90e1ef8d2771bcf4589607315b9899d13592bb477fc1441c32",
       "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
       "publicationPrerequisites": [
         {
@@ -68,6 +71,7 @@
       "state": "OWNER_ADOPTED",
       "ownerAdoptedOn": "2026-10-07",
       "ownerAdoptedVersion": "2.1",
+      "ownerAdoptedSha256": "5b27b4b7b34e555c05c17356a1f5ab03dc97c7a4f8356b9239b959e2348606a5",
       "note": "Disambiguation page with no operative clause; text lives in scripts/seed-legal.mjs.",
       "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
       "publicationPrerequisites": [
@@ -87,6 +91,7 @@
       "state": "OWNER_ADOPTED",
       "ownerAdoptedOn": "2026-10-07",
       "ownerAdoptedVersion": "3.1",
+      "ownerAdoptedSha256": "6f337787d7a5196c75dbb344f44955f148639928600cb4c0909cdf17e39b2367",
       "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
       "ownerConfirmations": [
         "OC-1 confirmed 7 October 2026: clause 16 limb (ii) means the notional fees for the first 12 months of the Scope even if a rolling retainer ends earlier."
@@ -108,6 +113,7 @@
       "state": "OWNER_ADOPTED",
       "ownerAdoptedOn": "2026-10-07",
       "ownerAdoptedVersion": "3.1",
+      "ownerAdoptedSha256": "5c1cb1ba9fb8bf631af15e2247eb6fc3707ee6342d8c1abf8cfbc203476fa7fa",
       "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
       "publicationPrerequisites": [
         {
@@ -126,6 +132,7 @@
       "state": "OWNER_ADOPTED",
       "ownerAdoptedOn": "2026-10-07",
       "ownerAdoptedVersion": "2.1",
+      "ownerAdoptedSha256": "b9a5bcce6422d401fda345ae3665c684e072331c43e1b69a36642813abfc6c45",
       "adoptionAuthority": "Owner instruction GS-LEGAL-001-R4, 7 October 2026: the owner reviewed the GS-LEGAL-001-R3 adoption package (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md section 12) and adopted this exact version. Owner adoption after an evidence-based internal review; not solicitor review, certification or a guarantee of enforceability.",
       "publicationPrerequisites": [
         {

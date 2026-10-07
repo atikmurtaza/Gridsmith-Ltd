@@ -18,9 +18,15 @@ The owner's instruction for `GS-LEGAL-001-R4` (7 October 2026):
 - confirms OC-1;
 - directs that Privacy Policy 2.1 is not adopted.
 
-The register records this instruction as `adoptionAuthority` on each adopted entry. `check:legal:adoption`
-refuses any adopted entry that lacks one, so a state change made by a script or an agent without the
-owner's instruction is visible rather than looking like an adoption.
+The register records this instruction as `adoptionAuthority` on each adopted entry, and the sha256 of
+the adopted text as `ownerAdoptedSha256`. `check:legal:adoption` refuses an adopted entry that lacks
+either, or whose text no longer matches its hash, so an edit that keeps the version number cannot keep
+the adoption.
+
+**Limit of the gate:** an `adoptionAuthority` string copied from another entry would satisfy it. The
+authority field records the instruction; it cannot prove one was given. What blocks Privacy from being
+marked adopted today is substantive: its open markers, its Draft date and its missing Effective date
+(R4 review, L2).
 
 ## 2. What was adopted
 
@@ -64,7 +70,7 @@ today) before it can move:
 |---|---|---|
 | §16 limb (ii) | "whether or not the Scope continues for that period" makes the 12 months notional. "Calculated at the periodic fee or rates stated in the Scope" fixes the amount without depending on fees actually becoming payable | Expresses OC-1 |
 | §16 "fixed term shorter than 12 months" | A rolling retainer has no fixed term, so the full 12 months applies. Only a Scope with a stated shorter fixed term uses that term | Consistent |
-| §6.2 — the client may end a project at any time | Ending early does not reduce limb (ii), as OC-1 intends | No contradiction |
+| §6 ¶1 — the client may end a project at any time | Ending early does not reduce limb (ii), as OC-1 intends | No contradiction |
 | §7 — termination and suspension by Gridsmith | The cap concerns liability, not fees owed on termination, so §7 does not interact with it | No contradiction |
 | §5 / §16 ¶4 — payment | "Nothing in this clause limits the client's obligation to pay": the notional figure measures our liability only and creates no fee obligation | No contradiction |
 | §16 ¶1 — non-excludable liabilities | Preserved | No contradiction |
@@ -105,7 +111,8 @@ an open marker or a Draft date, and `registerProblems` refuses adoption metadata
 - 04: subcontracting-company schedule, with chain-of-title and procurement of 05;
 - 05: individual moral-rights waiver;
 - 06: client rights-assignment instrument, with consumer and business variants that follow Cons 13 and
-  Bus 9.3 word for word;
+  Bus 9.3 closely. The background licence is reproduced word for word; Variant C adds recitals and uses
+  "transfer and assign" as operative words;
 - 07: title, AI-tool and third-party-licence register.
 
 **Formalities**, verified only against the evidence already collected, as set out in the README:
@@ -146,15 +153,19 @@ development dataset, which remains unreseeded.
 |---|---|
 | `docs/_legal/GS-O003-R-REGISTER.json` | Six entries `OWNER_ADOPTED` (date, version, authority, prerequisites, `prerequisitesMet: {}`). The Business entry records OC-1. Privacy unchanged. New rule and state record |
 | Five drafts | `**Draft date: …**` → `**Effective date: 7 October 2026**`. Privacy keeps its Draft date |
-| `scripts/seed-legal.mjs` | `/legal/client-terms` effective 2026-10-07. `reviewedBy` "Adopted by Gridsmith Ltd on …" for adopted entries |
+| `scripts/seed-legal.mjs` | `/legal/client-terms` effective 2026-10-07 (the `reviewedBy` "Adopted by Gridsmith Ltd on …" wording already existed and now applies) |
 | `lib/legal/adoption.ts`, `app/(marketing)/legal/[slug]/page.tsx` | Three-way banner. `OWNER_ADOPTED` shows "ADOPTED, NOT YET PUBLISHED"; below that state, the existing "NOT YET ADOPTED" banner; `PUBLISHABLE` shows none. Meta label "Effective"; other-documents list annotations |
-| `scripts/legal-parity-rules.mjs`, `check-legal-parity.mjs` (+ selftest, 39 assertions) | `bannerProblems(route, state, html)`: the served banner must match the register state |
-| `scripts/legal-adoption-rules.mjs`, `check-legal-adoption.mjs` (+ selftest, **92 cases**) | See the rules list below |
+| `scripts/legal-parity-rules.mjs`, `check-legal-parity.mjs` (+ selftest, 39 assertions) | `bannerProblems(route, state, html)`: the served banner must match the register state, on the six drafted routes **and** on the draftless `/legal/client-terms` (added after review L4; a route that does not serve, or is dropped from the source list, fails) |
+| `scripts/legal-adoption-rules.mjs`, `check-legal-adoption.mjs` (+ selftest, **99 cases**) | See the rules list below |
 | `scripts/migrate-production-cms.mjs`, `docs/_shared/GS-PROD-001-CMS-MANIFEST.json` | `OWNER_ADOPTED` legal documents are reported "Owner-adopted {v} on {date}; not PUBLISHABLE (prerequisites outstanding: …)". Manifest regenerated: 47 eligible, 10 gated, **0 legal eligible** |
 
 **New rules in `legal-adoption-rules.mjs`:**
 - `adoptionAuthority` is required once a document is adopted;
-- the publication prerequisites are required, and Cookie's A-2 retest in particular;
+- `ownerAdoptedSha256` binds the adoption to the adopted text (the draft's bytes, or for
+  `/legal/client-terms` its generated content); a mismatch is refused (review M1);
+- the publication prerequisites are required: Cookie's A-2 retest in particular, and, for Privacy when
+  it is adopted, `H4-B-INTAKE-PROMOTED` instead of a self-referential `PRIVACY-PUBLISHABLE` (review M5,
+  L1);
 - `PUBLISHABLE` needs evidence for every prerequisite;
 - `crossRegisterProblems`: `PRIVACY-PUBLISHABLE` cannot be recorded as met while Privacy is not
   `PUBLISHABLE`;
@@ -167,9 +178,9 @@ development dataset, which remains unreseeded.
 
 | # | Must prove | Branch |
 |---|---|---|
-| 1 | Six documents carry the correct adoption metadata | `registerProblems` (date, version equals the draft, authority, prerequisites); `stateProblems` (Effective date) |
+| 1 | Six documents carry the correct adoption metadata | `registerProblems` (date, version equals the draft, text hash equals the adopted text, authority, prerequisites); `stateProblems` (Effective date) |
 | 2 | Privacy does not | `registerProblems`: no adoption fields below `OWNER_ADOPTED` |
-| 3 | No agent can accidentally mark Privacy adopted | Authority required, plus the marker, Draft-date and Effective-date rules. The real-gate proof gave 6 problems |
+| 3 | No agent can accidentally mark Privacy adopted | The marker, Draft-date and Effective-date rules (substantive), plus authority, text hash and prerequisites (documentary; see the limit in §1). The real-gate proof gave 6 problems |
 | 4 | Cookie keeps A-2 | `REQUIRED_PREREQUISITES.cookies` |
 | 5 | No `PUBLISHABLE` without its own prerequisites | `prerequisitesMet` evidence rule, plus `crossRegisterProblems` |
 | 6 | No `[SEED]`, solicitor gate, fake approval or contradictory state in the six | `MARKERS`, `FORBIDDEN_CLAIMS` (extended), `ADOPTION_CONTRADICTION`, and the parity `bannerProblems` on the served page |
@@ -206,6 +217,18 @@ Restored byte-identical.
 **Real gate, Website Terms claiming PRIVACY-PUBLISHABLE met:** 1 problem ("records PRIVACY-PUBLISHABLE
 as met while the privacy entry is OWNER_REVIEW_REQUIRED"). Restored byte-identical.
 
+**Review-fix mutants** (each red on its named case):
+- the text-hash mismatch branch;
+- the hash format branch (first attempt crashed on `undefined.slice` instead of failing a named case;
+  the message was made robust and the mutant re-run red on the two named cases);
+- the Privacy `H4-B-INTAKE-PROMOTED` requirement;
+- the Privacy self-prerequisite filter;
+- the `approved by … lawyers` pattern;
+- the hash-before-adoption branch.
+
+**Real gate, one-word edit to Website Terms with the version unchanged:** 1 problem ("the text is not the
+adopted text"). Restored byte-identical.
+
 **Served:** reverting the page banner made draft-mode parity red on exactly the five adopted drafts, 2
 problems each. Green after restore.
 
@@ -216,8 +239,8 @@ Run on the working tree before the R4 commit, with Node 24.21.0:
 | Check | Result |
 |---|---|
 | `check:legal:adoption` | PASS. Register coherent: privacy `OWNER_REVIEW_REQUIRED`; the other six `OWNER_ADOPTED` |
-| `check:legal:adoption:selftest` | PASS, 92 cases |
-| `check:legal:parity` (draft mode, real Next app, Sanity answered locally from the seeds) | PASS: 6 documents, 107 clauses, 429 paragraphs; served banners match the state ("ADOPTED, NOT YET PUBLISHED" ×6 incl. `/legal/client-terms`; Privacy "NOT YET ADOPTED") |
+| `check:legal:adoption:selftest` | PASS, 99 cases |
+| `check:legal:parity` (draft mode, real Next app, Sanity answered locally from the seeds) | PASS: 6 documents, 107 clauses, 429 paragraphs word for word. Banners asserted against the register on all seven routes, `/legal/client-terms` included (gate-backed since review L4): the six adopted show "ADOPTED, NOT YET PUBLISHED" and Privacy shows "NOT YET ADOPTED". Proofs: a register/served mismatch on `/legal/client-terms` gave 2 problems on that route alone; removing its measurement gave "adoption banner not measured" |
 | `check-legal-parity.selftest` | PASS, 39 assertions |
 | `check:consumer-terms` | PASS: 2 routes, 202 links, 0 to the business terms |
 | `verify:static` | PASS (exit 0) |
@@ -231,11 +254,40 @@ Run on the working tree before the R4 commit, with Node 24.21.0:
 | Production mutation | None. Supabase was used read-only (list projects, list functions, get organisation). No Sanity, Hostinger, Vercel, DNS or `main` call |
 | Exact-SHA CI | Reported in the phase's final status, not here |
 
+## 9b. Independent review
+
+A read-only reviewer checked the R4 deliverables against the R3 evidence and the adopted terms: **0 HIGH,
+6 MEDIUM, 11 LOW**. All were fixed in the follow-up commit:
+- **M1:** adoption bound to the text by `ownerAdoptedSha256`.
+- **M2:** template 04 written out in full, with Annex A.
+- **M3:** template 05's credit exception.
+- **M4:** plan items 3 and 6 split into the known part and an owner-evidence part (3a, 6a); P-12 now
+  requires a stated retention period, not a filter window.
+- **M5:** `H4-B-INTAKE-PROMOTED` added for Privacy.
+- **M6:** the monthly pre-run export, and the failure path built on it.
+- **L1–L11:**
+  - Privacy no longer lists itself as a prerequisite;
+  - the authority limit is stated;
+  - the lawyers pattern is tested;
+  - the `/legal/client-terms` banner is gated;
+  - three inaccuracies in this record are corrected;
+  - README consideration and freelancer-waiver rules are aligned with the templates;
+  - Variant B ¶6 is split into its ghostwriting and Scope cases;
+  - the retention checklist now covers R16, reads back before replacing exports, and deletes the
+    restore-test database;
+  - search summaries in the checklist are labelled as such;
+  - "Cons 13 ¶5–6" is cited;
+  - template 01's board minute adds a declaration-of-interest line, marked UNVERIFIED.
+
+The reviewer confirmed: template 06 gives no more than the contracts; future rights are presently
+assigned and not payment-conditional; the waivers run to Gridsmith, licensees, successors and clients;
+the owner's employment is never assumed; Privacy cannot be marked adopted.
+
 ## 10. Remaining blockers
 
 | Blocker | Owner of the next step |
 |---|---|
-| **Privacy:** P-01 to P-12; retention routine operating; 2.2 applied and adopted | Owner (evidence); a later legal phase |
+| **Privacy:** P-01 to P-12; retention routine operating; 2.2 applied and adopted; H4-B intake promoted to Production before it is `PUBLISHABLE` | Owner (evidence); a later legal phase; cutover |
 | **Cookie A-2:** production cookie retest at cutover | Cutover phase |
 | **Freelancer permission** (`GS-HOST-H4-C`): no written permission; review publication blocked | Owner / provider |
 | **`GS-X002`:** Technical scope review; the 3 Technical services are not migrated | Reviewer / owner |

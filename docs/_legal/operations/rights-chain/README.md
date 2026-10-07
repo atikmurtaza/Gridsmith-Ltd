@@ -17,7 +17,7 @@ The adopted client terms make three promises that Gridsmith can keep only if it 
 | A written transfer from every subcontractor or other contributor **before their work is used** | Cons 13 ¶4; Bus 9.3 ¶3 | 01, 03, 04 |
 | A signed waiver from each writer on a ghostwritten book | Cons 10.2; Bus 13 ¶3 | 05 (via 01–04) |
 
-They also rest on one unstated condition: Bus 9.2 and Cons 13 ¶6 describe "our own" tools and
+They also rest on one unstated condition: Bus 9.2 and Cons 13 ¶5–6 describe "our own" tools and
 templates. That is true only for material Gridsmith Ltd owns, which for anything the owner made
 personally or before incorporation means template 01.
 
@@ -46,7 +46,7 @@ contributors.
 | Employee, related work outside employment | Yes | Yes | Yes | Yes | — | Yes | Yes | — | 02 (clause 2) |
 | Director, not employed under a contract of service | Yes | Yes | Yes | Yes | — | Yes | Yes | — | 01 adapted, or 03 |
 | **The owner personally** | Yes (pre-incorporation, background and personally owned work) | Yes | Yes | — (company's own information) | — | Yes | Yes | — | **01** in every case; plus 02 if employed |
-| Freelancer (individual) | Yes (pre-existing project material) | Yes, **before the work is used**, not conditional on payment | Yes | Yes | Per project | Yes | Yes | — | 03 + 05 |
+| Freelancer (individual) | Yes (pre-existing project material) | Yes, **before the work is used**, not conditional on payment | Yes (in 03 clause 2) | Yes | Per project | Yes | Yes | — | 03; plus a stand-alone 05 where the Scope requires one or the work is a ghostwritten book |
 | Subcontracting company | Yes | Yes | Only from its individuals (a company cannot waive for them, s. 87) | Yes | Per project | Yes | Yes | **Yes** | 04 + 05 from each individual |
 | Commissioned writer (credited) | Yes | Yes | Paternity per agreed credit; integrity waived | Yes | **Credit recorded** | Yes | Yes | — | 03 + writer addendum + 05 |
 | Ghostwriter | Yes | Yes | **Both rights waived; no assertion anywhere** | Yes, including the fact of involvement | **No credit, unless agreed** | Yes | Yes | — | 03 + ghostwriter addendum + 05 |
@@ -78,7 +78,7 @@ of service.** A directorship is not employment. The answer changes the paperwork
 | An electronic signature satisfies s. 90(3) | B, citing the Law Commission and ECA 2000 s. 7 | Medium-high (B) |
 | Design right: writing signed by the assignor; prospective ownership | CDPA ss. 222(3), 223 | **UNVERIFIED** (not read at source) |
 | Database right: assignment formalities | Copyright and Rights in Databases Regulations 1997 | **UNVERIFIED** |
-| Whether s. 91 needs consideration or a deed (it speaks of an "agreement") | — | **UNVERIFIED.** The templates recite a nominal consideration as conservative drafting; the owner or an adviser should confirm |
+| Whether s. 91 needs consideration or a deed (it speaks of an "agreement") | — | **UNVERIFIED.** Template 01 offers an optional nominal consideration; 03 and 04 rely on the engagement fee; the owner or an adviser should confirm |
 | Sign as simple signed writing, **not as a deed** (a deed carries the 12-year Limitation Act s. 8 period) | Limitation Act 1980 s. 8 | Search summary only (R3 record §4) |
 
 ## Execution checklist (before the first project that relies on it)
@@ -86,8 +86,9 @@ of service.** A directorship is not employment. The answer changes the paperwork
 1. Answer the owner employment question above (yes/no; date of any service contract).
 2. Sign template 01 (owner); the board minute records it.
 3. If anyone is employed, put template 02 into each contract of employment.
-4. For each subcontractor, sign 03 or 04 **before their work is used**, and collect 05 from each
-   individual author.
+4. For each subcontractor, sign 03 or 04 **before their work is used**. Collect 05 from each
+   individual author of a subcontracting company's work (04 Annex A), and from an individual
+   freelancer where the Scope requires a stand-alone waiver or the work is a ghostwritten book.
 5. For each writer on a book, record the credit position (writer addendum) or the ghostwriting
    position (ghostwriter addendum).
 6. Record each AI tool used and confirm its terms allow assignment of output (07).

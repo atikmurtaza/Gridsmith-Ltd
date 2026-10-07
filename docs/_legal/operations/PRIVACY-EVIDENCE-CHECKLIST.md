@@ -63,7 +63,7 @@ No Hostinger or Resend connector is attached to this session.
 | Provider | Hostinger |
 | Dashboard area | hPanel → **Billing** → open any recent invoice for the hosting or email plan |
 | Fact needed | The exact legal name and address of the seller on the invoice (for example "Hostinger UK Limited" or "Hostinger International Ltd") |
-| Why it matters | The party to the processing contract (UK GDPR Art. 28(3)), and whether contracting with a non-UK entity is itself a transfer that needs a safeguard. R3 found the DPA names Hostinger International Ltd (Cyprus) as data importer, while UK customers may contract with Hostinger UK Limited |
+| Why it matters | The party to the processing contract (UK GDPR Art. 28(3)), and whether contracting with a non-UK entity is itself a transfer that needs a safeguard. R3's search summaries (not evidence) suggested the DPA names Hostinger International Ltd (Cyprus) as data importer, while UK customers may contract with Hostinger UK Limited |
 | Acceptable evidence | A screenshot or PDF of the invoice header showing the seller |
 | Report | "Seller: [legal name], [country]", plus the invoice date |
 | Redaction | **Yes**: redact the card digits, the billing address if it is personal, and the amount if preferred. The seller block must stay readable |
@@ -145,7 +145,7 @@ Standard Contractual Clauses, or the UK International Data Transfer Agreement? P
 |---|---|
 | Provider | Resend |
 | Dashboard area | resend.com → **Settings → Documents** (DPA download) |
-| Fact needed | The DPA's date and version; the contracting entity (R3: Plus Five Five, Inc.); whether it includes the UK Addendum or the UK IDTA, or relies on the Data Privacy Framework and its UK Extension |
+| Fact needed | The DPA's date and version; the contracting entity (R3's search summaries named Plus Five Five, Inc.; not evidence); whether it includes the UK Addendum or the UK IDTA, or relies on the Data Privacy Framework and its UK Extension |
 | Why it matters | Art. 28(3); Art. 46 |
 | Acceptable evidence | The downloaded DPA PDF (kept outside the repository) and the clause numbers that answer the question |
 | Report | "DPA dated [date]; entity [name]; transfer mechanism: [UK Addendum / IDTA / DPF + UK Extension / other], clause [x]" |
@@ -212,7 +212,7 @@ Standard Contractual Clauses, or the UK International Data Transfer Agreement? P
 | Dashboard area | Project `qfgpwumvvtizeamkynes` (and Production once H4-B is promoted) → **Logs → Edge Functions**: the earliest time selectable; or a support ticket |
 | Fact needed | How long Edge Function invocation logs (which may include caller IP addresses) are kept on the Free plan |
 | Why it matters | Privacy §2 ¶3 names provider logs; retention row R14 |
-| Acceptable evidence | Screenshot of the log explorer's time-range limit, or Supabase's written reply |
+| Acceptable evidence | Supabase's written reply, or a Supabase document that states a retention period. A log explorer's selectable time range is a filter window, not a retention period (as for P-04), and is **not** acceptable on its own. Also report whether the API log entries carry a client IP field (plan item 3a) |
 | Report | "[n] days / hours" |
 | Redaction | **Yes: redact IP addresses and request bodies in any log line shown** |
 | Resolves | §2 ¶3; **§8 marker** (Supabase log limb) |

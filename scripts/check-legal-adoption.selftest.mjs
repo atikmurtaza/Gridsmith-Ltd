@@ -144,16 +144,25 @@ expect('adopted with an open marker (the privacy guard)', stateProblems('p', 'OW
 expect('adopted still headed with a draft date', stateProblems('c', 'OWNER_ADOPTED', consumerDraft, 's', '2026-10-07'), /OWNER_ADOPTED but still headed with a draft date/);
 expect('adopted without an effective date', stateProblems('c', 'OWNER_ADOPTED', consumerDraft, 's', '2026-10-07'), /OWNER_ADOPTED without an "Effective date"/);
 const PRE = (ids) => ids.map((id) => ({ id, requirement: id }));
-const adoptedEntry = { ...entry, state: 'OWNER_ADOPTED', ownerAdoptedOn: '2026-10-07', ownerAdoptedVersion: '1.0',
+const SHA = 'a'.repeat(64);
+const adoptedEntry = { ...entry, state: 'OWNER_ADOPTED', ownerAdoptedOn: '2026-10-07', ownerAdoptedVersion: '1.0', ownerAdoptedSha256: SHA,
   adoptionAuthority: 'Owner instruction, test specimen', publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'PRIVACY-PUBLISHABLE']), prerequisitesMet: {} };
-expect('adopted register clean', registerProblems('x', adoptedEntry, '1.0', 'docs/_legal/X.md'), null);
-expect('adopted without authority', registerProblems('x', { ...adoptedEntry, adoptionAuthority: undefined }, '1.0', 'docs/_legal/X.md'), /without an adoptionAuthority/);
-expect('adopted with an empty authority', registerProblems('x', { ...adoptedEntry, adoptionAuthority: '  ' }, '1.0', 'docs/_legal/X.md'), /without an adoptionAuthority/);
-expect('adopted without cutover prerequisite', registerProblems('x', { ...adoptedEntry, publicationPrerequisites: PRE(['PRIVACY-PUBLISHABLE']) }, '1.0', 'docs/_legal/X.md'), /CUTOVER-AUTHORITY/);
-expect('cookies adopted without A-2', registerProblems('cookies', adoptedEntry, '1.0', 'docs/_legal/X.md'), /A-2-PRODUCTION-COOKIE-RETEST/);
-expect('cookies adopted with A-2 clean', registerProblems('cookies', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'PRIVACY-PUBLISHABLE', 'A-2-PRODUCTION-COOKIE-RETEST']) }, '1.0', 'docs/_legal/X.md'), null);
-expect('publishable with an unmet prerequisite', registerProblems('x', { ...adoptedEntry, state: 'PUBLISHABLE', prerequisitesMet: { 'CUTOVER-AUTHORITY': 'owner, date' } }, '1.0', 'docs/_legal/X.md'), /PRIVACY-PUBLISHABLE has no recorded evidence/);
-expect('publishable with every prerequisite met', registerProblems('x', { ...adoptedEntry, state: 'PUBLISHABLE', prerequisitesMet: { 'CUTOVER-AUTHORITY': 'owner, date', 'PRIVACY-PUBLISHABLE': 'register, date' } }, '1.0', 'docs/_legal/X.md'), null);
+expect('adopted register clean', registerProblems('x', adoptedEntry, '1.0', 'docs/_legal/X.md', SHA), null);
+expect('adopted without authority', registerProblems('x', { ...adoptedEntry, adoptionAuthority: undefined }, '1.0', 'docs/_legal/X.md', SHA), /without an adoptionAuthority/);
+expect('adopted with an empty authority', registerProblems('x', { ...adoptedEntry, adoptionAuthority: '  ' }, '1.0', 'docs/_legal/X.md', SHA), /without an adoptionAuthority/);
+expect('adopted without cutover prerequisite', registerProblems('x', { ...adoptedEntry, publicationPrerequisites: PRE(['PRIVACY-PUBLISHABLE']) }, '1.0', 'docs/_legal/X.md', SHA), /CUTOVER-AUTHORITY/);
+expect('cookies adopted without A-2', registerProblems('cookies', adoptedEntry, '1.0', 'docs/_legal/X.md', SHA), /A-2-PRODUCTION-COOKIE-RETEST/);
+expect('cookies adopted with A-2 clean', registerProblems('cookies', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'PRIVACY-PUBLISHABLE', 'A-2-PRODUCTION-COOKIE-RETEST']) }, '1.0', 'docs/_legal/X.md', SHA), null);
+expect('publishable with an unmet prerequisite', registerProblems('x', { ...adoptedEntry, state: 'PUBLISHABLE', prerequisitesMet: { 'CUTOVER-AUTHORITY': 'owner, date' } }, '1.0', 'docs/_legal/X.md', SHA), /PRIVACY-PUBLISHABLE has no recorded evidence/);
+expect('publishable with every prerequisite met', registerProblems('x', { ...adoptedEntry, state: 'PUBLISHABLE', prerequisitesMet: { 'CUTOVER-AUTHORITY': 'owner, date', 'PRIVACY-PUBLISHABLE': 'register, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
+// R4 review M1 — adoption is bound to the adopted text, not only the version number.
+expect('adopted text changed, same version', registerProblems('x', adoptedEntry, '1.0', 'docs/_legal/X.md', 'b'.repeat(64)), /not the adopted text/);
+expect('adopted without a text hash', registerProblems('x', { ...adoptedEntry, ownerAdoptedSha256: undefined }, '1.0', 'docs/_legal/X.md', SHA), /without an ownerAdoptedSha256/);
+expect('adopted with a malformed hash', registerProblems('x', { ...adoptedEntry, ownerAdoptedSha256: 'abc' }, '1.0', 'docs/_legal/X.md', 'abc'), /without an ownerAdoptedSha256/);
+expect('hash recorded before adoption', registerProblems('x', { ...entry, ownerAdoptedSha256: SHA }, '1.0', 'docs/_legal/X.md', SHA), /only the owner's adoption/);
+// R4 review M5/L1 — privacy, when adopted, needs the H4-B intake promoted and does not list itself.
+expect('privacy adopted without the H4-B prerequisite', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY']) }, '1.0', 'docs/_legal/X.md', SHA), /H4-B-INTAKE-PROMOTED/);
+expect('privacy adopted with its own prerequisites clean', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED']) }, '1.0', 'docs/_legal/X.md', SHA), null);
 
 // danglingReferences — lists and sub-clauses.
 expect('reference list', danglingReferences('## 1. A\n## 2. B\nSee sections 1, 2 and 7.\n'), /^7$/);
@@ -161,6 +170,7 @@ expect('sub-clause parent', danglingReferences('## 6. A\n### 6.1 B\nSee section 
 
 // GS-LEGAL-001-R4 — the owner's forbidden list, the obsolete solicitor gate, contradictory state.
 expect('lawyer approved', all('consumer-client-terms', consumer + '\nThese terms are lawyer-approved.\n'), /forbidden claim/);
+expect('approved by our lawyers', all('consumer-client-terms', consumer + '\nThese terms were approved by our lawyers.\n'), /forbidden claim/);
 expect('guaranteed compliant', all('consumer-client-terms', consumer + '\nThis policy is guaranteed compliant.\n'), /forbidden claim/);
 expect('guaranteed enforceable', all('consumer-client-terms', consumer + '\nEvery clause is guaranteed to be enforceable.\n'), /forbidden claim/);
 expect('obsolete solicitor gate', all('consumer-client-terms', consumer + '\nThis version is subject to solicitor approval.\n'), /forbidden claim/);

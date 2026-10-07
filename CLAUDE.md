@@ -4,7 +4,7 @@
 > - **Publication prerequisites (all outstanding):** CUTOVER-AUTHORITY and PRIVACY-PUBLISHABLE on all six; A-2-PRODUCTION-COOKIE-RETEST on Cookie.
 > - **Privacy 2.1:** `OWNER_REVIEW_REQUIRED`, three markers; owner checks P-01–P-12 (`docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md`); 2.2 plan not applied.
 > - **Operations:** rights-chain templates 01–07 (`docs/_legal/operations/rights-chain/`, nothing signed; owner employment status unknown); retention activation checklist (routine not operating, nothing deleted).
-> - **Gates:** `check:legal:adoption` requires authority and prerequisites, refuses markers/draft dates at adoption, cross-checks PRIVACY-PUBLISHABLE, extended forbidden claims (selftest 92); parity checks the served banner against the state (selftest 39).
+> - **Gates:** `check:legal:adoption` binds each adoption to its text (`ownerAdoptedSha256`), requires authority and prerequisites (Privacy: `H4-B-INTAKE-PROMOTED`), refuses markers/draft dates at adoption, cross-checks PRIVACY-PUBLISHABLE, extended forbidden claims (selftest 99); parity checks the served banner against the state on all seven routes (selftest 39). Independent review: 0 H, 6 M, 11 L, all fixed.
 > - **A-1 dev reseed NOT run:** `spzu6y31.api.sanity.io` blocked by egress (403), no token, so dataset identity unprovable; no Sanity read or write. Parity green in draft mode against local seeds.
 > - **Untouched:** no Hostinger, gridsmith.uk, DNS, Production Sanity/Supabase/Edge or `main` change; no lead or `pg_dump` deleted; H4-H not begun.
 

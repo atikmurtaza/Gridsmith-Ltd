@@ -42,6 +42,7 @@ was not.
 1. **Monthly, first working day.** Run a read-only count of leads past R1, R2 and R4. Record the count,
    delete them, and record the number deleted. In the same session:
    - clear R3 and R18 mail past its period from the inbox, Sent items and trash;
+   - delete R16 WhatsApp and text threads past their period;
    - replace or delete any obsolete R17 export.
 2. **Quarterly.**
    - Prune R10 outbox rows, and R11 rows once a writer exists; R11 rows go before their lead.
@@ -56,6 +57,9 @@ Automating step 1, for example with a scheduled database job, is a separately au
 task. It is not started.
 
 ## 3. Activation: what must be true before Privacy §8 can change
+
+The operational checklist for this (operator, procedure, logging, exceptions, escalation) is
+`RETENTION-ACTIVATION-CHECKLIST.md` (`GS-LEGAL-001-R4`).
 
 1. The §4 cleanup phase has run once, with its accountability log.
 2. The monthly routine has a named operator and a first log entry.

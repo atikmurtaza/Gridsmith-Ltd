@@ -20,7 +20,7 @@ for them.
 **Verdict on the terms.** No clause in Client Terms for Consumers 3.1 or Client Terms for Business
 Clients 3.1 is inaccurate or impossible to keep, **provided the documents in §3 are signed before first
 use**. So the terms are unchanged on this point. One dependency is easy to miss: Bus 9.2 and Cons 13 ¶6
-describe tools and templates "we" own. That is true only once the owner has assigned to the company any
+describe tools and templates "we" own (Bus 9.2; the bullet under Cons 13 ¶5 and the licence in ¶6). That is true only once the owner has assigned to the company any
 such material the owner created personally or before incorporation (§3, item 1).
 
 ## 1. Concepts kept apart
@@ -66,6 +66,8 @@ These are **contents requirements**, not drafts. None is signed; none may be rep
 | 7 | **Title register** | — | Items 1–6, kept under retention row R7 (`RETENTION-SCHEDULE.md`) | — |
 
 ## 4. Owner action
+
+**Templates for every item in §3 are in `rights-chain/` (`GS-LEGAL-001-R4`).** None is signed.
 
 - **Confirm** whether the owner is employed by Gridsmith Ltd under a contract of service. The answer
   changes item 2, not item 1: item 1 is needed either way.

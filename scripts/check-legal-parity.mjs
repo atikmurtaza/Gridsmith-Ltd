@@ -162,6 +162,7 @@ const UNCOVERED = 'client-terms';
 
 const problems = [];
 const counted = { docs: 0, clauses: 0, paragraphs: 0, tokens: 0 };
+const bannerOnly = [];
 
 /** `<section id="clause-…">…</section>` — the template renders one per clause. */
 const clauseSections = (html) => [
@@ -181,7 +182,19 @@ const decode = (s) =>
     .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)));
 
 for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
-  if (!file) continue;
+  if (!file) {
+    // GS-LEGAL-001-R4: no draft to compare word for word, but the adoption banner it serves is
+    // still asserted against the register, so an adopted page cannot claim to be unadopted or the
+    // reverse. A route that does not serve fails here too, rather than leaving the banner unmeasured.
+    const route = `/legal/${slug}`;
+    const res = await fetch(BASE_URL + route).catch((e) => ({ ok: false, status: 0, error: e }));
+    if (!res.ok) problems.push(`${route} returned ${res.status || 'no response'} — its adoption banner was not measured`);
+    else {
+      problems.push(...bannerProblems(route, LEGAL_REGISTER.documents?.[slug]?.state, await res.text()));
+      bannerOnly.push(slug);
+    }
+    continue;
+  }
   counted.docs += 1;
 
   const markdown = readFileSync(DRAFTS + file, 'utf8');
@@ -288,6 +301,11 @@ for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
   }
 }
 
+// A draftless route whose banner was never measured is a hollow subject, not a pass.
+if (!bannerOnly.includes(UNCOVERED) && !problems.some((p) => p.startsWith(`/legal/${UNCOVERED} `))) {
+  problems.push(`/legal/${UNCOVERED}: adoption banner not measured (the route is no longer in LEGAL_DRAFT_SOURCES)`);
+}
+
 if (problems.length > 0) {
   console.error(`\ncheck-legal-parity: ${problems.length} problem(s) against ${BASE_URL}\n`);
   for (const p of problems) console.error(`  ${p}\n`);
@@ -319,6 +337,7 @@ if (problems.length > 0) {
   );
   console.log(
     `check-legal-parity: /legal/${UNCOVERED} is NOT covered — it has no docs/_legal/ draft ` +
-      'because it carries no operative clause. check-consumer-terms.mjs guards it.',
+      'because it carries no operative clause, so it is not compared word for word (check-consumer-terms.mjs ' +
+      'guards its links). Its adoption banner was checked against the register.',
   );
 }

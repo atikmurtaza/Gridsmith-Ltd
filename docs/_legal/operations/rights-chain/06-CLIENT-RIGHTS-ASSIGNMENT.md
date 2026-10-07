@@ -112,9 +112,12 @@ handwritten one. Enter it in the title register (07) and keep it under retention
    copyright is unsettled, so Gridsmith does not promise that such elements are protected, but this
    assignment includes any rights that do exist.
 
-6. [● Where the Scope requires it, or for ghostwriting unless the Scope says otherwise:] Gridsmith has
-   obtained from each contributing individual a signed written waiver of moral rights [● or a written
-   promise not to assert them].
+6. [● Ghostwriting, unless the Scope says otherwise (clause 13):] Gridsmith has obtained from each
+   writer who worked on the book a signed written waiver of the right to be identified as author and of
+   the right to object to derogatory treatment.
+   [● Otherwise, only where the Scope requires it (clause 9.3):] Gridsmith has obtained from each
+   contributing individual a written waiver of moral rights [● or a written promise not to assert
+   them].
 
 7. Each party will provide any other document reasonably needed to give effect to this assignment
    (clause 9.3). The Client Terms for Business Clients (version 3.1) otherwise continue to apply.
