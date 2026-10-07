@@ -3,7 +3,13 @@
 **Status:** schedule **adopted by the owner** (`GS-LEGAL-001-R3`, decision O-1 option (a) with the R8
 modification, 7 October 2026).
 
-**Routine status: NOT YET OPERATING** (R7, 7 October 2026). ~~No Production record has been deleted under
+**Routine status (R8, 7 October 2026): NOT YET OPERATING; one owner step remains.**
+- The first monthly review is done and logged: leads 0, email 0, WhatsApp/SMS 0.
+- Cadence: monthly from 2 November 2026; quarterly from 4 January 2027; annual from 1 March 2027.
+- The 2 October `pg_dump` is in the Recycle Bin, pending the owner's permanent deletion.
+- Record: `research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md` §3.
+
+~~**Routine status: NOT YET OPERATING** (R7, 7 October 2026).~~ ~~No Production record has been deleted under
 it. The 63 Production leads have not been classified. The manual `pg_dump` export has not been
 replaced.~~
 - **Done (R7):** the §4 cleanup ran. All 63 Production leads were probe records written by the project's
@@ -43,7 +49,7 @@ was not.
 | R14 | **Database backups and platform logs** | Supabase | **Logs: the dashboard view window on Free is the last day** (owner dashboard observation and Supabase documentation, R6). Supabase decides how long logs are actually kept. **Provider-side retention is not established:** R5 saw older records returned through the logs API, so one-day deletion cannot be asserted. Request logs carry client-IP header fields, country and user agent. Deleting a lead does not delete them. **Backups:** Free has no automatic backups or PITR; Supabase may keep copies for a period it sets | — | Described in Privacy 2.2 §6 and §8 without a deletion claim |
 | R15 | `gs_consent` cookie | Visitor's browser | **365 days** (`lib/consent/state.ts`) | Set on *Got it* | Expires in the browser |
 | R16 | **WhatsApp and text messages**, including WhatsApp cloud chat backups | Owner's phone; backup provider | As R1 for an enquiry; as R5 where part of a project record | As R1/R5 | Delete the chat; it leaves the backup when the backup rotates |
-| R17 | **Manual database exports (`pg_dump`)** and any restore-test database | Owner's machine, outside the repository (`GS-PROD-003-R1.md` §7, holding all 63 leads) | **Replace or delete obsolete exports after each authorised deletion run**, so deleted records do not survive indefinitely in manual copies. Delete any restore-test database when the test ends | Each deletion run | Replace or delete. **Not before the §4 cleanup phase** (owner instruction, R3). **R7:** the cleanup has run. The 2 October dump is superseded (its rows are a subset of the R7 baseline; the schema is in migrations 0001–0004), so the owner deletes it. The R7 baseline is kept until the first monthly run, then deleted |
+| R17 | **Manual database exports (`pg_dump`)** and any restore-test database | Owner's machine, outside the repository (`GS-PROD-003-R1.md` §7, holding all 63 leads) | **Replace or delete obsolete exports after each authorised deletion run**, so deleted records do not survive indefinitely in manual copies. Delete any restore-test database when the test ends | Each deletion run | Replace or delete. **Not before the §4 cleanup phase** (owner instruction, R3). **R7:** the cleanup has run. The 2 October dump is superseded (its rows are a subset of the R7 baseline; the schema is in migrations 0001–0004), so the owner deletes it. The R7 baseline is kept until the 2 November 2026 monthly run (B step 7), then deleted (R8: the first monthly run was 7 October 2026) |
 | R18 | **Other mailbox correspondence** (direct email enquiries, Sent items) | `contact@gridsmith.uk` | As R1 for an enquiry; as R5 for a project | As R1/R5 | Delete, including Sent and trash |
 | R19 | **Freelancer review text** shown on the site | Sanity CMS | While displayed, and until removal on request (Privacy §2A) | — | Delete the document |
 | R20 | `public.events`, `public.sample_grants` | Supabase | **No data held** (0 rows on 2 Oct; no writer since analytics were removed) | — | If a writer is ever added, schedule it first |

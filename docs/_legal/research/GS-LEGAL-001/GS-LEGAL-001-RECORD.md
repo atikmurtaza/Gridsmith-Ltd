@@ -334,7 +334,7 @@ Privacy evidence sweep; the record is `R5-PRIVACY-EVIDENCE.md`.
 ## 15. GS-LEGAL-001-R6 (7 October 2026)
 
 The owner's evidence is applied and Privacy 2.2 is drafted; the record is `R6-PRIVACY-2.2-DRAFT.md`.
-- **Hostinger:** the subscription is held by another business; the intermediary analysis is in R6 §3.
+- **Hostinger:** [R8: hosting-account history redacted on owner instruction. Current fact: Gridsmith's admin department manages the hosting account; the account's Hostinger customer of record is not Gridsmith Ltd (R8 record §2).]
 - **Supabase:** the customer-accessible log window is the last day; provider-side retention is not
   established.
 - **Resend:** 30 days, backups 7 days.

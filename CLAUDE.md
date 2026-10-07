@@ -1,6 +1,14 @@
+> **GS-LEGAL-001-R8 (7 October 2026): HOSTING EVIDENCE REQUIRED — Privacy 2.2 byte-identical, not adopted or published; first monthly retention review done.** Record: `docs/_legal/research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md`.
+>
+> - **Hosting (owner fact):** Gridsmith's admin department manages the hosting account. Account history and other businesses are not recorded (owner instruction; R5–R7 passages redacted in place). Hostinger DPA re-read: annexed to the Terms of Service; Email Services covered; Cloudflare CDN sub-processor; SCCs deemed signed on acceptance; UK Addendum §9.3.
+> - **`HOSTINGER-PROCESSOR-CHAIN` redefined** as seven elements of the real arrangement (R8 §2.3); no inter-company agreement, account history or whole-account transfer is required. **Elements 1–6 met. Element 7 not met:** the owner confirmed the account's Hostinger customer of record is not Gridsmith Ltd, so nothing binds Hostinger "with regard to" Gridsmith (Art. 28(3)), and Privacy §7's Hostinger reliance limb depends on it. Close by (a) the website and mailbox sitting under a Hostinger account whose Customer is Gridsmith Ltd (recommended; no whole-account change needed), or (b) a recorded owner risk decision, which is an accepted Art. 28(3) non-compliance plus a narrowed §6/§7 (not recommended).
+> - **Retention:** first monthly review 7 October 2026. Production leads 0 (read-only; identity re-proven); email 0 and WhatsApp/SMS 0 deletion candidates (owner). Logged outside the repo. Cadence: monthly 2 Nov 2026; quarterly 4 Jan 2027; annual 1 Mar 2027 (first accounts to 28 Feb 2027, Companies House). Operator Atik Murtaza via Gridsmith's admin department; no deputy.
+> - **2 October `pg_dump`:** hash, contents (63 probe rows, 0 genuine) and schema recoverability (ledger SHAs equal the migration files) verified. Moved to the Recycle Bin. **Permanent deletion is the owner's click** (Claude's rules forbid hard-deleting files or emptying the trash), so **`RETENTION-ROUTINE-OPERATING` is NOT set**. The R7 baseline is kept until 2 Nov. Docker is down, so the restore container is unverified; non-blocking (probe data only).
+> - **Sanity:** no write (Privacy unchanged); served parity re-run read-only. **Untouched:** Hostinger, gridsmith.uk, DNS, Production Sanity/Supabase schema/Edge, `main`; nothing published; H4-B/H4-H not begun.
+
 > **GS-LEGAL-001-R7 (7 October 2026): RETENTION CLEANUP RUN — ROUTINE NOT YET OPERATING — OWNER ACTION REMAINS. Privacy 2.2 unmarked, not adopted or published.** Record: `docs/_legal/research/GS-LEGAL-001/R7-HOSTINGER-RETENTION.md`.
 >
-> - **Hostinger:** R6's "the subscription holder is a processor" is withdrawn. A US business bought the multi-domain plan (named only by the owner; **the repository is public**); Atik Murtaza manages it; no access by the holder is shown, so it is not a processor or recipient. Hostinger's DPA (revised 2026-09-29) was read directly: Customer = the contracting party, controller or processor (§2.1–2.2); SCCs plus the UK Addendum (§9). **What remains is Hostinger's Art. 28(3) contract:** it binds Hostinger to the holder, not Gridsmith. `HOSTINGER-PROCESSOR-CHAIN` is redefined as (a) the owner's access, contact-email and capacity confirmation, plus (b) Gridsmith Ltd made Hostinger's Customer (recommended), or an interim DPA §2.2 arrangement, which would also require revising Privacy §6/§7.
+> - **Hostinger:** R6's processor classification is withdrawn (account history redacted at R8 on owner instruction). Hostinger's DPA (revised 2026-09-29) was read directly: Customer = the contracting party, controller or processor (§2.1–2.2); SCCs plus the UK Addendum (§9). `HOSTINGER-PROCESSOR-CHAIN` redefined (superseded at R8).
 > - **Privacy 2.2:** the marker and one sentence are removed; no marker remains; `OWNER_REVIEW_REQUIRED`; no adoption fields; sha256 `2404a1cf…`.
 > - **Retention cleanup (owner-authorised):** Production `dqiutgmxillhsbzgnlsx`, identity proven by two paths (fingerprint `dbf57e8d…`). All 63 leads were gate probes: 6 reserved-domain addresses (A-08 pipeline, K-10, K-13), 3–11 September. Baseline export outside the repo (sha256 `ba5143fd…`); one asserted transaction deleted 63; read-back 0; structure unchanged (RLS 5/5, 0 policies, 18 constraints, ledger 0001–0004). Log outside the repo (ids sha256 `ffdef05e…`). `notified_at` is never written by the insert path, so it is not evidence of whether mail was sent.
 > - **Routine:** operator Atik Murtaza; deputy none appointed. **`RETENTION-ROUTINE-OPERATING` NOT set.** Open: A2; the first monthly run (mailbox and WhatsApp are the owner's); C7 (delete the superseded 2 October `pg_dump`; check the restore container); quarterly and annual dates.
@@ -11,15 +19,14 @@
 > **GS-LEGAL-001-R6 (7 October 2026): OWNER FACT REQUIRED — Privacy 2.2 drafted, not adopted or published.** Record: `docs/_legal/research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md`.
 >
 > - **Owner evidence applied:**
->   - E-1: the Hostinger subscription is held by another business; Gridsmith is not Hostinger's contracting customer.
+>   - E-1: [redacted at R8 on owner instruction; see R8 record §2].
 >   - E-2: website hosted in France; email hosting through Hostinger, product not named.
 >   - E-3: Resend Free, 30 days, backups 7 days.
 >   - E-4: Supabase dashboard log view window is the last day; provider-side retention not established.
 >   - E-5: criteria wording.
 >   - Statute (s.388, HMRC 6 years, LA s.5) verified outside this environment.
 > - **Privacy 2.2** (`docs/_legal/PRIVACY-POLICY.md`):
->   - two 2.1 markers resolved; one `[OWNER DECISION]` marker remains on the Hostinger account-holder arrangement;
->   - owner facts: whether that business or its staff can access Gridsmith account data, and where it is established; plus a written processing agreement or an account transfer (`docs/_legal/operations/PROCESSOR-REGISTER.md`);
+>   - two 2.1 markers resolved; one `[OWNER DECISION]` marker remained on the Hostinger arrangement (removed at R7) [R8: hosting-account history redacted on owner instruction; see R8 record §2];
 >   - `OWNER_REVIEW_REQUIRED`, no adoption fields.
 > - **Gate:** adoption also needs recorded `RETENTION-ROUTINE-OPERATING` and `HOSTINGER-PROCESSOR-CHAIN` evidence (selftest 103). The routine is not operating. Independent review: 0 H, 5 M, 6 L, 3 N; all fixed.
 > - **Publication prerequisites:** `H4-B-INTAKE-PROMOTED` and `CUTOVER-AUTHORITY`.

@@ -11,15 +11,20 @@ Source: the twelve checks in `../research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIE
 so that each can be done without further explanation. What changes in the policy once they are answered
 is in `../research/GS-LEGAL-001/R4-PRIVACY-2.2-CHANGE-PLAN.md`.
 
+## R8 status (7 October 2026) — supersedes the R7 status below
+
+- **Hostinger DPA re-read** (revised 2026-09-29): annexed to the Terms of Service; "Email Services"
+  covered; Cloudflare is the CDN sub-processor; SCCs deemed signed on acceptance of the Terms.
+- **Gridsmith's admin department manages the hosting account** (owner).
+- **Remaining:** `HOSTINGER-PROCESSOR-CHAIN` element 7. The account's Hostinger customer of record is not
+  Gridsmith Ltd (`../research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md` §2.3).
+
 ## R7 status (7 October 2026) — supersedes the R6 "only remaining owner item" below
 
 - **Hostinger's DPA** was read directly (revised 2026-09-29): SCCs Modules 2/3 and the UK Addendum
   (§9). The P-02 primary re-read is **closed**.
-- The subscription holder is **not** a processor (`PROCESSOR-REGISTER.md`, R7).
-- **Remaining:**
-  - the one access confirmation, (a);
-  - the Hostinger Customer route, (b);
-  - both recorded as `HOSTINGER-PROCESSOR-CHAIN` evidence.
+- No inter-company processor relationship (R7; R8 wording).
+- **Remaining:** the R7 key elements (superseded and redacted; see R8 §2.3).
 - P-07 (the Resend DPA primary re-read) is still not re-read here. It is non-blocking, because Privacy
   states Resend's safeguard generically.
 
@@ -29,15 +34,13 @@ The owner's evidence closes E-1 to E-5 (`../research/GS-LEGAL-001/R6-PRIVACY-2.2
 
 | Check | Result |
 |---|---|
-| **E-1** Hostinger | The subscription is held by **another business**, not Gridsmith Ltd. **This opens one owner fact:** whether that business or its staff can access Gridsmith account data, plus a processor arrangement (`PROCESSOR-REGISTER.md`) |
+| **E-1** Hostinger | [R8: hosting-account history redacted on owner instruction. Current fact: Gridsmith's admin department manages the hosting account; the account's Hostinger customer of record is not Gridsmith Ltd (R8 record §2).] |
 | **E-2** Hostinger | Website: France. Email hosting through Hostinger; product not named |
 | **E-3** Resend | Free plan; 30 days; backups 7 days |
 | **E-4** Supabase | Dashboard view window: the last day; Supabase decides actual retention. A support ticket is **optional** (provider-side retention only) |
 | **E-5** Hostinger logs | Non-blocking; criteria wording |
 
-**Only remaining owner item:** answer the access question (and where that business is established),
-and put in place either the processing agreement or the account transfer (`PROCESSOR-REGISTER.md`,
-*Open action*). Adoption needs `HOSTINGER-PROCESSOR-CHAIN` evidence recorded.
+**Only remaining owner item (R6):** [R8: hosting-account history redacted on owner instruction; see R8 record §2]; superseded by R8.
 
 ## R5 status (7 October 2026) — history
 

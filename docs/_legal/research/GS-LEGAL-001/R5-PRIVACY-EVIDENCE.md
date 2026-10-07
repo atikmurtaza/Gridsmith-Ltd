@@ -246,8 +246,7 @@ statutory record + responsive and legal checks", on **one of its 18 server-run c
 
 R6 applied the owner's evidence. Nothing above is rewritten; these refinements govern where they differ.
 See `R6-PRIVACY-2.2-DRAFT.md` §2–§5.
-- **E-1:** the Hostinger subscription is held by another business (bought 2024, four years, prepaid to
-  2028), so Gridsmith Ltd is not Hostinger's contracting customer. The intermediary analysis is in R6 §3.
+- **E-1:** [R8: hosting-account history redacted on owner instruction. Current fact: Gridsmith's admin department manages the hosting account; the account's Hostinger customer of record is not Gridsmith Ltd (R8 record §2).]
 - **E-2:** the website is hosted in France. The mailbox is email hosting supplied through Hostinger;
   no product is named.
 - **E-3:** Resend Free; 30 days; backups 7 days. Closed.

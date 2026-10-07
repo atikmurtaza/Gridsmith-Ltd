@@ -4,6 +4,11 @@ Handoff for a fresh Claude Code cloud session, written 7 October 2026. Branch
 `staging/gs-legal-001`; the GS-LEGAL-001 work is commit `53cc4f67`, and this file is the commit
 after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` in this folder.
 
+## R8 status (7 October 2026) — Claude Desktop
+
+**GS-LEGAL-001-R8 — hosting evidence required; first monthly review done.** Record:
+`R8-HOSTING-RETENTION-CLOSURE.md`. Next: the owner's two actions in `docs/_shared/OWNER-ACTIONS.md` (R8).
+
 ## R7 status (7 October 2026) — Claude Desktop
 
 **GS-LEGAL-001-R7 — retention cleanup run; Hostinger chain corrected; A-1 done.** Record:
@@ -20,13 +25,12 @@ The cloud session's blockers (egress, no `.env.local`) no longer apply: R7 ran o
 
 **GS-LEGAL-001-R6 — Privacy 2.2 drafted; owner fact required.** Record: `R6-PRIVACY-2.2-DRAFT.md`.
 - **Owner evidence:** E-1 to E-5 applied; statute verified.
-- **Privacy 2.2:** in `docs/_legal/PRIVACY-POLICY.md` with one marker (the Hostinger account-holder
-  arrangement); `OWNER_REVIEW_REQUIRED`.
+- **Privacy 2.2:** in `docs/_legal/PRIVACY-POLICY.md` with one Hostinger marker (removed at R7);
+  `OWNER_REVIEW_REQUIRED`. [R8: hosting-account history redacted on owner instruction; see R8 record §2].
 - **Gate:** adoption needs `RETENTION-ROUTINE-OPERATING` and `HOSTINGER-PROCESSOR-CHAIN` evidence.
 
 **Next:**
-1. The owner answers the access question and puts in place the processing agreement or the account
-   transfer (`docs/_legal/operations/PROCESSOR-REGISTER.md`).
+1. [R8: hosting-account history redacted on owner instruction; see R8 record §2]; superseded by R8.
 2. A separately authorised phase runs the retention cleanup and the first monthly review.
 3. A legal phase removes the marker, re-verifies, and the owner adopts 2.2.
 4. Publication follows H4-B promotion and cutover authority.

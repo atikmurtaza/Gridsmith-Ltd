@@ -9,47 +9,41 @@ category. Evidence references are to `../research/GS-LEGAL-001/R5-PRIVACY-EVIDEN
 |---|---|---|---|---|---|
 | **Supabase** (Supabase Pte. Ltd., Singapore) | Processor: enquiry database (Ireland), Edge Function intake (Preview only until H4-B is promoted), request logs | "Gridsmith Org" on the self-serve Free plan; no marketplace purchase recorded | DPA incorporated into the Terms of Service ("No separate signed DPA is needed"); UK Addendum B.1.0 | Data `eu-west-1`; sub-processors include US companies | R5 §3.1–§3.3 (provider source and account) |
 | **Resend** (Plus Five Five, Inc., United States) | Processor: internal enquiry notification email | Free plan (owner-confirmed, R6) | DPA incorporated into the customer agreement and binding through it (verified outside this environment, R6). No separately signed DPA is recorded | Storage and processing in the US | R6 §2 |
-| **Hostinger** (Hostinger International Ltd, Cyprus; Hostinger UK Limited; or Hostinger Global S.à r.l., per its DPA) | Processor in substance: website hosting (servers in France), CDN and email hosting for contact@gridsmith.uk | **Not contracted by Gridsmith Ltd.** Hostinger's "Customer" is the subscription holder (R7, owner-confirmed) | DPA revised 2026-09-29, read directly at R7: Customer is controller or processor (§2.1); a processor-Customer warrants controller authority (§2.2); EU SCCs Modules 2/3 and the UK Addendum (§9). **It binds Hostinger to its Customer, not to Gridsmith Ltd. Gridsmith can rely on these terms only once *Open action* (b) is in place** | Website: France (owner-confirmed). Mailbox location not established | R6 §2; R7 §2 |
-| **Subscription holder** (a business registered in the United States; its name is held by the owner and **not recorded here, because the repository is public**) | **Not a processor and not a recipient** (R7, superseding R6's "treated as a processor"), subject to *Open action* (a). It bought the multi-domain plan in 2024 (prepaid to 2028), and Gridsmith uses its capacity. The owner states that Atik Murtaza personally manages the account. No fact shows the holder's staff, systems or processes receiving or using Gridsmith data, and none is inferred | Commercial subscription holder only | None needed on account of its role. **Becomes a processor only if route 2 below is chosen** | United States (no Gridsmith data shown to reach it, so no transfer) | R7 §2.1–§2.2 |
+| **Hostinger** (Hostinger International Ltd, Cyprus; Hostinger UK Limited; or Hostinger Global S.à r.l., per its DPA) | Processor: website hosting (servers in France), CDN (sub-processor Cloudflare) and email hosting for contact@gridsmith.uk | **Gridsmith's admin department manages the hosting account** (owner, R8). The account's Hostinger customer of record is **not Gridsmith Ltd** (owner, R8) | DPA revised 2026-09-29, read directly (R7, R8): annexed to the Terms of Service; Customer is controller or processor (§2.1–2.2); Email Services covered (§1.1); EU SCCs Modules 2/3 and the UK Addendum (§9). **It binds Hostinger to its Customer.** See *Open action* | Website: France (owner-confirmed). Mailbox location not established | R8 §2 |
 | Professional advisers (e.g. accountants) | Recipients where necessary | Engaged case by case | Professional duties; terms per engagement | UK | Privacy §6 |
 | WhatsApp (Meta), mobile networks | Independent providers that carry messages the person chooses to send | Their own terms with the sender | — | — | Privacy §6 |
 
-## Open action — the Hostinger contract (R7; supersedes the R6 text, kept in git history)
+## Open action — Gridsmith Ltd as Hostinger's Customer (R8; supersedes R6 and R7, kept in git history)
 
-~~R6: the subscription holder is Gridsmith's processor; a processing agreement with it, or an account
-transfer, documents the chain.~~ **R7 correction:** paying for and holding the plan, with the same
-individual managing it, does not make the holder a processor (UK GDPR Art. 4(2), 4(8)). On the facts
-supplied it performs no operation on Gridsmith data.
+**What the processing arrangement is:**
+- Gridsmith's admin department manages the hosting account.
+- Hostinger supplies the hosting (France), CDN and email hosting.
+- Hostinger's DPA governs that processing.
 
-**The gap that remains is Hostinger's, not the holder's.**
-- Hostinger processes Gridsmith data, and UK GDPR Art. 28(3) requires a contract binding it "with
-  regard to the controller".
-- Hostinger's DPA binds it to its Customer, the holder.
-- The DPA knows only controller and processor customers (§2.1), and on the facts the holder is neither
-  for Gridsmith's data.
+No inter-company processor relationship is created from the account's history (owner instruction, R8).
 
-**Routes:**
-1. **Recommended:** Gridsmith Ltd becomes Hostinger's Customer for the gridsmith.uk hosting and
-   mailbox. Either move them to a Hostinger account in Gridsmith Ltd's name, or transfer the
-   subscription. Hostinger's DPA then binds Hostinger to Gridsmith directly. **Privacy 2.2 is correct as
-   drafted under this route.**
-2. **Interim only, if route 1 must wait:** a written arrangement under which the holder operates the
-   account for gridsmith.uk only on Gridsmith Ltd's documented instructions (DPA §2.2). **This makes the
-   holder a processor by contract, and so a recipient (Art. 4(9)), established in the US.** Before
-   adoption, Privacy §6 must describe that recipient category and §7 the US transfer and its
-   safeguard, followed by a re-hash, a fresh review and A-1.
+**The one residual (UK GDPR Art. 28(3)):** the contract must bind the processor "with regard to the
+controller". Hostinger's Terms and DPA bind Hostinger to its Customer, and the account's customer of
+record is not Gridsmith Ltd. Operational management does not change the contracting party.
 
-**Adoption evidence `HOSTINGER-PROCESSOR-CHAIN` (redefined at R7; gate unchanged)** must record:
-- **(a)** the owner's confirmation that:
-  - no person other than Atik Murtaza holds a login, team-member or delegated access to the Hostinger
-    account or the contact@gridsmith.uk mailbox;
-  - the account's contact and notification email is controlled by him or by Gridsmith;
-  - he manages the gridsmith.uk hosting for Gridsmith.
+**Ways to close it (owner's choice; (a) recommended, (b) not recommended):**
+- **(a) Gridsmith Ltd becomes the Customer** for the gridsmith.uk website and mailbox.
+  - **The minimum:** they sit under a Hostinger account whose Customer is Gridsmith Ltd, for example by
+    moving them into a Gridsmith Ltd account. Changing the existing account as a whole is not required.
+    The mechanism is not verified here.
+  - **Afterwards:** re-confirm the hosting location (France) and the email hosting, and confirm that the
+    account's contact address is Gridsmith-controlled.
+  - Privacy 2.2 needs no change.
+- **(b) A recorded owner risk decision** for a stated period.
+  - It records an **accepted Art. 28(3) non-compliance**, not satisfaction.
+  - The SCCs and UK Addendum would still not run to Gridsmith.
+  - Hostinger's notices would still go to the customer of record.
+  - Privacy §7's Hostinger reliance limb and §6's last sentence would have to be narrowed, followed by a
+    re-hash, a fresh review and A-1.
 
-  If any part is untrue, Privacy §6 and §7 must be revised before adoption.
-- **(b)** route 1 in place with a date, or route 2 with those Privacy revisions.
-
-Privacy 2.2 no longer carries a marker for this. Adoption is held by the evidence key, not by a marker.
+**Adoption evidence `HOSTINGER-PROCESSOR-CHAIN` (redefined at R8; gate unchanged)** records elements 1–7 of
+`../research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md` §2.3. Elements 1–6 are met; element 7 waits on
+(a), or on (b) with the Privacy change.
 
 ## Recommended confirmation (non-blocking)
 

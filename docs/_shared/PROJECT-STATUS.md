@@ -1,5 +1,13 @@
+> **GS-LEGAL-001-R8 (7 October 2026) — hosting evidence required; first monthly retention review done:**
+> - **Hosting:** Gridsmith's admin department manages the hosting account. `HOSTINGER-PROCESSOR-CHAIN` elements 1–6 met; **element 7 not met**: the account's Hostinger customer of record is not Gridsmith Ltd (UK GDPR Art. 28(3)).
+> - **Privacy 2.2:** byte-identical; `OWNER_REVIEW_REQUIRED`; not ready for adoption.
+> - **Retention:** review 7 October 2026 — leads 0, email 0, WhatsApp/SMS 0; cadence recorded. The 2 October dump is in the Recycle Bin pending the owner's permanent deletion, so `RETENTION-ROUTINE-OPERATING` is not set.
+> - **Untouched:** Hostinger, gridsmith.uk, DNS, Production Sanity/Supabase schema/Edge, `main`; nothing published.
+>
+> Record: `docs/_legal/research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md`.
+
 > **GS-LEGAL-001-R7 (7 October 2026) — retention cleanup run; routine not yet operating; Hostinger chain corrected; A-1 done; owner action remains:**
-> - **Hostinger:** the plan's holder (a US business, not named because the repository is public) is **not** Gridsmith's processor merely by holding the plan (R6 withdrawn). The remaining gap is Hostinger's own Art. 28(3) contract: Gridsmith Ltd is not Hostinger's Customer. Recommended: make Gridsmith Ltd the Customer.
+> - **Hostinger:** R6's processor classification withdrawn; account history redacted at R8 on owner instruction.
 > - **Privacy 2.2:** the last marker is removed; `OWNER_REVIEW_REQUIRED`; **not ready for adoption** (both evidence keys unmet).
 > - **Retention:** all 63 Production leads were gate probe records (reserved-domain addresses, 3–11 September). All 63 were deleted after a verified baseline export, leaving 0. **The routine is not yet operating:** A2, the first monthly run, C7 (the 2 October `pg_dump`) and the review dates are open.
 > - **A-1:** the seven development legal documents were reseeded; served parity PASS against `development`.
@@ -8,7 +16,7 @@
 > Record: `docs/_legal/research/GS-LEGAL-001/R7-HOSTINGER-RETENTION.md`.
 
 > **GS-LEGAL-001-R6 (7 October 2026) — Privacy 2.2 drafted; owner fact required:**
-> - **Owner fact:** one marker remains, on the Hostinger account-holder arrangement (access question plus a processing agreement or an account transfer).
+> - **Owner fact:** one marker remained on the Hostinger arrangement (removed at R7) [R8: hosting-account history redacted on owner instruction; see R8 record §2].
 > - **Adoption:** also needs the retention routine operating and the Hostinger processor chain documented.
 > - **Publication:** needs H4-B promoted and cutover authority.
 > - **Untouched:** no production change.

@@ -7,7 +7,7 @@
 - **Privacy Policy 2.2** is drafted in `docs/_legal/PRIVACY-POLICY.md` and is
   `OWNER_REVIEW_REQUIRED`. It has no adoption fields and is not seeded anywhere.
 - **Two of the three 2.1 markers are resolved.** One `[OWNER DECISION]` marker remains, in §6, on the
-  Hostinger account-holder arrangement (§3 below).
+  Hostinger arrangement (§3 below; superseded by R7 and R8).
 - **Adoption is also blocked** until the retention routine operates and the Hostinger processor chain
   is documented. These are new gate conditions: `RETENTION-ROUTINE-OPERATING` and
   `HOSTINGER-PROCESSOR-CHAIN`.
@@ -30,7 +30,7 @@ This record adds to R1–R5. It is not legal advice and contains no claim of sol
 
 | Check | Result | Class |
 |---|---|---|
-| **E-1 Hostinger contracting position** | The hosting subscription was bought in 2024 by **another business, not Gridsmith Ltd**, for four years, prepaid to 2028. There is no Gridsmith Ltd invoice. Hostinger's terms indicate that UK customers contracting directly would ordinarily contract with Hostinger UK Limited, and its DPA covers the relevant Hostinger entities. That is **provider-level only and does not make Gridsmith the contracting customer**. The subscription holder's identity is not recorded in the repository and is not needed in public wording. **Closed as a fact; it opens the arrangement question in §3** | OWNER-CONFIRMED; CURRENT OFFICIAL PROVIDER FACT |
+| **E-1 Hostinger contracting position** | [R8: hosting-account history redacted on owner instruction. Current fact: Gridsmith's admin department manages the hosting account; the account's Hostinger customer of record is not Gridsmith Ltd (R8 record §2).] | OWNER-CONFIRMED |
 | **E-2 Hostinger server and email** | Website server location: **Europe — France**. The mailbox is a free business email service supplied through Hostinger (Manage Email opens a webmail interface). **The product is not identified, and Titan is not claimed.** The public text says "email hosting … through Hostinger". The mailbox storage location is not established | OWNER-CONFIRMED; UNKNOWN (product label; mailbox location) — not required for public wording |
 | **E-3 Resend** | Plan **Free** (transactional 3,000 emails, $0; marketing 1,000 contacts, $0; receiving 0). The oldest visible sent email was 12 days old. That shows data of that age is visible; **it is not a retention period**. Provider: **30-day data retention on Free**, covering email and log data (Free, Pro and Scale); **backups persist for 7 days**; after termination, remaining data is deleted within the provider's stated period. **Closed** | OWNER-CONFIRMED; CURRENT OFFICIAL PROVIDER FACT |
 | **E-4 Supabase logs** | Organisation on the **Free** plan. In the owner's Logs view, every visible log carried the current date. Supabase documentation (current, checked outside this environment) says Free-plan users can access logs from the **last day**. **Dashboard view window: last day — established. Provider-side retention beyond that: not established** (see §4). No support ticket is needed for Privacy. One remains **optional**, only to learn provider-internal retention | OWNER-CONFIRMED; CURRENT OFFICIAL PROVIDER FACT; UNKNOWN (provider-side) — not required for public wording |
@@ -40,42 +40,9 @@ This record adds to R1–R5. It is not legal advice and contains no claim of sol
 
 ## 3. Hostinger intermediary analysis
 
-**Facts:**
-- Another business holds and paid for the Hostinger subscription.
-- Gridsmith uses the hosting (website in France, CDN, mailbox).
-- Gridsmith Ltd has no invoice and no direct acceptance of Hostinger's terms on record.
-
-| Question | Answer from evidence |
-|---|---|
-| 1. Does the subscription-owning business merely pay for and hold the account? | It holds and paid for it (owner-confirmed). **Whether it does anything more is not established** |
-| 2. Can it, or its staff, access hosting files, databases, email, logs, account-level support or other personal data? | **Not established.** Holding a subscription does not prove access, and none is inferred. *Inference, not relied on:* an account holder ordinarily has administrative control of the account |
-| 3. Is Gridsmith an authorised user or controller operating within that account? | Gridsmith is the **controller** of the personal data processed through its website, logs and mailbox: it decides the purposes and the means. Whether it has delegated or own-login access is not recorded |
-| 4. Does the intermediary process personal data on Gridsmith's behalf? | Only if it can access or operate the account on Gridsmith's behalf. **Open** (question 2) |
-| 5. Is a processor or data-sharing agreement needed? | **Yes, in either case, to document Gridsmith's processor chain** (UK GDPR Art. 28(3), *inference from the contract structure*). Hostinger's DPA binds Hostinger to its customer, the account holder, not to Gridsmith. Two routes close it: a written processing agreement with the account holder (with Hostinger as sub-processor), or transferring the account to Gridsmith Ltd. Access (question 2) decides whether the account holder must also be described as a recipient |
-
-**Classification (revised after the independent review):** *processor*, with Hostinger as its
-*sub-processor*. As account holder it can suspend or delete the account, and so Gridsmith's data,
-whatever its day-to-day access. "Infrastructure intermediary" is not a UK GDPR role and is used only
-as a description.
-- **Not:** a joint controller, nor an independent controller. There is no evidence it uses the data for
-  its own purposes.
-
-**Effect on Privacy.** The public text says, truthfully today, that Hostinger provides the hosting
-"through a hosting account held by another business". It does not
-name that business (Art. 13(1)(e) allows categories). It does **not** say Gridsmith contracts with
-Hostinger.
-
-One marker states exactly what the owner must confirm and put in place before adoption. The detailed
-record is `../../operations/PROCESSOR-REGISTER.md`.
-
-**The owner question:** *"Can the company that owns the Hostinger subscription, or its staff, access
-Gridsmith's hosting files, mailbox, logs or other account data?"* — and where is that company
-established? The second part matters if it is outside the UK and EEA, because §7 would then have to
-cover it.
-
-**Adoption needs evidence, not just marker removal:** `prerequisitesMet["HOSTINGER-PROCESSOR-CHAIN"]`
-must record the signed processing agreement or the account transfer. The Hostinger transfer limb in §7
-also needs a direct reading of Hostinger's DPA transfer terms; R5 had only search summaries of them.
+**Superseded and redacted (R7, R8).** R6 treated the hosting account's customer as Gridsmith's
+processor. R7 withdrew that, and R8 redacted the account history on owner instruction. The current
+analysis is in `R8-HOSTING-RETENTION-CLOSURE.md` §2. Git history keeps the original text.
 
 ## 4. Supabase logs — R6 reconciliation of R5 (addendum; R5 is not rewritten)
 
@@ -119,7 +86,7 @@ The UNVERIFIED markers in `RETENTION-SCHEDULE.md` §6 are replaced by this verif
 |---|---|---|
 | Header | Version 2.2, Draft date 7 October 2026 | — |
 | §2 ¶3 | Providers' logs record IP, country and browser details; Supabase receives the form | R5 §3.3; `lib/leads/edge-client.ts:23` |
-| §6 Hostinger | Servers in France; CDN; email hosting through Hostinger (no product named); used through another business's account; **marker** | E-1, E-2 |
+| §6 Hostinger | Servers in France; CDN; email hosting through Hostinger (no product named); **marker** (removed at R7; R8 §2) | E-1, E-2 |
 | §6 Supabase | Supabase Pte. Ltd., Singapore; US sub-processors; request logs with IP; Supabase decides retention; lead deletion does not reach logs | R5 §3.1; E-4 |
 | §6 Resend | Plus Five Five, Inc., US; 30 days; backups, which may contain them, kept for up to 7 days | E-3; Resend DPA |
 | §6 processor terms | Supabase and Resend under their incorporated DPAs; Hostinger's terms apply to the account. **The 2.1 marker is removed** | R5 §3.1; R6 §2 |
@@ -185,11 +152,10 @@ consistency.
    Economic Area".
 5. The retention documents described the old marker control. Now restated.
 
-**LOW:** "arranged the service for us" removed; backup phrasing clarified; the 2028 transfer made the
-interim route under option 1; the establishment question added; owner action 3 spelled out; the
+**LOW:** "arranged the service for us" removed; backup phrasing clarified; the interim route clarified; [R8: redacted]; owner action 3 spelled out; the
 schedule's stale re-read paragraph superseded.
 
-**NOTE:** the account holder is now treated as a processor; confirming that the Supabase and Resend
+**NOTE:** [R8: superseded; see R8 §2]; confirming that the Supabase and Resend
 accounts were opened for Gridsmith Ltd is recorded as recommended and non-blocking; this §9 replaces the
 dangling §9a.
 

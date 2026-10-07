@@ -1,5 +1,17 @@
 # Retention routine — activation checklist
 
+**R8 (7 October 2026):**
+- The first monthly review is done and logged: leads 0, email 0, WhatsApp/SMS 0.
+- Cadence:
+  - monthly: first working day; next Mon 2 November 2026;
+  - quarterly: with the January, April, July and October runs; first Mon 4 January 2027;
+  - annual: first working day after the financial year end; first accounts to 28 February 2027, so
+    Mon 1 March 2027.
+- A2 done.
+- **Remaining:** C7. The 2 October dump is in the Recycle Bin; the owner deletes it permanently.
+
+Record: `../research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md` §3.
+
 **Status:** prepared at `GS-LEGAL-001-R4` (7 October 2026). **R7 (same day): Part C has run.** All 63
 Production leads were probe records; all 63 were deleted; 0 remain. **The routine is still NOT
 operating:**
@@ -22,7 +34,7 @@ recorded `prerequisitesMet["RETENTION-ROUTINE-OPERATING"]` evidence.
 | # | Item | Owner input needed | Done |
 |---|---|---|---|
 | A1 | **Named operator** for the monthly routine; a **deputy** for absence is optional (R7; Part G covers absence without one) | **Operator: Atik Murtaza** (director; named by the owner, R7). **Deputy: NONE CURRENTLY APPOINTED.** A deputy is resilience, not a legal requirement (UK GDPR Art. 5(2) requires accountability, not a deputy); Part G covers absence | [x] |
-| A2 | Operator access: Supabase Production (read and delete on `public.leads`, by a route the owner approves), the `contact@gridsmith.uk` mailbox, and the document store holding the log | Confirm access route. **No secret value is recorded here or in the repository** | [ ] |
+| A2 | Operator access: Supabase Production (read and delete on `public.leads`, by a route the owner approves), the `contact@gridsmith.uk` mailbox, and the document store holding the log | Confirm access route. **No secret value is recorded here or in the repository** | [x] R8: Supabase through the Gridsmith Org; mailbox and WhatsApp through Gridsmith's admin department; log at `%USERPROFILE%\gridsmith-records` |
 | A3 | Owner authority for the **one-off cleanup phase** (Part C), which writes to Production Supabase | A separate phase authorisation | [x] R7 owner instruction |
 | A4 | Owner authority for **automation**, if wanted (for example a scheduled database job for R1/R2) | A separate implementation phase; optional | [ ] |
 
@@ -71,7 +83,7 @@ Run once, before the routine starts, under its own authority (A3). The full step
 | C4 | Delete only (c), (d) and (e), in one transaction, with a count assertion | [x] R7: 63 deleted, asserted before commit |
 | C5 | **Read back**: the remaining count, and no (a) or (b) row removed | [x] R7: 0 remaining; structure unchanged |
 | C6 | Delete the matching notification emails (R3) for deleted rows | [x] R7: not a personal-data deletion, because any notification for these rows carried only probe values at reserved domains. ~~`notified_at` null on all 63, so none was sent~~ (wrong: the insert path never writes `notified_at`). Any A-08 probe mail in the inbox or Resend is cleared at the first monthly run |
-| C7 | **Only after C5 passes:** replace **the 2 October 2026 `pg_dump`** (R17; `docs/_shared/GS-PROD-003-R1.md` §7) with a post-cleanup export, or delete it, and record which. Do the same for the C1 baseline once any agreed hold period has ended. Delete **any restore-test database** left from GS-PROD-003-R1's restore test (R17), if one still exists | [ ] **Owner:** delete `supabase-production-20261002T125412Z.dump`, which is superseded (R7 §4). Keep the R7 baseline until the first monthly run. With Docker running, remove any restore-test container (`docker ps -a`) |
+| C7 | **Only after C5 passes:** replace **the 2 October 2026 `pg_dump`** (R17; `docs/_shared/GS-PROD-003-R1.md` §7) with a post-cleanup export, or delete it, and record which. Do the same for the C1 baseline once any agreed hold period has ended. Delete **any restore-test database** left from GS-PROD-003-R1's restore test (R17), if one still exists | [ ] **R8:** the dump was verified (sha256 `96e4885f…`, 63 probe rows, 0 genuine; schema = migrations 0001–0004) and moved to the Recycle Bin on 7 October 2026. **Owner:** delete it permanently. The R7 baseline is kept until 2 November 2026. The restore container is unverified (Docker down; probe data only; non-blocking) |
 | C8 | Write the accountability log entry (Part E) | [x] R7: `%USERPROFILE%\gridsmith-records\RETENTION-LOG.txt` |
 
 ## D. Preservation exceptions — do not delete while any applies
@@ -105,10 +117,10 @@ The log holds ids and counts, **never names, email addresses or message content*
 
 All must be true:
 
-- [ ] A1 and A2 done.
-- [ ] Part C run once, with its log entry (C8).
-- [ ] The first monthly run (Part B) logged.
-- [ ] R17 handled: the 2 October 2026 `pg_dump` replaced or deleted, and any restore-test database deleted (C7).
+- [x] A1 and A2 done (R7, R8).
+- [x] Part C run once, with its log entry (C8) (R7; C7 below).
+- [x] The first monthly run (Part B) logged (R8, 7 October 2026).
+- [ ] R17 handled: the 2 October 2026 `pg_dump` replaced or deleted (C7). **R8:** it is in the Recycle Bin, pending the owner's permanent deletion. ~~and any restore-test database deleted~~ **R8 (owner instruction, Task 6):** the restore-test container is non-blocking housekeeping while Docker is unavailable and it holds no genuine personal data (it held only the 63 probe rows).
 - [x] R12–R14 set (R6). R12: by criteria. R13: Resend 30 days, backups 7 days. R14: Supabase one-day
   customer window, provider-side retention not asserted.
 - [x] Privacy 2.2 §8 says that deleting an enquiry does not shorten providers' own logs and backups (R6
@@ -117,13 +129,14 @@ All must be true:
 
 ~~**Still open (R6):** A1 and A2; Part C; the first monthly run; R17.~~
 
-**Still open (R7):**
+**Still open (R8):** C7 only (the owner's permanent deletion of the dump from the Recycle Bin). A2, the
+first monthly run and the review dates are done. ~~**Still open (R7):**~~
 - A2 (the operator's access route; the operator already holds it);
 - the first monthly run, logged;
 - R17 (the dump deleted, and the restore container checked);
 - the quarterly and annual dates recorded.
 
-Part C is done except C7. A1 is done. When all four are done, record the
+Part C is done except C7. A1 is done. When the R17 box above is ticked, record the
 evidence in the register as `prerequisitesMet["RETENTION-ROUTINE-OPERATING"]` (log reference and date).
 `check:legal:adoption` refuses Privacy at `OWNER_ADOPTED` without it.
 

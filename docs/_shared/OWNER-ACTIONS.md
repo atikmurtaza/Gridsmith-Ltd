@@ -45,7 +45,29 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
   OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
   enforceability.
-- **R7 (7 October 2026): cleanup run, A-1 done; the routine is not yet operating; owner actions remain**
+- **R8 (7 October 2026): hosting evidence required; first monthly retention review done**
+  (`docs/_legal/research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md`). **This supersedes R7 items 1–3.**
+  - **Done:**
+    - your hosting fact (Gridsmith's admin department manages the hosting account);
+    - email 0 and WhatsApp/SMS 0 deletion candidates;
+    - Production leads 0;
+    - review cadence recorded;
+    - the 2 October dump verified and moved to the Recycle Bin.
+  - **Remaining owner actions:**
+    1. **Recycle Bin:** permanently delete only `supabase-production-20261002T125412Z.dump` (right-click →
+       Delete → Yes), then tell Claude so it can verify read-only and record
+       `RETENTION-ROUTINE-OPERATING`.
+    2. **Hostinger (recommended route):** have the gridsmith.uk website and mailbox sit under a Hostinger
+       account whose customer is Gridsmith Ltd, for example by moving them into a Gridsmith Ltd account.
+       Changing the existing account as a whole is not required, and no inter-company agreement is
+       needed. Afterwards, confirm that hosting is still in France, that the mailbox is still Hostinger
+       email hosting, and that the account's contact email is a Gridsmith address. The alternative, a
+       recorded risk decision, accepts an Art. 28(3) non-compliance and means narrowing Privacy §6/§7
+       (not recommended).
+    3. *Non-blocking housekeeping:* when Docker is next running, remove any GS-PROD-003-R1 restore-test
+       container (`docker ps -a`).
+    4. Then adopt Privacy 2.2 by explicit instruction; then cutover authority (unchanged).
+- **R7 (7 October 2026): cleanup run, A-1 done** (items 1–3 superseded by R8)
   (`docs/_legal/research/GS-LEGAL-001/R7-HOSTINGER-RETENTION.md`). **This supersedes R6 items 1–3.**
   - **Done:**
     - the 63 Production leads, all gate probes, deleted after a baseline export;
@@ -60,10 +82,9 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
        - you manage the gridsmith.uk hosting for Gridsmith.
 
        If any part is untrue, say what is true.
-    2. **Hostinger contract:** make Gridsmith Ltd Hostinger's Customer for gridsmith.uk (recommended:
-       its own Hostinger account, or a subscription transfer), and record the date. The interim
-       alternative, an arrangement with the subscription holder under Hostinger DPA §2.2, would make that
-       business a recipient, and Privacy §6/§7 would then need revising first.
+    2. **Hostinger contract:** make Gridsmith Ltd Hostinger's Customer for gridsmith.uk (superseded by
+       R8 item 2), and record the date. The interim
+       alternative was withdrawn at R8.
     3. **Retention routine:**
        - A2: confirm your access route (Supabase dashboard, mailbox, log location);
        - run and log the first monthly review: the read-only count query in Part B; mailbox (R3/R18),
@@ -79,12 +100,7 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   (`docs/_legal/research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md`).
   - **Done:** your E-1 to E-5 answers and the statutory check are applied.
   - **Remaining owner actions:**
-    1. **Answer:** "Can the company that owns the Hostinger subscription, or its staff, access
-       Gridsmith's hosting files, mailbox, logs or other account data?" — and where is that company
-       established?
-    2. **Put in place** either a written data processing agreement between Gridsmith Ltd and that
-       company, or a transfer of the hosting account to Gridsmith Ltd
-       (`docs/_legal/operations/PROCESSOR-REGISTER.md`).
+    1–2. [R8: hosting-account history redacted on owner instruction; see R8 record §2]; superseded by R8.
     3. **Make the retention routine operate:**
        - name an operator and a deputy, and arrange their access (A1–A2);
        - authorise the cleanup phase (Part C);

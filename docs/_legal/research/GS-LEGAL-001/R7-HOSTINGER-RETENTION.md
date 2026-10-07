@@ -5,9 +5,7 @@
 (the first trusted-environment phase of GS-LEGAL-001; R1–R6 ran in a cloud session).
 
 **Result: RETENTION CLEANUP RUN — ROUTINE NOT YET OPERATING — OWNER ACTION REMAINS.**
-- **Hostinger:** the R6 classification of the subscription holder as Gridsmith's processor is
-  **withdrawn** (§2). The Privacy 2.2 marker is removed. A narrower Hostinger contract point remains as
-  adoption evidence (§2.4).
+- **Hostinger:** the R6 processor classification is **withdrawn** (§2; superseded by R8). The Privacy 2.2 marker is removed. A Hostinger contract point remains (R8 §2.3).
 - **Retention:** all 63 Production leads were probe records written by the project's own gates. All 63
   were deleted under schedule §4 class (e), after a verified baseline export (§3).
 - **Routine:** defined, but **not operating** (§4). **`RETENTION-ROUTINE-OPERATING` is NOT recorded, and
@@ -16,8 +14,8 @@
   served parity passes against it (§6).
 - **Privacy 2.2:** `OWNER_REVIEW_REQUIRED`, no markers, **not ready for adoption** (§5).
 
-This record is not legal advice and claims no solicitor review. **The repository is public:** the
-subscription holder is not named here, and the owner holds its identity.
+This record is not legal advice and claims no solicitor review. **The repository is public.** R8 redacted the hosting-account history from this record on owner
+instruction.
 
 ## 1. Desktop handoff
 
@@ -28,103 +26,18 @@ subscription holder is not named here, and the owner holds its identity.
 | Update | `git switch -c claude/sweet-mendel-11qvli --track origin/…`. The lockfile is identical, so `node_modules` is valid. The untracked files do not exist on R6, so there is no conflict |
 | R6 state re-verified | `check:legal:adoption` PASS; selftest 103; the six adopted fingerprints equal the register; Privacy sha256 `140ab3aa…`, one marker |
 
-## 2. Hostinger and the subscription holder — fresh analysis
+## 2. Hostinger
 
-**Owner facts (R7):**
-- The Hostinger multi-domain plan was bought in 2024, for four years and prepaid to 2028, by **another
-  business, registered in the United States** ("the subscription holder"). Its name is held by the owner.
-- Gridsmith uses that plan's capacity for gridsmith.uk. Gridsmith Ltd did not buy the plan.
-- **Atik Murtaza personally manages** the Hostinger account and the Gridsmith hosting configuration.
-- No fact establishes that the subscription holder's staff receive, inspect or use any Gridsmith
-  enquiries, mail, logs, databases or client data.
+**Redacted and superseded at R8** (owner instruction; git history keeps the R7 text).
 
-**Provider fact, read directly (new in R7):** Hostinger's Data Processing Addendum
-(hostinger.com/legal/dpa, revised 2026-09-29 11:49:03):
-- "Customer" is the party that enters into the agreement with Hostinger (preamble).
-- That Customer is "a Controller or Processor, as applicable, of the Customer Data" (§2.1).
-- A Customer acting as processor warrants that its instructions, including the appointment of
-  Hostinger, "have been authorized by the relevant Controller" (§2.2).
-- Transfers outside the EEA: the EU SCCs, Module Two and Module Three (§9.1–9.2), and "The UK
-  International Data Transfer Addendum will apply to Customer Data transferred via Covered Services from
-  the United Kingdom" (§9.3).
-- Sub-processors: general consent, with notice and a termination right (§6).
-- Appendix 1 lists "Customer's users authorized by Customer" as data subjects.
+What R7 established, and R8 keeps:
+- Hostinger's DPA was read directly. "Customer" is the contracting party, as controller or
+  processor (§2.1–2.2), with SCCs and the UK Addendum (§9).
+- No inter-company processor relationship is created from the account's history.
+- Privacy 2.2 §6 lost its marker and the sentence describing the account.
 
-This closes R5/R6's open item, the direct reading of the provider's terms.
-
-**Who can rely on them (review M4):** these terms run between Hostinger and its Customer. **Gridsmith
-can rely on them only once `HOSTINGER-PROCESSOR-CHAIN` (b) is in place** (§2.4).
-
-### 2.1 Task A–E
-
-| | Question | Answer |
-|---|---|---|
-| A | Does buying the plan, holding the subscription and sharing an administrator make the holder a processor? | **No.** A processor is a person who *processes personal data* on behalf of the controller (UK GDPR Art. 4(8)). Processing is an *operation on personal data* (Art. 4(2)). Paying for a service and being the contracting customer are commercial acts, not operations on personal data. The facts supplied show no such operation by the holder |
-| B | Account ownership versus processing | **Account ownership** is the holder's contract with Hostinger: billing, the right to use the plan, and the contractual standing to instruct, suspend or end it. **Processing** is what is done with the data: Hostinger stores and serves it, and Gridsmith decides why and how. R6 treated the contractual *power* to suspend or delete as processing. That was an inference from the contract structure, not an operation on data, and it is withdrawn |
-| C | The shared administrator | The owner states that Atik Murtaza personally manages the account. Gridsmith decides the purposes and means of the gridsmith.uk data, so his work on that hosting is Gridsmith's own processing. It is not evidence that the holder, a separate business, processes Gridsmith data. **The capacity in which he acts is part of the confirmation in §2.4 (a)** (review L5) |
-| D | Evidence that the holder's personnel, systems or processes access Gridsmith data | **None.** The repository records no Hostinger user other than the owner, no system of the holder, and no workflow of the holder touching gridsmith.uk data. None is inferred |
-| E | Does the account structure technically give the holder's personnel access? | **Not established either way.** Access to a Hostinger account is held by whoever holds its login or delegated access. Hostinger also sends its Customer notices to the account's contact email. Whether **any other person** holds access, or controls that address, is the one fact not yet recorded (§2.4 (a)) |
-
-### 2.2 Classification — Outcome A
-
-**The subscription holder is a commercial subscription holder only. On the facts supplied it does not
-process Gridsmith personal data, so it is not Gridsmith's processor and not a recipient.**
-- This holds subject to the confirmation in §2.4 (a).
-- No Article 28 agreement with the holder is required on account of its role.
-- Its US establishment raises no restricted transfer, because no Gridsmith data is shown to go to it.
-- The arrangement is recorded internally (`../../operations/PROCESSOR-REGISTER.md`) and is not
-  published. Art. 13(1)(e) concerns recipients, and the holder is not one.
-
-### 2.3 Privacy wording
-
-- §6 keeps the operative facts: Hostinger hosts the site in France with its CDN, provides email hosting
-  for the mailbox, and processes request data.
-- The sentence "We use Hostinger's service through a hosting account held by another business" is
-  **removed**. It described a commercial arrangement, not a recipient.
-- The marker is **removed**. Privacy 2.2 now carries no marker.
-- Kept, because it is true and does not say Gridsmith bought the plan: "Hostinger's data processing terms
-  apply to the hosting account through which we receive its service."
-- §7's Hostinger limb ("the international transfer safeguards set out in their data processing
-  agreements") **describes the provider terms accurately** (SCCs and the UK Addendum, §9). It becomes
-  true **as reliance by Gridsmith** only with (b) route 1, which adoption requires.
-- The holder is not named.
-
-### 2.4 What remains — a Hostinger point, not a holder point
-
-**Classifying the holder correctly does not remove the gap R6 found; it relocates it.**
-- Hostinger *does* process Gridsmith data.
-- UK GDPR Art. 28(3) requires that processing to be governed by a contract binding the processor "with
-  regard to the controller".
-- Hostinger's DPA binds Hostinger to its **Customer**, the holder, not Gridsmith Ltd.
-- The DPA has only two customer roles, controller and processor (§2.1). On the facts above, the holder is
-  neither for Gridsmith's data.
-
-So Gridsmith's own Art. 28(3) position with Hostinger is not evidenced.
-
-1. **Recommended — Gridsmith Ltd becomes Hostinger's Customer** for the gridsmith.uk hosting and
-   mailbox. Either the website and mail move to a Hostinger account in Gridsmith Ltd's name, or the
-   subscription is transferred. Hostinger's DPA then binds Hostinger directly to Gridsmith. **The
-   Privacy 2.2 text is correct as drafted under this route.**
-2. **Interim alternative, only if route 1 must wait:** a written arrangement under which the holder, as
-   Hostinger's Customer, holds and operates the account for gridsmith.uk only on Gridsmith Ltd's
-   documented instructions (DPA §2.2). **This makes the holder a processor by contract, and so a
-   recipient (Art. 4(9)).** Choosing it therefore requires, before adoption:
-   - Privacy §6 revised to describe that recipient category;
-   - §7 revised for a transfer to a US processor, with its safeguard;
-   - a re-hash, a fresh review, and A-1 re-run (review M2).
-
-**The adoption key `HOSTINGER-PROCESSOR-CHAIN` is kept and redefined** (gate unchanged in force). Its
-evidence must record:
-- **(a)** the owner's confirmation that:
-  - **no person other than Atik Murtaza** holds a login, team-member or delegated access to the
-    Hostinger account or the contact@gridsmith.uk mailbox;
-  - the account's contact and notification email is controlled by him or by Gridsmith;
-  - he manages the gridsmith.uk hosting for Gridsmith.
-
-  If any part is untrue, Privacy §6 and §7 must be revised first (review L4, L5).
-- **(b)** route 1 in place with a date, or route 2 with the Privacy revisions above.
-
-**The single remaining owner fact is (a).** (b) is an owner action, not a fact.
+The current analysis, the redefined `HOSTINGER-PROCESSOR-CHAIN` and the remaining contractual point are
+in `R8-HOSTING-RETENTION-CLOSURE.md` §2.
 
 ## 3. Retention cleanup — Production `public.leads`
 
@@ -257,8 +170,8 @@ and in `docs/_shared/OWNER-ACTIONS.md`:
 | Requirement | State |
 |---|---|
 | No open marker | **Met** (0) |
-| Hostinger provider terms | Read directly. Gridsmith can rely on them only with (b) |
-| `HOSTINGER-PROCESSOR-CHAIN` | **Not met:** (a) the confirmation; (b) route 1 (or route 2 with the Privacy revisions) |
+| Hostinger provider terms | Read directly. Reliance: see R8 §2.3 element 7 (the R7 key elements are superseded and redacted) |
+| `HOSTINGER-PROCESSOR-CHAIN` | **Not met** (redefined at R8; R8 §2.3) |
 | `RETENTION-ROUTINE-OPERATING` | **Not met** (§4, items 1–4) |
 | E-3, E-4, E-5, statute | Unchanged from R6; not reopened |
 
@@ -315,18 +228,16 @@ activation truthfulness, the `pg_dump`, adoption readiness and Sanity parity.
 **MEDIUM:**
 1. **M1:** C6 relied on `notified_at`, which the insert path never writes. Corrected here, in the
    checklist, the status files and the external log.
-2. **M2:** route 2 makes the holder a recipient. It now requires Privacy §6/§7 revision, and "text
-   independent of route" is limited to route 1.
+2. **M2:** the interim route was limited (R8: withdrawn; see R8 §2).
 3. **M3:** the headline read "activated". It is now "cleanup run — routine not yet operating".
-4. **M4:** §7's Hostinger safeguard is relied on only once (b) is in place. Stated in §2 and in the
-   register.
+4. **M4:** §7's Hostinger reliance limb depends on the contracting point (now R8 §2.3 element 7).
 
 **LOW:**
 1. **L1:** checklist A1 wording now matches the deputy decision.
 2. **L2:** the open-item lists are aligned (A2, the first monthly run, C7, the review dates).
 3. **L3:** the R6 register rule is annotated as redefined.
-4. **L4:** (a) now also covers the account's contact email, and "§6 and §7".
-5. **L5:** the capacity is no longer asserted; it is part of (a).
+4. **L4:** the access confirmation was extended (R7 key elements; superseded and redacted, see R8 §2.3).
+5. **L5:** the capacity is no longer asserted (superseded by R8 §2.1).
 6. **L6:** the `email` read is recorded.
 7. **L7:** this section is filled; the fingerprints and A-1 versions are labelled; "subset" is replaced.
 
@@ -336,7 +247,7 @@ activation truthfulness, the `pg_dump`, adoption readiness and Sanity parity.
 3. **N3:** the SQL matches the schedule; rights-request deadlines added to Part G.
 4. **N4:** parity is consistent; re-run A-1 after any Privacy edit.
 5. **N5:** the selftest change is a fix, not a weakening. **The repository is PUBLIC**
-   (`gh repo view`), so the subscription holder's name was removed from every committed file.
+   (`gh repo view`), so no other business is named in any committed file.
 
 **Selftest note:**
 - Removing the marker hollowed two specimens in `check-legal-adoption.selftest.mjs`, which used the
