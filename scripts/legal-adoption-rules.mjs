@@ -121,11 +121,14 @@ export function requiredPrerequisites(slug) {
 /**
  * Operational conditions an adopted text describes as already happening (GS-LEGAL-001-R6). Unlike a
  * publication prerequisite, which is met at PUBLISHABLE, these need recorded evidence before the owner
- * can adopt: Privacy 2.2 §8 says records are deleted at monthly reviews, which is true only once the
- * retention routine operates (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md` Part F).
+ * can adopt. Privacy 2.2 §8 describes the retention reviews, which is true only once the routine operates
+ * (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md` Part F). Its §6 describes the Hostinger
+ * arrangement, which needs the processor chain documented (`docs/_legal/operations/PROCESSOR-REGISTER.md`).
  */
 export const REQUIRED_ADOPTION_EVIDENCE = {
-  privacy: ['RETENTION-ROUTINE-OPERATING'],
+  // HOSTINGER-PROCESSOR-CHAIN (R6 review M3): removing the §6 marker alone must not unblock adoption.
+  // A signed Gridsmith–account-holder processing agreement, or the account transfer, goes on record.
+  privacy: ['RETENTION-ROUTINE-OPERATING', 'HOSTINGER-PROCESSOR-CHAIN'],
 };
 
 /** sha256 hex, the form `ownerAdoptedSha256` records. */

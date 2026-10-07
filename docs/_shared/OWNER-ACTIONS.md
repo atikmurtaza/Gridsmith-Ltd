@@ -50,12 +50,19 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
   - **Done:** your E-1 to E-5 answers and the statutory check are applied.
   - **Remaining owner actions:**
     1. **Answer:** "Can the company that owns the Hostinger subscription, or its staff, access
-       Gridsmith's hosting files, mailbox, logs or other account data?"
+       Gridsmith's hosting files, mailbox, logs or other account data?" — and where is that company
+       established?
     2. **Put in place** either a written data processing agreement between Gridsmith Ltd and that
        company, or a transfer of the hosting account to Gridsmith Ltd
        (`docs/_legal/operations/PROCESSOR-REGISTER.md`).
-    3. **Authorise the retention cleanup phase.** Privacy 2.2 cannot be adopted until the routine
-       operates.
+    3. **Make the retention routine operate:**
+       - name an operator and a deputy, and arrange their access (A1–A2);
+       - authorise the cleanup phase (Part C);
+       - have the first monthly run logged;
+       - handle the `pg_dump` (R17).
+
+       Privacy 2.2 cannot be adopted until this evidence is recorded
+       (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md` Part F).
     4. **Sign template 01** (unchanged).
     5. **Give cutover authority** when ready.
   - **No longer needed:** E-1 to E-5 as R5 framed them; the Supabase support ticket is optional.

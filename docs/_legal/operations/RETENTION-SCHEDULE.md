@@ -6,8 +6,9 @@ modification, 7 October 2026).
 **Routine status: NOT YET OPERATING.** No Production record has been deleted under it. The 63
 Production leads have not been classified. The manual `pg_dump` export has not been replaced.
 
-**Privacy §8 is therefore unchanged and keeps its `[OWNER DECISION]` marker.** It must not say the
-routine operates until §4 has run once and §2 is active (P-1).
+~~**Privacy §8 is therefore unchanged and keeps its `[OWNER DECISION]` marker.**~~ **R6:** Privacy §8 is
+drafted in version 2.2, but Privacy may not be adopted until §4 has run once and §2 is active (P-1).
+`check:legal:adoption` requires `prerequisitesMet["RETENTION-ROUTINE-OPERATING"]`.
 
 This is not legal advice. Where a period depends on a statute, §6 says what was read at source and what
 was not.
@@ -29,7 +30,7 @@ was not.
 | R11 | **Press Path Finder results** | `public.press_path_results` (`expires_at` = 90 days) | **90 days** | Creation | **No write path exists today** (0 rows on 2 Oct). Before one is built: the 90-day job must exist, and `lead_id references leads(id)` has no on-delete action, so linked results must be deleted or nulled before their lead (or the foreign key migrated to `on delete set null`) |
 | R12 | **Hosting, CDN and mailbox logs** (IP address, browser details) | Hostinger. The website is hosted in France (owner-confirmed, R6). The mailbox is email hosting supplied through Hostinger; its product and location are not established | **Provider's period, set by Hostinger according to its operational, security and legal requirements; no reliable official figure** (R6: E-5 non-blocking) | — | Described by criteria in Privacy 2.2 §8 |
 | R13 | **Email-delivery logs and metadata** of the notification | Resend (Plus Five Five, Inc.; stored in the United States) | **30 days on the Free plan** for email and log data; **backups kept for 7 days** (R6: plan owner-confirmed as Free; provider periods verified outside this environment). The owner's 12-day oldest-visible email is an observation, not the period | — | Stated in Privacy 2.2 §6 and §8 |
-| R14 | **Database backups and platform logs** | Supabase | **Logs: the customer-accessible window on Free is the last day** (owner dashboard observation and Supabase documentation, R6). **Provider-side retention is not established:** R5 saw older records returned through the logs API, so one-day deletion cannot be asserted. Request logs carry client-IP header fields, country and user agent. Deleting a lead does not delete them. **Backups:** Free has no automatic backups or PITR; Supabase may keep copies for a period it sets | — | Described in Privacy 2.2 §6 and §8 without a deletion claim |
+| R14 | **Database backups and platform logs** | Supabase | **Logs: the dashboard view window on Free is the last day** (owner dashboard observation and Supabase documentation, R6). Supabase decides how long logs are actually kept. **Provider-side retention is not established:** R5 saw older records returned through the logs API, so one-day deletion cannot be asserted. Request logs carry client-IP header fields, country and user agent. Deleting a lead does not delete them. **Backups:** Free has no automatic backups or PITR; Supabase may keep copies for a period it sets | — | Described in Privacy 2.2 §6 and §8 without a deletion claim |
 | R15 | `gs_consent` cookie | Visitor's browser | **365 days** (`lib/consent/state.ts`) | Set on *Got it* | Expires in the browser |
 | R16 | **WhatsApp and text messages**, including WhatsApp cloud chat backups | Owner's phone; backup provider | As R1 for an enquiry; as R5 where part of a project record | As R1/R5 | Delete the chat; it leaves the backup when the backup rotates |
 | R17 | **Manual database exports (`pg_dump`)** and any restore-test database | Owner's machine, outside the repository (`GS-PROD-003-R1.md` §7, holding all 63 leads) | **Replace or delete obsolete exports after each authorised deletion run**, so deleted records do not survive indefinitely in manual copies. Delete any restore-test database when the test ends | Each deletion run | Replace or delete. **Not before the §4 cleanup phase** (owner instruction, R3) |
@@ -48,7 +49,10 @@ was not.
    - Prune R10 outbox rows, and R11 rows once a writer exists; R11 rows go before their lead.
    - Confirm that R8 material for projects ended more than 90 days ago has been returned or deleted, and
      that the final delivered set has moved to R5.
-3. **Annually, after the financial year end.** Delete R5 and R6 records whose 6-year period has ended.
+3. **Annually, after the financial year end.** Delete R5 and R6 records whose 6-year period has ended, R7
+   title documents whose reliance ended more than 6 years ago, and R9 complaints with no project record
+   closed more than 2 years ago. (R6: R7 and R9 had no cadence before; this is a cadence only, and no
+   period changes.)
 4. **Log every run** in one line (date, counts, who ran it). The log holds no personal data beyond ids
    and is kept for as long as the routine runs plus 6 years. It is the evidence UK GDPR Art. 5(2)
    accountability asks for.
@@ -64,7 +68,8 @@ The operational checklist for this (operator, procedure, logging, exceptions, es
 1. The §4 cleanup phase has run once, with its accountability log.
 2. The monthly routine has a named operator and a first log entry.
 3. R12–R14 are established from the owner account checks (§5).
-4. Only then is Privacy §8 ¶2 replaced, using the wording in
+4. ~~Only then is Privacy §8 ¶2 replaced~~ (R6: §8 is drafted in 2.2; adoption, not drafting, now waits
+   on items 1–3, through `RETENTION-ROUTINE-OPERATING`), using the wording in
    `research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md` §5.4, with:
    - R8 corrected to the owner's modification (project files are returned or deleted within 90 days;
      the final delivered set is kept with the contract record);
@@ -72,7 +77,7 @@ The operational checklist for this (operator, procedure, logging, exceptions, es
      check after 30 days", not "for 30 days");
    - R12–R14 filled in.
 
-   The Privacy version then moves to 2.2.
+   ~~The Privacy version then moves to 2.2.~~ (R6: done as a draft.)
 
 ## 4. The later controlled retention-cleanup phase (prepared; not run)
 
@@ -127,6 +132,8 @@ environment's egress proxy for both direct fetches and the fetch tool.
 | Limitation Act 1980: s. 5 contract 6 years; s. 2 tort 6 years; s. 8 deed 12 years; s. 14A latent damage, the later of 6 years or 3 from knowledge; s. 14B 15-year longstop; s. 32 postponement | Search summaries; never read in the repository | **Externally unverified** | High (ss. 2, 5, 8); medium-high (ss. 14A, 14B, 32) |
 
 **Consequence for the periods.** None of the readings above shows a proposed period to be legally wrong,
-so the owner's adopted periods stand. Before Privacy §8 states "six years" as fact (§3), re-read FA 1998
-Sch. 18 para 21 and Limitation Act ss. 2, 5 and 14A–14B at source. That is a five-minute check once the
-host is reachable.
+so the owner's adopted periods stand. ~~Before Privacy §8 states "six years" as fact (§3), re-read FA
+1998 Sch. 18 para 21 and Limitation Act ss. 2, 5 and 14A–14B at source.~~ **R6:** the HMRC 6-year
+period, CA 2006 s.388 and LA 1980 s.5, on which Privacy §8's "six years" rests, are verified (see the
+note above the table). ss. 2, 14A and 14B remain unverified and are used only for the possible
+longer period for future Technical work (R5).

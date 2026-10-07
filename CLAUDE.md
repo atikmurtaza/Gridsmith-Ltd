@@ -4,14 +4,14 @@
 >   - E-1: the Hostinger subscription is held by another business; Gridsmith is not Hostinger's contracting customer.
 >   - E-2: website hosted in France; email hosting through Hostinger, product not named.
 >   - E-3: Resend Free, 30 days, backups 7 days.
->   - E-4: Supabase customer-accessible log window is the last day; provider-side retention not established.
+>   - E-4: Supabase dashboard log view window is the last day; provider-side retention not established.
 >   - E-5: criteria wording.
 >   - Statute (s.388, HMRC 6 years, LA s.5) verified outside this environment.
 > - **Privacy 2.2** (`docs/_legal/PRIVACY-POLICY.md`):
 >   - two 2.1 markers resolved; one `[OWNER DECISION]` marker remains on the Hostinger account-holder arrangement;
->   - the only owner fact is whether that business or its staff can access Gridsmith account data, plus a written processing agreement or an account transfer (`docs/_legal/operations/PROCESSOR-REGISTER.md`);
+>   - owner facts: whether that business or its staff can access Gridsmith account data, and where it is established; plus a written processing agreement or an account transfer (`docs/_legal/operations/PROCESSOR-REGISTER.md`);
 >   - `OWNER_REVIEW_REQUIRED`, no adoption fields.
-> - **Gate:** adoption also needs recorded `RETENTION-ROUTINE-OPERATING` evidence (selftest 102). The routine is not operating.
+> - **Gate:** adoption also needs recorded `RETENTION-ROUTINE-OPERATING` and `HOSTINGER-PROCESSOR-CHAIN` evidence (selftest 103). The routine is not operating. Independent review: 0 H, 5 M, 6 L, 3 N; all fixed.
 > - **Publication prerequisites:** `H4-B-INTAKE-PROMOTED` and `CUTOVER-AUTHORITY`.
 > - **Adopted documents:** fingerprints unchanged.
 > - **CI:** `check:legal:parity` against the development dataset is expected red until A-1 (deferred); the gate is unchanged.

@@ -1,6 +1,6 @@
 > **GS-LEGAL-001-R6 (7 October 2026) — Privacy 2.2 drafted; owner fact required:**
 > - **Owner fact:** one marker remains, on the Hostinger account-holder arrangement (access question plus a processing agreement or an account transfer).
-> - **Adoption:** also needs the retention routine operating.
+> - **Adoption:** also needs the retention routine operating and the Hostinger processor chain documented.
 > - **Publication:** needs H4-B promoted and cutover authority.
 > - **Untouched:** no production change.
 >

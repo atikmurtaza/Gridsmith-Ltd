@@ -10,7 +10,7 @@ after it. Read `CLAUDE.md` first, then this file, then `GS-LEGAL-001-RECORD.md` 
 - **Owner evidence:** E-1 to E-5 applied; statute verified.
 - **Privacy 2.2:** in `docs/_legal/PRIVACY-POLICY.md` with one marker (the Hostinger account-holder
   arrangement); `OWNER_REVIEW_REQUIRED`.
-- **Gate:** adoption needs `RETENTION-ROUTINE-OPERATING` evidence.
+- **Gate:** adoption needs `RETENTION-ROUTINE-OPERATING` and `HOSTINGER-PROCESSOR-CHAIN` evidence.
 
 **Next:**
 1. The owner answers the access question and puts in place the processing agreement or the account

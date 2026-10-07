@@ -6,8 +6,9 @@ been replaced or deleted. **This checklist activates nothing.** Running any step
 its own owner-authorised phase permitting Production writes.
 
 The schedule (R1–R20), the routine and the cleanup plan are in `RETENTION-SCHEDULE.md`. This checklist
-turns them into things a named person does and logs. Privacy §8 changes only when every box in Part F is
-ticked (`../research/GS-LEGAL-001/R4-PRIVACY-2.2-CHANGE-PLAN.md` items 14a–14c).
+turns them into things a named person does and logs. **R6:** Privacy §8 is already drafted in 2.2.
+Privacy may not be **adopted** until every box in Part F is ticked; `check:legal:adoption` requires
+recorded `prerequisitesMet["RETENTION-ROUTINE-OPERATING"]` evidence.
 
 ## A. Operator and authority
 
@@ -96,8 +97,9 @@ evidence in the register as `prerequisitesMet["RETENTION-ROUTINE-OPERATING"]` (l
 `check:legal:adoption` refuses Privacy at `OWNER_ADOPTED` without it.
 
 The Privacy 2.2 §8 wording is drafted (R6) but may not be adopted until then. **This checklist must not be marked complete to satisfy
-a gate.** `check:legal:adoption` refuses Privacy at `OWNER_ADOPTED` while its §8 marker is open, and the
-marker comes out only when this part is true.
+a gate.** `check:legal:adoption` refuses Privacy at `OWNER_ADOPTED` without recorded evidence for
+`RETENTION-ROUTINE-OPERATING`. That evidence must show the cleanup log, the first monthly log, the named
+operator, and the quarterly and annual steps scheduled, because Privacy §8 also promises those.
 
 ## G. Failure and escalation
 
