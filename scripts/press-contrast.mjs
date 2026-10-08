@@ -1,3 +1,6 @@
+import assert from 'node:assert/strict';
+import { labelOpacitySamples, renderedLabelContrast } from './rendered-label-contrast.mjs';
+
 /** Press's ruled paper, waveform and horizontal rails can make axe decline contrast.
  * Resolve each declined node from rendered pixels, rather than allowlisting the page.
  * Sampling follows the Design/Digital pixel gates: worst 2% of the text's backdrop.
@@ -108,4 +111,142 @@ export async function provePressContrast(browser) {
     if((await pressContrast(page,'#decor')).why!=='decorative')throw new Error('Press contrast proof: decoration misclassified');
     console.log('Press pixel contrast: readable, 1:1/opacity failures, zero hidden count, outside, missing and decorative specimens PASS');
   } finally { await page.close(); }
+}
+
+/** Inspect visible illustrative text too: aria-hidden does not make a painted flag readable. */
+export async function checkPressFlags(browser, base) {
+  const selector = '.pr-desk:has(#pr-desk-edit:checked) :is(.pr-d-flag, .pr-d-ins)';
+  const copy = ['Reason first?', 'Split this sentence'];
+  const whole = samples => {
+    assert(samples.length, 'Press flags: no visible animation-frame subjects');
+    assert(samples.every(s => s.opacity === 1), 'Press flags: fractional painted opacity');
+  };
+  assert.throws(() => whole([]), /no visible/);
+  assert.throws(() => whole([{ opacity: .3 }]), /fractional/);
+  let minimum = Infinity, boxes = 0;
+  for (const [width, height, mode] of [[412, 823, 'motion'], [1440, 900, 'motion'],
+    [412, 823, 'reduced'], [412, 823, 'no-JS']]) {
+    const page = await browser.newPage();
+    try {
+      await page.setCacheEnabled(false);
+      await page.setViewport({ width, height, deviceScaleFactor: width === 412 && mode === 'motion' ? 1.75 : 1 });
+      await page.setCookie({ name: 'gs_consent', value: '1', url: base });
+      if (mode === 'reduced') await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+      if (mode === 'no-JS') await page.setJavaScriptEnabled(false);
+      if (mode !== 'no-JS') {
+        await page.evaluateOnNewDocument(labelOpacitySamples, selector, true);
+        await page.evaluateOnNewDocument(() => {
+          window.__pressAnnotationSamples = [];
+          const frame = () => {
+            for (const e of document.querySelectorAll('.pr-d-ins, .pr-d-ms-tag')) {
+              if (e.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }))
+                window.__pressAnnotationSamples.push({ opacity: Number(getComputedStyle(e).opacity), text: e.textContent.trim() });
+            }
+            requestAnimationFrame(frame);
+          };
+          frame();
+        });
+      }
+      assert.equal((await page.goto(base + '/press', { waitUntil: 'networkidle0' })).status(), 200);
+      assert.deepEqual(await page.$$eval('.pr-d-flag', es => es.map(e => e.textContent)), copy, 'Press flag subjects changed');
+      assert.equal(await page.$eval('.pr-d-ins', e => e.textContent), 'your');
+      if (mode === 'motion') {
+        await page.$eval('.pr-desk', e => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+        await new Promise(r => setTimeout(r, 4200));
+        whole(await page.evaluate(() => window.__labelContrastSamples));
+        const annotations = await page.evaluate(() => window.__pressAnnotationSamples);
+        // This guards each annotation's own fade; Edit pixels below include ancestor effects.
+        assert(annotations.every(s => s.opacity === 1), 'Press annotation own-opacity fade');
+        assert.deepEqual([...new Set(annotations.map(s => s.text))].sort(), ['Edited manuscript', 'your'], 'annotation sampler missed a stage');
+        // Scroll out and back through the real IntersectionObserver lifecycle.
+        await page.$eval('#editing', e => e.scrollIntoView({ behavior: 'instant' }));
+        await new Promise(r => setTimeout(r, 100));
+        await page.$eval('.pr-desk', e => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+        await new Promise(r => setTimeout(r, 1200));
+        whole(await page.evaluate(() => window.__labelContrastSamples));
+        await page.click('.pr-desk-loop');
+        assert.equal(await page.$eval('.pr-desk-loop', e => e.getAttribute('aria-pressed')), 'true');
+        // The shared glyph decoder uses CSS pixels; lifecycle above uses CI's phone scale.
+        await page.setViewport({ width, height, deviceScaleFactor: 1 });
+      } else {
+        assert.equal(await page.$eval('[name="pr-desk"]:checked', e => e.value), 'publish');
+        assert.deepEqual(await page.evaluate(labelOpacitySamples, '.pr-d-flag'), [], `${mode}: initial Publish flags must be absent`);
+        await page.$eval('.pr-desk', e => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+      }
+      const measure = async context => {
+        const appearance = await page.$$eval(selector, es => es.map(e => {
+          const ancestors = [];
+          for (let a = e; a; a = a.parentElement) ancestors.push(getComputedStyle(a).filter);
+          return { visible: e.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }), ancestors };
+        }));
+        assert(appearance.every(e => e.visible && e.ancestors.every(f => f === 'none')), `${context}: flags hidden or filtered`);
+        whole(await page.evaluate(labelOpacitySamples, selector));
+        const result = await renderedLabelContrast(page, selector);
+        assert.deepEqual(result.failures, [], `${context}: ${result.failures.join('; ')}`);
+        assert.equal(result.boxes, 3, `${context}: both flags and insertion must supply painted glyphs`);
+        minimum = Math.min(minimum, result.min); boxes += result.boxes;
+        console.log(`Press flags ${width}px ${mode} ${context}: ${result.min.toFixed(2)}:1, ${result.boxes} glyph boxes`);
+      };
+      // Freeze actual CSS transition timelines at known fractions, never wait away a fade.
+      for (const from of ['write', 'publish']) {
+        await page.$eval(`#pr-desk-${from}`, e => {
+          e.checked = true;
+          getComputedStyle(document.querySelector('.pr-d-ms')).getPropertyValue('transform');
+          document.getAnimations().forEach(a => a.finish());
+        });
+        await page.$eval('#pr-desk-edit', e => { e.checked = true; getComputedStyle(document.querySelector('.pr-d-ms')).getPropertyValue('transform'); });
+        const moving = await page.evaluate(async () => {
+          const animations = document.querySelector('.pr-d-ms').getAnimations();
+          animations.forEach(a => a.pause());
+          await Promise.all(animations.map(a => a.ready));
+          return animations.length;
+        });
+        if (mode === 'motion') assert(moving > 0, `${from}: manuscript geometry no longer moves`);
+        for (const fraction of mode === 'motion' ? [0, .05, .25, .5, .75, 1] : [1]) {
+          await page.evaluate(fraction => {
+            document.querySelector('.pr-d-ms').getAnimations().forEach(a => { a.currentTime = Number(a.effect.getTiming().duration) * fraction; });
+          }, fraction);
+          await measure(`${from}→edit ${fraction}`);
+        }
+        for (const to of ['produce', 'publish']) {
+          await page.$eval(`#pr-desk-${to}`, e => { e.checked = true; });
+          assert.deepEqual(await page.evaluate(labelOpacitySamples, '.pr-d-flag'), [], `edit→${to}: flags remain painted`);
+          await page.$eval('#pr-desk-edit', e => { e.checked = true; document.getAnimations().forEach(a => a.finish()); });
+        }
+      }
+      if (mode === 'motion') {
+        // Real degraded flag specimens must fail the same pixel assertion, despite aria-hidden.
+        for (const css of [`.pr-d-flag{color:var(--pr-gold-bright)!important}`, '.pr-d-ms{opacity:.3!important}', '.pr-d-ins{opacity:.3!important}']) {
+          const style = await page.addStyleTag({ content: css });
+          try {
+            const bad = await renderedLabelContrast(page, selector);
+            assert(bad.failures.some(f => f.includes('needs 5:1')), 'Press flag low-contrast specimen escaped');
+            assert.equal(bad.boxes, 3, 'degraded annotations were not measured');
+            if (css.includes('opacity')) {
+              const faded = await page.evaluate(labelOpacitySamples, selector);
+              assert.throws(() => whole(faded), /fractional/);
+            }
+          } finally { await style.evaluate(e => e.remove()); }
+        }
+        const filtered = await page.addStyleTag({ content: '.pr-d-ms{filter:brightness(.3)!important}' });
+        try {
+          assert.equal((await page.evaluate(labelOpacitySamples, selector)).length, 3, 'filtered specimen is not visible');
+          await assert.rejects(() => measure('filtered specimen'), /flags hidden or filtered/);
+        } finally { await filtered.evaluate(e => e.remove()); }
+      }
+      await page.$eval('#pr-desk-write', e => { e.checked = true; document.getAnimations().forEach(a => a.finish()); });
+      await page.focus('#pr-desk-write'); await page.keyboard.press('ArrowRight');
+      assert.equal(await page.$eval('[name="pr-desk"]:checked', e => e.value), 'edit', 'keyboard did not select Edit');
+      assert(await page.$eval('label[for="pr-desk-edit"]', e => {
+        const c = getComputedStyle(e); return c.outlineStyle !== 'none' && parseFloat(c.outlineWidth) >= 2;
+      }), 'Edit keyboard focus outline missing');
+      await page.evaluate(() => document.getAnimations().forEach(a => a.finish()));
+      await measure('keyboard Edit');
+      const flags = await renderedLabelContrast(page, '.pr-d-flag');
+      assert.deepEqual(flags.failures, [], 'settled flag contrast');
+      assert.equal(flags.boxes, 2, 'settled flags not both painted');
+      console.log(`Press flags alone ${width}px ${mode}: ${flags.min.toFixed(2)}:1`);
+    } finally { await page.close(); }
+  }
+  console.log(`Press flags PASS: ${boxes} painted glyph boxes, minimum ${minimum.toFixed(2)}:1; initial/hydrated, lifecycle, transition timelines, reduced-motion, native no-JS and keyboard`);
 }

@@ -1,3 +1,5 @@
+> **GS-LEGAL-001-R12-PRESS-FIX (8 October 2026):** Narrow rendered-contrast correction preserves approved R3 paper/ink palette, layout, typography, copy, desk geometry and stage timings. Flags/insertion/tag use whole-opacity visibility; manuscript opacity/filter states snap while geometry continues. The full Press scene includes permanent degraded rendered specimens and transition/lifecycle/mobile/desktop/reduced-motion/keyboard/no-JS coverage. Local verification precedes one scoped commit/push; exact-SHA CI closure uses the final session receipt. No new visual direction, deployment or publication. Evidence: `docs/_shared/GS-LEGAL-001-R12-PRESS-FIX.md`.
+
 # Design Spec — Gridsmith Press
 
 Inherits `_shared/00-FOUNDATION.md` §3. Press theme only.

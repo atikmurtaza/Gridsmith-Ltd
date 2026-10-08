@@ -363,7 +363,7 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
 
 .pr-d-strike { position: relative; }
 .pr-d-strike::after { content: ""; position: absolute; inset-inline: -0.2cqw; top: 55%; border-block-start: 0.3cqw solid var(--pr-gold); opacity: 1; transition: opacity var(--dur-slow) var(--ease-out); }
-.pr-d-ins { position: absolute; left: 50%; bottom: 85%; translate: -50% 0; font-family: var(--pr-sans); font-size: 1.3cqw; font-weight: 700; color: var(--pr-gold-ink); opacity: 1; transition: opacity var(--dur-slow) var(--ease-out); }
+.pr-d-ins { position: absolute; left: 50%; bottom: 85%; translate: -50% 0; font-family: var(--pr-sans); font-size: 1.3cqw; font-weight: 700; color: var(--pr-gold-ink); }
 
 .pr-d-flag {
   position: absolute;
@@ -376,8 +376,7 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
   font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
-  opacity: 0;
-  transition: opacity var(--settle) var(--ease-out);
+  visibility: hidden;
 }
 
 .pr-d-flag-1 { top: 9cqw; }
@@ -500,13 +499,13 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
 .pr-desk:has(#pr-desk-write:checked) .pr-d-note { opacity: 1; scale: 1.12; translate: 5cqw 0; z-index: 4; }
 .pr-desk:has(#pr-desk-write:checked) .pr-d-ms { rotate: 0deg; translate: 20cqw 1cqw; scale: 1; opacity: 1; }
 .pr-desk:has(#pr-desk-write:checked) .pr-d-ms .pr-d-bar { opacity: 0.35; }
-.pr-desk:has(#pr-desk-write:checked) :is(.pr-d-ins, .pr-d-ms-tag) { opacity: 0; }
+.pr-desk:has(#pr-desk-write:checked) :is(.pr-d-ins, .pr-d-ms-tag) { visibility: hidden; }
 .pr-desk:has(#pr-desk-write:checked) .pr-d-strike::after { opacity: 0; }
 
 .pr-desk:has(#pr-desk-edit:checked) .pr-d-note { opacity: 0.45; scale: 0.95; translate: -2cqw 0; }
 .pr-desk:has(#pr-desk-edit:checked) .pr-d-ms { rotate: 0deg; translate: 18cqw 1cqw; scale: 1.12; opacity: 1; z-index: 5; }
-.pr-desk:has(#pr-desk-edit:checked) .pr-d-flag { opacity: 1; }
-.pr-desk:has(#pr-desk-edit:checked) .pr-d-ms-tag { opacity: 0; }
+.pr-desk:has(#pr-desk-edit:checked) .pr-d-flag { visibility: visible; }
+.pr-desk:has(#pr-desk-edit:checked) .pr-d-ms-tag { visibility: hidden; }
 
 .pr-desk:has(#pr-desk-produce:checked) .pr-d-note { opacity: 0.3; }
 .pr-desk:has(#pr-desk-produce:checked) .pr-d-ms { rotate: -7deg; translate: -5cqw 3cqw; scale: 0.97; opacity: 0.72; }
@@ -1412,7 +1411,8 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
 .pr-hero .pr-d-ms {
   opacity: 0.9;
   filter: brightness(0.82) saturate(0.6);
-  transition-property: opacity, translate, rotate, scale, transform, filter;
+  /* Flags must enter at full contrast; only the manuscript's geometry interpolates. */
+  transition-property: translate, rotate, scale, transform;
 }
 .pr-desk:has(#pr-desk-write:checked, #pr-desk-edit:checked) .pr-d-ms { filter: none; }
 .pr-desk:has(#pr-desk-produce:checked) .pr-d-ms { opacity: 0.94; filter: brightness(0.9) saturate(0.75); }
@@ -1427,7 +1427,6 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
   text-transform: uppercase;
   color: var(--pr-gold-ink);
   white-space: nowrap;
-  transition: opacity var(--dur-slow) var(--ease-out);
 }
 .pr-hero .pr-d-flag { background: var(--pr-gold-bright); color: var(--pr-green-deep); }
 .pr-hero .pr-d-page { border-color: var(--pr-rule); }

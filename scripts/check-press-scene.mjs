@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {AxePuppeteer} from '@axe-core/puppeteer';
 import {launch} from './browser-launch.mjs';
-import {pressContrast, provePressContrast} from './press-contrast.mjs';
+import {checkPressFlags, pressContrast, provePressContrast} from './press-contrast.mjs';
 const base=process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const processNames=['Consultation','Planning & Scope','Approval & Start','Design, Development & Updates','Delivery','Support (if applicable)'];
@@ -44,9 +44,16 @@ assert.throws(()=>checkCycle(specimen.map((e,i)=>i===4?{...e,at:5000}:e)),/cycle
 assert.throws(()=>checkCycle(specimen.map((e,i)=>i===1?{...e,stage:'publish'}:e)));
 for(const index of [1,2,3])assert.throws(()=>checkCycle(specimen.map((e,i)=>i===index?{...e,at:e.at+500}:e)),/stage timing/);
 const browser=await launch();
+if(process.argv.includes('--contrast-only')){
+ try{await provePressContrast(browser);await checkPressFlags(browser,base);}
+ finally{await browser.close();}
+ process.exit(0);
+}
 try {
  await provePressContrast(browser);
+ await checkPressFlags(browser,base);
  const page=await browser.newPage(),errors=[];
+ await page.setCacheEnabled(false);
  page.on('pageerror',e=>errors.push(e.message));
  await page.evaluateOnNewDocument(()=>{
   window.__pressShifts=[];
