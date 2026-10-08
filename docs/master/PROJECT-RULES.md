@@ -1,5 +1,11 @@
 # Project Rules — Gridsmith Master Layer
 
+> **GS-LEGAL-001-R12 (8 October 2026):** Private legal review may use the explicit development-only
+> adopted-development static profile after exact adopted-content/fingerprint checks. This does not
+> change rule 11's production PUBLISHABLE requirement. Production queries also consult the committed
+> register. Review documents retain noindex and adopted/not-published notices. Evidence:
+> `../_legal/research/GS-LEGAL-001/R12-WEBSITE-INTEGRATION.md`.
+
 > **GS-P00 override — 11 September 2026.** `GS-D001` removes public client/cross-division project
 > proof from the launch critical path; `GS-D002` removes shared public price assumptions. The master
 > tracker maps the preserved historical rows to the current capability/process/quote strategy.

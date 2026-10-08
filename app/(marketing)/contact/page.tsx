@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Numeric } from '@/components/primitives/Numeric';
 import { ContactForm } from '@/components/leads/ContactForm';
 import { Opening } from '@/components/shared/Opening';
@@ -80,6 +81,9 @@ export default async function Page() {
               responseCommitment={company.responseCommitment}
               contactEmail={company.contactEmail ?? ''}
             />
+            <p className={styles.quotationNote}>
+              Before accepting a quotation, read <Link href="/legal/client-terms">which client terms apply to you</Link>.
+            </p>
           </div>
 
           <aside className={styles.direct} aria-labelledby="other-ways">

@@ -680,6 +680,8 @@
   line-height: var(--leading-relaxed);
   color: var(--ink-muted);
 }
+.quotationNote { composes: directNote; }
+.quotationNote a { color: var(--ink); text-decoration: underline; text-underline-offset: 0.2em; }
 @media (max-width: 899px) {
   .contactGrid { grid-template-columns: minmax(0, 1fr); }
 }

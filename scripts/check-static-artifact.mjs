@@ -3,6 +3,8 @@ import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { artifactReviewProblems } from './review-public-rules.mjs';
+import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
+import { legalPreviewProfile } from './legal-preview-rules.mjs';
 
 export function readArtifact(root) {
   if (!existsSync(root)) throw new Error('Static artifact missing; nothing scanned');
@@ -22,7 +24,14 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   const problems = [];
   const bad = (code, detail) => problems.push(`${code}: ${detail}`);
   const expected = manifest.routes.filter((route) => route.eligible);
-  if (manifest.version !== 1 || manifest.target !== 'static' || manifest.dataset !== 'production' || manifest.indexable !== false) bad('PROFILE', 'invalid/indexable manifest');
+  let preview = false;
+  try { preview = legalPreviewProfile(manifest.legalPreview, manifest.dataset, siteOrigin); }
+  catch { bad('PROFILE', 'invalid legal preview boundary'); }
+  if (manifest.version !== 1 || manifest.target !== 'static' || (!preview && manifest.dataset !== 'production') || manifest.indexable !== false) bad('PROFILE', 'invalid/indexable manifest');
+  if (preview && (expected.filter((route) => route.contentType === 'legalDocument').length !== 7 ||
+      LEGAL_DOCUMENT_SLUGS.some((slug) => !expected.some((route) => route.path === `/legal/${slug}`)))) {
+    bad('LEGAL', 'private preview must include all seven adopted documents');
+  }
   // Independent subjects: deleting a manifest entry cannot delete its expectation.
   for (const path of ['/', '/about', '/approach', '/contact', '/insights', '/design', '/digital',
     '/press', '/press/contact', '/press/contact/thank-you', '/press/path-finder']) {
@@ -31,8 +40,10 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   for (const entry of publication.filter((item) => ['service', 'legalDocument'].includes(item.type))) {
     const path = entry.type === 'service' ? `/${entry.division}/services/${entry.slug}` : `/legal/${entry.slug}`;
     const route = manifest.routes.find((item) => item.path === path);
-    if (!route || route.eligible !== entry.eligible || route.gate !== entry.gate || route.sourceId !== entry.id) bad('PUBLICATION', 'reviewed inventory disagreement');
-    if (!entry.eligible && [...files.keys()].some((name) => name.startsWith(`${path.slice(1)}.`) || name.startsWith(`${path.slice(1)}/`))) bad('GATED', 'excluded route or sidecar emitted');
+    const legal = preview && entry.type === 'legalDocument';
+    if (!route || route.eligible !== (legal || entry.eligible) || route.gate !== (legal ? 'GS-O003-R-PREVIEW' : entry.gate) ||
+        route.sourceId !== (preview ? `seed-${entry.id}` : entry.id)) bad('PUBLICATION', 'reviewed inventory disagreement');
+    if (!legal && !entry.eligible && [...files.keys()].some((name) => name.startsWith(`${path.slice(1)}.`) || name.startsWith(`${path.slice(1)}/`))) bad('GATED', 'excluded route or sidecar emitted');
   }
   const htmlPath = (path) => path === '/' ? 'index.html' : `${path.slice(1)}.html`;
   const allowedHtml = new Set([...expected.map((route) => htmlPath(route.path)), '404.html', '500.html']);
@@ -48,6 +59,10 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
         !/<meta\b[^>]*name="description"[^>]*content="[^\"]+"/i.test(text) ||
         !canonicalValid) bad('SEO', 'heading/title/description/exact staging canonical missing');
     if (!/<meta\b[^>]*name="robots"[^>]*content="[^\"]*noindex/i.test(text)) bad('NOINDEX', 'route missing noindex');
+    if (preview && route.contentType === 'legalDocument' &&
+        (!text.includes('ADOPTED, NOT YET PUBLISHED.') || /\[TK|\[SEED|\[OWNER DECISION|Basis:|prerequisitesMet|adoptionAuthority/.test(text))) {
+      bad('LEGAL', 'adopted review notice missing or internal material rendered');
+    }
     if (route.path === '/' && !/application\/ld\+json/.test(text)) bad('STRUCTURED', 'Organization data missing');
     if (['/contact', '/press/contact'].includes(route.path)) {
       const kind = route.path === '/contact' ? 'contact' : 'press';
@@ -78,6 +93,8 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
       try { if (JSON.parse(Buffer.from(token.split('.')[1], 'base64url')).role === 'service_role') bad('SECRET', 'privileged JWT present'); } catch { /* Not a JSON JWT. */ }
     }
     if (/\/_next\/image\?url=/.test(text)) bad('IMAGE', 'runtime optimiser URL present');
+    if (/ownerAdoptedSha256|adoptionAuthority|prerequisitesMet|ownerConfirmations/.test(text)) bad('PRIVATE', 'internal legal register material emitted');
+    if (/api\.sanity\.io\/[\s\S]{0,80}data\/query/.test(text)) bad('CMS-RUNTIME', 'CMS query transport emitted');
     if (/\$ACTION_|Next-Action|createServerReference\(/.test(text)) bad('ACTION', 'Next Server Action transport emitted');
     if (/\.(?:html|css|svg)$/.test(name)) {
       const resource = (value) => {
@@ -91,6 +108,14 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
         const attributes = new Map([...tag[2].matchAll(/([\w:-]+)\s*=\s*(?:"([^\"]*)"|'([^']*)')/g)]
           .map((attr) => [attr[1].toLowerCase(), attr[2] ?? attr[3]]));
         resource(attributes.get('src')); resource(attributes.get('poster'));
+        const href = attributes.get('href');
+        if (tag[1].toLowerCase() === 'a' && href?.startsWith('/')) {
+          const url = new URL(href, siteOrigin), target = htmlPath(url.pathname);
+          const gatedLegal = !preview && manifest.routes.some((route) =>
+            route.path === url.pathname && !route.eligible && route.contentType === 'legalDocument');
+          if (!files.has(target) && !files.has(url.pathname.slice(1)) && !gatedLegal) bad('LINK', 'internal link has no exported destination');
+          if (url.hash && files.has(target) && !files.get(target).toString('utf8').includes(`id="${url.hash.slice(1)}"`)) bad('LINK', 'internal link fragment has no target');
+        }
         if (['image', 'use'].includes(tag[1].toLowerCase()) ||
             (tag[1].toLowerCase() === 'link' && /^(?:stylesheet|icon|apple-touch-icon|manifest|preload|modulepreload)$/i.test(attributes.get('rel') ?? ''))) {
           resource(attributes.get('href') ?? attributes.get('xlink:href'));

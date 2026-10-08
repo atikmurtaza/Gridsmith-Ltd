@@ -10,7 +10,7 @@ export function prepareHostingerText(path: string, text: string) {
 }
 
 /** Hostinger HTTP cache policy; unrelated to prohibited review-data caching. */
-export function hostingerRules(origin: string) {
+export function hostingerRules(origin: string, dataset: 'production' | 'development' = 'production') {
   if (origin !== REVIEW_STAGING_ORIGIN) throw new Error('Exact isolated Hostinger staging origin required');
   return `# GS-HOST-H4-D-R1: static files only; no PHP or Node application runtime.
 Options -Indexes -MultiViews
@@ -37,7 +37,7 @@ Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()"
 Header always set Strict-Transport-Security "max-age=31536000"
 Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://qfgpwumvvtizeamkynes.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'"
-Header always set X-GridSmith-Sanity-Dataset "production"
+Header always set X-GridSmith-Sanity-Dataset "${dataset}"
 Header always set Cache-Control "no-cache"
 <FilesMatch "\\.(?:svg|png|jpe?g|webp|avif|glb|gltf|bin|woff2?)$">
 Header always set Cache-Control "public, max-age=300, must-revalidate, no-transform"

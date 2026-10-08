@@ -7,6 +7,8 @@ import { AxePuppeteer } from '@axe-core/puppeteer';
 import { launch } from './browser-launch.mjs';
 import { preparePress } from './press-contrast.mjs';
 import { REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
+import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
+import { servedLegalPreview } from './legal-preview-rules.mjs';
 
 const normal = process.argv.includes('--normal');
 const base = process.env.STATIC_BASE_URL ?? (normal ? 'http://127.0.0.1:3235' : 'http://127.0.0.1:3236');
@@ -20,6 +22,13 @@ const services = ['design', 'digital', 'press'].map((division) => {
 });
 const routes = ['/', '/design', '/digital', '/press', ...services, '/about', '/approach',
   '/contact', '/insights', '/press/contact', '/press/contact/thank-you', '/press/path-finder'];
+// Ask the served artifact, not an optional runner-side manifest. R12 can never silently skip.
+const deploymentResponse = normal ? null : await fetch(base + '/__deployment.json');
+assert(normal || deploymentResponse.ok, 'Static artifact must identify its served profile');
+const deployment = deploymentResponse ? await deploymentResponse.json() : null;
+const legalPreview = normal ? false : servedLegalPreview(deployment, process.argv.includes('--legal-preview'));
+const legalRoutes = legalPreview ? LEGAL_DOCUMENT_SLUGS.map((slug) => `/legal/${slug}`) : [];
+routes.push(...legalRoutes);
 const pause = (ms) => new Promise((done) => setTimeout(done, ms));
 const browser = await launch();
 const page = await browser.newPage();
@@ -32,6 +41,7 @@ page.on('response', (response) => {
 });
 const receipt = { phase: 'GS-HOST-H4-D-R1', profile: hosted ? 'hosted' : normal ? 'normal' : 'static', pages: [],
   noJs: [], accessibility: [], realGpu: 'UNVERIFIED', server: normal ? 'Next runtime' : 'plain file server' };
+receipt.legalPreview = legalPreview;
 try {
   await page.setViewport({ width: 1440, height: 900 });
   for (const route of routes) {
@@ -45,6 +55,59 @@ try {
       JSON.stringify({ route, state }));
     assert(state.noindex?.includes('noindex'));
     receipt.pages.push({ route, ...state });
+  }
+  receipt.legal = [];
+  for (const route of legalRoutes) {
+    for (const js of [true, false]) {
+      const document = await browser.newPage();
+      await document.setJavaScriptEnabled(js); await document.setCacheEnabled(false);
+      await document.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+      for (const width of [320, 390, 768, 1024, 1440]) {
+        await document.setViewport({ width, height: 900 });
+        assert.equal((await document.goto(base + route, { waitUntil: 'networkidle0' })).status(), 200);
+        const state = await document.evaluate(() => {
+          const clauses = [...document.querySelectorAll('main section[id^="clause-"]')];
+          const anchors = [...document.querySelectorAll('main nav a[href^="#clause-"]')];
+          return { h1: document.querySelectorAll('main h1').length,
+            clauses: clauses.length, anchors: anchors.length,
+            unique: new Set(clauses.map((el) => el.id)).size === clauses.length,
+            links: anchors.every((el) => document.getElementById(el.getAttribute('href').slice(1))),
+            headings: clauses.every((el) => el.querySelector('h2')),
+            overflow: document.documentElement.scrollWidth > innerWidth + 1,
+            banner: document.querySelector('main').textContent.includes('ADOPTED, NOT YET PUBLISHED.'),
+            footer: Boolean(document.querySelector('footer')), header: Boolean(document.querySelector('header')) };
+        });
+        assert(state.h1 === 1 && state.clauses > 0 && state.anchors > 0 && state.unique && state.links &&
+          state.headings && !state.overflow && state.banner && state.footer && state.header, `${route}/${width}/JS:${js} ${JSON.stringify(state)}`);
+        if (width < 1024) {
+          await document.focus('main details > summary'); await document.keyboard.press('Enter');
+          assert(await document.$eval('main details', (el) => el.open));
+          await document.keyboard.press('Tab');
+        } else await document.focus('main nav a[href^="#clause-"]');
+        const href = await document.evaluate(() => document.activeElement?.getAttribute('href'));
+        assert(href?.startsWith('#clause-'), 'Keyboard did not reach legal contents');
+        await document.keyboard.press('Enter');
+        const target = await document.$eval(href, (el) => ({ top: el.getBoundingClientRect().top,
+          heading: el.querySelector('h2')?.textContent }));
+        assert(target.top >= 0 && target.top < 900 && target.heading, 'Legal anchor is hidden/outside viewport');
+        receipt.legal.push({ route, js, width, ...state, anchor: href });
+      }
+      await document.close();
+    }
+  }
+  // All rendered legal destinations and fragments must resolve; the adopted wording stays intact.
+  receipt.legalLinks = 0;
+  for (const route of routes) {
+    await page.goto(base + route, { waitUntil: 'networkidle0' });
+    const links = await page.$$eval('a[href^="/legal/"]', (nodes) => nodes.map((el) => el.getAttribute('href')));
+    if (legalPreview) for (const href of new Set(links)) {
+      const target = new URL(href, base);
+      assert(legalRoutes.includes(target.pathname), `Unknown legal destination ${href}`);
+      const html = await (await fetch(target)).text();
+      assert(html.includes('ADOPTED, NOT YET PUBLISHED.'));
+      if (target.hash) assert(html.includes(`id="${target.hash.slice(1)}"`), `Orphan legal fragment ${href}`);
+      receipt.legalLinks++;
+    }
   }
   // The explicit software scene affordance proves hydration, not device GPU performance.
   await page.goto(base + '/?scene=software', { waitUntil: 'networkidle0' });
@@ -149,7 +212,7 @@ try {
     const require = createRequire(fileURLToPath(import.meta.url));
     const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
     const rawAxe = [];
-    for (const route of ['/', '/design', '/digital', '/press', ...services, '/about', '/approach', '/contact', '/insights', '/press/contact', '/press/contact/thank-you']) {
+    for (const route of ['/', '/design', '/digital', '/press', ...services, '/about', '/approach', '/contact', '/insights', '/press/contact', '/press/contact/thank-you', ...legalRoutes]) {
       await page.goto(base + route, { waitUntil: 'networkidle0' });
       // Match the existing normal gate: audit each revealed, settled Press chapter,
       // rather than causing axe's scrolling to sample a first-entrance transition.
@@ -167,13 +230,20 @@ try {
       rawAxe.push({ route, result });
       receipt.accessibility.push({ route, violations: result.violations.map((issue) => ({ id: issue.id, impact: issue.impact,
         nodes: issue.nodes.map((node) => node.target) })), incomplete: result.incomplete.map((issue) => issue.id) });
+      if (legalRoutes.includes(route)) {
+        await page.setViewport({ width: 390, height: 900 });
+        const mobile = await new AxePuppeteer(page, axeSource).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+        rawAxe.push({ route, width: 390, result: mobile });
+        receipt.accessibility.push({ route, js: true, width: 390, violations: mobile.violations.map((issue) => ({ id: issue.id, impact: issue.impact,
+          nodes: issue.nodes.map((node) => node.target) })), incomplete: mobile.incomplete.map((issue) => issue.id) });
+        await page.setViewport({ width: 1440, height: 900 });
+      }
     }
-    writeFileSync(`build/${hosted ? 'hosted' : 'static'}-axe-results.json`, JSON.stringify(rawAxe, null, 2) + '\n');
     // No-JS reviews use the same full list, without duplicate fallback text.
     // No-JS never collects answers or invokes an endpoint.
     const noJs = await browser.newPage(); await noJs.setJavaScriptEnabled(false);
     await noJs.setCacheEnabled(false); // This route proof requires fresh 200 bodies, not cached 304 revalidation.
-    for (const route of ['/', '/design', '/digital', '/press', ...services, '/about', '/approach', '/contact', '/insights', '/press/contact', '/press/contact/thank-you']) {
+    for (const route of ['/', '/design', '/digital', '/press', ...services, '/about', '/approach', '/contact', '/insights', '/press/contact', '/press/contact/thank-you', ...legalRoutes]) {
       assert.equal((await noJs.goto(base + route, { waitUntil: 'networkidle0' })).status(), 200);
       if (route === '/') {
         const reviews = await noJs.$eval('[data-reviews-carousel]', (root) => ({
@@ -200,6 +270,54 @@ try {
         state.reflow.push({ width, overflow });
       }
       receipt.noJs.push({ route, ...state });
+      if (legalRoutes.includes(route)) for (const width of [320, 1440]) {
+        await noJs.setViewport({ width, height: 900 });
+        // H4-E's established method: axe needs script execution, so audit an asserted replay
+        // of the cold no-JS DOM. No application script is present or allowed to load.
+        const originalText = await noJs.$eval('main', (el) => el.innerText);
+        const rewriteScripting = (css) => css.replace(/\(scripting:\s*none\)/g, '(min-width: 0px)')
+          .replace(/\(scripting:\s*enabled\)/g, '(max-width: 0px)');
+        const html = rewriteScripting((await noJs.content()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
+          .replace(/<\/?noscript\b[^>]*>/gi, '').replace('<head>', `<head><base href="${base}/">`));
+        const replay = await browser.newPage(); await replay.setViewport({ width, height: 900 });
+        await replay.setRequestInterception(true);
+        replay.on('request', async (request) => {
+          if (request.resourceType() === 'script') return request.abort();
+          if (request.resourceType() === 'stylesheet') {
+            const response = await fetch(request.url());
+            assert(response.ok, 'No-JS replay stylesheet missing');
+            return request.respond({ status: 200, contentType: 'text/css', body: rewriteScripting(await response.text()) });
+          }
+          return request.continue();
+        });
+        await replay.setContent(html, { waitUntil: 'networkidle0' });
+        assert.equal(await replay.$eval('main', (el) => el.innerText), originalText, 'No-JS replay changed visible legal content');
+        if (!receipt.noJsAxeValidity) {
+          await replay.evaluate(() => {
+            const specimen = document.createElement('p'); specimen.id = 'r12-contrast-specimen';
+            specimen.textContent = 'Deliberately unreadable verification specimen';
+            specimen.style.cssText = 'color:var(--line);background:var(--canvas);padding:20px';
+            document.querySelector('main').prepend(specimen);
+            specimen.scrollIntoView();
+          });
+          const specimenState = await replay.$eval('#r12-contrast-specimen', (el) => ({
+            color: getComputedStyle(el).color, background: getComputedStyle(el).backgroundColor,
+            height: el.getBoundingClientRect().height, top: el.getBoundingClientRect().top,
+          }));
+          assert(specimenState.color !== specimenState.background && specimenState.height > 0 &&
+            specimenState.top >= 0 && specimenState.top < 900, 'Contrast specimen must be visible and have distinct foreground/background');
+          const proof = await new AxePuppeteer(replay, axeSource).withTags(['wcag2aa']).analyze();
+          assert(proof.violations.some((issue) => issue.id === 'color-contrast' &&
+            issue.nodes.some((node) => node.target.includes('#r12-contrast-specimen'))), 'No-JS axe replay did not reject its visible specimen');
+          await replay.$eval('#r12-contrast-specimen', (el) => el.remove());
+          receipt.noJsAxeValidity = 'Visible low-contrast specimen rejected in the same replay, then removed';
+        }
+        const result = await new AxePuppeteer(replay, axeSource).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+        rawAxe.push({ route, js: false, width, result });
+        receipt.accessibility.push({ route, js: false, width, violations: result.violations.map((issue) => ({ id: issue.id, impact: issue.impact,
+          nodes: issue.nodes.map((node) => node.target) })), incomplete: result.incomplete.map((issue) => issue.id) });
+        await replay.close();
+      }
     }
     await noJs.setViewport({ width: 375, height: 812 });
     await noJs.goto(base + '/about', { waitUntil: 'networkidle0' });
@@ -211,6 +329,7 @@ try {
     await noJs.waitForFunction(() => location.pathname === '/design');
     receipt.noJsMobileNavigation = true;
     await noJs.close();
+    writeFileSync(`build/${hosted ? 'hosted' : 'static'}-axe-results.json`, JSON.stringify(rawAxe, null, 2) + '\n');
   }
   assert.deepEqual(errors, []); assert.deepEqual(failedRequests, []); assert.deepEqual(badResponses, []);
   receipt.browserErrors = errors; receipt.failedRequests = failedRequests; receipt.badResponses = badResponses;

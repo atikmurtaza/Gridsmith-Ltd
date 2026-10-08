@@ -1,5 +1,8 @@
 import { sanityClient } from '@/lib/sanity/client';
 import { STATIC_BUILD } from '@/lib/build/target';
+import { SANITY_DATASET } from '@/sanity/env';
+import legalRegister from '@/docs/_legal/GS-O003-R-REGISTER.json';
+import { staticManifest } from '@/lib/build/static-routes';
 import type { PortableMarkDef, PortableSpan } from '@/lib/content/portableLinks';
 
 /**
@@ -144,14 +147,19 @@ const q = async <T,>(query: string, params: Record<string, unknown> = {}) => {
   return value;
 };
 
+// A development review export uses the same gated service set as its route manifest.
+const staticServiceIds = STATIC_BUILD ? staticManifest().routes
+  .filter((route) => route.eligible && route.contentType === 'service').map((route) => route.sourceId) : [];
+
 export const listServices = (division: Division) =>
   q<ServiceCard[]>(
     `*[_type == "service" && division == $division && published == true
+       && (!$static || _id in $serviceIds)
        && !(_id in path("drafts.**"))]
      | order(order asc){
        "title": title, "slug": slug.current, division, capabilityGroup, problem, order
      }`,
-    { division },
+    { division, static: STATIC_BUILD, serviceIds: staticServiceIds },
   );
 
 /**
@@ -174,14 +182,14 @@ export const getService = (division: Division, slug: string) =>
       deliverables[]{label, detail, "included": coalesce(included, true)},
       process[]{number, title, description, divisionDetail, duration, clientTime},
       collaborators,
-      "relatedServices": relatedServices[@->published == true]->{
+      "relatedServices": relatedServices[@->published == true && (!$static || @->_id in $serviceIds)]->{
         "title": title, "slug": slug.current, division
       },
       ctaLabel,
       "metaTitle": seo.metaTitle, "metaDescription": seo.metaDescription,
       "isSeed": coalesce(isSeed, false)
     }`,
-    { division, slug },
+    { division, slug, static: STATIC_BUILD, serviceIds: staticServiceIds },
   );
 
 /** Slugs for `generateStaticParams`, scoped to one division for the same reason. */
@@ -268,33 +276,29 @@ export const getGroupPage = (slug: 'approach' | 'about') =>
     { slug },
   );
 
-/**
- * **`adoptionState` is not filtered here, and that is deliberate.** (Until 6 October 2026 this
- * was the `solicitorApproved` flag; `GS-O003-R` replaced it.)
- *
- * `master/SCHEMA.md` gives the query an `$allowUnapproved` parameter. Filtering an unapproved
- * document out would serve a 404 for `/legal/privacy`, and a website with no privacy notice is
- * a worse outcome than one carrying a draft that says, at the top of the page, that it is a
- * draft. The route renders the approval state prominently instead, and `L-04` is the gate that
- * flips it. What must not happen — a draft published as though it were approved — is prevented
- * by rendering the state, not by hiding the document.
- */
+/** R12: development review remains separate from the committed production publication register. */
+const publishableLegalSlugs = Object.entries(legalRegister.documents)
+  .filter(([, entry]) => (entry.state as string) === 'PUBLISHABLE')
+  .map(([slug]) => slug);
 export const getLegalDocument = (slug: string) =>
   q<LegalDocument | null>(
-    `*[_type == "legalDocument" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
+    `*[_type == "legalDocument" && slug.current == $slug && !(_id in path("drafts.**"))
+      && ($development || (adoptionState == "PUBLISHABLE" && slug.current in $publishableSlugs))][0]{
       title, version, effectiveFrom, lastReviewed, reviewedBy,
       "adoptionState": coalesce(adoptionState, "RESEARCHED"),
       summary,
       clauses[]{number, heading, anchorId, basis, body},
       "isSeed": coalesce(isSeed, false)
     }`,
-    { slug },
+    { slug, development: SANITY_DATASET === 'development', publishableSlugs: publishableLegalSlugs },
   );
 
 export const listLegalDocuments = () =>
   q<{ title: string; slug: string; summary: string | null; adoptionState: string }[]>(
-    `*[_type == "legalDocument" && !(_id in path("drafts.**"))] | order(title asc){
+    `*[_type == "legalDocument" && !(_id in path("drafts.**"))
+      && ($development || (adoptionState == "PUBLISHABLE" && slug.current in $publishableSlugs))] | order(title asc){
       title, "slug": slug.current, summary,
       "adoptionState": coalesce(adoptionState, "RESEARCHED")
     }`,
+    { development: SANITY_DATASET === 'development', publishableSlugs: publishableLegalSlugs },
   );

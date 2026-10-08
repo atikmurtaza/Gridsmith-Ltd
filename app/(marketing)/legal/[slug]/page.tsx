@@ -16,6 +16,7 @@ import {
 } from '@/lib/legal/slugs';
 import styles from '@/components/shared/shared.module.css';
 import opening from '@/components/shared/opening.module.css';
+import { absolute } from '@/lib/seo/site';
 
 /**
  * `/legal/[slug]` — the legal document template (`L-02`).
@@ -35,26 +36,12 @@ import opening from '@/components/shared/opening.module.css';
  * sticky header — a fragment that scrolls the target out of view is a WCAG 2.4.7-adjacent
  * failure that no automated check catches, because the element is technically focused.
  *
- * ## An unapproved document is announced, never hidden
+ * ## R12: private review and production publication are separate
  *
- * `adoptionState` (`GS-O003-R`, `lib/legal/adoption.ts`; until 6 October 2026 the
- * `solicitorApproved` flag) is shown, not filtered: anything short of `OWNER_ADOPTED` carries the
- * "not yet adopted" banner, and an `OWNER_ADOPTED` document carries "adopted, not yet published"
- * (`GS-LEGAL-001-R4`: once six documents were adopted, the old two-way banner would have told a
- * reader that an adopted document had not been adopted). Production only ever receives `PUBLISHABLE` documents (the
- * migration reads the committed register), so the banner appears on review builds only. The
- * query does **not** filter on the state —
- * `lib/sanity/queries.ts` explains why in full. A missing privacy notice is a worse outcome
- * than a draft that says, in the first thing on the page, that it is a draft. What must not
- * happen is a draft presented as though it were reviewed, and that is prevented by rendering
- * the state rather than by hiding the document.
- *
- * **As of 2 September 2026 the flag gates nothing — it describes.** It filters no query,
- * blocks no route, fails no build, and no longer suppresses indexing. The owner's decision is
- * that external legal review is booked separately and the programme does not wait on it, so a
- * flag that withheld the published instruments until the review landed was withholding them
- * indefinitely. `check-legal-parity.mjs` branch D still requires the banner to render, which
- * is an assertion that the state is *shown* — the opposite of a gate.
+ * OWNER_ADOPTED documents show the adopted/not-published notice and cannot be indexed.
+ * The explicit adopted-development export validates exact content and fingerprints before
+ * and after generation. Production queries require PUBLISHABLE in both CMS and the committed
+ * register; migration and the default export retain their publication prerequisite gates.
  *
  * ## Print
  *
@@ -89,15 +76,9 @@ export async function generateMetadata({
   return {
     title: `${doc.title} — Gridsmith Ltd`,
     description: doc.summary ?? undefined,
-    // **No `robots` gate on the review state, as of 2 September 2026** (then `solicitorApproved`,
-    // now `adoptionState`). It used to `noindex`
-    // every legal page until the flag flipped, which made the flag a publication gate: the
-    // instruments were served but withheld from search, so the company's published legal
-    // position was unfindable pending a review that had not been booked. The owner's decision
-    // is that the review does not gate the programme. The draft state is *described* — the
-    // banner below, `reviewedBy`, and the version — and describing a state is not the same as
-    // suppressing the document. A visitor who searches for Gridsmith's privacy notice should
-    // find the notice Gridsmith actually publishes.
+    alternates: { canonical: absolute(`/legal/${slug}`) },
+    // R12: a review document remains unindexable regardless of deployment configuration.
+    ...(!isPublishable(doc.adoptionState) ? { robots: { index: false, follow: false } } : {}),
   };
 }
 
@@ -192,7 +173,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               </details>
             ) : null}
             {clauses.map((clause) => (
-              <section key={clause.anchorId} id={clause.anchorId} className={styles.clause}>
+              <section key={clause.anchorId} id={clause.anchorId} className={styles.clause} tabIndex={-1}>
                 <h2 className={styles.clauseTitle}>
                   <span className={styles.clauseNo}>{clause.number}</span> {clause.heading}
                 </h2>

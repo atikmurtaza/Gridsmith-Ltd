@@ -13,7 +13,8 @@ export type StaticRoute = {
   sitemap: boolean; revision: string | null;
 };
 export type StaticManifest = {
-  version: 1; target: 'static'; dataset: 'production'; indexable: false;
+  version: 1; target: 'static'; dataset: 'production' | 'development'; indexable: false;
+  legalPreview?: 'adopted-development';
   routes: StaticRoute[];
 };
 
@@ -88,3 +89,28 @@ export function createStaticManifest(
 /** Future indexing uses this same eligible set; H4-A always emits an empty sitemap. */
 export const sitemapPaths = (manifest: StaticManifest) =>
   manifest.routes.filter((route) => route.eligible && route.sitemap).map((route) => route.path);
+
+/** R12 private development export. Production inventory and eligibility are never rewritten. */
+export function createLegalPreviewManifest(documents: ContentIdentity[], publication: PublicationEntry[]): StaticManifest {
+  const byId = new Map(documents.map((doc) => [doc._id, doc]));
+  if (byId.size !== documents.length) throw new Error('Duplicate development CMS identity');
+  const preview = publication.map((entry) => ({ ...entry,
+    id: entry.id === 'companyDetails' ? entry.id : `seed-${entry.id}`,
+    ...(entry.type === 'legalDocument' ? { eligible: true, gate: 'GS-O003-R-PREVIEW' } : {}),
+  }));
+  // Reuse the production routing predicates on a separate identity-only projection. Raw seed
+  // records are never relabelled, persisted, or passed to production migration.
+  const authorised = preview.filter((entry) => entry.eligible).map((entry) => {
+    const doc = byId.get(entry.id);
+    if (!doc) throw new Error(`Required development content missing: ${entry.id}`);
+    return { ...doc, _id: entry.id.replace(/^seed-/, ''), isSeed: false };
+  });
+  const manifest = createStaticManifest(authorised, preview.map((entry) => ({
+    ...entry, id: entry.id.replace(/^seed-/, ''),
+  })));
+  return { ...manifest, dataset: 'development', legalPreview: 'adopted-development',
+    routes: manifest.routes.map((route) => ({ ...route,
+      sourceId: route.sourceId && route.sourceId !== 'companyDetails' ? `seed-${route.sourceId}` : route.sourceId,
+      sitemap: route.contentType === 'legalDocument' ? false : route.sitemap,
+    })) };
+}

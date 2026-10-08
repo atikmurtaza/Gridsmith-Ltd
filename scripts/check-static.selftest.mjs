@@ -1,7 +1,7 @@
 /** Permanent H4-A positive and adversarial subjects; no app source mutation/network. */
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createStaticManifest, sitemapPaths } from '../lib/build/route-manifest.ts';
+import { createStaticManifest, createLegalPreviewManifest, sitemapPaths } from '../lib/build/route-manifest.ts';
 import { resolveBuildTarget } from '../lib/build/target.ts';
 import { inspectStaticArtifact } from './check-static-artifact.mjs';
 
@@ -132,6 +132,12 @@ for (const content of ['<img src="/assets/missing.png">', '<img srcset="/brand/m
 }
 breakArtifact('zero files', (files) => files.clear(), 'COUNT');
 breakArtifact('zero JS', (files) => files.delete('_next/static/specimen.js'), 'CHUNKS');
+breakArtifact('missing internal destination', (files) => set(files, 'index.html', fixture.get('index.html') + '<a href="/missing">Specimen</a>'), 'LINK');
+breakArtifact('orphan internal fragment', (files) => set(files, 'index.html', fixture.get('index.html') + '<a href="/about#missing">Specimen</a>'), 'LINK');
+for (const marker of ['ownerAdoptedSha256', 'adoptionAuthority', 'prerequisitesMet', 'ownerConfirmations']) {
+  breakArtifact('internal legal register', (files) => set(files, 'private.json', marker), 'PRIVATE');
+}
+breakArtifact('CMS runtime transport', (files) => set(files, '_next/static/specimen.js', 'https://specimen.api.sanity.io/v2025-02-19/data/query/development'), 'CMS-RUNTIME');
 const changedCount = new Map(fixture); changedCount.delete('about.html');
 assert.equal(inspect(changedCount).fileCount, inspect().fileCount - 1);
 assert.equal(inspect(changedCount).htmlRoutes, inspect().htmlRoutes - 1);
@@ -175,3 +181,65 @@ assert.equal(siblingRouteAllowed(hosting.replace('RewriteCond %{REQUEST_FILENAME
   'Injected directory exclusion must fail the sibling-route predicate');
 console.log('Hostinger hash/cache predicates: 5 hashed and 6 unversioned names; sibling-route positive/adverse predicates PASS.');
 console.log('Hostinger static config subject: exact-origin production rejection, noindex, gated 404 and explicit cache policies. Served behaviour remains a hosted gate.');
+
+// R12: private preview has separate identities; all production exclusion proofs above still run.
+const { legalPreviewProfile, legalPreviewProblems, servedLegalPreview } = await import('./legal-preview-rules.mjs');
+const { LEGAL_DOCUMENTS } = await import('./seed-legal.mjs');
+const register = JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json'));
+assert.equal(legalPreviewProfile(undefined, 'production', REVIEW_STAGING_ORIGIN), false);
+assert(legalPreviewProfile('adopted-development', 'development', REVIEW_STAGING_ORIGIN));
+let previewProofs = 0;
+assert(servedLegalPreview({ legalPreview: true, dataset: 'development' }, true));
+assert.equal(servedLegalPreview({ legalPreview: false, dataset: 'production' }), false);
+for (const [identity, required] of [[null, false], [null, true], [{ legalPreview: false }, true],
+  [{ legalPreview: true, dataset: 'production' }, true], [{ legalPreview: true, dataset: 'production' }, false]]) {
+  assert.throws(() => servedLegalPreview(identity, required), /must identify|R12 requires/); previewProofs++;
+}
+for (const [value, dataset, origin] of [
+  ['adopted-development', 'production', REVIEW_STAGING_ORIGIN],
+  ['adopted-development', 'development', 'https://gridsmith.uk'],
+  ['adopted-development', 'development', 'https://unapproved.example.invalid'],
+  ['adopted-development', 'development', REVIEW_STAGING_ORIGIN + '/'],
+  ['true', 'development', REVIEW_STAGING_ORIGIN],
+]) { assert.throws(() => legalPreviewProfile(value, dataset, origin), /Legal preview requires/); previewProofs++; }
+const parity = (actual = LEGAL_DOCUMENTS, expected = LEGAL_DOCUMENTS, input = register,
+  read = (path) => readFileSync(path)) => legalPreviewProblems(actual, expected, input, read);
+assert.deepEqual(parity(), []);
+for (const [change, message] of [
+  [(docs) => docs.pop(), /seven|missing/],
+  [(docs) => docs.push(docs[0]), /seven|duplicate/],
+  [(docs) => { docs[0].clauses[0].body[0].children[0].text += ' unapproved text'; }, /content mismatch/],
+  [(docs) => { docs[0].version = '0.0'; }, /content mismatch/],
+  [(docs) => { docs[0].adoptionState = 'PUBLISHABLE'; }, /content mismatch/],
+]) {
+  const docs = structuredClone(LEGAL_DOCUMENTS); change(docs);
+  assert(parity(docs).some((problem) => message.test(problem))); previewProofs++;
+}
+const unadopted = structuredClone(register); unadopted.documents.privacy.state = 'OWNER_REVIEW_REQUIRED';
+assert(parity(LEGAL_DOCUMENTS, LEGAL_DOCUMENTS, unadopted).some((p) => /not owner-adopted/.test(p))); previewProofs++;
+assert(parity(LEGAL_DOCUMENTS, LEGAL_DOCUMENTS, register, () => Buffer.from('fingerprint specimen')).some((p) => /fingerprint mismatch/.test(p))); previewProofs++;
+const devDocs = [...documents.map((doc) => ({ ...doc, _id: doc._id === 'companyDetails' ? doc._id : `seed-${doc._id}`, isSeed: true })),
+  ...LEGAL_DOCUMENTS.map((doc) => ({ _id: doc._id, _type: doc._type, _rev: 'specimen', slug: doc.slug.current, isSeed: true }))];
+const privateManifest = createLegalPreviewManifest(devDocs, publication);
+assert.equal(privateManifest.dataset, 'development');
+assert.equal(privateManifest.routes.filter((r) => r.eligible && r.contentType === 'legalDocument').length, 7);
+assert.equal(manifest.routes.filter((r) => r.eligible && r.contentType === 'legalDocument').length, 0);
+const privateFiles = new Map(fixture);
+for (const route of privateManifest.routes.filter((r) => r.contentType === 'legalDocument')) {
+  set(privateFiles, `${route.path.slice(1)}.html`, fixture.get('about.html').toString()
+    .replace('http://localhost:3236/about', `http://localhost:3236${route.path}`) + '<p>ADOPTED, NOT YET PUBLISHED.</p>');
+}
+assert.deepEqual(inspectStaticArtifact(privateFiles, privateManifest, publication).problems, []);
+assert(inspectStaticArtifact(privateFiles, manifest, publication).problems.some((p) => p.startsWith('GATED:'))); previewProofs++;
+for (const change of [
+  (m) => { m.dataset = 'production'; },
+  (m) => { delete m.legalPreview; },
+  (m) => { m.routes = m.routes.filter((r) => r.path !== '/legal/privacy'); },
+]) {
+  const input = structuredClone(privateManifest); change(input);
+  assert(inspectStaticArtifact(privateFiles, input, publication).problems.length > 0); previewProofs++;
+}
+const noNotice = new Map(privateFiles);
+set(noNotice, 'legal/privacy.html', noNotice.get('legal/privacy.html').toString().replace('ADOPTED, NOT YET PUBLISHED.', ''));
+assert(inspectStaticArtifact(noNotice, privateManifest, publication).problems.some((p) => p.startsWith('LEGAL:'))); previewProofs++;
+console.log(`R12 legal preview PASS: exact seven-document parity; ${previewProofs} adverse proofs; production still emits zero legal routes.`);
