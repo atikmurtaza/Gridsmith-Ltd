@@ -11,7 +11,19 @@ Source: the twelve checks in `../research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIE
 so that each can be done without further explanation. What changes in the policy once they are answered
 is in `../research/GS-LEGAL-001/R4-PRIVACY-2.2-CHANGE-PLAN.md`.
 
-## R10 status (8 October 2026) — supersedes the R9 status below
+## R11 status (8 October 2026) — supersedes R8–R10 instructions
+
+Privacy 2.3 is OWNER_ADOPTED, exact SHA-256
+`80e67b5256449e2c7fc1562ead2da8ec538b217c8735cba3679f985af50a620b`.
+HOSTINGER-PROCESSOR-CHAIN is evidenced from current authorised corporate use and incorporated
+Hostinger Terms/DPA (R11 §§2–3). No external administrator is identified; no additional agreement
+with internal staff is shown mandatory. The R10 draft is SUPERSEDED / NOT EXECUTED. No specific
+mandatory residual contract gap is established. All seven remain OWNER_ADOPTED, not PUBLISHABLE;
+H4-B promotion and cutover/publication authority are unmet.
+
+Authority: `../research/GS-LEGAL-001/R11-PRIVACY-ADOPTION-HOSTING-CLOSEOUT.md`.
+
+## R10 historical status (superseded by R11)
 
 - **Privacy 2.3** no longer claims reliance on Hostinger's safeguards. **No owner evidence item remains
   for adoption.**

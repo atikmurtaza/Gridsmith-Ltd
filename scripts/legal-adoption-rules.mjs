@@ -109,9 +109,9 @@ export const REQUIRED_PREREQUISITES = {
   cookies: ['A-2-PRODUCTION-COOKIE-RETEST'],
   // Privacy §6/§7 describe the Supabase Edge Function intake, which runs only on Preview until H4-B
   // is promoted; cutover authority alone does not make that true (R4 review M5).
-  // HOSTINGER-PROCESSOR-CHAIN (GS-LEGAL-001-R10): moved here from REQUIRED_ADOPTION_EVIDENCE. Privacy 2.3
-  // no longer states reliance on Hostinger's safeguards, so the adopted text does not depend on it, but the
-  // Art. 28(3) arrangement for Hostinger must be evidenced before the policy is published.
+  // HOSTINGER-PROCESSOR-CHAIN (R10, clarified R11): evidence of existing Art. 28 contractual coverage
+  // for hosting/email, including authorised corporate service use under Hostinger's incorporated DPA.
+  // Internal administrators need no separate processor agreement; R10's signature requirement is withdrawn.
   privacy: ['H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN'],
 };
 
@@ -131,7 +131,7 @@ export function requiredPrerequisites(slug) {
 export const REQUIRED_ADOPTION_EVIDENCE = {
   // HOSTINGER-PROCESSOR-CHAIN was adoption evidence from R6 to R9 and is a publication prerequisite from R10
   // (REQUIRED_PREREQUISITES.privacy): Privacy 2.3 §7 describes Hostinger's terms without claiming reliance,
-  // so adoption no longer depends on it. Publication still does.
+  // so adoption no longer depends on it. Publication needs contractual coverage evidence, not a new signature.
   privacy: ['RETENTION-ROUTINE-OPERATING'],
 };
 

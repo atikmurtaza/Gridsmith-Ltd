@@ -1,4 +1,15 @@
-# Hosting processing arrangement — DRAFT, NOT EXECUTED
+# Hosting processing arrangement — SUPERSEDED / NOT EXECUTED
+
+**GS-LEGAL-001-R11, 8 October 2026: SUPERSEDED / NOT EXECUTED.** Do not sign, circulate or
+use this draft as compliance evidence. The owner rejects its unsupported assumption that a separate
+external account holder is Gridsmith's processor. The owner controls the account; Gridsmith's
+authorised internal administrators manage hosting and the mailbox. No external administrator has
+been identified. Current Hostinger terms/DPA and the clarified facts do not establish a need for this
+additional agreement. Shared personnel do not merge separate legal entities; if a separate entity
+actually processes Gridsmith data, assess its real role then. The text below is retained only as
+superseded history, including its signature blocks and instructions.
+
+Current authority: `../research/GS-LEGAL-001/R11-PRIVACY-ADOPTION-HOSTING-CLOSEOUT.md`.
 
 **Status:** draft prepared at `GS-LEGAL-001-R10` (8 October 2026) for the owner. **Not signed, not sent,
 not in force.** No party has agreed to it. It is not legal advice and has no solicitor review.

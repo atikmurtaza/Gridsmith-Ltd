@@ -1,3 +1,7 @@
+> **Historical R10 record:** R11 (8 October 2026) supersedes the external account-holder processor
+> assumption, signature requirement and queued post-signing review. Privacy 2.3 is now OWNER_ADOPTED;
+> the draft agreement is SUPERSEDED / NOT EXECUTED. Current authority: `R11-PRIVACY-ADOPTION-HOSTING-CLOSEOUT.md`.
+
 # GS-LEGAL-001-R10 — hosting closeout and Privacy adoption package
 
 **Date:** 8 October 2026. **Branch:** `claude/sweet-mendel-11qvli`, from R9 HEAD

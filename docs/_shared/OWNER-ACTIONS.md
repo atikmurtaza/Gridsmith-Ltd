@@ -38,14 +38,22 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
 
 ### `GS-O003-R` — Legal evidence + owner adoption (replaces `GS-O003`, 6 October 2026)
 
-- **Status:** OWNER ACTION REQUIRED — decisions, then adoption.
+- **Status (R11):** all seven OWNER_ADOPTED; production-stage publication authority remains outstanding.
 - **Owner decision recorded (6 October 2026, `GS-LEGAL-001`):** no solicitor is commissioned at this
   stage. `GS-O003`'s mandatory solicitor approval is replaced by an evidence-based review against
   current UK legislation and official guidance plus explicit owner adoption, per document, recorded in
   `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
   OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
   enforceability.
-- **R10 (8 October 2026): Privacy 2.3 ready for your adoption; one contractual step before publication**
+- **R11 (8 October 2026): Privacy 2.3 adopted; hosting agreement requirement withdrawn.**
+  All seven OWNER_ADOPTED; six earlier entries/fingerprints unchanged. Existing hosting decision CLOSED.
+  HOSTINGER-PROCESSOR-CHAIN evidenced from authorised corporate use and current incorporated DPA
+  (R11 §§2–3), not execution of the superseded draft. No additional agreement with internal
+  administrators is shown legally necessary. No specific residual contract gap established.
+  **Remaining:** separately authorise legal integration/readiness (GS-LEGAL-001-R12), and later the
+  production intake/publication/cutover phases. Do not sign or circulate the R10 draft.
+- **R10 historical action — SUPERSEDED by R11 (do not act on the signature instructions below).**
+  **R10 (8 October 2026): Privacy 2.3 ready for your adoption; one contractual step before publication**
   (`docs/_legal/research/GS-LEGAL-001/R10-HOSTING-CLOSEOUT-PRIVACY-PACKAGE.md`). **This supersedes R9's
   remaining action.**
   1. **Adopt Privacy 2.3** if you agree, using the statement in the R10 record §5.

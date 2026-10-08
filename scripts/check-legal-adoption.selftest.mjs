@@ -136,7 +136,7 @@ expect('publishable clean', stateProblems('c', 'PUBLISHABLE', adoptedConsumer, '
 const privacyMarked = privacy.replace(/^## 6\. /m, '[OWNER DECISION: specimen marker]\n\n## 6. ');
 if (!/\[OWNER DECISION/.test(privacyMarked)) throw new Error('selftest premise: privacy specimen carries no marker');
 expect('researched may carry markers', stateProblems('p', 'RESEARCHED', privacyMarked, 's', null), null);
-expect('publishable with owner marker', stateProblems('p', 'PUBLISHABLE', toEffective(privacyMarked), 's', '2026-10-07'), /open marker/);
+expect('publishable with owner marker', stateProblems('p', 'PUBLISHABLE', toEffective(asDraft(privacyMarked)), 's', '2026-10-07'), /open marker/);
 expect('verified with TK', stateProblems('c', 'VERIFIED', consumerDraft + '\n[TK: price]\n', 's', null), /\\\[TK/);
 expect('verified with seed summary', stateProblems('c', 'OWNER_REVIEW_REQUIRED', consumerDraft, '[SEED] summary', null), /\\\[SEED/);
 expect('publishable without effective date', stateProblems('c', 'PUBLISHABLE', consumerDraft, 's', '2026-10-07'), /without an "Effective date"/);
@@ -174,7 +174,7 @@ expect('privacy adopted with empty retention evidence', registerProblems('privac
 // R10 — the Hostinger chain moved from adoption evidence to a publication prerequisite.
 expect('privacy adopted without listing the Hostinger chain prerequisite', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'cleanup log, date' } }, '1.0', 'docs/_legal/X.md', SHA), /adopted without the publication prerequisite HOSTINGER-PROCESSOR-CHAIN/);
 expect('privacy publishable without Hostinger chain evidence', registerProblems('privacy', { ...adoptedEntry, state: 'PUBLISHABLE', publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'log', 'CUTOVER-AUTHORITY': 'owner', 'H4-B-INTAKE-PROMOTED': 'phase' } }, '1.0', 'docs/_legal/X.md', SHA), /HOSTINGER-PROCESSOR-CHAIN has no recorded evidence/);
-expect('privacy publishable with every prerequisite met', registerProblems('privacy', { ...adoptedEntry, state: 'PUBLISHABLE', publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'log', 'CUTOVER-AUTHORITY': 'owner', 'H4-B-INTAKE-PROMOTED': 'phase', 'HOSTINGER-PROCESSOR-CHAIN': 'signed arrangement, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
+expect('privacy publishable with existing contractual coverage and every prerequisite met', registerProblems('privacy', { ...adoptedEntry, state: 'PUBLISHABLE', publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'log', 'CUTOVER-AUTHORITY': 'owner', 'H4-B-INTAKE-PROMOTED': 'phase', 'HOSTINGER-PROCESSOR-CHAIN': 'R11 authorised corporate use, existing Terms and incorporated DPA, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
 expect('other documents need no retention evidence', registerProblems('terms', adoptedEntry, '1.0', 'docs/_legal/X.md', SHA), null);
 
 // danglingReferences — lists and sub-clauses.
@@ -195,7 +195,7 @@ expect('privacy-publishable claimed while privacy unadopted', crossRegisterProbl
 expect('privacy-publishable claimed while privacy only adopted', crossRegisterProblems(docs('OWNER_ADOPTED', { 'PRIVACY-PUBLISHABLE': 'yes' })), /while the privacy entry is OWNER_ADOPTED/);
 expect('privacy-publishable met for real', crossRegisterProblems(docs('PUBLISHABLE', { 'PRIVACY-PUBLISHABLE': 'register, date' })), null);
 expect('privacy-publishable not claimed', crossRegisterProblems(docs('OWNER_REVIEW_REQUIRED', {})), null);
-// The live register: Privacy not adopted, so the cross check must be clean today.
+// The live register: no entry claims Privacy publishable; adoption alone does not permit publication.
 expect('live register cross-coherent', crossRegisterProblems(JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json', 'utf8')).documents), null);
 
 // parseDraft — the generator the served pages come from refuses malformed drafts.

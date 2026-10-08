@@ -509,7 +509,7 @@
       "source": "scripts/seed-legal.mjs",
       "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Owner adoption outstanding (register state OWNER_REVIEW_REQUIRED)"
+      "reason": "Owner-adopted 2.3 on 2026-10-08; not PUBLISHABLE (publication prerequisites outstanding: CUTOVER-AUTHORITY, H4-B-INTAKE-PROMOTED)"
     },
     {
       "type": "legalDocument",

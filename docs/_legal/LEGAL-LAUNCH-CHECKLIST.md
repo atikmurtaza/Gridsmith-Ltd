@@ -15,6 +15,16 @@
 
 This file is not a public legal notice. It records the practical items that should stay aligned with the public terms.
 
+## R11 adoption and hosting closeout (8 October 2026)
+
+All seven legal documents are OWNER_ADOPTED; none PUBLISHABLE. Existing Hostinger infrastructure
+decision CLOSED; Article 28 existing-terms coverage recorded on owner-attested authorised corporate
+use. No additional administrator agreement shown necessary. R10 draft SUPERSEDED / NOT EXECUTED.
+Publication still requires the approved GS-O003-R launch policy prerequisites (H4-B intake accuracy,
+cutover authority, Privacy co-publication and Cookie production retest), not a new contract signature.
+This does not imply public publication or Production cutover readiness. Current authority:
+`research/GS-LEGAL-001/R11-PRIVACY-ADOPTION-HOSTING-CLOSEOUT.md` §5.
+
 ## Required before public launch
 
 - [x] Remove every fabricated or placeholder VAT number. Done 2 September 2026: the `vatNumber` field is removed from the Sanity schema, the query, the footer, `/about` and the seed, so there is no rendering path a number can reach. `check:launch` no longer requires one on a live dataset — a gate demanding a value that does not lawfully exist is a gate demanding a false disclosure.

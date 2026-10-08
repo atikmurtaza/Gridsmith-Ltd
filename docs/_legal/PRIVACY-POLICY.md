@@ -1,7 +1,7 @@
 # Privacy Policy
 
 **Version 2.3**\
-**Draft date: 8 October 2026**
+**Effective date: 8 October 2026**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
 Company number: **17050842**\
