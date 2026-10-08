@@ -40,8 +40,8 @@
  *
  * Text on `/` sits over a `<canvas>`. axe cannot compute a background it cannot see and
  * reports those nodes *incomplete*, correctly. This measures what axe declines to: the
- * screenshot is taken twice, once as served and once with every glyph made transparent, and
- * each text box is compared against the second. The 98th percentile rather than the maximum,
+ * computed foreground is compared with a screenshot with every glyph made transparent;
+ * opposite-colour captures identify painted perspective glyphs. The 98th percentile rather than the maximum,
  * so a single anti-aliased pixel of a bar's edge does not decide a paragraph.
  *
  * ## Proving it
@@ -62,7 +62,8 @@ const CHAPTERS = ['hero', 'studios', 'context', 'process', 'reviews', 'close'];
  * harness only, where each probe reruns the gate. A filtered run says so on its last line, so it
  * cannot be read as the full gate.
  */
-const ONLY = process.env.MASTER_SCENE_VIEWPORTS?.split(',') ?? null;
+const DIAGNOSTICS = process.env.MASTER_SCENE_DIAGNOSTICS === '1';
+const ONLY = process.env.MASTER_SCENE_VIEWPORTS?.split(',') ?? (DIAGNOSTICS ? ['320x568'] : null);
 /** Fractions of the way between two chapter poses at which transit is sampled. */
 const BETWEEN = [1 / 3, 2 / 3];
 /** Hardcoded, not read from the source: the widths the owner asked to see (§22). */
@@ -123,7 +124,7 @@ async function bareUndimmed(page, q, tag, problems) {
   await redraw();
   const acknowledged = await page.evaluate(() => document.querySelector('[data-master-scene] canvas')?.hasAttribute('data-undimmed'));
   if (!acknowledged) problems.push(`${q} ${tag}: the renderer did not acknowledge data-scene-undim — the gold behind text was not measured`);
-  const frame = await analyse(await page.screenshot({ encoding: 'base64' }), []);
+  const frame = await analyse(await captureViewport(page), []);
   await page.evaluate((h) => {
     document.querySelectorAll('style').forEach((s) => s.textContent === h && s.remove());
     document.documentElement.removeAttribute('data-scene-undim');
@@ -138,15 +139,40 @@ async function bareUndimmed(page, q, tag, problems) {
 // `protocolTimeout`: software rendering competes with the browser's own protocol traffic; the
 // default 180s was enough by hand and not under the proof harness (`Network.enable timed out`).
 const browser = await launch({ args: ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'], protocolTimeout: 600_000 });
+console.log(`check-master-scene: ${await browser.version()}, ${process.platform}, Node ${process.version}; document-coordinate viewport capture`);
 const decoder = await browser.newPage();
 
 const problems = [];
 const log = [];
 
+/** Clip in document coordinates: viewport-surface captures painted offscreen review SVGs at 320px. */
+async function captureViewport(page) {
+  const read = () => page.evaluate(() => ({
+    layout: [document.documentElement.scrollWidth, document.documentElement.scrollHeight],
+    clip: { x: scrollX, y: scrollY, width: innerWidth, height: innerHeight },
+    dpr: devicePixelRatio, offset: [visualViewport.offsetLeft, visualViewport.offsetTop], scale: visualViewport.scale,
+    ring: document.querySelector('[data-reviews-carousel] ul')?.getAttribute('style'),
+  }));
+  const before = await read();
+  if (before.dpr !== 1 || before.scale !== 1 || before.offset.some(v => v !== 0)) throw new Error('Master capture requires scale 1 and an unshifted visual viewport');
+  const boxes = await page.evaluate(TEXT_BOXES);
+  const png = await page.screenshot({ encoding: 'base64', fullPage: false, captureBeyondViewport: true, clip: before.clip });
+  const bytes = Buffer.from(png,'base64');
+  if(bytes.readUInt32BE(16) !== before.clip.width || bytes.readUInt32BE(20) !== before.clip.height) throw new Error('Master screenshot bitmap dimensions changed');
+  const after = await read();
+  const captured = await page.evaluate(TEXT_BOXES);
+  if (JSON.stringify(before) !== JSON.stringify(after) ||
+      JSON.stringify(boxes.map(b => [b.text,b.box,b.opacity])) !== JSON.stringify(captured.map(b => [b.text,b.box,b.opacity]))) {
+    throw new Error(`Master screenshot and DOM pose changed during capture: ${JSON.stringify({ before, after,
+      boxesBefore: boxes.map(b => [b.box,b.opacity]), boxesAfter: captured.map(b => [b.box,b.opacity]) })}`);
+  }
+  return png;
+}
+
 /** Decode a PNG screenshot in a CSP-free page and hand back what the questions need. */
 async function analyse(pngBase64, boxes, reviewMasks = [], reviewBoxes = []) {
   return decoder.evaluate(
-    async (b64, boxes, reviewMasks, reviewBoxes) => {
+    async (b64, boxes, reviewMasks, reviewBoxes, diagnostics) => {
       const img = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob());
       const c = new OffscreenCanvas(img.width, img.height);
       const ctx = c.getContext('2d');
@@ -167,8 +193,10 @@ async function analyse(pngBase64, boxes, reviewMasks = [], reviewBoxes = []) {
         const r = data[i], g = data[i + 1], b = data[i + 2];
         if (r > 70 && r >= g && g > b && r - b > 30) { gold++; mask[p] = 1; }
       }
+      const samples = [];
       const p98 = boxes.map(([x, y, w, h], index) => {
         const ls = [];
+        const pixels = [];
         for (let yy = Math.max(0, y); yy < Math.min(height, y + h); yy++)
           for (let xx = Math.max(0, x); xx < Math.min(width, x + w); xx++) {
             const i = (yy * width + xx) * 4;
@@ -178,19 +206,23 @@ async function analyse(pngBase64, boxes, reviewMasks = [], reviewBoxes = []) {
             if (reviewBoxes[index] && masks.length === 2 &&
                 ![0, 1, 2].every((c) => masks[1][i + c] - masks[0][i + c] > 16)) continue;
             ls.push(L(i));
+            if (diagnostics) pixels.push({ at: [xx, yy], rgb: Array.from(data.slice(i,i+3)), L: L(i) });
           }
         ls.sort((a, b) => a - b);
-        return ls.length ? ls[Math.floor(ls.length * 0.98)] : null;
+        const value = ls.length ? ls[Math.floor(ls.length * 0.98)] : null;
+        if (diagnostics) samples.push({ count: ls.length, percentile: pixels.find(p => p.L === value) ?? null });
+        return value;
       });
       let x0 = width, y0 = height, x1 = 0, y1 = 0;
       for (let p = 0; p < mask.length; p++) if (mask[p]) { const x = p % width, y = (p / width) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
       const bbox = x1 >= x0 ? ((x1 - x0) * (y1 - y0)) / (width * height) : 0;
-      return { gold: gold / (width * height), mask: Array.from(mask), p98, bbox };
+      return { width, height, gold: gold / (width * height), mask: Array.from(mask), p98, bbox, samples };
     },
     pngBase64,
     boxes,
     reviewMasks,
     reviewBoxes,
+    DIAGNOSTICS,
   );
 }
 
@@ -199,7 +231,7 @@ async function reviewGlyphMasks(page) {
   const masks = [];
   for (const colour of ['black', 'white']) {
     const style = await page.addStyleTag({ content: `[data-reviews-carousel] li * { color: ${colour} !important; }` });
-    masks.push(await page.screenshot({ encoding: 'base64' }));
+    masks.push(await captureViewport(page));
     await style.evaluate((el) => el.remove());
   }
   return masks;
@@ -209,6 +241,19 @@ async function openHome(width, height, { reduced = false, noWebGL = false, optIn
   const page = await browser.newPage();
   await page.setViewport({ width, height, deviceScaleFactor: 1 });
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: reduced ? 'reduce' : 'no-preference' }]);
+  if (DIAGNOSTICS) await page.evaluateOnNewDocument(() => {
+    const names = new WeakMap(), uniforms = {};
+    const proto = WebGLRenderingContext.prototype, location = proto.getUniformLocation, draw = proto.drawArrays;
+    proto.getUniformLocation = function(program, name) { const value = location.call(this, program, name); if(value) names.set(value,name); return value; };
+    for(const method of ['uniform1f','uniform2f','uniform3fv','uniform4fv']) {
+      const original = proto[method];
+      proto[method] = function(location, ...value) { const name = names.get(location); if(name) uniforms[name] = value.map(v => typeof v === 'number' ? v : Array.from(v)); return original.call(this,location,...value); };
+    }
+    proto.drawArrays = function(...args) {
+      if(this.canvas.closest('[data-master-scene]')) window.__masterCaptureFrame = { at:performance.now(), scroll:[scrollX,scrollY], bitmap:[this.canvas.width,this.canvas.height], uniforms:structuredClone(uniforms) };
+      return draw.call(this,...args);
+    };
+  });
   if (noWebGL) {
     await page.evaluateOnNewDocument(() => {
       const real = HTMLCanvasElement.prototype.getContext;
@@ -241,7 +286,60 @@ async function openHome(width, height, { reduced = false, noWebGL = false, optIn
   await page
     .waitForFunction(() => document.querySelector('[data-master-scene]')?.dataset.render, { timeout: 15000 })
     .catch(() => {});
+  // Finish the first raster/layout before collecting glyphs; Windows changed font metrics on it.
+  if (optIn) await page.screenshot({ captureBeyondViewport: true, clip: await page.evaluate(() => ({ x: scrollX, y: scrollY, width: innerWidth, height: innerHeight })) });
   return page;
+}
+
+/** Read the browser's coordinate spaces and painted state; never infer them from runner settings. */
+const captureState = () => {
+  const rect = el => el?.getBoundingClientRect().toJSON();
+  const v = visualViewport;
+  const ring = document.querySelector('[data-reviews-carousel] ul');
+  const canvas = document.querySelector('[data-master-scene] canvas');
+  const css = el => {
+    const s = getComputedStyle(el);
+    return { element: el.tagName, className: el.getAttribute('class'), rect: rect(el),
+      color: s.color, textFill: s.webkitTextFillColor, opacity: s.opacity, filter: s.filter,
+      transform: s.transform, zoom: s.zoom, overflow: [s.overflowX, s.overflowY],
+      visibility: s.visibility, font: s.font, clipPath: s.clipPath,
+      scroll: [el.scrollLeft, el.scrollTop] };
+  };
+  const caption = [...document.querySelectorAll('[data-chapter="reviews"] p')].find(el => el.textContent.startsWith('Selected reviews'));
+  return { at: performance.now(), scroll: [scrollX, scrollY], viewport: [innerWidth, innerHeight],
+    dpr: devicePixelRatio, visualViewport: v && { offset: [v.offsetLeft, v.offsetTop], page: [v.pageLeft, v.pageTop], size: [v.width, v.height], scale: v.scale },
+    fonts: document.fonts.status, hydrated: document.querySelector('[data-reviews-carousel]')?.hasAttribute('data-enhanced'),
+    paused: document.querySelector('[data-pause]')?.getAttribute('aria-pressed'), ring: ring?.getAttribute('style'),
+    canvas: canvas && { rect: rect(canvas), bitmap: [canvas.width, canvas.height], render: canvas.parentElement.dataset.render },
+    chapters: [...document.querySelectorAll('[data-chapter]')].map(el => ({ name: el.dataset.chapter, rect: rect(el), documentTop: el.getBoundingClientRect().top + scrollY })),
+    caption: caption && { text: caption.textContent, ancestors: [caption, ...function* () { for(let el=caption.parentElement;el;el=el.parentElement) yield el; }()].map(css) },
+    controls: [...document.querySelectorAll('[data-reviews-carousel] button, [data-reviews-carousel] svg')].map(css),
+    sceneFrame: window.__masterCaptureFrame,
+    animations: document.getAnimations().map(a => ({ state: a.playState, currentTime: a.currentTime, target: a.effect?.target?.className })) };
+};
+
+async function saveCapture(tag, name, boxes, states, background, behind, source) {
+  const { before } = states;
+  if(!states.backgroundState.sceneFrame?.uniforms.uS) throw new Error('Master diagnostic did not reach the renderer uniforms');
+  const stem = `build/master-scene/capture-${tag}-${name}`.replace(/[^\w./-]+/g, '_');
+  mkdirSync('build/master-scene', { recursive: true });
+  writeFileSync(`${stem}-source.png`, source);
+  writeFileSync(`${stem}-background.png`, Buffer.from(background, 'base64'));
+  const overlay = await decoder.evaluate(async (b64, boxes) => {
+    const img = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob());
+    const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+    const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0);
+    ctx.strokeStyle = 'red'; ctx.fillStyle = 'red'; ctx.font = '12px monospace';
+    boxes.forEach(({ box: [x,y,w,h] }, i) => { ctx.strokeRect(x,y,w,h); ctx.fillText(String(i),x,y); });
+    return c.toDataURL('image/png').split(',')[1];
+  }, background, boxes);
+  writeFileSync(`${stem}-overlay.png`, Buffer.from(overlay, 'base64'));
+  writeFileSync(`${stem}.json`, JSON.stringify({ tag, chapter: name, browser: await browser.version(),
+    platform: process.platform, runtime: process.version, screenshot: { fullPage: false, captureBeyondViewport: true, fromSurface: true,
+      clip: { x:before.scroll[0], y:before.scroll[1], width:before.viewport[0], height:before.viewport[1] }, bitmap: [behind.width, behind.height] },
+    ...states, sourceNote: 'Subsequent independently guarded source frame; diagnostic captures can affect composition.',
+    glyphs: boxes.map((b,i) => ({ index: i, ...b, documentBox: [b.box[0]+before.scroll[0],b.box[1]+before.scroll[1],...b.box.slice(2)],
+      backgroundLuminance: behind.p98[i], sample: behind.samples[i], contrast: behind.p98[i] === null ? null : ratio(b.L,behind.p98[i]) })) }, null, 2));
 }
 
 /**
@@ -276,6 +374,7 @@ const TEXT_BOXES = () => {
     const node = walker.currentNode;
     if (!node.textContent.trim()) continue;
     const el = node.parentElement;
+    if (getComputedStyle(el).visibility !== 'visible') continue;
     // Visually hidden text (`.sr-only`) is not on screen and has no background to measure.
     const own = el.getBoundingClientRect();
     if (own.width <= 1 || own.height <= 1) continue;
@@ -326,6 +425,70 @@ const TEXT_BOXES = () => {
 
 const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 
+// A nonzero document scroll must put the known marker and caption at their CSS viewport pixels.
+// The shifted screenshot and shifted DOM specimens must both fail independently of contrast.
+{
+  const page = await browser.newPage();
+  await page.setViewport({ width: 320, height: 568, deviceScaleFactor: 1 });
+  await page.setContent('<style>body{margin:0;height:2500px;background:var(--canvas);color:var(--ink);font:20px Arial}p{position:absolute;top:900px;left:24px;margin:0}i{position:absolute;top:910px;left:280px;width:12px;height:12px;background:var(--accent)}</style><body data-division="master"><main><p>Capture specimen</p><i></i></main></body>');
+  await page.addStyleTag({ content: readFileSync('styles/themes/master.css','utf8') });
+  const marker = async (png, y) => decoder.evaluate(async (b64,y) => {
+    const img = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob());
+    const c = new OffscreenCanvas(img.width,img.height), ctx = c.getContext('2d'); ctx.drawImage(img,0,0);
+    return { size:[img.width,img.height], rgb:Array.from(ctx.getImageData(285,y,1,1).data).slice(0,3) };
+  },png,y);
+  const expected = await page.$eval('i',el => getComputedStyle(el).backgroundColor.match(/\d+/g).slice(0,3).map(Number));
+  for(const scroll of [850,900,910]) {
+    await page.evaluate(y => scrollTo(0,y),scroll);
+    const point = await marker(await captureViewport(page),915-scroll);
+    if(JSON.stringify(point.size) !== '[320,568]' || JSON.stringify(point.rgb) !== JSON.stringify(expected)) throw new Error('Document/bitmap coordinate calibration failed');
+  }
+  await page.evaluate(() => scrollTo(0,850));
+  const captionContrast = async () => {
+    const [text] = await page.evaluate(TEXT_BOXES);
+    const hide = await page.addStyleTag({ content:'p{color:transparent!important}' });
+    try {
+      const frame = await analyse(await captureViewport(page),[text.box]);
+      if(frame.p98[0] === null) throw new Error('Static caption contrast specimen had no pixels');
+      return { text, contrast:ratio(text.L,frame.p98[0]) };
+    } finally { await hide.evaluate(el => el.remove()); }
+  };
+  const good = await captionContrast();
+  const low = await page.addStyleTag({ content:'p{color:var(--canvas)}' });
+  const bad = await captionContrast();
+  await low.evaluate(el => el.remove());
+  const fade = await page.addStyleTag({ content:'p{opacity:.3}' });
+  const [faded] = await page.evaluate(TEXT_BOXES);
+  await fade.evaluate(el => el.remove());
+  if(good.contrast < good.text.min || bad.contrast >= bad.text.min || faded?.opacity !== .3) throw new Error('Static caption low-contrast/faded proof failed');
+  const shifted = await page.screenshot({ encoding:'base64', captureBeyondViewport:true, clip:{x:0,y:870,width:320,height:568} });
+  if(JSON.stringify((await marker(shifted,65)).rgb) === JSON.stringify(expected)) throw new Error('Shifted bitmap specimen was not rejected');
+  const screenshot = page.screenshot.bind(page);
+  page.screenshot = options => screenshot({ ...options, clip: { ...options.clip, width:319 } });
+  let dimensions = false;
+  try { await captureViewport(page); } catch(error) { if(!error.message.includes('bitmap dimensions changed')) throw error; dimensions=true; }
+  page.screenshot = screenshot;
+  if(!dimensions) throw new Error('Wrong bitmap dimensions specimen was not rejected');
+  await page.setViewport({ width:320, height:568, deviceScaleFactor:2 });
+  let scale = false;
+  try { await captureViewport(page); } catch(error) { if(!error.message.includes('requires scale 1')) throw error; scale=true; }
+  await page.setViewport({ width:320, height:568, deviceScaleFactor:1 });
+  if(!scale) throw new Error('Wrong device scale specimen was not rejected');
+  page.screenshot = async options => { await page.$eval('body',el => { el.style.height='2600px'; }); return screenshot(options); };
+  let layout = false;
+  try { await captureViewport(page); } catch(error) { if(!error.message.includes('DOM pose changed')) throw error; layout=true; }
+  page.screenshot = screenshot;
+  await page.$eval('body',el => { el.style.height='2500px'; });
+  if(!layout) throw new Error('Changed document layout specimen was not rejected');
+  page.screenshot = async options => { await page.$eval('p',el => { el.style.top='950px'; }); return screenshot(options); };
+  let moved = false;
+  try { await captureViewport(page); } catch(error) { if(!error.message.includes('DOM pose changed')) throw error; moved=true; }
+  page.screenshot = screenshot;
+  if(!moved) throw new Error('Moved DOM specimen was not rejected');
+  await page.close();
+  console.log('check-master-scene: document/bitmap mapping at three scrolls, static caption low contrast/fade, shifted bitmap, dimensions, device scale, document layout and moved DOM proven');
+}
+
 // Prove both sides of the perspective-card correction without changing application CSS.
 {
   const page = await browser.newPage();
@@ -339,7 +502,7 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
     return [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)];
   }));
   const transparent = await page.addStyleTag({ content: 'span { color: transparent !important; }' });
-  const background = await page.screenshot({ encoding: 'base64' });
+  const background = await captureViewport(page);
   const masks = await reviewGlyphMasks(page);
   const sampled = await analyse(background, boxes, masks, [true, true]);
   await transparent.evaluate((el) => el.remove());
@@ -381,11 +544,11 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
   await page.setContent('<main style="transform-style:preserve-3d"><p style="visibility:visible">Capture specimen</p></main>');
   const before = await page.$eval('p', el => el.getBoundingClientRect().toJSON());
   const faulty = await page.addStyleTag({ content: 'main{visibility:hidden!important}' });
-  if (await page.$eval('p', el => getComputedStyle(el).visibility) !== 'visible') throw new Error('Visibility leak proof was inert');
+  if (await page.$eval('p', el => getComputedStyle(el).visibility) !== 'visible' || (await page.evaluate(TEXT_BOXES)).length === 0) throw new Error('Visibility leak proof was inert');
   await faulty.evaluate(el => el.remove());
   await page.addStyleTag({ content: HIDE_CONTENT });
   const after = await page.$eval('p', el => ({ box: el.getBoundingClientRect().toJSON(), visibility: getComputedStyle(el).visibility, parentOpacity: getComputedStyle(el.parentElement).opacity }));
-  if (after.visibility !== 'hidden' || after.parentOpacity !== '1' || JSON.stringify(before) !== JSON.stringify(after.box)) throw new Error('Bare-scene hiding proof failed');
+  if (after.visibility !== 'hidden' || after.parentOpacity !== '1' || JSON.stringify(before) !== JSON.stringify(after.box) || (await page.evaluate(TEXT_BOXES)).length !== 0) throw new Error('Bare-scene hiding proof failed');
   await page.close();
   console.log('check-master-scene: explicit descendant visibility hides the bare-scene subject without flattening or moving geometry');
 }
@@ -463,10 +626,11 @@ for (const [w0, h0] of RUN) {
     if (overflow > 0) problems.push(`6 ${tag} ${name}: ${overflow}px of horizontal overflow`);
 
     const boxes = await page.evaluate(TEXT_BOXES);
+    const diagnosticBefore = DIAGNOSTICS ? await page.evaluate(captureState) : null;
 
     // The scene alone: content hidden, so gold text and the gold button cannot count as the mark.
     await page.addStyleTag({ content: HIDE_CONTENT });
-    const bare = await analyse(await page.screenshot({ encoding: 'base64' }), []);
+    const bare = await analyse(await captureViewport(page), []);
     await page.evaluate((h) => document.querySelectorAll('style').forEach((s) => s.textContent === h && s.remove()), HIDE_CONTENT);
 
     // 3 — visible, at every settled pose. Not in transit: a mark passing behind dense copy or the
@@ -516,13 +680,15 @@ for (const [w0, h0] of RUN) {
 
     // 5 — every text box against the scene behind it, glyphs transparent.
     await page.addStyleTag({ content: ':is(header, main, footer) *, :is(header, main, footer) *::before, :is(header, main, footer) *::after { color: transparent !important; text-decoration-color: transparent !important; }' });
-    const background = await page.screenshot({ encoding: 'base64' });
+    const background = await captureViewport(page);
+    const diagnosticBackground = DIAGNOSTICS ? await page.evaluate(captureState) : null;
     const capturedBoxes = await page.evaluate(TEXT_BOXES);
     if (JSON.stringify(boxes.map(b => [b.text, b.box])) !== JSON.stringify(capturedBoxes.map(b => [b.text, b.box]))) {
       throw new Error(`5 ${tag} ${name}: text geometry changed during background capture`);
     }
     const masks = boxes.some((b) => b.review) ? await reviewGlyphMasks(page) : [];
     const behind = await analyse(background, boxes.map((b) => b.box), masks, boxes.map((b) => b.review));
+    if (behind.width !== width || behind.height !== height) throw new Error(`5 ${tag} ${name}: screenshot bitmap does not match CSS viewport at scale 1`);
 
     // 10 — the page's own surfaces leave the scene visible. Same frame, text transparent: what is
     // left between the reader and the scene is backgrounds, veils and panels.
@@ -536,6 +702,12 @@ for (const [w0, h0] of RUN) {
       problems.push(`10 ${tag} ${name}: only ${(unobscured * 100).toFixed(0)}% of the visible scene survives the page's own backgrounds — something opaque is covering it`);
     }
     await page.evaluate(() => document.querySelectorAll('style').forEach((s) => s.textContent.includes('color: transparent !important') && s.remove()));
+    if (DIAGNOSTICS) {
+      const sourceBefore = await page.evaluate(captureState);
+      const source = Buffer.from(await captureViewport(page),'base64');
+      await saveCapture(tag, name, boxes, { before: diagnosticBefore, backgroundState: diagnosticBackground,
+        sourceBefore, sourceAfter: await page.evaluate(captureState) }, background, behind, source);
+    }
     let worst = Infinity;
     boxes.forEach((b, i) => {
       if (b.opacity !== 1) problems.push(`5 ${tag} ${name}: "${b.text}" is painted at ${b.opacity} opacity — foreground contrast must include compositing`);
@@ -550,7 +722,7 @@ for (const [w0, h0] of RUN) {
       // that only CI produces can be examined (uploaded by CI as master-scene-evidence). Evidence
       // only — nothing here changes what passes.
       if (r < b.min) {
-        const dir = '.artifacts/master-scene';
+        const dir = 'build/master-scene';
         const stem = `${dir}/q5-${tag}-${name}-${i}`.replace(/[^\w./-]+/g, '_');
         mkdirSync(dir, { recursive: true });
         writeFileSync(`${stem}.png`, Buffer.from(background, 'base64'));
@@ -590,7 +762,7 @@ for (const [w0, h0] of RUN) {
   for (const chapter of ['hero', 'close']) {
     await toChapter(page, chapter);
     await page.addStyleTag({ content: HIDE_CONTENT });
-    frames.push(await analyse(await page.screenshot({ encoding: 'base64' }), []));
+    frames.push(await analyse(await captureViewport(page), []));
     await page.evaluate((h) => document.querySelectorAll('style').forEach((s) => s.textContent === h && s.remove()), HIDE_CONTENT);
   }
   let diff = 0;
@@ -619,7 +791,7 @@ for (const [w0, h0] of RUN) {
   });
   if (fb.state !== 'fallback') problems.push(`7: without WebGL data-render is "${fb.state}", not "fallback"`);
   await page.addStyleTag({ content: HIDE_CONTENT });
-  const fbFrame = await analyse(await page.screenshot({ encoding: 'base64' }), []);
+  const fbFrame = await analyse(await captureViewport(page), []);
   await page.evaluate((h) => document.querySelectorAll('style').forEach((s) => s.textContent === h && s.remove()), HIDE_CONTENT);
   if (fb.display === 'none' || fb.shapes !== '8/6') problems.push(`7: without WebGL the fallback mark is not drawn (display ${fb.display}, ${fb.shapes} spheres/bars, expected 8/6)`);
   else if (fbFrame.gold < VISIBLE_FLOOR) problems.push(`7: without WebGL the fallback mark covers ${(fbFrame.gold * 100).toFixed(2)}% of the viewport — drawn and not seen`);
@@ -657,7 +829,7 @@ for (const [w, h] of [[1440, 900], [768, 1024], [390, 844]]) {
     await new Promise((r) => setTimeout(r, 100));
     const boxes = await page.evaluate(TEXT_BOXES);
     const hide = await page.addStyleTag({ content: ':is(header, main, footer) *, :is(header, main, footer) *::before, :is(header, main, footer) *::after { color: transparent !important; text-decoration-color: transparent !important; }' });
-    const background = await page.screenshot({ encoding: 'base64' });
+    const background = await captureViewport(page);
     await hide.evaluate((el) => el.remove());
     const behind = await analyse(background, boxes.map((b) => b.box));
     boxes.forEach((b, k) => {

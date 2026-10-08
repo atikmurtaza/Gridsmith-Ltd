@@ -2,6 +2,12 @@
 
 8 October 2026. **LOCAL DEVELOPMENT ARTIFACT ONLY. STAGING DEPLOYMENT NOT EXECUTED OR AUTHORISED.**
 
+R12-MASTER-CAPTURE corrects the demonstrated bitmap/DOM capture mismatch in the Master
+gate while preserving application visuals and all accessibility thresholds. The failed
+`b2179254` run cannot establish staging readiness. Use the final exact-SHA CI receipt
+for this repair before separately authorised R13; CI closure does not deploy or authorise
+the private artifact. Evidence: `docs/_shared/GS-LEGAL-001-R12-MASTER-CAPTURE.md`.
+
 R12-PRESS-FIX preserves this profile and rebuilds the same 62-route/219-file legal
 review artifact with the Press contrast correction, retaining the passing
 Master/Digital repair. Use its final exact-source/CI receipt before any separately

@@ -390,7 +390,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: master-scene-evidence
-          path: .artifacts/master-scene
+          path: build/master-scene
           if-no-files-found: ignore
 
   hostinger-staging:
