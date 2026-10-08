@@ -48,6 +48,7 @@ import { AxePuppeteer } from '@axe-core/puppeteer';
 import { readFileSync } from 'node:fs';
 import { REVIEW_SOURCE_LABEL as SOURCE_LABEL, REVIEW_SOURCE_URL as FREELANCER_PROFILE } from '../lib/reviews/public-model.ts';
 import { anonymityProblems } from './service-content-rules.mjs';
+import { labelOpacitySamples, proveLabelContrast, renderedLabelContrast } from './rendered-label-contrast.mjs';
 
 const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000';
 const axeSource = readFileSync('node_modules/axe-core/axe.min.js', 'utf8');
@@ -82,7 +83,86 @@ const problems = [];
 const say = (line) => console.log(line);
 const browser = await launch();
 
+async function captionContrast() {
+  await proveLabelContrast(browser);
+  for (const width of [320, 390, 1440]) {
+    const page = await browser.newPage();
+    await page.setViewport({ width, height: 900 });
+    await page.setCookie({ name: 'gs_consent', value: '1', url: BASE_URL });
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+    await page.evaluateOnNewDocument(labelOpacitySamples, '[data-reviews-carousel] figure', true);
+    await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
+    await page.waitForSelector('[data-reviews-carousel][data-enhanced]');
+    await page.$eval('[data-reviews-carousel]', el => el.scrollIntoView({ block: 'center' }));
+    let boxes = 0, min = Infinity;
+    for (const angle of [0, 40, 45, 49.9, 50.1, 60, 90]) {
+      const drag = await page.$eval('[data-reviews-carousel]', (el, angle) => {
+        const ring = el.querySelector('ul'), card = ring.firstElementChild;
+        const at = Number(ring.style.transform.match(/rotateY\(([-\d.]+)deg/)[1]);
+        const radius = card.offsetWidth * Number(el.style.getPropertyValue('--k'));
+        const stage = ring.parentElement.getBoundingClientRect();
+        return { x: stage.left + 8, y: Math.max(5, stage.top + 8), dx: (angle - at) * Math.PI * radius / 180 };
+      }, angle);
+      await page.mouse.move(drag.x, drag.y);
+      await page.mouse.down();
+      await page.mouse.move(drag.x + drag.dx, drag.y, { steps: 8 });
+      await page.mouse.up();
+      await page.waitForFunction(angle => {
+        const ring = document.querySelector('[data-reviews-carousel] ul');
+        const at = Number(ring.style.transform.match(/rotateY\(([-\d.]+)deg/)[1]);
+        return Math.abs(at - angle) < .1;
+      }, {}, angle);
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      const result = await renderedLabelContrast(page, '[data-reviews-carousel] figure');
+      problems.push(...result.failures.map(f => `12: ${width}px ${angle}°: ${f}`));
+      boxes += result.boxes; min = Math.min(min, result.min);
+    }
+    // Keyboard focus restores even an unpainted far-side provenance link to the reading plane.
+    await page.focus('[data-review-key="review-06"] figcaption a');
+    await page.waitForFunction(() => {
+      const ring = document.querySelector('[data-reviews-carousel] ul');
+      const card = document.querySelector('[data-review-key="review-06"]');
+      const angle = Number(ring.style.transform.match(/rotateY\(([-\d.]+)deg/)[1]);
+      const step = 360 / ring.children.length;
+      return card.hasAttribute('data-front') && Math.abs(((angle + 5 * step) % 360 + 540) % 360 - 180) < .01;
+    });
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    const focus = await renderedLabelContrast(page, '[data-review-key="review-06"] figure');
+    problems.push(...focus.failures.map(f => `12: ${width}px focused caption: ${f}`));
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+    await page.focus('#main');
+    const movingAt = await page.$eval('[data-reviews-carousel] ul', el => el.style.transform);
+    await new Promise(r => setTimeout(r, 8500));
+    const samples = await page.evaluate(() => window.__labelContrastSamples);
+    if (!samples.length || samples.some(s => s.opacity !== 1)) problems.push(`12: ${width}px transitional caption opacity failed`);
+    if (movingAt === await page.$eval('[data-reviews-carousel] ul', el => el.style.transform)) problems.push(`12: ${width}px autoplay sampling measured a still drum`);
+    await page.click('[data-pause]');
+    const paused = await renderedLabelContrast(page, '[data-reviews-carousel] figure');
+    problems.push(...paused.failures.map(f => `12: ${width}px paused: ${f}`));
+    console.log(`12. captions ${width}px: seven manual angles, focus, reduced motion, pause; ${boxes} glyph boxes, minimum ${min.toFixed(2)}:1; ${samples.length} frame samples`);
+    await page.close();
+    const nojs = await browser.newPage();
+    await nojs.setViewport({ width, height: 900 });
+    await nojs.setJavaScriptEnabled(false);
+    await nojs.goto(`${BASE_URL}/`, { waitUntil: 'networkidle0' });
+    const staticState = await nojs.$eval('[data-reviews-carousel]', el => ({ enhanced: el.hasAttribute('data-enhanced'), figures: el.querySelectorAll('figure').length, layout: getComputedStyle(el.querySelector('ul')).display }));
+    if (staticState.enhanced || staticState.figures !== 11 || staticState.layout !== 'grid') problems.push(`12: ${width}px no-JS review grid changed`);
+    await nojs.$eval('[data-reviews-carousel]', el => el.scrollIntoView({ block: 'start' }));
+    const fallback = await renderedLabelContrast(nojs, '[data-reviews-carousel] figure');
+    problems.push(...fallback.failures.map(f => `12: ${width}px no-JS: ${f}`));
+    await nojs.close();
+  }
+}
+
+if (process.argv.includes('--contrast-only')) {
+  try { await captionContrast(); } finally { await browser.close(); }
+  if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
+  console.log('check-reviews-ui: focused caption contrast PASS');
+  process.exit(0);
+}
+
 try {
+  await captionContrast();
   /* -- 1 and 2. Master renders them; no division does ---------------------- */
 
   const counts = {};

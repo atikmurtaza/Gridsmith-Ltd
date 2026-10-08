@@ -2,6 +2,12 @@
 
 8 October 2026. **LOCAL DEVELOPMENT ARTIFACT ONLY. STAGING DEPLOYMENT NOT EXECUTED OR AUTHORISED.**
 
+R12-CI-FIX preserves this profile and rebuilds the same 62-route/219-file legal review
+artifact with the Master/Digital contrast correction. Use the final source/CI receipt
+from that session before any separately authorised R13 deployment. The prior failed
+SHA is not staging-ready on the strength of its earlier local pass. Repair evidence:
+`docs/_shared/GS-LEGAL-001-R12-CI-FIX.md`.
+
 Destination remains `https://mediumaquamarine-wallaby-594070.hostingersite.com`, existing multi-domain
 Business account administered internally by Gridsmith. No purchase, migration, new account/domain,
 VPS, subscription or managed Node service. R11 controls hosting-processing coverage; R10 draft is

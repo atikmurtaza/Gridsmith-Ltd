@@ -25,7 +25,7 @@ import styles from './home.module.css';
  * are decoration (`aria-hidden`) and carry no text. `geometry()` derives the angles from the
  * review count, so server and client render the same values. Because the words are flat and the
  * label curves away behind them, a label keeps side margins that grow with its width, and its
- * words fade between `WORDS_FULL` and `WORDS_GONE` degrees from the front — past that the label
+ * words stay at full contrast until `WORDS_GONE` degrees from the front — past that the label
  * is a sliver at the drum's edge, carried on as a blank curve.
  *
  * ## Sized by the stage, never by a card count
@@ -78,8 +78,7 @@ const EASE_RATE = 0.6;
 const EASE_NUDGE = 0.22;
 /** A release keeps at most this angular speed (deg/s) — momentum, never a spin. */
 const MAX_FLING = 60;
-/** Degrees from the front at which a label's words start to fade, and are gone. */
-const WORDS_FULL = 40;
+/** Beyond this angle the flat words would overhang the curved label. */
 const WORDS_GONE = 50;
 
 const rad = (deg: number) => (deg * Math.PI) / 180;
@@ -161,11 +160,10 @@ export function ReviewCarousel({ reviews }: { reviews: readonly PublicReview[] }
       for (let i = 0; i < el.children.length; i++) {
         const away = Math.cos(rad(a + i * g.step)) < 0;
         if (far[i] !== away) el.children[i].toggleAttribute('data-far', (far[i] = away));
-        // The words fade as their label turns past WORDS_FULL and are gone by WORDS_GONE: beyond
-        // it the label is a sliver and flat words would stand off its curved edge. Opacity keeps
-        // them in the accessibility tree; once unpainted they stop taking pointer hits too.
+        // Keep painted words at full contrast; beyond the label's readable geometry they are
+        // unpainted but stay in the accessibility tree so focus can bring any review to the front.
         const off = Math.abs(((((a + i * g.step) % 360) + 540) % 360) - 180);
-        const o = Math.round(Math.min(1, Math.max(0, (WORDS_GONE - off) / (WORDS_GONE - WORDS_FULL))) * 100) / 100;
+        const o = off < WORDS_GONE ? 1 : 0;
         if (ink[i] !== o) {
           const fig = (el.children[i] as HTMLElement).querySelector('figure');
           if (fig) {

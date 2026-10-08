@@ -1,3 +1,5 @@
+> **GS-LEGAL-001-R12-CI-FIX (8 October 2026):** Review words stay fully opaque throughout the cylinder's existing readable window (less than 50° from the front), then become unpainted together. Cylinder, facets, dragging and focus promotion retain their motion; reduced-motion and anonymous no-JS content remain. This supersedes the earlier 40–50° word fade. Evidence: `docs/_shared/GS-LEGAL-001-R12-CI-FIX.md`.
+
 # Design Spec — Gridsmith Master Layer
 
 Inherits `_shared/00-FOUNDATION.md` §3. This file defines the master theme and the rules that keep three division identities reading as one company.

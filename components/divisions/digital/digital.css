@@ -495,7 +495,8 @@
 .dg-compass-nav, .dg-compass-link { position: absolute; inset: 0; pointer-events: none; }
 .dg-compass-link { color: var(--digital-muted-dark); text-decoration: none; transition: color calc(var(--dur-slow) * 1.5) ease-out; }
 .dg-compass-number { position: absolute; left: calc(var(--dg-nx) * 100%); top: calc(var(--dg-ny) * 100%); display: grid; place-items: center; inline-size: 52px; block-size: 52px; transform: translate(-50%, -50%); font-size: 1.5rem; pointer-events: auto; transition: font-size calc(var(--dur-slow) * 1.5) var(--ease-out); }
-.dg-compass-label { position: absolute; display: grid; gap: .3rem; inline-size: 11.5rem; min-block-size: 70px; padding: .7rem .85rem; border: 1px solid var(--digital-line-dark); background: var(--digital-dark-raised); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(4px); transition: opacity calc(var(--dur-base) * .88) ease-out, transform calc(var(--dur-base) * .88) ease-out, visibility calc(var(--dur-base) * .88); }
+/* Text and its backing appear together at full contrast; the callout still moves into place. */
+.dg-compass-label { position: absolute; display: grid; gap: .3rem; inline-size: 11.5rem; min-block-size: 70px; padding: .7rem .85rem; border: 1px solid var(--digital-line-dark); background: var(--digital-dark-raised); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(4px); transition: transform calc(var(--dur-base) * .88) ease-out; }
 .dg-compass-link-1 .dg-compass-label { left: calc(50% + 45px); top: -110px; }
 .dg-compass-link-2 .dg-compass-label { left: 85%; bottom: 88%; }
 .dg-compass-link-3 .dg-compass-label { left: 65%; top: calc(100% + 2.75rem); }

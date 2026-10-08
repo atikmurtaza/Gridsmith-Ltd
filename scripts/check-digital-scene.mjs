@@ -11,6 +11,7 @@
  * --prove injects reversible browser-only faults and requires each assertion branch to fail.
  */
 import { launch } from './browser-launch.mjs';
+import { labelOpacitySamples, renderedLabelContrast } from './rendered-label-contrast.mjs';
 
 const base = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
 const PROVE = process.argv.includes('--prove');
@@ -25,7 +26,7 @@ const decoder = await browser.newPage();
 const errors = [];
 const settle = (ms = 1500) => new Promise((r) => setTimeout(r, ms));
 
-async function open(width, height, { reduced = false, saveData = false, js = true } = {}) {
+async function open(width, height, { reduced = false, saveData = false, js = true, contrast = false } = {}) {
   const page = await browser.newPage();
   await page.setViewport({ width, height, deviceScaleFactor: 1 });
   await page.setCookie({ name: 'gs_consent', value: '1', url: base });
@@ -34,6 +35,7 @@ async function open(width, height, { reduced = false, saveData = false, js = tru
     await page.evaluateOnNewDocument(() =>
       Object.defineProperty(navigator, 'connection', { value: { saveData: true }, configurable: true }));
   if (!js) await page.setJavaScriptEnabled(false);
+  if (contrast) await page.evaluateOnNewDocument(labelOpacitySamples, '.dg-compass-label', true);
   page.on('pageerror', (e) => errors.push(`${width}x${height}: browser error ${e.message}`));
   const response = await page.goto(`${base}/digital`, { waitUntil: 'networkidle0' });
   if (![200, 304].includes(response?.status())) throw new Error(`/digital HTTP ${response?.status()}`);
@@ -171,6 +173,59 @@ async function visit(page, anchor) {
   await page.evaluate((y) => window.scrollTo(0, y), y);
   await settle();
   return state(page);
+}
+
+// R12: inspect crossovers as they happen, then pixel backgrounds in every readable callout.
+async function compassContrast(width, height, reduced = false) {
+  const page = await open(width, height, { reduced, contrast: true });
+  let boxes = 0, min = Infinity;
+  const found = [];
+  for (const anchor of anchors().filter(a => ['hero', 'map', 'final'].includes(a.name))) {
+    await visit(page, anchor);
+    if (anchor.name === 'map' && width < 1024) continue; // The stacked map uses its native list.
+    if (anchor.name === 'final' && width >= 1024) {
+      await page.evaluate(async () => {
+        const shell = document.querySelector('.dg-apertures');
+        const lead = document.querySelector('.dg-close-copy > p');
+        // Converge after content-visibility renders the intervening chapters. Keep the
+        // lead just beyond Final's actual axis trigger, with the whole compass on screen.
+        for (let n = 0; n < 4; n++) {
+          const axis = parseFloat(getComputedStyle(shell.parentElement).top) + shell.offsetWidth / 2;
+          scrollTo(0, scrollY + lead.getBoundingClientRect().bottom - axis + 30);
+          await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+        }
+      });
+      await page.waitForFunction(() => {
+        const shell = document.querySelector('.dg-apertures');
+        const r = shell.getBoundingClientRect();
+        return shell.dataset.mode === 'final' && !shell.querySelector('nav').inert && r.top >= 110 && r.bottom < innerHeight - 150;
+      });
+    }
+    if (anchor.name === 'hero') await page.evaluate(() => document.querySelector('.dg-motion-control').click());
+    for (let i = 1; i <= 5; i++) {
+      const link = `.dg-compass-link-${i}`;
+      await page.$eval(link, el => el.focus({ preventScroll: true }));
+      // Puppeteer's hover scrolls sticky descendants into view and can leave Final.
+      const point = await page.$eval(`${link} .dg-compass-number`, el => {
+        const r = el.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      });
+      await page.mouse.move(point.x, point.y);
+      await settle(300);
+      // Phone callouts begin below the fold. Bring their text into the viewport within Hero.
+      if (anchor.name === 'hero' && width < 1024) await page.evaluate(() => scrollTo(0, 180));
+      const result = await renderedLabelContrast(page, `${link} .dg-compass-label`);
+      const current = await state(page);
+      if (current.mode !== anchor.mode || current.inert) found.push(`${width} ${anchor.name} ${i}: callout state changed to ${current.mode}, inert ${current.inert}`);
+      found.push(...result.failures.map(f => `${width} ${anchor.name} ${i}: ${f}`));
+      boxes += result.boxes; min = Math.min(min, result.min);
+    }
+  }
+  const samples = await page.evaluate(() => window.__labelContrastSamples);
+  if (!samples.length || samples.some(s => s.opacity !== 1)) found.push(`${width}: transitional label opacity failed (${samples.length} samples)`);
+  await page.close();
+  console.log(`compass contrast ${width}x${height}${reduced ? ' reduced' : ''}: ${boxes} glyph boxes, minimum ${min.toFixed(2)}:1, ${samples.length} animation-frame opacity samples`);
+  return found;
 }
 
 // ---- 1. States and rendered contrast across the matrix ------------------------------------
@@ -360,6 +415,10 @@ function noJsProblems(html) {
 }
 
 try {
+  if (process.argv.includes('--contrast-only')) {
+    for (const [w, h] of [[412, 823], [1440, 900]]) errors.push(...await compassContrast(w, h));
+    errors.push(...await compassContrast(412, 823, true));
+  } else {
   const html = await (await fetch(`${base}/digital`)).text();
   if (PROVE) {
     const proofs = [
@@ -378,6 +437,8 @@ try {
       else console.log(`PROVEN RED ${name}`);
     }
   } else {
+    for (const [w, h] of [[412, 823], [1440, 900]]) errors.push(...await compassContrast(w, h));
+    errors.push(...await compassContrast(412, 823, true));
     let total = 0;
     for (const [w, h] of SIZES) {
       const { found, measured } = await matrix(w, h);
@@ -407,6 +468,7 @@ try {
     errors.push(...nojs);
     console.log(`no-JS: ${nojs.length ? 'FAILED' : `hero, CTAs, 5 route links, 5 chapters, ${SERVICE_LINKS} service links, engagement, final`}`);
     console.log(`pixel contrast: ${total} text boxes measured across ${SIZES.length} sizes`);
+  }
   }
 } finally {
   await browser.close();

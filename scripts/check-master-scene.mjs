@@ -96,15 +96,13 @@ const VISIBLE_FLOOR = 0.01;
 const MOTION_FLOOR = 0.02;
 const SETTLE_MS = 1800;
 /**
- * Hides the page's content so only the scene is measured. **`opacity`, not `visibility`** —
- * the first version used `visibility: hidden`, and descendants that declare `visibility:
- * visible` (the nav, the kicker, the button) stayed on screen and were counted as the mark.
- * It read as the scene moving under reduced motion, 2.12%, when the scene was identical.
+ * Hide every descendant explicitly: root opacity flattens the review drum's preserve-3d
+ * compositor group. A root-only visibility rule leaked descendants declaring visible.
  */
-const HIDE_CONTENT = 'main, header, footer { opacity: 0 !important; }';
+const HIDE_CONTENT = 'main, header, footer, :is(main, header, footer) * { visibility: hidden !important; }';
 /**
  * The scene with its text dimming removed at the source. The renderer dims the scene behind every
- * element in its text selector, and hiding the content by opacity leaves those boxes in place — so a
+ * element in its text selector, and hiding the content leaves those boxes in place — so a
  * bare capture reads dimmed gold as no gold exactly where text is. Questions 12 and 13 ask about the
  * gold itself there, so the renderer's test affordance is switched on (`data-scene-undim` on
  * <html>, acknowledged as `data-undimmed` on the canvas) and a scroll event makes it redraw.
@@ -281,12 +279,12 @@ const TEXT_BOXES = () => {
     // Visually hidden text (`.sr-only`) is not on screen and has no background to measure.
     const own = el.getBoundingClientRect();
     if (own.width <= 1 || own.height <= 1) continue;
-    // GS-VIS-001-R1: text under an ancestor at opacity 0 is not painted (the review drum fades the
+    // GS-VIS-001-R1: text under an ancestor at opacity 0 is not painted (the review drum removes the
     // words of a label turned past 50°) — there is nothing on screen to measure. Any opacity above
     // zero is painted and measured as usual; the proof below holds both sides.
-    let faded = false;
-    for (let a = el; a && a !== root; a = a.parentElement) if (getComputedStyle(a).opacity === '0') { faded = true; break; }
-    if (faded) continue;
+    let opacity = 1;
+    for (let a = el; a && a !== root; a = a.parentElement) opacity *= Number(getComputedStyle(a).opacity);
+    if (opacity === 0) continue;
     // ...and text beyond a sideways-clipping ancestor (the drum's stage) is not painted either: each
     // box is trimmed to the clip, so the background is sampled only where the glyphs actually are.
     let clip = null;
@@ -318,6 +316,7 @@ const TEXT_BOXES = () => {
         text: node.textContent.trim().slice(0, 40),
         review: !!el.closest('[data-reviews-carousel] li'),
         footer: !!el.closest('body > footer'),
+        opacity,
       });
     }
   }
@@ -369,11 +368,26 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
   const faint = boxes.find((b) => b.text === 'Faint');
   const edge = boxes.find((b) => b.text.startsWith('Edgeword'));
   const trimmed = edge && edge.box[0] >= 40 && edge.box[0] + edge.box[2] <= 101;
-  if (ghost || !faint || !trimmed) {
+  if (ghost || !faint || faint.opacity !== .3 || !trimmed) {
     throw new Error(`Painted-text proof failed: ghost ${!!ghost} (want false), faint ${!!faint} (want true), edge ${JSON.stringify(edge?.box)} (want within 40–100)`);
   }
   console.log('check-master-scene: unpainted (opacity 0) text skipped, faded text still measured, clipped text trimmed to its clip');
   await page.close();
+}
+// Every descendant is hidden, including a child with its own visible declaration; 3D grouping
+// and geometry remain intact. The original root-only visibility fault is a permanent subject.
+{
+  const page = await browser.newPage();
+  await page.setContent('<main style="transform-style:preserve-3d"><p style="visibility:visible">Capture specimen</p></main>');
+  const before = await page.$eval('p', el => el.getBoundingClientRect().toJSON());
+  const faulty = await page.addStyleTag({ content: 'main{visibility:hidden!important}' });
+  if (await page.$eval('p', el => getComputedStyle(el).visibility) !== 'visible') throw new Error('Visibility leak proof was inert');
+  await faulty.evaluate(el => el.remove());
+  await page.addStyleTag({ content: HIDE_CONTENT });
+  const after = await page.$eval('p', el => ({ box: el.getBoundingClientRect().toJSON(), visibility: getComputedStyle(el).visibility, parentOpacity: getComputedStyle(el.parentElement).opacity }));
+  if (after.visibility !== 'hidden' || after.parentOpacity !== '1' || JSON.stringify(before) !== JSON.stringify(after.box)) throw new Error('Bare-scene hiding proof failed');
+  await page.close();
+  console.log('check-master-scene: explicit descendant visibility hides the bare-scene subject without flattening or moving geometry');
 }
 if (process.argv.includes('--prove-review-mask-only')) {
   await browser.close();
@@ -503,6 +517,10 @@ for (const [w0, h0] of RUN) {
     // 5 — every text box against the scene behind it, glyphs transparent.
     await page.addStyleTag({ content: ':is(header, main, footer) *, :is(header, main, footer) *::before, :is(header, main, footer) *::after { color: transparent !important; text-decoration-color: transparent !important; }' });
     const background = await page.screenshot({ encoding: 'base64' });
+    const capturedBoxes = await page.evaluate(TEXT_BOXES);
+    if (JSON.stringify(boxes.map(b => [b.text, b.box])) !== JSON.stringify(capturedBoxes.map(b => [b.text, b.box]))) {
+      throw new Error(`5 ${tag} ${name}: text geometry changed during background capture`);
+    }
     const masks = boxes.some((b) => b.review) ? await reviewGlyphMasks(page) : [];
     const behind = await analyse(background, boxes.map((b) => b.box), masks, boxes.map((b) => b.review));
 
@@ -520,6 +538,7 @@ for (const [w0, h0] of RUN) {
     await page.evaluate(() => document.querySelectorAll('style').forEach((s) => s.textContent.includes('color: transparent !important') && s.remove()));
     let worst = Infinity;
     boxes.forEach((b, i) => {
+      if (b.opacity !== 1) problems.push(`5 ${tag} ${name}: "${b.text}" is painted at ${b.opacity} opacity — foreground contrast must include compositing`);
       if (behind.p98[i] === null) {
         if (!b.review) problems.push(`5 ${tag} ${name}: no background pixels for "${b.text}"`);
         return;
