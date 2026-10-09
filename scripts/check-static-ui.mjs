@@ -110,8 +110,9 @@ try {
     }
   }
   // The explicit software scene affordance proves hydration, not device GPU performance.
-  await page.goto(base + '/?scene=software', { waitUntil: 'networkidle0' });
-  await page.waitForSelector('[data-render="ready"]');
+  // Software rendering can delay network-idle delivery; require the scene's actual ready state.
+  await page.goto(base + '/?scene=software', { waitUntil: 'load' });
+  await page.waitForSelector('[data-master-scene][data-render="ready"]');
   receipt.master = 'software WebGL ready';
   assert.equal(await page.$$eval('[data-reviews-carousel] blockquote', (nodes) => nodes.length), 11);
   // GS-HOST-H4-G: the approved GS-VIS-001 cylinder turns continuously; its angle is the ring's

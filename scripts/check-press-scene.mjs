@@ -7,6 +7,7 @@ import {readFileSync} from 'node:fs';
 import {AxePuppeteer} from '@axe-core/puppeteer';
 import {launch} from './browser-launch.mjs';
 import {checkPressFlags, pressContrast, provePressContrast} from './press-contrast.mjs';
+import {labelOpacitySamples, renderedLabelContrast} from './rendered-label-contrast.mjs';
 const base=process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const processNames=['Consultation','Planning & Scope','Approval & Start','Design, Development & Updates','Delivery','Support (if applicable)'];
@@ -43,17 +44,16 @@ assert.throws(()=>checkCycle(specimen.slice(0,4)),/repeat/);
 assert.throws(()=>checkCycle(specimen.map((e,i)=>i===4?{...e,at:5000}:e)),/cycle timing/);
 assert.throws(()=>checkCycle(specimen.map((e,i)=>i===1?{...e,stage:'publish'}:e)));
 for(const index of [1,2,3])assert.throws(()=>checkCycle(specimen.map((e,i)=>i===index?{...e,at:e.at+500}:e)),/stage timing/);
+// Use main-thread CSS sampling for paused pixel captures; default-browser acceptance follows.
+const pixelBrowser=await launch({args:['--disable-threaded-animation']});
+try{await provePressContrast(pixelBrowser);await checkPressFlags(pixelBrowser,base);}
+finally{await pixelBrowser.close();}
+if(process.argv.includes('--contrast-only'))process.exit(0);
 const browser=await launch();
-if(process.argv.includes('--contrast-only')){
- try{await provePressContrast(browser);await checkPressFlags(browser,base);}
- finally{await browser.close();}
- process.exit(0);
-}
 try {
- await provePressContrast(browser);
- await checkPressFlags(browser,base);
  const page=await browser.newPage(),errors=[];
  await page.setCacheEnabled(false);
+ await page.evaluateOnNewDocument(labelOpacitySamples,'.pr-desk:has(#pr-desk-edit:checked) :is(.pr-d-flag, .pr-d-ins)',true);
  page.on('pageerror',e=>errors.push(e.message));
  await page.evaluateOnNewDocument(()=>{
   window.__pressShifts=[];
@@ -69,10 +69,24 @@ try {
  },ms);
  // The first sample is the current state, not an observed transition into that state.
  checkCycle((await sample(8200)).slice(1));
+ const nativeLabels=await page.evaluate(()=>window.__labelContrastSamples);
+ const nativeAnnotations=samples=>{
+  assert(samples.length>0,'default-threaded loop did not reach readable annotations');
+  assert(samples.every(s=>s.opacity===1),'default-threaded loop faded readable annotations');
+  assert.deepEqual([...new Set(samples.map(s=>s.text))].sort(),['Reason first?','Split this sentence','your'],'default-threaded loop did not reach all three annotations');
+ };
+ nativeAnnotations(nativeLabels);
+ assert.throws(()=>nativeAnnotations([]),/did not reach/);
+ assert.throws(()=>nativeAnnotations([{opacity:.3}]),/faded readable/);
+ assert.throws(()=>nativeAnnotations(nativeLabels.filter(s=>s.text!=='your')),/did not reach all three/);
  const cls=await page.evaluate(()=>window.__pressShifts.reduce((a,b)=>a+b,0));assert(cls<=.1,`hero CLS ${cls}`);console.log(`Hero CLS: ${cls}`);
  await page.click('.pr-desk-loop');assert.equal((await sample(4100)).length,1,'pause does not stop');
  for(let i=0;i<3;i++){await page.click('.pr-desk-loop');await wait(200);await page.click('.pr-desk-loop');assert.equal((await sample(700)).length,1);}
  await page.click('label[for="pr-desk-edit"]');assert.equal((await sample(5300)).length,1,'manual choice overrides pause');
+ const settled=await renderedLabelContrast(page,'.pr-desk:has(#pr-desk-edit:checked) :is(.pr-d-flag, .pr-d-ins)');
+ assert.deepEqual(settled.failures,[],'default-threaded settled Edit contrast');
+ assert.equal(settled.boxes,3,'default-threaded settled Edit must paint all annotations');
+ console.log(`Default-threaded settled Edit: ${settled.min.toFixed(2)}:1, three painted glyph subjects`);
  await page.click('.pr-desk-loop');await page.click('label[for="pr-desk-produce"]');
  const manual=await sample(6700);assert.equal(manual[0].stage,'produce');assert(manual[1].at>=4800&&manual[1].at<5500,'manual hold changed');
  await page.$eval('#editing',e=>e.scrollIntoView());await wait(500);assert.equal((await sample(4100)).length,1,'offscreen loop');

@@ -145,7 +145,7 @@ const decoder = await browser.newPage();
 const problems = [];
 const log = [];
 
-/** Clip in document coordinates: viewport-surface captures painted offscreen review SVGs at 320px. */
+/** Keep the document clip, without Chromium's beyond-viewport 1×1 responsive reflow. */
 async function captureViewport(page) {
   const read = () => page.evaluate(() => ({
     layout: [document.documentElement.scrollWidth, document.documentElement.scrollHeight],
@@ -156,9 +156,10 @@ async function captureViewport(page) {
   const before = await read();
   if (before.dpr !== 1 || before.scale !== 1 || before.offset.some(v => v !== 0)) throw new Error('Master capture requires scale 1 and an unshifted visual viewport');
   const boxes = await page.evaluate(TEXT_BOXES);
-  const png = await page.screenshot({ encoding: 'base64', fullPage: false, captureBeyondViewport: true, clip: before.clip });
+  // Cross a render lifecycle after mask changes; the original pose still must match after capture.
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const png = await page.screenshot({ encoding: 'base64', fullPage: false, captureBeyondViewport: false, clip: before.clip });
   const bytes = Buffer.from(png,'base64');
-  if(bytes.readUInt32BE(16) !== before.clip.width || bytes.readUInt32BE(20) !== before.clip.height) throw new Error('Master screenshot bitmap dimensions changed');
   const after = await read();
   const captured = await page.evaluate(TEXT_BOXES);
   if (JSON.stringify(before) !== JSON.stringify(after) ||
@@ -166,6 +167,7 @@ async function captureViewport(page) {
     throw new Error(`Master screenshot and DOM pose changed during capture: ${JSON.stringify({ before, after,
       boxesBefore: boxes.map(b => [b.box,b.opacity]), boxesAfter: captured.map(b => [b.box,b.opacity]) })}`);
   }
+  if(bytes.readUInt32BE(16) !== before.clip.width || bytes.readUInt32BE(20) !== before.clip.height) throw new Error('Master screenshot bitmap dimensions changed');
   return png;
 }
 
@@ -287,7 +289,7 @@ async function openHome(width, height, { reduced = false, noWebGL = false, optIn
     .waitForFunction(() => document.querySelector('[data-master-scene]')?.dataset.render, { timeout: 15000 })
     .catch(() => {});
   // Finish the first raster/layout before collecting glyphs; Windows changed font metrics on it.
-  if (optIn) await page.screenshot({ captureBeyondViewport: true, clip: await page.evaluate(() => ({ x: scrollX, y: scrollY, width: innerWidth, height: innerHeight })) });
+  if (optIn) await page.screenshot({ captureBeyondViewport: false, clip: await page.evaluate(() => ({ x: scrollX, y: scrollY, width: innerWidth, height: innerHeight })) });
   return page;
 }
 
@@ -300,7 +302,7 @@ const captureState = () => {
   const css = el => {
     const s = getComputedStyle(el);
     return { element: el.tagName, className: el.getAttribute('class'), rect: rect(el),
-      color: s.color, textFill: s.webkitTextFillColor, opacity: s.opacity, filter: s.filter,
+      color: s.color, stroke: s.stroke, fill: s.fill, textFill: s.webkitTextFillColor, opacity: s.opacity, filter: s.filter,
       transform: s.transform, zoom: s.zoom, overflow: [s.overflowX, s.overflowY],
       visibility: s.visibility, font: s.font, clipPath: s.clipPath,
       scroll: [el.scrollLeft, el.scrollTop] };
@@ -313,7 +315,9 @@ const captureState = () => {
     canvas: canvas && { rect: rect(canvas), bitmap: [canvas.width, canvas.height], render: canvas.parentElement.dataset.render },
     chapters: [...document.querySelectorAll('[data-chapter]')].map(el => ({ name: el.dataset.chapter, rect: rect(el), documentTop: el.getBoundingClientRect().top + scrollY })),
     caption: caption && { text: caption.textContent, ancestors: [caption, ...function* () { for(let el=caption.parentElement;el;el=el.parentElement) yield el; }()].map(css) },
-    controls: [...document.querySelectorAll('[data-reviews-carousel] button, [data-reviews-carousel] svg')].map(css),
+    controls: [...document.querySelectorAll('[data-reviews-carousel] button, [data-reviews-carousel] svg, [data-reviews-carousel] path')].map(css),
+    contextAndProcess: [...document.querySelectorAll('[data-chapter="context"] a, [data-chapter="process"] h2')].map(el => ({ text: el.textContent,
+      ancestors: [el, ...function* () { for(let a=el.parentElement;a;a=a.parentElement) yield a; }()].map(css) })),
     sceneFrame: window.__masterCaptureFrame,
     animations: document.getAnimations().map(a => ({ state: a.playState, currentTime: a.currentTime, target: a.effect?.target?.className })) };
 };
@@ -335,7 +339,7 @@ async function saveCapture(tag, name, boxes, states, background, behind, source)
   }, background, boxes);
   writeFileSync(`${stem}-overlay.png`, Buffer.from(overlay, 'base64'));
   writeFileSync(`${stem}.json`, JSON.stringify({ tag, chapter: name, browser: await browser.version(),
-    platform: process.platform, runtime: process.version, screenshot: { fullPage: false, captureBeyondViewport: true, fromSurface: true,
+    platform: process.platform, runtime: process.version, screenshot: { fullPage: false, captureBeyondViewport: false, fromSurface: true,
       clip: { x:before.scroll[0], y:before.scroll[1], width:before.viewport[0], height:before.viewport[1] }, bitmap: [behind.width, behind.height] },
     ...states, sourceNote: 'Subsequent independently guarded source frame; diagnostic captures can affect composition.',
     glyphs: boxes.map((b,i) => ({ index: i, ...b, documentBox: [b.box[0]+before.scroll[0],b.box[1]+before.scroll[1],...b.box.slice(2)],
@@ -430,7 +434,7 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 {
   const page = await browser.newPage();
   await page.setViewport({ width: 320, height: 568, deviceScaleFactor: 1 });
-  await page.setContent('<style>body{margin:0;height:2500px;background:var(--canvas);color:var(--ink);font:20px Arial}p{position:absolute;top:900px;left:24px;margin:0}i{position:absolute;top:910px;left:280px;width:12px;height:12px;background:var(--accent)}</style><body data-division="master"><main><p>Capture specimen</p><i></i></main></body>');
+  await page.setContent('<style>body{margin:0;height:2500px;background:var(--canvas);color:var(--ink);font:20px Arial}p{position:absolute;top:calc(100vh + 332px);left:10vw;margin:0}i{position:absolute;top:calc(100vh + 342px);left:calc(100vw - 40px);width:12px;height:12px;background:var(--accent)}</style><body data-division="master"><main><p>Capture specimen</p><i></i></main></body>');
   await page.addStyleTag({ content: readFileSync('styles/themes/master.css','utf8') });
   const marker = async (png, y) => decoder.evaluate(async (b64,y) => {
     const img = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob());
@@ -438,11 +442,24 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
     return { size:[img.width,img.height], rgb:Array.from(ctx.getImageData(285,y,1,1).data).slice(0,3) };
   },png,y);
   const expected = await page.$eval('i',el => getComputedStyle(el).backgroundColor.match(/\d+/g).slice(0,3).map(Number));
+  const anchorState = () => page.evaluate(() => ({ styles: [...document.querySelectorAll('style')].map(e => e.textContent), anchor: getComputedStyle(document.documentElement).overflowAnchor }));
+  const originalAnchor = await anchorState();
+  await page.evaluate(() => { window.__captureResizes=[]; addEventListener('resize',()=>window.__captureResizes.push([innerWidth,innerHeight])); });
+  const nativeScreenshot = page.screenshot.bind(page);
+  page.screenshot = async options => {
+    if(options.captureBeyondViewport !== false || options.clip.y !== await page.evaluate(() => scrollY)) throw new Error('Capture must use an explicit current document clip without beyond-viewport emulation');
+    return nativeScreenshot(options);
+  };
   for(const scroll of [850,900,910]) {
     await page.evaluate(y => scrollTo(0,y),scroll);
     const point = await marker(await captureViewport(page),915-scroll);
     if(JSON.stringify(point.size) !== '[320,568]' || JSON.stringify(point.rgb) !== JSON.stringify(expected)) throw new Error('Document/bitmap coordinate calibration failed');
+    if(JSON.stringify(await anchorState()) !== JSON.stringify(originalAnchor)) throw new Error('Capture changed root styles');
   }
+  page.screenshot = nativeScreenshot;
+  const stableSizes = sizes => sizes.every(([w,h])=>w===320 && h===568);
+  if(!stableSizes([[320,568]]) || stableSizes([[320,568],[1,1],[320,568]]) ||
+      !stableSizes(await page.evaluate(() => window.__captureResizes))) throw new Error('Responsive capture viewport proof failed');
   await page.evaluate(() => scrollTo(0,850));
   const captionContrast = async () => {
     const [text] = await page.evaluate(TEXT_BOXES);
@@ -461,8 +478,11 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
   const [faded] = await page.evaluate(TEXT_BOXES);
   await fade.evaluate(el => el.remove());
   if(good.contrast < good.text.min || bad.contrast >= bad.text.min || faded?.opacity !== .3) throw new Error('Static caption low-contrast/faded proof failed');
-  const shifted = await page.screenshot({ encoding:'base64', captureBeyondViewport:true, clip:{x:0,y:870,width:320,height:568} });
-  if(JSON.stringify((await marker(shifted,65)).rgb) === JSON.stringify(expected)) throw new Error('Shifted bitmap specimen was not rejected');
+  const unshifted = await page.screenshot({ encoding:'base64', captureBeyondViewport:false, clip:{x:0,y:850,width:320,height:548} });
+  const shifted = await page.screenshot({ encoding:'base64', captureBeyondViewport:false, clip:{x:0,y:870,width:320,height:548} });
+  const correct = await marker(unshifted,65), wrong = await marker(shifted,65);
+  if(JSON.stringify(correct.size) !== '[320,548]' || JSON.stringify(wrong.size) !== JSON.stringify(correct.size) ||
+      JSON.stringify(correct.rgb) !== JSON.stringify(expected) || JSON.stringify(wrong.rgb) === JSON.stringify(expected)) throw new Error('Shifted bitmap specimen was not rejected independently of dimensions');
   const screenshot = page.screenshot.bind(page);
   page.screenshot = options => screenshot({ ...options, clip: { ...options.clip, width:319 } });
   let dimensions = false;
@@ -485,8 +505,14 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
   try { await captureViewport(page); } catch(error) { if(!error.message.includes('DOM pose changed')) throw error; moved=true; }
   page.screenshot = screenshot;
   if(!moved) throw new Error('Moved DOM specimen was not rejected');
+  page.screenshot = async options => { await page.evaluate(() => scrollBy(0,20)); return screenshot(options); };
+  let scrolled = false;
+  try { await captureViewport(page); } catch(error) { if(!error.message.includes('DOM pose changed')) throw error; scrolled=true; }
+  page.screenshot = screenshot;
+  if(!scrolled) throw new Error('Real scroll movement specimen was not rejected');
+  if(JSON.stringify(await anchorState()) !== JSON.stringify(originalAnchor)) throw new Error('Rejected capture changed root styles');
   await page.close();
-  console.log('check-master-scene: document/bitmap mapping at three scrolls, static caption low contrast/fade, shifted bitmap, dimensions, device scale, document layout and moved DOM proven');
+  console.log('check-master-scene: responsive document/bitmap mapping at three scrolls, 1×1 resize rejected, static caption low contrast/fade, shifted bitmap, dimensions, device scale, document layout, moved DOM/scroll and root styles preserved');
 }
 
 // Prove both sides of the perspective-card correction without changing application CSS.
@@ -680,7 +706,9 @@ for (const [w0, h0] of RUN) {
 
     // 5 — every text box against the scene behind it, glyphs transparent.
     await page.addStyleTag({ content: ':is(header, main, footer) *, :is(header, main, footer) *::before, :is(header, main, footer) *::after { color: transparent !important; text-decoration-color: transparent !important; }' });
+    const q5Before = await page.evaluate(captureState);
     const background = await captureViewport(page);
+    const q5After = await page.evaluate(captureState);
     const diagnosticBackground = DIAGNOSTICS ? await page.evaluate(captureState) : null;
     const capturedBoxes = await page.evaluate(TEXT_BOXES);
     if (JSON.stringify(boxes.map(b => [b.text, b.box])) !== JSON.stringify(capturedBoxes.map(b => [b.text, b.box]))) {
@@ -726,7 +754,7 @@ for (const [w0, h0] of RUN) {
         const stem = `${dir}/q5-${tag}-${name}-${i}`.replace(/[^\w./-]+/g, '_');
         mkdirSync(dir, { recursive: true });
         writeFileSync(`${stem}.png`, Buffer.from(background, 'base64'));
-        writeFileSync(`${stem}.json`, JSON.stringify({ tag, position: name, text: b.text, box: b.box, L: b.L, min: b.min, ratio: r, p98: behind.p98[i] }, null, 2));
+        writeFileSync(`${stem}.json`, JSON.stringify({ tag, position: name, text: b.text, box: b.box, L: b.L, min: b.min, ratio: r, p98: behind.p98[i], q5Before, q5After }, null, 2));
       }
     });
     if (settled) row.push(`${name} ${(bare.gold * 100).toFixed(1)}%/${Math.round(unobscured * 100)}%/${boxes.length ? worst.toFixed(1) : '—'}`);

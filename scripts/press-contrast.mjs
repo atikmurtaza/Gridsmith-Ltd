@@ -117,6 +117,7 @@ export async function provePressContrast(browser) {
 export async function checkPressFlags(browser, base) {
   const selector = '.pr-desk:has(#pr-desk-edit:checked) :is(.pr-d-flag, .pr-d-ins)';
   const copy = ['Reason first?', 'Split this sentence'];
+  const nativePoses = (poses, from) => assert.equal(new Set(poses).size, 6, `${from}: paused transition fractions did not produce six distinct native poses`);
   const whole = samples => {
     assert(samples.length, 'Press flags: no visible animation-frame subjects');
     assert(samples.every(s => s.opacity === 1), 'Press flags: fractional painted opacity');
@@ -202,11 +203,17 @@ export async function checkPressFlags(browser, base) {
           return animations.length;
         });
         if (mode === 'motion') assert(moving > 0, `${from}: manuscript geometry no longer moves`);
+        const poses = [];
         for (const fraction of mode === 'motion' ? [0, .05, .25, .5, .75, 1] : [1]) {
           await page.evaluate(fraction => {
             document.querySelector('.pr-d-ms').getAnimations().forEach(a => { a.currentTime = Number(a.effect.getTiming().duration) * fraction; });
           }, fraction);
+          poses.push(await page.$eval('.pr-d-ms', e => JSON.stringify(e.getBoundingClientRect().toJSON())));
           await measure(`${from}→edit ${fraction}`);
+        }
+        if (mode === 'motion') {
+          nativePoses(poses, from);
+          assert.throws(() => nativePoses(poses.map(() => poses[0]), from), /six distinct native poses/);
         }
         for (const to of ['produce', 'publish']) {
           await page.$eval(`#pr-desk-${to}`, e => { e.checked = true; });
@@ -215,6 +222,24 @@ export async function checkPressFlags(browser, base) {
         }
       }
       if (mode === 'motion') {
+        const insertion = await page.$eval('.pr-d-ins', e => { const text = e.textContent; e.textContent = ''; return text; });
+        try {
+          assert.equal(await page.$eval('.pr-d-ins', e => e.textContent), '', 'missing annotation specimen was inert');
+          await assert.rejects(() => measure('missing insertion specimen'), /both flags and insertion/, 'missing required glyph escaped');
+        } finally { await page.$eval('.pr-d-ins', (e, text) => { e.textContent = text; }, insertion); }
+        const screenshot = page.screenshot.bind(page);
+        const manuscriptStyle = await page.$eval('.pr-d-ms', e => e.getAttribute('style'));
+        page.screenshot = async options => { await page.$eval('.pr-d-ms', e => { e.style.translate = '30cqw 1cqw'; e.style.transition = 'none'; }); return screenshot(options); };
+        try {
+          await assert.rejects(() => measure('moved manuscript specimen'), /text\/background capture state moved/, 'mismatched manuscript geometry escaped');
+        } finally {
+          page.screenshot = screenshot;
+          await page.$eval('.pr-d-ms', (e, style) => {
+            if(style === null)e.removeAttribute('style');else e.setAttribute('style', style);
+            getComputedStyle(e).getPropertyValue('translate');
+            document.getAnimations().forEach(a => a.finish());
+          }, manuscriptStyle);
+        }
         // Real degraded flag specimens must fail the same pixel assertion, despite aria-hidden.
         for (const css of [`.pr-d-flag{color:var(--pr-gold-bright)!important}`, '.pr-d-ms{opacity:.3!important}', '.pr-d-ins{opacity:.3!important}']) {
           const style = await page.addStyleTag({ content: css });
