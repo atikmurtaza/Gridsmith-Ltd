@@ -8,7 +8,12 @@ import {AxePuppeteer} from '@axe-core/puppeteer';
 import {launch} from './browser-launch.mjs';
 import {checkPressFlags, pressContrast, provePressContrast} from './press-contrast.mjs';
 import {labelOpacitySamples, renderedLabelContrast} from './rendered-label-contrast.mjs';
+import {checkPressWriting} from './press-writing-contrast.mjs';
 const base=process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
+const writingBrowser=await launch();
+try { await checkPressWriting(writingBrowser,base); }
+finally { await writingBrowser.close(); }
+if(process.argv.includes('--writing-only'))process.exit(0);
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const processNames=['Consultation','Planning & Scope','Approval & Start','Design, Development & Updates','Delivery','Support (if applicable)'];
 const axeSource=readFileSync('node_modules/axe-core/axe.min.js','utf8');
@@ -172,6 +177,8 @@ try {
  }
  for(const [segment,field] of [['author','manuscriptStage'],['business','bookPurpose'],['content','formats'],['production','workType']]){
   await page.goto(base+'/press/contact',{waitUntil:'networkidle0'});
+  // The fixed notice can cover an in-viewport radio; scroll it clear before a real pointer click.
+  await page.$eval(`input[name="segment"][value="${segment}"]`,e=>e.scrollIntoView({block:'center',behavior:'instant'}));
   await page.click(`input[name="segment"][value="${segment}"]`);await page.locator('form button[type="button"]:last-child').click();
   assert(await page.$eval(`[name="${field}"]`,e=>e.checkVisibility()),`${segment} branch missing`);
   if(segment==='production')assert.deepEqual(await page.$$eval('[name="workType"] option',es=>es.map(e=>e.value).filter(Boolean)),['editing','book-production','publishing','audiobook']);
@@ -179,6 +186,7 @@ try {
  // Invalid payload only: no branch answers, so the action rejects before submitLead.
  await page.goto(base+'/press/contact',{waitUntil:'networkidle0'});
  let posts=0;page.on('request',r=>{if(r.method()==='POST')posts++;});
+ await page.$eval('input[name="segment"][value="content"]',e=>e.scrollIntoView({block:'center',behavior:'instant'}));
  await page.click('input[name="segment"][value="content"]');
  for(let i=0;i<3;i++){await page.locator('form button[type="button"]:last-child').click();await wait(200);}
  assert.match(await page.$eval('form [aria-live]:not([data-submit-status])',e=>e.textContent),/^Step 4/,'Next submitted before contact details');

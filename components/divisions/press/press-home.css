@@ -626,7 +626,6 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
   border: 1px solid var(--pr-rule);
   font-family: var(--pr-sans);
   transition:
-    opacity var(--settle) var(--ease-out),
     translate var(--settle) var(--ease-out),
     rotate var(--settle) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
@@ -664,7 +663,6 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
   padding-block: 0.95rem;
   border-block-start: 1px solid var(--pr-ink);
   transition:
-    opacity var(--settle) var(--ease-out),
     translate var(--settle) var(--ease-out),
     background-color var(--dur-fast) var(--ease-out);
   transition-delay: calc(var(--dur-slow) * 2 + var(--dur-fast) * var(--i));
@@ -688,8 +686,9 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
   transition-delay: calc(var(--dur-fast) * 0);
 }
 
-.pr-motion .pr-writing:not(.pr-entered) .pr-src { opacity: 0; translate: calc(var(--i) * 1.5rem - 3rem) 1.5rem; rotate: calc(var(--i) * 3deg - 6deg); }
-.pr-motion .pr-writing:not(.pr-entered) .pr-ch { opacity: 0; translate: -1rem 0; }
+/* Keep ink and paper opaque throughout the staggered source-to-outline movement. */
+.pr-motion .pr-writing:not(.pr-entered) .pr-src { translate: calc(var(--i) * 1.5rem - 3rem) 1.5rem; rotate: calc(var(--i) * 3deg - 6deg); }
+.pr-motion .pr-writing:not(.pr-entered) .pr-ch { translate: -1rem 0; }
 
 /* ── 02 Editing: the dark stage and the scale ───────────────────────────── */
 .pr-scale { margin-block-start: clamp(2.5rem, 2rem + 2vw, 4rem); }
@@ -1607,6 +1606,8 @@ body[data-division="press"] .pr-home .pr-green .pr-paper-obj :focus-visible { ou
   .pr-bar a { padding-inline: 0; font-size: 0.75rem; text-align: center; }
 
   .pr-src-text { font-size: 1rem; }
+  /* Opaque cards keep their paper inside the phone viewport while rotating. */
+  .pr-motion .pr-writing:not(.pr-entered) .pr-src { translate: calc(var(--i) * 0.5rem - 1rem) 1.5rem; }
   .pr-ch { grid-template-columns: 1.75rem 1fr; }
   .pr-ch-from { grid-column: 2; }
 

@@ -252,6 +252,10 @@ jobs:
       - name: The Master scene model holds its invariants (and each check is proven red)
         run: npm run check:master:scene:selftest
 
+      # Deterministic lifecycle coverage; footer focus and live WebGL remain browser checks.
+      - name: Master accessibility lifecycle regression (live reduced motion and cleanup)
+        run: node scripts/check-master-accessibility.selftest.mjs
+
       # GS-DES-002-RC. The Design scroll rhythm (designTimeline.ts): every transformation sits in
       # a passing interval, each artefact resolves and dwells, Brand → Motion never goes blank.
       # Each check runs on the real timeline and on a fixture broken to fail it, in the same run.
