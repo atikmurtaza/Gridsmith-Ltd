@@ -95,11 +95,23 @@ export function ConsentBanner() {
       root.removeProperty(RESERVE_VAR);
       return;
     }
-    const reserve = () => root.setProperty(RESERVE_VAR, `${el.offsetHeight}px`);
-    reserve();
-    window.addEventListener('resize', reserve);
+    const reserve = (resized = false) => {
+      root.setProperty(RESERVE_VAR, `${el.offsetHeight}px`);
+      // Reopening or rewrapping must also reveal a control that already has focus.
+      const active = document.activeElement;
+      if (active?.closest('footer') && (resized || active.getBoundingClientRect().top < innerHeight)) {
+        active.scrollIntoView({ block: resized ? 'center' : 'nearest' });
+      }
+    };
+    const onResize = () => reserve(true);
+    onResize();
+    const observer = new ResizeObserver(() => reserve());
+    observer.observe(el);
+    observer.observe(document.body);
+    window.addEventListener('resize', onResize);
     return () => {
-      window.removeEventListener('resize', reserve);
+      observer.disconnect();
+      window.removeEventListener('resize', onResize);
       root.removeProperty(RESERVE_VAR);
     };
   }, [show]);

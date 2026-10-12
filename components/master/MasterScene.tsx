@@ -1,6 +1,7 @@
 'use client'; // WebGL, matchMedia and a post-paint dynamic import — none of it exists on the server.
 
 import { useEffect, useRef, type ReactNode } from 'react';
+import type { Scene } from './scene';
 import styles from './home.module.css';
 
 /**
@@ -31,11 +32,12 @@ export function MasterScene({ fallback }: { fallback: ReactNode }) {
     const canvas = ref.current;
     const layer = canvas?.parentElement;
     if (!canvas || !layer) return;
-    let dispose: (() => void) | null = null;
+    let scene: Scene | null = null;
     let cancelled = false;
     const fallback = () => {
-      dispose?.();
-      dispose = null;
+      if (cancelled) return;
+      scene?.dispose();
+      scene = null;
       layer.dataset.render = 'fallback';
     };
 
@@ -47,17 +49,22 @@ export function MasterScene({ fallback }: { fallback: ReactNode }) {
       return;
     }
 
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const onMotion = () => scene?.setReducedMotion(motion.matches);
+    if (motion.addEventListener) motion.addEventListener('change', onMotion);
+    else motion.addListener(onMotion);
+
     const start = () =>
       import('./scene')
         .then(({ startScene }) => {
           if (cancelled) return;
-          dispose = startScene(canvas, {
-            reduced: matchMedia('(prefers-reduced-motion: reduce)').matches,
+          scene = startScene(canvas, {
+            reduced: motion.matches,
             // Test affordance for `check:master:scene` on a GPU-less runner; see scene.ts.
             allowSoftware: new URLSearchParams(location.search).get('scene') === 'software',
             onSlow: fallback,
           });
-          if (dispose) layer.dataset.render = 'ready';
+          if (scene) layer.dataset.render = 'ready';
           else fallback();
         })
         .catch(fallback);
@@ -72,7 +79,10 @@ export function MasterScene({ fallback }: { fallback: ReactNode }) {
       if (window.cancelIdleCallback) window.cancelIdleCallback(idle);
       else window.clearTimeout(idle);
       canvas.removeEventListener('gs-scene-lost', fallback);
-      dispose?.();
+      if (motion.removeEventListener) motion.removeEventListener('change', onMotion);
+      else motion.removeListener(onMotion);
+      scene?.dispose();
+      scene = null;
     };
   }, []);
 

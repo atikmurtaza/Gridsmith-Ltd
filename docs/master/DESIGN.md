@@ -1,3 +1,5 @@
+> **GS-R12-A11Y-FIX-001 (12 October 2026), local correction:** The Master scene must respond to live reduced-motion preference changes as well as initial preference: reduce holds the existing hero geometry still through scrolling; normal restores the current chapter without restarting the renderer. Shared footer clearance uses the measured open cookie-notice height, disappears on dismissal, and combines with the mobile sticky reserve using the larger value. Native focus, notice appearance, normal scrolling, geometry, choreography and the 3D carousel are preserved. Local evidence only; original Q5/Q14 and R12 acceptance remain open. `GS-R12-A11Y-FIX-001.md` (external report).
+
 > **GS-LEGAL-001-R12-CI-FIX (8 October 2026):** Review words stay fully opaque throughout the cylinder's existing readable window (less than 50° from the front), then become unpainted together. Cylinder, facets, dragging and focus promotion retain their motion; reduced-motion and anonymous no-JS content remain. This supersedes the earlier 40–50° word fade. Evidence: `docs/_shared/GS-LEGAL-001-R12-CI-FIX.md`.
 
 # Design Spec — Gridsmith Master Layer

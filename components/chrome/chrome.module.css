@@ -512,6 +512,8 @@
   max-width: var(--container);
   margin-inline: auto;
   padding: var(--space-6) var(--gutter);
+  /* Scroll padding cannot expose the last control without real document-end space. */
+  padding-block-end: calc(var(--space-6) + var(--consent-block-size, 0px));
   font-family: var(--font-ui);
   font-size: var(--text-xs);
   line-height: var(--leading-relaxed);
@@ -576,6 +578,6 @@
      bottom edge below 768px. e-commerce regs reg. 6 require the particulars to be "easily,
      directly and permanently accessible"; reserving the bar's published height keeps them so. */
   .statutoryInner {
-    padding-block-end: calc(var(--space-6) + var(--sticky-cta-block-size, 0px));
+    padding-block-end: calc(var(--space-6) + max(var(--sticky-cta-block-size, 0px), var(--consent-block-size, 0px)));
   }
 }

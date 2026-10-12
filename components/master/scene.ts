@@ -21,7 +21,7 @@ import { CHAPTERS, KEYS_NARROW, KEYS_WIDE, ROD_RADIUS, SPHERE_RADIUS, pose, proc
  * `requestAnimationFrame` already stops in a background tab. Resolution is capped by pixel
  * count and backs off if frames run long.
  *
- * Returns a disposer, or `null` if WebGL is unavailable or the shader does not compile — the
+ * Returns motion/disposal controls, or `null` if WebGL is unavailable or the shader does not compile — the
  * caller then shows the static fallback.
  */
 
@@ -180,10 +180,13 @@ function tokenSrgb(style: CSSStyleDeclaration, name: string): Vec3 {
 
 const FOV_TAN_HALF = Math.tan((32 * Math.PI) / 180 / 2);
 
+export type Scene = { dispose: () => void; setReducedMotion: (reduced: boolean) => void };
+
 export function startScene(
   canvas: HTMLCanvasElement,
   opts: { reduced: boolean; allowSoftware?: boolean; onSlow?: () => void },
-): (() => void) | null {
+): Scene | null {
+  let reduced = opts.reduced;
   // **No software rendering.** Without a GPU, Chrome runs WebGL on the CPU (SwiftShader) and every
   // frame of this shader becomes a main-thread block of about a second — measured on the CI
   // runner at GS-R001-M: TBT 41,960ms, TTI 45s, Lighthouse performance 0.66. A visitor on such a
@@ -312,7 +315,7 @@ export function startScene(
     return centres.length - 1;
   };
 
-  let target = opts.reduced ? 0 : chapterAt();
+  let target = reduced ? 0 : chapterAt();
   let current = target;
   let pointer: [number, number] = [0, 0];
   let tilt: [number, number] = [0, 0];
@@ -362,7 +365,7 @@ export function startScene(
   // motion, whose single still composition stays exactly where it is.
   const FOOTER_TEXT = 'body > footer :is(p, a, h2, h3, li > span)';
   const footerLift = (p: Pose, aspect: number) => {
-    if (opts.reduced) return 0;
+    if (reduced) return 0;
     const footer = document.querySelector('body > footer');
     if (!footer || footer.getBoundingClientRect().top >= innerHeight) return 0;
     const [w, h] = [innerWidth, innerHeight];
@@ -391,7 +394,7 @@ export function startScene(
   const draw = (now: number) => {
     readRects();
     const keys = narrow.matches ? keysNarrow : keysWide;
-    const sway = opts.reduced
+    const sway = reduced
       ? 0
       : (Math.max(0, 1 - current) + Math.max(0, current - 4)) * 0.09 * Math.sin(now / 2600);
     const extra: Vec3 = [tilt[1] * 0.1, tilt[0] * 0.16 + sway, 0];
@@ -421,7 +424,7 @@ export function startScene(
     const moving =
       Math.abs(target - current) > 0.0005 ||
       Math.abs(pointer[0] - tilt[0]) + Math.abs(pointer[1] - tilt[1]) > 0.001;
-    const swaying = !opts.reduced && (current < 1 || current > 4);
+    const swaying = !reduced && (current < 1 || current > 4);
 
     if (moving || dirty || now - lastDraw > 33) {
       dirty = false;
@@ -450,7 +453,7 @@ export function startScene(
 
   const onScroll = () => {
     // Reduced motion: the pose never moves, but the text moves over it, so the dimming follows.
-    if (opts.reduced) {
+    if (reduced) {
       draw(performance.now());
       return;
     }
@@ -460,17 +463,17 @@ export function startScene(
     kick();
   };
   const onPointer = (e: PointerEvent) => {
-    if (opts.reduced || coarse.matches || e.pointerType !== 'mouse') return;
+    if (reduced || coarse.matches || e.pointerType !== 'mouse') return;
     pointer = [e.clientX / innerWidth - 0.5, e.clientY / innerHeight - 0.5];
     kick();
   };
   const onResize = () => {
     resize();
     measure();
-    target = opts.reduced ? 0 : chapterAt();
+    target = reduced ? 0 : chapterAt();
     current = target;
     draw(performance.now());
-    kick();
+    if (!reduced) kick();
   };
   const onLost = (e: Event) => {
     e.preventDefault();
@@ -486,11 +489,23 @@ export function startScene(
 
   resize();
   measure();
-  target = current = opts.reduced ? 0 : chapterAt();
+  target = current = reduced ? 0 : chapterAt();
   draw(performance.now());
-  kick();
+  if (!reduced) kick();
 
-  return () => {
+  const setReducedMotion = (value: boolean) => {
+    if (value === reduced) return;
+    reduced = value;
+    cancelAnimationFrame(raf);
+    raf = last = 0;
+    dirty = false;
+    pointer = tilt = [0, 0];
+    target = current = reduced ? 0 : chapterAt();
+    draw(performance.now());
+    if (!reduced) kick();
+  };
+
+  const dispose = () => {
     cancelAnimationFrame(raf);
     ro.disconnect();
     removeEventListener('scroll', onScroll);
@@ -502,4 +517,5 @@ export function startScene(
     gl.deleteShader(fs);
     gl.getExtension('WEBGL_lose_context')?.loseContext();
   };
+  return { dispose, setReducedMotion };
 }
