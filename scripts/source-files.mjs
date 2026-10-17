@@ -24,7 +24,7 @@ import { readdirSync, existsSync, statSync } from 'node:fs';
 import { join, relative, posix, sep } from 'node:path';
 
 /** Trees that are scanned. */
-export const ROOTS = ['app', 'components', 'lib', 'lighthouse', 'sanity', 'scripts', 'styles', 'supabase'];
+export const ROOTS = ['app', 'components', 'config', 'lib', 'lighthouse', 'sanity', 'scripts', 'styles', 'supabase'];
 
 /**
  * Trees that are deliberately not source, each with the reason. Excluding one is a

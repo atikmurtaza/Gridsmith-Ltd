@@ -1,0 +1,49 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Origin: Google LLC
+Label: Google
+Suite: stable
+Codename: stable
+Version: 1.0
+Date: Wed, 14 Oct 2026 09:01:24 UTC
+Architectures: amd64 arm64
+Components: main
+Description: Google chrome-linux software repository
+MD5Sum:
+ aed0000cb34124e3470d8e1803e3f881 6207 main/binary-amd64/Packages
+ 0d4da89af375bc704050a68b94cfdbd1 1410 main/binary-amd64/Packages.gz
+ 156e5ea7a0c6bed5973a68a45e546dc9 151 main/binary-amd64/Release
+ 43b09c42adb09f1986fd9c7716a239fd 6207 main/binary-arm64/Packages
+ 18542d11e1e0a92d4808e9623e49eb8d 1401 main/binary-arm64/Packages.gz
+ fa9332f7f48fabf2a9015ece5b110dd6 151 main/binary-arm64/Release
+SHA1:
+ 9e0da47acb8533920c458b1e67933a2948795a57 6207 main/binary-amd64/Packages
+ ba74da5736c3eb5b2c38d50992a700f6deed732a 1410 main/binary-amd64/Packages.gz
+ 0f4348c2d4d7cc1f8e59b5934d87f1ca872f6e34 151 main/binary-amd64/Release
+ 8ca796801a016e7bb31149e6cc1b33e4d4c6b222 6207 main/binary-arm64/Packages
+ e0d35b85f0398d9328c671979e66de5d220f5b12 1401 main/binary-arm64/Packages.gz
+ 1192bce6bc4c2f641a0287ad41c6bd47e7b2e81d 151 main/binary-arm64/Release
+SHA256:
+ cafc994f194c588cc63e4031ce54f7297bc2591ef336d0da7300b41e1b4fec41 6207 main/binary-amd64/Packages
+ d109ed76fc96e05d22903d0d1604d5ff09dc542936c08d6318df965f993f42ed 1410 main/binary-amd64/Packages.gz
+ c1e3c9318381862306adcdc4fd4fe2d85be8aa4c4f3dcbb40fce80413f588286 151 main/binary-amd64/Release
+ cad8b5d9f0f93837e520411da745444cfcaacbdb13e35993560845d69f688cb6 6207 main/binary-arm64/Packages
+ 6a8332161321c7a0189fb4dad3b6d1199e65b536b13fe4fb4051d45893a637a2 1401 main/binary-arm64/Packages.gz
+ 0146ffd3e2f8867413c78a453f9fdf691a39b0c205f8d3f152c555cb2040c7da 151 main/binary-arm64/Release
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEDiJZF0FGcPRELCUN/VM8B8JkZI8FAmrPRPcACgkQ/VM8B8Jk
+ZI+VTQ//dn+Gw12ytHlv9PvHUsy3zjR75/qMV61YpfgW06sfBXjlw03KAhky9OfC
+w0SO6+8wAGXtfxFj5sv1cxA6bFtDpIH0DGmQnIQfFhD2pB25OoSo0SmswtVXV/8z
+l2Z/VmSqXjOimnZJ5IqbtBSFK0hS4MWSWiZHbpJWqZkWz6+vauG7QqCQnr3RfFku
+CJ7cE0H0FgiC4WNUilR6nVe+y4kIIuKzW1YP6NWpRqsutZTOllYHQSVjUoaflNQt
+5t3TcuMZm82avE8st3TfVTvYM2vKDtkldN7S8SQC546JIp/TVLKjo/GcZT2muo0Q
+ec/6hRYiT1Wa51ri2qH1J9Thfv1XVx1tkHDhf19rItO+NPobg5neV6mg2hBu45Dh
+mHL7XLYlYextA3NiP5WXd3yOXwhdI64/iwRVeaAhne1acLeHbUSg8WZVfssN/e+b
+ukts71yv1djRJP4BarvIE+wYR7LRtzCYVoghDnstiipXcm0w7Gq9E7EdNGO2QCMy
+gTTVRcMCD1/BSCbWPNu3optyakBaA/grM0kUt4k3Wj1bh2NaCw70I0UaQE766s66
+7AMUOb18RMBdP2BPSrhfcv19uWMmXToMyPcAo0J9p1eYZgXKDQEuX2OaLAA6W+HW
+hX7XP4vAhF4xb+kz1ujui1dJ4B7Qeg+6K0NUW/scSZQSasYUAlA=
+=5ffg
+-----END PGP SIGNATURE-----

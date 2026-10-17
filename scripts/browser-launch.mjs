@@ -24,9 +24,19 @@
  * bare `puppeteer.launch()` does not, which is why `check:control`'s sibling rule applies:
  * grep for `puppeteer.launch(` before assuming this file covers everything.
  */
-import puppeteer from 'puppeteer';
+import { controlledBrowser, consumerProblems, discoverConfiguration, verifyBrowser } from './browser-input.mjs';
 
 export const CHROME_ARGS = ['--no-sandbox', '--disable-dev-shm-usage'];
 
-export const launch = (options = {}) =>
-  puppeteer.launch({ headless: true, ...options, args: [...CHROME_ARGS, ...(options.args ?? [])] });
+export const launch = async (options = {}) => {
+  let executablePath;
+  if (controlledBrowser) {
+    if (discoverConfiguration().length) throw new Error('PUPPETEER_DISCOVERABLE_CONFIG');
+    const problems = consumerProblems('puppeteer', process.env.PUPPETEER_EXECUTABLE_PATH, options);
+    if (problems.length) throw new Error(problems.join(','));
+    executablePath = verifyBrowser(process.env.PUPPETEER_EXECUTABLE_PATH);
+  }
+  const { default: puppeteer } = await import('puppeteer');
+  return puppeteer.launch({ headless: true, ...options,
+    ...(controlledBrowser ? { executablePath } : {}), args: [...CHROME_ARGS, ...(options.args ?? [])] });
+};

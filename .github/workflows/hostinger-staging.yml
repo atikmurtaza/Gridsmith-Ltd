@@ -3,7 +3,6 @@ on:
   workflow_call:
 permissions:
   contents: read
-  actions: read
 concurrency:
   group: gridsmith-hostinger-staging
   cancel-in-progress: false
@@ -17,15 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      actions: read
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: 'true'
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@v5
         with:
           node-version: '24'
           cache: npm
+      - run: node scripts/browser-input.selftest.mjs
+      - run: node scripts/browser-input.mjs install-controls
       - run: npm ci
       - run: npm run verify:static
       - run: npm run build:static
