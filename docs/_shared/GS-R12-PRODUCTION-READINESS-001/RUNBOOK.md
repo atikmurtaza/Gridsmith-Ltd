@@ -77,7 +77,7 @@ each GitHub App's repository access and push/deploy behaviour recorded (ledger D
 4. Record per-step outcomes. Expected on first run:
    - Option A prefix (`browser-input.selftest`, `install-controls`, `provision`, `check`) is its
      first Linux execution (ledger BRW-RT-01). Any failure there is classified before anything else.
-   - `size` fails at 2.8732KB vs 2.8KB unless BLD-01 is decided first.
+   - `size` should pass: 2.8732KB vs the owner-raised 2.9KB budget (27 B gz headroom).
    - Every browser gate now runs on Chrome **155.0.8059.79**; treat its visual/LHCI numbers as a
      new baseline (BRW-155-01). Master Q5 is classified under the agreed protocol (Q5-01).
 5. Download and retain `master-scene-evidence`, Lighthouse and design artifacts.

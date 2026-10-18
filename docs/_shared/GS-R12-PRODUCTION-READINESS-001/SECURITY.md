@@ -67,6 +67,9 @@ The four existing GS-SEC-001-R3 scoped overrides are kept. The lock diff touches
   Note: `get-uri` reads `entry.modifiedAt`, which `basic-ftp` sets only from MLSD (5.x and 6.x
   alike), so its Unix-LIST fallback always ends in NotFound. That is pre-existing upstream behaviour,
   not a regression.
+- The FTP branches run in a child process (`scripts/check-dependency-overrides-ftp.mjs`); on Windows a
+  native node.exe crash (`0xC0000409`, also seen with the original basic-ftp 5.3.1) gets exactly one
+  reported re-run; assertion failures never do (`78052aac`).
 - Red control: before the override, all five resolutions were reported below the fixed versions
   (and old `tmp` 0.1.0 also failed its own `removeCallback` on Windows).
 

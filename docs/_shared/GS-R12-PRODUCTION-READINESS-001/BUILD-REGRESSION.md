@@ -21,7 +21,7 @@
 | 3 | Master lifecycle selftest | PASS | 1 s | |
 | 4 | `next build` (clean `.next`) | PASS | 57 s | 73 static pages |
 | 5–7 | `lint:secrets`, `check:tokens`, `check:theme` | PASS | 1 s each | |
-| 8 | `size` | **FAIL** | 2 s | Only the shared-baseline assertion: 2.8732KB vs 2.8KB (**BLD-01**). All 69 route budgets, consent banner (2.1/3KB), Master 7.8/15KB pass |
+| 8 | `size` | **FAIL** at the old 2.8KB budget → **PASS** after the owner raised it to 2.9KB (18 Oct) | 2 s | Shared-baseline assertion only: 2.8732KB (**BLD-01**). All 69 route budgets, consent banner (2.1/3KB), Master 7.8/15KB pass |
 | 9 | 18 served gates (`with-server`) | 16 PASS, 2 FAIL | 56 min | see below |
 | 10 | `check-master-accessibility` | PASS | 65 s | 12 consent (footer focus, SC 2.4.11) + 2 live reduced-motion |
 | 11 | `--manual-scroll-only` | PASS | 9 s | |
@@ -74,9 +74,11 @@
 host's software WebGL); 32 ms on Chrome 155. Classified as host load, not an application change.
 Margin noted as a warning for slow runners (BPH-07).
 
-### `size` — BLD-01
+### `size` — BLD-01 (owner decision taken)
 
-See LEDGER BLD-01. Remains failing pending the owner decision.
+Owner raised `SHARED_BASELINE_BUDGET_KB` to 2.9KB on 18 Oct 2026. Clean in-tree build, probe off:
+`npm run size` **PASS** (2.8732KB). Probe on (re-sized to 64 characters): fails with "shared baseline
+is 2.95KB, over its 2.9KB budget", proving the assertion is reachable in its 0.1KB window.
 
 ### `check:edge:ui` — thank-you title race (gate defect, fixed)
 
@@ -85,6 +87,16 @@ the URL changed, although the exported `press/contact/thank-you.html` carries th
 instrumented replay read the correct title immediately. Next's client router can apply the title
 after the URL. Fix (`d3013441`): bounded wait for the title before the unchanged assertion. After:
 two consecutive full runs PASS.
+
+### `check:deps:overrides` — native node.exe crash in the FTP harness (contained)
+
+An exit 127 in a later `verify:static` run was Windows status `0xC0000409` (native fail-fast in
+node.exe v24.15, no stderr). Localised to the loopback FTP sequence and reproduced with the
+**original** basic-ftp 5.3.1 (5/200) as well as 6.2.3 (≈1%), so it is a runtime fault, not the
+override. Contained in `78052aac`: FTP behaviour runs in a child; one reported re-run only for that
+exact Windows status; assertion failures, other statuses or a second crash still fail. Branch
+proofs with stand-in children passed; **1,000 gate runs: 0 failures, 9 contained re-runs**.
+`verify:static` then PASS on the `78052aac` tree (61 gates; parity with `ci.yml`).
 
 ## 4. Static export (private legal-preview profile) — run on `e2744e54`, then `d3013441`
 

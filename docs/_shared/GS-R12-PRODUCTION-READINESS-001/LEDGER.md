@@ -26,7 +26,7 @@ locally executable acceptance (7–10), then items that need an external run or 
 | # | ID | Class | Status | Title | Owner approval |
 |---|---|---|---|---|---|
 | 1 | BRW-EOL-01 | 1 | PASS | Option A manifest hash pin would fail on every checkout (CRLF pin vs `eol=lf`) | — |
-| 2 | BLD-01 | 1+2 | OWNER DECISION REQUIRED | Shared-baseline bundle budget exceeded by the SC 2.4.11 footer-focus fix | Budget or behaviour |
+| 2 | BLD-01 | 1+2 | PASS | Shared-baseline bundle budget exceeded by the SC 2.4.11 footer-focus fix — owner raised the budget to 2.9KB | Decided 18 Oct |
 | 3 | SEC-TMP-02 | 1 | PASS (local) | `tmp` GHSA-ph9p-34f9-6g65 / GHSA-52f5-9888-hmc6 — scoped override | Confirm remediation |
 | 4 | SEC-UUID-03 | 1 | PASS (local) | `uuid` GHSA-w5hq-g745-h8pq — scoped override | Confirm remediation |
 | 5 | SEC-FTP-04 | 1 | PASS (local) | `basic-ftp` GHSA-c475-qrg2-pj4r — scoped override | Confirm remediation |
@@ -38,6 +38,7 @@ locally executable acceptance (7–10), then items that need an external run or 
 | 10a | BRW-02 | 1 | PASS (synthetic) | Option A `--version` predicate rejected real Linux Chrome output | — |
 | 10b | GATE-PRESS-01 | 1 | PASS | `check:press:scene` state-cue loop measured mid-transition (failed deterministically on this tree) | — |
 | 10c | GATE-EDGE-01 | 3 | PASS | `check:edge:ui` raced the router for the thank-you title | — |
+| 10e | GATE-DEPS-01 | 3 | PASS | `check:deps:overrides` FTP harness hit a native node.exe crash (0xC0000409) ~1% of Windows runs, with the original basic-ftp too | — |
 | 10d | REVIEW-01 | 3 | PASS | Independent review: 3 confirmed low findings in new test code, all fixed (`cf2cd083`) | — |
 | 11 | CI-01 | 1 | BLOCKED | No exact-SHA GitHub CI exists for this candidate | Push authority |
 | 12 | BRW-RT-01 | 1 | BLOCKED | Option A never executed on Linux (APT closure, extraction, Chrome 155 launch, Lighthouse) | Phase-006 Docker / CI |
@@ -88,11 +89,14 @@ remaining risk · owner approval · references.
 - **Result:** `git show HEAD:config/browser-input.json | sha256sum` = `20ac446b…`. Independent review: no finding.
 - **Remaining risk:** none known; first Linux checkout is the runtime confirmation.
 
-### BLD-01 — shared-baseline bundle budget · class 1 + 2 · **OWNER DECISION REQUIRED**
+### BLD-01 — shared-baseline bundle budget · class 1 + 2 · **PASS (owner decision, 18 Oct 2026)**
 - **Issue/impact:** `ddf9d9aa` (footer-focus SC 2.4.11 fix) raised the shared baseline every route pays to **2.9143KB** against `SHARED_BASELINE_BUDGET_KB = 2.8`. `npm run size` exits 1, so the candidate's CI `verify` would fail at `size`. Previous local passes measured a build whose `node_modules` was a junction outside the build directory, which chunks differently; CI's last `size` pass (`8fec6426`) predates `ddf9d9aa`.
 - **Evidence:** local runtime, clean in-tree builds: `e854ad87`-equivalent 2.9143KB (117 B gz over); with `8fec6426`'s `ConsentBanner.tsx` 2.8KB (pass); exact method replicates `check-bundle-size`.
 - **Fix applied:** `e6390bd6` removes down-levelled syntax (default parameter, optional chaining) from the effect: **2.8732KB**, 75 B gz over. Behaviour unchanged: `check-master-accessibility` 14/14 + manual-scroll PASS. A further `lib/consent/state.ts` template-literal change re-chunked the banner and made the total worse; reverted.
-- **Owner decision:** (a) raise the budget to 2.9KB (keeps the required window below `FLOOR_TOLERANCE_KB` 3.0; accessibility outranks a byte budget per non-negotiable #10; 27 B headroom at 2.8732), or (b) reduce behaviour (e.g. drop body `ResizeObserver`, which the earlier independent review added to stop a reflow scroll jump) and re-verify. No gate threshold was changed.
+- **Owner decision:** (a) raise the budget to 2.9KB (keeps the required window below `FLOOR_TOLERANCE_KB` 3.0; accessibility outranks a byte budget per non-negotiable #10; 27 B headroom at 2.8732), or (b) reduce behaviour (e.g. drop body `ResizeObserver`, which the earlier independent review added to stop a reflow scroll jump) and re-verify.
+- **Decision taken (owner, 18 Oct 2026):** keep the fix; `SHARED_BASELINE_BUDGET_KB` 2.8 → **2.9**, reason recorded beside the constant in `scripts/check-bundle-size.mjs`; the problem message now prints two decimals (a 0.1KB window is unreadable at one). Still strictly below `FLOOR_TOLERANCE_KB` 3.0 (the guard passes).
+- **Probe re-calibrated:** the committed deliberate-failure probe had silently become invalid — with the baseline at 2.87KB its 1,480-character payload lifted `shared` to 3.8986KB, so the floor check fired instead of this assertion. Re-sized to 64 characters on measurement (64 → 2.9494KB, 80 → 2.9611, 160 → 3.0227): with the probe on, `size` fails with "shared baseline is 2.95KB, over its 2.9KB budget" (the floor check did not exit first).
+- **Result:** clean in-tree build, probe off: `npm run size` **PASS** (2.8732KB; 27 B gz headroom). Lazy Master scene 7.1/8KB and Design scene 7.9/8KB now reached and pass.
 
 ### SEC-TMP-02 / SEC-UUID-03 / SEC-FTP-04 — fixable advisories · class 1 · **PASS (local)**
 - **Fix:** scoped overrides (`6b441ad3`): `@lhci/cli` → `tmp 0.2.7`, `uuid 11.1.1`; `typeid-js` → `uuid 11.1.1`; `get-uri` → `basic-ftp 6.2.3`.
@@ -118,6 +122,11 @@ remaining risk · owner approval · references.
 ### GATE-EDGE-01 — thank-you title race · class 3 · **PASS**
 - `check:edge:ui` asserted the title right after the URL changed. Fix `d3013441` (bounded wait before the unchanged assertion). Two consecutive runs PASS.
 
+### GATE-DEPS-01 — native crash in the FTP loopback harness · class 3 · **PASS (contained)**
+- Found while re-running `verify:static` after the budget change: exit 127 in Git Bash = Windows status **0xC0000409** (`STATUS_STACK_BUFFER_OVERRUN`, native fail-fast in node.exe v24.15), no stderr, no diagnostic report. Localised to the FTP section (FTP-only variant crashed; non-FTP variant clean). Rates: original basic-ftp 5.3.1 5/200; 6.2.3 with per-case servers ≈1/30; tracked-socket teardown 1/150–1/200; single server pair 12/1000 — so a Node/Windows runtime fault in this loopback socket sequence, not the override and not an assertion.
+- Containment: the FTP behaviour runs in a child (`scripts/check-dependency-overrides-ftp.mjs`); exactly one re-run only for Windows status 0xC0000409, reported in the output; an assertion failure, any other status, or a second crash fails the gate. Branch proofs with stand-in children: assertion → exit 1, no re-run; one crash → reported re-run, pass; two crashes → exit 1 "native crash on both attempts". 1,000-run gate stress: see BUILD-REGRESSION.
+- Not claimed: the native cause inside node.exe; whether it occurs on Linux CI (Node 24.21).
+
 ### REVIEW-01 — independent review of this branch · class 3 · **PASS**
 - 3 reviewers (correctness, CI/pin integrity, security) + per-finding refutation over all commits to `bb2343fd`: 11 raised, 3 confirmed (all low, all in new test code: HSTS digit-shape regex; unbounded root climb; nested-consumer blind spot), fixed in `cf2cd083`. No finding in app code, pins or Option A integration. A second review of `cf2cd083`/`e2744e54`/`d3013441` confirmed both waits move the sample to the intended settled state without weakening their predicates, and found one more low gap (npm-aliased lock entries), fixed in `7a1b662a`.
 
@@ -128,7 +137,7 @@ remaining risk · owner approval · references.
 | Option A synthetic selftests | PASS (406 JS + 140 Python) |
 | `verify:static` (61 gates) | PASS on `bb2343fd` and on final `e2744e54` |
 | Build + secrets/tokens/theme | PASS |
-| Bundle budgets | 69 routes PASS; **shared baseline FAIL 2.8732KB vs 2.8KB (BLD-01)** |
+| Bundle budgets | 69 routes PASS; shared baseline 2.8732KB vs **2.9KB** (owner decision BLD-01) PASS; lazy scenes PASS |
 | 18 served gates | 16 PASS first time; Press failed (gate defect, fixed, 2× PASS); Master Q8 failed under host contention, PASS isolated (all 14 questions) |
 | Footer focus / live reduced motion | 15/15 PASS |
 | Static export (legal-preview) | artifact 62 routes / 218 files PASS; static UI 21 pages + 41 axe analyses 0 violations PASS; edge UI PASS ×2 |
@@ -145,21 +154,19 @@ Full tables: [BUILD-REGRESSION.md](BUILD-REGRESSION.md).
 The candidate is not "technically ready with only owner gates pending", because mandatory technical
 evidence is missing or failing:
 
-1. **BLD-01** — `npm run size` fails on a clean in-tree build (75 B gz over the shared baseline).
-   It needs an owner decision before CI can pass; no gate was changed.
-2. **CI-01** — no exact-SHA GitHub CI exists for any commit after `8fec6426`; local Windows runs
+1. **CI-01** — no exact-SHA GitHub CI exists for any commit after `8fec6426`; local Windows runs
    are not CI evidence, and Lighthouse cannot run locally.
-3. **BRW-RT-01** — the Option A browser path (now the only CI browser path) has never executed on
+2. **BRW-RT-01** — the Option A browser path (now the only CI browser path) has never executed on
    Linux. Two defects that would have failed its first run were found and fixed here (BRW-EOL-01,
    BRW-02), which is a reason to expect more until it runs.
-4. **Q5-01** — Master Q5 remains UNRESOLVED in CI (local passes on Chrome 148 and 155).
-5. **Production delivery does not exist yet** — no production static profile, delivery channel,
+3. **Q5-01** — Master Q5 remains UNRESOLVED in CI (local passes on Chrome 148 and 155).
+4. **Production delivery does not exist yet** — no production static profile, delivery channel,
    restore-proven backup or promoted intake (DEP-PROD-*, LEG-02, LEG-05), by design of the current
    phase gates.
 
 Owner/legal/security decisions that will also be required before any release are listed in
 [HANDOFF.md](HANDOFF.md). The shortest path to `TECHNICALLY READY — OWNER RELEASE GATES PENDING`:
-decide BLD-01 → complete DEP-PUSH-SAFETY → authorise one exact-SHA push (no dispatch) → classify its
+complete DEP-PUSH-SAFETY → authorise one exact-SHA push (no dispatch) → classify its
 Option A, Q5 and Lighthouse results on Chrome 155.
 
 ### CI-01 — exact-SHA CI · class 1 · **BLOCKED**

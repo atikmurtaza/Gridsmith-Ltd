@@ -26,8 +26,10 @@ Nothing was pushed, published or deployed; no provider, DNS or Docker action was
 | `e2744e54` | `check:press:scene` settles state-cue labels before measuring (timing defect; failed deterministically on this tree) |
 | `d3013441` | `check:edge:ui` waits for the thank-you title instead of racing the router |
 | `7a1b662a` | Lock-wide override check also counts npm-aliased copies (second independent review) |
+| `c6bb5030` | **Owner decision BLD-01:** shared-baseline budget 2.8 → 2.9KB, reason recorded; stale probe re-sized so the assertion stays provably reachable |
+| `78052aac` | `check:deps:overrides` FTP behaviour isolated in a child; one reported re-run only for a Windows native node.exe crash |
 
-Local acceptance on the final tree: everything passes except `size` (BLD-01); Master Q8 passed
+Local acceptance on the final tree: everything passes (`size` after the owner's BLD-01 budget decision); Master Q8 passed
 once the host was idle; Lighthouse cannot run on Windows. Details in BUILD-REGRESSION.md.
 
 ## Reports
@@ -38,8 +40,7 @@ once the host was idle; Lighthouse cannot run on Windows. Details in BUILD-REGRE
 
 ## Owner decisions needed, in the order that unblocks the most
 
-1. **BLD-01** — keep the SC 2.4.11 footer-focus fix and raise `SHARED_BASELINE_BUDGET_KB` 2.8 → 2.9
-   (still below the 3.0 floor tolerance), or cut behaviour to fit 2.8. Until decided, CI `size` fails.
+1. ~~**BLD-01**~~ — **decided 18 Oct 2026:** budget raised to 2.9KB to keep the SC 2.4.11 fix; `size` passes.
 2. **DEP-PUSH-SAFETY + CI-01** — complete the provider checklist, then authorise one push of the
    final SHA (no dispatch). That run is also the first Linux execution of Option A (BRW-RT-01) and
    the Q5 diagnostic on Chrome 155 (Q5-01).

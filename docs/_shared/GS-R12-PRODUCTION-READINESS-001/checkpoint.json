@@ -57,6 +57,18 @@
     {
       "sha": "7a1b662a",
       "subject": "test(security): count npm-aliased copies in the lock-wide override check"
+    },
+    {
+      "sha": "3d91e567",
+      "subject": "docs(readiness): GS-R12-PRODUCTION-READINESS-001 ledger, reports and runbook"
+    },
+    {
+      "sha": "c6bb5030",
+      "subject": "perf(budget): raise the shared-baseline budget to 2.9KB for the SC 2.4.11 fix"
+    },
+    {
+      "sha": "78052aac",
+      "subject": "test(security): contain a Windows node.exe crash in the FTP override check"
     }
   ],
   "protected": {
@@ -79,7 +91,6 @@
   "providerWrite": false,
   "statusByClass": {
     "class1Open": [
-      "BLD-01 (owner decision)",
       "CI-01",
       "BRW-RT-01",
       "Q5-01",
@@ -99,10 +110,11 @@
       "BRW-02 (synthetic)",
       "ACC-03/LEG-15 (local)",
       "ACC-04 (local)",
-      "GATE-PRESS-01"
+      "GATE-PRESS-01",
+      "BLD-01 (owner decision)",
+      "GATE-DEPS-01 (contained)"
     ],
     "ownerDecisions": [
-      "BLD-01",
       "DEP-PUSH-SAFETY",
       "BRW-03",
       "SEC-ZIP-01",
@@ -126,11 +138,18 @@
     ]
   },
   "evidence": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/BUILD-REGRESSION.md (local results); scratchpad logs are session-temporary",
-  "lastSuccessfulCommand": "git commit 7a1b662a (check:deps:overrides PASS)",
+  "lastSuccessfulCommand": "npm run verify:static PASS on 78052aac; git commit 78052aac",
   "next": [
-    "Owner: decide BLD-01 (budget 2.8 -> 2.9 or behaviour cut)",
     "Owner: DEP-PUSH-SAFETY checklist, then authorise one push of the final SHA (no workflow_dispatch) as CI-01 + first Option A Linux run + Q5 diagnostic on Chrome 155",
     "Owner: BRW-03 durable Chrome input; dispositions for extract-zip x2, braces, sprintf-js",
     "After CI: classify results; production-profile/cutover phases only under separate authority"
+  ],
+  "ownerDecisionsTaken": [
+    {
+      "id": "BLD-01",
+      "date": "2026-10-18",
+      "decision": "Raise SHARED_BASELINE_BUDGET_KB 2.8 -> 2.9 to keep the SC 2.4.11 footer-focus fix; reason recorded in scripts/check-bundle-size.mjs",
+      "result": "npm run size PASS (2.8732KB); probe re-sized to 64 chars, fires at 2.9494KB"
+    }
   ]
 }
