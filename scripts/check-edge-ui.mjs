@@ -162,6 +162,9 @@ try {
     const pressRequest=JSON.parse(pressResponse.request().postData());
     accept({form:'press',width,requestId:live?receipt.requests.find(item=>item.formType==='press').requestId:pressRequest.requestId,blankOptionals:true});
     await page.waitForFunction(() => location.pathname==='/press/contact/thank-you');
+    // Next's client router can apply the destination title after the URL changes; wait (bounded)
+    // for it rather than racing it. The assertion below is unchanged (GS-R12-PR-001).
+    await page.waitForFunction(() => document.title.includes('That has reached us'), { timeout: 10_000 }).catch(() => {});
     assert((await page.title()).includes('That has reached us'));
   }
   if (!live) {
