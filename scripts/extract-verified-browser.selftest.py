@@ -333,6 +333,12 @@ negative("provider interpreter inconsistency", "PROVIDER_INTERPRETER_CONFLICT", 
 negative("provider false environment evidence", "PROVIDER_RECEIPT_INCOMPLETE", lambda: verifier.validate_provider_receipt(changed(loader_fixture(), ["environmentClean"], False), RUNTIME))
 positive("browser exact version output predicate", "browser_version exact product/version/exit status, no process executed", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79\n", 0, MANIFEST))
 negative("browser wrapper or extra output", "BROWSER_VERSION_IDENTITY", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79\nwrapper\n", 0, MANIFEST))
+positive("browser stable channel token is empty", "browser_version exact product/version/exit status, no process executed", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79 \n", 0, MANIFEST))
+positive("browser unknown channel without wrapper env", "browser_version exact product/version/exit status, no process executed", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79 unknown\n", 0, MANIFEST))
+negative("browser other channel", "BROWSER_VERSION_IDENTITY", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79 beta\n", 0, MANIFEST))
+negative("browser doubled separator", "BROWSER_VERSION_IDENTITY", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79  \n", 0, MANIFEST))
+negative("browser Chromium product", "BROWSER_VERSION_IDENTITY", lambda: verifier.browser_version(b"Chromium 155.0.8059.79 \n", 0, MANIFEST))
+assert verifier.browser_version(b"Google Chrome 155.0.8059.79 unknown\n", 0, MANIFEST)["output"] == "Google Chrome 155.0.8059.79", "canonical receipt identity"
 negative("browser wrong product", "BROWSER_VERSION_IDENTITY", lambda: verifier.browser_version(b"Chromium 155.0.8059.79\n", 0, MANIFEST))
 negative("browser wrong version", "BROWSER_VERSION_IDENTITY", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.80\n", 0, MANIFEST))
 negative("browser nonzero exit", "BROWSER_VERSION_EXIT", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79\n", 1, MANIFEST))

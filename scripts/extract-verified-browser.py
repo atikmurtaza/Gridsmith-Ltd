@@ -981,8 +981,13 @@ def browser_version(output, returncode, m):
         value = output.decode("ascii")
     except (UnicodeError, AttributeError):
         raise Rejected("BROWSER_VERSION_ENCODING") from None
-    require(value in ("Google Chrome " + m["browserVersion"], "Google Chrome " + m["browserVersion"] + "\n"), "BROWSER_VERSION_IDENTITY")
-    return {"product": "Google Chrome", "version": m["browserVersion"], "output": value.rstrip("\n"), "exitCode": 0}
+    # Branded Linux Chrome prints "<product> <version> <channel>". The channel comes from
+    # CHROME_VERSION_EXTRA, which only the package's google-chrome wrapper exports: the binary run
+    # directly in the clean environment reports "unknown", and "stable" maps to an empty token.
+    # Product and version stay exact; only those two channel tokens are accepted (GS-R12-PR-001).
+    identity = "Google Chrome " + m["browserVersion"]
+    require(value in {identity + suffix + end for suffix in ("", " ", " unknown") for end in ("", "\n")}, "BROWSER_VERSION_IDENTITY")
+    return {"product": "Google Chrome", "version": m["browserVersion"], "output": identity, "exitCode": 0}
 
 
 def run_version(executable, expected_sha, m):
