@@ -87,7 +87,7 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     if (/(?:^|\/)(?:api|gridsmith-[^/]*probe|%5Fkitchen-sink|%5Fmaster-sink|_kitchen-sink|_master-sink)(?:[/.]|$)/i.test(name) ||
         /(?:^|\/)(?:\.env[^/]*|node_modules|\.next|package(?:-lock)?\.json)(?:\/|$)/.test(name)) bad('RUNTIME', 'server/test/source artifact emitted');
     if (/22108992|22100632|Varnika/i.test(text)) bad('WITHHELD', 'withheld marker present');
-    if (/SUPABASE_SERVICE_ROLE_KEY|GRIDSMITH_WORKER_TOKEN|RESEND_API_KEY|SANITY_API_WRITE_TOKEN|DIRECT_CONNECTION_STRING|VERCEL_TOKEN|FREELANCER_API_(?:TOKEN|SECRET)|Freelancer-OAuth-V1|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|postgres(?:ql)?:\/\/|\bre_[A-Za-z0-9_]{24,}/.test(text) ||
+    if (/SUPABASE_SERVICE_ROLE_KEY|GRIDSMITH_WORKER_TOKEN|RESEND_API_KEY|SANITY_API_WRITE_TOKEN|DIRECT_CONNECTION_STRING|VERCEL_TOKEN|FREELANCER_API_(?:TOKEN|SECRET)|Freelancer-OAuth-V1|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----|postgres(?:ql)?:\/\/|\bre_[A-Za-z0-9_]{24,}|\bsb_secret_[A-Za-z0-9_-]{20,}/.test(text) ||
         knownSecrets.some((value) => value.length >= 8 && data.includes(Buffer.from(value)))) bad('SECRET', 'privileged marker/value present');
     for (const token of text.match(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g) ?? []) {
       try { if (JSON.parse(Buffer.from(token.split('.')[1], 'base64url')).role === 'service_role') bad('SECRET', 'privileged JWT present'); } catch { /* Not a JSON JWT. */ }
