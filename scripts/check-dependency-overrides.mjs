@@ -59,14 +59,18 @@ for (const [consumer, dep, min] of EXPECT) {
 
 // Every installed copy, wherever it is nested: the lockfile is what `npm ci` installs.
 const MINIMUM = { tmp: '0.2.6', uuid: '11.1.1', 'basic-ftp': '6.2.1' };
-const lockProblems = (packages) => Object.entries(packages).flatMap(([path, { version }]) => {
-  const name = path.split('node_modules/').pop();
-  return MINIMUM[name] && version && !atLeast(version, MINIMUM[name]) ? [`${path} is ${name}@${version}, below the fixed ${MINIMUM[name]}`] : [];
+// Lockfile v3 records `name` only when the folder differs (an npm alias), which overrides do not reach.
+const packageName = (path, entry) => entry.name ?? path.split('node_modules/').pop();
+const lockProblems = (packages) => Object.entries(packages).flatMap(([path, entry]) => {
+  const name = packageName(path, entry);
+  return MINIMUM[name] && entry.version && !atLeast(entry.version, MINIMUM[name]) ? [`${path} is ${name}@${entry.version}, below the fixed ${MINIMUM[name]}`] : [];
 });
 assert.equal(lockProblems({ 'node_modules/x/node_modules/tmp': { version: '0.1.0' }, 'node_modules/uuid': { version: '11.1.1' } }).length, 1,
   'lock check must report a nested vulnerable copy');
+assert.equal(lockProblems({ 'node_modules/x/node_modules/tmp-legacy': { name: 'tmp', version: '0.0.33' } }).length, 1,
+  'lock check must report an npm-aliased vulnerable copy');
 const lock = JSON.parse(readFileSync(join(root, 'package-lock.json'), 'utf8')).packages;
-const copies = Object.keys(lock).filter((path) => MINIMUM[path.split('node_modules/').pop()]).length;
+const copies = Object.entries(lock).filter(([path, entry]) => MINIMUM[packageName(path, entry)]).length;
 problems.push(...lockProblems(lock));
 console.log(`  package-lock: ${copies} installed copies of tmp/uuid/basic-ftp checked`);
 
