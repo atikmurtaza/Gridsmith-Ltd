@@ -74,7 +74,7 @@ assert.match(from('@lhci/cli')('uuid').v4(), /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]
   assert.match(id.toString(), /^trace_[0-9a-hjkmnp-tv-z]{26}$/, 'typeid-js v7 id');
   assert.equal(cjs.TypeID.fromString(id.toString()).toUUID(), id.toUUID(), 'typeid-js round trip');
   assert.match(id.toUUID(), /^[0-9a-f]{8}-[0-9a-f]{4}-7/, 'typeid-js uses uuid v7');
-  const esm = await import(from('@sanity/cli').resolve('typeid-js').replace(/index\.js$/, 'index.mjs').replace(/\\/g, '/').replace(/^([A-Za-z]):/, 'file:///$1:'));
+  const esm = await import(pathToFileURL(from('@sanity/cli').resolve('typeid-js').replace(/index\.js$/, 'index.mjs')).href);
   assert.match(esm.typeid('trace').toString(), /^trace_/, 'typeid-js ESM');
 }
 
@@ -95,7 +95,7 @@ async function ftpCase(mode) {
         const line = buffer.slice(0, at); buffer = buffer.slice(at + 2);
         const [cmd, ...rest] = line.split(' '); const arg = rest.join(' ');
         seen.push(cmd.toUpperCase());
-        const send = (body) => { const go = () => { dataSocket.end(body, () => c.write('226 done\r\n')); }; c.write('150 opening\r\n'); dataSocket ? go() : (pending = go); };
+        const send = (body) => { const go = () => { dataSocket.end(body, () => c.write('226 done\r\n')); }; c.write('150 opening\r\n'); if (dataSocket) go(); else pending = go; };
         switch (cmd.toUpperCase()) {
           case 'USER': c.write('331 password\r\n'); break;
           case 'PASS': c.write('230 in\r\n'); break;
