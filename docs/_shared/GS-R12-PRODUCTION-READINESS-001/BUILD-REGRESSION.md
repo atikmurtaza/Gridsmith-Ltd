@@ -93,10 +93,10 @@ two consecutive full runs PASS.
 An exit 127 in a later `verify:static` run was Windows status `0xC0000409` (native fail-fast in
 node.exe v24.15, no stderr). Localised to the loopback FTP sequence and reproduced with the
 **original** basic-ftp 5.3.1 (5/200) as well as 6.2.3 (≈1%), so it is a runtime fault, not the
-override. Contained in `78052aac`: FTP behaviour runs in a child; one reported re-run only for that
+override. Contained in `ff2a0558`: FTP behaviour runs in a child; one reported re-run only for that
 exact Windows status; assertion failures, other statuses or a second crash still fail. Branch
 proofs with stand-in children passed; **1,000 gate runs: 0 failures, 9 contained re-runs**.
-`verify:static` then PASS on the `78052aac` tree (61 gates; parity with `ci.yml`).
+`verify:static` then PASS on the `ff2a0558` tree (61 gates; parity with `ci.yml`).
 
 ## 4. Static export (private legal-preview profile) — run on `e2744e54`, then `d3013441`
 

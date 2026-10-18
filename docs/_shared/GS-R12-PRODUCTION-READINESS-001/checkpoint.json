@@ -59,15 +59,15 @@
       "subject": "test(security): count npm-aliased copies in the lock-wide override check"
     },
     {
-      "sha": "3d91e567",
+      "sha": "45522cc7",
       "subject": "docs(readiness): GS-R12-PRODUCTION-READINESS-001 ledger, reports and runbook"
     },
     {
-      "sha": "c6bb5030",
+      "sha": "e720c939",
       "subject": "perf(budget): raise the shared-baseline budget to 2.9KB for the SC 2.4.11 fix"
     },
     {
-      "sha": "78052aac",
+      "sha": "ff2a0558",
       "subject": "test(security): contain a Windows node.exe crash in the FTP override check"
     }
   ],
@@ -138,9 +138,9 @@
     ]
   },
   "evidence": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/BUILD-REGRESSION.md (local results); scratchpad logs are session-temporary",
-  "lastSuccessfulCommand": "npm run verify:static PASS on 78052aac; git commit 78052aac",
+  "lastSuccessfulCommand": "npm audit signatures PASS; approval packet written",
   "next": [
-    "Owner: DEP-PUSH-SAFETY checklist, then authorise one push of the final SHA (no workflow_dispatch) as CI-01 + first Option A Linux run + Q5 diagnostic on Chrome 155",
+    "Owner: confirm Hostinger panel state and GitHub Apps, then approve the exact push in APPROVAL-PACKET.md §10",
     "Owner: BRW-03 durable Chrome input; dispositions for extract-zip x2, braces, sprintf-js",
     "After CI: classify results; production-profile/cutover phases only under separate authority"
   ],
@@ -151,5 +151,32 @@
       "decision": "Raise SHARED_BASELINE_BUDGET_KB 2.8 -> 2.9 to keep the SC 2.4.11 footer-focus fix; reason recorded in scripts/check-bundle-size.mjs",
       "result": "npm run size PASS (2.8732KB); probe re-sized to 64 chars, fires at 2.9494KB"
     }
+  ],
+  "historyRewrite": {
+    "date": "2026-10-18",
+    "reason": "remove production security-alert and hosting-account details before any push to a public repository",
+    "mapping": {
+      "3d91e567": "45522cc7",
+      "c6bb5030": "e720c939",
+      "78052aac": "ff2a0558",
+      "effa6177": "ec1dd06e"
+    },
+    "treeAfter": "b0d175d1f321c2e2d4e8bc98bedbab08253c15e4",
+    "preRewriteHeadInReflog": "d67d09318a74c282abcbdddc4f6249553feed281"
+  },
+  "ciGate": {
+    "status": "AWAITING OWNER PUSH APPROVAL",
+    "packet": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/APPROVAL-PACKET.md",
+    "event": "push (verify job only)",
+    "unverified": [
+      "Hostinger staging auto-deploy/branch (13 Oct obs.)",
+      "Hostinger production Git (13 Oct obs.)",
+      "other GitHub Apps"
+    ]
+  },
+  "evidenceAdded": [
+    "npm audit signatures: 1567 verified signatures, 429 attestations",
+    "Vercel: 0 projects linked to repo (18 Oct)",
+    "GitHub: 0 hooks, 0 rulesets, Pages none, 0 secrets, default token read (18 Oct)"
   ]
 }

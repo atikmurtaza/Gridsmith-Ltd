@@ -218,3 +218,53 @@ Observed facts the owner should know:
   the Next fallback path is undisclosed (LEG-13).
 - Status-register drift: PROJECT-STATUS's blocker table still names the superseded solicitor gate
   (LEG-12). Not edited here because the owner checkout carries uncommitted changes to that file.
+
+## 5. Controlled CI gate preparation (18 October 2026)
+
+**Verified locally**
+
+- Branch `claude/gs-r12-production-readiness-001`, clean tree, linear history on `e854ad87`; owner
+  checkout and the Option A worktree unchanged.
+- Bundle (BLD-01): `size` PASS at 2.8732KB vs the owner-approved 2.9KB; probe payload absent from
+  every built file; probe on → the shared-baseline assertion fires at 2.95KB; floor-tolerance guard
+  intact; consent/footer-focus code unchanged since `e6390bd6`.
+- Crash containment (GATE-DEPS-01): FTP behaviour in a child; one reported re-run only when
+  `process.platform === 'win32'` and status is exactly `0xC0000409`; Linux gets no retry.
+- Dependencies: `npm ls` exit 0 (two known optional-platform extraneous entries);
+  **`npm audit signatures`: 1,567 packages with verified registry signatures, 429 attestations**;
+  lock `eb854741…`.
+
+**Public-repository exposure fixed (EXPOSE-01, class 2 → PASS)**
+
+The repository is public. The readiness docs stated the live production site's provider security
+alert count and named installed GitHub Apps and the hosting plan; none of that was previously in
+the repository. Redacted to neutral wording (details held outside the repository) and folded into
+the original local commit by a non-interactive autosquash rebase of never-pushed commits: final
+tree byte-identical (`b0d175d1`), the phrases appear in 0 commits on the branch. SHA mapping:
+`3d91e567→45522cc7`, `c6bb5030→e720c939`, `78052aac→ff2a0558`, `effa6177→ec1dd06e`. The push
+delta (48 files, +8,267 lines) was scanned: no credentials or keys.
+
+**Deployment-trigger audit (read-only, 18 Oct)** — see [APPROVAL-PACKET.md](APPROVAL-PACKET.md) §4–6:
+push runs `verify` only; publishing requires `workflow_dispatch`; 0 webhooks/rulesets/Pages;
+environments unused; 0 secrets; default token read-only; **Vercel: 0 projects linked to the repo**.
+UNVERIFIED today: Hostinger staging auto-deploy/branch and production Git (13 Oct observations), and
+the other installed GitHub Apps' behaviour.
+
+**No local change is needed for a CI-only run**: the existing push path is already CI-only.
+
+### Release gates
+
+| Gate | Status | Evidence / blocker |
+|---|---|---|
+| Security remediation | **PASS (local)** | 4 fixable IDs remediated; production audit 0; full audit 4 IDs with no published fix |
+| Advisory decisions (extract-zip ×2, braces, sprintf-js) | **OWNER DECISION REQUIRED** | SECURITY.md §3 |
+| Bundle budgets | **PASS** | Owner decision BLD-01 |
+| Browser Option A runtime | **BLOCKED** | Needs the first CI run (or approved phase-006 route) |
+| Master Q5 acceptance | **BLOCKED** | Needs CI evidence on Chrome 155; local 14/14 on 148 and 155 |
+| Complete CI acceptance | **BLOCKED** | Push approval pending (APPROVAL-PACKET) |
+| Local acceptance | **PASS** | §2.1 |
+| Legal publication clearance | **OWNER DECISION REQUIRED** | 7 OWNER_ADOPTED, 0 PUBLISHABLE (§4) |
+| Provider deployment safety | **OWNER DECISION REQUIRED** | Hostinger panel + GitHub Apps confirmation |
+| Production configuration | **BLOCKED** | No production profile/channel (DEP-PROD-*) |
+| Backup and rollback readiness | **BLOCKED** | No restore-proven backup (DEP-PROD-ROLLBACK); staging rollback documented |
+| Owner deployment authorisation | **OWNER DECISION REQUIRED** | Not requested; nothing deploys |
