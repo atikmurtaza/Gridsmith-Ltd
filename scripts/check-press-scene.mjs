@@ -164,7 +164,11 @@ try {
   const target=`label[for="${id}"]`;
   await page.$eval(target,e=>e.scrollIntoView({block:'center',behavior:'instant'}));await wait(400);
   await page.click(target);assert(await page.$eval(`#${id}`,e=>e.checked),`${id} state-cue precondition`);
-  assert((await pressContrast(page,target)).pass,`${id} contrast`);
+  // Settle like the selection loop above (wait(800)): measuring inside the label's 0.15s colour/
+  // background crossfade sampled a mid-transition foreground and failed by timing alone (GS-R12-PR-001).
+  await wait(800);
+  const cue=await pressContrast(page,target);
+  assert(cue.pass,`${id} contrast ${cue.why}`);
   assert.match(await page.$eval(target,e=>getComputedStyle(e).textDecorationLine),/underline/,`${id} non-colour selection cue missing`);
  }
  const titles=new Set(),descriptions=new Set();
