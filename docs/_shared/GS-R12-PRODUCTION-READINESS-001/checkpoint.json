@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "phase": "GS-R12-PRODUCTION-READINESS-001",
+  "updated": "2026-10-18",
+  "decision": "NOT READY — SPECIFIC TECHNICAL BLOCKERS",
+  "worktree": "C:\\Users\\atikm\\.codex\\worktrees\\gs-r12-production-readiness-001\\Gridsmith Ltd",
+  "branch": "claude/gs-r12-production-readiness-001",
+  "baseline": {
+    "commit": "e854ad8747ad7ced8d543105368f25b501fec8b1",
+    "tree": "be9cf685a8864797b54507d816d405f31c2cd273"
+  },
+  "localCommits": [
+    {
+      "sha": "59efa2d4",
+      "subject": "chore(git): keep hash-pinned browser provenance bytes exact"
+    },
+    {
+      "sha": "fe72bdbc",
+      "subject": "ci(browser): provision authenticated fixed Chrome for CI consumers (Option A)"
+    },
+    {
+      "sha": "e6390bd6",
+      "subject": "perf(consent): keep footer focus reserve free of down-levelled syntax"
+    },
+    {
+      "sha": "0784d7d3",
+      "subject": "fix(security): recognise new-format Supabase secret keys in the static artifact scan"
+    },
+    {
+      "sha": "8c1fd41e",
+      "subject": "test(static): assert the delivered Hostinger security-header policy offline"
+    },
+    {
+      "sha": "6b441ad3",
+      "subject": "fix(security): override tmp, uuid and basic-ftp to patched releases"
+    },
+    {
+      "sha": "98672fe2",
+      "subject": "fix(browser): accept the channel token real Linux Chrome prints for --version"
+    },
+    {
+      "sha": "bb2343fd",
+      "subject": "chore(security): lint-clean the dependency-override regression"
+    },
+    {
+      "sha": "cf2cd083",
+      "subject": "test: address independent review of the readiness gates"
+    },
+    {
+      "sha": "e2744e54",
+      "subject": "fix(test): settle Press state-cue labels before measuring contrast"
+    },
+    {
+      "sha": "d3013441",
+      "subject": "fix(test): wait for the thank-you title instead of racing the router"
+    },
+    {
+      "sha": "7a1b662a",
+      "subject": "test(security): count npm-aliased copies in the lock-wide override check"
+    }
+  ],
+  "protected": {
+    "ownerCheckout": "never modified",
+    "optionAWorktree": "copied byte-identical, never modified",
+    "masterQ5Verifier": "scripts/check-master-scene.mjs sha256 98210eaf657a7930a03b9a120b5557150e978f439784b0a43f3af23e9ea307f3 unchanged",
+    "legalFiles": "no legal text, register or adoption state changed; 7 OWNER_ADOPTED, 0 PUBLISHABLE",
+    "envLocal": "owner .env.local never read or copied"
+  },
+  "pins": {
+    "package.json": "e048cd904f41abd3e1206424eebf8e52b5ba33bea82f109557be90c99e5bb53d",
+    "package-lock.json": "eb85474121ce8782aaa6e7560e8fdcd198e7410a889e50d859dd3dcf4469e01d",
+    "ci.yml": "2b1a05d3a6edc30fd071855fbddea401e0b5141a37087e6beae509ddd3d8b0af",
+    "browser-input.json": "20ac446b365c2e9f08d83355f66e99f78c4065c93c49099c45ebd4754be0cb54"
+  },
+  "pushed": false,
+  "ciTriggered": false,
+  "deployed": false,
+  "dockerRun": false,
+  "providerWrite": false,
+  "statusByClass": {
+    "class1Open": [
+      "BLD-01 (owner decision)",
+      "CI-01",
+      "BRW-RT-01",
+      "Q5-01",
+      "DEP-PROD-PROFILE",
+      "DEP-PROD-CHANNEL",
+      "DEP-PROD-ROLLBACK",
+      "LEG-02",
+      "LEG-04",
+      "LEG-05/06"
+    ],
+    "class1Closed": [
+      "BRW-EOL-01",
+      "SEC-TMP-02",
+      "SEC-UUID-03",
+      "SEC-FTP-04",
+      "SEC-PIN-07",
+      "BRW-02 (synthetic)",
+      "ACC-03/LEG-15 (local)",
+      "ACC-04 (local)",
+      "GATE-PRESS-01"
+    ],
+    "ownerDecisions": [
+      "BLD-01",
+      "DEP-PUSH-SAFETY",
+      "BRW-03",
+      "SEC-ZIP-01",
+      "SEC-BRACES-05",
+      "SEC-SPRINTF-06",
+      "Q5-01",
+      "LEG-01",
+      "LEG-07",
+      "LEG-08",
+      "LEG-09",
+      "LEG-10",
+      "LEG-11",
+      "LEG-14",
+      "POL-01",
+      "SEC-F4",
+      "SEC-F5",
+      "ACC-08",
+      "DEP-WP-ROLLBACK-TARGET",
+      "BPH-05",
+      "DEP-VERCEL-RESIDUAL"
+    ]
+  },
+  "evidence": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/BUILD-REGRESSION.md (local results); scratchpad logs are session-temporary",
+  "lastSuccessfulCommand": "git commit 7a1b662a (check:deps:overrides PASS)",
+  "next": [
+    "Owner: decide BLD-01 (budget 2.8 -> 2.9 or behaviour cut)",
+    "Owner: DEP-PUSH-SAFETY checklist, then authorise one push of the final SHA (no workflow_dispatch) as CI-01 + first Option A Linux run + Q5 diagnostic on Chrome 155",
+    "Owner: BRW-03 durable Chrome input; dispositions for extract-zip x2, braces, sprintf-js",
+    "After CI: classify results; production-profile/cutover phases only under separate authority"
+  ]
+}
