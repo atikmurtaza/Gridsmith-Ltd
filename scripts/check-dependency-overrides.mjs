@@ -15,7 +15,7 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { existsSync, readFileSync } from 'node:fs';
-import { createServer } from 'node:net';
+import { spawnSync } from 'node:child_process';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -103,75 +103,23 @@ assert.match(from('@lhci/cli')('uuid').v4(), /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]
   assert.match(esm.typeid('trace').toString(), /^trace_/, 'typeid-js ESM');
 }
 
-// get-uri's ftp: route over basic-ftp, against a loopback server that records what it was asked.
-async function ftpCase(mode) {
-  const seen = [];
-  let pending = null;
-  let dataSocket = null;
-  const data = createServer((s) => { dataSocket = s; if (pending) { pending(); pending = null; } });
-  await new Promise((r) => data.listen(0, '127.0.0.1', r));
-  const control = createServer((c) => {
-    c.write('220 gs mock\r\n');
-    let buffer = '';
-    c.on('data', (chunk) => {
-      buffer += chunk;
-      let at;
-      while ((at = buffer.indexOf('\r\n')) >= 0) {
-        const line = buffer.slice(0, at); buffer = buffer.slice(at + 2);
-        const [cmd, ...rest] = line.split(' '); const arg = rest.join(' ');
-        seen.push(cmd.toUpperCase());
-        const send = (body) => { const go = () => { dataSocket.end(body, () => c.write('226 done\r\n')); }; c.write('150 opening\r\n'); if (dataSocket) go(); else pending = go; };
-        switch (cmd.toUpperCase()) {
-          case 'USER': c.write('331 password\r\n'); break;
-          case 'PASS': c.write('230 in\r\n'); break;
-          case 'FEAT': c.write(mode === 'mlsd' ? '211-Features:\r\n MLST type*;size*;modify*;\r\n211 End\r\n' : '211 End\r\n'); break;
-          case 'TYPE': case 'STRU': case 'OPTS': c.write('200 ok\r\n'); break;
-          case 'EPSV': dataSocket = null; c.write(`229 Entering Extended Passive Mode (|||${data.address().port}|)\r\n`); break;
-          case 'PASV': { dataSocket = null; const p = data.address().port; c.write(`227 Entering Passive Mode (127,0,0,1,${p >> 8},${p & 255})\r\n`); break; }
-          case 'MDTM':
-            if (arg.endsWith('missing.txt')) c.write('550 not found\r\n');
-            else if (mode === 'mdtm') c.write('213 20261018120000\r\n');
-            else c.write('502 not implemented\r\n');
-            break;
-          case 'LIST': send('-rw-r--r-- 1 owner group 11 Oct 18 12:00 file.txt\r\n'); break;
-          case 'MLSD': send('type=file;size=11;modify=20261018120000; file.txt\r\n'); break;
-          case 'RETR': send('hello world'); break;
-          case 'QUIT': c.end('221 bye\r\n'); break;
-          default: c.write('502 not implemented\r\n');
-        }
-      }
-    });
-    c.on('error', () => {});
-  });
-  await new Promise((r) => control.listen(0, '127.0.0.1', r));
-  const { getUri } = from('pac-proxy-agent')('get-uri');
-  const port = control.address().port;
-  try {
-    if (mode === 'missing' || mode === 'list') {
-      await assert.rejects(getUri(`ftp://127.0.0.1:${port}/pub/${mode === 'list' ? 'file' : 'missing'}.txt`), (e) => e.code === 'ENOTFOUND', `ftp ${mode} -> NotFound`);
-    } else {
-      const stream = await getUri(`ftp://127.0.0.1:${port}/pub/file.txt`);
-      let text = '';
-      for await (const chunk of stream) text += chunk;
-      assert.equal(text, 'hello world', `ftp ${mode} content`);
-      assert(stream.lastModified instanceof Date && !Number.isNaN(+stream.lastModified), `ftp ${mode} lastModified`);
-    }
-  } finally {
-    control.close(); data.close();
-  }
-  return seen;
+// get-uri's ftp: route runs in a child (check-dependency-overrides-ftp.mjs). On Windows, node.exe
+// v24.15 occasionally dies natively (0xC0000409, about 1% of runs) during that loopback socket
+// sequence — with basic-ftp 5.3.1 as well as 6.2.3, so it is a runtime fault, not the override.
+// Exactly one re-run is allowed for exactly that Windows status, and it is reported. An assertion
+// failure, any other status, or a second crash fails this gate.
+const runFtp = () => spawnSync(process.execPath, [join(root, 'scripts', 'check-dependency-overrides-ftp.mjs')], { encoding: 'utf8', timeout: 120_000 });
+const nativeCrash = (run) => process.platform === 'win32' && run.status !== null && (run.status >>> 0) === 0xc0000409;
+let ftpRun = runFtp();
+if (nativeCrash(ftpRun)) {
+  console.log('  get-uri ftp: node.exe native crash 0xC0000409 (Windows runtime fault, not an assertion); re-running once');
+  ftpRun = runFtp();
 }
-const mdtm = await ftpCase('mdtm');
-assert(mdtm.includes('MDTM') && mdtm.includes('RETR') && !mdtm.includes('LIST'), `ftp MDTM path not reached: ${mdtm}`);
-const mlsd = await ftpCase('mlsd');
-assert(mlsd.includes('MDTM') && mlsd.includes('MLSD') && mlsd.includes('RETR'), `ftp MLSD fallback not reached: ${mlsd}`);
-// Unix LIST is the advisory's parser. get-uri reads entry.modifiedAt, which basic-ftp sets only
-// from MLSD (5.x and 6.x alike), so this branch parses the listing and then reports NotFound.
-const list = await ftpCase('list');
-assert(list.includes('MDTM') && list.includes('LIST') && !list.includes('RETR'), `ftp Unix LIST fallback not reached: ${list}`);
-const missing = await ftpCase('missing');
-assert(missing.includes('MDTM') && !missing.includes('RETR'), `ftp 550 path not reached: ${missing}`);
-console.log(`  get-uri ftp: MDTM [${mdtm}] · MLSD fallback [${mlsd}] · Unix LIST fallback [${list}] · 550 [${missing}]`);
+process.stdout.write(ftpRun.stdout ?? '');
+process.stderr.write(ftpRun.stderr ?? '');
+if (ftpRun.status !== 0) {
+  problems.push(`get-uri ftp behaviour failed (status ${ftpRun.status === null ? ftpRun.signal : '0x' + (ftpRun.status >>> 0).toString(16)}${nativeCrash(ftpRun) ? ', native crash on both attempts' : ''})`);
+}
 
 if (problems.length) {
   console.error(`check-dependency-overrides: ${problems.length} problem(s)\n${problems.map((p) => `  ${p}`).join('\n')}`);
