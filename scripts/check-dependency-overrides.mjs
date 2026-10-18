@@ -20,11 +20,19 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const root = resolve(import.meta.dirname, '..');
-const from = (pkg) => createRequire(join(root, 'node_modules', pkg, 'package.json'));
+const from = (pkg) => {
+  const manifest = join(root, 'node_modules', pkg, 'package.json');
+  // A consumer that is not where we look would make createRequire measure the root copy instead.
+  assert(existsSync(manifest), `consumer ${pkg} is not installed at node_modules/${pkg}`);
+  return createRequire(manifest);
+};
 const versionOf = (consumer, dep) => {
-  const req = from(consumer);
-  let dir = req.resolve(dep);
-  while (!existsSync(join(dir, 'package.json')) || JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).name !== dep) dir = resolve(dir, '..');
+  let dir = from(consumer).resolve(dep);
+  while (!existsSync(join(dir, 'package.json')) || JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).name !== dep) {
+    // An aliased or renamed package must fail here, not climb past the filesystem root forever.
+    if (resolve(dir, '..') === dir) throw new Error(`no package.json named ${dep} above ${consumer}'s resolution`);
+    dir = resolve(dir, '..');
+  }
   return JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).version;
 };
 const atLeast = (version, minimum) => {
@@ -48,6 +56,19 @@ for (const [consumer, dep, min] of EXPECT) {
   console.log(`  ${consumer} -> ${dep}@${v} (needs >=${min})`);
   if (!atLeast(v, min)) problems.push(`${consumer} resolves ${dep}@${v}, below the fixed ${min}`);
 }
+
+// Every installed copy, wherever it is nested: the lockfile is what `npm ci` installs.
+const MINIMUM = { tmp: '0.2.6', uuid: '11.1.1', 'basic-ftp': '6.2.1' };
+const lockProblems = (packages) => Object.entries(packages).flatMap(([path, { version }]) => {
+  const name = path.split('node_modules/').pop();
+  return MINIMUM[name] && version && !atLeast(version, MINIMUM[name]) ? [`${path} is ${name}@${version}, below the fixed ${MINIMUM[name]}`] : [];
+});
+assert.equal(lockProblems({ 'node_modules/x/node_modules/tmp': { version: '0.1.0' }, 'node_modules/uuid': { version: '11.1.1' } }).length, 1,
+  'lock check must report a nested vulnerable copy');
+const lock = JSON.parse(readFileSync(join(root, 'package-lock.json'), 'utf8')).packages;
+const copies = Object.keys(lock).filter((path) => MINIMUM[path.split('node_modules/').pop()]).length;
+problems.push(...lockProblems(lock));
+console.log(`  package-lock: ${copies} installed copies of tmp/uuid/basic-ftp checked`);
 
 // tmp, as @lhci/cli's `open` command calls it.
 {

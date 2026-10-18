@@ -183,7 +183,8 @@ assert.equal(siblingRouteAllowed(hosting.replace('RewriteCond %{REQUEST_FILENAME
 // .htaccess is the only delivered security-header policy. Assert it offline, branch by branch.
 const REQUIRED_HEADERS = { 'X-Content-Type-Options': /^nosniff$/, 'X-Frame-Options': /^DENY$/,
   'Referrer-Policy': /^strict-origin-when-cross-origin$/, 'Permissions-Policy': /camera=\(\).*geolocation=\(\).*microphone=\(\)/,
-  'Strict-Transport-Security': /^max-age=(?:3153[6-9]\d{3}|[4-9]\d{7}|\d{9,})/ };
+  // Numeric, not digit-shaped: at least one year (31536000 s); a zero-padded zero must not pass.
+  'Strict-Transport-Security': { test: (v) => { const m = /^max-age=(\d+)(?:;|$)/.exec(v); return Boolean(m) && Number(m[1]) >= 31536000; } } };
 const REQUIRED_CSP = ["default-src 'self'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'", "object-src 'none'"];
 const headerProblems = (rules) => {
   const set = Object.fromEntries([...rules.matchAll(/^Header always set ([\w-]+) "([^"]*)"$/gm)].map(m => [m[1], m[2]]));
@@ -196,12 +197,16 @@ for (const [mutation, expected] of [[r => r.replace(/^Header always set Content-
   [r => r.replace("frame-ancestors 'none'; ", ''), "CSP frame-ancestors 'none'"], [r => r.replace("object-src 'none'; ", ''), "CSP object-src 'none'"],
   [r => r.replace(/^Header always set Strict-Transport-Security .*$/m, ''), 'Strict-Transport-Security'],
   [r => r.replace('max-age=31536000"', 'max-age=300"'), 'Strict-Transport-Security'],
+  [r => r.replace('max-age=31536000"', 'max-age=000000000"'), 'Strict-Transport-Security'],
   [r => r.replace('"nosniff"', '"sniff"'), 'X-Content-Type-Options'], [r => r.replace('"DENY"', '"SAMEORIGIN"'), 'X-Frame-Options'],
   [r => r.replace(/^Header always set Referrer-Policy .*$/m, ''), 'Referrer-Policy'],
   [r => r.replace('microphone=(), ', ''), 'Permissions-Policy']]) {
   assert(headerProblems(mutation(hosting)).includes(expected), `Header mutation not caught: ${expected}`);
 }
-console.log(`Hostinger security headers: ${Object.keys(REQUIRED_HEADERS).length} headers and ${REQUIRED_CSP.length} CSP directives asserted; 9 mutation proofs red.`);
+for (const longer of ['31556952', '31622400', '63072000']) {
+  assert.deepEqual(headerProblems(hosting.replace('max-age=31536000"', `max-age=${longer}"`)), [], `HSTS ${longer} s is at least a year`);
+}
+console.log(`Hostinger security headers: ${Object.keys(REQUIRED_HEADERS).length} headers and ${REQUIRED_CSP.length} CSP directives asserted; 10 mutation proofs red, 3 longer HSTS values accepted.`);
 console.log('Hostinger hash/cache predicates: 5 hashed and 6 unversioned names; sibling-route positive/adverse predicates PASS.');
 console.log('Hostinger static config subject: exact-origin production rejection, noindex, gated 404 and explicit cache policies. Served behaviour remains a hosted gate.');
 
