@@ -17,8 +17,8 @@ const base = {
   gitConfig: [['remote.origin.url', 'https://github.com/example/public.git']],
   npmConfig: { registry: 'https://registry.npmjs.org/', 'engine-strict': 'true', 'ignore-scripts': 'false', omit: '' },
   npmConfigFiles: ['engine-strict=true\n'], configPaths: [],
-  packageSha256: '9ce5c7a021b3a926fe39d149193adca03d0bae592de79d4142f0f7f119078e67',
-  lockSha256: '0db1f40a33223b7f2e2a84a8549f19d0130338165b53ee0d62dccf837f41e6a9',
+  packageSha256: 'e048cd904f41abd3e1206424eebf8e52b5ba33bea82f109557be90c99e5bb53d',
+  lockSha256: 'eb85474121ce8782aaa6e7560e8fdcd198e7410a889e50d859dd3dcf4469e01d',
 };
 assert.deepEqual(installationProblems(base), []);
 let cases = 1;

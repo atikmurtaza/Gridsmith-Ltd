@@ -12,11 +12,11 @@ import { sourceFiles } from './source-files.mjs';
 const sha256 = (text) => createHash('sha256').update(text).digest('hex');
 // Expectations are outside the workflow subjects; changing a workflow requires explicit review here.
 const WORKFLOWS = {
-  '.github/workflows/ci.yml': '8738c6a2b9e706dafc9b097ac5edacbb772894b1d65364e049d421476ce4bb5d',
+  '.github/workflows/ci.yml': '2b1a05d3a6edc30fd071855fbddea401e0b5141a37087e6beae509ddd3d8b0af',
   '.github/workflows/hostinger-staging.yml': '1877f94f343a0e1029e16091407a4043f083ca08a93df1e9476e1eb371375793',
 };
-const PACKAGE_SHA256 = '9ce5c7a021b3a926fe39d149193adca03d0bae592de79d4142f0f7f119078e67';
-const LOCK_SHA256 = '0db1f40a33223b7f2e2a84a8549f19d0130338165b53ee0d62dccf837f41e6a9';
+const PACKAGE_SHA256 = 'e048cd904f41abd3e1206424eebf8e52b5ba33bea82f109557be90c99e5bb53d';
+const LOCK_SHA256 = 'eb85474121ce8782aaa6e7560e8fdcd198e7410a889e50d859dd3dcf4469e01d';
 const GUARD_SUBJECTS = new Set(['scripts/browser-input.mjs', 'scripts/browser-input.selftest.mjs']);
 const SAFE_GIT_ENV = {
   GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_SYSTEM: '/dev/null', GIT_CONFIG_GLOBAL: '/dev/null',

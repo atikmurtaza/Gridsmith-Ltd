@@ -248,6 +248,12 @@ jobs:
       - name: Portable Text links render only for a safe href (committed specimens)
         run: npm run check:portable-links:selftest
 
+      # GS-R12-PRODUCTION-READINESS-001. The tmp, uuid and basic-ftp security overrides, read from
+      # each real consumer's own resolution and exercised through the consumer's call path
+      # (get-uri's ftp: route against a loopback server). No network.
+      - name: Security overrides resolve and behave through their consumers
+        run: npm run check:deps:overrides
+
       # GS-O004 / GS-R001. Selftest first, same reason as every pair above: each RESPONSE_RULES
       # and TEAM_RULES limb is broken separately and the returned problem set is read, so a
       # pattern edited into inertness fails here rather than reporting a clean run against the
