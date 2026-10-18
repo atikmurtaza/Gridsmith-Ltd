@@ -236,6 +236,16 @@ negative("unsafe clock before signed release", "KEY_CLOCK", lambda: verifier.par
 negative("unsafe clock after signer expiry", "KEY_CLOCK", lambda: verifier.parse_key_status(KEY, MANIFEST["provenance"], MANIFEST["provenance"]["signerExpiresUnix"]))
 positive("synthetic valid signed metadata status", "parse_signature_status actual predicate; synthetic trusted GPG output", lambda: verifier.parse_signature_status(signature_fixture(), MANIFEST["provenance"], NOW))
 negative("invalid signature", "SIGNATURE_INVALID", lambda: verifier.parse_signature_status(signature_fixture(status="BADSIG"), MANIFEST["provenance"], NOW))
+# Verbatim `gpgv --status-fd 1` output from GnuPG 2.4.9 for the committed key and InRelease (captured
+# offline 18 Oct 2026; CI run 39151214971 failed SIGNATURE_INVALID on the same shape under 2.4.4).
+REAL_GNUPG_24_STATUS = (
+    "[GNUPG:] PLAINTEXT 74 0 \n[GNUPG:] NEWSIG\n[GNUPG:] KEYEXPIRED 1555048520\n[GNUPG:] KEYEXPIRED 1579833932\n"
+    "[GNUPG:] KEYEXPIRED 1658427182\n[GNUPG:] KEYEXPIRED 1729865503\n[GNUPG:] KEYEXPIRED 1771082712\n"
+    "[GNUPG:] KEY_CONSIDERED EB4C1BFD4F042F6DDDCCEC917721F63BD38B4796 0\n[GNUPG:] SIG_ID aYa467Ob1Jvw+iqPXp2AJL5DnEg 2026-10-14 1791968503\n"
+    "[GNUPG:] GOODSIG FD533C07C264648F Google Inc. (Linux Packages Signing Authority) <linux-packages-keymaster@google.com>\n"
+    "[GNUPG:] VALIDSIG 0E225917414670F4442C250DFD533C07C264648F 2026-10-14 1791968503 0 4 0 1 8 01 EB4C1BFD4F042F6DDDCCEC917721F63BD38B4796\n")
+positive("real GnuPG 2.4 status: unused expired subkeys reported", "parse_signature_status actual predicate; real gpgv 2.4.9 output", lambda: verifier.parse_signature_status(REAL_GNUPG_24_STATUS, MANIFEST["provenance"], NOW))
+negative("real GnuPG 2.4 status with expired signing key", "SIGNATURE_INVALID", lambda: verifier.parse_signature_status(REAL_GNUPG_24_STATUS + "[GNUPG:] EXPKEYSIG FD533C07C264648F Google Inc.\n", MANIFEST["provenance"], NOW))
 negative("signature missing", "SIGNATURE_STATUS_MISSING", lambda: verifier.parse_signature_status("[GNUPG:] NEWSIG\n", MANIFEST["provenance"], NOW))
 negative("signature wrong signer", "SIGNATURE_SIGNING_IDENTITY", lambda: verifier.parse_signature_status(signature_fixture(signer="A" * 40), MANIFEST["provenance"], NOW))
 negative("signature wrong primary", "SIGNATURE_SIGNING_IDENTITY", lambda: verifier.parse_signature_status(signature_fixture(primary="A" * 40), MANIFEST["provenance"], NOW))

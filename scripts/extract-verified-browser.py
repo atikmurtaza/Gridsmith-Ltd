@@ -359,7 +359,11 @@ def parse_key_status(text, p, now):
 
 def parse_signature_status(text, p, now):
     lines = [line[len("[GNUPG:] "):].split() for line in text.splitlines() if line.startswith("[GNUPG:] ")]
-    require(lines and not any(row and row[0] in {"BADSIG", "ERRSIG", "NO_PUBKEY", "NODATA", "FAILURE", "ERROR", "EXPSIG", "EXPKEYSIG", "REVKEYSIG", "KEYEXPIRED", "SIGEXPIRED"} for row in lines), "SIGNATURE_INVALID")
+    # KEYEXPIRED is not a verdict: GnuPG emits it for every expired subkey in the keyring even when
+    # that subkey did not sign (GnuPG 2.4 gpgv does so for Google's retired subkeys; CI run
+    # 39151214971). An expired signing key is EXPKEYSIG; validity and expiry of the signature and
+    # signer are also enforced from VALIDSIG below and from parse_key_status (GS-R12-PR-001).
+    require(lines and not any(row and row[0] in {"BADSIG", "ERRSIG", "NO_PUBKEY", "NODATA", "FAILURE", "ERROR", "EXPSIG", "EXPKEYSIG", "REVKEYSIG", "SIGEXPIRED"} for row in lines), "SIGNATURE_INVALID")
     valid = [row for row in lines if row and row[0] == "VALIDSIG"]
     require(len(valid) == 1 and len(valid[0]) == 11, "SIGNATURE_STATUS_MISSING")
     row = valid[0]
