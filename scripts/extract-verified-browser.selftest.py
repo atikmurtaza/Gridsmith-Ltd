@@ -12,6 +12,7 @@ import importlib.util
 import io
 import json
 import os
+import posixpath
 import stat
 import struct
 import sys
@@ -341,6 +342,89 @@ negative("provider receipt traversal", "PROVIDER_ENTRY_ROOT", lambda: verifier.v
 negative("provider duplicate SONAME", "PROVIDER_DUPLICATE_SONAME", lambda: verifier.validate_provider_receipt(changed(loader_fixture(), ["providers"], loader_fixture()["providers"] + [loader_fixture()["providers"][0]]), RUNTIME))
 negative("provider interpreter inconsistency", "PROVIDER_INTERPRETER_CONFLICT", lambda: verifier.validate_provider_receipt(changed(loader_fixture(), ["providers", 1, "sha256"], "c" * 64), RUNTIME))
 negative("provider false environment evidence", "PROVIDER_RECEIPT_INCOMPLETE", lambda: verifier.validate_provider_receipt(changed(loader_fixture(), ["environmentClean"], False), RUNTIME))
+
+# Ubuntu 24.04 host model for verify_loader (CI run 39151214971's image: glibc 2.39, dpkg 1.22.6).
+# rtld_trace follows glibc-2.39 elf/rtld.c: run as a command, ld.so's l_name is argv[0] and its
+# libname is the member's PT_INTERP, or argv[0] without one; the trace prints "libname => l_name"
+# when they differ. dpkg_search follows dpkg-1.22.6 src/query/main.c searchoutput/searchfiles: a
+# diversion prints two lines and counts as found; exit 1 only when an argument found nothing. Noble's
+# libc6 registers its files under /usr only (packages.ubuntu.com noble/amd64/libc6 filelist) and its
+# preinst adds the DEP17 M8 diversion of /lib64/ld-linux-x86-64.so.2 (Launchpad glibc ubuntu/noble-updates).
+LD, LD_REAL = "/lib64/ld-linux-x86-64.so.2", "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"
+LIBC, LIBC_REAL = "/lib/x86_64-linux-gnu/libc.so.6", "/usr/lib/x86_64-linux-gnu/libc.so.6"
+NOBLE_OWNERS = {LD_REAL: "libc6:amd64", LIBC_REAL: "libc6:amd64"}
+NOBLE_DIVERSIONS = {LD: ("libc6", LD + ".usr-is-merged")}
+LIB_ELF = elf_fixture(interpreter=None)
+LOADER_RUNTIME = fixture_runtime(BASE + [member("opt/google/chrome/libvulkan.so.1", LIB_ELF, elf=verifier.elf_identity(io.BytesIO(LIB_ELF), len(LIB_ELF)))])
+
+
+def rtld_trace(argv0, interpreter):
+    libname = interpreter or argv0
+    own = libname if libname == argv0 else libname + " => " + argv0
+    return ("\tlinux-vdso.so.1 (0x00007ffd00001000)\n\tlibc.so.6 => " + LIBC + " (0x00007f0000001000)\n\t" + own + " (0x00007f0000002000)\n").encode()
+
+
+def dpkg_search(paths, owners, diversions):
+    lines, misses = [], 0
+    for path in paths:
+        if path in diversions:
+            package, target = diversions[path]
+            by = "local diversion" if package is None else "diversion by " + package
+            lines += [by + " from: " + path, by + " to: " + target]
+        if path in owners:
+            lines.append(owners[path] + ": " + path)
+        misses += path not in owners and path not in diversions
+    return "".join(line + "\n" for line in lines).encode(), int(misses > 0)
+
+
+class LoaderHost:
+    def __init__(self, owners=NOBLE_OWNERS, diversions=NOBLE_DIVERSIONS, status="installed", search_status=None):
+        self.owners, self.diversions, self.status, self.search_status, self.calls = owners, diversions, status, search_status, []
+
+    def run(self, args, executable=None, **options):
+        self.calls.append((list(args), executable))
+        if args[:2] == ["/usr/bin/dpkg-query", "--search"]:
+            output, status = dpkg_search(args[2:], self.owners, self.diversions)
+            return output, status if self.search_status is None else self.search_status
+        if args[:2] == ["/usr/bin/dpkg-query", "--show"]:
+            return "".join("%s\t2.39-0ubuntu8.9\tamd64\t%s\n" % (name, self.status) for name in args[3:]).encode(), 0
+        verifier.require(executable == LD_REAL and args[1] == "--list", "FIXTURE_UNEXPECTED_TOOL")
+        row = next(row for row in LOADER_RUNTIME["expectedMembers"] if posixpath.join("/tmp/job/runtime", row["path"]) == args[2])
+        return rtld_trace(args[0], row["elf"]["interpreter"]), 0
+
+    def __call__(self, operation):
+        saved = verifier.run_bounded, verifier.os_library, verifier.trusted_tool
+        verifier.run_bounded, verifier.trusted_tool = self.run, lambda name: "/usr/bin/" + name
+        verifier.os_library = lambda path, runtime: {"path": path, "realPath": {LD: LD_REAL, LIBC: LIBC_REAL}[path], "sha256": hashlib.sha256(path.encode()).hexdigest()}
+        try:
+            return operation()
+        finally:
+            verifier.run_bounded, verifier.os_library, verifier.trusted_tool = saved
+
+
+def noble_closure():
+    host = LoaderHost()
+    receipt = host(lambda: verifier.verify_loader("/tmp/job/runtime", LOADER_RUNTIME))
+    searches = [args for args, _ in host.calls if args[1] == "--search"]
+    lists = [(args, executable) for args, executable in host.calls if args[1] == "--list"]
+    verifier.require(len(lists) == 2 and all(args[0] == LD and executable == LD_REAL for args, executable in lists), "FIXTURE_LOADER_INVOCATION")
+    verifier.require(len(searches) == 2 and searches[0] == ["/usr/bin/dpkg-query", "--search", "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2", LD_REAL] and host.calls.index((searches[0], None)) < host.calls.index(lists[0]), "FIXTURE_OWNERSHIP_BEFORE_EXECUTION")
+    verifier.require(not any(LD in args[2:] for args in searches), "FIXTURE_SYMLINK_PATH_QUERIED")
+    verifier.require(receipt["interpreter"] == {"path": LD, "realPath": LD_REAL, "sha256": hashlib.sha256(LD.encode()).hexdigest(), "package": "libc6:amd64", "version": "2.39-0ubuntu8.9", "architecture": "amd64"}, "FIXTURE_INTERPRETER_RECEIPT")
+
+
+positive("Ubuntu 24.04 loader closure: argv[0] interpreter, diverted PT_INTERP path, one batched ownership query", "verify_loader complete provider receipt", noble_closure)
+for argv0, interpreter in ((LD, LD), (LD, None)):
+    assert verifier.parse_loader_output(rtld_trace(argv0, interpreter))["ld-linux-x86-64.so.2"] == LD, "one loader name for PT_INTERP and library members"
+negative("loader run by realpath names itself twice", "LOADER_OUTPUT_MALFORMED", lambda: verifier.parse_loader_output(rtld_trace(LD_REAL, LD)))
+negative("diversion of the resolved file", "LOADER_PACKAGE_OWNERSHIP", lambda: LoaderHost(diversions={LIBC_REAL: ("libc6", LIBC_REAL + ".usr-is-merged")})(lambda: verifier.package_providers({LIBC_REAL})))
+positive("protective diversion of an unmerged alias", "package_providers DEP17 alias diversion", lambda: verifier.require(LoaderHost(diversions={LIBC: ("libc6", LIBC + ".usr-is-merged")})(lambda: verifier.package_providers({LIBC_REAL}))[LIBC_REAL]["package"] == "libc6:amd64", "FIXTURE_ALIAS_DIVERSION"))
+negative("non-protective diversion of an alias", "LOADER_PACKAGE_OWNERSHIP", lambda: LoaderHost(diversions={LIBC: ("evil", "/tmp/libc.so.6")})(lambda: verifier.package_providers({LIBC_REAL})))
+negative("local diversion of an alias", "LOADER_PACKAGE_OWNERSHIP", lambda: LoaderHost(diversions={LIBC: (None, LIBC + ".usr-is-merged")})(lambda: verifier.package_providers({LIBC_REAL})))
+negative("library without a registered owner", "LOADER_PACKAGE_OWNERSHIP", lambda: LoaderHost()(lambda: verifier.package_providers({"/usr/lib/x86_64-linux-gnu/libmissing.so.1"})))
+negative("two packages own one library", "LOADER_PACKAGE_OWNERSHIP", lambda: LoaderHost(owners={**NOBLE_OWNERS, LIBC: "libc6-other:amd64"})(lambda: verifier.package_providers({LIBC_REAL})))
+negative("ownership query failure", "TRUSTED_TOOL_FAILED_OR_OUTPUT_LIMIT", lambda: LoaderHost(search_status=2)(lambda: verifier.package_providers({LIBC_REAL})))
+negative("owning package not installed", "LOADER_PACKAGE_IDENTITY", lambda: LoaderHost(status="half-installed")(lambda: verifier.package_providers({LIBC_REAL})))
 positive("browser exact version output predicate", "browser_version exact product/version/exit status, no process executed", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79\n", 0, MANIFEST))
 negative("browser wrapper or extra output", "BROWSER_VERSION_IDENTITY", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79\nwrapper\n", 0, MANIFEST))
 positive("browser stable channel token is empty", "browser_version exact product/version/exit status, no process executed", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79 \n", 0, MANIFEST))

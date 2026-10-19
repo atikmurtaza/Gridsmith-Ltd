@@ -899,42 +899,51 @@ def parse_loader_output(data):
     return result
 
 
-def package_provider(path, real):
+def package_providers(reals):
+    # Ownership is asked of each resolved file and, for packages not yet moved under /usr, its
+    # pre-merge alias; never of the path ld.so printed. On Ubuntu 24.04 that path can be a symlink
+    # carrying only libc6's DEP17 protective diversion (/lib64/ld-linux-x86-64.so.2), which
+    # dpkg-query reports as found, exit 0, with no owner line. One query for every file reads the
+    # dpkg file database once, not twice per library inside the shared wall deadline.
     tool = trusted_tool("dpkg-query")
-    candidates = [real, path]
-    if real.startswith("/usr/lib/"):
-        candidates.append(real[4:])
-    owners = set()
-    for candidate in dict.fromkeys(candidates):
-        try:
-            result = command([tool, "--search", candidate], maximum=65536).decode("ascii")
-        except Rejected as error:
-            if error.code == "TRUSTED_TOOL_FAILED_OR_OUTPUT_LIMIT":
-                continue
-            raise
-        for line in result.splitlines():
-            match = re.fullmatch(r"([a-z0-9][a-z0-9+.-]*(?::amd64)?): (/.+)", line)
-            require(match is not None and match[2] == candidate, "LOADER_PACKAGE_OWNERSHIP")
-            owners.add(match[1])
-    require(len(owners) == 1, "LOADER_PACKAGE_OWNERSHIP")
-    owner = owners.pop()
-    row = command([tool, "--show", "--showformat=${binary:Package}\t${Version}\t${Architecture}\t${db:Status-Status}\n", owner], maximum=65536).decode("ascii").strip().split("\t")
-    require(len(row) == 4 and row[0] == owner and PACKAGE.fullmatch(row[0]) and re.fullmatch(r"[0-9][A-Za-z0-9.+:~_-]*", row[1]) and row[2] == "amd64" and row[3] == "installed", "LOADER_PACKAGE_IDENTITY")
-    return {"package": row[0], "version": row[1], "architecture": row[2]}
+    candidates = {real: real for real in reals}
+    for real in sorted(reals):
+        if real.startswith("/usr/lib/"):
+            candidates.setdefault(real[4:], real)
+    output, status = run_bounded([tool, "--search", *sorted(candidates)], maximum=4 * 1024 * 1024)
+    # Status 1 only reports an argument without a registered owner; every file is checked below.
+    require(status in (0, 1), "TRUSTED_TOOL_FAILED_OR_OUTPUT_LIMIT")
+    owners = {real: set() for real in reals}
+    for line in output.decode("ascii").splitlines():
+        diversion = re.fullmatch(r"diversion by [a-z0-9][a-z0-9+.-]* (?:from: (/.+)|to: (/.+)\.usr-is-merged)", line)
+        if diversion:
+            # A DEP17 protective diversion of an alias is not a claim about the resolved file.
+            alias = diversion[1] or diversion[2]
+            require(candidates.get(alias, alias) != alias, "LOADER_PACKAGE_OWNERSHIP")
+            continue
+        match = re.fullmatch(r"([a-z0-9][a-z0-9+.-]*(?::amd64)?): (/.+)", line)
+        require(match is not None and match[2] in candidates, "LOADER_PACKAGE_OWNERSHIP")
+        owners[candidates[match[2]]].add(match[1])
+    require(all(len(names) == 1 for names in owners.values()), "LOADER_PACKAGE_OWNERSHIP")
+    names = sorted({name for names in owners.values() for name in names})
+    rows = {}
+    shown = command([tool, "--show", "--showformat=${binary:Package}\t${Version}\t${Architecture}\t${db:Status-Status}\n", *names], maximum=1024 * 1024)
+    for line in shown.decode("ascii").splitlines():
+        row = line.split("\t")
+        require(len(row) == 4 and row[0] in names and row[0] not in rows and re.fullmatch(r"[0-9][A-Za-z0-9.+:~_-]*", row[1]) and row[2] == "amd64" and row[3] == "installed", "LOADER_PACKAGE_IDENTITY")
+        rows[row[0]] = {"package": row[0], "version": row[1], "architecture": row[2]}
+    require(len(rows) == len(names), "LOADER_PACKAGE_IDENTITY")
+    return {real: rows[owner] for real, (owner,) in owners.items()}
 
 
-def provider(path, runtime, soname=None):
+def os_library(path, runtime):
     real = trusted_os_realpath(path, runtime["trustedOsLibraryRoots"])
     with opened(real, os_owned=True) as (fd, info):
         _, sha = hash_fd(fd)
         with os.fdopen(os.dup(fd), "rb") as file:
             header = read_at(file, 0, 64, info.st_size)
             require(header[:7] == b"\x7fELF\x02\x01\x01" and struct.unpack_from("<H", header, 18)[0] == 62, "LOADER_PROVIDER_ELF")
-        identity = package_provider(path, real)
-    value = {"path": path, "realPath": real, "sha256": sha, **identity}
-    if soname is not None:
-        value = {"soname": soname, **value}
-    return value
+    return {"path": path, "realPath": real, "sha256": sha}
 
 
 def validate_provider_receipt(loader, runtime):
@@ -963,19 +972,27 @@ def validate_provider_receipt(loader, runtime):
 
 def verify_loader(root, runtime):
     clean_environment(os.environ)
-    interpreter = provider(runtime["interpreter"], runtime)
-    observed = {}
+    interpreter = runtime["interpreter"]
+    files = {interpreter: os_library(interpreter, runtime)}
+    loader_file = files[interpreter]["realPath"]
+    package_providers({loader_file})  # the loader is attributed to its package before it runs
+    traced = {}
     for member in runtime["expectedMembers"]:
         if "elf" not in member or member["path"] in runtime["optionalElfMembers"]:
             continue
-        output = command([interpreter["realPath"], "--list", posixpath.join(root, member["path"])], maximum=1024 * 1024)
+        # glibc elf/rtld.c names ld.so by argv[0] for a member without PT_INTERP and prints
+        # "<PT_INTERP> => <argv[0]>" when the two differ, so argv[0] is the interpreter path, as ldd
+        # passes it; the resolved, attributed file is what executes.
+        output = command([interpreter, "--list", posixpath.join(root, member["path"])], executable=loader_file, maximum=1024 * 1024)
         paths = parse_loader_output(output)
         require(set(member["elf"]["needed"]) <= set(paths), "LOADER_MEMBER_DEPENDENCIES")
         for name, path in paths.items():
-            value = provider(path, runtime, name)
-            require(name not in observed or observed[name] == value, "LOADER_PROVIDER_CONFLICT")
-            observed[name] = value
-    loader = {"interpreter": interpreter, "providers": [observed[name] for name in sorted(observed)], "elfMembers": sum("elf" in row for row in runtime["expectedMembers"]), "missing": [], "environmentClean": True}
+            require(traced.setdefault(name, path) == path, "LOADER_PROVIDER_CONFLICT")
+            if path not in files:
+                files[path] = os_library(path, runtime)
+    identity = package_providers({value["realPath"] for value in files.values()})
+    entry = lambda path: {**files[path], **identity[files[path]["realPath"]]}
+    loader = {"interpreter": entry(interpreter), "providers": [{"soname": name, **entry(path)} for name, path in sorted(traced.items())], "elfMembers": sum("elf" in row for row in runtime["expectedMembers"]), "missing": [], "environmentClean": True}
     return validate_provider_receipt(loader, runtime)
 
 
