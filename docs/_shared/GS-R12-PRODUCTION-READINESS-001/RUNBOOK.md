@@ -124,7 +124,8 @@ procedure, its rollback and evidence list are in
 ## 4b. Supabase availability and scheduled retries (owner authority: GS-O025)
 
 Activation and post-activation verification are in
-[GS-O025-SUPABASE-AVAILABILITY.md](../GS-O025-SUPABASE-AVAILABILITY.md) §7–§8.
+[GS-O025-SUPABASE-AVAILABILITY.md](../GS-O025-SUPABASE-AVAILABILITY.md) §7–§8: a single 10-step
+procedure with a pre-push trigger inspection and safe disabling.
 
 - **Before cutover:** activate the availability check (twice daily, both projects). It needs the
   workflow files on `main`, which is a separate decision.

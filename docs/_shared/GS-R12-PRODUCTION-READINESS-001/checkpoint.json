@@ -336,7 +336,7 @@
   },
   "gsO025": {
     "date": "2026-10-20",
-    "status": "implemented, locally proven, NOT ACTIVE",
+    "status": "READY TO ACTIVATE (owner); drain off until live",
     "record": "docs/_shared/GS-O025-SUPABASE-AVAILABILITY.md",
     "schedules": {
       "availability": "23 5,17 * * * UTC, production then preview",
@@ -365,6 +365,15 @@
       "mutations": "6/6 red",
       "optionA": "0 source codes; pins unchanged",
       "verifyStatic": "PASS"
+    },
+    "round2": {
+      "date": "2026-10-20",
+      "switchOffGuard": "both workflows; fails manual runs when disabled",
+      "heartbeat": "optional Healthchecks.io secrets GS_O025_{PRODUCTION,PREVIEW}_HEARTBEAT_URL",
+      "procedure": "GS-O025-SUPABASE-AVAILABILITY.md section 8 (10 steps)",
+      "mainInspection": "main fbecbe01 ci.yml verify-only; Vercel 0 linked; Hostinger H2/H3 owner",
+      "selftest": "72 profile cases"
     }
-  }
+  },
+  "chromeCheck": "2026-10-20 round 2: .79 still 200; stable .84"
 }

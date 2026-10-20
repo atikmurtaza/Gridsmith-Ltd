@@ -11,6 +11,8 @@ Two owner-approved pushes: 18 Oct `d3d5ba46` (CI 39151214971, failed at Option A
 
 **20 Oct, GS-O025 (local, not active):** twice-daily read-only Supabase availability check for both projects (least-privilege `gridsmith_keepalive` role) and an hourly, live-only, drain-only notification workflow. Both are dormant until you activate them; the H4-B deployment must now use the GS-O025 commit. Record: [GS-O025-SUPABASE-AVAILABILITY.md](../GS-O025-SUPABASE-AVAILABILITY.md); LEDGER §12.
 
+**20 Oct, GS-O025 round 2:** the keep-alive is ready to activate. Manual runs fail loudly when switched off; an optional Healthchecks.io heartbeat detects missed runs. The single 10-step procedure is in GS-O025 §8 and needs your Hostinger H2/H3 confirmation before its 4-file `main` commit.
+
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`

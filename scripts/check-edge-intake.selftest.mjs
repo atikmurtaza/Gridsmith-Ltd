@@ -255,8 +255,14 @@ const workflowProblems = (text, expected) => {
   if (JSON.stringify(on?.schedule) !== JSON.stringify([{ cron: expected.cron }])) problems.push('SCHEDULE');
   if (JSON.stringify(wf.permissions) !== '{"contents":"read"}') problems.push('PERMISSIONS');
   if (!wf.concurrency?.group || wf.concurrency['cancel-in-progress'] !== false) problems.push('CONCURRENCY');
-  const jobs = Object.values(wf.jobs ?? {});
+  const { 'switch-off': switchOff, ...rest } = wf.jobs ?? {};
+  const jobs = Object.values(rest);
   if (jobs.length !== 1) problems.push('JOBS');
+  // The manual-run guard: fails loudly when the switch is off, and holds nothing worth stealing.
+  const guard = switchOff?.steps ?? [];
+  if (!switchOff || switchOff.if !== `github.event_name == 'workflow_dispatch' && vars.${expected.gate} != 'true'` ||
+      JSON.stringify(switchOff.permissions) !== '{}' || guard.length !== 1 || guard[0].uses || guard[0].env ||
+      !/&& exit 1$/.test(guard[0].run ?? '') || /\$\{\{/.test(guard[0].run ?? '') || !(switchOff['timeout-minutes'] <= 1)) problems.push('SWITCH_OFF');
   for (const job of jobs) {
     if (job.if !== `vars.${expected.gate} == 'true'`) problems.push('ACTIVATION_GATE');
     if (!(job['timeout-minutes'] > 0 && job['timeout-minutes'] <= 5)) problems.push('TIMEOUT');
@@ -265,7 +271,9 @@ const workflowProblems = (text, expected) => {
     for (const step of job.steps) {
       if (step.uses?.startsWith('actions/checkout') && step.with?.['persist-credentials'] !== false) problems.push('CHECKOUT_CREDENTIALS');
       if (step.run !== undefined && (/\$\{\{/.test(step.run) || step.run !== `bash ${expected.script}`)) problems.push('RUN_INTERPOLATION');
-      for (const value of Object.values(step.env ?? {})) if (/secrets\./.test(value) && !/^\$\{\{ secrets\.[A-Z0-9_]+ \}\}$/.test(value)) problems.push('SECRET_EXPRESSION');
+      for (const value of Object.values(step.env ?? {})) {
+        if (/secrets/.test(value) && !/^\$\{\{ secrets(?:\.[A-Z0-9_]+|\[matrix\.[a-z]+\]) \}\}$/.test(value)) problems.push('SECRET_EXPRESSION');
+      }
     }
   }
   if (!workflowScriptExists(expected.script)) problems.push('SCRIPT_MISSING');
@@ -283,7 +291,14 @@ for (const [file, expected] of workflows) {
     [(t) => t.replace('persist-credentials: false', 'persist-credentials: true'), 'CHECKOUT_CREDENTIALS'],
     [(t) => t.replace(`run: bash ${expected.script}`, 'run: echo "${{ secrets.GS_PRODUCTION_DRAIN_TOKEN }}"'), 'RUN_INTERPOLATION'],
     [(t) => t.replace(`cron: '${expected.cron}'`, "cron: '0 0 * * *'"), 'SCHEDULE'],
-    [(t) => t.replace('    timeout-minutes: 3', '    timeout-minutes: 3\n    continue-on-error: true'), 'SWALLOWED_FAILURE']]) {
+    [(t) => t.replace('    timeout-minutes: 3', '    timeout-minutes: 3\n    continue-on-error: true'), 'SWALLOWED_FAILURE'],
+    [(t) => t.replace('  workflow_dispatch:\n', ''), 'TRIGGERS'],
+    [(t) => t.replace(`github.event_name == 'workflow_dispatch' && vars.${expected.gate} != 'true'`, 'always()'), 'SWITCH_OFF'],
+    [(t) => t.replace('nothing was', 'nothing was').replace('&& exit 1', '&& exit 0'), 'SWITCH_OFF'],
+    [(t) => t.replace('    permissions: {}', '    permissions:\n      contents: read'), 'SWITCH_OFF'],
+    [(t) => t.replace(/^(\s+)- run: echo "::error::/m, '$1- env:\n$1    LEAK: ${{ secrets.GS_PRODUCTION_DRAIN_TOKEN }}\n$1  run: echo "::error::'), 'SWITCH_OFF'],
+    [(t) => t.replace(/  switch-off:[\s\S]*?\n\n/, ''), 'SWITCH_OFF'],
+    [(t) => t.replace('DB_URL: ${{ secrets[matrix.secret] }}', 'DB_URL: ${{ secrets[matrix.secret] || secrets.OTHER }}').replace('ANON_KEY: ${{ secrets.GS_PRODUCTION_ANON_KEY }}', 'ANON_KEY: ${{ format(secrets.GS_PRODUCTION_ANON_KEY) }}'), 'SECRET_EXPRESSION']]) {
     assert(workflowProblems(mutation(text), expected).includes(code), `${file}: ${code} did not fire`); profileCases++;
   }
 }

@@ -24,6 +24,16 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # A manual run with the switch off would otherwise skip the job and look green. This fails it,
+  # explicitly, with no checkout, secret or permission. Scheduled runs never take this path.
+  switch-off:
+    if: github.event_name == 'workflow_dispatch' && vars.GS_PRODUCTION_DRAIN_ENABLED != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    permissions: {}
+    steps:
+      - run: echo "::error::The Production drain is switched off (GS_PRODUCTION_DRAIN_ENABLED is not 'true'); nothing was processed." && exit 1
+
   drain:
     if: vars.GS_PRODUCTION_DRAIN_ENABLED == 'true'
     runs-on: ubuntu-24.04

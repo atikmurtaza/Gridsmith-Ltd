@@ -518,3 +518,20 @@ locally; **not active**. No push, secret, variable, schedule, Edge or Supabase c
 | O25-05 | Monitoring | PASS (prepared) | Failure emails; monthly `state`/`run list`/counter checks | Owner adds to the monthly review |
 
 GS-O025 itself stays OPEN until the availability check is activated and verified (owner).
+
+### 12.1 GS-O025 activation readiness (20 October 2026, round 2)
+
+- **Reported contradiction checked:** both workflows already had `workflow_dispatch`. The real gap was
+  that a manual run with the switch off skipped the job and looked green. Each workflow now has a
+  `switch-off` job (dispatch only, `permissions: {}`, no checkout or secret) that fails with an
+  explicit message.
+- **Missed-run detection:** an optional, no-cost Healthchecks.io heartbeat after each successful
+  session. It is the only measure that catches dropped schedules and the 60-day disablement
+  (owner choice, new external service).
+- **Activation procedure:** one 10-step procedure (record §8), with pre-push trigger inspection.
+  `main` runs only verify-only `ci.yml`; Vercel has 0 linked projects; Hostinger H2/H3 must be
+  confirmed by you before the 4-file `main` commit.
+- **Proof:** Edge selftest 72 profile cases (16 mutations per workflow); heartbeat branches with no
+  network; `verify:static` PASS.
+- **Re-checked:** the Chrome `.79` pin is still downloadable (stable is `.84`); the same 4 advisory
+  IDs; production audit 0.

@@ -23,6 +23,16 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # A manual run with the switch off would otherwise skip the job and look green. This fails it,
+  # explicitly, with no checkout, secret or permission. Scheduled runs never take this path.
+  switch-off:
+    if: github.event_name == 'workflow_dispatch' && vars.GS_O025_KEEPALIVE_ENABLED != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    permissions: {}
+    steps:
+      - run: echo "::error::GS-O025 is switched off (GS_O025_KEEPALIVE_ENABLED is not 'true'); nothing was checked." && exit 1
+
   availability:
     name: ${{ matrix.project }}
     if: vars.GS_O025_KEEPALIVE_ENABLED == 'true'
@@ -36,9 +46,11 @@ jobs:
           - project: production
             ref: dqiutgmxillhsbzgnlsx
             secret: GS_O025_PRODUCTION_DB_URL
+            heartbeat: GS_O025_PRODUCTION_HEARTBEAT_URL
           - project: preview
             ref: qfgpwumvvtizeamkynes
             secret: GS_O025_PREVIEW_DB_URL
+            heartbeat: GS_O025_PREVIEW_HEARTBEAT_URL
     steps:
       - uses: actions/checkout@v5
         with:
@@ -49,4 +61,6 @@ jobs:
         env:
           DB_URL: ${{ secrets[matrix.secret] }}
           REF: ${{ matrix.ref }}
+          # Optional dead-man's switch (owner choice): pinged only after a successful session.
+          HEARTBEAT_URL: ${{ secrets[matrix.heartbeat] }}
         run: bash scripts/supabase-availability.sh

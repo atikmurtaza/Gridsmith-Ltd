@@ -69,6 +69,7 @@ Preview has no scheduled drain: it is always synthetic-only and the worker refus
 |---|---|---|---|
 | Secret | `GS_O025_PRODUCTION_DB_URL` | `postgresql://gridsmith_keepalive.dqiutgmxillhsbzgnlsx:<password>@aws-<n>-eu-west-1.pooler.supabase.com:5432/postgres` | Availability activation |
 | Secret | `GS_O025_PREVIEW_DB_URL` | the same for `qfgpwumvvtizeamkynes` | Availability activation |
+| Secret (optional) | `GS_O025_PRODUCTION_HEARTBEAT_URL`, `GS_O025_PREVIEW_HEARTBEAT_URL` | `https://hc-ping.com/<uuid>` per project | If you choose the heartbeat (§6) |
 | Variable | `GS_O025_KEEPALIVE_ENABLED` | `true` | Availability activation |
 | Edge secret (Production) | `GRIDSMITH_DRAIN_TOKEN` | random, ≥32 characters | Drain activation |
 | Secret | `GS_PRODUCTION_DRAIN_TOKEN` | the same value | Drain activation |
@@ -88,17 +89,25 @@ No service-role key is stored in GitHub.
 | Supabase | 2 pooler sessions per day per project, 6 trivial statements | ~720 Edge invocations (Free includes 500,000) and ~720 claim RPCs |
 | Resend | none | only for real pending notifications (no extra mail) |
 
-## 6. Failure reporting
 
-- **Any failure** (paused project, rejected credential, wrong role, timeout, worker refusal, a `dead`
-  or unconfirmed job, drain enabled before `live`) fails the job with an `::error::` line. GitHub
-  then emails the user who last edited the cron line (your account, when you commit the
-  activation). Check GitHub → Settings → Notifications → Actions → "Send notifications for failed
-  workflows".
-- **Silent failure modes** produce no failed run: the 60-day schedule disablement and GitHub dropping
-  scheduled runs under load. The backstops are:
-  1. Supabase's own warning email, one week before any pause;
-  2. a check added to the existing monthly review (§7).
+## 6. Failure reporting and missed runs
+
+| Situation | How it surfaces |
+|---|---|
+| Paused project, rejected credential, wrong role, timeout, worker refusal, a `dead` or unconfirmed job, drain enabled before `live` | The job fails with an `::error::` line. GitHub emails the user who last edited the cron line (you, once you commit the activation). Check GitHub → Settings → Notifications → Actions → "Send notifications for failed workflows" |
+| Manual run while the switch is off | The `switch-off` job **fails** with "switched off … nothing was checked" (it never looks green). It has no checkout, secret or permission. Scheduled runs never take this path |
+| A run delayed or dropped by GitHub, or the schedule disabled after 60 days without repository activity | **No failed run exists**, so GitHub sends nothing. Covered by: (1) the optional Healthchecks.io heartbeat below; (2) Supabase's own warning email one week before any pause; (3) the monthly check in §7 |
+
+**Independent no-cost alert (owner choice, not active):** a Healthchecks.io check per project. Its
+free plan includes 20 checks and email alerts. The availability job pings the check's URL **only
+after a successful database session**; Healthchecks emails you if a ping is overdue.
+
+- Set the period to 12 h and the grace to 12 h, so an alert fires after about 24 h without success.
+- This is the only measure that detects missing runs, because it does not depend on GitHub running.
+- It is a new external service. It receives the runner's IP address and the ping time, and no
+  personal data.
+- The ping URL is checked to be `https://hc-ping.com/<uuid>` and is sent through stdin config.
+- An undelivered ping is a warning, not a failure: the monitor itself will alert.
 
 ## 7. How to verify runs are actually happening
 
@@ -110,49 +119,123 @@ Expect `active` (not `disabled_inactivity`).
 ```bash
 gh run list -R atikmurtaza/Gridsmith-Ltd -w supabase-availability.yml --event schedule -L 10
 ```
-Expect about 2 successful runs per day.
+Expect about 2 successful runs per day; times may lag the cron by minutes, or occasionally more.
 
-On Supabase, the read-only inspection query (`scripts/production-inspect.sql`) now reports
-`keepaliveStatementCalls`. It must grow between checks (3 per run per project). Locally it went
-0 → 6 over two runs.
+On Supabase, the read-only inspection query (`scripts/production-inspect.sql`) reports
+`keepaliveStatementCalls`. It must grow between checks (3 per run per project); locally it went
+0 → 6 over two runs. With the heartbeat, the Healthchecks dashboard shows the last ping per project.
 
-Add these three checks to the monthly retention review (next: 2 Nov 2026). Re-enable a disabled
-schedule with `gh workflow enable supabase-availability.yml -R atikmurtaza/Gridsmith-Ltd`.
+Add these to the monthly retention review (next: 2 Nov 2026). Re-enable a disabled schedule with
+`gh workflow enable supabase-availability.yml -R atikmurtaza/Gridsmith-Ltd`.
 
-## 8. Activation (owner-approved, in order; not done)
+## 8. Activation procedure (owner-run; nothing here has been done)
 
-**Availability: can go before H4-B, because it does not depend on it.**
+Availability first; it does not depend on H4-B. Secret values are typed only into your own
+terminal or the provider dashboards, never into chat or a file in the repository.
 
-1. Apply the role to each project:
-   ```bash
-   npx --yes supabase@2.119.0 db query --linked --project-ref <ref> --file scripts/gs-o025-keepalive-role.sql
-   ```
-   Expect one row: `rolcanlogin=f`, the three settings, `table_grants=0`.
-2. In each project's SQL editor, run
-   `alter role gridsmith_keepalive login password '<generated, 32+ characters>';`, then create the two
-   URL secrets (§4).
-3. **Put the two workflows and two scripts on `main`.** Schedules only run there, and the jobs check
-   out their script from the scheduled ref. `main` is still `fbecbe01`, and pushing to it starts
-   that branch's own (older) CI once. This is a separate decision: a 4-file commit on `main`, or
-   making the release branch the default.
-4. Set `GS_O025_KEEPALIVE_ENABLED=true`.
-5. Verify: `gh workflow run supabase-availability.yml -R atikmurtaza/Gridsmith-Ltd --ref main`. Expect
-   both jobs green with `ok` lines, and `keepaliveStatementCalls` above 0 on both projects.
-6. After 24 hours: at least 2 runs with `--event schedule`, all green.
+**0. Preconditions (read-only).** What pushing to `main` can trigger, checked on 20 Oct:
 
-**Drain: only after the H4-B deployment, and only when Production switches to `live`.**
+| Surface | Fact | Source |
+|---|---|---|
+| `main` (`fbecbe01`) workflows | Only `ci.yml`: push/PR/dispatch, `verify` only, no secrets, no deploy job, read-only token. A push to `main` starts **one** such run on main's older code. It may go red; it publishes nothing | `git show origin/main:.github/workflows/ci.yml` |
+| New workflows | Schedule and dispatch only; no push trigger. The drain job is off (variable unset) | this branch |
+| Vercel | 0 projects linked to the repository; no deployment since 3 Oct | API read |
+| GitHub | 0 webhooks, 0 rulesets, no Pages | API read |
+| Hostinger | **Not verifiable by Claude.** Confirm H2 (staging pulls only `codex/gs-hostinger-artifact`) and **H3 (gridsmith.uk Git not connected)**. If H3 is connected to `main`, **stop**: a push could deploy | your hPanel |
 
-1. Set `GRIDSMITH_DRAIN_TOKEN` on Production, then redeploy `gs-notification-worker` from the
-   reviewed commit.
-2. Create `GS_PRODUCTION_DRAIN_TOKEN` and `GS_PRODUCTION_ANON_KEY`. Set
-   `GS_PRODUCTION_DRAIN_ENABLED=true` in the same step that sets `GRIDSMITH_INTAKE_MODE=live`.
-3. Verify: `gh workflow run notification-drain.yml -R atikmurtaza/Gridsmith-Ltd --ref main`. Expect
-   `claimed=0 … dead=0` and green. Enabled early, it fails loudly with "not in live mode" and
-   processes nothing (proven).
+**1. Role in Production:**
+```bash
+npx --yes supabase@2.119.0 db query --linked --project-ref dqiutgmxillhsbzgnlsx --file scripts/gs-o025-keepalive-role.sql
+```
+Expect one row: `rolcanlogin=f`, settings `default_transaction_read_only=on`,
+`idle_in_transaction_session_timeout=10s`, `statement_timeout=5s`, and `table_grants=0`.
 
-**Rollback:** set either variable to anything but `true` (jobs skip), or
-`gh workflow disable <file>`. `alter role gridsmith_keepalive nologin` revokes the credential. Unset
-`GRIDSMITH_DRAIN_TOKEN` to disable the drain path in the worker.
+**2. Role in Preview:** the same command with `--project-ref qfgpwumvvtizeamkynes`. Same expected row.
+
+**3. Credentials:**
+- Generate two passwords (one per project), 32+ letters and digits so nothing needs URL-encoding;
+  your password manager will do.
+- In each project's dashboard SQL editor:
+  `alter role gridsmith_keepalive login password '<password>';`
+- Take the pooler host from Dashboard → Connect → Session pooler (`aws-<n>-eu-west-1.pooler.supabase.com`).
+- Build:
+  `postgresql://gridsmith_keepalive.<ref>:<password>@aws-<n>-eu-west-1.pooler.supabase.com:5432/postgres`
+
+**4. GitHub secrets** (`gh` reads the value from a prompt, not from the command line):
+```bash
+gh secret set GS_O025_PRODUCTION_DB_URL -R atikmurtaza/Gridsmith-Ltd
+```
+```bash
+gh secret set GS_O025_PREVIEW_DB_URL -R atikmurtaza/Gridsmith-Ltd
+```
+Optional heartbeat: create two Healthchecks.io checks (12 h period, 12 h grace), then set
+`GS_O025_PRODUCTION_HEARTBEAT_URL` and `GS_O025_PREVIEW_HEARTBEAT_URL` the same way.
+
+**5. Switch:**
+```bash
+gh variable set GS_O025_KEEPALIVE_ENABLED -R atikmurtaza/Gridsmith-Ltd --body true
+```
+Do **not** set `GS_PRODUCTION_DRAIN_ENABLED`.
+
+**6. Put the workflows on the default branch**: one fast-forward commit on `main` adding exactly
+four files (both workflows and both scripts), from the reviewed commit:
+```bash
+git -C "<worktree>" fetch origin main
+```
+```bash
+git -C "<worktree>" worktree add "<temp folder>" origin/main --detach
+```
+```bash
+git -C "<temp folder>" checkout <reviewed commit> -- .github/workflows/supabase-availability.yml .github/workflows/notification-drain.yml scripts/supabase-availability.sh scripts/notification-drain.sh
+```
+```bash
+git -C "<temp folder>" commit -m "ci(ops): GS-O025 Supabase availability and dormant notification drain"
+```
+```bash
+git -C "<temp folder>" push origin HEAD:refs/heads/main
+```
+No force. Expect exactly one `CI` push run on `main` (verify-only) and the two new workflows listed
+under Actions. The alternative is to make the release branch the default branch, which is a
+repository-setting change with wider effects and is not recommended.
+
+**7. Initial manual test:**
+```bash
+gh workflow run supabase-availability.yml -R atikmurtaza/Gridsmith-Ltd --ref main
+```
+```bash
+gh run watch -R atikmurtaza/Gridsmith-Ltd
+```
+Expect `production` and `preview` green with `ok (read-only session as gridsmith_keepalive, 3
+statements)`, plus "heartbeat sent" if configured. `switch-off` is skipped. This also proves `psql`
+exists on the hosted runner.
+
+**8. Confirm real database activity:** run the inspection query on both projects (header of
+`scripts/production-inspect.sql`, with each `--project-ref`). Expect `keepaliveRole.canLogin: true`
+and `keepaliveStatementCalls ≥ 3`.
+
+**9. Confirm scheduled execution:** after 24 h, `gh run list … --event schedule` shows at least 2
+green runs, the workflow `state` is `active`, and `keepaliveStatementCalls` has grown by at least
+6 on each project.
+
+**10. Disable safely (any of these, in rising order):**
+- Pause: `gh variable set GS_O025_KEEPALIVE_ENABLED -R atikmurtaza/Gridsmith-Ltd --body false`.
+  Scheduled jobs skip, and a manual run fails "switched off".
+- Stop: `gh workflow disable supabase-availability.yml -R atikmurtaza/Gridsmith-Ltd`.
+- Revoke the credential: `alter role gridsmith_keepalive nologin;` in each project, then
+  `gh secret delete GS_O025_PRODUCTION_DB_URL -R atikmurtaza/Gridsmith-Ltd` (and Preview).
+- Remove: `drop role gridsmith_keepalive;` (it owns nothing) and a revert commit on `main`.
+
+**Drain activation** happens later, only with H4-B deployed and in the same step as `live`:
+1. Set the Production Edge secret `GRIDSMITH_DRAIN_TOKEN` (random, 32+ characters) and redeploy
+   `gs-notification-worker`.
+2. Set `GS_PRODUCTION_DRAIN_TOKEN` (same value) and `GS_PRODUCTION_ANON_KEY` (Production legacy
+   anon JWT).
+3. Set `GS_PRODUCTION_DRAIN_ENABLED=true`.
+4. Run `gh workflow run notification-drain.yml -R atikmurtaza/Gridsmith-Ltd --ref main` and expect
+   `claimed=0 … dead=0`.
+
+Dispatching the availability workflow never triggers the drain: they are separate files, with no
+`workflow_run` or call between them.
 
 ## 9. Local verification
 
@@ -162,18 +245,21 @@ schedule with `gh workflow enable supabase-availability.yml -R atikmurtaza/Grids
 | `supabase-availability.sh`, 13 branches | Positive `ok`; refusals for privileged role, nothing listening, bad ref, unset or non-URL secret, loopback outside selftest, transaction pooler, wrong project, service-role user, selftest remote host, wrong database. The "wrong password" probe was **inert**: the image trusts loopback, so password rejection belongs to the real pooler, and a failed session is proven by "nothing listening" |
 | Drift detection | Role read-only default removed → the script fails "session was not the read-only … role"; restored → `ok` |
 | `notification-drain.sh` against the **real** `createWorker` (loopback, stub store and mail) | live → `claimed=1 sent=1`, exit 0; not live → 409 failure; dead job → operator-review failure; wrong token → 401; server down → unreachable; short, unset or missing secrets; selftest remote URL — 9/9 correct |
-| Edge selftest | 58 profile cases, including the drain token, the scheduled path (401/409/403/200), `scheduledDrainEnabled`, and 18 workflow-YAML mutations (triggers, permissions, concurrency, activation gate, timeout, checkout credentials, run interpolation, schedule, swallowed failure) |
+| Edge selftest (round 1) | 58 profile cases, including the drain token, the scheduled path (401/409/403/200), `scheduledDrainEnabled`, and 18 workflow-YAML mutations (triggers, permissions, concurrency, activation gate, timeout, checkout credentials, run interpolation, schedule, swallowed failure) |
 | Implementation mutations | 6/6 red: health via timer; drain while not live; short token; length mismatch; enabled outside Production; enabled in synthetic-only |
 | Option A | `installationProblems` source scan of the new files gives 0 codes; `ci.yml`, `hostinger-staging.yml`, `package.json` and the lock are byte-identical to their pins |
 | Keepalive verification signal | `keepaliveStatementCalls` 0 → 6 after two runs |
 | `verify:static` | PASS |
-| **Not run** | No GitHub run, secret or schedule; no Supabase write; `psql` presence on the hosted runner is assumed from the runner image (activation step 5 proves it) |
+| Manual-run guard (20 Oct, round 2) | `switch-off` job: runs only on `workflow_dispatch` with the switch off, `permissions: {}`, no checkout or secret, exits 1 with an explicit message. Structural test: 16 mutations per workflow red (incl. the guard's condition, exit code, permissions, injected secret, deletion, and the manual trigger removed) — 72 profile cases in total |
+| Heartbeat (no network) | Not configured → `ok`; undelivered → `ok` plus warning; wrong host or malformed URL → fails as misconfiguration; database failure → no heartbeat attempted. The delivered path needs network: activation step 7 shows it |
+| Pre-push trigger inspection | `main`: `ci.yml` only, verify-only, no secrets or deploy; Vercel 0 linked projects; GitHub 0 hooks. Hostinger H2/H3 not verifiable here |
+| **Not run** | No GitHub run, secret, variable or schedule; no Supabase write; no Healthchecks account. `psql` on the hosted runner is proven by activation step 7 |
 
 ## 10. Readiness
 
-**Availability check: ready to activate** after your approval of §8 steps 1–6, including the
-`main` decision.
-
-**Scheduled drain: ready, but must stay off** until H4-B is deployed and Production is `live`. The
-H4-B deployment must now use the commit containing this change, because the worker gained the
-drain-only path; the H4-B record's approval wording is updated to say so.
+- **Availability check: READY TO ACTIVATE** once you have confirmed H2/H3 and approved §8 steps
+  0–10, which include the 4-file commit on `main`.
+- **Heartbeat:** optional, your choice of a new external service.
+- **Scheduled drain: ready, but stays off** until H4-B is deployed and Production is `live`.
+- **H4-B:** must deploy from the GS-O025 commit or later, because the worker gained the drain-only
+  path.

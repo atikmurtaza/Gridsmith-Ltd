@@ -38,4 +38,16 @@ fi
 [ "$(printf '%s\n' "$result" | sed -n 2,3p | tr '\n' ' ')" = 't t ' ] || fail 'read-only queries returned an unexpected result'
 echo "GS-O025 $REF: ok (read-only session as gridsmith_keepalive, 3 statements)"
 [ -n "${GITHUB_STEP_SUMMARY:-}" ] && echo "ok $REF $(date -u +%FT%TZ)" >> "$GITHUB_STEP_SUMMARY"
+# Optional dead-man's switch: an external monitor alerts when these pings stop arriving, which
+# covers what GitHub cannot report (dropped schedules, the 60-day public-repository disablement).
+if [ -n "${HEARTBEAT_URL:-}" ]; then
+  [[ "$HEARTBEAT_URL" =~ ^https://hc-ping\.com/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$ ]] \
+    || fail 'HEARTBEAT_URL is not a Healthchecks.io ping URL'
+  if curl -fsS --max-time 10 --retry 0 -o /dev/null -K - 2>/dev/null <<EOF
+url = "$HEARTBEAT_URL"
+EOF
+  then echo "GS-O025 $REF: heartbeat sent"
+  else echo "::warning::GS-O025 $REF: heartbeat not delivered; the external monitor will alert if this persists"
+  fi
+fi
 exit 0

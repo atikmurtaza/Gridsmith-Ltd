@@ -237,6 +237,26 @@ immediate but unmeasured. **A written plan is not a tested rollback:** D2 is the
 
 ## H. Recommended next action
 
+### H.0 Launch sequence (current, 20 Oct, after GS-O025 round 2)
+
+Every step is owner-gated and approved on its own. "Proves" is the evidence that must exist before
+the next step.
+
+| # | Operation | Depends on | Proves | Record |
+|---|---|---|---|---|
+| 1 | Hostinger read-only checks H1–H7 (yours) | — | No Git path from `main` to gridsmith.uk; backups listed; the 15 Oct DNS change was expected | GS-R13-H4B §E.2 |
+| 2 | **GS-O025 keep-alive activation**, including the 4-file `main` commit | 1 (H2/H3) | Both projects get twice-daily authenticated activity; first manual run green | GS-O025 §8 |
+| 3 | **GS-R13-H4B-EXEC-001**: backup, migration, secrets, deploy, synthetic test, cleanup (`synthetic-only`) | 2 recommended, so Production stays awake; sender and pause decisions | Production intake works end to end; restore-proven backup | GS-R13-H4B §C.3, §F |
+| 4 | One push of the release branch for **exact-SHA CI** of the release candidate | 3 (the worker commit is final) | Linux CI green on that SHA. The Chrome `.79` pin was still downloadable on 20 Oct; if it has been pruned, re-pin first (§E.2) | RUNBOOK §2–3 |
+| 5 | **Staging release** of that SHA (`workflow_dispatch`, hPanel Redeploy, auto-deploy back off) | 4 | Hosted behaviour on Hostinger: headers, routes, forms against Preview | RUNBOOK §4 |
+| 6 | **Legal decisions** (seven lines plus the Cookies sequencing option) and CUTOVER-AUTHORITY | 3 (H4-B-INTAKE-PROMOTED needs live intake at cutover) | PUBLISHABLE states can be recorded | LEGAL-PUBLICATION-APPROVAL |
+| 7 | WordPress/DNS backup, restore-proven (D2/D3) | 1 | A rollback target | RUNBOOK §5 |
+| 8 | Set `PRODUCTION_INTAKE_URL` (local commit), legal CMS write, **GS-R13 production build** | 3, 6 | The gridsmith.uk artifact passes its gate | GS-R13 record §6 |
+| 9 | **Cutover**: sibling directory, document-root switch, `GRIDSMITH_INTAKE_MODE=live`, drain enabled, A-2 cookie retest, post-cutover checks | 5, 7, 8 | Live site; rollback by switching the document root back | RUNBOOK §5, GS-O025 §8 (drain) |
+
+Still open alongside: the 4 dev-only advisory dispositions (§B), BRW-03 (§E.2), SEC-F4, SEC-F5,
+ACC-08, POL-01.
+
 > **Update (20 Oct, after GS-R13-H4B):**
 > - **D5 + D8:** the Production intake package, with restore-proven backup tooling, is ready for
 >   one approval: [record](../GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md) §F.
