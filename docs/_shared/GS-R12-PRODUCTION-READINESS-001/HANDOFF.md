@@ -5,6 +5,8 @@ Two owner-approved pushes: 18 Oct `d3d5ba46` (CI 39151214971, failed at Option A
 
 **20 Oct, GS-R12-FINAL-RELEASE-PREPARATION-001:** consolidated owner decisions are in [RELEASE-DECISION-PACK.md](RELEASE-DECISION-PACK.md); results are in LEDGER §9. Production CMS 47/47 equals the repository payload; the production-dataset staging artifact builds (identity `7e0b5ffd…`) and passes `check:static:ui`. Google's stable Chrome is now `.84`, so the `.79` pin (BRW-03) is time-sensitive. Decision unchanged.
 
+**20 Oct, GS-R13-PRODUCTION-PROFILE-001 (owner-authorised, local):** the gridsmith.uk static profile is implemented and refuses to build until the Production intake URL and all seven PUBLISHABLE states exist. The rehearsal and staging regression are verified locally. Record: [GS-R13-PRODUCTION-PROFILE-001.md](../GS-R13-PRODUCTION-PROFILE-001.md); LEDGER §10.
+
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`

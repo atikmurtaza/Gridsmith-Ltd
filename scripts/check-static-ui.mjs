@@ -9,6 +9,7 @@ import { preparePress } from './press-contrast.mjs';
 import { REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
 import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { servedLegalPreview } from './legal-preview-rules.mjs';
+import { NOINDEX_PATHS } from '../lib/build/route-manifest.ts';
 
 const normal = process.argv.includes('--normal');
 const base = process.env.STATIC_BASE_URL ?? (normal ? 'http://127.0.0.1:3235' : 'http://127.0.0.1:3236');
@@ -27,6 +28,9 @@ const deploymentResponse = normal ? null : await fetch(base + '/__deployment.jso
 assert(normal || deploymentResponse.ok, 'Static artifact must identify its served profile');
 const deployment = deploymentResponse ? await deploymentResponse.json() : null;
 const legalPreview = normal ? false : servedLegalPreview(deployment, process.argv.includes('--legal-preview'));
+// GS-R13: the gridsmith.uk profile is indexable and ships no reviews; it is proved on loopback only.
+const productionProfile = deployment?.profile === 'production';
+assert(!productionProfile || !hosted, 'The production profile is never proved on the staging origin');
 const legalRoutes = legalPreview ? LEGAL_DOCUMENT_SLUGS.map((slug) => `/legal/${slug}`) : [];
 routes.push(...legalRoutes);
 const pause = (ms) => new Promise((done) => setTimeout(done, ms));
@@ -53,7 +57,9 @@ try {
       lang: document.documentElement.lang, main: Boolean(document.querySelector('main#main')) }));
     assert(state.title && state.h1 && state.ink && /^en(?:-|$)/i.test(state.lang) && state.main,
       JSON.stringify({ route, state }));
-    assert(state.noindex?.includes('noindex'));
+    assert(productionProfile && !NOINDEX_PATHS.includes(route)
+      ? /\bindex\b/.test(state.noindex ?? '') && !/noindex|nofollow/.test(state.noindex ?? '')
+      : state.noindex?.includes('noindex'), JSON.stringify({ route, robots: state.noindex }));
     receipt.pages.push({ route, ...state });
   }
   receipt.legal = [];
@@ -114,13 +120,15 @@ try {
   await page.goto(base + '/?scene=software', { waitUntil: 'load' });
   await page.waitForSelector('[data-master-scene][data-render="ready"]');
   receipt.master = 'software WebGL ready';
-  assert.equal(await page.$$eval('[data-reviews-carousel] blockquote', (nodes) => nodes.length), 11);
+  assert.equal(await page.$$eval('[data-reviews-carousel] blockquote', (nodes) => nodes.length), productionProfile ? 0 : 11);
   // GS-HOST-H4-G: the approved GS-VIS-001 cylinder turns continuously; its angle is the ring's
   // rotateY, and its controls are named by aria-label (the contract check:reviews:ui also reads).
   const reviewAngle = () => page.$eval('[data-reviews-carousel] ul',
     (el) => Number(/rotateY\((-?[\d.]+)deg\)/.exec(el.style.transform)?.[1]));
   const reviewButton = (name) => page.$eval('[data-reviews-carousel]', (el, label) =>
     [...el.querySelectorAll('button')].find((button) => button.getAttribute('aria-label') === label)?.focus(), name);
+  if (productionProfile) receipt.reviews = { count: 0, reason: 'no written Freelancer permission (LEG-08)' };
+  else {
   await page.$eval('[data-reviews-carousel]', (el) => el.scrollIntoView({ block: 'center' }));
   const initialAngle = await reviewAngle(); await pause(3000);
   const turnedAngle = await reviewAngle();
@@ -134,6 +142,7 @@ try {
   await page.keyboard.press('Enter'); await pause(1500);
   assert(Math.abs(await reviewAngle() - pausedAngle) > 1, 'Rotate reviews right did not turn the paused cylinder');
   receipt.reviews = { count: 11, continuousRotation: true, pause: true, arrows: true };
+  }
 
   await page.goto(base + '/design', { waitUntil: 'networkidle0' });
   await page.waitForSelector('[data-design-story][data-enhanced="true"]');
@@ -176,12 +185,14 @@ try {
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
   await page.goto(base + '/', { waitUntil: 'networkidle0' });
   // GS-VIS-001-R1: reduced motion keeps the drum, still — nothing turns and there is nothing to pause.
+  if (!productionProfile) {
   await page.$eval('[data-reviews-carousel]', (el) => el.scrollIntoView({ block: 'center' }));
   await pause(500);
   const stillAngle = await reviewAngle(); await pause(2500);
   assert(Number.isFinite(stillAngle), 'Reduced-motion review cylinder exposes no rotateY angle');
   assert(Math.abs(await reviewAngle() - stillAngle) < 0.01, 'Review cylinder turned on its own under reduced motion');
   assert.equal(await page.$eval('[data-reviews-carousel] button[data-pause]', (el) => getComputedStyle(el).display), 'none');
+  }
   await page.goto(base + '/digital', { waitUntil: 'networkidle0' });
   assert.equal(await page.$eval('.dg-apertures', (el) => el.dataset.motion), 'inactive');
   receipt.reducedMotion = 'still review cylinder without a pause control, and Digital reduced state';
@@ -246,7 +257,10 @@ try {
     await noJs.setCacheEnabled(false); // This route proof requires fresh 200 bodies, not cached 304 revalidation.
     for (const route of ['/', '/design', '/digital', '/press', ...services, '/about', '/approach', '/contact', '/insights', '/press/contact', '/press/contact/thank-you', ...legalRoutes]) {
       assert.equal((await noJs.goto(base + route, { waitUntil: 'networkidle0' })).status(), 200);
-      if (route === '/') {
+      if (route === '/' && productionProfile) {
+        assert.equal(await noJs.$$eval('[data-reviews-carousel]', (nodes) => nodes.length), 0);
+        receipt.noJsReviews = { count: 0 };
+      } else if (route === '/') {
         const reviews = await noJs.$eval('[data-reviews-carousel]', (root) => ({
           count: root.querySelectorAll('blockquote').length,
           transform: getComputedStyle(root.querySelector('ul')).transform,

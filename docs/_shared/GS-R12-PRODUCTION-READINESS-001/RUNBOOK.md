@@ -36,6 +36,11 @@ intake is pinned to the isolated Preview Supabase project. Uploading this artifa
 `gridsmith.uk` would 403 every request. **There is therefore no production release artifact yet**
 (ledger DEP-PROD-PROFILE, LEG-05).
 
+Since GS-R13-PRODUCTION-PROFILE-001 the gridsmith.uk profile exists
+(`GRIDSMITH_STATIC_PROFILE=production`, [record](../GS-R13-PRODUCTION-PROFILE-001.md)). It refuses
+to build until the Production intake URL is recorded and all seven legal documents are
+PUBLISHABLE. Its local rehearsal artifact is not deployable: `.htaccess` `Require all denied`.
+
 ## 2. Pre-push read-only recheck (run immediately before any authorised push)
 
 All GETs; none mutates anything.
@@ -123,8 +128,10 @@ Design (GS-HOST-004 §cutover, not yet executed), made concrete:
    **Restore-prove the backup privately** before proceeding (DEP-PROD-ROLLBACK).
 2. Decide the open provider security alerts on the current site: resolve first, or accept WordPress as the rollback
    target for a bounded window (DEP-WP-ROLLBACK-TARGET).
-3. Build the production artifact from the exact CI-green SHA with the production profile; run its
-   artifact gate; retain receipt and hashes.
+3. Build the production artifact from the exact CI-green SHA with the production profile
+   (`GRIDSMITH_STATIC_PROFILE=production NEXT_PUBLIC_LEAD_INTAKE_URL=<recorded Production intake>
+   npm run build:static`; it runs its artifact gate and refuses on any unmet input); retain receipt
+   and hashes. A CI workflow input for this profile does not exist yet.
 4. Upload to a **sibling directory** on the same Hostinger site (no DNS change needed if the same
    site serves both).
 5. Switch by document-root change or directory rename (near-atomic). Purge CDN.

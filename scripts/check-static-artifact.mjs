@@ -5,6 +5,8 @@ import { pathToFileURL } from 'node:url';
 import { artifactReviewProblems } from './review-public-rules.mjs';
 import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { legalPreviewProfile } from './legal-preview-rules.mjs';
+import { PRODUCTION_ORIGIN } from '../lib/build/production.ts';
+import { sitemapPaths } from '../lib/build/route-manifest.ts';
 
 export function readArtifact(root) {
   if (!existsSync(root)) throw new Error('Static artifact missing; nothing scanned');
@@ -27,7 +29,13 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   let preview = false;
   try { preview = legalPreviewProfile(manifest.legalPreview, manifest.dataset, siteOrigin); }
   catch { bad('PROFILE', 'invalid legal preview boundary'); }
-  if (manifest.version !== 1 || manifest.target !== 'static' || (!preview && manifest.dataset !== 'production') || manifest.indexable !== false) bad('PROFILE', 'invalid/indexable manifest');
+  // GS-R13: indexable means the gridsmith.uk production profile, and nothing else may be.
+  const production = manifest.indexable === true;
+  if (manifest.version !== 1 || manifest.target !== 'static' || (!preview && manifest.dataset !== 'production') ||
+      (production ? preview || siteOrigin !== PRODUCTION_ORIGIN : manifest.indexable !== false)) bad('PROFILE', 'invalid/indexable manifest');
+  if (production && LEGAL_DOCUMENT_SLUGS.some((slug) => !expected.some((route) => route.path === `/legal/${slug}` && route.contentType === 'legalDocument'))) {
+    bad('LEGAL', 'production requires all seven PUBLISHABLE legal documents');
+  }
   if (preview && (expected.filter((route) => route.contentType === 'legalDocument').length !== 7 ||
       LEGAL_DOCUMENT_SLUGS.some((slug) => !expected.some((route) => route.path === `/legal/${slug}`)))) {
     bad('LEGAL', 'private preview must include all seven adopted documents');
@@ -58,7 +66,11 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     if (!/<h1(?:\s|>)/i.test(text) || !/<title>[^<]+<\/title>/i.test(text) ||
         !/<meta\b[^>]*name="description"[^>]*content="[^\"]+"/i.test(text) ||
         !canonicalValid) bad('SEO', 'heading/title/description/exact staging canonical missing');
-    if (!/<meta\b[^>]*name="robots"[^>]*content="[^\"]*noindex/i.test(text)) bad('NOINDEX', 'route missing noindex');
+    const robotsMeta = text.match(/<meta\b[^>]*name="robots"[^>]*content="([^"]*)"/i)?.[1];
+    // Production: a sitemap route must be indexable, and a non-sitemap route keeps its own noindex.
+    if (production && route.sitemap) {
+      if (!robotsMeta || /noindex|nofollow/i.test(robotsMeta) || !/\bindex\b/i.test(robotsMeta)) bad('INDEX', `${route.path}: production sitemap route not indexable`);
+    } else if (!/noindex/i.test(robotsMeta ?? '')) bad(production ? 'INDEX' : 'NOINDEX', `${route.path}: route missing noindex`);
     if (preview && route.contentType === 'legalDocument' &&
         (!text.includes('ADOPTED, NOT YET PUBLISHED.') || /\[TK|\[SEED|\[OWNER DECISION|Basis:|prerequisitesMet|adoptionAuthority/.test(text))) {
       bad('LEGAL', 'adopted review notice missing or internal material rendered');
@@ -74,9 +86,26 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   const notFound = files.get('404.html')?.toString('utf8');
   if (!notFound || !/<h1(?:\s|>)/i.test(notFound) || !/Gridsmith/i.test(notFound) || !/noindex/.test(notFound)) bad('404', 'branded noindex document missing');
   const robots = files.get('robots.txt')?.toString('utf8');
-  if (!robots || !/Disallow:\s*\/\s*(?:\n|$)/i.test(robots) || /^Allow:/im.test(robots)) bad('ROBOTS', 'temporary crawl policy missing');
   const sitemap = files.get('sitemap.xml')?.toString('utf8');
-  if (!sitemap || !/<urlset\b/.test(sitemap) || /<loc>/.test(sitemap)) bad('SITEMAP', 'temporary sitemap must be empty');
+  if (production) {
+    if (!robots || !/^Allow:\s*\/\s*$/im.test(robots) || /^Disallow:/im.test(robots) ||
+        !robots.includes(`Sitemap: ${PRODUCTION_ORIGIN}/sitemap.xml`)) bad('ROBOTS', 'production crawl policy missing');
+    const locs = [...(sitemap ?? '').matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]).sort();
+    const want = sitemapPaths(manifest).map((path) => new URL(path, PRODUCTION_ORIGIN).toString()).sort();
+    if (!sitemap || !/<urlset\b/.test(sitemap) || JSON.stringify(locs) !== JSON.stringify(want)) bad('SITEMAP', 'production sitemap must list exactly the eligible routes');
+    const rules = files.get('.htaccess')?.toString('utf8') ?? '';
+    if (!rules.includes('RewriteCond %{HTTP_HOST} !^gridsmith\\.uk$ [NC]') ||
+        !rules.includes('RewriteRule \\.(?:php[0-9]?|phtml|phar|pl|cgi)(?:/|$) - [F,L,NC]') ||
+        /noindex|<IfModule mod_headers/i.test(rules) || !/^Header always set Content-Security-Policy /m.test(rules)) {
+      bad('HTACCESS', 'production host lock, PHP denial or header policy missing');
+    }
+    let deployment = null;
+    try { deployment = files.has('__deployment.json') ? JSON.parse(files.get('__deployment.json')) : null; } catch { bad('REHEARSAL', 'unreadable deployment identity'); }
+    if (/^Require all denied$/m.test(rules) || (deployment && deployment.deployable !== true)) bad('REHEARSAL', 'rehearsal artifact is not deployable');
+  } else {
+    if (!robots || !/Disallow:\s*\/\s*(?:\n|$)/i.test(robots) || /^Allow:/im.test(robots)) bad('ROBOTS', 'temporary crawl policy missing');
+    if (!sitemap || !/<urlset\b/.test(sitemap) || /<loc>/.test(sitemap)) bad('SITEMAP', 'temporary sitemap must be empty');
+  }
   let totalBytes = 0;
   for (const [name, data] of files) {
     totalBytes += data.length;

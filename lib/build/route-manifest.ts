@@ -13,7 +13,7 @@ export type StaticRoute = {
   sitemap: boolean; revision: string | null;
 };
 export type StaticManifest = {
-  version: 1; target: 'static'; dataset: 'production' | 'development'; indexable: false;
+  version: 1; target: 'static'; dataset: 'production' | 'development'; indexable: boolean;
   legalPreview?: 'adopted-development';
   routes: StaticRoute[];
 };
@@ -23,9 +23,11 @@ const fixedPaths = [
   '/press/contact', '/press/contact/thank-you', '/press/path-finder',
 ];
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+/** Fixed routes that declare their own noindex and stay out of the sitemap in every profile. */
+export const NOINDEX_PATHS = ['/press/contact/thank-you', '/press/path-finder'];
 
 export function createStaticManifest(
-  documents: ContentIdentity[], publication: PublicationEntry[],
+  documents: ContentIdentity[], publication: PublicationEntry[], { indexable = false } = {},
 ): StaticManifest {
   const byId = new Map(documents.map((doc) => [doc._id, doc]));
   if (byId.size !== documents.length) throw new Error('Duplicate CMS source identity');
@@ -56,7 +58,7 @@ export function createStaticManifest(
     return {
       path, contentType: path === '/about' || path === '/approach' ? 'groupPage' : 'page',
       sourceId, slug: null, eligible: true, gate: null, reason: null,
-      sitemap: !['/press/contact/thank-you', '/press/path-finder'].includes(path),
+      sitemap: !NOINDEX_PATHS.includes(path),
       revision: byId.get(sourceId)?._rev ?? null,
     };
   });
@@ -82,11 +84,11 @@ export function createStaticManifest(
   if (new Set(routes.map((route) => route.path)).size !== routes.length) {
     throw new Error('Duplicate static route');
   }
-  return { version: 1, target: 'static', dataset: 'production', indexable: false,
+  return { version: 1, target: 'static', dataset: 'production', indexable,
     routes: routes.sort((a, b) => a.path.localeCompare(b.path)) };
 }
 
-/** Future indexing uses this same eligible set; H4-A always emits an empty sitemap. */
+/** The indexable (GS-R13 production) sitemap uses this eligible set; staging emits an empty sitemap. */
 export const sitemapPaths = (manifest: StaticManifest) =>
   manifest.routes.filter((route) => route.eligible && route.sitemap).map((route) => route.path);
 

@@ -106,9 +106,14 @@ Observed facts to decide alongside:
 
 ### E.1 What exists and what differs from production
 
-| Property | Staging profile (exists, built today) | gridsmith.uk profile (does not exist) |
+> **Update (GS-R13-PRODUCTION-PROFILE-001, 20 Oct):** the gridsmith.uk profile now exists and
+> refuses to build until inputs 2 and 3 below exist. Its rehearsal is verified locally. See
+> [the record](../GS-R13-PRODUCTION-PROFILE-001.md). The right-hand column below is now implemented,
+> except the intake, which the build refuses to guess.
+
+| Property | Staging profile (exists, built today) | gridsmith.uk profile (GS-R13: implemented, fails closed) |
 |---|---|---|
-| Command | `GRIDSMITH_STAGING_ORIGIN=https://mediumaquamarine-wallaby-594070.hostingersite.com NEXT_PUBLIC_LEAD_INTAKE_URL=https://qfgpwumvvtizeamkynes.supabase.co/functions/v1/gs-lead-intake npm run build:static` | — `build-static.mjs` refuses any origin except loopback or the staging origin |
+| Command | `GRIDSMITH_STAGING_ORIGIN=https://mediumaquamarine-wallaby-594070.hostingersite.com NEXT_PUBLIC_LEAD_INTAKE_URL=https://qfgpwumvvtizeamkynes.supabase.co/functions/v1/gs-lead-intake npm run build:static` | `GRIDSMITH_STATIC_PROFILE=production NEXT_PUBLIC_LEAD_INTAKE_URL=<recorded Production intake> npm run build:static`: refused today |
 | CMS | Production dataset, public read, published perspective; a revision change during the build fails it | Same |
 | Origin / host lock | Staging hostname; `.htaccess` returns 403 for any other `Host` | `gridsmith.uk` (decide how `www` redirects) |
 | Indexing | noindex meta and header, `Disallow: /`, empty sitemap (asserted by the artifact gate) | Indexable, real sitemap, no `X-Robots-Tag` |
@@ -126,8 +131,8 @@ release artifact must come from the CI publish job on the release SHA, which bin
 
 **Inputs a gridsmith.uk build needs, with their owners:**
 
-1. Owner authority to implement the production profile: host lock, indexing, header set without
-   noindex, `*.php` denial, `connect-src`. Local engineering only.
+1. ~~Owner authority to implement the production profile~~: done in GS-R13-PRODUCTION-PROFILE-001
+   (local, not pushed).
 2. Production intake URL and allowed origin (D8; H4-B authority).
 3. The PUBLISHABLE state for each legal document (§C).
 4. Decisions on Path Finder, Freelancer reviews and Technical services (LEG-07/08/09).
@@ -220,10 +225,10 @@ immediate but unmeasured. **A written plan is not a tested rollback:** D2 is the
 | Dependency security, dev advisories | OWNER DECISION REQUIRED (§B) |
 | Static build (production dataset, staging profile) | PASS (local) |
 | Production CMS integrity | PASS (public read) |
-| gridsmith.uk production profile | BLOCKED (owner authority and inputs, §E) |
+| gridsmith.uk production profile | PASS (local, fails closed; GS-R13). Release build BLOCKED on the intake URL and legal states |
 | Lead intake, production | BLOCKED (H4-B, D8) |
 | Legal publication | OWNER DECISION REQUIRED (§C) |
-| Security headers, production | BLOCKED (no production profile) |
+| Security headers, production | PASS as policy text (GS-R13); hosted delivery BLOCKED (no upload) |
 | Hosting push safety | OWNER DECISION REQUIRED (D1) |
 | Staging (candidate) | BLOCKED (D7, not authorised) |
 | Backup | BLOCKED (D2–D5) |
@@ -232,7 +237,12 @@ immediate but unmeasured. **A written plan is not a tested rollback:** D2 is the
 
 ## H. Recommended next action
 
-The longest-lead item, and the one every later step waits on, is the gridsmith.uk build profile.
+> **Update (20 Oct, after GS-R13):** the profile is done. The longest-lead item is now the
+> Production lead intake (H4-B production, D5 then D8), whose recorded URL is the profile's
+> remaining technical input. Do the D1 Hostinger confirmations first.
+
+*Original recommendation, now completed:* the longest-lead item, and the one every later step
+waited on, was the gridsmith.uk build profile.
 It is local engineering, and it can be built and verified without any provider write. Suggested
 wording:
 

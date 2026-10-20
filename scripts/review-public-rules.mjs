@@ -37,11 +37,26 @@ export function artifactReviewProblems(files, baseline) {
     const rating = Number(card.match(/aria-label="([\d.]+) out of 5 stars"/)?.[1]);
     return { key, reviewText: decode(quote), rating, sourceUrl, sourceLabel };
   });
-  problems.push(...publicReviewProblems(reviews, baseline));
+  problems.push(...publicReviewProblems(reviews, baseline), ...providerDataProblems(files));
+  return [...new Set(problems)];
+}
+
+function providerDataProblems(files) {
+  const problems = [];
   for (const [name, bytes] of files) {
     const content = bytes.toString('utf8');
     if (/(?<!\d)(?:22179079|22156296|22148254|22148334|22140811|22134775|22131409|22111228|22100757|22061591|22055287)(?!\d)|from_user_id|authorName|public_name|paid_amount|Freelancer-OAuth-V1|freelancer\.com\/api\//i.test(content)) problems.push(`PROVIDER_DATA:${name}`);
     if (/\.map$/.test(name)) problems.push(`SOURCE_MAP:${name}`);
+  }
+  return problems;
+}
+
+/** GS-R13 production: no written Freelancer permission is held, so no review may ship (LEG-08). */
+export function artifactNoReviewProblems(files) {
+  const problems = providerDataProblems(files);
+  for (const [name, bytes] of files) {
+    // Rendered documents and RSC payloads only: a client chunk may carry the component's code unused.
+    if (/\.(?:html|txt)$/.test(name) && /data-review-key=|data-reviews-carousel/.test(bytes.toString('utf8'))) problems.push(`REVIEWS_PRESENT:${name}`);
   }
   return [...new Set(problems)];
 }

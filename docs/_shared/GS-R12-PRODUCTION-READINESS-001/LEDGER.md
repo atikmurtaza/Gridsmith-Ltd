@@ -44,7 +44,7 @@ locally executable acceptance (7–10), then items that need an external run or 
 | 12 | BRW-RT-01 | 1 | **PASS (CI 39378746236)** | ~~Option A never executed on Linux~~ — authenticate, extract, loader closure, `--version`, Puppeteer and LHCI on Chrome 155, §8 | — |
 | 13 | Q5-01 | 1 | **PASS on exact SHA (CI 39378746236)** | All 14 `check:master:scene` questions pass on Chrome 155 / Linux with the protected verifier byte-unchanged; the earlier Chrome 154 capture disagreement did not recur; its cause is not claimed resolved, §8 | Watch the next runs |
 | 14 | BRW-155-01 | 3 | IN PROGRESS | Candidate CI measures on Chrome 155; all a11y/visual/LHCI evidence is Chrome 148/154 | First CI = new baseline |
-| 15 | DEP-PROD-PROFILE | 1 | BLOCKED | No production (gridsmith.uk, indexable) static profile; build refuses any non-staging origin | Cutover phase |
+| 15 | DEP-PROD-PROFILE | 1 | **PASS (local, fails closed)** | ~~No production (gridsmith.uk, indexable) static profile~~ — implemented in GS-R13-PRODUCTION-PROFILE-001; refuses until the Production intake URL and 7 PUBLISHABLE states exist; rehearsal verified, §10 | Inputs: H4-B, legal |
 | 16 | DEP-PROD-CHANNEL | 1 | BLOCKED | No production deployment channel/credentials | Cutover phase |
 | 17 | DEP-PROD-ROLLBACK | 1 | BLOCKED | No restore-proven WordPress/DNS backup; rollback rehearsal absent | Owner backup |
 | 18 | LEG-02 | 1 | BLOCKED | Lead intake (H4-B) Preview-only; Privacy §2/§6/§7 describes a production intake that does not exist | H4-B production phase |
@@ -465,3 +465,21 @@ CI-green SHA). The `f9d443aa` delta is 5 docs files. Owner checkout untouched.
 | FRP-13 | Production build inputs | BLOCKED (owner authority/inputs) | Pack §E.1 | Recommended next action, pack §H |
 | FRP-14 | Lead intake, production E2E | BLOCKED | No production intake (H4-B Preview-only). Test plan: after D8, one owner-approved enquiry from `https://gridsmith.uk/contact` with marked synthetic content → row in `leads` + outbox → Resend to contact@gridsmith.uk → owner confirms receipt → delete exactly that row by id and record before/after counts | Needs D5 backup first |
 | FRP-15 | Backup and rollback | BLOCKED | Pack §F.3; public DNS baseline recorded | D2–D5; no rehearsal |
+
+## 10. GS-R13-PRODUCTION-PROFILE-001 (owner-authorised, 20 October 2026)
+
+Record: [GS-R13-PRODUCTION-PROFILE-001.md](../GS-R13-PRODUCTION-PROFILE-001.md). Local only: no push,
+deployment or provider write.
+
+| ID | Requirement | Status | Evidence | Remaining |
+|---|---|---|---|---|
+| R13-01 | gridsmith.uk profile: host lock, indexing, header policy, PHP denial | **PASS (local)** | `productionHostingerRules`, profile in `build-static.mjs`; selftest 39 adverse proofs; 10/10 implementation mutations red | Hosted behaviour unverified |
+| R13-02 | Fails closed until the Production intake URL exists | **PASS** | `PRODUCTION_INTAKE_URL = null`; the real build refuses with `INTAKE` (7 refusal paths proven) | Set in the H4-B production phase |
+| R13-03 | Fails closed until all seven legal documents are PUBLISHABLE | **PASS** | Refusal lists 7 `LEGAL` lines; artifact gate `LEGAL` | Owner legal decisions |
+| R13-04 | Rehearsal proves the Next export is indexable and correct | **PASS (local)** | 55 routes; `check:static:ui` 14 pages, 13 axe 0 violations; 53 sitemap URLs | Not deployable by construction |
+| R13-05 | Staging profile unchanged | **PASS (local)** | `.htaccess` hash-pinned and identical; all JS chunks identical; CSS/HTML differences reproduced by a rebuild of the unchanged source | CI not run |
+| R13-06 | Release from CI | NOT STARTED | `hostinger-staging.yml` builds staging only | Reviewed workflow input, after the inputs exist |
+
+Consequences for earlier rows: DEP-PROD-PROFILE and SEC-F1 become PASS (local, fails closed).
+LEG-05/06 (legal routes in the production artifact) are now enforced by the profile rather than
+merely missing. FRP-13's inputs are reduced to the H4-B intake URL and the legal states.

@@ -158,12 +158,13 @@
     ]
   },
   "evidence": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/BUILD-REGRESSION.md (local results); scratchpad logs are session-temporary",
-  "lastSuccessfulCommand": "npm run check:static:ui PASS on production-dataset artifact 7e0b5ffd",
+  "lastSuccessfulCommand": "npm run verify:static PASS after GS-R13",
   "next": [
-    "Owner: dispositions for extract-zip x2, braces, sprintf-js; BRW-03 durable Chrome input",
-    "Owner: authorise the production-delivery phases (BPH-05 production profile, CUTOVER-AUTHORITY, backup/rollback, H4-B promotion) and legal publication when ready",
-    "Owner: confirm Hostinger panel state (not received with the second approval)",
-    "The docs commit recording run 2 is local; publishing it needs a separate push approval"
+    "Owner: D1 Hostinger read-only confirmations",
+    "Owner: H4-B production phase (D5 backup, then D8) to establish PRODUCTION_INTAKE_URL",
+    "Owner: legal PUBLISHABLE decisions",
+    "Owner: advisory dispositions; BRW-03 re-pin before the next CI run",
+    "No push without fresh approval naming the SHA"
   ],
   "ownerDecisionsTaken": [
     {
@@ -273,6 +274,29 @@
       "Owner: D1 Hostinger read-only confirmations + backup list",
       "Owner: §B advisory dispositions; BRW-03 re-pin (time-sensitive)",
       "No push without fresh approval naming the SHA"
+    ]
+  },
+  "productionProfile": {
+    "phase": "GS-R13-PRODUCTION-PROFILE-001",
+    "date": "2026-10-20",
+    "authority": "owner, 20 Oct 2026: local implementation and verification only; no push, deployment or provider write",
+    "record": "docs/_shared/GS-R13-PRODUCTION-PROFILE-001.md",
+    "status": "implemented, locally verified, fails closed",
+    "refusesUntil": [
+      "PRODUCTION_INTAKE_URL set in lib/build/production.ts by the H4-B production phase",
+      "all seven legal documents PUBLISHABLE and migration-eligible"
+    ],
+    "evidence": {
+      "selftest": "check:static:selftest GS-R13 39 adverse proofs",
+      "mutations": "10/10 implementation mutations red; control green; restored byte-identical",
+      "refusals": "7 real build refusal paths; out/ untouched",
+      "rehearsal": "55 routes, 204 files; check:static:ui 14 pages, 13 axe 0 violations; 53 sitemap URLs",
+      "staging": ".htaccess sha256 5f35938f identical; all JS chunks identical; CSS/HTML variance reproduced by a rebuild of unchanged source",
+      "verifyStatic": "PASS"
+    },
+    "notRun": [
+      "hosted behaviour",
+      "CI"
     ]
   }
 }
