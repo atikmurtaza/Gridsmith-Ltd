@@ -1,12 +1,12 @@
 # GS-R12-PRODUCTION-READINESS-001 — handoff
 
 **Decision: NOT READY — SPECIFIC TECHNICAL BLOCKERS** (see [LEDGER.md](LEDGER.md) §3).
-Nothing was pushed, published or deployed; no provider, DNS or Docker action was taken.
+One owner-approved push (18 Oct, `d3d5ba46`) ran CI once ([39151214971](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/39151214971), failed at Option A provision; nothing published). Later commits are local only. Nothing was deployed; no provider, DNS or Docker action was taken.
 
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`
-- Branch: `claude/gs-r12-production-readiness-001` (local only; not on origin)
+- Branch: `claude/gs-r12-production-readiness-001` — on origin at `d3d5ba46`; local `HEAD` is ahead (see below)
 - Base: `e854ad87` (tree `be9cf685`). Owner checkout and the Option A worktree were never modified.
 - State file for resuming: [checkpoint.json](checkpoint.json)
 
@@ -28,6 +28,10 @@ Nothing was pushed, published or deployed; no provider, DNS or Docker action was
 | `7a1b662a` | Lock-wide override check also counts npm-aliased copies (second independent review) |
 | `e720c939` | **Owner decision BLD-01:** shared-baseline budget 2.8 → 2.9KB, reason recorded; stale probe re-sized so the assertion stays provably reachable |
 | `ff2a0558` | `check:deps:overrides` FTP behaviour isolated in a child; one reported re-run only for a Windows native node.exe crash |
+| `ec1dd06e`, `d3d5ba46` | Readiness docs and approval packet 1 (pushed with the first run) |
+| `493e3cad` | **Local.** GnuPG 2.4 `KEYEXPIRED` no longer treated as a verdict (cause of run 39151214971) |
+| `e4dfe8f8` | **Local.** Loader/provider closure fixed for Ubuntu 24.04 merged `/usr` before it could fail (LEDGER §7) |
+| `d9cb6c15` | **Local.** Independent-review follow-up to `e4dfe8f8` (stricter ownership, re-measure, 9 more tests) |
 
 Local acceptance on the final tree: everything passes (`size` after the owner's BLD-01 budget decision); Master Q8 passed
 once the host was idle; Lighthouse cannot run on Windows. Details in BUILD-REGRESSION.md.
@@ -41,9 +45,9 @@ once the host was idle; Lighthouse cannot run on Windows. Details in BUILD-REGRE
 ## Owner decisions needed, in the order that unblocks the most
 
 1. ~~**BLD-01**~~ — **decided 18 Oct 2026:** budget raised to 2.9KB to keep the SC 2.4.11 fix; `size` passes.
-2. **DEP-PUSH-SAFETY + CI-01** — complete the provider checklist, then authorise one push of the
-   final SHA (no dispatch). That run is also the first Linux execution of Option A (BRW-RT-01) and
-   the Q5 diagnostic on Chrome 155 (Q5-01).
+2. **CI-01 (second run)** — confirm Hostinger again, then approve the fast-forward push in
+   [APPROVAL-PACKET-2.md](APPROVAL-PACKET-2.md) §6. It is the first run that can reach extraction,
+   the loader, Chrome 155 and the served gates/Q5 (BRW-RT-01, Q5-01).
 3. **BRW-03** — a durable authenticated source for the pinned Chrome `.deb` (Google prunes old
    stable builds).
 4. **Security residuals** — dispositions for extract-zip ×2, braces, sprintf-js (no published fixes).

@@ -268,3 +268,97 @@ the other installed GitHub Apps' behaviour.
 | Production configuration | **BLOCKED** | No production profile/channel (DEP-PROD-*) |
 | Backup and rollback readiness | **BLOCKED** | No restore-proven backup (DEP-PROD-ROLLBACK); staging rollback documented |
 | Owner deployment authorisation | **OWNER DECISION REQUIRED** | Not requested; nothing deploys |
+
+## 6. First exact-SHA CI run (owner-approved push, 18 October 2026)
+
+- **Approval:** owner approved pushing `claude/gs-r12-production-readiness-001` at
+  `d3d5ba462f0b0e26f505dfb466d486bb6991bef1` (19 commits, incl. `ddf9d9aa`, `e854ad87`) for exactly one
+  push-event CI run. Preconditions rechecked immediately before: HEAD matched, clean tree, branch
+  absent on origin, 0 webhooks, 0 queued runs, 0 PRs, Vercel 0 linked projects. One push with an
+  explicit single-branch refspec.
+- **Run:** [CI 39151214971](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/39151214971),
+  event `push`, head `d3d5ba46…`, conclusion **failure**; `hostinger-staging` **skipped** (nothing
+  published). No other run was triggered.
+- **First Linux evidence for Option A:** `browser-input.selftest` **PASS** (including the Python
+  selftest's Linux-only filesystem fixtures, never run before); `install-controls` **PASS**;
+  `provision` **FAIL** `SIGNATURE_INVALID` after ~1 s; all later steps skipped, so there is **no**
+  new evidence for typecheck/build/size/LHCI/served gates or Q5 from this run.
+- **BRW-RT-02 — root cause (fixed locally, `493e3cad`):** reproduced offline with GnuPG 2.4.9 using
+  the committed key and InRelease — `gpgv` reports `GOODSIG`/`VALIDSIG` from the pinned signer subkey
+  (SHA-256) plus one `KEYEXPIRED` line per retired, unused Google subkey; the parser treated
+  `KEYEXPIRED` as fatal. GnuPG documents `KEYEXPIRED` as emitted for unused expired subkeys and
+  `EXPKEYSIG` as the expired-signing-key verdict (still fatal). Verbatim 2.4.9 output is now a
+  permanent positive fixture (the old predicate rejects it) with an `EXPKEYSIG` negative.
+  Python selftest 142 PASS; browser-input selftest PASS.
+- **Next stage reachability (read-only, 18 Oct):** pinned `.deb` URL `200`, exactly 143,638,568
+  bytes, no redirect; live signing key byte-identical to the pin.
+
+## 7. Offline diagnosis of the next Option A stage (19–20 October 2026)
+
+Nothing was pushed or dispatched; no Docker, WSL or Linux host was used. The fix for run
+39151214971 (`493e3cad`) moves CI past authentication into stages that have **never** run on real
+Linux: the retained Debian 12 receipts record 0 extractions, 0 loader/provider observations and 0
+browser executions. Before asking for another push, those stages were predicted from code and
+verified against primary sources: glibc-2.39 `elf/rtld.c`, dpkg-1.22.6 `src/query/main.c`, the
+Ubuntu noble `libc6` file list and `libc.preinst` (Launchpad glibc `ubuntu/noble-updates`). Three
+independent predictors were used, each prediction then went to an adversarial refuter, and every
+verdict was checked against the code.
+
+| ID | Class | Verdict | Mechanism (all inside `verify_loader`, provision step) |
+|---|---|---|---|
+| BRW-RT-03 | 1 | **REAL → fixed `e4dfe8f8`** | First action: ownership of the interpreter path `/lib64/ld-linux-x86-64.so.2`. On noble, libc6 registers its files only under `/usr` and its preinst adds the DEP17 M8 protective diversion of exactly that path. `dpkg-query -S` therefore prints `diversion by libc6 from:/to:` lines with no owner line and still exits 0 (diversions count as found). The single-owner regex rejects this: `LOADER_PACKAGE_OWNERSHIP`. Debian 12's libc6 owns the path directly, so this could never appear there |
+| BRW-RT-04 | 1 | **REAL → fixed `e4dfe8f8`** | ld.so ran with argv[0] = its realpath. rtld sets `l_name = argv[0]` and prints `"<PT_INTERP> => <argv[0]>"` when they differ, so `chrome` gives `/lib64/ld-linux-x86-64.so.2 => /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2 (0x…)` and fails as `LOADER_OUTPUT_MALFORMED`. Members without PT_INTERP name the loader by its realpath, so a regex-only fix would split one loader into two identities (`LOADER_PROVIDER_CONFLICT` / `PROVIDER_INTERPRETER_CONFLICT` / Node `RECEIPT_INTERPRETER_CONFLICT`) |
+| BRW-RT-05 | 1 | **REAL (mechanism) → fixed `e4dfe8f8`** | About 350 uncached `dpkg-query --search` runs plus about 130 `--show` runs, one after another, and each `--search` reads the whole file database. They share the 120 s deadline with acquisition and extraction (`RESOURCE_WALL_LIMIT`). How long one query takes on the runner image is unmeasured |
+| ELF parsing on real members | — | **REFUTED by execution** | A refuter ran the committed `elf_identity` and pass 1 of `archive_inventory` read-only over the retained authenticated `.deb` (sha256 `b7726070…`), with CPython 3.14 on Windows and no Chrome execution. All 11 ELF members equal the manifest's `elf` blocks; the inventory hash equals the pinned `INPUT_INVENTORY_SHA256` (`ac8ee7b5…`) |
+| Chrome 155 launch / engine change | 3 | Not a new failure | Already BRW-155-01 (new CI baseline) |
+
+**Fix (`e4dfe8f8`, tightened in `d9cb6c15` after an independent three-lens review):**
+
+- Ownership is asked of each resolved file, plus its `/lib` alias only when `/lib` resolves to
+  `/usr/lib`; never of the printed symlink path.
+- Any diversion line rejects, as do two owners, no owner, a query failure, and a package row that is
+  not installed, not amd64, unrequested, duplicated or missing.
+- ld.so runs with argv[0] = the interpreter path, as `ldd` passes it, while the resolved, attributed
+  file is what executes.
+- Ownership costs two `--search` and two `--show` runs per verification, whatever the library
+  count: the loader is attributed before it runs, then one batch covers the rest.
+- Every file is measured again after attribution, and the loader's two attributions must agree
+  (`LOADER_PROVIDER_CHANGED`).
+- The receipt shape is unchanged for `browser-input.mjs`.
+
+**Review (`e4dfe8f8`, semantics / security / fixture-validity lenses, read-only, private copies):**
+
+- None of the three reviewers found a defect that would fail the first run, and each checked its
+  reading against rtld.c and dpkg.
+- They raised 11 low findings: a weakened alias-diversion case; the unchecked merged-`/usr`
+  assumption; the lost hash-to-version binding; several untested branches (alias owner, `--show`
+  identity, cross-member conflict, missing NEEDED, full provider list); the stubbed resolver; and the
+  "two runs" record.
+- All 11 were applied in `d9cb6c15`. On Linux, the selftest now also runs the real resolver against
+  the host's own loader and `/lib`.
+
+**Proof:**
+
+- Python selftest 142 → **161** (162 on Linux) with an Ubuntu 24.04 host model: `rtld_trace` follows
+  rtld.c and `dpkg_search` follows dpkg's `searchoutput`/`searchfiles`, with the noble diversion.
+- **14 re-injected defects** in private copies each turn it red:
+  - realpath argv[0] → `LOADER_OUTPUT_MALFORMED`;
+  - printed path queried → `LOADER_PACKAGE_OWNERSHIP`;
+  - per-library queries, or the loader run before attribution → the call-sequence assertion;
+  - alias owners rejected, alias without merged `/usr`, any status accepted, architecture unchecked,
+    the cross-member conflict dropped, NEEDED unchecked, no re-measure, or the loader identity not
+    compared → their own tests;
+  - rows not bound, or missing rows → a verifier `KeyError`, which `main()` reports as
+    `VERIFIER_UNEXPECTED_FAILURE`, so it still fails closed.
+- `browser-input.selftest` PASS (Python 161); `verify:static` PASS on `d9cb6c15`.
+
+**Still unobserved until a Linux run:**
+
+- Real `dpkg-query` and ld.so timing on the image.
+- Extraction pass 2 writing with CPython 3.12.3's `tarfile` data filter.
+- `OutputTree` on the real tree.
+- The real `chrome --version`.
+- Puppeteer/LHCI launches.
+- Every served gate and Q5.
+
+Each consumer launch repeats a full verification; that costs minutes, not a failure.

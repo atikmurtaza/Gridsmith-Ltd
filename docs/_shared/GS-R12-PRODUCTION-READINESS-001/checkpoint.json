@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "GS-R12-PRODUCTION-READINESS-001",
-  "updated": "2026-10-18",
+  "updated": "2026-10-20",
   "decision": "NOT READY — SPECIFIC TECHNICAL BLOCKERS",
   "worktree": "C:\\Users\\atikm\\.codex\\worktrees\\gs-r12-production-readiness-001\\Gridsmith Ltd",
   "branch": "claude/gs-r12-production-readiness-001",
@@ -69,6 +69,26 @@
     {
       "sha": "ff2a0558",
       "subject": "test(security): contain a Windows node.exe crash in the FTP override check"
+    },
+    {
+      "sha": "d3d5ba46",
+      "subject": "docs(readiness): CI approval packet and controlled-gate verification (pushed)"
+    },
+    {
+      "sha": "493e3cad",
+      "subject": "fix(browser): do not treat GnuPG KEYEXPIRED status as a signature verdict (local)"
+    },
+    {
+      "sha": "ec1dd06e",
+      "subject": "docs(readiness): record BLD-01 owner decision and FTP harness containment"
+    },
+    {
+      "sha": "e4dfe8f8",
+      "subject": "fix(browser): resolve loader closure on Ubuntu 24.04 merged /usr"
+    },
+    {
+      "sha": "d9cb6c15",
+      "subject": "fix(browser): tighten the loader ownership check after independent review"
     }
   ],
   "protected": {
@@ -84,8 +104,8 @@
     "ci.yml": "2b1a05d3a6edc30fd071855fbddea401e0b5141a37087e6beae509ddd3d8b0af",
     "browser-input.json": "20ac446b365c2e9f08d83355f66e99f78c4065c93c49099c45ebd4754be0cb54"
   },
-  "pushed": false,
-  "ciTriggered": false,
+  "pushed": true,
+  "ciTriggered": true,
   "deployed": false,
   "dockerRun": false,
   "providerWrite": false,
@@ -112,7 +132,9 @@
       "ACC-04 (local)",
       "GATE-PRESS-01",
       "BLD-01 (owner decision)",
-      "GATE-DEPS-01 (contained)"
+      "GATE-DEPS-01 (contained)",
+      "BRW-RT-02 (offline, 493e3cad)",
+      "BRW-RT-03/04/05 (offline, e4dfe8f8)"
     ],
     "ownerDecisions": [
       "DEP-PUSH-SAFETY",
@@ -138,9 +160,9 @@
     ]
   },
   "evidence": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/BUILD-REGRESSION.md (local results); scratchpad logs are session-temporary",
-  "lastSuccessfulCommand": "npm audit signatures PASS; approval packet written",
+  "lastSuccessfulCommand": "verify:static PASS and browser-input.selftest PASS on d9cb6c15",
   "next": [
-    "Owner: confirm Hostinger panel state and GitHub Apps, then approve the exact push in APPROVAL-PACKET.md §10",
+    "Owner: confirm Hostinger, then approve the fast-forward push in APPROVAL-PACKET-2.md §6 (exact SHA in the request)",
     "Owner: BRW-03 durable Chrome input; dispositions for extract-zip x2, braces, sprintf-js",
     "After CI: classify results; production-profile/cutover phases only under separate authority"
   ],
@@ -165,18 +187,54 @@
     "preRewriteHeadInReflog": "d67d09318a74c282abcbdddc4f6249553feed281"
   },
   "ciGate": {
-    "status": "AWAITING OWNER PUSH APPROVAL",
-    "packet": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/APPROVAL-PACKET.md",
+    "status": "SECOND RUN AWAITING OWNER APPROVAL",
+    "packet": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/APPROVAL-PACKET-2.md",
     "event": "push (verify job only)",
     "unverified": [
       "Hostinger staging auto-deploy/branch (13 Oct obs.)",
       "Hostinger production Git (13 Oct obs.)",
       "other GitHub Apps"
-    ]
+    ],
+    "checked20Oct": "hooks 0, rulesets 0, Pages none, secrets 0, token read, PRs 0, queued/in-progress 0, Vercel 0 linked projects, remote head d3d5ba46"
   },
   "evidenceAdded": [
     "npm audit signatures: 1567 verified signatures, 429 attestations",
     "Vercel: 0 projects linked to repo (18 Oct)",
     "GitHub: 0 hooks, 0 rulesets, Pages none, 0 secrets, default token read (18 Oct)"
-  ]
+  ],
+  "ciRuns": [
+    {
+      "runId": 39151214971,
+      "sha": "d3d5ba462f0b0e26f505dfb466d486bb6991bef1",
+      "event": "push",
+      "conclusion": "failure",
+      "failedStep": "browser-input.mjs provision: SIGNATURE_INVALID",
+      "hostingerStaging": "skipped",
+      "cause": "gpgv 2.4 KEYEXPIRED for unused retired subkeys treated as fatal",
+      "fixCommit": "493e3cad (local, not pushed)"
+    }
+  ],
+  "remoteHead": "d3d5ba462f0b0e26f505dfb466d486bb6991bef1",
+  "offlineDiagnosis": {
+    "date": "2026-10-20",
+    "ledger": "LEDGER.md §7",
+    "real": [
+      "BRW-RT-03 LOADER_PACKAGE_OWNERSHIP (noble libc6 DEP17 diversion of /lib64/ld-linux-x86-64.so.2)",
+      "BRW-RT-04 LOADER_OUTPUT_MALFORMED / interpreter identity split (ld.so argv[0] = realpath)",
+      "BRW-RT-05 ~480 serial dpkg-query runs inside the 120 s deadline"
+    ],
+    "refuted": [
+      "elf_identity on real ELF members (executed read-only over the retained authenticated .deb; inventory hash = pinned)",
+      "Chrome 155 launch (already BRW-155-01)"
+    ],
+    "fixCommit": "e4dfe8f8 + d9cb6c15 (local, not pushed)",
+    "selftest": "Python 161 (162 on Linux) PASS; browser-input.selftest PASS; verify:static PASS; 14 re-injected defects each red",
+    "primarySources": [
+      "glibc-2.39 elf/rtld.c",
+      "dpkg-1.22.6 src/query/main.c",
+      "packages.ubuntu.com noble/amd64/libc6 filelist",
+      "Launchpad glibc ubuntu/noble-updates debian/debhelper.in/libc.preinst"
+    ],
+    "review": "three lenses on e4dfe8f8: 0 first-run defects, 11 low findings, all applied in d9cb6c15"
+  }
 }
