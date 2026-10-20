@@ -550,3 +550,27 @@ GS-O025 itself stays OPEN until the availability check is activated and verified
 **Status: NOT OPERATIONAL.** The secrets' user part must be `gridsmith_keepalive.<ref>`. Scheduled
 runs (05:23/17:23 UTC) will fail the same way, and email you, until the secrets are corrected.
 Drain: off. Heartbeat: not configured. The 24-hour scheduled-run verification is pending.
+
+### 12.3 GS-O025-ACTIVATE-002 re-run (20 October 2026, 14:12 UTC)
+
+After you corrected the secrets (updated 14:09–14:10 UTC), manual run 39437210411 at `dbde73d3`:
+
+| Project | Job | Database evidence |
+|---|---|---|
+| Preview `qfgpwumvvtizeamkynes` | **PASS**: "ok (read-only session as gridsmith_keepalive, 3 statements)" | `keepaliveStatementCalls` 0 → **4** (real, authenticated activity) |
+| Production `dqiutgmxillhsbzgnlsx` | **FAIL**: "database session failed or timed out" | `keepaliveStatementCalls` stays **0**; no session reached the database. The secret passed the provenance check (user, pooler host shape, port 5432, database), so the address has the right shape |
+
+Logs scanned: 0 addresses, pooler hosts or passwords. `switch-off` skipped. Drain off. Heartbeat
+not configured.
+
+**Likely causes (unverifiable here, because the secret is not readable):**
+1. The Production secret uses Preview's pooler host. Projects can sit on different pooler clusters
+   (`aws-0-…` vs `aws-1-…`), so take the host from Production's own Connect panel.
+2. The password in the Production address differs from the one set on the Production role.
+
+**`main`'s CI run 39433946390** (the push) failed in its served-gate step: 3 of 13 commands, on
+`main`'s own 17 September code. The four added files are not read by those gates. It published
+nothing.
+
+**Status: PARTIALLY OPERATIONAL** (Preview only). Scheduled runs at 05:23/17:23 UTC will keep
+Preview active and will fail, and email you, for Production until the Production secret is fixed.

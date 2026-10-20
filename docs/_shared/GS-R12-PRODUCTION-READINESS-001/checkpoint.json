@@ -386,7 +386,17 @@
       "variable": "GS_O025_KEEPALIVE_ENABLED=true",
       "drain": "off",
       "heartbeat": "not configured",
-      "status": "NOT OPERATIONAL: owner to correct the two secrets, then one re-run"
+      "status": "PARTIAL: Preview operational; Production secret to be corrected by owner, then one re-run",
+      "rerun": {
+        "id": 39437210411,
+        "preview": "PASS; keepaliveStatementCalls 0->4",
+        "production": "FAIL: database session failed; calls 0; provenance check passed",
+        "likelyCauses": [
+          "Production pooler host differs (aws-0 vs aws-1)",
+          "password mismatch"
+        ],
+        "mainCi": "39433946390 failure in served gates on main 17-Sep code; unrelated to the 4 files"
+      }
     }
   },
   "chromeCheck": "2026-10-20 round 2: .79 still 200; stable .84"
