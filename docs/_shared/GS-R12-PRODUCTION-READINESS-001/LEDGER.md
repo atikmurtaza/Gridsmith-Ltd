@@ -622,3 +622,40 @@ grants 0, before and after.
 - Migration still `b807e3ed6d4f`; Production state as at §11.
 - **Added prerequisite:** the Production pooler address must be proven first, because the backup
   uses the same session pooler.
+
+### 12.5 GS-O025-DIAG-005 (20 October 2026, 22:15 UTC)
+
+**Your diagnostic run:** `user=gridsmith_keepalive (ref dqiutgmxillhsbzglsx) host-cluster=aws-0-eu-west-1`,
+UNCLASSIFIED.
+
+- **Ref typo confirmed:** Supabase lists Production as `dqiutgmxillhsbzgnlsx` (20 characters); the
+  pasted address had `dqiutgmxillhsbzglsx` (19), missing the `n` at position 17.
+- **But the stored secret differed from that paste.** Runs 39437210411 and 39460750895 passed the
+  workflow's username check, which requires the exact ref, so the secret's ref was correct.
+- **Host cluster:** the pasted address used `aws-0-eu-west-1`. Production's working session pooler on
+  2 October (GS-PROD-003-R1 backup) was `aws-1-eu-west-1`.
+- **Why UNCLASSIFIED:** most likely the newer Supavisor wording `(ENOTFOUND) tenant/user … not found`,
+  which the old pattern did not match.
+
+**Diagnostic improved (local only, never run by CI):**
+- Offline checks before any connection: username must be `gridsmith_keepalive.<ref>`; the ref must
+  be one of the two Gridsmith refs (a typo now gives REF MISMATCH with both lengths); the host must
+  be an eu-west-1 session pooler.
+- Routing matches both Supavisor wordings, case-insensitively.
+- An unknown error prints one sanitised line, with password, user, ref and host replaced.
+- Fake-client selftest: POOLER ROUTING ×2, PASSWORD, OK, scrubbed UNCLASSIFIED, offline REF
+  MISMATCH (no client started).
+
+**Disclosure: unintended live login attempts.**
+- While testing, a PATH error (`C:/…` split on the colon) made the real client run instead of the
+  fake. Five login attempts went to the Production pooler `aws-1-eu-west-1` as
+  `gridsmith_keepalive.dqiutgmxillhsbzgnlsx` with a made-up password (no real credential).
+- Each was rejected as "password authentication failed", which proves `aws-1` routes this user and
+  ref.
+- Supabase network bans afterwards: none (this machine's address was not banned).
+
+**Scheduled execution observed:** run 39493782927 (schedule) started 20:39 UTC for the 17:23 cron,
+**3 h 16 min late**. Preview passed and Production failed. GitHub delay is real and is now measured.
+
+**Production secret** updated again at 22:11:03 UTC. Not yet diagnosed, so no workflow run has been
+made.

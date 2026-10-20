@@ -411,6 +411,19 @@
         ],
         "remaining": "secret address: host/cluster, user or password",
         "tool": "scripts/diagnose-keepalive-url.sh (owner-run, hidden prompt, category only)"
+      },
+      "diag005": {
+        "refTypo": "paste had dqiutgmxillhsbzglsx (19) vs dqiutgmxillhsbzgnlsx (20)",
+        "secretRefWasCorrect": "workflow provenance passed in runs 2-3",
+        "pastedCluster": "aws-0-eu-west-1",
+        "workingCluster": "aws-1-eu-west-1 (2 Oct backup; confirmed by 5 unintended fake-password attempts reaching password check; no bans)",
+        "scheduledRun": {
+          "id": 39493782927,
+          "started": "20:39Z for 17:23 cron",
+          "preview": "success",
+          "production": "failure"
+        },
+        "secretUpdated": "2026-10-20T22:11:03Z (not yet diagnosed)"
       }
     }
   },
