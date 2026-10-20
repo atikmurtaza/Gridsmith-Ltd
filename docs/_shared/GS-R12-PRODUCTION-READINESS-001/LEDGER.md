@@ -436,3 +436,32 @@ Each consumer launch repeats a full verification; that costs minutes, not a fail
 | Production configuration | **BLOCKED** (owner authority) | No production profile or channel (BPH-05, CUTOVER-AUTHORITY) |
 | Backup and rollback readiness | **BLOCKED** (owner authority) | No restore-proven backup (DEP-PROD-ROLLBACK) |
 | Owner deployment authorisation | **OWNER DECISION REQUIRED** | Not requested; nothing deploys |
+
+## 9. Final release preparation (GS-R12-FINAL-RELEASE-PREPARATION-001, 20 October 2026)
+
+Decision pack: [RELEASE-DECISION-PACK.md](RELEASE-DECISION-PACK.md). Decision unchanged:
+**BLOCKED — REQUIRED OWNER OR EXTERNAL ACTION.** Nothing was pushed, dispatched, deployed or
+written to a provider. Raw outputs are in the ignored `build/` directory of this worktree
+(`cms-audit-2026-10-20.json`, `build-static-prod-2026-10-20.log`, `static-receipt.json`,
+`static-ui-prod-2026-10-20.log`, `static-ui-receipt.json`). They are local and are not committed.
+
+**Starting state:** HEAD `f9d443aa` (tree `2c2f107a`), clean; `origin` branch head `17080169` (the
+CI-green SHA). The `f9d443aa` delta is 5 docs files. Owner checkout untouched.
+
+| ID | Requirement | Status | Evidence / command | Remaining risk / next |
+|---|---|---|---|---|
+| FRP-01 | Repository verification | PASS | `git status`, `git rev-parse`, `git ls-remote origin` | — |
+| FRP-02 | Advisory re-check | PASS (no change) | `npm audit --json`: 21 entries / 4 IDs; `--omit=dev` 0; `npm view` latest braces 3.0.3, extract-zip 2.0.1, sprintf-js 1.1.3 (all affected); `npm ls` paths. New: puppeteer 25 drops extract-zip, but `@lhci/cli` 0.15.1 (latest) → lighthouse 12.6.1 → puppeteer-core ^24 keeps a copy | Owner dispositions, pack §B |
+| FRP-03 | Chrome source durability (BRW-03) | **OWNER DECISION REQUIRED, now time-sensitive** | `curl -I` pinned `.deb`: 200, 143,638,568 B, no redirect. Live signed index `dists/stable/main/binary-amd64/Packages` lists `155.0.8059.84-1`, not `.79` | Pool pruning makes the next CI fail closed at download. Recommended R1 re-pin, pack §E.2 |
+| FRP-04 | Production CMS read-only audit (BPH-05 read) | PASS | `node build/cms-audit.mjs` (unauthenticated, published perspective): 47 docs, 47/47 deep-equal to `buildPayload()`, 0 foreign/missing/markers/suspicious keys/dangling refs; fingerprint `d0dc7ef2…`. Probes: one changed field and one dropped expectation gave `differ` 1 and `foreign` 1; injected `[SEED]`, `isSeed`, `priceFrom` and a dangling `_ref` each fired | The audit cannot see drafts or system documents without a token |
+| FRP-05 | Production-dataset static build (BPH-05) | PASS (local) | `GRIDSMITH_STAGING_ORIGIN=<staging> NEXT_PUBLIC_LEAD_INTAKE_URL=<preview> npm run build:static`: EXIT 0; 55 routes, 204 files, 29,600,827 B, identity `7e0b5ffd…`, problems 0, `sourceModified: false`, `/legal/*` and insights excluded | Windows build: the release artifact must come from the CI publish job |
+| FRP-06 | Static UI on that artifact | PASS (local) | Plain file server on 127.0.0.1:3236 (scratch `build/serve-out.mjs`), `npm run check:static:ui`: 14 pages, 13 axe analyses with 0 violation rules, 13 no-JS pages | Not hosting-specific: no `.htaccess` was applied |
+| FRP-07 | Legal approval pack | PASS (prepared) | `check:legal:adoption` PASS; per-document table in pack §C; company facts identical in all six drafts; artifact pages link 4–5 `/legal/*` routes that do not ship | Owner approves or withholds each document |
+| FRP-08 | GitHub trigger audit | PASS (API read) | 0 hooks, 0 rulesets, Pages 404, environments without rules, 0 secrets, 3 publishable variables, default token `read`, `main` unprotected; `smoke.yml` registered but on no current branch. Installed-app listing needs a GitHub App token (403) | App behaviour still UNVERIFIED |
+| FRP-09 | Vercel | PASS (API read) | `gridsmith-ltd`: latest deployment 3 Oct (Preview), none from the 18 or 20 Oct pushes; no production target; SSO protection on | Retire or keep: owner (D10) |
+| FRP-10 | Supabase read-only | BLOCKED | The connector lists only an unrelated organisation (2 projects). Production `dqiutgmxillhsbzgnlsx` and Preview `qfgpwumvvtizeamkynes` are not visible | Owner D5, or reconnect the connector |
+| FRP-11 | Hostinger panel | BLOCKED | hPanel redirected to sign-in; Claude may not enter credentials | Owner D1 |
+| FRP-12 | DNS/TLS/HTTP | PASS (public read) | `nslookup` A/AAAA/NS/MX/TXT/DMARC/DKIM; `openssl s_client`: apex/www LE valid to 16 Dec 2026, staging wildcard to 7 Dec; `curl -I`: production WordPress 200, www/http 301; staging headers present and `__deployment.json` = `6615d97c`/`28b841dd…` | SOA serial `2026101501` = zone changed 15 Oct; owner to confirm |
+| FRP-13 | Production build inputs | BLOCKED (owner authority/inputs) | Pack §E.1 | Recommended next action, pack §H |
+| FRP-14 | Lead intake, production E2E | BLOCKED | No production intake (H4-B Preview-only). Test plan: after D8, one owner-approved enquiry from `https://gridsmith.uk/contact` with marked synthetic content → row in `leads` + outbox → Resend to contact@gridsmith.uk → owner confirms receipt → delete exactly that row by id and record before/after counts | Needs D5 backup first |
+| FRP-15 | Backup and rollback | BLOCKED | Pack §F.3; public DNS baseline recorded | D2–D5; no rehearsal |

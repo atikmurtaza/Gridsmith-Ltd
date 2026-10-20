@@ -3,6 +3,8 @@
 **Decision: BLOCKED — REQUIRED OWNER OR EXTERNAL ACTION** (see [LEDGER.md](LEDGER.md) §3, §8). Exact-SHA CI [39378746236](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/39378746236) is green on `17080169`.
 Two owner-approved pushes: 18 Oct `d3d5ba46` (CI 39151214971, failed at Option A provision) and 20 Oct `17080169` (CI 39378746236, **success**, all 57 steps). `hostinger-staging` was skipped both times; nothing was published or deployed. No provider, DNS or Docker action was taken.
 
+**20 Oct, GS-R12-FINAL-RELEASE-PREPARATION-001:** consolidated owner decisions are in [RELEASE-DECISION-PACK.md](RELEASE-DECISION-PACK.md); results are in LEDGER §9. Production CMS 47/47 equals the repository payload; the production-dataset staging artifact builds (identity `7e0b5ffd…`) and passes `check:static:ui`. Google's stable Chrome is now `.84`, so the `.79` pin (BRW-03) is time-sensitive. Decision unchanged.
+
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`

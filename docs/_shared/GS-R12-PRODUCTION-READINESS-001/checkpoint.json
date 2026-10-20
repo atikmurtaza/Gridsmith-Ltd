@@ -158,7 +158,7 @@
     ]
   },
   "evidence": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/BUILD-REGRESSION.md (local results); scratchpad logs are session-temporary",
-  "lastSuccessfulCommand": "CI 39378746236 success on 17080169",
+  "lastSuccessfulCommand": "npm run check:static:ui PASS on production-dataset artifact 7e0b5ffd",
   "next": [
     "Owner: dispositions for extract-zip x2, braces, sprintf-js; BRW-03 durable Chrome input",
     "Owner: authorise the production-delivery phases (BPH-05 production profile, CUTOVER-AUTHORITY, backup/rollback, H4-B promotion) and legal publication when ready",
@@ -245,5 +245,34 @@
       "Launchpad glibc ubuntu/noble-updates debian/debhelper.in/libc.preinst"
     ],
     "review": "three lenses on e4dfe8f8: 0 first-run defects, 11 low findings, all applied in d9cb6c15"
+  },
+  "finalReleasePreparation": {
+    "phase": "GS-R12-FINAL-RELEASE-PREPARATION-001",
+    "date": "2026-10-20",
+    "decision": "BLOCKED — REQUIRED OWNER OR EXTERNAL ACTION",
+    "pack": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/RELEASE-DECISION-PACK.md",
+    "ledger": "LEDGER.md §9",
+    "startHead": "f9d443aa",
+    "lastCompletedStep": "FRP-15 recorded; docs commit",
+    "results": {
+      "audit": "21 entries / 4 IDs; production 0",
+      "chrome": "pinned .79 still downloadable; stable index now 155.0.8059.84-1",
+      "cms": "production 47/47 deep-equal to repo payload; fingerprint d0dc7ef2471ea5c68cdd05919b945422c5a0b36d287cfc65424e357a7b8e2423",
+      "staticBuild": "production dataset, staging origin: 55 routes, 204 files, identity 7e0b5ffd63b4566ccabbc234c38b523d6cb524d337357fcf07a939f4a40ee72a (local Windows, source f9d443aa)",
+      "staticUi": "14 pages, 13 axe 0 violations, 13 no-JS",
+      "staging": "still 6615d97c / 28b841dd",
+      "vercel": "no deployment since 3 Oct",
+      "github": "0 hooks/rulesets/secrets, token read",
+      "supabase": "connector cannot see Gridsmith org",
+      "hostinger": "hPanel needs owner sign-in",
+      "dns": "SOA serial 2026101501 (changed 15 Oct)"
+    },
+    "localEvidence": "build/ (ignored): cms-audit-2026-10-20.json, build-static-prod-2026-10-20.log, static-receipt.json, static-ui-prod-2026-10-20.log, static-ui-receipt.json",
+    "next": [
+      "Owner: GS-R13-PRODUCTION-PROFILE-001 authority (pack §H)",
+      "Owner: D1 Hostinger read-only confirmations + backup list",
+      "Owner: §B advisory dispositions; BRW-03 re-pin (time-sensitive)",
+      "No push without fresh approval naming the SHA"
+    ]
   }
 }
