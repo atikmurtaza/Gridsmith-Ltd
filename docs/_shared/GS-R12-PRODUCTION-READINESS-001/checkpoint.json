@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "phase": "GS-R12-PRODUCTION-READINESS-001",
   "updated": "2026-10-20",
-  "decision": "NOT READY — SPECIFIC TECHNICAL BLOCKERS",
+  "decision": "BLOCKED — REQUIRED OWNER OR EXTERNAL ACTION",
   "worktree": "C:\\Users\\atikm\\.codex\\worktrees\\gs-r12-production-readiness-001\\Gridsmith Ltd",
   "branch": "claude/gs-r12-production-readiness-001",
   "baseline": {
@@ -111,9 +111,6 @@
   "providerWrite": false,
   "statusByClass": {
     "class1Open": [
-      "CI-01",
-      "BRW-RT-01",
-      "Q5-01",
       "DEP-PROD-PROFILE",
       "DEP-PROD-CHANNEL",
       "DEP-PROD-ROLLBACK",
@@ -134,15 +131,16 @@
       "BLD-01 (owner decision)",
       "GATE-DEPS-01 (contained)",
       "BRW-RT-02 (offline, 493e3cad)",
-      "BRW-RT-03/04/05 (offline, e4dfe8f8)"
+      "BRW-RT-03/04/05 (offline, e4dfe8f8)",
+      "CI-01 (CI 39378746236)",
+      "BRW-RT-01 (CI 39378746236)",
+      "Q5-01 (exact-SHA PASS; watch next runs)"
     ],
     "ownerDecisions": [
-      "DEP-PUSH-SAFETY",
       "BRW-03",
       "SEC-ZIP-01",
       "SEC-BRACES-05",
       "SEC-SPRINTF-06",
-      "Q5-01",
       "LEG-01",
       "LEG-07",
       "LEG-08",
@@ -160,11 +158,12 @@
     ]
   },
   "evidence": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/BUILD-REGRESSION.md (local results); scratchpad logs are session-temporary",
-  "lastSuccessfulCommand": "verify:static PASS and browser-input.selftest PASS on d9cb6c15",
+  "lastSuccessfulCommand": "CI 39378746236 success on 17080169",
   "next": [
-    "Owner: confirm Hostinger, then approve the fast-forward push in APPROVAL-PACKET-2.md §6 (exact SHA in the request)",
-    "Owner: BRW-03 durable Chrome input; dispositions for extract-zip x2, braces, sprintf-js",
-    "After CI: classify results; production-profile/cutover phases only under separate authority"
+    "Owner: dispositions for extract-zip x2, braces, sprintf-js; BRW-03 durable Chrome input",
+    "Owner: authorise the production-delivery phases (BPH-05 production profile, CUTOVER-AUTHORITY, backup/rollback, H4-B promotion) and legal publication when ready",
+    "Owner: confirm Hostinger panel state (not received with the second approval)",
+    "The docs commit recording run 2 is local; publishing it needs a separate push approval"
   ],
   "ownerDecisionsTaken": [
     {
@@ -187,15 +186,9 @@
     "preRewriteHeadInReflog": "d67d09318a74c282abcbdddc4f6249553feed281"
   },
   "ciGate": {
-    "status": "SECOND RUN AWAITING OWNER APPROVAL",
+    "status": "SECOND RUN DONE — SUCCESS; no further push authorised",
     "packet": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/APPROVAL-PACKET-2.md",
-    "event": "push (verify job only)",
-    "unverified": [
-      "Hostinger staging auto-deploy/branch (13 Oct obs.)",
-      "Hostinger production Git (13 Oct obs.)",
-      "other GitHub Apps"
-    ],
-    "checked20Oct": "hooks 0, rulesets 0, Pages none, secrets 0, token read, PRs 0, queued/in-progress 0, Vercel 0 linked projects, remote head d3d5ba46"
+    "approvalNote": "approval text truncated at 300 chars before the Hostinger-confirmation clause"
   },
   "evidenceAdded": [
     "npm audit signatures: 1567 verified signatures, 429 attestations",
@@ -212,9 +205,25 @@
       "hostingerStaging": "skipped",
       "cause": "gpgv 2.4 KEYEXPIRED for unused retired subkeys treated as fatal",
       "fixCommit": "493e3cad (local, not pushed)"
+    },
+    {
+      "runId": 39378746236,
+      "sha": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "event": "push",
+      "conclusion": "success",
+      "steps": 57,
+      "hostingerStaging": "skipped",
+      "python": 174,
+      "provisionSeconds": 25,
+      "chrome": "155.0.8059.79",
+      "q5": "all 14 questions pass; verifier 98210eaf unchanged",
+      "lhciDesktop": "perf/a11y/bp 1.0 on all 11 routes",
+      "lhciMobile": "LCP 902-1075 ms, TBT 69-93 ms",
+      "axe": "76 analyses, 0 violations",
+      "size": "69 routes within budget"
     }
   ],
-  "remoteHead": "d3d5ba462f0b0e26f505dfb466d486bb6991bef1",
+  "remoteHead": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
   "offlineDiagnosis": {
     "date": "2026-10-20",
     "ledger": "LEDGER.md §7",

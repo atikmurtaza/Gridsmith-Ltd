@@ -1,12 +1,12 @@
 # GS-R12-PRODUCTION-READINESS-001 — handoff
 
-**Decision: NOT READY — SPECIFIC TECHNICAL BLOCKERS** (see [LEDGER.md](LEDGER.md) §3).
-One owner-approved push (18 Oct, `d3d5ba46`) ran CI once ([39151214971](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/39151214971), failed at Option A provision; nothing published). Later commits are local only. Nothing was deployed; no provider, DNS or Docker action was taken.
+**Decision: BLOCKED — REQUIRED OWNER OR EXTERNAL ACTION** (see [LEDGER.md](LEDGER.md) §3, §8). Exact-SHA CI [39378746236](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/39378746236) is green on `17080169`.
+Two owner-approved pushes: 18 Oct `d3d5ba46` (CI 39151214971, failed at Option A provision) and 20 Oct `17080169` (CI 39378746236, **success**, all 57 steps). `hostinger-staging` was skipped both times; nothing was published or deployed. No provider, DNS or Docker action was taken.
 
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`
-- Branch: `claude/gs-r12-production-readiness-001` — on origin at `d3d5ba46`; local `HEAD` is ahead (see below)
+- Branch: `claude/gs-r12-production-readiness-001` — on origin at `17080169`; the docs commit recording run 2 is local only
 - Base: `e854ad87` (tree `be9cf685`). Owner checkout and the Option A worktree were never modified.
 - State file for resuming: [checkpoint.json](checkpoint.json)
 
@@ -45,9 +45,7 @@ once the host was idle; Lighthouse cannot run on Windows. Details in BUILD-REGRE
 ## Owner decisions needed, in the order that unblocks the most
 
 1. ~~**BLD-01**~~ — **decided 18 Oct 2026:** budget raised to 2.9KB to keep the SC 2.4.11 fix; `size` passes.
-2. **CI-01 (second run)** — confirm Hostinger again, then approve the fast-forward push in
-   [APPROVAL-PACKET-2.md](APPROVAL-PACKET-2.md) §6. It is the first run that can reach extraction,
-   the loader, Chrome 155 and the served gates/Q5 (BRW-RT-01, Q5-01).
+2. ~~**CI-01**~~ — **done:** CI 39378746236 green; BRW-RT-01 and Q5-01 PASS on the exact SHA. Confirm the Hostinger panel state (not received with the second approval).
 3. **BRW-03** — a durable authenticated source for the pinned Chrome `.deb` (Google prunes old
    stable builds).
 4. **Security residuals** — dispositions for extract-zip ×2, braces, sprintf-js (no published fixes).

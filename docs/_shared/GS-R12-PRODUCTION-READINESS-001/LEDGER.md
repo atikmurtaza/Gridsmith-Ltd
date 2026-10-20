@@ -40,9 +40,9 @@ locally executable acceptance (7–10), then items that need an external run or 
 | 10c | GATE-EDGE-01 | 3 | PASS | `check:edge:ui` raced the router for the thank-you title | — |
 | 10e | GATE-DEPS-01 | 3 | PASS | `check:deps:overrides` FTP harness hit a native node.exe crash (0xC0000409) ~1% of Windows runs, with the original basic-ftp too | — |
 | 10d | REVIEW-01 | 3 | PASS | Independent review: 3 confirmed low findings in new test code, all fixed (`cf2cd083`) | — |
-| 11 | CI-01 | 1 | BLOCKED | No exact-SHA GitHub CI exists for this candidate | Push authority |
-| 12 | BRW-RT-01 | 1 | BLOCKED | Option A never executed on Linux (APT closure, extraction, Chrome 155 launch, Lighthouse) | Phase-006 Docker / CI |
-| 13 | Q5-01 | 1 | OWNER DECISION REQUIRED | Master Q5 red in the last two exact-SHA CI runs; capture/render disagreement UNRESOLVED | Classification protocol + one diagnostic CI run |
+| 11 | CI-01 | 1 | **PASS (CI 39378746236, `17080169`)** | ~~No exact-SHA GitHub CI exists for this candidate~~ — exact-SHA CI green, §8 | — |
+| 12 | BRW-RT-01 | 1 | **PASS (CI 39378746236)** | ~~Option A never executed on Linux~~ — authenticate, extract, loader closure, `--version`, Puppeteer and LHCI on Chrome 155, §8 | — |
+| 13 | Q5-01 | 1 | **PASS on exact SHA (CI 39378746236)** | All 14 `check:master:scene` questions pass on Chrome 155 / Linux with the protected verifier byte-unchanged; the earlier Chrome 154 capture disagreement did not recur; its cause is not claimed resolved, §8 | Watch the next runs |
 | 14 | BRW-155-01 | 3 | IN PROGRESS | Candidate CI measures on Chrome 155; all a11y/visual/LHCI evidence is Chrome 148/154 | First CI = new baseline |
 | 15 | DEP-PROD-PROFILE | 1 | BLOCKED | No production (gridsmith.uk, indexable) static profile; build refuses any non-staging origin | Cutover phase |
 | 16 | DEP-PROD-CHANNEL | 1 | BLOCKED | No production deployment channel/credentials | Cutover phase |
@@ -149,25 +149,26 @@ Full tables: [BUILD-REGRESSION.md](BUILD-REGRESSION.md).
 
 ## 3. Final production-readiness decision
 
-**NOT READY — SPECIFIC TECHNICAL BLOCKERS**
+**BLOCKED — REQUIRED OWNER OR EXTERNAL ACTION** (20 October 2026; superseded the 18 October
+"NOT READY — SPECIFIC TECHNICAL BLOCKERS" after CI 39378746236, §8).
 
-The candidate is not "technically ready with only owner gates pending", because mandatory technical
-evidence is missing or failing:
+Exact-SHA CI is green on `17080169`. That run closes CI-01, BRW-RT-01 and Q5-01 with Linux and Chrome
+155 evidence.
 
-1. **CI-01** — no exact-SHA GitHub CI exists for any commit after `8fec6426`; local Windows runs
-   are not CI evidence, and Lighthouse cannot run locally.
-2. **BRW-RT-01** — the Option A browser path (now the only CI browser path) has never executed on
-   Linux. Two defects that would have failed its first run were found and fixed here (BRW-EOL-01,
-   BRW-02), which is a reason to expect more until it runs.
-3. **Q5-01** — Master Q5 remains UNRESOLVED in CI (local passes on Chrome 148 and 155).
-4. **Production delivery does not exist yet** — no production static profile, delivery channel,
-   restore-proven backup or promoted intake (DEP-PROD-*, LEG-02, LEG-05), by design of the current
-   phase gates.
+What remains cannot be produced in this phase without owner authority or external action:
 
-Owner/legal/security decisions that will also be required before any release are listed in
-[HANDOFF.md](HANDOFF.md). The shortest path to `TECHNICALLY READY — OWNER RELEASE GATES PENDING`:
-complete DEP-PUSH-SAFETY → authorise one exact-SHA push (no dispatch) → classify its
-Option A, Q5 and Lighthouse results on Chrome 155.
+1. **Production delivery.** It needs four things, each in its own owner-authorised phase:
+   - a production static profile, built from a read of the Production dataset (BPH-05);
+   - a delivery channel and cutover authority (DEP-PROD-CHANNEL, CUTOVER-AUTHORITY);
+   - a restore-proven backup and a rollback target (DEP-PROD-ROLLBACK, DEP-WP-ROLLBACK-TARGET);
+   - the promoted lead intake (LEG-02, H4-B).
+2. **Legal and publication.** The cutover legal routes and the cookie retest (LEG-04, LEG-05/06);
+   7 documents are OWNER_ADOPTED and 0 PUBLISHABLE (§4).
+3. **Owner decisions.** Security advisories with no published fix (extract-zip ×2, braces, sprintf-js);
+   BRW-03, a durable Chrome input; POL-01, SEC-F4/F5, ACC-08.
+
+No technical defect is open in the candidate. It is not "technically ready", because no production
+artifact or channel exists that can be verified. Those depend on the owner actions above.
 
 ### CI-01 — exact-SHA CI · class 1 · **BLOCKED**
 - No run exists for any commit after `8fec6426` (last: 38009171819, FAILURE on Q5 only). Pushing creates the branch and starts `verify` only; `workflow_dispatch` publishes and must not be used. Needs owner push authority after DEP-PUSH-SAFETY. Procedure: [RUNBOOK.md](RUNBOOK.md) §2–3.
@@ -362,3 +363,76 @@ verdict was checked against the code.
 - Every served gate and Q5.
 
 Each consumer launch repeats a full verification; that costs minutes, not a failure.
+
+## 8. Second exact-SHA CI run — green (owner-approved push, 20 October 2026)
+
+**Approval and push**
+
+- The owner approved one fast-forward push `d3d5ba46` → `17080169288b06e1cb3d54f72479ef68e4ad9d07`
+  and exactly one push-event CI run (verify job only).
+- The approval text reached me cut off at 300 characters, before its Hostinger-confirmation clause.
+  The cut was caused by the length of my own reply button.
+- Preconditions rechecked immediately before the push: `HEAD` matched, clean tree, remote head
+  `d3d5ba46`, fast-forward, 0 webhooks, 0 queued or in-progress runs, 0 PRs.
+- One push with an explicit refspec, no force.
+- Run: [CI 39378746236](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/39378746236), the
+  only run for that SHA. Conclusion **success**, 06:09–07:39 UTC. `hostinger-staging` **skipped**,
+  so nothing was published or deployed.
+
+**Option A on Linux (first complete execution; BRW-RT-01 → PASS)**
+
+- `browser-input.selftest` PASS, Python **174** tests, including the Linux filesystem fixtures and
+  the real-resolver check against the runner's own loader.
+- `install-controls` PASS.
+- `provision` PASS in about 25 s: authentication, raw `b7726070…`, both archive passes, tree
+  write and verify, loader/provider closure, `chrome --version`.
+- `browser-input check` PASS in about 10 s.
+- Every browser consumer reported `Chrome/155.0.8059.79` / `HeadlessChrome/155.0.0.0`.
+- BRW-RT-03/04/05, the defects fixed offline in `e4dfe8f8`/`d9cb6c15`, did not occur. The 120 s
+  deadline left wide margin.
+
+**Gates on the exact SHA (CI-01 → PASS)**
+
+- All 57 `verify` steps succeeded: TypeScript, ESLint, 35 static and selftest steps (including
+  `check:deps:overrides`), Build, tokens, theme, `size` and the served gates.
+- **`size`:** 69 routes within their delta budgets. Shared baseline 2.8KB of 2.9KB, consent banner
+  2.1/3KB, Master scene 7.1/8KB, Design scene 7.9/8KB.
+- **Lighthouse desktop**, median of 3 runs over 11 routes: performance, accessibility and best
+  practices **1.0** on every route, so Digital holds 100/100/100. SEO 0.66 everywhere, as expected
+  from the staging `noindex` (not asserted). LCP 572–686 ms, TBT 0 ms, CLS 0.000.
+- **Lighthouse mobile** (4G, 4× CPU): LCP **902–1075 ms** against budgets of 1750–2000 ms; TBT 69–93 ms;
+  CLS ≤ 0.0001.
+- **axe:** 76 analyses, 0 violations.
+- `check:master:hero` (18 sizes), `check:design:scene` (25 sizes + R2), `check:press:scene`,
+  `check:digital:scene` and `check:reviews:ui` all PASS.
+
+**Master Q5 (Q5-01 → PASS on exact SHA)**
+
+- `check:master:scene` on `Chrome/155.0.8059.79, linux`: "all 14 questions pass".
+- Worst scene-text contrast per position ≥ 6.0:1 at every one of the 12 viewports; transit worst
+  6.0:1.
+- Fallback read top to bottom: worst 9.3:1. Software WebGL: 0 ms blocking beyond 50 ms per task.
+- The protected verifier `scripts/check-master-scene.mjs` is byte-identical to the baseline
+  (`98210eaf…`). No threshold, retry or suppression was changed.
+- No failure evidence was produced, so the `master-scene-evidence` artifact is absent.
+- The two earlier CI failures (Chrome 154) were a capture/compositor disagreement. It did not recur
+  on Chrome 155. One green run is not proof the cause is gone, so watch the next runs.
+
+**Artifacts retained:** `lighthouseci-reports`, `design-scene-evidence`.
+
+### Release gates (20 October 2026)
+
+| Gate | Status | Evidence / blocker |
+|---|---|---|
+| Security remediation | **PASS** | Exact-SHA CI incl. `check:deps:overrides`; production audit 0 |
+| Advisory decisions | **OWNER DECISION REQUIRED** | 4 IDs with no published fix (SECURITY.md §3) |
+| Bundle budgets | **PASS** | CI `size` |
+| Browser Option A runtime | **PASS** | CI provision/check/consumers on Chrome 155 |
+| Master Q5 acceptance | **PASS (exact SHA)** | All 14 questions, protected verifier unchanged |
+| Complete CI acceptance | **PASS** | CI 39378746236 success |
+| Local acceptance | **PASS** | §2.1 |
+| Legal publication clearance | **OWNER DECISION REQUIRED** | 7 OWNER_ADOPTED, 0 PUBLISHABLE (§4) |
+| Provider deployment safety | **OWNER DECISION REQUIRED** | Hostinger panel confirmation was not received this round |
+| Production configuration | **BLOCKED** (owner authority) | No production profile or channel (BPH-05, CUTOVER-AUTHORITY) |
+| Backup and rollback readiness | **BLOCKED** (owner authority) | No restore-proven backup (DEP-PROD-ROLLBACK) |
+| Owner deployment authorisation | **OWNER DECISION REQUIRED** | Not requested; nothing deploys |

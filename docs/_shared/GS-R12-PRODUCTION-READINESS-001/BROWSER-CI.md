@@ -1,5 +1,10 @@
 # C. Browser provisioning (Option A) and CI validation report
 
+> **20 Oct 2026 update:** Option A ran end to end on Linux in exact-SHA CI 39378746236 (`17080169`).
+> Provision took about 25 s, `check` about 10 s, and every consumer reported Chrome 155.0.8059.79.
+> BRW-RT-01 is PASS. Fixes found before the run: `493e3cad`, `e4dfe8f8`, `d9cb6c15`
+> ([LEDGER.md](LEDGER.md) §6–§8). The text below is the 18 Oct state.
+
 ## 1. What is in the candidate
 
 The independently reviewed Option A source (17 paths) was imported byte-for-byte from the isolated
