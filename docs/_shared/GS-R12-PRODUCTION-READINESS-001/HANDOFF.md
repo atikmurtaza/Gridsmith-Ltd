@@ -9,6 +9,8 @@ Two owner-approved pushes: 18 Oct `d3d5ba46` (CI 39151214971, failed at Option A
 
 **20 Oct, GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001 (local):** the Production intake package (restore-proven backup tool, Production-capable Edge profile, exact deploy/test/cleanup/rollback steps) is ready for one approval; nothing deployed. Production is verified read-only: leads 0, ledger 0001–0004, H4-B absent. Record: [GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md](../GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md); legal decisions in [LEGAL-PUBLICATION-APPROVAL.md](LEGAL-PUBLICATION-APPROVAL.md); LEDGER §11.
 
+**20 Oct, GS-O025 (local, not active):** twice-daily read-only Supabase availability check for both projects (least-privilege `gridsmith_keepalive` role) and an hourly, live-only, drain-only notification workflow. Both are dormant until you activate them; the H4-B deployment must now use the GS-O025 commit. Record: [GS-O025-SUPABASE-AVAILABILITY.md](../GS-O025-SUPABASE-AVAILABILITY.md); LEDGER §12.
+
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`

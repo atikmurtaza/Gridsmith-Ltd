@@ -332,6 +332,39 @@
       "SEC-F4, SEC-F5",
       "dump encryption at rest"
     ],
-    "next": "Owner: approve GS-R13-H4B-EXEC-001 (record section F) after deciding the pause and sender"
+    "next": "Owner: approve GS-R13-H4B-EXEC-001 with the GS-O025 commit SHA (worker changed)"
+  },
+  "gsO025": {
+    "date": "2026-10-20",
+    "status": "implemented, locally proven, NOT ACTIVE",
+    "record": "docs/_shared/GS-O025-SUPABASE-AVAILABILITY.md",
+    "schedules": {
+      "availability": "23 5,17 * * * UTC, production then preview",
+      "drain": "41 * * * * UTC, production, live mode only"
+    },
+    "secrets": [
+      "GS_O025_PRODUCTION_DB_URL",
+      "GS_O025_PREVIEW_DB_URL",
+      "GS_PRODUCTION_DRAIN_TOKEN",
+      "GS_PRODUCTION_ANON_KEY"
+    ],
+    "variables": [
+      "GS_O025_KEEPALIVE_ENABLED",
+      "GS_PRODUCTION_DRAIN_ENABLED"
+    ],
+    "edgeSecret": "GRIDSMITH_DRAIN_TOKEN (drain activation only)",
+    "activationBlockers": [
+      "workflow files must be on the default branch main (fbecbe01): owner decision",
+      "role SQL + password per project",
+      "secrets and variables"
+    ],
+    "evidence": {
+      "availabilityScript": "13 branches (1 inert probe recorded)",
+      "drainScript": "9/9 against real createWorker",
+      "edgeSelftest": "58 profile cases incl. 18 YAML mutations",
+      "mutations": "6/6 red",
+      "optionA": "0 source codes; pins unchanged",
+      "verifyStatic": "PASS"
+    }
   }
 }

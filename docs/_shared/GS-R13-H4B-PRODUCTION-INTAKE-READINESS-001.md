@@ -226,3 +226,12 @@ approval (short form):
 > Approve GS-R13-H4B-EXEC-001 on dqiutgmxillhsbzgnlsx only: restore-proven backup; migration b807e3ed6d4f; 6 secrets in synthetic-only mode; deploy both H4-B functions from commit <SHA>; one marked synthetic test to contact@gridsmith.uk; delete that test lead. No live mode, push or site change.
 
 Before approving, decide D.1 (pause) and D.3 (sender).
+
+> **Update (GS-O025, 20 Oct):**
+> - The worker gained a drain-only scheduled path, so `<SHA>` must be the GS-O025 commit or later,
+>   not `86fe6620`.
+> - `GRIDSMITH_DRAIN_TOKEN` is **not** part of this operation. It is set at drain activation, with
+>   `live`.
+> - D.1 now has a best-effort mitigation ready to activate:
+>   [GS-O025-SUPABASE-AVAILABILITY.md](GS-O025-SUPABASE-AVAILABILITY.md).
+> - D.2 has a scheduled hourly drain, which runs only in `live` mode.

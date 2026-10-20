@@ -34,6 +34,10 @@ export function edgeDeployment(env: (name: string) => string): EdgeDeployment {
 export const isSyntheticLead = (lead: { full_name: string; email: string }) =>
   lead.full_name.startsWith('GS-HOST-H4-B ') && lead.email.endsWith('@gridsmith.invalid');
 
+/** GS-O025: scheduled retry processing runs only in Production `live` mode, never on synthetic-only. */
+export const scheduledDrainEnabled = (deployment: Pick<EdgeDeployment, 'production' | 'mode'>) =>
+  deployment.production && deployment.mode === 'live';
+
 /** Preview always, and Production until cutover, admit only the marked synthetic identity. */
 export const admitsLead = (deployment: Pick<EdgeDeployment, 'mode'>, lead: { full_name: string; email: string }) =>
   deployment.mode === 'live' || isSyntheticLead(lead);

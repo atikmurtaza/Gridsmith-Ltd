@@ -503,3 +503,18 @@ Nothing deployed or written to Production; `PRODUCTION_INTAKE_URL` stays `null`.
 
 Consequences for earlier rows: SEC-F2 / SEC-INTAKE-PROD moves from BLOCKED to READY FOR APPROVAL;
 LEG-02 still waits for the deployment and `live` mode.
+
+## 12. GS-O025 — Supabase availability and notification maintenance (20 October 2026)
+
+Record: [GS-O025-SUPABASE-AVAILABILITY.md](../GS-O025-SUPABASE-AVAILABILITY.md). Implemented and proven
+locally; **not active**. No push, secret, variable, schedule, Edge or Supabase change.
+
+| ID | Requirement | Status | Evidence | Remaining |
+|---|---|---|---|---|
+| O25-01 | Policy check | PASS | Supabase pausing page: "sufficient user database activity", "typically a few user requests to the database each day"; GitHub: default branch only, 60-day public-repo disablement, runs may be dropped | Threshold unpublished: best effort only |
+| O25-02 | Least-privilege availability check, both projects, twice daily | PASS (local) | Role SQL; script with 13 branches; read-only and drift proofs; counter 0 → 6 | Activation steps 1–6 (incl. the `main` decision) |
+| O25-03 | Scheduled retry drain, separate and live-only | PASS (local) | Drain-only token; 409 when not live; 9/9 script branches against the real worker; 6/6 mutations red | After H4-B and `live` |
+| O25-04 | Workflow safety | PASS (local) | 18 YAML mutations red; Option A scan 0 codes; pins unchanged | First hosted run |
+| O25-05 | Monitoring | PASS (prepared) | Failure emails; monthly `state`/`run list`/counter checks | Owner adds to the monthly review |
+
+GS-O025 itself stays OPEN until the availability check is activated and verified (owner).

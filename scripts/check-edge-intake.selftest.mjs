@@ -217,4 +217,74 @@ for (const args of [['functions', 'list', '--project-ref', 'abcdefghijklmnopqrst
 }
 await assert.rejects(() => operator.reconcile('health', 'abcdefghijklmnopqrst'), /Unapproved project/); profileCases++;
 await assert.rejects(() => operator.reconcile('delete', PRODUCTION_REF), /Choose health or drain/); profileCases++;
+// GS-O025 scheduled drain: narrower than the operator credential, drain-only, live-only.
+const { drainTokenMatches } = await import('../lib/leads/edge-worker.ts');
+const { scheduledDrainEnabled } = await import('../lib/leads/edge-deployment.ts');
+assert(scheduledDrainEnabled({ production: true, mode: 'live' }));
+for (const value of [{ production: true, mode: 'synthetic-only' }, { production: false, mode: 'live' }, { production: false, mode: 'synthetic-only' }]) {
+  assert(!scheduledDrainEnabled(value), JSON.stringify(value)); profileCases++;
+}
+const drainToken = 'scheduled-drain-dummy-token-0123456789abcdef';
+assert(drainTokenMatches(drainToken, drainToken));
+for (const [presented, expected] of [[drainToken.slice(0, -1) + 'X', drainToken], [drainToken + 'x', drainToken], [null, drainToken],
+  ['', drainToken], ['short-token', 'short-token'], [drainToken, '']]) {
+  assert(!drainTokenMatches(presented, expected), JSON.stringify([presented, expected])); profileCases++;
+}
+const timerRequest = (operation, header = drainToken) => new Request('http://worker.invalid', { method: 'POST',
+  headers: { Authorization: 'Bearer project-anon-jwt-dummy', 'Content-Type': 'application/json', 'X-Gridsmith-Drain-Token': header },
+  body: JSON.stringify({ operation }) });
+const timerWorker = (enabled) => createWorker(token, store, mail, async () => new Response('{}', { status: 200 }),
+  { authorize: (request) => drainTokenMatches(request.headers.get('X-Gridsmith-Drain-Token'), drainToken), enabled });
+let healthReads = 0; const countingStore = { ...store, health: async () => { healthReads++; return {}; } };
+const before = claims;
+assert.equal((await timerWorker(true)(timerRequest('drain', 'wrong-token-of-the-wrong-length'))).status, 401); profileCases++;
+assert.equal((await timerWorker(false)(timerRequest('drain'))).status, 409); assert.equal(claims, before); profileCases++;
+const healthDenied = await createWorker(token, countingStore, mail, undefined,
+  { authorize: () => true, enabled: true })(timerRequest('health'));
+assert.equal(healthDenied.status, 403); assert.equal(healthReads, 0); profileCases++;
+const drained = await (await timerWorker(true)(timerRequest('drain'))).json();
+assert.equal(drained.sent, 1); assert.equal(claims, before + 1); profileCases++;
+assert.equal((await createWorker(token, store, mail)(timerRequest('drain'))).status, 401, 'no scheduled path unless configured'); profileCases++;
+assert.equal((await timerWorker(false)(workerRequest('health'))).status, 200, 'operator path unchanged when the timer is disabled'); profileCases++;
+// GS-O025 workflows: structural safety, asserted on the parsed YAML (a value, so no probe is inert).
+const { load: loadYaml } = await import('js-yaml');
+const { readFileSync: readWorkflow, existsSync: workflowScriptExists } = await import('node:fs');
+const workflowProblems = (text, expected) => {
+  const problems = [], wf = loadYaml(text), on = wf.on ?? wf.true;
+  if (JSON.stringify(Object.keys(on ?? {}).sort()) !== '["schedule","workflow_dispatch"]') problems.push('TRIGGERS');
+  if (JSON.stringify(on?.schedule) !== JSON.stringify([{ cron: expected.cron }])) problems.push('SCHEDULE');
+  if (JSON.stringify(wf.permissions) !== '{"contents":"read"}') problems.push('PERMISSIONS');
+  if (!wf.concurrency?.group || wf.concurrency['cancel-in-progress'] !== false) problems.push('CONCURRENCY');
+  const jobs = Object.values(wf.jobs ?? {});
+  if (jobs.length !== 1) problems.push('JOBS');
+  for (const job of jobs) {
+    if (job.if !== `vars.${expected.gate} == 'true'`) problems.push('ACTIVATION_GATE');
+    if (!(job['timeout-minutes'] > 0 && job['timeout-minutes'] <= 5)) problems.push('TIMEOUT');
+    if (job['runs-on'] !== 'ubuntu-24.04') problems.push('RUNNER');
+    if ('continue-on-error' in job || job.steps.some((step) => 'continue-on-error' in step)) problems.push('SWALLOWED_FAILURE');
+    for (const step of job.steps) {
+      if (step.uses?.startsWith('actions/checkout') && step.with?.['persist-credentials'] !== false) problems.push('CHECKOUT_CREDENTIALS');
+      if (step.run !== undefined && (/\$\{\{/.test(step.run) || step.run !== `bash ${expected.script}`)) problems.push('RUN_INTERPOLATION');
+      for (const value of Object.values(step.env ?? {})) if (/secrets\./.test(value) && !/^\$\{\{ secrets\.[A-Z0-9_]+ \}\}$/.test(value)) problems.push('SECRET_EXPRESSION');
+    }
+  }
+  if (!workflowScriptExists(expected.script)) problems.push('SCRIPT_MISSING');
+  if (/pull_request|push:|ACTIONS_STEP_DEBUG|set -x/.test(text)) problems.push('UNSAFE_TEXT');
+  return [...new Set(problems)];
+};
+const workflows = [['.github/workflows/supabase-availability.yml', { cron: '23 5,17 * * *', gate: 'GS_O025_KEEPALIVE_ENABLED', script: 'scripts/supabase-availability.sh' }],
+  ['.github/workflows/notification-drain.yml', { cron: '41 * * * *', gate: 'GS_PRODUCTION_DRAIN_ENABLED', script: 'scripts/notification-drain.sh' }]];
+for (const [file, expected] of workflows) {
+  const text = readWorkflow(file, 'utf8');
+  assert.deepEqual(workflowProblems(text, expected), [], file);
+  for (const [mutation, code] of [[(t) => t.replace('  workflow_dispatch:', '  workflow_dispatch:\n  pull_request:'), 'TRIGGERS'],
+    [(t) => t.replace('contents: read', 'contents: write'), 'PERMISSIONS'], [(t) => t.replace('cancel-in-progress: false', 'cancel-in-progress: true'), 'CONCURRENCY'],
+    [(t) => t.replace(`if: vars.${expected.gate} == 'true'`, 'if: true'), 'ACTIVATION_GATE'], [(t) => t.replace('timeout-minutes: 3', 'timeout-minutes: 30'), 'TIMEOUT'],
+    [(t) => t.replace('persist-credentials: false', 'persist-credentials: true'), 'CHECKOUT_CREDENTIALS'],
+    [(t) => t.replace(`run: bash ${expected.script}`, 'run: echo "${{ secrets.GS_PRODUCTION_DRAIN_TOKEN }}"'), 'RUN_INTERPOLATION'],
+    [(t) => t.replace(`cron: '${expected.cron}'`, "cron: '0 0 * * *'"), 'SCHEDULE'],
+    [(t) => t.replace('    timeout-minutes: 3', '    timeout-minutes: 3\n    continue-on-error: true'), 'SWALLOWED_FAILURE']]) {
+    assert(workflowProblems(mutation(text), expected).includes(code), `${file}: ${code} did not fire`); profileCases++;
+  }
+}
 console.log(`GS-R13-H4B project profile PASS: Preview/Production/live accepted; ${profileCases} adverse or boundary cases (project, mode, origins, recipient, synthetic identity, admission, labelling).`);

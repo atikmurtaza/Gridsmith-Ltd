@@ -1,0 +1,41 @@
+# GS-O025: scheduled processing of pending Production notification retries.
+#
+# Separate from the public contact forms: it calls only the private worker, with a drain-only
+# credential (X-Gridsmith-Drain-Token) behind the gateway's JWT check. The worker refuses (409)
+# unless Production is in `live` mode, so this cannot process the synthetic smoke test.
+#
+# Dormant until activated: GitHub schedules only run on the default branch, and the job is skipped
+# unless the repository variable GS_PRODUCTION_DRAIN_ENABLED is 'true'. Enable it only after the
+# worker is deployed and Production is live. See the GS-O025 record.
+name: Production notification drain (GS-O025)
+
+on:
+  schedule:
+    # Hourly at :41. Retry back-off is 60 s to 2 h within a 23 h horizon, so hourly keeps every
+    # retry well inside it; the submission-time wake remains the fast path.
+    - cron: '41 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gs-o025-production-drain
+  cancel-in-progress: false
+
+jobs:
+  drain:
+    if: vars.GS_PRODUCTION_DRAIN_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts/notification-drain.sh
+          sparse-checkout-cone-mode: false
+      - name: Drain pending notifications (aggregate counts only)
+        env:
+          ANON_KEY: ${{ secrets.GS_PRODUCTION_ANON_KEY }}
+          DRAIN_TOKEN: ${{ secrets.GS_PRODUCTION_DRAIN_TOKEN }}
+        run: bash scripts/notification-drain.sh

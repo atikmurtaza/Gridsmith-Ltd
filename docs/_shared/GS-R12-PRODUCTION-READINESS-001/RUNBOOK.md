@@ -121,6 +121,18 @@ procedure, its rollback and evidence list are in
 §C.3. It runs entirely on Supabase `dqiutgmxillhsbzgnlsx` and does not touch the website. Mode stays
 `synthetic-only` until cutover.
 
+## 4b. Supabase availability and scheduled retries (owner authority: GS-O025)
+
+Activation and post-activation verification are in
+[GS-O025-SUPABASE-AVAILABILITY.md](../GS-O025-SUPABASE-AVAILABILITY.md) §7–§8.
+
+- **Before cutover:** activate the availability check (twice daily, both projects). It needs the
+  workflow files on `main`, which is a separate decision.
+- **At cutover:** enable the hourly drain in the same step as `GRIDSMITH_INTAKE_MODE=live`, never
+  earlier. The worker refuses it otherwise.
+- **After launch:** check monthly that the workflow `state` is `active`, that scheduled runs are
+  green, and that `keepaliveStatementCalls` is growing.
+
 ## 5. Production cutover (owner authorities: CUTOVER-AUTHORITY, H4-B, H4-H, DNS)
 
 **Prerequisites, all unmet today:** a production static profile and artifact gate (DEP-PROD-PROFILE,

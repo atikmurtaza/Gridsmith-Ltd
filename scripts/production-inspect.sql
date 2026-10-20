@@ -19,6 +19,9 @@ select json_build_object(
   'authUsers', (select count(*) from auth.users),
   'storageBuckets', (select count(*) from storage.buckets),
   'storageObjects', (select count(*) from storage.objects),
-  'databaseBytes', pg_database_size(current_database())
+  'databaseBytes', pg_database_size(current_database()),
+  -- GS-O025: whether scheduled availability sessions are arriving (0 before activation).
+  'keepaliveRole', (select json_build_object('exists', true, 'canLogin', rolcanlogin) from pg_roles where rolname = 'gridsmith_keepalive'),
+  'keepaliveStatementCalls', (select coalesce(sum(s.calls), 0) from pg_stat_statements s join pg_roles r on r.oid = s.userid where r.rolname = 'gridsmith_keepalive')
 ) as inspection;
 commit;

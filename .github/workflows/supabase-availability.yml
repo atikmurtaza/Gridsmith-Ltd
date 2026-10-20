@@ -1,0 +1,52 @@
+# GS-O025: best-effort Supabase Free-plan activity for both Gridsmith projects.
+#
+# Supabase pauses a Free project that lacks "sufficient user database activity" over 7 days and
+# says "typically a few user requests to the database each day" is enough; no threshold is
+# published. This runs one read-only session (3 statements) per project twice a day as the
+# least-privilege `gridsmith_keepalive` role. It is activity, not an uptime guarantee.
+#
+# Dormant until activated: GitHub schedules only run on the default branch, and the job is skipped
+# unless the repository variable GS_O025_KEEPALIVE_ENABLED is 'true'. See the GS-O025 record.
+name: Supabase availability (GS-O025)
+
+on:
+  schedule:
+    # 05:23 and 17:23 UTC; off the hour, where GitHub delays or drops fewer scheduled runs.
+    - cron: '23 5,17 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gs-o025-supabase-availability
+  cancel-in-progress: false
+
+jobs:
+  availability:
+    name: ${{ matrix.project }}
+    if: vars.GS_O025_KEEPALIVE_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - project: production
+            ref: dqiutgmxillhsbzgnlsx
+            secret: GS_O025_PRODUCTION_DB_URL
+          - project: preview
+            ref: qfgpwumvvtizeamkynes
+            secret: GS_O025_PREVIEW_DB_URL
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          sparse-checkout: scripts/supabase-availability.sh
+          sparse-checkout-cone-mode: false
+      - name: Read-only session as gridsmith_keepalive
+        env:
+          DB_URL: ${{ secrets[matrix.secret] }}
+          REF: ${{ matrix.ref }}
+        run: bash scripts/supabase-availability.sh
