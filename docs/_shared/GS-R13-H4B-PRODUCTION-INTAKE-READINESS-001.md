@@ -242,6 +242,10 @@ Before approving, decide D.1 (pause) and D.3 (sender).
 > - **New prerequisite:** Production's keep-alive job must pass first. It proves the Production
 >   session-pooler host that step 1's backup also uses, and it keeps Production awake for the
 >   operation.
+> - **Prerequisite met (23:40 UTC):** Production keep-alive passed (run 39516560037), so the
+>   `aws-1` session pooler is proven. Step 1 is now one command,
+>   `powershell -NoProfile -ExecutionPolicy Bypass -File scriptsgs-r13-backup-production.ps1`,
+>   with one hidden prompt for the Production database password.
 > - Approval wording, once that passes: "Approve GS-R13-H4B-EXEC-001 on dqiutgmxillhsbzgnlsx only:
 >   restore-proven backup; migration b807e3ed6d4f; 6 secrets in synthetic-only mode; deploy both
 >   H4-B functions from e77700ba or later; one marked synthetic test to contact@gridsmith.uk;

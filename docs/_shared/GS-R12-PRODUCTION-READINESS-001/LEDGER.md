@@ -659,3 +659,49 @@ UNCLASSIFIED.
 
 **Production secret** updated again at 22:11:03 UTC. Not yet diagnosed, so no workflow run has been
 made.
+
+### 12.6 GS-O025 recovery: both projects operational (20 October 2026, 23:40 UTC)
+
+**Root cause (established):** the Production secret pointed at the wrong session-pooler cluster.
+- Supabase's own pooler configuration (CLI link in a scratch folder, no password) gives
+  `aws-1-eu-west-1.pooler.supabase.com:5432` for Production. The address you pasted earlier used
+  `aws-0`, and also carried a ref typo (19 characters).
+- Earlier runs passed the workflow's username and ref check, so the stored secret's ref was right;
+  the cluster was the fault.
+- After your correction at 23:16:35 UTC, the next run passed.
+
+**Verification, run 39516560037 (`dbde73d3`, manual, under the existing approval):**
+
+| Project | Job | `keepaliveStatementCalls` | Leads | Public policies |
+|---|---|---|---|---|
+| Production `dqiutgmxillhsbzgnlsx` | **success**: read-only session, 3 statements | **0 → 4** | 0 → 0 | 0 → 0 |
+| Preview `qfgpwumvvtizeamkynes` | **success** | 12 → 16 | 0 → 0 | 0 → 0 |
+
+`switch-off` skipped; logs scanned: 0 addresses, hosts or passwords. Drain still off (no variable).
+
+**Pasting fixes (`diagnose-keepalive-url.sh`):** the URL-format error was reproduced with synthetic
+values from bracketed-paste markers, surrounding spaces, quotes and a byte-order mark. These are now
+stripped, together with CR/LF and zero-width spaces; 8 paste forms parse and a typo'd ref is still
+caught offline.
+
+**PowerShell tools (owner-run; no Git Bash, nothing typed except a confirmation or one password):**
+- `scripts/gs-o025-rotate-production-keepalive.ps1`, for a future rotation:
+  - generates a 40-character password in memory and applies only its SCRAM-SHA-256 verifier;
+  - proves a real login through `aws-1`, and only then writes the secret through standard input;
+  - **Self-test PASS** against a disposable Supabase Postgres: verifier accepted, real login OK,
+    wrong password = PASSWORD, stored as SCRAM. Mutants red: broken verifier (stops before the
+    secret is touched); always-OK login (caught by the wrong-password control);
+  - **Defects found and fixed by testing:** Windows PowerShell prefixed redirected stdin with a
+    UTF-8 BOM (146 bytes for 143; now 143/143); `ConvertFrom-Json` array filtering returned empty;
+  - real preflight ran read-only and stopped at the confirmation with nothing changed. **Not
+    needed now.**
+- `scripts/gs-r13-backup-production.ps1`, for H4-B step 1: one hidden password prompt, a fixed
+  `postgres.<ref>@aws-1…:5432/postgres` address, then runs the proven backup script. Dry run
+  shows the address shape; nothing leaks into the shell. `supabase db dump --linked` cannot replace
+  it: the dry run shows it uses the IPv6-only direct host.
+
+**GS-O025 status: ACTIVE on both projects.** Still pending:
+- the 24-hour scheduled verification for Production (scheduled at 05:23 and 17:23 UTC; the first
+  scheduled run started 3 h 16 min late; Preview's scheduled run already passed);
+- the optional heartbeat, not configured;
+- the limits in the GS-O025 record §6.

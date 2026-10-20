@@ -272,3 +272,16 @@ Dispatching the availability workflow never triggers the drain: they are separat
 - **Scheduled drain: ready, but stays off** until H4-B is deployed and Production is `live`.
 - **H4-B:** must deploy from the GS-O025 commit or later, because the worker gained the drain-only
   path.
+
+## 11. Activation result (20 October 2026, 23:40 UTC)
+
+**ACTIVE on both projects.**
+- Manual verification run 39516560037 (`dbde73d3`): Production and Preview successful, with
+  `keepaliveStatementCalls` Production 0 → 4 and Preview 12 → 16.
+- Earlier failures: the Production secret used pooler cluster `aws-0`. Supabase's pooler
+  configuration gives `aws-1-eu-west-1` (LEDGER §12.6).
+- Recovery tools are PowerShell, owner-run: `scripts/gs-o025-rotate-production-keepalive.ps1`
+  (credential rotation, self-tested) and `scripts/diagnose-keepalive-url.sh` (diagnosis, now
+  paste-tolerant).
+- Pending: the 24-hour scheduled check for Production (§8 step 9). Heartbeat not configured. Drain
+  off.

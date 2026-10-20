@@ -15,6 +15,8 @@ Two owner-approved pushes: 18 Oct `d3d5ba46` (CI 39151214971, failed at Option A
 
 **20 Oct, GS-O025 activation (16:49 UTC):** the four files are on `main` (`dbde73d3`). Preview's keep-alive passes with real activity; Production's still fails at login, and every provider-side cause has been ruled out. Next: you run `bash scripts/diagnose-keepalive-url.sh` on the Production address. `main`'s red CI is dataset drift exposed by any push, not caused by the files (LEDGER §12.4).
 
+**20 Oct, 23:40 UTC, GS-O025 ACTIVE:** both keep-alive jobs pass (run 39516560037; Production calls 0 → 4, Preview 12 → 16). The root cause was the Production secret using pooler cluster `aws-0` instead of `aws-1`. Owner tools are now PowerShell one-liners (`gs-o025-rotate-production-keepalive.ps1`, `gs-r13-backup-production.ps1`). Next: the H4-B approval (LEDGER §12.6).
+
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`

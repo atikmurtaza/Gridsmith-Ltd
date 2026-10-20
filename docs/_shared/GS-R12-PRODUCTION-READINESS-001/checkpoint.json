@@ -160,11 +160,9 @@
   "evidence": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/BUILD-REGRESSION.md (local results); scratchpad logs are session-temporary",
   "lastSuccessfulCommand": "npm run verify:static PASS after GS-R13-H4B",
   "next": [
-    "Owner: D1 Hostinger read-only confirmations",
-    "Owner: H4-B production phase (D5 backup, then D8) to establish PRODUCTION_INTAKE_URL",
-    "Owner: legal PUBLISHABLE decisions",
-    "Owner: advisory dispositions; BRW-03 re-pin before the next CI run",
-    "No push without fresh approval naming the SHA"
+    "Owner: decide sender (LEAD_NOTIFICATION_FROM) and accept GS-O025 as the free-plan mitigation",
+    "Owner: approve GS-R13-H4B-EXEC-001 (record section F wording)",
+    "Claude: confirm Production scheduled runs over the next 24h"
   ],
   "ownerDecisionsTaken": [
     {
@@ -336,7 +334,7 @@
   },
   "gsO025": {
     "date": "2026-10-20",
-    "status": "READY TO ACTIVATE (owner); drain off until live",
+    "status": "ACTIVE on both projects (run 39516560037); 24h Production scheduled verification pending",
     "record": "docs/_shared/GS-O025-SUPABASE-AVAILABILITY.md",
     "schedules": {
       "availability": "23 5,17 * * * UTC, production then preview",
@@ -424,6 +422,16 @@
           "production": "failure"
         },
         "secretUpdated": "2026-10-20T22:11:03Z (not yet diagnosed)"
+      },
+      "final": {
+        "run": 39516560037,
+        "production": "success; calls 0->4",
+        "preview": "success; calls 12->16",
+        "rootCause": "secret used pooler cluster aws-0; correct aws-1 (Supabase pooler config); fixed by owner 2026-10-20T23:16:35Z",
+        "tools": [
+          "scripts/gs-o025-rotate-production-keepalive.ps1 (selftest PASS; BOM + JSON bugs fixed)",
+          "scripts/gs-r13-backup-production.ps1 (dry run PASS)"
+        ]
       }
     }
   },

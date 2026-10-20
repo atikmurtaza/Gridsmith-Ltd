@@ -7,6 +7,12 @@
 set -uo pipefail
 image=public.ecr.aws/supabase/postgres:17.6.1.167
 if [ -n "${DB_URL:-}" ]; then url="$DB_URL"; else read -rsp 'Paste the connection string (hidden): ' url; echo; fi
+# Pasting adds invisible wrappers: bracketed-paste markers, CR/LF, a byte-order mark,
+# zero-width spaces, surrounding spaces or quotes. Remove them before parsing.
+url="${url//$'\e[200~'/}"; url="${url//$'\e[201~'/}"; url="${url//$'\r'/}"; url="${url//$'\n'/}"
+url="${url//$'\xef\xbb\xbf'/}"; url="${url//$'\xe2\x80\x8b'/}"
+url="${url#"${url%%[![:space:]]*}"}"; url="${url%"${url##*[![:space:]]}"}"
+[[ "$url" == \"*\" || "$url" == \'*\' ]] && url="${url:1:${#url}-2}"
 re='^postgres(ql)?://([^:@/]+):([^@]+)@([^:/?]+):([0-9]+)/([^?]+)$'
 [[ "$url" =~ $re ]] || { echo 'RESULT: not a postgres URL of the form user:password@host:port/database'; exit 2; }
 decode() { local value="${1//+/ }"; printf '%b' "${value//%/\\x}"; }
