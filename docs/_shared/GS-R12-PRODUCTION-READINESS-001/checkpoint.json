@@ -386,7 +386,7 @@
       "variable": "GS_O025_KEEPALIVE_ENABLED=true",
       "drain": "off",
       "heartbeat": "not configured",
-      "status": "PARTIAL: Preview operational; Production secret to be corrected by owner, then one re-run",
+      "status": "OPEN: Preview operational; Production blocked on secret address",
       "rerun": {
         "id": 39437210411,
         "preview": "PASS; keepaliveStatementCalls 0->4",
@@ -396,8 +396,28 @@
           "password mismatch"
         ],
         "mainCi": "39433946390 failure in served gates on main 17-Sep code; unrelated to the 4 files"
+      },
+      "run3": {
+        "id": 39460750895,
+        "preview": "PASS",
+        "production": "FAIL session; calls 0",
+        "ruledOut": [
+          "project status",
+          "role login/limit/expiry",
+          "scram",
+          "get_auth identical",
+          "network restrictions/ssl/bans",
+          "script"
+        ],
+        "remaining": "secret address: host/cluster, user or password",
+        "tool": "scripts/diagnose-keepalive-url.sh (owner-run, hidden prompt, category only)"
       }
     }
   },
-  "chromeCheck": "2026-10-20 round 2: .79 still 200; stable .84"
+  "chromeCheck": "2026-10-20 round 2: .79 still 200; stable .84",
+  "mainCi": {
+    "run": 39433946390,
+    "verdict": "exposed, not caused: dataset-backed gates (legal parity 345, service-content 18, company 1) vs main 17-Sep sources; 4 files not read",
+    "nextAction": "none on main; green when release merges"
+  }
 }

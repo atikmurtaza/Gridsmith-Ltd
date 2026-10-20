@@ -209,6 +209,15 @@ Expect `production` and `preview` green with `ok (read-only session as gridsmith
 statements)`, plus "heartbeat sent" if configured. `switch-off` is skipped. This also proves `psql`
 exists on the hosted runner.
 
+**7a. If a job fails at "database session failed":** do not re-run. Diagnose the stored address
+locally. Paste the same address you stored as the secret when prompted; it stays hidden:
+```bash
+bash scripts/diagnose-keepalive-url.sh
+```
+It prints only the address's shape and one category: DNS, POOLER ROUTING (wrong cluster, user or
+ref), PASSWORD, NETWORK, CONNECTION LIMIT, TLS OR ACCESS POLICY, SQL PERMISSION, or OK. Fix that one
+thing, re-set the secret, then make one re-run.
+
 **8. Confirm real database activity:** run the inspection query on both projects (header of
 `scripts/production-inspect.sql`, with each `--project-ref`). Expect `keepaliveRole.canLogin: true`
 and `keepaliveStatementCalls ≥ 3`.

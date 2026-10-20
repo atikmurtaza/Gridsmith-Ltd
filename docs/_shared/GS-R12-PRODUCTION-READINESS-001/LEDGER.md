@@ -574,3 +574,51 @@ nothing.
 
 **Status: PARTIALLY OPERATIONAL** (Preview only). Scheduled runs at 05:23/17:23 UTC will keep
 Preview active and will fail, and email you, for Production until the Production secret is fixed.
+
+### 12.4 GS-O025-ACTIVATE-003 (20 October 2026, 16:49 UTC)
+
+Production secret updated 16:46:39 UTC. One manual run, 39460750895 (`dbde73d3`):
+
+| Project | Job | Database evidence (before → after) |
+|---|---|---|
+| Preview | **PASS**: read-only session, 3 statements | `keepaliveStatementCalls` 4 before this run (it had gone 0 → 4 in run 39437210411) |
+| Production | **FAIL**: "database session failed or timed out" | `keepaliveStatementCalls` 0 → 0; no session reached the database |
+
+**Ruled out read-only, on both projects identically:**
+- Project ACTIVE_HEALTHY.
+- Role LOGIN on, connection limit 2, no expiry, settings present.
+- `password_encryption=scram-sha-256`; the pooler's `pgbouncer.get_auth` is identical (md5 `48b9133f…`).
+- Network restrictions `0.0.0.0/0` / `::/0`; SSL enforcement off; no network bans.
+- No code drift: the Preview job passes with the same script.
+
+**Remaining categories:** the address itself, meaning the pooler host or cluster, the username, or
+the password. The workflow cannot distinguish them, because the script deliberately discards
+libpq's message. New corrective tool, local and never run by CI: `scripts/diagnose-keepalive-url.sh`.
+It reads the URL from a hidden prompt, makes one login, and prints only the address's shape (role,
+ref, cluster, port) and a category: OK / DNS / POOLER ROUTING / PASSWORD / NETWORK / CONNECTION
+LIMIT / TLS OR ACCESS POLICY / SQL PERMISSION / TOOLING / UNCLASSIFIED. Proven locally: OK,
+PASSWORD, DNS, NETWORK and malformed. The POOLER ROUTING pattern ("Tenant or user not found") is
+specific to Supavisor and untested locally. No workflow re-run until the category is known.
+
+**Data unchanged:** Production and Preview both have leads 0, public policies 0 and anon/authenticated
+grants 0, before and after.
+
+**`main` CI 39433946390: exposed, not caused.**
+- Its 3 failing served commands are dataset-backed: `check:legal:parity` (345, e.g. "/legal/privacy
+  serves version 2.3 and PRIVACY-POLICY.md is at 2.0"), `check:service-content:dataset` (18) and
+  `check:company` (1).
+- `main`'s 17 September sources are compared with today's development dataset, which was reseeded
+  with the adopted legal set on 7–8 October. `main`'s previous run (35288782657, 17 September) was
+  green.
+- The four maintenance files are not read by those gates. Any push to `main` fails the same way until
+  `main` receives the release branch.
+- **Next release action:** none on `main` now. Do not patch `main` piecemeal; it goes green when the
+  release branch is merged at cutover.
+
+**GS-O025 stays OPEN:** Preview operational; Production blocked on the secret.
+
+**H4-B package reconciled:**
+- No code change since `e77700ba`; deploy from `e77700ba` or later.
+- Migration still `b807e3ed6d4f`; Production state as at §11.
+- **Added prerequisite:** the Production pooler address must be proven first, because the backup
+  uses the same session pooler.

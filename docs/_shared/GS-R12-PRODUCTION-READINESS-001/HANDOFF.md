@@ -13,6 +13,8 @@ Two owner-approved pushes: 18 Oct `d3d5ba46` (CI 39151214971, failed at Option A
 
 **20 Oct, GS-O025 round 2:** the keep-alive is ready to activate. Manual runs fail loudly when switched off; an optional Healthchecks.io heartbeat detects missed runs. The single 10-step procedure is in GS-O025 §8 and needs your Hostinger H2/H3 confirmation before its 4-file `main` commit.
 
+**20 Oct, GS-O025 activation (16:49 UTC):** the four files are on `main` (`dbde73d3`). Preview's keep-alive passes with real activity; Production's still fails at login, and every provider-side cause has been ruled out. Next: you run `bash scripts/diagnose-keepalive-url.sh` on the Production address. `main`'s red CI is dataset drift exposed by any push, not caused by the files (LEDGER §12.4).
+
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`

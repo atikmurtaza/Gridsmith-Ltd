@@ -235,3 +235,14 @@ Before approving, decide D.1 (pause) and D.3 (sender).
 > - D.1 now has a best-effort mitigation ready to activate:
 >   [GS-O025-SUPABASE-AVAILABILITY.md](GS-O025-SUPABASE-AVAILABILITY.md).
 > - D.2 has a scheduled hourly drain, which runs only in `live` mode.
+>
+> **Update (20 Oct, 16:49 UTC):**
+> - The package was rechecked against `e77700ba`: no code drift, migration `b807e3ed6d4f`, and
+>   Production unchanged (leads 0, ledger 0001–0004, H4-B absent).
+> - **New prerequisite:** Production's keep-alive job must pass first. It proves the Production
+>   session-pooler host that step 1's backup also uses, and it keeps Production awake for the
+>   operation.
+> - Approval wording, once that passes: "Approve GS-R13-H4B-EXEC-001 on dqiutgmxillhsbzgnlsx only:
+>   restore-proven backup; migration b807e3ed6d4f; 6 secrets in synthetic-only mode; deploy both
+>   H4-B functions from e77700ba or later; one marked synthetic test to contact@gridsmith.uk;
+>   delete that test lead. No live mode, drain, push or site change."
