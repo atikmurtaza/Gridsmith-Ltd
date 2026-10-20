@@ -535,3 +535,18 @@ GS-O025 itself stays OPEN until the availability check is activated and verified
   network; `verify:static` PASS.
 - **Re-checked:** the Chrome `.79` pin is still downloadable (stable is `.84`); the same 4 advisory
   IDs; production audit 0.
+
+### 12.2 GS-O025-ACTIVATE-001 execution (owner-approved steps 1, 2, 5, 6, 7; 20 October 2026)
+
+| Step | Result | Evidence |
+|---|---|---|
+| 1 Role on Production `dqiutgmxillhsbzgnlsx` | **DONE** | `gridsmith_keepalive`: no superuser/RLS bypass, connection limit 2, 3 settings, 0 table and routine grants (13:27 UTC) |
+| 2 Role on Preview `qfgpwumvvtizeamkynes` | **DONE** | Identical read-back |
+| 3–4 Passwords, secrets (owner) | Done by you | Login enabled on both (`rolcanlogin=true`); secrets `GS_O025_PRODUCTION_DB_URL` and `GS_O025_PREVIEW_DB_URL` present (names only) |
+| 5 Switch | **DONE** | `GS_O025_KEEPALIVE_ENABLED=true`; no drain variable |
+| 6 Four files on `main` | **DONE** | `fbecbe01..dbde73d3`, fast-forward, exactly 4 added files with blobs equal to `e77700ba`. Only effect: CI push run 39433946390 on `main`; 0 GitHub deployments; Vercel's latest deployment unchanged (3 Oct). Workflows 390602516 (availability) and 390602511 (drain) `active` |
+| 7 Manual check | **FAILED (fail-closed)** | Run 39434046434: `production` and `preview` failed "user is not gridsmith_keepalive.<ref>"; `switch-off` skipped. No database session; `keepaliveStatementCalls` 0 on both; logs scanned: 0 addresses, hosts or passwords |
+
+**Status: NOT OPERATIONAL.** The secrets' user part must be `gridsmith_keepalive.<ref>`. Scheduled
+runs (05:23/17:23 UTC) will fail the same way, and email you, until the secrets are corrected.
+Drain: off. Heartbeat: not configured. The 24-hour scheduled-run verification is pending.

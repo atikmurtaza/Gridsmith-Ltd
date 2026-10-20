@@ -373,6 +373,20 @@
       "procedure": "GS-O025-SUPABASE-AVAILABILITY.md section 8 (10 steps)",
       "mainInspection": "main fbecbe01 ci.yml verify-only; Vercel 0 linked; Hostinger H2/H3 owner",
       "selftest": "72 profile cases"
+    },
+    "activation": {
+      "date": "2026-10-20",
+      "mainCommit": "dbde73d30536543c54c7822b7cec092a25e13525",
+      "mainCiRun": 39433946390,
+      "manualRun": {
+        "id": 39434046434,
+        "result": "failure: secret user part is not gridsmith_keepalive.<ref> (both projects); no DB session"
+      },
+      "roles": "created both; login enabled by owner",
+      "variable": "GS_O025_KEEPALIVE_ENABLED=true",
+      "drain": "off",
+      "heartbeat": "not configured",
+      "status": "NOT OPERATIONAL: owner to correct the two secrets, then one re-run"
     }
   },
   "chromeCheck": "2026-10-20 round 2: .79 still 200; stable .84"
