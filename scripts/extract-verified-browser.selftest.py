@@ -358,10 +358,11 @@ LIB_ELF = elf_fixture(interpreter=None)
 LOADER_RUNTIME = fixture_runtime(BASE + [member("opt/google/chrome/libvulkan.so.1", LIB_ELF, elf=verifier.elf_identity(io.BytesIO(LIB_ELF), len(LIB_ELF)))])
 
 
-def rtld_trace(argv0, interpreter):
-    libname = interpreter or argv0
+def rtld_trace(argv0, row, libc=LIBC):
+    libname = row["elf"]["interpreter"] or argv0
     own = libname if libname == argv0 else libname + " => " + argv0
-    return ("\tlinux-vdso.so.1 (0x00007ffd00001000)\n\tlibc.so.6 => " + LIBC + " (0x00007f0000001000)\n\t" + own + " (0x00007f0000002000)\n").encode()
+    libc_line = "\tlibc.so.6 => " + libc + " (0x00007f0000001000)\n" if libc else ""
+    return ("\tlinux-vdso.so.1 (0x00007ffd00001000)\n" + libc_line + "\t" + own + " (0x00007f0000002000)\n").encode()
 
 
 def dpkg_search(paths, owners, diversions):
@@ -377,9 +378,14 @@ def dpkg_search(paths, owners, diversions):
     return "".join(line + "\n" for line in lines).encode(), int(misses > 0)
 
 
+def installed(names):
+    return ["%s\t2.39-0ubuntu8.9\tamd64\tinstalled" % name for name in names]
+
+
 class LoaderHost:
-    def __init__(self, owners=NOBLE_OWNERS, diversions=NOBLE_DIVERSIONS, status="installed", search_status=None):
-        self.owners, self.diversions, self.status, self.search_status, self.calls = owners, diversions, status, search_status, []
+    def __init__(self, owners=NOBLE_OWNERS, diversions=NOBLE_DIVERSIONS, shown=installed, search_status=None, merged=True, trace=rtld_trace, changed=None):
+        self.owners, self.diversions, self.shown, self.search_status, self.merged, self.trace, self.changed = owners, diversions, shown, search_status, merged, trace, changed
+        self.calls, self.measured = [], []
 
     def run(self, args, executable=None, **options):
         self.calls.append((list(args), executable))
@@ -387,44 +393,70 @@ class LoaderHost:
             output, status = dpkg_search(args[2:], self.owners, self.diversions)
             return output, status if self.search_status is None else self.search_status
         if args[:2] == ["/usr/bin/dpkg-query", "--show"]:
-            return "".join("%s\t2.39-0ubuntu8.9\tamd64\t%s\n" % (name, self.status) for name in args[3:]).encode(), 0
+            return "".join(row + "\n" for row in self.shown(args[3:])).encode(), 0
         verifier.require(executable == LD_REAL and args[1] == "--list", "FIXTURE_UNEXPECTED_TOOL")
-        row = next(row for row in LOADER_RUNTIME["expectedMembers"] if posixpath.join("/tmp/job/runtime", row["path"]) == args[2])
-        return rtld_trace(args[0], row["elf"]["interpreter"]), 0
+        return self.trace(args[0], next(row for row in LOADER_RUNTIME["expectedMembers"] if posixpath.join("/tmp/job/runtime", row["path"]) == args[2])), 0
+
+    def library(self, path, runtime):
+        # Stands in for trusted_os_realpath + hashing; the Linux fixtures run the real resolver.
+        self.measured.append(path)
+        changed = path == self.changed and self.measured.count(path) > 1
+        return {"path": path, "realPath": {LD: LD_REAL, LIBC: LIBC_REAL, LIBC_REAL: LIBC_REAL}[path], "sha256": hashlib.sha256((path + "*" * changed).encode()).hexdigest()}
 
     def __call__(self, operation):
-        saved = verifier.run_bounded, verifier.os_library, verifier.trusted_tool
-        verifier.run_bounded, verifier.trusted_tool = self.run, lambda name: "/usr/bin/" + name
-        verifier.os_library = lambda path, runtime: {"path": path, "realPath": {LD: LD_REAL, LIBC: LIBC_REAL}[path], "sha256": hashlib.sha256(path.encode()).hexdigest()}
+        saved = verifier.run_bounded, verifier.os_library, verifier.trusted_tool, verifier.trusted_os_realpath
+        verifier.run_bounded, verifier.os_library, verifier.trusted_tool = self.run, self.library, lambda name: "/usr/bin/" + name
+        verifier.trusted_os_realpath = lambda path, roots: {"/lib": "/usr/lib" if self.merged else "/lib"}[path]
         try:
             return operation()
         finally:
-            verifier.run_bounded, verifier.os_library, verifier.trusted_tool = saved
+            verifier.run_bounded, verifier.os_library, verifier.trusted_tool, verifier.trusted_os_realpath = saved
 
 
 def noble_closure():
     host = LoaderHost()
     receipt = host(lambda: verifier.verify_loader("/tmp/job/runtime", LOADER_RUNTIME))
+    calls = [args[1] for args, _ in host.calls]
     searches = [args for args, _ in host.calls if args[1] == "--search"]
     lists = [(args, executable) for args, executable in host.calls if args[1] == "--list"]
     verifier.require(len(lists) == 2 and all(args[0] == LD and executable == LD_REAL for args, executable in lists), "FIXTURE_LOADER_INVOCATION")
-    verifier.require(len(searches) == 2 and searches[0] == ["/usr/bin/dpkg-query", "--search", "/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2", LD_REAL] and host.calls.index((searches[0], None)) < host.calls.index(lists[0]), "FIXTURE_OWNERSHIP_BEFORE_EXECUTION")
+    # Two --search and two --show, whatever the library count; the loader's pair precedes its execution.
+    verifier.require(calls == ["--search", "--show", "--list", "--list", "--search", "--show"] and searches[0][2:] == ["/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2", LD_REAL], "FIXTURE_OWNERSHIP_BEFORE_EXECUTION")
     verifier.require(not any(LD in args[2:] for args in searches), "FIXTURE_SYMLINK_PATH_QUERIED")
-    verifier.require(receipt["interpreter"] == {"path": LD, "realPath": LD_REAL, "sha256": hashlib.sha256(LD.encode()).hexdigest(), "package": "libc6:amd64", "version": "2.39-0ubuntu8.9", "architecture": "amd64"}, "FIXTURE_INTERPRETER_RECEIPT")
+    verifier.require(sorted(host.measured) == sorted([LD, LIBC] * 2), "FIXTURE_REMEASURED")
+    package = {"package": "libc6:amd64", "version": "2.39-0ubuntu8.9", "architecture": "amd64"}
+    loader = {"path": LD, "realPath": LD_REAL, "sha256": hashlib.sha256(LD.encode()).hexdigest(), **package}
+    libc = {"soname": "libc.so.6", "path": LIBC, "realPath": LIBC_REAL, "sha256": hashlib.sha256(LIBC.encode()).hexdigest(), **package}
+    verifier.require(receipt["interpreter"] == loader and receipt["providers"] == [{"soname": "ld-linux-x86-64.so.2", **loader}, libc], "FIXTURE_PROVIDER_RECEIPT")
 
 
-positive("Ubuntu 24.04 loader closure: argv[0] interpreter, diverted PT_INTERP path, one batched ownership query", "verify_loader complete provider receipt", noble_closure)
+def providers(host, reals=frozenset({LIBC_REAL}), merged=True):
+    return host(lambda: verifier.package_providers(set(reals), merged))
+
+
+positive("Ubuntu 24.04 loader closure: argv[0] interpreter, diverted PT_INTERP path, batched ownership, re-measured files", "verify_loader complete provider receipt", noble_closure)
 for argv0, interpreter in ((LD, LD), (LD, None)):
-    assert verifier.parse_loader_output(rtld_trace(argv0, interpreter))["ld-linux-x86-64.so.2"] == LD, "one loader name for PT_INTERP and library members"
-negative("loader run by realpath names itself twice", "LOADER_OUTPUT_MALFORMED", lambda: verifier.parse_loader_output(rtld_trace(LD_REAL, LD)))
-negative("diversion of the resolved file", "LOADER_PACKAGE_OWNERSHIP", lambda: LoaderHost(diversions={LIBC_REAL: ("libc6", LIBC_REAL + ".usr-is-merged")})(lambda: verifier.package_providers({LIBC_REAL})))
-positive("protective diversion of an unmerged alias", "package_providers DEP17 alias diversion", lambda: verifier.require(LoaderHost(diversions={LIBC: ("libc6", LIBC + ".usr-is-merged")})(lambda: verifier.package_providers({LIBC_REAL}))[LIBC_REAL]["package"] == "libc6:amd64", "FIXTURE_ALIAS_DIVERSION"))
-negative("non-protective diversion of an alias", "LOADER_PACKAGE_OWNERSHIP", lambda: LoaderHost(diversions={LIBC: ("evil", "/tmp/libc.so.6")})(lambda: verifier.package_providers({LIBC_REAL})))
-negative("local diversion of an alias", "LOADER_PACKAGE_OWNERSHIP", lambda: LoaderHost(diversions={LIBC: (None, LIBC + ".usr-is-merged")})(lambda: verifier.package_providers({LIBC_REAL})))
-negative("library without a registered owner", "LOADER_PACKAGE_OWNERSHIP", lambda: LoaderHost()(lambda: verifier.package_providers({"/usr/lib/x86_64-linux-gnu/libmissing.so.1"})))
-negative("two packages own one library", "LOADER_PACKAGE_OWNERSHIP", lambda: LoaderHost(owners={**NOBLE_OWNERS, LIBC: "libc6-other:amd64"})(lambda: verifier.package_providers({LIBC_REAL})))
-negative("ownership query failure", "TRUSTED_TOOL_FAILED_OR_OUTPUT_LIMIT", lambda: LoaderHost(search_status=2)(lambda: verifier.package_providers({LIBC_REAL})))
-negative("owning package not installed", "LOADER_PACKAGE_IDENTITY", lambda: LoaderHost(status="half-installed")(lambda: verifier.package_providers({LIBC_REAL})))
+    assert verifier.parse_loader_output(rtld_trace(argv0, {"elf": {"interpreter": interpreter}}))["ld-linux-x86-64.so.2"] == LD, "one loader name for PT_INTERP and library members"
+negative("loader run by realpath names itself twice", "LOADER_OUTPUT_MALFORMED", lambda: verifier.parse_loader_output(rtld_trace(LD_REAL, {"elf": {"interpreter": LD}})))
+positive("unmoved package registers the /lib alias on merged /usr", "package_providers alias ownership", lambda: verifier.require(providers(LoaderHost(owners={LIBC: "libc6:amd64"}))[LIBC_REAL]["package"] == "libc6:amd64", "FIXTURE_ALIAS_OWNER"))
+negative("/lib alias not used when /usr is not merged", "LOADER_PACKAGE_OWNERSHIP", lambda: providers(LoaderHost(owners={LIBC: "libc6:amd64"}), merged=False))
+negative("protective diversion of an alias", "LOADER_PACKAGE_OWNERSHIP", lambda: providers(LoaderHost(diversions={LIBC: ("libc6", LIBC + ".usr-is-merged")})))
+negative("diversion of the resolved file", "LOADER_PACKAGE_OWNERSHIP", lambda: providers(LoaderHost(diversions={LIBC_REAL: ("libc6", LIBC_REAL + ".usr-is-merged")})))
+negative("local diversion of an alias", "LOADER_PACKAGE_OWNERSHIP", lambda: providers(LoaderHost(diversions={LIBC: (None, LIBC + ".usr-is-merged")})))
+negative("library without a registered owner", "LOADER_PACKAGE_OWNERSHIP", lambda: providers(LoaderHost(), {"/usr/lib/x86_64-linux-gnu/libmissing.so.1"}))
+negative("two packages own one library", "LOADER_PACKAGE_OWNERSHIP", lambda: providers(LoaderHost(owners={**NOBLE_OWNERS, LIBC: "libc6-other:amd64"})))
+negative("ownership query failure", "TRUSTED_TOOL_FAILED_OR_OUTPUT_LIMIT", lambda: providers(LoaderHost(search_status=2)))
+for name, shown in (("owning package not installed", lambda names: [row.replace("\tinstalled", "\thalf-installed") for row in installed(names)]),
+                    ("owning package other architecture", lambda names: [row.replace("\tamd64\t", "\ti386\t") for row in installed(names)]),
+                    ("unrequested package row", lambda names: installed(["libc6-other:amd64"])),
+                    ("duplicated package row", lambda names: installed(names) * 2),
+                    ("missing package row", lambda names: [])):
+    negative(name, "LOADER_PACKAGE_IDENTITY", lambda shown=shown: providers(LoaderHost(shown=shown)))
+negative("members disagree on a provider path", "LOADER_PROVIDER_CONFLICT", lambda: LoaderHost(trace=lambda argv0, row: rtld_trace(argv0, row, LIBC if row["elf"]["interpreter"] else LIBC_REAL))(lambda: verifier.verify_loader("/tmp/job/runtime", LOADER_RUNTIME)))
+negative("member trace without a NEEDED library", "LOADER_MEMBER_DEPENDENCIES", lambda: LoaderHost(trace=lambda argv0, row: rtld_trace(argv0, row, None))(lambda: verifier.verify_loader("/tmp/job/runtime", LOADER_RUNTIME)))
+negative("library replaced after attribution", "LOADER_PROVIDER_CHANGED", lambda: LoaderHost(changed=LIBC)(lambda: verifier.verify_loader("/tmp/job/runtime", LOADER_RUNTIME)))
+upgraded = []
+negative("loader package upgraded after it ran", "LOADER_PROVIDER_CHANGED", lambda: LoaderHost(shown=lambda names: upgraded.append(1) or [row.replace("8.9", "8.%d" % (8 + len(upgraded))) for row in installed(names)])(lambda: verifier.verify_loader("/tmp/job/runtime", LOADER_RUNTIME)))
 positive("browser exact version output predicate", "browser_version exact product/version/exit status, no process executed", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79\n", 0, MANIFEST))
 negative("browser wrapper or extra output", "BROWSER_VERSION_IDENTITY", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79\nwrapper\n", 0, MANIFEST))
 positive("browser stable channel token is empty", "browser_version exact product/version/exit status, no process executed", lambda: verifier.browser_version(b"Google Chrome 155.0.8059.79 \n", 0, MANIFEST))
@@ -451,6 +483,9 @@ for field in ("st_ino", "st_size", "st_mtime_ns", "st_ctime_ns", "st_mode", "st_
 
 
 def linux_filesystem_fixtures():
+    roots = MANIFEST["runtime"]["trustedOsLibraryRoots"]
+    # The real resolver against this host's own loader and /lib, compared with the C library's realpath.
+    positive("Linux real loader resolution", "os_library actual trusted resolver on this host", lambda: verifier.require(verifier.os_library(LD, MANIFEST["runtime"])["realPath"] == os.path.realpath(LD) != LD and verifier.trusted_os_realpath("/lib", roots) == os.path.realpath("/lib"), "FIXTURE_HOST_RESOLUTION"))
     positive("Linux bounded fixture subprocess", "run_bounded actual pipe observation", lambda: verifier.require(verifier.run_bounded([sys.executable, "-I", "-B", "-S", "-c", "print('fixture')"])[0] == b"fixture\n", "FIXTURE_SUBPROCESS_OUTPUT"))
     negative("Linux actual subprocess output bound", "RESOURCE_TOOL_OUTPUT_LIMIT", lambda: verifier.run_bounded([sys.executable, "-I", "-B", "-S", "-c", "print('x'*1024)"], maximum=128))
     negative("Linux actual subprocess deadline", "RESOURCE_WALL_LIMIT", lambda: verifier.run_bounded([sys.executable, "-I", "-B", "-S", "-c", "import time; time.sleep(1)"], timeout=0.01))

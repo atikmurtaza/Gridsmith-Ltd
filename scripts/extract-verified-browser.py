@@ -899,28 +899,20 @@ def parse_loader_output(data):
     return result
 
 
-def package_providers(reals):
-    # Ownership is asked of each resolved file and, for packages not yet moved under /usr, its
-    # pre-merge alias; never of the path ld.so printed. On Ubuntu 24.04 that path can be a symlink
-    # carrying only libc6's DEP17 protective diversion (/lib64/ld-linux-x86-64.so.2), which
-    # dpkg-query reports as found, exit 0, with no owner line. One query for every file reads the
-    # dpkg file database once, not twice per library inside the shared wall deadline.
+def package_providers(reals, merged):
+    # Ownership is asked of each resolved file and, on merged /usr, of the /lib alias that packages
+    # not yet moved under /usr still register; never of the path ld.so printed. On Ubuntu 24.04 that
+    # path can be a symlink carrying only libc6's DEP17 protective diversion
+    # (/lib64/ld-linux-x86-64.so.2), which dpkg-query reports as found, exit 0, with no owner line.
+    # Any diversion line still rejects. One query for every file reads the dpkg file database once,
+    # not twice per library inside the shared wall deadline.
     tool = trusted_tool("dpkg-query")
-    candidates = {real: real for real in reals}
-    for real in sorted(reals):
-        if real.startswith("/usr/lib/"):
-            candidates.setdefault(real[4:], real)
+    candidates = {**{real[4:]: real for real in reals if merged and real.startswith("/usr/lib/")}, **{real: real for real in reals}}
     output, status = run_bounded([tool, "--search", *sorted(candidates)], maximum=4 * 1024 * 1024)
     # Status 1 only reports an argument without a registered owner; every file is checked below.
     require(status in (0, 1), "TRUSTED_TOOL_FAILED_OR_OUTPUT_LIMIT")
     owners = {real: set() for real in reals}
     for line in output.decode("ascii").splitlines():
-        diversion = re.fullmatch(r"diversion by [a-z0-9][a-z0-9+.-]* (?:from: (/.+)|to: (/.+)\.usr-is-merged)", line)
-        if diversion:
-            # A DEP17 protective diversion of an alias is not a claim about the resolved file.
-            alias = diversion[1] or diversion[2]
-            require(candidates.get(alias, alias) != alias, "LOADER_PACKAGE_OWNERSHIP")
-            continue
         match = re.fullmatch(r"([a-z0-9][a-z0-9+.-]*(?::amd64)?): (/.+)", line)
         require(match is not None and match[2] in candidates, "LOADER_PACKAGE_OWNERSHIP")
         owners[candidates[match[2]]].add(match[1])
@@ -972,10 +964,11 @@ def validate_provider_receipt(loader, runtime):
 
 def verify_loader(root, runtime):
     clean_environment(os.environ)
+    merged = trusted_os_realpath("/lib", runtime["trustedOsLibraryRoots"]) == "/usr/lib"
     interpreter = runtime["interpreter"]
     files = {interpreter: os_library(interpreter, runtime)}
     loader_file = files[interpreter]["realPath"]
-    package_providers({loader_file})  # the loader is attributed to its package before it runs
+    attributed = package_providers({loader_file}, merged)  # the loader is attributed before it runs
     traced = {}
     for member in runtime["expectedMembers"]:
         if "elf" not in member or member["path"] in runtime["optionalElfMembers"]:
@@ -990,7 +983,9 @@ def verify_loader(root, runtime):
             require(traced.setdefault(name, path) == path, "LOADER_PROVIDER_CONFLICT")
             if path not in files:
                 files[path] = os_library(path, runtime)
-    identity = package_providers({value["realPath"] for value in files.values()})
+    identity = package_providers({value["realPath"] for value in files.values()}, merged)
+    # Measured again after attribution, so each hash and package version describe the same file.
+    require(identity[loader_file] == attributed[loader_file] and all(os_library(path, runtime) == value for path, value in files.items()), "LOADER_PROVIDER_CHANGED")
     entry = lambda path: {**files[path], **identity[files[path]["realPath"]]}
     loader = {"interpreter": entry(interpreter), "providers": [{"soname": name, **entry(path)} for name, path in sorted(traced.items())], "elfMembers": sum("elf" in row for row in runtime["expectedMembers"]), "missing": [], "environmentClean": True}
     return validate_provider_receipt(loader, runtime)
