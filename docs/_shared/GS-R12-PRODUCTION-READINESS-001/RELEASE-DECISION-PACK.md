@@ -237,6 +237,14 @@ immediate but unmeasured. **A written plan is not a tested rollback:** D2 is the
 
 ## H. Recommended next action
 
+> **Update (20 Oct, after GS-R13-H4B):**
+> - **D5 + D8:** the Production intake package, with restore-proven backup tooling, is ready for
+>   one approval: [record](../GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md) §F.
+> - **Legal:** the seven decisions are in one document,
+>   [LEGAL-PUBLICATION-APPROVAL.md](LEGAL-PUBLICATION-APPROVAL.md), which records a Cookies/profile
+>   sequencing defect.
+> - **Decide first:** the Free-plan pause (GS-O025) and the sender.
+
 > **Update (20 Oct, after GS-R13):** the profile is done. The longest-lead item is now the
 > Production lead intake (H4-B production, D5 then D8), whose recorded URL is the profile's
 > remaining technical input. Do the D1 Hostinger confirmations first.

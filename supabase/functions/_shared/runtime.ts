@@ -1,11 +1,12 @@
-/** H4-B deploys to Preview only. Reserved project credentials remain inside Edge. */
+/** H4-B Edge runtime. The project profile decides what it may do; reserved credentials stay inside Edge. */
+import { edgeDeployment } from '../../../lib/leads/edge-deployment.ts';
 declare const Deno: { env: { get(name: string): string | undefined } };
 export const env = (name: string) => Deno.env.get(name) ?? '';
+// Throws for any project other than the approved Preview or Production one (GS-R13-H4B).
+export const deployment = edgeDeployment(env);
 export const projectUrl = env('SUPABASE_URL').replace(/\/$/, '');
 export const privateKey = env('SUPABASE_SERVICE_ROLE_KEY');
-if (projectUrl !== 'https://qfgpwumvvtizeamkynes.supabase.co' || !privateKey) {
-  throw new Error('H4-B requires the isolated Preview project');
-}
+if (!privateKey) throw new Error('Edge service credential required');
 export async function rpc<T>(name: string, body: Record<string, unknown> = {}): Promise<T> {
   const response = await fetch(`${projectUrl}/rest/v1/rpc/${name}`, { method: 'POST',
     headers: { apikey: privateKey, Authorization: `Bearer ${privateKey}`, 'Content-Type': 'application/json' },
@@ -22,7 +23,7 @@ export async function authorizeWorker(request: Request): Promise<boolean> {
   try {
     if (!authorization.startsWith('Bearer ')) return false;
     const claims = JSON.parse(atob(authorization.slice(7).split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-    if (claims.role !== 'service_role' || claims.ref !== 'qfgpwumvvtizeamkynes') return false;
+    if (claims.role !== 'service_role' || claims.ref !== deployment.ref) return false;
     const response = await fetch(`${projectUrl}/rest/v1/rpc/gs_notification_health`, {
       method: 'POST', headers: { apikey: privateKey, Authorization: authorization, 'Content-Type': 'application/json' },
       body: '{}', signal: AbortSignal.timeout(10000),

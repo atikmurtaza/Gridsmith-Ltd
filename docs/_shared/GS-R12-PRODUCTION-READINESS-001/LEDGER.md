@@ -483,3 +483,23 @@ deployment or provider write.
 Consequences for earlier rows: DEP-PROD-PROFILE and SEC-F1 become PASS (local, fails closed).
 LEG-05/06 (legal routes in the production artifact) are now enforced by the profile rather than
 merely missing. FRP-13's inputs are reduced to the H4-B intake URL and the legal states.
+
+## 11. GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001 (20 October 2026)
+
+Record: [GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md](../GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md).
+Nothing deployed or written to Production; `PRODUCTION_INTAKE_URL` stays `null`.
+
+| ID | Requirement | Status | Evidence | Remaining |
+|---|---|---|---|---|
+| H4BP-01 | Production Supabase state | **PASS (read-only)** | ACTIVE_HEALTHY; leads 0; ledger 0001–0004 equal to the repository; H4-B absent; RLS 5/5, 0 policies, 0 anon/auth grants; 0 functions; no provider backups | Status flipped INACTIVE → ACTIVE during the session, not by this session; owner to confirm |
+| H4BP-02 | Backup method | **PASS (local proof)** | `scripts/backup-production-db.mjs`: 9/9 refusals; selftest restore equal (7 tables, ledger, lead fingerprint); 2 mismatch modes red | Real backup needs your pooler URL and approval; dump encryption at rest is your action |
+| H4BP-03 | Production-capable Edge functions | **PASS (local)** | `lib/leads/edge-deployment.ts`; selftest 25 profile cases; 7/7 mutations red | Deno bundle at deploy time |
+| H4BP-04 | Migration on Supabase Postgres | **PASS (local)** | 40-assertion proof on Postgres 17.10 and on Supabase 17.6.1.167 | Production application needs approval |
+| H4BP-05 | Deployment package | **PASS (prepared)** | Record §C.3: steps 0–10, rollback, evidence | Not executed |
+| H4BP-06 | Free-plan pause | **OWNER DECISION (GS-O025)** | Both projects were paused today | Decide before `live` |
+| H4BP-07 | Sender identity | **OWNER INPUT** | No Resend DNS on gridsmith.uk | Confirm the verified sender |
+| H4BP-08 | Legal ↔ profile sequencing | **OWNER DECISION** | Cookies A-2 vs the all-seven profile requirement | Options in LEGAL-PUBLICATION-APPROVAL.md |
+| H4BP-09 | Unintended Preview probe run | **RECORDED** | `check-edge-preview.mjs` executed on import; 17 read-only probes PASS, counts unchanged | — |
+
+Consequences for earlier rows: SEC-F2 / SEC-INTAKE-PROD moves from BLOCKED to READY FOR APPROVAL;
+LEG-02 still waits for the deployment and `live` mode.

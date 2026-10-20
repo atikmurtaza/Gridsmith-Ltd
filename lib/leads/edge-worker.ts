@@ -1,4 +1,5 @@
 /** Bounded private notification processor; message/manuscript content never leaves leads. */
+import { isSyntheticLead } from './edge-deployment.ts';
 export type NotificationWork = {
   id: string; lead_id: string; lease_token: string; attempts: number; form_type: string;
   lead: { division: string; lead_type: string; service_slug?: string; full_name: string;
@@ -14,9 +15,11 @@ export type MailConfig = { key: string; from: string; to: string; synthetic: boo
 
 export function notificationEmail(work: NotificationWork, config: MailConfig) {
   const lead = work.lead;
+  // A marked synthetic identity is labelled in every project, so a Production smoke test is obvious.
+  const synthetic = config.synthetic || isSyntheticLead(lead);
   return { from: config.from, to: [config.to],
-    subject: `${config.synthetic ? '[SYNTHETIC H4-B TEST] ' : ''}New ${lead.division} lead — ${lead.full_name}`,
-    text: [config.synthetic ? 'SYNTHETIC GS-HOST-H4-B TEST — no customer data.' : null,
+    subject: `${synthetic ? '[SYNTHETIC H4-B TEST] ' : ''}New ${lead.division} lead — ${lead.full_name}`,
+    text: [synthetic ? 'SYNTHETIC GS-HOST-H4-B TEST — no customer data.' : null,
       `Division: ${lead.division}`, `Type: ${lead.lead_type}`,
       lead.service_slug ? `Service: ${lead.service_slug}` : null,
       `Name: ${lead.full_name}`, `Email: ${lead.email}`,

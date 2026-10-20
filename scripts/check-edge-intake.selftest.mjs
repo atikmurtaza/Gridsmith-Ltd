@@ -171,3 +171,50 @@ answer = { status: 202, value: { status: 'ok', id: id(), excessive: 'x'.repeat(1
 assert.equal((await submitContactEdge(idle, formOf(base))).status, 'error');
 console.log('H4-B client selftest PASS: retry identity, value transport, concurrent identical/differing submissions, fixed Press redirect and bounded malformed responses.');
 console.log(`H4-B domain/Edge/worker selftest PASS: ${cases} parity/adverse HTTP/provider cases; all five Press branches; blank optionals; zero-call invalid/trapped subjects; CORS/body/burst/failure/private-worker/idempotency checks.`);
+
+// GS-R13-H4B: the project profile that replaces the three hard-coded Preview guards.
+const { edgeDeployment, admitsLead, isSyntheticLead, PREVIEW_REF, PRODUCTION_REF, APPROVED_RECIPIENT } = await import('../lib/leads/edge-deployment.ts');
+let profileCases = 0;
+const envOf = (values) => (name) => values[name] ?? '';
+const preview = { SUPABASE_URL: `https://${PREVIEW_REF}.supabase.co`, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify([origin]) };
+const production = { SUPABASE_URL: `https://${PRODUCTION_REF}.supabase.co`, GRIDSMITH_ALLOWED_ORIGINS: '["https://gridsmith.uk"]',
+  GRIDSMITH_INTAKE_MODE: 'synthetic-only', LEAD_NOTIFICATION_EMAIL: APPROVED_RECIPIENT };
+assert.deepEqual(edgeDeployment(envOf(preview)), { ref: PREVIEW_REF, production: false, mode: 'synthetic-only', origins: [origin], recipient: '' });
+assert.equal(edgeDeployment(envOf(production)).production, true);
+assert.equal(edgeDeployment(envOf({ ...production, GRIDSMITH_INTAKE_MODE: 'live' })).mode, 'live');
+for (const [name, values, message] of [
+  ['unknown project', { ...production, SUPABASE_URL: 'https://abcdefghijklmnopqrst.supabase.co' }, /approved Preview or Production/],
+  ['project URL with a path', { ...production, SUPABASE_URL: `https://${PRODUCTION_REF}.supabase.co/x` }, /approved Preview or Production/],
+  ['plain-HTTP project URL', { ...production, SUPABASE_URL: `http://${PRODUCTION_REF}.supabase.co` }, /approved Preview or Production/],
+  ['Production mode unset', { ...production, GRIDSMITH_INTAKE_MODE: '' }, /synthetic-only or live/],
+  ['Production mode unknown', { ...production, GRIDSMITH_INTAKE_MODE: 'LIVE' }, /synthetic-only or live/],
+  ['Preview asked to go live', { ...preview, GRIDSMITH_INTAKE_MODE: 'live' }, /only synthetic/],
+  ['Production with a loopback origin', { ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', origin]) }, /only from https:\/\/gridsmith.uk/],
+  ['Production with the www origin', { ...production, GRIDSMITH_ALLOWED_ORIGINS: '["https://www.gridsmith.uk"]' }, /only from/],
+  ['Production with the staging origin', { ...production, GRIDSMITH_ALLOWED_ORIGINS: '["https://mediumaquamarine-wallaby-594070.hostingersite.com"]' }, /only from/],
+  ['origins not JSON', { ...production, GRIDSMITH_ALLOWED_ORIGINS: 'https://gridsmith.uk' }, /Exact approved intake origins/],
+  ['origins unset', { ...production, GRIDSMITH_ALLOWED_ORIGINS: '' }, /Exact approved intake origins/],
+  ['unapproved recipient', { ...production, LEAD_NOTIFICATION_EMAIL: 'someone@example.invalid' }, /approved recipient/],
+]) { assert.throws(() => edgeDeployment(envOf(values)), message, name); profileCases++; }
+const realLead = { full_name: 'Real Person', email: 'person@example.com' };
+const marked = { full_name: 'GS-HOST-H4-B Production smoke', email: 'smoke@gridsmith.invalid' };
+assert(isSyntheticLead(marked) && !isSyntheticLead(realLead));
+for (const near of [{ ...marked, email: 'smoke@gridsmith.uk' }, { ...marked, full_name: 'GS-HOST-H4-BX smoke' }, { ...marked, full_name: 'x GS-HOST-H4-B smoke' }]) {
+  assert(!isSyntheticLead(near), JSON.stringify(near)); profileCases++;
+}
+assert(admitsLead({ mode: 'synthetic-only' }, marked) && !admitsLead({ mode: 'synthetic-only' }, realLead)); profileCases++;
+assert(admitsLead({ mode: 'live' }, realLead) && admitsLead({ mode: 'live' }, marked)); profileCases++;
+const productionMail = { ...mail, synthetic: false };
+const label = (lead) => notificationEmail({ ...work, lead: { ...work.lead, ...lead } }, productionMail);
+assert(!JSON.stringify(label(realLead)).includes('SYNTHETIC')); profileCases++;
+assert(label(marked).subject.startsWith('[SYNTHETIC H4-B TEST] ') && label(marked).text.startsWith('SYNTHETIC GS-HOST-H4-B TEST')); profileCases++;
+// Operator CLI guard: refuses before spawning anything, so these subjects make no provider call.
+const operator = await import('./reconcile-preview-outbox.mjs');
+for (const args of [['functions', 'list', '--project-ref', 'abcdefghijklmnopqrst'], ['functions', 'list'],
+  ['functions', 'list', '--project-ref', PRODUCTION_REF, '--project-ref', PREVIEW_REF],
+  ['db', 'query', '--project-ref', PRODUCTION_REF, '--db-url', 'postgresql://x']]) {
+  assert.throws(() => operator.supabase(args), /exact approved Preview or Production/); profileCases++;
+}
+await assert.rejects(() => operator.reconcile('health', 'abcdefghijklmnopqrst'), /Unapproved project/); profileCases++;
+await assert.rejects(() => operator.reconcile('delete', PRODUCTION_REF), /Choose health or drain/); profileCases++;
+console.log(`GS-R13-H4B project profile PASS: Preview/Production/live accepted; ${profileCases} adverse or boundary cases (project, mode, origins, recipient, synthetic identity, admission, labelling).`);

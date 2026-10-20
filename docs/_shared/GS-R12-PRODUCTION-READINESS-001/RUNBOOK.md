@@ -113,6 +113,14 @@ input that preserves the source-binding checks, or an owner-approved manual proc
 3. Verify `__deployment.json` identity plus routes, forms and assets.
 4. Auto-deploy OFF; confirm after reload.
 
+## 4a. Production lead intake (owner authority: GS-R13-H4B-EXEC-001)
+
+The exact backup → migration → secrets → deploy → health → probes → synthetic E2E → cleanup
+procedure, its rollback and evidence list are in
+[GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md](../GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md)
+§C.3. It runs entirely on Supabase `dqiutgmxillhsbzgnlsx` and does not touch the website. Mode stays
+`synthetic-only` until cutover.
+
 ## 5. Production cutover (owner authorities: CUTOVER-AUTHORITY, H4-B, H4-H, DNS)
 
 **Prerequisites, all unmet today:** a production static profile and artifact gate (DEP-PROD-PROFILE,

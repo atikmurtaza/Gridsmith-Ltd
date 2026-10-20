@@ -158,7 +158,7 @@
     ]
   },
   "evidence": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/BUILD-REGRESSION.md (local results); scratchpad logs are session-temporary",
-  "lastSuccessfulCommand": "npm run verify:static PASS after GS-R13",
+  "lastSuccessfulCommand": "npm run verify:static PASS after GS-R13-H4B",
   "next": [
     "Owner: D1 Hostinger read-only confirmations",
     "Owner: H4-B production phase (D5 backup, then D8) to establish PRODUCTION_INTAKE_URL",
@@ -298,5 +298,40 @@
       "hosted behaviour",
       "CI"
     ]
+  },
+  "h4bProductionReadiness": {
+    "phase": "GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001",
+    "date": "2026-10-20",
+    "status": "READY FOR ONE OWNER-AUTHORISED OPERATION; nothing deployed",
+    "record": "docs/_shared/GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md",
+    "legalApproval": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/LEGAL-PUBLICATION-APPROVAL.md",
+    "production": {
+      "ref": "dqiutgmxillhsbzgnlsx",
+      "status": "ACTIVE_HEALTHY at ~12:30 UTC (INACTIVE at ~11:00 UTC; not changed by this session)",
+      "leads": 0,
+      "ledger": "0001-0004 equal to repo; pending 20261004184828 b807e3ed6d4f",
+      "functions": 0,
+      "providerBackups": "none (Free, PITR off)",
+      "rls": "5/5, 0 policies, 0 anon/auth grants"
+    },
+    "evidence": {
+      "edgeSelftest": "59 + 25 profile cases",
+      "mutations": "7/7 red",
+      "dbProof": "40 assertions on Postgres 17.10 and Supabase 17.6.1.167",
+      "backupScript": "9/9 refusals; selftest restore equal; 2 mismatch modes red",
+      "verifyStatic": "PASS"
+    },
+    "disclosures": [
+      "db query --linked initialises the CLI temporary login role",
+      "check-edge-preview.mjs ran unintentionally on import: 17 read-only Preview probes, counts unchanged"
+    ],
+    "ownerDecisions": [
+      "GS-O025 Free-plan pause before live",
+      "LEAD_NOTIFICATION_FROM verified sender",
+      "Cookies A-2 vs all-seven profile sequencing",
+      "SEC-F4, SEC-F5",
+      "dump encryption at rest"
+    ],
+    "next": "Owner: approve GS-R13-H4B-EXEC-001 (record section F) after deciding the pause and sender"
   }
 }

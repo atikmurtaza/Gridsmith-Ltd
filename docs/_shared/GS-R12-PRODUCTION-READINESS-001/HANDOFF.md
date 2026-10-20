@@ -7,6 +7,8 @@ Two owner-approved pushes: 18 Oct `d3d5ba46` (CI 39151214971, failed at Option A
 
 **20 Oct, GS-R13-PRODUCTION-PROFILE-001 (owner-authorised, local):** the gridsmith.uk static profile is implemented and refuses to build until the Production intake URL and all seven PUBLISHABLE states exist. The rehearsal and staging regression are verified locally. Record: [GS-R13-PRODUCTION-PROFILE-001.md](../GS-R13-PRODUCTION-PROFILE-001.md); LEDGER §10.
 
+**20 Oct, GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001 (local):** the Production intake package (restore-proven backup tool, Production-capable Edge profile, exact deploy/test/cleanup/rollback steps) is ready for one approval; nothing deployed. Production is verified read-only: leads 0, ledger 0001–0004, H4-B absent. Record: [GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md](../GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md); legal decisions in [LEGAL-PUBLICATION-APPROVAL.md](LEGAL-PUBLICATION-APPROVAL.md); LEDGER §11.
+
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`
