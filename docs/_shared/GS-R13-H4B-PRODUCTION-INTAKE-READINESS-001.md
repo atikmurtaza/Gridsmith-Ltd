@@ -365,3 +365,37 @@ an explicit release gate:** `main` turns green only when the release branch merg
   Success is "six Production secrets set".
 - **Stop condition:** any line beginning `STOPPED`, `REFUSED`, `POST-CHECK FAILED` or
   `backup NOT proven` ends the operation at that step; nothing later runs. Recovery is in §G.4.
+
+## H. GS-R13-H4B-EXEC-001: executed (21 October 2026, 00:16–00:39 UTC)
+
+**Result: PASS.** Production `dqiutgmxillhsbzgnlsx` now runs the H4-B intake in `synthetic-only` mode, with
+the drain off. Each step's stop gate was checked before the next step ran. Source: commit `e3e14701`.
+
+| # | Step | Evidence |
+|---|---|---|
+| 0 | Preflight (Claude, read-only) | ACTIVE_HEALTHY; 0 functions; only `SUPABASE_DB_URL`; ledger 0001–0004; no H4-B objects; leads 0 |
+| 1 | Backup (owner) | `supabase-production-20261021T002409Z.dump`, 23,678 B, sha256 `16af7fc0cec7b7195e902da94bcb89e6acb5205ce3ccaa483b9b4ee13087b856`; restored equal (5 tables); stored outside the repository |
+| 2 | Backup gate (Claude) | Claude re-hashed the file independently: equal to the receipt and the owner's report; receipt `selftest:false`, project and ledger 0001–0004 correct, leads 0, 1 min old; `BACKUP GATE PASS` |
+| 3 | Migration `b807e3ed6d4f` (one transaction) | `APPLIED`: ledger 5, `gridsmith_private`, 4 RPCs, no public execute, RLS on, leads 0 unchanged. Independent read-only check: schema, tables and RPCs owned by `postgres`; RPCs SECURITY INVOKER with `search_path=pg_catalog`, EXECUTE only `postgres`/`service_role`; private tables RLS on, `service_role` `arw`; 0 policies; 0 `anon`/`authenticated`/`PUBLIC` table or routine grants. **Identical to Preview** on ledger, schema ACL, tables, routines, policies and grants |
+| 4 | Six secrets (owner) | Names exact, nothing extra. Claude matched each stored sha256 digest against the expected value: mode `synthetic-only`, origins `["https://gridsmith.uk"]`, recipient `contact@gridsmith.uk`, sender `onboarding@resend.dev`, worker token = Production's own `service_role` JWT (role and ref checked); `RESEND_API_KEY` present and distinct from Preview's. Drain: `GS_PRODUCTION_DRAIN_ENABLED` absent, and `scheduledDrainEnabled` is false outside `live` |
+| 5 | Deploy (`--use-api`) | `gs-lead-intake` v1 ACTIVE `verify_jwt=false`; `gs-notification-worker` v1 ACTIVE `verify_jwt=true` (00:33 UTC). Function source identical to `e77700ba` |
+| 6 | Negative probes (22) | Intake (Origin `https://gridsmith.uk` unless stated): OPTIONS 204; OPTIONS with an extra header 403; GET 405; missing, foreign or `www.` origin 403, with no ACAO header; text/plain 415; malformed 400; oversized 413; array form type 400; invalid email, URL name and bad Press branch 422; honeypot 202 with no storage; real identity 409 (`synthetic-only`). Worker: anon JWT, no credential and forged service JWT all 401. REST with the anon key: SELECT, INSERT and `gs_notification_health` 401; `gs_intake_admit` 404. No internal detail in any response. Counts unchanged (leads 0, outbox 0, intake_state 1, the migration's own row) |
+| 7 | One synthetic Contact enquiry | Request `893e0edd-5fe3-42c8-a292-3454c23f2de7` → 202, lead `df13b13c-6175-4402-918b-ea9aa7182dab` (`GS-HOST-H4-B Production smoke` / `smoke@gridsmith.invalid`); outbox `sent`, attempts 1, `sent_at` 00:35:14 UTC, no failure |
+| 8 | Owner confirmation | The `[SYNTHETIC H4-B TEST]` email arrived at contact@gridsmith.uk |
+| 9 | Cleanup | One transaction: asserted exactly 1 lead, then deleted by id **and** the synthetic name **and** email, aborting unless exactly 1 row matched. Afterwards: leads 0, outbox 0 (cascade), ledger 5, intake_state 1; mode still `synthetic-only`; functions unchanged |
+
+**State left:** H4-B is deployed on Production and refuses every non-synthetic enquiry with 409. No
+website build points at it yet: `PRODUCTION_INTAKE_URL` is still unset, and the profile refuses to
+build without it and the seven PUBLISHABLE states. The backup is kept outside the repository.
+
+**Not done (each needs its own approval):**
+- `live` mode;
+- the Production drain (`GS_PRODUCTION_DRAIN_ENABLED`);
+- the Resend domain verification and `-Sender verified`;
+- the website build and deployment;
+- Hostinger, DNS and WordPress;
+- legal publication;
+- any Git push.
+
+**Rollback**, if ever needed: §G.4. Delete both functions and unset the secrets. The empty-schema
+rollback, or a restore from the step 1 dump, runs only under approval.

@@ -453,5 +453,33 @@
     ],
     "deploy": "functions deploy --use-api",
     "releaseGate": "main CI content parity red until merge"
+  },
+  "h4bExec": {
+    "date": "2026-10-21",
+    "result": "PASS",
+    "project": "dqiutgmxillhsbzgnlsx",
+    "source": "e3e14701",
+    "backup": {
+      "file": "supabase-production-20261021T002409Z.dump",
+      "sha256": "16af7fc0cec7b7195e902da94bcb89e6acb5205ce3ccaa483b9b4ee13087b856",
+      "restoredEqual": true
+    },
+    "migration": "20261004184828_gs_host_h4b_private_intake.sql:b807e3ed6d4f (ledger 5, equal to Preview)",
+    "secrets": "6, digest-verified; mode synthetic-only; sender onboarding@resend.dev",
+    "functions": {
+      "gs-lead-intake": "v1 verify_jwt=false",
+      "gs-notification-worker": "v1 verify_jwt=true"
+    },
+    "probes": 22,
+    "smoke": {
+      "requestId": "893e0edd-5fe3-42c8-a292-3454c23f2de7",
+      "leadId": "df13b13c-6175-4402-918b-ea9aa7182dab",
+      "outbox": "sent attempt 1",
+      "ownerReceived": true,
+      "deleted": true
+    },
+    "after": { "leads": 0, "outbox": 0 },
+    "drain": "off (GS_PRODUCTION_DRAIN_ENABLED absent)",
+    "notAuthorised": ["live mode", "drain", "Resend domain verification + -Sender verified", "website build/deploy", "Hostinger/DNS/WordPress", "legal publication", "git push"]
   }
 }

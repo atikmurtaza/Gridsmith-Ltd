@@ -726,3 +726,22 @@ scheduled-run verification for Production is still outstanding.
 It failed lint: a parameter named `use` in `gs-r13-apply-h4b-migration.mjs` tripped
 `react-hooks/rules-of-hooks`. The fix-up commit renames it; `verify:static` now exits 0, and the exit
 code was read directly rather than from the background-task summary.
+
+### 12.8 GS-R13-H4B-EXEC-001: Production intake deployed, synthetic-only (21 October 2026, 00:39 UTC)
+
+| ID | Item | Status | Evidence |
+|---|---|---|---|
+| EXEC-01 | Restore-proven backup | **PASS** | sha256 `16af7fc0…`; restore equal; independently re-hashed; gate PASS |
+| EXEC-02 | Migration `b807e3ed6d4f` | **PASS** | One transaction; ledger 5; ownership, ACLs, invoker/search_path, RLS and grants identical to Preview |
+| EXEC-03 | Six Production secrets | **PASS** | Digest-verified values; drain switch absent |
+| EXEC-04 | Both Edge Functions from `e3e14701` | **PASS** | v1 ACTIVE; JWT settings as designed |
+| EXEC-05 | 22 negative/privilege probes | **PASS** | Counts unchanged |
+| EXEC-06 | Synthetic notification | **PASS** | Sent on attempt 1; the owner confirmed receipt |
+| EXEC-07 | Cleanup | **PASS** | Exactly the synthetic lead deleted; leads 0, outbox 0 |
+
+`H4-B-INTAKE-PROMOTED`, the Production intake half, is now **deployed and proven in synthetic-only
+mode**. Going `live` is a separate approval and needs the Resend domain verification first. Details:
+H4-B record §H. Still outstanding:
+- the GS-O025 24-hour scheduled verification for Production;
+- the `main` CI release gate;
+- the legal, advisory, Chrome-pin and staging items in RELEASE-DECISION-PACK.
