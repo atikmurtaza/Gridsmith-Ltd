@@ -745,3 +745,16 @@ H4-B record §H. Still outstanding:
 - the GS-O025 24-hour scheduled verification for Production;
 - the `main` CI release gate;
 - the legal, advisory, Chrome-pin and staging items in RELEASE-DECISION-PACK.
+
+## 13. GS-R14-001: Resend verified; temporary-domain release candidate (21 October 2026)
+
+| ID | Item | Status | Evidence |
+|---|---|---|---|
+| R14-01 | Temporary hostname | **VERIFIED** | hPanel: its own website; Git `codex/gs-hostinger-artifact` → `public_html`; auto-deploy off; serving `28b841dd` |
+| R14-02 | Resend gridsmith.uk | **VERIFIED** | Dashboard "Verified"; DKIM and Return-Path published; the Production key covers All domains |
+| R14-03 | Sender transition | **PREPARED** | One Edge secret; no redeploy needed for it (Supabase docs) |
+| R14-04 | Temporary-domain RC | **PASS locally** | `418aeac3`: verify:static EXIT=0; build 55 routes / identity `8ef4c3a0…`; artifact PASS; static UI PASS (axe 0) |
+| R14-05 | Production intake | **UNCHANGED** | synthetic-only; drain off; leads 0 |
+| R14-06 | Deployment | **AWAITING APPROVAL** | GS-R14-001 record §7 |
+
+Record: [GS-R14-001-TEMPORARY-DOMAIN-RELEASE.md](../GS-R14-001-TEMPORARY-DOMAIN-RELEASE.md).

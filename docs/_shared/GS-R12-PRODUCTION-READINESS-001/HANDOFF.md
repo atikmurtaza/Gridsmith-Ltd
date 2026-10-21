@@ -21,6 +21,8 @@ Two owner-approved pushes: 18 Oct `d3d5ba46` (CI 39151214971, failed at Option A
 
 **21 Oct, 00:39 UTC, GS-R13-H4B-EXEC-001 PASS:** the Production intake is deployed in `synthetic-only` mode with the drain off. Steps: a restore-proven backup, migration `b807e3ed6d4f`, six digest-verified secrets, both functions from `e3e14701`, 22 negative probes, and one synthetic notification you received; the lead was then deleted (leads 0, outbox 0). `live`, the drain, Resend domain verification, the website and any push each need their own approval. Record: H4-B record §H; LEDGER §12.8.
 
+**21 Oct, GS-R14-001 (local):** Resend has verified gridsmith.uk. The temporary-domain release candidate (`418aeac3`, Production intake, noindex) passes locally. Deployment and the Production Edge sender/origin change wait for one approval; record [GS-R14-001](../GS-R14-001-TEMPORARY-DOMAIN-RELEASE.md) §7.
+
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`

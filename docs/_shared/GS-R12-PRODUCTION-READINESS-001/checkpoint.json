@@ -478,8 +478,37 @@
       "ownerReceived": true,
       "deleted": true
     },
-    "after": { "leads": 0, "outbox": 0 },
+    "after": {
+      "leads": 0,
+      "outbox": 0
+    },
     "drain": "off (GS_PRODUCTION_DRAIN_ENABLED absent)",
-    "notAuthorised": ["live mode", "drain", "Resend domain verification + -Sender verified", "website build/deploy", "Hostinger/DNS/WordPress", "legal publication", "git push"]
+    "notAuthorised": [
+      "live mode",
+      "drain",
+      "Resend domain verification + -Sender verified",
+      "website build/deploy",
+      "Hostinger/DNS/WordPress",
+      "legal publication",
+      "git push"
+    ]
+  },
+  "r14": {
+    "date": "2026-10-21",
+    "record": "docs/_shared/GS-R14-001-TEMPORARY-DOMAIN-RELEASE.md",
+    "temporaryOrigin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+    "autoDeploy": "off",
+    "servingIdentity": "28b841dd",
+    "rollbackArtifactCommit": "bd8dd825",
+    "resend": "gridsmith.uk Verified; key gridsmith-production All domains",
+    "candidate": {
+      "source": "418aeac3",
+      "identity": "8ef4c3a0",
+      "routes": 55,
+      "files": 204,
+      "verifyStatic": "EXIT=0",
+      "staticUi": "PASS axe 0"
+    },
+    "awaiting": "owner approval GS-R14-001 section 7"
   }
 }
