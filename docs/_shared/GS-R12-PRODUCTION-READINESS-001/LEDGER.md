@@ -721,3 +721,8 @@ scheduled-run verification for Production is still outstanding.
 | PREP2-06 | Secrets without typing values | **READY** | `gs-r13-h4b-production-secrets.ps1`: 4 fixed values, worker JWT fetched and checked in-process, one hidden Resend-key prompt; `-SelfTest` round-trips all six through dotenv for both senders; the planned values give production / synthetic-only / gridsmith.uk / drain off / real leads refused |
 | PREP2-07 | Deploy | **READY** | `functions deploy … --use-api` (bundled by Supabase, no Docker image download); Edge code identical to `e77700ba` |
 | PREP2-08 | `main` CI content parity | **RELEASE GATE** | Run 39433946390 stays red until the release branch merges at cutover |
+
+**Correction (21 Oct):** commit `c4fd4555` was made before `verify:static` had been read correctly.
+It failed lint: a parameter named `use` in `gs-r13-apply-h4b-migration.mjs` tripped
+`react-hooks/rules-of-hooks`. The fix-up commit renames it; `verify:static` now exits 0, and the exit
+code was read directly rather than from the background-task summary.

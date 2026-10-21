@@ -46,7 +46,7 @@ const query = (file) => {
   const value = rows.find((row) => row.state)?.state;
   return typeof value === 'string' ? JSON.parse(value) : value;
 };
-const withFile = (text, use) => { const file = join(tmpdir(), `gs-r13-${process.pid}-${Date.now()}.sql`); writeFileSync(file, text, { mode: 0o600 }); try { return use(file); } finally { rmSync(file, { force: true }); } };
+const withFile = (text, run) => { const file = join(tmpdir(), `gs-r13-${process.pid}-${Date.now()}.sql`); writeFileSync(file, text, { mode: 0o600 }); try { return run(file); } finally { rmSync(file, { force: true }); } };
 
 const gate = spawnSync(process.execPath, ['scripts/gs-r13-require-backup.mjs'], { encoding: 'utf8' });
 process.stdout.write(gate.stdout); process.stderr.write(gate.stderr);
