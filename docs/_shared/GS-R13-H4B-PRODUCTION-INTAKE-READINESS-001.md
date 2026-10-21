@@ -331,3 +331,37 @@ an explicit release gate:** `main` turns green only when the release branch merg
 | 6–7 | A probe mismatch, or the notification not `sent` | Keep `synthetic-only`. If it stayed pending, your one command `node scripts/reconcile-preview-outbox.mjs drain --production`. Then step 9 cleanup |
 | 8 | Email not received | Check the Resend dashboard and the sender; step 9 cleanup; still no live mode |
 | Any | — | Full rollback: delete both functions, unset the six secrets, empty-schema rollback (approval), or restore from the step 1 dump (approval) |
+
+### G.5 Decision gate GS-R13-H4B-DECISION-003 (21 October 2026)
+
+**Sender eligibility, proven read-only:**
+- Preview's stored `LEAD_NOTIFICATION_FROM` and `LEAD_NOTIFICATION_EMAIL` hash exactly (Supabase secret
+  digests) to `onboarding@resend.dev` and `contact@gridsmith.uk`.
+- That configuration delivered three notifications (Resend `delivered`, GS-HOST-H4-B).
+- So the Resend account behind Preview's key permits `onboarding@resend.dev` → contact@gridsmith.uk.
+- The secrets tool now uses exactly `onboarding@resend.dev`; the earlier display-name form was never
+  proven.
+- **Use the same Resend account's API key for Production.**
+
+**Operational decisions: pending your confirmation, not authorisation:**
+1. The shared sender for the synthetic test.
+2. Free plan plus the best-effort keep-alive for initial launch.
+3. `contact@gridsmith.uk` as the live sender only after Resend verifies gridsmith.uk.
+
+**Owner handoff (after approval):**
+- Working directory: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`.
+  Docker Desktop must be running.
+- Backup:
+  `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\gs-r13-backup-production.ps1`.
+  The hidden prompt wants the **Production database password**, the `postgres` password from
+  Supabase → Project Settings → Database.
+  - If you don't know it, resetting it there changes it for anything else that uses it. Your
+    `.env.local` `DIRECT_CONNECTION_STRING` and the Vercel production variables use it.
+  - Success is a JSON line with `"restoredEqual":true`, then "GS-R13: backup restore-proven". Claude
+    then confirms with `node scripts/gs-r13-require-backup.mjs`.
+- Secrets (step 4, when Claude asks):
+  `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\gs-r13-h4b-production-secrets.ps1`.
+  The hidden prompt wants the Resend API key from the same Resend account that Preview uses.
+  Success is "six Production secrets set".
+- **Stop condition:** any line beginning `STOPPED`, `REFUSED`, `POST-CHECK FAILED` or
+  `backup NOT proven` ends the operation at that step; nothing later runs. Recovery is in §G.4.

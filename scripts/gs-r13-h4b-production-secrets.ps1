@@ -5,7 +5,8 @@ synthetic-only intake. You paste only the Resend API key (hidden). Nothing is pr
   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\gs-r13-h4b-production-secrets.ps1 [-Sender verified]
 
 Fixed values: GRIDSMITH_INTAKE_MODE=synthetic-only; GRIDSMITH_ALLOWED_ORIGINS=["https://gridsmith.uk"];
-LEAD_NOTIFICATION_EMAIL=contact@gridsmith.uk; LEAD_NOTIFICATION_FROM is "Gridsmith <onboarding@resend.dev>"
+LEAD_NOTIFICATION_EMAIL=contact@gridsmith.uk; LEAD_NOTIFICATION_FROM is "onboarding@resend.dev" (the exact
+value Preview uses, digest-matched and delivered to contact@gridsmith.uk; use the SAME Resend account's key)
 (Resend's shared sender, delivered only to the Resend account owner, as Preview uses) unless
 -Sender verified is given after gridsmith.uk is verified in Resend, then "Gridsmith <contact@gridsmith.uk>".
 GRIDSMITH_WORKER_TOKEN is Production's legacy service_role JWT, read in this process from Supabase
@@ -32,7 +33,7 @@ function Write-EnvFile([hashtable]$Values, [string]$Path) {
   & icacls $Path /inheritance:r /grant:r "$($env:USERNAME):F" | Out-Null
 }
 
-$from = if ($Sender -eq 'verified') { 'Gridsmith <contact@gridsmith.uk>' } else { 'Gridsmith <onboarding@resend.dev>' }
+$from = if ($Sender -eq 'verified') { 'Gridsmith <contact@gridsmith.uk>' } else { 'onboarding@resend.dev' }
 $values = @{ GRIDSMITH_INTAKE_MODE = 'synthetic-only'; GRIDSMITH_ALLOWED_ORIGINS = '["https://gridsmith.uk"]'
   LEAD_NOTIFICATION_EMAIL = 'contact@gridsmith.uk'; LEAD_NOTIFICATION_FROM = $from }
 $tmp = [IO.Path]::Combine([IO.Path]::GetTempPath(), "gs-r13-secrets-$([Guid]::NewGuid()).env")
@@ -46,7 +47,7 @@ if ($SelfTest) {
     Pop-Location
     $bad = @($Expected | Where-Object { $parsed.$_ -ne $values[$_] })
     if ($bad.Count -or @($parsed.PSObject.Properties).Count -ne 6) { Stop-With "selftest: env file did not parse back exactly ($($bad -join ','))" }
-    Write-Host 'GS-R13: SELFTEST PASS - six names, every value (JSON origins, display-name sender) parses back exactly'
+    Write-Host 'GS-R13: SELFTEST PASS - six names, every value (JSON origins, sender) parses back exactly'
   } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
   exit 0
 }
