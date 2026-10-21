@@ -22,7 +22,7 @@ Header always set X-Frame-Options "DENY"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()"
 Header always set Strict-Transport-Security "max-age=31536000"
-Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://qfgpwumvvtizeamkynes.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'"
+Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://dqiutgmxillhsbzgnlsx.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'"
 Header always set X-GridSmith-Sanity-Dataset "production"
 Header always set Cache-Control "no-cache"
 <FilesMatch "\.(?:svg|png|jpe?g|webp|avif|glb|gltf|bin|woff2?)$">
