@@ -17,6 +17,8 @@ Two owner-approved pushes: 18 Oct `d3d5ba46` (CI 39151214971, failed at Option A
 
 **20 Oct, 23:40 UTC, GS-O025 ACTIVE:** both keep-alive jobs pass (run 39516560037; Production calls 0 → 4, Preview 12 → 16). The root cause was the Production secret using pooler cluster `aws-0` instead of `aws-1`. Owner tools are now PowerShell one-liners (`gs-o025-rotate-production-keepalive.ps1`, `gs-r13-backup-production.ps1`). Next: the H4-B approval (LEDGER §12.6).
 
+**21 Oct, GS-R13-H4B-PREP-002:** the intake execution plan is final (H4-B record §G). Your manual part is two PowerShell commands, each with one hidden prompt (backup: database password; secrets: Resend key). Claude does the gate, the one-transaction migration, the deploy, probes, synthetic test and cleanup. The sender for the test is `onboarding@resend.dev`; gridsmith.uk must be verified in Resend before `live`.
+
 ## Where things are
 
 - Worktree: `C:\Users\atikm\.codex\worktrees\gs-r12-production-readiness-001\Gridsmith Ltd`

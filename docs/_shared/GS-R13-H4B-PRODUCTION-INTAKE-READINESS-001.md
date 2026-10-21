@@ -250,3 +250,84 @@ Before approving, decide D.1 (pause) and D.3 (sender).
 >   restore-proven backup; migration b807e3ed6d4f; 6 secrets in synthetic-only mode; deploy both
 >   H4-B functions from e77700ba or later; one marked synthetic test to contact@gridsmith.uk;
 >   delete that test lead. No live mode, drain, push or site change."
+
+## G. GS-R13-H4B-EXEC-001: final execution plan (GS-R13-H4B-PREP-002, 21 October 2026)
+
+Source: this branch at the reviewed local commit, a descendant of `e77700ba` with identical
+`supabase/` and `lib/` (verified `git diff e77700ba HEAD -- supabase lib` is empty). No push is
+needed: the CLI bundles the local files.
+
+### G.1 Email sender (read-only DNS and repository evidence)
+
+- **gridsmith.uk is not verified in Resend.** There is no `resend._domainkey.gridsmith.uk` DKIM record
+  and no Return-Path subdomain (`send.gridsmith.uk`, Resend's default); the apex SPF is
+  `include:_spf.mail.hostinger.com ~all` only; DMARC is `p=none`. The repository records this as
+  deliberate until deployment (`Q-M20`, BEFORE-LAUNCH item 14).
+- So `Gridsmith <contact@gridsmith.uk>` would be refused by Resend today, and the worker would mark the
+  notification `dead`.
+- Preview delivers through Resend's shared `onboarding@resend.dev`, which reaches only the Resend
+  account owner's address.
+- **For EXEC-001 (synthetic test only):** sender `Gridsmith <onboarding@resend.dev>`, the tool's
+  default `-Sender shared`. That proves the Production pipeline end to end, exactly as Preview does.
+- **Before `live` (separate approval):** the owner's minimal action is:
+  1. Resend dashboard → Domains → Add `gridsmith.uk`.
+  2. Copy its records exactly into Hostinger DNS: DKIM TXT `resend._domainkey`, plus MX and TXT on the
+     Return-Path subdomain (default `send`). These are new names, so the existing apex SPF and mail
+     are untouched. If Resend shows an apex SPF record, merge it into the existing one, never add a
+     second.
+  3. Press Verify.
+  4. Re-run the secrets tool with `-Sender verified`, giving `Gridsmith <contact@gridsmith.uk>`.
+- Recipient: the worker accepts only `contact@gridsmith.uk`, which matches.
+
+### G.2 Availability policy (recommendation, not owner acceptance)
+
+Production stays on the Free plan with GS-O025 as **best-effort** activity:
+- twice-daily authenticated sessions, plus the hourly drain once `live`.
+- **Not guaranteed:** Supabase publishes no threshold; GitHub may delay runs (3 h 16 min observed) or
+  drop them, and disables schedules after 60 days without repository activity.
+
+Monitoring:
+- GitHub failure emails;
+- Supabase's own pause-warning email, one week ahead;
+- the monthly checks in GS-O025 §7;
+- the optional Healthchecks heartbeat (recommended before `live`).
+
+Recovery if paused:
+1. Dashboard → Resume project. Restorable for up to one year.
+2. The site keeps its mailto fallback meanwhile.
+3. Re-run the availability workflow once.
+
+The only guaranteed exemption is a paid plan, which is not authorised.
+
+### G.3 Steps, actors, evidence and stop rules
+
+| # | Actor | Action (tool) | Evidence after the step | Stop if |
+|---|---|---|---|---|
+| 0 | Claude | Read-only preflight: project ACTIVE_HEALTHY; `scripts/gs-r13-apply-h4b-migration.mjs --plan` pre-state; `functions list` empty; secrets names | Ledger 0001–0004, no H4-B objects, leads N, 0 functions | Anything differs |
+| 1 | **Owner** | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\gs-r13-backup-production.ps1` (one hidden prompt: the Production database password) | Receipt `restoredEqual: true`, sha256, leads N | Not proven: the gate stays shut |
+| 2 | Claude | `node scripts/gs-r13-require-backup.mjs` | BACKUP GATE PASS (≤ 6 h old, hash match, pre-migration ledger) | REFUSED |
+| 3 | Claude | `GS_R13_MIGRATE_CONFIRM=apply-b807e3ed6d4f node scripts/gs-r13-apply-h4b-migration.mjs` (one transaction) | APPLIED: ledger 5, private schema, 4 invoker RPCs, no public execute, RLS on, leads N unchanged | REFUSED / POST-CHECK FAILED |
+| 4 | **Owner** | `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\gs-r13-h4b-production-secrets.ps1` (one hidden prompt: the Resend API key; worker JWT fetched and checked in-process) | Six names listed | STOPPED |
+| 5 | Claude | `npx --yes supabase@2.119.0 functions deploy gs-lead-intake --project-ref dqiutgmxillhsbzgnlsx --use-api`, then the same for `gs-notification-worker` | `functions list`: intake ACTIVE `verify_jwt=false`, worker ACTIVE `verify_jwt=true` | Bundle or deploy error |
+| 6 | Claude | Negative probes on the intake: foreign Origin 403, GET 405, text/plain 415, malformed 400, invalid 422, honeypot 202 with no storage, real identity in `synthetic-only` 409; OPTIONS from gridsmith.uk 204 | Statuses as listed; leads still N | Any mismatch |
+| 7 | Claude | One marked synthetic Contact POST (`GS-HOST-H4-B Production smoke`, `smoke@gridsmith.invalid`, Origin `https://gridsmith.uk`, saved request UUID) | 202 `{id}`; read-only SQL shows outbox `sent`, `attempts 1`, `notified_at` set | 5xx, or outbox not `sent` within 2 min |
+| 8 | **Owner** | Confirm one `[SYNTHETIC H4-B TEST]` email reached contact@gridsmith.uk | Yes/no | No |
+| 9 | Claude | Delete exactly that lead by id with the synthetic predicates (outbox cascades) | Leads N, outbox 0 | Count mismatch |
+
+Release safeguards held throughout: no push, no `main` change, no Hostinger, DNS or WordPress
+change, no legal publication, mode stays `synthetic-only`, drain stays off, and no grants or RLS
+change beyond the reviewed migration. **`main` CI's content-parity failure (run 39433946390) remains
+an explicit release gate:** `main` turns green only when the release branch merges at cutover.
+
+### G.4 Recovery from partial failure
+
+| Fails at | State left | Recovery |
+|---|---|---|
+| 1–2 | Nothing changed | Fix the cause (password, Docker) and repeat |
+| 3 | The transaction rolls back (proven locally: an injected failure leaves ledger 4, no schema, no routines) | Read the error; nothing to undo |
+| 3 post-check | Migration committed but a check failed | Stop. Inspect read-only. The documented empty-schema rollback (drop 4 RPCs, 2 tables, schema; delete the ledger row) runs only under approval and only if the outbox is empty |
+| 4 | Secrets partially set | Re-run the tool (it is idempotent), or `secrets unset` the names |
+| 5 | One function deployed | Website does not use it. `functions delete <name>`, or redeploy |
+| 6–7 | A probe mismatch, or the notification not `sent` | Keep `synthetic-only`. If it stayed pending, your one command `node scripts/reconcile-preview-outbox.mjs drain --production`. Then step 9 cleanup |
+| 8 | Email not received | Check the Resend dashboard and the sender; step 9 cleanup; still no live mode |
+| Any | — | Full rollback: delete both functions, unset the six secrets, empty-schema rollback (approval), or restore from the step 1 dump (approval) |

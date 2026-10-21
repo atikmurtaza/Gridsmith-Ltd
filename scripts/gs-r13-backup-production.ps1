@@ -10,12 +10,17 @@ outside the repository with an owner-only ACL, restores it into a disposable loc
 compares counts, ledger and a lead fingerprint. The password exists only in this process's memory
 and the child's environment, and is cleared afterwards. -DryRun shows the address shape only.
 #>
-param([switch]$DryRun)
+param([switch]$DryRun, [switch]$SelfTest)
 $ErrorActionPreference = 'Continue'
 $Ref = 'dqiutgmxillhsbzgnlsx'; $PoolerHost = 'aws-1-eu-west-1.pooler.supabase.com'
 $RepoRoot = Split-Path -Parent $PSScriptRoot
+# -SelfTest: a hostile synthetic password must survive escaping and pass the backup script's own
+# address checks; no connection is made.
+$SelfTestPassword = 'Synth p@ss:w/rd#%+&?=1'
 
-$secure = if ($DryRun) { ConvertTo-SecureString 'DryRunOnly0123456789' -AsPlainText -Force } else { Read-Host 'Production database password (hidden)' -AsSecureString }
+$secure = if ($DryRun) { ConvertTo-SecureString 'DryRunOnly0123456789' -AsPlainText -Force }
+  elseif ($SelfTest) { ConvertTo-SecureString $SelfTestPassword -AsPlainText -Force }
+  else { Read-Host 'Production database password (hidden)' -AsSecureString }
 $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
 try {
   $plain = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr)
@@ -24,7 +29,14 @@ try {
   if ($DryRun) { Write-Host ('GS-R13: DRY RUN - address shape: ' + ($url -replace ':[^:@/]+@', ':<hidden>@')); exit 0 }
   $env:GS_PRODUCTION_DB_URL = $url; $env:GS_PRODUCTION_BACKUP_CONFIRM = 'read-production'
   Push-Location $RepoRoot
-  try { & node scripts/backup-production-db.mjs; $code = $LASTEXITCODE } finally { Pop-Location }
+  try {
+    if ($SelfTest) {
+      $env:GS_SELFTEST_EXPECTED = $SelfTestPassword
+      & node -e "import('./scripts/backup-production-db.mjs').then(({urlProblems})=>{const v=process.env.GS_PRODUCTION_DB_URL,u=new URL(v);const p=urlProblems(v);const ok=!p.length&&decodeURIComponent(u.password)===process.env.GS_SELFTEST_EXPECTED&&decodeURIComponent(u.username)==='postgres.$Ref'&&u.hostname==='$PoolerHost'&&process.env.GS_PRODUCTION_BACKUP_CONFIRM==='read-production';console.log(ok?'GS-R13: SELFTEST PASS - address accepted by the backup script and the password decodes exactly':'GS-R13: SELFTEST FAIL '+JSON.stringify(p));process.exit(ok?0:3)})"
+      $code = $LASTEXITCODE; Remove-Item env:GS_SELFTEST_EXPECTED -ErrorAction SilentlyContinue
+    } else { & node scripts/backup-production-db.mjs; $code = $LASTEXITCODE }
+  } finally { Pop-Location }
+  if ($SelfTest) { exit $code }
   if ($code -eq 0) { Write-Host 'GS-R13: backup restore-proven. Tell Claude: backup done.' } else { Write-Host "GS-R13: backup NOT proven (exit $code); nothing in Production was changed" }
   exit $code
 } finally {

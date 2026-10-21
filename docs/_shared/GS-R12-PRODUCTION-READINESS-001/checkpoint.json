@@ -160,9 +160,9 @@
   "evidence": "docs/_shared/GS-R12-PRODUCTION-READINESS-001/BUILD-REGRESSION.md (local results); scratchpad logs are session-temporary",
   "lastSuccessfulCommand": "npm run verify:static PASS after GS-R13-H4B",
   "next": [
-    "Owner: decide sender (LEAD_NOTIFICATION_FROM) and accept GS-O025 as the free-plan mitigation",
-    "Owner: approve GS-R13-H4B-EXEC-001 (record section F wording)",
-    "Claude: confirm Production scheduled runs over the next 24h"
+    "Owner: approve GS-R13-H4B-EXEC-001 (record section G)",
+    "Owner: accept or decline the availability policy (G.2)",
+    "Before live: verify gridsmith.uk in Resend (G.1)"
   ],
   "ownerDecisionsTaken": [
     {
@@ -334,7 +334,7 @@
   },
   "gsO025": {
     "date": "2026-10-20",
-    "status": "ACTIVE on both projects (run 39516560037); 24h Production scheduled verification pending",
+    "status": "MANUALLY VERIFIED AND OPERATIONAL (run 39516560037); 24h Production scheduled verification outstanding",
     "record": "docs/_shared/GS-O025-SUPABASE-AVAILABILITY.md",
     "schedules": {
       "availability": "23 5,17 * * * UTC, production then preview",
@@ -440,5 +440,18 @@
     "run": 39433946390,
     "verdict": "exposed, not caused: dataset-backed gates (legal parity 345, service-content 18, company 1) vs main 17-Sep sources; 4 files not read",
     "nextAction": "none on main; green when release merges"
+  },
+  "h4bExecPlan": {
+    "date": "2026-10-21",
+    "record": "GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md section G",
+    "sender": "gridsmith.uk not verified in Resend; EXEC-001 uses onboarding@resend.dev; domain verification before live",
+    "tools": [
+      "scripts/gs-r13-backup-production.ps1 (owner, 1 hidden prompt)",
+      "scripts/gs-r13-require-backup.mjs",
+      "scripts/gs-r13-apply-h4b-migration.mjs (Claude, no password, one transaction)",
+      "scripts/gs-r13-h4b-production-secrets.ps1 (owner, 1 hidden prompt)"
+    ],
+    "deploy": "functions deploy --use-api",
+    "releaseGate": "main CI content parity red until merge"
   }
 }

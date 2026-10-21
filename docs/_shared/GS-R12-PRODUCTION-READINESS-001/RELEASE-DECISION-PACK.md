@@ -257,6 +257,14 @@ the next step.
 Still open alongside: the 4 dev-only advisory dispositions (§B), BRW-03 (§E.2), SEC-F4, SEC-F5,
 ACC-08, POL-01.
 
+**Status (21 Oct):**
+- Step 2 is done: GS-O025 is active on both projects.
+- Step 3 is ready for approval with an exact plan (GS-R13-H4B record §G).
+- New gates:
+  - **Resend domain verification of gridsmith.uk before `live`** (§G.1).
+  - **`main` CI content parity (run 39433946390) must be green at cutover.** It clears only when the
+    release branch merges.
+
 > **Update (20 Oct, after GS-R13-H4B):**
 > - **D5 + D8:** the Production intake package, with restore-proven backup tooling, is ready for
 >   one approval: [record](../GS-R13-H4B-PRODUCTION-INTAKE-READINESS-001.md) §F.

@@ -705,3 +705,19 @@ caught offline.
   scheduled run started 3 h 16 min late; Preview's scheduled run already passed);
 - the optional heartbeat, not configured;
 - the limits in the GS-O025 record §6.
+
+### 12.7 GS-R13-H4B-PREP-002: final intake preparation (21 October 2026)
+
+**GS-O025: manually verified and operational** on both projects (run 39516560037). The 24-hour
+scheduled-run verification for Production is still outstanding.
+
+| ID | Item | Status | Evidence |
+|---|---|---|---|
+| PREP2-01 | Resend sender | **NOT VERIFIED (blocks only the `live` sender)** | No `resend._domainkey` or `send.` records; the apex SPF covers Hostinger only. EXEC-001 uses the shared `onboarding@resend.dev`, as Preview does; the domain-verification steps are in the record §G.1 |
+| PREP2-02 | Availability policy | RECOMMENDED, not accepted | Record §G.2 |
+| PREP2-03 | Backup wrapper | **READY** | Production-only (fixed ref, `aws-1` pooler, `postgres.<ref>`); hidden prompt; fails closed; `-SelfTest` PASS with a hostile password (`@ : / # % + & ? =` and a space) that decodes exactly; no-escaping mutant red; env cleared |
+| PREP2-04 | Migration cannot run without a proven backup | **READY** | `gs-r13-require-backup.mjs`: 10 adverse receipts refused, empty folder refused; compatible with the real receipt format |
+| PREP2-05 | Migration step without a database password | **READY** | `gs-r13-apply-h4b-migration.mjs`: one transaction through the CLI (runs as postgres, like the runner); on a disposable Supabase Postgres it gave ledger 5, 4 RPCs owned by postgres, 0 public execute, RLS on, leads unchanged; re-apply refused; an injected failure rolled back completely; the real Production pre-state query matches; refuses with no receipt |
+| PREP2-06 | Secrets without typing values | **READY** | `gs-r13-h4b-production-secrets.ps1`: 4 fixed values, worker JWT fetched and checked in-process, one hidden Resend-key prompt; `-SelfTest` round-trips all six through dotenv for both senders; the planned values give production / synthetic-only / gridsmith.uk / drain off / real leads refused |
+| PREP2-07 | Deploy | **READY** | `functions deploy … --use-api` (bundled by Supabase, no Docker image download); Edge code identical to `e77700ba` |
+| PREP2-08 | `main` CI content parity | **RELEASE GATE** | Run 39433946390 stays red until the release branch merges at cutover |
