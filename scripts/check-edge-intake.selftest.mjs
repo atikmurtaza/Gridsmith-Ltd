@@ -1,6 +1,7 @@
 /** Permanent local parity/HTTP/worker adverse specimens. No provider traffic or app mutation. */
 import assert from 'node:assert/strict';
 import { register } from 'node:module';
+import { readFileSync } from 'node:fs';
 import { createIntake, INTAKE_BODY_BYTES } from '../lib/leads/edge-intake.ts';
 import { validateForm } from '../lib/leads/form-domain.ts';
 import { createWorker, notificationEmail, sendNotification } from '../lib/leads/edge-worker.ts';
@@ -173,7 +174,10 @@ console.log('H4-B client selftest PASS: retry identity, value transport, concurr
 console.log(`H4-B domain/Edge/worker selftest PASS: ${cases} parity/adverse HTTP/provider cases; all five Press branches; blank optionals; zero-call invalid/trapped subjects; CORS/body/burst/failure/private-worker/idempotency checks.`);
 
 // GS-R13-H4B: the project profile that replaces the three hard-coded Preview guards.
-const { edgeDeployment, admitsLead, isSyntheticLead, PREVIEW_REF, PRODUCTION_REF, APPROVED_RECIPIENT } = await import('../lib/leads/edge-deployment.ts');
+const { edgeDeployment, admitsLead, isSyntheticLead, PREVIEW_REF, PRODUCTION_REF, APPROVED_RECIPIENT, TEMPORARY_ORIGIN } = await import('../lib/leads/edge-deployment.ts');
+// Read as text: public-model.ts is server-only and cannot be imported here.
+assert(readFileSync(new URL('../lib/reviews/public-model.ts', import.meta.url), 'utf8')
+  .includes(`export const REVIEW_STAGING_ORIGIN = '${TEMPORARY_ORIGIN}';`), 'one temporary origin across the Edge and static profiles');
 let profileCases = 0;
 const envOf = (values) => (name) => values[name] ?? '';
 const preview = { SUPABASE_URL: `https://${PREVIEW_REF}.supabase.co`, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify([origin]) };
@@ -182,6 +186,8 @@ const production = { SUPABASE_URL: `https://${PRODUCTION_REF}.supabase.co`, GRID
 assert.deepEqual(edgeDeployment(envOf(preview)), { ref: PREVIEW_REF, production: false, mode: 'synthetic-only', origins: [origin], recipient: '' });
 assert.equal(edgeDeployment(envOf(production)).production, true);
 assert.equal(edgeDeployment(envOf({ ...production, GRIDSMITH_INTAKE_MODE: 'live' })).mode, 'live');
+assert.deepEqual(edgeDeployment(envOf({ ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', TEMPORARY_ORIGIN]) })).origins,
+  ['https://gridsmith.uk', TEMPORARY_ORIGIN]);
 for (const [name, values, message] of [
   ['unknown project', { ...production, SUPABASE_URL: 'https://abcdefghijklmnopqrst.supabase.co' }, /approved Preview or Production/],
   ['project URL with a path', { ...production, SUPABASE_URL: `https://${PRODUCTION_REF}.supabase.co/x` }, /approved Preview or Production/],
@@ -192,6 +198,11 @@ for (const [name, values, message] of [
   ['Production with a loopback origin', { ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', origin]) }, /only from https:\/\/gridsmith.uk/],
   ['Production with the www origin', { ...production, GRIDSMITH_ALLOWED_ORIGINS: '["https://www.gridsmith.uk"]' }, /only from/],
   ['Production with the staging origin', { ...production, GRIDSMITH_ALLOWED_ORIGINS: '["https://mediumaquamarine-wallaby-594070.hostingersite.com"]' }, /only from/],
+  // GS-R14: the temporary domain only alongside gridsmith.uk, in that order, and never in live mode.
+  ['Production live with the temporary domain', { ...production, GRIDSMITH_INTAKE_MODE: 'live', GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', TEMPORARY_ORIGIN]) }, /only from/],
+  ['temporary domain first', { ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify([TEMPORARY_ORIGIN, 'https://gridsmith.uk']) }, /only from/],
+  ['temporary domain plus loopback', { ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', TEMPORARY_ORIGIN, origin]) }, /only from/],
+  ['temporary domain over HTTP', { ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', TEMPORARY_ORIGIN.replace('https:', 'http:')]) }, /only from/],
   ['origins not JSON', { ...production, GRIDSMITH_ALLOWED_ORIGINS: 'https://gridsmith.uk' }, /Exact approved intake origins/],
   ['origins unset', { ...production, GRIDSMITH_ALLOWED_ORIGINS: '' }, /Exact approved intake origins/],
   ['unapproved recipient', { ...production, LEAD_NOTIFICATION_EMAIL: 'someone@example.invalid' }, /approved recipient/],

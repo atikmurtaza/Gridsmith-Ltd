@@ -284,6 +284,17 @@ const codes = (problems) => problems.map((problem) => problem.split(':')[0]);
 // Staging delivery is byte-identical to its accepted pre-GS-R13 policy.
 assert.equal(sha(hostingerRules(REVIEW_STAGING_ORIGIN)), '5f35938fdfa3ee6ddd714ab38afb8c29f91c6e73c6f83e8580b82f34d3bdd1a1');
 assert.equal(sha(hostingerRules(REVIEW_STAGING_ORIGIN, 'development')), '0cbdf3c59729aff50209a899692288021774f5f1e438a312866fc50b6d509a23');
+// GS-R14: the temporary domain against the recorded Production intake differs only in connect-src.
+{
+  const { PRODUCTION_INTAKE_URL } = await import('../lib/build/production.ts');
+  const productionIntake = new URL(PRODUCTION_INTAKE_URL).origin, previewIntake = new URL(PREVIEW_INTAKE_URL).origin;
+  const temporary = hostingerRules(REVIEW_STAGING_ORIGIN, 'production', productionIntake);
+  assert.equal(temporary, hostingerRules(REVIEW_STAGING_ORIGIN).replace(`connect-src 'self' ${previewIntake};`, `connect-src 'self' ${productionIntake};`));
+  assert(temporary.includes(`connect-src 'self' ${productionIntake};`) && !temporary.includes(previewIntake) && /X-Robots-Tag "noindex/.test(temporary));
+  for (const origin of ['https://abcdefghijklmnopqrst.supabase.co', PRODUCTION_INTAKE_URL, 'https://example.invalid', productionIntake.replace('https:', 'http:')]) {
+    assert.throws(() => hostingerRules(REVIEW_STAGING_ORIGIN, 'production', origin), /Preview or recorded Production intake/, origin);
+  }
+}
 
 // Inputs. Today's repository state must refuse; a fully supplied specimen must not.
 assert(productionInputProblems(PREVIEW_INTAKE_URL, publication, register).length > 0, 'Profile must refuse today');

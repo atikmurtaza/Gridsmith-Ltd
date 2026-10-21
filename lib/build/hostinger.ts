@@ -1,5 +1,5 @@
 import { REVIEW_STAGING_ORIGIN } from '../reviews/public-model.ts';
-import { PRODUCTION_ORIGIN, PREVIEW_INTAKE_URL } from './production.ts';
+import { PRODUCTION_ORIGIN, PREVIEW_INTAKE_URL, PRODUCTION_INTAKE_URL } from './production.ts';
 import { readFileSync } from 'node:fs';
 
 type LegacyRedirect = { source: string; destination: string; permanent: boolean };
@@ -55,8 +55,13 @@ AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascri
 `;
 
 /** Hostinger HTTP cache policy; unrelated to prohibited review-data caching. */
-export function hostingerRules(origin: string, dataset: 'production' | 'development' = 'production') {
+export function hostingerRules(origin: string, dataset: 'production' | 'development' = 'production',
+  intakeOrigin = new URL(PREVIEW_INTAKE_URL).origin) {
   if (origin !== REVIEW_STAGING_ORIGIN) throw new Error('Exact isolated Hostinger staging origin required');
+  // GS-R14: the temporary domain may use the Production intake; nothing else may enter connect-src.
+  if (![PREVIEW_INTAKE_URL, PRODUCTION_INTAKE_URL].some((url) => url && new URL(url).origin === intakeOrigin)) {
+    throw new Error('Staging rules require the Preview or recorded Production intake origin');
+  }
   return `# GS-HOST-H4-D-R1: static files only; no PHP or Node application runtime.
 Options -Indexes -MultiViews
 DirectoryIndex index.html
@@ -70,7 +75,7 @@ RewriteRule ^ https://mediumaquamarine-wallaby-594070.hostingersite.com%{REQUEST
 # Legal successors remain gated: legacy requests must return the branded 404.
 RewriteRule ^(?:privacy-policy|terms-and-conditions)/?$ - [R=404,L]
 ${routing}<IfModule mod_headers.c>
-${headerPolicy(true, new URL(PREVIEW_INTAKE_URL).origin, dataset)}</IfModule>
+${headerPolicy(true, intakeOrigin, dataset)}</IfModule>
 ${types}`;
 }
 

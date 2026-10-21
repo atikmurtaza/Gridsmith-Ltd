@@ -10,11 +10,10 @@ export const PRODUCTION_ORIGIN = 'https://gridsmith.uk';
 export const PREVIEW_INTAKE_URL = 'https://qfgpwumvvtizeamkynes.supabase.co/functions/v1/gs-lead-intake';
 
 /**
- * The Production Edge intake. `null` until the H4-B production phase has deployed
- * `gs-lead-intake` to the Production project, allowed this origin, and recorded the evidence.
- * That phase sets it in its own reviewed commit; nothing else may.
+ * The Production Edge intake. Set (GS-R14) from GS-R13-H4B-EXEC-001's evidence (`34e036aa`):
+ * `gs-lead-intake` deployed to Production, allowing this origin, and proven synthetic-only.
  */
-export const PRODUCTION_INTAKE_URL: string | null = null;
+export const PRODUCTION_INTAKE_URL: string | null = 'https://dqiutgmxillhsbzgnlsx.supabase.co/functions/v1/gs-lead-intake';
 
 const intakePattern = /^https:\/\/[a-z0-9]{20}\.supabase\.co\/functions\/v1\/gs-lead-intake$/;
 

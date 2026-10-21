@@ -16,7 +16,7 @@ import { LEGAL_DOCUMENTS } from './seed-legal.mjs';
 import { resolveBuildTarget } from '../lib/build/target.ts';
 import { stagingReviewsAllowed, REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
 import { hostingerRules, prepareHostingerText, productionHostingerRules } from '../lib/build/hostinger.ts';
-import { PRODUCTION_ORIGIN, PREVIEW_INTAKE_URL, productionInputProblems } from '../lib/build/production.ts';
+import { PRODUCTION_ORIGIN, PREVIEW_INTAKE_URL, PRODUCTION_INTAKE_URL, productionInputProblems } from '../lib/build/production.ts';
 import { SANITY_PROJECT_ID, SANITY_API_VERSION } from '../sanity/project.ts';
 import { inspectStaticArtifact, readArtifact } from './check-static-artifact.mjs';
 import { artifactReviewProblems, artifactNoReviewProblems } from './review-public-rules.mjs';
@@ -44,8 +44,10 @@ if (production) {
   if (rehearsal && intakeUrl !== PREVIEW_INTAKE_URL) throw new Error('A production rehearsal uses only the isolated Preview intake');
   if (rehearsal) waived = unmet;
   else if (unmet.length) throw new Error(`gridsmith.uk profile refused; unmet production inputs:\n${unmet.join('\n')}`);
-} else if (intakeUrl !== PREVIEW_INTAKE_URL) {
-  throw new Error('H4-B static proof requires the explicit isolated Preview intake URL');
+} else if (intakeUrl !== PREVIEW_INTAKE_URL && !(intakeUrl === PRODUCTION_INTAKE_URL &&
+  process.env.GRIDSMITH_STAGING_ORIGIN === REVIEW_STAGING_ORIGIN)) {
+  // GS-R14: only the exact Hostinger temporary domain may build against the Production intake.
+  throw new Error('Staging requires the isolated Preview intake, or the recorded Production intake on the exact temporary domain');
 }
 // Only these artifact findings follow from waived inputs; every other finding still refuses.
 const unwaived = (problems) => rehearsal ? problems.filter((problem) => {
@@ -175,7 +177,7 @@ try {
   const after = makeManifest(await inventory(), publication, { indexable: production });
   if (JSON.stringify(after) !== JSON.stringify(manifest)) throw new Error('CMS revisions changed during static generation');
   if (production) writeFileSync(join(staging, 'out/.htaccess'), productionHostingerRules(new URL(intakeUrl).origin, dataset, { rehearsal }));
-  else if (siteOrigin === REVIEW_STAGING_ORIGIN) writeFileSync(join(staging, 'out/.htaccess'), hostingerRules(siteOrigin, dataset));
+  else if (siteOrigin === REVIEW_STAGING_ORIGIN) writeFileSync(join(staging, 'out/.htaccess'), hostingerRules(siteOrigin, dataset, new URL(intakeUrl).origin));
   for (const [path, bytes] of readArtifact(join(staging, 'out'))) {
     if (path.endsWith('.html') || path === 'robots.txt') {
       writeFileSync(join(staging, 'out', path), prepareHostingerText(path, bytes.toString('utf8')));
@@ -196,7 +198,7 @@ try {
     untracked.some((path) => /^(?:app|components|lib|styles|sanity|redirects|scripts|lighthouse)\//.test(path));
   const phase = production ? 'GS-R13-PRODUCTION-PROFILE-001' : legalPreview ? 'GS-LEGAL-001-R12' : 'GS-HOST-H4-D-R1';
   const deployment = { phase, sourceSha, sourceModified, siteOrigin,
-    dataset, legalPreview, ...(production ? { profile, rehearsal, deployable: !rehearsal } : {}),
+    dataset, legalPreview, intakeOrigin: new URL(intakeUrl).origin, ...(production ? { profile, rehearsal, deployable: !rehearsal } : {}),
     artifactIdentity: digest(JSON.stringify(fileManifest)), files: fileManifest };
   writeFileSync(join(output, '__deployment.json'), JSON.stringify(deployment) + '\n');
   const finalResult = inspectStaticArtifact(readArtifact(output), manifest, publication, knownSecrets, siteOrigin);
