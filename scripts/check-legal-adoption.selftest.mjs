@@ -10,6 +10,8 @@
  * Runs in `verify:static`.
  */
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import assert from 'node:assert/strict';
 import {
   danglingReferences,
   draftProblems,
@@ -18,14 +20,19 @@ import {
   registerProblems,
   crossRegisterProblems,
   stateProblems,
+  coordinatedReviewProblems,
 } from './legal-adoption-rules.mjs';
-import { parseDraft } from './seed-legal.mjs';
+import { parseDraft, assertAdoptedSource } from './seed-legal.mjs';
+import { allLegalPublishable } from '../lib/legal/adoption.ts';
 
 const read = (f) => readFileSync(`docs/_legal/${f}`, 'utf8');
-const consumer = read('CONSUMER-TERMS.md');
-const business = read('MSA-BUSINESS.md');
-const privacy = read('PRIVACY-POLICY.md');
-const cookies = read('COOKIE-POLICY.md');
+const consumer = read('current/client-terms-consumers.md');
+const business = read('current/client-terms-business.md');
+const privacy = read('current/privacy-policy.md');
+const cookies = read('current/cookie-policy.md');
+const website = read('current/website-terms.md');
+const workflow = read('compliance/CONSUMER-CONTRACTING-WORKFLOW.md');
+const coordinated = { privacy, cookies, terms: website, 'consumer-client-terms': consumer, 'business-client-terms': business };
 const facts = { cookieName: 'gs_consent', cookieDays: 365, storageApis: [] };
 
 let failures = 0;
@@ -44,6 +51,16 @@ const expect = (name, problems, pattern) => {
 };
 const all = (slug, md) => [...draftProblems(slug, md), ...instrumentProblems(slug, md)];
 
+expect('coordinated public texts and operational templates', coordinatedReviewProblems(coordinated, workflow), null);
+expect('stale quotation version', coordinatedReviewProblems(coordinated, workflow.replace('Client Terms for Consumers version 3.3', 'Client Terms for Consumers version 3.1')), /current consumer version/);
+expect('missing early-service request in quotation', coordinatedReviewProblems(coordinated, workflow.replace('"I ask Gridsmith Ltd to start work now', '"Please start')), /exact acceptance/);
+expect('cancellation form omits digital content', coordinatedReviewProblems(coordinated, workflow.replace('following service/digital content:', 'following service:')), /form differs/);
+expect('digital supply starts early', coordinatedReviewProblems({ ...coordinated, 'consumer-client-terms': consumer.replace('we wait until its cancellation period has ended before supplying it', 'we supply it immediately') }, workflow), /digital content must wait/);
+expect('sensitive-data instructions diverge', coordinatedReviewProblems({ ...coordinated, terms: website.replace('Relevance to a project does not by itself authorise its use.', 'Relevance authorises use.') }, workflow), /sensitive-data instructions/);
+expect('internal release detail resurfaces', coordinatedReviewProblems({ ...coordinated, privacy: privacy + '\nProduction scheduler history.' }, workflow), /internal release/);
+expect('fixed response promise resurfaces', coordinatedReviewProblems({ ...coordinated, terms: website + '\nWe acknowledge within 5 working days.' }, workflow), /fixed acknowledgement/);
+expect('country list resurfaces in client terms', coordinatedReviewProblems({ ...coordinated, 'business-client-terms': business + '\nAgencies in Pakistan.' }, workflow), /country list/);
+
 // Controls.
 expect('consumer clean', all('consumer-client-terms', consumer), null);
 expect('business clean', all('business-client-terms', business), null);
@@ -57,7 +74,7 @@ expect('company number', all('consumer-client-terms', consumer.replaceAll('17050
 expect('dangling reference', all('consumer-client-terms', swap(consumer, 'the cancellation form in section 22', 'the cancellation form in section 42')), /refers to clause\(s\) 42/);
 expect('regulator name', draftProblems('privacy', privacy + "\nComplain to the Information Commissioner's Office.\n"), /Information Commissioner's Office/);
 expect('retired host', draftProblems('privacy', privacy + '\nVercel hosts the site.\n'), /Vercel/);
-expect('website prices', draftProblems('terms', read('WEBSITE-TERMS.md').replace('This website does not publish prices.', 'Prices shown on this website are indicative.')), /prices shown/);
+expect('website prices', draftProblems('terms', read('current/website-terms.md').replace('This website does not publish prices.', 'Prices shown on this website are indicative.')), /prices shown/);
 
 // instrumentProblems — shared client-terms branches.
 expect('automatic portfolio', all('business-client-terms', business + '\nGridsmith may identify the client and display final work.\n'), /automatic portfolio/);
@@ -100,8 +117,8 @@ expect('provider missing', parityProblems(privacy.replaceAll('Hostinger', 'our h
 expect('regulator missing', parityProblems(privacy.replaceAll('Information Commission', 'regulator'), cookies, facts), /Information Commission/);
 expect('storage region missing', parityProblems(privacy.replaceAll('Ireland', 'Europe'), cookies, facts), /where enquiries are stored/);
 expect('cookie name', parityProblems(privacy, cookies, { ...facts, cookieName: 'gs_other' }), /gs_other/);
-expect('cookie lifetime', parityProblems(privacy, cookies, { ...facts, cookieDays: 180 }), /180-day/);
-expect('undisclosed storage', parityProblems(privacy, cookies, { ...facts, storageApis: ['localStorage'] }), /says no local storage/);
+expect('cookie lifetime', parityProblems(privacy, cookies, { ...facts, cookieDays: 366 }), /366-day/);
+expect('undisclosed storage', parityProblems(privacy, cookies + '\nWe do not use local storage.\n', { ...facts, storageApis: ['localStorage'] }), /says no local storage/);
 
 // registerProblems.
 const entry = { draft: 'docs/_legal/X.md', state: 'RESEARCHED', ownerAdoptedOn: null, ownerAdoptedVersion: null };
@@ -148,33 +165,35 @@ expect('adopted clean', stateProblems('c', 'OWNER_ADOPTED', adoptedConsumer, 's'
 expect('adopted with an open marker (the privacy guard)', stateProblems('p', 'OWNER_ADOPTED', toEffective(asDraft(privacyMarked)), 's', '2026-10-07'), /OWNER_ADOPTED but carries an open marker/);
 expect('adopted still headed with a draft date', stateProblems('c', 'OWNER_ADOPTED', consumerDraft, 's', '2026-10-07'), /OWNER_ADOPTED but still headed with a draft date/);
 expect('adopted without an effective date', stateProblems('c', 'OWNER_ADOPTED', consumerDraft, 's', '2026-10-07'), /OWNER_ADOPTED without an "Effective date"/);
-const PRE = (ids) => ids.map((id) => ({ id, requirement: id }));
+const PUBLICATION_TEXT = 'Owner authority to publish. It does not authorise any change to gridsmith.uk, WordPress or DNS.';
+const PRE = (ids) => ids.map((id) => ({ id, requirement: id === 'PUBLICATION-AUTHORITY' ? PUBLICATION_TEXT : id }));
 const SHA = 'a'.repeat(64);
 const adoptedEntry = { ...entry, state: 'OWNER_ADOPTED', ownerAdoptedOn: '2026-10-07', ownerAdoptedVersion: '1.0', ownerAdoptedSha256: SHA,
-  adoptionAuthority: 'Owner instruction, test specimen', publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'PRIVACY-PUBLISHABLE']), prerequisitesMet: {} };
+  adoptionAuthority: 'Owner instruction, test specimen', publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'PRIVACY-PUBLISHABLE']), prerequisitesMet: {} };
 expect('adopted register clean', registerProblems('x', adoptedEntry, '1.0', 'docs/_legal/X.md', SHA), null);
 expect('adopted without authority', registerProblems('x', { ...adoptedEntry, adoptionAuthority: undefined }, '1.0', 'docs/_legal/X.md', SHA), /without an adoptionAuthority/);
 expect('adopted with an empty authority', registerProblems('x', { ...adoptedEntry, adoptionAuthority: '  ' }, '1.0', 'docs/_legal/X.md', SHA), /without an adoptionAuthority/);
-expect('adopted without cutover prerequisite', registerProblems('x', { ...adoptedEntry, publicationPrerequisites: PRE(['PRIVACY-PUBLISHABLE']) }, '1.0', 'docs/_legal/X.md', SHA), /CUTOVER-AUTHORITY/);
-expect('cookies adopted without A-2', registerProblems('cookies', adoptedEntry, '1.0', 'docs/_legal/X.md', SHA), /A-2-PRODUCTION-COOKIE-RETEST/);
-expect('cookies adopted with A-2 clean', registerProblems('cookies', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'PRIVACY-PUBLISHABLE', 'A-2-PRODUCTION-COOKIE-RETEST']) }, '1.0', 'docs/_legal/X.md', SHA), null);
-expect('publishable with an unmet prerequisite', registerProblems('x', { ...adoptedEntry, state: 'PUBLISHABLE', prerequisitesMet: { 'CUTOVER-AUTHORITY': 'owner, date' } }, '1.0', 'docs/_legal/X.md', SHA), /PRIVACY-PUBLISHABLE has no recorded evidence/);
-expect('publishable with every prerequisite met', registerProblems('x', { ...adoptedEntry, state: 'PUBLISHABLE', prerequisitesMet: { 'CUTOVER-AUTHORITY': 'owner, date', 'PRIVACY-PUBLISHABLE': 'register, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
+expect('adopted without publication-authority prerequisite', registerProblems('x', { ...adoptedEntry, publicationPrerequisites: PRE(['PRIVACY-PUBLISHABLE']) }, '1.0', 'docs/_legal/X.md', SHA), /PUBLICATION-AUTHORITY/);
+expect('publication authority that reads as cutover authority', registerProblems('x', { ...adoptedEntry, publicationPrerequisites: [{ id: 'PUBLICATION-AUTHORITY', requirement: 'Owner authority to publish and to switch gridsmith.uk.' }, ...PRE(['PRIVACY-PUBLISHABLE'])] }, '1.0', 'docs/_legal/X.md', SHA), /does not authorise gridsmith[.]uk, WordPress or DNS/);
+expect('cookies adopted without A-2', registerProblems('cookies', adoptedEntry, '1.0', 'docs/_legal/X.md', SHA), /A-2-COOKIE-RETEST/);
+expect('cookies adopted with A-2 clean', registerProblems('cookies', { ...adoptedEntry, publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'PRIVACY-PUBLISHABLE', 'A-2-COOKIE-RETEST']) }, '1.0', 'docs/_legal/X.md', SHA), null);
+expect('publishable with an unmet prerequisite', registerProblems('x', { ...adoptedEntry, state: 'PUBLISHABLE', prerequisitesMet: { 'PUBLICATION-AUTHORITY': 'owner, date' } }, '1.0', 'docs/_legal/X.md', SHA), /PRIVACY-PUBLISHABLE has no recorded evidence/);
+expect('publishable with every prerequisite met', registerProblems('x', { ...adoptedEntry, state: 'PUBLISHABLE', prerequisitesMet: { 'PUBLICATION-AUTHORITY': 'owner, date', 'PRIVACY-PUBLISHABLE': 'register, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
 // R4 review M1 — adoption is bound to the adopted text, not only the version number.
 expect('adopted text changed, same version', registerProblems('x', adoptedEntry, '1.0', 'docs/_legal/X.md', 'b'.repeat(64)), /not the adopted text/);
 expect('adopted without a text hash', registerProblems('x', { ...adoptedEntry, ownerAdoptedSha256: undefined }, '1.0', 'docs/_legal/X.md', SHA), /without an ownerAdoptedSha256/);
 expect('adopted with a malformed hash', registerProblems('x', { ...adoptedEntry, ownerAdoptedSha256: 'abc' }, '1.0', 'docs/_legal/X.md', 'abc'), /without an ownerAdoptedSha256/);
 expect('hash recorded before adoption', registerProblems('x', { ...entry, ownerAdoptedSha256: SHA }, '1.0', 'docs/_legal/X.md', SHA), /only the owner's adoption/);
 // R4 review M5/L1 — privacy, when adopted, needs the H4-B intake promoted and does not list itself.
-expect('privacy adopted without the H4-B prerequisite', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY']) }, '1.0', 'docs/_legal/X.md', SHA), /H4-B-INTAKE-PROMOTED/);
-expect('privacy adopted with its own prerequisites clean', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'cleanup log, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
+expect('privacy adopted without the H4-B prerequisite', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY']) }, '1.0', 'docs/_legal/X.md', SHA), /H4-B-INTAKE-PROMOTED/);
+expect('privacy adopted with its own prerequisites clean', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'cleanup log, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
 // R6 — Privacy 2.2 describes the retention routine as operating, so adoption needs evidence that it does.
-expect('privacy adopted while the retention routine is not operating', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']) }, '1.0', 'docs/_legal/X.md', SHA), /without recorded evidence for RETENTION-ROUTINE-OPERATING/);
-expect('privacy adopted with empty retention evidence', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': '  ' } }, '1.0', 'docs/_legal/X.md', SHA), /without recorded evidence for RETENTION-ROUTINE-OPERATING/);
+expect('privacy adopted while the retention routine is not operating', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']) }, '1.0', 'docs/_legal/X.md', SHA), /without recorded evidence for RETENTION-ROUTINE-OPERATING/);
+expect('privacy adopted with empty retention evidence', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': '  ' } }, '1.0', 'docs/_legal/X.md', SHA), /without recorded evidence for RETENTION-ROUTINE-OPERATING/);
 // R10 — the Hostinger chain moved from adoption evidence to a publication prerequisite.
-expect('privacy adopted without listing the Hostinger chain prerequisite', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'cleanup log, date' } }, '1.0', 'docs/_legal/X.md', SHA), /adopted without the publication prerequisite HOSTINGER-PROCESSOR-CHAIN/);
-expect('privacy publishable without Hostinger chain evidence', registerProblems('privacy', { ...adoptedEntry, state: 'PUBLISHABLE', publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'log', 'CUTOVER-AUTHORITY': 'owner', 'H4-B-INTAKE-PROMOTED': 'phase' } }, '1.0', 'docs/_legal/X.md', SHA), /HOSTINGER-PROCESSOR-CHAIN has no recorded evidence/);
-expect('privacy publishable with existing contractual coverage and every prerequisite met', registerProblems('privacy', { ...adoptedEntry, state: 'PUBLISHABLE', publicationPrerequisites: PRE(['CUTOVER-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'log', 'CUTOVER-AUTHORITY': 'owner', 'H4-B-INTAKE-PROMOTED': 'phase', 'HOSTINGER-PROCESSOR-CHAIN': 'R11 authorised corporate use, existing Terms and incorporated DPA, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
+expect('privacy adopted without listing the Hostinger chain prerequisite', registerProblems('privacy', { ...adoptedEntry, publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'H4-B-INTAKE-PROMOTED']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'cleanup log, date' } }, '1.0', 'docs/_legal/X.md', SHA), /adopted without the publication prerequisite HOSTINGER-PROCESSOR-CHAIN/);
+expect('privacy publishable without Hostinger chain evidence', registerProblems('privacy', { ...adoptedEntry, state: 'PUBLISHABLE', publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'log', 'PUBLICATION-AUTHORITY': 'owner', 'H4-B-INTAKE-PROMOTED': 'phase' } }, '1.0', 'docs/_legal/X.md', SHA), /HOSTINGER-PROCESSOR-CHAIN has no recorded evidence/);
+expect('privacy publishable with existing contractual coverage and every prerequisite met', registerProblems('privacy', { ...adoptedEntry, state: 'PUBLISHABLE', publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'log', 'PUBLICATION-AUTHORITY': 'owner', 'H4-B-INTAKE-PROMOTED': 'phase', 'HOSTINGER-PROCESSOR-CHAIN': 'R11 authorised corporate use, existing Terms and incorporated DPA, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
 expect('other documents need no retention evidence', registerProblems('terms', adoptedEntry, '1.0', 'docs/_legal/X.md', SHA), null);
 
 // danglingReferences — lists and sub-clauses.
@@ -196,7 +215,7 @@ expect('privacy-publishable claimed while privacy only adopted', crossRegisterPr
 expect('privacy-publishable met for real', crossRegisterProblems(docs('PUBLISHABLE', { 'PRIVACY-PUBLISHABLE': 'register, date' })), null);
 expect('privacy-publishable not claimed', crossRegisterProblems(docs('OWNER_REVIEW_REQUIRED', {})), null);
 // The live register: no entry claims Privacy publishable; adoption alone does not permit publication.
-expect('live register cross-coherent', crossRegisterProblems(JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json', 'utf8')).documents), null);
+expect('live register cross-coherent', crossRegisterProblems(JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json', 'utf8')).documents), null);
 
 // parseDraft — the generator the served pages come from refuses malformed drafts.
 const head = '# T\n\n**Version 1.0**\\\n**Draft date: 6 October 2026**\n\n';
@@ -217,6 +236,23 @@ throws('no date', '# T\n\n**Version 1.0**\n\n## 1. A\n\nx\n', /no effective or d
 throws('duplicate clause', head + '## 1. A\n\nx\n\n## 1. B\n\ny\n', /appears twice/);
 throws('unnumbered heading', head + '## 1. A\n\nx\n\n## Annex\n\ny\n', /unnumbered heading/);
 throws('no clause', head + 'Just text.\n', /no numbered clause/);
+
+// Owner adoption does not backdate the separately authorised cutover.
+const boundText = 'Exact synthetic adopted text';
+const boundEntry = { state: 'OWNER_ADOPTED', ownerAdoptedSha256: createHash('sha256').update(boundText).digest('hex') };
+assert.doesNotThrow(() => assertAdoptedSource('specimen', boundEntry, boundText));
+assert.throws(() => assertAdoptedSource('specimen', boundEntry, boundText + ' changed'), /differs from the exact owner-adopted text/);
+assert.doesNotThrow(() => assertAdoptedSource('specimen', { state: 'OWNER_REVIEW_REQUIRED' }, boundText));
+assert.equal(allLegalPublishable(Array(7).fill('PUBLISHABLE')), true);
+assert.equal(allLegalPublishable(Array(6).fill('PUBLISHABLE')), false);
+assert.equal(allLegalPublishable([...Array(6).fill('PUBLISHABLE'), 'OWNER_ADOPTED']), false);
+cases += 6;
+const publicationHeader = '**Effective date: On first publication with the replacement website at gridsmith.uk**';
+const publicationParsed = parseDraft(consumer);
+expect('publication trigger parsed', publicationParsed.effectiveOnPublication && publicationParsed.effective === null && publicationParsed.drafted === '2026-10-22' ? [] : ['bad commencement'], null);
+expect('adopted before publication event', stateProblems('c', 'OWNER_ADOPTED', consumer, 's', '2026-10-22'), null);
+expect('publishable commencement remains future', stateProblems('c', 'PUBLISHABLE', consumer, 's', '2026-10-22'), null);
+throws('malformed commencement rejected', consumer.replace(publicationHeader, '**Effective date: whenever approved**'), /unreadable effective date/);
 
 if (failures) {
   console.error(`\ncheck-legal-adoption.selftest: ${failures} of ${cases} case(s) failed`);

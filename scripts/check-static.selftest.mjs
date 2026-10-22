@@ -185,9 +185,9 @@ console.log('Hostinger static config subject: exact-origin production rejection,
 // R12: private preview has separate identities; all production exclusion proofs above still run.
 const { legalPreviewProfile, legalPreviewProblems, servedLegalPreview } = await import('./legal-preview-rules.mjs');
 const { LEGAL_DOCUMENTS } = await import('./seed-legal.mjs');
-const register = JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json'));
+const register = JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json'));
 assert.equal(legalPreviewProfile(undefined, 'production', REVIEW_STAGING_ORIGIN), false);
-assert(legalPreviewProfile('adopted-development', 'development', REVIEW_STAGING_ORIGIN));
+assert(legalPreviewProfile('adopted-development', 'development', 'http://localhost:3236'));
 let previewProofs = 0;
 assert(servedLegalPreview({ legalPreview: true, dataset: 'development' }, true));
 assert.equal(servedLegalPreview({ legalPreview: false, dataset: 'production' }), false);
@@ -197,6 +197,7 @@ for (const [identity, required] of [[null, false], [null, true], [{ legalPreview
 }
 for (const [value, dataset, origin] of [
   ['adopted-development', 'production', REVIEW_STAGING_ORIGIN],
+  ['adopted-development', 'development', REVIEW_STAGING_ORIGIN],
   ['adopted-development', 'development', 'https://gridsmith.uk'],
   ['adopted-development', 'development', 'https://unapproved.example.invalid'],
   ['adopted-development', 'development', REVIEW_STAGING_ORIGIN + '/'],
@@ -243,3 +244,40 @@ const noNotice = new Map(privateFiles);
 set(noNotice, 'legal/privacy.html', noNotice.get('legal/privacy.html').toString().replace('ADOPTED, NOT YET PUBLISHED.', ''));
 assert(inspectStaticArtifact(noNotice, privateManifest, publication).problems.some((p) => p.startsWith('LEGAL:'))); previewProofs++;
 console.log(`R12 legal preview PASS: exact seven-document parity; ${previewProofs} adverse proofs; production still emits zero legal routes.`);
+
+// GS-LAUNCH-001: a partial ordinary publication inventory must not export legal pages.
+const legalPublication = publication.map((entry) => entry.type === 'legalDocument' ? { ...entry, eligible: true, gate: null } : entry);
+const legalDocuments = legalPublication.filter((entry) => entry.eligible).map((entry) => ({
+  _id: entry.id, _type: entry.type, _rev: 'atomic-specimen', slug: entry.slug,
+  ...(entry.division ? { division: entry.division } : {}),
+  ...(entry.type === 'service' ? { published: true } : {}), isSeed: false,
+}));
+assert.equal(createStaticManifest(legalDocuments, legalPublication).routes.filter((route) => route.eligible && route.contentType === 'legalDocument').length, 7);
+for (let count = 1; count < 7; count++) {
+  let seen = 0;
+  const partial = legalPublication.map((entry) => entry.type === 'legalDocument' ? { ...entry, eligible: seen++ < count } : entry);
+  assert.throws(() => createStaticManifest(legalDocuments, partial), /all seven canonical/);
+}
+const wrongLegal = legalPublication.map((entry) => entry.type === 'legalDocument' && entry.slug === 'privacy' ? { ...entry, slug: 'wrong-slug' } : entry);
+assert.throws(() => createStaticManifest(legalDocuments, wrongLegal), /all seven canonical/);
+const { listPublicReviews } = await import('../lib/reviews/source.ts');
+assert.deepEqual(listPublicReviews(), []);
+const { artifactNoReviewProblems } = await import('./review-public-rules.mjs');
+assert.deepEqual(artifactNoReviewProblems(new Map([['index.html', Buffer.from('<h1>Gridsmith</h1>')]])), []);
+assert(artifactNoReviewProblems(new Map([['index.html', Buffer.from('<div data-reviews-carousel>probe</div>')]])).some((problem) => problem.startsWith('REVIEWS_PRESENT')));
+console.log('GS-LAUNCH-001: all-seven publication positive/partial/wrong-slug and review suppression proofs PASS.');
+
+const allLegalManifest = createStaticManifest(legalDocuments, legalPublication);
+const allLegalFixture = new Map(fixture);
+for (const route of allLegalManifest.routes.filter((item) => item.contentType === 'legalDocument')) {
+  allLegalFixture.set(route.path.slice(1) + '.html', Buffer.from(fixture.get('about.html').toString().replaceAll('/about', route.path)));
+}
+assert.deepEqual(inspectStaticArtifact(allLegalFixture, allLegalManifest, legalPublication).problems, []);
+const partialArtifactManifest = structuredClone(allLegalManifest);
+for (const route of partialArtifactManifest.routes.filter((item) => item.contentType === 'legalDocument' && item.slug !== 'privacy')) route.eligible = false;
+assert(inspectStaticArtifact(allLegalFixture, partialArtifactManifest, legalPublication).problems.includes('LEGAL: legal output must include all seven canonical documents together'));
+const { APPROVED_STAGING_REVIEWS } = await import('../lib/reviews/staging-approved.ts');
+for (const path of ['index.html', 'payload.txt', 'api/reviews.json', '_next/static/chunks/data.js']) {
+  assert(artifactNoReviewProblems(new Map([[path, Buffer.from(APPROVED_STAGING_REVIEWS[0].reviewText)]])).some((problem) => problem.startsWith('REVIEW_TEXT:')), path);
+}
+console.log('GS-LAUNCH-001: ordinary all-seven artifact control and partial-artifact rejection; four review-leak transports PASS.');

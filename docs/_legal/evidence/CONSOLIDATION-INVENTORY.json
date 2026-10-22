@@ -1,0 +1,692 @@
+{
+  "task": "GS-LAUNCH-001",
+  "date": "2026-10-22",
+  "primaryBaseline": "e854ad8747ad7ced8d543105368f25b501fec8b1",
+  "adoptionSource": "a7b931c10eb2a543bfa43e89954555fdadb7072d",
+  "sharedGitDirectory": true,
+  "mergeBase": "e854ad8747ad7ced8d543105368f25b501fec8b1",
+  "primaryCommitsSinceSourceFork": 0,
+  "preexistingDirtyFilesPreserved": {
+    "docs/_shared/05-HANDOVER.md": "c22b0b869b8d73211b30b42a1c66b32c6c3009c6a207b4deb4ad4ad2ee291f8c",
+    "docs/_shared/AI-HANDOFF.md": "29e749b5621ef6295375e506041bfb65d1676ad15692b006bbb295934443efb9",
+    "docs/_shared/PROJECT-STATUS.md": "c9ca46c685de6cce1947a50b19e899155ddd9a3d2f78d26475bd8c47c53d9b65",
+    ".codex/agents/accessibility-audit.toml": "47c8cec0db8bd1d130224a5ad8df0a830133372451640cf1895158e76d7ec437",
+    ".codex/agents/content-integrity.toml": "ccee9c6c93dd458718b1b092e27aa5a336fcf9d8003e53957c3b6982f863d5d5",
+    ".codex/agents/design-conformance.toml": "accfd51070d6a84956d1432c6454c0b4a0e7df4c23120ad6970b5d71ac996b60",
+    ".codex/agents/rules-compliance.toml": "df41d34bb36caf2aec76e8dc44955478856ac9a101f351abecdc397c47818143",
+    ".codex/agents/spec-compliance.toml": "c9baa030ad101536d1215f59fd4436f87f8c68596af72d615335f748e2f1832e",
+    "AGENTS.md": "ee998c1d7c00c3529f277e3d20377f144726909e875cc53d663025c98f72c6f6",
+    "docs/_shared/GS-LEGAL-001-R12-RASTER-CLOSURE.md": "db1ab3fb726cb1d408f33b4dadd758601031d31d6328e2e90e7637b0deb5be4c",
+    "docs/_shared/GS-SEC-001-R1.md": "5053339b2bcf2ff854e85467249d731defa4ff558339174921af16581d1d43aa",
+    "docs/_shared/GS-SEC-001-R2.md": "6a945382e58acde9696f637388c4c9dc028dfdd0bded443c15a47d941e6819d8",
+    "docs/_shared/GS-SEC-001-R3.md": "e886e8676e8b9bd9e0d0073957640dbc29b16984a2ec4e6c1f017e40b65dd776",
+    "public/brand/design/preview.html": "d16b6de9da38db5216b38f98300de9af55bd66228be1dc8323d191e33b1b2c48"
+  },
+  "canonical": [
+    {
+      "slug": "privacy",
+      "path": "docs/_legal/current/privacy-policy.md",
+      "version": "2.6",
+      "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "cookies",
+      "path": "docs/_legal/current/cookie-policy.md",
+      "version": "2.4",
+      "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "terms",
+      "path": "docs/_legal/current/website-terms.md",
+      "version": "2.3",
+      "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "client-terms",
+      "path": "docs/_legal/current/client-terms-applicability.md",
+      "version": "2.3",
+      "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "business-client-terms",
+      "path": "docs/_legal/current/client-terms-business.md",
+      "version": "3.3",
+      "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "consumer-client-terms",
+      "path": "docs/_legal/current/client-terms-consumers.md",
+      "version": "3.3",
+      "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "accessibility",
+      "path": "docs/_legal/current/accessibility-statement.md",
+      "version": "2.3",
+      "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb",
+      "state": "OWNER_ADOPTED"
+    }
+  ],
+  "currentFiles": [
+    {
+      "path": "docs/_legal/compliance/AGENCY-DELIVERY-AGREEMENT.md",
+      "status": "UNEXECUTED_TEMPLATE",
+      "sha256": "0c5a11b6ca73b986bb3aeac5dc064a8fa1f1cff38fcd4770a1d9dd6fecbb1e5b",
+      "bytes": 10905,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/ANALYTICS-ACTIVATION.md",
+      "status": "INTERNAL_OPERATIONAL_CONTROL",
+      "sha256": "7cbbcbabce18d6ef762e69f7eb88fbbc1377b04d9b85c3c198f47959b333c865",
+      "bytes": 4405,
+      "adoptionSourceIdentical": false
+    },
+    {
+      "path": "docs/_legal/compliance/CONSUMER-CONTRACTING-WORKFLOW.md",
+      "status": "INTERNAL_OPERATIONAL_CONTROL",
+      "sha256": "b6195a82b987243afe43d5f8d0e5851a2c4261fb7d1b543d0b914d5818b58202",
+      "bytes": 16308,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/DELETION-IMPLEMENTATION.md",
+      "status": "INTERNAL_OPERATIONAL_CONTROL",
+      "sha256": "edbd3f91ada6ed7abac3aa5aada0cdc9d93256a00056ccf0ac96326adb5841e1",
+      "bytes": 6397,
+      "adoptionSourceIdentical": false
+    },
+    {
+      "path": "docs/_legal/compliance/INTERNATIONAL-TRANSFERS.md",
+      "status": "INTERNAL_OPERATIONAL_CONTROL",
+      "sha256": "d7ff6f703da5cfc9958fe7b686be1b189676acd26b7ac502d608f070cd97f96d",
+      "bytes": 4823,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/LEGAL-LAUNCH-CHECKLIST.md",
+      "status": "INTERNAL_OPERATIONAL_CONTROL",
+      "sha256": "9a22e7477a3749daf06c017c7b6bcba0c906f15146e70f2390cc5a76ef790038",
+      "bytes": 3886,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/PROCESSOR-REGISTER.md",
+      "status": "INTERNAL_OPERATIONAL_CONTROL",
+      "sha256": "2d2d8c401a59a0a764133448d0af171716531642bfa73c8c95476367204515df",
+      "bytes": 4523,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/RETENTION-ACTIVATION-CHECKLIST.md",
+      "status": "INTERNAL_OPERATIONAL_CONTROL",
+      "sha256": "f4987aa5cc82a2c5ba90d1717252f7e03a03509546eded311bda23ed23e1a50b",
+      "bytes": 3583,
+      "adoptionSourceIdentical": false
+    },
+    {
+      "path": "docs/_legal/compliance/RETENTION-SCHEDULE.md",
+      "status": "INTERNAL_OPERATIONAL_CONTROL",
+      "sha256": "a5306934f1ee0e437a1742e9314531d10317e27714e9d00b7919aa189a0734ff",
+      "bytes": 8975,
+      "adoptionSourceIdentical": false
+    },
+    {
+      "path": "docs/_legal/compliance/rights-chain/01-OWNER-ASSIGNMENT-AND-WAIVER.md",
+      "status": "UNEXECUTED_TEMPLATE",
+      "sha256": "09b92aa120bdfe4e9d6e7835da05ac8dbcf587671a5b2549c671ab6950b470b0",
+      "bytes": 9559,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/rights-chain/02-EMPLOYEE-IP-CLAUSE.md",
+      "status": "UNEXECUTED_TEMPLATE",
+      "sha256": "94e2cd1dcd8e86bb33e6205c5593a58ea9cf0c31aba421042796ef979d8abffc",
+      "bytes": 5143,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/rights-chain/03-SUBCONTRACTOR-INDIVIDUAL-SCHEDULE.md",
+      "status": "UNEXECUTED_TEMPLATE",
+      "sha256": "0397fe4a3c822f1c7c9d1182e1277b3d2dc21ebd84137a40526e83db7dbcce33",
+      "bytes": 6474,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/rights-chain/04-SUBCONTRACTOR-COMPANY-SCHEDULE.md",
+      "status": "UNEXECUTED_TEMPLATE",
+      "sha256": "bb1f0496376eedea97668ea99f608472211302c012f0ea9475350269fec7049a",
+      "bytes": 6441,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/rights-chain/05-INDIVIDUAL-MORAL-RIGHTS-WAIVER.md",
+      "status": "UNEXECUTED_TEMPLATE",
+      "sha256": "6c3697e78a25823cb3e2cd8d789f258fd0089abda78180133c0bfe7d444c47ba",
+      "bytes": 3277,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/rights-chain/06-CLIENT-RIGHTS-ASSIGNMENT.md",
+      "status": "UNEXECUTED_TEMPLATE",
+      "sha256": "dfd3bd4204b8ece41b9173a3d62ed2911cf1cba53fa8136d82ba97dc2c130397",
+      "bytes": 8214,
+      "adoptionSourceIdentical": false
+    },
+    {
+      "path": "docs/_legal/compliance/rights-chain/07-TITLE-AND-TOOL-REGISTER.md",
+      "status": "UNEXECUTED_TEMPLATE",
+      "sha256": "521af61d45aab4dde62de41626e46fed0d24475c0ea61f76d9dcce94c2fb996a",
+      "bytes": 2393,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/compliance/rights-chain/README.md",
+      "status": "UNEXECUTED_TEMPLATE",
+      "sha256": "2b369cdbbe4cb880875fed218ef6382346465cc9d0862c8daccff36cca9de355",
+      "bytes": 10016,
+      "adoptionSourceIdentical": false
+    },
+    {
+      "path": "docs/_legal/compliance/RIGHTS-CHAIN.md",
+      "status": "INTERNAL_OPERATIONAL_CONTROL",
+      "sha256": "99bdeaffb242960aa6d37600c37787a01e42a834a79b63e71083120ff8cb3e14",
+      "bytes": 12134,
+      "adoptionSourceIdentical": false
+    },
+    {
+      "path": "docs/_legal/current/accessibility-statement.md",
+      "status": "OWNER_ADOPTED",
+      "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb",
+      "bytes": 2982,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/current/client-terms-applicability.md",
+      "status": "OWNER_ADOPTED",
+      "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+      "bytes": 2116,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/current/client-terms-business.md",
+      "status": "OWNER_ADOPTED",
+      "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+      "bytes": 30370,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/current/client-terms-consumers.md",
+      "status": "OWNER_ADOPTED",
+      "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e",
+      "bytes": 26217,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/current/cookie-policy.md",
+      "status": "OWNER_ADOPTED",
+      "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+      "bytes": 2952,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/current/privacy-policy.md",
+      "status": "OWNER_ADOPTED",
+      "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7",
+      "bytes": 13113,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/current/website-terms.md",
+      "status": "OWNER_ADOPTED",
+      "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+      "bytes": 5250,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/evidence/GS-LAUNCH-001-VERIFICATION.json",
+      "status": "EVIDENCE_ONLY",
+      "sha256": "423c556aa674b10fe80bd98da9d35458d62bef11021d4cc73d9dca687bce5bc1",
+      "bytes": 4925,
+      "adoptionSourceIdentical": false
+    },
+    {
+      "path": "docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md",
+      "status": "EVIDENCE_ONLY",
+      "sha256": "de9baa0a11b02cec4259c17a92371be8a4d0a2eced2fef68556b7f5512fe2dfe",
+      "bytes": 7948,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/evidence/GS-O003-R-REGISTER.json",
+      "status": "EVIDENCE_ONLY",
+      "sha256": "4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e",
+      "bytes": 21553,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/evidence/OWNER-FACTS.md",
+      "status": "EVIDENCE_ONLY",
+      "sha256": "ed4116d9be82bf979dd680b24250226bd053d89699aeee5505cbb7a736c9c9f0",
+      "bytes": 2412,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/evidence/PHASE-2-ACCESSIBILITY.json",
+      "status": "EVIDENCE_ONLY",
+      "sha256": "c8c16bf3f893aa0addd3e933f41acd043958e9bbc94a05d983082267a1efcb6c",
+      "bytes": 2165,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/evidence/PHASE-2-VERIFICATION.json",
+      "status": "EVIDENCE_ONLY",
+      "sha256": "7525a49bda4e576f08c0314300cc94c834f11d3943cd378f07cd7a666e1889ba",
+      "bytes": 3934,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/evidence/PREVIEW-RETENTION-READBACK.json",
+      "status": "EVIDENCE_ONLY",
+      "sha256": "50fb9add24ee41a43f9ef9b5b9e35705cba3a776e2ae3f844a0ecb197a59c8be",
+      "bytes": 843,
+      "adoptionSourceIdentical": true
+    },
+    {
+      "path": "docs/_legal/README.md",
+      "status": "INTERNAL_INVENTORY",
+      "sha256": "9a68361875b0b66f88de55fe44498e35a5421bd1092f4ad012db027341859ad1",
+      "bytes": 2880,
+      "adoptionSourceIdentical": false
+    }
+  ],
+  "inventorySelf": "docs/_legal/evidence/CONSOLIDATION-INVENTORY.json (excluded from its own digest)",
+  "removedOriginals": [
+    {
+      "path": "docs/_legal/00-LEGAL-BASIS.md",
+      "sha256": "6c96b245bf77dc185a520331e93230540559bb1d7528768d931131605f7a65e0",
+      "bytes": 37071,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/00-LEGAL-BASIS.md"
+    },
+    {
+      "path": "docs/_legal/01-FACTUAL-INVENTORY.md",
+      "sha256": "dd3c2df3fe2a50468c7c8e088e18a8c71cb1d0a276dc18423df4feabb028b56c",
+      "bytes": 40837,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/01-FACTUAL-INVENTORY.md"
+    },
+    {
+      "path": "docs/_legal/02-CITATION-LEDGER.md",
+      "sha256": "235ec000007ed230ccd31e258e35879ea48ee35bdfc74c4d6a11b5f763f76f45",
+      "bytes": 120063,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/02-CITATION-LEDGER.md"
+    },
+    {
+      "path": "docs/_legal/03-REVISION-LOG.md",
+      "sha256": "8d5a92732649c722ab36d1518b446083e005613bc30efea05a2825b122cb84fc",
+      "bytes": 137361,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/03-REVISION-LOG.md"
+    },
+    {
+      "path": "docs/_legal/04-VERIFICATION-REPORT.md",
+      "sha256": "82ad9f0c9e3969cae81ef1f73fa5e422dd975437faecf1a1dc9409e98ca661a7",
+      "bytes": 55856,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/04-VERIFICATION-REPORT.md"
+    },
+    {
+      "path": "docs/_legal/05-REVERIFICATION-REPORT.md",
+      "sha256": "c29e911fc9c92c4664e5cd4376cb9c050e4004168ba3ff34986cd8365ddeb4a5",
+      "bytes": 31280,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/05-REVERIFICATION-REPORT.md"
+    },
+    {
+      "path": "docs/_legal/06-FINAL-VERIFICATION.md",
+      "sha256": "ea5502627920f91b17da4173fabe2114e753ff38da4a9cc54c162620e190e86f",
+      "bytes": 31000,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/06-FINAL-VERIFICATION.md"
+    },
+    {
+      "path": "docs/_legal/07-STATE-REPORT.md",
+      "sha256": "2da80ea802955fef2aa419ab80e379248baae18c9747cd3e183c55d3eb582de7",
+      "bytes": 30832,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/07-STATE-REPORT.md"
+    },
+    {
+      "path": "docs/_legal/ACCESSIBILITY-STATEMENT.md",
+      "sha256": "b9a5bcce6422d401fda345ae3665c684e072331c43e1b69a36642813abfc6c45",
+      "bytes": 2708,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/ACCESSIBILITY-STATEMENT.md"
+    },
+    {
+      "path": "docs/_legal/CONSUMER-TERMS.md",
+      "sha256": "5c1cb1ba9fb8bf631af15e2247eb6fc3707ee6342d8c1abf8cfbc203476fa7fa",
+      "bytes": 24178,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/CONSUMER-TERMS.md"
+    },
+    {
+      "path": "docs/_legal/COOKIE-POLICY.md",
+      "sha256": "b1a04b4c9eab965d951dfe495f434d7041abfd21c32e8f7dcf825a48c573629a",
+      "bytes": 2823,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/COOKIE-POLICY.md"
+    },
+    {
+      "path": "docs/_legal/GS-O003-R-REGISTER.json",
+      "sha256": "7d07da07354a8031b41742c4f78f1e7deab0f99de08dae6d26794f81b52faae8",
+      "bytes": 22152,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/GS-O003-R-REGISTER.json"
+    },
+    {
+      "path": "docs/_legal/LEGAL-LAUNCH-CHECKLIST.md",
+      "sha256": "6c270da74e4e0ca20a6e2d09b80e6b7c86b4a631eaeb276b46bd36c468e244ad",
+      "bytes": 9517,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/LEGAL-LAUNCH-CHECKLIST.md"
+    },
+    {
+      "path": "docs/_legal/MSA-BUSINESS.md",
+      "sha256": "6f337787d7a5196c75dbb344f44955f148639928600cb4c0909cdf17e39b2367",
+      "bytes": 29708,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/MSA-BUSINESS.md"
+    },
+    {
+      "path": "docs/_legal/operations/CONSUMER-CONTRACTING-WORKFLOW.md",
+      "sha256": "95a395702ce556ac2d3628ba3843d411e8dc5b1649b527d53c3c3df30c683053",
+      "bytes": 21834,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/CONSUMER-CONTRACTING-WORKFLOW.md"
+    },
+    {
+      "path": "docs/_legal/operations/HOSTING-PROCESSING-ARRANGEMENT-DRAFT.md",
+      "sha256": "d1bad0044afa3b55029847046ae8eb87bb49f43849a8048321b70dc3d9c5f3a2",
+      "bytes": 7516,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/HOSTING-PROCESSING-ARRANGEMENT-DRAFT.md"
+    },
+    {
+      "path": "docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md",
+      "sha256": "dd2e071f063f6a902c0039bf1313f7420696485435ff44c8f91a8b39bfd7265a",
+      "bytes": 23795,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md"
+    },
+    {
+      "path": "docs/_legal/operations/PROCESSOR-REGISTER.md",
+      "sha256": "2fc05d871242c6993a802840dac4cc30fd425146dec7ed29e6117cd99344be6d",
+      "bytes": 4163,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/PROCESSOR-REGISTER.md"
+    },
+    {
+      "path": "docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md",
+      "sha256": "3e4797a1802094604ebcb6986e46eed3b628f653d082849f626a2d51bc51100e",
+      "bytes": 13671,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md"
+    },
+    {
+      "path": "docs/_legal/operations/RETENTION-SCHEDULE.md",
+      "sha256": "21f75419ccabc9ea805edf6c4e105be82fb00b646ae941dbc895c87dcec7a53f",
+      "bytes": 16554,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/RETENTION-SCHEDULE.md"
+    },
+    {
+      "path": "docs/_legal/operations/rights-chain/01-OWNER-ASSIGNMENT-AND-WAIVER.md",
+      "sha256": "09b92aa120bdfe4e9d6e7835da05ac8dbcf587671a5b2549c671ab6950b470b0",
+      "bytes": 9559,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/rights-chain/01-OWNER-ASSIGNMENT-AND-WAIVER.md"
+    },
+    {
+      "path": "docs/_legal/operations/rights-chain/02-EMPLOYEE-IP-CLAUSE.md",
+      "sha256": "94e2cd1dcd8e86bb33e6205c5593a58ea9cf0c31aba421042796ef979d8abffc",
+      "bytes": 5143,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/rights-chain/02-EMPLOYEE-IP-CLAUSE.md"
+    },
+    {
+      "path": "docs/_legal/operations/rights-chain/03-SUBCONTRACTOR-INDIVIDUAL-SCHEDULE.md",
+      "sha256": "0397fe4a3c822f1c7c9d1182e1277b3d2dc21ebd84137a40526e83db7dbcce33",
+      "bytes": 6474,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/rights-chain/03-SUBCONTRACTOR-INDIVIDUAL-SCHEDULE.md"
+    },
+    {
+      "path": "docs/_legal/operations/rights-chain/04-SUBCONTRACTOR-COMPANY-SCHEDULE.md",
+      "sha256": "bb1f0496376eedea97668ea99f608472211302c012f0ea9475350269fec7049a",
+      "bytes": 6441,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/rights-chain/04-SUBCONTRACTOR-COMPANY-SCHEDULE.md"
+    },
+    {
+      "path": "docs/_legal/operations/rights-chain/05-INDIVIDUAL-MORAL-RIGHTS-WAIVER.md",
+      "sha256": "6c3697e78a25823cb3e2cd8d789f258fd0089abda78180133c0bfe7d444c47ba",
+      "bytes": 3277,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/rights-chain/05-INDIVIDUAL-MORAL-RIGHTS-WAIVER.md"
+    },
+    {
+      "path": "docs/_legal/operations/rights-chain/06-CLIENT-RIGHTS-ASSIGNMENT.md",
+      "sha256": "3322dab0a9fef98ccdfa90625ee21fa8a0ee34a903dbd9bf72f18d7a3c4d4c1e",
+      "bytes": 8168,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/rights-chain/06-CLIENT-RIGHTS-ASSIGNMENT.md"
+    },
+    {
+      "path": "docs/_legal/operations/rights-chain/07-TITLE-AND-TOOL-REGISTER.md",
+      "sha256": "521af61d45aab4dde62de41626e46fed0d24475c0ea61f76d9dcce94c2fb996a",
+      "bytes": 2393,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/rights-chain/07-TITLE-AND-TOOL-REGISTER.md"
+    },
+    {
+      "path": "docs/_legal/operations/rights-chain/README.md",
+      "sha256": "c72a7fe3232f729be669287c948dc0b206194a26209bb5857406d2900255d545",
+      "bytes": 9914,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/rights-chain/README.md"
+    },
+    {
+      "path": "docs/_legal/operations/RIGHTS-CHAIN.md",
+      "sha256": "3c279992811dc6a3ebb4627bd016b7c300151d4900c96e77afe36ec21c93f33e",
+      "bytes": 11858,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/RIGHTS-CHAIN.md"
+    },
+    {
+      "path": "docs/_legal/PRIVACY-POLICY.md",
+      "sha256": "80e67b5256449e2c7fc1562ead2da8ec538b217c8735cba3679f985af50a620b",
+      "bytes": 13300,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/PRIVACY-POLICY.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/00-BRIEF.md",
+      "sha256": "a50419666de56f832e90cb9cb69735e6074f090b1ae78fa28d9d9091a5fc3e47",
+      "bytes": 7275,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/00-BRIEF.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/A-consumer-law.md",
+      "sha256": "6fbd96e8b02f622f57f035d0ef3ce74d45af0ae34ea8b3ce28b1350d3aeebaf0",
+      "bytes": 69025,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/A-consumer-law.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/B-business-terms.md",
+      "sha256": "b203336580641699c7e30389f1b8d634105772ed1a152108a09b2b53e266eb65",
+      "bytes": 85917,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/B-business-terms.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/C-privacy-cookies.md",
+      "sha256": "a526c7ebd0b9b7a139e07e4679d994a4508af20272d9d2bb793cc4a919de4265",
+      "bytes": 49244,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/C-privacy-cookies.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/CLOUD-CONTINUATION.md",
+      "sha256": "5916c313526eb945a02d416db9e62524f0a7e60953054eb44ca849a72d55ee62",
+      "bytes": 15871,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/CLOUD-CONTINUATION.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/D-ecommerce-disclosures.md",
+      "sha256": "e878d840bf788a8dbabebed41db643ae17d556ab544ab9eceb0989e6faa38359",
+      "bytes": 38011,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/D-ecommerce-disclosures.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/E-competitor-benchmark.md",
+      "sha256": "62d2be06e3e86ec62197e6e282ae0442f41e3e3ccc3918656f2a6e7ef3803f80",
+      "bytes": 36558,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/E-competitor-benchmark.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/F-adversarial-review.md",
+      "sha256": "a8866ac8f5bf9924b5167a1064ded268c45550d1d02ae928cb9842c693ba7f7e",
+      "bytes": 63831,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/F-adversarial-review.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/G-final-cross-check.md",
+      "sha256": "793db3b26bf07c9e443658473d436ad39b54dd3bdd4c4f2a27d293827b523207",
+      "bytes": 47767,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/G-final-cross-check.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/GS-LEGAL-001-RECORD.md",
+      "sha256": "2e03e4a2baeab46056dddfb88203cf10e6338c97268cb86ce619e0984c94cbda",
+      "bytes": 35579,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/GS-LEGAL-001-RECORD.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R10-HOSTING-CLOSEOUT-PRIVACY-PACKAGE.md",
+      "sha256": "204a588421b8aaff9b16604515f648527b5058cf4717c177498d60409988c7b9",
+      "bytes": 11566,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R10-HOSTING-CLOSEOUT-PRIVACY-PACKAGE.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R11-PRIVACY-ADOPTION-HOSTING-CLOSEOUT.md",
+      "sha256": "9f2abba28c728f3013a677a2887d121e19e6e4d9844a3d3c6a3febd1eaef1a1c",
+      "bytes": 15134,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R11-PRIVACY-ADOPTION-HOSTING-CLOSEOUT.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R12-WEBSITE-INTEGRATION.md",
+      "sha256": "9fb50921afa65aca2296a5ea3942654a50550b2f000c0e11f7a345ad41b6ac08",
+      "bytes": 13588,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R12-WEBSITE-INTEGRATION.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md",
+      "sha256": "d503a8b830057a617eb960270af340e127a030947c06d0c0be9b05c36efc5d67",
+      "bytes": 66988,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md",
+      "sha256": "7e905d16a8f973f28379f4543be6f33aaecd97386c219e90d326cfd9791c9238",
+      "bytes": 35907,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R4-OWNER-ADOPTION.md",
+      "sha256": "cf5bca094dd4255ce15632551cf2e3c625c21a7e92addb488ed74907d4b3d317",
+      "bytes": 19942,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R4-OWNER-ADOPTION.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R4-PRIVACY-2.2-CHANGE-PLAN.md",
+      "sha256": "a2a9698ac354d8ae90654bee8583396da9ef3ec81b0a7f0a080efeb2ab29b294",
+      "bytes": 8869,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R4-PRIVACY-2.2-CHANGE-PLAN.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-2.2-READINESS.md",
+      "sha256": "c6d4410cae0da4e049521aa64ad10b725b314f30fdafb2936aabf997ea58a7b7",
+      "bytes": 15149,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-2.2-READINESS.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md",
+      "sha256": "b988ddd0b0ae628d336f996b747fc0a91b454fa5dc4d9812b4024f80ca477791",
+      "bytes": 25650,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md",
+      "sha256": "6b7d4f0ae9c0eef6f7e6d3420d7fecdd841abeae5f21947b6fe01d84a65e0946",
+      "bytes": 14285,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R7-HOSTINGER-RETENTION.md",
+      "sha256": "8c37cdba1b2bea1e9decf0469a7846651cdb9227d0657932ba1baa690bc2d42b",
+      "bytes": 16775,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R7-HOSTINGER-RETENTION.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md",
+      "sha256": "de4eec456a8997e17f74a8e9a6748464940f5939abe289e4dc42a8af04f822d7",
+      "bytes": 17458,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md"
+    },
+    {
+      "path": "docs/_legal/research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md",
+      "sha256": "f35f7d2897ab6d85e2840f6dfff583459f162f93093ee80ec54c0dabe3ddfd8e",
+      "bytes": 19599,
+      "disposition": "SUPERSEDED_RESEARCH_REMOVED_FROM_ACTIVE_TREE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md"
+    },
+    {
+      "path": "docs/_legal/WEBSITE-TERMS.md",
+      "sha256": "9bc00779b0c79d90e1ef8d2771bcf4589607315b9899d13592bb477fc1441c32",
+      "bytes": 4918,
+      "disposition": "REPLACED_BY_CURRENT_PACKAGE",
+      "preservedAt": "git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/WEBSITE-TERMS.md"
+    }
+  ],
+  "sourceCheckoutAndOutputs": "Unmodified; no historical archive duplicated",
+  "excludedSourceWork": "Later release/hosting/intake/analytics/consent/browser/security changes were not merged wholesale."
+}

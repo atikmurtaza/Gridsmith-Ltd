@@ -2,7 +2,7 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { artifactReviewProblems } from './review-public-rules.mjs';
+import { artifactNoReviewProblems } from './review-public-rules.mjs';
 import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { legalPreviewProfile } from './legal-preview-rules.mjs';
 
@@ -28,9 +28,10 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   try { preview = legalPreviewProfile(manifest.legalPreview, manifest.dataset, siteOrigin); }
   catch { bad('PROFILE', 'invalid legal preview boundary'); }
   if (manifest.version !== 1 || manifest.target !== 'static' || (!preview && manifest.dataset !== 'production') || manifest.indexable !== false) bad('PROFILE', 'invalid/indexable manifest');
-  if (preview && (expected.filter((route) => route.contentType === 'legalDocument').length !== 7 ||
+  const legal = expected.filter((route) => route.contentType === 'legalDocument');
+  if ((preview || legal.length > 0) && (legal.length !== 7 ||
       LEGAL_DOCUMENT_SLUGS.some((slug) => !expected.some((route) => route.path === `/legal/${slug}`)))) {
-    bad('LEGAL', 'private preview must include all seven adopted documents');
+    bad('LEGAL', 'legal output must include all seven canonical documents together');
   }
   // Independent subjects: deleting a manifest entry cannot delete its expectation.
   for (const path of ['/', '/about', '/approach', '/contact', '/insights', '/design', '/digital',
@@ -138,7 +139,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     'DIRECT_CONNECTION_STRING', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN', 'FREELANCER_API_SECRET']
     .map((name) => process.env[name]).filter((value) => value?.length >= 8);
   const result = inspectStaticArtifact(readArtifact(resolve('out')), manifest, publication, secrets, JSON.parse(readFileSync('build/static-receipt.json')).siteOrigin ?? 'http://localhost:3236');
-  result.problems.push(...artifactReviewProblems(readArtifact(resolve('out')), JSON.parse(readFileSync('docs/_shared/GS-HOST-H4-D-REVIEW-BASELINE.json'))));
+  result.problems.push(...artifactNoReviewProblems(readArtifact(resolve('out'))));
   if (result.problems.length) { console.error(result.problems.join('\n')); process.exitCode = 1; }
   else console.log(`Static contract PASS: ${result.htmlRoutes} routes, ${result.fileCount} files, ${result.totalBytes} bytes; ${secrets.length} supplied secret values checked.`);
 }

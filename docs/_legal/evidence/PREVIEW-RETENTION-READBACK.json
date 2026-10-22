@@ -1,0 +1,21 @@
+{
+  "reviewDate": "2026-10-22",
+  "source": "Supabase connector execute_sql, one transaction explicitly READ ONLY",
+  "project": "qfgpwumvvtizeamkynes",
+  "scope": "Preview job and aggregate counts only; no personal records, no endpoint, no mutation, no Production query",
+  "rows": [
+    {
+      "database_name": "postgres",
+      "jobname": "gs-consent-retention-daily",
+      "schedule": "17 3 * * *",
+      "active": true,
+      "command_md5": "5db75fdf346f69d2fe848f35d3518cd8",
+      "genuine_history_rows": 0,
+      "last_success_utc": null,
+      "failed_runs": 0,
+      "consent_rows": 0,
+      "expired_rows": 0
+    }
+  ],
+  "conclusion": "Configured active daily job; no genuine scheduler history or success observed; zero consent/expired rows. Manual A09 and disposable proofs remain separate. Cause of missing history UNKNOWN."
+}

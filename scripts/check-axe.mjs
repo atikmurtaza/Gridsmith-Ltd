@@ -1532,7 +1532,7 @@ check-axe: ${leadProblems.length} problem(s) on the lead pipeline (A-08):`);
  * silence. Every premise of that sequence has been removed: `lib/analytics/load.ts` is
  * deleted, `NEXT_PUBLIC_GA4_ID` and `NEXT_PUBLIC_POSTHOG_KEY` are inert, there is no Accept
  * and no Reject, and `window.__gsAnalyticsConfigured` is no longer published. The owner took
- * OQ-7 option 2 (`docs/_legal/03-REVISION-LOG.md` round 10): stop asking, because the two
+ * OQ-7 option 2 (`git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/03-REVISION-LOG.md` round 10): stop asking, because the two
  * libraries loaded on consent and never initialised.
  *
  * **Deleting the block outright was the wrong move and this is why.** The old sequence's real

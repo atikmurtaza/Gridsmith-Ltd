@@ -63,7 +63,9 @@ export const legalDocument = defineType({
     }),
     defineField({ name: 'title', type: 'string', validation: (r) => r.required() }),
     defineField({ name: 'version', type: 'string' }),
-    defineField({ name: 'effectiveFrom', type: 'date', validation: (r) => r.required() }),
+    defineField({ name: 'effectiveOnPublication', type: 'boolean', description: 'Takes effect only on first publication with the replacement website at gridsmith.uk.' }),
+    defineField({ name: 'effectiveFrom', type: 'date', validation: (r) => r.custom((value, context) =>
+      context.document?.effectiveOnPublication === true ? (!value || 'Publication-triggered text must not carry a backdated effective date') : (!!value || 'An effective date or publication trigger is required')) }),
     defineField({ name: 'lastReviewed', type: 'date' }),
     defineField({
       name: 'reviewedBy',
@@ -74,7 +76,7 @@ export const legalDocument = defineType({
      * `GS-O003-R` (`lib/legal/adoption.ts`), replacing the `solicitorApproved` boolean on
      * 6 October 2026 (owner decision, `GS-LEGAL-001`). Only `PUBLISHABLE` documents enter the
      * production dataset — `migrate-production-cms.mjs` reads the committed register
-     * `docs/_legal/GS-O003-R-REGISTER.json`, not this field, so a Studio edit cannot publish
+     * `docs/_legal/evidence/GS-O003-R-REGISTER.json`, not this field, so a Studio edit cannot publish
      * an unadopted document. The field describes the state to the reader of the page.
      */
     defineField({

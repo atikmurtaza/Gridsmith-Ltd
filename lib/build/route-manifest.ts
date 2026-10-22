@@ -1,3 +1,5 @@
+import { LEGAL_DOCUMENT_SLUGS } from '../legal/slugs.ts';
+
 /** H4-A: routing policy consumes the existing reviewed CMS publication inventory. */
 export type PublicationEntry = {
   type: string; id: string; slug: string | null; division?: string;
@@ -27,6 +29,10 @@ const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export function createStaticManifest(
   documents: ContentIdentity[], publication: PublicationEntry[],
 ): StaticManifest {
+  const legal = publication.filter((entry) => entry.type === 'legalDocument' && entry.eligible);
+  if (legal.length !== 0 && (legal.length !== 7 || LEGAL_DOCUMENT_SLUGS.some((slug) => !legal.some((entry) => entry.slug === slug)))) {
+    throw new Error('Legal publication requires all seven canonical documents together');
+  }
   const byId = new Map(documents.map((doc) => [doc._id, doc]));
   if (byId.size !== documents.length) throw new Error('Duplicate CMS source identity');
   const known = new Set(publication.map((entry) => entry.id));

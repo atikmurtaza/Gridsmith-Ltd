@@ -4,12 +4,12 @@
  * It replaces the earlier rule that no legal document could be published until a solicitor had
  * approved it (`GS-O003`, the `solicitorApproved` flag). The owner decided not to commission a
  * solicitor at this stage; instead each document is reviewed against current UK legislation and
- * official guidance (`docs/_legal/research/GS-LEGAL-001/`) and then **adopted by the owner**.
+ * official guidance (`git:a7b931c10eb2a543bfa43e89954555fdadb7072d:docs/_archive/legal/pre-GS-LEGAL-FINAL-001/research/GS-LEGAL-001/`) and then **adopted by the owner**.
  * Nothing here claims solicitor review, certification or guaranteed enforceability.
  *
  * The states are ordered. A document is published only at `PUBLISHABLE`, which is reachable only
  * after `OWNER_ADOPTED`, and only the owner moves a document to `OWNER_ADOPTED` — by recording the
- * adoption date and the adopted version in `docs/_legal/GS-O003-R-REGISTER.json`. No script sets
+ * adoption date and the adopted version in `docs/_legal/evidence/GS-O003-R-REGISTER.json`. No script sets
  * it. `check:legal:adoption` enforces the documentary conditions for `PUBLISHABLE`.
  *
  * One list, several consumers — the Sanity schema, the legal route, the production migration and
@@ -34,6 +34,9 @@ export const isAdoptionState = (value: unknown): value is AdoptionState =>
   typeof value === 'string' && (ADOPTION_STATES as readonly string[]).includes(value);
 
 export const isPublishable = (state: unknown) => state === 'PUBLISHABLE';
+
+/** The owner requires a single seven-document cutover; partial publication must expose none. */
+export const allLegalPublishable = (states: unknown[]) => states.length === 7 && states.every(isPublishable);
 
 /**
  * Adopted by the owner but not yet `PUBLISHABLE` (`GS-LEGAL-001-R4`). The page must say this

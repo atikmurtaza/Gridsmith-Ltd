@@ -60,7 +60,7 @@ export function pressSegmentOptions(hasExpectationsStatement: boolean) {
  * | Segment | Destination | Why |
  * |---|---|---|
  * | `business` | business terms | *"I am a business or a founder"* states the trade purpose `MSA-BUSINESS.md` §1 requires |
- * | `author` | consumer terms | `_legal/00-LEGAL-BASIS.md` §3 and FR-P24: an individual author with a manuscript is a consumer buyer, and the instrument's own §1 corrects the minority who are not |
+ * | `author` | consumer terms | `git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/00-LEGAL-BASIS.md` §3 and FR-P24: an individual author with a manuscript is a consumer buyer, and the instrument's own §1 corrects the minority who are not |
  * | `memoir` | consumer terms | same, and more strongly — a memoir or legacy book is outside a trade by description |
  * | `content`, `production` | **the disambiguation page** | Neither answer states the purpose of purchase. The page explains both instruments without selecting one on the visitor's behalf. |
  *

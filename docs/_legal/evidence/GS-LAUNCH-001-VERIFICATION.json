@@ -1,0 +1,163 @@
+{
+  "task": "GS-LAUNCH-001",
+  "date": "2026-10-22",
+  "scope": "primary checkout local consolidation;not launch acceptance",
+  "checks": [
+    {
+      "name": "verify:static",
+      "status": "PASS",
+      "evidence": "Entire final package script passed"
+    },
+    {
+      "name": "Next.js clean build",
+      "status": "PASS",
+      "evidence": "Old output preserved;fresh .next build"
+    },
+    {
+      "name": "SHA-256/version/adoption",
+      "status": "PASS",
+      "evidence": "Exact seven adopted files;zero PUBLISHABLE"
+    },
+    {
+      "name": "legal parity/links",
+      "status": "PASS",
+      "evidence": "7 pages,109 clauses,406 paragraphs;293 legal/in-page links;208 consumer links"
+    },
+    {
+      "name": "offline legal axe",
+      "status": "PASS",
+      "evidence": "14 analyses;zero violations/no overflow"
+    },
+    {
+      "name": "served axe/consent",
+      "status": "PASS",
+      "evidence": "76+2 deferred-footer analyses;zero violations;existing allowed incompletes;current/legacy/no-JS;zero analytics calls"
+    },
+    {
+      "name": "Freelancer suppression",
+      "status": "PASS",
+      "evidence": "197 built files;11 served routes;no API calls"
+    },
+    {
+      "name": "local security headers",
+      "status": "PASS",
+      "evidence": "3 served routes"
+    },
+    {
+      "name": "secrets/tokens/theme",
+      "status": "PASS",
+      "evidence": "All three exit zero"
+    },
+    {
+      "name": "bundle budgets",
+      "status": "FAIL",
+      "evidence": "Shared baseline 2.9KB exceeds unchanged2.8KB;per-route budgets pass"
+    },
+    {
+      "name": "CI/Lighthouse/hosted release",
+      "status": "UNVERIFIED",
+      "evidence": "No push/dispatch;Windows Lighthouse skipped;no deployment"
+    },
+    {
+      "name": "static export",
+      "status": "UNVERIFIED",
+      "evidence": "Not rerun;bundle gate fails;static contract selftests pass"
+    },
+    {
+      "name": "live forms/providers",
+      "status": "UNVERIFIED",
+      "evidence": "No live submissions;Supabase/Resend/Slack/write credentials disabled on local server"
+    },
+    {
+      "name": "unrelated work",
+      "status": "PASS",
+      "evidence": "14 initial dirty contents preserved;prior3 control-file suffix edits unstaged"
+    }
+  ],
+  "tests": {
+    "adoptionCases": 125,
+    "parityCases": 39,
+    "servedAxe": 76,
+    "deferredFooterAxe": 2,
+    "offlineLegalAxe": 14,
+    "legalOrFragmentLinks": 293,
+    "consumerLinks": 208
+  },
+  "logs": [
+    {
+      "name": "final-static.log",
+      "sha256": "457f016fc0961d44b322192fa54cc89141192a311c924d15d338ea8e3148f1ca"
+    },
+    {
+      "name": "build.log",
+      "sha256": "79c52ab4e8225a0d7451284c11e937c71f4578dbdb79aeb642b33fc49559b0b3"
+    },
+    {
+      "name": "legal-artifact.log",
+      "sha256": "9880186ecb6df5f7b8370f73cfa3fc301826d7aaed4c6cc37d74a6607ff762b7"
+    },
+    {
+      "name": "served.log",
+      "sha256": "6a4bc53fac476baf947f274b61ec9f06bfe7482fea4671f407c81151fdcef72a"
+    },
+    {
+      "name": "post-build.log",
+      "sha256": "847853bab748a004d59a57226b2f204ffd80daefbd14d6a876ed3205292c3b69"
+    }
+  ],
+  "canonical": [
+    {
+      "slug": "privacy",
+      "path": "docs/_legal/current/privacy-policy.md",
+      "version": "2.6",
+      "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "cookies",
+      "path": "docs/_legal/current/cookie-policy.md",
+      "version": "2.4",
+      "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "terms",
+      "path": "docs/_legal/current/website-terms.md",
+      "version": "2.3",
+      "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "client-terms",
+      "path": "docs/_legal/current/client-terms-applicability.md",
+      "version": "2.3",
+      "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "business-client-terms",
+      "path": "docs/_legal/current/client-terms-business.md",
+      "version": "3.3",
+      "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "consumer-client-terms",
+      "path": "docs/_legal/current/client-terms-consumers.md",
+      "version": "3.3",
+      "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "accessibility",
+      "path": "docs/_legal/current/accessibility-statement.md",
+      "version": "2.3",
+      "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb",
+      "state": "OWNER_ADOPTED"
+    }
+  ],
+  "productionMutations": 0,
+  "pushes": 0,
+  "deployments": 0,
+  "sourceCheckoutModified": false
+}

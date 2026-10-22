@@ -7,14 +7,13 @@ import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { createClient } from '@sanity/client';
 import { createStaticManifest, createLegalPreviewManifest } from '../lib/build/route-manifest.ts';
-import { legalPreviewProfile, legalPreviewProblems } from './legal-preview-rules.mjs';
-import { LEGAL_DOCUMENTS } from './seed-legal.mjs';
+import { legalPreviewProfile } from './legal-preview-rules.mjs';
 import { resolveBuildTarget } from '../lib/build/target.ts';
 import { stagingReviewsAllowed, REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
 import { hostingerRules, prepareHostingerText } from '../lib/build/hostinger.ts';
 import { SANITY_PROJECT_ID, SANITY_API_VERSION } from '../sanity/project.ts';
 import { inspectStaticArtifact, readArtifact } from './check-static-artifact.mjs';
-import { artifactReviewProblems } from './review-public-rules.mjs';
+import { artifactNoReviewProblems } from './review-public-rules.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const staging = join(root, 'build/static-source');
@@ -42,7 +41,7 @@ if (!stagingReviewsAllowed('owner-staging', siteOrigin) || new URL(siteOrigin).o
   throw new Error('Explicit temporary/local staging origin required; gridsmith.uk is forbidden');
 }
 const environment = { ...process.env, GRIDSMITH_BUILD_TARGET: 'static', GRIDSMITH_STATIC_PROOF: '1',
-  GRIDSMITH_STATIC_MANIFEST_PATH: manifestFile, GRIDSMITH_REVIEW_PRESENTATION: 'owner-staging', NEXT_PUBLIC_SANITY_DATASET: dataset,
+  GRIDSMITH_STATIC_MANIFEST_PATH: manifestFile, GRIDSMITH_REVIEW_PRESENTATION: '', NEXT_PUBLIC_SANITY_DATASET: dataset,
   NEXT_PUBLIC_SITE_URL: siteOrigin, NEXT_PUBLIC_BUNDLE_SIZE_PROBE: '', GRIDSMITH_EXCLUDE_PROBES: '1' };
 const privateNames = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'DIRECT_CONNECTION_STRING', 'RESEND_API_KEY',
   'SANITY_API_WRITE_TOKEN', 'SANITY_API_READ_TOKEN', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN',
@@ -66,13 +65,7 @@ const replaceOnce = (file, before, after) => {
 };
 const makeManifest = legalPreview ? createLegalPreviewManifest : createStaticManifest;
 const checkLegal = async () => {
-  if (!legalPreview) return;
-  const documents = await client.fetch('*[_type == "legalDocument" && !(_id in path("drafts.**"))]');
-  const problems = legalPreviewProblems(documents, LEGAL_DOCUMENTS,
-    JSON.parse(readFileSync(join(root, 'docs/_legal/GS-O003-R-REGISTER.json'))),
-    (path) => readFileSync(join(root, path)));
-  if (problems.length) throw new Error(problems.join('\n'));
-  console.log('Private legal preview: seven development CMS documents match the adopted content and fingerprints exactly.');
+  if (legalPreview) run(['scripts/check-legal-adoption.mjs']);
 };
 
 removeGenerated(output); // A failed build cannot leave a stale apparently-good artifact.
@@ -99,8 +92,9 @@ for (const file of trackedPublic.stdout.split('\0').filter(Boolean)) {
   mkdirSync(dirname(destination), { recursive: true }); cpSync(source, destination);
 }
 symlinkSync(join(root, 'node_modules'), join(staging, 'node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
-mkdirSync(join(staging, 'docs/_legal'), { recursive: true });
-cpSync(join(root, 'docs/_legal/GS-O003-R-REGISTER.json'), join(staging, 'docs/_legal/GS-O003-R-REGISTER.json'));
+mkdirSync(join(staging, 'docs/_legal/evidence'), { recursive: true });
+cpSync(join(root, 'docs/_legal/current'), join(staging, 'docs/_legal/current'), { recursive: true });
+cpSync(join(root, 'docs/_legal/evidence/GS-O003-R-REGISTER.json'), join(staging, 'docs/_legal/evidence/GS-O003-R-REGISTER.json'));
 // The disposable tree is nested under an ignored build directory. Explicit content
 // roots avoid auto-discovery traversing sibling builds or dropping this tree.
 replaceOnce('styles/globals.css', '@import "tailwindcss";',
@@ -155,7 +149,7 @@ try {
   const files = readArtifact(join(staging, 'out'));
   const knownSecrets = privateNames.map((name) => process.env[name]).filter((value) => value?.length >= 8);
   const result = inspectStaticArtifact(files, manifest, publication, knownSecrets, siteOrigin);
-  result.problems.push(...artifactReviewProblems(files, JSON.parse(readFileSync(join(root, 'docs/_shared/GS-HOST-H4-D-REVIEW-BASELINE.json')))));
+  result.problems.push(...artifactNoReviewProblems(files));
   if (result.problems.length) throw new Error(result.problems.join('\n'));
   cpSync(join(staging, 'out'), output, { recursive: true });
   const fileManifest = [...files].map(([path, data]) => ({ path, bytes: data.length, sha256: digest(data) }));

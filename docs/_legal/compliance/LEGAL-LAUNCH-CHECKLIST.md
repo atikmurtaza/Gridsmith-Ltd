@@ -1,0 +1,19 @@
+# Legal preparation, adoption and separate release controls
+
+22 October 2026. Supersedes obsolete solicitor/PI/temporary-domain checklist wording; exact prior record retained in archive. No external certification is claimed.
+
+- Phase 1 CLOSED: the final seven reviewed texts are fixed at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b; content, versions and fingerprints remain unchanged.
+- Phase 2 CLOSED, 22 October 2026: explicit approval and the owner’s technical-operations confirmation are recorded; all seven are OWNER_ADOPTED with exact versions/SHA-256 and passing local checks. The legal-document preparation/adoption blocker is closed. None is PUBLISHABLE; no commencement is backdated. Evidence: ../evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md.
+- Publication: all seven together only at separately authorised WordPress-to-Next.js cutover at gridsmith.uk, never on temporary domain. Existing intake/hosting/consent/parity gates and CUTOVER-AUTHORITY remain separate.
+- ICO fee PAID, owner-confirmed; not independently verified. No further payment requested.
+- PI: owner will not purchase; not a publication prerequisite; no cover claimed. UCTA reasonableness and actual statutory responsibilities remain material.
+- Freelancer: written permission pending; public display/fetch/refresh disabled. Missing permission does not block launch while suppressed. Later activation requires permission, source/rights/privacy/retention review and separate authority.
+- Analytics: disabled pending current notices, affirmative consent/evidence, actual provider terms/settings/transfers, retention/erasure and operating controls. Notice-only launch permitted. ANALYTICS-READY evidence is separate from text approval. The current notices describe future processing; revise them for actual activation first. Operational detail: ANALYTICS-ACTIVATION.md.
+- Agencies: review existing contracts; signed confidentiality/IP, role-specific Article28/client authorisation and actual-country transfer clearance before access. Historical access/safeguards not verified. This is an operational clearance, not unfinished public drafting.
+- Consumers: written quotation with price/taxes/costs, terms/stage table; obligation-to-pay acceptance before charging; durable confirmation/form. Early services require express request/payment/loss acknowledgements; email acceptance only; any separate digital-content supply waits until its cancellation period ends, even when services start early. Current saveable quotation/confirmation/form/refund templates: CONSUMER-CONTRACTING-WORKFLOW.md, aligned to consumer terms 3.3. No inferred consent from payment/enquiry.
+- Retention: keep manual reviews effective, verify daily consent execution by environment; Preview manual proof does not establish Production operation. Honour rights, holds, backups and provider deletion; query window is not deletion.
+- Website: accurate full company identity, bounded services, accessible alternatives, no full-conformance/commercial guarantees, accurate cookie state and no unapproved reviews.
+
+No WordPress/DNS/Production database/live analytics/Hostinger deployment/public-page mutation is authorised by this checklist.
+
+Remaining release prerequisites: separate all-seven publication/cutover authority; H4-B Production intake promotion and verification; Privacy publishability and co-publication; cookie/processing retest on the serving stack and authorised live origin. GS-X002 remains a separate gate for the three Technical service records if included. Agency/rights execution, client sub-processor authorisations and international-transfer clearance remain operational requirements before relevant work/access, not unfinished legal-document preparation. Analytics and reviews may remain disabled at launch. Existing infrastructure, backup/rollback, exact-release CI and hosted acceptance gates are not discharged here.

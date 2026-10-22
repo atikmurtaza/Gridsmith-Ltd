@@ -1,3 +1,5 @@
+> **GS-LAUNCH-001 (22 October 2026):** The primary checkout now uses the exact seven OWNER_ADOPTED texts from adoption commit `a7b931c10eb2a543bfa43e89954555fdadb7072d` under `docs/_legal/current/`; zero PUBLISHABLE. Drafting/adoption is closed. Publication remains held for separate authorised gridsmith.uk cutover, all seven together; no temporary-domain publication. Analytics and Freelancer reviews remain disabled. Only legal dependencies and local suppression/atomic-publication guards are consolidated; later release/intake/provider work on the source branch is not merged. Inventory: `docs/_legal/evidence/CONSOLIDATION-INVENTORY.json`. Verification and remaining launch evidence: `docs/_shared/GS-LAUNCH-001.md`. No push, deployment, DNS, WordPress or Production mutation.
+
 # Project Rules — Gridsmith Master Layer
 
 > **GS-LEGAL-001-R12 (8 October 2026):** Private legal review may use the explicit development-only

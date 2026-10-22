@@ -1,13 +1,12 @@
 /** R12: private review is a build profile, never a publication state or CMS write. */
 import { isDeepStrictEqual } from 'node:util';
 import { createHash } from 'node:crypto';
-import { stagingReviewsAllowed } from '../lib/reviews/public-model.ts';
 
 export function legalPreviewProfile(value, dataset, origin) {
   if (value === undefined) return false;
   if (value !== 'adopted-development' || dataset !== 'development' ||
-      !stagingReviewsAllowed('owner-staging', origin) || new URL(origin).origin !== origin) {
-    throw new Error('Legal preview requires adopted-development, development dataset and an exact isolated staging origin');
+      !/^http:\/\/(?:localhost|127\.0\.0\.1):[0-9]+$/.test(origin)) {
+    throw new Error('Legal preview requires adopted-development, development dataset and an exact loopback origin; temporary-domain legal publication is prohibited');
   }
   return true;
 }

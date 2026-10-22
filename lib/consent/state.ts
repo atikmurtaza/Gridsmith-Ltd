@@ -2,7 +2,7 @@
  * Consent state (`A-11`). No third-party CMP — `PROJECT-RULES.md` §6.
  *
  * **There are no consent categories, because there is nothing non-essential to consent to.**
- * Owner's decision, 26 August 2026 (`docs/_legal/03-REVISION-LOG.md` round 10, OQ-7 option 2).
+ * Owner's decision, 26 August 2026 (`git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/03-REVISION-LOG.md` round 10, OQ-7 option 2).
  * Measurement at round 6 established that GA4 and PostHog loaded on grant and never
  * initialised: no `gtag('config')`, no `posthog.init()`, `window.gtag` undefined,
  * `posthog.__loaded` false, and `gs_consent` the only cookie in any of the three states. So

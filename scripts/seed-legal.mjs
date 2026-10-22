@@ -1,6 +1,6 @@
 /**
  * The seven legal documents, **generated from `docs/_legal/` at import time** — one draft per
- * slug, plus the one page that has no draft (`client-terms`, below).
+ * slug, including the client-terms applicability page.
  *
  * ## This file is no longer a transcription (`GS-LEGAL-001`, 6 October 2026)
  *
@@ -37,37 +37,37 @@
  * The old transcription carried a hand-written citation per clause and the route printed it.
  * Two of those citations were stale on a public legal page (a revoked 2008 instrument; "retained"
  * EU law), and the drafts never carried them (`GS-LEGAL-001` F, S-1 to S-3). The citations now live
- * in the research record, `docs/_legal/research/GS-LEGAL-001/`, where they are dated and sourced,
+ * in the research record, `git:a7b931c10eb2a543bfa43e89954555fdadb7072d:docs/_archive/legal/pre-GS-LEGAL-FINAL-001/research/GS-LEGAL-001/`, where they are dated and sourced,
  * and the route no longer renders `basis`.
  *
  * ## Adoption state comes from the `GS-O003-R` register
  *
- * `adoptionState` is read from `docs/_legal/GS-O003-R-REGISTER.json`, the same file the production
+ * `adoptionState` is read from `docs/_legal/evidence/GS-O003-R-REGISTER.json`, the same file the production
  * migration reads. A register that says a document was adopted at a version the draft no longer
  * carries throws: a draft edited after adoption is not the adopted document.
  */
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
-const ROOT = new URL('../', import.meta.url);
-const read = (path) => readFileSync(new URL(path, ROOT), 'utf8');
+const read = (path) => readFileSync(path, 'utf8');
 
 /**
  * slug → the `docs/_legal/` draft it is generated from.
  *
  * Exported for `scripts/check-legal-parity.mjs`, which uses it only to pair a route with a file.
- * `null` means there is no draft; see `clientTermsDisambiguation`.
+ * Every public route has one canonical source, including the applicability page.
  */
 export const LEGAL_DRAFT_SOURCES = {
-  privacy: 'PRIVACY-POLICY.md',
-  cookies: 'COOKIE-POLICY.md',
-  terms: 'WEBSITE-TERMS.md',
-  'client-terms': null,
-  'business-client-terms': 'MSA-BUSINESS.md',
-  'consumer-client-terms': 'CONSUMER-TERMS.md',
-  accessibility: 'ACCESSIBILITY-STATEMENT.md',
+  privacy: 'current/privacy-policy.md',
+  cookies: 'current/cookie-policy.md',
+  terms: 'current/website-terms.md',
+  'client-terms': 'current/client-terms-applicability.md',
+  'business-client-terms': 'current/client-terms-business.md',
+  'consumer-client-terms': 'current/client-terms-consumers.md',
+  accessibility: 'current/accessibility-statement.md',
 };
 
-const REGISTER = JSON.parse(read('docs/_legal/GS-O003-R-REGISTER.json'));
+const REGISTER = JSON.parse(read('docs/_legal/evidence/GS-O003-R-REGISTER.json'));
 
 const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
   'september', 'october', 'november', 'december'];
@@ -93,12 +93,13 @@ export function parseDraft(markdown, name = 'draft') {
   const title = lines.find((l) => /^# /.test(l))?.slice(2).trim();
   const version = markdown.match(/^\*\*Version ([0-9]+\.[0-9]+)\*\*/m)?.[1];
   const effectiveText = markdown.match(/^\*\*Effective date: ([^*]+)\*\*/m)?.[1];
-  const draftedText = markdown.match(/^\*\*Draft date: ([^*]+)\*\*/m)?.[1];
+  const draftedText = markdown.match(/^\*\*(?:Draft|Review) date: ([^*]+)\*\*/m)?.[1];
+  const effectiveOnPublication = effectiveText === 'On first publication with the replacement website at gridsmith.uk';
   if (!title) throw new Error(`${name}: no "# Title" line`);
   if (!version) throw new Error(`${name}: no "**Version X.Y**" line`);
   const effective = effectiveText ? isoDate(effectiveText) : null;
   const drafted = draftedText ? isoDate(draftedText) : null;
-  if (effectiveText && !effective) throw new Error(`${name}: unreadable effective date "${effectiveText}"`);
+  if (effectiveText && !effective && !effectiveOnPublication) throw new Error(`${name}: unreadable effective date "${effectiveText}"`);
   if (draftedText && !drafted) throw new Error(`${name}: unreadable draft date "${draftedText}"`);
   if (!effective && !drafted) throw new Error(`${name}: no effective or draft date`);
 
@@ -149,7 +150,7 @@ export function parseDraft(markdown, name = 'draft') {
   }
   if (current) flush();
   if (clauses.length === 0) throw new Error(`${name}: no numbered clause`);
-  return { title, version, effective, drafted, clauses };
+  return { title, version, effective, drafted, effectiveOnPublication, clauses };
 }
 
 const blocks = (prefix, paragraphs) =>
@@ -179,13 +180,14 @@ function adoption(slug, version) {
   };
 }
 
-const shape = (slug, { title, version, effective, drafted, clauses }, summary) => ({
+const shape = (slug, { title, version, effective, drafted, effectiveOnPublication = false, clauses }, summary) => ({
   _id: `seed-legal-${slug}`,
   _type: 'legalDocument',
   slug: { _type: 'slug', current: slug },
   title,
   version,
-  effectiveFrom: effective ?? drafted,
+  effectiveFrom: effectiveOnPublication ? null : effective ?? drafted,
+  effectiveOnPublication,
   lastReviewed: drafted ?? effective,
   ...adoption(slug, version),
   summary,
@@ -201,9 +203,18 @@ const shape = (slug, { title, version, effective, drafted, clauses }, summary) =
   isSeed: true,
 });
 
+export function assertAdoptedSource(slug, entry, markdown) {
+  if (['OWNER_ADOPTED', 'PUBLISHABLE'].includes(entry?.state) &&
+      createHash('sha256').update(markdown).digest('hex') !== entry.ownerAdoptedSha256) {
+    throw new Error(`${slug}: canonical source differs from the exact owner-adopted text`);
+  }
+}
+
 const fromDraft = (slug, summary) => {
   const file = LEGAL_DRAFT_SOURCES[slug];
-  return shape(slug, parseDraft(read(`docs/_legal/${file}`), file), summary);
+  const markdown = read(`docs/_legal/${file}`);
+  assertAdoptedSource(slug, REGISTER.documents?.[slug], markdown);
+  return shape(slug, parseDraft(markdown, file), summary);
 };
 
 const privacy = fromDraft(
@@ -213,7 +224,7 @@ const privacy = fromDraft(
 
 const cookies = fromDraft(
   'cookies',
-  'The one cookie gridsmith.uk sets, why it does not need consent, and what would change if we ever introduced anything else.',
+  'The essential acknowledgement cookie and the separate consent, provider and deletion controls required before optional analytics can begin.',
 );
 
 const terms = fromDraft(
@@ -244,37 +255,11 @@ const accessibility = fromDraft(
  * audience's instrument. So the path survives carrying no operative clause. It says which
  * document governs whom, and the "other documents" list at the foot of the page links to both.
  *
- * **This is the one legal document with no `docs/_legal/` draft**, because it is not an
- * instrument. `check-legal-parity.mjs` cannot cover it and names it in every run;
- * `scripts/check-consumer-terms.mjs` guards the routing it exists to perform. Clause 1.2 was
- * corrected at `GS-LEGAL-001` (F, D-1): it had said Consumer Rights Act 2015 s. 57 makes the
- * business liability cap non-binding on a consumer outright, which overstated s. 57.
+ * It now has a canonical source and the same word-for-word parity coverage as the six
+ * instruments. The old hand-authored seed content is retained in Git history.
  */
-const clientTermsDisambiguation = shape(
-  'client-terms',
-  {
-    title: 'Client Terms — which ones apply to you',
-    version: '2.1',
-    // Owner-adopted 7 October 2026 (GS-LEGAL-001-R4): the adoption date is its effective date.
-    effective: '2026-10-07',
-    drafted: null,
-    clauses: [
-      { number: '1.1', heading: 'If you are buying for a business', paragraphs: [
-        'If you are a company, a partnership, a sole trader or anyone else buying for the purposes of a trade, business, craft or profession, the Client Terms for Business Clients apply. They are at /legal/business-client-terms and are linked at the foot of this page.',
-        'That is most Gridsmith Design and Gridsmith Digital work.',
-      ] },
-      { number: '1.2', heading: 'If you are buying as an individual', paragraphs: [
-        'If you are an individual buying for purposes outside your trade, business, craft or profession, you are a consumer and the Client Terms for Consumers apply. They are at /legal/consumer-client-terms and are linked at the foot of this page.',
-        'For example, an author writing a family memoir is usually a consumer; an author running a publishing business usually is not.',
-        'The two documents are deliberately not interchangeable. Consumer law gives you rights the business terms do not reflect: for example, a term cannot exclude our duty to use reasonable care and skill, cannot stop you recovering the price you paid where you are entitled to it, and is not binding on you if it is unfair (Consumer Rights Act 2015, sections 57 and 62).',
-      ] },
-      { number: '1.3', heading: 'If you are not sure', paragraphs: [
-        'Ask us before you accept a quotation and we will tell you which terms apply and why. Your quotation also names the terms that apply, so that it is written down rather than assumed.',
-      ] },
-    ],
-  },
-  'There are two sets of client terms and this page is not either of them. It exists so that nobody reads the wrong one. Which applies to you depends on whether you are buying as a business or as an individual, and the difference matters: consumer law gives you rights that cannot be excluded, and the business terms are written for clients who do not have them.',
-);
+const clientTermsDisambiguation = fromDraft('client-terms',
+  'Which client terms apply depends on the purpose of your purchase, including whether an individual is buying wholly or mainly outside a trade, business, craft or profession. Your quotation identifies the applicable version.');
 
 export const LEGAL_DOCUMENTS = [
   privacy,

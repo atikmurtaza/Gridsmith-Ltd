@@ -125,7 +125,7 @@ export const STRUCK_RULES = [
       'wording offers more than the reviewed contract gives — non-negotiable #6, ' +
       '`01-VALIDATION-REPORT.md` §21, `press/PROJECT-TRACKER.md` K-17.',
     where:
-      '`docs/_legal/CONSUMER-TERMS.md` §6, and nowhere else. The replacement UI copy is ' +
+      '`docs/_legal/current/client-terms-consumers.md` §6, and nowhere else. The replacement UI copy is ' +
       'K-17 and is blocked on the owner — this check asserts only that the struck wording ' +
       'does not stand, never what should stand in its place.',
   },
@@ -198,7 +198,7 @@ export const STRUCK_RULES = [
       'non-registered trader has no number to disclose and no net/gross distinction to draw. ' +
       'The absence is the decision and both `sanity/schemas/companyDetails.ts` and ' +
       '`lib/company/companyDetails.ts` say so in their first lines. ' +
-      '`_shared/05-HANDOVER.md` 2 Sept 2026; `docs/_legal/03-REVISION-LOG.md`.',
+      '`_shared/05-HANDOVER.md` 2 Sept 2026; `git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/03-REVISION-LOG.md`.',
     where:
       'The **VAT display rule** survives and is the live one: no price this site serves may be ' +
       'presented as VAT-exclusive and no VAT number may be published. ' +
@@ -457,9 +457,9 @@ export const STRUCK_RULES = [
       'this stage; `GS-O003` (mandatory solicitor approval before any legal page is published) is ' +
       'replaced by `GS-O003-R`: an evidence-based review against current UK legislation and official ' +
       'guidance (`docs/_legal/research/GS-LEGAL-001/`), then explicit owner adoption recorded in ' +
-      '`docs/_legal/GS-O003-R-REGISTER.json`. No document claims solicitor review.',
+      '`docs/_legal/evidence/GS-O003-R-REGISTER.json`. No document claims solicitor review.',
     where:
-      '`lib/legal/adoption.ts` (states), `docs/_legal/GS-O003-R-REGISTER.json` (per-document state), ' +
+      '`lib/legal/adoption.ts` (states), `docs/_legal/evidence/GS-O003-R-REGISTER.json` (per-document state), ' +
       '`scripts/check-legal-adoption.mjs` (documentary gate) and `scripts/migrate-production-cms.mjs` ' +
       '(production admits only `PUBLISHABLE`).',
   },

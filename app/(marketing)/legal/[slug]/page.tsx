@@ -144,7 +144,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               doc.version ? `Version ${doc.version}` : null,
               // An unadopted version has no effective date, only the date it was drafted. An adopted
               // one carries its effective date from adoption, before and after publication.
-              doc.effectiveFrom
+              doc.effectiveOnPublication ? 'Effective on first publication with the replacement website at gridsmith.uk' : doc.effectiveFrom
                 ? `${isPublishable(doc.adoptionState) || isAdoptedNotPublished(doc.adoptionState) ? 'Effective' : 'Draft dated'} ${doc.effectiveFrom}`
                 : null,
               isPublishable(doc.adoptionState) && doc.lastReviewed ? `Reviewed ${doc.lastReviewed}` : null,

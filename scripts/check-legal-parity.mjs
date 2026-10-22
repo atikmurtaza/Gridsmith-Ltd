@@ -6,7 +6,7 @@
  *
  * ## The defect this exists for
  *
- * `docs/_legal/07-STATE-REPORT.md` §0: *"The drafts and the published site are two different
+ * `git:a7b931c10eb2a543bfa43e89954555fdadb7072d:docs/_archive/legal/pre-GS-LEGAL-FINAL-001/07-STATE-REPORT.md` §0: *"The drafts and the published site are two different
  * documents, and nobody has been comparing them."* Findings F-1 to F-7 are seven live
  * divergences and **not one of them failed a build**. The worst two:
  *
@@ -122,14 +122,10 @@
  * The same boundary in one sentence: this gate closes the gap between the draft and the site;
  * it opens nothing on the gap between the draft and the law.
  *
- * ## The one slug this cannot cover, named in every run
+ * ## All seven canonical sources
  *
- * `/legal/client-terms` has **no `docs/_legal/` draft**, because it is not an instrument: it is
- * the disambiguation page the owner's 26 August 2026 routing decision created, carrying no
- * operative clause. There is nothing to compare it against, so it is excluded — and the
- * exclusion is printed on every successful run rather than left implicit, because a gate that
- * silently covers six of seven reads exactly like a gate that covers seven.
- * `scripts/check-consumer-terms.mjs` is what guards that page.
+ * The applicability page has its own canonical source and receives the same exact parity
+ * and adoption-banner checks as the six instruments. Consumer routing is also checked.
  *
  * ## Proven by deliberate failure
  *
@@ -140,7 +136,7 @@
 import { readFileSync } from 'node:fs';
 import { LEGAL_DRAFT_SOURCES } from './seed-legal.mjs';
 /** `GS-O003-R` register: the expected adoption state of each served document. */
-const LEGAL_REGISTER = JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json', 'utf8'));
+const LEGAL_REGISTER = JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json', 'utf8'));
 import {
   containsRun,
   currentVersion,
@@ -152,17 +148,21 @@ import {
 } from './legal-parity-rules.mjs';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
+// Static artifacts can be checked before a server is authorised; this does not prove delivery.
+const artifactDir = process.argv.find((arg) => arg.startsWith('--artifact-dir='))?.slice('--artifact-dir='.length);
+const readRoute = async (route) => {
+  if (!artifactDir) return fetch(BASE_URL + route).catch((error) => ({ ok: false, status: 0, error }));
+  try { return new Response(readFileSync(`${artifactDir}${route}.html`), { status: 200 }); }
+  catch { return new Response('', { status: 404 }); }
+};
+console.log(`check-legal-parity: input=${artifactDir ? 'built HTML files (delivery unverified)' : 'served HTTP pages'}`);
 const DRAFTS = 'docs/_legal/';
 
 /** Hardcoded. See the docstring — an expectation derived from its subject cannot fail. */
-const EXPECTED_DOCS = 6;
-
-/** The slug with no draft, named in the output rather than silently skipped. */
-const UNCOVERED = 'client-terms';
+const EXPECTED_DOCS = 7;
 
 const problems = [];
 const counted = { docs: 0, clauses: 0, paragraphs: 0, tokens: 0 };
-const bannerOnly = [];
 
 /** `<section id="clause-…">…</section>` — the template renders one per clause. */
 const clauseSections = (html) => [
@@ -182,26 +182,13 @@ const decode = (s) =>
     .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)));
 
 for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
-  if (!file) {
-    // GS-LEGAL-001-R4: no draft to compare word for word, but the adoption banner it serves is
-    // still asserted against the register, so an adopted page cannot claim to be unadopted or the
-    // reverse. A route that does not serve fails here too, rather than leaving the banner unmeasured.
-    const route = `/legal/${slug}`;
-    const res = await fetch(BASE_URL + route).catch((e) => ({ ok: false, status: 0, error: e }));
-    if (!res.ok) problems.push(`${route} returned ${res.status || 'no response'} — its adoption banner was not measured`);
-    else {
-      problems.push(...bannerProblems(route, LEGAL_REGISTER.documents?.[slug]?.state, await res.text()));
-      bannerOnly.push(slug);
-    }
-    continue;
-  }
   counted.docs += 1;
 
   const markdown = readFileSync(DRAFTS + file, 'utf8');
   const draftWords = normaliseWords(markdown);
   const route = `/legal/${slug}`;
 
-  const res = await fetch(BASE_URL + route).catch((e) => ({ ok: false, status: 0, error: e }));
+  const res = await readRoute(route);
   if (!res.ok) {
     // Branch D. A route that does not serve is not a route that passes: nothing was measured
     // on it, and reporting that as clean is how a deleted CMS document goes unnoticed.
@@ -301,11 +288,6 @@ for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
   }
 }
 
-// A draftless route whose banner was never measured is a hollow subject, not a pass.
-if (!bannerOnly.includes(UNCOVERED) && !problems.some((p) => p.startsWith(`/legal/${UNCOVERED} `))) {
-  problems.push(`/legal/${UNCOVERED}: adoption banner not measured (the route is no longer in LEGAL_DRAFT_SOURCES)`);
-}
-
 if (problems.length > 0) {
   console.error(`\ncheck-legal-parity: ${problems.length} problem(s) against ${BASE_URL}\n`);
   for (const p of problems) console.error(`  ${p}\n`);
@@ -336,8 +318,6 @@ if (problems.length > 0) {
       `${counted.tokens} draft clause(s) all reachable`,
   );
   console.log(
-    `check-legal-parity: /legal/${UNCOVERED} is NOT covered — it has no docs/_legal/ draft ` +
-      'because it carries no operative clause, so it is not compared word for word (check-consumer-terms.mjs ' +
-      'guards its links). Its adoption banner was checked against the register.',
+    'check-legal-parity: all seven legal pages are covered by canonical source and adoption-banner checks.',
   );
 }

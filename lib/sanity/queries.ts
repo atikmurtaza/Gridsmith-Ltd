@@ -1,9 +1,11 @@
 import { sanityClient } from '@/lib/sanity/client';
 import { STATIC_BUILD } from '@/lib/build/target';
 import { SANITY_DATASET } from '@/sanity/env';
-import legalRegister from '@/docs/_legal/GS-O003-R-REGISTER.json';
+import legalRegister from '@/docs/_legal/evidence/GS-O003-R-REGISTER.json';
 import { staticManifest } from '@/lib/build/static-routes';
 import type { PortableMarkDef, PortableSpan } from '@/lib/content/portableLinks';
+import { LEGAL_DOCUMENTS } from '@/scripts/seed-legal.mjs';
+import { allLegalPublishable } from '@/lib/legal/adoption';
 
 /**
  * The read layer. **Every public projection is written so that a field which must not reach
@@ -132,6 +134,7 @@ export type LegalDocument = {
   title: string;
   version: string | null;
   effectiveFrom: string | null;
+  effectiveOnPublication?: boolean;
   lastReviewed: string | null;
   reviewedBy: string | null;
   /** `GS-O003-R` state (`lib/legal/adoption.ts`). Only `PUBLISHABLE` reaches production. */
@@ -276,29 +279,15 @@ export const getGroupPage = (slug: 'approach' | 'about') =>
     { slug },
   );
 
-/** R12: development review remains separate from the committed production publication register. */
-const publishableLegalSlugs = Object.entries(legalRegister.documents)
-  .filter(([, entry]) => (entry.state as string) === 'PUBLISHABLE')
-  .map(([slug]) => slug);
+/** Canonical repository text also supplies the served route; CMS copies cannot override it. */
+const publishableLegalSlugs = allLegalPublishable(Object.values(legalRegister.documents).map((entry) => entry.state))
+  ? Object.keys(legalRegister.documents) : [];
 export const getLegalDocument = (slug: string) =>
-  q<LegalDocument | null>(
-    `*[_type == "legalDocument" && slug.current == $slug && !(_id in path("drafts.**"))
-      && ($development || (adoptionState == "PUBLISHABLE" && slug.current in $publishableSlugs))][0]{
-      title, version, effectiveFrom, lastReviewed, reviewedBy,
-      "adoptionState": coalesce(adoptionState, "RESEARCHED"),
-      summary,
-      clauses[]{number, heading, anchorId, basis, body},
-      "isSeed": coalesce(isSeed, false)
-    }`,
-    { slug, development: SANITY_DATASET === 'development', publishableSlugs: publishableLegalSlugs },
-  );
+  Promise.resolve(LEGAL_DOCUMENTS.find((doc) => doc.slug.current === slug &&
+    (SANITY_DATASET === 'development' || (doc.adoptionState === 'PUBLISHABLE' && publishableLegalSlugs.includes(slug)))) ?? null);
 
 export const listLegalDocuments = () =>
-  q<{ title: string; slug: string; summary: string | null; adoptionState: string }[]>(
-    `*[_type == "legalDocument" && !(_id in path("drafts.**"))
-      && ($development || (adoptionState == "PUBLISHABLE" && slug.current in $publishableSlugs))] | order(title asc){
-      title, "slug": slug.current, summary,
-      "adoptionState": coalesce(adoptionState, "RESEARCHED")
-    }`,
-    { development: SANITY_DATASET === 'development', publishableSlugs: publishableLegalSlugs },
-  );
+  Promise.resolve(LEGAL_DOCUMENTS.filter((doc) => SANITY_DATASET === 'development' ||
+    (doc.adoptionState === 'PUBLISHABLE' && publishableLegalSlugs.includes(doc.slug.current)))
+    .map((doc) => ({ title: doc.title, slug: doc.slug.current, summary: doc.summary, adoptionState: doc.adoptionState }))
+    .sort((a, b) => a.title.localeCompare(b.title)));

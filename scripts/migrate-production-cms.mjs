@@ -14,7 +14,7 @@
  * `seed-` prefix, no dot, `isSeed: false`, references rewritten to the production ids. Excluded,
  * each with its gate in the manifest: the Technical services (`GS-X002`; the reference
  * to one from another service is dropped rather than left dangling), every `legalDocument` that
- * is not `PUBLISHABLE` in `docs/_legal/GS-O003-R-REGISTER.json` (`GS-O003-R`, which replaced the
+ * is not `PUBLISHABLE` in `docs/_legal/evidence/GS-O003-R-REGISTER.json` (`GS-O003-R`, which replaced the
  * solicitor-approval gate `GS-O003` on 6 October 2026 — an adopted document's payload is its
  * `seed-legal.mjs` transcription, held word for word to the draft by `check:legal:parity`),
  * and the types that never migrate (`faq`, `teamMember`, `post` briefs, `testimonial`).
@@ -35,6 +35,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { createClient } from '@sanity/client';
 import { PRODUCTION_DATASET, SANITY_API_VERSION, SANITY_PROJECT_ID } from '../sanity/project.ts';
+import { allLegalPublishable } from '../lib/legal/adoption.ts';
 import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { PROFESSIONAL_REVIEW_GROUPS } from '../lib/services/architecture.ts';
 import { doc as companyDetails } from './seed-company-details.mjs';
@@ -43,12 +44,12 @@ import { groupPageDocs, serviceDocs } from './seed-content.mjs';
 
 const MANIFEST = 'docs/_shared/GS-PROD-001-CMS-MANIFEST.json';
 /** `GS-O003-R`: the owner-adoption register. Only the owner advances a document to OWNER_ADOPTED. */
-export const LEGAL_REGISTER = JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json', 'utf8'));
+export const LEGAL_REGISTER = JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json', 'utf8'));
 
 /** A legal document reaches production only adopted, at the adopted version, and PUBLISHABLE. */
 export function legalPublishable(slug, version) {
   const entry = LEGAL_REGISTER.documents?.[slug];
-  return Boolean(entry && entry.state === 'PUBLISHABLE' && entry.ownerAdoptedOn && entry.ownerAdoptedVersion && entry.ownerAdoptedVersion === version);
+  return Boolean(allLegalPublishable(Object.values(LEGAL_REGISTER.documents).map((item) => item.state)) && entry && entry.state === 'PUBLISHABLE' && entry.ownerAdoptedOn && entry.ownerAdoptedVersion && entry.ownerAdoptedVersion === version);
 }
 const args = process.argv.slice(2);
 const flag = (name) => args.includes(name);

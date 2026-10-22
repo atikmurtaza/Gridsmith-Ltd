@@ -41,7 +41,7 @@ export const metadata: Metadata = {
  * better to say about itself. So the marketing presentation and the legal disclosure are
  * separated. The disclosure did not move — **it was already in the statutory footer of every
  * page**, which is where SI 2015/17 reg. 25(2) puts it and where it satisfies the regulation
- * (`_legal/02-CITATION-LEDGER.md` `L-TDR-25`). Nothing about compliance changes here; what is
+ * (`git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/02-CITATION-LEDGER.md` `L-TDR-25`). Nothing about compliance changes here; what is
  * removed is a **second, promotional copy of it**.
  *
  * What remains of `M-J4` is one restrained line at the foot of the page: the company number,

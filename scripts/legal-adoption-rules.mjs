@@ -15,7 +15,7 @@
  * resolve, and that nothing is `PUBLISHABLE` while it carries an open marker or no effective date.
  *
  * **They cannot assert that a clause is legally sound.** That is what the research record in
- * `docs/_legal/research/GS-LEGAL-001/` is for, and adoption is the owner's act. A green run means
+ * `git:a7b931c10eb2a543bfa43e89954555fdadb7072d:docs/_archive/legal/pre-GS-LEGAL-FINAL-001/research/GS-LEGAL-001/` is for, and adoption is the owner's act. A green run means
  * "the documents keep the decided positions and the register is honest", never "the documents are
  * right" — the same ceiling `check-legal-parity.mjs` states for itself.
  */
@@ -101,12 +101,17 @@ export function danglingReferences(markdown) {
  * separate one. Every adopted entry lists what must be true before it may become `PUBLISHABLE`,
  * and `PUBLISHABLE` is refused while any listed prerequisite has no recorded evidence in
  * `prerequisitesMet`. Hardcoded expectations, because an expectation read from its own subject
- * cannot fail: the cookie policy must always carry the A-2 production retest, and every adopted
- * document must carry the cutover authority and the privacy co-requisite.
+ * cannot fail: the cookie policy must always carry the A-2 retest, and every adopted document must
+ * carry the publication authority and the privacy co-requisite.
+ *
+ * GS-R16-001 (Option Q): publication and cutover are separate authorities. PUBLICATION-AUTHORITY
+ * replaced CUTOVER-AUTHORITY here, so approving a document never authorises a gridsmith.uk,
+ * WordPress or DNS change; the A-2 retest is evidenced on the stack serving the release and
+ * repeated on gridsmith.uk in the cutover checklist.
  */
 export const REQUIRED_PREREQUISITES = {
-  all: ['CUTOVER-AUTHORITY', 'PRIVACY-PUBLISHABLE'],
-  cookies: ['A-2-PRODUCTION-COOKIE-RETEST'],
+  all: ['PUBLICATION-AUTHORITY', 'PRIVACY-PUBLISHABLE'],
+  cookies: ['A-2-COOKIE-RETEST'],
   // Privacy §6/§7 describe the Supabase Edge Function intake, which runs only on Preview until H4-B
   // is promoted; cutover authority alone does not make that true (R4 review M5).
   // HOSTINGER-PROCESSOR-CHAIN (R10, clarified R11): evidence of existing Art. 28 contractual coverage
@@ -125,8 +130,8 @@ export function requiredPrerequisites(slug) {
  * Operational conditions an adopted text describes as already happening (GS-LEGAL-001-R6). Unlike a
  * publication prerequisite, which is met at PUBLISHABLE, these need recorded evidence before the owner
  * can adopt. Privacy §8 describes the retention reviews, which is true only once the routine operates
- * (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md` Part F). The Hostinger processor chain
- * (`docs/_legal/operations/PROCESSOR-REGISTER.md`) is a publication prerequisite from R10.
+ * (`docs/_legal/compliance/RETENTION-ACTIVATION-CHECKLIST.md` Part F). The Hostinger processor chain
+ * (`docs/_legal/compliance/PROCESSOR-REGISTER.md`) is a publication prerequisite from R10.
  */
 export const REQUIRED_ADOPTION_EVIDENCE = {
   // HOSTINGER-PROCESSOR-CHAIN was adoption evidence from R6 to R9 and is a publication prerequisite from R10
@@ -179,6 +184,11 @@ export function registerProblems(slug, entry, draftVersion, expectedDraft, conte
     }
     for (const id of requiredPrerequisites(slug)) {
       if (!listed.has(id)) p.push(`${slug}: adopted without the publication prerequisite ${id}`);
+    }
+    // GS-R16-001: publication approval must say, in its own words, that it is not cutover authority.
+    const authority = (entry.publicationPrerequisites ?? []).find((item) => item?.id === 'PUBLICATION-AUTHORITY');
+    if (authority && !/does not authorise[^.]*gridsmith[.]uk[^.]*WordPress[^.]*DNS/.test(authority.requirement ?? '')) {
+      p.push(`${slug}: PUBLICATION-AUTHORITY must state that it does not authorise gridsmith.uk, WordPress or DNS changes`);
     }
   }
   if (entry.state === 'PUBLISHABLE') {
@@ -274,6 +284,9 @@ export function parityProblems(privacy, cookies, facts) {
   return p;
 }
 
+/** Event-based commencement keeps owner adoption separate from later cutover. */
+export const effectiveOnPublication = (markdown) => /^\*\*Effective date: On first publication with the replacement website at gridsmith\.uk\*\*$/m.test(markdown);
+
 /** Rules that apply only once a document is at or beyond a state. */
 export function stateProblems(slug, state, markdown, summary, ownerAdoptedOn) {
   const p = [];
@@ -287,15 +300,15 @@ export function stateProblems(slug, state, markdown, summary, ownerAdoptedOn) {
   if (rank(state) >= rank('OWNER_ADOPTED')) {
     for (const re of MARKERS) if (re.test(text)) p.push(`${slug}: ${state} but carries an open marker ${re}`);
     if (headerDate(markdown, 'Draft date')) p.push(`${slug}: ${state} but still headed with a draft date`);
-    if (!headerDate(markdown, 'Effective date')) p.push(`${slug}: ${state} without an "Effective date" header`);
+    if (!headerDate(markdown, 'Effective date') && !effectiveOnPublication(markdown)) p.push(`${slug}: ${state} without an "Effective date" header`);
     // An adopted document that still describes itself as unadopted contradicts its own register entry.
     if (ADOPTION_CONTRADICTION.test(text)) p.push(`${slug}: ${state} but its text says it is not adopted (${ADOPTION_CONTRADICTION})`);
   }
   if (state === 'PUBLISHABLE') {
     for (const re of MARKERS) if (re.test(text)) p.push(`${slug}: PUBLISHABLE but carries an open marker ${re}`);
     const effective = headerDate(markdown, 'Effective date');
-    if (!effective) p.push(`${slug}: PUBLISHABLE without an "Effective date" header`);
-    else if (ownerAdoptedOn && effective < ownerAdoptedOn) p.push(`${slug}: effective ${effective} is before its adoption on ${ownerAdoptedOn}`);
+    if (!effective && !effectiveOnPublication(markdown)) p.push(`${slug}: PUBLISHABLE without an "Effective date" header`);
+    else if (effective && ownerAdoptedOn && effective < ownerAdoptedOn) p.push(`${slug}: effective ${effective} is before its adoption on ${ownerAdoptedOn}`);
     if (headerDate(markdown, 'Draft date')) p.push(`${slug}: PUBLISHABLE but still headed with a draft date`);
   }
   return p;
@@ -315,6 +328,36 @@ export function crossRegisterProblems(documents) {
     if (met['PRIVACY-PUBLISHABLE'] != null && privacyState !== 'PUBLISHABLE') {
       p.push(`${slug}: records PRIVACY-PUBLISHABLE as met while the privacy entry is ${privacyState}`);
     }
+  }
+  return p;
+}
+
+/** Final owner-review controls: public disclosures and the maintained email process must agree. */
+export function coordinatedReviewProblems(drafts, workflow) {
+  const p = [];
+  const consumer = drafts['consumer-client-terms'] ?? '';
+  const version = consumer.match(/^\*\*Version ([^*]+)\*\*/m)?.[1];
+  const quotation = workflow.split('## 2. Quotation email and attachment')[1]?.split('## 3.')[0] ?? '';
+  if (!version || !quotation.includes(`Client Terms for Consumers version ${version}`) || !workflow.includes(`Terms: Client Terms for Consumers ${version} (attached)`)) {
+    p.push('consumer workflow: quotation and confirmation must name the current consumer version');
+  }
+  const statements = [...consumer.matchAll(/"(I (?:accept this quotation|ask Gridsmith Ltd|understand that)[^"]+)"/g)].map(m => m[1]);
+  if (statements.length !== 4 || statements.some(s => !quotation.includes(`"${s}"`))) {
+    p.push('consumer workflow: quotation must contain the exact acceptance and three early-service statements');
+  }
+  const normalise = s => s.replace(/\s+/g, ' ').trim();
+  const form = consumer.split('## 22. Cancellation form')[1] ?? '';
+  const workflowForm = workflow.split('## 4. Cancellation form')[1]?.split('~~~text\n')[1]?.split('~~~')[0] ?? '';
+  if (!form.trim() || normalise(form) !== normalise(workflowForm)) p.push('consumer workflow: cancellation form differs from the consumer terms');
+  if (!/we wait until its cancellation period has ended before supplying it/.test(consumer) || !/do not supply them before their cancellation period ends/.test(workflow)) {
+    p.push('consumer workflow: separate digital content must wait until cancellation ends');
+  }
+  const sensitive = text => text.match(/Please do not send special-category information[^\n]+/)?.[0];
+  if (!sensitive(drafts.privacy ?? '') || sensitive(drafts.privacy) !== sensitive(drafts.terms ?? '')) p.push('privacy and website terms: sensitive-data instructions must match');
+  for (const [slug, text] of Object.entries(drafts)) {
+    if (/temporary demonstration|temporary.domain|\bPreview\b|\bProduction\b|\bWordPress\b|\bcutover\b/.test(text)) p.push(`${slug}: public text contains internal release history or controls`);
+    if (/acknowledge[^.\n]{0,100}(?:5|five) working days/i.test(text)) p.push(`${slug}: unnecessary fixed acknowledgement promise`);
+    if (/client-terms$/.test(slug) && /\b(?:USA|Pakistan|United States)\b/.test(text)) p.push(`${slug}: outsourcing country list belongs in the privacy notice`);
   }
   return p;
 }

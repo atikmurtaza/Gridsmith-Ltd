@@ -4,8 +4,8 @@
  *
  * `GS-O003` required solicitor approval before any legal document could be published. The owner
  * replaced it with an evidence-based review plus explicit owner adoption, recorded per document in
- * `docs/_legal/GS-O003-R-REGISTER.json`. This gate is the documentary half of that rule; the
- * research record (`docs/_legal/research/GS-LEGAL-001/`) is the substantive half, and the owner's
+ * `docs/_legal/evidence/GS-O003-R-REGISTER.json`. This gate is the documentary half of that rule; the
+ * research record (`git:a7b931c10eb2a543bfa43e89954555fdadb7072d:docs/_archive/legal/pre-GS-LEGAL-FINAL-001/research/GS-LEGAL-001/`) is the substantive half, and the owner's
  * adoption is the decision. See `legal-adoption-rules.mjs` for what a green run does and does not
  * mean.
  *
@@ -27,12 +27,13 @@ import {
   parityProblems,
   registerProblems,
   stateProblems,
+  coordinatedReviewProblems,
   FORBIDDEN_CLAIMS,
   MARKERS,
 } from './legal-adoption-rules.mjs';
 
 /** Hardcoded — removing a source must fail, not measure less. */
-const EXPECTED_DRAFTS = 6;
+const EXPECTED_DRAFTS = 7;
 const EXPECTED_DOCUMENTS = 7;
 
 const sha256 = (data) => createHash('sha256').update(data).digest('hex');
@@ -45,8 +46,11 @@ const adoptedTextSha = (doc, file) =>
     ? sha256(readFileSync(`docs/_legal/${file}`))
     : sha256(JSON.stringify({ title: doc.title, version: doc.version, effectiveFrom: doc.effectiveFrom, summary: doc.summary, clauses: doc.clauses }));
 
-const register = JSON.parse(readFileSync('docs/_legal/GS-O003-R-REGISTER.json', 'utf8'));
+const register = JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json', 'utf8'));
 const problems = [];
+const canonical = readdirSync('docs/_legal/current').sort();
+const expectedFiles = Object.values(LEGAL_DRAFT_SOURCES).map((p) => p.replace('current/', '')).sort();
+if (JSON.stringify(canonical) !== JSON.stringify(expectedFiles)) problems.push('current/ must contain exactly the seven canonical public texts');
 const counted = { drafts: 0, documents: 0 };
 const drafts = {};
 
@@ -75,6 +79,7 @@ ${doc.summary}`;
 }
 
 problems.push(...crossRegisterProblems(register.documents));
+problems.push(...coordinatedReviewProblems(drafts, readFileSync('docs/_legal/compliance/CONSUMER-CONTRACTING-WORKFLOW.md', 'utf8')));
 
 // Facts from the source, not from the policies.
 const consent = readFileSync('lib/consent/state.ts', 'utf8');

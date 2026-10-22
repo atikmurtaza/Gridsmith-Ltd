@@ -526,7 +526,7 @@ export function teamProblems(route, text) {
  *
  * 1. **SI 2015/17 reg. 25(2)(c)** requires the address of the registered office on the
  *    company's websites. This build satisfies it in the statutory footer, which is on every
- *    page — `_legal/02-CITATION-LEDGER.md` `L-CTD-25`. That is a legal requirement, so it is
+ *    page — `git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/02-CITATION-LEDGER.md` `L-CTD-25`. That is a legal requirement, so it is
  *    inside the owner's own carve-out, and moving it to one page would be a compliance
  *    decision rather than a content one.
  * 2. **The `_legal/` instruments** name it as the address for service (`CONSUMER-TERMS` §18,
