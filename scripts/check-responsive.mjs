@@ -35,7 +35,7 @@ const ROUTES = [
   // `K-05`. A wide data table is the other way a page overflows 375px, and the only one on
   // the site outside the kitchen sink — `Table` wraps in an `overflow-x: auto` region, and
   // whether that region actually contains the overflow is a layout-time fact.
-  { path: '/press/path-finder', status: 200 },
+  { path: '/press/gridsmith-path-probe', status: 200 },
   // Epic N routes, chosen to cover every distinct template rather than every URL. `/work`,
   // `/work/[slug]` and `/digital/estimate` were removed at `GS-P03` with their routes.
   // `U-08`'s subject — one per division since `GS-P04`, because the three service pages are one

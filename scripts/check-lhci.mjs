@@ -19,7 +19,9 @@
  */
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
+import { createRequire } from 'node:module';
 import { isCI, isWindows, lhciSkipped, UNAVAILABLE_ON_WINDOWS } from './lhci-availability.mjs';
+import { controlledBrowser, consumerProblems, verifyBrowser } from './browser-input.mjs';
 
 const axis = process.argv[2];
 if (axis !== 'desktop' && axis !== 'mobile') {
@@ -46,6 +48,17 @@ if (lhciSkipped) {
       `     ${UNAVAILABLE_ON_WINDOWS.removeWhen}\n`,
   );
   process.exit(0);
+}
+
+if (controlledBrowser) {
+  const config = createRequire(import.meta.url)(`../lighthouserc.${axis}.cjs`);
+  const problems = consumerProblems('lighthouse', process.env.CHROME_PATH, config.ci?.collect);
+  if (process.argv.length !== 3) problems.push('LIGHTHOUSE_CLI_OVERRIDE');
+  if (Object.keys(process.env).some((key) => /^LHCI_COLLECT__|^LHCI_.*CONFIG|^LHCITEST_/.test(key) && process.env[key])) {
+    problems.push('LIGHTHOUSE_ENV_OVERRIDE');
+  }
+  if (problems.length) throw new Error(problems.join(','));
+  process.env.CHROME_PATH = verifyBrowser(process.env.CHROME_PATH);
 }
 
 // Resolved from node_modules rather than PATH: `npm run` adds .bin to PATH but a direct

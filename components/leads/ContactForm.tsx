@@ -62,7 +62,7 @@ const INITIAL: FormState = { status: 'idle' };
 
 const DIVISIONS = [
   { value: 'unsure', label: 'More than one, or I am not sure', hint: 'This goes straight to the founder.' },
-  { value: 'design', label: 'Design — brand, 3D, CAD, drawings' },
+  { value: 'design', label: 'Design — brand, visual, 3D, illustration' },
   { value: 'digital', label: 'Digital — websites, software, AI' },
   { value: 'press', label: 'Press — publishing, writing, content' },
 ];

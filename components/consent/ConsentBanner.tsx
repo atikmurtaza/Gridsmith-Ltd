@@ -95,11 +95,13 @@ export function ConsentBanner() {
       root.removeProperty(RESERVE_VAR);
       return;
     }
-    const reserve = (resized = false) => {
-      root.setProperty(RESERVE_VAR, `${el.offsetHeight}px`);
+    // No default parameter or optional chaining: SWC down-levels both for the browserslist
+    // targets, and that output alone put the shared baseline over its budget (GS-R12-PR-001).
+    const reserve = (resized?: boolean) => {
+      root.setProperty(RESERVE_VAR, el.offsetHeight + 'px');
       // Reopening or rewrapping must also reveal a control that already has focus.
       const active = document.activeElement;
-      if (active?.closest('footer') && (resized || active.getBoundingClientRect().top < innerHeight)) {
+      if (active && active.closest('footer') && (resized || active.getBoundingClientRect().top < innerHeight)) {
         active.scrollIntoView({ block: resized ? 'center' : 'nearest' });
       }
     };

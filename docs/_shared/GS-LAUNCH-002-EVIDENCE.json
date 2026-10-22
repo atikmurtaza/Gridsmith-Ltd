@@ -1,0 +1,5408 @@
+{
+  "task": "GS-LAUNCH-002",
+  "executionComplete": true,
+  "recordedAt": "2026-10-22T23:33:38.209500+00:00",
+  "baseline": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+  "branch": "codex/gs-launch-002",
+  "comparison": "a7b931c10eb2a543bfa43e89954555fdadb7072d",
+  "verificationIdentity": "Local precommit candidate; final commit is identified in the Git history and final response. No exact-SHA remote acceptance is claimed.",
+  "sourceManifest": [
+    {
+      "path": ".gitattributes",
+      "bytes": 1279,
+      "sha256": "d45c80ca0d6506b9ee0c30f31a5adcb8ea43619d4ec1253835f9648c4ec27d69",
+      "modifiedAtUTC": "2026-10-22T13:20:50.001809+00:00"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 24801,
+      "sha256": "2b1a05d3a6edc30fd071855fbddea401e0b5141a37087e6beae509ddd3d8b0af",
+      "modifiedAtUTC": "2026-10-22T13:20:50.049483+00:00"
+    },
+    {
+      "path": ".github/workflows/hostinger-staging.yml",
+      "bytes": 2816,
+      "sha256": "4e436c2ac8f4eda00bd71cbc845c3fbfd0ea1fc6e78848bf8a5335c75d19453f",
+      "modifiedAtUTC": "2026-10-22T13:20:51.265146+00:00"
+    },
+    {
+      "path": "app/(marketing)/insights/page.tsx",
+      "bytes": 2610,
+      "sha256": "ee641e5393313ed84e1ffd347de08d5366f092b36674dc1fc5dcd41c2f0d890c",
+      "modifiedAtUTC": "2026-10-22T13:20:09.436986+00:00"
+    },
+    {
+      "path": "app/(press)/press/gridsmith-path-probe/page.probe.tsx",
+      "bytes": 9935,
+      "sha256": "337749e3d1f9b3720c1aed14988a682913d41c32fda64947bb9d52ff41b30aeb",
+      "modifiedAtUTC": "2026-10-22T13:21:11.929777+00:00"
+    },
+    {
+      "path": "app/sitemap.ts",
+      "bytes": 3121,
+      "sha256": "1effc4ccfd78d649f4827dcfd011caaa1bd98fb17ed7850a925bfcd656e65717",
+      "modifiedAtUTC": "2026-10-22T22:03:47.307963+00:00"
+    },
+    {
+      "path": "components/consent/ConsentBanner.tsx",
+      "bytes": 7962,
+      "sha256": "6acff292e405a09aa5a0b1ba7652285d61d152bbb788fabb94c491170876088a",
+      "modifiedAtUTC": "2026-10-22T13:20:09.535869+00:00"
+    },
+    {
+      "path": "components/consent/bundle-size-probe.ts",
+      "bytes": 3072,
+      "sha256": "9f6c6ca960e7da559c52b22ab8e49c706916c1951f0928dd7d5bbacb6bb5ed78",
+      "modifiedAtUTC": "2026-10-22T22:29:19.139609+00:00"
+    },
+    {
+      "path": "components/leads/ContactForm.tsx",
+      "bytes": 10285,
+      "sha256": "027ce6b001c2bdb629b7b9b2ff02544612d1946f94e6448af7fd69a23192e3c5",
+      "modifiedAtUTC": "2026-10-22T13:21:11.925778+00:00"
+    },
+    {
+      "path": "components/master/scene.ts",
+      "bytes": 22071,
+      "sha256": "3f6ef0f3e7f5cb8a3073391902558e54293285424bdfc5d25c595bbb139a5606",
+      "modifiedAtUTC": "2026-10-22T22:48:41.418447+00:00"
+    },
+    {
+      "path": "components/master/sceneModel.ts",
+      "bytes": 19858,
+      "sha256": "c06d145db7e051483c9ff76564737a8b02504c48fbaf7f28d77c90e94d90315d",
+      "modifiedAtUTC": "2026-10-22T22:48:41.417442+00:00"
+    },
+    {
+      "path": "config/browser-input.json",
+      "bytes": 229589,
+      "sha256": "20ac446b365c2e9f08d83355f66e99f78c4065c93c49099c45ebd4754be0cb54",
+      "modifiedAtUTC": "2026-10-22T13:20:50.100989+00:00"
+    },
+    {
+      "path": "config/browser-provenance/google-chrome-155.InRelease",
+      "bytes": 2548,
+      "sha256": "256e3048bac6b5238fcae0f6295b66c6ed3f8db027c72d6ab34080abf10e1b13",
+      "modifiedAtUTC": "2026-10-22T13:20:50.151513+00:00"
+    },
+    {
+      "path": "config/browser-provenance/google-chrome-155.Packages",
+      "bytes": 6207,
+      "sha256": "cafc994f194c588cc63e4031ce54f7297bc2591ef336d0da7300b41e1b4fec41",
+      "modifiedAtUTC": "2026-10-22T13:20:50.204315+00:00"
+    },
+    {
+      "path": "config/browser-provenance/google-linux-signing-key.asc",
+      "bytes": 19640,
+      "sha256": "54dea5f6c2a26091578cf52a999cebc6b64df478d37ad4dce96376b711e3b27c",
+      "modifiedAtUTC": "2026-10-22T13:20:50.250864+00:00"
+    },
+    {
+      "path": "lib/build/hostinger.ts",
+      "bytes": 6606,
+      "sha256": "0baa8af8102a74bcd75f8247997cca7c13d117e3b78b2a2e4d11a4b9659b72c9",
+      "modifiedAtUTC": "2026-10-22T13:20:51.377990+00:00"
+    },
+    {
+      "path": "lib/build/production.ts",
+      "bytes": 2277,
+      "sha256": "6424abd6497c8bf1aeb0a7cedba6c0af63903fa510dc860461e9636b95c31cdb",
+      "modifiedAtUTC": "2026-10-22T13:20:51.323755+00:00"
+    },
+    {
+      "path": "lib/build/route-manifest.ts",
+      "bytes": 7195,
+      "sha256": "a6d7299a810cf877e02e34904c30d2c9a3171a7ef25722513d3ed748231428a0",
+      "modifiedAtUTC": "2026-10-22T13:28:26.980019+00:00"
+    },
+    {
+      "path": "lib/build/static-routes.ts",
+      "bytes": 1786,
+      "sha256": "b60bc63c1bf3df44937c444b2311d0190ad73e0b5f31aa9c544c44f3a1af13b8",
+      "modifiedAtUTC": "2026-10-22T13:20:51.432880+00:00"
+    },
+    {
+      "path": "lib/company/companyDetails.ts",
+      "bytes": 4639,
+      "sha256": "3749080b2b4af0bb1b7ca6339081d67f36c9a70cf99771d95339f64b28d8f331",
+      "modifiedAtUTC": "2026-10-22T13:20:09.285593+00:00"
+    },
+    {
+      "path": "lib/company/confirmed.ts",
+      "bytes": 256,
+      "sha256": "5f7b353eff96a9e208c1ef1b6b5fad83018fd21cc4ad241c07efdcb9be2d955f",
+      "modifiedAtUTC": "2026-10-22T13:20:09.235204+00:00"
+    },
+    {
+      "path": "lib/leads/edge-deployment.ts",
+      "bytes": 3555,
+      "sha256": "8e1d615e6f98b39d64a6b54f979a17d39fe411034a2f0def80868e62ecf3673f",
+      "modifiedAtUTC": "2026-10-22T13:20:51.534530+00:00"
+    },
+    {
+      "path": "lib/leads/edge-worker.ts",
+      "bytes": 6536,
+      "sha256": "0ad8bb85ff539de206c38fa3b88d8ff3bf18e1c520d1fec36958c122ab5301a7",
+      "modifiedAtUTC": "2026-10-22T13:20:51.587142+00:00"
+    },
+    {
+      "path": "lib/seo/site.ts",
+      "bytes": 6452,
+      "sha256": "8bd7bd9cb9d078336dc6315bdf511f3b76550adda0872e5fa8a6f50e5b56a34c",
+      "modifiedAtUTC": "2026-10-22T13:20:51.483991+00:00"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 871943,
+      "sha256": "2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c",
+      "modifiedAtUTC": "2026-10-22T22:09:19.851948+00:00"
+    },
+    {
+      "path": "package.json",
+      "bytes": 9238,
+      "sha256": "3ab3f64f4999e7f3b0a16c4f99b431058371baad9beeff168eb938948493eeba",
+      "modifiedAtUTC": "2026-10-22T22:12:57.641105+00:00"
+    },
+    {
+      "path": "scripts/browser-input.mjs",
+      "bytes": 31366,
+      "sha256": "696778911c780fade4caf1856b77f8a808323fc9ef5c419416302ce8f706fddd",
+      "modifiedAtUTC": "2026-10-22T22:29:19.179612+00:00"
+    },
+    {
+      "path": "scripts/browser-input.selftest.mjs",
+      "bytes": 30848,
+      "sha256": "58cee56649ba4fca601b25b78275022804a65ca72087bcc3176c6ae8ed64b0b0",
+      "modifiedAtUTC": "2026-10-22T22:29:19.218137+00:00"
+    },
+    {
+      "path": "scripts/browser-launch.mjs",
+      "bytes": 2422,
+      "sha256": "8a4655a18d76a09f4a1732c63d76e3c043c234eda00fa184ed37e162da75436f",
+      "modifiedAtUTC": "2026-10-22T13:20:50.541434+00:00"
+    },
+    {
+      "path": "scripts/build-static.mjs",
+      "bytes": 16386,
+      "sha256": "52360d004658505a48791610c73e6ec0bbd39d8bc85aa52a8b9f714b90f8e94c",
+      "modifiedAtUTC": "2026-10-22T13:28:26.978031+00:00"
+    },
+    {
+      "path": "scripts/check-axe.mjs",
+      "bytes": 111449,
+      "sha256": "9247cb9601781e585d58350d19c27fb92e722ebe51a35822d5407b3ec1cd5ba0",
+      "modifiedAtUTC": "2026-10-22T13:21:11.933776+00:00"
+    },
+    {
+      "path": "scripts/check-bundle-size.mjs",
+      "bytes": 43100,
+      "sha256": "0b20f4777e0f7e93a2792161ada2fc13b507f005ee59c2d577527372de7def82",
+      "modifiedAtUTC": "2026-10-22T22:29:19.100859+00:00"
+    },
+    {
+      "path": "scripts/check-company-facts.mjs",
+      "bytes": 14911,
+      "sha256": "e62f849f6eee10bc32df4231cb5f7078a5232ef2e85cbdc36e766d760043d02e",
+      "modifiedAtUTC": "2026-10-22T13:21:11.934795+00:00"
+    },
+    {
+      "path": "scripts/check-company-facts.selftest.mjs",
+      "bytes": 21471,
+      "sha256": "8120b93db1d2d2bd9a092abe44a119f109130d70f6aaa913e35465afe42f4a03",
+      "modifiedAtUTC": "2026-10-22T13:24:19.330926+00:00"
+    },
+    {
+      "path": "scripts/check-dependency-overrides-ftp.mjs",
+      "bytes": 5509,
+      "sha256": "ccd01c13659db6ba55daddec38b343a10ca285b1dafaf490801ecbc4e57785bd",
+      "modifiedAtUTC": "2026-10-22T13:20:50.969452+00:00"
+    },
+    {
+      "path": "scripts/check-dependency-overrides.mjs",
+      "bytes": 10811,
+      "sha256": "554dc26be41e4f9dc4fd6394a2f21dba87ed8266d5426a2d11972cdf69b0f82d",
+      "modifiedAtUTC": "2026-10-22T22:10:03.222121+00:00"
+    },
+    {
+      "path": "scripts/check-edge-intake.selftest.mjs",
+      "bytes": 21996,
+      "sha256": "9f8a604b9a0b9248ffae26f6c852020d26e55bd042f73fb9e20ff9119fb60df7",
+      "modifiedAtUTC": "2026-10-22T13:29:31.596035+00:00"
+    },
+    {
+      "path": "scripts/check-edge-ui.mjs",
+      "bytes": 13807,
+      "sha256": "28bdac1525294aff6329b82a7753776ce8b1571bc485f56af0c2a57685fae282",
+      "modifiedAtUTC": "2026-10-22T13:20:51.209356+00:00"
+    },
+    {
+      "path": "scripts/check-lhci.mjs",
+      "bytes": 3212,
+      "sha256": "629d9c92dd5bca55decd3fb6c65f3c4b0b2a3a49512851f0bbf196c1070f0814",
+      "modifiedAtUTC": "2026-10-22T13:20:50.607317+00:00"
+    },
+    {
+      "path": "scripts/check-master-accessibility.mjs",
+      "bytes": 13970,
+      "sha256": "b3083b62d9fdfdaa002c65ffbf90b8aad4d1b546b11c76706df1677b21bed122",
+      "modifiedAtUTC": "2026-10-22T22:43:44.800342+00:00"
+    },
+    {
+      "path": "scripts/check-master-accessibility.selftest.mjs",
+      "bytes": 9308,
+      "sha256": "e49b459a3c430f0ca54282ada7d31c08920b1bdfda445382864439f73720ed2f",
+      "modifiedAtUTC": "2026-10-22T22:49:29.845008+00:00"
+    },
+    {
+      "path": "scripts/check-master-scene.mjs",
+      "bytes": 58844,
+      "sha256": "2d3ec86794550d07b13668d40bd090215d5eb2fa026a909461692dee8aac54b9",
+      "modifiedAtUTC": "2026-10-22T23:03:46.056253+00:00"
+    },
+    {
+      "path": "scripts/check-master-scene.selftest.mjs",
+      "bytes": 14841,
+      "sha256": "86867f944c945c7a9523f0b1358ac90761dce08ac55a71532e93348dc4269c82",
+      "modifiedAtUTC": "2026-10-22T23:03:46.047482+00:00"
+    },
+    {
+      "path": "scripts/check-path-live.mjs",
+      "bytes": 14768,
+      "sha256": "b111ee87810bb2ec083bd973cc1c2a2c19064c3a8f8cf459cc69844fa2dc4123",
+      "modifiedAtUTC": "2026-10-22T13:21:11.937778+00:00"
+    },
+    {
+      "path": "scripts/check-press-scene.mjs",
+      "bytes": 18300,
+      "sha256": "c0220479a6cf4f29cd986eccb0a1b41a79c05b92654c4cda2ab30cdf2911a639",
+      "modifiedAtUTC": "2026-10-22T13:28:26.979011+00:00"
+    },
+    {
+      "path": "scripts/check-press-type.mjs",
+      "bytes": 9617,
+      "sha256": "22404389339934f55589a52e36d2ea049b735871b77811516b586e5345a52340",
+      "modifiedAtUTC": "2026-10-22T13:21:11.939796+00:00"
+    },
+    {
+      "path": "scripts/check-responsive.mjs",
+      "bytes": 11829,
+      "sha256": "78ed591f5c5ae5ba9087e51da771b20be2dfd7b0828a53ddea4fbd5716e4fd95",
+      "modifiedAtUTC": "2026-10-22T13:21:11.936778+00:00"
+    },
+    {
+      "path": "scripts/check-static-artifact.mjs",
+      "bytes": 14254,
+      "sha256": "eb6dd24664a5226d8d85e974b950befe2ccf8b41054ef7e1c22aef8436d43683",
+      "modifiedAtUTC": "2026-10-22T13:21:12.165483+00:00"
+    },
+    {
+      "path": "scripts/check-static-ui.mjs",
+      "bytes": 21829,
+      "sha256": "631da5cfffbb0525ad9ba917447b0fe6436f9c8542dca39d45913d604baf23c8",
+      "modifiedAtUTC": "2026-10-22T13:29:31.597034+00:00"
+    },
+    {
+      "path": "scripts/check-static.selftest.mjs",
+      "bytes": 41605,
+      "sha256": "03b835d22a68804cff413614e829fd8e5d2bd50de8a9186f4341b8c5c943ee9c",
+      "modifiedAtUTC": "2026-10-22T22:05:31.688453+00:00"
+    },
+    {
+      "path": "scripts/company-facts-rules.mjs",
+      "bytes": 26886,
+      "sha256": "5a54799631541ced27b668df0e8df1d1c0cf7b03e5cb1dea683fcd4a43619e86",
+      "modifiedAtUTC": "2026-10-22T13:24:19.319439+00:00"
+    },
+    {
+      "path": "scripts/extract-verified-browser.py",
+      "bytes": 65206,
+      "sha256": "4ec0968ab260f4812609bc8ff88a6f3e80afc43d4e68392d8fbdbf0df0e1f2ad",
+      "modifiedAtUTC": "2026-10-22T13:20:50.405133+00:00"
+    },
+    {
+      "path": "scripts/extract-verified-browser.selftest.py",
+      "bytes": 47184,
+      "sha256": "3c9cbb8c3b27264591c7fe69a04fafc9071c15a93d8c13161707161cf49c3e8a",
+      "modifiedAtUTC": "2026-10-22T13:20:50.464904+00:00"
+    },
+    {
+      "path": "scripts/seed-company-details.mjs",
+      "bytes": 7022,
+      "sha256": "77985a8501dbb224addc4db975387647a1eb4139d12a10cb529d4d471bbc2d3b",
+      "modifiedAtUTC": "2026-10-22T13:20:09.336130+00:00"
+    },
+    {
+      "path": "scripts/service-content.mjs",
+      "bytes": 72899,
+      "sha256": "e52495a38421940246a8a41381f4c83c933ea36dad1a9f453e9b12a28b98cebc",
+      "modifiedAtUTC": "2026-10-22T13:21:11.927778+00:00"
+    },
+    {
+      "path": "scripts/source-files.mjs",
+      "bytes": 6088,
+      "sha256": "1eb0fdacffcf2e14e7cf257f41d7a709415504d4aa3ddae08f214c2eacb8e74c",
+      "modifiedAtUTC": "2026-10-22T13:20:50.704075+00:00"
+    },
+    {
+      "path": "supabase/functions/_shared/runtime.ts",
+      "bytes": 2108,
+      "sha256": "4c01b04dc2db5165e00230e7858980d80ccb74ed47b4a2396b09fd26cf3c2f43",
+      "modifiedAtUTC": "2026-10-22T13:20:08.926620+00:00"
+    },
+    {
+      "path": "supabase/functions/gs-lead-intake/index.ts",
+      "bytes": 1376,
+      "sha256": "73f15eb007911af1aef6913c64388cdad550a7167d65f730ac14154dbbfd5fdb",
+      "modifiedAtUTC": "2026-10-22T13:20:08.976033+00:00"
+    },
+    {
+      "path": "supabase/functions/gs-notification-worker/index.ts",
+      "bytes": 1384,
+      "sha256": "f7915dd3afd38ad0a9fd4057f1dfb73008c4be3b9958f49acfde52e0e7509721",
+      "modifiedAtUTC": "2026-10-22T13:20:09.027038+00:00"
+    }
+  ],
+  "canonical": [
+    {
+      "slug": "privacy",
+      "path": "docs/_legal/current/privacy-policy.md",
+      "version": "2.6",
+      "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "cookies",
+      "path": "docs/_legal/current/cookie-policy.md",
+      "version": "2.4",
+      "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "terms",
+      "path": "docs/_legal/current/website-terms.md",
+      "version": "2.3",
+      "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "client-terms",
+      "path": "docs/_legal/current/client-terms-applicability.md",
+      "version": "2.3",
+      "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "business-client-terms",
+      "path": "docs/_legal/current/client-terms-business.md",
+      "version": "3.3",
+      "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "consumer-client-terms",
+      "path": "docs/_legal/current/client-terms-consumers.md",
+      "version": "3.3",
+      "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e",
+      "state": "OWNER_ADOPTED"
+    },
+    {
+      "slug": "accessibility",
+      "path": "docs/_legal/current/accessibility-statement.md",
+      "version": "2.3",
+      "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb",
+      "state": "OWNER_ADOPTED"
+    }
+  ],
+  "register": {
+    "path": "docs/_legal/evidence/GS-O003-R-REGISTER.json",
+    "bytes": 21553,
+    "sha256": "4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e",
+    "modifiedAtUTC": "2026-10-22T13:12:53.117381+00:00"
+  },
+  "legalChanged": false,
+  "ownerAdopted": 7,
+  "publishable": 0,
+  "primaryPreservation": {
+    "head": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+    "branch": "codex/gs-launch-001",
+    "fingerprints": [
+      {
+        "path": ".codex/agents/accessibility-audit.toml",
+        "sha256": "47c8cec0db8bd1d130224a5ad8df0a830133372451640cf1895158e76d7ec437"
+      },
+      {
+        "path": ".codex/agents/content-integrity.toml",
+        "sha256": "ccee9c6c93dd458718b1b092e27aa5a336fcf9d8003e53957c3b6982f863d5d5"
+      },
+      {
+        "path": ".codex/agents/design-conformance.toml",
+        "sha256": "accfd51070d6a84956d1432c6454c0b4a0e7df4c23120ad6970b5d71ac996b60"
+      },
+      {
+        "path": ".codex/agents/rules-compliance.toml",
+        "sha256": "df41d34bb36caf2aec76e8dc44955478856ac9a101f351abecdc397c47818143"
+      },
+      {
+        "path": ".codex/agents/spec-compliance.toml",
+        "sha256": "c9baa030ad101536d1215f59fd4436f87f8c68596af72d615335f748e2f1832e"
+      },
+      {
+        "path": "AGENTS.md",
+        "sha256": "ee998c1d7c00c3529f277e3d20377f144726909e875cc53d663025c98f72c6f6"
+      },
+      {
+        "path": "docs/_shared/GS-LEGAL-001-R12-RASTER-CLOSURE.md",
+        "sha256": "db1ab3fb726cb1d408f33b4dadd758601031d31d6328e2e90e7637b0deb5be4c"
+      },
+      {
+        "path": "docs/_shared/GS-SEC-001-R1.md",
+        "sha256": "5053339b2bcf2ff854e85467249d731defa4ff558339174921af16581d1d43aa"
+      },
+      {
+        "path": "docs/_shared/GS-SEC-001-R2.md",
+        "sha256": "6a945382e58acde9696f637388c4c9dc028dfdd0bded443c15a47d941e6819d8"
+      },
+      {
+        "path": "docs/_shared/GS-SEC-001-R3.md",
+        "sha256": "e886e8676e8b9bd9e0d0073957640dbc29b16984a2ec4e6c1f017e40b65dd776"
+      },
+      {
+        "path": "public/brand/design/preview.html",
+        "sha256": "d16b6de9da38db5216b38f98300de9af55bd66228be1dc8323d191e33b1b2c48"
+      },
+      {
+        "path": "docs/_shared/05-HANDOVER.md",
+        "sha256": "447d5c013a16ea01b6d3699fe64d4b0a1df3e709d9a7f9e8445deebb9512cdc9"
+      },
+      {
+        "path": "docs/_shared/AI-HANDOFF.md",
+        "sha256": "9eb7a1b2e0507c846652fd533fd748b7bb935c4314f765d25698a3bbcd3daf88"
+      },
+      {
+        "path": "docs/_shared/PROJECT-STATUS.md",
+        "sha256": "ffc418d78b4e3fd96179c1b7bd60dd72afac2b2c22f45e423bbdad0567fc3771"
+      }
+    ],
+    "allMatch": true,
+    "status": [
+      " M docs/_shared/05-HANDOVER.md",
+      " M docs/_shared/AI-HANDOFF.md",
+      " M docs/_shared/PROJECT-STATUS.md",
+      "?? .codex/agents/accessibility-audit.toml",
+      "?? .codex/agents/content-integrity.toml",
+      "?? .codex/agents/design-conformance.toml",
+      "?? .codex/agents/rules-compliance.toml",
+      "?? .codex/agents/spec-compliance.toml",
+      "?? AGENTS.md",
+      "?? docs/_shared/GS-LEGAL-001-R12-RASTER-CLOSURE.md",
+      "?? docs/_shared/GS-SEC-001-R1.md",
+      "?? docs/_shared/GS-SEC-001-R2.md",
+      "?? docs/_shared/GS-SEC-001-R3.md",
+      "?? public/brand/design/preview.html"
+    ]
+  },
+  "audits": [
+    {
+      "label": "initial original production",
+      "path": "build/gs-launch-002/audit-before-production.json",
+      "bytes": 368,
+      "sha256": "5baba18c25fd4008ba7f61154e0187ebb7e0e2e9a1d64a10fbb6b83d134da3b5",
+      "modifiedAtUTC": "2026-10-22T13:14:26.915707+00:00",
+      "lockSha256": "0db1f40a33223b7f2e2a84a8549f19d0130338165b53ee0d62dccf837f41e6a9",
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1643,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1706
+        }
+      },
+      "vulnerabilities": {}
+    },
+    {
+      "label": "initial original full",
+      "path": "build/gs-launch-002/audit-before-full.json",
+      "bytes": 22947,
+      "sha256": "b9805e343507683198c9e5011f329e4d6da77ce0922a2a57048ce600eb179ebe",
+      "modifiedAtUTC": "2026-10-22T13:14:31.205928+00:00",
+      "lockSha256": "0db1f40a33223b7f2e2a84a8549f19d0130338165b53ee0d62dccf837f41e6a9",
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 2,
+          "moderate": 7,
+          "high": 23,
+          "critical": 0,
+          "total": 32
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1643,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1706
+        }
+      },
+      "vulnerabilities": {
+        "@lhci/cli": {
+          "name": "@lhci/cli",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@lhci/utils",
+            "inquirer",
+            "lighthouse",
+            "proxy-agent",
+            "tmp",
+            "uuid"
+          ],
+          "effects": [],
+          "range": "*",
+          "nodes": [
+            "node_modules/@lhci/cli"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "@lhci/utils": {
+          "name": "@lhci/utils",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "js-yaml",
+            "lighthouse"
+          ],
+          "effects": [
+            "@lhci/cli"
+          ],
+          "range": ">=0.3.6",
+          "nodes": [
+            "node_modules/@lhci/utils"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "@next/eslint-plugin-next": {
+          "name": "@next/eslint-plugin-next",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "fast-glob"
+          ],
+          "effects": [
+            "eslint-config-next"
+          ],
+          "range": ">=14.3.0-canary.0",
+          "nodes": [
+            "node_modules/@next/eslint-plugin-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "@puppeteer/browsers": {
+          "name": "@puppeteer/browsers",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "extract-zip",
+            "proxy-agent"
+          ],
+          "effects": [
+            "puppeteer",
+            "puppeteer-core"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/@puppeteer/browsers"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@sanity/cli": {
+          "name": "@sanity/cli",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@sanity/codegen",
+            "@vercel/frameworks",
+            "typeid-js"
+          ],
+          "effects": [
+            "sanity"
+          ],
+          "range": "<=0.0.0-20260612111702 || 3.8.4-next.27 - 3.16.0 || >=5.7.1-next.1",
+          "nodes": [
+            "node_modules/@sanity/cli"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "@sanity/codegen": {
+          "name": "@sanity/codegen",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "chokidar",
+            "globby"
+          ],
+          "effects": [
+            "@sanity/cli"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/@sanity/codegen"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "@vercel/frameworks": {
+          "name": "@vercel/frameworks",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            "js-yaml"
+          ],
+          "effects": [
+            "@sanity/cli"
+          ],
+          "range": ">=0.2.1-canary.0",
+          "nodes": [
+            "node_modules/@vercel/frameworks"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "argparse": {
+          "name": "argparse",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            "sprintf-js"
+          ],
+          "effects": [
+            "js-yaml"
+          ],
+          "range": "1.0.0 - 1.0.10",
+          "nodes": [
+            "node_modules/@lhci/utils/node_modules/argparse",
+            "node_modules/@vercel/frameworks/node_modules/argparse"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "basic-ftp": {
+          "name": "basic-ftp",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1240853,
+              "name": "basic-ftp",
+              "dependency": "basic-ftp",
+              "title": "basic-ftp: Quadratic-time CPU denial of service in Client.list() Unix directory-listing parser (RE_LINE backtracking)",
+              "url": "https://github.com/advisories/GHSA-c475-qrg2-pj4r",
+              "severity": "high",
+              "cwe": [
+                "CWE-1333"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": "<=6.2.0"
+            }
+          ],
+          "effects": [
+            "get-uri"
+          ],
+          "range": "<=6.2.0",
+          "nodes": [
+            "node_modules/basic-ftp"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "braces": {
+          "name": "braces",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1240992,
+              "name": "braces",
+              "dependency": "braces",
+              "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+              "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+              "severity": "high",
+              "cwe": [
+                "CWE-674"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": "<=3.0.3"
+            }
+          ],
+          "effects": [
+            "chokidar",
+            "micromatch"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/braces"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "chokidar": {
+          "name": "chokidar",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "braces"
+          ],
+          "effects": [
+            "@sanity/codegen"
+          ],
+          "range": "2.0.0 - 3.6.0",
+          "nodes": [
+            "node_modules/@sanity/codegen/node_modules/chokidar"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "eslint-config-next": {
+          "name": "eslint-config-next",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@next/eslint-plugin-next"
+          ],
+          "effects": [],
+          "range": ">=14.3.0-canary.0",
+          "nodes": [
+            "node_modules/eslint-config-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "external-editor": {
+          "name": "external-editor",
+          "severity": "low",
+          "isDirect": false,
+          "via": [
+            "tmp"
+          ],
+          "effects": [
+            "inquirer"
+          ],
+          "range": ">=1.1.1",
+          "nodes": [
+            "node_modules/external-editor"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "extract-zip": {
+          "name": "extract-zip",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1139346,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip unvalidated symlink path traversal",
+              "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+              },
+              "range": "<=2.0.1"
+            },
+            {
+              "source": 1193685,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+              "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:H"
+              },
+              "range": "<=2.0.1"
+            }
+          ],
+          "effects": [
+            "@puppeteer/browsers"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/extract-zip"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "fast-glob": {
+          "name": "fast-glob",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "micromatch"
+          ],
+          "effects": [
+            "@next/eslint-plugin-next",
+            "globby"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/fast-glob"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "get-uri": {
+          "name": "get-uri",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "basic-ftp"
+          ],
+          "effects": [
+            "pac-proxy-agent"
+          ],
+          "range": ">=5.0.0",
+          "nodes": [
+            "node_modules/get-uri"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "globby": {
+          "name": "globby",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "fast-glob"
+          ],
+          "effects": [
+            "@sanity/codegen"
+          ],
+          "range": ">=8.0.0",
+          "nodes": [
+            "node_modules/globby"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "inquirer": {
+          "name": "inquirer",
+          "severity": "low",
+          "isDirect": false,
+          "via": [
+            "external-editor"
+          ],
+          "effects": [
+            "@lhci/cli"
+          ],
+          "range": "3.0.0 - 8.2.6 || 9.0.0 - 9.3.7",
+          "nodes": [
+            "node_modules/inquirer"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "js-yaml": {
+          "name": "js-yaml",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            "argparse"
+          ],
+          "effects": [
+            "@lhci/utils",
+            "@vercel/frameworks"
+          ],
+          "range": "3.2.7 - 3.15.2",
+          "nodes": [
+            "node_modules/@lhci/utils/node_modules/js-yaml",
+            "node_modules/@vercel/frameworks/node_modules/js-yaml"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "lighthouse": {
+          "name": "lighthouse",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "puppeteer-core"
+          ],
+          "effects": [
+            "@lhci/cli",
+            "@lhci/utils"
+          ],
+          "range": "10.1.1-dev.20230414 - 10.1.1-dev.20230503 || 10.2.0-dev.20230504 - 13.3.0",
+          "nodes": [
+            "node_modules/lighthouse"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "markdown-it": {
+          "name": "markdown-it",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1242600,
+              "name": "markdown-it",
+              "dependency": "markdown-it",
+              "title": "markdown-it: Quadratic complexity in smartquotes with unmatched closing quotes",
+              "url": "https://github.com/advisories/GHSA-r7fv-28h4-cvq7",
+              "severity": "high",
+              "cwe": [
+                "CWE-400",
+                "CWE-407"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": "<14.3.2"
+            },
+            {
+              "source": 1242646,
+              "name": "markdown-it",
+              "dependency": "markdown-it",
+              "title": "markdown-it: Quadratic-time denial of service in inline HTML parsing with html enabled",
+              "url": "https://github.com/advisories/GHSA-vfgh-jcmw-g37q",
+              "severity": "low",
+              "cwe": [
+                "CWE-400",
+                "CWE-407"
+              ],
+              "cvss": {
+                "score": 3.7,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+              },
+              "range": "<14.3.3"
+            },
+            {
+              "source": 1242672,
+              "name": "markdown-it",
+              "dependency": "markdown-it",
+              "title": "markdown-it: Quadratic-time rendering of a single multi-line link reference definition with default options (regression since 14.0)",
+              "url": "https://github.com/advisories/GHSA-gfr2-rv44-r23c",
+              "severity": "high",
+              "cwe": [
+                "CWE-400",
+                "CWE-407"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": ">=14.1.0 <14.3.3"
+            }
+          ],
+          "effects": [],
+          "range": "<=14.3.2",
+          "nodes": [
+            "node_modules/markdown-it"
+          ],
+          "fixAvailable": true
+        },
+        "micromatch": {
+          "name": "micromatch",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "braces"
+          ],
+          "effects": [
+            "fast-glob"
+          ],
+          "range": ">=0.2.0",
+          "nodes": [
+            "node_modules/micromatch"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "pac-proxy-agent": {
+          "name": "pac-proxy-agent",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "get-uri"
+          ],
+          "effects": [
+            "proxy-agent"
+          ],
+          "range": ">=6.0.0",
+          "nodes": [
+            "node_modules/pac-proxy-agent"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "proxy-agent": {
+          "name": "proxy-agent",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "pac-proxy-agent"
+          ],
+          "effects": [
+            "@lhci/cli",
+            "@puppeteer/browsers"
+          ],
+          "range": ">=6.0.0",
+          "nodes": [
+            "node_modules/proxy-agent"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer": {
+          "name": "puppeteer",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@puppeteer/browsers",
+            "puppeteer-core"
+          ],
+          "effects": [],
+          "range": "19.8.1 - 24.43.1",
+          "nodes": [
+            "node_modules/puppeteer"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer-core": {
+          "name": "puppeteer-core",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@puppeteer/browsers"
+          ],
+          "effects": [
+            "lighthouse",
+            "puppeteer"
+          ],
+          "range": "19.8.4 - 24.43.1",
+          "nodes": [
+            "node_modules/puppeteer-core"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "sanity": {
+          "name": "sanity",
+          "severity": "moderate",
+          "isDirect": true,
+          "via": [
+            "@sanity/cli"
+          ],
+          "effects": [],
+          "range": "3.94.1-next.0.6739e10a32 - 3.94.1 || >=5.14.2-alpha.14",
+          "nodes": [
+            "node_modules/sanity"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "sprintf-js": {
+          "name": "sprintf-js",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1241202,
+              "name": "sprintf-js",
+              "dependency": "sprintf-js",
+              "title": "sprintf-js vulnerable to denial of service through unbounded precision specifiers",
+              "url": "https://github.com/advisories/GHSA-hp3w-g68c-fv3c",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-1284"
+              ],
+              "cvss": {
+                "score": 5.3,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+              },
+              "range": "<=1.1.3"
+            }
+          ],
+          "effects": [
+            "argparse"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/sprintf-js"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "tmp": {
+          "name": "tmp",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1109537,
+              "name": "tmp",
+              "dependency": "tmp",
+              "title": "tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter",
+              "url": "https://github.com/advisories/GHSA-52f5-9888-hmc6",
+              "severity": "low",
+              "cwe": [
+                "CWE-59"
+              ],
+              "cvss": {
+                "score": 2.5,
+                "vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:L/A:N"
+              },
+              "range": "<=0.2.3"
+            },
+            {
+              "source": 1120654,
+              "name": "tmp",
+              "dependency": "tmp",
+              "title": "tmp has Path Traversal via unsanitized prefix/postfix that enables directory escape",
+              "url": "https://github.com/advisories/GHSA-ph9p-34f9-6g65",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": "<0.2.6"
+            }
+          ],
+          "effects": [
+            "@lhci/cli",
+            "external-editor"
+          ],
+          "range": "<=0.2.5",
+          "nodes": [
+            "node_modules/external-editor/node_modules/tmp",
+            "node_modules/tmp"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "typeid-js": {
+          "name": "typeid-js",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            "uuid"
+          ],
+          "effects": [
+            "@sanity/cli"
+          ],
+          "range": ">=1.1.0",
+          "nodes": [
+            "node_modules/typeid-js"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "uuid": {
+          "name": "uuid",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1119441,
+              "name": "uuid",
+              "dependency": "uuid",
+              "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+              "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-787",
+                "CWE-1285"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+              },
+              "range": "<11.1.1"
+            }
+          ],
+          "effects": [
+            "@lhci/cli",
+            "typeid-js"
+          ],
+          "range": "<11.1.1",
+          "nodes": [
+            "node_modules/typeid-js/node_modules/uuid",
+            "node_modules/uuid"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "vite": {
+          "name": "vite",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1242625,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "launch-editor: escapeCmdArgs() omits % escaping on Windows",
+              "url": "https://github.com/advisories/GHSA-698v-4r3x-3vcv",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-78"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            },
+            {
+              "source": 1242654,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "launch-editor: Editor CLI flag misinterpretation causing arbitrary command execution for some editors",
+              "url": "https://github.com/advisories/GHSA-r825-w8mm-5pxw",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-88"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            },
+            {
+              "source": 1242661,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "launch-editor: `fs.existsSync()` existence check can be bypassed on Windows",
+              "url": "https://github.com/advisories/GHSA-587h-7wmj-h5pm",
+              "severity": "high",
+              "cwe": [
+                "CWE-77"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            },
+            {
+              "source": 1242727,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "Vite: Cross origin script execution through Vite custom middleware",
+              "url": "https://github.com/advisories/GHSA-9jrq-w75r-8gcw",
+              "severity": "low",
+              "cwe": [
+                "CWE-80"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            },
+            {
+              "source": 1242733,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "Vite: Files outside `server.fs.allow` could be served when project paths match system paths on non-Windows machine",
+              "url": "https://github.com/advisories/GHSA-rq7h-c2jc-7f22",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-22",
+                "CWE-284"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            },
+            {
+              "source": 1242736,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "Vite: First 4 bytes of files outside of `server.fs` setting is exposed by `?vite-wasm-instance`",
+              "url": "https://github.com/advisories/GHSA-vfpm-58rq-9qcg",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-22",
+                "CWE-200",
+                "CWE-209"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            }
+          ],
+          "effects": [],
+          "range": "8.2.0 - 8.2.2",
+          "nodes": [
+            "node_modules/vite"
+          ],
+          "fixAvailable": true
+        }
+      }
+    },
+    {
+      "label": "refreshed original production",
+      "path": "build/gs-launch-002/audit-original-refreshed-production.json",
+      "bytes": 1619,
+      "sha256": "9df4331a5c20fc28a02019cb7c41afb08f7b56811853b1c24f06081a05b1f3a6",
+      "modifiedAtUTC": "2026-10-22T22:11:40.189329+00:00",
+      "lockSha256": "0db1f40a33223b7f2e2a84a8549f19d0130338165b53ee0d62dccf837f41e6a9",
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 1,
+          "total": 1
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1643,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1706
+        }
+      },
+      "vulnerabilities": {
+        "next": {
+          "name": "next",
+          "severity": "critical",
+          "isDirect": true,
+          "via": [
+            {
+              "source": 1242817,
+              "name": "next",
+              "dependency": "next",
+              "title": "Next.js: Unauthenticated Remote Code Execution in Image Optimization API when SVG files are used",
+              "url": "https://github.com/advisories/GHSA-2464-fhr4-w9xw",
+              "severity": "critical",
+              "cwe": [
+                "CWE-1395"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=10.0.0 <=15.5.27"
+            },
+            {
+              "source": 1242819,
+              "name": "next",
+              "dependency": "next",
+              "title": "Next.js: Denial of Service in App Router using Server Actions",
+              "url": "https://github.com/advisories/GHSA-p3m5-59mp-jv5r",
+              "severity": "high",
+              "cwe": [
+                "CWE-770"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=13.0.0 <=15.5.27"
+            }
+          ],
+          "effects": [],
+          "range": "10.0.0 - 15.5.27",
+          "nodes": [
+            "node_modules/next"
+          ],
+          "fixAvailable": true
+        }
+      }
+    },
+    {
+      "label": "refreshed original full",
+      "path": "build/gs-launch-002/audit-original-refreshed-full.json",
+      "bytes": 24487,
+      "sha256": "a27ecd3a0582cc0f90a82612e93c6d19bf1977e5a565dc3d94e0e0e7aea08ead",
+      "modifiedAtUTC": "2026-10-22T22:12:38.596119+00:00",
+      "lockSha256": "0db1f40a33223b7f2e2a84a8549f19d0130338165b53ee0d62dccf837f41e6a9",
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 2,
+          "moderate": 4,
+          "high": 23,
+          "critical": 2,
+          "total": 31
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1643,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1706
+        }
+      },
+      "vulnerabilities": {
+        "@lhci/cli": {
+          "name": "@lhci/cli",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@lhci/utils",
+            "inquirer",
+            "lighthouse",
+            "proxy-agent",
+            "tmp",
+            "uuid"
+          ],
+          "effects": [],
+          "range": "*",
+          "nodes": [
+            "node_modules/@lhci/cli"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "@lhci/utils": {
+          "name": "@lhci/utils",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "lighthouse"
+          ],
+          "effects": [
+            "@lhci/cli"
+          ],
+          "range": ">=0.13.0",
+          "nodes": [
+            "node_modules/@lhci/utils"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "@next/eslint-plugin-next": {
+          "name": "@next/eslint-plugin-next",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "fast-glob"
+          ],
+          "effects": [
+            "eslint-config-next"
+          ],
+          "range": ">=14.3.0-canary.0",
+          "nodes": [
+            "node_modules/@next/eslint-plugin-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "@puppeteer/browsers": {
+          "name": "@puppeteer/browsers",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "extract-zip",
+            "proxy-agent"
+          ],
+          "effects": [
+            "puppeteer",
+            "puppeteer-core"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/@puppeteer/browsers"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@sanity/cli": {
+          "name": "@sanity/cli",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@sanity/codegen",
+            "typeid-js"
+          ],
+          "effects": [
+            "sanity"
+          ],
+          "range": "<=0.0.0-20260612111702 || >=5.7.1-next.1",
+          "nodes": [
+            "node_modules/@sanity/cli"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "@sanity/codegen": {
+          "name": "@sanity/codegen",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "chokidar",
+            "globby"
+          ],
+          "effects": [
+            "@sanity/cli"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/@sanity/codegen"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "basic-ftp": {
+          "name": "basic-ftp",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1240853,
+              "name": "basic-ftp",
+              "dependency": "basic-ftp",
+              "title": "basic-ftp: Quadratic-time CPU denial of service in Client.list() Unix directory-listing parser (RE_LINE backtracking)",
+              "url": "https://github.com/advisories/GHSA-c475-qrg2-pj4r",
+              "severity": "high",
+              "cwe": [
+                "CWE-1333"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": "<=6.2.0"
+            }
+          ],
+          "effects": [
+            "get-uri"
+          ],
+          "range": "<=6.2.0",
+          "nodes": [
+            "node_modules/basic-ftp"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "braces": {
+          "name": "braces",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1240992,
+              "name": "braces",
+              "dependency": "braces",
+              "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+              "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+              "severity": "high",
+              "cwe": [
+                "CWE-674"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": "<=3.0.3"
+            }
+          ],
+          "effects": [
+            "chokidar",
+            "micromatch"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/braces"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "chokidar": {
+          "name": "chokidar",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "braces"
+          ],
+          "effects": [
+            "@sanity/codegen"
+          ],
+          "range": "2.0.0 - 3.6.0",
+          "nodes": [
+            "node_modules/@sanity/codegen/node_modules/chokidar"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "dompurify": {
+          "name": "dompurify",
+          "severity": "critical",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1242880,
+              "name": "dompurify",
+              "dependency": "dompurify",
+              "title": "DOMPurify SAFE_FOR_TEMPLATES bypass: split template expressions survive in attached shadow root content on DOM output modes",
+              "url": "https://github.com/advisories/GHSA-cg2g-xh64-v4q7",
+              "severity": "critical",
+              "cwe": [
+                "CWE-79"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=3.4.4 <=3.4.16"
+            },
+            {
+              "source": 1242881,
+              "name": "dompurify",
+              "dependency": "dompurify",
+              "title": "DOMPurify IN_PLACE: hook that removes a parent or sibling leaves the detached subtree's event handlers armed (incomplete fix for GHSA-p98j-92pf-mc4p)",
+              "url": "https://github.com/advisories/GHSA-mrv2-3pqr-j5jr",
+              "severity": "high",
+              "cwe": [
+                "CWE-79",
+                "CWE-693"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": "<=3.4.16"
+            },
+            {
+              "source": 1242882,
+              "name": "dompurify",
+              "dependency": "dompurify",
+              "title": "DOMPurify: SMIL attributeName=href guard is skipped when PARSER_MEDIA_TYPE is application/xhtml+xml",
+              "url": "https://github.com/advisories/GHSA-c6gr-qvv4-5v3f",
+              "severity": "low",
+              "cwe": [
+                "CWE-79"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": "<=3.4.16"
+            }
+          ],
+          "effects": [],
+          "range": "<=3.4.16",
+          "nodes": [
+            "node_modules/dompurify"
+          ],
+          "fixAvailable": true
+        },
+        "eslint-config-next": {
+          "name": "eslint-config-next",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@next/eslint-plugin-next"
+          ],
+          "effects": [],
+          "range": ">=14.3.0-canary.0",
+          "nodes": [
+            "node_modules/eslint-config-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "external-editor": {
+          "name": "external-editor",
+          "severity": "low",
+          "isDirect": false,
+          "via": [
+            "tmp"
+          ],
+          "effects": [
+            "inquirer"
+          ],
+          "range": ">=1.1.1",
+          "nodes": [
+            "node_modules/external-editor"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "extract-zip": {
+          "name": "extract-zip",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1139346,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip unvalidated symlink path traversal",
+              "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+              },
+              "range": "<=2.0.1"
+            },
+            {
+              "source": 1193685,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+              "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:H"
+              },
+              "range": "<=2.0.1"
+            }
+          ],
+          "effects": [
+            "@puppeteer/browsers"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/extract-zip"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "fast-glob": {
+          "name": "fast-glob",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "micromatch"
+          ],
+          "effects": [
+            "@next/eslint-plugin-next",
+            "globby"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/fast-glob"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "get-uri": {
+          "name": "get-uri",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "basic-ftp"
+          ],
+          "effects": [
+            "pac-proxy-agent"
+          ],
+          "range": ">=5.0.0",
+          "nodes": [
+            "node_modules/get-uri"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "globby": {
+          "name": "globby",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "fast-glob"
+          ],
+          "effects": [
+            "@sanity/codegen"
+          ],
+          "range": ">=8.0.0",
+          "nodes": [
+            "node_modules/globby"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "inquirer": {
+          "name": "inquirer",
+          "severity": "low",
+          "isDirect": false,
+          "via": [
+            "external-editor"
+          ],
+          "effects": [
+            "@lhci/cli"
+          ],
+          "range": "3.0.0 - 8.2.6 || 9.0.0 - 9.3.7",
+          "nodes": [
+            "node_modules/inquirer"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "ip-address": {
+          "name": "ip-address",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1242883,
+              "name": "ip-address",
+              "dependency": "ip-address",
+              "title": "ip-address: Address6 matches a zone identifier in quadratic time ahead of its length limit, allowing a single long string to stall the process",
+              "url": "https://github.com/advisories/GHSA-rxp7-6hxx-x8q5",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-1333"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": "<=10.7.3"
+            }
+          ],
+          "effects": [],
+          "range": "<=10.7.3",
+          "nodes": [
+            "node_modules/ip-address"
+          ],
+          "fixAvailable": true
+        },
+        "lighthouse": {
+          "name": "lighthouse",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "puppeteer-core"
+          ],
+          "effects": [
+            "@lhci/cli",
+            "@lhci/utils"
+          ],
+          "range": "10.1.1-dev.20230414 - 10.1.1-dev.20230503 || 10.2.0-dev.20230504 - 13.3.0",
+          "nodes": [
+            "node_modules/lighthouse"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "markdown-it": {
+          "name": "markdown-it",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1242600,
+              "name": "markdown-it",
+              "dependency": "markdown-it",
+              "title": "markdown-it: Quadratic complexity in smartquotes with unmatched closing quotes",
+              "url": "https://github.com/advisories/GHSA-r7fv-28h4-cvq7",
+              "severity": "high",
+              "cwe": [
+                "CWE-400",
+                "CWE-407"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": "<14.3.2"
+            },
+            {
+              "source": 1242646,
+              "name": "markdown-it",
+              "dependency": "markdown-it",
+              "title": "markdown-it: Quadratic-time denial of service in inline HTML parsing with html enabled",
+              "url": "https://github.com/advisories/GHSA-vfgh-jcmw-g37q",
+              "severity": "low",
+              "cwe": [
+                "CWE-400",
+                "CWE-407"
+              ],
+              "cvss": {
+                "score": 3.7,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+              },
+              "range": "<14.3.3"
+            },
+            {
+              "source": 1242672,
+              "name": "markdown-it",
+              "dependency": "markdown-it",
+              "title": "markdown-it: Quadratic-time rendering of a single multi-line link reference definition with default options (regression since 14.0)",
+              "url": "https://github.com/advisories/GHSA-gfr2-rv44-r23c",
+              "severity": "high",
+              "cwe": [
+                "CWE-400",
+                "CWE-407"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": ">=14.1.0 <14.3.3"
+            }
+          ],
+          "effects": [],
+          "range": "<=14.3.2",
+          "nodes": [
+            "node_modules/markdown-it"
+          ],
+          "fixAvailable": true
+        },
+        "micromatch": {
+          "name": "micromatch",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "braces"
+          ],
+          "effects": [
+            "fast-glob"
+          ],
+          "range": ">=0.2.0",
+          "nodes": [
+            "node_modules/micromatch"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "next": {
+          "name": "next",
+          "severity": "critical",
+          "isDirect": true,
+          "via": [
+            {
+              "source": 1242817,
+              "name": "next",
+              "dependency": "next",
+              "title": "Next.js: Unauthenticated Remote Code Execution in Image Optimization API when SVG files are used",
+              "url": "https://github.com/advisories/GHSA-2464-fhr4-w9xw",
+              "severity": "critical",
+              "cwe": [
+                "CWE-1395"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=10.0.0 <=15.5.27"
+            },
+            {
+              "source": 1242819,
+              "name": "next",
+              "dependency": "next",
+              "title": "Next.js: Denial of Service in App Router using Server Actions",
+              "url": "https://github.com/advisories/GHSA-p3m5-59mp-jv5r",
+              "severity": "high",
+              "cwe": [
+                "CWE-770"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=13.0.0 <=15.5.27"
+            }
+          ],
+          "effects": [],
+          "range": "10.0.0 - 15.5.27",
+          "nodes": [
+            "node_modules/next"
+          ],
+          "fixAvailable": true
+        },
+        "pac-proxy-agent": {
+          "name": "pac-proxy-agent",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "get-uri"
+          ],
+          "effects": [
+            "proxy-agent"
+          ],
+          "range": ">=6.0.0",
+          "nodes": [
+            "node_modules/pac-proxy-agent"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "proxy-agent": {
+          "name": "proxy-agent",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "pac-proxy-agent"
+          ],
+          "effects": [
+            "@lhci/cli",
+            "@puppeteer/browsers"
+          ],
+          "range": ">=6.0.0",
+          "nodes": [
+            "node_modules/proxy-agent"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer": {
+          "name": "puppeteer",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@puppeteer/browsers",
+            "puppeteer-core"
+          ],
+          "effects": [],
+          "range": "19.8.1 - 24.43.1",
+          "nodes": [
+            "node_modules/puppeteer"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer-core": {
+          "name": "puppeteer-core",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@puppeteer/browsers"
+          ],
+          "effects": [
+            "lighthouse",
+            "puppeteer"
+          ],
+          "range": "19.8.4 - 24.43.1",
+          "nodes": [
+            "node_modules/puppeteer-core"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "sanity": {
+          "name": "sanity",
+          "severity": "moderate",
+          "isDirect": true,
+          "via": [
+            "@sanity/cli"
+          ],
+          "effects": [],
+          "range": "3.94.1-next.0.6739e10a32 - 3.94.1 || >=5.14.2-alpha.14",
+          "nodes": [
+            "node_modules/sanity"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "tmp": {
+          "name": "tmp",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1109537,
+              "name": "tmp",
+              "dependency": "tmp",
+              "title": "tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter",
+              "url": "https://github.com/advisories/GHSA-52f5-9888-hmc6",
+              "severity": "low",
+              "cwe": [
+                "CWE-59"
+              ],
+              "cvss": {
+                "score": 2.5,
+                "vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:L/A:N"
+              },
+              "range": "<=0.2.3"
+            },
+            {
+              "source": 1120654,
+              "name": "tmp",
+              "dependency": "tmp",
+              "title": "tmp has Path Traversal via unsanitized prefix/postfix that enables directory escape",
+              "url": "https://github.com/advisories/GHSA-ph9p-34f9-6g65",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": "<0.2.6"
+            }
+          ],
+          "effects": [
+            "@lhci/cli",
+            "external-editor"
+          ],
+          "range": "<=0.2.5",
+          "nodes": [
+            "node_modules/external-editor/node_modules/tmp",
+            "node_modules/tmp"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "typeid-js": {
+          "name": "typeid-js",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            "uuid"
+          ],
+          "effects": [
+            "@sanity/cli"
+          ],
+          "range": ">=1.1.0",
+          "nodes": [
+            "node_modules/typeid-js"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.14.1",
+            "isSemVerMajor": true
+          }
+        },
+        "uuid": {
+          "name": "uuid",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1119441,
+              "name": "uuid",
+              "dependency": "uuid",
+              "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+              "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-787",
+                "CWE-1285"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+              },
+              "range": "<11.1.1"
+            }
+          ],
+          "effects": [
+            "@lhci/cli",
+            "typeid-js"
+          ],
+          "range": "<11.1.1",
+          "nodes": [
+            "node_modules/typeid-js/node_modules/uuid",
+            "node_modules/uuid"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.6.1",
+            "isSemVerMajor": true
+          }
+        },
+        "vite": {
+          "name": "vite",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1242625,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "launch-editor: escapeCmdArgs() omits % escaping on Windows",
+              "url": "https://github.com/advisories/GHSA-698v-4r3x-3vcv",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-78"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            },
+            {
+              "source": 1242654,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "launch-editor: Editor CLI flag misinterpretation causing arbitrary command execution for some editors",
+              "url": "https://github.com/advisories/GHSA-r825-w8mm-5pxw",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-88"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            },
+            {
+              "source": 1242661,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "launch-editor: `fs.existsSync()` existence check can be bypassed on Windows",
+              "url": "https://github.com/advisories/GHSA-587h-7wmj-h5pm",
+              "severity": "high",
+              "cwe": [
+                "CWE-77"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            },
+            {
+              "source": 1242727,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "Vite: Cross origin script execution through Vite custom middleware",
+              "url": "https://github.com/advisories/GHSA-9jrq-w75r-8gcw",
+              "severity": "low",
+              "cwe": [
+                "CWE-80"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            },
+            {
+              "source": 1242733,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "Vite: Files outside `server.fs.allow` could be served when project paths match system paths on non-Windows machine",
+              "url": "https://github.com/advisories/GHSA-rq7h-c2jc-7f22",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-22",
+                "CWE-284"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            },
+            {
+              "source": 1242736,
+              "name": "vite",
+              "dependency": "vite",
+              "title": "Vite: First 4 bytes of files outside of `server.fs` setting is exposed by `?vite-wasm-instance`",
+              "url": "https://github.com/advisories/GHSA-vfpm-58rq-9qcg",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-22",
+                "CWE-200",
+                "CWE-209"
+              ],
+              "cvss": {
+                "score": 0,
+                "vectorString": null
+              },
+              "range": ">=8.2.0 <=8.2.3"
+            }
+          ],
+          "effects": [],
+          "range": "8.2.0 - 8.2.2",
+          "nodes": [
+            "node_modules/vite"
+          ],
+          "fixAvailable": true
+        }
+      }
+    },
+    {
+      "label": "final candidate production",
+      "path": "build/gs-launch-002/audit-final-production.json",
+      "bytes": 368,
+      "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c",
+      "modifiedAtUTC": "2026-10-22T22:18:04.313379+00:00",
+      "lockSha256": "2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c",
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1638,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1701
+        }
+      },
+      "vulnerabilities": {}
+    },
+    {
+      "label": "final candidate full",
+      "path": "build/gs-launch-002/audit-final-full.json",
+      "bytes": 9216,
+      "sha256": "cf5eed829171e36eb17a3b63698a1079673d30decaafbcced7f269f46c4202f4",
+      "modifiedAtUTC": "2026-10-22T22:18:08.344739+00:00",
+      "lockSha256": "2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c",
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 17,
+          "critical": 0,
+          "total": 17
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1638,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1701
+        }
+      },
+      "vulnerabilities": {
+        "@lhci/cli": {
+          "name": "@lhci/cli",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@lhci/utils",
+            "lighthouse"
+          ],
+          "effects": [],
+          "range": "<=0.1.1-alpha.5 || >=0.13.0",
+          "nodes": [
+            "node_modules/@lhci/cli"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.12.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@lhci/utils": {
+          "name": "@lhci/utils",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "lighthouse"
+          ],
+          "effects": [
+            "@lhci/cli"
+          ],
+          "range": ">=0.13.0",
+          "nodes": [
+            "node_modules/@lhci/utils"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.12.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@next/eslint-plugin-next": {
+          "name": "@next/eslint-plugin-next",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "fast-glob"
+          ],
+          "effects": [
+            "eslint-config-next"
+          ],
+          "range": ">=14.3.0-canary.0",
+          "nodes": [
+            "node_modules/@next/eslint-plugin-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "@puppeteer/browsers": {
+          "name": "@puppeteer/browsers",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "extract-zip"
+          ],
+          "effects": [
+            "puppeteer",
+            "puppeteer-core"
+          ],
+          "range": "<=2.13.2",
+          "nodes": [
+            "node_modules/@puppeteer/browsers"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@sanity/cli": {
+          "name": "@sanity/cli",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@sanity/codegen"
+          ],
+          "effects": [
+            "sanity"
+          ],
+          "range": "<=0.0.0-20260612111702 || >=5.7.1-next.1",
+          "nodes": [
+            "node_modules/@sanity/cli"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@sanity/codegen": {
+          "name": "@sanity/codegen",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "chokidar",
+            "globby"
+          ],
+          "effects": [
+            "@sanity/cli"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/@sanity/codegen"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "braces": {
+          "name": "braces",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1240992,
+              "name": "braces",
+              "dependency": "braces",
+              "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+              "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+              "severity": "high",
+              "cwe": [
+                "CWE-674"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": "<=3.0.3"
+            }
+          ],
+          "effects": [
+            "chokidar",
+            "micromatch"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/braces"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "chokidar": {
+          "name": "chokidar",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "braces"
+          ],
+          "effects": [
+            "@sanity/codegen"
+          ],
+          "range": "2.0.0 - 3.6.0",
+          "nodes": [
+            "node_modules/@sanity/codegen/node_modules/chokidar"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "eslint-config-next": {
+          "name": "eslint-config-next",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@next/eslint-plugin-next"
+          ],
+          "effects": [],
+          "range": ">=14.3.0-canary.0",
+          "nodes": [
+            "node_modules/eslint-config-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "extract-zip": {
+          "name": "extract-zip",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1139346,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip unvalidated symlink path traversal",
+              "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+              },
+              "range": "<=2.0.1"
+            },
+            {
+              "source": 1193685,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+              "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:H"
+              },
+              "range": "<=2.0.1"
+            }
+          ],
+          "effects": [
+            "@puppeteer/browsers"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/extract-zip"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "fast-glob": {
+          "name": "fast-glob",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "micromatch"
+          ],
+          "effects": [
+            "@next/eslint-plugin-next",
+            "globby"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/fast-glob"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "globby": {
+          "name": "globby",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "fast-glob"
+          ],
+          "effects": [
+            "@sanity/codegen"
+          ],
+          "range": ">=8.0.0",
+          "nodes": [
+            "node_modules/globby"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "lighthouse": {
+          "name": "lighthouse",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "puppeteer-core"
+          ],
+          "effects": [
+            "@lhci/cli",
+            "@lhci/utils"
+          ],
+          "range": "10.1.1-dev.20230414 - 10.1.1-dev.20230503 || 10.2.0-dev.20230504 - 13.3.0",
+          "nodes": [
+            "node_modules/lighthouse"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.12.0",
+            "isSemVerMajor": true
+          }
+        },
+        "micromatch": {
+          "name": "micromatch",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "braces"
+          ],
+          "effects": [
+            "fast-glob"
+          ],
+          "range": ">=0.2.0",
+          "nodes": [
+            "node_modules/micromatch"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer": {
+          "name": "puppeteer",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@puppeteer/browsers",
+            "puppeteer-core"
+          ],
+          "effects": [],
+          "range": "19.8.1 - 24.43.1",
+          "nodes": [
+            "node_modules/puppeteer"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer-core": {
+          "name": "puppeteer-core",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@puppeteer/browsers"
+          ],
+          "effects": [
+            "lighthouse",
+            "puppeteer"
+          ],
+          "range": "19.8.4 - 24.43.1",
+          "nodes": [
+            "node_modules/puppeteer-core"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "sanity": {
+          "name": "sanity",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@sanity/cli"
+          ],
+          "effects": [],
+          "range": "3.94.1-next.0.6739e10a32 - 3.94.1 || >=5.7.1-next.1",
+          "nodes": [
+            "node_modules/sanity"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        }
+      }
+    },
+    {
+      "label": "release refresh production",
+      "path": "build/gs-launch-002/audit-release-production.log",
+      "bytes": 368,
+      "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c",
+      "modifiedAtUTC": "2026-10-22T23:18:37.479905+00:00",
+      "lockSha256": "2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c",
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1638,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1701
+        }
+      },
+      "vulnerabilities": {}
+    },
+    {
+      "label": "release refresh full",
+      "path": "build/gs-launch-002/audit-release-full.log",
+      "bytes": 9216,
+      "sha256": "cf5eed829171e36eb17a3b63698a1079673d30decaafbcced7f269f46c4202f4",
+      "modifiedAtUTC": "2026-10-22T23:19:12.196864+00:00",
+      "lockSha256": "2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c",
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 17,
+          "critical": 0,
+          "total": 17
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1638,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1701
+        }
+      },
+      "vulnerabilities": {
+        "@lhci/cli": {
+          "name": "@lhci/cli",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@lhci/utils",
+            "lighthouse"
+          ],
+          "effects": [],
+          "range": "<=0.1.1-alpha.5 || >=0.13.0",
+          "nodes": [
+            "node_modules/@lhci/cli"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.12.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@lhci/utils": {
+          "name": "@lhci/utils",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "lighthouse"
+          ],
+          "effects": [
+            "@lhci/cli"
+          ],
+          "range": ">=0.13.0",
+          "nodes": [
+            "node_modules/@lhci/utils"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.12.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@next/eslint-plugin-next": {
+          "name": "@next/eslint-plugin-next",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "fast-glob"
+          ],
+          "effects": [
+            "eslint-config-next"
+          ],
+          "range": ">=14.3.0-canary.0",
+          "nodes": [
+            "node_modules/@next/eslint-plugin-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "@puppeteer/browsers": {
+          "name": "@puppeteer/browsers",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "extract-zip"
+          ],
+          "effects": [
+            "puppeteer",
+            "puppeteer-core"
+          ],
+          "range": "<=2.13.2",
+          "nodes": [
+            "node_modules/@puppeteer/browsers"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@sanity/cli": {
+          "name": "@sanity/cli",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@sanity/codegen"
+          ],
+          "effects": [
+            "sanity"
+          ],
+          "range": "<=0.0.0-20260612111702 || >=5.7.1-next.1",
+          "nodes": [
+            "node_modules/@sanity/cli"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@sanity/codegen": {
+          "name": "@sanity/codegen",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "chokidar",
+            "globby"
+          ],
+          "effects": [
+            "@sanity/cli"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/@sanity/codegen"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "braces": {
+          "name": "braces",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1240992,
+              "name": "braces",
+              "dependency": "braces",
+              "title": "braces vulnerable to stack-exhaustion denial of service through deeply nested patterns",
+              "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+              "severity": "high",
+              "cwe": [
+                "CWE-674"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": "<=3.0.3"
+            }
+          ],
+          "effects": [
+            "chokidar",
+            "micromatch"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/braces"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "chokidar": {
+          "name": "chokidar",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "braces"
+          ],
+          "effects": [
+            "@sanity/codegen"
+          ],
+          "range": "2.0.0 - 3.6.0",
+          "nodes": [
+            "node_modules/@sanity/codegen/node_modules/chokidar"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "eslint-config-next": {
+          "name": "eslint-config-next",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@next/eslint-plugin-next"
+          ],
+          "effects": [],
+          "range": ">=14.3.0-canary.0",
+          "nodes": [
+            "node_modules/eslint-config-next"
+          ],
+          "fixAvailable": {
+            "name": "eslint-config-next",
+            "version": "14.2.35",
+            "isSemVerMajor": true
+          }
+        },
+        "extract-zip": {
+          "name": "extract-zip",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1139346,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip unvalidated symlink path traversal",
+              "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+              },
+              "range": "<=2.0.1"
+            },
+            {
+              "source": 1193685,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+              "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:H"
+              },
+              "range": "<=2.0.1"
+            }
+          ],
+          "effects": [
+            "@puppeteer/browsers"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/extract-zip"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "fast-glob": {
+          "name": "fast-glob",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "micromatch"
+          ],
+          "effects": [
+            "@next/eslint-plugin-next",
+            "globby"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/fast-glob"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "globby": {
+          "name": "globby",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "fast-glob"
+          ],
+          "effects": [
+            "@sanity/codegen"
+          ],
+          "range": ">=8.0.0",
+          "nodes": [
+            "node_modules/globby"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "lighthouse": {
+          "name": "lighthouse",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "puppeteer-core"
+          ],
+          "effects": [
+            "@lhci/cli",
+            "@lhci/utils"
+          ],
+          "range": "10.1.1-dev.20230414 - 10.1.1-dev.20230503 || 10.2.0-dev.20230504 - 13.3.0",
+          "nodes": [
+            "node_modules/lighthouse"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.12.0",
+            "isSemVerMajor": true
+          }
+        },
+        "micromatch": {
+          "name": "micromatch",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "braces"
+          ],
+          "effects": [
+            "fast-glob"
+          ],
+          "range": ">=0.2.0",
+          "nodes": [
+            "node_modules/micromatch"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer": {
+          "name": "puppeteer",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@puppeteer/browsers",
+            "puppeteer-core"
+          ],
+          "effects": [],
+          "range": "19.8.1 - 24.43.1",
+          "nodes": [
+            "node_modules/puppeteer"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer-core": {
+          "name": "puppeteer-core",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@puppeteer/browsers"
+          ],
+          "effects": [
+            "lighthouse",
+            "puppeteer"
+          ],
+          "range": "19.8.4 - 24.43.1",
+          "nodes": [
+            "node_modules/puppeteer-core"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "sanity": {
+          "name": "sanity",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@sanity/cli"
+          ],
+          "effects": [],
+          "range": "3.94.1-next.0.6739e10a32 - 3.94.1 || >=5.7.1-next.1",
+          "nodes": [
+            "node_modules/sanity"
+          ],
+          "fixAvailable": {
+            "name": "sanity",
+            "version": "5.7.0",
+            "isSemVerMajor": true
+          }
+        }
+      }
+    }
+  ],
+  "tests": [
+    {
+      "name": "audit-release-production",
+      "command": [
+        "npm.cmd",
+        "audit",
+        "--omit=dev",
+        "--json"
+      ],
+      "exitCode": 0,
+      "seconds": 18.04,
+      "log": "build/gs-launch-002/audit-release-production.log",
+      "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c",
+      "status": "PASS"
+    },
+    {
+      "name": "audit-release-full",
+      "command": [
+        "npm.cmd",
+        "audit",
+        "--json"
+      ],
+      "exitCode": 1,
+      "seconds": 34.74,
+      "log": "build/gs-launch-002/audit-release-full.log",
+      "sha256": "cf5eed829171e36eb17a3b63698a1079673d30decaafbcced7f269f46c4202f4",
+      "status": "FINDINGS_UNACCEPTED"
+    },
+    {
+      "name": "build-after",
+      "command": [
+        "npm.cmd",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "seconds": 46.7,
+      "log": "build/gs-launch-002/build-after.log",
+      "sha256": "0c9c043c213aa015ee6d251b93c0e19a5e207e47a839d222c7339f6eae014881",
+      "status": "PASS"
+    },
+    {
+      "name": "size-after",
+      "command": [
+        "npm.cmd",
+        "run",
+        "size"
+      ],
+      "exitCode": 0,
+      "seconds": 2.37,
+      "log": "build/gs-launch-002/size-after.log",
+      "sha256": "1dd76b26fe661dad41d3ef6c1e7b8a4dfb8f0b5df55305cd00dc1b57f047273d",
+      "status": "PASS"
+    },
+    {
+      "name": "lint-secrets",
+      "command": [
+        "npm.cmd",
+        "run",
+        "lint:secrets"
+      ],
+      "exitCode": 0,
+      "seconds": 0.71,
+      "log": "build/gs-launch-002/lint-secrets.log",
+      "sha256": "3e4510e9e6a99c4af319d6f9d8b75ea0b78494faf80c96e3a01a6f57f2e7d4f7",
+      "status": "PASS"
+    },
+    {
+      "name": "check-tokens",
+      "command": [
+        "npm.cmd",
+        "run",
+        "check:tokens"
+      ],
+      "exitCode": 0,
+      "seconds": 0.52,
+      "log": "build/gs-launch-002/check-tokens.log",
+      "sha256": "6a2a121e899789a6549b3a582e6c288edaf9c7f884d2a8f4259bd47d5340e702",
+      "status": "PASS"
+    },
+    {
+      "name": "check-theme",
+      "command": [
+        "npm.cmd",
+        "run",
+        "check:theme"
+      ],
+      "exitCode": 0,
+      "seconds": 0.52,
+      "log": "build/gs-launch-002/check-theme.log",
+      "sha256": "9eaeff572fc3e5eadbf73cc1400c10fe32c2c357cb701fc4a49710146edf8922",
+      "status": "PASS"
+    },
+    {
+      "name": "build-bundle-probe",
+      "command": [
+        "npm.cmd",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "seconds": 25.1,
+      "log": "build/gs-launch-002/build-bundle-probe.log",
+      "sha256": "aa9936916450a8060f414ef88a15b772bc924680550b158d93ff9a9dc11ffde6",
+      "status": "PASS"
+    },
+    {
+      "name": "size-bundle-probe",
+      "command": [
+        "npm.cmd",
+        "run",
+        "size"
+      ],
+      "exitCode": 1,
+      "seconds": 1.45,
+      "log": "build/gs-launch-002/size-bundle-probe.log",
+      "sha256": "591b7632f1f11fa5ec8b730a34155212b1ccbf2a610df0a6eba83f8fe10f6849",
+      "status": "EXPECTED_ADVERSE_RED"
+    },
+    {
+      "name": "build-exclude-probes",
+      "command": [
+        "npm.cmd",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "seconds": 68.7,
+      "log": "build/gs-launch-002/build-exclude-probes.log",
+      "sha256": "aef2d21801a2f534f8fb57a6c161f4262687a4e3554bbff57dd2137dcbe0c891",
+      "status": "PASS"
+    },
+    {
+      "name": "verify-static-final",
+      "command": [
+        "npm.cmd",
+        "run",
+        "verify:static"
+      ],
+      "exitCode": 0,
+      "seconds": 158.91,
+      "log": "build/gs-launch-002/verify-static-final.log",
+      "sha256": "90c42e13aaf2627ffc8139e262a572445ae457c74df61a8455d956e6c9299ba5",
+      "status": "PASS"
+    },
+    {
+      "name": "browser-installed-selftest-final",
+      "command": [
+        "node",
+        "scripts/browser-input.selftest.mjs",
+        "--installed",
+        "--python",
+        "C:\\Python314\\python.exe"
+      ],
+      "exitCode": 0,
+      "seconds": 0.75,
+      "log": "build/gs-launch-002/browser-installed-selftest-final.log",
+      "sha256": "ce0185c0fa12ae2076080a84a77c27fe814a69164622807ce784555c2a1703a6",
+      "status": "PASS"
+    },
+    {
+      "name": "size-final",
+      "command": [
+        "npm.cmd",
+        "run",
+        "size"
+      ],
+      "exitCode": 0,
+      "seconds": 2.25,
+      "log": "build/gs-launch-002/size-final.log",
+      "sha256": "1dd76b26fe661dad41d3ef6c1e7b8a4dfb8f0b5df55305cd00dc1b57f047273d",
+      "status": "PASS"
+    },
+    {
+      "name": "master-lifecycle-selftest-final",
+      "command": [
+        "node",
+        "scripts/check-master-accessibility.selftest.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.57,
+      "log": "build/gs-launch-002/master-lifecycle-selftest-final.log",
+      "sha256": "1864ef29643c1078f330f69e27e4fdde7e1104f1b12adb2b9073fc230eafc328",
+      "status": "PASS"
+    },
+    {
+      "name": "master-served",
+      "command": [
+        "node",
+        "scripts/with-server.mjs",
+        "npm run check:master:scene",
+        "npm run check:master:hero",
+        "node scripts/check-master-accessibility.mjs",
+        "node scripts/check-master-accessibility.selftest.mjs",
+        "npm run check:reviews:ui",
+        "npm run check:company",
+        "npm run check:security-headers",
+        "node scripts/check-static-ui.mjs --normal"
+      ],
+      "exitCode": 0,
+      "seconds": 1190.39,
+      "log": "build/gs-launch-002/master-served.log",
+      "sha256": "11ce40608399e11557f7d8881593e61f279889b0e22b9ebf38706232e0e2c353",
+      "status": "PASS"
+    },
+    {
+      "name": "production-refusal",
+      "command": [
+        "npm.cmd",
+        "run",
+        "build:static"
+      ],
+      "exitCode": 1,
+      "seconds": 1.74,
+      "log": "build/gs-launch-002/production-refusal.log",
+      "sha256": "d79cd1019106e8ec8014cbc0e83fe4b441469be4bb591e49d04db6a155bae09f",
+      "status": "EXPECTED_REFUSAL"
+    },
+    {
+      "name": "production-rehearsal",
+      "command": [
+        "npm.cmd",
+        "run",
+        "build:static"
+      ],
+      "exitCode": 0,
+      "seconds": 117.87,
+      "log": "build/gs-launch-002/production-rehearsal.log",
+      "sha256": "73de3d49ff7cc2dd01a595dc32de9a8c6c0bd63b6c33643b5cfe5fc0df8a0cd9",
+      "status": "PASS"
+    },
+    {
+      "name": "served",
+      "command": [
+        "node",
+        "scripts/with-server.mjs",
+        "npm run check:axe",
+        "npm run check:security-headers",
+        "npm run check:redirects",
+        "npm run check:launch",
+        "npm run check:responsive",
+        "npm run check:consumer-terms",
+        "npm run check:legal:parity",
+        "npm run check:vat",
+        "npm run check:press:type",
+        "npm run check:press:scene",
+        "npm run check:path:live",
+        "npm run check:service-content:dataset",
+        "npm run check:reviews:ui",
+        "npm run check:company",
+        "npm run check:master:scene",
+        "npm run check:master:hero",
+        "npm run check:design:scene",
+        "npm run check:digital:scene",
+        "node scripts/check-master-accessibility.mjs",
+        "node scripts/check-master-accessibility.selftest.mjs",
+        "node scripts/check-static-ui.mjs --normal",
+        "npm run check:lhci:desktop",
+        "npm run check:lhci:mobile"
+      ],
+      "exitCode": 1,
+      "seconds": 2274.15,
+      "log": "build/gs-launch-002/served.log",
+      "sha256": "b3cccb83b7e3fa42025dd7627443a391e0d310f80518d0c8a6c16df691383785",
+      "status": "INITIAL_FAILURE_SUPERSEDED_WHERE_RETESTED",
+      "note": "Original Master scene required withheld review controls; the original accessibility run recorded scene page errors (undefined form) from the missing review centre in the older build. Fresh master-served results control these two questions. Other route/division results remain scoped to this run; final static-artifact checks cover the refreshed export."
+    },
+    {
+      "name": "static-browser",
+      "command": [
+        "node",
+        "scripts/check-static-ui.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 74.46,
+      "log": "build/gs-launch-002/static-browser.log",
+      "sha256": "7874fd2b3bd24f5b8780df66deb1bed140784b6713839defa896a6a193ea7c30",
+      "status": "PASS"
+    },
+    {
+      "name": "mock-forms",
+      "command": [
+        "node",
+        "scripts/check-edge-ui.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 16.95,
+      "log": "build/gs-launch-002/mock-forms.log",
+      "sha256": "f98418783fcfb68e6440a2dcbe9ada8e8bfe4e866bd94ee0d7d7ee96cd8f5a9b",
+      "status": "PASS"
+    },
+    {
+      "name": "verify-static",
+      "command": [
+        "npm.cmd",
+        "run",
+        "verify:static"
+      ],
+      "exitCode": 0,
+      "seconds": 109.01,
+      "log": "build/gs-launch-002/verify-static.log",
+      "sha256": "b8012e378cfbbde7befa3432567cc8622b714be0bd9aa5f634acd96112c27fce",
+      "status": "PASS"
+    },
+    {
+      "name": "browser-installed-selftest",
+      "command": [
+        "node",
+        "scripts/browser-input.selftest.mjs",
+        "--installed",
+        "--python",
+        "C:\\Python314\\python.exe"
+      ],
+      "exitCode": 0,
+      "seconds": 1.68,
+      "log": "build/gs-launch-002/browser-installed-selftest.log",
+      "sha256": "ce0185c0fa12ae2076080a84a77c27fe814a69164622807ce784555c2a1703a6",
+      "status": "PASS"
+    },
+    {
+      "name": "browser-install-controls",
+      "command": [
+        "node",
+        "scripts/browser-input.mjs",
+        "install-controls"
+      ],
+      "exitCode": 1,
+      "seconds": 0.27,
+      "log": "build/gs-launch-002/browser-install-controls.log",
+      "sha256": "ccb4df9807b29513afdc3cd47d4070cce7852b2ab1e822adddb530c59b8f6efa",
+      "status": "UNVERIFIED_ON_WINDOWS"
+    },
+    {
+      "name": "audit-after-production",
+      "command": [
+        "npm.cmd",
+        "audit",
+        "--omit=dev",
+        "--json"
+      ],
+      "exitCode": 0,
+      "seconds": 2.57,
+      "log": "build/gs-launch-002/audit-after-production.log",
+      "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c",
+      "status": "PASS"
+    },
+    {
+      "name": "audit-after-full",
+      "command": [
+        "npm.cmd",
+        "audit",
+        "--json"
+      ],
+      "exitCode": 1,
+      "seconds": 2.74,
+      "log": "build/gs-launch-002/audit-after-full.log",
+      "sha256": "71a48696a4abddc5e0a4c4911e5dbc69bdef423aea7f50544c4700e164227216",
+      "status": "FINDINGS_UNACCEPTED"
+    }
+  ],
+  "servedCommands": [
+    "npm run check:axe",
+    "npm run check:security-headers",
+    "npm run check:redirects",
+    "npm run check:launch",
+    "npm run check:responsive",
+    "npm run check:consumer-terms",
+    "npm run check:legal:parity",
+    "npm run check:vat",
+    "npm run check:press:type",
+    "npm run check:press:scene",
+    "npm run check:path:live",
+    "npm run check:service-content:dataset",
+    "npm run check:reviews:ui",
+    "npm run check:company",
+    "npm run check:master:scene",
+    "npm run check:master:hero",
+    "npm run check:design:scene",
+    "npm run check:digital:scene",
+    "node scripts/check-master-accessibility.mjs",
+    "node scripts/check-master-accessibility.selftest.mjs",
+    "node scripts/check-static-ui.mjs --normal",
+    "npm run check:lhci:desktop",
+    "npm run check:lhci:mobile"
+  ],
+  "logs": [
+    {
+      "path": "build/gs-launch-002/audit-after-full.log",
+      "bytes": 9258,
+      "sha256": "71a48696a4abddc5e0a4c4911e5dbc69bdef423aea7f50544c4700e164227216",
+      "modifiedAtUTC": "2026-10-22T22:20:30.312524+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/audit-after-production.log",
+      "bytes": 368,
+      "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c",
+      "modifiedAtUTC": "2026-10-22T22:20:27.559283+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/audit-release-full.log",
+      "bytes": 9216,
+      "sha256": "cf5eed829171e36eb17a3b63698a1079673d30decaafbcced7f269f46c4202f4",
+      "modifiedAtUTC": "2026-10-22T23:19:12.196864+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/audit-release-production.log",
+      "bytes": 368,
+      "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c",
+      "modifiedAtUTC": "2026-10-22T23:18:37.479905+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/browser-install-controls.log",
+      "bytes": 47,
+      "sha256": "ccb4df9807b29513afdc3cd47d4070cce7852b2ab1e822adddb530c59b8f6efa",
+      "modifiedAtUTC": "2026-10-22T22:20:24.993452+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/browser-installed-selftest-final.log",
+      "bytes": 49763,
+      "sha256": "ce0185c0fa12ae2076080a84a77c27fe814a69164622807ce784555c2a1703a6",
+      "modifiedAtUTC": "2026-10-22T23:17:41.536162+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/browser-installed-selftest.log",
+      "bytes": 49763,
+      "sha256": "ce0185c0fa12ae2076080a84a77c27fe814a69164622807ce784555c2a1703a6",
+      "modifiedAtUTC": "2026-10-22T22:20:24.722591+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/browser-selftest.log",
+      "bytes": 49475,
+      "sha256": "e5177edc3b3f4ab5719fc847d3a2ad98c7c17166b5fa66c1008b8913bbd92209",
+      "modifiedAtUTC": "2026-10-22T13:24:28.743610+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/build-after.log",
+      "bytes": 4457,
+      "sha256": "0c9c043c213aa015ee6d251b93c0e19a5e207e47a839d222c7339f6eae014881",
+      "modifiedAtUTC": "2026-10-22T23:09:24.120840+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/build-before.log",
+      "bytes": 4539,
+      "sha256": "0867ee3de7731741b571dcbb058d14556cbc8a58dc3c34961bee3d4cf9b417f1",
+      "modifiedAtUTC": "2026-10-22T13:19:22.021742+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/build-bundle-probe.log",
+      "bytes": 4456,
+      "sha256": "aa9936916450a8060f414ef88a15b772bc924680550b158d93ff9a9dc11ffde6",
+      "modifiedAtUTC": "2026-10-22T22:24:35.328657+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/build-exclude-probes.log",
+      "bytes": 4063,
+      "sha256": "aef2d21801a2f534f8fb57a6c161f4262687a4e3554bbff57dd2137dcbe0c891",
+      "modifiedAtUTC": "2026-10-22T23:32:23.751451+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/check-theme.log",
+      "bytes": 394,
+      "sha256": "9eaeff572fc3e5eadbf73cc1400c10fe32c2c357cb701fc4a49710146edf8922",
+      "modifiedAtUTC": "2026-10-22T23:09:28.855183+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/check-tokens.log",
+      "bytes": 404,
+      "sha256": "6a2a121e899789a6549b3a582e6c288edaf9c7f884d2a8f4259bd47d5340e702",
+      "modifiedAtUTC": "2026-10-22T23:09:28.331382+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/content-review-refresh.log",
+      "bytes": 262,
+      "sha256": "6aac818b1d663c95d0664d81802ee19476b060391271c5856261674a9e256959",
+      "modifiedAtUTC": "2026-10-22T22:07:27.021210+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/dependency-compatibility.log",
+      "bytes": 1079,
+      "sha256": "2c4d3911f3516850da044d142c4df628b92d8090cd2e7b2c9099767657c44328",
+      "modifiedAtUTC": "2026-10-22T22:14:42.724441+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/extractor-selftest.log",
+      "bytes": 22479,
+      "sha256": "b03642fd5ab74164bfcb17b4d453a0eb5191283b911efd548feeea6f3abebdd8",
+      "modifiedAtUTC": "2026-10-22T13:22:35.102730+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/framework-15.5.27-build.log",
+      "bytes": 1032,
+      "sha256": "660fa57635cce57a6cba49bec9cfae1dca5a5ad82814aed47dbbbdb0931e83a5",
+      "modifiedAtUTC": "2026-10-22T22:20:31.239637+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/framework-15.5.27-install.log",
+      "bytes": 21,
+      "sha256": "1217fb0d8c342f9895b7a251609806f01781574bb4cfe107f6407de6a278d79e",
+      "modifiedAtUTC": "2026-10-22T22:20:18.325181+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/framework-15.5.28-build.log",
+      "bytes": 1032,
+      "sha256": "1c941cf311dd482fb30db730933ac3db67866716111d3b63f5470519242bce81",
+      "modifiedAtUTC": "2026-10-22T22:21:09.993972+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/framework-15.5.28-install.log",
+      "bytes": 26,
+      "sha256": "a78c3a80a3494717402188f58e6ac64f5ffd97f1f7014b35fc01cea8deb5ac3e",
+      "modifiedAtUTC": "2026-10-22T22:20:59.136564+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/framework-inherited-config-failure.log",
+      "bytes": 950,
+      "sha256": "86882b980049a8d0d47fb14a0080889ebde4ffee0e4e38ca5e58f7355f17a4a9",
+      "modifiedAtUTC": "2026-10-22T22:17:46.511371+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/framework-jsx-config-failure.log",
+      "bytes": 1636,
+      "sha256": "1c24b1474a3d66bc937f6519cc783d0b76cbdee67a85626ab6c65f83ebc5893d",
+      "modifiedAtUTC": "2026-10-22T22:19:53.981953+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/initial-wrong-cwd-next-lock-resolution.log",
+      "bytes": 20,
+      "sha256": "aa914bd24a52c044220260904ea8e7dd30d4665802a5c1bd8c4b3daf107c6d86",
+      "modifiedAtUTC": "2026-10-22T22:08:46.585071+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/install-after.log",
+      "bytes": 878,
+      "sha256": "7ba128a90449c22f41ce18069009f9954372785bf2072e1870e033c197b31a29",
+      "modifiedAtUTC": "2026-10-22T13:27:44.522943+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/install-before.log",
+      "bytes": 1402,
+      "sha256": "596e373730732b45cc75516b413a367678df5f7e4f170db1dab6948145841d31",
+      "modifiedAtUTC": "2026-10-22T13:17:18.814168+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/install-final.log",
+      "bytes": 878,
+      "sha256": "12ec6c5a27521a41b29e3c4ea1b78eb66a7661b5a76c44e40d0ed9718b3ae5ae",
+      "modifiedAtUTC": "2026-10-22T13:38:40.316636+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/install-security-final.log",
+      "bytes": 878,
+      "sha256": "ea042dca3f2a2ba655fc4f34ef3f9e368eac99ea43082f448be1a3bc05928ee1",
+      "modifiedAtUTC": "2026-10-22T22:12:32.289224+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/lint-secrets.log",
+      "bytes": 550,
+      "sha256": "3e4510e9e6a99c4af319d6f9d8b75ea0b78494faf80c96e3a01a6f57f2e7d4f7",
+      "modifiedAtUTC": "2026-10-22T23:09:27.398590+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/master-lifecycle-selftest-final.log",
+      "bytes": 279,
+      "sha256": "1864ef29643c1078f330f69e27e4fdde7e1104f1b12adb2b9073fc230eafc328",
+      "modifiedAtUTC": "2026-10-22T23:17:44.389287+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/master-served.log",
+      "bytes": 10955,
+      "sha256": "11ce40608399e11557f7d8881593e61f279889b0e22b9ebf38706232e0e2c353",
+      "modifiedAtUTC": "2026-10-22T23:29:23.321463+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/mock-forms.log",
+      "bytes": 120,
+      "sha256": "f98418783fcfb68e6440a2dcbe9ada8e8bfe4e866bd94ee0d7d7ee96cd8f5a9b",
+      "modifiedAtUTC": "2026-10-22T23:31:01.909879+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/next-lock-resolution.log",
+      "bytes": 20,
+      "sha256": "259c4fa2f9f1d0afd8b4eb23f45f6fdf748b9475b5112992df5bbf33e078dcd4",
+      "modifiedAtUTC": "2026-10-22T22:08:59.252460+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/next-patch.log",
+      "bytes": 412,
+      "sha256": "2a3a9515f4b75cbb283cac951360a9a8a7d0e5b1b56357b93cc07ec1a4151420",
+      "modifiedAtUTC": "2026-10-22T22:08:03.640728+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/pre-master-build-after.log",
+      "bytes": 4456,
+      "sha256": "5877fee942b8f324d59f3e900dd08210483eab5ebae45eb5443d07e55a988b8b",
+      "modifiedAtUTC": "2026-10-22T22:25:03.758557+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/pre-master-production-refusal.log",
+      "bytes": 1297,
+      "sha256": "d79cd1019106e8ec8014cbc0e83fe4b441469be4bb591e49d04db6a155bae09f",
+      "modifiedAtUTC": "2026-10-22T22:25:44.638970+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/pre-master-production-rehearsal.log",
+      "bytes": 4607,
+      "sha256": "0686c40789d98b10d83a95b1618e0d11d12599fef2d8b839a552d17b7e8f080d",
+      "modifiedAtUTC": "2026-10-22T22:27:05.642310+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/pre-master-size-after.log",
+      "bytes": 6966,
+      "sha256": "92a882ea757b5006a51cf6ce1b09445b4733aa5b767b6d1d183e1a7c609043bd",
+      "modifiedAtUTC": "2026-10-22T22:25:05.287754+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/production-refusal.log",
+      "bytes": 1297,
+      "sha256": "d79cd1019106e8ec8014cbc0e83fe4b441469be4bb591e49d04db6a155bae09f",
+      "modifiedAtUTC": "2026-10-22T23:09:45.071042+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/production-rehearsal.log",
+      "bytes": 4608,
+      "sha256": "73de3d49ff7cc2dd01a595dc32de9a8c6c0bd63b6c33643b5cfe5fc0df8a0cd9",
+      "modifiedAtUTC": "2026-10-22T23:11:42.620827+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/served.log",
+      "bytes": 183199,
+      "sha256": "b3cccb83b7e3fa42025dd7627443a391e0d310f80518d0c8a6c16df691383785",
+      "modifiedAtUTC": "2026-10-22T23:07:18.046476+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/size-after.log",
+      "bytes": 6946,
+      "sha256": "1dd76b26fe661dad41d3ef6c1e7b8a4dfb8f0b5df55305cd00dc1b57f047273d",
+      "modifiedAtUTC": "2026-10-22T23:09:26.655272+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/size-before.log",
+      "bytes": 7195,
+      "sha256": "c213b35364261431ff9ae7e4aba0e802c30299643b052f9814493375c6792e6d",
+      "modifiedAtUTC": "2026-10-22T13:19:24.263168+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/size-bundle-probe.log",
+      "bytes": 7120,
+      "sha256": "591b7632f1f11fa5ec8b730a34155212b1ccbf2a610df0a6eba83f8fe10f6849",
+      "modifiedAtUTC": "2026-10-22T22:24:36.860573+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/size-final.log",
+      "bytes": 6946,
+      "sha256": "1dd76b26fe661dad41d3ef6c1e7b8a4dfb8f0b5df55305cd00dc1b57f047273d",
+      "modifiedAtUTC": "2026-10-22T23:17:43.776257+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/static-browser.log",
+      "bytes": 201,
+      "sha256": "7874fd2b3bd24f5b8780df66deb1bed140784b6713839defa896a6a193ea7c30",
+      "modifiedAtUTC": "2026-10-22T23:30:44.703197+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/static-selftest.log",
+      "bytes": 1325,
+      "sha256": "5a80ed26b159742f9b80dcbaef0c570b622129a079ed955d1ad761480193075f",
+      "modifiedAtUTC": "2026-10-22T13:24:36.755022+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/targeted-patches.log",
+      "bytes": 29,
+      "sha256": "99718544db924c1fe4166a49e5c7045fa4a0afcee5913946f0e1b0a42d642dca",
+      "modifiedAtUTC": "2026-10-22T13:32:10.905442+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/verify-static-final.log",
+      "bytes": 41889,
+      "sha256": "90c42e13aaf2627ffc8139e262a572445ae457c74df61a8455d956e6c9299ba5",
+      "modifiedAtUTC": "2026-10-22T23:17:40.744959+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/verify-static.log",
+      "bytes": 41804,
+      "sha256": "b8012e378cfbbde7befa3432567cc8622b714be0bd9aa5f634acd96112c27fce",
+      "modifiedAtUTC": "2026-10-22T22:20:22.975216+00:00"
+    },
+    {
+      "path": "build/gs-launch-002/windows-install-observation.log",
+      "bytes": 51,
+      "sha256": "4bf0f71a9ecaa7d40f80563bfa048bf65f042a0dd707332b87bff575ec22a9f5",
+      "modifiedAtUTC": "2026-10-22T22:14:42.955818+00:00"
+    }
+  ],
+  "servedResultInterpretation": {
+    "initialRun": "21 commands exited zero, including two Lighthouse skips; Master scene and actual-code motion/consent gate failed. No full served PASS was claimed.",
+    "supersedingRun": "See master-served for the rebuilt corrected scene, actual WebGL reduced-motion/focus/lifecycle checks and repeated route/header/review/company checks.",
+    "unchangedDivisionEvidence": "Press, Design and Digital gate/application code was unchanged by the review-centre correction. Their complete original served run is retained rather than relabelled as a later run."
+  },
+  "localBrowser": {
+    "masterVersion": "Chrome/148.0.7778.97",
+    "platform": "win32",
+    "limitation": "Local browser results do not attest the separately authenticated Linux Chrome input or CI."
+  },
+  "frameworkMeasurement": {
+    "path": "docs/_shared/GS-LAUNCH-002-FRAMEWORK-FLOOR.json",
+    "bytes": 3423,
+    "sha256": "7da466f33fd4f860512065c381ad81e275a9b1bdb702ca9f64549fbfe2d28c21",
+    "modifiedAtUTC": "2026-10-22T22:24:43.594833+00:00"
+  },
+  "reconciliation": {
+    "path": "docs/_shared/GS-LAUNCH-002-RECONCILIATION.json",
+    "bytes": 39146,
+    "sha256": "3657facf801af833fc109110e4208e0c0d49f73366cc872fd57ed10dd00941be",
+    "modifiedAtUTC": "2026-10-22T23:33:38.002212+00:00"
+  },
+  "productionRehearsal": {
+    "receipt": {
+      "path": "build/production-rehearsal-receipt.json",
+      "bytes": 63931,
+      "sha256": "f8c0a789fbedd0c2cf4d5d746826e325930640381b6a2a03cd2cfc78baf3cbea",
+      "modifiedAtUTC": "2026-10-22T23:11:42.611838+00:00"
+    },
+    "identity": {
+      "path": "build/production-rehearsal/__deployment.json",
+      "bytes": 28682,
+      "sha256": "76e3391d40af46b7562ee320727db4763242bfac30374ac3fc281232184ec0a2",
+      "modifiedAtUTC": "2026-10-22T23:11:03.946262+00:00"
+    },
+    "profile": "production",
+    "rehearsal": true,
+    "deployable": false,
+    "sourceSha": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+    "sourceModified": true,
+    "artifactIdentity": "d24dc2268346a7bf697d0a8b89c41c3daadf5df1b94b88bbe78e5bef1a186be3",
+    "waived": [
+      "INTAKE: NEXT_PUBLIC_LEAD_INTAKE_URL is not the recorded production intake",
+      "LEGAL: privacy is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: cookies is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: client-terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: business-client-terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: consumer-client-terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: accessibility is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: production requires all seven PUBLISHABLE legal documents",
+      "REHEARSAL: rehearsal artifact is not deployable"
+    ],
+    "eligibleRoutes": 54,
+    "gatedRoutes": 10,
+    "technicalExclusions": [
+      {
+        "type": "service",
+        "id": "service-design-cad-drafting",
+        "slug": "cad-drafting",
+        "division": "design",
+        "group": "technical",
+        "source": "scripts/service-content.mjs",
+        "gate": "GS-X002",
+        "eligible": false,
+        "reason": "Technical group: limited professional scope not yet confirmed by review"
+      },
+      {
+        "type": "service",
+        "id": "service-design-engineering-drawings",
+        "slug": "engineering-drawings",
+        "division": "design",
+        "group": "technical",
+        "source": "scripts/service-content.mjs",
+        "gate": "GS-X002",
+        "eligible": false,
+        "reason": "Technical group: limited professional scope not yet confirmed by review"
+      },
+      {
+        "type": "service",
+        "id": "service-design-technical-documentation",
+        "slug": "technical-documentation",
+        "division": "design",
+        "group": "technical",
+        "source": "scripts/service-content.mjs",
+        "gate": "GS-X002",
+        "eligible": false,
+        "reason": "Technical group: limited professional scope not yet confirmed by review"
+      }
+    ],
+    "legalRoutes": 0,
+    "apacheDeniesAll": true,
+    "limitation": "Plain loopback file server proves exported browser behavior; Apache/Hostinger served policy remains unverified."
+  },
+  "limitations": [
+    "Linux authenticated browser acquisition/loader/consumer acceptance UNVERIFIED",
+    "Windows install observation cannot spawn npm without npm.cmd; guard not weakened",
+    "Existing normal-runtime SSR crash shell remains a known Level A gap M-P1-1 (no lang/h1/main); no full WCAG acceptance claimed",
+    "Lighthouse desktop/mobile SKIPPED on Windows and UNVERIFIED",
+    "Manual assistive-technology and real device/GPU acceptance UNVERIFIED",
+    "Hosted origin/CDN/Apache headers, cookies, redirects, forms and rollback UNVERIFIED",
+    "Live provider intake/notification/availability and H4-B promotion UNVERIFIED",
+    "17 high toolchain affected package entries from three advisories UNACCEPTED; no security waiver",
+    "WordPress restore/DNS/mail baseline/publication/cutover authority outstanding"
+  ],
+  "pushes": 0,
+  "remoteCIDispatches": 0,
+  "deployments": 0,
+  "productionMutations": 0,
+  "liveEnquiries": 0,
+  "analyticsActivated": false,
+  "reviewsActivated": false,
+  "readiness": "NO-GO",
+  "nextSingleRecommendation": "Exact-candidate Linux acceptance: read-only provider-trigger safety preflight and residual-security disposition, then CI/browser/Lighthouse only under separate explicit push/dispatch authority; do not start GS-LAUNCH-003 here.",
+  "browserReceipts": [
+    {
+      "path": "build/h4b-mock-ui-receipt.json",
+      "bytes": 10073,
+      "sha256": "12859010a7cc8350e1ac14d34cf8177888a1620c06e4deda9ee5e0bdfba98463",
+      "modifiedAtUTC": "2026-10-22T23:31:01.908880+00:00",
+      "receipt": {
+        "phase": "GS-HOST-H4-B",
+        "base": "http://localhost:3236",
+        "transport": "in-memory Edge HTTP",
+        "states": [
+          {
+            "form": "contact",
+            "width": 1440,
+            "failure": "network",
+            "retained": true,
+            "focus": true
+          },
+          {
+            "form": "contact",
+            "width": 1440,
+            "failure": "temporary",
+            "retained": true,
+            "focus": true
+          },
+          {
+            "form": "contact",
+            "width": 390,
+            "failure": "network",
+            "retained": true,
+            "focus": true
+          },
+          {
+            "form": "contact",
+            "width": 390,
+            "failure": "temporary",
+            "retained": true,
+            "focus": true
+          }
+        ],
+        "requests": [],
+        "accepted": [
+          {
+            "form": "contact",
+            "width": 1440,
+            "requestId": "86a51157-d5a6-427c-b0e8-81fa8d79ef67"
+          },
+          {
+            "form": "press",
+            "width": 1440,
+            "requestId": "802b5322-83ee-422a-bc00-ef9e17701900",
+            "blankOptionals": true
+          },
+          {
+            "form": "contact",
+            "width": 390,
+            "requestId": "59b91eab-1ebb-4f0b-ba96-82b2e2b34914"
+          },
+          {
+            "form": "press",
+            "width": 390,
+            "requestId": "2d43c120-8111-4d64-9e0a-246b431114de",
+            "blankOptionals": true
+          }
+        ],
+        "accessibility": [
+          {
+            "label": "contact 1440 invalid",
+            "violations": [],
+            "incomplete": [
+              {
+                "id": "color-contrast",
+                "nodes": [
+                  {
+                    "target": [
+                      "#gs-consent-heading"
+                    ],
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "contrastRatio": 0,
+                          "fontSize": "11.3pt (15px)",
+                          "fontWeight": "normal",
+                          "messageKey": "elmPartiallyObscuring",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined because it partially overlaps other elements"
+                      }
+                    ],
+                    "all": [],
+                    "none": []
+                  }
+                ]
+              }
+            ],
+            "consentContrast": {
+              "fg": "rgb(15, 15, 15)",
+              "bg": "rgb(250, 250, 249)",
+              "ratio": 18.35347797228559,
+              "adjudication": "existing opaque fixed-overlay heading; form controls have no incompletes"
+            }
+          },
+          {
+            "label": "contact 1440 success",
+            "violations": [],
+            "incomplete": []
+          },
+          {
+            "label": "press 1440 invalid",
+            "violations": [],
+            "incomplete": [
+              {
+                "id": "color-contrast",
+                "nodes": [
+                  {
+                    "target": [
+                      "#gs-consent-heading"
+                    ],
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "contrastRatio": 0,
+                          "fontSize": "11.3pt (15px)",
+                          "fontWeight": "normal",
+                          "messageKey": "elmPartiallyObscuring",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined because it partially overlaps other elements"
+                      }
+                    ],
+                    "all": [],
+                    "none": []
+                  }
+                ]
+              }
+            ],
+            "consentContrast": {
+              "fg": "rgb(26, 24, 21)",
+              "bg": "rgb(255, 255, 255)",
+              "ratio": 17.715470529998143,
+              "adjudication": "existing opaque fixed-overlay heading; form controls have no incompletes"
+            }
+          },
+          {
+            "label": "press 1440 network",
+            "violations": [],
+            "incomplete": [
+              {
+                "id": "color-contrast",
+                "nodes": [
+                  {
+                    "target": [
+                      "#gs-consent-heading"
+                    ],
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "contrastRatio": 0,
+                          "fontSize": "11.3pt (15px)",
+                          "fontWeight": "normal",
+                          "messageKey": "elmPartiallyObscuring",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined because it partially overlaps other elements"
+                      }
+                    ],
+                    "all": [],
+                    "none": []
+                  }
+                ]
+              }
+            ],
+            "consentContrast": {
+              "fg": "rgb(26, 24, 21)",
+              "bg": "rgb(255, 255, 255)",
+              "ratio": 17.715470529998143,
+              "adjudication": "existing opaque fixed-overlay heading; form controls have no incompletes"
+            }
+          },
+          {
+            "label": "press 1440 temporary",
+            "violations": [],
+            "incomplete": [
+              {
+                "id": "color-contrast",
+                "nodes": [
+                  {
+                    "target": [
+                      "#gs-consent-heading"
+                    ],
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "contrastRatio": 0,
+                          "fontSize": "11.3pt (15px)",
+                          "fontWeight": "normal",
+                          "messageKey": "elmPartiallyObscuring",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined because it partially overlaps other elements"
+                      }
+                    ],
+                    "all": [],
+                    "none": []
+                  }
+                ]
+              }
+            ],
+            "consentContrast": {
+              "fg": "rgb(26, 24, 21)",
+              "bg": "rgb(255, 255, 255)",
+              "ratio": 17.715470529998143,
+              "adjudication": "existing opaque fixed-overlay heading; form controls have no incompletes"
+            }
+          },
+          {
+            "label": "contact 390 invalid",
+            "violations": [],
+            "incomplete": []
+          },
+          {
+            "label": "contact 390 success",
+            "violations": [],
+            "incomplete": [
+              {
+                "id": "color-contrast",
+                "nodes": [
+                  {
+                    "target": [
+                      "#gs-consent-heading"
+                    ],
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "contrastRatio": 0,
+                          "fontSize": "10.6pt (14.068px)",
+                          "fontWeight": "normal",
+                          "messageKey": "elmPartiallyObscuring",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined because it partially overlaps other elements"
+                      }
+                    ],
+                    "all": [],
+                    "none": []
+                  }
+                ]
+              }
+            ],
+            "consentContrast": {
+              "fg": "rgb(15, 15, 15)",
+              "bg": "rgb(250, 250, 249)",
+              "ratio": 18.35347797228559,
+              "adjudication": "existing opaque fixed-overlay heading; form controls have no incompletes"
+            }
+          },
+          {
+            "label": "press 390 invalid",
+            "violations": [],
+            "incomplete": []
+          },
+          {
+            "label": "press 390 network",
+            "violations": [],
+            "incomplete": [
+              {
+                "id": "color-contrast",
+                "nodes": [
+                  {
+                    "target": [
+                      "#gs-consent-heading"
+                    ],
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "contrastRatio": 0,
+                          "fontSize": "10.6pt (14.068px)",
+                          "fontWeight": "normal",
+                          "messageKey": "elmPartiallyObscuring",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined because it partially overlaps other elements"
+                      }
+                    ],
+                    "all": [],
+                    "none": []
+                  }
+                ]
+              }
+            ],
+            "consentContrast": {
+              "fg": "rgb(26, 24, 21)",
+              "bg": "rgb(255, 255, 255)",
+              "ratio": 17.715470529998143,
+              "adjudication": "existing opaque fixed-overlay heading; form controls have no incompletes"
+            }
+          },
+          {
+            "label": "press 390 temporary",
+            "violations": [],
+            "incomplete": [
+              {
+                "id": "color-contrast",
+                "nodes": [
+                  {
+                    "target": [
+                      "#gs-consent-heading"
+                    ],
+                    "any": [
+                      {
+                        "id": "color-contrast",
+                        "data": {
+                          "contrastRatio": 0,
+                          "fontSize": "10.6pt (14.068px)",
+                          "fontWeight": "normal",
+                          "messageKey": "elmPartiallyObscuring",
+                          "expectedContrastRatio": "4.5:1"
+                        },
+                        "relatedNodes": [],
+                        "impact": "serious",
+                        "message": "Element's background color could not be determined because it partially overlaps other elements"
+                      }
+                    ],
+                    "all": [],
+                    "none": []
+                  }
+                ]
+              }
+            ],
+            "consentContrast": {
+              "fg": "rgb(26, 24, 21)",
+              "bg": "rgb(255, 255, 255)",
+              "ratio": 17.715470529998143,
+              "adjudication": "existing opaque fixed-overlay heading; form controls have no incompletes"
+            }
+          }
+        ],
+        "noJs": "explicit unsupported submission, email alternative, no external action"
+      }
+    },
+    {
+      "path": "build/normal-ui-receipt.json",
+      "bytes": 4212,
+      "sha256": "c6122fdf3af6709f89090f4d5eb7dd990d1b1bd1a6024870e2c4c80eeb1f5292",
+      "modifiedAtUTC": "2026-10-22T23:29:23.140873+00:00",
+      "receipt": {
+        "phase": "GS-HOST-H4-D-R1",
+        "profile": "normal",
+        "pages": [
+          {
+            "route": "/",
+            "title": "Gridsmith Ltd — design, digital and publishing studios",
+            "h1": "Most companies start over with every supplier. You shouldn’t have to.",
+            "ink": "#f5eedd",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/design",
+            "title": "Gridsmith Design — from line to form",
+            "h1": "From lineto form.",
+            "ink": "#f3f0e8",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/digital",
+            "title": "Gridsmith Digital — websites, software, apps and connected workflows",
+            "h1": "When one thing changes, the right things follow.",
+            "ink": "#1c2024",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/press",
+            "title": "Gridsmith Press — writing, editorial, publishing and content",
+            "h1": "Clear writing is a series of decisions.",
+            "ink": "#1a1815",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/design/services/brand-identity-systems",
+            "title": "Brand Identity Systems — Gridsmith Design",
+            "h1": "Brand Identity Systems",
+            "ink": "#f3f0e8",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/digital/services/website-design-build",
+            "title": "Website Design & Build — Gridsmith Digital",
+            "h1": "Website Design & Build",
+            "ink": "#1c2024",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/press/services/ghostwriting",
+            "title": "Ghostwriting — Gridsmith Press",
+            "h1": "Ghostwriting",
+            "ink": "#1a1815",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/about",
+            "title": "About Gridsmith Ltd — one company, three specialist studios",
+            "h1": "About Gridsmith",
+            "ink": "#0f0f0f",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/approach",
+            "title": "How we work: the six stages of a project — Gridsmith Ltd",
+            "h1": "How we work",
+            "ink": "#0f0f0f",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/contact",
+            "title": "Tell us what you need — Gridsmith Ltd",
+            "h1": "Tell us what you need",
+            "ink": "#0f0f0f",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/insights",
+            "title": "Insights — Gridsmith Ltd",
+            "h1": "Insights",
+            "ink": "#0f0f0f",
+            "noindex": "noindex, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/press/contact",
+            "title": "Tell us about the work — Gridsmith Press",
+            "h1": "Tell us about the work",
+            "ink": "#1a1815",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/press/contact/thank-you",
+            "title": "That has reached us — Gridsmith Press",
+            "h1": "That has reached us",
+            "ink": "#1a1815",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          }
+        ],
+        "noJs": [],
+        "accessibility": [],
+        "realGpu": "UNVERIFIED",
+        "server": "Next runtime",
+        "legalPreview": false,
+        "legal": [],
+        "legalLinks": 0,
+        "master": "software WebGL ready",
+        "reviews": {
+          "count": 0,
+          "reason": "GS-LAUNCH-002 suppression in every profile"
+        },
+        "design": {
+          "beforeChapter": "0",
+          "afterChapter": "3"
+        },
+        "disclosure": true,
+        "navigation": "/design/services/brand-identity-systems",
+        "digital": {
+          "motionBefore": "auto",
+          "motionAfter": "paused"
+        },
+        "pressMotion": true,
+        "pressPathFinder": "404; no public placeholder",
+        "reducedMotion": "reviews absent; Digital reduced state",
+        "keyboardSkip": true,
+        "mobileMenuKeyboard": true,
+        "local404": 404,
+        "browserErrors": [],
+        "failedRequests": [],
+        "badResponses": []
+      }
+    },
+    {
+      "path": "build/static-ui-receipt.json",
+      "bytes": 12101,
+      "sha256": "7e21cf9e03c13a8749a8196f29d075e207ec65bd856e3eaa11af77d0035a5100",
+      "modifiedAtUTC": "2026-10-22T23:30:44.700198+00:00",
+      "receipt": {
+        "phase": "GS-HOST-H4-D-R1",
+        "profile": "static",
+        "pages": [
+          {
+            "route": "/",
+            "title": "Gridsmith Ltd — design, digital and publishing studios",
+            "h1": "Most companies start over with every supplier. You shouldn’t have to.",
+            "ink": "#f5eedd",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/design",
+            "title": "Gridsmith Design — from line to form",
+            "h1": "From lineto form.",
+            "ink": "#f3f0e8",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/digital",
+            "title": "Gridsmith Digital — websites, software, apps and connected workflows",
+            "h1": "When one thing changes, the right things follow.",
+            "ink": "#1c2024",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/press",
+            "title": "Gridsmith Press — writing, editorial, publishing and content",
+            "h1": "Clear writing is a series of decisions.",
+            "ink": "#1a1815",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/design/services/brand-identity-systems",
+            "title": "Brand Identity Systems — Gridsmith Design",
+            "h1": "Brand Identity Systems",
+            "ink": "#f3f0e8",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/digital/services/website-design-build",
+            "title": "Website Design & Build — Gridsmith Digital",
+            "h1": "Website Design & Build",
+            "ink": "#1c2024",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/press/services/ghostwriting",
+            "title": "Ghostwriting — Gridsmith Press",
+            "h1": "Ghostwriting",
+            "ink": "#1a1815",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/about",
+            "title": "About Gridsmith Ltd — one company, three specialist studios",
+            "h1": "About Gridsmith",
+            "ink": "#0f0f0f",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/approach",
+            "title": "How we work: the six stages of a project — Gridsmith Ltd",
+            "h1": "How we work",
+            "ink": "#0f0f0f",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/contact",
+            "title": "Tell us what you need — Gridsmith Ltd",
+            "h1": "Tell us what you need",
+            "ink": "#0f0f0f",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/insights",
+            "title": "Insights — Gridsmith Ltd",
+            "h1": "Insights",
+            "ink": "#0f0f0f",
+            "noindex": "noindex, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/press/contact",
+            "title": "Tell us about the work — Gridsmith Press",
+            "h1": "Tell us about the work",
+            "ink": "#1a1815",
+            "noindex": "index, follow",
+            "lang": "en-GB",
+            "main": true
+          },
+          {
+            "route": "/press/contact/thank-you",
+            "title": "That has reached us — Gridsmith Press",
+            "h1": "That has reached us",
+            "ink": "#1a1815",
+            "noindex": "noindex, nofollow",
+            "lang": "en-GB",
+            "main": true
+          }
+        ],
+        "noJs": [
+          {
+            "route": "/",
+            "h1": true,
+            "mainText": 2678,
+            "navigation": 13,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/design",
+            "h1": true,
+            "mainText": 2745,
+            "navigation": 3,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/digital",
+            "h1": true,
+            "mainText": 7555,
+            "navigation": 3,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/press",
+            "h1": true,
+            "mainText": 18232,
+            "navigation": 3,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/design/services/brand-identity-systems",
+            "h1": true,
+            "mainText": 2584,
+            "navigation": 3,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/digital/services/website-design-build",
+            "h1": true,
+            "mainText": 2784,
+            "navigation": 3,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/press/services/ghostwriting",
+            "h1": true,
+            "mainText": 2153,
+            "navigation": 3,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/about",
+            "h1": true,
+            "mainText": 4344,
+            "navigation": 13,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/approach",
+            "h1": true,
+            "mainText": 4670,
+            "navigation": 13,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/contact",
+            "h1": true,
+            "mainText": 1346,
+            "navigation": 13,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/insights",
+            "h1": true,
+            "mainText": 241,
+            "navigation": 13,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/press/contact",
+            "h1": true,
+            "mainText": 1252,
+            "navigation": 3,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          },
+          {
+            "route": "/press/contact/thank-you",
+            "h1": true,
+            "mainText": 544,
+            "navigation": 3,
+            "disclosure": true,
+            "overflow": false,
+            "reflow": [
+              {
+                "width": 390,
+                "overflow": false
+              },
+              {
+                "width": 768,
+                "overflow": false
+              },
+              {
+                "width": 1440,
+                "overflow": false
+              },
+              {
+                "width": 1920,
+                "overflow": false
+              }
+            ]
+          }
+        ],
+        "accessibility": [
+          {
+            "route": "/",
+            "violations": [],
+            "incomplete": [
+              "color-contrast"
+            ]
+          },
+          {
+            "route": "/design",
+            "violations": [],
+            "incomplete": [
+              "color-contrast"
+            ]
+          },
+          {
+            "route": "/digital",
+            "violations": [],
+            "incomplete": [
+              "color-contrast"
+            ]
+          },
+          {
+            "route": "/press",
+            "violations": [],
+            "incomplete": [
+              "color-contrast"
+            ]
+          },
+          {
+            "route": "/design/services/brand-identity-systems",
+            "violations": [],
+            "incomplete": []
+          },
+          {
+            "route": "/digital/services/website-design-build",
+            "violations": [],
+            "incomplete": []
+          },
+          {
+            "route": "/press/services/ghostwriting",
+            "violations": [],
+            "incomplete": []
+          },
+          {
+            "route": "/about",
+            "violations": [],
+            "incomplete": [
+              "color-contrast"
+            ]
+          },
+          {
+            "route": "/approach",
+            "violations": [],
+            "incomplete": []
+          },
+          {
+            "route": "/contact",
+            "violations": [],
+            "incomplete": [
+              "color-contrast"
+            ]
+          },
+          {
+            "route": "/insights",
+            "violations": [],
+            "incomplete": [
+              "color-contrast"
+            ]
+          },
+          {
+            "route": "/press/contact",
+            "violations": [],
+            "incomplete": [
+              "color-contrast"
+            ]
+          },
+          {
+            "route": "/press/contact/thank-you",
+            "violations": [],
+            "incomplete": [
+              "color-contrast"
+            ]
+          }
+        ],
+        "realGpu": "UNVERIFIED",
+        "server": "plain file server",
+        "legalPreview": false,
+        "legal": [],
+        "legalLinks": 0,
+        "master": "software WebGL ready",
+        "reviews": {
+          "count": 0,
+          "reason": "GS-LAUNCH-002 suppression in every profile"
+        },
+        "design": {
+          "beforeChapter": "0",
+          "afterChapter": "3"
+        },
+        "disclosure": true,
+        "navigation": "/design/services/brand-identity-systems",
+        "digital": {
+          "motionBefore": "auto",
+          "motionAfter": "paused"
+        },
+        "pressMotion": true,
+        "pressPathFinder": "404; no public placeholder",
+        "reducedMotion": "reviews absent; Digital reduced state",
+        "keyboardSkip": true,
+        "mobileMenuKeyboard": true,
+        "local404": 404,
+        "pressAxeState": {
+          "stage": "write",
+          "paused": "true"
+        },
+        "noJsReviews": {
+          "count": 0
+        },
+        "noJsMobileNavigation": true,
+        "browserErrors": [],
+        "failedRequests": [],
+        "badResponses": []
+      }
+    }
+  ],
+  "masterAccessibility": {
+    "resultFile": {
+      "path": "build/master-accessibility/results.json",
+      "bytes": 853,
+      "sha256": "b4deda888ffd93ffbd4aabcf92e5c0632760728ae5667e89351f38403478baca",
+      "modifiedAtUTC": "2026-10-22T23:28:28.089891+00:00"
+    },
+    "results": [
+      {
+        "test": "consent 1440 /",
+        "passed": true
+      },
+      {
+        "test": "consent 1440 /design",
+        "passed": true
+      },
+      {
+        "test": "consent 1440 /digital",
+        "passed": true
+      },
+      {
+        "test": "consent 1440 /press",
+        "passed": true
+      },
+      {
+        "test": "consent 390 /",
+        "passed": true
+      },
+      {
+        "test": "consent 390 /design",
+        "passed": true
+      },
+      {
+        "test": "consent 390 /digital",
+        "passed": true
+      },
+      {
+        "test": "consent 390 /press",
+        "passed": true
+      },
+      {
+        "test": "consent 320 /",
+        "passed": true
+      },
+      {
+        "test": "consent 320 /design",
+        "passed": true
+      },
+      {
+        "test": "consent 320 /digital",
+        "passed": true
+      },
+      {
+        "test": "consent 320 /press",
+        "passed": true
+      },
+      {
+        "test": "motion 1440",
+        "passed": true
+      },
+      {
+        "test": "motion 390",
+        "passed": true
+      }
+    ]
+  },
+  "artifactPolicy": {
+    "routeManifest": {
+      "path": "build/static-route-manifest.json",
+      "bytes": 22531,
+      "sha256": "946398fef102d404b89b10d2675eb71f7276dd4cdc3c1149e819e1483630b8c4",
+      "modifiedAtUTC": "2026-10-22T23:09:47.527274+00:00"
+    },
+    "htaccess": {
+      "path": "build/production-rehearsal/.htaccess",
+      "bytes": 2550,
+      "sha256": "031b3bb6d42a709462b38d0294b90d3ec814099ecb8e112768c10d3caec1497c",
+      "modifiedAtUTC": "2026-10-22T23:10:24.294385+00:00"
+    },
+    "fileCount": 201
+  }
+}

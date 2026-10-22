@@ -68,5 +68,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const lastModified = new Date();
-  return [...STATIC, ...dynamic].map((path) => ({ url: absolute(path), lastModified }));
+  return [...STATIC.filter((path) => path !== '/insights' || posts.length > 0), ...dynamic]
+    .map((path) => ({ url: absolute(path), lastModified }));
 }

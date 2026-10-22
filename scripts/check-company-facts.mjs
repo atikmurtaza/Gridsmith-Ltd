@@ -114,7 +114,7 @@ const ROUTES = [
   '/digital',
   '/digital/services/website-design-build',
   '/press',
-  '/press/path-finder',
+  '/press/gridsmith-path-probe',
   '/press/contact',
   '/press/contact/thank-you',
   '/press/services/publishing-preparation',

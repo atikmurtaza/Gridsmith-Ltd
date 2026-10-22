@@ -4,10 +4,19 @@ import { Opening } from '@/components/shared/Opening';
 import styles from '@/components/shared/shared.module.css';
 import { listPosts } from '@/lib/sanity/queries';
 
-export const metadata: Metadata = {
+const metadataBase: Metadata = {
   title: 'Insights — Gridsmith Ltd',
   description: 'Writing from Gridsmith Design, Gridsmith Digital and Gridsmith Press.',
 };
+
+/**
+ * GS-R16-001 (owner decision 16): while nothing is published the index stays out of the sitemap
+ * and is noindex, so a crawler is never offered an empty page. The first article reverses both.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const posts = await listPosts();
+  return posts.length ? metadataBase : { ...metadataBase, robots: { index: false, follow: true } };
+}
 
 /**
  * `/insights` — the hub (`N-13`).

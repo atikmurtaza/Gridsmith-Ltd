@@ -142,6 +142,24 @@ const browser = await launch({ args: ['--enable-unsafe-swiftshader', '--use-angl
 console.log(`check-master-scene: ${await browser.version()}, ${process.platform}, Node ${process.version}; document-coordinate viewport capture`);
 const decoder = await browser.newPage();
 
+async function assertReviewsSuppressed(page) {
+  const count = await page.$$eval('[data-chapter="reviews"], [data-reviews-carousel], [data-review-key], button[aria-label="Pause review rotation"]', nodes => nodes.length);
+  if (count !== 0) throw new Error('Master review content or controls leaked');
+}
+await assertReviewsSuppressed(decoder);
+let reviewSuppressionProofs = 0;
+for (const fixture of ['<section data-chapter="reviews"></section>', '<div data-reviews-carousel></div>',
+  '<li data-review-key="synthetic"></li>', '<button aria-label="Pause review rotation"></button>']) {
+  await decoder.setContent(fixture);
+  let rejected = false;
+  try { await assertReviewsSuppressed(decoder); } catch (error) { rejected = error.message === 'Master review content or controls leaked'; }
+  if (!rejected) throw new Error('Master review suppression adverse specimen passed');
+  reviewSuppressionProofs++;
+  await decoder.setContent('');
+  await assertReviewsSuppressed(decoder);
+}
+console.log(`check-master-scene: review suppression clean control and ${reviewSuppressionProofs} leaked-carrier specimens PASS`);
+
 const problems = [];
 const log = [];
 
@@ -355,7 +373,10 @@ async function saveCapture(tag, name, boxes, states, background, behind, source)
 async function toChapter(page, pos) {
   await page.evaluate((p) => {
     const centre = (n) => {
-      const r = document.querySelector(`[data-chapter="${n}"]`).getBoundingClientRect();
+      const element = document.querySelector(`[data-chapter="${n}"]`);
+      if (!element && n === 'reviews') return (centre('process') + centre('close')) / 2;
+      if (!element) throw new Error(`Master chapter missing: ${n}`);
+      const r = element.getBoundingClientRect();
       return r.top + scrollY + Math.min(r.height, innerHeight) / 2 - innerHeight / 2;
     };
     const end = document.documentElement.scrollHeight - innerHeight;
@@ -618,14 +639,8 @@ for (const [w0, h0] of RUN) {
     continue;
   }
 
-  // A DOM rectangle and its background capture must describe the same pose, and slow software
-  // captures can span the carousel's continuous turn (GS-VIS-001). Paused once, by its own control, before any
-  // position is measured — transit positions see the carousel too. Its motion is check:reviews:ui's.
-  await page.evaluate(() => {
-    const button = [...document.querySelectorAll('button')].find((el) => el.getAttribute('aria-label') === 'Pause review rotation');
-    if (!button) throw new Error('Review pause control missing');
-    if (button.getAttribute('aria-pressed') !== 'true') button.click();
-  });
+  // Public reviews are withheld; still measure the approved ring at its virtual narrative centre.
+  await assertReviewsSuppressed(page);
 
   // Every chapter, the transit between each pair, then the close → footer handoff and the bottom.
   const positions = [];
@@ -836,13 +851,7 @@ for (const [w, h] of [[1440, 900], [768, 1024], [390, 844]]) {
   const tag = `${w}x${h}`;
   const page = await openHome(w, h, { noWebGL: true });
   const state = await page.evaluate(() => document.querySelector('[data-master-scene]')?.dataset.render);
-  // GS-VIS-001: the review cylinder turns continuously, so the text boxes and the background
-  // capture below would describe different poses. Paused by its own control, as question 5 is.
-  await page.evaluate(() => {
-    const button = [...document.querySelectorAll('button')].find((el) => el.getAttribute('aria-label') === 'Pause review rotation');
-    if (!button) throw new Error('Review pause control missing');
-    if (button.getAttribute('aria-pressed') !== 'true') button.click();
-  });
+  await assertReviewsSuppressed(page);
   if (state !== 'fallback') {
     problems.push(`14 ${tag}: without WebGL data-render is "${state}" — the fallback was not the subject`);
     await page.close();

@@ -10,7 +10,7 @@ reads awkwardly, the site reads awkwardly, and that is what this document exists
 change. `check:service-content` fails while this document's recorded hash and the source
 disagree, so an approval cannot silently attach to wording that has since changed.
 
-**Source SHA-256:** `a2a53592aeed0f0f60e83727cddaffa5b5cbd5fdc8f63cec0ccf4c8be4a33297`
+**Source SHA-256:** `e52495a38421940246a8a41381f4c83c933ea36dad1a9f453e9b12a28b98cebc`
 
 ---
 
@@ -361,7 +361,7 @@ would be operational commitments nobody has given.
 >
 > Drawn from source material you supply — drawings, CAD, photographs or samples — and checked back against it.
 >
-> This is illustration for explanation. Dimensioned drawing preparation is Technical, on the CAD drafting and engineering drawing pages, and carries its own scope note.
+> This is illustration for explanation. Dimensioned drawing preparation is separate technical work with its own scope note.
 
 **What this covers, as shown publicly**
 

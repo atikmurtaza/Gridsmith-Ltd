@@ -1,4 +1,4 @@
-import { CHAPTERS, KEYS_NARROW, KEYS_WIDE, ROD_RADIUS, SPHERE_RADIUS, pose, processFraming, processFramingWide, type Box, type Pose, type Vec3 } from './sceneModel';
+import { CHAPTERS, KEYS_NARROW, KEYS_WIDE, ROD_RADIUS, SPHERE_RADIUS, pose, processFraming, processFramingWide, resolveChapterCentres, type Box, type Pose, type Vec3 } from './sceneModel';
 
 /**
  * The Master scene renderer — `GS-R001-M`. Loaded by `MasterScene` with a dynamic `import()`
@@ -279,12 +279,12 @@ export function startScene(
   let keysNarrow = KEYS_NARROW;
   let keysWide = KEYS_WIDE;
   const measure = () => {
-    centres = CHAPTERS.map((name) => {
+    centres = resolveChapterCentres(CHAPTERS.map((name) => {
       const el = document.querySelector<HTMLElement>(`[data-chapter="${name}"]`);
       if (!el) return NaN;
       const r = el.getBoundingClientRect();
       return r.top + scrollY + Math.min(r.height, innerHeight) / 2;
-    });
+    }));
     keysNarrow = KEYS_NARROW;
     keysWide = KEYS_WIDE;
     const chapter = document.querySelector<HTMLElement>('[data-chapter="process"]');
@@ -469,7 +469,11 @@ export function startScene(
   };
   const onResize = () => {
     resize();
-    measure();
+    try { measure(); } catch {
+      dispose();
+      canvas.dispatchEvent(new CustomEvent('gs-scene-lost', { bubbles: true }));
+      return;
+    }
     target = reduced ? 0 : chapterAt();
     current = target;
     draw(performance.now());
@@ -487,12 +491,6 @@ export function startScene(
   addEventListener('pointermove', onPointer, { passive: true });
   canvas.addEventListener('webglcontextlost', onLost);
 
-  resize();
-  measure();
-  target = current = reduced ? 0 : chapterAt();
-  draw(performance.now());
-  if (!reduced) kick();
-
   const setReducedMotion = (value: boolean) => {
     if (value === reduced) return;
     reduced = value;
@@ -505,7 +503,10 @@ export function startScene(
     if (!reduced) kick();
   };
 
+  let disposed = false;
   const dispose = () => {
+    if (disposed) return;
+    disposed = true;
     cancelAnimationFrame(raf);
     ro.disconnect();
     removeEventListener('scroll', onScroll);
@@ -517,5 +518,10 @@ export function startScene(
     gl.deleteShader(fs);
     gl.getExtension('WEBGL_lose_context')?.loseContext();
   };
+  resize();
+  try { measure(); } catch { dispose(); return null; }
+  target = current = reduced ? 0 : chapterAt();
+  draw(performance.now());
+  if (!reduced) kick();
   return { dispose, setReducedMotion };
 }

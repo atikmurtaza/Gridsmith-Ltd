@@ -1,4 +1,5 @@
 import { sanityClient } from '@/lib/sanity/client';
+import { COMPANY_DISCLOSURE } from './confirmed';
 
 /**
  * The statutory record, read once per build (`M-05`).
@@ -88,5 +89,5 @@ export async function getCompanyDetails(): Promise<CompanyDetails> {
         '`npm run seed:company`.',
     );
   }
-  return details;
+  return { ...details, ...COMPANY_DISCLOSURE };
 }

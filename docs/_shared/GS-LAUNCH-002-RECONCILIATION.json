@@ -1,0 +1,804 @@
+{
+  "task": "GS-LAUNCH-002",
+  "baseline": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+  "comparison": "a7b931c10eb2a543bfa43e89954555fdadb7072d",
+  "responsibleCommits": [
+    {
+      "sha": "59efa2d4cc67bcd889f69636933f67e39918c02d",
+      "subject": "chore(git): keep hash-pinned browser provenance bytes exact"
+    },
+    {
+      "sha": "fe72bdbcb5da87ef8ee0a280775602b4f0e1ebbd",
+      "subject": "ci(browser): provision authenticated fixed Chrome for CI consumers (Option A)"
+    },
+    {
+      "sha": "98672fe2fe459b482c8c23bd4508df81ec20c946",
+      "subject": "fix(browser): accept the channel token real Linux Chrome prints for --version"
+    },
+    {
+      "sha": "493e3cad9d876ad78dc550bc804206240aae8178",
+      "subject": "fix(browser): do not treat GnuPG KEYEXPIRED status as a signature verdict"
+    },
+    {
+      "sha": "e4dfe8f849d69c6718fedbbb742c24e5ab5af536",
+      "subject": "fix(browser): resolve loader closure on Ubuntu 24.04 merged /usr"
+    },
+    {
+      "sha": "d9cb6c1525724ad3c44ac7ba79e8923feab999a9",
+      "subject": "fix(browser): tighten the loader ownership check after independent review"
+    },
+    {
+      "sha": "0784d7d39d65d0df0c6a11733b0148202ddced00",
+      "subject": "fix(security): recognise new-format Supabase secret keys in the static artifact scan"
+    },
+    {
+      "sha": "8c1fd41e7f91d418e832b536338be121063e5681",
+      "subject": "test(static): assert the delivered Hostinger security-header policy offline"
+    },
+    {
+      "sha": "cf2cd083dd8882e56aef3528e3426ef85fb41c71",
+      "subject": "test: address independent review of the readiness gates"
+    },
+    {
+      "sha": "1c83b7c61d5d9f56cd28501aa051b98396ccf6ec",
+      "subject": "feat(hosting): gridsmith.uk static build profile, fail-closed (GS-R13-PRODUCTION-PROFILE-001)"
+    },
+    {
+      "sha": "418aeac30d295e3dbabf4c91a0cf9793dc4aa05a",
+      "subject": "feat(release): GS-R14 temporary-domain release candidate on the Production intake"
+    },
+    {
+      "sha": "86fe66201ad0d63a3287f632ec467ce4f19a02d0",
+      "subject": "feat(intake): Production-capable H4-B profile and restore-proven backup tooling (GS-R13-H4B)"
+    },
+    {
+      "sha": "30b8b22d2b0400e8a127b7385b239d04b18c2390",
+      "subject": "feat(ops): dormant Supabase availability check and live-only notification drain (GS-O025)"
+    },
+    {
+      "sha": "6b441ad31dd6f2d11608c58c347db6ffc27bf6c1",
+      "subject": "fix(security): override tmp, uuid and basic-ftp to patched releases"
+    },
+    {
+      "sha": "e6390bd60596915af74a5e7d92c3e43408fa3b18",
+      "subject": "perf(consent): keep footer focus reserve free of down-levelled syntax"
+    },
+    {
+      "sha": "e720c9397d6fdbb0836dfedb2f5553c830e14224",
+      "subject": "perf(budget): raise the shared-baseline budget to 2.9KB for the SC 2.4.11 fix"
+    }
+  ],
+  "fileCount": 73,
+  "files": [
+    {
+      "path": ".gitattributes",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "d45c80ca0d6506b9ee0c30f31a5adcb8ea43619d4ec1253835f9648c4ec27d69",
+      "baselineSha256": "fb8c96650ef68d211b8651fd3ea698f4f710308082a13644450914e676393b2b",
+      "finalSha256": "d45c80ca0d6506b9ee0c30f31a5adcb8ea43619d4ec1253835f9648c4ec27d69",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "2b1a05d3a6edc30fd071855fbddea401e0b5141a37087e6beae509ddd3d8b0af",
+      "baselineSha256": "12d6fb9183a78c8c71a05699b4670f1ac895b677b8ece8f9709a9e7122359127",
+      "finalSha256": "2b1a05d3a6edc30fd071855fbddea401e0b5141a37087e6beae509ddd3d8b0af",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": ".github/workflows/hostinger-staging.yml",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "4e436c2ac8f4eda00bd71cbc845c3fbfd0ea1fc6e78848bf8a5335c75d19453f",
+      "baselineSha256": "f75cd46144389ef6e4fa9fa6bc5767c4020bcd15b9b1c8f4645577bd81ba5f98",
+      "finalSha256": "4e436c2ac8f4eda00bd71cbc845c3fbfd0ea1fc6e78848bf8a5335c75d19453f",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "CLAUDE.md",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "8f5734ae878d13edb14c0c48e9d7eaff7916554c5c80859e45fca07e3a674074",
+      "finalSha256": "308b8ae2139dc99f6d93589ed549a4fbd5332025ecd3d8fec89c966a62c8bee1",
+      "status": "modified",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "app/(marketing)/insights/page.tsx",
+      "changed": true,
+      "sourceCommit": "a7b931c10eb2a543bfa43e89954555fdadb7072d",
+      "sourceSha256": "ee641e5393313ed84e1ffd347de08d5366f092b36674dc1fc5dcd41c2f0d890c",
+      "baselineSha256": "7393e005568effb2224fcef99b6c2e693b9203f4111e1a754c036daa63e160f2",
+      "finalSha256": "ee641e5393313ed84e1ffd347de08d5366f092b36674dc1fc5dcd41c2f0d890c",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "app/(press)/press/gridsmith-path-probe/page.probe.tsx",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": null,
+      "finalSha256": "337749e3d1f9b3720c1aed14988a682913d41c32fda64947bb9d52ff41b30aeb",
+      "status": "added",
+      "decision": "Retain the original decision-table gate subject; deployment and static builds exclude it."
+    },
+    {
+      "path": "app/(press)/press/path-finder/page.tsx",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "337749e3d1f9b3720c1aed14988a682913d41c32fda64947bb9d52ff41b30aeb",
+      "finalSha256": null,
+      "status": "removed",
+      "decision": "Remove the public placeholder route; retain the identical accessible/no-JS specimen at an excluded probe filename."
+    },
+    {
+      "path": "app/sitemap.ts",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "cfa653fc3f7f4ee92fe72c68e5e0e4762a67bc11eb93eed7b1c7faebebabad7e",
+      "finalSha256": "1effc4ccfd78d649f4827dcfd011caaa1bd98fb17ed7850a925bfcd656e65717",
+      "status": "modified",
+      "decision": "Withhold empty Insights from normal sitemap as well as the static profile."
+    },
+    {
+      "path": "components/consent/ConsentBanner.tsx",
+      "changed": true,
+      "sourceCommit": "e6390bd60596915af74a5e7d92c3e43408fa3b18",
+      "sourceSha256": "6acff292e405a09aa5a0b1ba7652285d61d152bbb788fabb94c491170876088a",
+      "baselineSha256": "ceb44db7191b37c3f0091993947cdb5f42c782ace04abee9be55f153b8e657f0",
+      "finalSha256": "6acff292e405a09aa5a0b1ba7652285d61d152bbb788fabb94c491170876088a",
+      "status": "modified",
+      "decision": "Carry the approved behavior-preserving syntax reduction while preserving focus-obscuration handling."
+    },
+    {
+      "path": "components/consent/bundle-size-probe.ts",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "38f1db3083f652dc4a758954a77d585b93dfeedf4e42af4e8cd76dd810c467df",
+      "baselineSha256": "fe64c5bc3ed116f2c0039d02e86a9e9a673edf9582db0b19ed85255a3998bc32",
+      "finalSha256": "9f6c6ca960e7da559c52b22ab8e49c706916c1951f0928dd7d5bbacb6bb5ed78",
+      "status": "modified",
+      "decision": "Recalibrate permanent negative proof to reach the shared assertion with the measured Next floor."
+    },
+    {
+      "path": "components/leads/ContactForm.tsx",
+      "changed": true,
+      "sourceCommit": "primary f6cdd6da + selected reconciliation",
+      "sourceSha256": null,
+      "baselineSha256": "f203725b8cb36ec279d845914607bf7784eb865c81361387857807d1402fdc11",
+      "finalSha256": "027ce6b001c2bdb629b7b9b2ff02544612d1946f94e6448af7fd69a23192e3c5",
+      "status": "modified",
+      "decision": "adapt existing gate/caller; preserve consolidated safeguards"
+    },
+    {
+      "path": "components/master/scene.ts",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "dadec3981583807336ba7ee61642c762ca5ad32a841de5708de0561d08e0e53e",
+      "finalSha256": "3f6ef0f3e7f5cb8a3073391902558e54293285424bdfc5d25c595bbb139a5606",
+      "status": "modified",
+      "decision": "Use finite narrative centres when the review section is withheld; preserve all model poses, renderer settings and motion behavior."
+    },
+    {
+      "path": "components/master/sceneModel.ts",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "524c0370ed8d0ca42bec0807534b8e228fdfe43c4b7e501bb2667064a7ab3adf",
+      "finalSha256": "c06d145db7e051483c9ff76564737a8b02504c48fbaf7f28d77c90e94d90315d",
+      "status": "modified",
+      "decision": "Resolve only the missing review centre halfway between process/close; reject invalid required geometry without changing model keyframes."
+    },
+    {
+      "path": "config/browser-input.json",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "20ac446b365c2e9f08d83355f66e99f78c4065c93c49099c45ebd4754be0cb54",
+      "baselineSha256": null,
+      "finalSha256": "20ac446b365c2e9f08d83355f66e99f78c4065c93c49099c45ebd4754be0cb54",
+      "status": "added",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "config/browser-provenance/google-chrome-155.InRelease",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "256e3048bac6b5238fcae0f6295b66c6ed3f8db027c72d6ab34080abf10e1b13",
+      "baselineSha256": null,
+      "finalSha256": "256e3048bac6b5238fcae0f6295b66c6ed3f8db027c72d6ab34080abf10e1b13",
+      "status": "added",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "config/browser-provenance/google-chrome-155.Packages",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "cafc994f194c588cc63e4031ce54f7297bc2591ef336d0da7300b41e1b4fec41",
+      "baselineSha256": null,
+      "finalSha256": "cafc994f194c588cc63e4031ce54f7297bc2591ef336d0da7300b41e1b4fec41",
+      "status": "added",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "config/browser-provenance/google-linux-signing-key.asc",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "54dea5f6c2a26091578cf52a999cebc6b64df478d37ad4dce96376b711e3b27c",
+      "baselineSha256": null,
+      "finalSha256": "54dea5f6c2a26091578cf52a999cebc6b64df478d37ad4dce96376b711e3b27c",
+      "status": "added",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "docs/_shared/00-FOUNDATION.md",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "6cc3ae51259622c271fa36f08c56edffb62e587da6eabb924fe059d12097bf47",
+      "finalSha256": "927c41a60e659d8938580b22d00853a528b962e8ede5dc084efc876ab068bf03",
+      "status": "modified",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "docs/_shared/05-HANDOVER.md",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "d060f80967b5895bca6ff8ec4428f6422ed012a3bd3ca30af46504a555f233d6",
+      "finalSha256": "371e1f65c4b593049bad50e1aef94d02c77709156ea4a85573eb394108225ab8",
+      "status": "modified",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "docs/_shared/AI-HANDOFF.md",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "09ea65e7320c75f3cf0d6dbe51a7c0c37742285c69af7a7438cbbe3f7045aaf1",
+      "finalSha256": "2cfbe5fb308f8cf5e3eca6ae2b2f37339dd3aed38595423ea47ff62df60fdc36",
+      "status": "modified",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "docs/_shared/GS-LAUNCH-002-EVIDENCE.json",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": null,
+      "finalSha256": null,
+      "status": "generated evidence; self-hash intentionally external",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "docs/_shared/GS-LAUNCH-002-FRAMEWORK-FLOOR.json",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": null,
+      "finalSha256": "7da466f33fd4f860512065c381ad81e275a9b1bdb702ca9f64549fbfe2d28c21",
+      "status": "added",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "docs/_shared/GS-LAUNCH-002-RECONCILIATION.json",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": null,
+      "finalSha256": null,
+      "status": "generated evidence; self-hash intentionally external",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "docs/_shared/GS-LAUNCH-002.md",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": null,
+      "finalSha256": "45762287fe55c317668701b21d390ba204110318786811d704954a5840643673",
+      "status": "added",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "docs/_shared/GS-P05-OWNER-CONTENT-REVIEW.md",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "6f712739e9c743527da32e0a12d63ca8c288d179e96d9ccec3da8210b3a10f15",
+      "finalSha256": "1e172f35c1b02105683e29c54b8803f9cd0f7cc41365846d3f40ba55bf3ba249",
+      "status": "modified",
+      "decision": "Regenerate the existing owner-review transcription for the selected illustration clarification; no new owner acceptance."
+    },
+    {
+      "path": "docs/_shared/OWNER-ACTIONS.md",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "1ab7b116128c1950fdcdb2b4005dacb30db666788c926d5e062266b1e5c09b58",
+      "finalSha256": "7bb9f54bd6306c28a47cc6d97c18db49d7dd08e9ce52fedae311e4f5644e33d1",
+      "status": "modified",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "docs/_shared/PROJECT-STATUS.md",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "819485a80ace965284fda6cc240d7a219c17f1dd171fed7f931b1a2bb8656d6c",
+      "finalSha256": "ec446867c33cd74e6602cda60a35a3aea85826b1f10b329bb13b4992f3635000",
+      "status": "modified",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "docs/master/PROJECT-RULES.md",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "bf832bcd7f972f89ee416c65930fbaec34cd00b0ec7515c93d07d3fdf83a9ce4",
+      "finalSha256": "71a1df6798fb876b20032eeb360c8ff287a462d15db6845a3605d51f21fcdfb6",
+      "status": "modified",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "docs/press/PROJECT-RULES.md",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "7a1c7781e5511bffee6a4d889cdb7451196ebd4a289439298b1fa231de59ae71",
+      "finalSha256": "6e29edd68d72ce69dea292c04fbcc504a9a460ef055b6c8f00cb1232c9e21daa",
+      "status": "modified",
+      "decision": "Record current reconciliation authority, verification, readiness or measurement; preserve historical decisions."
+    },
+    {
+      "path": "lib/build/hostinger.ts",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "0baa8af8102a74bcd75f8247997cca7c13d117e3b78b2a2e4d11a4b9659b72c9",
+      "baselineSha256": "1d882d750596be36f721064e81000f11012b79837547f733d6009e72a920c430",
+      "finalSha256": "0baa8af8102a74bcd75f8247997cca7c13d117e3b78b2a2e4d11a4b9659b72c9",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "lib/build/production.ts",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "6424abd6497c8bf1aeb0a7cedba6c0af63903fa510dc860461e9636b95c31cdb",
+      "baselineSha256": null,
+      "finalSha256": "6424abd6497c8bf1aeb0a7cedba6c0af63903fa510dc860461e9636b95c31cdb",
+      "status": "added",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "lib/build/route-manifest.ts",
+      "changed": true,
+      "sourceCommit": "a7b931c10eb2a543bfa43e89954555fdadb7072d",
+      "sourceSha256": "7c54fa5217dd49e6ec3ba6e0248712bde14a493864591a3c82e4c4cc8b068ceb",
+      "baselineSha256": "33449f68df95cac80b3bba10d10c9ed4bbc693a2f1ac4d94970099efa3f76049",
+      "finalSha256": "a6d7299a810cf877e02e34904c30d2c9a3171a7ef25722513d3ed748231428a0",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "lib/build/static-routes.ts",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "b60bc63c1bf3df44937c444b2311d0190ad73e0b5f31aa9c544c44f3a1af13b8",
+      "baselineSha256": "04b143a4c1effb570480470f0c8976959feeb462ae2951237ffa2583cb57e69f",
+      "finalSha256": "b60bc63c1bf3df44937c444b2311d0190ad73e0b5f31aa9c544c44f3a1af13b8",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "lib/company/companyDetails.ts",
+      "changed": true,
+      "sourceCommit": "a7b931c10eb2a543bfa43e89954555fdadb7072d",
+      "sourceSha256": "3749080b2b4af0bb1b7ca6339081d67f36c9a70cf99771d95339f64b28d8f331",
+      "baselineSha256": "03f67613690c643b9d3ea1a779ed66708b6609151a220677015c5f8e72dafe10",
+      "finalSha256": "3749080b2b4af0bb1b7ca6339081d67f36c9a70cf99771d95339f64b28d8f331",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "lib/company/confirmed.ts",
+      "changed": true,
+      "sourceCommit": "a7b931c10eb2a543bfa43e89954555fdadb7072d",
+      "sourceSha256": "5f7b353eff96a9e208c1ef1b6b5fad83018fd21cc4ad241c07efdcb9be2d955f",
+      "baselineSha256": null,
+      "finalSha256": "5f7b353eff96a9e208c1ef1b6b5fad83018fd21cc4ad241c07efdcb9be2d955f",
+      "status": "added",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "lib/leads/edge-deployment.ts",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "8e1d615e6f98b39d64a6b54f979a17d39fe411034a2f0def80868e62ecf3673f",
+      "baselineSha256": null,
+      "finalSha256": "8e1d615e6f98b39d64a6b54f979a17d39fe411034a2f0def80868e62ecf3673f",
+      "status": "added",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "lib/leads/edge-worker.ts",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "0ad8bb85ff539de206c38fa3b88d8ff3bf18e1c520d1fec36958c122ab5301a7",
+      "baselineSha256": "7190d682854bfa843b4dfbb97226428d0804f91e6a521c4c7914bc2c3fe9f5b5",
+      "finalSha256": "0ad8bb85ff539de206c38fa3b88d8ff3bf18e1c520d1fec36958c122ab5301a7",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "lib/seo/site.ts",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "8bd7bd9cb9d078336dc6315bdf511f3b76550adda0872e5fa8a6f50e5b56a34c",
+      "baselineSha256": "72cfb582597eb18e1298f4b8cba5f7c99e815ea11df02ba302e6ed0de417a304",
+      "finalSha256": "8bd7bd9cb9d078336dc6315bdf511f3b76550adda0872e5fa8a6f50e5b56a34c",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "package-lock.json",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "eb85474121ce8782aaa6e7560e8fdcd198e7410a889e50d859dd3dcf4469e01d",
+      "baselineSha256": "0db1f40a33223b7f2e2a84a8549f19d0130338165b53ee0d62dccf837f41e6a9",
+      "finalSha256": "2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c",
+      "status": "modified",
+      "decision": "Resolve only reviewed compatible security patches and their aligned Next packages; retain unrelated native bindings."
+    },
+    {
+      "path": "package.json",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "e048cd904f41abd3e1206424eebf8e52b5ba33bea82f109557be90c99e5bb53d",
+      "baselineSha256": "9ce5c7a021b3a926fe39d149193adca03d0bae592de79d4142f0f7f119078e67",
+      "finalSha256": "3ab3f64f4999e7f3b0a16c4f99b431058371baad9beeff168eb938948493eeba",
+      "status": "modified",
+      "decision": "Select reviewed security commands/overrides and exact Next/eslint-config-next 15.5.28 pins; no optional analytics."
+    },
+    {
+      "path": "scripts/browser-input.mjs",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "977daaf6849bf6ae77a11c4ae7f77b737e198b24f71866d40dd16d7b51501755",
+      "baselineSha256": null,
+      "finalSha256": "696778911c780fade4caf1856b77f8a808323fc9ef5c419416302ce8f706fddd",
+      "status": "added",
+      "decision": "Preserve authenticated acquisition/install controls with independently reviewed final workflow/package/lock pins."
+    },
+    {
+      "path": "scripts/browser-input.selftest.mjs",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "a8fad251bcb4d0c42aa3543a58e412a5c006772d7ff9a38c92465ea554f54e85",
+      "baselineSha256": null,
+      "finalSha256": "58cee56649ba4fca601b25b78275022804a65ca72087bcc3176c6ae8ed64b0b0",
+      "status": "added",
+      "decision": "Retain permanent adverse controls and pin the reviewed final package/lock bytes independently."
+    },
+    {
+      "path": "scripts/browser-launch.mjs",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "8a4655a18d76a09f4a1732c63d76e3c043c234eda00fa184ed37e162da75436f",
+      "baselineSha256": "a4922a9ccb172ffe7f1567b14cb6929b8894e2ab620ef39c44e1ba246cbd1771",
+      "finalSha256": "8a4655a18d76a09f4a1732c63d76e3c043c234eda00fa184ed37e162da75436f",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/build-static.mjs",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "17cbb17fa3c7d2817c87e594b6b61322793173066d767e0624a9e30cfff25380",
+      "baselineSha256": "da6ce07550a30286419fb036e4d797ced91145fae3f1a9bbea6c1025dfcded07",
+      "finalSha256": "52360d004658505a48791610c73e6ec0bbd39d8bc85aa52a8b9f714b90f8e94c",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/check-axe.mjs",
+      "changed": true,
+      "sourceCommit": "primary f6cdd6da + selected reconciliation",
+      "sourceSha256": null,
+      "baselineSha256": "b3ba909bfae6536cf2bcd0c42d5943b051b25630c8cf950caeeff9147976c0e6",
+      "finalSha256": "9247cb9601781e585d58350d19c27fb92e722ebe51a35822d5407b3ec1cd5ba0",
+      "status": "modified",
+      "decision": "adapt existing gate/caller; preserve consolidated safeguards"
+    },
+    {
+      "path": "scripts/check-bundle-size.mjs",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "8b7f330a7c3ec713ec2b19ccb29eef68318afd377dd73f0439b895abe2a9dd2b",
+      "baselineSha256": "d66efe92366e38b2d70a868e344f1d4f6c191b12c8321df04ad3d526108b0c0a",
+      "finalSha256": "0b20f4777e0f7e93a2792161ada2fc13b507f005ee59c2d577527372de7def82",
+      "status": "modified",
+      "decision": "Carry approved BLD-01 2.9 KB shared budget, independently measured security-patch framework floor, and relocated probe budget."
+    },
+    {
+      "path": "scripts/check-company-facts.mjs",
+      "changed": true,
+      "sourceCommit": "primary f6cdd6da + selected reconciliation",
+      "sourceSha256": null,
+      "baselineSha256": "2a84c7e36bbb711722bd228c38cc60e5bd38d1f39ec1602a5dfb83bc32bbeeb9",
+      "finalSha256": "e62f849f6eee10bc32df4231cb5f7078a5232ef2e85cbdc36e766d760043d02e",
+      "status": "modified",
+      "decision": "adapt existing gate/caller; preserve consolidated safeguards"
+    },
+    {
+      "path": "scripts/check-company-facts.selftest.mjs",
+      "changed": true,
+      "sourceCommit": "a7b931c10eb2a543bfa43e89954555fdadb7072d",
+      "sourceSha256": "29a3cb62be4232c15b36a8c63fa113235b276a66943e16d61363893dd385969e",
+      "baselineSha256": "d86a7fd552e4e9c30eca0282053e2f8d8c7a39fb490f2638ad81c5f290cdaee8",
+      "finalSha256": "8120b93db1d2d2bd9a092abe44a119f109130d70f6aaa913e35465afe42f4a03",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/check-dependency-overrides-ftp.mjs",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "ccd01c13659db6ba55daddec38b343a10ca285b1dafaf490801ecbc4e57785bd",
+      "baselineSha256": null,
+      "finalSha256": "ccd01c13659db6ba55daddec38b343a10ca285b1dafaf490801ecbc4e57785bd",
+      "status": "added",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/check-dependency-overrides.mjs",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "5be766ceafb3bcc23b0e9c5742c23bf524056d0f3a13d437b57de5c3805eb25a",
+      "baselineSha256": null,
+      "finalSha256": "554dc26be41e4f9dc4fd6394a2f21dba87ed8266d5426a2d11972cdf69b0f82d",
+      "status": "added",
+      "decision": "Verify real consumer resolution and behavior for all eleven targeted security resolutions."
+    },
+    {
+      "path": "scripts/check-edge-intake.selftest.mjs",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "9855e7973e02a8b1cadf73d51269d42909d4eb21e1f079847085723c86e5d1d1",
+      "baselineSha256": "0e859fb3d5060bbb06631a6d3b190a8862ada2ed16d2c70288793fa42f56922f",
+      "finalSha256": "9f8a604b9a0b9248ffae26f6c852020d26e55bd042f73fb9e20ff9119fb60df7",
+      "status": "modified",
+      "decision": "Exercise pure project/mode/origin/recipient/intake/worker boundaries without unrelated operator executors."
+    },
+    {
+      "path": "scripts/check-edge-ui.mjs",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "28bdac1525294aff6329b82a7753776ce8b1571bc485f56af0c2a57685fae282",
+      "baselineSha256": "9c356d47484835d0d125153f55a2e480bee287cfd0d836681ceff41b8fe9aac0",
+      "finalSha256": "28bdac1525294aff6329b82a7753776ce8b1571bc485f56af0c2a57685fae282",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/check-lhci.mjs",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "629d9c92dd5bca55decd3fb6c65f3c4b0b2a3a49512851f0bbf196c1070f0814",
+      "baselineSha256": "8580803648c632e7304c1c5bd97ef78a8e66ffc91fd2c83f604dab79b10d5e78",
+      "finalSha256": "629d9c92dd5bca55decd3fb6c65f3c4b0b2a3a49512851f0bbf196c1070f0814",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/check-master-accessibility.mjs",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "055a2ba1453bf97d5651954244ece39519faa93f5409909d48e622bd4b73355b",
+      "finalSha256": "b3083b62d9fdfdaa002c65ffbf90b8aad4d1b546b11c76706df1677b21bed122",
+      "status": "modified",
+      "decision": "Use the real Close chapter for reduced-motion scroll proof with public reviews absent."
+    },
+    {
+      "path": "scripts/check-master-accessibility.selftest.mjs",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "333715d5420f726413ecb23788b57c5f2debfd0668fa651724fdb08be2b0828e",
+      "finalSha256": "e49b459a3c430f0ca54282ada7d31c08920b1bdfda445382864439f73720ed2f",
+      "status": "modified",
+      "decision": "Run actual renderer against five real chapter doubles with reviews absent and assert finite uploaded geometry and lifecycle cleanup."
+    },
+    {
+      "path": "scripts/check-master-scene.mjs",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "98210eaf657a7930a03b9a120b5557150e978f439784b0a43f3af23e9ea307f3",
+      "finalSha256": "2d3ec86794550d07b13668d40bd090215d5eb2fa026a909461692dee8aac54b9",
+      "status": "modified",
+      "decision": "Assert reviews remain suppressed, compute virtual review centre independently and retain all fourteen scene questions and four adverse leaked-carrier proofs."
+    },
+    {
+      "path": "scripts/check-master-scene.selftest.mjs",
+      "changed": true,
+      "sourceCommit": null,
+      "sourceSha256": null,
+      "baselineSha256": "f26cc70fdf8946b0dd54da7ed0bb9b5eacd9af7ab59d9b42ce79793383463036",
+      "finalSha256": "86867f944c945c7a9523f0b1358ac90761dce08ac55a71532e93348dc4269c82",
+      "status": "modified",
+      "decision": "Retain all visual-model invariants and add present/withheld review, input-preservation and invalid-centre specimens."
+    },
+    {
+      "path": "scripts/check-path-live.mjs",
+      "changed": true,
+      "sourceCommit": "primary f6cdd6da + selected reconciliation",
+      "sourceSha256": null,
+      "baselineSha256": "3a843b08407b150e34e3837e4b667bca61cb31b1fd6a80c885fb3f3e31d33dd1",
+      "finalSha256": "b111ee87810bb2ec083bd973cc1c2a2c19064c3a8f8cf459cc69844fa2dc4123",
+      "status": "modified",
+      "decision": "adapt existing gate/caller; preserve consolidated safeguards"
+    },
+    {
+      "path": "scripts/check-press-scene.mjs",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "369f47b714b7056baf145d120dab9f98761ba9ff0d4ba129f1642625adc0add3",
+      "baselineSha256": "e30f0b2d5d38d8754f3dc79c5dbe0e26aeb3061ef93ca7fb40062e27cbcb5825",
+      "finalSha256": "c0220479a6cf4f29cd986eccb0a1b41a79c05b92654c4cda2ab30cdf2911a639",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/check-press-type.mjs",
+      "changed": true,
+      "sourceCommit": "primary f6cdd6da + selected reconciliation",
+      "sourceSha256": null,
+      "baselineSha256": "b7ba3bb1b1c724f37901d3a2b7f51b72cf47d595fa391de74e541a84d114028b",
+      "finalSha256": "22404389339934f55589a52e36d2ea049b735871b77811516b586e5345a52340",
+      "status": "modified",
+      "decision": "adapt existing gate/caller; preserve consolidated safeguards"
+    },
+    {
+      "path": "scripts/check-responsive.mjs",
+      "changed": true,
+      "sourceCommit": "primary f6cdd6da + selected reconciliation",
+      "sourceSha256": null,
+      "baselineSha256": "0ad67b1e940c3303025f7888b67569e674b4d97dc0af52de5f69bd0aa6636ff3",
+      "finalSha256": "78ed591f5c5ae5ba9087e51da771b20be2dfd7b0828a53ddea4fbd5716e4fd95",
+      "status": "modified",
+      "decision": "adapt existing gate/caller; preserve consolidated safeguards"
+    },
+    {
+      "path": "scripts/check-static-artifact.mjs",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "5fae2d698a94f587241974003c591dd51dfc61b2b75f412bb17464d4bc869e9a",
+      "baselineSha256": "c3b578715ad23234852533b911fb4acd40d5a4b9cc8d91b5f5a2ff456721f4d3",
+      "finalSha256": "eb6dd24664a5226d8d85e974b950befe2ccf8b41054ef7e1c22aef8436d43683",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/check-static-ui.mjs",
+      "changed": true,
+      "sourceCommit": "primary f6cdd6da + selected reconciliation",
+      "sourceSha256": null,
+      "baselineSha256": "ae330272ebd7f15aafa70dcb06d5acfd33cf34138990daec2e27f5efe031e317",
+      "finalSha256": "631da5cfffbb0525ad9ba917447b0fe6436f9c8542dca39d45913d604baf23c8",
+      "status": "modified",
+      "decision": "Assert review suppression in all profiles, both withheld paths, and served sitemap-driven robots behavior."
+    },
+    {
+      "path": "scripts/check-static.selftest.mjs",
+      "changed": true,
+      "sourceCommit": "primary f6cdd6da + selected reconciliation",
+      "sourceSha256": null,
+      "baselineSha256": "1d5a3d26bb6a5337c24d33ea9dadb2b48db3cdad72332ccfc80a6e5b4eee9c85",
+      "finalSha256": "03b835d22a68804cff413614e829fd8e5d2bd50de8a9186f4341b8c5c943ee9c",
+      "status": "modified",
+      "decision": "Preserve consolidated atomic legal/review controls and add Path leak and empty/published Insights branch specimens."
+    },
+    {
+      "path": "scripts/company-facts-rules.mjs",
+      "changed": true,
+      "sourceCommit": "primary f6cdd6da + selected reconciliation",
+      "sourceSha256": null,
+      "baselineSha256": "ba46b32be0ff9c3674d4d6a0f79d05a316b30bc68048d315c79dd0a1bab812a4",
+      "finalSha256": "5a54799631541ced27b668df0e8df1d1c0cf7b03e5cb1dea683fcd4a43619e86",
+      "status": "modified",
+      "decision": "adapt existing gate/caller; preserve consolidated safeguards"
+    },
+    {
+      "path": "scripts/extract-verified-browser.py",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "4ec0968ab260f4812609bc8ff88a6f3e80afc43d4e68392d8fbdbf0df0e1f2ad",
+      "baselineSha256": null,
+      "finalSha256": "4ec0968ab260f4812609bc8ff88a6f3e80afc43d4e68392d8fbdbf0df0e1f2ad",
+      "status": "added",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/extract-verified-browser.selftest.py",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "3c9cbb8c3b27264591c7fe69a04fafc9071c15a93d8c13161707161cf49c3e8a",
+      "baselineSha256": null,
+      "finalSha256": "3c9cbb8c3b27264591c7fe69a04fafc9071c15a93d8c13161707161cf49c3e8a",
+      "status": "added",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/seed-company-details.mjs",
+      "changed": true,
+      "sourceCommit": "a7b931c10eb2a543bfa43e89954555fdadb7072d",
+      "sourceSha256": "77985a8501dbb224addc4db975387647a1eb4139d12a10cb529d4d471bbc2d3b",
+      "baselineSha256": "5554a56043f5ba2eed8f59a1e1e34fb383efbe0b0288eb8fe2997419e353c9f9",
+      "finalSha256": "77985a8501dbb224addc4db975387647a1eb4139d12a10cb529d4d471bbc2d3b",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "scripts/service-content.mjs",
+      "changed": true,
+      "sourceCommit": "primary f6cdd6da + selected reconciliation",
+      "sourceSha256": null,
+      "baselineSha256": "a2a53592aeed0f0f60e83727cddaffa5b5cbd5fdc8f63cec0ccf4c8be4a33297",
+      "finalSha256": "e52495a38421940246a8a41381f4c83c933ea36dad1a9f453e9b12a28b98cebc",
+      "status": "modified",
+      "decision": "adapt existing gate/caller; preserve consolidated safeguards"
+    },
+    {
+      "path": "scripts/source-files.mjs",
+      "changed": true,
+      "sourceCommit": "17080169288b06e1cb3d54f72479ef68e4ad9d07",
+      "sourceSha256": "1eb0fdacffcf2e14e7cf257f41d7a709415504d4aa3ddae08f214c2eacb8e74c",
+      "baselineSha256": "a3f6a7669ccbbf66e8b89c962195c7088cec0e673ffbf759ac9aaf519e880316",
+      "finalSha256": "1eb0fdacffcf2e14e7cf257f41d7a709415504d4aa3ddae08f214c2eacb8e74c",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "supabase/functions/_shared/runtime.ts",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "4c01b04dc2db5165e00230e7858980d80ccb74ed47b4a2396b09fd26cf3c2f43",
+      "baselineSha256": "516343c748127badbb9923c861fcf763a562ef5ae8c1c7787ed0a6fade62d7db",
+      "finalSha256": "4c01b04dc2db5165e00230e7858980d80ccb74ed47b4a2396b09fd26cf3c2f43",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "supabase/functions/gs-lead-intake/index.ts",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "73f15eb007911af1aef6913c64388cdad550a7167d65f730ac14154dbbfd5fdb",
+      "baselineSha256": "ca9035acc22efc94bbefa603853a5afe743234b3bc01e83126a94048f94f75ea",
+      "finalSha256": "73f15eb007911af1aef6913c64388cdad550a7167d65f730ac14154dbbfd5fdb",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    },
+    {
+      "path": "supabase/functions/gs-notification-worker/index.ts",
+      "changed": true,
+      "sourceCommit": "3930a7ad14ecb806e74d4ec8f251badfcc031e5f",
+      "sourceSha256": "f7915dd3afd38ad0a9fd4057f1dfb73008c4be3b9958f49acfde52e0e7509721",
+      "baselineSha256": "22c2a4c27c2f3b70c412e4b3af9ea1e6865965ba67a74113826718a75f9f04de",
+      "finalSha256": "f7915dd3afd38ad0a9fd4057f1dfb73008c4be3b9958f49acfde52e0e7509721",
+      "status": "modified",
+      "decision": "reviewed import with selective adaptation where required"
+    }
+  ]
+}

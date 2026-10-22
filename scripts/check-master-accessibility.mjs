@@ -214,7 +214,7 @@ async function motion(viewport) {
       assert.equal(reducedB.resources.programs, initial.resources.programs, 'No renderer restart across toggles');
       assert.equal(reducedB.resources.draws, reducedA.resources.draws, 'No reduced render loop');
     }
-    await page.evaluate(() => document.querySelector('[data-chapter="reviews"]').scrollIntoView());
+    await page.evaluate(() => document.querySelector('[data-chapter="close"]').scrollIntoView());
     await frames(page, 3);
     const [scrolledA, scrolledB] = await pair(page, `${id}-reduced-scroll`);
     assert.deepEqual(scrolledA.pose, initial.pose, 'Scrolling preserves reduced hero pose');

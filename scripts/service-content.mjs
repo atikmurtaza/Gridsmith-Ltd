@@ -290,7 +290,7 @@ export const SERVICES = {
       description: [
         'Illustration of how something is assembled, fitted or used: exploded views, cutaways, callout diagrams and step sequences for manuals, instructions and product documentation.',
         'Drawn from source material you supply — drawings, CAD, photographs or samples — and checked back against it.',
-        'This is illustration for explanation. Dimensioned drawing preparation is Technical, on the CAD drafting and engineering drawing pages, and carries its own scope note.',
+        'This is illustration for explanation. Dimensioned drawing preparation is separate technical work with its own scope note.',
       ],
       deliverables: [
         ['Exploded and cutaway views', 'Drawn to show assembly order and internal relationships.'],

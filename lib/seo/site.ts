@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { STATIC_BUILD } from '../build/target.ts';
+import { PRODUCTION_ORIGIN } from '../build/production.ts';
 
 /**
  * The site's own origin, and whether this deployment is allowed to be indexed — `G-04`,
@@ -45,7 +46,9 @@ import { STATIC_BUILD } from '../build/target.ts';
  * - `NEXT_PUBLIC_SITE_URL` alone would index a preview whose variable was set for a test.
  *
  * Requiring the owner to set a variable **and** deploy to production makes indexing an act
- * rather than a side effect. Everything else — preview, local, CI — is `Disallow: /`, which is
+ * rather than a side effect. A static export is indexable only under the explicit gridsmith.uk
+ * profile (`GRIDSMITH_STATIC_PROFILE=production`, `GS-R13`), which refuses to build until its
+ * inputs exist (`lib/build/production.ts`). Everything else — preview, local, CI — is `Disallow: /`, which is
  * `app/robots.ts`.
  *
  * **Vercel Authentication is already on for this project** (`ssoProtection`, all except custom
@@ -74,8 +77,9 @@ export const SITE_ORIGIN = new URL(SITE_URL);
  * Whether search engines may index this deployment. See the header: both conditions are
  * required, and everything that is not a configured production deployment is disallowed.
  */
-export const INDEXABLE =
-  !STATIC_BUILD && process.env.VERCEL_ENV === 'production' && Boolean(process.env.NEXT_PUBLIC_SITE_URL?.trim());
+export const INDEXABLE = STATIC_BUILD
+  ? process.env.GRIDSMITH_STATIC_PROFILE === 'production' && process.env.NEXT_PUBLIC_SITE_URL === PRODUCTION_ORIGIN
+  : process.env.VERCEL_ENV === 'production' && Boolean(process.env.NEXT_PUBLIC_SITE_URL?.trim());
 
 /** An absolute URL for a site-relative path. */
 export const absolute = (path: string) => new URL(path, SITE_URL).toString();

@@ -80,11 +80,26 @@ const FLOOR_TOLERANCE_KB = 3.0;
  * same commit. `M-P2-6` is the real fix — it is the same 0.1KB-granularity absorption the
  * spread tolerance below already documents.
  *
- * 2.8 keeps a real window (`2.8 < shared ≤ 3.0`) in which this fires and the floor check does
+ * **2.8 → 2.9 at `GS-R12-PRODUCTION-READINESS-001` (18 October 2026), owner decision, for
+ * accessibility.** `ddf9d9aa` fixed WCAG 2.2 SC 2.4.11 (Focus Not Obscured): the fixed cookie
+ * notice could cover a focused footer control, so the banner's effect now reveals that control
+ * when the notice opens or rewraps (a `ResizeObserver` on the bar and `document.body`, which the
+ * independent review added to stop a reflow scroll jump). That code ships on every route, and a
+ * clean in-tree build measured the shared baseline at **2.9143KB**. `e6390bd6` removed the
+ * syntax SWC down-levels (default parameter, optional chaining) without changing behaviour,
+ * reaching **2.8732KB**, still 75 B gz over 2.8. Accessibility outranks a byte budget
+ * (CLAUDE.md non-negotiable #10), so the owner chose to keep the fix and raise the budget rather
+ * than cut the behaviour. The banner is still capped separately by `CONSENT_BANNER_BUDGET_KB`.
+ * (Earlier local passes measured builds whose `node_modules` was a junction outside the build
+ * directory, which chunks differently; CI's last `size` pass predates `ddf9d9aa`.)
+ *
+ * 2.9 keeps a real window (`2.9 < shared ≤ 3.0`) in which this fires and the floor check does
  * not, which the guard below asserts and the deliberate-failure proof has to land inside. The
+ * window is now 0.1KB wide, so the committed probe (`components/consent/bundle-size-probe.ts`)
+ * is sized to the current baseline and must be re-measured whenever the baseline moves. The
  * ceilings that actually bind are untouched: master 15KB, banner 3.0KB, primitives 6.0KB.
  */
-const SHARED_BASELINE_BUDGET_KB = 2.8;
+const SHARED_BASELINE_BUDGET_KB = 2.9;
 const PRIMITIVES_BUDGET_KB = 6.0;
 
 /**
@@ -179,7 +194,7 @@ if (!(SHARED_BASELINE_BUDGET_KB < FLOOR_TOLERANCE_KB)) {
 const BUDGETS = [
   // `/design/estimate` and `/digital/estimate` were removed at `GS-P03`: under `GS-D002` there is
   // no public price estimator. A future non-price scoping island takes the same 40KB when built.
-  ['/press/path-finder', 40],
+  ['/press/gridsmith-path-probe', 40],
   ['/design', 25],
   ['/press', 20],
   ['/digital', 15],
@@ -636,7 +651,7 @@ if (baselineRows.length !== BASELINE_ROUTES.length) {
 
   if (shared > SHARED_BASELINE_BUDGET_KB) {
     decomposition.push(
-      `shared baseline is ${shared.toFixed(1)}KB, over its ${SHARED_BASELINE_BUDGET_KB}KB budget. ` +
+      `shared baseline is ${shared.toFixed(2)}KB, over its ${SHARED_BASELINE_BUDGET_KB}KB budget. ` +
         'Something new ships on every route. This is the cost that cannot be attributed to any ' +
         'feature, so it comes straight out of every budget at once.',
     );

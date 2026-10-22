@@ -90,7 +90,7 @@ import { recommend } from '../lib/path/recommend.ts';
 import { SEED_OUTCOMES, SEED_QUESTIONS, SEED_RULES } from '../lib/path/seedConfig.ts';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
-const ROUTE = '/press/path-finder';
+const ROUTE = '/press/gridsmith-path-probe';
 const CTA_ROUTE = '/press/contact';
 
 const problems = [];

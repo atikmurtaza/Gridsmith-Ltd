@@ -55,7 +55,7 @@ const ROUTES = [
   // `groupPage` layouts, the insights hub, a legal document and the one route with a form.
   // `/work` and `/work/[slug]` were removed at `GS-P03` with the routes (`GS-D001`), and
   // `/digital/estimate` with the price table (`GS-D002`); `Table`'s scroll region is still
-  // audited on a production route at `/about` and `/press/path-finder`.
+  // audited on a production route at `/about` and `/press/gridsmith-path-probe`.
   // `U-08`'s subject, and since `GS-P04` one per division rather than one in total: all three
   // divisions render the SAME template (`components/content/ServiceDetail.tsx`) under three
   // different themes, and what a shared template needs audited is exactly the part that is not
@@ -85,7 +85,7 @@ const ROUTES = [
   // focusable region and row headers, on the route that carries the ETH-04 honest outcomes —
   // the one page on the site where a screen-reader user losing the row/column relationship
   // would lose which outcome a criterion belongs to.
-  { path: '/press/path-finder', status: 200 },
+  { path: '/press/gridsmith-path-probe', status: 200 },
   { path: '/_kitchen-sink', status: 200 },
   // Composed master components. Separate from the kitchen sink so the primitive-layer
   // measurement stays a measurement of primitives — see the page's own docstring.
@@ -264,7 +264,7 @@ const INCOMPLETE_ALLOWED = [
       // shared layout, so this route reproduces the identical incomplete and is not a new
       // question — this is the K-13 direction, and it is decided here rather than discovered
       // by a red run two sessions later.
-      '/press/path-finder',
+      '/press/gridsmith-path-probe',
       // `GS-P04`'s three service routes. `website-design-build` was already here from `U-08`;
       // the Design and Press ones went into `ROUTES` and not into this entry, and the gate went
       // red on seven combinations — **the K-13 pair again, in the same gate, two rows above a

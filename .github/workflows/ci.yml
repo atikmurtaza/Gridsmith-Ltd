@@ -37,6 +37,9 @@ on:
     types: [opened, reopened]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 # `NEXT_PUBLIC_SANITY_DATASET` has no default (M-P1-2): an unset variable is a build error
 # rather than a silent fallback to `development`, because on a live host that fallback would
 # publish a [SEED] statutory footer. CI builds against `development` and says so here.
@@ -66,7 +69,11 @@ env:
 
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: 'true'
     steps:
       - uses: actions/checkout@v5
         with:
@@ -76,13 +83,18 @@ jobs:
           # CI's first real run — an environment difference, not a bad ledger. The gate
           # needs the whole history to answer its question at all.
           fetch-depth: 0
+          persist-credentials: false
 
       - uses: actions/setup-node@v5
         with:
           node-version: '24'
           cache: npm
 
+      - run: node scripts/browser-input.selftest.mjs
+      - run: node scripts/browser-input.mjs install-controls
+      - run: node scripts/browser-input.mjs provision
       - run: npm ci
+      - run: node scripts/browser-input.mjs check
 
       - name: TypeScript
         run: npm run typecheck
@@ -235,6 +247,12 @@ jobs:
       # link annotation renders only for a site path, http(s) or mailto; anything else stays text.
       - name: Portable Text links render only for a safe href (committed specimens)
         run: npm run check:portable-links:selftest
+
+      # GS-R12-PRODUCTION-READINESS-001. The tmp, uuid and basic-ftp security overrides, read from
+      # each real consumer's own resolution and exercised through the consumer's call path
+      # (get-uri's ftp: route against a loopback server). No network.
+      - name: Security overrides resolve and behave through their consumers
+        run: npm run check:deps:overrides
 
       # GS-O004 / GS-R001. Selftest first, same reason as every pair above: each RESPONSE_RULES
       # and TEAM_RULES limb is broken separately and the returned problem set is read, so a
@@ -404,5 +422,4 @@ jobs:
     needs: verify
     permissions:
       contents: write
-      actions: read
     uses: ./.github/workflows/hostinger-staging.yml

@@ -154,6 +154,18 @@ export type Key = {
 
 export const CHAPTERS = ['hero', 'studios', 'context', 'process', 'reviews', 'close'] as const;
 
+/** Keep the approved ring pose between process and close while public reviews are withheld. */
+export function resolveChapterCentres(centres: number[]): number[] {
+  const resolved = [...centres];
+  const review = CHAPTERS.indexOf('reviews');
+  if (Number.isNaN(resolved[review])) resolved[review] = (resolved[review - 1] + resolved[review + 1]) / 2;
+  if (resolved.length !== CHAPTERS.length || resolved.some((value, index) =>
+    !Number.isFinite(value) || (index > 0 && value <= resolved[index - 1]))) {
+    throw new Error('Master chapter centres must be finite and ordered');
+  }
+  return resolved;
+}
+
 /**
  * The story follows the argument (`GS-MASTER-001-F`): the assembled mark → the studios, the
  * mark taken apart into its pieces → one relationship, the pieces back together → the process

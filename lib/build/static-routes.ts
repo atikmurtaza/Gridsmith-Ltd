@@ -2,6 +2,7 @@ import 'server-only';
 import { readFileSync } from 'node:fs';
 import { STATIC_BUILD } from './target';
 import type { StaticManifest } from './route-manifest';
+import { PRODUCTION_ORIGIN } from './production';
 
 /** Build input lives outside the public artifact; normal requests never consult it. */
 export function staticManifest(): StaticManifest {
@@ -12,10 +13,16 @@ export function staticManifest(): StaticManifest {
   const preview = manifest.dataset === 'development' && manifest.legalPreview === 'adopted-development' &&
     process.env.GRIDSMITH_LEGAL_PREVIEW === 'adopted-development' && process.env.NEXT_PUBLIC_SANITY_DATASET === 'development';
   if (manifest.version !== 1 || manifest.target !== 'static' || (!preview && manifest.dataset !== 'production') ||
-      manifest.indexable !== false || !Array.isArray(manifest.routes)) {
+      manifest.indexable !== productionProfile(manifest) || !Array.isArray(manifest.routes)) {
     throw new Error('Invalid static publication manifest');
   }
   return manifest;
+}
+
+/** GS-R13: only the explicit gridsmith.uk profile over the production dataset may be indexable. */
+function productionProfile(manifest: StaticManifest) {
+  return process.env.GRIDSMITH_STATIC_PROFILE === 'production' && manifest.dataset === 'production' &&
+    process.env.NEXT_PUBLIC_SITE_URL === PRODUCTION_ORIGIN;
 }
 
 export function staticParams(contentType: string, division?: string) {

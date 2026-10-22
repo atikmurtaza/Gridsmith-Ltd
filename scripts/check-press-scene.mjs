@@ -31,7 +31,7 @@ const visibleFocus=e=>{
  return c.outlineColor===expected && c.outlineStyle!=='none' && parseFloat(c.outlineWidth)>=2;
 };
 const withheld=(sitemap,metadata)=>!sitemap.includes('/press/path-finder') && /robots:\s*\{\s*index:\s*false,\s*follow:\s*false\s*\}/.test(metadata);
-const sitemap=readFileSync('app/sitemap.ts','utf8'),metadata=readFileSync('app/(press)/press/path-finder/page.tsx','utf8');
+const sitemap=readFileSync('app/sitemap.ts','utf8'),metadata=readFileSync('app/(press)/press/gridsmith-path-probe/page.probe.tsx','utf8');
 assert(withheld(sitemap,metadata),'Path Finder discovery is not withheld');
 assert(!withheld(sitemap+"'/press/path-finder'",metadata),'sitemap negative proof');
 assert(!withheld(sitemap,metadata.replace('index: false','index: true')),'metadata negative proof');
@@ -164,7 +164,11 @@ try {
   const target=`label[for="${id}"]`;
   await page.$eval(target,e=>e.scrollIntoView({block:'center',behavior:'instant'}));await wait(400);
   await page.click(target);assert(await page.$eval(`#${id}`,e=>e.checked),`${id} state-cue precondition`);
-  assert((await pressContrast(page,target)).pass,`${id} contrast`);
+  // Settle like the selection loop above (wait(800)): measuring inside the label's 0.15s colour/
+  // background crossfade sampled a mid-transition foreground and failed by timing alone (GS-R12-PR-001).
+  await wait(800);
+  const cue=await pressContrast(page,target);
+  assert(cue.pass,`${id} contrast ${cue.why}`);
   assert.match(await page.$eval(target,e=>getComputedStyle(e).textDecorationLine),/underline/,`${id} non-colour selection cue missing`);
  }
  const titles=new Set(),descriptions=new Set();

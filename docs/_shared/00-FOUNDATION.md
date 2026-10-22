@@ -1,3 +1,5 @@
+> **GS-LAUNCH-002 current override:** The current shared company response is “We aim to respond as soon as practicable.” and registration wording is “England and Wales”, from owner-confirmed decisions 17–18. The BLD-01 shared-baseline allowance is 2.9 KB with its preserved accessibility implementation and permanent negative probe; framework floor calibration is independently measured in the task evidence. Historical timed-response wording below is superseded. Analytics/reviews stay disabled; public Path Finder is withheld. See `GS-LAUNCH-002.md`.
+
 # Shared Foundation — Architecture & Design Tokens
 
 > **GS-P00 commercial override — 11 September 2026.** Portfolio volumes and public pricing in

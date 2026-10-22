@@ -33,6 +33,7 @@
  * must fail. A check that passes its broken fixture is reported as a gate defect. The readings
  * are values, not absences — the shape `CLAUDE.md` prefers.
  */
+import assert from 'node:assert/strict';
 import {
   CHAPTERS,
   ROD_RADIUS,
@@ -43,11 +44,24 @@ import {
   LOGO_SPHERES,
   ROD_LENGTHS,
   pose,
+  resolveChapterCentres,
 } from '../components/master/sceneModel.ts';
 
 const TAN = Math.tan((16 * Math.PI) / 180);
 const ASPECT = 16 / 9;
 const ZERO = [0, 0, 0];
+const fullCentres = [100, 300, 500, 700, 900, 1100];
+assert.deepEqual(resolveChapterCentres(fullCentres), fullCentres);
+const withheldCentres = [100, 300, 500, 700, NaN, 1100];
+assert.deepEqual(resolveChapterCentres(withheldCentres), fullCentres);
+assert(Number.isNaN(withheldCentres[4]), 'Measurement input is not mutated');
+for (const broken of [fullCentres.slice(1), [100, 300, NaN, 700, NaN, 1100],
+  [100, 300, 500, 700, 900, Infinity], [100, 300, 500, 700, 900, 900],
+  [100, 300, 500, 700, 600, 1100], [100, 300, 500, 700, Infinity, 1100],
+  [100, 300, 500, 700, -Infinity, 1100]]) {
+  assert.throws(() => resolveChapterCentres(broken), /finite and ordered/);
+}
+console.log('Master chapter centres: present/withheld reviews and invalid geometry specimens PASS');
 const d = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 const samples = (keys) => Array.from({ length: (keys.length - 1) * 200 + 1 }, (_, i) => i / 200);
 

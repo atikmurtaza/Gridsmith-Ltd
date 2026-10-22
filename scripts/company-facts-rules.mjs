@@ -33,7 +33,8 @@
 export const FACTS = {
   legalName: 'Gridsmith Ltd',
   companyNumber: '17050842',
-  placeOfRegistration: 'England',
+  placeOfRegistration: 'England and Wales',
+  responseCommitment: 'We aim to respond as soon as practicable.',
   contactEmail: 'contact@gridsmith.uk',
   contactPhone: '+44 7405 448534',
   /**
@@ -83,6 +84,11 @@ export const FORBIDDEN_EMAILS = [
  * from whichever limb happened to be exercised.
  */
 export const RESPONSE_RULES = [
+  {
+    id: 'SUPERSEDED-TIMED-RESPONSE',
+    pattern: /typically respond within\s+\d+\s+hours/i,
+    why: 'the owner replaced the timed response wording at GS-R16 decision 18',
+  },
   {
     id: 'GUARANTEE-ALWAYS-BY',
     pattern: /always\s+(?:by|within)\b/i,
@@ -584,6 +590,7 @@ export function disclosureProblems(route, footerText) {
     // Presence only. The footer renders it as text at `GS-R001-R` — see `Footer.tsx` — so
     // this asserts the string is there, and question 3 asserts nothing links it `tel:`.
     [FACTS.contactPhone, 'the published contact number (GS-O004)'],
+    [FACTS.responseCommitment, 'the current response wording (GS-R16 decision 18)'],
   ];
   for (const [value, why] of required) {
     if (!t.includes(value)) {
@@ -594,8 +601,8 @@ export function disclosureProblems(route, footerText) {
   // the factual inventory, so it is the string a later session is most likely to restore.
   if (/registered in England\s*&(?:amp;)?\s*Wales/i.test(t)) {
     problems.push(
-      `${route}'s footer says "England & Wales". GS-O004 gives "England", corroborated by the ` +
-        'Companies House register. The old value was an agent-chosen seed nobody had confirmed.',
+      `${route}'s footer says "England & Wales". The statutory wording is "England and Wales" ` +
+        '(GS-LEGAL-001-R3 C-3, owner decision GS-R16-001); write it out, without the ampersand.',
     );
   }
   return problems;

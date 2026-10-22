@@ -64,7 +64,7 @@ const none = (list) => (list.length === 0 ? true : `expected no problem, got ${J
 const GOOD_FOOTER =
   `${FACTS.legalName} · registered in ${FACTS.placeOfRegistration} · company number ` +
   `${FACTS.companyNumber} · registered office ${FACTS.registeredOffice} ` +
-  `${FACTS.contactEmail} · ${FACTS.contactPhone}`;
+  `${FACTS.contactEmail} · ${FACTS.contactPhone} · ${FACTS.responseCommitment}`;
 
 /* -- 1. the statutory disclosure -------------------------------------------- */
 
@@ -81,6 +81,7 @@ for (const [value, label] of [
   [FACTS.registeredOffice, 'registered office'],
   [FACTS.contactEmail, 'contact email'],
   [FACTS.contactPhone, 'contact phone'],
+  [FACTS.responseCommitment, 'current response wording'],
 ]) {
   check(
     `DISCLOSURE — a footer missing the ${label}`,
@@ -93,13 +94,14 @@ check(
   (() => {
     const list = disclosureProblems(
       '/',
-      GOOD_FOOTER.replace('registered in England', 'registered in England & Wales'),
+      GOOD_FOOTER.replace('registered in England and Wales', 'registered in England & Wales'),
     );
-    // Two problems: the required "registered in England" is absent as a substring only when the
-    // ampersand form is used in isolation — it is not, so exactly the named rule must fire.
-    return list.length === 1 && list[0].includes('England & Wales')
+    // GS-R16-001: the required wording is now "England and Wales", so the ampersand form fires
+    // twice — the required phrase is missing, and the ampersand rule names the form itself.
+    return list.length === 2 && list.some((p) => p.includes('missing "registered in England and Wales"')) &&
+      list.some((p) => p.includes('says "England & Wales"'))
       ? true
-      : `expected the England & Wales rule alone, got ${JSON.stringify(list)}`;
+      : `expected the missing-wording and England & Wales rules, got ${JSON.stringify(list)}`;
   })(),
 );
 
@@ -259,6 +261,7 @@ check(
 /* -- 5. response wording, every rule alone ----------------------------------- */
 
 const RESPONSE_SPECIMENS = {
+  'SUPERSEDED-TIMED-RESPONSE': 'We typically respond within 48 hours.',
   'GUARANTEE-ALWAYS-BY': "We'll reply as soon as we can, and always by the end of the next business day.",
   'GUARANTEE-WORD': 'We guarantee a reply.',
   'GUARANTEE-SLA': 'Covered by a service-level agreement.',
@@ -268,8 +271,8 @@ const RESPONSE_SPECIMENS = {
 };
 
 check(
-  'RESPONSE CLEAN — the wording GS-O004 authorises',
-  none(responseProblems('/contact', 'We typically respond within 48 hours.')),
+  'RESPONSE CLEAN — the current owner-confirmed wording',
+  none(responseProblems('/contact', 'We aim to respond as soon as practicable.')),
 );
 
 for (const rule of RESPONSE_RULES) {

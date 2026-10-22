@@ -1,6 +1,7 @@
 /** Permanent local parity/HTTP/worker adverse specimens. No provider traffic or app mutation. */
 import assert from 'node:assert/strict';
 import { register } from 'node:module';
+import { readFileSync } from 'node:fs';
 import { createIntake, INTAKE_BODY_BYTES } from '../lib/leads/edge-intake.ts';
 import { validateForm } from '../lib/leads/form-domain.ts';
 import { createWorker, notificationEmail, sendNotification } from '../lib/leads/edge-worker.ts';
@@ -171,3 +172,80 @@ answer = { status: 202, value: { status: 'ok', id: id(), excessive: 'x'.repeat(1
 assert.equal((await submitContactEdge(idle, formOf(base))).status, 'error');
 console.log('H4-B client selftest PASS: retry identity, value transport, concurrent identical/differing submissions, fixed Press redirect and bounded malformed responses.');
 console.log(`H4-B domain/Edge/worker selftest PASS: ${cases} parity/adverse HTTP/provider cases; all five Press branches; blank optionals; zero-call invalid/trapped subjects; CORS/body/burst/failure/private-worker/idempotency checks.`);
+
+// GS-R13-H4B: the project profile that replaces the three hard-coded Preview guards.
+const { edgeDeployment, admitsLead, isSyntheticLead, PREVIEW_REF, PRODUCTION_REF, APPROVED_RECIPIENT, TEMPORARY_ORIGIN } = await import('../lib/leads/edge-deployment.ts');
+// Read as text: public-model.ts is server-only and cannot be imported here.
+assert(readFileSync(new URL('../lib/reviews/public-model.ts', import.meta.url), 'utf8')
+  .includes(`export const REVIEW_STAGING_ORIGIN = '${TEMPORARY_ORIGIN}';`), 'one temporary origin across the Edge and static profiles');
+let profileCases = 0;
+const envOf = (values) => (name) => values[name] ?? '';
+const preview = { SUPABASE_URL: `https://${PREVIEW_REF}.supabase.co`, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify([origin]) };
+const production = { SUPABASE_URL: `https://${PRODUCTION_REF}.supabase.co`, GRIDSMITH_ALLOWED_ORIGINS: '["https://gridsmith.uk"]',
+  GRIDSMITH_INTAKE_MODE: 'synthetic-only', LEAD_NOTIFICATION_EMAIL: APPROVED_RECIPIENT };
+assert.deepEqual(edgeDeployment(envOf(preview)), { ref: PREVIEW_REF, production: false, mode: 'synthetic-only', origins: [origin], recipient: '' });
+assert.equal(edgeDeployment(envOf(production)).production, true);
+assert.equal(edgeDeployment(envOf({ ...production, GRIDSMITH_INTAKE_MODE: 'live' })).mode, 'live');
+assert.deepEqual(edgeDeployment(envOf({ ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', TEMPORARY_ORIGIN]) })).origins,
+  ['https://gridsmith.uk', TEMPORARY_ORIGIN]);
+for (const [name, values, message] of [
+  ['unknown project', { ...production, SUPABASE_URL: 'https://abcdefghijklmnopqrst.supabase.co' }, /approved Preview or Production/],
+  ['project URL with a path', { ...production, SUPABASE_URL: `https://${PRODUCTION_REF}.supabase.co/x` }, /approved Preview or Production/],
+  ['plain-HTTP project URL', { ...production, SUPABASE_URL: `http://${PRODUCTION_REF}.supabase.co` }, /approved Preview or Production/],
+  ['Production mode unset', { ...production, GRIDSMITH_INTAKE_MODE: '' }, /synthetic-only or live/],
+  ['Production mode unknown', { ...production, GRIDSMITH_INTAKE_MODE: 'LIVE' }, /synthetic-only or live/],
+  ['Preview asked to go live', { ...preview, GRIDSMITH_INTAKE_MODE: 'live' }, /only synthetic/],
+  ['Production with a loopback origin', { ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', origin]) }, /only from https:\/\/gridsmith.uk/],
+  ['Production with the www origin', { ...production, GRIDSMITH_ALLOWED_ORIGINS: '["https://www.gridsmith.uk"]' }, /only from/],
+  ['Production with the staging origin', { ...production, GRIDSMITH_ALLOWED_ORIGINS: '["https://mediumaquamarine-wallaby-594070.hostingersite.com"]' }, /only from/],
+  // GS-R14: the temporary domain only alongside gridsmith.uk, in that order, and never in live mode.
+  ['Production live with the temporary domain', { ...production, GRIDSMITH_INTAKE_MODE: 'live', GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', TEMPORARY_ORIGIN]) }, /only from/],
+  ['temporary domain first', { ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify([TEMPORARY_ORIGIN, 'https://gridsmith.uk']) }, /only from/],
+  ['temporary domain plus loopback', { ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', TEMPORARY_ORIGIN, origin]) }, /only from/],
+  ['temporary domain over HTTP', { ...production, GRIDSMITH_ALLOWED_ORIGINS: JSON.stringify(['https://gridsmith.uk', TEMPORARY_ORIGIN.replace('https:', 'http:')]) }, /only from/],
+  ['origins not JSON', { ...production, GRIDSMITH_ALLOWED_ORIGINS: 'https://gridsmith.uk' }, /Exact approved intake origins/],
+  ['origins unset', { ...production, GRIDSMITH_ALLOWED_ORIGINS: '' }, /Exact approved intake origins/],
+  ['unapproved recipient', { ...production, LEAD_NOTIFICATION_EMAIL: 'someone@example.invalid' }, /approved recipient/],
+]) { assert.throws(() => edgeDeployment(envOf(values)), message, name); profileCases++; }
+const realLead = { full_name: 'Real Person', email: 'person@example.com' };
+const marked = { full_name: 'GS-HOST-H4-B Production smoke', email: 'smoke@gridsmith.invalid' };
+assert(isSyntheticLead(marked) && !isSyntheticLead(realLead));
+for (const near of [{ ...marked, email: 'smoke@gridsmith.uk' }, { ...marked, full_name: 'GS-HOST-H4-BX smoke' }, { ...marked, full_name: 'x GS-HOST-H4-B smoke' }]) {
+  assert(!isSyntheticLead(near), JSON.stringify(near)); profileCases++;
+}
+assert(admitsLead({ mode: 'synthetic-only' }, marked) && !admitsLead({ mode: 'synthetic-only' }, realLead)); profileCases++;
+assert(admitsLead({ mode: 'live' }, realLead) && admitsLead({ mode: 'live' }, marked)); profileCases++;
+const productionMail = { ...mail, synthetic: false };
+const label = (lead) => notificationEmail({ ...work, lead: { ...work.lead, ...lead } }, productionMail);
+assert(!JSON.stringify(label(realLead)).includes('SYNTHETIC')); profileCases++;
+assert(label(marked).subject.startsWith('[SYNTHETIC H4-B TEST] ') && label(marked).text.startsWith('SYNTHETIC GS-HOST-H4-B TEST')); profileCases++;
+// GS-O025 scheduled drain: narrower than the operator credential, drain-only, live-only.
+const { drainTokenMatches } = await import('../lib/leads/edge-worker.ts');
+const { scheduledDrainEnabled } = await import('../lib/leads/edge-deployment.ts');
+assert(scheduledDrainEnabled({ production: true, mode: 'live' }));
+for (const value of [{ production: true, mode: 'synthetic-only' }, { production: false, mode: 'live' }, { production: false, mode: 'synthetic-only' }]) {
+  assert(!scheduledDrainEnabled(value), JSON.stringify(value)); profileCases++;
+}
+const drainToken = 'scheduled-drain-dummy-token-0123456789abcdef';
+assert(drainTokenMatches(drainToken, drainToken));
+for (const [presented, expected] of [[drainToken.slice(0, -1) + 'X', drainToken], [drainToken + 'x', drainToken], [null, drainToken],
+  ['', drainToken], ['short-token', 'short-token'], [drainToken, '']]) {
+  assert(!drainTokenMatches(presented, expected), JSON.stringify([presented, expected])); profileCases++;
+}
+const timerRequest = (operation, header = drainToken) => new Request('http://worker.invalid', { method: 'POST',
+  headers: { Authorization: 'Bearer project-anon-jwt-dummy', 'Content-Type': 'application/json', 'X-Gridsmith-Drain-Token': header },
+  body: JSON.stringify({ operation }) });
+const timerWorker = (enabled) => createWorker(token, store, mail, async () => new Response('{}', { status: 200 }),
+  { authorize: (request) => drainTokenMatches(request.headers.get('X-Gridsmith-Drain-Token'), drainToken), enabled });
+let healthReads = 0; const countingStore = { ...store, health: async () => { healthReads++; return {}; } };
+const before = claims;
+assert.equal((await timerWorker(true)(timerRequest('drain', 'wrong-token-of-the-wrong-length'))).status, 401); profileCases++;
+assert.equal((await timerWorker(false)(timerRequest('drain'))).status, 409); assert.equal(claims, before); profileCases++;
+const healthDenied = await createWorker(token, countingStore, mail, undefined,
+  { authorize: () => true, enabled: true })(timerRequest('health'));
+assert.equal(healthDenied.status, 403); assert.equal(healthReads, 0); profileCases++;
+const drained = await (await timerWorker(true)(timerRequest('drain'))).json();
+assert.equal(drained.sent, 1); assert.equal(claims, before + 1); profileCases++;
+assert.equal((await createWorker(token, store, mail)(timerRequest('drain'))).status, 401, 'no scheduled path unless configured'); profileCases++;
+assert.equal((await timerWorker(false)(workerRequest('health'))).status, 200, 'operator path unchanged when the timer is disabled'); profileCases++;
+console.log(`GS-R13-H4B project profile PASS: Preview/Production/live accepted; ${profileCases} adverse or boundary cases (project, mode, origins, recipient, synthetic identity, admission, labelling).`);

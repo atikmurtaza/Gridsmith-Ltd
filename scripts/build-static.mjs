@@ -1,4 +1,8 @@
-/** Local/noindex export proof; building never submits enquiries or sends mail. */
+/**
+ * Static export: the noindex staging proof by default, or the gridsmith.uk profile (GS-R13) when
+ * `GRIDSMITH_STATIC_PROFILE=production`, which refuses while any production input is unmet.
+ * Building never submits enquiries or sends mail.
+ */
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,39 +14,65 @@ import { createStaticManifest, createLegalPreviewManifest } from '../lib/build/r
 import { legalPreviewProfile } from './legal-preview-rules.mjs';
 import { resolveBuildTarget } from '../lib/build/target.ts';
 import { stagingReviewsAllowed, REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
-import { hostingerRules, prepareHostingerText } from '../lib/build/hostinger.ts';
+import { hostingerRules, prepareHostingerText, productionHostingerRules } from '../lib/build/hostinger.ts';
+import { PRODUCTION_ORIGIN, PREVIEW_INTAKE_URL, PRODUCTION_INTAKE_URL, productionInputProblems } from '../lib/build/production.ts';
 import { SANITY_PROJECT_ID, SANITY_API_VERSION } from '../sanity/project.ts';
 import { inspectStaticArtifact, readArtifact } from './check-static-artifact.mjs';
 import { artifactNoReviewProblems } from './review-public-rules.mjs';
 
+// GS-R13: `staging` (default, unchanged) or the explicit gridsmith.uk `production` profile. A
+// production rehearsal waives only the unmet inputs, writes outside `out/`, and is not deployable.
+const profile = process.env.GRIDSMITH_STATIC_PROFILE ?? 'staging';
+if (!['staging', 'production'].includes(profile)) throw new Error('GRIDSMITH_STATIC_PROFILE must be staging or production');
+const production = profile === 'production';
+const rehearsal = process.env.GRIDSMITH_PRODUCTION_REHEARSAL === '1';
+if (rehearsal && !production) throw new Error('A production rehearsal requires GRIDSMITH_STATIC_PROFILE=production');
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const staging = join(root, 'build/static-source');
-const output = join(root, 'out');
+const output = join(root, rehearsal ? 'build/production-rehearsal' : 'out');
 const manifestFile = join(root, 'build/static-route-manifest.json');
 const require = createRequire(join(root, 'package.json'));
 const publication = JSON.parse(readFileSync(join(root, 'docs/_shared/GS-PROD-001-CMS-MANIFEST.json'))).entries;
+const register = JSON.parse(readFileSync(join(root, 'docs/_legal/evidence/GS-O003-R-REGISTER.json')));
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 resolveBuildTarget(process.env.GRIDSMITH_BUILD_TARGET);
-const intakeUrl = 'https://qfgpwumvvtizeamkynes.supabase.co/functions/v1/gs-lead-intake';
-if (process.env.NEXT_PUBLIC_LEAD_INTAKE_URL !== intakeUrl) {
-  throw new Error('H4-B static proof requires the explicit isolated Preview intake URL');
+const intakeUrl = process.env.NEXT_PUBLIC_LEAD_INTAKE_URL;
+let waived = [];
+if (production) {
+  const unmet = productionInputProblems(intakeUrl, publication, register);
+  if (rehearsal && intakeUrl !== PREVIEW_INTAKE_URL) throw new Error('A production rehearsal uses only the isolated Preview intake');
+  if (rehearsal) waived = unmet;
+  else if (unmet.length) throw new Error(`gridsmith.uk profile refused; unmet production inputs:\n${unmet.join('\n')}`);
+} else if (intakeUrl !== PREVIEW_INTAKE_URL && !(intakeUrl === PRODUCTION_INTAKE_URL &&
+  process.env.GRIDSMITH_STAGING_ORIGIN === REVIEW_STAGING_ORIGIN)) {
+  // GS-R14: only the exact Hostinger temporary domain may build against the Production intake.
+  throw new Error('Staging requires the isolated Preview intake, or the recorded Production intake on the exact temporary domain');
 }
+// Only these artifact findings follow from waived inputs; every other finding still refuses.
+const unwaived = (problems) => rehearsal ? problems.filter((problem) => {
+  const waivable = /^(?:LEGAL|REHEARSAL):/.test(problem);
+  if (waivable) waived.push(problem);
+  return !waivable;
+}) : problems;
 
 // Recursive cleanup is restricted to explicit generated paths in this checkout.
 function removeGenerated(path) {
   if (![staging, output].includes(path) || relative(root, path).startsWith('..')) throw new Error('Unsafe static cleanup path');
   if (existsSync(path)) rmSync(path, { recursive: true });
 }
-const siteOrigin = process.env.GRIDSMITH_STAGING_ORIGIN ?? 'http://localhost:3236';
+if (production && process.env.GRIDSMITH_STAGING_ORIGIN) throw new Error('The gridsmith.uk profile takes no staging origin');
+const siteOrigin = production ? PRODUCTION_ORIGIN : process.env.GRIDSMITH_STAGING_ORIGIN ?? 'http://localhost:3236';
 const legalPreview = legalPreviewProfile(process.env.GRIDSMITH_LEGAL_PREVIEW,
   process.env.NEXT_PUBLIC_SANITY_DATASET, siteOrigin);
 const dataset = legalPreview ? 'development' : 'production';
-if (!stagingReviewsAllowed('owner-staging', siteOrigin) || new URL(siteOrigin).origin !== siteOrigin) {
+if (!production && (!stagingReviewsAllowed('owner-staging', siteOrigin) || new URL(siteOrigin).origin !== siteOrigin)) {
   throw new Error('Explicit temporary/local staging origin required; gridsmith.uk is forbidden');
 }
 const environment = { ...process.env, GRIDSMITH_BUILD_TARGET: 'static', GRIDSMITH_STATIC_PROOF: '1',
   GRIDSMITH_STATIC_MANIFEST_PATH: manifestFile, GRIDSMITH_REVIEW_PRESENTATION: '', NEXT_PUBLIC_SANITY_DATASET: dataset,
   NEXT_PUBLIC_SITE_URL: siteOrigin, NEXT_PUBLIC_BUNDLE_SIZE_PROBE: '', GRIDSMITH_EXCLUDE_PROBES: '1' };
+// Reviews fail closed off staging: no written Freelancer permission is held (LEG-08).
+if (production) delete environment.GRIDSMITH_REVIEW_PRESENTATION;
 const privateNames = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'DIRECT_CONNECTION_STRING', 'RESEND_API_KEY',
   'SANITY_API_WRITE_TOKEN', 'SANITY_API_READ_TOKEN', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN',
   'FREELANCER_API_SECRET', 'SLACK_LEADS_WEBHOOK', 'CRON_SECRET'];
@@ -75,7 +105,10 @@ run(['scripts/check-node-version.mjs']);
 run(['scripts/check-legal-adoption.mjs']);
 run(['scripts/check-launch-content.mjs', '--build']);
 await checkLegal();
-const manifest = makeManifest(await inventory(), publication);
+const manifest = makeManifest(await inventory(), publication, { indexable: production });
+if (!production && !legalPreview && manifest.routes.some((route) => route.contentType === 'legalDocument' && route.eligible)) {
+  throw new Error('Legal publication requires the separately authorised gridsmith.uk cutover');
+}
 writeFileSync(manifestFile, JSON.stringify(manifest, null, 2) + '\n');
 for (const name of ['app', 'components', 'lib', 'styles', 'sanity', 'redirects', 'scripts',
   'lighthouse', 'package.json', 'package-lock.json', 'next.config.ts', 'postcss.config.mjs',
@@ -102,7 +135,8 @@ replaceOnce('styles/globals.css', '@import "tailwindcss";',
 const exclusions = [];
 for (const name of ['app/api', 'app/gridsmith-lead-probe', 'app/gridsmith-timeout-probe',
   'app/(marketing)/%5Fkitchen-sink', 'app/(marketing)/%5Fmaster-sink',
-  'app/(marketing)/gridsmith-error-probe', 'app/(marketing)/gridsmith-ssr-throw-probe']) {
+  'app/(marketing)/gridsmith-error-probe', 'app/(marketing)/gridsmith-ssr-throw-probe',
+  'app/(press)/press/gridsmith-path-probe']) {
   const path = join(staging, name);
   if (!existsSync(path)) throw new Error(`Normal verification subject missing: ${name}`);
   rmSync(path, { recursive: true }); exclusions.push(name);
@@ -138,9 +172,10 @@ const logoMetadata = await sharp(preparedLogo).metadata();
 try {
   run([require.resolve('next/dist/bin/next'), 'build'], staging);
   await checkLegal();
-  const after = makeManifest(await inventory(), publication);
+  const after = makeManifest(await inventory(), publication, { indexable: production });
   if (JSON.stringify(after) !== JSON.stringify(manifest)) throw new Error('CMS revisions changed during static generation');
-  if (siteOrigin === REVIEW_STAGING_ORIGIN) writeFileSync(join(staging, 'out/.htaccess'), hostingerRules(siteOrigin, dataset));
+  if (production) writeFileSync(join(staging, 'out/.htaccess'), productionHostingerRules(new URL(intakeUrl).origin, dataset, { rehearsal }));
+  else if (siteOrigin === REVIEW_STAGING_ORIGIN) writeFileSync(join(staging, 'out/.htaccess'), hostingerRules(siteOrigin, dataset, new URL(intakeUrl).origin));
   for (const [path, bytes] of readArtifact(join(staging, 'out'))) {
     if (path.endsWith('.html') || path === 'robots.txt') {
       writeFileSync(join(staging, 'out', path), prepareHostingerText(path, bytes.toString('utf8')));
@@ -150,6 +185,7 @@ try {
   const knownSecrets = privateNames.map((name) => process.env[name]).filter((value) => value?.length >= 8);
   const result = inspectStaticArtifact(files, manifest, publication, knownSecrets, siteOrigin);
   result.problems.push(...artifactNoReviewProblems(files));
+  result.problems = unwaived(result.problems);
   if (result.problems.length) throw new Error(result.problems.join('\n'));
   cpSync(join(staging, 'out'), output, { recursive: true });
   const fileManifest = [...files].map(([path, data]) => ({ path, bytes: data.length, sha256: digest(data) }));
@@ -157,21 +193,27 @@ try {
   const untracked = spawnSync('git', ['ls-files', '--others', '--exclude-standard', '-z'], { cwd: root, encoding: 'utf8', windowsHide: true }).stdout.split('\0');
   const sourceModified = Boolean(spawnSync('git', ['status', '--porcelain', '--untracked-files=no'], { cwd: root, encoding: 'utf8', windowsHide: true }).stdout.trim()) ||
     untracked.some((path) => /^(?:app|components|lib|styles|sanity|redirects|scripts|lighthouse)\//.test(path));
-  const deployment = { phase: legalPreview ? 'GS-LEGAL-001-R12' : 'GS-HOST-H4-D-R1', sourceSha, sourceModified, siteOrigin,
-    dataset, legalPreview, artifactIdentity: digest(JSON.stringify(fileManifest)), files: fileManifest };
+  const phase = production ? 'GS-R13-PRODUCTION-PROFILE-001' : legalPreview ? 'GS-LEGAL-001-R12' : 'GS-HOST-H4-D-R1';
+  const deployment = { phase, sourceSha, sourceModified, siteOrigin,
+    dataset, legalPreview, intakeOrigin: new URL(intakeUrl).origin, ...(production ? { profile, rehearsal, deployable: !rehearsal } : {}),
+    artifactIdentity: digest(JSON.stringify(fileManifest)), files: fileManifest };
   writeFileSync(join(output, '__deployment.json'), JSON.stringify(deployment) + '\n');
   const finalResult = inspectStaticArtifact(readArtifact(output), manifest, publication, knownSecrets, siteOrigin);
+  finalResult.problems = unwaived(finalResult.problems);
   if (finalResult.problems.length) throw new Error(finalResult.problems.join('\n'));
-  writeFileSync(join(root, 'build/static-receipt.json'), JSON.stringify({ phase: legalPreview ? 'GS-LEGAL-001-R12' : 'GS-HOST-H4-D-R1',
-    legalPreview, stagingOnly: true, dataset, siteOrigin,
+  writeFileSync(join(root, rehearsal ? 'build/production-rehearsal-receipt.json' : 'build/static-receipt.json'), JSON.stringify({ phase,
+    legalPreview, stagingOnly: !production,
+    ...(production ? { profile, rehearsal, deployable: !rehearsal, waived: [...new Set(waived)] } : {}), dataset, siteOrigin,
     buildNode: process.version,
     sourceSha, sourceModified, manifest, exclusions, ...finalResult, knownSecretValuesChecked: knownSecrets.length,
     image: { sourceBytes: logoSource.length, sourceSha256: digest(logoSource), deliveryBytes: preparedLogo.length,
       deliverySha256: digest(preparedLogo), width: logoMetadata.width, height: logoMetadata.height,
       format: logoMetadata.format, quality: 75, alpha: logoMetadata.hasAlpha },
     files: fileManifest, manifestSha256: digest(JSON.stringify(fileManifest)) }, null, 2) + '\n');
-  console.log(`Static proof: ${finalResult.htmlRoutes} routes; ${finalResult.fileCount} files; ${finalResult.totalBytes} bytes. Output: out/`);
-  console.log('Owner-authorised staging artifact only. Hosted verification and production permission gates remain separate.');
+  console.log(`Static proof: ${finalResult.htmlRoutes} routes; ${finalResult.fileCount} files; ${finalResult.totalBytes} bytes. Output: ${relative(root, output)}/`);
+  if (rehearsal) console.log(`gridsmith.uk REHEARSAL, NOT DEPLOYABLE. Waived:\n${[...new Set(waived)].join('\n')}`);
+  else if (production) console.log('gridsmith.uk production artifact. Upload and cutover remain separately authorised.');
+  else console.log('Owner-authorised staging artifact only. Hosted verification and production permission gates remain separate.');
 } finally {
   removeGenerated(staging); // Discard raw provider fetch cache and copied source; never deploy/archive it.
 }

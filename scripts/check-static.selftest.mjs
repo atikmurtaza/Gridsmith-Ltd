@@ -1,7 +1,7 @@
 /** Permanent H4-A positive and adversarial subjects; no app source mutation/network. */
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { createStaticManifest, createLegalPreviewManifest, sitemapPaths } from '../lib/build/route-manifest.ts';
+import { createStaticManifest, createLegalPreviewManifest, sitemapPaths, NOINDEX_PATHS } from '../lib/build/route-manifest.ts';
 import { resolveBuildTarget } from '../lib/build/target.ts';
 import { inspectStaticArtifact } from './check-static-artifact.mjs';
 
@@ -114,7 +114,7 @@ for (const name of ['api/specimen.json', 'gridsmith-lead-probe.html', '_kitchen-
   breakArtifact('each runtime path', (files) => set(files, name, '{}'), 'RUNTIME');
 }
 for (const marker of ['22108992', '22100632', 'Varnika']) breakArtifact('each withheld marker', (files) => set(files, 'data.txt', marker), 'WITHHELD');
-for (const marker of ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'RESEND_API_KEY', 'SANITY_API_WRITE_TOKEN', 'DIRECT_CONNECTION_STRING', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN', 'FREELANCER_API_SECRET', 'Freelancer-OAuth-V1', '-----BEGIN PRIVATE KEY-----', 'postgresql://specimen', 're_' + 'a'.repeat(24)]) {
+for (const marker of ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'RESEND_API_KEY', 'SANITY_API_WRITE_TOKEN', 'DIRECT_CONNECTION_STRING', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN', 'FREELANCER_API_SECRET', 'Freelancer-OAuth-V1', '-----BEGIN PRIVATE KEY-----', 'postgresql://specimen', 're_' + 'a'.repeat(24), 'sb_secret_' + 'a'.repeat(24)]) {
   breakArtifact('each secret marker', (files) => set(files, 'data.txt', marker), 'SECRET');
 }
 const jwt = (role) => 'eyJhbGciOiJIUzI1NiJ9.' + Buffer.from(JSON.stringify({ role })).toString('base64url') + '.specimen';
@@ -281,3 +281,221 @@ for (const path of ['index.html', 'payload.txt', 'api/reviews.json', '_next/stat
   assert(artifactNoReviewProblems(new Map([[path, Buffer.from(APPROVED_STAGING_REVIEWS[0].reviewText)]])).some((problem) => problem.startsWith('REVIEW_TEXT:')), path);
 }
 console.log('GS-LAUNCH-001: ordinary all-seven artifact control and partial-artifact rejection; four review-leak transports PASS.');
+
+// GS-R12-PR-001 SEC-F6: next.config headers() do not apply to the static export, so the
+// .htaccess is the only delivered security-header policy. Assert it offline, branch by branch.
+const REQUIRED_HEADERS = { 'X-Content-Type-Options': /^nosniff$/, 'X-Frame-Options': /^DENY$/,
+  'Referrer-Policy': /^strict-origin-when-cross-origin$/, 'Permissions-Policy': /camera=\(\).*geolocation=\(\).*microphone=\(\)/,
+  // Numeric, not digit-shaped: at least one year (31536000 s); a zero-padded zero must not pass.
+  'Strict-Transport-Security': { test: (v) => { const m = /^max-age=(\d+)(?:;|$)/.exec(v); return Boolean(m) && Number(m[1]) >= 31536000; } } };
+const REQUIRED_CSP = ["default-src 'self'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'", "object-src 'none'"];
+const headerProblems = (rules) => {
+  const set = Object.fromEntries([...rules.matchAll(/^Header always set ([\w-]+) "([^"]*)"$/gm)].map(m => [m[1], m[2]]));
+  const problems = Object.entries(REQUIRED_HEADERS).filter(([name, value]) => !value.test(set[name] ?? '')).map(([name]) => name);
+  const csp = (set['Content-Security-Policy'] ?? '').split(';').map(d => d.trim());
+  return [...problems, ...REQUIRED_CSP.filter(d => !csp.includes(d)).map(d => `CSP ${d}`)];
+};
+assert.deepEqual(headerProblems(hosting), []);
+for (const [mutation, expected] of [[r => r.replace(/^Header always set Content-Security-Policy .*$/m, ''), "CSP frame-ancestors 'none'"],
+  [r => r.replace("frame-ancestors 'none'; ", ''), "CSP frame-ancestors 'none'"], [r => r.replace("object-src 'none'; ", ''), "CSP object-src 'none'"],
+  [r => r.replace(/^Header always set Strict-Transport-Security .*$/m, ''), 'Strict-Transport-Security'],
+  [r => r.replace('max-age=31536000"', 'max-age=300"'), 'Strict-Transport-Security'],
+  [r => r.replace('max-age=31536000"', 'max-age=000000000"'), 'Strict-Transport-Security'],
+  [r => r.replace('"nosniff"', '"sniff"'), 'X-Content-Type-Options'], [r => r.replace('"DENY"', '"SAMEORIGIN"'), 'X-Frame-Options'],
+  [r => r.replace(/^Header always set Referrer-Policy .*$/m, ''), 'Referrer-Policy'],
+  [r => r.replace('microphone=(), ', ''), 'Permissions-Policy']]) {
+  assert(headerProblems(mutation(hosting)).includes(expected), `Header mutation not caught: ${expected}`);
+}
+for (const longer of ['31556952', '31622400', '63072000']) {
+  assert.deepEqual(headerProblems(hosting.replace('max-age=31536000"', `max-age=${longer}"`)), [], `HSTS ${longer} s is at least a year`);
+}
+console.log(`Hostinger security headers: ${Object.keys(REQUIRED_HEADERS).length} headers and ${REQUIRED_CSP.length} CSP directives asserted; 10 mutation proofs red, 3 longer HSTS values accepted.`);
+console.log('Hostinger hash/cache predicates: 5 hashed and 6 unversioned names; sibling-route positive/adverse predicates PASS.');
+console.log('Hostinger static config subject: exact-origin production rejection, noindex, gated 404 and explicit cache policies. Served behaviour remains a hosted gate.');
+
+
+// GS-R13-PRODUCTION-PROFILE-001: the gridsmith.uk profile. Every reading below is a returned value,
+// so a probe cannot be inert; each adverse case names the code it must produce.
+const { createHash } = await import('node:crypto');
+const { PRODUCTION_ORIGIN, PREVIEW_INTAKE_URL, productionInputProblems } = await import('../lib/build/production.ts');
+const { productionHostingerRules } = await import('../lib/build/hostinger.ts');
+const sha = (text) => createHash('sha256').update(text).digest('hex');
+let productionProofs = 0;
+const codes = (problems) => problems.map((problem) => problem.split(':')[0]);
+// Staging delivery is byte-identical to its accepted pre-GS-R13 policy.
+assert.equal(sha(hostingerRules(REVIEW_STAGING_ORIGIN)), '5f35938fdfa3ee6ddd714ab38afb8c29f91c6e73c6f83e8580b82f34d3bdd1a1');
+assert.equal(sha(hostingerRules(REVIEW_STAGING_ORIGIN, 'development')), '0cbdf3c59729aff50209a899692288021774f5f1e438a312866fc50b6d509a23');
+// GS-R14: the temporary domain against the recorded Production intake differs only in connect-src.
+{
+  const { PRODUCTION_INTAKE_URL } = await import('../lib/build/production.ts');
+  const productionIntake = new URL(PRODUCTION_INTAKE_URL).origin, previewIntake = new URL(PREVIEW_INTAKE_URL).origin;
+  const temporary = hostingerRules(REVIEW_STAGING_ORIGIN, 'production', productionIntake);
+  assert.equal(temporary, hostingerRules(REVIEW_STAGING_ORIGIN).replace(`connect-src 'self' ${previewIntake};`, `connect-src 'self' ${productionIntake};`));
+  assert(temporary.includes(`connect-src 'self' ${productionIntake};`) && !temporary.includes(previewIntake) && /X-Robots-Tag "noindex/.test(temporary));
+  for (const origin of ['https://abcdefghijklmnopqrst.supabase.co', PRODUCTION_INTAKE_URL, 'https://example.invalid', productionIntake.replace('https:', 'http:')]) {
+    assert.throws(() => hostingerRules(REVIEW_STAGING_ORIGIN, 'production', origin), /Preview or recorded Production intake/, origin);
+  }
+}
+
+// Inputs. Today's repository state must refuse; a fully supplied specimen must not.
+assert(productionInputProblems(PREVIEW_INTAKE_URL, publication, register).length > 0, 'Profile must refuse today');
+const intake = 'https://abcdefghijklmnopqrst.supabase.co/functions/v1/gs-lead-intake';
+const readyRegister = structuredClone(register);
+for (const slug of Object.keys(readyRegister.documents)) readyRegister.documents[slug].state = 'PUBLISHABLE';
+const readyPublication = publication.map((entry) => entry.type === 'legalDocument'
+  ? { ...entry, eligible: true, gate: null, reason: undefined } : entry);
+const inputs = (url = intake, entries = readyPublication, input = readyRegister, expected = intake) =>
+  productionInputProblems(url, entries, input, expected);
+assert.deepEqual(inputs(), []);
+const plainHttp = 'http://abcdefghijklmnopqrst.supabase.co/functions/v1/gs-lead-intake';
+for (const [name, problems, code] of [
+  ['no recorded intake', inputs(intake, readyPublication, readyRegister, null), 'INTAKE'],
+  ['Preview recorded as production', inputs(PREVIEW_INTAKE_URL, readyPublication, readyRegister, PREVIEW_INTAKE_URL), 'INTAKE'],
+  ['plain-HTTP recorded intake', inputs(plainHttp, readyPublication, readyRegister, plainHttp), 'INTAKE'],
+  ['build intake differs', inputs(PREVIEW_INTAKE_URL), 'INTAKE'],
+  // Called directly: `inputs(undefined)` would take the default and not be unset at all.
+  ['build intake unset', productionInputProblems(undefined, readyPublication, readyRegister, intake), 'INTAKE'],
+]) { assert.deepEqual(codes(problems), [code], name); productionProofs++; }
+const adopted = structuredClone(readyRegister); adopted.documents.cookies.state = 'OWNER_ADOPTED';
+assert.deepEqual(inputs(intake, readyPublication, adopted), ['LEGAL: cookies is not PUBLISHABLE (register OWNER_ADOPTED, migration eligible)']); productionProofs++;
+const gatedEntry = readyPublication.map((entry) => entry.slug === 'terms' ? { ...entry, eligible: false } : entry);
+assert.deepEqual(codes(inputs(intake, gatedEntry)), ['LEGAL']); productionProofs++;
+assert.equal(codes(inputs(undefined, publication, register, null)).filter((code) => code === 'LEGAL').length, 7); productionProofs++;
+
+// Rules. Positive policy, then each predicate is extracted from the rules and exercised.
+const intakeOrigin = new URL(intake).origin;
+const rules = productionHostingerRules(intakeOrigin);
+assert.deepEqual(headerProblems(rules), []);
+assert(!/noindex/i.test(rules) && !rules.includes('<IfModule mod_headers') && !rules.includes('qfgpwumvvtizeamkynes'));
+assert(rules.includes(`connect-src 'self' ${intakeOrigin};`));
+assert(rules.includes('RewriteRule ^privacy-policy/?$ /legal/privacy [R=308,L]'));
+assert(rules.includes('RewriteRule ^terms-and-conditions/?$ /legal/client-terms [R=308,L]'));
+const php = new RegExp(rules.match(/^RewriteRule (\S+) - \[F,L,NC\]$/m)[1], 'i');
+for (const name of ['index.php', 'wp-login.php', 'wp-content/x.PHP', 'a.php7', 'b.phtml', 'c.phar', 'cgi-bin/x.cgi', 'index.php/extra']) {
+  assert(php.test(name), `PHP denial misses ${name}`);
+}
+for (const name of ['php-guide.html', 'design/services/php', 'index.html', 'assets/phpstorm.svg']) {
+  assert(!php.test(name), `PHP denial over-blocks ${name}`);
+}
+const lock = new RegExp(rules.match(/^RewriteCond %\{HTTP_HOST\} !(\S+) \[NC\]$/m)[1], 'i');
+const www = new RegExp(rules.match(/^RewriteCond %\{HTTP_HOST\} (\^www\S+) \[NC\]$/m)[1], 'i');
+assert(lock.test('gridsmith.uk') && lock.test('GRIDSMITH.UK'));
+for (const host of ['www.gridsmith.uk', 'gridsmith.uk.example.invalid', 'evilgridsmith.uk', 'mediumaquamarine-wallaby-594070.hostingersite.com']) {
+  assert(!lock.test(host), `Host lock admits ${host}`);
+}
+assert(www.test('www.gridsmith.uk') && !www.test('gridsmith.uk') && !www.test('www.gridsmith.uk.example.invalid'));
+assert(rules.indexOf('^www\\.gridsmith') < rules.indexOf('!^gridsmith'), 'www must fold into the apex before the host lock');
+for (const [origin, options, dataset] of [[new URL(PREVIEW_INTAKE_URL).origin, {}], [intakeOrigin, { rehearsal: true }],
+  ['http://abcdefghijklmnopqrst.supabase.co', {}], [intake, {}], ['https://example.invalid', {}], [intakeOrigin, {}, 'development']]) {
+  assert.throws(() => productionHostingerRules(origin, dataset ?? 'production', options), /Production rules require/); productionProofs++;
+}
+const rehearsalRules = productionHostingerRules(new URL(PREVIEW_INTAKE_URL).origin, 'production', { rehearsal: true });
+assert(rehearsalRules.startsWith('# REHEARSAL') && /^Require all denied$/m.test(rehearsalRules));
+
+// Artifact gate in production mode, over a fixture derived from the staging one.
+const legalDocs = readyPublication.filter((entry) => entry.type === 'legalDocument')
+  .map((entry) => ({ _id: entry.id, _type: 'legalDocument', _rev: 'specimen', slug: entry.slug, isSeed: false }));
+const prodManifest = createStaticManifest([...documents, ...legalDocs], readyPublication, { indexable: true });
+assert.equal(prodManifest.indexable, true);
+assert.equal(prodManifest.routes.filter((route) => route.eligible && route.contentType === 'legalDocument').length, 7);
+const prodFixture = new Map();
+const keepsNoindex = new Set(prodManifest.routes.filter((route) => !route.sitemap).map((route) => `${route.path.slice(1)}.html`));
+for (const [name, bytes] of fixture) {
+  const text = bytes.toString().replaceAll('http://localhost:3236', PRODUCTION_ORIGIN);
+  set(prodFixture, name, keepsNoindex.has(name) ? text : text.replace('noindex, nofollow', 'index, follow'));
+}
+for (const route of prodManifest.routes.filter((r) => r.contentType === 'legalDocument')) {
+  set(prodFixture, `${route.path.slice(1)}.html`, prodFixture.get('about.html').toString()
+    .replace(`${PRODUCTION_ORIGIN}/about`, `${PRODUCTION_ORIGIN}${route.path}`));
+}
+set(prodFixture, 'robots.txt', `User-Agent: *\nAllow: /\n\nSitemap: ${PRODUCTION_ORIGIN}/sitemap.xml\n`);
+const sitemapXml = (paths) => '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
+  paths.map((path) => `<url><loc>${new URL(path, PRODUCTION_ORIGIN)}</loc></url>`).join('') + '</urlset>';
+set(prodFixture, 'sitemap.xml', sitemapXml(sitemapPaths(prodManifest)));
+set(prodFixture, '.htaccess', rules);
+const inspectProd = (files = prodFixture, input = prodManifest, origin = PRODUCTION_ORIGIN) =>
+  inspectStaticArtifact(files, input, readyPublication, [], origin).problems;
+assert.deepEqual(inspectProd(), []);
+assert(codes(inspectStaticArtifact(prodFixture, { ...prodManifest, indexable: false }, readyPublication).problems).includes('NOINDEX'));
+const breakProd = (name, mutate, code) => {
+  const files = new Map(prodFixture), input = structuredClone(prodManifest);
+  const origin = mutate(files, input) ?? PRODUCTION_ORIGIN;
+  assert(codes(inspectProd(files, input, origin)).includes(code), `${name}: ${code} did not fire`); productionProofs++;
+};
+const editProd = (files, name, before, after) => set(files, name, files.get(name).toString().replace(before, after));
+breakProd('noindex in production', (f) => editProd(f, 'index.html', 'index, follow', 'noindex, nofollow'), 'INDEX');
+breakProd('nofollow in production', (f) => editProd(f, 'index.html', 'index, follow', 'index, nofollow'), 'INDEX');
+breakProd('robots meta missing', (f) => editProd(f, 'index.html', 'name="robots"', 'name="other"'), 'INDEX');
+for (const path of NOINDEX_PATHS) {
+  breakProd('deliberate noindex lost', (f) => editProd(f, `${path.slice(1)}.html`, 'noindex, nofollow', 'index, follow'), 'INDEX');
+}
+breakProd('staging canonical', (f) => editProd(f, 'about.html', `${PRODUCTION_ORIGIN}/about`, 'http://localhost:3236/about'), 'SEO');
+breakProd('robots disallow', (f) => editProd(f, 'robots.txt', 'Allow: /', 'Disallow: /'), 'ROBOTS');
+breakProd('robots sitemap line', (f) => editProd(f, 'robots.txt', 'Sitemap:', 'Other:'), 'ROBOTS');
+breakProd('robots missing', (f) => f.delete('robots.txt'), 'ROBOTS');
+breakProd('sitemap short', (f) => set(f, 'sitemap.xml', sitemapXml(sitemapPaths(prodManifest).slice(1))), 'SITEMAP');
+breakProd('sitemap extra', (f) => set(f, 'sitemap.xml', sitemapXml([...sitemapPaths(prodManifest), '/press/contact/thank-you'])), 'SITEMAP');
+breakProd('sitemap missing', (f) => f.delete('sitemap.xml'), 'SITEMAP');
+breakProd('htaccess missing', (f) => f.delete('.htaccess'), 'HTACCESS');
+breakProd('staging htaccess', (f) => set(f, '.htaccess', hostingerRules(REVIEW_STAGING_ORIGIN)), 'HTACCESS');
+breakProd('PHP denial removed', (f) => set(f, '.htaccess', rules.replace(/^RewriteRule \S+ - \[F,L,NC\]\n/m, '')), 'HTACCESS');
+breakProd('host lock removed', (f) => set(f, '.htaccess', rules.replace('RewriteCond %{HTTP_HOST} !^gridsmith\\.uk$ [NC]\n', '')), 'HTACCESS');
+breakProd('CSP removed', (f) => set(f, '.htaccess', rules.replace(/^Header always set Content-Security-Policy .*\n/m, '')), 'HTACCESS');
+breakProd('rehearsal rules', (f) => set(f, '.htaccess', rehearsalRules), 'REHEARSAL');
+breakProd('rehearsal identity', (f) => set(f, '__deployment.json', JSON.stringify({ profile: 'production', rehearsal: true, deployable: false })), 'REHEARSAL');
+breakProd('legal document gated', (f, m) => { m.routes.find((r) => r.path === '/legal/privacy').eligible = false; }, 'LEGAL');
+breakProd('indexable off the production origin', () => 'http://localhost:3236', 'PROFILE');
+assert.deepEqual(inspectProd(new Map([...prodFixture, ['__deployment.json', Buffer.from(JSON.stringify({ deployable: true }))]])), []);
+
+// Reviews: production ships none (LEG-08). A client chunk may carry the component code unused.
+assert.deepEqual(artifactNoReviewProblems(prodFixture), []);
+const chunk = new Map(prodFixture); set(chunk, '_next/static/specimen.js', 'data-reviews-carousel');
+assert.deepEqual(artifactNoReviewProblems(chunk), []);
+for (const [name, file, content, code] of [['rendered card', 'index.html', '<li data-review-key="k"></li>', 'REVIEWS_PRESENT'],
+  ['RSC payload', 'index.txt', 'data-reviews-carousel', 'REVIEWS_PRESENT'], ['provider id', 'data.txt', '22179079', 'PROVIDER_DATA'],
+  ['source map', 'x.js.map', '{}', 'SOURCE_MAP']]) {
+  const files = new Map(prodFixture); set(files, file, (files.get(file) ?? '') + content);
+  assert(codes(artifactNoReviewProblems(files)).includes(code), `${name}: ${code} did not fire`); productionProofs++;
+}
+console.log(`GS-R13 production profile PASS: refuses today; staging policy byte-identical; ${productionProofs} adverse proofs.`);
+
+for (const path of ['/press/path-finder', '/press/gridsmith-path-probe']) {
+  assert(!manifest.routes.some((route) => route.path === path));
+  const leakedManifest = structuredClone(manifest);
+  leakedManifest.routes.push({ ...manifest.routes[0], path, eligible: false });
+  assert(inspectStaticArtifact(fixture, leakedManifest, publication).problems.some((p) => p.startsWith('EXCLUDED:')));
+  for (const suffix of ['.html', '.txt', '/index.html']) {
+    const leaked = new Map(fixture); leaked.set(path.slice(1) + suffix, Buffer.from('<h1>Path Finder specimen</h1>'));
+    assert(inspectStaticArtifact(leaked, manifest, publication).problems.some((p) => p.startsWith('EXCLUDED:')));
+  }
+}
+assert(!sitemapPaths(manifest).includes('/insights'));
+assert(sitemapPaths(article).includes('/insights'));
+console.log('GS-LAUNCH-002: both withheld Path Finder paths reject emitted artifacts.');
+
+// Exercise the normal sitemap's empty/published article branches without a CMS connection.
+{
+  const { default: ts } = await import('typescript');
+  const { runInNewContext } = await import('node:vm');
+  let posts = [];
+  const subject = { exports: {} };
+  const imports = {
+    '@/lib/legal/slugs': { LEGAL_DOCUMENT_SLUGS: [] },
+    '@/lib/sanity/queries': { listServiceSlugs: async () => [], listPostSlugs: async () => posts },
+    '@/lib/seo/site': { INDEXABLE: true, absolute: path => new URL(path, PRODUCTION_ORIGIN).href },
+    '@/lib/build/target': { STATIC_BUILD: false },
+    '@/lib/build/static-routes': {}, '@/lib/build/route-manifest': {},
+  };
+  const compiled = ts.transpileModule(readFileSync('app/sitemap.ts', 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText;
+  runInNewContext(compiled, { module: subject, exports: subject.exports, require: name => {
+    assert(name in imports, `Unexpected sitemap dependency ${name}`); return imports[name];
+  } });
+  assert(!(await subject.exports.default()).some(row => row.url.endsWith('/insights')));
+  posts = ['published-specimen'];
+  const urls = (await subject.exports.default()).map(row => row.url);
+  assert(urls.includes(`${PRODUCTION_ORIGIN}/insights`));
+  assert(urls.includes(`${PRODUCTION_ORIGIN}/insights/published-specimen`));
+}
+console.log('GS-LAUNCH-002: normal sitemap empty/published Insights branches PASS.');
