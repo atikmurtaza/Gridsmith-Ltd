@@ -29,8 +29,11 @@ const KB = 1024;
  * To re-baseline: scaffold a bare Next app at the new version with the same layout and
  * page, build it, and sum the gzipped module scripts of `/`. Changing this number is a
  * deliberate act and belongs in its own commit with the measurement in the message.
+ * GS-LAUNCH-002: bare Next 15.5.27/15.5.28 + React 19.2.8 measured 102676/102773 B gz at level 9
+ * (100.2695/100.3643 KB). The current floor rounds to 100.4 KB; the site allowance stays
+ * 2.9 KB. Exact independent inputs and script digests: docs/_shared/GS-LAUNCH-002-FRAMEWORK-FLOOR.json.
  */
-const FLOOR_KB = 100.2;
+const FLOOR_KB = 100.4;
 
 /** How far below the floor a route may measure before the floor is treated as stale. */
 const FLOOR_TOLERANCE_KB = 3.0;
