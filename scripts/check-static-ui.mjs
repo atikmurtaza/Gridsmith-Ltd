@@ -44,7 +44,8 @@ page.on('pageerror', (error) => errors.push(error.message));
 page.on('requestfailed', (request) => failedRequests.push(new URL(request.url()).pathname));
 page.on('response', (response) => {
   const path = new URL(response.url()).pathname;
-  if (response.status() >= 400 && path !== '/h4a-unknown-route' && !excludedRoutes.includes(path)) badResponses.push({ path, status: response.status() });
+  const expectedStaticError = productionProfile && path === '/induced-500' && response.status() === 500;
+  if (response.status() >= 400 && path !== '/h4a-unknown-route' && !excludedRoutes.includes(path) && !expectedStaticError) badResponses.push({ path, status: response.status() });
 });
 const receipt = { phase: 'GS-HOST-H4-D-R1', profile: hosted ? 'hosted' : normal ? 'normal' : 'static', pages: [],
   noJs: [], accessibility: [], realGpu: 'UNVERIFIED', server: normal ? 'Next runtime' : 'plain file server' };
