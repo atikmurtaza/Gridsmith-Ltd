@@ -18,6 +18,23 @@ if (live && existsSync(`build/${proofPrefix}-live-ui-receipt.json`) && !process.
   throw new Error('Existing Preview requests require exact-ID reconciliation; use --resume only after inspecting them');
 }
 const axeSource = readFileSync(createRequire(fileURLToPath(import.meta.url)).resolve('axe-core/axe.min.js'),'utf8');
+const noticeTarget = ['#gs-consent-heading'];
+const noticeIncomplete = (issue, node) => issue.id === 'color-contrast' &&
+  JSON.stringify(node.target) === JSON.stringify(noticeTarget) && node.any.some(check =>
+    check.data?.messageKey === 'elmPartiallyObscuring' ||
+    (check.data?.messageKey === 'elmPartiallyObscured' && check.relatedNodes?.length > 0 &&
+      check.relatedNodes.every(related => JSON.stringify(related.target) === JSON.stringify(noticeTarget))));
+const noticeFixture = (messageKey, target = noticeTarget, relatedNodes = []) =>
+  ({ target, any: [{ data: { messageKey }, relatedNodes }] });
+for (const [issue, node, expected] of [
+  [{id:'color-contrast'}, noticeFixture('elmPartiallyObscuring'), true],
+  [{id:'color-contrast'}, noticeFixture('elmPartiallyObscured', noticeTarget, [{target:noticeTarget}]), true],
+  [{id:'other'}, noticeFixture('elmPartiallyObscuring'), false],
+  [{id:'color-contrast'}, noticeFixture('elmPartiallyObscuring', ['input']), false],
+  [{id:'color-contrast'}, noticeFixture('other'), false],
+  [{id:'color-contrast'}, noticeFixture('elmPartiallyObscured'), false],
+  [{id:'color-contrast'}, noticeFixture('elmPartiallyObscured', noticeTarget, [{target:['#foreign-overlay']}]), false],
+]) assert.equal(noticeIncomplete(issue,node),expected);
 const receipt = live && process.argv.includes('--resume') ? JSON.parse(readFileSync(`build/${proofPrefix}-live-ui-receipt.json`,'utf8')) :
   { phase: hosted ? 'GS-HOST-H4-D-R1' : 'GS-HOST-H4-B', base, transport: live ? 'deployed Preview Edge' : 'in-memory Edge HTTP', states: [], requests: [], accepted: [], accessibility: [] };
 if(live&&receipt.closed)throw new Error('This Preview proof was cleaned up; its replay records no longer exist. Do not resume.');
@@ -27,7 +44,7 @@ const accept = (item) => {
   receipt.accepted=receipt.accepted.filter(previous=>previous.form!==item.form||previous.width!==item.width);
   receipt.accepted.push(item);saveReceipt();
 };
-let mode = 'valid', admissions = 0, posts = 0;
+let mode = 'valid', admissions = 0, posts = 0, noticeGeometryProven = false;
 const payloads = [], failures = [];
 const handler = createIntake([base], async () => {
   if (mode === 'temporary') return { outcome: 'capacity' };
@@ -83,18 +100,33 @@ const audit = async (label) => {
   const result = await new AxePuppeteer(page,axeSource).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa']).analyze();
   receipt.accessibility.push({ label, violations: result.violations.map((issue) => ({ id: issue.id, targets: issue.nodes.map((node) => node.target) })),
     incomplete: result.incomplete.map((issue) => ({id:issue.id,nodes:issue.nodes.map(node=>({target:node.target,any:node.any,all:node.all,none:node.none}))})) });
+  saveReceipt();
   assert.equal(result.violations.length, 0, `Focused axe: ${label}`);
   for(const issue of result.incomplete)for(const node of issue.nodes){
-    assert.equal(issue.id,'color-contrast');assert.deepEqual(node.target,['#gs-consent-heading']);
-    assert(node.any.some(check=>check.data?.messageKey==='elmPartiallyObscuring'));
+    assert(noticeIncomplete(issue,node),'Only the fixed notice overlay or its self-overlap can be adjudicated');
   }
   // Existing check-axe adjudication is only for this fixed-overlay heading, never form controls.
   if(result.incomplete.length){
-    const pair=await page.$eval('#gs-consent-heading',element=>{
-      const fg=getComputedStyle(element).color;let parent=element,bg='';
-      while(parent){const color=getComputedStyle(parent).backgroundColor;if(!color.endsWith(', 0)')&&color!=='transparent'){bg=color;break;}parent=parent.parentElement;}
-      return {fg,bg};
-    });
+    const pair=await page.$eval('#gs-consent-heading',(element,prove)=>{
+      const read=()=>{
+        const r=element.getBoundingClientRect(),fg=getComputedStyle(element).color;let parent=element,bg='',opacity=1;
+        while(parent){const style=getComputedStyle(parent),color=style.backgroundColor;opacity*=Number(style.opacity);if(!bg&&!color.endsWith(', 0)')&&color!=='transparent')bg=color;parent=parent.parentElement;}
+        const points=[[r.left+2,r.top+2],[r.right-2,r.top+2],[r.left+2,r.bottom-2],[r.right-2,r.bottom-2],[(r.left+r.right)/2,(r.top+r.bottom)/2]];
+        return {fg,bg,opacity,visible:r.width>4&&r.height>4&&r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight,
+          unobscured:points.every(([x,y])=>{const hit=document.elementFromPoint(x,y);return hit===element||element.contains(hit);})};
+      };
+      const before=read();let adverseRejected=null;
+      if(prove){
+        const r=element.getBoundingClientRect(),cover=document.createElement('span');
+        Object.assign(cover.style,{position:'fixed',left:`${r.left}px`,top:`${r.top}px`,width:'4px',height:'4px',zIndex:'2147483647'});
+        document.body.append(cover);
+        try {adverseRejected=!read().unobscured;} finally {cover.remove();}
+      }
+      return {...before,adverseRejected};
+    },!noticeGeometryProven);
+    assert(pair.visible&&pair.unobscured&&pair.opacity===1,'Notice text must be opaque, in view and hit-tested above other content');
+    assert(/^rgb\(/.test(pair.fg)&&/^rgb\(/.test(pair.bg),'Notice contrast requires opaque colors');
+    if(!noticeGeometryProven){assert.equal(pair.adverseRejected,true,'A real overlay must fail the same hit test');noticeGeometryProven=true;}
     const luminance=color=>{const values=color.match(/[\d.]+/g).slice(0,3).map(Number).map(value=>{const c=value/255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4;});return values[0]*.2126+values[1]*.7152+values[2]*.0722;};
     const levels=[luminance(pair.fg),luminance(pair.bg)].sort((a,b)=>b-a),ratio=(levels[0]+.05)/(levels[1]+.05);
     assert(ratio>=4.5);receipt.accessibility.at(-1).consentContrast={...pair,ratio,adjudication:'existing opaque fixed-overlay heading; form controls have no incompletes'};

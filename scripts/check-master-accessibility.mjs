@@ -14,7 +14,8 @@ const out = resolve(process.env.A11Y_EVIDENCE_DIR ?? 'build/master-accessibility
 mkdirSync(out, { recursive: true });
 const results = [];
 const save = (name, data) => writeFileSync(resolve(out, `${name}.json`), JSON.stringify(data, null, 2));
-const browser = await launch();
+// Exercise actual WebGL on GPU-less Linux through the existing scene test affordance.
+const browser = await launch({ args: ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'] });
 const frames = (page, count = 2) => page.evaluate(n => new Promise(done => {
   const tick = () => --n ? requestAnimationFrame(tick) : done();
   requestAnimationFrame(tick);
@@ -189,7 +190,7 @@ async function pair(page, id) {
 
 async function motion(viewport) {
   const id = `motion-${viewport[0]}`;
-  const initialVisit = await open(viewport, '/', true);
+  const initialVisit = await open(viewport, '/?scene=software', true);
   let initial;
   try {
     await initialVisit.page.waitForFunction(() => document.querySelector('[data-master-scene]')?.dataset.render === 'ready');
@@ -198,7 +199,7 @@ async function motion(viewport) {
     assert.deepEqual(initial.pose, still.pose, 'Initial reduced pose stays still');
     assert(Object.keys(initial.pose).length > 0, 'Actual WebGL uniforms required');
   } finally { await initialVisit.context.close(); }
-  const { context, page } = await open(viewport);
+  const { context, page } = await open(viewport, '/?scene=software');
   try {
     await page.waitForFunction(() => document.querySelector('[data-master-scene]')?.dataset.render === 'ready');
     for (let i = 0; i < 3; i++) {
