@@ -1,4 +1,4 @@
-/** H4-A technical artifact only. No Server Action, input collection or success claim. */
+/** Direct contact without website input collection or a delivery claim. */
 import { Link } from '@/components/primitives/Link';
 import { Prose } from '@/components/primitives/Prose';
 
@@ -6,11 +6,11 @@ export function StaticContactShell({ contactEmail }: {
   contactEmail: string; responseCommitment: string; expectationsStatement?: string | null;
 }) {
   return (
-    <aside data-static-contact-shell="" aria-label="Technical preview enquiry notice">
+    <aside data-static-contact-shell="" aria-label="Contact by email">
       <Prose>
-      <p>Enquiry submissions are unavailable in this local technical preview.</p>
-      <p>No information is collected here. The website’s contact address is{' '}
+      <p>To discuss your project, email{' '}
         <Link href={`mailto:${contactEmail}`}>{contactEmail}</Link>.</p>
+      <p>You can also use the WhatsApp or text message links on this page.</p>
       </Prose>
     </aside>
   );

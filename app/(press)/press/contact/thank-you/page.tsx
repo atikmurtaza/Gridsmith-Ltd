@@ -6,9 +6,10 @@ import { Numeric } from '@/components/primitives/Numeric';
 import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { getCompanyDetails } from '@/lib/company/companyDetails';
+import { DIRECT_CONTACT } from '@/lib/build/target';
 
 export const metadata: Metadata = {
-  title: 'That has reached us — Gridsmith Press',
+  title: DIRECT_CONTACT ? 'Contact Gridsmith Press' : 'That has reached us — Gridsmith Press',
   robots: { index: false, follow: false },
 };
 
@@ -43,16 +44,16 @@ export default async function Page() {
     <main id="main" tabIndex={-1}>
       <Section rhythm="loose">
         <Container width="narrow">
-          <Heading level={1}>That has reached us</Heading>
+          <Heading level={1}>{DIRECT_CONTACT ? 'Contact Gridsmith Press' : 'That has reached us'}</Heading>
           <Prose>
             <p>{company.responseCommitment}</p>
             <p>
-              A person reads it — there is no queue and no automated triage. If you left a
-              manuscript link, we will look at it before replying.
+              {DIRECT_CONTACT ? 'This website does not collect enquiries through a form. Please use email, WhatsApp or text message on our contact page.' :
+                'A person reads it — there is no queue and no automated triage. If you left a manuscript link, we will look at it before replying.'}
             </p>
             {company.contactEmail ? (
               <p>
-                If you need to add something, write to{' '}
+                {DIRECT_CONTACT ? 'Write to ' : 'If you need to add something, write to '}
                 <a href={`mailto:${company.contactEmail}`}>
                   <Numeric>{company.contactEmail}</Numeric>
                 </a>
@@ -60,6 +61,7 @@ export default async function Page() {
               </p>
             ) : null}
           </Prose>
+          {DIRECT_CONTACT ? <p><Link href="/press/contact">Contact options</Link></p> : null}
           <Prose>
             <p>
               Gridsmith Press is one of three trading divisions of Gridsmith Ltd. If the book

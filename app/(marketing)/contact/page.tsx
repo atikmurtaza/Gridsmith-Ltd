@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Numeric } from '@/components/primitives/Numeric';
 import { ContactForm } from '@/components/leads/ContactForm';
+import { StaticContactShell } from '@/components/leads/StaticContactShell';
+import { DIRECT_CONTACT } from '@/lib/build/target';
 import { Opening } from '@/components/shared/Opening';
 import styles from '@/components/shared/shared.module.css';
 import { getCompanyDetails, whatsAppHref, smsHref } from '@/lib/company/companyDetails';
@@ -9,7 +11,8 @@ import { getCompanyDetails, whatsAppHref, smsHref } from '@/lib/company/companyD
 export const metadata: Metadata = {
   title: 'Tell us what you need — Gridsmith Ltd',
   description:
-    'One form for all three studios. If your need spans more than one, say so — that is the first option.',
+    DIRECT_CONTACT ? 'Contact Gridsmith by email, WhatsApp or text message to discuss your project.' :
+      'One form for all three studios. If your need spans more than one, say so — that is the first option.',
 };
 
 /**
@@ -69,7 +72,8 @@ export default async function Page() {
         place="Contact"
         title="Tell us what you need"
         lead={[
-          'One form for all three studios. If what you need spans more than one of them, say so — it is the first option, and it comes straight to the founder rather than being routed to a studio that can only do part of it.',
+          DIRECT_CONTACT ? 'Tell us about your project by email, WhatsApp or text message. If it spans more than one studio, say so.' :
+            'One form for all three studios. If what you need spans more than one of them, say so — it is the first option, and it comes straight to the founder rather than being routed to a studio that can only do part of it.',
           company.responseCommitment,
         ]}
       />
@@ -77,10 +81,10 @@ export default async function Page() {
       <div className={styles.sheet}>
         <div className={`${styles.wrap} ${styles.contactGrid}`}>
           <div>
-            <ContactForm
+            {DIRECT_CONTACT ? <StaticContactShell contactEmail={company.contactEmail ?? ''} responseCommitment={company.responseCommitment} /> : <ContactForm
               responseCommitment={company.responseCommitment}
               contactEmail={company.contactEmail ?? ''}
-            />
+            />}
             <p className={styles.quotationNote}>
               Before accepting a quotation, read <Link href="/legal/client-terms">which client terms apply to you</Link>.
             </p>
@@ -90,7 +94,7 @@ export default async function Page() {
             <h2 id="other-ways" className={styles.directTitle}>
               Or reach us directly
             </h2>
-            <p className={styles.directNote}>If the form is in your way, it is not the only route.</p>
+            <p className={styles.directNote}>{DIRECT_CONTACT ? 'Choose the contact method that suits you.' : 'If the form is in your way, it is not the only route.'}</p>
             <dl className={styles.directList}>
               {company.contactEmail ? (
                 <div>
@@ -119,7 +123,7 @@ export default async function Page() {
               ) : null}
             </dl>
             <p className={styles.directNote}>
-              Both reach the same place as the form. {company.responseCommitment}
+              {DIRECT_CONTACT ? 'Email, WhatsApp and text messages reach Gridsmith directly.' : 'Both reach the same place as the form.'} {company.responseCommitment}
             </p>
           </aside>
         </div>

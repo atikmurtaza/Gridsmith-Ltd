@@ -7,3 +7,5 @@ export function resolveBuildTarget(value: string | undefined): 'normal' | 'stati
 
 export const BUILD_TARGET = resolveBuildTarget(process.env.GRIDSMITH_BUILD_TARGET);
 export const STATIC_BUILD = BUILD_TARGET === 'static';
+// GS-LAUNCH-007: initial Hostinger launch offers direct contact; intake stays separately controlled.
+export const DIRECT_CONTACT = STATIC_BUILD && process.env.GRIDSMITH_STATIC_PROFILE === 'production';

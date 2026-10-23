@@ -46,9 +46,10 @@ export function readArtifact(root) {
   visit(root); return files;
 }
 
-export function inspectStaticArtifact(files, manifest, publication, knownSecrets = [], siteOrigin = 'http://localhost:3236') {
+export function inspectStaticArtifact(files, manifest, publication, knownSecrets = [], siteOrigin = 'http://localhost:3236', contactMode = 'edge') {
   const problems = [];
   const bad = (code, detail) => problems.push(`${code}: ${detail}`);
+  if (!['edge', 'direct'].includes(contactMode)) bad('CONTACT', 'unknown contact mode');
   const expected = manifest.routes.filter((route) => route.eligible);
   let preview = false;
   try { preview = legalPreviewProfile(manifest.legalPreview, manifest.dataset, siteOrigin); }
@@ -106,16 +107,25 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     if (route.path === '/' && !/application\/ld\+json/.test(text)) bad('STRUCTURED', 'Organization data missing');
     if (['/contact', '/press/contact'].includes(route.path)) {
       const kind = route.path === '/contact' ? 'contact' : 'press';
-      if (!new RegExp(`<form\\b[^>]*data-edge-form="${kind}"`).test(text) || /data-static-contact-shell/.test(text) ||
+      if (contactMode === 'direct') {
+        if (!/data-static-contact-shell/.test(text) || !/href="mailto:[^"\s]+@[^"\s]+"/.test(text) ||
+            !/href="https:\/\/wa.me\/\d+"/.test(text) || /<form\b/i.test(text)) bad('CONTACT', 'direct email/WhatsApp contact missing or a form remains');
+      } else if (!new RegExp(`<form\\b[^>]*data-edge-form="${kind}"`).test(text) || /data-static-contact-shell/.test(text) ||
           /<form\b[^>]*\baction=/i.test(text) || !/<noscript>[^]*JavaScript is required[^]*mailto:/i.test(text)) bad('FORM', 'functional Edge form/no-JS disclosure missing or runtime binding present');
     }
-    if (route.path === '/press/contact/thank-you' && (!/That has reached us/.test(text) || /data-static-contact-shell/.test(text))) bad('FORM', 'fixed accepted confirmation missing');
+    if (route.path === '/press/contact/thank-you' && (contactMode === 'direct'
+      ? /That has reached us/.test(text) || !/This website does not collect enquiries through a form/.test(text)
+      : !/That has reached us/.test(text) || /data-static-contact-shell/.test(text))) bad('FORM', 'contact confirmation does not match contact mode');
   }
   const notFound = files.get('404.html')?.toString('utf8');
   if (!notFound || !/<h1(?:\s|>)/i.test(notFound) || !/Gridsmith/i.test(notFound) || !/noindex/.test(notFound)) bad('404', 'branded noindex document missing');
   const robots = files.get('robots.txt')?.toString('utf8');
   const sitemap = files.get('sitemap.xml')?.toString('utf8');
   if (production) {
+    const error = files.get('500.html')?.toString('utf8') ?? '';
+    if (!/<html\b[^>]*\slang="en(?:-GB)?"/i.test(error) || !/<title>[^<]+<\/title>/i.test(error) ||
+        !/<main\b/.test(error) || !/<h1\b/.test(error) || !/href="\/"/.test(error) ||
+        !/noindex/.test(error) || /::vercel:|nothing you sent has been lost/i.test(error)) bad('500', 'accessible truthful static error document missing');
     if (!robots || !/^Allow:\s*\/\s*$/im.test(robots) || /^Disallow:/im.test(robots) ||
         !robots.includes(`Sitemap: ${PRODUCTION_ORIGIN}/sitemap.xml`)) bad('ROBOTS', 'production crawl policy missing');
     const locs = [...(sitemap ?? '').matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]).sort();
@@ -124,7 +134,8 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     const rules = files.get('.htaccess')?.toString('utf8') ?? '';
     if (!rules.includes('RewriteCond %{HTTP_HOST} !^gridsmith\\.uk$ [NC]') ||
         !rules.includes('RewriteRule \\.(?:php[0-9]?|phtml|phar|pl|cgi)(?:/|$) - [F,L,NC]') ||
-        /noindex|<IfModule mod_headers/i.test(rules) || !/^Header always set Content-Security-Policy /m.test(rules)) {
+        /noindex|<IfModule mod_headers/i.test(rules) || !/^Header always set Content-Security-Policy /m.test(rules) ||
+        !/^ErrorDocument 500 \/500.html$/m.test(rules)) {
       bad('HTACCESS', 'production host lock, PHP denial or header policy missing');
     }
     let deployment = null;
@@ -142,6 +153,8 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     }
     totalBytes += data.length;
     const text = data.toString('utf8');
+    if (contactMode === 'direct' && /\.(?:html|js|txt|json)$/.test(name) &&
+        /supabase\.co|gs-lead-intake|data-edge-form|::vercel:/.test(text)) bad('CONTACT', 'intake/Preview transport or obsolete hosting marker in direct-contact artifact');
     if (/\.(?:html|css|js|txt|xml|json|svg)$/.test(name) &&
         (/[ \t]+(?=\r?$)/m.test(text) || /(?:\r?\n){2,}$/.test(text))) bad('WHITESPACE', 'generated text cannot pass publication whitespace check');
     if (/\.html$/.test(name) && !allowedHtml.has(name)) bad('EXTRA', 'unmanifested HTML emitted');
@@ -198,7 +211,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   const secrets = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'RESEND_API_KEY', 'SANITY_API_WRITE_TOKEN',
     'DIRECT_CONNECTION_STRING', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN', 'FREELANCER_API_SECRET']
     .map((name) => process.env[name]).filter((value) => value?.length >= 8);
-  const result = inspectStaticArtifact(readArtifact(resolve('out')), manifest, publication, secrets, JSON.parse(readFileSync('build/static-receipt.json')).siteOrigin ?? 'http://localhost:3236');
+  const receipt = JSON.parse(readFileSync('build/static-receipt.json'));
+  const result = inspectStaticArtifact(readArtifact(resolve('out')), manifest, publication, secrets,
+    receipt.siteOrigin ?? 'http://localhost:3236', receipt.contactMode ?? 'edge');
   result.problems.push(...artifactNoReviewProblems(readArtifact(resolve('out'))));
   if (result.problems.length) { console.error(result.problems.join('\n')); process.exitCode = 1; }
   else console.log(`Static contract PASS: ${result.htmlRoutes} routes, ${result.fileCount} files, ${result.totalBytes} bytes; ${secrets.length} supplied secret values checked.`);

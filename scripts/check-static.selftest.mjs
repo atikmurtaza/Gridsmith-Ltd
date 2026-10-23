@@ -413,13 +413,15 @@ const sitemapXml = (paths) => '<urlset xmlns="http://www.sitemaps.org/schemas/si
   paths.map((path) => `<url><loc>${new URL(path, PRODUCTION_ORIGIN)}</loc></url>`).join('') + '</urlset>';
 set(prodFixture, 'sitemap.xml', sitemapXml(sitemapPaths(prodManifest)));
 set(prodFixture, '.htaccess', rules);
+set(prodFixture, '500.html', readFileSync('public/500.html'));
 const inspectProd = (files = prodFixture, input = prodManifest, origin = PRODUCTION_ORIGIN) =>
   inspectStaticArtifact(files, input, readyPublication, [], origin).problems;
 assert.deepEqual(inspectProd(), []);
 assert(codes(inspectStaticArtifact(prodFixture, { ...prodManifest, indexable: false }, readyPublication).problems).includes('NOINDEX'));
 const breakProd = (name, mutate, code) => {
   const files = new Map(prodFixture), input = structuredClone(prodManifest);
-  const origin = mutate(files, input) ?? PRODUCTION_ORIGIN;
+  const changedOrigin = mutate(files, input);
+  const origin = typeof changedOrigin === 'string' ? changedOrigin : PRODUCTION_ORIGIN;
   assert(codes(inspectProd(files, input, origin)).includes(code), `${name}: ${code} did not fire`); productionProofs++;
 };
 const editProd = (files, name, before, after) => set(files, name, files.get(name).toString().replace(before, after));
@@ -458,6 +460,66 @@ for (const [name, file, content, code] of [['rendered card', 'index.html', '<li 
   assert(codes(artifactNoReviewProblems(files)).includes(code), `${name}: ${code} did not fire`); productionProofs++;
 }
 console.log(`GS-R13 production profile PASS: refuses today; staging policy byte-identical; ${productionProofs} adverse proofs.`);
+
+// GS-LAUNCH-007: direct contact removes intake, never legal publication authority.
+const { staticLighthouseProblems } = await import('../lib/build/production.ts');
+const { createRequire } = await import('node:module');
+const { ROUTES: lighthouseRoutes, selectStaticRoutes } = createRequire(import.meta.url)('../lighthouse/routes.cjs');
+assert.equal(lighthouseRoutes.length, 11);
+assert.equal(selectStaticRoutes(lighthouseRoutes, prodManifest).length, 11);
+assert.equal(selectStaticRoutes(lighthouseRoutes, manifest, true).length, 10);
+assert.throws(() => selectStaticRoutes(lighthouseRoutes, manifest, false), /Static Lighthouse route missing: \/legal\/privacy/);
+assert.throws(() => selectStaticRoutes(lighthouseRoutes, { routes: [] }), /Static Lighthouse route missing: \//);
+const staticSubject = { profile: 'production', contactMode: 'direct', siteOrigin: PRODUCTION_ORIGIN, sourceModified: false };
+assert.deepEqual(staticLighthouseProblems(staticSubject), []);
+for (const identity of [null, {}, { ...staticSubject, profile: 'staging' }, { ...staticSubject, contactMode: 'edge' },
+  { ...staticSubject, siteOrigin: REVIEW_STAGING_ORIGIN }, { ...staticSubject, sourceModified: true }]) {
+  assert.deepEqual(staticLighthouseProblems(identity), ['STATIC_LIGHTHOUSE_SUBJECT']);
+}
+assert.deepEqual(productionInputProblems(undefined, readyPublication, readyRegister, null, 'direct'), []);
+assert.equal(productionInputProblems(undefined, publication, register, null, 'direct').length, 7);
+for (const url of [PREVIEW_INTAKE_URL, intake]) {
+  assert.deepEqual(codes(productionInputProblems(url, readyPublication, readyRegister, intake, 'direct')), ['INTAKE']);
+}
+const directFixture = new Map(prodFixture);
+for (const name of ['contact.html', 'press/contact.html']) {
+  set(directFixture, name, directFixture.get(name).toString().replace(/<form\b[^]*?<\/form>/,
+    '<aside data-static-contact-shell><a href="mailto:synthetic@example.invalid">Email</a><a href="https://wa.me/440000000000">WhatsApp</a></aside>'));
+}
+set(directFixture, 'press/contact/thank-you.html', directFixture.get('press/contact/thank-you.html').toString()
+  .replaceAll('That has reached us', 'This website does not collect enquiries through a form'));
+const directRules = productionHostingerRules(null);
+assert(!/supabase|gs-lead-intake/.test(directRules));
+assert(directRules.includes('ErrorDocument 500 /500.html'));
+assert(/^Require all denied$/m.test(productionHostingerRules(null, 'production', { rehearsal: true })));
+set(directFixture, '.htaccess', directRules);
+const inspectDirect = (files, mode = 'direct') => inspectStaticArtifact(files, prodManifest, readyPublication, [], PRODUCTION_ORIGIN, mode).problems;
+assert.deepEqual(inspectDirect(directFixture), []);
+let directProofs = 0;
+for (const [name, mutate, code] of [
+  ['form', f => set(f, 'contact.html', f.get('contact.html') + '<form></form>'), 'CONTACT'],
+  ['shell', f => editProd(f, 'contact.html', 'data-static-contact-shell', 'data-other'), 'CONTACT'],
+  ['email', f => editProd(f, 'contact.html', 'mailto:', 'other:'), 'CONTACT'],
+  ['WhatsApp', f => editProd(f, 'press/contact.html', 'https://wa.me/', 'https://example.invalid/'), 'CONTACT'],
+  ['confirmation', f => editProd(f, 'press/contact/thank-you.html', 'This website does not collect enquiries through a form', 'That has reached us'), 'FORM'],
+  ...['html', 'js', 'txt', 'json'].map(ext => [ext + ' intake leak', f => set(f, ext === 'html' ? 'contact.html' : 'leak.' + ext, (ext === 'html' ? f.get('contact.html') : '') + PREVIEW_INTAKE_URL), 'CONTACT']),
+  ['missing error', f => f.delete('500.html'), '500'],
+  ['title', f => editProd(f, '500.html', '<title>', '<other>'), '500'],
+  ['noindex', f => editProd(f, '500.html', 'noindex', 'index'), '500'],
+  ['obsolete platform marker', f => set(f, '500.html', f.get('500.html') + '::vercel:REQUEST_ID::'), '500'],
+  ['false delivery assurance', f => set(f, '500.html', f.get('500.html') + 'nothing you sent has been lost'), '500'],
+  ['language', f => editProd(f, '500.html', 'lang="en-GB"', 'data-lang="en-GB"'), '500'],
+  ['main', f => editProd(f, '500.html', '<main ', '<section '), '500'],
+  ['heading', f => editProd(f, '500.html', '<h1>', '<h2>'), '500'],
+  ['recovery', f => editProd(f, '500.html', 'href="/"', 'href="#"'), '500'],
+  ['error mapping', f => editProd(f, '.htaccess', 'ErrorDocument 500 /500.html', ''), 'HTACCESS'],
+  ['rehearsal denial', f => set(f, '.htaccess', productionHostingerRules(null, 'production', { rehearsal: true })), 'REHEARSAL'],
+]) {
+  const files = new Map(directFixture); mutate(files);
+  assert(codes(inspectDirect(files)).includes(code), `${name}: ${code} did not fire`); directProofs++;
+}
+assert(codes(inspectDirect(directFixture, 'unknown')).includes('CONTACT'));
+console.log(`GS-LAUNCH-007 direct-contact/error PASS: ${directProofs + 1} adverse artifact proofs; seven legal refusals retained.`);
 
 for (const path of ['/press/path-finder', '/press/gridsmith-path-probe']) {
   assert(!manifest.routes.some((route) => route.path === path));

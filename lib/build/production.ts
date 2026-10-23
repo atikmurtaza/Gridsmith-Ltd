@@ -17,14 +17,23 @@ export const PRODUCTION_INTAKE_URL: string | null = 'https://dqiutgmxillhsbzgnls
 
 const intakePattern = /^https:\/\/[a-z0-9]{20}\.supabase\.co\/functions\/v1\/gs-lead-intake$/;
 
+/** Ask the local static subject before measuring it; never fall back to Next SSR. */
+export function staticLighthouseProblems(identity: { profile?: string; contactMode?: string; siteOrigin?: string; sourceModified?: boolean } | null): string[] {
+  return identity?.profile === 'production' && identity.contactMode === 'direct' &&
+    identity.siteOrigin === PRODUCTION_ORIGIN && identity.sourceModified === false ? [] : ['STATIC_LIGHTHOUSE_SUBJECT'];
+}
+
 type Entry = { type: string; slug: string | null; eligible: boolean };
 type Register = { documents?: Record<string, { state?: string } | undefined> };
 
 /** Every unmet production input as `CODE: detail`. An empty list is the only buildable state. */
 export function productionInputProblems(intakeUrl: string | undefined, publication: Entry[],
-  register: Register, expectedIntake: string | null = PRODUCTION_INTAKE_URL): string[] {
+  register: Register, expectedIntake: string | null = PRODUCTION_INTAKE_URL,
+  contactMode: 'edge' | 'direct' = 'edge'): string[] {
   const problems: string[] = [];
-  if (!expectedIntake) problems.push('INTAKE: production intake URL not established (H4-B production phase)');
+  if (contactMode === 'direct') {
+    if (intakeUrl) problems.push('INTAKE: direct contact must not configure an intake endpoint');
+  } else if (!expectedIntake) problems.push('INTAKE: production intake URL not established (H4-B production phase)');
   else if (!intakePattern.test(expectedIntake) || expectedIntake === PREVIEW_INTAKE_URL) {
     problems.push('INTAKE: recorded production intake is malformed or is the isolated Preview project');
   } else if (intakeUrl !== expectedIntake) {

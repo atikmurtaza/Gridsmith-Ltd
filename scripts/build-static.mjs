@@ -25,6 +25,7 @@ import { artifactNoReviewProblems } from './review-public-rules.mjs';
 const profile = process.env.GRIDSMITH_STATIC_PROFILE ?? 'staging';
 if (!['staging', 'production'].includes(profile)) throw new Error('GRIDSMITH_STATIC_PROFILE must be staging or production');
 const production = profile === 'production';
+const contactMode = production ? 'direct' : 'edge';
 const rehearsal = process.env.GRIDSMITH_PRODUCTION_REHEARSAL === '1';
 if (rehearsal && !production) throw new Error('A production rehearsal requires GRIDSMITH_STATIC_PROFILE=production');
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -44,8 +45,8 @@ resolveBuildTarget(process.env.GRIDSMITH_BUILD_TARGET);
 const intakeUrl = process.env.NEXT_PUBLIC_LEAD_INTAKE_URL;
 let waived = [];
 if (production) {
-  const unmet = productionInputProblems(intakeUrl, publication, register);
-  if (rehearsal && intakeUrl !== PREVIEW_INTAKE_URL) throw new Error('A production rehearsal uses only the isolated Preview intake');
+  const unmet = productionInputProblems(intakeUrl, publication, register, PRODUCTION_INTAKE_URL, contactMode);
+  if (intakeUrl) throw new Error('The direct-contact production profile takes no intake endpoint');
   if (rehearsal) waived = unmet;
   else if (unmet.length) throw new Error(`gridsmith.uk profile refused; unmet production inputs:\n${unmet.join('\n')}`);
 } else if (intakeUrl !== PREVIEW_INTAKE_URL && !(intakeUrl === PRODUCTION_INTAKE_URL &&
@@ -83,6 +84,7 @@ const privateNames = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'DI
   'FREELANCER_API_SECRET', 'SLACK_LEADS_WEBHOOK', 'CRON_SECRET'];
 for (const key of [...privateNames, 'PROJECT_URL', 'PUBLISHABLE_KEY', 'VERCEL_ENV', 'VERCEL_URL',
   'VERCEL_PROJECT_PRODUCTION_URL', 'LEAD_NOTIFICATION_FROM', 'LEAD_NOTIFICATION_EMAIL']) delete environment[key];
+if (production) delete environment.NEXT_PUBLIC_LEAD_INTAKE_URL;
 const run = (args, cwd = root) => {
   const result = spawnSync(process.execPath, args, { cwd, env: environment, stdio: 'inherit', windowsHide: true });
   if (result.status !== 0) throw new Error(`Static build step failed (${result.status ?? 'no exit code'})`);
@@ -163,8 +165,14 @@ for (const [kind, folder] of [['post', 'app/(marketing)/insights/[slug]'], ['leg
     writeFileSync(file, readFileSync(file, 'utf8') + '\nexport const dynamicParams = false;\n');
   }
 }
-// Replace only the adapters in the disposable export tree. The real forms remain,
-// while the Server Action/runtime graph cannot enter the static browser bundle.
+// Remove the form client graph entirely from direct-contact exports.
+if (production) {
+  writeFileSync(join(staging, 'components/leads/ContactForm.tsx'),
+    "export { StaticContactShell as ContactForm } from './StaticContactShell';\n");
+  writeFileSync(join(staging, 'components/divisions/press/PressContactFlow.tsx'),
+    "export { StaticContactShell as PressContactFlow } from '../../leads/StaticContactShell';\n");
+}
+// Replace adapters in the disposable tree so Server Actions cannot enter either static profile.
 for (const [file, edge, action] of [['lib/leads/action.ts', 'submitContactEdge', 'submitLeadAction'],
   ['lib/leads/pressAction.ts', 'submitPressEdge', 'submitPressLeadAction']]) writeFileSync(join(staging, file),
   `export { ${edge} as ${action} } from './edge-client';\nexport type { FormState } from './form-domain';\n`);
@@ -179,7 +187,7 @@ try {
   await checkLegal();
   const after = makeManifest(await inventory(), publication, { indexable: production });
   if (JSON.stringify(after) !== JSON.stringify(manifest)) throw new Error('CMS revisions changed during static generation');
-  if (production) writeFileSync(join(staging, 'out/.htaccess'), productionHostingerRules(new URL(intakeUrl).origin, dataset, { rehearsal }));
+  if (production) writeFileSync(join(staging, 'out/.htaccess'), productionHostingerRules(null, dataset, { rehearsal }));
   else if (siteOrigin === REVIEW_STAGING_ORIGIN) writeFileSync(join(staging, 'out/.htaccess'), hostingerRules(siteOrigin, dataset, new URL(intakeUrl).origin));
   for (const [path, bytes] of readArtifact(join(staging, 'out'))) {
     if (path.endsWith('.html') || path === 'robots.txt') {
@@ -188,7 +196,7 @@ try {
   }
   const files = readArtifact(join(staging, 'out'));
   const knownSecrets = privateNames.map((name) => process.env[name]).filter((value) => value?.length >= 8);
-  const result = inspectStaticArtifact(files, manifest, publication, knownSecrets, siteOrigin);
+  const result = inspectStaticArtifact(files, manifest, publication, knownSecrets, siteOrigin, contactMode);
   result.problems.push(...artifactNoReviewProblems(files));
   result.problems = unwaived(result.problems);
   if (result.problems.length) throw new Error(result.problems.join('\n'));
@@ -200,14 +208,14 @@ try {
     untracked.some((path) => /^(?:app|components|lib|styles|sanity|redirects|scripts|lighthouse)\//.test(path));
   const phase = production ? 'GS-R13-PRODUCTION-PROFILE-001' : legalPreview ? 'GS-LEGAL-001-R12' : 'GS-HOST-H4-D-R1';
   const deployment = { phase, sourceSha, sourceModified, siteOrigin,
-    dataset, legalPreview, intakeOrigin: new URL(intakeUrl).origin, ...(production ? { profile, rehearsal, deployable: !rehearsal } : {}),
+    dataset, legalPreview, contactMode, intakeOrigin: production ? null : new URL(intakeUrl).origin, ...(production ? { profile, rehearsal, deployable: !rehearsal } : {}),
     artifactIdentity: digest(JSON.stringify(fileManifest)), files: fileManifest };
   writeFileSync(join(output, '__deployment.json'), JSON.stringify(deployment) + '\n');
-  const finalResult = inspectStaticArtifact(readArtifact(output), manifest, publication, knownSecrets, siteOrigin);
+  const finalResult = inspectStaticArtifact(readArtifact(output), manifest, publication, knownSecrets, siteOrigin, contactMode);
   finalResult.problems = unwaived(finalResult.problems);
   if (finalResult.problems.length) throw new Error(finalResult.problems.join('\n'));
   writeFileSync(join(root, rehearsal ? 'build/production-rehearsal-receipt.json' : 'build/static-receipt.json'), JSON.stringify({ phase,
-    legalPreview, stagingOnly: !production,
+    legalPreview, contactMode, stagingOnly: !production,
     ...(production ? { profile, rehearsal, deployable: !rehearsal, waived: [...new Set(waived)] } : {}), dataset, siteOrigin,
     buildNode: process.version,
     sourceSha, sourceModified, manifest, exclusions, ...finalResult, knownSecretValuesChecked: knownSecrets.length,

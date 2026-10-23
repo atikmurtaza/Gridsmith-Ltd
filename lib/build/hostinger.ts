@@ -93,10 +93,10 @@ function legacyRules() {
  * PHP and other script extensions refused, because the document root has held WordPress; and
  * headers outside `<IfModule>`, so a missing module fails loudly instead of dropping them.
  */
-export function productionHostingerRules(intakeOrigin: string, dataset: 'production' = 'production',
+export function productionHostingerRules(intakeOrigin: string | null, dataset: 'production' = 'production',
   { rehearsal = false } = {}) {
   const preview = intakeOrigin === new URL(PREVIEW_INTAKE_URL).origin;
-  if (!/^https:\/\/[a-z0-9]{20}\.supabase\.co$/.test(intakeOrigin) || preview !== rehearsal) {
+  if (intakeOrigin !== null && (!/^https:\/\/[a-z0-9]{20}\.supabase\.co$/.test(intakeOrigin) || preview !== rehearsal)) {
     throw new Error('Production rules require the Production Supabase intake origin (Preview only in a rehearsal)');
   }
   if (dataset !== 'production') throw new Error('Production rules require the production dataset');
@@ -106,6 +106,7 @@ export function productionHostingerRules(intakeOrigin: string, dataset: 'product
 Options -Indexes -MultiViews
 DirectoryIndex index.html
 ErrorDocument 404 /404.html
+ErrorDocument 500 /500.html
 RewriteEngine On
 RewriteRule (^|/)\\.(?!well-known/) - [F,L]
 RewriteRule \\.(?:php[0-9]?|phtml|phar|pl|cgi)(?:/|$) - [F,L,NC]
@@ -115,5 +116,5 @@ RewriteCond %{HTTP_HOST} !^${hostPattern}$ [NC]
 RewriteRule ^ - [F,L]
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ ${PRODUCTION_ORIGIN}%{REQUEST_URI} [R=308,L,NE]
-${legacyRules()}${routing}${headerPolicy(false, intakeOrigin, dataset)}${types}`;
+${legacyRules()}${routing}${headerPolicy(false, intakeOrigin ?? '', dataset)}${types}`;
 }

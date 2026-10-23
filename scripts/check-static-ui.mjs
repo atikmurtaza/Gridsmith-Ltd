@@ -30,6 +30,7 @@ const deployment = deploymentResponse ? await deploymentResponse.json() : null;
 const legalPreview = normal ? false : servedLegalPreview(deployment, process.argv.includes('--legal-preview'));
 // GS-R13: the gridsmith.uk profile is indexable and ships no reviews; it is proved on loopback only.
 const productionProfile = deployment?.profile === 'production';
+const directContact = deployment?.contactMode === 'direct';
 assert(!productionProfile || !hosted, 'The production profile is never proved on the staging origin');
 const servedSitemap = productionProfile ? await (await fetch(base + '/sitemap.xml')).text() : '';
 const indexedPaths = new Set([...servedSitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => new URL(match[1]).pathname));
@@ -48,6 +49,7 @@ page.on('response', (response) => {
 const receipt = { phase: 'GS-HOST-H4-D-R1', profile: hosted ? 'hosted' : normal ? 'normal' : 'static', pages: [],
   noJs: [], accessibility: [], realGpu: 'UNVERIFIED', server: normal ? 'Next runtime' : 'plain file server' };
 receipt.legalPreview = legalPreview;
+const errorAxe = [];
 try {
   await page.setViewport({ width: 1440, height: 900 });
   for (const route of routes) {
@@ -65,6 +67,42 @@ try {
     receipt.pages.push({ route, ...state });
   }
   receipt.legal = [];
+  receipt.contact = [];
+  if (directContact) {
+    const intakeRequests = [];
+    const recordIntake = request => { if (/supabase\.co|gs-lead-intake/.test(request.url())) intakeRequests.push(request.url()); };
+    page.on('request', recordIntake);
+    for (const js of [true, false]) {
+      await page.setJavaScriptEnabled(js);
+      for (const width of [375, 768, 1440]) {
+        await page.setViewport({ width, height: 900 });
+        for (const route of ['/contact', '/press/contact']) {
+          await page.goto(base + route, { waitUntil: 'networkidle0' });
+          assert.equal(await page.$$eval('form, input, textarea', nodes => nodes.length), 0);
+          assert(await page.$('[data-static-contact-shell] a[href^="mailto:"]'));
+          assert(await page.$('a[href^="https://wa.me/"]'));
+          let reached = false;
+          for (let step = 0; step < 60 && !reached; step++) {
+            await page.keyboard.press('Tab');
+            reached = await page.evaluate(() => document.activeElement?.matches('[data-static-contact-shell] a[href^="mailto:"]'));
+          }
+          assert(reached, 'Tab did not reach the direct email link');
+          assert(await page.evaluate(() => {
+            const el = document.activeElement, rect = el.getBoundingClientRect(), style = getComputedStyle(el);
+            const hit = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+            return el.matches(':focus-visible') && style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0 &&
+              rect.width > 0 && rect.height > 0 && rect.top >= 0 && rect.bottom <= innerHeight && el.contains(hit);
+          }), 'Email keyboard focus is hidden or obscured');
+          assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+          receipt.contact.push({ route, js, width, emailKeyboard: true, formCount: 0 });
+        }
+      }
+    }
+    await page.setJavaScriptEnabled(true); await page.setViewport({ width: 1440, height: 900 });
+    page.off('request', recordIntake); assert.deepEqual(intakeRequests, []);
+    await page.goto(base + '/press/contact/thank-you', { waitUntil: 'networkidle0' });
+    assert(!(await page.$eval('main', el => el.textContent)).includes('That has reached us'));
+  }
   for (const route of legalRoutes) {
     for (const js of [true, false]) {
       const document = await browser.newPage();
@@ -190,10 +228,22 @@ try {
 
   assert.equal((await page.goto(base + '/h4a-unknown-route', { waitUntil: 'networkidle0' })).status(), 404);
   assert((await page.title()).toLowerCase().includes('not found')); receipt.local404 = 404;
+  if (productionProfile) {
+    receipt.errors = [];
+    for (const route of ['/h4a-unknown-route', '/500.html']) {
+      await page.goto(base + route, { waitUntil: 'networkidle0' });
+      assert(await page.evaluate(() => /^en(?:-|$)/i.test(document.documentElement.lang) &&
+        document.title && document.querySelector('main h1') && document.querySelector('main a[href="/"]')));
+      const result = await new AxePuppeteer(page).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+      errorAxe.push({ route, result });
+      assert.deepEqual(result.violations, []);
+      receipt.errors.push({ route, violations: 0, status: route === '/500.html' ? 'document fetch only; mapping requires separate HTTP evidence' : 404 });
+    }
+  }
   if (!normal) {
     const require = createRequire(fileURLToPath(import.meta.url));
     const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
-    const rawAxe = [];
+    const rawAxe = [...errorAxe];
     for (const route of ['/', '/design', '/digital', '/press', ...services, '/about', '/approach', '/contact', '/insights', '/press/contact', '/press/contact/thank-you', ...legalRoutes]) {
       await page.goto(base + route, { waitUntil: 'networkidle0' });
       // Match the existing normal gate: audit each revealed, settled Press chapter,

@@ -65,7 +65,8 @@ const { ORIGIN_DESKTOP: ORIGIN, ROUTES, pattern } = require('./lighthouse/routes
  * `is-crawlable` is 0, or the audit list runs against an indexable page and passes trivially.
  */
 const INDEXABLE =
-  process.env.VERCEL_ENV === 'production' && Boolean((process.env.NEXT_PUBLIC_SITE_URL || '').trim());
+  process.env.GRIDSMITH_BUILD_TARGET === 'static' ||
+  (process.env.VERCEL_ENV === 'production' && Boolean((process.env.NEXT_PUBLIC_SITE_URL || '').trim()));
 
 /**
  * Every SEO audit that still means something on a page nobody is allowed to index, each at 1.
@@ -87,7 +88,7 @@ const SEO_ASSERTIONS = INDEXABLE
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: 'npm run start -- -p 3200',
+      ...(process.env.GRIDSMITH_BUILD_TARGET === 'static' ? {} : { startServerCommand: 'npm run start -- -p 3200' }),
       startServerReadyPattern: 'Ready in|started server',
       url: ROUTES.map((r) => ORIGIN + r.path),
       // Three runs and a median. A single cold run against assertions pinned to an exact

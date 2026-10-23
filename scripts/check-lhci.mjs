@@ -22,6 +22,8 @@ import { join } from 'node:path';
 import { createRequire } from 'node:module';
 import { isCI, isWindows, lhciSkipped, UNAVAILABLE_ON_WINDOWS } from './lhci-availability.mjs';
 import { controlledBrowser, consumerProblems, verifyBrowser } from './browser-input.mjs';
+import { staticLighthouseProblems } from '../lib/build/production.ts';
+import { createConnection } from 'node:net';
 
 const axis = process.argv[2];
 if (axis !== 'desktop' && axis !== 'mobile') {
@@ -64,6 +66,25 @@ if (controlledBrowser) {
 // Resolved from node_modules rather than PATH: `npm run` adds .bin to PATH but a direct
 // `node scripts/check-lhci.mjs` does not, and the gate should behave the same either way.
 const bin = join('node_modules', '.bin', isWindows ? 'lhci.cmd' : 'lhci');
+if (process.env.GRIDSMITH_BUILD_TARGET === 'static') {
+  const response = await fetch('http://127.0.0.1:3236/__deployment.json');
+  const identity = response.ok ? await response.json() : null;
+  const { STATIC_IDENTITY } = createRequire(import.meta.url)('../lighthouse/routes.cjs');
+  if (JSON.stringify(identity) !== JSON.stringify(STATIC_IDENTITY)) throw new Error('STATIC_LIGHTHOUSE_ARTIFACT_IDENTITY');
+  const problems = staticLighthouseProblems(identity);
+  if (problems.length) throw new Error(problems.join(','));
+  if (axis === 'desktop') {
+    const measured = await (await fetch('http://127.0.0.1:3200/__deployment.json')).json();
+    if (JSON.stringify(measured) !== JSON.stringify(identity)) throw new Error('STATIC_LIGHTHOUSE_DESKTOP_IDENTITY');
+  } else {
+    const occupied = await new Promise(resolve => {
+      const socket = createConnection({ host: '127.0.0.1', port: 3202 });
+      socket.once('connect', () => { socket.destroy(); resolve(true); });
+      socket.once('error', () => resolve(false));
+    });
+    if (occupied) throw new Error('STATIC_LIGHTHOUSE_MOBILE_PORT_OCCUPIED');
+  }
+}
 
 const result = spawnSync(bin, ['autorun', `--config=lighthouserc.${axis}.cjs`], {
   shell: true,

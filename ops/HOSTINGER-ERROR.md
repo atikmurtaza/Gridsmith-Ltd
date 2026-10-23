@@ -1,4 +1,6 @@
-# Operator-owned error response — conditional package
+> **GS-LAUNCH-007 override:** retain this independent package and its proofs unchanged. Ordinary static release uses public/500.html and ErrorDocument 500 /500.html; independent storage, malformed-root survival and provider outer-error templates are documented limitations, not release prerequisites. No support contact is needed. See docs/_shared/GS-LAUNCH-007.md.
+
+# Operator-owned error response â€” conditional package
 
 The two files in `hostinger-error/` are nonpublic source. They are deliberately outside `public/`,
 the static build source roots, `out/`, and the replaceable release. Never upload this directory with
