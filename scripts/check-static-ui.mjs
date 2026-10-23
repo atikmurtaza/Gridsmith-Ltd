@@ -230,14 +230,15 @@ try {
   assert((await page.title()).toLowerCase().includes('not found')); receipt.local404 = 404;
   if (productionProfile) {
     receipt.errors = [];
-    for (const route of ['/h4a-unknown-route', '/500.html']) {
-      await page.goto(base + route, { waitUntil: 'networkidle0' });
-      assert(await page.evaluate(() => /^en(?:-|$)/i.test(document.documentElement.lang) &&
-        document.title && document.querySelector('main h1') && document.querySelector('main a[href="/"]')));
+    for (const route of ['/h4a-unknown-route', '/500.html', '/induced-500']) {
+      const response = await page.goto(base + route, { waitUntil: 'networkidle0' });
+      assert.equal(response.status(), route === '/induced-500' ? 500 : route === '/500.html' ? 200 : 404);
+      assert(await page.evaluate(() => Boolean(/^en(?:-|$)/i.test(document.documentElement.lang) &&
+        document.title && document.querySelector('main h1') && document.querySelector('main a[href="/"]'))));
       const result = await new AxePuppeteer(page).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
       errorAxe.push({ route, result });
       assert.deepEqual(result.violations, []);
-      receipt.errors.push({ route, violations: 0, status: route === '/500.html' ? 'document fetch only; mapping requires separate HTTP evidence' : 404 });
+      receipt.errors.push({ route, violations: 0, status: response.status() });
     }
   }
   if (!normal) {

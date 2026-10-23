@@ -69,6 +69,10 @@ Apache's default slash redirect returned 301 instead of the exported page. Produ
 the [standard DirectorySlash directive](https://httpd.apache.org/docs/2.4/mod/mod_dir.html#directoryslash)
 to Off while preserving `Options -Indexes -MultiViews`. The HTTP route gate and adverse specimen
 cover this correction; directory listings remain disabled. Hosted acceptance is still separate.
+The first new browser-error assertion returned a DOM element across Puppeteer's serialization
+boundary instead of a boolean; it is corrected to return a boolean. The permanent browser proof
+also visits the actual local induced HTTP 500 response, not just its document URL. The initial
+failed check is retained separately and is not counted as a pass.
 It cannot rescue a malformed root `.htaccess`, a missing error file, account/server outage or a
 provider/CDN-generated 502/503/504. Hostinger outer templates and their accessibility remain
 UNVERIFIED. They are limitations, not claimed fixes or automatic static-launch blockers.
