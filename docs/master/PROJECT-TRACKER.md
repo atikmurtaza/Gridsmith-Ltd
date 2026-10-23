@@ -1,3 +1,5 @@
+> **GS-LAUNCH-004 current M-P1-1 status (23 October 2026):** Normal Next SSR remains FAIL; the earlier ACCEPTED RISK heading below is historical and supplies no current accessibility waiver. The intended static Hostinger profile cannot execute the Next SSR failure, but release still requires independently verified accessible host/CDN 500 handling. Local design/proofs, exclusions, provider approval and rollback scope: `../_shared/GS-LAUNCH-004.md` and its evidence JSON. No hosted change or GS-LAUNCH-005 execution.
+
 # Project Tracker — Gridsmith Master Layer
 
 **Status:** `TODO` · `WIP` · `BLOCKED` · `REVIEW` · `DONE` · **Priority:** P0 blocks launch · P1 desirable · P2 post-launch

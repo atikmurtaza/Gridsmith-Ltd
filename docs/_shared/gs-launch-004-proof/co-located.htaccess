@@ -1,0 +1,3 @@
+ErrorDocument 500 /500.html
+RewriteEngine On
+RewriteRule ^induced-500$ - [R=500,L]
