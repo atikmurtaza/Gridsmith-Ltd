@@ -78,6 +78,10 @@ are recorded separately from network failures; actual JavaScript-enabled failure
 failures still fail the gate. A direct diagnostic established the script type and absent network
 error, and the HTTP gate independently requires the matching public script bytes. The induced
 500 subject is required only in the denied rehearsal simulation, not on an ordinary ready artifact.
+The new keyboard proof exposed a Next link prefetch of the withheld client-terms sidecar. The
+contact page now reuses the existing plain-anchor Link primitive; legal routes remain withheld
+and unexpected HTTP errors still fail. This avoids background requests without inventing a legal
+page, weakening the artifact refusal or suppressing a browser error.
 It cannot rescue a malformed root `.htaccess`, a missing error file, account/server outage or a
 provider/CDN-generated 502/503/504. Hostinger outer templates and their accessibility remain
 UNVERIFIED. They are limitations, not claimed fixes or automatic static-launch blockers.

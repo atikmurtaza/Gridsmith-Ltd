@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Link } from '@/components/primitives/Link';
 import { Numeric } from '@/components/primitives/Numeric';
 import { ContactForm } from '@/components/leads/ContactForm';
 import { StaticContactShell } from '@/components/leads/StaticContactShell';
