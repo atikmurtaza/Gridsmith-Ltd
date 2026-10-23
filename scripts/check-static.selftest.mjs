@@ -470,6 +470,33 @@ assert.equal(selectStaticRoutes(lighthouseRoutes, prodManifest).length, 11);
 assert.equal(selectStaticRoutes(lighthouseRoutes, manifest, true).length, 10);
 assert.throws(() => selectStaticRoutes(lighthouseRoutes, manifest, false), /Static Lighthouse route missing: \/legal\/privacy/);
 assert.throws(() => selectStaticRoutes(lighthouseRoutes, { routes: [] }), /Static Lighthouse route missing: \//);
+const indexingFixture = { routes: [{ path: '/', eligible: true, sitemap: true }, { path: '/insights', eligible: true, sitemap: false }] };
+assert.deepEqual(selectStaticRoutes([{ path: '/' }, { path: '/insights' }], indexingFixture),
+  [{ path: '/', indexable: true }, { path: '/insights', indexable: false }]);
+assert.equal(selectStaticRoutes([{ path: '/insights' }], { routes: [{ ...indexingFixture.routes[1], sitemap: true }] })[0].indexable, true);
+{
+  const { runInNewContext } = await import('node:vm');
+  const configSource = readFileSync('lighthouserc.desktop.cjs', 'utf8');
+  const assertions = (manifest) => {
+    const subject = { exports: {} };
+    runInNewContext(configSource, { module: subject, process: { env: { GRIDSMITH_BUILD_TARGET: 'static' } }, require: name => {
+      assert.equal(name, './lighthouse/routes.cjs');
+      return { ORIGIN_DESKTOP: 'http://127.0.0.1:3200', ROUTES: selectStaticRoutes([{ path: '/' }, { path: '/insights' }], manifest), pattern: (_origin, path) => path };
+    } });
+    return JSON.parse(JSON.stringify(subject.exports.ci.assert.assertMatrix));
+  };
+  const [home, empty] = assertions(indexingFixture).map(row => row.assertions);
+  assert.deepEqual(home['categories:seo'], ['error', { minScore: 0.9 }]);
+  assert.equal(home['is-crawlable'], undefined);
+  assert.equal(empty['categories:seo'], undefined);
+  for (const audit of ['document-title', 'meta-description', 'canonical', 'crawlable-anchors', 'robots-txt', 'link-text', 'hreflang']) {
+    assert.deepEqual(empty[audit], ['error', { minScore: 1 }], audit);
+  }
+  assert.equal(empty['is-crawlable'], 'off');
+  const published = assertions({ routes: indexingFixture.routes.map(row => ({ ...row, sitemap: true })) })[1].assertions;
+  assert.deepEqual(published['categories:seo'], ['error', { minScore: 0.9 }]);
+  assert.equal(published['is-crawlable'], undefined);
+}
 const staticSubject = { profile: 'production', contactMode: 'direct', siteOrigin: PRODUCTION_ORIGIN, sourceModified: false };
 assert.deepEqual(staticLighthouseProblems(staticSubject), []);
 for (const identity of [null, {}, { ...staticSubject, profile: 'staging' }, { ...staticSubject, contactMode: 'edge' },

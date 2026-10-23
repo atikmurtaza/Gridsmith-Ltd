@@ -97,10 +97,10 @@ const ALL_ROUTES = [
 
 // The legal route is legitimately absent only from an unpublished static rehearsal.
 function selectStaticRoutes(routes, manifest, rehearsal = false) {
-  return routes.filter(route => {
-    const eligible = manifest.routes.some(item => item.path === route.path && item.eligible);
-    if (!eligible && !(rehearsal && route.path === '/legal/privacy')) throw new Error(`Static Lighthouse route missing: ${route.path}`);
-    return eligible;
+  return routes.flatMap(route => {
+    const item = manifest.routes.find(item => item.path === route.path && item.eligible);
+    if (!item && !(rehearsal && route.path === '/legal/privacy')) throw new Error(`Static Lighthouse route missing: ${route.path}`);
+    return item ? [{ ...route, indexable: item.sitemap === true }] : [];
   });
 }
 const STATIC_IDENTITY = process.env.GRIDSMITH_BUILD_TARGET === 'static' ? JSON.parse(require('node:fs').readFileSync(

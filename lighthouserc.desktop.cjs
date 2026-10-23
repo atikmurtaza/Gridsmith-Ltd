@@ -49,12 +49,13 @@
  * wide, and it closes itself — set `NEXT_PUBLIC_SITE_URL` on a production deployment and
  * the category assertion returns with no edit here.
  *
- * **The condition is read from this process's own environment, which is legitimate here and
- * would not be elsewhere.** `CLAUDE.md` warns that a gate inferring the state of a system it
+ * **Normal mode reads its own environment because it starts the measured server.**
+ * `CLAUDE.md` warns that a gate inferring the state of a system it
  * does not run in is asserting against something it cannot see — `check-axe` did exactly
  * that about Resend. This config **starts the server itself** through `startServerCommand`,
  * so the build being measured inherits this environment by construction. There is no second
- * machine to be wrong about.
+ * machine to be wrong about. Static mode instead reads each route's indexing policy from the
+ * export manifest; check-lhci binds the already-running file server to that exact artifact.
  */
 const { ORIGIN_DESKTOP: ORIGIN, ROUTES, pattern } = require('./lighthouse/routes.cjs');
 
@@ -72,7 +73,8 @@ const INDEXABLE =
  * Every SEO audit that still means something on a page nobody is allowed to index, each at 1.
  * `is-crawlable` is off because the page is `noindex` on purpose; nothing else is excused.
  */
-const SEO_ASSERTIONS = INDEXABLE
+// Empty Insights remains intentionally noindex; static manifest policy owns each route.
+const seoAssertions = (indexable) => indexable
   ? { 'categories:seo': ['error', { minScore: 0.9 }] }
   : {
       'document-title': ['error', { minScore: 1 }],
@@ -114,7 +116,7 @@ module.exports = {
           'categories:performance': ['error', { minScore: r.perf }],
           'categories:accessibility': ['error', { minScore: 1 }],
           'categories:best-practices': ['error', { minScore: 0.96 }],
-          ...SEO_ASSERTIONS,
+          ...seoAssertions(r.indexable ?? INDEXABLE),
         },
       })),
     },

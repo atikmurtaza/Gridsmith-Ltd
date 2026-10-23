@@ -1,6 +1,6 @@
 # Local static-release specimen
 
-Run only in a newly created disposable Linux container labelled `gridsmith.task=GS-LAUNCH-007`,
+Run only in a newly created disposable Linux container with `--init`, labelled `gridsmith.task=GS-LAUNCH-007`,
 with no published host port, source at `/work/repo`, matching installed dependencies, Apache from
 signed distribution packages and the repository's independently verified browser. No env files,
 credentials, provider requests or live enquiries are required. Keep raw logs and receipts.
@@ -46,6 +46,27 @@ then rerun the positive gate. These are local subjects only, never hosted fault 
 Also demonstrate the two raw-identity mismatches and occupied mobile listener make static Lighthouse
 refuse before collection; retain the results. The pure route/subject branches have permanent
 assert-based fixtures in `scripts/check-static.selftest.mjs`.
+The permanent guarded seven-case runner is:
+
+```sh
+GS_LOCAL_PROOF=GS-LAUNCH-007 node docs/_shared/gs-launch-007-proof/negative-proofs.mjs
+```
+
+Apache's local worker pool is bounded to eight threads within one child. The original container
+without an init reaper accumulated browser tasks and exhausted its 512-task limit; its interrupted
+collections are retained separately. The final disposable container reaps orphaned browser children.
+The artifact, browser and assertion budgets are unchanged.
+
+After both Lighthouse axes, run the recorded-desktop contrast supplement sequentially:
+
+```sh
+GS_LOCAL_PROOF=GS-LAUNCH-007 node docs/_shared/gs-launch-007-proof/contrast.mjs
+```
+
+It binds the served identity to the denied original, imports/extracts the existing rendered
+predicates without threshold changes, accounts for each recorded axe membership and deliberately
+breaks/restores each of the five predicates. Its receipt distinguishes measured text, structural
+hidden/decorative subjects and unresolved readings. It does not stand for full scene/mobile matrices.
 
 At completion compare every original artifact file to its deployment manifest, plus its identity
 and denied `.htaccess`; verify protected source bytes against Git. Stop/remove only the newly

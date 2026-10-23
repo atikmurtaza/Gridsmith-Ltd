@@ -4,7 +4,7 @@
 Baseline: `ff29969c8d0a3087f95736e1e2d1c6535dc64193` (`codex/gs-launch-006`).
 Isolated branch/worktree: `codex/gs-launch-007`,
 `C:\Users\atikm\.codex\worktrees\gs-launch-007\Gridsmith Ltd`.
-Final verification and artifact bindings are in `GS-LAUNCH-007-EVIDENCE.json` at closeout.
+Final verification and artifact bindings are in `GS-LAUNCH-007-EVIDENCE.json`.
 
 ## Architecture and current authority
 
@@ -30,12 +30,12 @@ D owner decision. A/D means required evidence plus the owner transaction authori
 | Approved visuals, keyboard, no-JS, reduced motion, responsive and Lighthouse budgets | A | Existing thresholds retained. Static Lighthouse measures files rather than starting Next. Human assistive-technology/physical GPU acceptance is not inferred from automation. |
 | Seven legal pages, exact versions and accurate processing notice | A/D | Seven OWNER_ADOPTED; zero PUBLISHABLE. All-seven production refusal retained. See checklist below. |
 | Contact | D | Prepared direct email/WhatsApp/SMS launch; no website form, intake endpoint, POST or delivery-success assertion. Privacy accuracy still needs owner disposition. |
-| WordPress root, target, current backups/restoration and publisher safety | A/D | Live WordPress is still HTTP 200; private operational preflight and approved backup/cutover remain necessary. |
+| WordPress root, target, current backups/restoration and publisher safety | A/D | Read-only WordPress homepage returned HTTP 200 at 17:33 UTC on 23 October; private operational preflight and approved backup/cutover remain necessary. |
 | Current public DNS/mail baseline | A | Read-only public records captured locally; complete zone/DKIM/config export remains an operator preflight. No DNS or email change is proposed. |
 | Production dependency audit | A | Exact unchanged lockfile: zero findings. |
 | Build-tool vulnerabilities | D | Seven high affected entries across two active extract-zip advisories; unresolved/unaccepted. Explicit controlled-build residual-risk decision required. |
 | Exact-SHA remote CI | A/D | Still UNVERIFIED under existing CI authority. No push/dispatch is authorised. Local Linux results are separate; final approval must name verification/publishing scope and preserve this gate. |
-| Hosted/owner visual, accessibility and confidentiality acceptance | A/D | Local proofs do not establish these. Execute scoped smoke checks at cutover; owner acceptance remains recorded separately. |
+| Hosted release acceptance | A/D | Existing design approvals are retained. Local proofs do not establish hosted/device/assistive-technology/confidentiality acceptance. Execute scoped smoke checks at cutover and record owner release acceptance separately. |
 | Normal Next SSR crash | C | Retain FAIL and test. No Next runtime in Hostinger artifact. |
 | Node application entitlement / Vercel configuration | C | Neither belongs to the selected architecture. |
 | Independent error store, malformed-root survival, provider 502/503/504 templates | B | Documented limitation, absent evidence of a critical release defect. No support ticket or exhaustive fault programme is required. |
@@ -100,12 +100,85 @@ or environment files. Fresh `npm ci` uses the unchanged exact lockfile and suppr
 ordinary ZIP download. Existing independently authenticated Google DEB provisioning supplies Chrome
 155; browser identity is enforced separately for Puppeteer and Lighthouse. Tests run as `node`.
 Raw commands, UTC times, exits, logs and hashes are retained under ignored `build/gs-launch-007/`.
+Artifact scans found no forbidden runtime transport, Preview intake endpoint, privileged-key/JWT
+marker, source map or private legal-register material. The isolated build loaded no privileged
+credentials, so `knownSecretValuesChecked:0` is reported accurately; marker/source checks are not
+represented as comparison against an unavailable production-secret inventory.
+Automatic approval review rejected removal of the ignored local `node_modules` junction with
+"blocked by policy". It remains untouched and points to the primary checkout's dependencies; all
+credited release verification used the fresh exact-lock Linux install. Do not run a Windows install
+through that junction or treat its older Next package as this release's verified dependency set.
 
-Initial verified results: clean install, full `verify:static`, normal clean `verify:build`, all 69
-route bundle budgets, browser provisioning/check and deliberate production refusal pass their named
-questions. The first rehearsal failed with EAGAIN under concurrent browser load; it is retained,
-and the bounded-worker rerun is separate. Final static/browser/HTTP/Lighthouse results and exact
-artifact identity are added at closeout; no pending check is called PASS here.
+The verified application/source SHA is `7d8f820b68fa64eb6a3d6aec13182debf3e15ef7`.
+The later closeout commit changes documentation, local proof specimens and Lighthouse's per-route
+indexing-policy check only. It does not change the application, exporter, runtime assets, legal files,
+lockfile or Lighthouse budgets. The verification-source hashes are separately bound in the evidence.
+
+| Check | Exact local result |
+|---|---|
+| Clean Linux install | PASS; 1,572 packages, exact unchanged lockfile, Node 24.15.0/npm 11.12.1. |
+| `npm run verify:static` | PASS on the final source; includes existing source/selftest/security/contrast controls and 23 direct/error adverse artifact cases. |
+| Clean normal `NEXT_BUILD_CPUS=1 npm run verify:build` | PASS; `.next` removed first; all 69 route bundle budgets. This is not an SSR-crash pass. |
+| Guarded production build | Correctly REFUSED; seven non-PUBLISHABLE documents plus the all-seven requirement. |
+| Denied static rehearsal | PASS for permitted rehearsal; 54 routes, 197 files, 28,739,641 bytes; seven legal and three Technical routes excluded. |
+| Static browser | PASS; 13 page proofs, 13 no-JS proofs with reflow at 390/768/1440/1920, 12 direct-contact keyboard cases at 375/768/1440 in both JS modes; division interactions, navigation and reduced-motion checks retained. No intake requests. |
+| Focused axe | 16 analyses, zero violations; 404, standalone 500 and actual induced HTTP 500 included. Contrast incompletes are accounted separately below. |
+| Rendered contrast supplement | PASS for the 250 recorded desktop memberships: 231 measured, 19 structurally decorative, zero hidden/unvisited/unresolved. All five low-contrast predicate specimens rejected, captured DOM styles restored and positive checks repeated. |
+| Local Apache HTTP | PASS; exact identity, 195 public file hashes, all 54 routes, headers/MIME/cache/compression, gated 404, redirects and exact GET/HEAD 500 behavior. |
+| Permanent adverse HTTP/Lighthouse proof | PASS; seven cases rejected at their intended assertions, captured simulation bytes restored and positive HTTP rerun. |
+| Static desktop/mobile Lighthouse | PASS; ten routes × three runs per axis; all existing assertions. Performance/accessibility/best-practice medians 1.00 throughout; indexable SEO 1.00, intentional-noindex Insights 0.66 with individual SEO checks passing. Desktop median LCP 578–681 ms; mobile 878–1,035 ms. Omitted legal route confined to this identity-bound denied rehearsal. |
+| Exact-SHA CI and hosted smoke | UNVERIFIED; no push, dispatch or deployment. |
+
+The first rehearsal failed with EAGAIN under concurrent browser load. An earlier full normal scene
+aggregate was interrupted rather than completed. Static Lighthouse collections in the original
+container reached its 512-task limit and were stopped (exit 137); their partial reports are not
+credited. The original container lacked an init reaper. Verification continued in a task-owned
+snapshot with `--init`, no host mounts/ports, the same limits and a bounded eight-thread Apache child.
+These logs remain retained. The reruns are separate;
+no assertion threshold, browser authenticity control or release refusal was relaxed.
+The first completed desktop collection passed the performance/accessibility/best-practice budgets,
+but failed SEO on empty `/insights` (0.66). Its existing GS-R16-001 policy intentionally sets noindex
+until the owner publishes an article. The static verifier had incorrectly assumed all production
+routes were indexable. It now reads each route's sitemap/indexing policy from the validated manifest;
+indexable routes retain the 0.9 SEO floor, and intentional noindex routes retain all existing named
+SEO assertions at 1 except `is-crawlable`. Fixtures cover both indexing states. The failed reports
+are retained separately; public Insights content and indexing policy were not changed.
+
+Axe left 250 contrast memberships incomplete across 13 analyses. The guarded supplement binds the
+same denied artifact and imports/extracts the existing Master, Design, Digital, Press and glyph-mask
+predicates with unchanged thresholds. It checks each recorded target after scrolling into view;
+Digital's existing collected boxes are restricted to that target's overlapping text ranges before
+the unchanged pixel calculation. Master keeps its bitmap/DOM capture-invariant checks. Consent
+checks include composed opacity, opaque background and actual hit testing. Decorative memberships
+are explicitly noninteractive, aria-hidden subtrees; they are not called contrast passes.
+
+The first supplement is retained as FAIL: its consent adverse specimen used an inline-important
+text-fill that prevented the black/white mask from measuring glyphs; its Digital call measured
+unrelated viewport copy and could confuse repeated labels such as 03/04. The corrected color-only
+specimen permits the existing glyph mask, and target-range filtering removes those unrelated
+subjects while still rejecting missing/zero-box targets and requiring every recorded range. The
+corrected run measured all 250 memberships and its five adverse/restored proofs passed. No product
+style, text, animation, contrast threshold or axe violation was suppressed to obtain this result.
+
+This supplement covers the recorded 1440×900 memberships, not the full scene/lifecycle/mobile
+matrices. Frozen scene/style source is unchanged from the predecessor; historical GS-LAUNCH-003
+full-scene results remain historical. Current static browser reflow, keyboard, reduced-motion and
+both Lighthouse axes are separate current results. Physical-GPU, human assistive-technology and
+hosted acceptance remain UNVERIFIED; no universal WCAG-conformance claim is inferred from scores.
+
+### Retained artifact
+
+Artifact identity: `e8ca42a47d95e8c22727712d03aeb923a349ef5bc66b6bc7c5a87722ad3342d4`.
+Source: `7d8f820b68fa64eb6a3d6aec13182debf3e15ef7`, `sourceModified:false`.
+Origin: `https://gridsmith.uk`; production dataset; `contactMode:direct`; `intakeOrigin:null`.
+The original artifact is retained locally at `build/gs-launch-007/final/artifact/`, with private
+receipt, CMS route revisions, deployment identity and per-file hashes alongside it.
+The builder checks CMS revisions before and after generation. This binds the retained bytes and
+the reproduction procedure; it does not claim that a later mutable-CMS/Next build is byte-identical.
+It is **nondeployable**, `rehearsal:true`, `deployable:false`, and access-denied by `.htaccess`.
+Only a separate local simulation copy removes the deny rule and adapts host/TLS routing to loopback.
+Never upload this rehearsal or edit its flags to promote it. A final deployable all-seven artifact
+cannot be produced before genuine legal/privacy prerequisites and publication authority exist.
 
 Fresh production audit: **0 findings**. Full audit: **7 high**, no critical/moderate/low, from
 [GHSA-jmr9-qjv8-65gv](https://github.com/advisories/GHSA-jmr9-qjv8-65gv) and
@@ -189,13 +262,16 @@ Redeploy re-enabled auto-deployment. A source push is not a harmless test.
 5. After the authorised switch, check served identity, all public/legal routes, contact links,
    assets/fonts, 404/500 mapping, legacy redirects, sitemap/canonicals/robots, headers and selected
    mobile/desktop keyboard/axe/cookie behavior. Do not inject faults into WordPress or run live forms.
+   For 500, inspect the approved mapping and request `/500.html`; no artificial production fault or
+   exhaustive outer-CDN error test is required. Actual provider-generated error behavior stays limited
+   to what was observed, separately from the local induced-500 proof.
    Any cache purge must be confined to the approved site. No DNS/mail changes are planned.
 6. On wrong identity, missing/broken routes/assets/contact, legal mismatch, critical accessibility or
    security failure, stop and restore the recorded old root/configuration. Restore database only if
    necessary under the agreed write window. Recheck the previous WordPress site and mailbox; retain
    both private recovery copies for the approved retention period. Preserve MX/SPF/DKIM/DMARC.
 
-The current WordPress homepage was read-only verified HTTP 200 with WordPress markers; public DNS
+At 17:33 UTC on 23 October, the WordPress homepage was read-only verified HTTP 200 with WordPress markers; public DNS
 records were captured locally. hPanel's signed-in list showed Business and separate WordPress and
 temporary sites. Dashboard navigation then timed out, so current absolute roots, backups, upload/root
 switch capability and full provider trigger state remain **UNVERIFIED**. No setting was changed.
@@ -229,7 +305,9 @@ cannot authorise an unidentified later artifact. No GS-LAUNCH-008 is started aut
 
 If a later execution session is used, give it this bounded prompt:
 
-> Continue GS-LAUNCH-007 from its reported implementation SHA and clean worktree. Read
+> Continue GS-LAUNCH-007 from the final local closeout commit reported to the owner on
+> codex/gs-launch-007. Preserve that clean worktree; the retained artifact's earlier source SHA is
+> a separate binding, not an instruction to reset the branch. Read
 > GS-LAUNCH-007.md and its evidence JSON. Use only the owner's completed release checklist and named
 > private target/backup receipt. Confirm actual privacy/contact applicability and all-seven authority;
 > do not manufacture evidence or amend adopted clauses. Build and verify the exact final artifact,
