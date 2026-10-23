@@ -42,11 +42,12 @@ const page = await browser.newPage();
 const errors = [], failedRequests = [], badResponses = [];
 page.on('pageerror', (error) => errors.push(error.message));
 page.on('requestfailed', (request) => failedRequests.push(new URL(request.url()).pathname));
-page.on('response', (response) => {
+const recordResponse = (response) => {
   const path = new URL(response.url()).pathname;
   const expectedStaticError = productionProfile && deployment.rehearsal && !deployment.deployable && path === '/induced-500' && response.status() === 500;
   if (response.status() >= 400 && path !== '/h4a-unknown-route' && !excludedRoutes.includes(path) && !expectedStaticError) badResponses.push({ path, status: response.status() });
-});
+};
+page.on('response', recordResponse);
 const receipt = { phase: 'GS-HOST-H4-D-R1', profile: hosted ? 'hosted' : normal ? 'normal' : 'static', pages: [],
   noJs: [], accessibility: [], realGpu: 'UNVERIFIED', server: normal ? 'Next runtime' : 'plain file server' };
 receipt.legalPreview = legalPreview;
@@ -77,6 +78,8 @@ try {
       await contactPage.setJavaScriptEnabled(js);
       const failures = [];
       contactPage.on('request', recordIntake);
+      contactPage.on('pageerror', error => errors.push(error.message));
+      contactPage.on('response', recordResponse);
       contactPage.on('requestfailed', request => failures.push({ type: request.resourceType(),
         path: new URL(request.url()).pathname, error: request.failure()?.errorText }));
       for (const width of [375, 768, 1440]) {
