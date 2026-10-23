@@ -104,6 +104,7 @@ export function productionHostingerRules(intakeOrigin: string | null, dataset: '
   // A rehearsal proves the profile locally; uploaded by mistake, it serves nothing.
   return `${rehearsal ? '# REHEARSAL: not deployable. Unmet production inputs were waived locally.\nRequire all denied\n' : ''}# GS-R13-PRODUCTION-PROFILE-001: ${host} static files only; no PHP or Node application runtime.
 Options -Indexes -MultiViews
+DirectorySlash Off
 DirectoryIndex index.html
 ErrorDocument 404 /404.html
 ErrorDocument 500 /500.html

@@ -135,7 +135,8 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     if (!rules.includes('RewriteCond %{HTTP_HOST} !^gridsmith\\.uk$ [NC]') ||
         !rules.includes('RewriteRule \\.(?:php[0-9]?|phtml|phar|pl|cgi)(?:/|$) - [F,L,NC]') ||
         /noindex|<IfModule mod_headers/i.test(rules) || !/^Header always set Content-Security-Policy /m.test(rules) ||
-        !/^ErrorDocument 500 \/500.html$/m.test(rules)) {
+        !/^ErrorDocument 500 \/500.html$/m.test(rules) || !/^DirectorySlash Off$/m.test(rules) ||
+        !/^Options -Indexes -MultiViews$/m.test(rules)) {
       bad('HTACCESS', 'production host lock, PHP denial or header policy missing');
     }
     let deployment = null;

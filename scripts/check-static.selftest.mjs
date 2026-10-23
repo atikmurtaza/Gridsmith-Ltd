@@ -513,6 +513,8 @@ for (const [name, mutate, code] of [
   ['heading', f => editProd(f, '500.html', '<h1>', '<h2>'), '500'],
   ['recovery', f => editProd(f, '500.html', 'href="/"', 'href="#"'), '500'],
   ['error mapping', f => editProd(f, '.htaccess', 'ErrorDocument 500 /500.html', ''), 'HTACCESS'],
+  ['directory redirect', f => editProd(f, '.htaccess', 'DirectorySlash Off', ''), 'HTACCESS'],
+  ['directory indexing', f => editProd(f, '.htaccess', 'Options -Indexes -MultiViews', ''), 'HTACCESS'],
   ['rehearsal denial', f => set(f, '.htaccess', productionHostingerRules(null, 'production', { rehearsal: true })), 'REHEARSAL'],
 ]) {
   const files = new Map(directFixture); mutate(files);

@@ -64,6 +64,11 @@ operator document/package is retained unchanged outside the public artifact. Hos
 [documents per-code HTML error pages](https://www.hostinger.com/support/1583295-how-to-customize-your-website-s-error-pages-in-hostinger/).
 
 This same-root fallback covers ordinary origin errors while root configuration remains usable.
+The initial local HTTP run also found that `/design` shares a name with a real asset directory:
+Apache's default slash redirect returned 301 instead of the exported page. Production now sets
+the [standard DirectorySlash directive](https://httpd.apache.org/docs/2.4/mod/mod_dir.html#directoryslash)
+to Off while preserving `Options -Indexes -MultiViews`. The HTTP route gate and adverse specimen
+cover this correction; directory listings remain disabled. Hosted acceptance is still separate.
 It cannot rescue a malformed root `.htaccess`, a missing error file, account/server outage or a
 provider/CDN-generated 502/503/504. Hostinger outer templates and their accessibility remain
 UNVERIFIED. They are limitations, not claimed fixes or automatic static-launch blockers.
