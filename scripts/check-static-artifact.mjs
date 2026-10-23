@@ -1,12 +1,36 @@
 /** Additional export contract; never replaces the normal Next gates. */
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { artifactNoReviewProblems } from './review-public-rules.mjs';
 import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { legalPreviewProfile } from './legal-preview-rules.mjs';
 import { PRODUCTION_ORIGIN } from '../lib/build/production.ts';
 import { sitemapPaths, LAUNCH_EXCLUDED_PATHS } from '../lib/build/route-manifest.ts';
+
+// Requirements only: actual provider configuration is deliberately not generated or installed.
+export const operatorErrorPolicy = {
+  version: 1, providerAcceptance: 'UNVERIFIED', deployable: false, owner: 'operator',
+  storage: 'outside-release-root', status: 500, errorUri: '/__gs_error.html',
+  cacheControl: 'no-store, max-age=0',
+  contentSecurityPolicy: "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+};
+const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
+export function inspectOperatorError(files) {
+  const problems = [];
+  const html = files.get('error.html'), identity = files.get('identity.json');
+  if (!html || !identity || files.size !== 2) problems.push('OPERATOR_ERROR: exactly two operator files required');
+  try {
+    const recorded = JSON.parse(identity?.toString('utf8'));
+    if (JSON.stringify(recorded.policy) !== JSON.stringify(operatorErrorPolicy) ||
+        recorded.configurationSha256 !== sha256(JSON.stringify(operatorErrorPolicy))) {
+      problems.push('OPERATOR_ERROR: configuration identity differs');
+    }
+    if (!html || recorded.documentSha256 !== sha256(html)) problems.push('OPERATOR_ERROR: document bytes differ');
+  } catch { problems.push('OPERATOR_ERROR: malformed or missing identity'); }
+  return problems;
+}
 
 export function readArtifact(root) {
   if (!existsSync(root)) throw new Error('Static artifact missing; nothing scanned');
@@ -112,6 +136,10 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   }
   let totalBytes = 0;
   for (const [name, data] of files) {
+    if (/(?:^|\/)(?:ops|hostinger-error)(?:\/|$)/.test(name) || name === '__gs_error.html' ||
+        data.includes(Buffer.from('<title>Page unavailable — Gridsmith Ltd</title>'))) {
+      bad('OPERATOR_ERROR', 'independent fallback must not enter the website artifact');
+    }
     totalBytes += data.length;
     const text = data.toString('utf8');
     if (/\.(?:html|css|js|txt|xml|json|svg)$/.test(name) &&

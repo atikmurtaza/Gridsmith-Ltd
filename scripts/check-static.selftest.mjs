@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createStaticManifest, createLegalPreviewManifest, sitemapPaths, NOINDEX_PATHS } from '../lib/build/route-manifest.ts';
 import { resolveBuildTarget } from '../lib/build/target.ts';
-import { inspectStaticArtifact } from './check-static-artifact.mjs';
+import { inspectStaticArtifact, inspectOperatorError, readArtifact } from './check-static-artifact.mjs';
 
 const publication = JSON.parse(readFileSync('docs/_shared/GS-PROD-001-CMS-MANIFEST.json', 'utf8')).entries;
 const documents = publication.filter((entry) => entry.eligible).map((entry) => ({
@@ -499,3 +499,39 @@ console.log('GS-LAUNCH-002: both withheld Path Finder paths reject emitted artif
   assert(urls.includes(`${PRODUCTION_ORIGIN}/insights/published-specimen`));
 }
 console.log('GS-LAUNCH-002: normal sitemap empty/published Insights branches PASS.');
+
+// GS-LAUNCH-005: all subjects are in memory; no proof mutates operator or release files.
+const operatorFiles = readArtifact('ops/hostinger-error');
+assert.deepEqual(inspectOperatorError(operatorFiles), []);
+let operatorProofs = 0;
+for (const [label, change, message] of [
+  ['zero files', f => f.clear(), 'exactly two'],
+  ['missing fallback', f => f.delete('error.html'), 'document bytes'],
+  ['missing identity', f => f.delete('identity.json'), 'malformed or missing'],
+  ['malformed identity', f => set(f, 'identity.json', '{'), 'malformed or missing'],
+  ['extra file', f => set(f, 'unexpected.conf', ''), 'exactly two'],
+  ['malformed HTML', f => set(f, 'error.html', '<html>broken'), 'document bytes'],
+  ['inaccessible language', f => set(f, 'error.html', f.get('error.html').toString().replace('lang="en-GB"', '')), 'document bytes'],
+  ['configuration drift', f => {
+    const identity = JSON.parse(f.get('identity.json')); identity.policy.status = 200;
+    set(f, 'identity.json', JSON.stringify(identity));
+  }, 'configuration identity'],
+  ['configuration hash drift', f => {
+    const identity = JSON.parse(f.get('identity.json')); identity.configurationSha256 = '0'.repeat(64);
+    set(f, 'identity.json', JSON.stringify(identity));
+  }, 'configuration identity'],
+]) {
+  const files = new Map(operatorFiles); change(files);
+  assert(inspectOperatorError(files).some(p => p.includes(message)), `${label}: expected assertion did not fire`);
+  operatorProofs++;
+}
+for (const [name, bytes] of [
+  ['ops/hostinger-error/error.html', Buffer.from('path-only specimen')],
+  ['hostinger-error/identity.json', Buffer.from('path-only specimen')],
+  ['__gs_error.html', Buffer.from('path-only specimen')],
+  ['legal/fallback.html', operatorFiles.get('error.html')],
+]) {
+  const files = new Map(fixture); files.set(name, bytes);
+  assert(inspect(files).problems.some(p => p.startsWith('OPERATOR_ERROR:')), name); operatorProofs++;
+}
+console.log(`GS-LAUNCH-005 operator error package PASS: 2 files; ${operatorProofs} named adverse proofs; no hosted acceptance.`);

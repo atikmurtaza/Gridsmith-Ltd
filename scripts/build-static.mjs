@@ -17,7 +17,7 @@ import { stagingReviewsAllowed, REVIEW_STAGING_ORIGIN } from '../lib/reviews/pub
 import { hostingerRules, prepareHostingerText, productionHostingerRules } from '../lib/build/hostinger.ts';
 import { PRODUCTION_ORIGIN, PREVIEW_INTAKE_URL, PRODUCTION_INTAKE_URL, productionInputProblems } from '../lib/build/production.ts';
 import { SANITY_PROJECT_ID, SANITY_API_VERSION } from '../sanity/project.ts';
-import { inspectStaticArtifact, readArtifact } from './check-static-artifact.mjs';
+import { inspectStaticArtifact, inspectOperatorError, readArtifact } from './check-static-artifact.mjs';
 import { artifactNoReviewProblems } from './review-public-rules.mjs';
 
 // GS-R13: `staging` (default, unchanged) or the explicit gridsmith.uk `production` profile. A
@@ -35,6 +35,11 @@ const require = createRequire(join(root, 'package.json'));
 const publication = JSON.parse(readFileSync(join(root, 'docs/_shared/GS-PROD-001-CMS-MANIFEST.json'))).entries;
 const register = JSON.parse(readFileSync(join(root, 'docs/_legal/evidence/GS-O003-R-REGISTER.json')));
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
+const operatorFiles = readArtifact(join(root, 'ops/hostinger-error'));
+const operatorProblems = inspectOperatorError(operatorFiles);
+if (operatorProblems.length) throw new Error(operatorProblems.join('\n'));
+const operatorError = { ...JSON.parse(operatorFiles.get('identity.json').toString('utf8')),
+  installed: false, providerAcceptance: 'UNVERIFIED' };
 resolveBuildTarget(process.env.GRIDSMITH_BUILD_TARGET);
 const intakeUrl = process.env.NEXT_PUBLIC_LEAD_INTAKE_URL;
 let waived = [];
@@ -209,7 +214,7 @@ try {
     image: { sourceBytes: logoSource.length, sourceSha256: digest(logoSource), deliveryBytes: preparedLogo.length,
       deliverySha256: digest(preparedLogo), width: logoMetadata.width, height: logoMetadata.height,
       format: logoMetadata.format, quality: 75, alpha: logoMetadata.hasAlpha },
-    files: fileManifest, manifestSha256: digest(JSON.stringify(fileManifest)) }, null, 2) + '\n');
+    operatorError, files: fileManifest, manifestSha256: digest(JSON.stringify(fileManifest)) }, null, 2) + '\n');
   console.log(`Static proof: ${finalResult.htmlRoutes} routes; ${finalResult.fileCount} files; ${finalResult.totalBytes} bytes. Output: ${relative(root, output)}/`);
   if (rehearsal) console.log(`gridsmith.uk REHEARSAL, NOT DEPLOYABLE. Waived:\n${[...new Set(waived)].join('\n')}`);
   else if (production) console.log('gridsmith.uk production artifact. Upload and cutover remain separately authorised.');

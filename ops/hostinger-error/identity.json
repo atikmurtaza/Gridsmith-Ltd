@@ -1,0 +1,15 @@
+{
+  "policy": {
+    "version": 1,
+    "providerAcceptance": "UNVERIFIED",
+    "deployable": false,
+    "owner": "operator",
+    "storage": "outside-release-root",
+    "status": 500,
+    "errorUri": "/__gs_error.html",
+    "cacheControl": "no-store, max-age=0",
+    "contentSecurityPolicy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
+  },
+  "configurationSha256": "e34b8851ddbbee2e04b194f2becf33c89bde4ed472e95140b2ef34a2373ed8a2",
+  "documentSha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+}
