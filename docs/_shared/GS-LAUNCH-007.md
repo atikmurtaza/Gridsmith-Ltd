@@ -73,6 +73,11 @@ The first new browser-error assertion returned a DOM element across Puppeteer's 
 boundary instead of a boolean; it is corrected to return a boolean. The permanent browser proof
 also visits the actual local induced HTTP 500 response, not just its document URL. The initial
 failed check is retained separately and is not counted as a pass.
+No-JS contact checks use separate browser pages. Chromium's disabled-script preload notifications
+are recorded separately from network failures; actual JavaScript-enabled failures and non-script
+failures still fail the gate. A direct diagnostic established the script type and absent network
+error, and the HTTP gate independently requires the matching public script bytes. The induced
+500 subject is required only in the denied rehearsal simulation, not on an ordinary ready artifact.
 It cannot rescue a malformed root `.htaccess`, a missing error file, account/server outage or a
 provider/CDN-generated 502/503/504. Hostinger outer templates and their accessibility remain
 UNVERIFIED. They are limitations, not claimed fixes or automatic static-launch blockers.

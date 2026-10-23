@@ -44,7 +44,7 @@ page.on('pageerror', (error) => errors.push(error.message));
 page.on('requestfailed', (request) => failedRequests.push(new URL(request.url()).pathname));
 page.on('response', (response) => {
   const path = new URL(response.url()).pathname;
-  const expectedStaticError = productionProfile && path === '/induced-500' && response.status() === 500;
+  const expectedStaticError = productionProfile && deployment.rehearsal && !deployment.deployable && path === '/induced-500' && response.status() === 500;
   if (response.status() >= 400 && path !== '/h4a-unknown-route' && !excludedRoutes.includes(path) && !expectedStaticError) badResponses.push({ path, status: response.status() });
 });
 const receipt = { phase: 'GS-HOST-H4-D-R1', profile: hosted ? 'hosted' : normal ? 'normal' : 'static', pages: [],
@@ -72,35 +72,42 @@ try {
   if (directContact) {
     const intakeRequests = [];
     const recordIntake = request => { if (/supabase\.co|gs-lead-intake/.test(request.url())) intakeRequests.push(request.url()); };
-    page.on('request', recordIntake);
     for (const js of [true, false]) {
-      await page.setJavaScriptEnabled(js);
+      const contactPage = await browser.newPage();
+      await contactPage.setJavaScriptEnabled(js);
+      const failures = [];
+      contactPage.on('request', recordIntake);
+      contactPage.on('requestfailed', request => failures.push({ type: request.resourceType(),
+        path: new URL(request.url()).pathname, error: request.failure()?.errorText }));
       for (const width of [375, 768, 1440]) {
-        await page.setViewport({ width, height: 900 });
+        await contactPage.setViewport({ width, height: 900 });
         for (const route of ['/contact', '/press/contact']) {
-          await page.goto(base + route, { waitUntil: 'networkidle0' });
-          assert.equal(await page.$$eval('form, input, textarea', nodes => nodes.length), 0);
-          assert(await page.$('[data-static-contact-shell] a[href^="mailto:"]'));
-          assert(await page.$('a[href^="https://wa.me/"]'));
+          await contactPage.goto(base + route, { waitUntil: 'networkidle0' });
+          assert.equal(await contactPage.$$eval('form, input, textarea', nodes => nodes.length), 0);
+          assert(await contactPage.$('[data-static-contact-shell] a[href^="mailto:"]'));
+          assert(await contactPage.$('a[href^="https://wa.me/"]'));
           let reached = false;
           for (let step = 0; step < 60 && !reached; step++) {
-            await page.keyboard.press('Tab');
-            reached = await page.evaluate(() => document.activeElement?.matches('[data-static-contact-shell] a[href^="mailto:"]'));
+            await contactPage.keyboard.press('Tab');
+            reached = await contactPage.evaluate(() => document.activeElement?.matches('[data-static-contact-shell] a[href^="mailto:"]'));
           }
           assert(reached, 'Tab did not reach the direct email link');
-          assert(await page.evaluate(() => {
+          assert(await contactPage.evaluate(() => {
             const el = document.activeElement, rect = el.getBoundingClientRect(), style = getComputedStyle(el);
             const hit = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
             return el.matches(':focus-visible') && style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0 &&
               rect.width > 0 && rect.height > 0 && rect.top >= 0 && rect.bottom <= innerHeight && el.contains(hit);
           }), 'Email keyboard focus is hidden or obscured');
-          assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+          assert(await contactPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
           receipt.contact.push({ route, js, width, emailKeyboard: true, formCount: 0 });
         }
       }
+      // Chromium rejects script preloads without a network error when JavaScript is disabled.
+      assert.deepEqual(failures.filter(failure => js || failure.type !== 'script' || failure.error), []);
+      if (!js) receipt.disabledScriptPreloads = failures;
+      await contactPage.close();
     }
-    await page.setJavaScriptEnabled(true); await page.setViewport({ width: 1440, height: 900 });
-    page.off('request', recordIntake); assert.deepEqual(intakeRequests, []);
+    assert.deepEqual(intakeRequests, []);
     await page.goto(base + '/press/contact/thank-you', { waitUntil: 'networkidle0' });
     assert(!(await page.$eval('main', el => el.textContent)).includes('That has reached us'));
   }
@@ -231,7 +238,8 @@ try {
   assert((await page.title()).toLowerCase().includes('not found')); receipt.local404 = 404;
   if (productionProfile) {
     receipt.errors = [];
-    for (const route of ['/h4a-unknown-route', '/500.html', '/induced-500']) {
+    const errorRoutes = ['/h4a-unknown-route', '/500.html', ...(deployment.rehearsal && !deployment.deployable ? ['/induced-500'] : [])];
+    for (const route of errorRoutes) {
       const response = await page.goto(base + route, { waitUntil: 'networkidle0' });
       assert.equal(response.status(), route === '/induced-500' ? 500 : route === '/500.html' ? 200 : 404);
       assert(await page.evaluate(() => Boolean(/^en(?:-|$)/i.test(document.documentElement.lang) &&
