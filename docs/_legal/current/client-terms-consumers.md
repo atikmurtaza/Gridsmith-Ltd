@@ -1,13 +1,13 @@
 # Client Terms for Consumers
 
-**Version 3.3**\
-**Review date: 22 October 2026**\
+**Version 3.4**\
+**Review date: 25 October 2026**\
 **Effective date: On first publication with the replacement website at gridsmith.uk**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
 Company number: **17050842**\
 Registered office: 30 Briarfield Road, Farnworth, Bolton, BL4 0HD\
-Email: **contact@gridsmith.uk** · WhatsApp or text: +44 7405 448534\
+Email: **contact@gridsmith.uk** · WhatsApp: +44 7405 448534\
 Trading divisions: **Gridsmith Design, Gridsmith Digital and Gridsmith Press**
 
 ## 1. Who these terms apply to
@@ -311,7 +311,7 @@ These terms are governed by the law of England and Wales. If you live in Scotlan
 **Gridsmith Ltd**\
 30 Briarfield Road, Farnworth, Bolton, BL4 0HD\
 Email: contact@gridsmith.uk\
-WhatsApp or text: +44 7405 448534
+WhatsApp: +44 7405 448534
 
 ## 22. Cancellation form
 

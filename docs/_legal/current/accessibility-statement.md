@@ -1,7 +1,7 @@
 # Accessibility Statement
 
-**Version 2.3**\
-**Review date: 22 October 2026**\
+**Version 2.4**\
+**Review date: 25 October 2026**\
 **Effective date: On first publication with the replacement website at gridsmith.uk**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
@@ -40,7 +40,7 @@ Automated testing does not detect every accessibility problem, so it is not trea
 
 Some routes or components have received less manual or assistive-technology testing than others.
 
-Our enquiry forms need JavaScript to send an enquiry. If you cannot use them, email contact@gridsmith.uk instead and we will treat your email in the same way.
+Contact us by email at contact@gridsmith.uk, or through the WhatsApp link on our contact pages. The website does not use enquiry forms. These contact links do not require website JavaScript. Email remains available if WhatsApp is unavailable or inaccessible; we do not claim that external email or messaging services are fully accessible.
 
 If we identify an accessibility barrier, we will assess it promptly, make reasonable adjustments and offer an effective alternative where appropriate while a correction is prepared. We do not charge for a reasonable adjustment. Accessibility requests are considered on their circumstances rather than postponed automatically to a general development schedule.
 

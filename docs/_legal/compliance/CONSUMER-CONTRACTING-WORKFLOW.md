@@ -1,6 +1,6 @@
 # Consumer contracting workflow and email templates
 
-**Revision: GS-LEGAL-FINAL-001 final owner review, 22 October 2026.** Prepared for Client Terms for Consumers **3.3**. Adopted by the owner on 22 October 2026 with the exact Consumer Terms 3.3. It does not amend existing contracts or authorise use before the new terms and Privacy Policy are properly published at the authorised gridsmith.uk cutover. Adoption record: ../evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. The previous workflow is preserved at commit 74a12c79f3fe9094adfb66756781c79ef4cf16d1. These are the actual maintained operational templates, not website text or evidence of completed client transactions.
+**Revision: GS-LAUNCH-014, 25 October 2026.** Prepared for Client Terms for Consumers **3.4**, adopted by exact-text owner approval on 25 October 2026. It does not amend existing contracts or authorise use before the new terms and Privacy Policy are properly published at the authorised gridsmith.uk cutover. Adoption record: ../evidence/GS-LAUNCH-014-ADOPTION.md. The superseded 3.3 workflow and its original adoption evidence are preserved at ../evidence/GS-LAUNCH-014-superseded/CONSUMER-CONTRACTING-WORKFLOW.md. These are the actual maintained operational templates, not website text or evidence of completed client transactions.
 
 ## 1. Operating rules
 
@@ -11,7 +11,7 @@
 5. Send durable confirmation with the quotation, terms and form again, before work and before a payment request. Record receipt of acceptance, the cancellation deadline and the chosen start date. Contract date is day 0; the ordinary cancellation period ends at the end of day 14. Standard start is day 15. Missing information may extend cancellation; do not assume the ordinary deadline in that case.
 6. Early services need all three express statements. These do not permit early supply of a separate digital-content contract component. Identify digital-content components and allocate their price in the quotation; do not supply them before their cancellation period ends. If classification is uncertain, wait. Describe functionality, compatibility and interoperability where relevant. The legal classification follows the actual supply, not its label.
 7. Schedule consumer payments before the work they cover. Never charge interest or a fee for deferred payment. Terms section 4's maximum of twelve deferred payments within the 12 months beginning with the contract date remains a hard limit if any deferred payment is proposed. Obtain supplier costs before paying the supplier. No non-refundable deposit or non-cancellable supplier purchase during cancellation. Printed goods are bought and paid for directly by the client, on the printer's terms; no printer commission or referral arrangement is assumed.
-8. Preserve the owner defaults of 30 calendar days' quotation validity unless expressly varied, no VAT charged on Gridsmith fees while the owner-confirmed non-registration remains accurate, and WhatsApp/text only at +44 7405 448534. Review VAT before using a quotation if status changes. Do not add a voice-call promise.
+8. Preserve the owner defaults of 30 calendar days' quotation validity unless expressly varied, no VAT charged on Gridsmith fees while the owner-confirmed non-registration remains accurate, and WhatsApp only at +44 7405 448534. Review VAT before using a quotation if status changes. Do not add a voice-call promise.
 9. Stage shares total 100% of the services price and reflect actual work. State an objective progress measure for every stage; do not front-load stages. A cancellation charge reflects the services actually supplied and cannot exceed their price; use market value if that price is excessive. Missing required cancellation information or an express early request means no early-service charge. A missing stage table is also treated as zero under our operating rule.
 10. Before agency access, obtain the confidentiality/rights and applicable Article 28, client-authorisation and transfer arrangements in AGENCY-DELIVERY-AGREEMENT.md and INTERNATIONAL-TRANSFERS.md. Complete the rights chain before promising assignments or waivers. These documents are not proof of signatures. No public outsourcing country list is added to quotations or terms; identify processing locations and sub-processors in the confidential project data schedule where required.
 11. Fill or remove every bracketed field before sending. Check price, taxes, supplier costs, stage totals, period, dates, exact version, deliverables, exclusions and attachments. Keep acceptance, early-start statements, confirmation, changes and cancellation calculations under RETENTION-SCHEDULE.md. Make necessary accessibility adjustments without charge.
@@ -22,13 +22,13 @@
 Gridsmith Ltd — Quotation [reference]                         Date: [date]
 Private limited company registered in England and Wales, company number 17050842
 Registered office: 30 Briarfield Road, Farnworth, Bolton, BL4 0HD
-contact@gridsmith.uk · WhatsApp or text +44 7405 448534
+contact@gridsmith.uk · WhatsApp +44 7405 448534
 Division: Gridsmith [Design/Digital/Press]
 
 For: [client name and postal address]
 Buying as an individual wholly or mainly outside your trade, business, craft or profession.
 Open for acceptance until: [date; normally 30 calendar days from quotation date]
-Terms: Client Terms for Consumers version 3.3, attached in a form you can save and print.
+Terms: Client Terms for Consumers version 3.4, attached in a form you can save and print.
 
 1. SERVICES AND DELIVERABLES
 [Main characteristics, formats and deliverables; revision rounds; exclusions; assumptions]
@@ -100,7 +100,7 @@ Then add EITHER "Standard start." OR all three statements:
 "I understand that if Gridsmith Ltd completes all the work before my 14-day cancellation period ends, I will lose my right to cancel."
 
 An early start is optional and applies only to services; separate digital content waits.
-Attachments: Quotation [reference] · Client Terms for Consumers 3.3 · Cancellation form
+Attachments: Quotation [reference] · Client Terms for Consumers 3.4 · Cancellation form
 ~~~
 
 ## 3. Contract confirmation email
@@ -110,7 +110,7 @@ Subject: Contract confirmation — [reference]
 Dear [name],
 This confirms your contract with Gridsmith Ltd.
 Contract made: [date acceptance received]   Quotation: [reference and date]
-Terms: Client Terms for Consumers 3.3 (attached)
+Terms: Client Terms for Consumers 3.4 (attached)
 Total price and payment schedule: [repeat agreed price, components and schedule]
 Cancellation period ends: end of [date, normally contract date + 14 days]
 
@@ -132,7 +132,7 @@ method unless you agree otherwise.
 
 Gridsmith [division], Gridsmith Ltd, registered in England and Wales, company number 17050842
 30 Briarfield Road, Farnworth, Bolton, BL4 0HD · contact@gridsmith.uk
-Attachments: Quotation [reference] · Client Terms for Consumers 3.3 · Cancellation form
+Attachments: Quotation [reference] · Client Terms for Consumers 3.4 · Cancellation form
 ~~~
 
 ## 4. Cancellation form — attach exactly as in terms section 22

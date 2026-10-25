@@ -363,11 +363,11 @@ check(
 
 /* -- 8. placeholders, every rule alone --------------------------------------- */
 
-// All seven public instruments remain subjects, including the three unadopted proposals.
+// All seven canonical public instruments remain subjects after exact-text adoption.
 for (const [slug, file] of [
-  ['privacy', 'proposed/GS-LAUNCH-013/privacy-policy-2.7.md'],
-  ['accessibility', 'proposed/GS-LAUNCH-013/accessibility-statement-2.4.md'],
-  ['consumer-client-terms', 'proposed/GS-LAUNCH-013/client-terms-consumers-3.4.md'],
+  ['privacy', 'current/privacy-policy.md'],
+  ['accessibility', 'current/accessibility-statement.md'],
+  ['consumer-client-terms', 'current/client-terms-consumers.md'],
   ['cookies', 'current/cookie-policy.md'],
   ['terms', 'current/website-terms.md'],
   ['client-terms', 'current/client-terms-applicability.md'],
@@ -402,7 +402,9 @@ for (const text of ['Historical SMS records may remain in backups.',
   check(`LEGAL history does not hide a new offer: ${text}`, callProblems('/legal/privacy', `${text} Call us.`).length > 0);
 }
 const adoptedConsumer = readFileSync('docs/_legal/current/client-terms-consumers.md', 'utf8');
-check('LEGAL canonical 3.3 contradiction remains observable', one(callProblems('/legal/consumer-client-terms', adoptedConsumer), 'SMS-PUBLIC-COPY'));
+check('LEGAL canonical 3.4 contact correction', none(callProblems('/legal/consumer-client-terms', adoptedConsumer)));
+const previousConsumer = readFileSync('docs/_legal/evidence/GS-LAUNCH-014-superseded/client-terms-consumers.md', 'utf8');
+check('LEGAL superseded 3.3 contradiction remains observable', one(callProblems('/legal/consumer-client-terms', previousConsumer), 'SMS-PUBLIC-COPY'));
 for (const [id, specimens] of [
   ['SMS-PUBLIC-COPY', ['WhatsApp or SMS', 'Text us', 'Send an SMS', 'Contact us by text', 'We accept enquiries by SMS', 'SMS: +447405448534']],
   ['CALL-CTA-DIRECT', ['Telephone us', 'Voice calls: +447405448534', 'Contact us by phone', 'Telephone: +447405448534']],

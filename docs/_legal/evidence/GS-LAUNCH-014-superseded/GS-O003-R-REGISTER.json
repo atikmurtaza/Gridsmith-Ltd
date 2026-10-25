@@ -1,0 +1,188 @@
+{
+  "gate": "GS-O003-R",
+  "title": "Legal evidence + owner adoption register",
+  "decision": "Owner decision, 6 October 2026 (GS-LEGAL-001): no solicitor is commissioned at this stage; GS-O003's mandatory solicitor approval is replaced by an evidence-based review of each document against current UK legislation and official guidance, followed by explicit owner adoption. Nothing in this register claims solicitor review, certification or guaranteed enforceability.",
+  "states": [
+    "RESEARCHED",
+    "VERIFIED",
+    "OWNER_REVIEW_REQUIRED",
+    "OWNER_ADOPTED",
+    "PUBLISHABLE"
+  ],
+  "rules": [
+    "GS-LEGAL-FINAL-001 supersedes the temporary-domain publication option and prior active drafts. Historical rules and exact earlier adoptions are preserved in previousAdoptionRegister.",
+    "Only an explicit owner approval adopts the exact reviewed text. Record ownerAdoptedOn, ownerAdoptedVersion, ownerAdoptedSha256 and adoptionAuthority after approval. Phase 1 records no adoption.",
+    "All seven texts have a publication-triggered effective date. Adoption/review does not make them effective and does not authorise publication or cutover.",
+    "All seven documents are published together only with the separately authorised WordPress-to-Next.js cutover at gridsmith.uk. Never publish these texts on the temporary domain.",
+    "PUBLISHABLE requires the existing documentary publication prerequisites. Production queries and CMS migration remain gated. No permission, insurance, ICO payment or external certification is inferred.",
+    "Analytics remains disabled pending current notices, consent, account-specific DPA/transfer/retention settings and verified erasure/operational controls. Privacy prerequisitesMet ANALYTICS-READY records separate activation evidence, never document approval."
+  ],
+  "stateRecord": "6 October 2026 (GS-LEGAL-001): all seven moved to OWNER_REVIEW_REQUIRED on Agent G's re-verification (research/GS-LEGAL-001/G-final-cross-check.md section 7). 7 October 2026 (GS-LEGAL-001-R3): the owner decisions in research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md section 4 were applied (research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md); the client terms for consumers and for business clients moved to version 3.1, the other five are unchanged; all seven remain OWNER_REVIEW_REQUIRED, and six of them now need only the owner's adoption. The privacy policy still carries three [OWNER DECISION] markers (processor terms, transfer safeguard, retention) that wait on owner account checks and on the retention routine operating, so it is not adoptable. No document is OWNER_ADOPTED. 7 October 2026 (GS-LEGAL-001-R4): on the owner's instruction, six documents are OWNER_ADOPTED (business-client-terms 3.1, consumer-client-terms 3.1, terms 2.1, cookies 2.1, accessibility 2.1, client-terms 2.1), each with its publication prerequisites listed and none met; none is PUBLISHABLE. The privacy policy is not adopted and remains OWNER_REVIEW_REQUIRED with its three markers (research/GS-LEGAL-001/R4-OWNER-ADOPTION.md). 7 October 2026 (GS-LEGAL-001-R5): evidence sweep only; no state, version or adopted text changed. The privacy policy remains OWNER_REVIEW_REQUIRED with its three markers; its 2.2 readiness and the four remaining owner checks are in research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md. 7 October 2026 (GS-LEGAL-001-R6): the privacy policy draft moved to version 2.2 (owner evidence applied; one [OWNER DECISION] marker remains on the Hostinger arrangement (history redacted at R8)). It stays OWNER_REVIEW_REQUIRED with no adoption fields. Adoption now also needs recorded evidence for RETENTION-ROUTINE-OPERATING and HOSTINGER-PROCESSOR-CHAIN (research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md). 7 October 2026 (GS-LEGAL-001-R7): the R6 Hostinger processor classification was withdrawn, and the privacy policy 2.2 draft lost its last [OWNER DECISION] marker and one sentence. It stays OWNER_REVIEW_REQUIRED with no adoption fields, because RETENTION-ROUTINE-OPERATING and HOSTINGER-PROCESSOR-CHAIN have no recorded evidence. The 63 Production probe leads were deleted under the retention cleanup (the routine is not yet operating), and the seven development legal documents were reseeded (research/GS-LEGAL-001/R7-HOSTINGER-RETENTION.md). The six adopted documents are unchanged. 7 October 2026 (GS-LEGAL-001-R8): the privacy policy 2.2 is unchanged (byte-identical), OWNER_REVIEW_REQUIRED with no adoption fields. HOSTINGER-PROCESSOR-CHAIN was redefined; elements 1-6 are met and element 7 is not, because the hosting account's Hostinger customer of record is not Gridsmith Ltd. The first monthly retention review was done (database, email and WhatsApp/SMS: 0 each); RETENTION-ROUTINE-OPERATING is not recorded until the superseded 2 October dump is permanently deleted from the Recycle Bin by the owner (research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md). 7 October 2026 (GS-LEGAL-001-R9): the privacy policy 2.2 is unchanged (byte-identical, 0 markers), OWNER_REVIEW_REQUIRED with no adoption fields. RETENTION-ROUTINE-OPERATING is recorded in prerequisitesMet (the obsolete dump was permanently deleted by the owner). HOSTINGER-PROCESSOR-CHAIN is not: the existing infrastructure stays and Gridsmith need not be the named customer, but Hostinger's Terms make the Account-information owner the owner of the Account's data, so an Art. 28(3) arrangement with regard to Gridsmith Ltd still has to be documented (route A or B, research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md section 3.4). Not ready for adoption. 8 October 2026 (GS-LEGAL-001-R10): the privacy policy draft moved to version 2.3 (one section 7 sentence; draft sha256 d388e844...), OWNER_REVIEW_REQUIRED with no adoption fields, and is ready for the owner's explicit adoption. RETENTION-ROUTINE-OPERATING is recorded. HOSTINGER-PROCESSOR-CHAIN is now a publication prerequisite and remains unmet; an unexecuted draft processing arrangement is prepared (research/GS-LEGAL-001/R10-HOSTING-CLOSEOUT-PRIVACY-PACKAGE.md). 8 October 2026 (GS-LEGAL-001-R11): Privacy 2.3 OWNER_ADOPTED on explicit owner approval; header-only change; exact adopted SHA-256 80e67b5256449e2c7fc1562ead2da8ec538b217c8735cba3679f985af50a620b. All seven OWNER_ADOPTED; earlier six entries and fingerprints unchanged. Existing infrastructure decision CLOSED. HOSTINGER-PROCESSOR-CHAIN evidenced from owner-attested authorised corporate use and current Terms/DPA; no separate administrator agreement shown necessary. R10 draft SUPERSEDED / NOT EXECUTED. No legal document PUBLISHABLE, published or deployed. 22 October 2026 (GS-LEGAL-FINAL-001 Phase 2): owner expressly approved the seven final reviewed texts at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b and confirmed the technical restrictions match actual operations. Contact facts match prior owner confirmations. All seven OWNER_ADOPTED with exact unchanged source fingerprints and publication-triggered commencement; none PUBLISHABLE. Local verification and closure recorded in docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md.",
+  "documents": {
+    "privacy": {
+      "draft": "docs/_legal/current/privacy-policy.md",
+      "state": "OWNER_ADOPTED",
+      "prerequisitesMet": {
+        "RETENTION-ROUTINE-OPERATING": "Evidenced 2026-10-07 (GS-LEGAL-001-R9). Cleanup run and logged (R7: 63 probe rows). First monthly review 2026-10-07 logged (leads 0, email 0, WhatsApp/SMS 0). The obsolete 2026-10-02 pg_dump permanently deleted (owner attestation; read-only absence checks at R9). Operator Atik Murtaza through Gridsmith's admin department. Cadence: monthly from 2026-11-02, quarterly from 2027-01-04, annual from 2027-03-01. Log held outside the repository (operations/RETENTION-ACTIVATION-CHECKLIST.md Part E). Records: R7, R8 section 3, research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md section 2.",
+        "HOSTINGER-PROCESSOR-CHAIN": "Evidenced 2026-10-08 (GS-LEGAL-001-R11 section 3): owner confirms personal control, Gridsmith admin management and internal authorised mailbox access; no separate external administrator identified. Current Hostinger Terms sections 1-3 cover an entity using the services through authorised corporate representatives and incorporate the DPA; DPA sections 1-2 cover hosting/email and Customer as controller. Terms section 4 account ownership does not exclude that coverage. Contractual reading based on published terms plus owner-attested current corporate use, not provider account inspection or certification. No new terms acceptance performed. The separate-account-holder processor assumption and signature requirement at R10 are withdrawn; draft SUPERSEDED / NOT EXECUTED. Record: research/GS-LEGAL-001/R11-PRIVACY-ADOPTION-HOSTING-CLOSEOUT.md."
+      },
+      "publicationPrerequisites": [
+        {
+          "id": "PUBLICATION-AUTHORITY",
+          "requirement": "Owner authority for all seven exact versions to be published together only with the authorised WordPress-to-Next.js cutover at gridsmith.uk; never on a temporary domain. Document approval does not authorise changes to gridsmith.uk, WordPress or DNS. Separate CUTOVER-AUTHORITY remains required."
+        },
+        {
+          "id": "H4-B-INTAKE-PROMOTED",
+          "requirement": "The Production Supabase intake described in Privacy sections 2, 6 and 7 is promoted and verified before this policy accompanies live form collection (GS-LEGAL-001-R4 M5; UK GDPR Article 13 accuracy)."
+        },
+        {
+          "id": "HOSTINGER-PROCESSOR-CHAIN",
+          "requirement": "Recorded Article 28(3)/(9) contractual coverage for Gridsmith hosting and email under the existing Hostinger terms/DPA. R11 permits documented authorised corporate use under Terms sections 1-3; no separate agreement with internal administrators or account migration is required."
+        }
+      ],
+      "ownerAdoptedOn": "2026-10-22",
+      "ownerAdoptedVersion": "2.6",
+      "ownerAdoptedSha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7",
+      "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+    },
+    "cookies": {
+      "draft": "docs/_legal/current/cookie-policy.md",
+      "state": "OWNER_ADOPTED",
+      "publicationPrerequisites": [
+        {
+          "id": "PUBLICATION-AUTHORITY",
+          "requirement": "Owner authority for all seven exact versions to be published together only with the authorised WordPress-to-Next.js cutover at gridsmith.uk; never on a temporary domain. Document approval does not authorise changes to gridsmith.uk, WordPress or DNS. Separate CUTOVER-AUTHORITY remains required."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        },
+        {
+          "id": "A-2-COOKIE-RETEST",
+          "requirement": "Verify the exact release locally on the Hostinger stack and repeat against gridsmith.uk at authorised cutover: no non-essential requests/storage before consent, accurate notice mode, withdrawal and provider-deletion controls if analytics is enabled. No temporary-domain legal publication."
+        }
+      ],
+      "prerequisitesMet": {},
+      "ownerAdoptedOn": "2026-10-22",
+      "ownerAdoptedVersion": "2.4",
+      "ownerAdoptedSha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+      "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+    },
+    "terms": {
+      "draft": "docs/_legal/current/website-terms.md",
+      "state": "OWNER_ADOPTED",
+      "publicationPrerequisites": [
+        {
+          "id": "PUBLICATION-AUTHORITY",
+          "requirement": "Owner authority for all seven exact versions to be published together only with the authorised WordPress-to-Next.js cutover at gridsmith.uk; never on a temporary domain. Document approval does not authorise changes to gridsmith.uk, WordPress or DNS. Separate CUTOVER-AUTHORITY remains required."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        }
+      ],
+      "prerequisitesMet": {},
+      "ownerAdoptedOn": "2026-10-22",
+      "ownerAdoptedVersion": "2.3",
+      "ownerAdoptedSha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+      "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+    },
+    "client-terms": {
+      "draft": "docs/_legal/current/client-terms-applicability.md",
+      "state": "OWNER_ADOPTED",
+      "publicationPrerequisites": [
+        {
+          "id": "PUBLICATION-AUTHORITY",
+          "requirement": "Owner authority for all seven exact versions to be published together only with the authorised WordPress-to-Next.js cutover at gridsmith.uk; never on a temporary domain. Document approval does not authorise changes to gridsmith.uk, WordPress or DNS. Separate CUTOVER-AUTHORITY remains required."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        }
+      ],
+      "prerequisitesMet": {},
+      "ownerAdoptedOn": "2026-10-22",
+      "ownerAdoptedVersion": "2.3",
+      "ownerAdoptedSha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+      "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+    },
+    "business-client-terms": {
+      "draft": "docs/_legal/current/client-terms-business.md",
+      "state": "OWNER_ADOPTED",
+      "ownerConfirmations": [
+        "OC-1 confirmed 7 October 2026: clause 16 limb (ii) means the notional fees for the first 12 months of the Scope even if a rolling retainer ends earlier."
+      ],
+      "publicationPrerequisites": [
+        {
+          "id": "PUBLICATION-AUTHORITY",
+          "requirement": "Owner authority for all seven exact versions to be published together only with the authorised WordPress-to-Next.js cutover at gridsmith.uk; never on a temporary domain. Document approval does not authorise changes to gridsmith.uk, WordPress or DNS. Separate CUTOVER-AUTHORITY remains required."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        }
+      ],
+      "prerequisitesMet": {},
+      "ownerAdoptedOn": "2026-10-22",
+      "ownerAdoptedVersion": "3.3",
+      "ownerAdoptedSha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+      "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+    },
+    "consumer-client-terms": {
+      "draft": "docs/_legal/current/client-terms-consumers.md",
+      "state": "OWNER_ADOPTED",
+      "publicationPrerequisites": [
+        {
+          "id": "PUBLICATION-AUTHORITY",
+          "requirement": "Owner authority for all seven exact versions to be published together only with the authorised WordPress-to-Next.js cutover at gridsmith.uk; never on a temporary domain. Document approval does not authorise changes to gridsmith.uk, WordPress or DNS. Separate CUTOVER-AUTHORITY remains required."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        }
+      ],
+      "prerequisitesMet": {},
+      "ownerAdoptedOn": "2026-10-22",
+      "ownerAdoptedVersion": "3.3",
+      "ownerAdoptedSha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e",
+      "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+    },
+    "accessibility": {
+      "draft": "docs/_legal/current/accessibility-statement.md",
+      "state": "OWNER_ADOPTED",
+      "publicationPrerequisites": [
+        {
+          "id": "PUBLICATION-AUTHORITY",
+          "requirement": "Owner authority for all seven exact versions to be published together only with the authorised WordPress-to-Next.js cutover at gridsmith.uk; never on a temporary domain. Document approval does not authorise changes to gridsmith.uk, WordPress or DNS. Separate CUTOVER-AUTHORITY remains required."
+        },
+        {
+          "id": "PRIVACY-PUBLISHABLE",
+          "requirement": "The Privacy Policy is PUBLISHABLE at the same time: the client terms, website terms and cookie policy refer readers to it, and the enquiry forms must not collect personal data before it is live."
+        }
+      ],
+      "prerequisitesMet": {},
+      "ownerAdoptedOn": "2026-10-22",
+      "ownerAdoptedVersion": "2.3",
+      "ownerAdoptedSha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb",
+      "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+    }
+  },
+  "previousAdoptionRegister": "docs/_archive/legal/pre-GS-LEGAL-FINAL-001/adopted/GS-O003-R-REGISTER.json",
+  "currentReview": "GS-LEGAL-FINAL-001 Phase 2: seven exact reviewed versions OWNER_ADOPTED on 22 October 2026; zero PUBLISHABLE. Public sources unchanged from f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md.",
+  "adoptionRecord": "docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md",
+  "legalDocumentPreparation": {
+    "status": "CLOSED",
+    "date": "2026-10-22",
+    "reviewedCommit": "f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b",
+    "publicationStatus": "HELD_SEPARATE_CUTOVER_AUTHORITY_REQUIRED",
+    "verificationRecord": "docs/_legal/evidence/PHASE-2-VERIFICATION.json"
+  },
+  "ownerApproval": {
+    "date": "2026-10-22",
+    "instruction": "APPROVED for GS-LEGAL-FINAL-001 Phase 2 adoption, subject to confirming that the published contact details and technical-service restrictions reflect Gridsmith's actual operations.",
+    "technicalOperationsConfirmation": "Confirmed — this matches actual operations",
+    "contactConfirmation": "GS-O004/GS-R001-R and GS-R16 decisions 17–18; company-facts-rules, seed and actual local HTML checks; no new delivery/reachability test implied",
+    "restrictions": "No engineering design/calculations, certification, approval, stamping, regulated sign-off or responsible-designer role; no drawings/design details for construction or building work; drafting, illustration and documentation from supplied design information only",
+    "scope": "Adoption and local verification only. No push, deployment, publication, analytics/review activation, DNS, WordPress or Production modification. Agency agreements and international-transfer clearance remain separate operational requirements."
+  }
+}

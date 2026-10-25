@@ -341,6 +341,10 @@ assert.equal(sha(hostingerRules(REVIEW_STAGING_ORIGIN, 'development')), '0cbdf3c
 assert(productionInputProblems(PREVIEW_INTAKE_URL, publication, register).length > 0, 'Profile must refuse today');
 const intake = 'https://abcdefghijklmnopqrst.supabase.co/functions/v1/gs-lead-intake';
 const readyRegister = structuredClone(register);
+// This synthetic positive control models future form-mode adoption, independently of today's direct mode.
+readyRegister.documents.privacy.contactMode = 'edge';
+readyRegister.documents.privacy.publicationPrerequisites = readyRegister.documents.privacy.publicationPrerequisites
+  .map(item => item.id === 'DIRECT-CONTACT-VERIFIED' ? { ...item, id: 'H4-B-INTAKE-PROMOTED' } : item);
 for (const slug of Object.keys(readyRegister.documents)) readyRegister.documents[slug].state = 'PUBLISHABLE';
 const readyPublication = publication.map((entry) => entry.type === 'legalDocument'
   ? { ...entry, eligible: true, gate: null, reason: undefined } : entry);
@@ -360,7 +364,7 @@ const adopted = structuredClone(readyRegister); adopted.documents.cookies.state 
 assert.deepEqual(inputs(intake, readyPublication, adopted), ['LEGAL: cookies is not PUBLISHABLE (register OWNER_ADOPTED, migration eligible)']); productionProofs++;
 const gatedEntry = readyPublication.map((entry) => entry.slug === 'terms' ? { ...entry, eligible: false } : entry);
 assert.deepEqual(codes(inputs(intake, gatedEntry)), ['LEGAL']); productionProofs++;
-assert.equal(codes(inputs(undefined, publication, register, null)).filter((code) => code === 'LEGAL').length, 7); productionProofs++;
+assert.equal(inputs(undefined, publication, register, null).filter(p => /is not PUBLISHABLE/.test(p)).length, 7); productionProofs++;
 
 // Rules. Positive policy, then each predicate is extracted from the rules and exercised.
 const intakeOrigin = new URL(intake).origin;
@@ -509,7 +513,7 @@ directRegister.documents.privacy.publicationPrerequisites = directRegister.docum
   .map(item => item.id === 'H4-B-INTAKE-PROMOTED' ? { ...item, id: 'DIRECT-CONTACT-VERIFIED' } : item);
 directRegister.documents.privacy.prerequisitesMet['DIRECT-CONTACT-VERIFIED'] = 'Synthetic exact-source/contact/legal receipt; no real approval';
 assert.deepEqual(productionInputProblems(undefined, readyPublication, directRegister, null, 'direct'), []);
-assert.equal(productionInputProblems(undefined, publication, register, null, 'direct').length, 9);
+assert.equal(productionInputProblems(undefined, publication, register, null, 'direct').length, 8);
 assert.equal(productionInputProblems(undefined, publication, register, null, 'direct').filter(p => /is not PUBLISHABLE/.test(p)).length, 7);
 assert(productionInputProblems(undefined, readyPublication, readyRegister, null, 'direct').some(p => /no explicit direct-contact/.test(p)));
 for (const evidence of [undefined, '', '  ']) {

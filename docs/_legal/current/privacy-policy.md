@@ -1,7 +1,7 @@
 # Privacy Policy
 
-**Version 2.6**\
-**Review date: 22 October 2026**\
+**Version 2.7**\
+**Review date: 25 October 2026**\
 **Effective date: On first publication with the replacement website at gridsmith.uk**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
@@ -24,9 +24,9 @@ Depending on your dealings with us, we collect:
 - enquiry details, including the service, budget, timetable, publishing requirements and any links you provide;
 - correspondence, quotations, contracts, invoices and payment records;
 - project materials and personal data within them; and
-- technical request information, such as IP address and browser details, processed by our website and form providers, and submission references used to prevent duplicates and maintain security.
+- technical request information, such as IP address and browser details, processed by our hosting and content providers for delivery and security.
 
-We receive information from you, people acting for you and project participants. A restricted copy of reviews comes from Freelancer (section 2A). Payment providers supply transaction and reconciliation information. Our enquiry database does not store your IP address or browser details, but provider logs may do so.
+We receive information from you, people acting for you and project participants. A restricted copy of reviews comes from Freelancer (section 2A). Payment providers supply transaction and reconciliation information. The public website has no enquiry form. Contact links let you send an email or WhatsApp message through your chosen service. The website does not send those messages to an enquiry database or trigger automated enquiry notifications. Messages are accessed by the owner or sales department. Direct enquiries are not currently copied into other systems.
 
 Please do not send special-category information (such as health, religious or political details), criminal-offence information, passwords or payment-card details through website enquiries or linked files. If agreed work requires sensitive personal data, contact us first so we can agree a suitable secure channel and establish the additional lawful conditions and safeguards. Relevance to a project does not by itself authorise its use.
 
@@ -71,8 +71,8 @@ We will update this policy and the Cookie Policy before activation to explain th
 We share only what is needed for the relevant purpose:
 
 - **Hostinger** hosts our website and email, processing website requests, messages and security records.
-- **Supabase** receives website enquiries and stores them in our database in Ireland. Its service also processes request logs and backups.
-- **Resend** sends internal enquiry notifications to us containing contact details, the service requested and a reference, without the enquiry message or other answers.
+- **Email and messaging services** process the messages you choose to send us. Hostinger handles our email and WhatsApp (Meta) handles WhatsApp messages. The public website does not send enquiries to Supabase or use Resend notifications.
+- **Historical records** may remain in Supabase, Resend, email and developer-created backups from earlier processing. These may include earlier enquiry and notification records, technical logs and backup copies. The precise remaining holdings and applicable provider retention periods have not yet been verified; this policy does not assert that those records have been erased. Retained personal data remains subject to applicable purpose, confidentiality, security, retention and rights obligations.
 - **Sanity** manages published content and images. Requests to its content services may disclose technical request information; enquiries are not sent to Sanity.
 - **PayPal, Stripe and Square**, or **HSBC** for bank transfers, handle customer payments. They receive transaction and billing information and any payment, device or fraud-prevention details they collect directly. We receive payment status and reconciliation records. There is no card checkout on this website.
 - **Patel & Co.**, our external accountant, receives necessary contact, invoice, payment and supporting financial records, rather than manuscripts or full enquiry messages merely to record a payment.
@@ -80,23 +80,23 @@ We share only what is needed for the relevant purpose:
 
 Our processors act under data-processing terms. Banks, payment providers and professional advisers may act as independent controllers for their own payment, fraud-prevention, professional or legal duties; their role depends on the service. We can provide relevant recipient details on request.
 
-WhatsApp (Meta) or your mobile network also processes messages sent through those services under its own terms. We may disclose information where legally required, to protect legal rights, or in a genuine sale or reorganisation of the business. We do not sell personal data to advertisers or data brokers.
+WhatsApp (Meta) also processes messages sent through its service under its own terms. We may disclose information where legally required, to protect legal rights, or in a genuine sale or reorganisation of the business. We do not sell personal data to advertisers or data brokers.
 
 ## 7. International transfers
 
-Our website is hosted in France and enquiries are stored in Ireland. Both countries are covered by UK adequacy arrangements. Providers and delivery agencies can also process or access information elsewhere: Supabase is based in Singapore and uses international sub-processors, Resend processes notifications in the United States, and hosting and content-delivery networks operate internationally. Our delivery agencies include agencies in the United States, Pakistan and European countries.
+The owner confirms that our website is hosted in France, in the EU, which is covered by UK adequacy arrangements. Enquiries sent through our contact links are handled by our email and messaging providers. Company access is restricted to authorised personnel, and the owner reports no current overseas access by company personnel. This does not mean that email, WhatsApp or other providers and subprocessors process information only in the EU. Our hosting, content and messaging providers and delivery agencies may process or permit access to personal data in other countries. Historical Supabase and Resend records may also remain subject to international provider processing; their current locations and retention have not yet been verified. Our delivery agencies include agencies in the United States, Pakistan and European countries.
 
-For transfers outside the UK, including overseas access to project files, we require applicable UK adequacy coverage or appropriate safeguards. Provider arrangements include the UK Addendum to EU standard contractual clauses for Supabase and the transfer provisions in Resend's and Hostinger's data-processing terms. For agencies without adequacy coverage, the required route is the UK International Data Transfer Agreement or appropriate EU standard contractual clauses with the UK Addendum, supported by the required data protection test and any additional safeguards. We require the applicable arrangements before access begins.
+For transfers outside the UK, including overseas access to project files, we require applicable UK adequacy coverage or appropriate safeguards. The applicable transfer provisions in Hostinger's data-processing terms cover its services. Transfers involving other recipients, including any continuing processing of historical records, require applicable adequacy coverage or appropriate safeguards. The specific arrangements for relevant email, messaging and historical-data processing require verification; France/EU website hosting alone does not establish those arrangements. For agencies without adequacy coverage, the required route is the UK International Data Transfer Agreement or appropriate EU standard contractual clauses with the UK Addendum, supported by the required data protection test and any additional safeguards. We require the applicable arrangements before access begins.
 
 An eligible US recipient may instead use the UK Extension to the Data Privacy Framework where its certification and the transfer are covered. Pakistan has no general UK adequacy arrangement, and not every European country is covered. Payment and professional providers may also process internationally under their applicable terms and duties. Contact us for details or a copy of relevant safeguards, with confidential information redacted where necessary.
 
 ## 8. Retention
 
-We keep information only as long as needed for its purpose:
+We keep information only as long as needed for its purpose. The owner manages retention, deletion, backups and privacy requests. The following documented retention schedule remains the basis for those duties; its current applicability to particular historical holdings and providers requires confirmation:
 
 | Records | Retention |
 |---|---|
-| Enquiries that do not become projects, including internal notification emails | 12 months from receipt or last contact, whichever is later |
+| Enquiries that do not become projects, including email and messaging correspondence and any retained internal notification emails | 12 months from receipt or last contact, whichever is later |
 | Identified spam | 30 days |
 | Necessary project and contract records, including the final delivered set | Six years after the end of the financial year in which the project ends |
 | Accounting and tax records | Six years after the end of the relevant financial year, or longer where tax law requires |
@@ -104,11 +104,11 @@ We keep information only as long as needed for its purpose:
 | Complaints | With the project record, or two years after closure if there is no project |
 | Project working files | Return or deletion within 90 days after the project ends unless otherwise agreed |
 
-Enquiry and spam deletion is reviewed monthly; long-term records are reviewed annually after their periods end. Working-file clearance is checked quarterly. Agreed client data-processing instructions also apply. A documented legal hold may extend retention of relevant records, with restricted access and further review.
+Our documented schedule calls for monthly enquiry and spam deletion reviews, annual reviews of long-term records after their periods end, and quarterly working-file clearance checks. These are review duties, not a statement that review cycles or deletions have been completed; deletion is not represented as automated. Agreed client data-processing instructions also apply. A documented legal hold may extend retention of relevant records, with restricted access and further review.
 
-We retain only proportionate evidence of rights requests and preferences for accountability, disputes and respecting objections. Restricted Freelancer copies are reviewed monthly and when permission, removal requests or source changes require it, and removed when no longer needed or lawful.
+We retain only proportionate evidence of rights requests and preferences for accountability, disputes and respecting objections. The documented schedule requires restricted Freelancer copies to be reviewed monthly and when permission, removal requests or source changes require it, and removed when no longer needed or lawful. This does not assert that a scheduled review or removal has already occurred.
 
-Providers keep technical, security and backup records under their own operational and legal retention rules. Resend keeps notification and delivery records for 30 days, with backups for up to seven days. Other provider log and backup periods vary. Deleting a main record does not immediately erase every backup; copies awaiting expiry must remain protected and unavailable for ordinary use, and applicable deletions must be reapplied after restoration. Contact us about a particular record or retention period.
+Providers may retain technical, security and backup records under their own operational and legal retention rules. We have not verified the currently applicable periods for historical Resend or Supabase records, other provider logs or backups, or developer-created backup copies. The owner has not established a new company backup system; this does not mean that provider-managed backups are absent, and no tested backup/restore system is claimed. Deleting a main record does not immediately erase every backup; copies awaiting expiry must remain protected and unavailable for ordinary use, and applicable deletions must be reapplied after restoration. Contact us about a particular record or retention period.
 
 ## 9. Security
 

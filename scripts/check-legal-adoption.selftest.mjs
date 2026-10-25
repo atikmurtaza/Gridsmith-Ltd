@@ -35,7 +35,11 @@ const cookies = read('current/cookie-policy.md');
 const website = read('current/website-terms.md');
 const workflow = read('compliance/CONSUMER-CONTRACTING-WORKFLOW.md');
 const coordinated = { privacy, cookies, terms: website, 'consumer-client-terms': consumer, 'business-client-terms': business };
-const facts = { cookieName: 'gs_consent', cookieDays: 365, storageApis: [] };
+const previous = f => read('evidence/GS-LAUNCH-014-superseded/' + f);
+const previousConsumer = previous('client-terms-consumers.md');
+const previousPrivacy = previous('privacy-policy.md');
+const previousWorkflow = previous('CONSUMER-CONTRACTING-WORKFLOW.md');
+const facts = { cookieName: 'gs_consent', cookieDays: 365, storageApis: [], contactMode: 'direct' };
 
 let failures = 0;
 let cases = 0;
@@ -54,7 +58,7 @@ const expect = (name, problems, pattern) => {
 const all = (slug, md) => [...draftProblems(slug, md), ...instrumentProblems(slug, md)];
 
 expect('coordinated public texts and operational templates', coordinatedReviewProblems(coordinated, workflow), null);
-expect('stale quotation version', coordinatedReviewProblems(coordinated, workflow.replace('Client Terms for Consumers version 3.3', 'Client Terms for Consumers version 3.1')), /current consumer version/);
+expect('stale quotation version', coordinatedReviewProblems(coordinated, swap(workflow, 'Client Terms for Consumers version 3.4', 'Client Terms for Consumers version 3.1')), /current consumer version/);
 expect('missing early-service request in quotation', coordinatedReviewProblems(coordinated, workflow.replace('"I ask Gridsmith Ltd to start work now', '"Please start')), /exact acceptance/);
 expect('cancellation form omits digital content', coordinatedReviewProblems(coordinated, workflow.replace('following service/digital content:', 'following service:')), /form differs/);
 expect('digital supply starts early', coordinatedReviewProblems({ ...coordinated, 'consumer-client-terms': consumer.replace('we wait until its cancellation period has ended before supplying it', 'we supply it immediately') }, workflow), /digital content must wait/);
@@ -117,7 +121,7 @@ expect('no DPA schedule', all('business-client-terms', business.replaceAll('Data
 // parityProblems — each fact.
 expect('provider missing', parityProblems(privacy.replaceAll('Hostinger', 'our host'), cookies, facts), /does not name Hostinger/);
 expect('regulator missing', parityProblems(privacy.replaceAll('Information Commission', 'regulator'), cookies, facts), /Information Commission/);
-expect('storage region missing', parityProblems(privacy.replaceAll('Ireland', 'Europe'), cookies, facts), /where enquiries are stored/);
+expect('storage region missing', parityProblems(previousPrivacy.replaceAll('Ireland', 'Europe'), cookies, { ...facts, contactMode: 'edge' }), /where enquiries are stored/);
 expect('cookie name', parityProblems(privacy, cookies, { ...facts, cookieName: 'gs_other' }), /gs_other/);
 expect('cookie lifetime', parityProblems(privacy, cookies, { ...facts, cookieDays: 366 }), /366-day/);
 expect('undisclosed storage', parityProblems(privacy, cookies + '\nWe do not use local storage.\n', { ...facts, storageApis: ['localStorage'] }), /says no local storage/);
@@ -220,7 +224,7 @@ expect('direct mode still needs adopted fingerprint', registerProblems('privacy'
 const directPrivacy = 'Hostinger. Information Commission. The public website has no enquiry form. Contact links let you send an email or WhatsApp message through your chosen service.';
 const directFacts = { ...facts, contactMode: 'direct' };
 expect('synthetic direct privacy needs no fictitious intake region/provider', parityProblems(directPrivacy, cookies, directFacts), null);
-expect('old adopted privacy is not direct-contact accurate', parityProblems(privacy, cookies, directFacts), /inactive website intake/);
+expect('old adopted privacy is not direct-contact accurate', parityProblems(previousPrivacy, cookies, directFacts), /inactive website intake/);
 for (const currentClaim of ['**Supabase** receives website enquiries', '**Resend** sends internal enquiry notifications',
   'enquiries are stored in Ireland', 'website and form providers', 'submission references used to prevent duplicates']) {
   expect(`direct privacy rejects ${currentClaim}`, parityProblems(directPrivacy + currentClaim, cookies, directFacts), /inactive website intake/);
@@ -234,25 +238,26 @@ for (const channel of ['SMS', 'text message', 'text-message']) {
 expect('direct privacy still names hosting', parityProblems(directPrivacy.replace('Hostinger', ''), cookies, directFacts), /does not name Hostinger/);
 const directAccessibility = 'Contact us by email at contact@gridsmith.uk, or through the WhatsApp link on our contact pages. The website does not use enquiry forms. Email remains available if a messaging service is unavailable or inaccessible.';
 expect('direct accessibility specimen', directContactAccessibilityProblems(directAccessibility), null);
-expect('old form accessibility refused', directContactAccessibilityProblems(read('current/accessibility-statement.md')), /direct-contact alternative/);
+expect('old form accessibility refused', directContactAccessibilityProblems(previous('accessibility-statement.md')), /direct-contact alternative/);
 for (const phrase of ['website does not use enquiry forms', 'contact@gridsmith.uk', 'WhatsApp link']) {
   expect(`direct accessibility requires ${phrase}`, directContactAccessibilityProblems(directAccessibility.replace(phrase, '')), /direct-contact alternative/);
 }
 for (const channel of ['SMS', 'text message', 'text-message']) {
   expect(`direct accessibility rejects withdrawn ${channel}`, directContactAccessibilityProblems(directAccessibility + ' ' + channel), /direct-contact alternative/);
 }
-// Exact proposal files are permanent subjects; no adoption/register mutation is involved.
+// Exact proposals and predecessor snapshots remain permanent subjects after adoption.
 const proposedPrivacy = read('proposed/GS-LAUNCH-013/privacy-policy-2.7.md');
 const proposedAccessibility = read('proposed/GS-LAUNCH-013/accessibility-statement-2.4.md');
 const proposedConsumer = read('proposed/GS-LAUNCH-013/client-terms-consumers-3.4.md');
 assert.equal(proposedPrivacy, read('proposed/GS-LAUNCH-012/privacy-policy-2.7.md'));
 assert.equal(proposedAccessibility, read('proposed/GS-LAUNCH-012/accessibility-statement-2.4.md'));
-assert.equal(consumer.split('WhatsApp or text').length - 1, 2);
-assert.equal(proposedConsumer, consumer.replace('**Version 3.3**', '**Version 3.4**')
+assert.equal(previousConsumer.split('WhatsApp or text').length - 1, 2);
+assert.equal(proposedConsumer, previousConsumer.replace('**Version 3.3**', '**Version 3.4**')
   .replace('**Review date: 22 October 2026**', '**Review date: 25 October 2026**')
   .replaceAll('WhatsApp or text', 'WhatsApp'));
 assert.match(proposedConsumer, /phone or video call/);
-const actualConsumerEntry = JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json', 'utf8')).documents['consumer-client-terms'];
+const previousRegister = JSON.parse(previous('GS-O003-R-REGISTER.json'));
+const actualConsumerEntry = previousRegister.documents['consumer-client-terms'];
 assert.throws(() => assertAdoptedSource('consumer-client-terms', actualConsumerEntry, proposedConsumer), /differs from the exact owner-adopted text/);
 expect('Privacy 2.7 proposal direct parity', parityProblems(proposedPrivacy, cookies, directFacts), null);
 expect('Accessibility 2.4 proposal direct parity', directContactAccessibilityProblems(proposedAccessibility), null);
@@ -264,9 +269,46 @@ assert.match(proposedPrivacy, /historical/i);
 for (const disclosure of ['Supabase', 'Resend', 'developer-created backups', 'provider-managed backups', 'owner or sales department', 'no current overseas access', 'require verification']) assert(proposedPrivacy.includes(disclosure), disclosure);
 assert.match(proposedPrivacy, /not represented as automated/);
 assert.match(proposedAccessibility, /comprehensive assistive-technology and screen-reader audit.*has not been completed/);
-expect('proposed consumer cannot use current workflow version', coordinatedReviewProblems({ ...coordinated, privacy: proposedPrivacy, 'consumer-client-terms': proposedConsumer }, workflow), /current consumer version/);
-expect('future workflow version-only correction suffices', coordinatedReviewProblems({ ...coordinated, privacy: proposedPrivacy, 'consumer-client-terms': proposedConsumer }, workflow.replaceAll('Consumers version 3.3', 'Consumers version 3.4').replaceAll('Consumers 3.3 (attached)', 'Consumers 3.4 (attached)')), null);
+expect('proposed consumer cannot use current workflow version', coordinatedReviewProblems({ ...coordinated, privacy: proposedPrivacy, 'consumer-client-terms': proposedConsumer }, previousWorkflow), /current consumer version/);
+expect('future workflow version-only correction suffices', coordinatedReviewProblems({ ...coordinated, privacy: proposedPrivacy, 'consumer-client-terms': proposedConsumer }, previousWorkflow.replaceAll('Consumers version 3.3', 'Consumers version 3.4').replaceAll('Consumers 3.3 (attached)', 'Consumers 3.4 (attached)')), null);
 expect('contradictory direct accessibility refused', directContactAccessibilityProblems(directAccessibility + ' Our enquiry forms need JavaScript.'), /direct-contact alternative/);
+
+// GS-LAUNCH-014: fixed owner hashes and predecessor evidence are independent expectations.
+const currentRegister = JSON.parse(read('evidence/GS-O003-R-REGISTER.json'));
+const approvedHashes = {
+  privacy: '822dd473c253e7d031e18cf6c439ace13817f270d9fd9e1898d9b8c5fc4549a3',
+  accessibility: '774b1e200e67d146b0375b12c3fd4fadb3aeb0e27b87ea53bd0b419557984708',
+  'consumer-client-terms': 'a73f6df89b681721ebd97e841803327e8e91caabd1da0a90edbf204d590a0d5e',
+};
+assert.equal(createHash('sha256').update(previous('GS-O003-R-REGISTER.json')).digest('hex'), '4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e');
+for (const [slug, e] of Object.entries(currentRegister.documents)) {
+  const text = readFileSync(e.draft);
+  assert.equal(createHash('sha256').update(text).digest('hex'), approvedHashes[slug] ?? previousRegister.documents[slug].ownerAdoptedSha256);
+  assert.equal(e.state, 'OWNER_ADOPTED');
+  if (approvedHashes[slug]) {
+    assert.equal(e.ownerAdoptedSha256, approvedHashes[slug]);
+    assert.equal(e.ownerAdoptedOn, '2026-10-25');
+    const old = previousRegister.documents[slug];
+    const oldText = previous(old.draft.split('/').at(-1));
+    assert.equal(createHash('sha256').update(oldText).digest('hex'), old.ownerAdoptedSha256);
+    assert.throws(() => assertAdoptedSource(slug, old, text), /differs from the exact owner-adopted text/);
+    assert.throws(() => assertAdoptedSource(slug, e, oldText), /differs from the exact owner-adopted text/);
+  } else assert.deepEqual(e, previousRegister.documents[slug]);
+}
+assert.equal(currentRegister.previousAdoptionRegister, 'docs/_legal/evidence/GS-LAUNCH-014-superseded/GS-O003-R-REGISTER.json');
+assert.equal(currentRegister.documents.privacy.contactMode, 'direct');
+assert.equal(currentRegister.documents.privacy.prerequisitesMet['DIRECT-CONTACT-VERIFIED'], undefined);
+assert.equal(allLegalPublishable(Object.values(currentRegister.documents).map(e => e.state)), false);
+expect('adopted workflow coordinated', coordinatedReviewProblems(coordinated, workflow), null);
+expect('stale confirmation version', coordinatedReviewProblems(coordinated, swap(workflow, 'Consumers 3.4 (attached)', 'Consumers 3.3 (attached)')), /current consumer version/);
+assert.equal(createHash('sha256').update(read('evidence/GS-LAUNCH-014-OWNER-AUTHORITY.md')).digest('hex'), '8c0596b49763c11ddd0dbaa5954718b883946a57cef3c61ebb132140ee662497');
+const workflowBody = text => text.slice(text.indexOf('## 1. Operating rules'));
+assert.equal(workflowBody(workflow), workflowBody(previousWorkflow)
+  .replaceAll('Consumers version 3.3', 'Consumers version 3.4').replaceAll('Consumers 3.3', 'Consumers 3.4')
+  .replaceAll('WhatsApp/text only', 'WhatsApp only').replaceAll('WhatsApp or text', 'WhatsApp'));
+assert.equal(consumer, proposedConsumer);
+assert.equal(privacy, proposedPrivacy);
+assert.equal(read('current/accessibility-statement.md'), proposedAccessibility);
 
 // danglingReferences — lists and sub-clauses.
 expect('reference list', danglingReferences('## 1. A\n## 2. B\nSee sections 1, 2 and 7.\n'), /^7$/);
@@ -321,7 +363,7 @@ assert.equal(allLegalPublishable([...Array(6).fill('PUBLISHABLE'), 'OWNER_ADOPTE
 cases += 6;
 const publicationHeader = '**Effective date: On first publication with the replacement website at gridsmith.uk**';
 const publicationParsed = parseDraft(consumer);
-expect('publication trigger parsed', publicationParsed.effectiveOnPublication && publicationParsed.effective === null && publicationParsed.drafted === '2026-10-22' ? [] : ['bad commencement'], null);
+expect('publication trigger parsed', publicationParsed.effectiveOnPublication && publicationParsed.effective === null && publicationParsed.drafted === '2026-10-25' ? [] : ['bad commencement'], null);
 expect('adopted before publication event', stateProblems('c', 'OWNER_ADOPTED', consumer, 's', '2026-10-22'), null);
 expect('publishable commencement remains future', stateProblems('c', 'PUBLISHABLE', consumer, 's', '2026-10-22'), null);
 throws('malformed commencement rejected', consumer.replace(publicationHeader, '**Effective date: whenever approved**'), /unreadable effective date/);
