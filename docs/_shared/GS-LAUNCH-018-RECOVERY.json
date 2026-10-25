@@ -1,0 +1,52 @@
+{
+  "observedAt": "2026-10-25T22:47:39.4144444Z",
+  "originalRunId": "39590710731",
+  "originalBranch": "claude/gs-r12-production-readiness-001",
+  "originalSourceSha": "e545c1a2b5afd1431bef581044cec2bec4da252a",
+  "artifactBranchSha": "25d653f5582b78c31329dc5def12898d6a19b531",
+  "artifactIdentity": "59ec5ae74f7074cc16c2eecb6c6008c705179fd2e7f1be50ba960c04aa4cfbe9",
+  "legalPreview": false,
+  "legalFiles": 0,
+  "hostingerDashboard": {
+    "site": "mediumaquamarine-wallaby-594070.hostingersite.com",
+    "autoDeployment": false,
+    "sourceBranch": "codex/gs-hostinger-artifact",
+    "rootDirectory": "public_html",
+    "lastDeployment": "2026-10-21 13:39",
+    "absoluteRoot": "UNVERIFIED",
+    "physicalSeparation": "UNVERIFIED",
+    "detailsRead": "Two browser timeouts; no provider mutation"
+  },
+  "http": [
+    {
+      "path": "/",
+      "status": 200,
+      "title": "Gridsmith Ltd — design, digital and publishing studios"
+    },
+    {
+      "path": "/about",
+      "status": 200,
+      "title": "About Gridsmith Ltd — one company, three specialist studios"
+    },
+    {
+      "path": "/design",
+      "status": 200,
+      "title": "Gridsmith Design — from line to form"
+    },
+    {
+      "path": "/digital",
+      "status": 200,
+      "title": "Gridsmith Digital — websites, software, apps and connected workflows"
+    },
+    {
+      "path": "/press",
+      "status": 200,
+      "title": "Gridsmith Press — writing, editorial, publishing and content"
+    },
+    {
+      "path": "/legal/privacy",
+      "status": 404,
+      "title": "Page not found — Gridsmith Ltd"
+    }
+  ]
+}

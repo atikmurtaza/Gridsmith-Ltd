@@ -30,6 +30,7 @@ const deployment = deploymentResponse ? await deploymentResponse.json() : null;
 const legalPreview = normal ? false : servedLegalPreview(deployment, process.argv.includes('--legal-preview'));
 // GS-R13: the gridsmith.uk profile is indexable and ships no reviews; it is proved on loopback only.
 const productionProfile = deployment?.profile === 'production';
+const ownerPreview = deployment?.profile === 'owner-preview';
 const directContact = deployment?.contactMode === 'direct';
 assert(!productionProfile || !hosted, 'The production profile is never proved on the staging origin');
 const servedSitemap = productionProfile ? await (await fetch(base + '/sitemap.xml')).text() : '';
@@ -44,7 +45,7 @@ page.on('pageerror', (error) => errors.push(error.message));
 page.on('requestfailed', (request) => failedRequests.push(new URL(request.url()).pathname));
 const recordResponse = (response) => {
   const path = new URL(response.url()).pathname;
-  const expectedStaticError = productionProfile && deployment.rehearsal && !deployment.deployable && path === '/induced-500' && response.status() === 500;
+  const expectedStaticError = ((productionProfile && deployment.rehearsal && !deployment.deployable) || (ownerPreview && !hosted)) && path === '/induced-500' && response.status() === 500;
   if (response.status() >= 400 && path !== '/h4a-unknown-route' && !excludedRoutes.includes(path) && !expectedStaticError) badResponses.push({ path, status: response.status() });
 };
 page.on('response', recordResponse);
@@ -239,9 +240,9 @@ try {
 
   assert.equal((await page.goto(base + '/h4a-unknown-route', { waitUntil: 'networkidle0' })).status(), 404);
   assert((await page.title()).toLowerCase().includes('not found')); receipt.local404 = 404;
-  if (productionProfile) {
+  if (productionProfile || ownerPreview) {
     receipt.errors = [];
-    const errorRoutes = ['/h4a-unknown-route', '/500.html', ...(deployment.rehearsal && !deployment.deployable ? ['/induced-500'] : [])];
+    const errorRoutes = ['/h4a-unknown-route', '/500.html', ...((deployment.rehearsal && !deployment.deployable) || (ownerPreview && !hosted) ? ['/induced-500'] : [])];
     for (const route of errorRoutes) {
       const response = await page.goto(base + route, { waitUntil: 'networkidle0' });
       assert.equal(response.status(), route === '/induced-500' ? 500 : route === '/500.html' ? 200 : 404);

@@ -36,6 +36,20 @@ on:
   pull_request:
     types: [opened, reopened]
   workflow_dispatch:
+    inputs:
+      publish_preview:
+        description: 'Publish only an accepted preview with verified destination and exact owner approval'
+        type: boolean
+        default: false
+      approved_artifact:
+        description: 'Owner-approved artifact identity (empty means acceptance only)'
+        type: string
+      approval_sha256:
+        description: 'SHA-256 of the owner-approved GS_OWNER_PREVIEW_APPROVAL repository variable'
+        type: string
+      accepted_run_id:
+        description: 'Successful acceptance run holding the exact approved release'
+        type: string
 
 permissions:
   contents: read
@@ -416,10 +430,14 @@ jobs:
           if-no-files-found: ignore
 
   hostinger-staging:
-    # The registered CI dispatch runs this branch-local reusable workflow only after
-    # the exact-source normal verification job passes. No default-branch edit needed.
-    if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main' && github.ref != 'refs/heads/codex/gs-hostinger-artifact'
+    # Source pushes run acceptance only; explicit approved dispatch reuses accepted bytes.
+    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/codex/gs-hostinger-artifact'
     needs: verify
     permissions:
       contents: write
     uses: ./.github/workflows/hostinger-staging.yml
+    with:
+      publish_preview: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_preview == true }}
+      approved_artifact: ${{ inputs.approved_artifact || '' }}
+      approval_sha256: ${{ inputs.approval_sha256 || '' }}
+      accepted_run_id: ${{ inputs.accepted_run_id || '' }}

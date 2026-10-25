@@ -812,3 +812,9 @@ read-back: 0 differences from the repository payload on both; title/slug/other f
 - Implemented at `GS-P03` (14 September 2026): every price field, price renderer and the
   `/digital/estimate` price-band route removed; `/work` routes and all portfolio blocks removed.
   Nothing about prices or portfolio evidence is requested from the owner.
+
+## GS-LAUNCH-018 preview transaction dependencies
+
+Owner evidence required before a publishing dispatch: review the accepted release identity/ZIP and provide the temporary site's absolute-root and Git-mapping evidence, explicit separation from `gridsmith.uk`, auto-deployment OFF and the bounded temporary-site rollback receipt. The current account dashboard proves the logical target/branch only; two read-only root-detail attempts timed out. No publication approval exists yet.
+
+The nine high toolchain entries remain an owner security decision: there is no compatible extract-zip patch, and the offered Puppeteer major/Lighthouse engine changes need a separately reviewed migration. Current workflow refuses packaging while the full audit is nonzero; no risk acceptance is inferred. See `GS-LAUNCH-018.md` for the advisory scope and executable approval contract. These are preview decisions; production/DNS/mail/legal publication remain separate.

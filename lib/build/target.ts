@@ -14,12 +14,18 @@ export function ownerPreviewAllowed(profile: string | undefined, origin: string 
   return profile === 'owner-preview' && origin === REVIEW_STAGING_ORIGIN && dataset === 'production';
 }
 export type OwnerPreviewIdentity = { profile?: string; siteOrigin?: string; dataset?: string; legalPreview?: boolean;
-  contactMode?: string; intakeOrigin?: string | null; rehearsal?: boolean; deployable?: boolean; releaseStatus?: string };
+  contactMode?: string; intakeOrigin?: string | null; rehearsal?: boolean; deployable?: boolean; releaseStatus?: string;
+  sourceSha?: string; artifactIdentity?: string; sourceModified?: boolean;
+  acceptance?: { sourceSha?: string; artifactIdentity?: string; evidenceSha256?: string; runId?: string } };
 /** Shared served boundary: an owner preview cannot fall back to the historical development profile. */
 export function ownerPreviewIdentityAllowed(identity: OwnerPreviewIdentity | null) {
   return Boolean(identity && ownerPreviewAllowed(identity.profile, identity.siteOrigin, identity.dataset) &&
     identity.legalPreview === true && identity.contactMode === 'direct' && identity.intakeOrigin === null &&
-    identity.rehearsal === false && identity.deployable === false && identity.releaseStatus === 'ACCEPTANCE_PENDING');
+    identity.rehearsal === false && ((identity.deployable === false && identity.releaseStatus === 'ACCEPTANCE_PENDING') ||
+      (identity.deployable === true && identity.releaseStatus === 'ACCEPTANCE_PASSED' && identity.sourceModified === false &&
+        /^[a-f0-9]{40}$/.test(identity.sourceSha ?? '') && /^[a-f0-9]{64}$/.test(identity.artifactIdentity ?? '') &&
+        identity.acceptance?.sourceSha === identity.sourceSha && identity.acceptance?.artifactIdentity === identity.artifactIdentity &&
+        /^[a-f0-9]{64}$/.test(identity.acceptance?.evidenceSha256 ?? '') && /^\d+$/.test(identity.acceptance?.runId ?? ''))));
 }
 export const OWNER_PREVIEW = STATIC_BUILD && ownerPreviewAllowed(process.env.GRIDSMITH_STATIC_PROFILE,
   process.env.NEXT_PUBLIC_SITE_URL, process.env.NEXT_PUBLIC_SANITY_DATASET);
