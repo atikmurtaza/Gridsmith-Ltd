@@ -1,0 +1,596 @@
+{
+  "phase": "GS-LAUNCH-016",
+  "candidateSourceSha": "373c04b69a2bf9612b0807694f9d0d3262235c3a",
+  "documentationCommit": "Resolve with git log -1 --format=%H -- docs/_shared/GS-LAUNCH-016.md; this later documentation SHA is not the artifact source SHA.",
+  "platform": "win32",
+  "node": "v24.15.0",
+  "npm": "11.12.1",
+  "environment": "Own clean exact-lock install; PUPPETEER_SKIP_DOWNLOAD=true; .env.local contains only NEXT_PUBLIC_SANITY_DATASET=development; no privileged credentials deliberately supplied.",
+  "commands": [
+    {
+      "label": "install",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js",
+        "ci",
+        "--ignore-scripts=false"
+      ],
+      "startedAt": "2026-10-25T16:27:56.921Z",
+      "endedAt": "2026-10-25T16:29:57.031Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-27-56-921Z-install-8ffb8b78-0514-4a3b-9c63-d1dbb06da011.log",
+      "logBytes": 1106,
+      "logSha256": "a84b6d70343a1dddde73d8c7e100523a102713cbddb8ddc85ec76349016665a9",
+      "status": "PASS"
+    },
+    {
+      "label": "production-audit",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js",
+        "audit",
+        "--omit=dev",
+        "--json"
+      ],
+      "startedAt": "2026-10-25T16:29:54.945Z",
+      "endedAt": "2026-10-25T16:30:06.199Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-29-54-945Z-production-audit-bb4893c3-f78a-4831-9d14-d1a50891e634.log",
+      "logBytes": 368,
+      "logSha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c",
+      "status": "PASS"
+    },
+    {
+      "label": "full-audit",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js",
+        "audit",
+        "--json"
+      ],
+      "startedAt": "2026-10-25T16:30:05.019Z",
+      "endedAt": "2026-10-25T16:30:06.510Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-30-05-019Z-full-audit-0c91be15-defc-49f5-9bb6-527ef7a10978.log",
+      "logBytes": 5827,
+      "logSha256": "962685c0edacb8488ed449ca4ed5d1d2eb0be289d89bc76bdc39e32853999ac4",
+      "status": "FAIL"
+    },
+    {
+      "label": "verify-static",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "verify:static"
+      ],
+      "startedAt": "2026-10-25T16:30:10.954Z",
+      "endedAt": "2026-10-25T16:31:43.440Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-30-10-954Z-verify-static-4e001e06-0d24-4b58-ae69-4f38240beec7.log",
+      "logBytes": 60464,
+      "logSha256": "2ac4e77ac05bd48c87d1f066661c5692d5cf3f40a8d41366ba80a12bad5ab40c",
+      "status": "PASS"
+    },
+    {
+      "label": "normal-build",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "verify:build"
+      ],
+      "startedAt": "2026-10-25T16:32:02.086Z",
+      "endedAt": "2026-10-25T16:32:42.984Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-32-02-086Z-normal-build-bc042009-2828-4f47-bc78-b36e9837d0f6.log",
+      "logBytes": 12825,
+      "logSha256": "129924c947a3e9190ba4be40fa60913bb74d8144d0af9482e9d34ae5776f2b76",
+      "status": "PASS"
+    },
+    {
+      "label": "generate-offline",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "build/gs-launch-016/generate-offline.mjs"
+      ],
+      "startedAt": "2026-10-25T16:32:37.636Z",
+      "endedAt": "2026-10-25T16:32:37.723Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-32-37-636Z-generate-offline-327a305a-2463-4eec-8580-2a6f2ad1549f.log",
+      "logBytes": 622,
+      "logSha256": "02724479f53eba341c7b7c5e37a7952167720fdf088f24841c9187ce27038a9a",
+      "status": "PASS"
+    },
+    {
+      "label": "served-company-legal",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "scripts/with-server.mjs",
+        "npm run check:company",
+        "npm run check:legal:parity",
+        "npm run check:consumer-terms"
+      ],
+      "startedAt": "2026-10-25T16:33:14.757Z",
+      "endedAt": "2026-10-25T16:33:18.348Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-33-14-757Z-served-company-legal-9fc4c54d-54d4-4101-993a-fac63473b832.log",
+      "logBytes": 3183,
+      "logSha256": "4de54deec27888afedc16d69aa06feb5796b3ac258c09e53a0edcaee7e850d7d",
+      "status": "PASS"
+    },
+    {
+      "label": "production-refusal",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "scripts/build-static.mjs"
+      ],
+      "startedAt": "2026-10-25T16:33:18.667Z",
+      "endedAt": "2026-10-25T16:33:19.122Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-33-18-667Z-production-refusal-eae7e911-862d-407e-88f6-40e9d358ce40.log",
+      "logBytes": 1307,
+      "logSha256": "0e655957c89c2e192a3eef06d39f44abe25cf1d091eea5a4c1fdc30ba0b2f77c",
+      "status": "FAIL",
+      "expectedProtectiveRefusal": true
+    },
+    {
+      "label": "rehearsal",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "scripts/build-static.mjs"
+      ],
+      "startedAt": "2026-10-25T16:33:22.141Z",
+      "endedAt": "2026-10-25T16:34:35.995Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-33-22-141Z-rehearsal-39ee7d20-c032-4cbe-b250-12e8e1ace808.log",
+      "logBytes": 4542,
+      "logSha256": "f2588eb4464de7bef48a00673ca07fdef1a97ca5743ed530ada8eb0f0f7e7099",
+      "status": "PASS"
+    },
+    {
+      "label": "public-baseline",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "build/gs-launch-016/public-baseline.mjs"
+      ],
+      "startedAt": "2026-10-25T16:34:44.452Z",
+      "endedAt": "2026-10-25T16:34:48.700Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-34-44-452Z-public-baseline-ddad4686-bb7f-430f-8a3a-bdfa62969b71.log",
+      "logBytes": 437,
+      "logSha256": "aa202d75d5b6c87f9373ffebdf7416b576401a10cfd0c21f9ebf930d711a38e6",
+      "status": "PASS"
+    },
+    {
+      "label": "artifact-inspection",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "build/gs-launch-016/inspect-denied.mjs"
+      ],
+      "startedAt": "2026-10-25T16:34:53.835Z",
+      "endedAt": "2026-10-25T16:34:54.335Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-34-53-835Z-artifact-inspection-dea27b0d-90b7-4c1f-a5dd-34bd804c9e3b.log",
+      "logBytes": 672,
+      "logSha256": "26d45a54f603f895ca9860042b904229409f716fdcf6adb022e94b765fe66f98",
+      "status": "PASS"
+    },
+    {
+      "label": "final-control",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "check:control"
+      ],
+      "startedAt": "2026-10-25T16:39:32.545Z",
+      "endedAt": "2026-10-25T16:39:32.952Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-39-32-545Z-final-control-3acc4550-1b2d-4664-996c-d8b0f2751a00.log",
+      "logBytes": 136,
+      "logSha256": "a99488cdf58f3fcc65b8289a5a8e29dfd4376dbe97949e078f46874d6dccc507",
+      "status": "PASS"
+    },
+    {
+      "label": "final-secrets",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "C:/nvm4w/nodejs/node_modules/npm/bin/npm-cli.js",
+        "run",
+        "lint:secrets"
+      ],
+      "startedAt": "2026-10-25T16:39:58.931Z",
+      "endedAt": "2026-10-25T16:39:59.290Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-016/2026-10-25T16-39-58-931Z-final-secrets-3ca155fa-a5b1-49a0-8b5a-da33bde97359.log",
+      "logBytes": 504,
+      "logSha256": "6e22175802a9bf774a0d28a1013ea068141ee8b124ed9bd49d1bc978e9337d0f",
+      "status": "PASS"
+    }
+  ],
+  "audits": {
+    "production-audit": {
+      "auditReportVersion": 2,
+      "vulnerabilities": {},
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1638,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1701
+        }
+      }
+    },
+    "full-audit": {
+      "auditReportVersion": 2,
+      "vulnerabilities": {
+        "@lhci/cli": {
+          "name": "@lhci/cli",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@lhci/utils",
+            "lighthouse"
+          ],
+          "effects": [],
+          "range": "<=0.1.1-alpha.5 || >=0.14.0",
+          "nodes": [
+            "node_modules/@lhci/cli"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.13.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@lhci/utils": {
+          "name": "@lhci/utils",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "lighthouse"
+          ],
+          "effects": [
+            "@lhci/cli"
+          ],
+          "range": ">=0.14.0",
+          "nodes": [
+            "node_modules/@lhci/utils"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.13.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@puppeteer/browsers": {
+          "name": "@puppeteer/browsers",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "extract-zip"
+          ],
+          "effects": [
+            "puppeteer",
+            "puppeteer-core"
+          ],
+          "range": "<=2.13.2",
+          "nodes": [
+            "node_modules/@puppeteer/browsers"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "chromium-bidi": {
+          "name": "chromium-bidi",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "zod"
+          ],
+          "effects": [
+            "puppeteer",
+            "puppeteer-core"
+          ],
+          "range": "0.5.13 - 157.0.8081-0",
+          "nodes": [
+            "node_modules/chromium-bidi"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "extract-zip": {
+          "name": "extract-zip",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1139346,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip unvalidated symlink path traversal",
+              "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+              },
+              "range": "<=2.0.1"
+            },
+            {
+              "source": 1193685,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+              "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:H"
+              },
+              "range": "<=2.0.1"
+            }
+          ],
+          "effects": [
+            "@puppeteer/browsers"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/extract-zip"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "lighthouse": {
+          "name": "lighthouse",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "puppeteer-core"
+          ],
+          "effects": [
+            "@lhci/cli",
+            "@lhci/utils"
+          ],
+          "range": "11.7.0-dev.20240320 - 13.3.0",
+          "nodes": [
+            "node_modules/lighthouse"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.13.0",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer": {
+          "name": "puppeteer",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@puppeteer/browsers",
+            "chromium-bidi",
+            "puppeteer-core"
+          ],
+          "effects": [],
+          "range": "19.8.1 - 25.12.0",
+          "nodes": [
+            "node_modules/puppeteer"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer-core": {
+          "name": "puppeteer-core",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@puppeteer/browsers",
+            "chromium-bidi"
+          ],
+          "effects": [
+            "lighthouse",
+            "puppeteer"
+          ],
+          "range": "19.8.4 - 25.12.0",
+          "nodes": [
+            "node_modules/puppeteer-core"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "zod": {
+          "name": "zod",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1243066,
+              "name": "zod",
+              "dependency": "zod",
+              "title": "Zod can exhaust memory while validating oversized constrained collections",
+              "url": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+              "severity": "high",
+              "cwe": [
+                "CWE-770"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": "<4.6.6"
+            }
+          ],
+          "effects": [
+            "chromium-bidi"
+          ],
+          "range": "<4.6.6",
+          "nodes": [
+            "node_modules/chromium-bidi/node_modules/zod"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        }
+      },
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 9,
+          "critical": 0,
+          "total": 9
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1638,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1701
+        }
+      }
+    }
+  },
+  "artifactInspection": {
+    "label": "artifact-inspection",
+    "executable": "C:\\nvm4w\\nodejs\\node.exe",
+    "args": [
+      "build/gs-launch-016/inspect-denied.mjs"
+    ],
+    "startedAt": "2026-10-25T16:34:53.835Z",
+    "endedAt": "2026-10-25T16:34:54.335Z",
+    "exitCode": 0,
+    "signal": null,
+    "log": "build/gs-launch-016/2026-10-25T16-34-53-835Z-artifact-inspection-dea27b0d-90b7-4c1f-a5dd-34bd804c9e3b.log",
+    "logBytes": 672,
+    "logSha256": "26d45a54f603f895ca9860042b904229409f716fdcf6adb022e94b765fe66f98"
+  },
+  "artifactManifestSha256": "ba868549a2133a4d3a204335785f4581caf8a3ea7bb108c1160282c4f4985c1f",
+  "helperScripts": [
+    {
+      "path": "build/gs-launch-016/run.mjs",
+      "sha256": "4ab65a6b64e5844a85bd800bd1332c957c607b64098057df2c0dd38c1faf29f2"
+    },
+    {
+      "path": "build/gs-launch-016/inspect-denied.mjs",
+      "sha256": "d0d59f59353e175b6728637fea8f202dbbd8adc15e2ce6e6a6e8038cdb33a5a8"
+    },
+    {
+      "path": "build/gs-launch-016/generate-offline.mjs",
+      "sha256": "78a4e0b70c44201ea53b324e4d0273b37e65623c5ea9b6da162556f56a19e70e"
+    },
+    {
+      "path": "build/gs-launch-016/public-baseline.mjs",
+      "sha256": "6b1fa72d3ea238fe09cb9212e35d8b542af9885eca6973ba73aae0b2b6d32f08"
+    },
+    {
+      "path": "build/gs-launch-016/package-evidence.mjs",
+      "sha256": "a8e30dcb57c072593c4172cce4d560b85dee2affcdcd22102f44390aa8de7fd7"
+    },
+    {
+      "path": "build/gs-launch-016/finalize-evidence.mjs",
+      "sha256": "33f4fd69f156f63818238ac13bb3d2c0d76091984d271f85207adac630c4c5e9"
+    }
+  ],
+  "publicBaseline": {
+    "label": "public-baseline",
+    "executable": "C:\\nvm4w\\nodejs\\node.exe",
+    "args": [
+      "build/gs-launch-016/public-baseline.mjs"
+    ],
+    "startedAt": "2026-10-25T16:34:44.452Z",
+    "endedAt": "2026-10-25T16:34:48.700Z",
+    "exitCode": 0,
+    "signal": null,
+    "log": "build/gs-launch-016/2026-10-25T16-34-44-452Z-public-baseline-ddad4686-bb7f-430f-8a3a-bdfa62969b71.log",
+    "logBytes": 437,
+    "logSha256": "aa202d75d5b6c87f9373ffebdf7416b576401a10cfd0c21f9ebf930d711a38e6"
+  },
+  "unavailable": [
+    {
+      "check": "Hostinger account inspection",
+      "status": "NOT RUN",
+      "reason": "Browser inventory succeeded. Creating a new hPanel tab timed out after 30 seconds; kernel reset. No account settings were read or changed."
+    },
+    {
+      "check": "Linux / Apache / browser / responsive / keyboard / no-JS / axe / Lighthouse / cookie A-2 / exact-source remote CI",
+      "status": "NOT RUN",
+      "reason": "No newly cleared supported Linux job supplied; GS-LAUNCH-010 records prior automatic container-creation policy rejection. No retry, environment-policy change or browser-toolchain risk acceptance. Browser connection timed out. No push or CI dispatch authorised."
+    }
+  ],
+  "externalMutations": {
+    "push": 0,
+    "ciDispatch": 0,
+    "upload": 0,
+    "deployment": 0,
+    "wordPressWrites": 0,
+    "databaseWrites": 0,
+    "legalChanges": 0,
+    "dnsOrEmailChanges": 0,
+    "messagesOrEnquiries": 0,
+    "dockerAttempts": 0
+  },
+  "preservation": {
+    "status": "PASS",
+    "protectedTrackedFiles": 451,
+    "allProtectedHashesUnchanged": true,
+    "originalControlDocumentsRetainedAsSuffix": true,
+    "phaseChanges": "Five new phase documentation/manifest/evidence files and four prefixed control documents only; verify staged list before commit."
+  },
+  "integrity": {
+    "checkedAt": "2026-10-25T16:40:43.791Z",
+    "commandLogsVerified": 13,
+    "artifactFilesVerified": 199,
+    "archiveSha256Verified": true,
+    "manifestSha256": "ba868549a2133a4d3a204335785f4581caf8a3ea7bb108c1160282c4f4985c1f",
+    "secretScanLimit": "Marker scan passed; zero supplied secret values checked because privileged values were not configured."
+  }
+}
