@@ -24,7 +24,8 @@ export function staticLighthouseProblems(identity: { profile?: string; contactMo
 }
 
 type Entry = { type: string; slug: string | null; eligible: boolean };
-type Register = { documents?: Record<string, { state?: string } | undefined> };
+type Register = { documents?: Record<string, { state?: string; contactMode?: string;
+  prerequisitesMet?: Record<string, string> } | undefined> };
 
 /** Every unmet production input as `CODE: detail`. An empty list is the only buildable state. */
 export function productionInputProblems(intakeUrl: string | undefined, publication: Entry[],
@@ -33,11 +34,19 @@ export function productionInputProblems(intakeUrl: string | undefined, publicati
   const problems: string[] = [];
   if (contactMode === 'direct') {
     if (intakeUrl) problems.push('INTAKE: direct contact must not configure an intake endpoint');
+    const privacy = register.documents?.privacy;
+    if (privacy?.contactMode !== 'direct') problems.push('LEGAL: Privacy has no explicit direct-contact processing mode');
+    if (!privacy?.prerequisitesMet?.['DIRECT-CONTACT-VERIFIED']?.trim()) {
+      problems.push('LEGAL: DIRECT-CONTACT-VERIFIED has no recorded owner/verification receipt');
+    }
   } else if (!expectedIntake) problems.push('INTAKE: production intake URL not established (H4-B production phase)');
   else if (!intakePattern.test(expectedIntake) || expectedIntake === PREVIEW_INTAKE_URL) {
     problems.push('INTAKE: recorded production intake is malformed or is the isolated Preview project');
   } else if (intakeUrl !== expectedIntake) {
     problems.push('INTAKE: NEXT_PUBLIC_LEAD_INTAKE_URL is not the recorded production intake');
+  }
+  if (contactMode === 'edge' && register.documents?.privacy?.contactMode === 'direct') {
+    problems.push('LEGAL: form activation requires form-mode Privacy and H4-B-INTAKE-PROMOTED');
   }
   for (const slug of LEGAL_DOCUMENT_SLUGS) {
     const state = register.documents?.[slug]?.state ?? 'missing';

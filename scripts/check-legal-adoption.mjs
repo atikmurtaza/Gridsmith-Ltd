@@ -28,6 +28,7 @@ import {
   registerProblems,
   stateProblems,
   coordinatedReviewProblems,
+  directContactAccessibilityProblems,
   FORBIDDEN_CLAIMS,
   MARKERS,
 } from './legal-adoption-rules.mjs';
@@ -96,7 +97,9 @@ const storageApis = new Set();
 for (const file of ['app', 'components', 'lib'].flatMap(walk)) {
   for (const m of readFileSync(file, 'utf8').matchAll(/\b(localStorage|sessionStorage|indexedDB)\s*[.([]/g)) storageApis.add(m[1]);
 }
-problems.push(...parityProblems(drafts.privacy ?? '', drafts.cookies ?? '', { cookieName, cookieDays, storageApis: [...storageApis] }));
+const contactMode = register.documents?.privacy?.contactMode ?? 'edge';
+problems.push(...parityProblems(drafts.privacy ?? '', drafts.cookies ?? '', { cookieName, cookieDays, storageApis: [...storageApis], contactMode }));
+if (contactMode === 'direct') problems.push(...directContactAccessibilityProblems(drafts.accessibility ?? ''));
 
 if (counted.drafts !== EXPECTED_DRAFTS || counted.documents !== EXPECTED_DOCUMENTS) {
   problems.push(`measured ${counted.drafts} draft(s) and ${counted.documents} document(s), expected ${EXPECTED_DRAFTS} and ${EXPECTED_DOCUMENTS}`);

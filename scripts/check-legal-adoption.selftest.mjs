@@ -21,6 +21,8 @@ import {
   crossRegisterProblems,
   stateProblems,
   coordinatedReviewProblems,
+  requiredPrerequisites,
+  directContactAccessibilityProblems,
 } from './legal-adoption-rules.mjs';
 import { parseDraft, assertAdoptedSource } from './seed-legal.mjs';
 import { allLegalPublishable } from '../lib/legal/adoption.ts';
@@ -195,6 +197,45 @@ expect('privacy adopted without listing the Hostinger chain prerequisite', regis
 expect('privacy publishable without Hostinger chain evidence', registerProblems('privacy', { ...adoptedEntry, state: 'PUBLISHABLE', publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'log', 'PUBLICATION-AUTHORITY': 'owner', 'H4-B-INTAKE-PROMOTED': 'phase' } }, '1.0', 'docs/_legal/X.md', SHA), /HOSTINGER-PROCESSOR-CHAIN has no recorded evidence/);
 expect('privacy publishable with existing contractual coverage and every prerequisite met', registerProblems('privacy', { ...adoptedEntry, state: 'PUBLISHABLE', publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']), prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'log', 'PUBLICATION-AUTHORITY': 'owner', 'H4-B-INTAKE-PROMOTED': 'phase', 'HOSTINGER-PROCESSOR-CHAIN': 'R11 authorised corporate use, existing Terms and incorporated DPA, date' } }, '1.0', 'docs/_legal/X.md', SHA), null);
 expect('other documents need no retention evidence', registerProblems('terms', adoptedEntry, '1.0', 'docs/_legal/X.md', SHA), null);
+
+// GS-LAUNCH-011: synthetic receipts and text only; the actual register is never promoted.
+const directEntry = { ...adoptedEntry, contactMode: 'direct',
+  publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'DIRECT-CONTACT-VERIFIED', 'HOSTINGER-PROCESSOR-CHAIN']),
+  prerequisitesMet: { 'RETENTION-ROUTINE-OPERATING': 'synthetic retention receipt' } };
+assert.deepEqual(requiredPrerequisites('privacy'), ['PUBLICATION-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']);
+assert.deepEqual(requiredPrerequisites('privacy', 'direct'), ['PUBLICATION-AUTHORITY', 'DIRECT-CONTACT-VERIFIED', 'HOSTINGER-PROCESSOR-CHAIN']);
+expect('direct adoption can wait for publication evidence', registerProblems('privacy', directEntry, '1.0', 'docs/_legal/X.md', SHA), null);
+expect('direct mode rejects legacy prerequisite', registerProblems('privacy', { ...directEntry,
+  publicationPrerequisites: PRE(['PUBLICATION-AUTHORITY', 'H4-B-INTAKE-PROMOTED', 'HOSTINGER-PROCESSOR-CHAIN']) }, '1.0', 'docs/_legal/X.md', SHA), /DIRECT-CONTACT-VERIFIED/);
+expect('unknown processing mode', registerProblems('privacy', { ...directEntry, contactMode: 'unknown' }, '1.0', 'docs/_legal/X.md', SHA), /unknown contactMode/);
+const directMet = { ...directEntry.prerequisitesMet, 'PUBLICATION-AUTHORITY': 'synthetic owner authority',
+  'DIRECT-CONTACT-VERIFIED': 'synthetic exact-source/contact/legal receipt', 'HOSTINGER-PROCESSOR-CHAIN': 'synthetic coverage receipt' };
+for (const id of ['PUBLICATION-AUTHORITY', 'DIRECT-CONTACT-VERIFIED', 'HOSTINGER-PROCESSOR-CHAIN']) {
+  for (const evidence of [undefined, '  ']) expect(`direct publication requires ${id}`, registerProblems('privacy', {
+    ...directEntry, state: 'PUBLISHABLE', prerequisitesMet: { ...directMet, [id]: evidence } }, '1.0', 'docs/_legal/X.md', SHA), new RegExp(`${id} has no recorded evidence`));
+}
+expect('direct publication with synthetic complete evidence', registerProblems('privacy', { ...directEntry, state: 'PUBLISHABLE', prerequisitesMet: directMet }, '1.0', 'docs/_legal/X.md', SHA), null);
+expect('direct mode still needs retention evidence', registerProblems('privacy', { ...directEntry, prerequisitesMet: {} }, '1.0', 'docs/_legal/X.md', SHA), /RETENTION-ROUTINE-OPERATING/);
+expect('direct mode still needs adopted fingerprint', registerProblems('privacy', directEntry, '1.0', 'docs/_legal/X.md', 'b'.repeat(64)), /not the adopted text/);
+const directPrivacy = 'Hostinger. Information Commission. The public website has no enquiry form. Contact links let you send an email, WhatsApp message or text message through your chosen service.';
+const directFacts = { ...facts, contactMode: 'direct' };
+expect('synthetic direct privacy needs no fictitious intake region/provider', parityProblems(directPrivacy, cookies, directFacts), null);
+expect('old adopted privacy is not direct-contact accurate', parityProblems(privacy, cookies, directFacts), /inactive website intake/);
+for (const currentClaim of ['**Supabase** receives website enquiries', '**Resend** sends internal enquiry notifications',
+  'enquiries are stored in Ireland', 'website and form providers', 'submission references used to prevent duplicates']) {
+  expect(`direct privacy rejects ${currentClaim}`, parityProblems(directPrivacy + currentClaim, cookies, directFacts), /inactive website intake/);
+}
+for (const phrase of ['website has no enquiry form', 'email, WhatsApp message or text message']) {
+  expect(`direct privacy requires ${phrase}`, parityProblems(directPrivacy.replace(phrase, ''), cookies, directFacts), /direct-contact channels or no-form/);
+}
+expect('direct privacy still names hosting', parityProblems(directPrivacy.replace('Hostinger', ''), cookies, directFacts), /does not name Hostinger/);
+const directAccessibility = 'Contact us by email at contact@gridsmith.uk, or through the WhatsApp and text-message links on our contact pages. The website does not use enquiry forms. Email remains available if a messaging service is unavailable or inaccessible.';
+expect('direct accessibility specimen', directContactAccessibilityProblems(directAccessibility), null);
+expect('old form accessibility refused', directContactAccessibilityProblems(read('current/accessibility-statement.md')), /direct-contact alternative/);
+for (const phrase of ['website does not use enquiry forms', 'contact@gridsmith.uk', 'WhatsApp and text-message links']) {
+  expect(`direct accessibility requires ${phrase}`, directContactAccessibilityProblems(directAccessibility.replace(phrase, '')), /direct-contact alternative/);
+}
+expect('contradictory direct accessibility refused', directContactAccessibilityProblems(directAccessibility + ' Our enquiry forms need JavaScript.'), /direct-contact alternative/);
 
 // danglingReferences — lists and sub-clauses.
 expect('reference list', danglingReferences('## 1. A\n## 2. B\nSee sections 1, 2 and 7.\n'), /^7$/);

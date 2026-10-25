@@ -1,3 +1,5 @@
+> **GS-LAUNCH-011 preparation (25 October 2026):** Hostinger static direct-contact launch is approved architecturally; live form intake is not a prerequisite for that architecture. The explicit direct Privacy mode now requires DIRECT-CONTACT-VERIFIED instead; current legacy adopted Privacy/register remain unchanged and unmet. Do not set H4-B met or activate a form to satisfy older wording below. H4-B remains mandatory for future form-mode disclosures/activation. Proposed Privacy 2.7 and Accessibility 2.4 need F1-F5 confirmation and fresh exact-text adoption before switching register mode; all-seven publication authority, Privacy co-publication, retention/Hostinger/A-2/parity and separate artifact-bound cutover controls remain. No approval is recorded here. See ../../_shared/GS-LAUNCH-011.md.
+
 # Legal preparation, adoption and separate release controls
 
 22 October 2026. Supersedes obsolete solicitor/PI/temporary-domain checklist wording; exact prior record retained in archive. No external certification is claimed.

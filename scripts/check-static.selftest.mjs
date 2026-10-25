@@ -503,15 +503,33 @@ for (const identity of [null, {}, { ...staticSubject, profile: 'staging' }, { ..
   { ...staticSubject, siteOrigin: REVIEW_STAGING_ORIGIN }, { ...staticSubject, sourceModified: true }]) {
   assert.deepEqual(staticLighthouseProblems(identity), ['STATIC_LIGHTHOUSE_SUBJECT']);
 }
-assert.deepEqual(productionInputProblems(undefined, readyPublication, readyRegister, null, 'direct'), []);
-assert.equal(productionInputProblems(undefined, publication, register, null, 'direct').length, 7);
+const directRegister = structuredClone(readyRegister);
+directRegister.documents.privacy.contactMode = 'direct';
+directRegister.documents.privacy.publicationPrerequisites = directRegister.documents.privacy.publicationPrerequisites
+  .map(item => item.id === 'H4-B-INTAKE-PROMOTED' ? { ...item, id: 'DIRECT-CONTACT-VERIFIED' } : item);
+directRegister.documents.privacy.prerequisitesMet['DIRECT-CONTACT-VERIFIED'] = 'Synthetic exact-source/contact/legal receipt; no real approval';
+assert.deepEqual(productionInputProblems(undefined, readyPublication, directRegister, null, 'direct'), []);
+assert.equal(productionInputProblems(undefined, publication, register, null, 'direct').length, 9);
+assert.equal(productionInputProblems(undefined, publication, register, null, 'direct').filter(p => /is not PUBLISHABLE/.test(p)).length, 7);
+assert(productionInputProblems(undefined, readyPublication, readyRegister, null, 'direct').some(p => /no explicit direct-contact/.test(p)));
+for (const evidence of [undefined, '', '  ']) {
+  const subject = structuredClone(directRegister);
+  subject.documents.privacy.prerequisitesMet['DIRECT-CONTACT-VERIFIED'] = evidence;
+  assert.deepEqual(productionInputProblems(undefined, readyPublication, subject, null, 'direct'),
+    ['LEGAL: DIRECT-CONTACT-VERIFIED has no recorded owner/verification receipt']);
+}
+const wrongMode = structuredClone(directRegister); wrongMode.documents.privacy.contactMode = 'edge';
+assert.deepEqual(productionInputProblems(undefined, readyPublication, wrongMode, null, 'direct'),
+  ['LEGAL: Privacy has no explicit direct-contact processing mode']);
+assert.deepEqual(productionInputProblems(intake, readyPublication, directRegister, intake, 'edge'),
+  ['LEGAL: form activation requires form-mode Privacy and H4-B-INTAKE-PROMOTED']);
 for (const url of [PREVIEW_INTAKE_URL, intake]) {
-  assert.deepEqual(codes(productionInputProblems(url, readyPublication, readyRegister, intake, 'direct')), ['INTAKE']);
+  assert.deepEqual(codes(productionInputProblems(url, readyPublication, directRegister, intake, 'direct')), ['INTAKE']);
 }
 const directFixture = new Map(prodFixture);
 for (const name of ['contact.html', 'press/contact.html']) {
   set(directFixture, name, directFixture.get(name).toString().replace(/<form\b[^]*?<\/form>/,
-    '<aside data-static-contact-shell><a href="mailto:synthetic@example.invalid">Email</a><a href="https://wa.me/440000000000">WhatsApp</a></aside>'));
+    '<aside data-static-contact-shell><a href="mailto:contact@gridsmith.uk">Email</a><a href="https://wa.me/447405448534">WhatsApp</a><a href="sms:+447405448534">Text</a></aside>'));
 }
 set(directFixture, 'press/contact/thank-you.html', directFixture.get('press/contact/thank-you.html').toString()
   .replaceAll('That has reached us', 'This website does not collect enquiries through a form'));
@@ -525,9 +543,14 @@ assert.deepEqual(inspectDirect(directFixture), []);
 let directProofs = 0;
 for (const [name, mutate, code] of [
   ['form', f => set(f, 'contact.html', f.get('contact.html') + '<form></form>'), 'CONTACT'],
+  ['form outside contact routes', f => set(f, 'about.html', f.get('about.html') + '<form action="https://example.invalid/intake"></form>'), 'CONTACT'],
   ['shell', f => editProd(f, 'contact.html', 'data-static-contact-shell', 'data-other'), 'CONTACT'],
   ['email', f => editProd(f, 'contact.html', 'mailto:', 'other:'), 'CONTACT'],
   ['WhatsApp', f => editProd(f, 'press/contact.html', 'https://wa.me/', 'https://example.invalid/'), 'CONTACT'],
+  ['SMS missing', f => editProd(f, 'contact.html', 'sms:', 'other:'), 'CONTACT'],
+  ['email wrong recipient', f => editProd(f, 'contact.html', 'mailto:contact@gridsmith.uk', 'mailto:synthetic@example.invalid'), 'CONTACT'],
+  ['WhatsApp wrong recipient', f => editProd(f, 'press/contact.html', 'wa.me/447405448534', 'wa.me/440000000000'), 'CONTACT'],
+  ['SMS wrong recipient', f => editProd(f, 'press/contact.html', 'sms:+447405448534', 'sms:+440000000000'), 'CONTACT'],
   ['confirmation', f => editProd(f, 'press/contact/thank-you.html', 'This website does not collect enquiries through a form', 'That has reached us'), 'FORM'],
   ...['html', 'js', 'txt', 'json'].map(ext => [ext + ' intake leak', f => set(f, ext === 'html' ? 'contact.html' : 'leak.' + ext, (ext === 'html' ? f.get('contact.html') : '') + PREVIEW_INTAKE_URL), 'CONTACT']),
   ['missing error', f => f.delete('500.html'), '500'],

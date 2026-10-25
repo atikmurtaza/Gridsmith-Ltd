@@ -4,6 +4,7 @@ import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { artifactNoReviewProblems } from './review-public-rules.mjs';
+import { FACTS } from './company-facts-rules.mjs';
 import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { legalPreviewProfile } from './legal-preview-rules.mjs';
 import { PRODUCTION_ORIGIN } from '../lib/build/production.ts';
@@ -108,8 +109,9 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     if (['/contact', '/press/contact'].includes(route.path)) {
       const kind = route.path === '/contact' ? 'contact' : 'press';
       if (contactMode === 'direct') {
-        if (!/data-static-contact-shell/.test(text) || !/href="mailto:[^"\s]+@[^"\s]+"/.test(text) ||
-            !/href="https:\/\/wa.me\/\d+"/.test(text) || /<form\b/i.test(text)) bad('CONTACT', 'direct email/WhatsApp contact missing or a form remains');
+        if (!/data-static-contact-shell/.test(text) ||
+            ![`mailto:${FACTS.contactEmail}`, FACTS.whatsAppHref, FACTS.smsHref].every(href => text.includes(`href="${href}"`)) ||
+            /<form\b/i.test(text)) bad('CONTACT', 'approved direct email/WhatsApp/SMS contact missing or a form remains');
       } else if (!new RegExp(`<form\\b[^>]*data-edge-form="${kind}"`).test(text) || /data-static-contact-shell/.test(text) ||
           /<form\b[^>]*\baction=/i.test(text) || !/<noscript>[^]*JavaScript is required[^]*mailto:/i.test(text)) bad('FORM', 'functional Edge form/no-JS disclosure missing or runtime binding present');
     }
@@ -154,6 +156,9 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     }
     totalBytes += data.length;
     const text = data.toString('utf8');
+    if (contactMode === 'direct' && /\.html$/.test(name) && /<form\b/i.test(text)) {
+      bad('CONTACT', 'form emitted in direct-contact website');
+    }
     if (contactMode === 'direct' && /\.(?:html|js|txt|json)$/.test(name) &&
         /supabase\.co|gs-lead-intake|data-edge-form|::vercel:/.test(text)) bad('CONTACT', 'intake/Preview transport or obsolete hosting marker in direct-contact artifact');
     if (/\.(?:html|css|js|txt|xml|json|svg)$/.test(name) &&

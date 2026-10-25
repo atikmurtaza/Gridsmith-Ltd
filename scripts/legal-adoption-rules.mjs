@@ -121,9 +121,12 @@ export const REQUIRED_PREREQUISITES = {
 };
 
 /** The prerequisites an adopted entry must list. Privacy does not list itself (R4 review L1). */
-export function requiredPrerequisites(slug) {
+export function requiredPrerequisites(slug, contactMode = 'edge') {
   const all = slug === 'privacy' ? REQUIRED_PREREQUISITES.all.filter((id) => id !== 'PRIVACY-PUBLISHABLE') : REQUIRED_PREREQUISITES.all;
-  return [...all, ...(REQUIRED_PREREQUISITES[slug] ?? [])];
+  // The legacy intake requirement survives for future forms; direct contact needs its own receipt.
+  const specific = slug === 'privacy' && contactMode === 'direct'
+    ? ['DIRECT-CONTACT-VERIFIED', 'HOSTINGER-PROCESSOR-CHAIN'] : REQUIRED_PREREQUISITES[slug] ?? [];
+  return [...all, ...specific];
 }
 
 /**
@@ -153,6 +156,9 @@ export function registerProblems(slug, entry, draftVersion, expectedDraft, conte
   const p = [];
   if (!entry) return [`${slug}: no entry in the GS-O003-R register`];
   if (!STATES.includes(entry.state)) p.push(`${slug}: unknown state ${JSON.stringify(entry.state)}`);
+  if (slug === 'privacy' && !['edge', 'direct'].includes(entry.contactMode ?? 'edge')) {
+    p.push('privacy: unknown contactMode');
+  }
   if ((entry.draft ?? null) !== (expectedDraft ?? null)) {
     p.push(`${slug}: register draft ${JSON.stringify(entry.draft)} is not ${JSON.stringify(expectedDraft)}`);
   }
@@ -182,7 +188,7 @@ export function registerProblems(slug, entry, draftVersion, expectedDraft, conte
         p.push(`${slug}: ${entry.state} without recorded evidence for ${id}, an operational condition the adopted text describes as true`);
       }
     }
-    for (const id of requiredPrerequisites(slug)) {
+    for (const id of requiredPrerequisites(slug, entry.contactMode)) {
       if (!listed.has(id)) p.push(`${slug}: adopted without the publication prerequisite ${id}`);
     }
     // GS-R16-001: publication approval must say, in its own words, that it is not cutover authority.
@@ -270,11 +276,17 @@ export function instrumentProblems(slug, markdown) {
 /** Privacy and cookie policies against what the site does. `facts` comes from the source. */
 export function parityProblems(privacy, cookies, facts) {
   const p = [];
-  for (const provider of ['Hostinger', 'Supabase', 'Resend']) {
+  for (const provider of facts.contactMode === 'direct' ? ['Hostinger'] : ['Hostinger', 'Supabase', 'Resend']) {
     if (!privacy.includes(provider)) p.push(`privacy: does not name ${provider}`);
   }
   if (!/Information Commission\b/.test(privacy)) p.push('privacy: does not name the Information Commission');
-  if (!/Ireland/.test(privacy)) p.push('privacy: does not say where enquiries are stored');
+  if (facts.contactMode === 'direct') {
+    if (!/website has no enquiry form/.test(privacy) ||
+        !/email, WhatsApp message or text message/.test(privacy)) p.push('privacy: direct-contact channels or no-form disclosure missing');
+    if (/Supabase\*\* receives website enquiries|Resend\*\* sends internal enquiry notifications|enquiries are stored in Ireland|website and form providers|submission references used to prevent duplicates/.test(privacy)) {
+      p.push('privacy: inactive website intake described as current processing');
+    }
+  } else if (!/Ireland/.test(privacy)) p.push('privacy: does not say where enquiries are stored');
   if (!cookies.includes(facts.cookieName)) p.push(`cookies: does not name the cookie the site sets (${facts.cookieName})`);
   if (!new RegExp(`\\b${facts.cookieDays} days\\b`).test(cookies)) p.push(`cookies: does not state the ${facts.cookieDays}-day duration the site sets`);
   if (facts.storageApis.length && !/local storage/i.test(cookies)) p.push('cookies: the site uses browser storage the policy does not mention');
@@ -282,6 +294,13 @@ export function parityProblems(privacy, cookies, facts) {
     p.push(`cookies: says no local storage, but the source uses ${facts.storageApis.join(', ')}`);
   }
   return p;
+}
+
+/** Text checks complement the receipt; they cannot prove mailbox operation or historical erasure. */
+export function directContactAccessibilityProblems(markdown) {
+  return /website does not use enquiry forms/.test(markdown) &&
+    /contact@gridsmith\.uk/.test(markdown) && /WhatsApp and text-message links/.test(markdown) &&
+    !/enquiry forms need JavaScript/.test(markdown) ? [] : ['accessibility: direct-contact alternative does not match the no-form website'];
 }
 
 /** Event-based commencement keeps owner adoption separate from later cutover. */
