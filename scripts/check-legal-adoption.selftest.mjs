@@ -242,11 +242,21 @@ for (const channel of ['SMS', 'text message', 'text-message']) {
   expect(`direct accessibility rejects withdrawn ${channel}`, directContactAccessibilityProblems(directAccessibility + ' ' + channel), /direct-contact alternative/);
 }
 // Exact proposal files are permanent subjects; no adoption/register mutation is involved.
-const proposedPrivacy = read('proposed/GS-LAUNCH-012/privacy-policy-2.7.md');
-const proposedAccessibility = read('proposed/GS-LAUNCH-012/accessibility-statement-2.4.md');
+const proposedPrivacy = read('proposed/GS-LAUNCH-013/privacy-policy-2.7.md');
+const proposedAccessibility = read('proposed/GS-LAUNCH-013/accessibility-statement-2.4.md');
+const proposedConsumer = read('proposed/GS-LAUNCH-013/client-terms-consumers-3.4.md');
+assert.equal(proposedPrivacy, read('proposed/GS-LAUNCH-012/privacy-policy-2.7.md'));
+assert.equal(proposedAccessibility, read('proposed/GS-LAUNCH-012/accessibility-statement-2.4.md'));
+assert.equal(consumer.split('WhatsApp or text').length - 1, 2);
+assert.equal(proposedConsumer, consumer.replace('**Version 3.3**', '**Version 3.4**')
+  .replace('**Review date: 22 October 2026**', '**Review date: 25 October 2026**')
+  .replaceAll('WhatsApp or text', 'WhatsApp'));
+assert.match(proposedConsumer, /phone or video call/);
+const actualConsumerEntry = JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json', 'utf8')).documents['consumer-client-terms'];
+assert.throws(() => assertAdoptedSource('consumer-client-terms', actualConsumerEntry, proposedConsumer), /differs from the exact owner-adopted text/);
 expect('Privacy 2.7 proposal direct parity', parityProblems(proposedPrivacy, cookies, directFacts), null);
 expect('Accessibility 2.4 proposal direct parity', directContactAccessibilityProblems(proposedAccessibility), null);
-for (const [slug, proposal] of [['privacy', proposedPrivacy], ['accessibility', proposedAccessibility]]) {
+for (const [slug, proposal] of [['privacy', proposedPrivacy], ['accessibility', proposedAccessibility], ['consumer-client-terms', proposedConsumer]]) {
   expect(`${slug} proposed draft rules`, draftProblems(slug, proposal), null);
   expect(`${slug} proposed instrument rules`, instrumentProblems(slug, proposal), null);
 }
@@ -254,6 +264,8 @@ assert.match(proposedPrivacy, /historical/i);
 for (const disclosure of ['Supabase', 'Resend', 'developer-created backups', 'provider-managed backups', 'owner or sales department', 'no current overseas access', 'require verification']) assert(proposedPrivacy.includes(disclosure), disclosure);
 assert.match(proposedPrivacy, /not represented as automated/);
 assert.match(proposedAccessibility, /comprehensive assistive-technology and screen-reader audit.*has not been completed/);
+expect('proposed consumer cannot use current workflow version', coordinatedReviewProblems({ ...coordinated, privacy: proposedPrivacy, 'consumer-client-terms': proposedConsumer }, workflow), /current consumer version/);
+expect('future workflow version-only correction suffices', coordinatedReviewProblems({ ...coordinated, privacy: proposedPrivacy, 'consumer-client-terms': proposedConsumer }, workflow.replaceAll('Consumers version 3.3', 'Consumers version 3.4').replaceAll('Consumers 3.3 (attached)', 'Consumers 3.4 (attached)')), null);
 expect('contradictory direct accessibility refused', directContactAccessibilityProblems(directAccessibility + ' Our enquiry forms need JavaScript.'), /direct-contact alternative/);
 
 // danglingReferences — lists and sub-clauses.

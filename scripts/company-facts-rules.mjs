@@ -134,11 +134,26 @@ export const CALL_RULES = [
   {
     id: 'SMS-PUBLIC-COPY',
     pattern: /\b(?:SMS|text[-\s]+messages?|text\s+us|WhatsApp\s+(?:or|and)\s+text)\b/i,
+    // Legal instruments may discuss retained messages; reject offers rather than those nouns.
+    legalPatterns: [
+      /\b(?:WhatsApp|email)\s+(?:or|and)\s+(?:text|SMS)\b/i,
+      /\b(?:text|SMS)\s+us\b/i,
+      /\bsend\s+(?:us\s+)?(?:an?\s+)?(?:SMS|text(?:[-\s]+messages?)?)\b/i,
+      /\b(?:contact|message|reach)\s+(?:us|Gridsmith|me|the\s+(?:team|owner|sales\s+department))\s+(?:by|via|using|on)\s+(?:SMS|text(?:[-\s]+messages?)?)\b/i,
+      /\b(?:accept|welcome|take)\s+(?:enquiries|messages|contact)\s+(?:by|via|using|on)\s+(?:SMS|text(?:[-\s]+messages?)?)\b/i,
+      /\b(?:SMS|text[-\s]+messages?)\s*(?::\s*(?:\+?44|0\d)|(?:enquiries\s+)?(?:links?|welcome|available|accepted)\b)/i,
+    ],
     why: 'public copy offers or names the withdrawn text-message channel',
   },
   {
     id: 'CALL-CTA-DIRECT',
     pattern: /\b(?:call|ring|phone)\s+(?:Gridsmith|me|the\s+(?:office|team))\b|\b(?:voice|telephone|phone)\s+calls?\b|\b(?:call|ring|phone|telephone)\s*:?\s*(?:on\s+)?(?:\+?44|0\d)/i,
+    legalPatterns: [
+      /\b(?:call|ring|phone|telephone)\s+(?:us|Gridsmith|me|the\s+(?:office|team|owner|sales\s+department))\b/i,
+      /\b(?:voice|telephone|phone)\s+calls?\s*(?::\s*(?:\+?44|0\d)|(?:welcome|available|accepted)\b)/i,
+      /\b(?:contact|reach)\s+(?:us|Gridsmith|me|the\s+(?:team|owner|sales\s+department))\s+(?:by|via|using|on)\s+(?:voice\s+call|telephone|phone)\b/i,
+      /\b(?:call|ring|phone|telephone)\s*:?\s*(?:on\s+)?(?:\+?44|0\d)/i,
+    ],
     why: 'public copy offers a voice-call channel',
   },
   {
@@ -457,7 +472,8 @@ export function responseProblems(route, text) {
 export function callProblems(route, text) {
   const t = asText(text);
   return CALL_RULES.flatMap((rule) => {
-    const m = t.match(rule.pattern);
+    const patterns = route.startsWith('/legal/') ? rule.legalPatterns ?? [rule.pattern] : [rule.pattern];
+    const m = patterns.map((pattern) => t.match(pattern)).find(Boolean);
     return m
       ? [
           `${route} carries ${rule.id}: ${JSON.stringify(m[0])} — ${rule.why}. GS-R001-R: the ` +

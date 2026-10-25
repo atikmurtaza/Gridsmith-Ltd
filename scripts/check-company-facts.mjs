@@ -25,7 +25,7 @@
  *
  * 1. the statutory disclosure is present and correct in the footer of every route;
  * 2. only the approved email address is published, and every `mailto:` points at it;
- * 3. only the approved telephone number is published, and every `tel:` is the RFC 3966 form;
+ * 3. only the approved WhatsApp number is published; no `tel:` or `sms:` actions;
  * 4. the registered office appears only in the footer and in the `_legal/` instruments;
  * 5. no response-time guarantee, no SLA, no "ASAP", no published business hours;
  * 6. no public team member.
@@ -122,6 +122,9 @@ const ROUTES = [
   '/legal/terms',
   '/legal/consumer-client-terms',
   '/legal/business-client-terms',
+  '/legal/cookies',
+  '/legal/accessibility',
+  '/legal/client-terms',
 ];
 
 /**
@@ -135,6 +138,9 @@ const OFFICE_ALLOWED = [
   '/legal/terms',
   '/legal/consumer-client-terms',
   '/legal/business-client-terms',
+  '/legal/cookies',
+  '/legal/accessibility',
+  '/legal/client-terms',
 ];
 
 /** Below this, a served route carried no text worth the name and the scan measured nothing. */
