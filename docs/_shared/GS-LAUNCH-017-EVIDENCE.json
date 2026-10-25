@@ -5,8 +5,8 @@
   "platform": "win32",
   "node": "v24.15.0",
   "implementationCommit": "Resolve git log -1 --format=%H -- lib/build/target.ts; final artifactSourceSha below is the tested clean build.",
-  "artifactSourceSha": "626072e352b17abb87b021bd5e3d7b20b592c58e",
-  "artifactSourceModified": true,
+  "artifactSourceSha": "9f2df255602ea9b92d9aa3e9d72909896e05fc78",
+  "artifactSourceModified": false,
   "ownerAuthority": "Explicit user reply in GS-LAUNCH-017 permits all seven unchanged legal texts on the exact temporary domain for owner preview only; production publication remains held.",
   "environment": "Own exact-lock Windows install, PUPPETEER_SKIP_DOWNLOAD=true, only development dataset in local .env; static exporter forces production dataset; no privileged credentials supplied.",
   "verificationLimit": "Earlier uncommitted candidate builds are retained as such. Final clean-source build is separately labelled. Normal build/HTTP checks are regression evidence; static/hosted/browser acceptance is distinct.",
@@ -347,6 +347,67 @@
       "log": "build/gs-launch-017/2026-10-25T17-22-07-715Z-verify-static-commit-174e88ff-1490-40c5-a57b-7d35b69b3fa6.log",
       "logBytes": 60610,
       "logSha256": "8f80d1030d254b5167509184ecfc7a4f61b1b43e143cacd54f30a7340ad3f485",
+      "status": "PASS"
+    },
+    {
+      "label": "owner-preview-build-committed",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "scripts/build-static.mjs"
+      ],
+      "startedAt": "2026-10-25T17:23:13.023Z",
+      "endedAt": "2026-10-25T17:24:39.320Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-017/2026-10-25T17-23-13-023Z-owner-preview-build-committed-94ab866d-f32a-463c-b574-2a1ef6c3f45b.log",
+      "logBytes": 4646,
+      "logSha256": "8ddd83f2abe3ad118efe141dff3d12e73f46572d6da9bef4c17872bf2380971e",
+      "status": "PASS"
+    },
+    {
+      "label": "candidate-artifact-committed",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "scripts/check-static-artifact.mjs"
+      ],
+      "startedAt": "2026-10-25T17:25:28.444Z",
+      "endedAt": "2026-10-25T17:25:29.228Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-017/2026-10-25T17-25-28-444Z-candidate-artifact-committed-dccd85a1-1cb6-4769-8af1-d0ae7fbb5563.log",
+      "logBytes": 94,
+      "logSha256": "3af8e339009dc7cabc14534e584df08c7a8697540a8b60a8a4864c131a388c81",
+      "status": "PASS"
+    },
+    {
+      "label": "candidate-legal-committed",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "scripts/check-legal-parity.mjs",
+        "--artifact-dir=build/owner-preview-candidate"
+      ],
+      "startedAt": "2026-10-25T17:25:29.280Z",
+      "endedAt": "2026-10-25T17:25:29.380Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-017/2026-10-25T17-25-29-280Z-candidate-legal-committed-27cdc8c6-d3f5-4088-ae81-7929fd39c848.log",
+      "logBytes": 317,
+      "logSha256": "8158760ab679a17dfd92b6ccd447c50ad4ae98ab2fe631be3b946b402f0219d5",
+      "status": "PASS"
+    },
+    {
+      "label": "whole-candidate-contact",
+      "executable": "C:\\nvm4w\\nodejs\\node.exe",
+      "args": [
+        "build/gs-launch-017/inspect-candidate.mjs"
+      ],
+      "startedAt": "2026-10-25T17:25:29.426Z",
+      "endedAt": "2026-10-25T17:25:29.987Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-017/2026-10-25T17-25-29-426Z-whole-candidate-contact-f15218a4-8d87-4365-b00c-80d144a7e165.log",
+      "logBytes": 558,
+      "logSha256": "49c397b1f34bb0e28edeef5bdf38cb5e8627bc3aba529f969d0fc1e38e52b01c",
       "status": "PASS"
     }
   ],
@@ -1997,10 +2058,10 @@
   ],
   "candidate": {
     "fileCount": 214,
-    "totalBytes": 31921782,
-    "artifactIdentity": "c857cba05cfc357158d9f03773d00d62f627eaf409dcff16cb9808d323239f6d",
-    "completeFileInventorySha256": "7261028e75e809e1ddd0aa8e66aca6e298c470811027cb7d5817ff67b1b1a61d",
-    "manifestSha256": "6d359c50d518c891b5d58db4515faa81d4fff4c1cd88916a5a46486377622a68",
+    "totalBytes": 31921824,
+    "artifactIdentity": "f3cc8ecf061b9bf73bc551610066f08d17c9d5fbd50f86421a135bf9babb3b80",
+    "completeFileInventorySha256": "7a00f0d04757ffa85b7c0148d86badbd5aec8d7c8fc63506b31f3472d0ef2bb8",
+    "manifestSha256": "e31393fc33a868faef0f330db4682f3c9001357eaed5a85fb8cd5c3a6d122420",
     "archiveCreated": false
   },
   "independentReviews": {

@@ -25,7 +25,9 @@ Five independent read-only stage reviews covered specification, design, accessib
 ## Build and artifact disposition
 
 - Validation output: `C:\Users\atikm\.codex\worktrees\gs-launch-017\Gridsmith Ltd\build\owner-preview-candidate\`.
-- First fresh build: 61 eligible HTML routes, 63 HTML files including 404/500, 214 total files. Final clean-source counts, bytes, identity and every file hash are recorded in `GS-LAUNCH-017-ARTIFACT-MANIFEST.json` after rebuilding the committed source.
+- Final clean build: source `9f2df255602ea9b92d9aa3e9d72909896e05fc78`, `sourceModified:false`; 25 October 2026, 17:23:13–17:24:39 UTC, exit 0. 61 eligible HTML routes, 63 HTML files including 404/500, **214 total files, 31,921,824 bytes**. These include 40 JavaScript files, eight CSS files and 19 local WOFF2 font files.
+- Payload identity (213 files, excluding its own identity document): `f3cc8ecf061b9bf73bc551610066f08d17c9d5fbd50f86421a135bf9babb3b80`.
+- Complete 214-file inventory SHA-256: `7a00f0d04757ffa85b7c0148d86badbd5aec8d7c8fc63506b31f3472d0ef2bb8`. This hashes the sorted path/byte/hash records, not a ZIP. Every file and CMS route revision is recorded in [the manifest](GS-LAUNCH-017-ARTIFACT-MANIFEST.json).
 - Identity: `profile:owner-preview`, `dataset:production`, `legalPreview:true`, `contactMode:direct`, `intakeOrigin:null`, `rehearsal:false`, **`deployable:false`, `releaseStatus:ACCEPTANCE_PENDING`**.
 - Deployable release directory: **not created**. Archive filename: **not created**. Archive checksum: **N/A**.
 
@@ -38,6 +40,7 @@ Exact command arguments, UTC times, exits, log hashes, source/legal hashes and a
 - PASS: own fresh unchanged-lockfile install, complete `verify:static` including typecheck/lint, new positive/adverse preview tests and unchanged production refusals.
 - PASS: clean normal `verify:build`, secret-marker checks, tokens/themes and all 69 normal-build bundle budgets. This is regression evidence, not static Lighthouse acceptance.
 - PASS: fresh owner-preview static generation and exact artifact contract, including every eligible route, root-relative assets, internal destinations/fragments, exact temporary canonicals, noindex, direct contact and absence of Server Actions, image optimiser and runtime CMS/intake transport.
+- PASS: final whole-candidate company/contact scan, ten existing company predicates across all 61 eligible routes; every route includes the exact email and WhatsApp destinations, with zero findings. All 213 payload hashes and the identity count rechecked against the clean-source export.
 - PASS: built legal parity — all seven documents, 109 clauses, 406 paragraphs match canonical source word-for-word; review banners checked. All seven canonical bytes/fingerprints and the register match the starting reference.
 - PASS: selected normal local HTTP gates for company/contact, legal parity, consumer terms, headers, redirects, launch, VAT and service dataset. Development-only branches are reported as such; their seed/Technical allowances are not credited to the preview. No form submission or message was sent.
 - PASS: production dependency audit, zero findings. **FAIL:** full audit, nine high affected toolchain entries across the same three residual advisories. No risk acceptance is inferred and no dependency was changed.
