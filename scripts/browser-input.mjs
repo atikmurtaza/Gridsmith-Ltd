@@ -15,8 +15,8 @@ const WORKFLOWS = {
   '.github/workflows/ci.yml': '346a08373d6f8eb8b5dca02981980c0a916db63f0388535f2fcf68eed1bee9cc',
   '.github/workflows/hostinger-staging.yml': '4e436c2ac8f4eda00bd71cbc845c3fbfd0ea1fc6e78848bf8a5335c75d19453f',
 };
-const PACKAGE_SHA256 = 'c3887b334f93f77ef7a4ee66c1639d2c1395f676b4cff039adb10940c320f9c4';
-const LOCK_SHA256 = '2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c';
+const PACKAGE_SHA256 = '97854c2b19e9ca55d5a793bfb5a768ce28d2856d7c44159ebdccfff2b64dad31';
+const LOCK_SHA256 = 'f45a725650c64e81bc8d580569e012ad07ca3d254e8ffaa63fb22c6cc57a6fa3';
 const GUARD_SUBJECTS = new Set(['scripts/browser-input.mjs', 'scripts/browser-input.selftest.mjs']);
 const SAFE_GIT_ENV = {
   GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_SYSTEM: '/dev/null', GIT_CONFIG_GLOBAL: '/dev/null',
