@@ -1,0 +1,606 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-015",
+  "status": "LOCAL_VERIFICATION_COMPLETE_PUBLICATION_HOLD",
+  "date": "2026-10-25",
+  "timezone": "Europe/London",
+  "recordedAt": "2026-10-25T15:02:04.061Z",
+  "source": {
+    "commit": "c7f1b9478d4fe3e18ecaabd7a1fabe3011d03ac0",
+    "branch": "codex/gs-launch-015",
+    "worktree": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-015\\Gridsmith Ltd",
+    "documentationCommitLocator": "git log -1 --format=%H -- docs/_shared/GS-LAUNCH-015.md",
+    "finalCommitArtifactAcceptance": "NOT RUN",
+    "packageSha256": "97854c2b19e9ca55d5a793bfb5a768ce28d2856d7c44159ebdccfff2b64dad31",
+    "lockfileSha256": "f45a725650c64e81bc8d580569e012ad07ca3d254e8ffaa63fb22c6cc57a6fa3"
+  },
+  "authority": {
+    "kind": "SUPPLIED_OWNER_INSTRUCTION_NOT_OPERATIONAL_SIGNATURE",
+    "requestSha256": "a11b63794500d46eb99c3d98d0133c188fbab349692c98d9f4bc93d79622f755",
+    "requestUtf8": "# GS-LAUNCH-015 — Direct-Contact Operational Verification\r\n\r\n## Agent configuration\r\n\r\nAgent: OpenAI Codex\r\nReasoning: High\r\nSession: NEW\r\n\r\nRepository:\r\n`C:\\Users\\atikm\\Projects\\Gridsmith Ltd`\r\n\r\nStarting branch:\r\n`codex/gs-launch-014`\r\n\r\nStarting commit:\r\n`c7f1b9478d4fe3e18ecaabd7a1fabe3011d03ac0`\r\n\r\nCreate an isolated branch/worktree:\r\n`codex/gs-launch-015`\r\n\r\nRead GS-LAUNCH-014, GS-LAUNCH-011 through 013, relevant evidence JSON files, legal register, direct-contact controls, company details and release runbooks.\r\n\r\n## Objective\r\n\r\nPrepare and verify the genuine DIRECT-CONTACT-VERIFIED prerequisite using available source evidence and owner-confirmed operational facts.\r\n\r\nComplete every locally executable verification, distinguish confirmed evidence from missing evidence, and reduce remaining work to specific owner actions.\r\n\r\nDo not publish, deploy, modify production systems or weaken existing release gates.\r\n\r\n## 1. Confirm approved operating facts\r\n\r\nThe owner has confirmed:\r\n\r\n- Email: contact@gridsmith.uk, active and monitored.\r\n- WhatsApp: +447405448534, active and monitored.\r\n- No public SMS or voice-call options.\r\n- Owner or sales department accesses enquiries.\r\n- Direct enquiries are not currently copied into other systems.\r\n- Historical data may remain in Supabase, Resend, email and developer-created backups.\r\n- Website hosting is France/EU.\r\n- No current overseas company-personnel access, according to the owner.\r\n- Owner manages retention, deletion, backups and privacy requests.\r\n\r\nTreat these as owner attestations, not independent provider tests.\r\n\r\nDo not ask the owner to reconfirm settled facts without a specific contradiction.\r\n\r\n## 2. Verify direct-contact implementation\r\n\r\nInspect the final current source for:\r\n\r\n- Exact mailto recipient.\r\n- Exact WhatsApp destination.\r\n- Email and WhatsApp on both contact pages.\r\n- Accessible link names.\r\n- Email fallback without JavaScript.\r\n- No SMS/tel actions or advertised voice contact.\r\n- No website enquiry form.\r\n- No active website intake transport.\r\n- No Resend enquiry notification.\r\n- No false message-received confirmation.\r\n- Consistent contact details across Master, Design, Digital, Press, About, footer and legal content.\r\n\r\nRun existing positive and adverse tests.\r\n\r\nDo not alter the approved contact architecture.\r\n\r\n## 3. Build the operational evidence record\r\n\r\nCreate a structured DIRECT-CONTACT-VERIFIED evidence draft containing:\r\n\r\n- Owner identity and attested facts.\r\n- Exact source commit.\r\n- Package/lockfile hashes.\r\n- Canonical Privacy 2.7 and Accessibility 2.4 hashes.\r\n- Seven-document adoption state.\r\n- Source inspection results.\r\n- Executed test receipts.\r\n- Contact-channel operational evidence status.\r\n- Outstanding provider/operational checks.\r\n- Separate final-artifact verification requirements.\r\n\r\nWhere a genuine operational fact has already been confirmed by the owner, reference the existing approval evidence.\r\n\r\nWhere independent evidence is necessary but unavailable, record UNVERIFIED.\r\n\r\nDo not create fictional mailbox delivery receipts, WhatsApp delivery receipts, provider settings, signatures or dates.\r\n\r\nDo not send test enquiries without explicit permission.\r\n\r\n## 4. Evaluate prerequisite satisfaction\r\n\r\nDetermine whether the existing DIRECT-CONTACT-VERIFIED specification can be satisfied from the actual available evidence.\r\n\r\nIf all required prebuild evidence genuinely exists, prepare the receipt through the existing controlled mechanism.\r\n\r\nIf anything is missing, leave the prerequisite UNMET and provide only the precise missing evidence.\r\n\r\nDo not change the prerequisite definition merely to make it pass.\r\n\r\nDo not confuse prebuild source/operational verification with final-artifact or hosted acceptance.\r\n\r\nPreserve all-seven publication refusal and separate publication authority.\r\n\r\n## 5. Verify legal integration\r\n\r\nConfirm:\r\n\r\n- Seven canonical documents remain OWNER_ADOPTED.\r\n- Zero documents are PUBLISHABLE.\r\n- All seven fingerprints remain correct.\r\n- Consumer Terms 3.4 workflow references are current.\r\n- Historical adoption evidence is preserved.\r\n- Privacy uses direct-contact mode.\r\n- H4-B remains available for future form-mode operation.\r\n- No CMS write is required for local verification.\r\n\r\nDo not reopen approved legal wording without a genuine new inconsistency.\r\n\r\n## 6. Release blockers\r\n\r\nProduce one concise release-blocker matrix covering:\r\n\r\n1. Direct-contact operational evidence.\r\n2. Historical-data/provider obligations that genuinely affect publication.\r\n3. Hostinger live WordPress root/database mapping.\r\n4. Current Hostinger auto-publisher configuration.\r\n5. Matched WordPress files/database backups and restore proof.\r\n6. Actual static upload/root-switch and rollback mechanism.\r\n7. Authorised Ubuntu 24.04/Debian 12 Linux environment.\r\n8. Outstanding development-toolchain risk decision.\r\n9. Browser/Apache/axe/Lighthouse and exact-source CI acceptance.\r\n10. Legal publication authority and final artifact-bound cutover authority.\r\n\r\nFor each item, record whether it is COMPLETE, PARTIAL, BLOCKED or NOT RUN, the evidence source, the owner action required and whether it can proceed independently.\r\n\r\nDo not treat a previous denied rehearsal as a deployable artifact.\r\n\r\n## 7. Local verification\r\n\r\nRun:\r\n\r\n- Full static verification.\r\n- Company/contact selftests.\r\n- Legal adoption/parity checks.\r\n- Clean normal build.\r\n- All 69 bundle budgets.\r\n- Production dependency audit.\r\n- Expected production-builder refusal.\r\n- Denied static rehearsal and artifact inspection, if applicable.\r\n\r\nPreserve unique logs for failed and successful attempts.\r\n\r\nDo not retry previously denied Docker creation.\r\n\r\nDo not claim Linux/browser/hosted acceptance based on Windows checks.\r\n\r\n## 8. Deliverables\r\n\r\nCreate:\r\n`docs/_shared/GS-LAUNCH-015.md`\r\n\r\nInclude:\r\n\r\n- Operational/source evidence matrix.\r\n- Direct-contact prerequisite status.\r\n- Exact source and legal hashes.\r\n- Tests executed and results.\r\n- Remaining owner evidence requests.\r\n- Concise release-blocker matrix.\r\n- One next actionable execution task.\r\n\r\nCommit locally on `codex/gs-launch-015`.\r\n\r\nReport full SHA and clean worktree status.\r\n\r\nNo push, CI dispatch, production CMS/provider writes, publication, deployment, WordPress changes, DNS/email changes, historical-data deletion or security-risk acceptance.\r\n\r\nDo not start GS-LAUNCH-016 automatically.\r\n\r\n## Success criteria\r\n\r\nThe direct-contact prerequisite has been assessed against genuine evidence, with all locally executable checks completed.\r\n\r\nAny remaining blocker is documented as one concrete owner/operator action rather than another open-ended investigation.\r\n\r\nAll existing legal, security, hosting and cutover protections remain intact.",
+    "priorFacts": "docs/_shared/GS-LAUNCH-012.md section 1",
+    "ownerIdentity": {
+      "organisation": "Gridsmith Ltd",
+      "existingNamedOperator": "Atik Murtaza via Gridsmith administration",
+      "basis": "Existing register R9 retention operator; current requester supplies owner attestations. No independent identity authentication performed."
+    },
+    "facts": [
+      {
+        "fact": "F1",
+        "status": "OWNER_ATTESTED",
+        "value": "contact@gridsmith.uk and WhatsApp +447405448534 active and monitored; no public SMS/voice"
+      },
+      {
+        "fact": "F2",
+        "status": "OWNER_ATTESTED",
+        "value": "Owner or sales department accesses enquiries; no current copying to other systems"
+      },
+      {
+        "fact": "F3",
+        "status": "OWNER_ATTESTED_UNCERTAINTY",
+        "value": "Historical records may remain in Supabase, Resend, email and developer-created backups"
+      },
+      {
+        "fact": "F4",
+        "status": "OWNER_ATTESTED",
+        "value": "Website France/EU; no current overseas company-personnel access"
+      },
+      {
+        "fact": "F5",
+        "status": "OWNER_ATTESTED",
+        "value": "Owner manages retention, deletion, backups and privacy requests"
+      }
+    ]
+  },
+  "directContactVerificationDraft": {
+    "id": "DIRECT-CONTACT-VERIFIED",
+    "state": "UNMET",
+    "recordType": "DRAFT_NOT_COMPLETED_RECEIPT",
+    "completedReceiptId": null,
+    "operationalCheckDate": null,
+    "privateOperationalEvidenceReference": null,
+    "sourceComponent": "COMPLETE_FOR_PINNED_SOURCE",
+    "specification": [
+      "docs/_shared/GS-LAUNCH-011.md section 3",
+      "docs/_shared/GS-LAUNCH-012.md section 6",
+      "docs/_legal/evidence/GS-O003-R-REGISTER.json"
+    ],
+    "operationalGaps": [
+      {
+        "id": "GS-L015-O1",
+        "fact": "F1",
+        "status": "UNVERIFIED",
+        "missing": "Dated private mailbox/WhatsApp access-control and usable email fallback check reference; operator and actual check date. No new test enquiry required."
+      },
+      {
+        "id": "GS-L015-O2",
+        "fact": "F2",
+        "status": "UNVERIFIED",
+        "missing": "Actual forwarding/linked-device recipient and custody inventory; no live website intake journey operational disposition, separately from any retained remote endpoint."
+      },
+      {
+        "id": "GS-L015-O3",
+        "fact": "F3",
+        "status": "UNVERIFIED",
+        "missing": "Minimised actual historical holdings/categories/purposes/bases/custody/locations/holds and applicable provider retention/expiry settings inventory."
+      },
+      {
+        "id": "GS-L015-O4",
+        "fact": "F4",
+        "status": "UNVERIFIED",
+        "missing": "Applicable email/Meta/content/historical-provider entities, processing/access locations and actual contractual/transfer coverage; agency execution before relevant access."
+      },
+      {
+        "id": "GS-L015-O5",
+        "fact": "F5",
+        "status": "UNVERIFIED",
+        "missing": "Documented-period applicability, custody and genuine review/deletion/rights/backup/restoration-deletion handling evidence; do not invent future review completion."
+      }
+    ],
+    "registerModified": false,
+    "prerequisiteDefinitionModified": false,
+    "deliveryTests": "NOT RUN; no send permission; no mandatory new send inferred"
+  },
+  "sourceInspection": {
+    "email": "mailto:contact@gridsmith.uk",
+    "whatsApp": "https://wa.me/447405448534",
+    "contactPages": [
+      "/contact",
+      "/press/contact"
+    ],
+    "noJavaScriptEmail": "Native anchor present in initial direct-export HTML; browser execution NOT RUN",
+    "accessibleNames": "Source reviewed; rendered/AT acceptance UNVERIFIED",
+    "noSmsTel": "PASS reviewed source/HTTP/offline predicates",
+    "noPublicEnquiryForm": "PASS production static profile and denied export only",
+    "noWebsiteIntakeTransport": "PASS production static transformation and offline contract; remote endpoint state UNVERIFIED",
+    "noResendEnquiryNotification": "PASS export transport/configuration contract; remote worker state UNVERIFIED",
+    "noFalseReceipt": "PASS direct Press thank-you source and offline contract",
+    "consistency": "PASS 10 company questions on 21 normal HTTP routes, 54 denied export routes",
+    "normalDevelopmentBuild": "Retains form/probe subjects; not form-free production artifact",
+    "reviewedFiles": [
+      "lib/build/target.ts",
+      "lib/build/production.ts",
+      "scripts/build-static.mjs",
+      "components/leads/StaticContactShell.tsx",
+      "app/(marketing)/contact/page.tsx",
+      "app/(press)/press/contact/page.tsx",
+      "app/(press)/press/contact/thank-you/page.tsx",
+      "components/chrome/Footer.tsx",
+      "components/content/Connect.tsx",
+      "lib/company/companyDetails.ts",
+      "scripts/check-static-artifact.mjs"
+    ]
+  },
+  "legal": {
+    "ownerAdopted": 7,
+    "publishable": 0,
+    "documents": [
+      {
+        "slug": "privacy",
+        "path": "docs/_legal/current/privacy-policy.md",
+        "version": "2.7",
+        "state": "OWNER_ADOPTED",
+        "adoptedOn": "2026-10-25",
+        "sha256": "822dd473c253e7d031e18cf6c439ace13817f270d9fd9e1898d9b8c5fc4549a3",
+        "expectedSha256": "822dd473c253e7d031e18cf6c439ace13817f270d9fd9e1898d9b8c5fc4549a3",
+        "adoptionAuthority": "Owner exact-text approval in GS-LAUNCH-014 on 25 October 2026; local canonical adoption integration only. Complete approval scope and exact hashes: docs/_legal/evidence/GS-LAUNCH-014-ADOPTION.md. No publication, PUBLISHABLE, CMS/provider writes, push, CI dispatch, deployment, WordPress, DNS/email change, cutover, historical-data deletion or security risk acceptance."
+      },
+      {
+        "slug": "cookies",
+        "path": "docs/_legal/current/cookie-policy.md",
+        "version": "2.4",
+        "state": "OWNER_ADOPTED",
+        "adoptedOn": "2026-10-22",
+        "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+        "expectedSha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+        "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+      },
+      {
+        "slug": "terms",
+        "path": "docs/_legal/current/website-terms.md",
+        "version": "2.3",
+        "state": "OWNER_ADOPTED",
+        "adoptedOn": "2026-10-22",
+        "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+        "expectedSha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+        "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+      },
+      {
+        "slug": "client-terms",
+        "path": "docs/_legal/current/client-terms-applicability.md",
+        "version": "2.3",
+        "state": "OWNER_ADOPTED",
+        "adoptedOn": "2026-10-22",
+        "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+        "expectedSha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+        "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+      },
+      {
+        "slug": "business-client-terms",
+        "path": "docs/_legal/current/client-terms-business.md",
+        "version": "3.3",
+        "state": "OWNER_ADOPTED",
+        "adoptedOn": "2026-10-22",
+        "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+        "expectedSha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+        "adoptionAuthority": "Owner expressly approved Phase 2 adoption in this chat on 22 October 2026 and confirmed the technical restrictions match actual operations. Contact details match prior owner confirmations. Exact reviewed text at f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b. Authority and condition evidence: docs/_legal/evidence/GS-LEGAL-FINAL-001-PHASE-2-ADOPTION.md. No publication or deployment authority."
+      },
+      {
+        "slug": "consumer-client-terms",
+        "path": "docs/_legal/current/client-terms-consumers.md",
+        "version": "3.4",
+        "state": "OWNER_ADOPTED",
+        "adoptedOn": "2026-10-25",
+        "sha256": "a73f6df89b681721ebd97e841803327e8e91caabd1da0a90edbf204d590a0d5e",
+        "expectedSha256": "a73f6df89b681721ebd97e841803327e8e91caabd1da0a90edbf204d590a0d5e",
+        "adoptionAuthority": "Owner exact-text approval in GS-LAUNCH-014 on 25 October 2026; local canonical adoption integration only. Complete approval scope and exact hashes: docs/_legal/evidence/GS-LAUNCH-014-ADOPTION.md. No publication, PUBLISHABLE, CMS/provider writes, push, CI dispatch, deployment, WordPress, DNS/email change, cutover, historical-data deletion or security risk acceptance."
+      },
+      {
+        "slug": "accessibility",
+        "path": "docs/_legal/current/accessibility-statement.md",
+        "version": "2.4",
+        "state": "OWNER_ADOPTED",
+        "adoptedOn": "2026-10-25",
+        "sha256": "774b1e200e67d146b0375b12c3fd4fadb3aeb0e27b87ea53bd0b419557984708",
+        "expectedSha256": "774b1e200e67d146b0375b12c3fd4fadb3aeb0e27b87ea53bd0b419557984708",
+        "adoptionAuthority": "Owner exact-text approval in GS-LAUNCH-014 on 25 October 2026; local canonical adoption integration only. Complete approval scope and exact hashes: docs/_legal/evidence/GS-LAUNCH-014-ADOPTION.md. No publication, PUBLISHABLE, CMS/provider writes, push, CI dispatch, deployment, WordPress, DNS/email change, cutover, historical-data deletion or security risk acceptance."
+      }
+    ],
+    "registerSha256": "f3b1f3a17e9d183b1cbe012a9e9788e312335c5f8acd6f1b82bc6b6d0909a56d",
+    "contactMode": "direct",
+    "H4B": "PRESERVED_FOR_FUTURE_FORM_MODE",
+    "allSevenPublicationRefusal": "PRESERVED",
+    "workflow": "Consumer 3.4 current; historical 3.3 preserved",
+    "history": "Every baseline legal/adoption evidence file byte-identical",
+    "CMSWrites": 0,
+    "generatedDocuments": 7,
+    "generatedClauses": 109,
+    "generatedParagraphs": 406
+  },
+  "execution": {
+    "platform": "win32",
+    "node": "v24.15.0",
+    "npm": "11.12.1",
+    "localEnvFile": "NEXT_PUBLIC_SANITY_DATASET=development",
+    "PUPPETEER_SKIP_DOWNLOAD": "true",
+    "privilegedCredentialsSupplied": false,
+    "normalBuildPrecondition": {
+      "nextAbsent": true,
+      "evidence": "Read-only Test-Path returned False in tool chunk 4cd124 before standalone build; no delete executed"
+    },
+    "commands": [
+      {
+        "label": "install",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "ci",
+          "--ignore-scripts=false"
+        ],
+        "startedAt": "2026-10-25T14:49:32.043Z",
+        "endedAt": "2026-10-25T14:51:54.606Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T14-49-32-043Z-install-9420fe4e-8215-4b08-83dd-b0cf489a4d83.log",
+        "logSha256": "0fc3752f6bc64b113846e3bfde6d9e1c44c18de927da96784a4c97217f1a0266",
+        "logBytes": 1122,
+        "expectedExitCode": 0
+      },
+      {
+        "label": "production-audit",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "audit",
+          "--omit=dev",
+          "--json"
+        ],
+        "startedAt": "2026-10-25T14:52:47.748Z",
+        "endedAt": "2026-10-25T14:52:58.084Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T14-52-47-748Z-production-audit-3331e37b-3d10-4927-baea-c539448472dc.log",
+        "logSha256": "233add753a491f34c514034e6eff0837c97cac2bf49247a8bec3be546a32049e",
+        "logBytes": 384,
+        "expectedExitCode": 0
+      },
+      {
+        "label": "verify-static",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "verify:static"
+        ],
+        "startedAt": "2026-10-25T14:52:00.513Z",
+        "endedAt": "2026-10-25T14:54:15.448Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T14-52-00-513Z-verify-static-51d5bac9-74c0-4494-ab40-483c6ae1f7c7.log",
+        "logSha256": "373de243692d7bac51cae47b38a5c19496cc10877058bda0db3f082a419b22c8",
+        "logBytes": 60480,
+        "expectedExitCode": 0
+      },
+      {
+        "label": "normal-clean-build",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "verify:build"
+        ],
+        "startedAt": "2026-10-25T14:54:39.371Z",
+        "endedAt": "2026-10-25T14:55:19.407Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T14-54-39-371Z-normal-clean-build-64c61e16-1597-4b53-913a-e1b7e8912d63.log",
+        "logSha256": "322134e65ac2c24d9bd8be6ff37be98666d052bb9c64735e26dc21d5b8baea43",
+        "logBytes": 12841,
+        "expectedExitCode": 0
+      },
+      {
+        "label": "served-company-legal",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "scripts/with-server.mjs",
+          "npm run check:company",
+          "npm run check:legal:parity",
+          "npm run check:consumer-terms"
+        ],
+        "startedAt": "2026-10-25T14:55:27.461Z",
+        "endedAt": "2026-10-25T14:55:30.610Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T14-55-27-461Z-served-company-legal-7a39ea68-7e48-425c-b7c7-8b6bc2a9ecbe.log",
+        "logSha256": "013f62263a9ce4ca73bf919a9fc61c0a640bff5b26c00fab45de128ecebf6ba0",
+        "logBytes": 3199,
+        "expectedExitCode": 0
+      },
+      {
+        "label": "generate-offline",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "build/gs-launch-015/generate-offline.mjs"
+        ],
+        "startedAt": "2026-10-25T14:55:30.666Z",
+        "endedAt": "2026-10-25T14:55:30.747Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T14-55-30-666Z-generate-offline-548a66ff-91fe-43b5-abc6-187403110382.log",
+        "logSha256": "92315c12bdfa1984a79cebd80b7b601b3a0408e29acf7640713271dcc7bfc587",
+        "logBytes": 638,
+        "expectedExitCode": 0
+      },
+      {
+        "label": "refusal",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "scripts/build-static.mjs"
+        ],
+        "startedAt": "2026-10-25T14:55:30.802Z",
+        "endedAt": "2026-10-25T14:55:31.172Z",
+        "exitCode": 1,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T14-55-30-802Z-refusal-e8c97b27-abf3-4e40-a768-931459f24e3f.log",
+        "logSha256": "3b494be2cdf0c904e78106464cea23226a7fdaa3f15e236a5911fcde1981a942",
+        "logBytes": 1323,
+        "expectedExitCode": 1
+      },
+      {
+        "label": "rehearsal",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "scripts/build-static.mjs"
+        ],
+        "startedAt": "2026-10-25T14:55:36.672Z",
+        "endedAt": "2026-10-25T14:56:50.275Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T14-55-36-672Z-rehearsal-8b2f72d9-91b4-41f7-a7aa-4867cb324598.log",
+        "logSha256": "84b6d9abaa1bc361865661c2ae2bb0f8f3f3f1f8f7c6bc4760ae939f67e798b8",
+        "logBytes": 4558,
+        "expectedExitCode": 0
+      },
+      {
+        "label": "artifact-inspection",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "build/gs-launch-015/inspect-denied.mjs"
+        ],
+        "startedAt": "2026-10-25T14:58:11.620Z",
+        "endedAt": "2026-10-25T14:58:12.138Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T14-58-11-620Z-artifact-inspection-0cbb8f7d-5656-4660-a5e1-fc698a7ba13b.log",
+        "logSha256": "7fea0a3b85e2eda5ea44506eb5cfa9a6d1650609cd74bb0eb028f699e5e9ceb9",
+        "logBytes": 688,
+        "expectedExitCode": 0
+      },
+      {
+        "label": "final-control",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "check:control"
+        ],
+        "startedAt": "2026-10-25T15:01:21.674Z",
+        "endedAt": "2026-10-25T15:01:22.028Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T15-01-21-674Z-final-control-6ce4380a-6359-41bf-96bf-87ff0e7bbdd3.log",
+        "logSha256": "b6b180ebced167faeda1ca83faa0dd8207165bae1f4cbfefc2de0de3056419c2",
+        "logBytes": 152,
+        "expectedExitCode": 0
+      },
+      {
+        "label": "final-secrets",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "lint:secrets"
+        ],
+        "startedAt": "2026-10-25T15:01:22.081Z",
+        "endedAt": "2026-10-25T15:01:22.542Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T15-01-22-081Z-final-secrets-ac8d0e54-a4f5-4ab7-9b04-72cca5310b84.log",
+        "logSha256": "11956c80577de419cb72ec8eed6b27169586d014fc9d391c746da46bd1c4d324",
+        "logBytes": 520,
+        "expectedExitCode": 0
+      },
+      {
+        "label": "evidence-integrity",
+        "executable": "C:\\nvm4w\\nodejs\\node.exe",
+        "args": [
+          "build/gs-launch-015/verify-evidence.mjs"
+        ],
+        "startedAt": "2026-10-25T15:02:03.869Z",
+        "endedAt": "2026-10-25T15:02:03.931Z",
+        "exitCode": 0,
+        "signal": null,
+        "error": null,
+        "log": "build/gs-launch-015/2026-10-25T15-02-03-869Z-evidence-integrity-426f63e8-a648-4d9f-92eb-f3c33f97d1bc.log",
+        "logSha256": "fdbebd1df72d64709eb12ac61077c91987efa868098303d22108052457690fb3",
+        "logBytes": 186,
+        "expectedExitCode": 0
+      }
+    ],
+    "policyRejection": {
+      "status": "REJECTED_BEFORE_EXECUTION",
+      "reason": "blocked by policy",
+      "processExitCode": null,
+      "cleanupRetries": 0,
+      "transcript": "build/gs-launch-015/cleanup-build-policy-rejection.txt",
+      "transcriptSha256": "417f87179d9024942e7485f6171ac65268a929a822a5f2e52e67689ddf84b668",
+      "resolution": "Read-only absence check established no cleanup necessary; standalone build passed"
+    }
+  },
+  "measurements": {
+    "static": {
+      "companyCases": 387,
+      "adoptionCases": 171,
+      "parityAssertions": 39,
+      "productionAdverseProofs": 38,
+      "directContactErrorAdverseProofs": 45
+    },
+    "normalBuild": {
+      "bundleBudgets": 69,
+      "passed": 69
+    },
+    "normalHTTP": {
+      "companyQuestions": 10,
+      "routes": 21,
+      "legalDocuments": 7,
+      "clauses": 109,
+      "paragraphs": 406,
+      "consumerRoutes": 2,
+      "consumerLinks": 208
+    },
+    "productionAudit": {
+      "exitCode": 0,
+      "vulnerabilities": 0,
+      "developmentRiskAcceptance": false
+    },
+    "productionRefusal": {
+      "exitCode": 1,
+      "unmetInputs": 8,
+      "sevenIndependentDocumentRefusals": 7,
+      "outExists": false
+    },
+    "deniedArtifact": {
+      "startedAt": "2026-10-25T14:58:11.721Z",
+      "endedAt": "2026-10-25T14:58:12.124Z",
+      "exitCode": 0,
+      "artifactIdentity": "c7ec034351e9508f0a1ef5b50b66abcad84221044f5b5c8c98c02829f0801465",
+      "sourceSha": "c7f1b9478d4fe3e18ecaabd7a1fabe3011d03ac0",
+      "sourceModified": false,
+      "deployable": false,
+      "rehearsal": true,
+      "requireAllDenied": true,
+      "manifestFileHashesVerified": 198,
+      "files": 199,
+      "routes": 54,
+      "companyQuestions": 10,
+      "emailRoutes": 54,
+      "whatsAppRoutes": 54,
+      "contractExpectedRefusals": [
+        "LEGAL: production requires all seven PUBLISHABLE legal documents",
+        "REHEARSAL: rehearsal artifact is not deployable"
+      ],
+      "companyProblems": [],
+      "limit": "Offline artifact/source scan; no HTTP/browser/hosted acceptance"
+    }
+  },
+  "preservation": {
+    "baseline": "c7f1b9478d4fe3e18ecaabd7a1fabe3011d03ac0",
+    "baselineTrackedFiles": 623,
+    "changedBaselineFiles": [
+      "docs/_shared/05-HANDOVER.md",
+      "docs/_shared/AI-HANDOFF.md",
+      "docs/_shared/OWNER-ACTIONS.md",
+      "docs/_shared/PROJECT-STATUS.md"
+    ],
+    "preservedBaselineFiles": 619,
+    "allBaselineLegalFilesPreserved": true,
+    "allNonDocumentSourcePreserved": true,
+    "nonDocumentInventoryDefinition": "Starting tracked paths excluding docs/, .claude/, and CLAUDE.md; sorted path/sha256 objects, SHA-256 of JSON.stringify. Do not compare counts with differently defined earlier effective-source inventories.",
+    "nonDocumentInventoryFiles": 359,
+    "nonDocumentInventorySha256": "a59169bc355414ab936273a2402633e7bc0eebdb3de7620f7f6132660e1d18cd",
+    "helpers": [
+      {
+        "path": "build/gs-launch-015/run.mjs",
+        "sha256": "fa44d3a3de7160225cb8ae061fb5edf8c54af993f1e5e605b9e4fcaa7d93be5f"
+      },
+      {
+        "path": "build/gs-launch-015/inspect-denied.mjs",
+        "sha256": "5633d062e54e2a484989b7877444e3625c2313b18cc40935ba1e8e078ffbc194"
+      },
+      {
+        "path": "build/gs-launch-015/generate-offline.mjs",
+        "sha256": "30e6810896ed1600c0e494826e8a197e6a6554d2e019d3a8f24d88b4e1649d04"
+      },
+      {
+        "path": "build/gs-launch-015/assemble.mjs",
+        "sha256": "f5e1ca186b43609bee547aa2a688ecda51f0d6307f4c53b793197f583ab6dbf9"
+      }
+    ]
+  },
+  "reviews": [
+    {
+      "role": "spec-compliance",
+      "task": "/root/prerequisite_review",
+      "result": "No material scoped omission; UNMET and O1-O5 correct; final report re-reviewed"
+    },
+    {
+      "role": "accessibility-audit",
+      "task": "/root/contact_accessibility",
+      "result": "No material source defect in bounded direct-contact scope; rendered acceptance UNVERIFIED"
+    },
+    {
+      "role": "design-conformance",
+      "task": "/root/design_scope_review",
+      "result": "No visual source delta from baseline; no rendered visual acceptance"
+    },
+    {
+      "role": "content-integrity",
+      "task": "/root/evidence_content_review",
+      "result": "No material unverifiable claim; hashes/counts checked against local receipts"
+    },
+    {
+      "role": "rules-compliance",
+      "task": "/root/rules_final_review",
+      "result": "No scoped violation; final staged/commit cleanliness remains parent closeout"
+    }
+  ],
+  "finalArtifactRequirements": {
+    "status": "NOT RUN",
+    "requirements": [
+      "Rebind final exact source/package/lock/legal hashes and actual deployable artifact identity/manifests",
+      "All-seven generated/CMS/served parity, no forms/API/intake/notification transport, exact two channel links and truthful confirmation/error behaviour",
+      "HTTP/browser/no-JS/keyboard/AT scope, Linux/Apache/axe/desktop-mobile Lighthouse and publisher-safe exact-source CI as required",
+      "Cookie serving-stack A-2 plus authorised gridsmith.uk repeat",
+      "Separate all-seven publication authority and exact-transaction artifact/destination/backup/security/publisher/switch/rollback cutover authority"
+    ],
+    "deniedArtifactIsDeployable": false
+  },
+  "externalActions": {
+    "enquiriesSent": 0,
+    "messagesSent": 0,
+    "DockerAttempts": 0,
+    "pushes": 0,
+    "CIDispatches": 0,
+    "CMSWrites": 0,
+    "providerOrProductionWrites": 0,
+    "publication": 0,
+    "deployments": 0,
+    "WordPressChanges": 0,
+    "DNSOrEmailChanges": 0,
+    "historicalDataDeletions": 0,
+    "securityRiskAcceptance": 0,
+    "GSLaunch016Started": false
+  },
+  "report": {
+    "path": "docs/_shared/GS-LAUNCH-015.md",
+    "sha256": "d24446bdaea29169f49e83da15326fd05aae5c6e0c85dcfcca20299616899d99"
+  },
+  "limitations": [
+    "Windows/source/selected local HTTP/offline artifact only",
+    "No Linux/browser/no-JS/keyboard/AT/Apache/axe/Lighthouse/remote CI/Hostinger acceptance",
+    "Operational gaps O1-O5 remain; no synthetic receipt inserted",
+    "Fresh production-only audit does not dispose of development-toolchain risk",
+    "Denied rehearsal predates documentation commit, contains no gated legal pages, and is not deployable"
+  ]
+}
