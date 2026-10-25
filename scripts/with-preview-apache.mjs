@@ -97,7 +97,7 @@ try {
       ...process.env, STATIC_BASE_URL: 'http://127.0.0.1:3236', GRIDSMITH_BUILD_TARGET: 'static' } });
     const chunks = [];
     for (const stream of [child.stdout, child.stderr]) stream.on('data', bytes => { chunks.push(bytes); process.stdout.write(bytes); });
-    const exitCode = await new Promise((resolve, reject) => { child.once('error', reject); child.once('exit', resolve); });
+    const exitCode = await new Promise((resolve, reject) => { child.once('error', reject); child.once('close', resolve); });
     const log = Buffer.concat(chunks), logPath = `check-${receipt.checks.length}.log`;
     writeFileSync(`${directory}/${logPath}`, log);
     receipt.checks.push({ command: [process.execPath, ...args], startedAt, endedAt: new Date().toISOString(), exitCode,

@@ -43,7 +43,7 @@ export function approvalProblems(identity, approval, approvedArtifact, approvalH
       !/^[a-f0-9]{64}$/.test(approval.rollbackEvidenceSha256 ?? '')) problems.push('ROLLBACK');
   return problems;
 }
-function verifyFiles(directory, identity) {
+function verifyFiles(directory, identity, tracked = false) {
   assert(Array.isArray(identity.files) && identity.files.length > 0);
   assert.equal(sha(JSON.stringify(identity.files)), identity.artifactIdentity);
   for (const file of identity.files) {
@@ -51,7 +51,7 @@ function verifyFiles(directory, identity) {
     const bytes = readFileSync(`${directory}/${file.path}`);
     assert.equal(bytes.length, file.bytes, file.path); assert.equal(sha(bytes), file.sha256, file.path);
   }
-  const actual = readdirSync(directory, { recursive: true }).filter(path => {
+  const actual = tracked ? spawnSync('git', ['-C', directory, 'ls-files', '-z'], { encoding: 'utf8' }).stdout.split('\0').filter(Boolean).sort() : readdirSync(directory, { recursive: true }).filter(path => {
     const stat = lstatSync(`${directory}/${path}`); assert(!stat.isSymbolicLink(), 'Release symlink forbidden'); return stat.isFile();
   }).map(path => path.replaceAll('\\', '/')).sort();
   assert.deepEqual(actual, [...identity.files.map(file => file.path), '__deployment.json'].sort(), 'Release has extra or missing files');
@@ -75,6 +75,17 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     const archive = `owner-preview-${sourceSha}.zip`;
     const zipped = spawnSync('zip', ['-q', '-r', `../${archive}`, '.'], { cwd: 'build/owner-preview-release' });
     assert.equal(zipped.status, 0, 'Release ZIP failed');
+    const verified = spawnSync('python3', ['-I', '-c', `import hashlib,json,pathlib,sys,zipfile
+root=pathlib.Path('build/owner-preview-release')
+identity=json.loads((root/'__deployment.json').read_bytes())
+names=[f['path'] for f in identity['files']]+['__deployment.json']
+with zipfile.ZipFile(sys.argv[1]) as archive:
+ files=[f for f in archive.infolist() if not f.is_dir()]
+ assert sorted(f.filename for f in files)==sorted(names)
+ for f in files:
+  assert archive.read(f)==(root/f.filename).read_bytes(), f.filename
+print('ZIP entries and every archived byte match the accepted release')`, `build/${archive}`], { encoding: 'utf8' });
+    assert.equal(verified.status, 0, `Release ZIP verification failed: ${verified.stderr}`);
     writeFileSync('build/gs-launch-018/release.json', JSON.stringify({ sourceSha, artifactIdentity: identity.artifactIdentity,
       runId: receipt.runId, archive, archiveSha256: sha(readFileSync(`build/${archive}`)),
       files: [...identity.files, { path: '__deployment.json', bytes: Buffer.byteLength(JSON.stringify(accepted)), sha256: sha(JSON.stringify(accepted)) }] }, null, 2));
@@ -94,6 +105,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     assert.deepEqual(approvalProblems(identity, approval, process.env.APPROVED_ARTIFACT, process.env.APPROVAL_SHA256, raw), []);
     const previous = spawnSync('git', ['-C', 'deployment', 'rev-parse', 'HEAD'], { encoding: 'utf8' });
     assert.equal(previous.status, 0); assert.equal(previous.stdout.trim(), approval.previousArtifactSha, 'Rollback branch changed');
+    const oldIdentity = read('deployment/__deployment.json');
+    assert.equal(oldIdentity.siteOrigin, identity.siteOrigin);
+    verifyFiles('deployment', oldIdentity, true);
     console.log('Exact owner approval, accepted bytes, destination and rollback receipt verified.');
   }
 }
