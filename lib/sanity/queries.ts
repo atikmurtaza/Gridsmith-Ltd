@@ -1,5 +1,5 @@
 import { sanityClient } from '@/lib/sanity/client';
-import { STATIC_BUILD } from '@/lib/build/target';
+import { STATIC_BUILD, OWNER_PREVIEW } from '@/lib/build/target';
 import { SANITY_DATASET } from '@/sanity/env';
 import legalRegister from '@/docs/_legal/evidence/GS-O003-R-REGISTER.json';
 import { staticManifest } from '@/lib/build/static-routes';
@@ -284,10 +284,12 @@ const publishableLegalSlugs = allLegalPublishable(Object.values(legalRegister.do
   ? Object.keys(legalRegister.documents) : [];
 export const getLegalDocument = (slug: string) =>
   Promise.resolve(LEGAL_DOCUMENTS.find((doc) => doc.slug.current === slug &&
-    (SANITY_DATASET === 'development' || (doc.adoptionState === 'PUBLISHABLE' && publishableLegalSlugs.includes(slug)))) ?? null);
+    (SANITY_DATASET === 'development' || (OWNER_PREVIEW && staticManifest().legalPreview === 'adopted-owner') ||
+      (doc.adoptionState === 'PUBLISHABLE' && publishableLegalSlugs.includes(slug)))) ?? null);
 
 export const listLegalDocuments = () =>
   Promise.resolve(LEGAL_DOCUMENTS.filter((doc) => SANITY_DATASET === 'development' ||
+    (OWNER_PREVIEW && staticManifest().legalPreview === 'adopted-owner') ||
     (doc.adoptionState === 'PUBLISHABLE' && publishableLegalSlugs.includes(doc.slug.current)))
     .map((doc) => ({ title: doc.title, slug: doc.slug.current, summary: doc.summary, adoptionState: doc.adoptionState }))
     .sort((a, b) => a.title.localeCompare(b.title)));

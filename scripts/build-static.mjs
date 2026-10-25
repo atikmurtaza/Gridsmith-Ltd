@@ -1,6 +1,7 @@
 /**
  * Static export: the noindex staging proof by default, or the gridsmith.uk profile (GS-R13) when
  * `GRIDSMITH_STATIC_PROFILE=production`, which refuses while any production input is unmet.
+ * GS-LAUNCH-017 adds an exact-origin owner-preview validation candidate, never an implicit release.
  * Building never submits enquiries or sends mail.
  */
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
@@ -10,7 +11,7 @@ import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { createClient } from '@sanity/client';
-import { createStaticManifest, createLegalPreviewManifest } from '../lib/build/route-manifest.ts';
+import { createStaticManifest, createLegalPreviewManifest, createOwnerPreviewManifest } from '../lib/build/route-manifest.ts';
 import { legalPreviewProfile } from './legal-preview-rules.mjs';
 import { resolveBuildTarget } from '../lib/build/target.ts';
 import { stagingReviewsAllowed, REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
@@ -20,17 +21,19 @@ import { SANITY_PROJECT_ID, SANITY_API_VERSION } from '../sanity/project.ts';
 import { inspectStaticArtifact, inspectOperatorError, readArtifact } from './check-static-artifact.mjs';
 import { artifactNoReviewProblems } from './review-public-rules.mjs';
 
-// GS-R13: `staging` (default, unchanged) or the explicit gridsmith.uk `production` profile. A
+// GS-R13: `staging` (default), `owner-preview`, or the explicit gridsmith.uk `production` profile. A
 // production rehearsal waives only the unmet inputs, writes outside `out/`, and is not deployable.
 const profile = process.env.GRIDSMITH_STATIC_PROFILE ?? 'staging';
-if (!['staging', 'production'].includes(profile)) throw new Error('GRIDSMITH_STATIC_PROFILE must be staging or production');
+if (!['staging', 'production', 'owner-preview'].includes(profile)) throw new Error('GRIDSMITH_STATIC_PROFILE must be staging, production or owner-preview');
 const production = profile === 'production';
-const contactMode = production ? 'direct' : 'edge';
+const ownerPreview = profile === 'owner-preview';
+const direct = production || ownerPreview;
+const contactMode = direct ? 'direct' : 'edge';
 const rehearsal = process.env.GRIDSMITH_PRODUCTION_REHEARSAL === '1';
 if (rehearsal && !production) throw new Error('A production rehearsal requires GRIDSMITH_STATIC_PROFILE=production');
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const staging = join(root, 'build/static-source');
-const output = join(root, rehearsal ? 'build/production-rehearsal' : 'out');
+const output = join(root, rehearsal ? 'build/production-rehearsal' : ownerPreview ? 'build/owner-preview-candidate' : 'out');
 const manifestFile = join(root, 'build/static-route-manifest.json');
 const require = createRequire(join(root, 'package.json'));
 const publication = JSON.parse(readFileSync(join(root, 'docs/_shared/GS-PROD-001-CMS-MANIFEST.json'))).entries;
@@ -44,7 +47,11 @@ const operatorError = { ...JSON.parse(operatorFiles.get('identity.json').toStrin
 resolveBuildTarget(process.env.GRIDSMITH_BUILD_TARGET);
 const intakeUrl = process.env.NEXT_PUBLIC_LEAD_INTAKE_URL;
 let waived = [];
-if (production) {
+if (ownerPreview) {
+  if (intakeUrl || process.env.GRIDSMITH_STAGING_ORIGIN !== REVIEW_STAGING_ORIGIN || process.env.GRIDSMITH_LEGAL_PREVIEW) {
+    throw new Error('Owner preview requires the exact temporary origin, no intake and no other legal preview override');
+  }
+} else if (production) {
   const unmet = productionInputProblems(intakeUrl, publication, register, PRODUCTION_INTAKE_URL, contactMode);
   if (intakeUrl) throw new Error('The direct-contact production profile takes no intake endpoint');
   if (rehearsal) waived = unmet;
@@ -68,15 +75,16 @@ function removeGenerated(path) {
 }
 if (production && process.env.GRIDSMITH_STAGING_ORIGIN) throw new Error('The gridsmith.uk profile takes no staging origin');
 const siteOrigin = production ? PRODUCTION_ORIGIN : process.env.GRIDSMITH_STAGING_ORIGIN ?? 'http://localhost:3236';
-const legalPreview = legalPreviewProfile(process.env.GRIDSMITH_LEGAL_PREVIEW,
-  process.env.NEXT_PUBLIC_SANITY_DATASET, siteOrigin);
-const dataset = legalPreview ? 'development' : 'production';
+const dataset = ownerPreview ? 'production' : process.env.GRIDSMITH_LEGAL_PREVIEW ? 'development' : 'production';
+const legalPreview = legalPreviewProfile(ownerPreview ? 'adopted-owner' : process.env.GRIDSMITH_LEGAL_PREVIEW,
+  ownerPreview ? dataset : process.env.NEXT_PUBLIC_SANITY_DATASET, siteOrigin);
 if (!production && (!stagingReviewsAllowed('owner-staging', siteOrigin) || new URL(siteOrigin).origin !== siteOrigin)) {
   throw new Error('Explicit temporary/local staging origin required; gridsmith.uk is forbidden');
 }
 const environment = { ...process.env, GRIDSMITH_BUILD_TARGET: 'static', GRIDSMITH_STATIC_PROOF: '1',
   GRIDSMITH_STATIC_MANIFEST_PATH: manifestFile, GRIDSMITH_REVIEW_PRESENTATION: '', NEXT_PUBLIC_SANITY_DATASET: dataset,
   NEXT_PUBLIC_SITE_URL: siteOrigin, NEXT_PUBLIC_BUNDLE_SIZE_PROBE: '', GRIDSMITH_EXCLUDE_PROBES: '1' };
+if (ownerPreview) environment.GRIDSMITH_LEGAL_PREVIEW = 'adopted-owner';
 // Reviews fail closed off staging: no written Freelancer permission is held (LEG-08).
 if (production) delete environment.GRIDSMITH_REVIEW_PRESENTATION;
 const privateNames = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'DIRECT_CONNECTION_STRING', 'RESEND_API_KEY',
@@ -84,7 +92,7 @@ const privateNames = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'DI
   'FREELANCER_API_SECRET', 'SLACK_LEADS_WEBHOOK', 'CRON_SECRET'];
 for (const key of [...privateNames, 'PROJECT_URL', 'PUBLISHABLE_KEY', 'VERCEL_ENV', 'VERCEL_URL',
   'VERCEL_PROJECT_PRODUCTION_URL', 'LEAD_NOTIFICATION_FROM', 'LEAD_NOTIFICATION_EMAIL']) delete environment[key];
-if (production) delete environment.NEXT_PUBLIC_LEAD_INTAKE_URL;
+if (direct) delete environment.NEXT_PUBLIC_LEAD_INTAKE_URL;
 const run = (args, cwd = root) => {
   const result = spawnSync(process.execPath, args, { cwd, env: environment, stdio: 'inherit', windowsHide: true });
   if (result.status !== 0) throw new Error(`Static build step failed (${result.status ?? 'no exit code'})`);
@@ -100,7 +108,7 @@ const replaceOnce = (file, before, after) => {
   if (source.split(before).length !== 2) throw new Error(`Static preparation premise changed: ${file}`);
   writeFileSync(path, source.replace(before, after));
 };
-const makeManifest = legalPreview ? createLegalPreviewManifest : createStaticManifest;
+const makeManifest = ownerPreview ? createOwnerPreviewManifest : legalPreview ? createLegalPreviewManifest : createStaticManifest;
 const checkLegal = async () => {
   if (legalPreview) run(['scripts/check-legal-adoption.mjs']);
 };
@@ -166,7 +174,7 @@ for (const [kind, folder] of [['post', 'app/(marketing)/insights/[slug]'], ['leg
   }
 }
 // Remove the form client graph entirely from direct-contact exports.
-if (production) {
+if (direct) {
   writeFileSync(join(staging, 'components/leads/ContactForm.tsx'),
     "export { StaticContactShell as ContactForm } from './StaticContactShell';\n");
   writeFileSync(join(staging, 'components/divisions/press/PressContactFlow.tsx'),
@@ -187,7 +195,7 @@ try {
   await checkLegal();
   const after = makeManifest(await inventory(), publication, { indexable: production });
   if (JSON.stringify(after) !== JSON.stringify(manifest)) throw new Error('CMS revisions changed during static generation');
-  if (production) writeFileSync(join(staging, 'out/.htaccess'), productionHostingerRules(null, dataset, { rehearsal }));
+  if (direct) writeFileSync(join(staging, 'out/.htaccess'), productionHostingerRules(null, dataset, { rehearsal, ownerPreview }));
   else if (siteOrigin === REVIEW_STAGING_ORIGIN) writeFileSync(join(staging, 'out/.htaccess'), hostingerRules(siteOrigin, dataset, new URL(intakeUrl).origin));
   for (const [path, bytes] of readArtifact(join(staging, 'out'))) {
     if (path.endsWith('.html') || path === 'robots.txt') {
@@ -206,16 +214,18 @@ try {
   const untracked = spawnSync('git', ['ls-files', '--others', '--exclude-standard', '-z'], { cwd: root, encoding: 'utf8', windowsHide: true }).stdout.split('\0');
   const sourceModified = Boolean(spawnSync('git', ['status', '--porcelain', '--untracked-files=no'], { cwd: root, encoding: 'utf8', windowsHide: true }).stdout.trim()) ||
     untracked.some((path) => /^(?:app|components|lib|styles|sanity|redirects|scripts|lighthouse)\//.test(path));
-  const phase = production ? 'GS-R13-PRODUCTION-PROFILE-001' : legalPreview ? 'GS-LEGAL-001-R12' : 'GS-HOST-H4-D-R1';
+  const phase = ownerPreview ? 'GS-LAUNCH-017' : production ? 'GS-R13-PRODUCTION-PROFILE-001' : legalPreview ? 'GS-LEGAL-001-R12' : 'GS-HOST-H4-D-R1';
   const deployment = { phase, sourceSha, sourceModified, siteOrigin,
-    dataset, legalPreview, contactMode, intakeOrigin: production ? null : new URL(intakeUrl).origin, ...(production ? { profile, rehearsal, deployable: !rehearsal } : {}),
+    dataset, legalPreview, contactMode, intakeOrigin: direct ? null : new URL(intakeUrl).origin,
+    ...(production ? { profile, rehearsal, deployable: !rehearsal } : ownerPreview ? { profile, rehearsal: false, deployable: false, releaseStatus: 'ACCEPTANCE_PENDING' } : {}),
     artifactIdentity: digest(JSON.stringify(fileManifest)), files: fileManifest };
   writeFileSync(join(output, '__deployment.json'), JSON.stringify(deployment) + '\n');
-  const finalResult = inspectStaticArtifact(readArtifact(output), manifest, publication, knownSecrets, siteOrigin, contactMode);
+  const finalResult = inspectStaticArtifact(readArtifact(output), manifest, publication, knownSecrets, siteOrigin, contactMode, { requireIdentity: true });
   finalResult.problems = unwaived(finalResult.problems);
   if (finalResult.problems.length) throw new Error(finalResult.problems.join('\n'));
   writeFileSync(join(root, rehearsal ? 'build/production-rehearsal-receipt.json' : 'build/static-receipt.json'), JSON.stringify({ phase,
-    legalPreview, contactMode, stagingOnly: !production,
+    legalPreview, contactMode, stagingOnly: !production, outputDirectory: relative(root, output).replaceAll('\\', '/'),
+    ...(ownerPreview ? { profile, rehearsal: false, deployable: false, releaseStatus: 'ACCEPTANCE_PENDING' } : {}),
     ...(production ? { profile, rehearsal, deployable: !rehearsal, waived: [...new Set(waived)] } : {}), dataset, siteOrigin,
     buildNode: process.version,
     sourceSha, sourceModified, manifest, exclusions, ...finalResult, knownSecretValuesChecked: knownSecrets.length,
@@ -226,6 +236,7 @@ try {
   console.log(`Static proof: ${finalResult.htmlRoutes} routes; ${finalResult.fileCount} files; ${finalResult.totalBytes} bytes. Output: ${relative(root, output)}/`);
   if (rehearsal) console.log(`gridsmith.uk REHEARSAL, NOT DEPLOYABLE. Waived:\n${[...new Set(waived)].join('\n')}`);
   else if (production) console.log('gridsmith.uk production artifact. Upload and cutover remain separately authorised.');
+  else if (ownerPreview) console.log('Owner preview validation candidate only. Packaging and upload require completed preview acceptance.');
   else console.log('Owner-authorised staging artifact only. Hosted verification and production permission gates remain separate.');
 } finally {
   removeGenerated(staging); // Discard raw provider fetch cache and copied source; never deploy/archive it.

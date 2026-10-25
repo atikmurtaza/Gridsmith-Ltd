@@ -100,11 +100,12 @@ function selectStaticRoutes(routes, manifest, rehearsal = false) {
   return routes.flatMap(route => {
     const item = manifest.routes.find(item => item.path === route.path && item.eligible);
     if (!item && !(rehearsal && route.path === '/legal/privacy')) throw new Error(`Static Lighthouse route missing: ${route.path}`);
-    return item ? [{ ...route, indexable: item.sitemap === true }] : [];
+    return item ? [{ ...route, indexable: manifest.legalPreview === 'adopted-owner' ? false : item.sitemap === true }] : [];
   });
 }
 const STATIC_IDENTITY = process.env.GRIDSMITH_BUILD_TARGET === 'static' ? JSON.parse(require('node:fs').readFileSync(
-  `${process.env.GRIDSMITH_PRODUCTION_REHEARSAL === '1' ? 'build/production-rehearsal' : 'out'}/__deployment.json`)) : null;
+  `${process.env.GRIDSMITH_STATIC_PROFILE === 'owner-preview' ? 'build/owner-preview-candidate' :
+    process.env.GRIDSMITH_PRODUCTION_REHEARSAL === '1' ? 'build/production-rehearsal' : 'out'}/__deployment.json`)) : null;
 const ROUTES = STATIC_IDENTITY
   ? selectStaticRoutes(ALL_ROUTES, JSON.parse(require('node:fs').readFileSync('build/static-route-manifest.json')),
     STATIC_IDENTITY.rehearsal === true && STATIC_IDENTITY.deployable === false)

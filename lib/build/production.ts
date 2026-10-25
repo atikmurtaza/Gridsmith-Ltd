@@ -5,6 +5,7 @@
  * below is unmet. Nothing here is a default: an unset input is a refusal, never a fallback.
  */
 import { LEGAL_DOCUMENT_SLUGS } from '../legal/slugs.ts';
+import { ownerPreviewIdentityAllowed, type OwnerPreviewIdentity } from './target.ts';
 
 export const PRODUCTION_ORIGIN = 'https://gridsmith.uk';
 export const PREVIEW_INTAKE_URL = 'https://qfgpwumvvtizeamkynes.supabase.co/functions/v1/gs-lead-intake';
@@ -18,9 +19,10 @@ export const PRODUCTION_INTAKE_URL: string | null = 'https://dqiutgmxillhsbzgnls
 const intakePattern = /^https:\/\/[a-z0-9]{20}\.supabase\.co\/functions\/v1\/gs-lead-intake$/;
 
 /** Ask the local static subject before measuring it; never fall back to Next SSR. */
-export function staticLighthouseProblems(identity: { profile?: string; contactMode?: string; siteOrigin?: string; sourceModified?: boolean } | null): string[] {
-  return identity?.profile === 'production' && identity.contactMode === 'direct' &&
-    identity.siteOrigin === PRODUCTION_ORIGIN && identity.sourceModified === false ? [] : ['STATIC_LIGHTHOUSE_SUBJECT'];
+export function staticLighthouseProblems(identity: (OwnerPreviewIdentity & { sourceModified?: boolean }) | null): string[] {
+  const profile = identity && ((identity.profile === 'production' && identity.siteOrigin === PRODUCTION_ORIGIN) ||
+    ownerPreviewIdentityAllowed(identity));
+  return profile && identity.contactMode === 'direct' && identity.sourceModified === false ? [] : ['STATIC_LIGHTHOUSE_SUBJECT'];
 }
 
 type Entry = { type: string; slug: string | null; eligible: boolean };

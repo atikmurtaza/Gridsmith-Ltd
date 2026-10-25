@@ -9,6 +9,7 @@ import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { legalPreviewProfile } from './legal-preview-rules.mjs';
 import { PRODUCTION_ORIGIN } from '../lib/build/production.ts';
 import { sitemapPaths, LAUNCH_EXCLUDED_PATHS } from '../lib/build/route-manifest.ts';
+import { ownerPreviewIdentityAllowed } from '../lib/build/target.ts';
 
 // Requirements only: actual provider configuration is deliberately not generated or installed.
 export const operatorErrorPolicy = {
@@ -47,7 +48,7 @@ export function readArtifact(root) {
   visit(root); return files;
 }
 
-export function inspectStaticArtifact(files, manifest, publication, knownSecrets = [], siteOrigin = 'http://localhost:3236', contactMode = 'edge') {
+export function inspectStaticArtifact(files, manifest, publication, knownSecrets = [], siteOrigin = 'http://localhost:3236', contactMode = 'edge', { requireIdentity = false } = {}) {
   const problems = [];
   const bad = (code, detail) => problems.push(`${code}: ${detail}`);
   if (!['edge', 'direct'].includes(contactMode)) bad('CONTACT', 'unknown contact mode');
@@ -57,6 +58,8 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   catch { bad('PROFILE', 'invalid legal preview boundary'); }
   // GS-R13: indexable means the gridsmith.uk production profile, and nothing else may be.
   const production = manifest.indexable === true;
+  const ownerPreview = manifest.legalPreview === 'adopted-owner';
+  if (ownerPreview && contactMode !== 'direct') bad('CONTACT', 'owner preview requires direct contact');
   if (manifest.version !== 1 || manifest.target !== 'static' || (!preview && manifest.dataset !== 'production') ||
       (production ? preview || siteOrigin !== PRODUCTION_ORIGIN : manifest.indexable !== false)) bad('PROFILE', 'invalid/indexable manifest');
   if (production && LEGAL_DOCUMENT_SLUGS.some((slug) => !expected.some((route) => route.path === `/legal/${slug}` && route.contentType === 'legalDocument'))) {
@@ -76,8 +79,10 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     const path = entry.type === 'service' ? `/${entry.division}/services/${entry.slug}` : `/legal/${entry.slug}`;
     const route = manifest.routes.find((item) => item.path === path);
     const legal = preview && entry.type === 'legalDocument';
-    if (!route || route.eligible !== (legal || entry.eligible) || route.gate !== (legal ? 'GS-O003-R-PREVIEW' : entry.gate) ||
-        route.sourceId !== (preview ? `seed-${entry.id}` : entry.id)) bad('PUBLICATION', 'reviewed inventory disagreement');
+    const gate = legal ? ownerPreview ? 'GS-O003-R-OWNER-PREVIEW' : 'GS-O003-R-PREVIEW' : entry.gate;
+    const source = ownerPreview ? legal ? null : entry.id : preview ? `seed-${entry.id}` : entry.id;
+    if (!route || route.eligible !== (legal || entry.eligible) || route.gate !== gate ||
+        route.sourceId !== source) bad('PUBLICATION', 'reviewed inventory disagreement');
     if (!legal && !entry.eligible && [...files.keys()].some((name) => name.startsWith(`${path.slice(1)}.`) || name.startsWith(`${path.slice(1)}/`))) bad('GATED', 'excluded route or sidecar emitted');
   }
   for (const path of LAUNCH_EXCLUDED_PATHS) {
@@ -123,11 +128,13 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   if (!notFound || !/<h1(?:\s|>)/i.test(notFound) || !/Gridsmith/i.test(notFound) || !/noindex/.test(notFound)) bad('404', 'branded noindex document missing');
   const robots = files.get('robots.txt')?.toString('utf8');
   const sitemap = files.get('sitemap.xml')?.toString('utf8');
-  if (production) {
+  if (production || ownerPreview) {
     const error = files.get('500.html')?.toString('utf8') ?? '';
     if (!/<html\b[^>]*\slang="en(?:-GB)?"/i.test(error) || !/<title>[^<]+<\/title>/i.test(error) ||
         !/<main\b/.test(error) || !/<h1\b/.test(error) || !/href="\/"/.test(error) ||
         !/noindex/.test(error) || /::vercel:|nothing you sent has been lost/i.test(error)) bad('500', 'accessible truthful static error document missing');
+  }
+  if (production) {
     if (!robots || !/^Allow:\s*\/\s*$/im.test(robots) || /^Disallow:/im.test(robots) ||
         !robots.includes(`Sitemap: ${PRODUCTION_ORIGIN}/sitemap.xml`)) bad('ROBOTS', 'production crawl policy missing');
     const locs = [...(sitemap ?? '').matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]).sort();
@@ -147,6 +154,32 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   } else {
     if (!robots || !/Disallow:\s*\/\s*(?:\n|$)/i.test(robots) || /^Allow:/im.test(robots)) bad('ROBOTS', 'temporary crawl policy missing');
     if (!sitemap || !/<urlset\b/.test(sitemap) || /<loc>/.test(sitemap)) bad('SITEMAP', 'temporary sitemap must be empty');
+    if (ownerPreview) {
+      const rules = files.get('.htaccess')?.toString('utf8') ?? '';
+      const host = new URL(siteOrigin).host.replaceAll('.', '\\.');
+      if (!rules.includes(`RewriteCond %{HTTP_HOST} !^${host}$ [NC]\nRewriteRule ^ - [F,L]`) ||
+          !rules.includes('RewriteRule \\.(?:php[0-9]?|phtml|phar|pl|cgi)(?:/|$) - [F,L,NC]') ||
+          !/^Header always set X-Robots-Tag "noindex, nofollow, noarchive"$/m.test(rules) ||
+          !rules.includes("connect-src 'self' ;") || /supabase\.co|Require all denied|<IfModule mod_headers/.test(rules) ||
+          !/^DirectorySlash Off$/m.test(rules) || !/^ErrorDocument 500 \/500.html$/m.test(rules)) {
+        bad('HTACCESS', 'owner preview host, direct contact, noindex or fail-closed header policy missing');
+      }
+      if (requireIdentity || files.has('__deployment.json')) {
+        try {
+          const identity = JSON.parse(files.get('__deployment.json')?.toString('utf8'));
+          if (!ownerPreviewIdentityAllowed(identity) || identity.phase !== 'GS-LAUNCH-017' ||
+              !/^[a-f0-9]{40}$/.test(identity.sourceSha ?? '') || typeof identity.sourceModified !== 'boolean') {
+            bad('IDENTITY', 'invalid owner preview candidate identity');
+          }
+          const payload = identity.files;
+          if (!Array.isArray(payload) || payload.length !== files.size - 1 ||
+              new Set(payload.map(file => file.path)).size !== payload.length ||
+              payload.some(file => file.path === '__deployment.json' || !files.has(file.path) ||
+                file.bytes !== files.get(file.path).length || file.sha256 !== sha256(files.get(file.path))) ||
+              identity.artifactIdentity !== sha256(JSON.stringify(payload))) bad('IDENTITY', 'owner preview payload identity mismatch');
+        } catch { bad('IDENTITY', 'missing or malformed owner preview identity'); }
+      }
+    }
   }
   let totalBytes = 0;
   for (const [name, data] of files) {
@@ -223,9 +256,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     'DIRECT_CONNECTION_STRING', 'VERCEL_TOKEN', 'FREELANCER_API_TOKEN', 'FREELANCER_API_SECRET']
     .map((name) => process.env[name]).filter((value) => value?.length >= 8);
   const receipt = JSON.parse(readFileSync('build/static-receipt.json'));
-  const result = inspectStaticArtifact(readArtifact(resolve('out')), manifest, publication, secrets,
-    receipt.siteOrigin ?? 'http://localhost:3236', receipt.contactMode ?? 'edge');
-  result.problems.push(...artifactNoReviewProblems(readArtifact(resolve('out'))));
+  const directory = receipt.profile === 'owner-preview' ? 'build/owner-preview-candidate' : 'out';
+  const result = inspectStaticArtifact(readArtifact(resolve(directory)), manifest, publication, secrets,
+    receipt.siteOrigin ?? 'http://localhost:3236', receipt.contactMode ?? 'edge', { requireIdentity: true });
+  result.problems.push(...artifactNoReviewProblems(readArtifact(resolve(directory))));
   if (result.problems.length) { console.error(result.problems.join('\n')); process.exitCode = 1; }
   else console.log(`Static contract PASS: ${result.htmlRoutes} routes, ${result.fileCount} files, ${result.totalBytes} bytes; ${secrets.length} supplied secret values checked.`);
 }

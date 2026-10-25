@@ -16,7 +16,7 @@ export type StaticRoute = {
 };
 export type StaticManifest = {
   version: 1; target: 'static'; dataset: 'production' | 'development'; indexable: boolean;
-  legalPreview?: 'adopted-development';
+  legalPreview?: 'adopted-development' | 'adopted-owner';
   routes: StaticRoute[];
 };
 
@@ -104,6 +104,18 @@ export function createStaticManifest(
 /** The indexable (GS-R13 production) sitemap uses this eligible set; staging emits an empty sitemap. */
 export const sitemapPaths = (manifest: StaticManifest) =>
   manifest.routes.filter((route) => route.eligible && route.sitemap).map((route) => route.path);
+
+/** Owner-only display uses repository legal texts; no CMS eligibility or revision is invented. */
+export function createOwnerPreviewManifest(documents: ContentIdentity[], publication: PublicationEntry[]): StaticManifest {
+  const manifest = createStaticManifest(documents, publication);
+  const legal = manifest.routes.filter((route) => route.contentType === 'legalDocument');
+  if (legal.length !== 7 || LEGAL_DOCUMENT_SLUGS.some((slug) => !legal.some((route) => route.slug === slug))) {
+    throw new Error('Owner preview requires all seven canonical legal routes');
+  }
+  return { ...manifest, legalPreview: 'adopted-owner', routes: manifest.routes.map((route) =>
+    route.contentType === 'legalDocument' ? { ...route, eligible: true, sourceId: null, revision: null,
+      gate: 'GS-O003-R-OWNER-PREVIEW', reason: 'GS-LAUNCH-017 owner-authorised preview; production publication held', sitemap: false } : route) };
+}
 
 /** R12 private development export. Production inventory and eligibility are never rewritten. */
 export function createLegalPreviewManifest(documents: ContentIdentity[], publication: PublicationEntry[]): StaticManifest {

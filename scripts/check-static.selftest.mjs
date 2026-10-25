@@ -585,6 +585,91 @@ for (const [name, mutate, code] of [
 assert(codes(inspectDirect(directFixture, 'unknown')).includes('CONTACT'));
 console.log(`GS-LAUNCH-007 direct-contact/error PASS: ${directProofs + 1} adverse artifact proofs; seven legal refusals retained.`);
 
+// GS-LAUNCH-017: owner authority displays repository legal texts on one non-indexable host only.
+const { createOwnerPreviewManifest } = await import('../lib/build/route-manifest.ts');
+const { ownerPreviewAllowed } = await import('../lib/build/target.ts');
+assert(ownerPreviewAllowed('owner-preview', REVIEW_STAGING_ORIGIN, 'production'));
+let ownerProofs = 0;
+for (const args of [
+  ['production', REVIEW_STAGING_ORIGIN, 'production'], ['owner-preview', PRODUCTION_ORIGIN, 'production'],
+  ['owner-preview', REVIEW_STAGING_ORIGIN + '/', 'production'], ['owner-preview', REVIEW_STAGING_ORIGIN, 'development'],
+  ['owner-preview', 'http://localhost:3236', 'production'], ['owner-preview', 'https://example.invalid', 'production'],
+]) { assert(!ownerPreviewAllowed(...args)); ownerProofs++; }
+assert(legalPreviewProfile('adopted-owner', 'production', REVIEW_STAGING_ORIGIN));
+for (const [dataset, origin] of [['development', REVIEW_STAGING_ORIGIN], ['production', PRODUCTION_ORIGIN],
+  ['production', 'http://localhost:3236'], ['production', REVIEW_STAGING_ORIGIN + '/']]) {
+  assert.throws(() => legalPreviewProfile('adopted-owner', dataset, origin), /Legal preview requires/); ownerProofs++;
+}
+const ownerManifest = createOwnerPreviewManifest(documents, publication);
+assert.equal(ownerManifest.dataset, 'production'); assert.equal(ownerManifest.indexable, false);
+assert.equal(ownerManifest.routes.filter(r => r.eligible && r.contentType === 'legalDocument').length, 7);
+assert(ownerManifest.routes.filter(r => r.contentType === 'legalDocument').every(r => r.sourceId === null && r.revision === null && !r.sitemap));
+assert.throws(() => createOwnerPreviewManifest(documents, publication.filter(e => e.slug !== 'privacy')), /seven canonical/); ownerProofs++;
+assert.throws(() => createOwnerPreviewManifest([{ ...documents[0], isSeed: true }, ...documents.slice(1)], publication), /Seed/); ownerProofs++;
+const ownerRules = productionHostingerRules(null, 'production', { ownerPreview: true });
+assert.deepEqual(headerProblems(ownerRules), []);
+assert(!/supabase|Require all denied/.test(ownerRules));
+assert.throws(() => productionHostingerRules(null, 'production', { ownerPreview: true, rehearsal: true }), /Owner preview/); ownerProofs++;
+assert.throws(() => productionHostingerRules(intakeOrigin, 'production', { ownerPreview: true }), /Owner preview/); ownerProofs++;
+const ownerFiles = new Map([...directFixture].map(([name, bytes]) => [name, Buffer.from(bytes.toString()
+  .replaceAll(PRODUCTION_ORIGIN, REVIEW_STAGING_ORIGIN).replaceAll('content="index, follow"', 'content="noindex, nofollow"'))]));
+set(ownerFiles, '.htaccess', ownerRules);
+set(ownerFiles, 'robots.txt', 'User-Agent: *\nDisallow: /\n'); set(ownerFiles, 'sitemap.xml', '<urlset></urlset>');
+for (const r of ownerManifest.routes.filter(r => r.contentType === 'legalDocument')) {
+  const name = r.path.slice(1) + '.html'; set(ownerFiles, name, ownerFiles.get(name) + '<p>ADOPTED, NOT YET PUBLISHED.</p>');
+}
+const inspectOwner = (f = ownerFiles, m = ownerManifest, origin = REVIEW_STAGING_ORIGIN, mode = 'direct') =>
+  inspectStaticArtifact(f, m, publication, [], origin, mode).problems;
+assert.deepEqual(inspectOwner(), []);
+for (const [change, code] of [
+  [f => f.delete('legal/privacy.html'), 'ROUTE'], [f => f.delete('500.html'), '500'],
+  [f => set(f, 'legal/privacy.html', f.get('legal/privacy.html').toString().replace('ADOPTED, NOT YET PUBLISHED.', '')), 'LEGAL'],
+  [f => set(f, 'about.html', f.get('about.html') + '<form></form>'), 'CONTACT'],
+  [f => set(f, '.htaccess', ownerRules.replace(/!\^mediumaquamarine[^ ]+/, '!^example.invalid$')), 'HTACCESS'],
+  [f => set(f, '.htaccess', ownerRules.replace('RewriteRule ^ - [F,L]\n', '')), 'HTACCESS'],
+  [f => set(f, '.htaccess', ownerRules.replace(/^RewriteRule \\\..*\[F,L,NC\]\n/m, '')), 'HTACCESS'],
+  [f => set(f, '.htaccess', ownerRules.replace(/^Header always set X-Robots-Tag .*\n/m, '')), 'HTACCESS'],
+  [f => set(f, '.htaccess', ownerRules.replace("connect-src 'self' ;", "connect-src 'self' https://example.supabase.co;")), 'HTACCESS'],
+  [f => set(f, '.htaccess', ownerRules + 'Require all denied\n'), 'HTACCESS'],
+  [f => set(f, '.htaccess', ownerRules + '<IfModule mod_headers.c>\n</IfModule>\n'), 'HTACCESS'],
+  [f => set(f, '.htaccess', ownerRules.replace('DirectorySlash Off', 'DirectorySlash On')), 'HTACCESS'],
+  [f => set(f, '.htaccess', ownerRules.replace('ErrorDocument 500 /500.html', '')), 'HTACCESS'],
+]) { const files = new Map(ownerFiles); change(files); assert(codes(inspectOwner(files)).includes(code), code); ownerProofs++; }
+assert(codes(inspectOwner(ownerFiles, ownerManifest, PRODUCTION_ORIGIN)).includes('PROFILE')); ownerProofs++;
+assert(codes(inspectOwner(ownerFiles, ownerManifest, REVIEW_STAGING_ORIGIN, 'edge')).includes('CONTACT')); ownerProofs++;
+const ownerIdentity = { profile: 'owner-preview', legalPreview: true, dataset: 'production', siteOrigin: REVIEW_STAGING_ORIGIN,
+  sourceModified: false, contactMode: 'direct', intakeOrigin: null, rehearsal: false, deployable: false, releaseStatus: 'ACCEPTANCE_PENDING' };
+assert(servedLegalPreview(ownerIdentity, true)); assert.deepEqual(staticLighthouseProblems(ownerIdentity), []);
+for (const change of [{ dataset: 'development' }, { siteOrigin: PRODUCTION_ORIGIN }, { legalPreview: false }, { contactMode: 'edge' },
+  { profile: 'staging' }, { intakeOrigin: intakeOrigin }, { rehearsal: true }, { deployable: true }, { releaseStatus: 'APPROVED' }]) {
+  const input = { ...ownerIdentity, ...change };
+  assert.throws(() => servedLegalPreview(input, true), /R12 requires/); ownerProofs++;
+  if (input.profile === 'owner-preview') { assert.throws(() => servedLegalPreview(input), /R12 requires/); ownerProofs++; }
+  assert.deepEqual(staticLighthouseProblems(input), ['STATIC_LIGHTHOUSE_SUBJECT']); ownerProofs++;
+}
+assert.deepEqual(staticLighthouseProblems({ ...ownerIdentity, sourceModified: true }), ['STATIC_LIGHTHOUSE_SUBJECT']); ownerProofs++;
+assert.throws(() => servedLegalPreview({ ...ownerIdentity, dataset: 'development', siteOrigin: PRODUCTION_ORIGIN }, true), /R12 requires/); ownerProofs++;
+const ownerPayload = [...ownerFiles].map(([path, bytes]) => ({ path, bytes: bytes.length, sha256: sha(bytes) }));
+const finalOwnerIdentity = { ...ownerIdentity, phase: 'GS-LAUNCH-017', sourceSha: 'a'.repeat(40),
+  files: ownerPayload, artifactIdentity: sha(JSON.stringify(ownerPayload)) };
+const identifiedOwner = new Map(ownerFiles); set(identifiedOwner, '__deployment.json', JSON.stringify(finalOwnerIdentity));
+const inspectIdentified = files => inspectStaticArtifact(files, ownerManifest, publication, [], REVIEW_STAGING_ORIGIN, 'direct', { requireIdentity: true }).problems;
+assert.deepEqual(inspectIdentified(identifiedOwner), []);
+assert(codes(inspectIdentified(ownerFiles)).includes('IDENTITY')); ownerProofs++;
+for (const change of [i => { i.deployable = true; }, i => { i.releaseStatus = 'APPROVED'; }, i => { i.profile = 'production'; },
+  i => { i.phase = 'other'; }, i => { i.sourceSha = 'missing'; }, i => { delete i.sourceModified; }, i => { delete i.files; },
+  i => { i.files.pop(); }, i => { i.files[0] = i.files[1]; }, i => { i.files[0].path = '__deployment.json'; },
+  i => { i.files[0].bytes++; }, i => { i.files[0].sha256 = '0'.repeat(64); }, i => { i.artifactIdentity = '0'.repeat(64); }]) {
+  const input = structuredClone(finalOwnerIdentity); change(input);
+  const files = new Map(identifiedOwner); set(files, '__deployment.json', JSON.stringify(input));
+  assert(codes(inspectIdentified(files)).includes('IDENTITY')); ownerProofs++;
+}
+const malformedOwner = new Map(identifiedOwner); set(malformedOwner, '__deployment.json', '{');
+assert(codes(inspectIdentified(malformedOwner)).includes('IDENTITY')); ownerProofs++;
+assert(selectStaticRoutes(lighthouseRoutes, ownerManifest).every(r => r.indexable === false));
+assert.equal(productionInputProblems(undefined, publication, register, null, 'direct').length, 8);
+console.log(`GS-LAUNCH-017 owner preview PASS: 7 unchanged-source legal routes, direct contact and noindex; ${ownerProofs} named adverse proofs; production still refuses.`);
+
 for (const path of ['/press/path-finder', '/press/gridsmith-path-probe']) {
   assert(!manifest.routes.some((route) => route.path === path));
   const leakedManifest = structuredClone(manifest);

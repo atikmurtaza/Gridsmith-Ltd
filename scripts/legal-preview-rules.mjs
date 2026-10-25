@@ -1,12 +1,15 @@
 /** R12: private review is a build profile, never a publication state or CMS write. */
 import { isDeepStrictEqual } from 'node:util';
 import { createHash } from 'node:crypto';
+import { REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
+import { ownerPreviewIdentityAllowed } from '../lib/build/target.ts';
 
 export function legalPreviewProfile(value, dataset, origin) {
   if (value === undefined) return false;
+  if (value === 'adopted-owner' && dataset === 'production' && origin === REVIEW_STAGING_ORIGIN) return true;
   if (value !== 'adopted-development' || dataset !== 'development' ||
       !/^http:\/\/(?:localhost|127\.0\.0\.1):[0-9]+$/.test(origin)) {
-    throw new Error('Legal preview requires adopted-development, development dataset and an exact loopback origin; temporary-domain legal publication is prohibited');
+    throw new Error('Legal preview requires adopted-development on loopback, or adopted-owner with production content on the exact authorised temporary origin');
   }
   return true;
 }
@@ -15,7 +18,9 @@ export function legalPreviewProfile(value, dataset, origin) {
 export function servedLegalPreview(deployment, required = false) {
   if (!deployment || typeof deployment !== 'object') throw new Error('Static artifact must identify its served profile');
   const preview = deployment.legalPreview === true;
-  if ((required && !preview) || (preview && deployment.dataset !== 'development')) {
+  const owner = ownerPreviewIdentityAllowed(deployment);
+  if ((deployment.profile === 'owner-preview' && !owner) || (required && !preview) ||
+      (preview && !owner && (deployment.dataset !== 'development' || deployment.profile !== undefined))) {
     throw new Error('R12 requires the served adopted-development artifact');
   }
   return preview;

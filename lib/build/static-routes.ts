@@ -1,6 +1,6 @@
 import 'server-only';
 import { readFileSync } from 'node:fs';
-import { STATIC_BUILD } from './target';
+import { STATIC_BUILD, OWNER_PREVIEW } from './target';
 import type { StaticManifest } from './route-manifest';
 import { PRODUCTION_ORIGIN } from './production';
 
@@ -12,7 +12,9 @@ export function staticManifest(): StaticManifest {
   const manifest = JSON.parse(readFileSync(input, 'utf8')) as StaticManifest;
   const preview = manifest.dataset === 'development' && manifest.legalPreview === 'adopted-development' &&
     process.env.GRIDSMITH_LEGAL_PREVIEW === 'adopted-development' && process.env.NEXT_PUBLIC_SANITY_DATASET === 'development';
+  const ownerPreview = OWNER_PREVIEW && manifest.dataset === 'production' && manifest.legalPreview === 'adopted-owner';
   if (manifest.version !== 1 || manifest.target !== 'static' || (!preview && manifest.dataset !== 'production') ||
+      (manifest.legalPreview && !preview && !ownerPreview) ||
       manifest.indexable !== productionProfile(manifest) || !Array.isArray(manifest.routes)) {
     throw new Error('Invalid static publication manifest');
   }

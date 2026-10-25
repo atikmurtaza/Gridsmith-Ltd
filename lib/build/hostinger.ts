@@ -94,15 +94,17 @@ function legacyRules() {
  * headers outside `<IfModule>`, so a missing module fails loudly instead of dropping them.
  */
 export function productionHostingerRules(intakeOrigin: string | null, dataset: 'production' = 'production',
-  { rehearsal = false } = {}) {
+  { rehearsal = false, ownerPreview = false } = {}) {
+  if (ownerPreview && (rehearsal || intakeOrigin !== null)) throw new Error('Owner preview requires direct contact without rehearsal');
   const preview = intakeOrigin === new URL(PREVIEW_INTAKE_URL).origin;
   if (intakeOrigin !== null && (!/^https:\/\/[a-z0-9]{20}\.supabase\.co$/.test(intakeOrigin) || preview !== rehearsal)) {
     throw new Error('Production rules require the Production Supabase intake origin (Preview only in a rehearsal)');
   }
   if (dataset !== 'production') throw new Error('Production rules require the production dataset');
-  const host = new URL(PRODUCTION_ORIGIN).host, hostPattern = host.replaceAll('.', '\\.');
+  const origin = ownerPreview ? REVIEW_STAGING_ORIGIN : PRODUCTION_ORIGIN;
+  const host = new URL(origin).host, hostPattern = host.replaceAll('.', '\\.');
   // A rehearsal proves the profile locally; uploaded by mistake, it serves nothing.
-  return `${rehearsal ? '# REHEARSAL: not deployable. Unmet production inputs were waived locally.\nRequire all denied\n' : ''}# GS-R13-PRODUCTION-PROFILE-001: ${host} static files only; no PHP or Node application runtime.
+  return `${rehearsal ? '# REHEARSAL: not deployable. Unmet production inputs were waived locally.\nRequire all denied\n' : ''}# ${ownerPreview ? 'GS-LAUNCH-017 owner preview' : 'GS-R13-PRODUCTION-PROFILE-001'}: ${host} static files only; no PHP or Node application runtime.
 Options -Indexes -MultiViews
 DirectorySlash Off
 DirectoryIndex index.html
@@ -112,10 +114,10 @@ RewriteEngine On
 RewriteRule (^|/)\\.(?!well-known/) - [F,L]
 RewriteRule \\.(?:php[0-9]?|phtml|phar|pl|cgi)(?:/|$) - [F,L,NC]
 RewriteCond %{HTTP_HOST} ^www\\.${hostPattern}$ [NC]
-RewriteRule ^ ${PRODUCTION_ORIGIN}%{REQUEST_URI} [R=308,L,NE]
+RewriteRule ^ ${origin}%{REQUEST_URI} [R=308,L,NE]
 RewriteCond %{HTTP_HOST} !^${hostPattern}$ [NC]
 RewriteRule ^ - [F,L]
 RewriteCond %{HTTPS} !=on
-RewriteRule ^ ${PRODUCTION_ORIGIN}%{REQUEST_URI} [R=308,L,NE]
-${legacyRules()}${routing}${headerPolicy(false, intakeOrigin ?? '', dataset)}${types}`;
+RewriteRule ^ ${origin}%{REQUEST_URI} [R=308,L,NE]
+${legacyRules()}${routing}${headerPolicy(ownerPreview, intakeOrigin ?? '', dataset)}${types}`;
 }
