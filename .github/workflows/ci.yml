@@ -435,6 +435,7 @@ jobs:
     needs: verify
     permissions:
       contents: write
+      actions: read
     uses: ./.github/workflows/hostinger-staging.yml
     with:
       publish_preview: ${{ github.event_name == 'workflow_dispatch' && inputs.publish_preview == true }}
