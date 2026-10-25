@@ -288,8 +288,8 @@ console.log(
     'address, and every mailto: points at it',
 );
 console.log(
-  `  3. contact number: ${FACTS.contactPhone} on ${counted.phones} route(s); no tel: href on ` +
-    `any route, and every wa.me / sms: link is ${FACTS.whatsAppHref} / ${FACTS.smsHref}`,
+  `  3. contact number: ${FACTS.contactPhone} on ${counted.phones} route(s); no tel: or sms: href on ` +
+    `any route, and every wa.me link is ${FACTS.whatsAppHref}`,
 );
 console.log(
   `  4. registered office: ${counted.offices} occurrence-carrying route(s), none outside the ` +
@@ -299,7 +299,7 @@ console.log(
 console.log('  5. response wording: no guarantee, no SLA, no "ASAP", no published business hours');
 console.log('  6. public team: none');
 console.log(
-  `  7. call channel: no "call us", no "or call", no invitation to telephone, over ` +
+  `  7. withdrawn channels: no SMS/text-message copy or invitation to telephone, over ` +
     `${CALL_RULES.length} rule(s)`,
 );
 console.log(

@@ -40,14 +40,7 @@ const LEGAL_LINKS = LEGAL_FOOTER_SLUGS.map((s) => ({
  * the number the live `gridsmith.uk` already publishes, so nothing new is asserted about how to
  * reach the company.
  *
- * **It renders as text here, with no `tel:` and no `wa.me`.** `GS-R001-R` withdraws the call
- * channel, and `check:company` question 3 refuses a `tel:` href on any route. A WhatsApp link
- * would satisfy that rule and still be wrong in *this* block: the statutory footer is a
- * Companies Act and e-commerce-regs disclosure, not a contact surface, and it is on all 77
- * routes — putting a messaging call-to-action in it is marketing inside a legal notice. The
- * linked channels live on `/contact`, `/press/contact` and `/about`, where a reader has gone
- * looking for them. The number being *readable* is what reg. 6(1)(c) needs; being *clickable*
- * was never the requirement, and the email beside it is a link.
+ * GS-LAUNCH-012: label and link the number for WhatsApp only; omit Organization telephone.
  *
  * **No opening hours, ever.** `GS-O004` does not authorise published business hours and the
  * field no longer exists on the singleton. A phone number with no hours beside it is the
@@ -148,7 +141,6 @@ export async function Footer({ division }: { division: Division }) {
     url: SITE_URL,
     identifier: c.companyNumber,
     ...(c.contactEmail?.trim() ? { email: c.contactEmail } : {}),
-    ...(c.contactPhone?.trim() ? { telephone: c.contactPhone } : {}),
     address: { '@type': 'PostalAddress', streetAddress: c.registeredOffice, addressCountry: 'GB' },
     brand: STUDIOS.map((d) => ({ '@type': 'Brand', name: `Gridsmith ${d.label}` })),
   };
@@ -172,7 +164,7 @@ export async function Footer({ division }: { division: Division }) {
           ) : null}
           {phone ? (
             <p className={styles.footerContact}>
-              <span className={styles.footerContactLabel}>WhatsApp or text</span>{' '}
+              <span className={styles.footerContactLabel}>WhatsApp</span>{' '}
               <a href={whatsAppHref(phone)} className={styles.footerContactLink}>{phone}</a>
             </p>
           ) : null}

@@ -1,0 +1,755 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-012",
+  "recordedAt": "2026-10-25T02:11:47.309720+00:00",
+  "base": "4ac921a17c6a1b32b52bc4a510b2f40c3d27f61a",
+  "branch": "codex/gs-launch-012",
+  "worktree": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-012\\Gridsmith Ltd",
+  "phaseCommitLocator": "git log -1 --format=%H -- docs/_shared/GS-LAUNCH-012.md",
+  "status": "LOCAL_CONTACT_COMPLETE_PROPOSED_LEGAL_PUBLICATION_HOLD",
+  "ownerFacts": {
+    "F1": "Owner confirms active monitored email/WhatsApp; SMS and calls withdrawn",
+    "F2": "Owner or sales department; no current copying",
+    "F3": "Historical records may remain; no new owner backup system; provider backups not denied",
+    "F4": "Owner-confirmed France/EU website; no current overseas company-personnel access; authorised access",
+    "F5": "Owner manages retention/deletion/backups/rights; execution and current-period application not newly verified",
+    "source": "Owner GS-LAUNCH-012 request supplied 2026-10-25",
+    "independentlyTested": false
+  },
+  "legal": {
+    "canonicalSourcesUnchanged": true,
+    "registerUnchanged": true,
+    "ownerAdopted": 7,
+    "publishable": 0,
+    "proposals": [
+      {
+        "path": "docs/_legal/proposed/GS-LAUNCH-012/accessibility-statement-2.4.md",
+        "sha256": "774b1e200e67d146b0375b12c3fd4fadb3aeb0e27b87ea53bd0b419557984708",
+        "bytes": 3162,
+        "state": "PROPOSED_NOT_ADOPTED"
+      },
+      {
+        "path": "docs/_legal/proposed/GS-LAUNCH-012/comparison.diff",
+        "sha256": "1162b90a98abe18a80f45beb9146deeffb1c089daaa58a87b94bf21be70e0ebf",
+        "bytes": 10269,
+        "state": "PROPOSED_NOT_ADOPTED"
+      },
+      {
+        "path": "docs/_legal/proposed/GS-LAUNCH-012/privacy-policy-2.7.md",
+        "sha256": "822dd473c253e7d031e18cf6c439ace13817f270d9fd9e1898d9b8c5fc4549a3",
+        "bytes": 15100,
+        "state": "PROPOSED_NOT_ADOPTED"
+      }
+    ],
+    "newAdoptionRecorded": false,
+    "directContactModeRecorded": false,
+    "directContactReceiptRecorded": false,
+    "otherCanonicalInconsistency": {
+      "id": "GS-LAUNCH-012-C1",
+      "path": "docs/_legal/current/client-terms-consumers.md",
+      "lines": [
+        10,
+        314
+      ],
+      "text": "WhatsApp or text",
+      "modified": false,
+      "required": "Separate correction authority, version/review treatment and fresh exact-text adoption"
+    }
+  },
+  "sourceBinding": {
+    "definition": "SHA-256 of compact JSON over same ordered path/sha256 objects as GS-LAUNCH-010 inventory",
+    "fileCount": 367,
+    "baselineInventoryReference": "GS-LAUNCH-010-EVIDENCE.json sourceBinding.inventory",
+    "effectiveSourceSha256": "c671e39e53f91cd289353805d5ca5e01f4018892bca395620886778e33a1135f",
+    "changedSourceFiles": [
+      {
+        "path": "app/(marketing)/about/page.tsx",
+        "sha256": "6444f7b7856190f14c18fdab15e75a93a21387b7186838e95520cd435b67d845"
+      },
+      {
+        "path": "app/(marketing)/contact/page.tsx",
+        "sha256": "1cec4a445619b7ae284275d004bb0e22bf8a8363ba5546bc0a47d5d2bf55d78b"
+      },
+      {
+        "path": "app/(press)/press/contact/page.tsx",
+        "sha256": "783a289776caf93dbb0e8c29ed5ad454a0d046b34706d37b6877f77da5a64ab3"
+      },
+      {
+        "path": "app/(press)/press/contact/thank-you/page.tsx",
+        "sha256": "28e7eff18b770299e06c7658eace94aee0bbb4da5d2538e76d9d0c94211752a0"
+      },
+      {
+        "path": "components/chrome/Footer.tsx",
+        "sha256": "1d1c3c4572ee472bbda43e7aeaafab5e899a4dc81f83f35e5d166ac597653b77"
+      },
+      {
+        "path": "components/content/Connect.tsx",
+        "sha256": "25513f1cec6db994b870548a1db8f48e10f61b88e4a094a1c4bdafb68f561023"
+      },
+      {
+        "path": "components/leads/StaticContactShell.tsx",
+        "sha256": "c830cbf5b2f2fd471fe8799fae69a5e816a83edd6d37314b728cb76c59b9d2f4"
+      },
+      {
+        "path": "lib/company/companyDetails.ts",
+        "sha256": "5714dca355de411ac940135f4e1b01b66a0a666354870e58c7d89346cff33e03"
+      },
+      {
+        "path": "sanity/schemas/companyDetails.ts",
+        "sha256": "3c4b85b7e110ea68733095b83f7abfa3acc9958ba3e9f3a7a7c02f1565356057"
+      },
+      {
+        "path": "scripts/check-company-facts.mjs",
+        "sha256": "5c64f865b95dec7d537502d72f63f57a66d39e1836db76271f5dc774ea225b8b"
+      },
+      {
+        "path": "scripts/check-company-facts.selftest.mjs",
+        "sha256": "52fca8938f02a9237c6d7b98e52bdf833105b82a7aa1a8bb84b2d7bc25f6aa2c"
+      },
+      {
+        "path": "scripts/check-legal-adoption.selftest.mjs",
+        "sha256": "e012258ea2708c73f3a6ad277b3ca811f53191a001705c6767d11cd2baca59b3"
+      },
+      {
+        "path": "scripts/check-static-artifact.mjs",
+        "sha256": "4fd209b55c5458c883b0d13d9f23313c573e4ab064fae5a85a26fecf2eb7c651"
+      },
+      {
+        "path": "scripts/check-static.selftest.mjs",
+        "sha256": "06682bcaa190bba6bb271a408821c59842c6d17f7124cce63c7cc2773b3c1884"
+      },
+      {
+        "path": "scripts/company-facts-rules.mjs",
+        "sha256": "63bbd3d4c4a1f9b4c6792ca051f99317aa2915baeb5745a0fdeec73c2144102c"
+      },
+      {
+        "path": "scripts/legal-adoption-rules.mjs",
+        "sha256": "a419a6c8cab988a8a1eac146af0f390a3a2d3679bb78b3f8a751f0b57f7a4cf6"
+      }
+    ],
+    "preservedInputs": [
+      {
+        "path": "docs/_legal/current/accessibility-statement.md",
+        "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "docs/_legal/current/client-terms-applicability.md",
+        "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "docs/_legal/current/client-terms-business.md",
+        "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "docs/_legal/current/client-terms-consumers.md",
+        "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "docs/_legal/current/cookie-policy.md",
+        "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "docs/_legal/current/privacy-policy.md",
+        "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "docs/_legal/current/website-terms.md",
+        "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "docs/_legal/evidence/GS-O003-R-REGISTER.json",
+        "sha256": "4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "package.json",
+        "sha256": "97854c2b19e9ca55d5a793bfb5a768ce28d2856d7c44159ebdccfff2b64dad31",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "f45a725650c64e81bc8d580569e012ad07ca3d254e8ffaa63fb22c6cc57a6fa3",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "config/browser-input.json",
+        "sha256": "20ac446b365c2e9f08d83355f66e99f78c4065c93c49099c45ebd4754be0cb54",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": "scripts/browser-input.mjs",
+        "sha256": "0fc844b30a0561f54485cd402248265cf8af2c2fe282e1a07569ca66400cad2f",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": ".github/workflows/ci.yml",
+        "sha256": "346a08373d6f8eb8b5dca02981980c0a916db63f0388535f2fcf68eed1bee9cc",
+        "byteIdenticalToBase": true
+      },
+      {
+        "path": ".github/workflows/hostinger-staging.yml",
+        "sha256": "4e436c2ac8f4eda00bd71cbc845c3fbfd0ea1fc6e78848bf8a5335c75d19453f",
+        "byteIdenticalToBase": true
+      }
+    ]
+  },
+  "commands": [
+    {
+      "label": "production-audit",
+      "command": [
+        "npm",
+        "audit",
+        "--omit=dev",
+        "--json"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:01:41.945Z",
+      "endedAt": "2026-10-25T02:01:53.179Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-012/production-audit.log",
+      "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c"
+    },
+    {
+      "label": "build",
+      "command": [
+        "npm",
+        "run",
+        "verify:build"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:02:06.047Z",
+      "endedAt": "2026-10-25T02:02:57.308Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-012/build.log",
+      "sha256": "14852bb7a21646c54b859b80e98f8e991fa4afeaa0c09c0b40d8996020ff5b60"
+    },
+    {
+      "label": "served-company-legal",
+      "command": [
+        "node",
+        "scripts/with-server.mjs",
+        "npm run check:company",
+        "npm run check:legal:parity"
+      ],
+      "environment": {
+        "VERIFY_PORT": "3291"
+      },
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:03:34.901Z",
+      "endedAt": "2026-10-25T02:03:37.891Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "build/gs-launch-012/served-company-legal.log",
+      "sha256": "f6527944fbb215e1b5b1be8ca7f888cec5bd51ccde983f394e5efe6498c3d93e"
+    },
+    {
+      "label": "production-refusal",
+      "command": [
+        "node",
+        "scripts/build-static.mjs"
+      ],
+      "environment": {
+        "GRIDSMITH_STATIC_PROFILE": "production"
+      },
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:03:38.223Z",
+      "endedAt": "2026-10-25T02:03:40.247Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "build/gs-launch-012/production-refusal.log",
+      "sha256": "e645b2dae2b850b750bb2b1242b6aa801e1c86673b215616d77cc0a9c33ad089"
+    },
+    {
+      "label": "contact-selftest",
+      "command": [
+        "node",
+        "scripts/check-static.selftest.mjs"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:03:55.685Z",
+      "endedAt": "2026-10-25T02:03:56.283Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": null,
+      "sha256": "6dc1252fdbb54424b476aab2c289fba538f4b9567c3c60517d6d2ec433672446",
+      "attempt": 1,
+      "originalLog": "build/gs-launch-012/contact-selftest.log",
+      "rawLogStatus": "OVERWRITTEN_BY_RETRY; original hash retained; not recoverable"
+    },
+    {
+      "label": "verify-static",
+      "command": [
+        "npm",
+        "run",
+        "verify:static"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:01:55.888Z",
+      "endedAt": "2026-10-25T02:03:56.669Z",
+      "exitCode": 3221226505,
+      "signal": null,
+      "log": null,
+      "sha256": "6d03ef7adae4a35e5a9cdb56ccb00c9595659ee1e47d75c645ffea0d17671d02",
+      "attempt": 1,
+      "originalLog": "build/gs-launch-012/verify-static.log",
+      "rawLogStatus": "OVERWRITTEN_BY_RETRY; original hash retained; not recoverable"
+    },
+    {
+      "label": "rehearsal",
+      "command": [
+        "node",
+        "scripts/build-static.mjs"
+      ],
+      "environment": {
+        "GRIDSMITH_STATIC_PROFILE": "production",
+        "GRIDSMITH_PRODUCTION_REHEARSAL": "1"
+      },
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:04:26.567Z",
+      "endedAt": "2026-10-25T02:05:36.727Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-012/rehearsal.log",
+      "sha256": "f049f2d8878b2d36fb0fc3b698152b8d970c26fd7cb786cbfe5685fd0d61e0eb"
+    },
+    {
+      "label": "dependency-recheck",
+      "command": [
+        "node",
+        "scripts/check-dependency-overrides.mjs"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:06:48.704Z",
+      "endedAt": "2026-10-25T02:07:03.851Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-012/dependency-recheck.log",
+      "sha256": "41d5515384f61a3ae82ed56ff59cecb1c02cbe610e4971ae688b6fc865fe90fb"
+    },
+    {
+      "label": "verify-static",
+      "command": [
+        "npm",
+        "run",
+        "verify:static"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:07:10.562Z",
+      "endedAt": "2026-10-25T02:08:03.931Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-012/verify-static-attempt-2.log",
+      "sha256": "6362725d2626de456a42595e401c3f2c3c08fbb65f858e94e50caba6bf540369",
+      "attempt": 2
+    },
+    {
+      "label": "contact-selftest",
+      "command": [
+        "node",
+        "scripts/check-static.selftest.mjs"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:08:59.762Z",
+      "endedAt": "2026-10-25T02:09:00.363Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-012/contact-selftest-attempt-2.log",
+      "sha256": "6dc1252fdbb54424b476aab2c289fba538f4b9567c3c60517d6d2ec433672446",
+      "attempt": 2
+    },
+    {
+      "label": "legal-adoption",
+      "command": [
+        "node",
+        "scripts/check-legal-adoption.mjs"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:09:55.862Z",
+      "endedAt": "2026-10-25T02:09:55.957Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-012/legal-adoption-attempt-1.log",
+      "sha256": "acb39045c0394d9745d8d7993de37ebba99dd8f07f33f731a3c7a9c1f69ff2fb"
+    },
+    {
+      "label": "legal-parity-selftest",
+      "command": [
+        "node",
+        "scripts/check-legal-parity.selftest.mjs"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:09:56.007Z",
+      "endedAt": "2026-10-25T02:09:56.063Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-012/legal-parity-selftest-attempt-1.log",
+      "sha256": "e8ce4672be02bc57f5e235f66d7fc1060724ba2eb0e881aedbd7766a0bb8ba53"
+    },
+    {
+      "label": "verify-static",
+      "command": [
+        "npm",
+        "run",
+        "verify:static"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:09:21.888Z",
+      "endedAt": "2026-10-25T02:09:56.149Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-012/verify-static-attempt-3.log",
+      "sha256": "6362725d2626de456a42595e401c3f2c3c08fbb65f858e94e50caba6bf540369"
+    },
+    {
+      "label": "company-selftest",
+      "command": [
+        "node",
+        "scripts/check-company-facts.selftest.mjs"
+      ],
+      "environment": {},
+      "dataset": "development",
+      "startedAt": "2026-10-25T02:09:56.111Z",
+      "endedAt": "2026-10-25T02:09:56.208Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-012/company-selftest-attempt-1.log",
+      "sha256": "8418146f67e080f1085e4f4f04eaed8ac7bf84aa9ecb5169ad5bbffc12be2411"
+    }
+  ],
+  "supplementaryLogHashes": [
+    {
+      "path": "build/gs-launch-012/install.log",
+      "sha256": "a55e727c1bff1c40313c8c355e481933678dfc3f7bcc8a44866446b3948cf1f2",
+      "bytes": 878
+    },
+    {
+      "path": "build/gs-launch-012/company-initial.log",
+      "sha256": "e9e10e9d013831eca717b1df1122a0d11f25c36c928b67eb18de9925ed34442f",
+      "bytes": 6971
+    },
+    {
+      "path": "build/gs-launch-012/legal-initial.log",
+      "sha256": "1086a41497aaf893057e65651a5ac63a58a1f434a335bba2b08c12acfe35c20b",
+      "bytes": 95
+    },
+    {
+      "path": "build/gs-launch-012/static-initial.log",
+      "sha256": "293b45d4af35d1b086d593a9971077f364cdb2bbc725cb21063b52172a3313c6",
+      "bytes": 1597
+    },
+    {
+      "path": "build/gs-launch-012/artifact-inspection.json",
+      "sha256": "fef51859609289e253e3823465cd0d2c0f620e66a8a553e4fd09f22d832e9f58",
+      "bytes": 757
+    }
+  ],
+  "productionAudit": {
+    "auditReportVersion": 2,
+    "vulnerabilities": {},
+    "metadata": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "dependencies": {
+        "prod": 27,
+        "dev": 1638,
+        "optional": 148,
+        "peer": 11,
+        "peerOptional": 0,
+        "total": 1701
+      }
+    }
+  },
+  "deniedArtifactInspection": {
+    "startedAt": "2026-10-25T02:09:55.385Z",
+    "endedAt": "2026-10-25T02:09:55.802Z",
+    "exitCode": 0,
+    "artifactIdentity": "7ab5a9fb4f703440015e8185e1e89aa41e1e24f87fdfce7c810f9c2d06dfd07a",
+    "sourceSha": "4ac921a17c6a1b32b52bc4a510b2f40c3d27f61a",
+    "sourceModified": true,
+    "deployable": false,
+    "rehearsal": true,
+    "requireAllDenied": true,
+    "manifestFileHashesVerified": 198,
+    "files": 199,
+    "routes": 54,
+    "companyQuestions": 10,
+    "emailRoutes": 54,
+    "whatsAppRoutes": 54,
+    "contractExpectedRefusals": [
+      "LEGAL: production requires all seven PUBLISHABLE legal documents",
+      "REHEARSAL: rehearsal artifact is not deployable"
+    ],
+    "companyProblems": [],
+    "limit": "Offline artifact/source scan; no HTTP/browser/hosted acceptance"
+  },
+  "productionRefusal": {
+    "exitCode": 1,
+    "expected": true,
+    "unmetInputs": 9,
+    "independentLegalRefusals": 7,
+    "artifactCreated": false
+  },
+  "normalServedResults": {
+    "aggregateExitCode": 1,
+    "company": {
+      "status": "FAIL",
+      "reportedProblems": 1,
+      "reason": "Preserved Consumer Terms C1 withdrawn SMS wording"
+    },
+    "legalParity": {
+      "status": "PASS",
+      "documents": 7,
+      "clauses": 109,
+      "paragraphs": 406,
+      "limit": "Existing canonical development review, not proposed-text adoption or hosted acceptance"
+    }
+  },
+  "diagnostics": [
+    {
+      "label": "initial company predicate test",
+      "status": "FAIL_OUTPUT",
+      "exitCode": null,
+      "reason": "Overlapping voice invitation fixture; corrected; final84PASS"
+    },
+    {
+      "label": "initial extra offline artifact orchestration",
+      "exitCode": 1,
+      "reason": "Included inline CSS as visible copy; corrected orchestration to match existing script/style filtering; no application change"
+    },
+    {
+      "label": "first full static run",
+      "exitCode": 3221226505,
+      "hex": "0xC0000409",
+      "cause": "NOT_ESTABLISHED",
+      "rawLog": "OVERWRITTEN_BY_RETRY; original command/timestamp/exit/hash retained; output cannot be reconstructed",
+      "laterSuccessDoesNotRelabel": true
+    }
+  ],
+  "independentReviews": {
+    "spec": "Voice-number copy coverage gap fixed; focused re-review resolved",
+    "accessibility": "No source finding; runtime unverified",
+    "design": "No source finding; rendering unverified",
+    "content": "No new fabricated proposal facts; report raw-log wording corrected; Consumer C1 remains",
+    "rules": "Unrelated Footer guidance restored; focused re-review resolved",
+    "readOnly": true
+  },
+  "preservation": {
+    "primaryHead": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+    "primaryBranch": "codex/gs-launch-001",
+    "primaryStatusMatchesOpeningObservation": true,
+    "primaryStatus": [
+      " M docs/_shared/05-HANDOVER.md",
+      " M docs/_shared/AI-HANDOFF.md",
+      " M docs/_shared/PROJECT-STATUS.md",
+      "?? .codex/",
+      "?? AGENTS.md",
+      "?? docs/_shared/GS-LEGAL-001-R12-RASTER-CLOSURE.md",
+      "?? docs/_shared/GS-SEC-001-R1.md",
+      "?? docs/_shared/GS-SEC-001-R2.md",
+      "?? docs/_shared/GS-SEC-001-R3.md",
+      "?? public/brand/design/preview.html"
+    ],
+    "primaryByteHashBaselineAvailable": false,
+    "predecessorHead": "4ac921a17c6a1b32b52bc4a510b2f40c3d27f61a",
+    "predecessorClean": true,
+    "isolatedStartingHead": "4ac921a17c6a1b32b52bc4a510b2f40c3d27f61a",
+    "isolatedStartingClean": true,
+    "finalCleanStatusReceipt": "build/gs-launch-012/closeout.json, created only after commit"
+  },
+  "pending": [
+    "Fresh exact-text adoption",
+    "Consumer C1 separate correction/adoption",
+    "Historical holdings and provider retention/transfer verification",
+    "Current retention applicability/execution",
+    "Hostinger roots/database/publishers/matched backups/isolated restore/rollback",
+    "Policy-cleared Linux/browser/keyboard/axe/Lighthouse/exact-SHA CI",
+    "A-2 serving-stack and production-origin repeat",
+    "All-seven publication authority and separate exact-artifact cutover authority",
+    "Prior unresolved development-toolchain risk disposition"
+  ],
+  "linuxAcceptance": {
+    "status": "NOT_RUN",
+    "priorDockerDenialRetried": false
+  },
+  "push": false,
+  "ciDispatch": false,
+  "deployment": false,
+  "publication": false,
+  "productionWrites": 0,
+  "providerOperations": false,
+  "historicalDataDeleted": false,
+  "nextPhaseStarted": false,
+  "publicSourcesChecked": [
+    "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/the-right-to-be-informed/what-privacy-information-should-we-provide/",
+    "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/international-transfers/a-guide-to-international-transfers/what-is-an-international-transfer-of-personal-information/",
+    "https://www.hostinger.com/legal/dpa"
+  ],
+  "reportSha256": "309a5e1ec0d4c2704ad4452a58e6aa11f560a74fa90f1e142d5480086b3cd738",
+  "finalChecks": {
+    "recordedAt": "2026-10-25T02:12:41.133531+00:00",
+    "stagedFiles": 27,
+    "whitespace": "PASS",
+    "addedSensitiveValuePatterns": "PASS",
+    "scanLimit": "Added staged lines and named value formats; repository build secret check separately passed; no private secret inventory supplied",
+    "stagePathsReviewed": [
+      "app/(marketing)/about/page.tsx",
+      "app/(marketing)/contact/page.tsx",
+      "app/(press)/press/contact/page.tsx",
+      "app/(press)/press/contact/thank-you/page.tsx",
+      "components/chrome/Footer.tsx",
+      "components/content/Connect.tsx",
+      "components/leads/StaticContactShell.tsx",
+      "docs/_legal/proposed/GS-LAUNCH-012/accessibility-statement-2.4.md",
+      "docs/_legal/proposed/GS-LAUNCH-012/comparison.diff",
+      "docs/_legal/proposed/GS-LAUNCH-012/privacy-policy-2.7.md",
+      "docs/_shared/05-HANDOVER.md",
+      "docs/_shared/AI-HANDOFF.md",
+      "docs/_shared/GS-LAUNCH-012-EVIDENCE.json",
+      "docs/_shared/GS-LAUNCH-012.md",
+      "docs/_shared/OWNER-ACTIONS.md",
+      "docs/_shared/PROJECT-STATUS.md",
+      "docs/master/PROJECT-RULES.md",
+      "docs/press/PROJECT-RULES.md",
+      "lib/company/companyDetails.ts",
+      "sanity/schemas/companyDetails.ts",
+      "scripts/check-company-facts.mjs",
+      "scripts/check-company-facts.selftest.mjs",
+      "scripts/check-legal-adoption.selftest.mjs",
+      "scripts/check-static-artifact.mjs",
+      "scripts/check-static.selftest.mjs",
+      "scripts/company-facts-rules.mjs",
+      "scripts/legal-adoption-rules.mjs"
+    ],
+    "changedFileHashesExcludingThisEvidence": [
+      {
+        "path": "app/(marketing)/about/page.tsx",
+        "sha256": "6444f7b7856190f14c18fdab15e75a93a21387b7186838e95520cd435b67d845"
+      },
+      {
+        "path": "app/(marketing)/contact/page.tsx",
+        "sha256": "1cec4a445619b7ae284275d004bb0e22bf8a8363ba5546bc0a47d5d2bf55d78b"
+      },
+      {
+        "path": "app/(press)/press/contact/page.tsx",
+        "sha256": "783a289776caf93dbb0e8c29ed5ad454a0d046b34706d37b6877f77da5a64ab3"
+      },
+      {
+        "path": "app/(press)/press/contact/thank-you/page.tsx",
+        "sha256": "28e7eff18b770299e06c7658eace94aee0bbb4da5d2538e76d9d0c94211752a0"
+      },
+      {
+        "path": "components/chrome/Footer.tsx",
+        "sha256": "1d1c3c4572ee472bbda43e7aeaafab5e899a4dc81f83f35e5d166ac597653b77"
+      },
+      {
+        "path": "components/content/Connect.tsx",
+        "sha256": "25513f1cec6db994b870548a1db8f48e10f61b88e4a094a1c4bdafb68f561023"
+      },
+      {
+        "path": "components/leads/StaticContactShell.tsx",
+        "sha256": "c830cbf5b2f2fd471fe8799fae69a5e816a83edd6d37314b728cb76c59b9d2f4"
+      },
+      {
+        "path": "docs/_legal/proposed/GS-LAUNCH-012/accessibility-statement-2.4.md",
+        "sha256": "774b1e200e67d146b0375b12c3fd4fadb3aeb0e27b87ea53bd0b419557984708"
+      },
+      {
+        "path": "docs/_legal/proposed/GS-LAUNCH-012/comparison.diff",
+        "sha256": "1162b90a98abe18a80f45beb9146deeffb1c089daaa58a87b94bf21be70e0ebf"
+      },
+      {
+        "path": "docs/_legal/proposed/GS-LAUNCH-012/privacy-policy-2.7.md",
+        "sha256": "822dd473c253e7d031e18cf6c439ace13817f270d9fd9e1898d9b8c5fc4549a3"
+      },
+      {
+        "path": "docs/_shared/05-HANDOVER.md",
+        "sha256": "5cf1f8e458e45b89e6c61df9a59e2c23ef379abc4ab8ecb9ac8c3baf3d7232d2"
+      },
+      {
+        "path": "docs/_shared/AI-HANDOFF.md",
+        "sha256": "6e60c3c63d648ce1e1b0a457ea0573ad4b8906b30909681850f4822200d639a6"
+      },
+      {
+        "path": "docs/_shared/GS-LAUNCH-012.md",
+        "sha256": "309a5e1ec0d4c2704ad4452a58e6aa11f560a74fa90f1e142d5480086b3cd738"
+      },
+      {
+        "path": "docs/_shared/OWNER-ACTIONS.md",
+        "sha256": "49368036f88b2933590e88f68cd3c37e9066ed8c5391cd01e1aebb7ce6955391"
+      },
+      {
+        "path": "docs/_shared/PROJECT-STATUS.md",
+        "sha256": "7f4251c18c6530d86b801fcfb14252095152658511e3581f8b7c4da39d2caefb"
+      },
+      {
+        "path": "docs/master/PROJECT-RULES.md",
+        "sha256": "868780b34b24953ea2ddcf2a77addcb36b04e7290758493d2cf1ebcc1567d172"
+      },
+      {
+        "path": "docs/press/PROJECT-RULES.md",
+        "sha256": "b538bb572ed8c0b1b1f805b4e5bfcef7e974f815fd462890a17c5f7d5bbd3b5b"
+      },
+      {
+        "path": "lib/company/companyDetails.ts",
+        "sha256": "5714dca355de411ac940135f4e1b01b66a0a666354870e58c7d89346cff33e03"
+      },
+      {
+        "path": "sanity/schemas/companyDetails.ts",
+        "sha256": "3c4b85b7e110ea68733095b83f7abfa3acc9958ba3e9f3a7a7c02f1565356057"
+      },
+      {
+        "path": "scripts/check-company-facts.mjs",
+        "sha256": "5c64f865b95dec7d537502d72f63f57a66d39e1836db76271f5dc774ea225b8b"
+      },
+      {
+        "path": "scripts/check-company-facts.selftest.mjs",
+        "sha256": "52fca8938f02a9237c6d7b98e52bdf833105b82a7aa1a8bb84b2d7bc25f6aa2c"
+      },
+      {
+        "path": "scripts/check-legal-adoption.selftest.mjs",
+        "sha256": "e012258ea2708c73f3a6ad277b3ca811f53191a001705c6767d11cd2baca59b3"
+      },
+      {
+        "path": "scripts/check-static-artifact.mjs",
+        "sha256": "4fd209b55c5458c883b0d13d9f23313c573e4ab064fae5a85a26fecf2eb7c651"
+      },
+      {
+        "path": "scripts/check-static.selftest.mjs",
+        "sha256": "06682bcaa190bba6bb271a408821c59842c6d17f7124cce63c7cc2773b3c1884"
+      },
+      {
+        "path": "scripts/company-facts-rules.mjs",
+        "sha256": "63bbd3d4c4a1f9b4c6792ca051f99317aa2915baeb5745a0fdeec73c2144102c"
+      },
+      {
+        "path": "scripts/legal-adoption-rules.mjs",
+        "sha256": "a419a6c8cab988a8a1eac146af0f390a3a2d3679bb78b3f8a751f0b57f7a4cf6"
+      }
+    ]
+  }
+}

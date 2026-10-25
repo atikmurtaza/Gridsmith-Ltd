@@ -529,7 +529,7 @@ for (const url of [PREVIEW_INTAKE_URL, intake]) {
 const directFixture = new Map(prodFixture);
 for (const name of ['contact.html', 'press/contact.html']) {
   set(directFixture, name, directFixture.get(name).toString().replace(/<form\b[^]*?<\/form>/,
-    '<aside data-static-contact-shell><a href="mailto:contact@gridsmith.uk">Email</a><a href="https://wa.me/447405448534">WhatsApp</a><a href="sms:+447405448534">Text</a></aside>'));
+    '<aside data-static-contact-shell><a href="mailto:contact@gridsmith.uk">Email</a><a href="https://wa.me/447405448534">WhatsApp</a></aside>'));
 }
 set(directFixture, 'press/contact/thank-you.html', directFixture.get('press/contact/thank-you.html').toString()
   .replaceAll('That has reached us', 'This website does not collect enquiries through a form'));
@@ -540,6 +540,10 @@ assert(/^Require all denied$/m.test(productionHostingerRules(null, 'production',
 set(directFixture, '.htaccess', directRules);
 const inspectDirect = (files, mode = 'direct') => inspectStaticArtifact(files, prodManifest, readyPublication, [], PRODUCTION_ORIGIN, mode).problems;
 assert.deepEqual(inspectDirect(directFixture), []);
+const internalCopy = new Map(directFixture);
+set(internalCopy, 'about.html', internalCopy.get('about.html') + '<style>.sms { --label: "Text us" }</style><script type="application/json">{"historicNote":"WhatsApp or text"}</script>');
+assert.deepEqual(inspectDirect(internalCopy), [], 'Internal style/data text is not a public contact invitation');
+
 let directProofs = 0;
 for (const [name, mutate, code] of [
   ['form', f => set(f, 'contact.html', f.get('contact.html') + '<form></form>'), 'CONTACT'],
@@ -547,10 +551,14 @@ for (const [name, mutate, code] of [
   ['shell', f => editProd(f, 'contact.html', 'data-static-contact-shell', 'data-other'), 'CONTACT'],
   ['email', f => editProd(f, 'contact.html', 'mailto:', 'other:'), 'CONTACT'],
   ['WhatsApp', f => editProd(f, 'press/contact.html', 'https://wa.me/', 'https://example.invalid/'), 'CONTACT'],
-  ['SMS missing', f => editProd(f, 'contact.html', 'sms:', 'other:'), 'CONTACT'],
   ['email wrong recipient', f => editProd(f, 'contact.html', 'mailto:contact@gridsmith.uk', 'mailto:synthetic@example.invalid'), 'CONTACT'],
   ['WhatsApp wrong recipient', f => editProd(f, 'press/contact.html', 'wa.me/447405448534', 'wa.me/440000000000'), 'CONTACT'],
-  ['SMS wrong recipient', f => editProd(f, 'press/contact.html', 'sms:+447405448534', 'sms:+440000000000'), 'CONTACT'],
+  ...['sms:+447405448534', 'sms:+440000000000', 'tel:+447405448534'].map(href =>
+    [href, f => set(f, 'about.html', f.get('about.html') + `<a href="${href}">Contact</a>`), 'CONTACT']),
+  ...['Text us', 'Send an SMS', 'WhatsApp or text', 'text-message links', 'Call us', 'Give us a call', 'Or call', 'Speak to us on', 'Call Gridsmith', 'Voice calls', 'Call +447405448534', 'Phone +44 7405 448534', 'Telephone: +44 7405 448534', 'Telephone: 07405 448534'].map(copy =>
+    [copy, f => set(f, 'about.html', f.get('about.html') + `<p>${copy}</p>`), 'CONTACT']),
+  ['metadata SMS', f => editProd(f, 'about.html', 'name="description" content="Specimen"', 'name="description" content="Text messages welcome"'), 'CONTACT'],
+  ['single-quoted mixed-case SMS', f => set(f, '500.html', f.get('500.html') + "<a href = 'SmS:+447405448534'>Contact</a>"), 'CONTACT'],
   ['confirmation', f => editProd(f, 'press/contact/thank-you.html', 'This website does not collect enquiries through a form', 'That has reached us'), 'FORM'],
   ...['html', 'js', 'txt', 'json'].map(ext => [ext + ' intake leak', f => set(f, ext === 'html' ? 'contact.html' : 'leak.' + ext, (ext === 'html' ? f.get('contact.html') : '') + PREVIEW_INTAKE_URL), 'CONTACT']),
   ['missing error', f => f.delete('500.html'), '500'],

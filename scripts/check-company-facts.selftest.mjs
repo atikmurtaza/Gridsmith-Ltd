@@ -154,10 +154,10 @@ check(
  * call links.
  */
 const CLEAN_CHANNELS =
-  `<a href="${FACTS.whatsAppHref}">WhatsApp</a> <a href="${FACTS.smsHref}">text</a>`;
+  `<a href="${FACTS.whatsAppHref}">WhatsApp</a>`;
 
 check(
-  'PHONE CLEAN — the number as text, with the two authorised schemes',
+  'PHONE CLEAN — the number as text, with the authorised WhatsApp scheme',
   none(phoneProblems('/contact', FACTS.contactPhone, CLEAN_CHANNELS)),
 );
 
@@ -206,7 +206,7 @@ check(
   'PHONE — an sms: href that is not the global form',
   one(
     phoneProblems('/contact', FACTS.contactPhone, '<a href="sms:07405448534">t</a>'),
-    'RFC 5724',
+    'SMS',
   ),
 );
 
@@ -325,15 +325,17 @@ check(
 /* -- 7. the call channel, every rule alone ----------------------------------- */
 
 const CALL_SPECIMENS = {
+  'SMS-PUBLIC-COPY': 'WhatsApp or text messages.',
+  'CALL-CTA-DIRECT': 'Call Gridsmith on the number below.',
   'CALL-CTA-IMPERATIVE': 'Call us on the number below.',
   'CALL-CTA-GIVE-US': 'Give us a call any time.',
-  'CALL-CTA-OR-CALL': 'Or call the office.',
+  'CALL-CTA-OR-CALL': 'Or call below.',
   'CALL-SPEAK-TO': 'Speak to us on the number below.',
 };
 
 check(
   'CALL CLEAN — the wording GS-R001-R authorises',
-  none(callProblems('/contact', 'The same number takes WhatsApp and text messages.')),
+  none(callProblems('/contact', 'The same number takes WhatsApp messages.')),
 );
 
 check(

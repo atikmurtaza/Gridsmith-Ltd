@@ -6,12 +6,12 @@ import { StaticContactShell } from '@/components/leads/StaticContactShell';
 import { DIRECT_CONTACT } from '@/lib/build/target';
 import { Opening } from '@/components/shared/Opening';
 import styles from '@/components/shared/shared.module.css';
-import { getCompanyDetails, whatsAppHref, smsHref } from '@/lib/company/companyDetails';
+import { getCompanyDetails, whatsAppHref } from '@/lib/company/companyDetails';
 
 export const metadata: Metadata = {
   title: 'Tell us what you need — Gridsmith Ltd',
   description:
-    DIRECT_CONTACT ? 'Contact Gridsmith by email, WhatsApp or text message to discuss your project.' :
+    DIRECT_CONTACT ? 'Contact Gridsmith by email or WhatsApp to discuss your project.' :
       'One form for all three studios. If your need spans more than one, say so — that is the first option.',
 };
 
@@ -43,22 +43,7 @@ export const metadata: Metadata = {
  * owner authorises no guaranteed response time and no SLA — and every surface that says
  * anything about timing moved with it because none of them holds its own copy.
  *
- * ## The number is a message channel, not a call channel — `GS-R001-R`
- *
- * `GS-O004` published the number and linked it `tel:`. **That limb is superseded.** The number
- * is unchanged and still published; what is withdrawn is the invitation to ring it. Nobody has
- * committed to answering a call, there are no published hours and there never will be
- * (`GS-O004`, unchanged), and *"We typically respond within 48 hours"* is a sentence about
- * asynchronous contact — it sits correctly beside WhatsApp and SMS and incoherently beside a
- * telephone.
- *
- * So the number is offered as **WhatsApp and text message**, each named, each linked with the
- * scheme that channel actually uses. `check:company` question 3 refuses any `tel:` href and any
- * "call us" wording on any route, and the strike is registered in `scripts/struck-rules.mjs`.
- *
- * **SMS is listed alongside WhatsApp rather than instead of it** because `sms:` does nothing on
- * most desktop browsers. Neither is ever the only route on the page: the form is above it and
- * the email address is beside it, and reg. 6(1)(c) is satisfied by the email regardless.
+ * GS-LAUNCH-012: email and WhatsApp are the only public direct channels.
  */
 export default async function Page() {
   const company = await getCompanyDetails();
@@ -72,8 +57,8 @@ export default async function Page() {
         place="Contact"
         title="Tell us what you need"
         lead={[
-          DIRECT_CONTACT ? 'Tell us about your project by email, WhatsApp or text message. If it spans more than one studio, say so.' :
-            'One form for all three studios. If what you need spans more than one of them, say so — it is the first option, and it comes straight to the founder rather than being routed to a studio that can only do part of it.',
+          DIRECT_CONTACT ? 'Tell us about your project by email or WhatsApp. If it spans more than one studio, say so.' :
+            'One form for all three studios. If what you need spans more than one of them, say so — it is the first option, and it reaches the owner or sales department.',
           company.responseCommitment,
         ]}
       />
@@ -108,7 +93,7 @@ export default async function Page() {
               ) : null}
               {company.contactPhone ? (
                 <div>
-                  <dt>WhatsApp or text</dt>
+                  <dt>WhatsApp</dt>
                   <dd>
                     <Numeric>{company.contactPhone}</Numeric>
                     <br />
@@ -116,14 +101,12 @@ export default async function Page() {
                       WhatsApp
                       <span className="sr-only"> (opens in a new tab)</span>
                     </a>
-                    {' · '}
-                    <a href={smsHref(company.contactPhone)}>text message</a>
                   </dd>
                 </div>
               ) : null}
             </dl>
             <p className={styles.directNote}>
-              {DIRECT_CONTACT ? 'Email, WhatsApp and text messages reach Gridsmith directly.' : 'Both reach the same place as the form.'} {company.responseCommitment}
+              Email and WhatsApp reach Gridsmith directly. {company.responseCommitment}
             </p>
           </aside>
         </div>

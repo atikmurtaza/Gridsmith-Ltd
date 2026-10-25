@@ -4,7 +4,7 @@ import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { artifactNoReviewProblems } from './review-public-rules.mjs';
-import { FACTS } from './company-facts-rules.mjs';
+import { FACTS, phoneProblems, phoneTextOf, callProblems } from './company-facts-rules.mjs';
 import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { legalPreviewProfile } from './legal-preview-rules.mjs';
 import { PRODUCTION_ORIGIN } from '../lib/build/production.ts';
@@ -110,8 +110,8 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
       const kind = route.path === '/contact' ? 'contact' : 'press';
       if (contactMode === 'direct') {
         if (!/data-static-contact-shell/.test(text) ||
-            ![`mailto:${FACTS.contactEmail}`, FACTS.whatsAppHref, FACTS.smsHref].every(href => text.includes(`href="${href}"`)) ||
-            /<form\b/i.test(text)) bad('CONTACT', 'approved direct email/WhatsApp/SMS contact missing or a form remains');
+            ![`mailto:${FACTS.contactEmail}`, FACTS.whatsAppHref].every(href => text.includes(`href="${href}"`)) ||
+            /<form\b/i.test(text)) bad('CONTACT', 'approved direct email/WhatsApp contact missing or a form remains');
       } else if (!new RegExp(`<form\\b[^>]*data-edge-form="${kind}"`).test(text) || /data-static-contact-shell/.test(text) ||
           /<form\b[^>]*\baction=/i.test(text) || !/<noscript>[^]*JavaScript is required[^]*mailto:/i.test(text)) bad('FORM', 'functional Edge form/no-JS disclosure missing or runtime binding present');
     }
@@ -156,6 +156,11 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     }
     totalBytes += data.length;
     const text = data.toString('utf8');
+    if (contactMode === 'direct' && /\.html$/.test(name)) {
+      const publicMarkup = text.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, '');
+      const copy = phoneTextOf(publicMarkup) + ' ' + [...publicMarkup.matchAll(/<meta\b[^>]*\bcontent=["']([^"']*)["']/gi)].map(m => m[1]).join(' ');
+      for (const problem of [...phoneProblems(name, phoneTextOf(publicMarkup), publicMarkup), ...callProblems(name, copy)]) bad('CONTACT', problem);
+    }
     if (contactMode === 'direct' && /\.html$/.test(name) && /<form\b/i.test(text)) {
       bad('CONTACT', 'form emitted in direct-contact website');
     }

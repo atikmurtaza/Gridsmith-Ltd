@@ -282,7 +282,7 @@ export function parityProblems(privacy, cookies, facts) {
   if (!/Information Commission\b/.test(privacy)) p.push('privacy: does not name the Information Commission');
   if (facts.contactMode === 'direct') {
     if (!/website has no enquiry form/.test(privacy) ||
-        !/email, WhatsApp message or text message/.test(privacy)) p.push('privacy: direct-contact channels or no-form disclosure missing');
+        !/email or WhatsApp message/.test(privacy) || /\b(?:SMS|text[- ]message)/i.test(privacy)) p.push('privacy: direct-contact channels or no-form disclosure missing');
     if (/Supabase\*\* receives website enquiries|Resend\*\* sends internal enquiry notifications|enquiries are stored in Ireland|website and form providers|submission references used to prevent duplicates/.test(privacy)) {
       p.push('privacy: inactive website intake described as current processing');
     }
@@ -299,7 +299,7 @@ export function parityProblems(privacy, cookies, facts) {
 /** Text checks complement the receipt; they cannot prove mailbox operation or historical erasure. */
 export function directContactAccessibilityProblems(markdown) {
   return /website does not use enquiry forms/.test(markdown) &&
-    /contact@gridsmith\.uk/.test(markdown) && /WhatsApp and text-message links/.test(markdown) &&
+    /contact@gridsmith\.uk/.test(markdown) && /WhatsApp link/.test(markdown) && !/\b(?:SMS|text[- ]message)/i.test(markdown) &&
     !/enquiry forms need JavaScript/.test(markdown) ? [] : ['accessibility: direct-contact alternative does not match the no-form website'];
 }
 

@@ -10,7 +10,7 @@ export function StaticContactShell({ contactEmail }: {
       <Prose>
       <p>To discuss your project, email{' '}
         <Link href={`mailto:${contactEmail}`}>{contactEmail}</Link>.</p>
-      <p>You can also use the WhatsApp or text message links on this page.</p>
+      <p>You can also use the WhatsApp link on this page.</p>
       </Prose>
     </aside>
   );

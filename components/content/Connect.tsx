@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { PLATFORM_MARKS } from '@/components/chrome/platformMarks';
-import { whatsAppHref, smsHref } from '@/lib/company/companyDetails';
+import { whatsAppHref } from '@/lib/company/companyDetails';
 import { SOCIAL_CHANNELS } from '@/lib/company/social';
 import { ENQUIRY_CTA, enquiryHref } from '@/lib/services/architecture';
 import styles from '@/components/shared/shared.module.css';
@@ -8,7 +8,7 @@ import styles from '@/components/shared/shared.module.css';
 /**
  * The connection block on `/about` — `GS-R001-R`.
  *
- * Server Component, zero client JS. Two groups: the three ways to reach Gridsmith directly, and
+ * Server Component, zero client JS. Two groups: the two ways to reach Gridsmith directly, and
  * the accounts it keeps elsewhere.
  *
  * ## Every URL here is owner-configured and was resolved before it was published
@@ -37,7 +37,7 @@ import styles from '@/components/shared/shared.module.css';
  *
  * **Superseded for the platforms.** The owner's `B1-R2` decision puts each platform's own
  * official full-colour mark beside its link (provenance and the TikTok permission gate in
- * `components/chrome/platformMarks.ts`), so the platform rows here use those marks. The three
+ * `components/chrome/platformMarks.ts`), so the platform rows here use those marks. The two
  * direct channels keep the generic glyphs below — they are channels, not brands. The block is a
  * Master-frame band because X's official mark is the white variant for dark backgrounds. The
  * paragraphs that follow are the original `GS-R001-R` reasoning, kept as history.
@@ -64,13 +64,6 @@ const ICONS: Record<string, ReactNode> = {
   ),
   // A speech bubble with a tail — the message, not the platform's mark.
   whatsapp: <path d="M3 4.5 h14 v9 h-8 l-4 3.5 v-3.5 h-2 z" />,
-  // A message card with two lines of text on it.
-  sms: (
-    <>
-      <rect x="2.5" y="4.5" width="15" height="11" />
-      <path d="M6 8.5 h8 M6 11.5 h5" />
-    </>
-  ),
 };
 
 function Glyph({ name }: { name: keyof typeof ICONS }) {
@@ -141,7 +134,6 @@ export function Connect({
       value: contactPhone,
       external: true,
     });
-    direct.push({ icon: <Glyph name="sms" />, href: smsHref(contactPhone), label: 'Text message', value: contactPhone });
   }
 
   const social: Row[] = SOCIAL_CHANNELS.map((c) => ({
@@ -159,8 +151,7 @@ export function Connect({
           <div>
             <h2 id="connect" className={styles.rowTitle}>Getting in touch</h2>
             <p className={styles.connectNote}>
-              The <a href="/contact">enquiry form</a> is the easiest route if there is any detail to
-              share; every channel below reaches the same place. {responseCommitment}
+              Use <a href="/contact">email or WhatsApp</a> to tell us what you need. {responseCommitment}
             </p>
             <p className={styles.connectCta}>
               <a href={enquiryHref()} className={styles.cta}>

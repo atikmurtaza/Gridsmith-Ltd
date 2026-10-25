@@ -37,16 +37,8 @@ export const FACTS = {
   responseCommitment: 'We aim to respond as soon as practicable.',
   contactEmail: 'contact@gridsmith.uk',
   contactPhone: '+44 7405 448534',
-  /**
-   * The two schemes the number may be linked with — `GS-R001-R`. `tel:` is not one of them and
-   * `telHref` is gone; question 3 refuses a `tel:` href anywhere.
-   *
-   * `wa.me` takes the international number with **no leading `+`**; `sms:` keeps it, per RFC
-   * 5724. They are different strings for the same number, which is why both are written out
-   * here rather than derived from one another inside the expectation.
-   */
+  // GS-LAUNCH-012: the number is authorised for WhatsApp only.
   whatsAppHref: 'https://wa.me/447405448534',
-  smsHref: 'sms:+447405448534',
   /**
    * The reg. 25(2)(c) particular. It is asserted to appear **only** in the statutory footer
    * and in the `_legal/` instruments — see `officeProblems`.
@@ -139,6 +131,16 @@ export const RESPONSE_RULES = [
  * the *invitation* — an imperative to call, or a `tel:` href, which is the invitation in markup.
  */
 export const CALL_RULES = [
+  {
+    id: 'SMS-PUBLIC-COPY',
+    pattern: /\b(?:SMS|text[-\s]+messages?|text\s+us|WhatsApp\s+(?:or|and)\s+text)\b/i,
+    why: 'public copy offers or names the withdrawn text-message channel',
+  },
+  {
+    id: 'CALL-CTA-DIRECT',
+    pattern: /\b(?:call|ring|phone)\s+(?:Gridsmith|me|the\s+(?:office|team))\b|\b(?:voice|telephone|phone)\s+calls?\b|\b(?:call|ring|phone|telephone)\s*:?\s*(?:on\s+)?(?:\+?44|0\d)/i,
+    why: 'public copy offers a voice-call channel',
+  },
   {
     id: 'CALL-CTA-IMPERATIVE',
     pattern: /\b(?:call|ring|phone)\s+us\b/i,
@@ -400,33 +402,13 @@ export function phoneProblems(route, text, html) {
   const t = asText(text).replace(/\s+/g, ' ');
   const h = asText(html);
 
-  // **The assertion is inverted at `GS-R001-R` and this is the load-bearing line.** It used to
-  // check that every `tel:` was the RFC 3966 form; a gate shaped that way is green on a site
-  // covered in correctly-formatted call links, which is now the defect rather than the fix.
-  for (const m of h.matchAll(/href="tel:([^"]*)"/gi)) {
-    problems.push(
-      `${route} has a tel: href (${JSON.stringify(m[1])}). GS-R001-R withdraws the voice ` +
-        'channel: the number is published and is authorised for WhatsApp and SMS only. Link ' +
-        'it with whatsAppHref or smsHref, or render it as text.',
-    );
+  // All public telephone/SMS actions are withdrawn, even for the approved number.
+  for (const m of h.matchAll(/\bhref\s*=\s*["']\s*((?:tel|sms):[^"']*)["']/gi)) {
+    problems.push(`${route} has a ${m[1].split(':')[0].toLowerCase()}: href. GS-LAUNCH-012 withdraws the voice channel and SMS; use email or WhatsApp.`);
   }
-
-  // Each authorised scheme must point at the approved number. Same reasoning as the `mailto:`
-  // rule above: a displayed number and a linked number that differ are two numbers.
-  for (const m of h.matchAll(/href="(https:\/\/wa\.me\/[^"]*)"/gi)) {
+  for (const m of h.matchAll(/href=["'](https:\/\/wa\.me\/[^"']*)["']/gi)) {
     if (m[1] !== FACTS.whatsAppHref) {
-      problems.push(
-        `${route} has a WhatsApp link of ${JSON.stringify(m[1])}, not ${FACTS.whatsAppHref}. ` +
-          'wa.me takes the international number with no plus and no separators.',
-      );
-    }
-  }
-  for (const m of h.matchAll(/href="(sms:[^"]*)"/gi)) {
-    if (m[1] !== FACTS.smsHref) {
-      problems.push(
-        `${route} has an sms: href of ${JSON.stringify(m[1])}, not ${FACTS.smsHref}. ` +
-          'RFC 5724 wants the global form.',
-      );
+      problems.push(`${route} has a WhatsApp link of ${JSON.stringify(m[1])}, not ${FACTS.whatsAppHref}. wa.me takes the international number with no plus and no separators.`);
     }
   }
 
@@ -479,7 +461,7 @@ export function callProblems(route, text) {
     return m
       ? [
           `${route} carries ${rule.id}: ${JSON.stringify(m[0])} — ${rule.why}. GS-R001-R: the ` +
-            'number is a WhatsApp and SMS channel, not a call channel.',
+            'public direct channels are email and WhatsApp only (GS-LAUNCH-012).',
         ]
       : [];
   });

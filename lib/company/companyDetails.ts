@@ -18,26 +18,7 @@ export type CompanyDetails = {
   responseCommitment: string;
 };
 
-/**
- * The published number, in the two forms it is allowed to be linked as — `GS-R001-R`.
- *
- * **`telHref` is gone and `tel:` is prohibited.** `GS-O004` published the number and linked it
- * for dialling; the owner's `GS-R001-R` decision supersedes that limb and only that limb. The
- * number is unchanged, still published, still the same number the live `gridsmith.uk` shows —
- * what changed is that it is **not a voice-call channel**. Nobody has committed to answering a
- * ring, there are no published hours (`GS-O004`, unchanged), and a `tel:` link on a business
- * site is an invitation to call. `check:company` question 3 now refuses any `tel:` href on any
- * route, and `scripts/struck-rules.mjs` carries the strike.
- *
- * The number **is** authorised for WhatsApp and for SMS, which are both asynchronous — they
- * sit correctly beside *"We typically respond within 48 hours"* in a way a phone call does not.
- *
- * Both hrefs are **derived from the displayed string**, for the reason `telHref` was derived:
- * a stored second copy is how the number you read and the number you reach stop being the same
- * number, which is the defect the live site already has with its two email addresses
- * (`LIVE-SITE-EXTRACT.md` §11.2). Everything that is not `+` or a digit is dropped, so neither
- * can emit a malformed href whatever the singleton holds.
- */
+/** GS-LAUNCH-012: the published number is for WhatsApp only; email is the alternative. */
 const digits = (phone: string) => phone.replace(/[^+\d]/g, '');
 
 /**
@@ -46,14 +27,6 @@ const digits = (phone: string) => phone.replace(/[^+\d]/g, '');
  */
 export function whatsAppHref(phone: string): string {
   return `https://wa.me/${digits(phone).replace(/^\+/, '')}`;
-}
-
-/**
- * `sms:` per RFC 5724 — the global form, `+` retained. Support is near-universal on mobile and
- * absent on most desktops, which is why it is never the only route offered beside it.
- */
-export function smsHref(phone: string): string {
-  return `sms:${digits(phone)}`;
 }
 
 export const COMPANY_DETAILS_QUERY = `*[_type == "companyDetails"][0]{

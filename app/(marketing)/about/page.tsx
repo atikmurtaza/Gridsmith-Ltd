@@ -52,7 +52,7 @@ export const metadata: Metadata = {
  *
  * The registered office came off at `GS-O004` and stays off — it is a residential address and
  * the footer discloses it once. The `Telephone` row is removed at `GS-R001-R`: the number is
- * still published, but it is a WhatsApp and SMS number now, not a `tel:` link, and it belongs
+ * still published, but it is a WhatsApp number now, not a `tel:` link, and it belongs
  * in `Connect` with the channel named beside it rather than in a facts table that implies
  * dialling. `check:company` question 3 refuses a `tel:` href anywhere on the site.
  *

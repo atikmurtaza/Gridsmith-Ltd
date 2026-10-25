@@ -48,7 +48,7 @@ export default async function Page() {
           <Prose>
             <p>{company.responseCommitment}</p>
             <p>
-              {DIRECT_CONTACT ? 'This website does not collect enquiries through a form. Please use email, WhatsApp or text message on our contact page.' :
+              {DIRECT_CONTACT ? 'This website does not collect enquiries through a form. Please use email or WhatsApp on our contact page.' :
                 'A person reads it — there is no queue and no automated triage. If you left a manuscript link, we will look at it before replying.'}
             </p>
             {company.contactEmail ? (

@@ -7,12 +7,12 @@ import { Section } from '@/components/primitives/Section';
 import { PressContactFlow } from '@/components/divisions/press/PressContactFlow';
 import { StaticContactShell } from '@/components/leads/StaticContactShell';
 import { DIRECT_CONTACT } from '@/lib/build/target';
-import { getCompanyDetails, whatsAppHref, smsHref } from '@/lib/company/companyDetails';
+import { getCompanyDetails, whatsAppHref } from '@/lib/company/companyDetails';
 
 export const metadata: Metadata = {
   title: 'Tell us about the work — Gridsmith Press',
   description:
-    DIRECT_CONTACT ? 'Discuss your publishing project by email, WhatsApp or text message.' :
+    DIRECT_CONTACT ? 'Discuss your publishing project by email or WhatsApp.' :
       'Four questions about the work, then how to reach you. Manuscripts are shared as links, never uploads.',
 };
 
@@ -46,7 +46,7 @@ export default async function Page() {
           <Heading level={1}>Tell us about the work</Heading>
           <Prose>
             <p>
-              {DIRECT_CONTACT ? 'Tell us about your publishing project by email, WhatsApp or text message.' :
+              {DIRECT_CONTACT ? 'Tell us about your publishing project by email or WhatsApp.' :
                 'Four short steps. The questions change after the first one, so you are only asked what applies to you.'}
             </p>
             <p>
@@ -85,8 +85,7 @@ export default async function Page() {
                 </>
               ) : null}
             </p>
-            {/* `GS-R001-R`: the number is a message channel, not a call channel. Same wording
-                and same two schemes as `/contact` — the pages are one decision, not two. */}
+            {/* `GS-R001-R`: the number is a message channel, not a call channel. Email remains available beside WhatsApp (GS-LAUNCH-012). */}
             {company.contactPhone ? (
               <p>
                 {'The same number takes '}
@@ -98,10 +97,8 @@ export default async function Page() {
                   WhatsApp
                   <span className="sr-only"> (opens in a new tab)</span>
                 </a>
-                {' and '}
-                <a href={smsHref(company.contactPhone)}>text messages</a>
                 {': '}
-                <Numeric>{company.contactPhone}</Numeric>. {DIRECT_CONTACT ? 'Both reach Gridsmith directly.' : 'Both reach the same place as the form.'}
+                <Numeric>{company.contactPhone}</Numeric>. WhatsApp reaches Gridsmith directly.
               </p>
             ) : null}
           </Prose>

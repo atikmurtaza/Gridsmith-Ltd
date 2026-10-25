@@ -217,7 +217,7 @@ for (const id of ['PUBLICATION-AUTHORITY', 'DIRECT-CONTACT-VERIFIED', 'HOSTINGER
 expect('direct publication with synthetic complete evidence', registerProblems('privacy', { ...directEntry, state: 'PUBLISHABLE', prerequisitesMet: directMet }, '1.0', 'docs/_legal/X.md', SHA), null);
 expect('direct mode still needs retention evidence', registerProblems('privacy', { ...directEntry, prerequisitesMet: {} }, '1.0', 'docs/_legal/X.md', SHA), /RETENTION-ROUTINE-OPERATING/);
 expect('direct mode still needs adopted fingerprint', registerProblems('privacy', directEntry, '1.0', 'docs/_legal/X.md', 'b'.repeat(64)), /not the adopted text/);
-const directPrivacy = 'Hostinger. Information Commission. The public website has no enquiry form. Contact links let you send an email, WhatsApp message or text message through your chosen service.';
+const directPrivacy = 'Hostinger. Information Commission. The public website has no enquiry form. Contact links let you send an email or WhatsApp message through your chosen service.';
 const directFacts = { ...facts, contactMode: 'direct' };
 expect('synthetic direct privacy needs no fictitious intake region/provider', parityProblems(directPrivacy, cookies, directFacts), null);
 expect('old adopted privacy is not direct-contact accurate', parityProblems(privacy, cookies, directFacts), /inactive website intake/);
@@ -225,16 +225,35 @@ for (const currentClaim of ['**Supabase** receives website enquiries', '**Resend
   'enquiries are stored in Ireland', 'website and form providers', 'submission references used to prevent duplicates']) {
   expect(`direct privacy rejects ${currentClaim}`, parityProblems(directPrivacy + currentClaim, cookies, directFacts), /inactive website intake/);
 }
-for (const phrase of ['website has no enquiry form', 'email, WhatsApp message or text message']) {
+for (const phrase of ['website has no enquiry form', 'email or WhatsApp message']) {
   expect(`direct privacy requires ${phrase}`, parityProblems(directPrivacy.replace(phrase, ''), cookies, directFacts), /direct-contact channels or no-form/);
 }
+for (const channel of ['SMS', 'text message', 'text-message']) {
+  expect(`direct privacy rejects withdrawn ${channel}`, parityProblems(directPrivacy + ' ' + channel, cookies, directFacts), /direct-contact channels or no-form/);
+}
 expect('direct privacy still names hosting', parityProblems(directPrivacy.replace('Hostinger', ''), cookies, directFacts), /does not name Hostinger/);
-const directAccessibility = 'Contact us by email at contact@gridsmith.uk, or through the WhatsApp and text-message links on our contact pages. The website does not use enquiry forms. Email remains available if a messaging service is unavailable or inaccessible.';
+const directAccessibility = 'Contact us by email at contact@gridsmith.uk, or through the WhatsApp link on our contact pages. The website does not use enquiry forms. Email remains available if a messaging service is unavailable or inaccessible.';
 expect('direct accessibility specimen', directContactAccessibilityProblems(directAccessibility), null);
 expect('old form accessibility refused', directContactAccessibilityProblems(read('current/accessibility-statement.md')), /direct-contact alternative/);
-for (const phrase of ['website does not use enquiry forms', 'contact@gridsmith.uk', 'WhatsApp and text-message links']) {
+for (const phrase of ['website does not use enquiry forms', 'contact@gridsmith.uk', 'WhatsApp link']) {
   expect(`direct accessibility requires ${phrase}`, directContactAccessibilityProblems(directAccessibility.replace(phrase, '')), /direct-contact alternative/);
 }
+for (const channel of ['SMS', 'text message', 'text-message']) {
+  expect(`direct accessibility rejects withdrawn ${channel}`, directContactAccessibilityProblems(directAccessibility + ' ' + channel), /direct-contact alternative/);
+}
+// Exact proposal files are permanent subjects; no adoption/register mutation is involved.
+const proposedPrivacy = read('proposed/GS-LAUNCH-012/privacy-policy-2.7.md');
+const proposedAccessibility = read('proposed/GS-LAUNCH-012/accessibility-statement-2.4.md');
+expect('Privacy 2.7 proposal direct parity', parityProblems(proposedPrivacy, cookies, directFacts), null);
+expect('Accessibility 2.4 proposal direct parity', directContactAccessibilityProblems(proposedAccessibility), null);
+for (const [slug, proposal] of [['privacy', proposedPrivacy], ['accessibility', proposedAccessibility]]) {
+  expect(`${slug} proposed draft rules`, draftProblems(slug, proposal), null);
+  expect(`${slug} proposed instrument rules`, instrumentProblems(slug, proposal), null);
+}
+assert.match(proposedPrivacy, /historical/i);
+for (const disclosure of ['Supabase', 'Resend', 'developer-created backups', 'provider-managed backups', 'owner or sales department', 'no current overseas access', 'require verification']) assert(proposedPrivacy.includes(disclosure), disclosure);
+assert.match(proposedPrivacy, /not represented as automated/);
+assert.match(proposedAccessibility, /comprehensive assistive-technology and screen-reader audit.*has not been completed/);
 expect('contradictory direct accessibility refused', directContactAccessibilityProblems(directAccessibility + ' Our enquiry forms need JavaScript.'), /direct-contact alternative/);
 
 // danglingReferences — lists and sub-clauses.
