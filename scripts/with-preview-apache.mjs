@@ -44,6 +44,9 @@ MaxRequestWorkers 25
   Options FollowSymLinks
 </Directory>
 <VirtualHost 127.0.0.1:3443>
+  ServerName ${identity.siteOrigin}:443
+  UseCanonicalName On
+  UseCanonicalPhysicalPort Off
   SSLEngine on
   SSLCertificateFile "${directory}/local.pem"
   SSLCertificateKeyFile "${directory}/local.key"
@@ -105,7 +108,7 @@ try {
     receipt.checks.push({ command: [process.execPath, ...args], startedAt, endedAt: new Date().toISOString(), exitCode,
       log: logPath, logSha256: createHash('sha256').update(log).digest('hex') });
     writeFileSync(`${directory}/acceptance.json`, JSON.stringify(receipt, null, 2) + '\n');
-    if (exitCode !== 0) console.error(`Acceptance failed: ${args.join(' ')}; retaining failure and continuing independent checks`);
+    assert.equal(exitCode, 0, `Acceptance failed: ${args.join(' ')}`);
   }
   assert(receipt.checks.every(check => check.exitCode === 0), 'Preview acceptance contains failed checks');
   assert.deepEqual(readFileSync(`${root}/__deployment.json`), identityBytes, 'Candidate changed during acceptance');
