@@ -12,8 +12,8 @@ import { sourceFiles } from './source-files.mjs';
 const sha256 = (text) => createHash('sha256').update(text).digest('hex');
 // Expectations are outside the workflow subjects; changing a workflow requires explicit review here.
 const WORKFLOWS = {
-  '.github/workflows/ci.yml': '7ff5db889ee05db8748814288e6c0bb7dcab2dd6ec7e557196e0283ae72c9c05',
-  '.github/workflows/hostinger-staging.yml': '1efa0f346f3495b7783654ca109111df55f3cbd510081e866f2d44877c322c2f',
+  '.github/workflows/ci.yml': 'cc045be9166eb3b3d3f2ed90ac23fee93efada79bde45a8fd14f3b7d37045dec',
+  '.github/workflows/hostinger-staging.yml': 'f0aa0c3f012aebedf6768550e1da170400b674119eadc5c9d8d9c7cc0004b98d',
 };
 const PACKAGE_SHA256 = '97854c2b19e9ca55d5a793bfb5a768ce28d2856d7c44159ebdccfff2b64dad31';
 const LOCK_SHA256 = 'f45a725650c64e81bc8d580569e012ad07ca3d254e8ffaa63fb22c6cc57a6fa3';
@@ -76,7 +76,7 @@ export function installationProblems({ env, sources, workflows, gitConfig, npmCo
     const jobName = name.endsWith('/ci.yml') ? 'verify' : 'build';
     const job = source.match(new RegExp(`^  ${jobName}:\\r?\\n([\\s\\S]*?)(?=^  [a-z][a-z-]*:|$(?![\\s\\S]))`, 'm'))?.[1] ?? '';
     fail(!/^permissions:\r?\n  contents: read\s*$/m.test(source)
-      || !/^    permissions:\r?\n      contents: read\s*$/m.test(job), 'INSTALL_WORKFLOW_PERMISSIONS');
+      || !/^    permissions:\r?\n      contents: read\s*(?:\n      actions: read\s*)?$/m.test(job), 'INSTALL_WORKFLOW_PERMISSIONS');
     fail(!/^      PUPPETEER_SKIP_DOWNLOAD: ['"]true['"]\s*$/m.test(job), 'INSTALL_WORKFLOW_SKIP');
     fail(!/^          persist-credentials: false\s*$/m.test(job), 'INSTALL_WORKFLOW_CREDENTIAL_PERSISTENCE');
     fail(/\$\{\{\s*secrets(?:\.|\[)|secrets:\s*inherit/.test(source), 'INSTALL_WORKFLOW_SECRET_MAPPING');

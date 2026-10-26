@@ -432,7 +432,6 @@ jobs:
   hostinger-staging:
     # Source pushes run acceptance only; explicit approved dispatch reuses accepted bytes.
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/codex/gs-hostinger-artifact'
-    needs: verify
     permissions:
       contents: write
       actions: read

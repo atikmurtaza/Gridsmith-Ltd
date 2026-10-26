@@ -21,6 +21,7 @@ concurrency:
   cancel-in-progress: false
 env:
   NEXT_PUBLIC_SANITY_DATASET: production
+  NEXT_PUBLIC_SITE_URL: https://mediumaquamarine-wallaby-594070.hostingersite.com
   GRIDSMITH_STATIC_PROFILE: owner-preview
   GRIDSMITH_STAGING_ORIGIN: https://mediumaquamarine-wallaby-594070.hostingersite.com
 jobs:
@@ -29,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: read
     env:
       PUPPETEER_SKIP_DOWNLOAD: 'true'
     steps:
@@ -63,6 +65,8 @@ jobs:
           npm audit --omit=dev --json > build/gs-launch-018/audit-production.json
           npm audit --json > build/gs-launch-018/audit-full.json
       - name: Package only after all acceptance and security gates pass
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/preview-release.mjs prepare
       - name: Retain acceptance evidence (never a deployment artifact)
         if: always()

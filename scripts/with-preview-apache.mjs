@@ -103,8 +103,9 @@ try {
     receipt.checks.push({ command: [process.execPath, ...args], startedAt, endedAt: new Date().toISOString(), exitCode,
       log: logPath, logSha256: createHash('sha256').update(log).digest('hex') });
     writeFileSync(`${directory}/acceptance.json`, JSON.stringify(receipt, null, 2) + '\n');
-    assert.equal(exitCode, 0, `Acceptance failed: ${args.join(' ')}`);
+    if (exitCode !== 0) console.error(`Acceptance failed: ${args.join(' ')}; retaining failure and continuing independent checks`);
   }
+  assert(receipt.checks.every(check => check.exitCode === 0), 'Preview acceptance contains failed checks');
   assert.deepEqual(readFileSync(`${root}/__deployment.json`), identityBytes, 'Candidate changed during acceptance');
 } finally {
   for (const server of servers) { server.closeAllConnections(); server.close(); }
