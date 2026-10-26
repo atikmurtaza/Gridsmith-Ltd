@@ -14,6 +14,13 @@ export const ACCEPTANCE_COMMANDS = [
 ];
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const read = path => JSON.parse(readFileSync(path));
+export function normalVerificationPassed(jobs) {
+  const normal = jobs.find(job => job.name === 'verify');
+  assert(normal, 'Normal verification job missing');
+  if (normal.status !== 'completed') return false;
+  assert.equal(normal.conclusion, 'success', 'Normal verification did not pass');
+  return true;
+}
 export function acceptanceProblems(identity, receipt, audits, sourceSha, runId) {
   const problems = [];
   if (!ownerPreviewIdentityAllowed(identity) || identity.deployable !== false || identity.sourceModified !== false ||
@@ -69,9 +76,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
       const response = await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/jobs`, {
         headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}`, Accept: 'application/vnd.github+json' } });
       assert(response.ok, 'Cannot verify normal CI prerequisite');
-      const jobs = await response.json(), normal = jobs.jobs.find(job => job.name === 'verify');
-      assert(normal, 'Normal verification job missing');
-      if (normal.status === 'completed') { assert.equal(normal.conclusion, 'success', 'Normal verification did not pass'); break; }
+      const jobs = await response.json();
+      if (normalVerificationPassed(jobs.jobs)) break;
       assert(Date.now() < deadline, 'Normal verification timed out');
       console.log('Preview checks passed; waiting for the same-run normal verification prerequisite.');
       await new Promise(done => setTimeout(done, 30_000));

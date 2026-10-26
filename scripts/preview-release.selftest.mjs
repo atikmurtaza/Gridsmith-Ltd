@@ -1,7 +1,7 @@
 /** Permanent value-based proofs for every release and publication predicate. */
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { acceptanceProblems, approvalProblems, ACCEPTANCE_COMMANDS } from './preview-release.mjs';
+import { acceptanceProblems, approvalProblems, ACCEPTANCE_COMMANDS, normalVerificationPassed } from './preview-release.mjs';
 import { ownerPreviewIdentityAllowed } from '../lib/build/target.ts';
 const sha = text => createHash('sha256').update(text).digest('hex');
 const identity = { profile: 'owner-preview', siteOrigin: 'https://mediumaquamarine-wallaby-594070.hostingersite.com',
@@ -12,7 +12,13 @@ const receipt = { sourceSha: identity.sourceSha, artifactIdentity: identity.arti
 const audit = { metadata: { vulnerabilities: { total: 0 } }, vulnerabilities: {} };
 const inspect = (id = identity, rec = receipt, audits = [audit, audit]) => acceptanceProblems(id, rec, audits, identity.sourceSha, '123');
 assert.deepEqual(inspect(), []);
-let proofs = 1;
+assert(normalVerificationPassed([{ name: 'verify', status: 'completed', conclusion: 'success' }]));
+assert.equal(normalVerificationPassed([{ name: 'verify', status: 'in_progress', conclusion: null }]), false);
+assert.throws(() => normalVerificationPassed([]), /job missing/);
+for (const conclusion of ['failure', 'cancelled', 'skipped', null]) {
+  assert.throws(() => normalVerificationPassed([{ name: 'verify', status: 'completed', conclusion }]), /did not pass/);
+}
+let proofs = 8;
 for (const [id, rec, audits, code] of [
   [{ ...identity, sourceModified: true }, receipt, [audit, audit], 'CANDIDATE'],
   [{ ...identity, deployable: true }, receipt, [audit, audit], 'CANDIDATE'],
