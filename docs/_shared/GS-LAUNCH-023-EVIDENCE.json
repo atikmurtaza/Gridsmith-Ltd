@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "task": "GS-LAUNCH-023",
-  "recordedAt": "2026-10-26T22:23:45.108Z",
+  "recordedAt": "2026-10-26T22:30:14.384Z",
   "status": "CONDITIONAL",
   "baseline": "13032b1735c320842d7dc25f3de03afa704d3e33",
   "main": "dbde73d30536543c54c7822b7cec092a25e13525",
@@ -270,7 +270,11 @@
       "result": "PASS",
       "python": "C:/Python314/python.exe",
       "installedMode": true,
-      "initialDefaultPythonAttempt": "FAIL: Windows python3 alias exit 9009; retained"
+      "initialDefaultPythonAttempt": "FAIL: Windows python3 alias exit 9009; retained",
+      "sourceCases": 408,
+      "installedCases": 416,
+      "extractorFixtures": 161,
+      "linuxFilesystem": "NOT_RUN_ON_WINDOWS"
     },
     "productionRefusal": {
       "result": "PASS",
@@ -280,7 +284,17 @@
     "verifyBuild": {
       "result": "FAIL",
       "reason": "shared baseline 2.93 KB exceeds 2.9 KB; compile, secret, token and theme checks passed",
-      "acceptedSourceComparison": "PENDING"
+      "acceptedSourceComparison": {
+        "samePath": "FAIL: same 2.93 KB > 2.9 KB",
+        "separateDirectory": "PASS",
+        "comparedApplicationFiles": 220,
+        "differentApplicationFiles": 0,
+        "manifestListedScriptChunks": 39,
+        "byteIdenticalChunks": 36,
+        "fullArtifactEquality": false,
+        "deeperCompilerCause": "NOT_ISOLATED",
+        "integrationRegression": "NOT_DEMONSTRATED"
+      }
     },
     "windowsAxe": {
       "result": "PASS",
@@ -307,7 +321,21 @@
       "measuredArtifactSource": "13032b1735c320842d7dc25f3de03afa704d3e33",
       "newArtifactAcceptance": false
     },
-    "newLinuxCi": "NOT_RUN_AT_CHECKPOINT",
+    "newLinuxCi": {
+      "result": "IN_PROGRESS_AT_CLOSEOUT",
+      "initialSourceRun": 40412120947,
+      "initialSourceSha": "0b21ecf1e2253388e8b1ba18c62274d4e8ca86ac",
+      "partialPassed": [
+        "Linux build",
+        "secret scan",
+        "bundle budgets"
+      ],
+      "fullAcceptance": false,
+      "duplicatePullRequestRun": 40412208567,
+      "duplicateDisposition": "CANCELLED",
+      "initialRunDisposition": "SUPERSEDED_BY_DOCUMENTATION_TIP",
+      "finalTipChecks": "https://github.com/atikmurtaza/Gridsmith-Ltd/pull/3/checks"
+    },
     "productionRecovery": "NOT_RUN_OUT_OF_SCOPE"
   },
   "deploymentSafety": {
@@ -317,10 +345,24 @@
     "productionDrainVariable": "ABSENT",
     "keepaliveAlreadyEnabled": true,
     "webhooks": 0,
-    "productionActionsPerformed": false
+    "productionActionsPerformed": false,
+    "productionReadOnly": {
+      "checkedAt": "2026-10-26T22:27:01.2758823Z",
+      "status": 200,
+      "wordpressMarkers": true,
+      "method": "GET",
+      "writesPerformed": false
+    },
+    "vercelBranchDeployments": 0,
+    "githubIntegrationSourceDeployments": 0
   },
   "publicEvidencePolicy": "Raw receipts, private copies and historical unsent support drafts stay local. No support request is required.",
   "privateLogHashes": [
+    {
+      "name": "accepted-same-path-build.log",
+      "bytes": 13243,
+      "sha256": "bd384dbe0895b16271d1028d8f398218d5f73a4fd58ba9609083a39cd59becfe"
+    },
     {
       "name": "audit-full.json",
       "bytes": 390,
@@ -330,6 +372,11 @@
       "name": "audit-production.json",
       "bytes": 390,
       "sha256": "c4422cf7f987cbfbdc9abece5d7c2214ee190b777b6799462cd489e96c5dff38"
+    },
+    {
+      "name": "axe-correction.diff",
+      "bytes": 2086,
+      "sha256": "360a6c0b62b92dd9436cc0fd0fc1551b01c9e6590b6f4fb4f89172b28dbcbcbb"
     },
     {
       "name": "browser-input-selftest-python.log",
@@ -352,6 +399,11 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
+      "name": "production-readonly.json",
+      "bytes": 149,
+      "sha256": "60ba3673de0bfd4aad0d8135dc39db2d43749e1e8c5016c6202cf4da92101974"
+    },
+    {
       "name": "production-refusal.log",
       "bytes": 1307,
       "sha256": "ba55fde21ec177be591bdf1c140b4510ffb0199545bf59a32964def21a0edb75"
@@ -360,6 +412,11 @@
       "name": "release-selftest.log",
       "bytes": 152,
       "sha256": "87d1310f789dc295cb1681042b41beb05448584a5d3f55b6fa7bfe8354bc7310"
+    },
+    {
+      "name": "same-path-comparison.json",
+      "bytes": 269,
+      "sha256": "1ded1ca2fe74c83ee1448bbac33a731802bd3036d2a8730071b5459018109963"
     },
     {
       "name": "verify-build.log",
@@ -376,5 +433,16 @@
       "bytes": 203,
       "sha256": "9e02bd5b839d23cbc9716abe15d41b4e17881171de937f52d16c23cfe5e2c2bb"
     }
-  ]
+  ],
+  "integrationSourceSha": "0b21ecf1e2253388e8b1ba18c62274d4e8ca86ac",
+  "endingBranch": "codex/gs-launch-023",
+  "endingDocumentationSha": "Resolve enclosing commit / current draft PR head; no self-referential hash",
+  "pullRequest": {
+    "number": 3,
+    "url": "https://github.com/atikmurtaza/Gridsmith-Ltd/pull/3",
+    "base": "main",
+    "draft": true,
+    "merged": false,
+    "mergeable": true
+  }
 }

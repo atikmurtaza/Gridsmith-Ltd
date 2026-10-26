@@ -1,6 +1,6 @@
 # GS-LAUNCH-023 — release source consolidation and production integration
 
-26 October 2026 (Europe/London). **CONDITIONAL — source consolidated; verification/review closeout pending; production HOLD.** This phase integrates source and prepares review only. It does not authorise merging, deployment, legal publication, WordPress changes or provider operations. Earlier support-request recommendations are superseded; customer support is not a release prerequisite.
+26 October 2026 (Europe/London). **CONDITIONAL — source integration complete; draft review prepared; full final-source Linux CI pending; production HOLD.** This phase integrates source and prepares review only. It does not authorise merging, deployment, legal publication, WordPress changes or provider operations. Earlier support-request recommendations are superseded; customer support is not a release prerequisite.
 
 ## 1. Starting state and preserved work
 
@@ -12,7 +12,7 @@
 
 Before integration, 37 modified/untracked files across the primary, launch-018 and launch-021 checkouts were copied byte-for-byte and SHA-256 checked. The private inventory, copies, branch list and worktree list are under `C:\Users\atikm\.codex\task-evidence\gs-launch-023\`. Original worktrees, branches, ignored build receipts and private evidence are retained. No reset, clean, rebase, force-push or historical worktree deletion is part of this phase.
 
-The isolated integration checkout is `C:\Users\atikm\.codex\worktrees\gs-launch-023\Gridsmith Ltd`, branch `codex/gs-launch-023`. Its ignored `node_modules` junction reuses launch-018's installed tools; no dependency install or lockfile change was made locally. CI must install independently at the new source SHA.
+The isolated integration checkout is `C:\Users\atikm\.codex\worktrees\gs-launch-023\Gridsmith Ltd`, branch `codex/gs-launch-023`. Its ignored `node_modules` junction reuses launch-018's installed tools; no dependency install or lockfile change was made locally. CI installs independently at the new source SHA. A separate detached accepted-source comparison worktree was retained under the private evidence directory; it was not deleted.
 
 ## 2. Main reconciliation and change boundary
 
@@ -83,23 +83,33 @@ Local detailed logs are in `build/gs-launch-023/`; public summary and hashes are
 | `npm run verify:static` | PASS, including TypeScript, ESLint, source/content/security/legal/schema and static/edge selftests |
 | `npm audit --omit=dev --json` / `npm audit --json` | PASS; zero vulnerabilities in each |
 | `node scripts/preview-release.selftest.mjs` | PASS; 52 positive/adverse release proofs |
-| Browser installer/extractor selftests | PASS with `--python C:\Python314\python.exe`; default Windows `python3` alias attempt failed with 9009 and is retained |
+| Browser installer/extractor selftests | PASS: 408 source cases, 416 installed cases and 161 extractor fixtures with `--python C:\Python314\python.exe`; Windows Linux-only no-follow fixtures NOT RUN. Default Windows `python3` alias attempt failed with 9009 and is retained |
 | Four workflow YAML parses / imported shell `bash -n` | PASS; triggers/jobs inspected, shell syntax valid |
 | `node --check scripts/check-static-ui.mjs` | PASS |
 | Production builder refusal | PASS as a negative proof: exit 1 names DIRECT-CONTACT-VERIFIED and all seven non-PUBLISHABLE documents before CMS/build/cleanup |
-| `npm run verify:build` | FAIL: shared baseline 2.93 KB exceeds 2.9 KB; compilation, secret scan, tokens and theme checks PASS. Clean accepted-source comparison underway; threshold unchanged |
+| `npm run verify:build` | FAIL locally: shared baseline 2.93 KB exceeds 2.9 KB; compilation, secret scan, tokens and theme checks PASS. Clean accepted source at the same path reproduces the same failure; separate-directory accepted-source build PASS. No integration regression demonstrated; local failure retained, threshold unchanged |
 | Fresh Windows hosted UI/axe | PASS: 20 pages, 20 no-JS pages, 70 legal combinations, 41 focused plus 2 error analyses, zero violations; 23 incomplete-rule occurrences retained. Existing adverse contrast specimen rejects. This measures the unchanged preview, not a new payload |
-| New exact-SHA Linux CI / Apache / Lighthouse | NOT RUN at this checkpoint; historical accepted run is not substituted |
+| New exact-SHA Linux CI / Apache / Lighthouse | IN PROGRESS at closeout; not a PASS. Initial push run 40412120947 at source `0b21ecf1e2253388e8b1ba18c62274d4e8ca86ac` passed Linux build, secret and bundle checks and reached Lighthouse/Apache-browser acceptance. It is superseded by the final documentation-tip push; see the current PR checks. No old acceptance identity is reused |
 | Production deployment / real fault injection / WordPress recovery | NOT RUN; outside this phase |
 | App visual redesign / new feature validation | NOT APPLICABLE; no application change |
 
 ## 7. Commits and review
 
-The main reconciliation commit is listed above. Consolidation/source and final documentation commits, draft PR URL, exact tested SHA and CI disposition will be added at closeout. The PR targets `main` and must remain a draft/unmerged. Final branch tip is available through `git rev-parse codex/gs-launch-023`; the enclosing documentation commit cannot embed its own hash.
+- Main reconciliation: `0201301e07f64ae3673a1ec9889f81ad340daa36`.
+- Consolidated application/test source and launch records: `0b21ecf1e2253388e8b1ba18c62274d4e8ca86ac`.
+- This final documentation-only closeout follows that source commit. The enclosing commit cannot embed its own hash; resolve it with `git rev-parse codex/gs-launch-023` or the PR's head SHA. Its executable/application tree is unchanged from the source commit above.
+- [Draft PR #3](https://github.com/atikmurtaza/Gridsmith-Ltd/pull/3), targeting `main`, OPEN, DRAFT, unmerged; GitHub reports MERGEABLE. The large main diff is the pre-existing 140-commit release history, not a new redesign in this phase.
+- [Current final-tip checks](https://github.com/atikmurtaza/Gridsmith-Ltd/pull/3/checks) are the authority for subsequent Linux results. Full acceptance is pending at this written checkpoint. Do not treat local results or prior release `13032b17` as acceptance of a newer commit.
+
+Opening the draft also triggered duplicate run 40412208567; it was cancelled to avoid repeating the same expensive acceptance. The initial source run 40412120947 is retained as a partial diagnostic and superseded by final-tip CI, not represented as a completed acceptance. No threshold, test, workflow trigger or publication control was weakened. The previous full accepted run took approximately 88 minutes; this source-management handover does not invent its successor's result.
+
+The clean Windows comparison used absent `.next` directories for each build. At the same integration path, both accepted and integrated source fail at 2.93 KB; the accepted source in the separate comparison directory passes. All 220 compared application/configuration/dependency files are byte-identical. Of 39 manifest-listed script chunks, 36 also match byte-for-byte in the same-path builds; runtime/contact chunks differ, so complete artifact equality is not claimed. These observations establish a pre-existing local build discrepancy; its deeper compiler cause is not isolated. Linux source-run bundle checks passed. This phase does not fix or waive the Windows budget failure.
+
+Final safety observations: all 37 preserved original files still hash identically; source worktrees remain intact; remote main, accepted source and artifact branch retain their original SHAs. A read-only GET of `https://gridsmith.uk/` returned 200 with WordPress markers. GitHub lists no deployment for the integration source, and authenticated Vercel branch lookup lists zero deployments. These are scoped observations, not proof about arbitrary external actors or future configuration changes.
 
 ## 8. Release eligibility and owner actions
 
-**Production remains NO-GO.** Seven documents remain OWNER_ADOPTED and zero PUBLISHABLE. Dated private O1–O5 direct-contact operational evidence remains required; no form/intake or notification activation is needed for the direct-contact launch. Publication authority, all-seven legal eligibility/parity, Privacy co-publication, Cookie production-origin retest, applicable operational prerequisites and exact artifact-bound cutover approval remain separate gates. Approved content, excluded Technical services, disabled analytics/reviews and contact wording are unchanged.
+**Production remains NO-GO.** Full final-tip CI is pending, and the pre-existing Windows budget failure remains recorded. Neither is silently converted to a PASS. Seven documents remain OWNER_ADOPTED and zero PUBLISHABLE. Dated private O1–O5 direct-contact operational evidence remains required; no form/intake or notification activation is needed for the direct-contact launch. Publication authority, all-seven legal eligibility/parity, Privacy co-publication, Cookie production-origin retest, applicable operational prerequisites and exact artifact-bound cutover approval remain separate gates. Approved content, excluded Technical services, disabled analytics/reviews and contact wording are unchanged.
 
 No owner interaction is required to perform this source integration. Do not send support messages, repeat the cache investigation or change hosting to complete this phase. Any later production action requires its own explicit authority.
 
