@@ -48,6 +48,8 @@ MaxRequestWorkers 25
   SSLCertificateFile "${directory}/local.pem"
   SSLCertificateKeyFile "${directory}/local.key"
   DocumentRoot "${root}"
+  # The synthetic fault is raised before per-directory rules; map it at that same level.
+  ErrorDocument 500 /500.html
   RewriteEngine On
   RewriteRule ^/induced-500$ - [R=500,L]
 </VirtualHost>
