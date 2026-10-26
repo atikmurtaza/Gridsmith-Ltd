@@ -10,6 +10,9 @@ import { REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
 import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { servedLegalPreview } from './legal-preview-rules.mjs';
 
+// Explicit source avoids the axe adapter's encoded-path resolver on Windows paths with spaces.
+const require = createRequire(fileURLToPath(import.meta.url));
+const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 const normal = process.argv.includes('--normal');
 const base = process.env.STATIC_BASE_URL ?? (normal ? 'http://127.0.0.1:3235' : 'http://127.0.0.1:3236');
 const origin = new URL(base);
@@ -248,15 +251,13 @@ try {
       assert.equal(response.status(), route === '/induced-500' ? 500 : route === '/500.html' ? 200 : 404);
       assert(await page.evaluate(() => Boolean(/^en(?:-|$)/i.test(document.documentElement.lang) &&
         document.title && document.querySelector('main h1') && document.querySelector('main a[href="/"]'))));
-      const result = await new AxePuppeteer(page).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+      const result = await new AxePuppeteer(page, axeSource).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
       errorAxe.push({ route, result });
       assert.deepEqual(result.violations, []);
       receipt.errors.push({ route, violations: 0, status: response.status() });
     }
   }
   if (!normal) {
-    const require = createRequire(fileURLToPath(import.meta.url));
-    const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
     const rawAxe = [...errorAxe];
     for (const route of ['/', '/design', '/digital', '/press', ...services, '/about', '/approach', '/contact', '/insights', '/press/contact', '/press/contact/thank-you', ...legalRoutes]) {
       await page.goto(base + route, { waitUntil: 'networkidle0' });

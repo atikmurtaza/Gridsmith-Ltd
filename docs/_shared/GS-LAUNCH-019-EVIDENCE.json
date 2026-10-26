@@ -3,7 +3,7 @@
   "baseSha": "35c74d67efa58f21d8b10021bfde4ba4f584d645",
   "branch": "codex/gs-launch-018",
   "checkedAt": "2026-10-26T13:32:54.293Z",
-  "status": "LOCAL_SECURITY_REMEDIATED; EXACT-SOURCE_CI_REQUIRED",
+  "status": "ACCEPTED RELEASE READY FOR OWNER DEPLOYMENT APPROVAL",
   "auditBefore": {
     "auditReportVersion": 2,
     "vulnerabilities": {
@@ -420,5 +420,363 @@
       "sourceSha": "56c0d781ccf74deb8a1c843e14d20ac57c97510b",
       "cause": "EXPLICIT_BROWSER_INSTALLER triggered by read-only helper package metadata in dependency gate; moved assertion into existing guarded browser selftest; guard unchanged"
     }
-  ]
+  ],
+  "sourceSha": "13032b1735c320842d7dc25f3de03afa704d3e33",
+  "completedAt": "2026-10-26T15:11:09.183Z",
+  "ci": {
+    "conclusion": "success",
+    "headBranch": "codex/gs-launch-018",
+    "headSha": "13032b1735c320842d7dc25f3de03afa704d3e33",
+    "jobs": [
+      {
+        "name": "verify",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "hostinger-staging / build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "hostinger-staging / publish",
+        "status": "completed",
+        "conclusion": "skipped"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40332154565"
+  },
+  "release": {
+    "result": "PASS",
+    "sourceSha": "13032b1735c320842d7dc25f3de03afa704d3e33",
+    "runId": "40332154565",
+    "artifactIdentity": "8028cb984402db08d7ba016ab656c5602dfdfae5bc3a49fda7f70b6b890a65e4",
+    "releaseStatus": "ACCEPTANCE_PASSED",
+    "archive": "owner-preview-13032b1735c320842d7dc25f3de03afa704d3e33.zip",
+    "archiveBytes": 10297497,
+    "archiveSha256": "9a6291a8809efbb98e95e2e4cd8dd3fd73a577f921dc20b5ff514fec01959e96",
+    "filesVerified": 212,
+    "acceptanceChecksVerified": 6,
+    "receiptSha256": "2de73e07f095a92bbd4beecc7fb2d207e507b758cb4ddb17c19a06dc35e8e9b2",
+    "productionAudit": 0,
+    "fullAudit": 0,
+    "wholeWorkflow": "success",
+    "publisher": "skipped"
+  },
+  "workflowArtifacts": [
+    {
+      "id": 12661825675,
+      "name": "design-scene-evidence",
+      "size_in_bytes": 34891042,
+      "digest": "sha256:59de412005de33c91d0919a873ee5b33436fea5541579431a5d51bce985f2de9",
+      "workflow_run": {
+        "id": 40332154565,
+        "repository_id": 1330474483,
+        "head_repository_id": 1330474483,
+        "head_branch": "codex/gs-launch-018",
+        "head_sha": "13032b1735c320842d7dc25f3de03afa704d3e33"
+      }
+    },
+    {
+      "id": 12661805899,
+      "name": "hostinger-release-archive",
+      "size_in_bytes": 10155780,
+      "digest": "sha256:cb9e98e240ffacb5f34255c15a8effe31ad6314e074e38dc5a89611cb8eb7352",
+      "workflow_run": {
+        "id": 40332154565,
+        "repository_id": 1330474483,
+        "head_repository_id": 1330474483,
+        "head_branch": "codex/gs-launch-018",
+        "head_sha": "13032b1735c320842d7dc25f3de03afa704d3e33"
+      }
+    },
+    {
+      "id": 12661726103,
+      "name": "hostinger-static",
+      "size_in_bytes": 10298275,
+      "digest": "sha256:177e9342d1e1e4413322f054a57f0b6aa5bead090b843819f6382182ac648e46",
+      "workflow_run": {
+        "id": 40332154565,
+        "repository_id": 1330474483,
+        "head_repository_id": 1330474483,
+        "head_branch": "codex/gs-launch-018",
+        "head_sha": "13032b1735c320842d7dc25f3de03afa704d3e33"
+      }
+    },
+    {
+      "id": 12661371001,
+      "name": "owner-preview-evidence",
+      "size_in_bytes": 62703123,
+      "digest": "sha256:1419c1fcc8ab6f46551d996c6acfd70ff9def2d2d32ead4a11266215b38a6b0f",
+      "workflow_run": {
+        "id": 40332154565,
+        "repository_id": 1330474483,
+        "head_repository_id": 1330474483,
+        "head_branch": "codex/gs-launch-018",
+        "head_sha": "13032b1735c320842d7dc25f3de03afa704d3e33"
+      }
+    },
+    {
+      "id": 12657116706,
+      "name": "lighthouseci-reports",
+      "size_in_bytes": 59668245,
+      "digest": "sha256:fd722c7cde6066d7b85cf394c8ddcb6392f9c046ad5096fd4d2e3cead8c29e12",
+      "workflow_run": {
+        "id": 40332154565,
+        "repository_id": 1330474483,
+        "head_repository_id": 1330474483,
+        "head_branch": "codex/gs-launch-018",
+        "head_sha": "13032b1735c320842d7dc25f3de03afa704d3e33"
+      }
+    }
+  ],
+  "compatibility": {
+    "publicWebsiteSource": "UNCHANGED from35c74d67; tooling/metadata commits differ",
+    "normalServed": "PASS; all19commands",
+    "normalAxe": "76 analyses plus2deferred-footer analyses; zero violations;0unresolved incompletes;836explicitlymapped incompletes",
+    "responsive": "51combinations;PASS",
+    "preview": {
+      "coverage": "PASS; same 64 route dispositions, 61 eligible",
+      "browserPages": 20,
+      "noJs": 20,
+      "focusedAxe": 41,
+      "errorDocuments": 3,
+      "legalCombinations": 70,
+      "legalLinks": 98,
+      "contactChecks": 12,
+      "browserErrors": 0,
+      "failedRequests": 0,
+      "badResponses": 0,
+      "rawAxeEntries": 44
+    },
+    "legal": "PASS on candidate,normalserved and independentlydownloaded accepted release;7documents,109clauses,406paragraphs",
+    "httpApache": "PASS;210publicfilehashes,61routes,identity,headers,cache,MIME,compression,redirects,wrongHost,hiddenfiledenial,genuine404,GET/HEAD500"
+  },
+  "lighthouse": {
+    "normal": {
+      "desktop": {
+        "routes": 11,
+        "runs": 33,
+        "performance": [
+          1,
+          1
+        ],
+        "accessibility": [
+          1,
+          1
+        ],
+        "lcp": [
+          578.0643,
+          689.6554
+        ],
+        "maxCls": 0.00005385331448288253,
+        "maxTbt": 0,
+        "lcpDeltaMs": [
+          -5.4724999999998545,
+          34.118799999999965
+        ],
+        "tbtDeltaMs": [
+          0,
+          0
+        ],
+        "cpuBenchmark": [
+          2386,
+          2492.5
+        ]
+      },
+      "mobile": {
+        "routes": 11,
+        "runs": 33,
+        "performance": [
+          0.99,
+          1
+        ],
+        "accessibility": [
+          1,
+          1
+        ],
+        "lcp": [
+          904.037,
+          1081.82
+        ],
+        "maxCls": 0.0001431629925810673,
+        "maxTbt": 107.03699999999981,
+        "lcpDeltaMs": [
+          20.40700000000004,
+          41.72900000000004
+        ],
+        "tbtDeltaMs": [
+          31.87300000023879,
+          54.08699999999999
+        ],
+        "cpuBenchmark": [
+          2408,
+          2485
+        ]
+      }
+    },
+    "preview": {
+      "desktop": {
+        "routes": 11,
+        "runs": 33,
+        "performance": [
+          1,
+          1
+        ],
+        "accessibility": [
+          1,
+          1
+        ],
+        "lcp": [
+          572.6924999999999,
+          706.4194
+        ],
+        "maxCls": 0.00005385331448288253,
+        "maxTbt": 0,
+        "lcpDeltaMs": [
+          -7.486400000000231,
+          18.255250000000387
+        ],
+        "tbtDeltaMs": [
+          0,
+          0
+        ],
+        "cpuBenchmark": [
+          2660,
+          2855.5
+        ]
+      },
+      "mobile": {
+        "routes": 11,
+        "runs": 33,
+        "performance": [
+          1,
+          1
+        ],
+        "accessibility": [
+          1,
+          1
+        ],
+        "lcp": [
+          898.313,
+          1070.204
+        ],
+        "maxCls": 0.0001431629925810673,
+        "maxTbt": 84.50900000000047,
+        "lcpDeltaMs": [
+          1.2939999999999827,
+          17.811000000000035
+        ],
+        "tbtDeltaMs": [
+          7.713000000000193,
+          16.889999999999873
+        ],
+        "cpuBenchmark": [
+          2669,
+          2874
+        ]
+      }
+    }
+  },
+  "measurementInvestigation": {
+    "baselineCpuBenchmark": {
+      "normal": {
+        "desktop": [
+          2887,
+          3140
+        ],
+        "mobile": [
+          2793,
+          3216
+        ]
+      },
+      "preview": {
+        "desktop": [
+          2884,
+          3134.5
+        ],
+        "mobile": [
+          2863,
+          3104.5
+        ]
+      }
+    },
+    "newCpuBenchmark": {
+      "normal": {
+        "desktop": [
+          2386,
+          2492.5
+        ],
+        "mobile": [
+          2408,
+          2485
+        ]
+      },
+      "preview": {
+        "desktop": [
+          2660,
+          2855.5
+        ],
+        "mobile": [
+          2669,
+          2874
+        ]
+      }
+    },
+    "normalDigitalTrace": {
+      "sameScriptNames": [
+        "4bd1b696-f785427dddbba9fb.js",
+        "1255-3e1fb93b801764ec.js"
+      ],
+      "beforeLongTasksMs": [
+        [
+          101.322,
+          52.946,
+          51.554
+        ],
+        [
+          98.187,
+          54.763,
+          53.934
+        ],
+        [
+          102.285,
+          52.817,
+          52.183
+        ]
+      ],
+      "afterLongTasksMs": [
+        [
+          135.32,
+          71.717,
+          70.373
+        ],
+        [
+          129.964,
+          69.444,
+          68.993
+        ],
+        [
+          135.597,
+          73.377,
+          69.783
+        ]
+      ]
+    },
+    "conclusion": "All original budgets pass. Small LCP shifts and increased normal mobile TBT coincide with a materially lower CPU benchmark and the same script hashes. Preview shifts are smaller on its independent runner. Consistent with runner variation; these runs do not isolate a causal driver effect. No threshold relaxed."
+  },
+  "finalBoundary": {
+    "artifactBranchObservedSha": "25d653f5582b78c31329dc5def12898d6a19b531",
+    "publication": "NOT_PERFORMED;publisherSKIPPED",
+    "hostinger": "NOT_TOUCHED",
+    "productionDns": "NOT_TOUCHED",
+    "approval": "NOT_CREATED",
+    "completionRecords": "Local documentation-only updates after tested commit; branch HEAD remains tested source"
+  },
+  "independentCompletionReview": {
+    "result": "PASS; no release blocker found",
+    "checks": "ZIP checksum; every 212 manifest file hash/size/byte; separate release directory; source/run/identity; six log digests and commands; zero audits; whole workflow success",
+    "limitation": "CPU variance inference; hosted checks/deployment not performed"
+  }
 }
