@@ -377,6 +377,16 @@ function AllPrimitives({ division }: { division: string }) {
           <Button href="#main" variant="secondary">Secondary</Button>
         </StickyCta>
       </Specimen>
+
+      {/* `GS-R001-M`. The permanent subject of `check:contrast`'s opacity pass. Its previous
+          subject was the division cards' sibling fade, removed with the cards; with no faded
+          text anywhere the pass measured nothing and its zero-subject guard fired, correctly.
+          First written at 0.8, and the pass went red on Digital (4.44:1) and Press (4.41:1) — it
+          composites every fade with both --ink and --ink-muted — which is the proof it reaches
+          this subject. 0.85 clears every theme. */}
+      <Specimen name="Faded text — the opacity pass's committed subject">
+        <p className={styles.fadedSpecimen}>Body text at 0.85 opacity, measured on every theme.</p>
+      </Specimen>
     </>
   );
 }

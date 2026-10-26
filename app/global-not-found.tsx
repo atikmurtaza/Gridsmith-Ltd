@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
-import { Container } from '@/components/primitives/Container';
-import { Heading } from '@/components/primitives/Heading';
-import { Prose } from '@/components/primitives/Prose';
-import { Section } from '@/components/primitives/Section';
 import { RootShell } from '@/components/chrome/RootShell';
+import { STUDIOS } from '@/components/chrome/nav';
+import { Opening } from '@/components/shared/Opening';
+import styles from '@/components/shared/opening.module.css';
 import { inter } from '@/styles/fonts/inter';
 import { jetbrainsMono } from '@/styles/fonts/jetbrains-mono';
+import { SITE_ICONS } from '@/lib/seo/site';
 import '@/styles/globals.css';
 
-export const metadata: Metadata = { title: 'Page not found — Gridsmith Ltd' };
+export const metadata: Metadata = { title: 'Page not found — Gridsmith Ltd', ...SITE_ICONS };
 
 /**
  * The 404, in the master theme.
@@ -67,37 +67,36 @@ export const metadata: Metadata = { title: 'Page not found — Gridsmith Ltd' };
  * company disclosure every page carries. Both now land on a route that is inside every
  * gate, which was the point of putting it there.
  */
+/**
+ * `GS-SHARED-001-B2` — the 404 joins the Master family: a compact frame opening and five useful
+ * destinations as plain document links. No novelty numeral, no animation; one H1.
+ */
+const DESTINATIONS = [
+  { href: '/', label: 'Home' },
+  ...STUDIOS.map((s) => ({ href: s.href, label: `Gridsmith ${s.label}` })),
+  { href: '/contact', label: 'Contact' },
+];
+
 export default function NotFound() {
   return (
     <RootShell division="master" fontVariables={`${inter.variable} ${jetbrainsMono.variable}`}>
       <main id="main" tabIndex={-1}>
-        <Container>
-          <Section>
-            <Heading level={1}>Page not found</Heading>
-            <Prose>
-              <p>
-                That address does not exist. It may have moved, or the link that brought
-                you here may be out of date.
-              </p>
-              {/* A plain <a>, not the Link primitive. Link wraps next/link, which is a
-                  Client Component, and Next puts the root not-found boundary in EVERY
-                  route's script list — so one convenience import here cost 4.3KB gz on
-                  every page in the site, 29% of Digital's entire 15KB delta budget, for a
-                  page almost nobody reaches. Measured, not guessed: check-bundle-size
-                  moved every route from 100.2KB to 104.5KB the moment this file landed.
-                  Client-side routing off a 404 is worth nothing; a document load is the
-                  honest thing to do from a dead URL anyway. Prose styles the anchor.
-
-                  The disable below is that measurement, not a preference. The rule did
-                  not fire while this file was `not-found.tsx`; it fires on
-                  `global-not-found.tsx` because that convention is a page. Nothing about
-                  the trade-off changed with the filename. */}
-              <p>
-                <a href="/">Return to the home page</a>
-              </p>
-            </Prose>
-          </Section>
-        </Container>
+        <Opening
+          place="Page not found"
+          title="Page not found"
+          lead="That address does not exist. It may have moved, or the link that brought you here may be out of date."
+        >
+          {/* Plain <a>, not the Link primitive: Link wraps next/link, and Next puts the root
+              not-found boundary in every route's script list — measured at 4.3KB gz on every
+              page when it was tried. A document load is the honest thing from a dead URL. */}
+          <nav aria-label="Useful destinations">
+            <ul className={styles.destinations}>
+              {DESTINATIONS.map((d) => (
+                <li key={d.href}><a href={d.href}>{d.label}</a></li>
+              ))}
+            </ul>
+          </nav>
+        </Opening>
       </main>
     </RootShell>
   );

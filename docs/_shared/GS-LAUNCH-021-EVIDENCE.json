@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-021",
+  "kind": "public-summary-prepared-by-GS-LAUNCH-023",
+  "originalEvidenceSha256": "8690a1573e2b9aba5474f286bd0f38fc155ea4aca520128830609efad89a517a",
+  "originalEvidenceBytes": 28253,
+  "provenance": "Original complete JSON and raw receipts retained privately in the gs-launch-021 worktree and GS-LAUNCH-023 preservation archive; this is not a new measurement.",
+  "status": "CONDITIONAL",
+  "recordedAt": "2026-10-26T21:32:10.240Z",
+  "sourceSha": "13032b1735c320842d7dc25f3de03afa704d3e33",
+  "acceptedIdentity": "8028cb984402db08d7ba016ab656c5602dfdfae5bc3a49fda7f70b6b890a65e4",
+  "acceptanceRun": "40332154565",
+  "publicationRun": "40367278523",
+  "artifactCommit": "f1e1da1aad6c5f1dbc4df3a432a0063be3eacf86",
+  "hostedHttp": "FAIL",
+  "routeHtmlMatches": 61,
+  "publicFilesMatching": 209,
+  "publicFilesTotal": 210,
+  "legal": {
+    "documents": 7,
+    "clauses": 109,
+    "paragraphs": 406,
+    "result": "PASS"
+  },
+  "robots": "FAIL: provider response differs from accepted on-disk file",
+  "pngCsp": "FAIL: expected CSP absent on all nine PNG responses",
+  "deployedHtaccess": "UNVERIFIED",
+  "obsoletePaths": {
+    "count": 26,
+    "result": "FAIL: five canonical responses returned 200 in the complete sweep; superseded by GS-LAUNCH-022"
+  },
+  "browser": {
+    "result": "PASS",
+    "pages": 20,
+    "noJsPages": 20,
+    "legalCombinations": 70,
+    "axeAnalyses": 43,
+    "violations": 0,
+    "incompleteRuleOccurrences": 23,
+    "fullWcagCertification": false
+  },
+  "production": "NO-GO; temporary-origin findings do not prove future custom-origin behaviour",
+  "supportRecommendations": "SUPERSEDED; no customer-support action required or authorised"
+}

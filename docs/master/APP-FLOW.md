@@ -46,7 +46,7 @@ No conversion event. Pure verification. Must be completable in under 90 seconds.
 | Order | Block | Purpose | Primary action |
 |---|---|---|---|
 | 1 | Hero — one sentence on what Gridsmith is. **Not a services list.** | Orient | scroll |
-| 2 | **Division routing — three cards** | Route (M-J3) | → division hub |
+| 2 | **Division routing** — ~~three cards~~ superseded at `GS-R001-M`: a typographic index of the three studios, no cards, no colour blocks (the owner rejected the cards at `GS-O008`) | Route (M-J3) | → division hub |
 | 3 | The one-company argument, condensed. **Built at `N-01` as a heading and one paragraph, not "3 short points"** — the approved copy is sentences, and splitting an approved paragraph into three bullets would be rewriting it into a claim about what the three things are | Frame (M-J2) | → `/approach` **once it exists**; no link until then (`M-03`) |
 | 4 | Selected work — 6, mixed, **at least 1 cross-division**. **Not built at `N-01`: blocked on real client work, `M-P2-25`.** The page was built past it | Proof | → `/work/[slug]` |
 | 5 | The six-stage process, condensed. **Built at `N-01`** as `ProcessStages` with no `detail` passed — "condensed" is the absence of `divisionDetail`/`duration`/`clientTime`, not a variant of the component; `/approach` §4 item 4 passes them and gets the full version | Reduce risk | → `/approach` **once it exists**; no link until then (`M-03`) |

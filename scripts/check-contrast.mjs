@@ -22,7 +22,12 @@
 import { readFileSync, globSync } from 'node:fs';
 import { sep } from 'node:path';
 
-const THEMES = ['master', 'design', 'digital', 'press'];
+/**
+ * `master-stage` is the fifth palette — `GS-R001-M`, `styles/themes/master-stage.css`, the gold
+ * stage on `/` only. It is not a fifth division and has no route group; it is measured here
+ * because every colour a reader sees must be, and `/` is the page most readers see.
+ */
+const THEMES = ['master', 'design', 'digital', 'press', 'master-stage'];
 const TOLERANCE = 0.02; // DESIGN.md now carries measured values to 2dp
 
 /**
@@ -42,8 +47,9 @@ const TOLERANCE = 0.02; // DESIGN.md now carries measured values to 2dp
  *
  * An expectation derived from its own subject is not an expectation.
  */
-const EXPECTED_PAIRS = 36;
-const EXPECTED_CELLS = 148;
+// 36 → 44 and 148 → 185 at GS-R001-M: the stage adds 8 published pairs and one full matrix (37 cells).
+const EXPECTED_PAIRS = 44;
+const EXPECTED_CELLS = 185;
 
 /**
  * Pairs as named in each DESIGN.md §2 table, with the ratio each table publishes.
@@ -61,32 +67,47 @@ const PAIRS = {
     // The three division fills — master/DESIGN.md §2. The accent stays decorative as a
     // foreground and becomes a surface here, with its own paired ink on top.
     ['--accent-design-ink', '--accent-design', 'text', 9.07],
-    ['--accent-digital-ink', '--accent-digital', 'text', 5.09],
+    // 5.09 → 5.41 at GS-DIG-001-RC: the shared Digital accent is now the current Digital
+    // signal (`--digital-signal`), not the retired electric blue.
+    ['--accent-digital-ink', '--accent-digital', 'text', 5.41],
     ['--accent-press-ink', '--accent-press', 'text', 9.25],
     ['--accent-design', '--canvas', 'decor', 2.16],
-    ['--accent-digital', '--canvas', 'text', 5.09],
+    ['--accent-digital', '--canvas', 'text', 5.41],
     ['--accent-press', '--canvas', 'text', 9.74],
     ['--line-strong', '--canvas', 'decor', 1.74],
   ],
-  design: [
-    ['--ink', '--canvas', 'text', 17.92],
-    ['--ink-muted', '--canvas', 'text', 7.56],
-    ['--ink-subtle', '--canvas', 'text', 5.37],
-    ['--accent', '--canvas', 'text', 9.07],
-    ['--accent', '--canvas-raised', 'text', 8.46],
-    ['--accent-ink', '--accent', 'text', 9.07],
-    ['--accent-ink', '--accent-2', 'text', 5.55],
-    ['--line-strong', '--canvas', 'decor', 1.72],
+  // master/DESIGN.md §2.1 — the gold stage, derived from the logo's own gradient stops.
+  'master-stage': [
+    ['--ink', '--canvas', 'text', 17.19],
+    ['--ink-muted', '--canvas', 'text', 10.68],
+    ['--ink-subtle', '--canvas', 'text', 6.76],
+    ['--ink-subtle', '--canvas-raised', 'text', 6.39],
+    ['--accent', '--canvas', 'text', 11.06],
+    ['--accent-ink', '--accent', 'text', 11.06],
+    ['--accent-ink', '--accent-2', 'text', 5.16],
+    ['--line-strong', '--canvas', 'decor', 2.00],
   ],
+  design: [
+    ['--ink', '--canvas', 'text', 15.48],
+    ['--ink-muted', '--canvas', 'text', 10.30],
+    ['--ink-subtle', '--canvas', 'text', 7.87],
+    ['--accent', '--canvas', 'text', 8.38],
+    ['--accent', '--canvas-raised', 'text', 7.26],
+    ['--accent-ink', '--accent', 'text', 8.38],
+    ['--accent-ink', '--accent-2', 'text', 5.76],
+    ['--line-strong', '--canvas', 'decor', 2.45],
+  ],
+  // digital/DESIGN.md §2 — the delivered graphite palette (GS-DIG-001), resolved through
+  // digital-stage.css. The retired electric-blue figures stay in that document as history.
   digital: [
-    ['--ink', '--canvas', 'text', 18.96],
-    ['--ink-muted', '--canvas', 'text', 7.40],
-    ['--ink-subtle', '--canvas', 'text', 5.28],
-    ['--accent', '--canvas', 'text', 4.87],
-    ['--accent', '--canvas-raised', 'text', 5.09],
-    ['--accent-ink', '--accent', 'text', 5.09],
-    ['--accent-ink', '--accent-2', 'text', 10.22],
-    ['--line-strong', '--canvas', 'decor', 1.59],
+    ['--ink', '--canvas', 'text', 14.31],
+    ['--ink-muted', '--canvas', 'text', 6.99],
+    ['--ink-subtle', '--canvas', 'text', 6.99],
+    ['--accent', '--canvas', 'text', 6.50],
+    ['--accent', '--canvas-raised', 'text', 7.04],
+    ['--accent-ink', '--accent', 'text', 7.04],
+    ['--accent-ink', '--accent-2', 'text', 14.40],
+    ['--line-strong', '--canvas', 'decor', 3.63],
   ],
   press: [
     ['--ink', '--canvas', 'text', 16.84],
@@ -215,16 +236,64 @@ function ratio(fg, bg) {
   return (a + 0.05) / (b + 0.05);
 }
 
+/**
+ * The palette layer a theme's contract resolves through, when its literals live elsewhere.
+ *
+ * **Measure what is delivered, not what is declared nearest.** Until GS-DIG-001-RC this
+ * function read hex literals out of `styles/themes/digital.css` alone. That file still held
+ * the retired electric-blue sheet while `digital-stage.css`, declared on the same
+ * `<body data-division="digital">` with a more specific selector, overrode every one of
+ * those tokens — so the Digital rows here measured a palette no route rendered, and the
+ * palette every Digital route did render was measured by nothing. Same class as
+ * 01-VALIDATION-REPORT §21: two artefacts that must agree, only one delivered, and the
+ * gate reading the other one. Digital's contract now maps onto the stage palette with
+ * `var()`, and this resolves the reference exactly as the cascade does on that body.
+ */
+const PALETTE_LAYERS = { digital: ['digital-stage'] };
+
 function tokens(theme) {
-  const css = readFileSync(`styles/themes/${theme}.css`, 'utf8');
+  const declared = {};
+  for (const file of [theme, ...(PALETTE_LAYERS[theme] ?? [])]) {
+    let css = readFileSync(`styles/themes/${file}.css`, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    // A palette layer contributes only its root body block — what the cascade gives the
+    // body. Its later descendant-scoped overrides (the dark first section of a service
+    // page) are not the theme's canvas values and must not flatten into them.
+    if (file !== theme) {
+      const root = css.match(new RegExp(`(?:^|\\})\\s*body\\[data-division="${theme}"\\]\\s*\\{([^}]*)\\}`));
+      if (!root) throw new Error(`${file}.css: no root body[data-division="${theme}"] block to resolve through`);
+      css = root[1];
+    }
+    for (const m of css.matchAll(/(--[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8}|var\(\s*--[a-z0-9-]+\s*\))\s*;/g)) {
+      declared[m[1]] = m[2];
+    }
+  }
+  const resolve = (name, seen = new Set()) => {
+    const value = declared[name];
+    if (!value || seen.has(name)) return undefined;
+    if (value.startsWith('#')) return value;
+    seen.add(name);
+    return resolve(value.match(/--[a-z0-9-]+/)[0], seen);
+  };
   return Object.fromEntries(
-    [...css.matchAll(/(--[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\s*;/g)].map((m) => [m[1], m[2]]),
+    Object.keys(declared).map((name) => [name, resolve(name)]).filter(([, hex]) => hex),
   );
 }
 
 const failures = [];
 const drift = [];
 const rows = [];
+
+// GS-R002-R1 light chapters and the owner-approved material are separate from the night theme matrix.
+const designStage = tokens('design-stage');
+// R1 explicitly approves a Design treatment, without changing Master's material.
+for (const [token, expected] of [['--ds-night', [10, 25, 46]], ['--ds-gold', [212, 175, 53]]]) {
+  if (designStage[token]?.toLowerCase() !== '#' + expected.map(n => n.toString(16).padStart(2, '0')).join('')) failures.push(`R1 owner anchor ${token} must be ${expected}`);
+}
+for (const foreground of ['--ds-paper-ink', '--ds-paper-muted']) {
+  const measured = ratio(designStage[foreground], designStage['--ds-paper']);
+  if (measured < 4.5) failures.push(`Design paper ${foreground}: ${measured.toFixed(2)}:1`);
+  console.log(`Design paper ${foreground}: ${measured.toFixed(2)}:1; minimum 4.5:1`);
+}
 
 for (const theme of THEMES) {
   const t = tokens(theme);
@@ -292,6 +361,97 @@ if (rows.length !== EXPECTED_PAIRS) {
   );
   console.error(`check-contrast: ${failures[failures.length - 1]}\n`);
 }
+
+/* ---------------------------------------------------------------------------------
+ * The shared frame — `GS-SHARED-001-RC`, `styles/themes/chrome.css`.
+ *
+ * Header, footer, the dark openings, the 404 and global-error paint text with `--chrome-*`,
+ * a sixth set of values that none of the five theme palettes above contains: each division's
+ * block in chrome.css maps it onto that division's stage palette with `var()`, and Master's
+ * restates master-stage.css in literals. B2 shipped it unmeasured, and the size pass below
+ * reported `--chrome-accent`/`--chrome-muted` as unruled — correct, and the fix is to rule them,
+ * not to stop scanning the file.
+ *
+ * Resolved exactly as the cascade does on each `<body data-division>`: the division's own block
+ * in chrome.css, then its stage file. A referenced name declared twice with different values is
+ * ambiguous rather than resolved — a stage file's scoped override must never be mistaken for the
+ * frame's value. The published figures are chrome.css's own table, held here as literals.
+ * ------------------------------------------------------------------------------- */
+const CHROME_SOURCE = { master: null, design: 'design-stage', digital: 'digital-stage', press: 'press-stage' };
+const CHROME_PAIRS = {
+  master: [['--chrome-ink', 17.19], ['--chrome-muted', 10.68], ['--chrome-accent', 11.06]],
+  design: [['--chrome-ink', 15.48], ['--chrome-muted', 8.44], ['--chrome-accent', 8.38]],
+  digital: [['--chrome-ink', 14.40], ['--chrome-muted', 9.01], ['--chrome-accent', 7.08]],
+  press: [['--chrome-ink', 12.63], ['--chrome-muted', 8.37], ['--chrome-accent', 7.39]],
+};
+const EXPECTED_CHROME_PAIRS = 12;
+const chromeProblems = [];
+/** The frame's foregrounds and the job each may carry. `--chrome-line` is rules, never text. */
+const CHROME_USE = { '--chrome-ink': 'body', '--chrome-muted': 'body', '--chrome-accent': 'body', '--chrome-line': 'decor' };
+
+const stripComments = (css) => css.replace(/\/\*[\s\S]*?\*\//g, '');
+const chromeCss = stripComments(readFileSync('styles/themes/chrome.css', 'utf8'));
+
+function chromeTokens(division) {
+  const block = chromeCss.match(new RegExp(`body\\[data-division="${division}"\\]\\s*\\{([^}]*)\\}`));
+  if (!block) throw new Error(`chrome.css: no body[data-division="${division}"] block`);
+  const source = {};
+  if (CHROME_SOURCE[division]) {
+    const css = stripComments(readFileSync(`styles/themes/${CHROME_SOURCE[division]}.css`, 'utf8'));
+    for (const m of css.matchAll(/(--[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\s*;/g)) {
+      (source[m[1]] ??= new Set()).add(m[2].toLowerCase());
+    }
+  }
+  const out = {};
+  for (const m of block[1].matchAll(/(--chrome-[a-z]+)\s*:\s*(#[0-9a-fA-F]{3,8}|var\(\s*(--[a-z0-9-]+)\s*\))\s*;/g)) {
+    if (!m[3]) { out[m[1]] = m[2]; continue; }
+    const values = source[m[3]];
+    if (!values || values.size !== 1) {
+      chromeProblems.push(`chrome ${division}: ${m[1]} → ${m[3]} is ${values ? 'declared with ' + values.size + ' values' : 'not declared'} in ${CHROME_SOURCE[division]}.css`);
+      continue;
+    }
+    out[m[1]] = [...values][0];
+  }
+  return out;
+}
+
+const CHROME = Object.fromEntries(Object.keys(CHROME_SOURCE).map((d) => [d, chromeTokens(d)]));
+const chromeRows = [];
+for (const [division, pairs] of Object.entries(CHROME_PAIRS)) {
+  const t = CHROME[division];
+  for (const [fg, claimed] of pairs) {
+    if (!t[fg] || !t['--chrome-canvas']) {
+      chromeProblems.push(`chrome ${division}: ${fg} or --chrome-canvas not resolved`);
+      continue;
+    }
+    const measured = ratio(t[fg], t['--chrome-canvas']);
+    chromeRows.push({ division, fg, measured, claimed });
+    if (measured < MIN.text) chromeProblems.push(`chrome ${division}: ${fg} on --chrome-canvas = ${measured.toFixed(2)}:1, needs ${MIN.text}:1`);
+    if (Math.abs(measured - claimed) > TOLERANCE) {
+      chromeProblems.push(`chrome ${division}: ${fg} — chrome.css publishes ${claimed.toFixed(2)}:1, measured ${measured.toFixed(2)}:1`);
+    }
+  }
+}
+if (chromeRows.length !== EXPECTED_CHROME_PAIRS) {
+  chromeProblems.push(`measured ${chromeRows.length} chrome pairs, expected ${EXPECTED_CHROME_PAIRS}`);
+}
+// Master's frame is master-stage.css restated (chrome.css says so); hold it to that.
+const masterStage = tokens('master-stage');
+for (const [chrome, stage] of [['--chrome-canvas', '--canvas'], ['--chrome-ink', '--ink'], ['--chrome-muted', '--ink-muted'], ['--chrome-accent', '--accent']]) {
+  if (CHROME.master[chrome]?.toLowerCase() !== masterStage[stage]?.toLowerCase()) {
+    chromeProblems.push(`chrome master: ${chrome} ${CHROME.master[chrome]} is not master-stage ${stage} ${masterStage[stage]}`);
+  }
+}
+if (chromeProblems.length > 0) {
+  console.error(`check-contrast: ${chromeProblems.length} shared-frame problem(s)\n`);
+  for (const p of chromeProblems) console.error(`  ${p}`);
+  console.error('');
+}
+for (const r of chromeRows) console.log(`  chrome ${r.division.padEnd(8)} ${r.fg.padEnd(15)} on --chrome-canvas  ${r.measured.toFixed(2)}:1`);
+
+/** Worst ratio a chrome foreground reaches across the four frames. */
+const chromeWorst = (token) =>
+  Math.min(...Object.values(CHROME).filter((t) => t[token] && t['--chrome-canvas']).map((t) => ratio(t[token], t['--chrome-canvas'])));
 
 /* ---------------------------------------------------------------------------------
  * The permission matrix. Every foreground token against every surface, in every theme.
@@ -400,6 +560,9 @@ const SIZE_SOURCES = [
   'styles/globals.css',
   ...globSync('components/primitives/*.module.css'),
   ...globSync('app/**/*.module.css'),
+  // GS-SHARED-001-RC: the shared frame and the shared page components, on every route.
+  ...globSync('components/chrome/*.module.css'),
+  ...globSync('components/shared/*.module.css'),
 ];
 
 /** `--text-*` resolved to the SMALLEST px a clamp() can produce — the worst case. */
@@ -465,6 +628,27 @@ function scanCss(file, css, problems) {
     if (ON_ACCENT[token]) continue;
 
     declarationsSeen += 1;
+
+    // The shared frame's own foregrounds, ruled by CHROME_USE and measured on --chrome-canvas
+    // in all four frames (the worst one decides).
+    if (CHROME_USE[token]) {
+      if (CHROME_USE[token] === 'decor') {
+        problems.push(
+          `${file} — ${token} paints text at ${size[1]} (${px.toFixed(2)}px) and is declared ` +
+            "role: 'decor' in CHROME_USE. The frame's rule colour must never carry text.",
+        );
+        continue;
+      }
+      const weightMatch = body.match(/font-weight:\s*(\d+)/);
+      const weight = weightMatch ? Number(weightMatch[1]) : 400;
+      const needed = isLarge(px, weight) ? MIN.large : MIN.text;
+      const r = chromeWorst(token);
+      declarationsMeasured += 4;
+      if (r + TOLERANCE < needed) {
+        problems.push(`${file} — ${token} at ${size[1]} (${px.toFixed(2)}px) on --chrome-canvas: ${r.toFixed(2)}:1 worst, needs ${needed}:1`);
+      }
+      continue;
+    }
     const use = USE[token];
 
     if (!use) {
@@ -565,6 +749,7 @@ for (const file of SIZE_SOURCES) {
 const SELF_TEST_CSS = `
   .selfTestDecorAsText { color: var(--line-strong); font-size: var(--text-xs); }
   .selfTestUnruledAsText { color: var(--gridsmith-not-a-token); font-size: var(--text-xs); }
+  .selfTestChromeRuleAsText { color: var(--chrome-line); font-size: var(--text-xs); }
 `;
 // Captured BEFORE the self-test runs. The self-test scans two declarations of its own, so
 // reading the counter afterwards would mean the shipped stylesheets could stop pairing
@@ -575,14 +760,14 @@ const shippedDeclarations = declarationsSeen;
 const selfTestProblems = [];
 scanCss('<self-test>', SELF_TEST_CSS, selfTestProblems);
 
-const selfTestExpected = [/--line-strong .*role: 'decor'/, /--gridsmith-not-a-token .*not in the/];
+const selfTestExpected = [/--line-strong .*role: 'decor'/, /--gridsmith-not-a-token .*not in the/, /--chrome-line .*CHROME_USE/];
 if (
   selfTestProblems.length !== selfTestExpected.length ||
   !selfTestExpected.every((re) => selfTestProblems.some((p) => re.test(p)))
 ) {
   console.error(
     `\ncheck-contrast: the size pass failed its own self-test — expected ` +
-      `${selfTestExpected.length} problems (one decor, one unruled), got ${selfTestProblems.length}:\n`,
+      `${selfTestExpected.length} problems (one decor, one unruled, one chrome decor), got ${selfTestProblems.length}:\n`,
   );
   for (const p of selfTestProblems) console.error(`  ${p}`);
   console.error(
@@ -672,7 +857,10 @@ for (const file of globSync('{components,app}/**/*.module.css')) {
     // shared layers — primitives, chrome, app — genuinely run on all four.
     // `sep`, not a regex: a character class holding a backslash is the shape that produced
     // the U+0008 defect above, and this comparison needs no escaping at all.
-    const scoped = THEMES.find((d) => file.includes(`components${sep}${d}${sep}`));
+    // `components/master/home.module.css` is the one Master file that renders on the stage.
+    const scoped = file.endsWith(`components${sep}master${sep}home.module.css`)
+      ? 'master-stage'
+      : THEMES.find((d) => file.includes(`components${sep}${d}${sep}`));
     for (const theme of scoped ? [scoped] : THEMES) {
       const t = tokens(theme);
       for (const token of FADED_TEXT) {
@@ -695,8 +883,9 @@ for (const file of globSync('{components,app}/**/*.module.css')) {
 // stylesheets are clean — DESIGN.md §5 requires at least one fade to exist.
 if (opacityRules === 0) {
   opacityProblems.push(
-    'no opacity declaration below 1 was found in any CSS module. DESIGN.md §5 requires the ' +
-      'division cards to fade their siblings, so this scan measured nothing.',
+    'no opacity declaration below 1 was found in any CSS module, so this scan measured nothing. ' +
+      'Its committed subject is `.fadedSpecimen` in the kitchen sink (GS-R001-M; the division ' +
+      'cards’ sibling fade it used to measure was removed with the cards).',
   );
 }
 
@@ -706,11 +895,12 @@ if (opacityProblems.length > 0) {
   console.error('\nRaise the opacity, or use --ink where the fade applies.\n');
 }
 
-if (failures.length > 0 || drift.length > 0 || matrixProblems.length > 0 || sizeProblems.length > 0 || opacityProblems.length > 0) {
+if (failures.length > 0 || drift.length > 0 || chromeProblems.length > 0 || matrixProblems.length > 0 || sizeProblems.length > 0 || opacityProblems.length > 0) {
   process.exit(1);
 }
 
 console.log(`check-contrast: ${rows.length} pairs across ${THEMES.length} themes, all within role minima and matching DESIGN.md`);
+console.log(`check-contrast: shared frame — ${chromeRows.length} chrome pairs across 4 frames, all body-text safe and matching chrome.css; Master's frame equals master-stage`);
 console.log(
   `check-contrast: size pass — ${declarationsMeasured} declaration/surface combinations across ` +
     `${THEMES.length} themes, every declared font-size checked against its token's measured ratio`,

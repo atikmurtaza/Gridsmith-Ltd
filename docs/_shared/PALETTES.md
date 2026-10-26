@@ -1,4 +1,8 @@
+> **GS-R002-R1 current owner remediation (20 September 2026):** The verified GS-R002 candidate was **not visually approved**. R1 preserves From Line to Form and the service architecture, with Design-only Oxford Navy `#0A192E` / Imperial British Gold `#D4AF35`, earlier hero progress, left/right/left choreography, corrected G/S hierarchy, an original visor/quiff character, four-storey technical study and returning-wave convergence. Owner visual acceptance remains pending. Master (GS-O008 approved), Digital and Press remain frozen; Master polish is deferred. GS-O019 resolved and GS-O020 CLOSED — PUBLISH remain unchanged. Staging only; main and production untouched. Current evidence: `docs/_shared/GS-R002-R1-DESIGN.md`. Earlier status and palette entries below are historical and superseded where they conflict.
+
 # Division palettes — published hex values
+
+> **Owner-approved family strategy, GS-R002 (19 September 2026):** Master warm near-black + existing metallic gold; Design deep navy/cobalt + the same gold (implemented); Digital **deep teal + Gridsmith gold** (future only); Press **#426953 + complementary green derivatives + Gridsmith gold** (future only). Master owns gold; divisions borrow it. Historical palettes below remain traceable. Exact Design tokens and measured contrast: `GS-R002-DESIGN.md` and `design/DESIGN.md`.
 
 Every value on this page is measured, not designed-and-hoped. The measurements are
 reproduced by `npm run check:contrast` on every commit; where this page and that gate
@@ -56,7 +60,12 @@ Drafting pencil and warning tape, on a near-black drawing sheet.
 `--accent-2` measures 5.55:1 against the canvas and 1.63:1 against `--accent`: far enough
 from the sheet to read as a block, far enough from the accent to read as a different one.
 
-## Gridsmith Digital — electric blue
+## Gridsmith Digital — electric blue (retired at GS-DIG-001-RC; history)
+
+> **GS-DIG-001 current palette:** Digital now delivers the owner-approved graphite palette from
+> `styles/themes/digital-stage.css` (Digital signal `#35718A`, graphite `#22262B`, gold `#D2AD34`).
+> The electric-blue table below is historical. Delivered contract ratios are in
+> `docs/digital/DESIGN.md` §2 and are measured by `check:contrast`.
 
 A spec sheet: the accent for the statement, navy for the header rule.
 
@@ -109,7 +118,7 @@ homepage's routing cards, a division badge, the footer switcher.
 | Token | Fill | Ink token | Ink | Measured |
 |---|---|---|---|---|
 | `--accent-design` | **#E8A33D** | `--accent-design-ink` | **#0C0C0D** | **9.07:1** |
-| `--accent-digital` | **#1B5FFF** | `--accent-digital-ink` | **#FFFFFF** | **5.09:1** |
+| `--accent-digital` | **#35718A** (was #1B5FFF) | `--accent-digital-ink` | **#FFFFFF** | **5.41:1** |
 | `--accent-press` | **#2E4A3A** | `--accent-press-ink` | **#FBF9F4** | **9.25:1** |
 
 **The `decor` role on the three accents is unchanged.** It says they may never be a
@@ -127,7 +136,7 @@ text over it. Every one of these pairs is AA at any size.
 |---|---|---|
 | Gridsmith Ltd | `#0F0F0F` | `#FFFFFF` |
 | Gridsmith Design | `#E8A33D` | `#0C0C0D` |
-| Gridsmith Digital | `#1B5FFF` | `#FFFFFF` |
+| Gridsmith Digital | `#35718A` (was `#1B5FFF`) | `#FFFFFF` |
 | Gridsmith Press | `#2E4A3A` | `#FBF9F4` |
 
 Secondary, where a profile wants a banner behind the avatar:

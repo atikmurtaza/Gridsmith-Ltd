@@ -3,7 +3,11 @@
 @import "./themes/master.css";
 @import "./themes/design.css";
 @import "./themes/digital.css";
+@import "./themes/digital-stage.css";
 @import "./themes/press.css";
+@import "./themes/press-stage.css";
+@import "./themes/master-stage.css";
+@import "./themes/chrome.css";
 
 /**
  * Tailwind v4 ships its own `--text-*`, `--leading-*`, `--radius-*` and `--ease-*`

@@ -1,0 +1,2 @@
+# Preserve the supplied exact owner instruction, including its original CRLF bytes.
+GS-LAUNCH-014-OWNER-AUTHORITY.md -text -whitespace

@@ -11,10 +11,15 @@
     "prebuild": "npm run check:launch:build",
     "dev": "next dev",
     "build": "next build",
+    "build:static": "node scripts/build-static.mjs",
+    "check:static:artifact": "node scripts/check-static-artifact.mjs",
+    "check:static:ui": "node scripts/check-static-ui.mjs",
+    "check:static:selftest": "node scripts/check-static.selftest.mjs",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
     "lint:colors": "node scripts/check-no-hardcoded-colors.mjs",
+    "check:colors:selftest": "node scripts/color-literals.selftest.mjs",
     "lint:secrets": "node --env-file-if-exists=.env.local scripts/check-service-role-key.mjs",
     "size": "node scripts/check-bundle-size.mjs",
     "check:tokens": "node scripts/check-tokens.mjs",
@@ -29,11 +34,13 @@
     "check:consumer-terms": "node scripts/check-consumer-terms.mjs",
     "check:legal:parity": "node scripts/check-legal-parity.mjs",
     "check:legal:selftest": "node scripts/check-legal-parity.selftest.mjs",
+    "check:legal:adoption": "node scripts/check-legal-adoption.mjs",
+    "check:legal:adoption:selftest": "node scripts/check-legal-adoption.selftest.mjs",
     "check:lhci:desktop": "node scripts/check-lhci.mjs desktop",
     "check:lhci:mobile": "node scripts/check-lhci.mjs mobile",
-    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run lint:colors && npm run check:contrast && npm run check:state-cues && npm run check:headings && npm run check:content && npm run check:claims && npm run check:control && npm run check:schemas && npm run check:rls && npm run check:lead-security && npm run check:launch:selftest && npm run check:legal:selftest && npm run check:struck:selftest && npm run check:struck && npm run check:path:selftest && npm run check:press:contact:selftest && npm run check:lists:selftest && npm run check:lists && npm run check:service-content:selftest && npm run check:service-content && npm run check:reviews:selftest && npm run check:reviews && npm run check:company:selftest",
+    "verify:static": "npm run check:node && npm run typecheck && npm run lint && npm run check:colors:selftest && npm run lint:colors && npm run check:contrast && npm run check:state-cues && npm run check:headings && npm run check:content && npm run check:claims && npm run check:control && npm run check:schemas && npm run check:rls && npm run check:lead-security && npm run check:cms:migration && npm run check:launch:selftest && npm run check:legal:selftest && npm run check:legal:adoption:selftest && npm run check:legal:adoption && npm run check:struck:selftest && npm run check:struck && npm run check:path:selftest && npm run check:press:contact:selftest && npm run check:lists:selftest && npm run check:lists && npm run check:service-content:selftest && npm run check:service-content && npm run check:reviews:selftest && npm run check:reviews && npm run check:company:selftest && npm run check:master:scene:selftest && npm run check:design:timeline:selftest && npm run check:static:selftest && npm run check:edge:selftest && npm run check:portable-links:selftest && npm run check:deps:overrides",
     "verify:build": "npm run build && npm run lint:secrets && npm run check:tokens && npm run check:theme && npm run size",
-    "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:security-headers\" \"npm run check:launch\" \"npm run check:responsive\" \"npm run check:consumer-terms\" \"npm run check:legal:parity\" \"npm run check:vat\" \"npm run check:press:type\" \"npm run check:path:live\" \"npm run check:service-content:dataset\" \"npm run check:reviews:ui\" \"npm run check:company\" \"npm run check:mark:field\" \"npm run check:lhci:desktop\" \"npm run check:lhci:mobile\"",
+    "verify:served": "node scripts/with-server.mjs \"npm run check:axe\" \"npm run check:security-headers\" \"npm run check:redirects\" \"npm run check:launch\" \"npm run check:responsive\" \"npm run check:consumer-terms\" \"npm run check:legal:parity\" \"npm run check:vat\" \"npm run check:press:type\" \"npm run check:press:scene\" \"npm run check:path:live\" \"npm run check:service-content:dataset\" \"npm run check:reviews:ui\" \"npm run check:company\" \"npm run check:master:scene\" \"npm run check:master:hero\" \"npm run check:master:accessibility\" \"npm run check:design:scene\" \"npm run check:digital:scene\" \"npm run check:lhci:desktop\" \"npm run check:lhci:mobile\"",
     "verify": "npm run verify:static && npm run verify:build && npm run verify:served",
     "check:node": "node scripts/check-node-version.mjs",
     "studio": "sanity dev --port 3333",
@@ -44,14 +51,20 @@
     "check:schemas": "node scripts/check-schemas.mjs",
     "migrate": "node --env-file=.env.local scripts/migrate.mjs",
     "check:rls": "node scripts/check-rls.mjs",
-    "check:lead-security": "node scripts/check-lead-security.mjs",
+    "check:lead-security": "node --conditions=react-server scripts/check-lead-security.mjs",
+    "check:cms:migration": "node scripts/migrate-production-cms.mjs",
+    "cms:migration:manifest": "node scripts/migrate-production-cms.mjs --write-manifest",
     "check:security-headers": "node scripts/check-security-headers.mjs",
+    "check:redirects": "node scripts/check-redirects.mjs",
     "mark:measure": "node scripts/mark-freespace.mjs",
     "mark:solve": "node scripts/mark-path.mjs",
     "mark:overlap": "node scripts/check-mark-overlap.mjs",
     "check:mark:cls": "node scripts/check-mark-cls.mjs",
-    "check:mark:guard": "node scripts/check-mark-guard.mjs",
-    "check:mark:field": "node scripts/check-mark-field.mjs",
+    "check:master:scene": "node scripts/check-master-scene.mjs",
+    "check:master:hero": "node scripts/check-master-hero.mjs",
+    "check:master:accessibility": "node scripts/check-master-accessibility.mjs",
+    "check:master:scene:selftest": "node scripts/check-master-scene.selftest.mjs",
+    "prove:master:scene": "node scripts/prove-master-scene.mjs",
     "seed": "node --env-file=.env.local scripts/seed-content.mjs",
     "check:vat": "node scripts/check-vat-display.mjs",
     "check:press:type": "node scripts/check-press-type.mjs",
@@ -74,15 +87,29 @@
     "check:reviews:ui": "node scripts/check-reviews-ui.mjs",
     "check:company": "node scripts/check-company-facts.mjs",
     "check:company:selftest": "node scripts/check-company-facts.selftest.mjs",
-    "docs:content-review": "node scripts/owner-content-review.mjs"
+    "docs:content-review": "node scripts/owner-content-review.mjs",
+    "check:design:timeline:selftest": "node scripts/check-design-timeline.selftest.mjs",
+    "check:portable-links:selftest": "node scripts/check-portable-links.selftest.mjs",
+    "check:deps:overrides": "node scripts/check-dependency-overrides.mjs",
+    "check:design:scene": "node scripts/check-design-scene.mjs",
+    "prove:design:scene": "node scripts/check-design-scene.mjs --prove",
+    "check:digital:scene": "node scripts/check-digital-scene.mjs",
+    "prove:digital:scene": "node scripts/check-digital-scene.mjs --prove",
+    "check:press:scene": "node scripts/check-press-scene.mjs",
+    "check:edge:selftest": "node --conditions=react-server scripts/check-edge-intake.selftest.mjs",
+    "prove:edge:database": "node scripts/check-edge-database.mjs",
+    "check:edge:ui": "node scripts/check-edge-ui.mjs",
+    "check:edge:preview": "node scripts/check-edge-preview.mjs",
+    "edge:preview:health": "node scripts/reconcile-preview-outbox.mjs health",
+    "edge:preview:drain": "node scripts/reconcile-preview-outbox.mjs drain"
   },
   "dependencies": {
     "@sanity/client": "^8.1.0",
-    "next": "^15.5.25",
+    "next": "15.5.28",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "server-only": "^0.0.1",
-    "zod": "^4.4.3"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@axe-core/puppeteer": "^4.12.1",
@@ -94,10 +121,10 @@
     "@types/react-dom": "^19.2.4",
     "axe-core": "^4.13.0",
     "eslint": "^9.39.5",
-    "eslint-config-next": "^15.5.25",
+    "eslint-config-next": "15.5.28",
     "pg": "^8.23.0",
     "postcss": "^8.5.26",
-    "puppeteer": "^24.43.1",
+    "puppeteer": "25.14.0",
     "sanity": "^6.9.2",
     "styled-components": "^6.5.3",
     "tailwindcss": "^4.3.3",
@@ -105,6 +132,27 @@
   },
   "overrides": {
     "postcss": "$postcss",
-    "sharp": "0.35.4"
+    "sharp": "0.35.5",
+    "@module-federation/dts-plugin": {
+      "adm-zip": "0.6.1",
+      "undici": "7.30.1"
+    },
+    "@vercel/frameworks": {
+      "js-yaml": "3.15.2",
+      "smol-toml": "1.9.0"
+    },
+    "@lhci/cli": {
+      "tmp": "0.2.7",
+      "uuid": "11.1.1"
+    },
+    "typeid-js": {
+      "uuid": "11.1.1"
+    },
+    "get-uri": {
+      "basic-ftp": "6.2.3"
+    },
+    "lighthouse": {
+      "puppeteer-core": "25.14.0"
+    }
   }
 }

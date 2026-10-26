@@ -79,14 +79,39 @@ const ORIGIN_DESKTOP = 'http://127.0.0.1:3200';
 // the budget is asserted against the protocol Vercel actually negotiates, not HTTP/1.1.
 const ORIGIN_MOBILE = 'https://127.0.0.1:3202';
 
-const ROUTES = [
+const ALL_ROUTES = [
   { path: '/', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
   { path: '/design', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
   { path: '/digital', perf: 1, lcp: 1750, cls: 0.02, tbt: 150 }, // re-derived, M-P1-11
   { path: '/press', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
+  { path: '/press/services/publishing-preparation', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
+  { path: '/press/contact', perf: 0.95, lcp: 2000, cls: 0.05, tbt: 200 },
+  // GS-SHARED-001-RC: the shared Master-group pages, measured at Master's own budget (CLAUDE.md
+  // §Performance budgets). Not new numbers — they were bound by these and measured by nothing.
+  { path: '/about', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
+  { path: '/approach', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
+  { path: '/insights', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
+  { path: '/contact', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
+  { path: '/legal/privacy', perf: 0.98, lcp: 1800, cls: 0.03, tbt: 200 },
 ];
+
+// The legal route is legitimately absent only from an unpublished static rehearsal.
+function selectStaticRoutes(routes, manifest, rehearsal = false) {
+  return routes.flatMap(route => {
+    const item = manifest.routes.find(item => item.path === route.path && item.eligible);
+    if (!item && !(rehearsal && route.path === '/legal/privacy')) throw new Error(`Static Lighthouse route missing: ${route.path}`);
+    return item ? [{ ...route, indexable: manifest.legalPreview === 'adopted-owner' ? false : item.sitemap === true }] : [];
+  });
+}
+const STATIC_IDENTITY = process.env.GRIDSMITH_BUILD_TARGET === 'static' ? JSON.parse(require('node:fs').readFileSync(
+  `${process.env.GRIDSMITH_STATIC_PROFILE === 'owner-preview' ? 'build/owner-preview-candidate' :
+    process.env.GRIDSMITH_PRODUCTION_REHEARSAL === '1' ? 'build/production-rehearsal' : 'out'}/__deployment.json`)) : null;
+const ROUTES = STATIC_IDENTITY
+  ? selectStaticRoutes(ALL_ROUTES, JSON.parse(require('node:fs').readFileSync('build/static-route-manifest.json')),
+    STATIC_IDENTITY.rehearsal === true && STATIC_IDENTITY.deployable === false)
+  : ALL_ROUTES;
 
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const pattern = (origin, path) => `^${escape(origin + path)}$`;
 
-module.exports = { ORIGIN_DESKTOP, ORIGIN_MOBILE, ROUTES, pattern };
+module.exports = { ORIGIN_DESKTOP, ORIGIN_MOBILE, ROUTES, pattern, selectStaticRoutes, STATIC_IDENTITY };

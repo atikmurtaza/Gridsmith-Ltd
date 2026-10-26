@@ -18,11 +18,12 @@
 import { rmSync } from 'node:fs';
 import { createClient } from '@sanity/client';
 import { SANITY_API_VERSION, SANITY_PROJECT_ID } from '../sanity/project.ts';
+import { COMPANY_DISCLOSURE } from '../lib/company/confirmed.ts';
 
 const DATASET = 'development';
 
 const token = process.env.SANITY_API_WRITE_TOKEN;
-if (!token) {
+if (!token && import.meta.main) {
   console.error(
     '\nseed-company-details: SANITY_API_WRITE_TOKEN is not set.\n' +
       'It lives in .env.local, which is gitignored. Run via `npm run seed:company`, which\n' +
@@ -31,7 +32,7 @@ if (!token) {
   process.exit(1);
 }
 
-const doc = {
+export const doc = {
   _id: 'companyDetails',
   _type: 'companyDetails',
   legalName: 'Gridsmith Ltd',
@@ -43,7 +44,10 @@ const doc = {
   // country as `England`, and the owner's supplied public description is `Registered in
   // England`. The footer renders "registered in {placeOfRegistration}", so this string IS the
   // reg. 25(2)(a) particular and it is the owner's fact, not an inference.
-  placeOfRegistration: 'England',
+  // GS-R16-001 (owner decision 17): "England and Wales" — the statutory category (GS-LEGAL-001-R3
+  // C-3). Evidence: company number 17050842 carries no SC/NI prefix, the form Companies House uses
+  // for England and Wales registrations, and the registered office is in England (register, 21 Oct 2026).
+  placeOfRegistration: COMPANY_DISCLOSURE.placeOfRegistration,
   // **Confirmed against the public register, 16 September 2026**, which gives
   // `30 Briarfield Road, Farnworth, Bolton, England, BL4 0HD` — the same premises and the
   // same digit-zero postcode. The country component is not repeated here because the footer
@@ -78,9 +82,15 @@ const doc = {
   // is slower than that ceiling and is not a promise at all, so the rule is satisfied twice
   // over; it stays the single source of truth for every surface that says anything about
   // timing. `check:company` question 5 refuses guarantee wording on the served pages.
-  responseCommitment: 'We typically respond within 48 hours.',
+  // GS-R16-001 (owner decision 18): no time figure at all.
+  responseCommitment: COMPANY_DISCLOSURE.responseCommitment,
 };
 
+/**
+ * `GS-PROD-001`: `migrate-production-cms.mjs` imports the documents above to build the production
+ * payload from this source. Only running this file (`npm run seed:company`) writes; an import writes nothing.
+ */
+if (import.meta.main) {
 const client = createClient({
   projectId: SANITY_PROJECT_ID,
   dataset: DATASET,
@@ -105,3 +115,4 @@ console.log('  no businessHours field: GS-O004 does not authorise published open
 // every route from static to server-rendered-on-demand. CI is unaffected: it builds clean.
 rmSync('.next/cache/fetch-cache', { recursive: true, force: true });
 console.log('  cleared .next/cache/fetch-cache so the next build re-reads the dataset');
+} // import.meta.main

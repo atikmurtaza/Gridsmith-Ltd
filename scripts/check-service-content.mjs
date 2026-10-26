@@ -46,11 +46,13 @@ import {
 } from '../lib/services/catalogue.ts';
 import { SANITY_API_VERSION, SANITY_PROJECT_ID, PRODUCTION_DATASET } from '../sanity/project.ts';
 import { PROCESS_DETAIL, SERVICES } from './service-content.mjs';
+import { TERRITORIES } from '../components/divisions/press/catalogue.ts';
 import {
   STRUCK_COPY_RULES,
   anonymityProblems,
   coverageProblems,
   engagementProblems,
+  pressCatalogueProblems,
   struckCopyProblems,
 } from './service-content-rules.mjs';
 import { contentHash } from './owner-content-review.mjs';
@@ -77,6 +79,11 @@ say(
     `(${Object.entries(SERVICES).map(([d, r]) => `${d} ${r.length}`).join(', ')}) — ` +
     `${coverage.length === 0 ? 'each covered exactly once' : `${coverage.length} problem(s)`}`,
 );
+
+const pressCatalogue = pressCatalogueProblems(TERRITORIES, SERVICES.press);
+problems.push(...pressCatalogue);
+const pressRows = TERRITORIES.reduce((n, territory) => n + territory.primary.length + territory.supporting.length, 0);
+say(`press:      ${TERRITORIES.length} territories, ${pressRows} catalogue rows, ${SERVICES.press.length} canonical service(s) — ${pressCatalogue.length === 0 ? 'all mapped' : `${pressCatalogue.length} problem(s)`}`);
 
 /* -- 2. The Digital Marketing decomposition ------------------------------- */
 

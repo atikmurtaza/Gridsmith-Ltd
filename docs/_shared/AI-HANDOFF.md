@@ -1,250 +1,263 @@
+> **GS-LAUNCH-023 (26 October 2026): release-source integration; production HOLD.** Accepted source and main operations are reconciled on `codex/gs-launch-023`; GS-LAUNCH-019–022 findings and the Windows axe correction are consolidated. Current evidence, verification and next-task requirements: `docs/_shared/GS-LAUNCH-023.md`. Earlier support-request recommendations are superseded: no support action is required or authorised. Notification drain remains disabled; no production/legal/WordPress/provider operation is authorised.
+
+> **GS-LAUNCH-022 (26 October 2026): CONDITIONAL; owner flush CONFIRMED; served stale assets RESOLVED; hosted HTTP FAIL.** All 26 obsolete paths now return 404; robots remains the provider 58-byte replacement and all 9 PNGs still lack CSP, including fresh queries. Exact accepted identity, 61 route HTML hashes, 209/210 public files and legal parity retained; focused contact PASS. Prior hosted browser PASS reused after 273 successful GET subjects matched bytes and critical headers; no new full AA claim. Actual deployed .htaccess remains unverified after browser timeout. Windows axe fix and all prior records preserved; fresh syntax/ESLint PASS. No source/dependency/artifact change, commit/push/dispatch, extra purge/provider setting, support send, deployment or production/DNS/legal-publication operation. Close the repeated cache-debugging loop with the unsent GS-LAUNCH-022 provider request; independent source integration and WordPress recovery preparation may proceed under separate authority. Next recommendation: GS-LAUNCH-023 source/main reconciliation with handover preservation. See docs/_shared/GS-LAUNCH-022.md / GS-LAUNCH-022-EVIDENCE.json.
+
+> **GS-LAUNCH-021 (26 October 2026): CONDITIONAL; hosted browser recovered, HTTP FAIL; production NO-GO.** Exact accepted source 13032b1735c320842d7dc25f3de03afa704d3e33 / artifact 8028cb984402db08d7ba016ab656c5602dfdfae5bc3a49fda7f70b6b890a65e4 remains live. All 61 routes match accepted HTML; 209/210 public files match. Deployed robots download is exact, but provider HTTP replaces it; nine PNG CSP omissions and obsolete cached JS remain. Small Windows axe-source resolution fix passes full hosted UI: 20 pages/no-JS pages, 70 legal combinations, 41 focused plus 2 error axe analyses, zero violations; 23 incomplete rule occurrences retained. No rebuild, commit/push/dispatch, purge/provider change, support send or production/DNS/legal-status write. Original worktrees preserved; isolated codex/gs-launch-021 changes are uncommitted. Next: one explicitly approved temporary-site CDN Flush cache, canonical retest and provider delivery disposition; custom-origin verification and production owner/legal/backup/cutover gates remain. Evidence: docs/_shared/GS-LAUNCH-021.md and GS-LAUNCH-021-EVIDENCE.json.
+
+> **GS-LAUNCH-020: OWNER REDEPLOYED; HOSTED ACCEPTANCE FAIL.** Exact approved identity is live; publication40367278523 SUCCESS/artifactf1e1da1a. All61routes and7legal documents pass;209/210publicpayloadfiles match. Providerrobots differs; stalecache serves3removedJS/oldheaders; PNGCSP missing evenfreshqueryMISS. No purge/providerconfig/sourcechange/rollback; browserUI/axe notrun(accessdisabled). Need scoped cachepurge/read-onlyproviderdiagnosis authority. Evidence: build/gs-launch-020/HOSTED-ACCEPTANCE-SUMMARY.json.
+
+> **GS-LAUNCH-020 execution: PUBLICATION SUCCESS; TEMPORARY REDEPLOY AWAITS BROWSER ACCESS.** Full run40367278523 SUCCESS, including normal verify and publisher; artifact commit f1e1da1aad6c5f1dbc4df3a432a0063be3eacf86 matches all212acceptedfiles. Final browser read refused because local browser use disabled in Work settings; no Redeploy click. Existing owner approval persists; enable browser access or owner manually redeploy namedtemporarysite, then read-onlyhostedverification. No production/DNS/mail writes or rollbackauthority.
+
+> **GS-LAUNCH-020 execution (26 October 2026), OWNER APPROVED; ARTIFACT PUBLISHED; HOSTINGER PENDING:** Explicit yes recorded; exact approval variable installed. Run40367278523 publisher PASS, accepted212files match artifact commit f1e1da1aad6c5f1dbc4df3a432a0063be3eacf86. Full workflow normal verification remains IN_PROGRESS; manual temporary-site Redeploy waits. Auto-deployment OFF. Source remains13032b17; no rebuild of accepted bytes or production/DNS/mail writes. Rollback not authorised. Execution receipt: build/gs-launch-020/GS-LAUNCH-020-EXECUTION.json.
+
+> **GS-LAUNCH-020 (26 October 2026), PREPARATION COMPLETE; AWAITING OWNER DEPLOYMENT APPROVAL:** Owner screenshots confirm exact temporary Git mapping/public_html/auto-deployment OFF, requested temporary File Manager root and production GIT provider-connect setup. Bounded configured Git transaction isolation verified; no independent filesystem/chroot audit asserted. Accepted source/run/ZIP and all 212 files rechecked; prior 202-file rollback payload and procedure verified. Factual approval record complete but unsigned; no approval time invented. Exact publication command/manual Redeploy steps prepared. No rebuild, accepted-file change, commit/push, variable write, dispatch, Hostinger or production/DNS action. Rollback restores old forms/reviews and needs separate authority. See `docs/_shared/GS-LAUNCH-020.md`.
+
+> **GS-LAUNCH-019 (26 October 2026), ACCEPTED RELEASE READY FOR OWNER DEPLOYMENT APPROVAL:** Source `13032b1735c320842d7dc25f3de03afa704d3e33` on `codex/gs-launch-018`; whole CI [40332154565](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40332154565) SUCCESS. Normal verification, all six Preview acceptance commands, both zero audits and accepted packaging PASS. Downloaded ZIP/manifest/source/run and every 212 files independently verified. Publisher SKIPPED; artifact branch remains `25d653f5`. Fresh destination/rollback receipt and exact owner transaction approval are still required; no Hostinger Redeploy, production/DNS or legal-text change. Completion records are local documentation-only updates after the tested commit. See `docs/_shared/GS-LAUNCH-019.md`.
+
+> **GS-LAUNCH-018 (26 October 2026), PREVIEW RELEASE BLOCKED:** Original CI → Hostinger artifact-branch path restored in tested source `35c74d67`. Normal verification and all six exact-preview acceptance commands PASS in run `40254337220`; overall CI FAIL solely from nine high toolchain audit entries (production 0). Packaging/publisher SKIPPED; no accepted ZIP or release identity. Relative `public_html` Git destination corroborated; FTP write isolation untested. Next owner action: authorise bounded toolchain remediation, then exact-source acceptance and artifact-bound deployment approval. No deployment, production/DNS/mail/legal-text change. See `docs/_shared/GS-LAUNCH-018.md`.
+
+> **GS-LAUNCH-017 (25 October 2026), TEMPORARY PREVIEW CANDIDATE; RELEASE HOLD:** Owner explicitly permits all seven unchanged adopted legal texts on mediumaquamarine-wallaby-594070.hostingersite.com for this preview only, superseding the earlier temporary-domain ban; production publication remains held. A separate owner-preview profile uses production CMS content, canonical legal review banners, direct email/WhatsApp and noindex; existing visuals, legal bytes/register, production refusals and exclusions remain. Fresh local export: 61 eligible routes/214 files; source/static/build/legal/asset-link checks pass, including 72 new adverse proofs and five independent source reviews. Candidate is deployable:false / ACCEPTANCE_PENDING outside out/; no archive is released until retained acceptance passes. Windows Lighthouse skips; supported browser/Linux/Apache/accessibility/cookie/exact-source CI and the existing nine-high toolchain disposition remain incomplete. hPanel confirms a separate temporary-site entry, but interaction timeouts leave its absolute root UNVERIFIED. No old WordPress access/migration or production/DNS/email/provider mutation/upload/push/dispatch. Authority, current evidence and scoped next action: GS-LAUNCH-017.md / GS-LAUNCH-017-HOSTINGER-GUIDE.md. Earlier conflicting temporary-legal restrictions are historical for this exact preview only.
+
+> **GS-LAUNCH-016 (25 October 2026), PREPARATION COMPLETE; CUTOVER HOLD:** Isolated codex/gs-launch-016 verifies candidate 373c04b69a2bf9612b0807694f9d0d3262235c3a. Fresh Windows static/type/lint/clean normal build/69 budgets/selected contact-legal HTTP checks and production audit pass; full toolchain audit remains FAIL (nine high affected entries). Production builder refuses eight existing legal/receipt inputs. New 54-route/199-file rehearsal identity 9080c3572986d75b8135c6440b04b247f01f149a2a513728214ccae2bdaf5378 remains deny-all/nondeployable; complete checksummed manifest and local archive retained. Seven OWNER_ADOPTED, zero PUBLISHABLE; no legal/register/runtime/dependency/workflow change. Linux/Apache/browser/axe/Lighthouse/cookie/exact-source CI and private Hostinger recovery mapping remain unperformed/unverified. New/test-only mailbox and France/EU owner facts retained; no repeated historical-data questionnaire without contradiction. Current concise assessment, ownership, eight-item owner sheet and proposed runbook: GS-LAUNCH-016.md. Separate publication and exact-artifact cutover authority required. No push/dispatch/upload/deploy/provider/WordPress/database/DNS/email change, messages or deletion. STOP after preparation; earlier contrary next-phase wording below is historical.
+
+> **GS-LAUNCH-015 (25 October 2026), LOCAL VERIFICATION COMPLETE; PUBLICATION HOLD:** Direct-contact source/Windows static/build/69 budgets/selected HTTP/legal parity/production audit and fresh denied-artifact checks pass on c7f1b9478d4fe3e18ecaabd7a1fabe3011d03ac0. DIRECT-CONTACT-VERIFIED remains UNMET: the structured draft is not a completed receipt. Settled owner facts are retained; only O1-O5 private operational evidence is requested in GS-LAUNCH-015.md section 2. Seven OWNER_ADOPTED; zero PUBLISHABLE; canonical texts/register/history/workflow and release controls unchanged. Linux/browser/Apache/axe/Lighthouse/exact-source CI/Hostinger acceptance and security/hosting/publication/cutover decisions remain separate. No messages, push, dispatch, provider/Production writes, publication, deployment, deletion or risk acceptance. Stop before GS-LAUNCH-016. Earlier conflicting next-task language below is historical.
+
+> **GS-LAUNCH-014 (25 October 2026), LOCAL ADOPTION INTEGRATED; PUBLICATION HOLD:** Exact owner-approved Privacy 2.7, Accessibility 2.4 and Consumer Terms 3.4 replace only their canonical predecessors. The other four texts/entries are unchanged. Seven OWNER_ADOPTED; zero PUBLISHABLE. The prior register, superseded texts/workflow and original adoption evidence remain available through the existing register history. Consumer quotation/confirmation and contact labels align to 3.4/email/WhatsApp only; existing contracts retain agreed versions. Privacy contactMode is direct; DIRECT-CONTACT-VERIFIED remains unmet. H4-B remains required for future forms; all-seven refusal, Privacy co-publication, Hostinger, Cookie A-2, retention, separate publication and artifact-bound cutover authority remain. Evidence: GS-LAUNCH-014.md / GS-LAUNCH-014-EVIDENCE.json and ../_legal/evidence/GS-LAUNCH-014-ADOPTION.md. No push/dispatch/publication/deployment/provider or Production writes/WordPress/DNS/email change/deletion/risk acceptance. STOP before GS-LAUNCH-015. Earlier conflicting versions/statuses below are historical.
+
+> **GS-LAUNCH-013 (25 October 2026), THREE-DOCUMENT REVIEW PACKAGE; PUBLICATION HOLD:** Complete Privacy 2.7, Accessibility 2.4 and Consumer Terms 3.4 exact-text proposals, SHA-256 values, adopted-to-proposed diffs, factual/legal conditions and unapproved decision wording are in `GS-LAUNCH-013.md` / `GS-LAUNCH-013-EVIDENCE.json`. Consumer changes only its two WhatsApp labels plus version/review headers; all seven canonical texts and earlier legal/adoption evidence remain byte-identical: seven OWNER_ADOPTED, zero PUBLISHABLE. All seven served legal subjects and permanent SMS/voice/history/contract regressions are covered; normal canonical 3.3 contradiction remains an expected failure until authorised replacement. Historical holdings/provider retention/transfers/retention execution, Hostinger backup/restore/security and Linux/hosted acceptance remain open. No adoption, publication, push/deployment/provider or Production writes/deletion; STOP before GS-LAUNCH-014.
+
+> **GS-LAUNCH-012 (25 October 2026), CONTACT IMPLEMENTED; FRESH LEGAL PROPOSALS ONLY; PUBLICATION HOLD:** Owner F1–F5 confirms email/WhatsApp-only direct contact, owner/sales access, no current copying, possible historical data/backups, France/EU hosting and owner-managed privacy administration. Public SMS actions/copy and Organization telephone are removed; email/no-JS alternatives and response wording remain. Complete Privacy 2.7 and Accessibility 2.4 proposals and exact comparison are in `docs/_legal/proposed/GS-LAUNCH-012/`. All seven canonical texts, fingerprints, register and adoption evidence remain unchanged: seven OWNER_ADOPTED, zero PUBLISHABLE. Consumer Terms 3.3 still says “WhatsApp or text” twice; correction needs separate authority/fresh adoption before publication. Historical holdings, provider retention/transfers, backup/restore and retention execution remain unverified. DIRECT-CONTACT-VERIFIED accepts email/WhatsApp only; no operational receipt/adoption/publication authority manufactured. H4-B, all-seven refusal, Privacy co-publication, Hostinger processor controls, A-2 and separate cutover authority remain. Local matrix, hashes and owner decision package: `GS-LAUNCH-012.md` / `GS-LAUNCH-012-EVIDENCE.json`. Linux/browser acceptance pending; no denied Docker retry. No push/dispatch/deployment/publication/provider or Production writes/WordPress/DNS/email change or GS-LAUNCH-013. This task supersedes historical SMS channel authority only within its explicit scope.
+
+> **GS-LAUNCH-011 (25 October 2026), LOCAL READINESS PREPARATION; PUBLICATION HOLD:** Isolated `codex/gs-launch-011` starts at `b99647105f581f66962977ecd4122f8231da3ee0`. Existing gates now support an explicit direct-contact Privacy mode and an unmet DIRECT-CONTACT-VERIFIED receipt, preserve H4-B for future forms, and verify exact email/WhatsApp/SMS links plus no forms across the artifact. All seven canonical texts/register/adoptions and dependencies remain unchanged: seven OWNER_ADOPTED, zero PUBLISHABLE. Privacy 2.7 and Accessibility 2.4 wording is proposed only; F1-F5 actual contact/legacy-data/transfer/retention facts remain unsigned. Private hPanel root/database/separation/publisher/backup/upload/rollback evidence remains UNVERIFIED; current hPanel listing confirmed, dashboard unavailable; no settings/database access or support enquiry. Scoped security exception is unsigned; no denied Docker retry or Linux/browser acceptance. Current local tests, exact hashes, owner fact record and nine-step release procedure: GS-LAUNCH-011.md / GS-LAUNCH-011-EVIDENCE.json. Next only: owner completes facts/private receipt and approves settled wording for a separately authorised adoption change. No push/dispatch/deployable artifact/publication/upload/Production/WordPress/DNS/email change or GS-LAUNCH-012. Earlier conflicting next-phase restrictions are superseded only by this task’s explicit preparation authority.
+
+> **GS-LAUNCH-010 (25 October 2026), LINUX EXECUTION BLOCKED; PUBLICATION HOLD:** Isolated `codex/gs-launch-010` starts clean at `c152cbe0fa3b07c2600c228975b3824faa7096e6`; package, lockfile and all 367 effective-source hashes match GS-LAUNCH-009. No authorised supported Linux environment is available: WSL is Ubuntu 26.04; historical Gridsmith containers are exited and not authorised for reuse. No denied create/run retry. Fresh Windows lockfile audit: production zero, full nine high affected entries / three residual advisories; installed Linux audits and all browser/HTTP/axe/Lighthouse acceptance remain NOT RUN. Synthetic browser fixtures and legal adoption pass; seven OWNER_ADOPTED, zero PUBLISHABLE. Documentation-only blocker closeout, unsigned risk proposal and one policy-cleared Ubuntu 24.04 setup route: `GS-LAUNCH-010.md` / `GS-LAUNCH-010-EVIDENCE.json`. Owner/policy administrator must provision and clear that job and authorise resumption of GS-LAUNCH-010. No source/legal/register/dependency change, push, CI dispatch, deployment, provider/Production write, upload or GS-LAUNCH-011. Earlier results remain historical.
+
+> **GS-LAUNCH-009 (25 October 2026), LOCAL SECURITY REMEDIATION; PUBLICATION HOLD:** Independent exact-lock installs restore the complete static selftest without a TypeScript source change. Zod 4.6.6, body-parser 1.20.9 and compatible Undici 6.29.1/7.30.1 patches pass final source/consumer verification and a clean normal build with all 69 bundle budgets. Production audit zero; full audit retains nine high affected entries from nested Zod 3 and two extract-zip advisories, without owner acceptance. Browser authentication is unchanged; fresh browser/keyboard/reduced-motion/axe/Lighthouse and Apache HTTP acceptance remain NOT RUN in the permitted environment. Seven unchanged OWNER_ADOPTED legal texts, zero PUBLISHABLE; direct contact, exclusions and Hostinger-only static architecture preserved. Exact hashes, fresh denied rehearsal, test matrix and remaining decisions: GS-LAUNCH-009.md and GS-LAUNCH-009-EVIDENCE.json. No push, CI dispatch, deployment, legal/Production/provider write, intake activation, WordPress/DNS/email change or GS-LAUNCH-010. Next only: authorised supported Linux verification and explicit residual-toolchain disposition. Earlier conflicting counts/results below are historical.
+
+> **GS-LAUNCH-008 (24 October 2026), FINAL OWNER GATE; NONDEPLOYABLE:** Isolated codex/gs-launch-008 examines 462da70d without application, lockfile, canonical legal or register changes. Seven OWNER_ADOPTED, zero PUBLISHABLE; direct-contact Privacy/Accessibility corrections are proposed only. All 197 retained rehearsal files and 31 input hashes reverified; contact links match approved values. Fresh lockfile audits now report 1 high production / 10 high full across four advisory IDs (two extract-zip plus Zod and body-parser); no acceptance or remediation inferred. Current hPanel lists Business/gridsmith.uk WordPress/separate temporary site, but dashboard access timed out: roots/backups/switch/publishers remain UNVERIFIED. Linux container creation was automatically rejected; local legal/adoption/company checks pass, full static selftest is incomplete without TypeScript, browser/Linux/remote CI were not rerun. GS-LAUNCH-008.md section 7 is the single owner checklist and unapproved exact-artifact release record. No deployable artifact, push/dispatch/upload/publication/provider/WordPress/DNS/email/intake change or next phase. Earlier conflicting status below is historical.
+
+> **GS-LAUNCH-007 (23 October 2026), HOSTINGER-ONLY STATIC PREPARATION:** Current owner directive removes the support/independent-outer-error dependency and classifies normal Next SSR M-P1-1 FAIL as N/A to static launch, retaining its test/status. Production static contact is direct email/WhatsApp/SMS with no intake transport; ordinary static 500/404 handling and existing gates are preserved. Seven exact legal documents remain OWNER_ADOPTED, zero PUBLISHABLE; privacy/contact accuracy and all-seven publication still require owner authority. The clean-source denied rehearsal is bound to 7d8f820b68fa64eb6a3d6aec13182debf3e15ef7, identity e8ca42a47d95e8c22727712d03aeb923a349ef5bc66b6bc7c5a87722ad3342d4. Exact local checks, verification-source bindings, residual security disposition and controlled-upload/rollback procedure are in docs/_shared/GS-LAUNCH-007.md and GS-LAUNCH-007-EVIDENCE.json. Local success never implies exact-SHA CI, hosted acceptance or release authority. No push/dispatch/deployment, legal/CMS/provider write, WordPress replacement, DNS/mail change or GS-LAUNCH-008. Earlier conflicting launch-HOLD/support recommendations below are historical.
+
+> **GS-LAUNCH-006 (23 October 2026), CAPABILITY EVIDENCE; RELEASE HOLD:** Repository and public official documentation reviewed from b787ef79382ccf3fb904284951f88f3dcb12a86f on isolated codex/gs-launch-006. Business PHP/HTML, public_html and temporary-site/CDN/Git observations are historical; current account settings and independent storage/mapping, malformed-root survival, headers, outer errors and restoration remain UNVERIFIED. No authenticated access or hosted request was authorised or performed. Local package/selftests and retained evidence hashes pass; no hosted acceptance. Report, unsent support draft, E1–E7 evidence checklist and unapproved isolated-test design: `docs/_shared/GS-LAUNCH-006.md`; receipt: `GS-LAUNCH-006-EVIDENCE.json`. Seven unchanged OWNER_ADOPTED texts, zero PUBLISHABLE; normal SSR M-P1-1, unresolved 17-high/three-advisory findings and all release restrictions remain. Next recommendation only: owner-led redacted evidence packet and approved enquiry submission. No message sent, push, CI dispatch, hosting/DNS/WordPress change, fault, publication or Production write. GS-LAUNCH-007 requires separate approval.
+
+> **GS-LAUNCH-005 (23 October 2026), LOCAL CONDITIONAL PACKAGE; HOSTINGER HOLD:** Starting 6cce73bfd0f1a6fc42a449bbb7306fe2fd5848a5 is preserved in isolated codex/gs-launch-005. The nonpublic operator error HTML/identity and existing static build/artifact/selftest controls are implemented locally. Apache status/isolation/adverse/browser evidence is local only; Hostinger independent storage/mapping, malformed-root survival, headers, origin/CDN and provider 500/502/503/504 templates remain UNVERIFIED. No deployable Hostinger mapping is generated. Seven exact OWNER_ADOPTED legal texts, zero PUBLISHABLE; H4-B, exclusions, disabled analytics/reviews, unresolved 17-high/three-advisory toolchain findings and normal SSR M-P1-1 remain. Evidence/procedure: `docs/_shared/GS-LAUNCH-005.md` and `GS-LAUNCH-005-EVIDENCE.json`. No push, dispatch, deployment, hosted setting access/mutation, live enquiry or Production write. Next recommendation only: separately authorised GS-LAUNCH-006 capability evidence collection; no hosted fault or installation authority. STOP before provider operations.
+
+> **GS-LAUNCH-004 (23 October 2026), REMEDIATION DESIGN; RELEASE HOLD:** Exact 00cb2d0e candidate retained in isolated codex/gs-launch-004. M-P1-1 is reproduced as initial HTTP 500 with missing lang/H1/main and blank no-JS body; normal SSR remains FAIL. Intended Hostinger delivery is file-only: this Next failure mechanism is inapplicable there, but actual independent host/CDN 500 accessibility remains UNVERIFIED and blocks static acceptance. Supported independent-boundary local proofs and adverse isolation/missing-file results are recorded in GS-LAUNCH-004.md and GS-LAUNCH-004-EVIDENCE.json; no production remedy or hosting change is implemented. Seven exact OWNER_ADOPTED legal documents, zero PUBLISHABLE; exclusions, intake restrictions and 17 high toolchain entries across three unaccepted advisories remain. No push/dispatch/deployment/provider write/publication. Next recommendation only with separate approval: GS-LAUNCH-005, static Hostinger independent error response and isolated hosted acceptance. STOP before GS-LAUNCH-005.
+
+> **GS-LAUNCH-003 (23 October 2026), LOCAL PREPARATION COMPLETE; PUBLICATION NO-GO:** Baseline `cbdae0dd27be09983f3b01463d04ee57422d852e` is preserved on the separate `codex/gs-launch-003` worktree. Two bounded verifier corrections and the live Master shared/CI invocation are locally verified. Linux clean install/static/build/69 budgets/negative probe, authenticated browser, scenes, both Lighthouse axes, guarded refusal/nondeployable rehearsal and mocked forms pass for their named questions; original failed aggregates remain retained. Production audit is zero; full audit retains 17 high entries from three unaccepted advisories. M-P1-1 normal-runtime SSR accessibility remains FAIL. Seven exact OWNER_ADOPTED documents, zero PUBLISHABLE; all Technical/review/analytics/Path Finder exclusions remain. Exact-SHA remote CI, provider safety, hosted/manual/confidentiality and publication gates remain UNVERIFIED or owner-held. Evidence and next single separately authorised M-P1-1 design recommendation: `GS-LAUNCH-003.md` and `GS-LAUNCH-003-EVIDENCE.json`. No push, dispatch, deployment, live enquiry or Production/provider operation; GS-LAUNCH-004 is not started.
+
+> **GS-LAUNCH-002 (22 October 2026):** Targeted local release-source reconciliation on `codex/gs-launch-002`. Non-analytics browser/security, Production-profile and intake controls are adapted from pinned later source; confirmed company wording and public Path Finder withholding are reconciled. The seven canonical legal sources/register remain unchanged: seven OWNER_ADOPTED, zero PUBLISHABLE. Reviews and analytics remain disabled; GS-X002 exclusions and H4-B/publication/cutover approvals remain. Final local results, limitations, blockers and next recommendation: `docs/_shared/GS-LAUNCH-002.md` and its evidence JSON. No push, remote CI, deployment, provider write, live enquiry, DNS or WordPress action; GS-LAUNCH-003 is not started. This supersedes historical country/timed-response/public-Path-Finder descriptions for this candidate.
+
+> **GS-LAUNCH-001 (22 October 2026):** The primary checkout now uses the exact seven OWNER_ADOPTED texts from adoption commit `a7b931c10eb2a543bfa43e89954555fdadb7072d` under `docs/_legal/current/`; zero PUBLISHABLE. Drafting/adoption is closed. Publication remains held for separate authorised gridsmith.uk cutover, all seven together; no temporary-domain publication. Analytics and Freelancer reviews remain disabled. Only legal dependencies and local suppression/atomic-publication guards are consolidated; later release/intake/provider work on the source branch is not merged. Inventory: `docs/_legal/evidence/CONSOLIDATION-INVENTORY.json`. Verification and remaining launch evidence: `docs/_shared/GS-LAUNCH-001.md`. No push, deployment, DNS, WordPress or Production mutation.
+
+> **GS-R12-CANDIDATE-PACKAGE-001 (13 October 2026), local candidate:** Packages the reviewed Press opaque entrance/phone containment correction and permanent 96-case regression. Ordinary CI now invokes the deterministic Master accessibility lifecycle selftest before build; failure blocks verify. This does not cover footer keyboard focus or live WebGL. Retain the supported-browser evidence and rerun scripts/check-master-accessibility.mjs after changes to consent, shared chrome, Master motion/effect or their layout dependencies. No approved audit-result acceptance policy was found: the exact security evidence proposal remains external and requires an owner decision; dated production-zero/full-30 results are not candidate evidence. Package/lockfile, 54 legal files and original Master Q5 verifier are preserved. Q5 UNRESOLVED; provider push safety UNVERIFIED; R12 OPEN; private staging HOLD; Production UNAUTHORISED. External GS-R12-CANDIDATE-PACKAGE-001.md records validation, independent review and the resulting exact local SHA. No push, CI run, provider change or deployment.
+
+> **GS-R12-PRESS-SOURCE-CONTRAST-001 (13 October 2026), local correction:** Source-card and chapter-outline ink/paper remain opaque during their existing staggered movement. Original visible chapter fades were confirmed below 4.5:1. Phone source horizontal travel is narrowed only to keep rotated paper inside the viewport; copy, palette, typography and settled geometry remain unchanged. All 96 bounded Writing cases, original-fade adverse controls and existing Press scene checks pass locally. External evidence: `GS-R12-PRESS-SOURCE-CONTRAST-001.md`. Master accessibility fixes preserved; original Q5 unchanged/unresolved; missing Master regression CI coverage and push safety remain open. R12 OPEN; private staging HOLD; Production UNAUTHORISED. No commit, push, CI or deployment.
+
+> **GS-R12-A11Y-COMMIT-001 (12 October 2026), local packaging:** This commit records only the two reviewed accessibility corrections, their regression scripts and phase notes. Runtime/test content matches the locally verified candidate; the previous independent review has no open material findings. Earlier unrelated workflow notes remain outside this commit. External evidence: `GS-R12-A11Y-FIX-001.md` and `GS-R12-A11Y-COMMIT-001.md`. Exact-SHA GitHub CI acceptance is pending; the new targeted scripts are not yet invoked by the workflow. Q5 unchanged; historical capture cause UNRESOLVED; R12 OPEN; private staging HOLD; Production UNAUTHORISED. No push, CI trigger or deployment is authorised in this phase.
+
+> **GS-R12-A11Y-FIX-001 handoff (12 October 2026): BOTH FIXES LOCALLY VERIFIED, local only.** Five runtime files plus two retained regression scripts correct cookie-focus clearance and live Master reduced motion. Fresh baseline and candidate builds, 14 final browser cases, deliberate failures, actual uniforms, resource/lifecycle tests, shared-chrome geometry, existing responsive checks and unchanged bundle budgets are retained in `GS-R12-A11Y-FIX-001.md` (external report). One independent review's scroll-reflow finding was corrected locally; the new test fails the earlier candidate and passes the final one. Remaining Press axe contrast findings also occur on the original baseline; all eight full-page scans retain contrast incompletes. No complete accessibility, Q5 or release acceptance. Existing unrelated files and legal/security/verifier bytes remain protected. R12 OPEN; staging HOLD; Production UNAUTHORISED. No commit, push, CI or deployment. Next task only: owner review of this local patch/report, then separately authorised packaging and exact-SHA validation. STOP.
+
+> **GS-LEGAL-001-R12-MASTER-CAPTURE (8 October 2026) — capture-path repair; exact-SHA CI required:** Failed CI and focused Linux reproduction paint offscreen review controls inside static-caption sample boxes. Explicit document-coordinate viewport clipping corrects the demonstrated mismatch; the underlying compositor trigger remains unisolated. Application CSS/copy/motion and all 14 acceptance questions/thresholds are unchanged. Permanent mapping/pose/scale/dimensions and adverse contrast proofs, diagnostic receipts and independent review accompany full local verification before one scoped commit/push. Final exact-SHA CI is recorded in the session handoff/ignored closeout receipt; staging remains HOLD until success. Seven OWNER_ADOPTED, zero PUBLISHABLE; legal bytes/fingerprints and exclusions preserved. No deployment/dispatch, Production provider mutation, DNS/main/H4-B/H4-H or publication. Next only with separate authority: **GS-LEGAL-001-R13 private Hostinger staging deployment and served acceptance**. Evidence: `docs/_shared/GS-LEGAL-001-R12-MASTER-CAPTURE.md`. STOP before R13.
+
+> **GS-LEGAL-001-R12-PRESS-FIX (8 October 2026) — local contrast repair; exact-SHA CI receipt required:** Press editorial flags and neighbouring manuscript insertion/tag stop fading readable glyphs. Geometry, approved R3 styling, copy and loop timings remain. Full local verification and one independent review precede one scoped commit/push; successful exact-SHA CI is required for R12 closure and is recorded in the final session handoff/ignored closeout receipt. Seven legal documents remain OWNER_ADOPTED, none PUBLISHABLE; legal bytes, fingerprints, register and production exclusions are preserved. No deployment/dispatch, Production provider call, DNS/main change, H4-B/H4-H or legal publication. Next only after CI closure and separate owner authority: **GS-LEGAL-001-R13 private Hostinger staging deployment and served acceptance**. Evidence: `docs/_shared/GS-LEGAL-001-R12-PRESS-FIX.md`. STOP before R13.
+
+> **GS-LEGAL-001-R12 (8 October 2026) — LOCAL LEGAL INTEGRATION PASS; no deployment/publication:** Seven fingerprint-locked OWNER_ADOPTED documents now render in the explicit adopted-development static review profile. Exact development CMS parity, 62-route artifact contract, 70 legal responsive/keyboard combinations, 102 legal links and 41 axe analyses (zero violations) pass. Production queries require CMS and register PUBLISHABLE; default export/migration retain all seven exclusions. Independent review and accepted fixes complete; Master transition contrast flake did not reproduce (full 14-question gate PASS). Nothing PUBLISHABLE; CUTOVER-AUTHORITY, H4-B promotion, co-publication and Cookie production-origin retest remain. No Production/Sanity/Supabase/Edge/Hostinger/DNS/main change. R11 hosting closeout stays closed. Exact final-SHA CI is reported at session closeout; no Hostinger dispatch. Recommended next only: separately authorised GS-LEGAL-001-R13 private staging deployment and served acceptance. Evidence: `docs/_legal/research/GS-LEGAL-001/R12-WEBSITE-INTEGRATION.md`; separate readiness: `docs/_shared/GS-LEGAL-001-R12-STAGING-READINESS.md`.
+
+> **GS-LEGAL-001-R11 (8 October 2026) — Privacy 2.3 OWNER_ADOPTED; hosting closeout:**
+> All seven legal documents are OWNER_ADOPTED; adopted Privacy SHA-256 `80e67b5256449e2c7fc1562ead2da8ec538b217c8735cba3679f985af50a620b`. The earlier six entries/fingerprints are unchanged. Existing multi-domain Hostinger infrastructure decision CLOSED. Authorised internal administration and current Hostinger Terms/DPA support existing contractual coverage; no additional administrator agreement is shown necessary. R10 draft SUPERSEDED / NOT EXECUTED. `HOSTINGER-PROCESSOR-CHAIN` evidenced on that documented basis, not on signature or provider account inspection. CUTOVER-AUTHORITY and H4-B-INTAKE-PROMOTED remain unmet; none PUBLISHABLE. No public legal publication, Hostinger/Edge deployment, Production Sanity, DNS or main change. Next recommendation: GS-LEGAL-001-R12 legal site integration and publication-readiness verification, separately authorised. Record: `docs/_legal/research/GS-LEGAL-001/R11-PRIVACY-ADOPTION-HOSTING-CLOSEOUT.md`. This supersedes contrary R8-R10 instructions below.
+
+> **GS-LEGAL-001 (6 October 2026) — READY FOR OWNER LEGAL/COMMERCIAL DECISIONS; nothing published:** `GS-O003` (solicitor approval) is replaced by **`GS-O003-R`** — evidence-based review plus owner adoption per version (`lib/legal/adoption.ts`, `docs/_legal/GS-O003-R-REGISTER.json`; states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED → OWNER_ADOPTED → PUBLISHABLE; only the owner sets adoption). Six review workstreams (consumer, business, privacy, disclosures, competitor benchmark, adversarial) and an independent cross-check (G: 1 H, 8 M, 17 L; drafting defects fixed and re-verified) under `docs/_legal/research/GS-LEGAL-001/`. Redrafted: Client Terms for Consumers 3.0 (written acceptance with CCR reg. 14 acknowledgement, durable confirmation, standard/early start with three statements, stage-table proportionate amount, consumer exit after 14 days, no non-refundable deposits, services only, art. 60F instalment limit, GS-X002 boundary, consent-only portfolio, IP transfer with signed confirmation, model form), Client Terms for Business Clients 3.0 (formation/precedence, objective cancellation valuation, insolvency-qualified termination, consent-only portfolio, Art. 28 schedule, cap without self-referential saver), Website/Privacy/Cookie/Accessibility 2.1 (Hostinger, Information Commission, s. 164A, exact Resend contents). No VAT status, solicitor claim or AI disclaimer in any document. All seven at **OWNER_REVIEW_REQUIRED**; privacy holds three `[OWNER DECISION]` markers. `seed-legal.mjs` now generates the served text from the drafts; public `Basis:` lines removed; new `check:legal:adoption` (+ selftest 65) in `verify:static`/CI; struck rule `GS-O003-SOLICITOR-APPROVAL-GATE`. Site copy: `/contact` privacy link + no acknowledgement-email promise; Press rights note (owner to approve, D-20). Served parity against the development dataset is red until the legal documents are reseeded (owner decision D-24). Decisions D-1–D-30: `research/GS-LEGAL-001/GS-LEGAL-001-RECORD.md` §7. No Production, Hostinger, Sanity, Supabase, DNS, Vercel or main change; not pushed; H4-H not begun.
+
+> **GS-HOST-H4-G (6 October 2026) — PASS, hosted staging release candidate:** The owner-approved GS-VIS-SEO-RC work (41a54998: Batch A metadata/copy, studio summaries, Portable Text links, R2/R4 scene framing, Design/Press default-open lists, the review drum, ServiceDetail numbering) was never merged into the hosting branch; reconciled per file (no item superseded except the old review card body and the 'every review' lede). Review drum carries the anonymous PublicReview card, gated on data-enhanced (no-JS flat list). GS-O027 executed narrowly (intro+sections on two group pages, guarded, backed up, read back exact). Path Finder intentionally withheld; legal links remain a GS-O003 blocker. Source 6615d97c, CI 37468717268 success, identity 28b841dd… (artifact bd8dd825) manually deployed, CDN flushed, auto-deployment OFF. Hosted: H4-D contract 0 failures, review/static UI gates, 117-check responsive matrix, numbering, full no-JS and axe pass; Preview leads0/outbox0. Owner review package in GS-HOST-H4-G.md. Next: owner review; H4-H cutover blocked by Freelancer permission, GS-O003, GS-X002, item 24.
+
+> **GS-VIS-NUM-R5 (6 October 2026) — PASS; new hosted staging baseline:** Owner-reported decorative heading numbers on About/Approach came from GroupSections/Connect/ProcessRail; the owner-approved GS-VIS-001-R3 rule existed only in 41a54998 (VIS branch, never merged). Source 6f0ef7ce ports only R3's numbering hunks (About/Approach, Master chapters/process, Design/Digital/Press process numbering, Press journey bar, Path Finder no-JS prefixes); taxonomy, counts, progress, ratings and illustration numbers stay; no copy/metadata/form/review change. CI 37432618479 success; identity 997a2344… (artifact 8c3cad8a) validated, manually deployed (push alone did not deploy), CDN flushed, auto-deployment OFF after reload. Hosted: H4-D contract 0 failures (two temporary-domain exceptions unchanged), About/Approach 7 sizes x JS/no-JS clean, targeted H4-E regression identical (0 axe violations). H4-E remains accepted. Preview leads0/outbox0. Next: H4-G. See GS-VIS-NUM-R5.md.
+
+> **GS-HOST-H4-E (6 October 2026) — PASS, verification only:** Full no-JS acceptance of the accepted Hostinger staging artifact (44e93c0b / 75d8bf40…, artifact 255d0e55), local and hosted: all 55 eligible routes x 390/768/1024/1440/1920 in cold JS-disabled contexts — 200, one h1, landmarks, noindex, no shell/overflow/broken asset; axe on the no-JS rendering 110 analyses, 0 violations (replay validity-proven). No blocker: navigation, skip link, disclosures and Press stage radios work natively; 11 reviews readable as a static list with provenance, ratings, no names; Path Finder shows all questions and outcomes; Contact and Press disclose the JS requirement with visible contact@gridsmith.uk links and disabled submission (no GET leak, proven). Artifact scans clean; GS-X002/GS-O003 gated; Preview leads0/outbox0; no submission, mail, deployment or source change; auto-deployment OFF. Recorded: footer/Press legal links 404 until GS-O003; /press/path-finder has no inbound link. See GS-HOST-H4-E.md.
+
+> **H4-D-R2 closure (6 October 2026) — PASS with temporary-domain exceptions:** Hostinger temporary staging (mediumaquamarine-wallaby-594070.hostingersite.com) is the accepted hosted baseline at 44e93c0b / identity 75d8bf40… (artifact commit 255d0e55, tree = 73b872b4). Owner-approved HOSTINGER TEMPORARY-DOMAIN PROVIDER EXCEPTIONS: hCDN strips security/noindex headers from PNGs (bytes exact, no-transform honoured) and Hostinger serves its own robots.txt; staging-only, never production — BEFORE-LAUNCH item 24 requires re-verification on the production origin. Auto-deployment OFF (hPanel Redeploy turns it back on: switch off after every Redeploy). Live rollback proved with a validated 44e fixture (3829981a, b9f7eb2f…) and restored. Preview leads0/outbox0; no submissions/mail. Register 38 PASS / 4 PASS-with-exception / 0 PARTIAL/PENDING/FAIL. H4-E may begin. See GS-HOST-H4-D.md.
+
+> **H4-D-R1 44e checkpoint (5 October 2026) — PARTIAL:** CI 37372379784 passed for 44e93c0b; artifact 73b872b4 (identity 75d8bf40…) validated and deployed to the temporary Hostinger site (auto-deployment found ON; owner decision pending). After a second site-specific flush, all nine PNGs are byte-identical with no-transform under every Accept variant; 190/200 files pass bytes+headers+cache; all routes, gated 404s, redirect, hosted UI/axe/no-JS/reviews/responsive pass; Preview leads0/outbox0, no new submissions or mail. Remaining, provider-edge: hCDN strips every security/noindex header from PNGs, and Hostinger replaces robots.txt with its temporary-domain file (non-Google agents allowed). Rollback not executed (gated on full pass). Register 37 PASS / 4 PARTIAL / 1 PENDING. Main/Production/DNS untouched; H4-E not started. See GS-HOST-H4-D.md.
+
+> **H4-D-R1 hosted checkpoint (5 October 2026):** Source17f CI/publication passed and the first temporary Hostinger deployment completed. All55 HTML hashes, gated404/redirects, review UI, focused axe and four responsive viewports pass. Exactly two synthetic hosted enquiries each produced one delivered safe notification; exact cleanup restores Preview leads0/outbox0. PNG bytes/headers still fail full hosted acceptance. Source44e requests no-transform and corrects cold no-JS measurement; fresh CI37372379784 is running after a GitHub Actions outage delay. Corrected deployment/full HTTP/rollback remain pending. Main/Production/DNS untouched; H4-E not started. See GS-HOST-H4-D.md.
+
+> **GS-HOST-H4-D-R1 current owner authority (5 October 2026):** Temporary Hostinger staging may display the frozen 11 approved Freelancer quotations with actual ratings, anonymous linked provenance, and only established flags. This supersedes the earlier requirement to complete H4-C before H4-D. Provider permission is still unresolved; review API/cache/refresh automation remains BLOCKED and final gridsmith.uk review publication remains BLOCKED. Hostinger is the active staging target; zero persistent application Node, no Production/DNS/main/Sanity writes. Implementation and hosted evidence are in progress.
+
+> **GS-HOST-H4-C handoff (5 October 2026): BLOCKED; limited local privacy hardening uncommitted.** HEAD remains `8e6316cc5a0dda38e0de4c15fa1d8ef9c854b8a1`, branch `codex/gs-host-004`. Official current Freelancer User Agreement §11 requires written permission for feedback outside Freelancer; API §1 incorporates it. Owner confirmed no written grant is held; cache/archive retention remains unresolved and is not supplied by owner acceptance GS-O014. Source 13/11/2, James retained; permanent IDs frozen, empty override cannot bypass, synthetic specimens replace affected real-source snippets and live logs now carry withheld IDs only. No new review cache/workflow/normal-static build or commit/push. H4-B providers untouched. H4-C-R1 ready-to-send provider request, response matrix and eight-file classification are now prepared in the record, owner submission only; nothing sent. Resume implementation only with qualifying written provider evidence, then complete proofs before one local commit. Do not proceed H4-D. Details: `GS-HOST-H4-C.md`. STOP.
+
+> **GS-HOST-H4-B handoff (4 October 2026): local/isolated Preview PASS.** Branch `codex/gs-host-004`, start `63e100f0`; ending focused local commit is recorded by git/final receipt, no push. Normal Next action/after/notifier remain; static copied adapters use exact synthetic Preview endpoint. Immutable migration `20261004184828_gs_host_h4b_private_intake.sql` (`b807e3ed6d4f`) applied only to Preview. Public intake/private JWT worker and5 named custom secrets configured; no browser credentials. Three marked emails provider-delivered, exact synthetic rows removed, live receipt closed, health queue0. Source/SQL/UI/negative/static/normal proofs and precise limitations: `GS-HOST-H4-B.md`. No-JS submission unsupported; no scheduled unattended drain. Commands `edge:preview:health`/`edge:preview:drain` are authenticated Preview-only. Production migration plan NOT applied; Hostinger/DNS/WordPress/main/GS-VIS/SEO untouched. H4-C requires its own authority; STOP.
+
+> **GS-HOST-H4-A historical handoff (4 October 2026):** Local static foundation PASS; form shells superseded by H4-B. Receipt: `GS-HOST-H4-A.md`.
+
+> **GS-HOST-004 (4 October 2026) architecture handoff:** **OPTION B**, static files on existing Hostinger Business; existing Supabase Edge intake/durable notification worker and Resend; Sanity build reads; browser scenes/review interactions preserved. Complete module/environment/blocker matrix and three-route local export + browser receipt in `GS-HOST-004.md`. Prototype is a committed-source subset with two explicitly hash-recorded read-only GS-VIS overlays, not an exact-SHA release candidate. Current runtime/config/dependencies/CI unchanged; no forms/Production DB/Sanity writes/mail/deploy/DNS/WordPress/main/push. GS-O003/GS-X002 and GS-O025/GS-O026 remain. Earlier Node-wait/VPS recommendations superseded by owner's existing-Business-only architecture instruction. Review current API terms/retention and host acceptance still unproved. Branch codex/gs-host-004, starting 9508412e; local documentation/harnesses only, no commit. **Next phase H4-A; not executed. STOP.**
+
+> **GS-PROD-004B (2 October 2026) — TikTok mark retained by owner decision; `/design` scope note corrected:** **`GS-O021` CLOSED BY OWNER DECISION** — the owner reviewed the brand-use concern and chose to keep the TikTok mark (owner-accepted risk); **no written TikTok permission is recorded or claimed**; the `GS-PROD-004A` text-link prototype was rejected and discarded, so the TikTok implementation is byte-identical to the approved baseline (served build: footer and `/about` marks, link and accessible name unchanged). `/design` Technical note: "…professional-scope ~~and insurance~~ confirmation." (owner-approved two-word deletion; `check:design:scene` PASS, scope note 6.69:1). `e6f5691e`'s CI failure was `/press` mobile TBT 207.7ms vs 200 on a docs-only commit, with every route uniformly slower in that run than in `7f6472b2`'s (runner variance); the job was re-run, no gate altered. `GS-X002` OPEN (Technical only), `GS-O024` deferred, `GS-O003` OPEN. No production write; main untouched. Evidence: `docs/_shared/GS-PROD-004B.md`.
+
+> **GS-PROD-004A (2 October 2026) — owner-gate reduction + `GS-X002` review pack; OWNER ACTION REQUIRED, no production write:** Baseline `7f6472b2` CI `37010155414` and `028bd1d5` CI `37006558824` both success 48/48. **`GS-O021`:** no TikTok permission on record, so the fallback the record itself names is prepared **locally and uncommitted** — the `TikTok` entry removed from `platformMarks.ts`; the footer shows the plain word "TikTok" (same link and accessible name, 13.26:1, no 375px overflow) and `/about` keeps its label with an empty icon slot; awaits owner visual approval. **`GS-X002`:** self-contained reviewer brief `docs/_shared/GS-X002-REVIEW-PACK.md` (exact public copy, 76 strings verified verbatim; boundaries; questions A–E; closure evidence; no legal or insurance review); stays OPEN. **Finding:** `/design`'s Technical note still says services "remain subject to professional-scope and insurance confirmation" — proposed deletion of "and insurance" awaits owner copy approval. **`GS-O003` handoff:** three facts made explicit (insurance not a launch prerequisite; not a claim of zero liability; MSA §12 broader than the public scope). Blocker register reconciled in `PROJECT-STATUS.md`. Main, deployment, DNS, Sanity and Supabase untouched. Evidence: `docs/_shared/GS-PROD-004A.md`.
+
+> **GS-PROD-003-R1 (2 October 2026) — owner scope decision + `GS-T004` applied; PARTIAL PASS:** **`GS-O005` CLOSED BY OWNER SCOPE / RISK DECISION** — Gridsmith does not currently carry PI cover for the Technical/CAD services and will not make it a launch prerequisite (deferred, non-blocking `GS-O024`); scope stays limited (drafting/preparation to a client's brief; no design, calculation, approval, certification, stamping, sign-off or responsible-designer role); **not a claim of zero liability** and never advertised as insured or uninsured; contract wording stays with `GS-O003` (solicitor note added: `MSA-BUSINESS.md` §12/§16 and the PI-limit `[TK]` under UCTA s. 11(4)(b); no clause drafted). `professionalScopeConfirmed` now means only that `GS-X002` has confirmed limited scope — messages, schema description, manifest gate (`GS-X002`) and specs updated, old wording struck and registered (`check:struck` `GS-O005-PI-COVER-PUBLICATION-GATE`); `check:launch` selftest forbids PI/GS-O005 wording (proven red by isolated mutation). **`GS-X002` retained** (owner choice): a claims review independent of insurance, now the only gate on the 3 Technical services — **not migrated**, Production Sanity stays 47. Technical copy re-checked clean, unchanged. **`GS-T004` APPLIED:** `GS-O023` closed on owner provenance (key re-entered from `dqiutgmxillhsbzgnlsx`); verified `pg_dump` backup outside the repo (restore test 5 tables / 63 leads); `npm run migrate` applied exactly 0004 (`bd761ff9b9e4`); Production now equals Preview (RLS 5/5, 0 policies, 0 public grants, 18 lead constraints, identical definition hash); leads 63, row fingerprint unchanged; anon PostgREST 401; service-role write remains a cutover smoke-test proof. No deployment, alias, DNS, Sanity write, lead or form action; main untouched. Evidence: `docs/_shared/GS-PROD-003-R1.md`.
+
+> **GS-PROD-003 (2 October 2026) — Production database security parity + `GS-O005`; OWNER ACTION REQUIRED, no production write:** Against runtime `1542f508` (docs `7969dcbd`, no runtime change). **`GS-T004` not applied.** Migration 0004 (`20260911203125_gs_p01_security_hardening.sql`, runner SHA `bd761ff9b9e4`) read in full: drops the `leads` "anon insert only" policy, revokes `anon`/`authenticated` on the 5 tables + `events_id_seq`, enables ledger RLS, adds 17 validated CHECKs on `leads`, revokes future `postgres` defaults — security-only/non-destructive, no DML. Preview recomputed as the post-0004 state (RLS 5/5, 0 policies, 0 public grants, 18 `leads` constraints, 5 indexes, views `security_invoker`). Production read-only: ledger 0001–0003 (SHAs match), ledger RLS off, 1 policy, full `anon`/`authenticated` grants, 63 leads, **0 rows violating each of the 17 checks**; only 0004 pending. **Stopped on the credential condition:** Production `SUPABASE_SERVICE_ROLE_KEY` and `PROJECT_URL` are Vercel `sensitive` (write-only), and the only READY production deployment is the `3fbc518f` scaffold with no lead code, so no server-side proof exists without a Production deployment — new owner action `GS-O023` (re-enter from the Gridsmith Project, or explicitly defer proof to the cutover smoke test). No backup taken (not eligible). The removed anon policy has no consumer in any deployable build (server-only writer since `daf192f1`). **`GS-O005` = C, external/broker confirmation** (written PI coverage for CAD drafting, drawing preparation and technical documentation; `GS-X002` also gates `professionalScopeConfirmed`); Technical copy reviewed clean (explicit no-design/no-calculation/no-certification/no-sign-off exclusions), no copy change proposed; not migrated — Production Sanity stays 47 (Technical 0, legal 0). Supabase free-plan pause recorded only. No deployment, alias, DNS, env, Supabase/Sanity write, lead or form action; main untouched. Evidence: `docs/_shared/GS-PROD-003.md`.
+
+> **GS-O010-R2 (2 October 2026) — Preview isolation and end-to-end form proof; `GS-O010` CLOSED:** New free Supabase project `gridsmith-preview` (`qfgpwumvvtizeamkynes`, eu-west-1, Gridsmith Org) with the four repository migrations and the runner's ledger (RLS on all 5 tables, 0 policies, 0 anon/authenticated grants). Vercel Preview `PROJECT_URL`/`PUBLISHABLE_KEY` → that project; a Preview-only `SUPABASE_SERVICE_ROLE_KEY` (owner-entered); Preview `LEAD_NOTIFICATION_EMAIL` = `contact@gridsmith.uk` (owner choice); `DIRECT_CONNECTION_STRING`/`SANITY_API_WRITE_TOKEN` Production-only since R1. Production project `dqiutgmxillhsbzgnlsx` was **paused** (free plan) and was restored on owner approval for read-only snapshots — a cutover-readiness item. **Runtime defect found by the first valid Press submission and fixed at `1542f508`:** a blank optional answer (manuscript link, `triedElsewhere`) reached `leadSchema.payload` as `undefined`, which `z.json()` rejected on a key no step renders — every author/memoir/production enquiry without a link failed; payload values are now `z.json().optional()` (stored row unchanged, no visible UX change), and `check:press:contact:selftest` composes each segment through `leadSchema` (red on author/memoir/production before, business/content controls; 34/34 after). Proof through the SSO-protected, noindex Preview UI: one `/contact` and one `/press/contact` synthetic submission landed only in Preview (correct division/segment, no duplicate); owner confirmed exactly those two notifications; honeypot and invalid (URL in name) wrote and sent nothing; Production 63 leads before and after, 0 rows in the test window, 0 markers; synthetic rows deleted (Preview 0). Confirm the Production service-role value before cutover (edited by the owner this phase). No Production deployment, alias, DNS, Sanity write (47/0 legal/0 Technical) or main change. Evidence: `docs/_shared/GS-O010-R2.md`.
+
+> **GS-PROD-002 (1–2 October 2026) — controlled production CMS migration:** The first authorised production-content write. Against application SHA `c1dee128` (no runtime source change), one guarded `--write` of the 47 eligible documents (companyDetails 1, About/Approach group pages 2, services Design 13 / Digital 17 / Press 14) into Sanity `production`, after `verify:static` + dry run PASS, production read empty (0 public; 12 system docs only), and exports of both datasets outside the repository (production export = the `--backup`). Independent read-back: 47 documents, ids/slugs exactly the manifest, **47/47 deep-equal to the repository payload**, 87 references 0 dangling, 0 seed / `[SEED]` / Technical / legal / FAQ / team / post / testimonial; studio wording, statutory clause kept; development untouched (every `_rev` equal to its backup). Clean production-dataset build: `check:launch` live tier applying, seed 0, statutory fields present, EXIT=0 (`BEFORE-LAUNCH.md` §16, items 3–4 qualified in the record). Served locally: `check:launch` PASS, smoke + axe (0 violations, 12 analyses) + keyboard PASS; `check:company`/`axe`/`responsive`/`redirects`/`legal:parity` red only on the not-migrated `/legal/*` and Technical routes (no gate altered). **Legal not migrated (`GS-O003`); 3 Technical not migrated (`GS-O005`); Insights empty; footer `/legal/*` links 404 on production content until `GS-O003`.** No deployment, alias, DNS, Supabase, env or form action; `GS-O010` (next) and `GS-O021` open. Evidence: `docs/_shared/GS-PROD-002.md`.
+
+> **GS-INT-002 (1 October 2026) — final integration / programme RC:** A horizontal review of the assembled staging site (Master `989dbe23`, Design + Digital `146f93a0`, Press and Shared RCs — none reopened). One integration defect: the Master group's metadata said *"Design, Digital and Press are its trading divisions."* — `/`'s description and the inherited `og:`/`twitter:` description on About, Approach, Contact, Insights and legal — public brand copy, now *"One UK company. Design, Digital and Press are its three specialist studios."* (`app/(marketing)/layout.tsx`; non-visual). New `check:company` question 10: titles, `description`, `og:*`, `twitter:*` use the studio taxonomy and only the exact statutory clause says "trading division" (`/legal/` exempt); self-test 77 cases; red on question 10 alone against the unfixed `989dbe23` (11 problems). Recorded, not changed: footer / thank-you / `/` disclosure "trading divisions" (statutory, owner-approved); About/Approach/service "division" copy in seed + development CMS (owner copy decision before migration); About intro (development CMS); cookie notice one frame on late CSS for returning visitors (deferred polish); mixed-colour parser still latent; no form bot protection (cutover decision); Preview carries the shared `DIRECT_CONNECTION_STRING` and `SANITY_API_WRITE_TOKEN`, service role production-only (`GS-O010`). Production dataset empty; migration plan and cutover sequence in the record. `GS-O003`/`GS-O010`/`GS-O021` block cutover, `GS-O022` does not. The programme baseline is verified only when this RC's exact-SHA CI succeeds, recorded in the receipt. Staging only; main, production, DNS, Sanity and Supabase untouched; no valid submission; production NOT READY. Evidence: `docs/_shared/GS-INT-002.md`.
+
+> **GS-MASTER-001-RC (1 October 2026):** The owner-reviewed local Master candidate `GS-MASTER-001-F` (15 files, byte-identical through the Design/Digital cycle) is committed with one owner-approved correction, `GS-MASTER-001-RC-R1`: without WebGL (no-JS, Save-Data, ≤2 cores / ≤2 GB, software WebGL, failed import) the static fallback mark was `position: fixed`, so every line of `/` scrolled across it at about 1:1 (35–60 text boxes below AA per size at phone/tablet widths, 3–12 on desktop; the same at `146f93a0` — a baseline defect from `GS-R001-M` R1, ungated because question 5 measures only the WebGL scene). The fallback layer is now `position: absolute` (also under `scripting: none`): the branded hero composition, then normal readable content; no fallback closing mark, by owner decision. WebGL path unchanged. `check:master:scene` question 14 reads the fallback top to bottom with question 5's method (fixed candidate worst 7.5:1); probe `s14` re-fixes the layer and is red on 14 alone (1.13:1). Frozen: H1 *"Most companies start over with every supplier. You shouldn’t have to."*, canonical studio summaries/theses in `nav.ts`, relationship language, restrained Master offer, the WebGL story (assembled → exploded → reassembled → chain → still ring → front-on mark), review cylinder, footer-aware lift, mobile hero. Programme baseline recorded: Design + Digital remediation verified at `146f93a0` (CI `36810308636`, 47/47; `/digital` mobile LCP median 1725 of 1750). Deferred: About intro "three specialist divisions" (development CMS — CMS migration), `/` metadata "trading divisions" (shared layout — integration review). Master is verified only when this RC's exact-SHA CI succeeds, recorded in the receipt. Staging only; main, production, DNS and production CMS/database untouched; next phase is the final integration / programme RC. Evidence: `docs/_shared/GS-MASTER-001-RC.md`.
+
+> **GS-DES-002-M1-RC (30 September 2026):** The owner approved the Design maintenance exposed when `GS-DIG-002-RC`'s exact-SHA CI (run `36734877438`, `f7e45436`) first reached `check:design:scene` on Linux and failed `detail 2.75` 1440×900 touch: *Technical Design* 3.40:1 against 4.5 (Digital's mobile LCP passed in that run: 1748 / 1745 / 1733ms, median 1745 against 1750). `GS-DES-002-M1` — the enhanced-story kicker carries its chapter surface (`--ds-surface`, following G1's paper in expanded phone disclosures); `-R1` — the Technical building **detail** recedes to 0.2 while its copy crosses it (`TECHNICAL.copyOver [2.66, 2.76]`, `copyClear [2.84, 2.90]`), outline and rig untouched; `-R2` — CSS-only landscape stage containment (`min(88%, 1056px)`, hero `min(100%, 1200px)`, `min-width: 761px` and `min-aspect-ratio: 3/2`), geometry identical up to 2133×1200. Frozen. `check:design:scene` samples 2.6 / 2.75 / 2.8 in transit across its 25 sizes and 2.8 in the detail pass; `--prove` 31 red. RC correction is gate-only: the R1 proof's 1920×1080 subject was inert (large text, 3:1; 3.13 unreceded) and moves to 2048×1152 (2.27:1). Lazy Design scene 8,121 B gz of 8,192 (not raised). Digital, Press, shared chrome and the local Master candidate (`GS-MASTER-001-F`, uncommitted, excluded) unchanged. Whether the programme gate is restored is decided by this RC's exact-SHA CI, recorded in the receipt. Staging only; main, production, DNS and production CMS/database untouched; no launch or next phase authorised. Evidence: `docs/_shared/GS-DES-002-RC.md` §GS-DES-002-M1-RC.
+
+> **GS-DIG-002-RC (30 September 2026):** The owner approved the Digital remediation — `GS-DIG-002` (content-led Route Map pacing: hold `max(44svh, 24rem)`, map ~709ms / complete ~300ms against a 250ms floor), `GS-DIG-002-R1` (the shared footer deferred with `content-visibility: auto` on `/digital` only, `.dg-home ~ footer`; `check:axe` sets aside findings inside a skipped footer, reveals it and analyses the rendered footer through the same `record()` accounting, proven red on a 2.5:1 button) and `GS-DIG-002-R2` (Hero and Route Map are separate chapters: the Hero owns its first screen and a `data-transit` hand-off ends its demo before Route Map copy arrives; `check:digital:scene` `opening` asserts it). Frozen hierarchy: Hero → Route Map → 01 Web → 02 Software → 03 Apps → 04 Automation → 05 Operate. RC corrections are gate/dependency only: the deferred-footer proof's regex had lost its `\s` escapes (fixed), and production `undici` 7.29.0 → 7.29.1 by a single lock entry (no `package.json`, framework or Sanity change; production audit 0). The local Master candidate (`GS-MASTER-001-F`) stays uncommitted and excluded. `GS-DES-002-RC`'s own SHA `4df670d2` still failed CI on `/digital` mobile LCP; whether the programme gate is restored is decided by this RC's exact-SHA CI, recorded in the receipt. Staging only; main, production, DNS and production CMS/database untouched; no launch or next phase authorised. Evidence: `docs/_shared/GS-DIG-001-DIGITAL.md` §GS-DIG-002-RC.
+
+> **GS-DES-002-RC (30 September 2026):** The owner visually approved the complete Gridsmith Design experience after `GS-DES-002`, `-R1` and `-R2`: continuous content-led native scrolling (copy arrives, dwells and leaves with the page; transformations only while copy passes; no chapter blink), G/S → mark → the supplied genuine 3D logo (`/_next/image` WebP, ~41.7 KB, never the 3.3 MB PNG) → structure → canonical mascot → technical construction → completed building → final 3D logo, and the R2 footer handoff (≥768px the stage stays pinned, the story runs on under the footer and one continuous function glides the final mark into the footer slot; the shared footer mark is hidden on `/design` only; phones ride away natively). That result is frozen. RC corrections: the G2 note paper now applies at every stacked height (R1 made the ≤650px premise false), the stage caption is whole or hidden (never scroll-held part-faded), and `check:axe` maps R2's footer declines on `/design` to one allowance backed by a new pixel-measured `footer-contrast`; `check:design:timeline:selftest` is wired into `verify:static` and CI. The local Master candidate (`GS-MASTER-001-F`) is uncommitted and excluded. `GS-O010` open (no valid submission); `undici` production advisory recorded for a separate dependency patch. Staging only; main, production, DNS and production CMS/database untouched; no launch or next phase authorised. Evidence and receipt convention: `docs/_shared/GS-DES-002-RC.md`.
+
+> **GS-SHARED-001-RC (28 September 2026):** The owner visually approved the shared experience *The Frame and the Sheet* (B1, B1-R1, B1-R2, B2): shared header/footer, transparent browser identity, About, Approach, Insights, Legal, Contact, 404 and global error. RC corrections are implementation/gate only — chrome palette under `check:contrast`, footer JSON-LD escaping (`jsonLdHtml`), global error selected by `data-frame` (no client `data-division`), generated CTA arrows, the `/` scene axe entry re-pointed, Approach rail line as a border, legal Contents heading and print gold corrected. Legal parity 6/94/339 unchanged. `GS-O010` open (no valid submission); TikTok logo permission is a final production gate (`GS-O021`); Freelancer mark provisional (`GS-O022`); `GS-O003` open. Staging only; main, production, DNS and production CMS/database untouched; no launch or next phase authorised. Evidence and the exact-SHA receipt convention: `docs/_shared/GS-SHARED-001-RC.md`.
+
+> **GS-PRESS-001-RC (27 September 2026):** Owner-approved R3 visuals and D architecture remain frozen (6 territories / 14 services / 29 capabilities / 43 catalogue rows). Narrow accessibility, contact-button, motion-lifecycle, process-label, withholding and performance corrections are documented in `docs/_shared/GS-PRESS-001-RC.md`. Local verification and exact-SHA CI/protected Preview are distinct gates; final acceptance is determined by that record's release receipt convention. Production, main, DNS and production CMS/database remain untouched. No launch or next phase is authorised.
+
+> **GS-DIG-001-RC current authority (25 September 2026):** The owner approved the Digital redesign *Systems in Agreement* (one persistent five-point compass: Hero → Route Map → chapter/process background → Final) and its two R3-G corrections — Route Map callouts arrive with the compass (complete ≈290ms into the map state, no numbers-only interval under continuous scroll) and an enlarged environmental background compass (1.7× desktop, 1.9× tablet, 1.12× phone) — then authorised RC, a dedicated `staging/gs-dig-001-digital` branch, CI and protected Preview. RC corrections are gate/theme only: `check:contrast` now measures the delivered Digital palette (single source `styles/themes/digital-stage.css`), the legacy `#1B5FFF` Digital accent is retired in every theme (footer switcher rule only), `.codex/` is classified in the source inventory, Digital motion is on the duration token scale, and `check:digital:scene` measures rendered contrast, state, map timing, reduced motion, Save-Data and no-JS. Development CMS carries the approved B2 wording; production Sanity/Supabase, `main`, DNS, Hostinger and gridsmith.uk are untouched and no next division is authorised. The exact implementation SHA, CI run and Preview are recorded in the receipt section of `docs/_shared/GS-DIG-001-DIGITAL.md`. Authoritative evidence: that file.
+
+> **GS-R002-RC-G2 current authority (24 September 2026):** The owner approved paper behind the closed Technical scope note and resuming staging release. G2 is implemented only in the enhanced stacked layout (width <=760px, height >650px); rendered note contrast passes across 24 viewport combinations (local minimum 6.69:1; Linux CI minimum 6.62:1; corrected 760x800 6.69:1). G1 disclosures/H1 and lifecycle checks remain passing. Implementation c4781b0af64733313a78ea7c557a9d1393f7bb32 passes CI 35940710523 and exact-SHA protected Preview verification. The subsequent documentation checkpoint exposed an axe-helper focus race on the unchanged kitchen-sink skip link. The gate now restores and asserts document focus, with permanent positive/negative proofs and no application change. The final verification checkpoint requires successful exact-SHA CI and Preview; its receipt is recorded in the release handoff. Original mascot, exact Inter G/S, persistent building-to-logo, metallic finish, continuous wave and copy are preserved; only the approved reading surfaces amend R2. Main and production remain untouched; no next division is authorised. Authoritative evidence: `docs/_shared/GS-R002-RC-DESIGN.md`.
+
+> **GS-R002-R1 current owner remediation (20 September 2026):** The verified GS-R002 candidate was **not visually approved**. R1 preserves From Line to Form and the service architecture, with Design-only Oxford Navy `#0A192E` / Imperial British Gold `#D4AF35`, earlier hero progress, left/right/left choreography, corrected G/S hierarchy, an original visor/quiff character, four-storey technical study and returning-wave convergence. Owner visual acceptance remains pending. Master (GS-O008 approved), Digital and Press remain frozen; Master polish is deferred. GS-O019 resolved and GS-O020 CLOSED — PUBLISH remain unchanged. Staging only; main and production untouched. Current evidence: `docs/_shared/GS-R002-R1-DESIGN.md`. Earlier status and palette entries below are historical and superseded where they conflict.
+
 # AI handoff
+
+> **Current execution, 19 September 2026: GS-R002 — Design.** Implementation complete; owner-review candidate on `staging/gs-r002-design` from `eda5f3ae`. Master accepted (GS-O008), minor polish deferred; no main fast-forward. GS-O019 capability detail resolved without new top-level services. Full current record and protected Preview: `GS-R002-DESIGN.md`. The branch-tip CI check is authoritative for final verification; do not infer approval from local passes. The handoff below is the preserved predecessor.
 
 ## Execution
 
-- **Task ID:** `GS-R001-R` / `GS-O008`
-- **Task:** staging content, brand and experience remediation
+- **Task ID:** `GS-R001-M` / `GS-O008`
+- **Task:** Master experience redesign, and its remediation round R1
 - **Agent/model:** Claude Code (Opus 5)
-- **Status:** COMPLETE IN REPOSITORY. The eleven owner findings from the `GS-R001` staging review
-  are implemented; the owner's brand assets were supplied at the phase's owner gate, verified and
-  integrated; the Master background mark is built. **`GS-O008` stays OPEN — AWAITING OWNER
-  RE-REVIEW** and was not closed here. **No Supabase call of any kind. No production Sanity call.
-  No DNS, Hostinger or `gridsmith.uk` change. No dependency added.**
-- **Date:** 17 September 2026
-- **Full evidence:** `docs/_shared/GS-R001-R-REMEDIATION.md` — this file is the summary and the
-  next-phase recommendation; that one is the record.
+- **Status:** COMPLETE IN REPOSITORY. The owner rejected the Master homepage's visual direction
+  at `GS-O008`; `/` is redesigned. **`GS-O008` stays OPEN — AWAITING OWNER RE-REVIEW.** No
+  Supabase call of any kind. No production Sanity call. No DNS, Hostinger or `gridsmith.uk`
+  change. **No dependency added.**
+- **Date:** 18 September 2026
+- **Full evidence:** `docs/_shared/GS-R001-M-MASTER-REDESIGN.md`. The previous handoff
+  (`GS-R001-R`) is in git history and `GS-R001-R-REMEDIATION.md`.
+
+## R1 — remediation after the owner's review (18 September 2026)
+
+The owner reviewed the candidate and asked for six things; all are done. **`GS-O008` stays OPEN.**
+Record: `GS-R001-M-MASTER-REDESIGN.md` §R1.
+
+| Item | What changed |
+|---|---|
+| Hero at every size and zoom | Measured first: a fixed 665px column and a viewport-scaled headline gave **7 lines from 1745px up** and the CTA below the fold at **8 of 13** sizes. Now one fluid frame, a headline sized by its column and capped by height: **3–4 lines, CTA in the first screen, at all 14 sizes** (1229–3200px). New gate `check:master:hero` |
+| Joint close-up → exploded view | The mark opens into space — every piece scaled out from its place in the logo, fixed depths and tilts, a scroll-driven drift |
+| Final CTA obstruction | The footer was an opaque slab over the mark. Transparent on `/` while the scene runs; the scene dims only behind text |
+| Mobile veils | The full-width 92% bands are gone. The renderer dims the gold **only behind text** (up to 32 feathered rectangles). The header, whose wrapped nav was a band across the hero mark at 320px, is transparent on `/` too |
+| Reviews | The cylinder is back, redesigned: CSS 3D ring, every review whole, auto-steps every 6s, pause on hover/focus, **Pause rotation**, Previous/Next, still grid under reduced motion |
+| `GS-O020` | **CLOSED — PUBLISH.** `EXPECTED` 13 / 11 / 2; approval covers this review only |
+
+**Verification on the final source:** `verify:static` **48 gates PASS**; clean `verify:build` PASS —
+`/` delta **4.9KB of 15KB**, lazy scene **5.9KB of 8KB**, no dependency added; `verify:served` PASS —
+`check:axe` **zero violations, 0 unresolved**; `check:master:scene` **11 questions × 11 viewports ×
+7 positions**; `check:master:hero` **14 sizes**; `check:reviews:ui` PASS; `check:mark:cls` **0.0000**.
+**Proofs:** `scripts/prove-master-scene.mjs`, 23 probes over three gates — 21 red on their own
+question in one run, the other two red alone (§R1.9); s5, s10 and h5 re-proven after the final
+layout change (§R1.10).
+
+**R1 outcome:** commit `555cbf1d`; **CI `35397951081` `success`**, every step. Lighthouse `/`
+(GPU-less runner, so the fallback path): desktop **1.00 / LCP 554ms / TBT 0ms / CLS 0.000**, mobile
+**0.99 / LCP 1,636ms / TBT 81ms / CLS 0.000**. Preview `dpl_YWENAtfds2QUp8knd6UrcDFJXimu` **READY**
+(target `null`) at the same branch alias — 302 to Vercel SSO, `noindex`. `main` untouched at
+`fbecbe01`; `gridsmith.uk` unchanged on Hostinger.
 
 ## Repository state
 
-- **Starting commit:** `82d55ede`
-- **Ending commit:** `583a23bd`. Three commits: `e59903ab` the phase, `92ec2065` its commit
-  id, `583a23bd` the owner evidence that arrived afterwards (`GS-O017`, the animation tilt)
-- **Branches:** `staging/gs-r001-r-remediation` carries the candidate and is what Vercel builds as
-  a **preview**; `main` is fast-forwarded to the same commit
-- **Starting working tree:** clean, 0 ahead / 0 behind `origin/main`, no unrelated owner work
-- **Starting CI:** run `35147103758` `success` on `5049f820`, the last recorded state
+- **Starting commit:** `fbecbe01`, `main`, clean, 0 ahead / 0 behind
+- **Starting CI:** runs `35288782657` (`main`) and `35288781001` (branch), both `success`
+- **Branch:** `staging/gs-r001-m-master-redesign` (Vercel preview). **`main` not pushed** — it stays at
+  `fbecbe01`; a `main` push starts a production-target build and this phase forbids production
+  deployment. Fast-forward it when the owner accepts `/`
+- **Phase commits:** `07406d60` (the redesign), `c69fcdde` (declines software WebGL — CI's first
+  finding), `e298f576` (fallback as vector shapes — CI's second finding); this record follows.
+- **CI:** run `35308394477` on `07406d60` **failure** (Lighthouse desktop `/` 0.66, TBT 41,960ms);
+  `35314676312` on `c69fcdde` **failure** (mobile LCP 3,385ms); **`35318073725` on `e298f576`
+  `success`**, all steps. Lighthouse, median of 3, on a GPU-less runner — so **the fallback path**,
+  which is what a GPU-less visitor receives: desktop `/` **1.00 perf / 1.00 a11y / LCP 578ms /
+  TBT 0ms / CLS 0.000**; mobile `/` **0.99 / 1.00 / LCP 1,631ms (≤1,800) / TBT 88ms / CLS 0.000**.
+  SEO 0.66 is the deliberate `noindex`. The WebGL path's cost on a real GPU is not lab-measured
+  by anything available to this phase.
+- **Staging:** preview `dpl_HbdjFaGDUSYsEJetzcb3oUuD224J`, **`READY`**, target `null`, at
+  **`https://gridsmith-ltd-git-staging-gs-r001-7c084d-atikmurtazas-projects.vercel.app/`** — HTTP
+  302 to Vercel SSO with `x-robots-tag: noindex`. `gridsmith.uk`: HTTP 200, `platform: hostinger`,
+  unchanged.
 
-## Hard scope boundaries preserved
+## Scope held
 
-- **No Supabase call of any kind.** `GS-T004` is not applied.
-- **No production Sanity call.** One `development` write through the existing `npm run seed`,
-  which hardcodes the dataset and deletes only by provenance (`isSeed: true` **and** an `_id`
-  beginning `seed-`, both required).
-- **No deployment to production, no domain change, no DNS, no Hostinger.**
-- **No dependency added.** GSAP, Three.js, WebGL and any icon library were all declined.
-- The service architecture is unchanged: 3 divisions, 14 capability groups, 46 records, 81
-  capabilities, no public pricing, no public portfolio, Technical Design still gated.
-- `Q-P13` is not reopened and `SEED_RULES` is byte-identical.
-- The canonical six process stages are not reworded.
+- **Master homepage only.** Design, Digital and Press routes untouched; `/about`, `/approach`,
+  `/contact`, `/insights` and legal keep the white Master theme.
+- **Digital not researched** — owner: *"for digital i will tell later."*
+- **Press and Design research is capability evidence only** (`GS-O018`, `GS-O019`); no public
+  Press or Design content changed.
+- Preserved: no visitor-visible `[SEED]`, About/Approach remediation, editorial-brief Insights,
+  no call CTA, WhatsApp/SMS, eight social links, ICO unpublished, no pricing, no portfolio, the
+  Technical Design gate, Freelancer filtering.
 
----
+## What was built
 
-## 1. Why this phase existed, and the finding that outlives it
-
-`GS-R001` passed every gate it had, and the owner rejected what those gates were not asked about.
-
-**Forty-five gates were green on a candidate carrying `[SEED]` markers on four public routes.**
-Every gate that knew about seed content read the *dataset* and keyed off the *production* dataset
-name — and every staging candidate is built from `development`. So the one environment a human
-reviews was the one environment nothing checked.
-
-`check:company` questions 7 and 8 close it by reading **served text**. Question 8 found a fifth
-route within one run of being written: `/press/path-finder`, which no finding had raised and
-which no dataset query could ever have reached, because its seed config is a TypeScript file.
-
-## 2. `[SEED]` — classified, not stripped
-
-The brief prohibits removing the marker as the fix, and the four answers were different:
-
-| Content | Classification | Done |
-|---|---|---|
-| `/about`, `/approach` prose | synthetic filler | **rewritten** from approved architecture, process and commercial positions |
-| The nine `/insights` posts | fabricated thought leadership | **stopped being articles** — nine editorial briefs, unpublishable by construction |
-| Path Finder outcome copy | truthful but unapproved | marker removed, sentences kept, `SEED_RULES` untouched |
-| `teamMember`, `faq` records | genuinely fabricated, rendered by nothing | **left as they are**, still marked |
-
-**A marker in rendered text and a flag in a record are different things.** `isSeed: true` stays
-everywhere it was — it is what `check:launch` reads to refuse promotion to production.
-
-`post.status` is a closed list enforced on write; all three post queries filter
-`status == "published"` by **strict equality, never `coalesce`**, because a document written
-before the field existed has no status and coalescing would publish exactly the nine records the
-field was added to stop. `listPostSlugs` feeds `generateStaticParams`, so an unpublished post has
-**no page built for it at all** — verified in the build output.
-
-## 3. The contact channel
-
-`GS-O004`'s `tel:` limb is superseded and only that limb. The number is unchanged and still
-published; it is now **WhatsApp and SMS**, each named and linked with its own scheme, and
-**text-only in the statutory footer** — that block is a legal disclosure on all 77 routes, not a
-contact surface, and reg. 6(1)(c) needs the number readable rather than clickable.
-
-`check:company` question 3 refuses a `tel:` href on **any** route; question 7 refuses the wording.
-
-## 4. The brand assets, verified before use
-
-Three files, all **the mark alone** — no wordmark, no lockup. The SVG's own `<desc>` calls itself
-a *"recreation"*, so it was measured rather than trusted: alpha masks, each normalised to its own
-bounding box, compared shape to shape.
-
-| Measurement | Result |
-|---|---|
-| Content aspect ratios | PNG **1.0293**, SVG **1.0302**, 3D **1.0302** |
-| Shape IoU, PNG vs SVG | **0.9624** |
-| XOR after two erosions | **0 pixels** |
-
-A structural difference survives erosion as a blob. Nothing survived, so the vector **is** the
-raster's geometry and nothing was estimated by eye.
-
-**The SVG is primary on measurement**, which is the exception the owner's instruction allowed:
-4,134 bytes against 669,476, and the header logo renders at ~24px on all 77 routes above the
-fold. It is a **CSS background on `.wordmark::before`**, because the mark is decorative — the
-word beside it is the accessible name — and a decorative image belongs in the stylesheet. No rule
-was disabled to avoid `no-img-element`; the element simply does not exist.
-
-**Neither PNG is modified and neither is rendered.** The 3D render is kept for a social card
-nobody has designed yet. **No favicon was created** — §22 forbids deriving one, and there has
-never been one to keep.
-
-## 5. The Master background mark
-
-Master only, `/` only. The logo's own eight spheres and six rods, transcribed from the verified
-vector, drawn as **1px `--line` hairlines** — the geometry is exact, the rendering is not the
-logo's, and the static logo is served unmodified. Composed at the hero, separated mid-page,
-recomposed at the closing CTA.
-
-`animation-timeline: scroll(root)`, one shared `@keyframes`, per-piece custom properties.
-**Zero JavaScript**; the homepage delta is unchanged at **1.9KB of 15KB**. `display: none` below
-768px, static at 768–1023 and under `prefers-reduced-motion`, animated at 1024+. `aria-hidden`,
-no focusables, no pointer events, no layout participation. The Freelancer cylinder is unaffected.
-
-### The defect that reported itself healthy
-
-The first build used `animation-timeline: scroll()` — which means `scroll(nearest)`, resolved
-against the nearest ancestor **scroll container**. A `position: fixed` element has none, so the
-timeline resolved to nothing and the animation never advanced.
-
-`CSS.supports` said true. `getAnimations()` returned one animation. `playState` was `running`.
-The keyframes were correct. **The rendered transform at 50% scroll was `none`**, and
-`currentTime === null` was the only diagnostic that named the cause. A screenshot cannot see it
-either, because at scroll 0 the correct state *is* `none`.
-
-`check:mark:field` exists because of it and asserts the **rendered matrix**, never the
-animation's own report. Seven branches, each proven red; subjects restored from bytes captured
-beforehand and verified by SHA-256.
-
-**Proving that gate found a defect in that gate.** Its element selector required
-`aria-hidden="true"`, so removing the attribute stopped the element matching and it reported
-*"not in the document"* rather than *"not aria-hidden"* — a red, but **the branch it was written
-to prove had never executed**. `A-GATE-4-3` in miniature, found by proving rather than by reading.
-
-### Contrast — measured, then allowlisted, in that order
-
-axe returned `elmPartiallyObscuring` on the `h1` and hero intro: it **declined to evaluate**, not
-a violation. Three fixes were tried; two were wrong and are recorded as such. What settled it was
-measuring every foreground token against `--line` in all four themes: `--ink` and `--ink-muted`
-clear the body floor, `--ink-subtle` (4.14–4.39:1) and Digital's `--accent` (4.00:1) do not, and
-on Master the only text over the geometry is `--ink` and `--ink-muted`. Worst case **~13.9:1
-against a 4.5:1 floor**. The allowlist entry names its own removal conditions.
-
-The hero also got an opaque `--canvas` band. It did **not** resolve the axe result — that was the
-theory it was added on — but it is kept because it is right on its own terms.
-
-## 6. Social channels — resolved by owner evidence, after a search got it wrong
-
-**This section replaced an earlier version of itself, and the replaced conclusion is the useful
-part.** The first pass found none: the live site links no social account, and a public search
-returned three unrelated companies. On that evidence, omitting everything was right.
-
-The owner then identified **`github.com/atikmurtaza/gridsmith-working`** — their own earlier
-implementation — as where the links are configured. Read read-only, it carries nine explicit
-social URLs.
-
-**The search had not merely missed them; it had attributed two to someone else.**
-`facebook.com/gridsmith` and `linkedin.com/company/gridsmith` are Gridsmith Ltd's; the Seattle
-studio's accounts are at different URLs. **A name is not an identity**, and only a source the
-owner controls could have settled it.
-
-**Eight published**, each resolved first — Facebook (whose Page publishes `contact@gridsmith.uk`
-and the approved number, the strongest match of the eight), Instagram, LinkedIn, X, TikTok,
-YouTube, Reddit and Freelancer.
-
-**Facebook nearly went unpublished on a transport artefact:** anonymous `curl` returned HTTP 400
-on three URL forms — indistinguishable from a dead vanity URL — and a real browser rendered the
-Page normally. It was a bot block. Instagram is the same class inverted: 200 with near-identical
-bytes for a real handle and a nonsense one, so HTTP could neither confirm nor deny.
-
-**Two configured links were not published:** the Gmail compose link to the superseded legacy
-address (`FORBIDDEN_EMAILS`, and being configured in an older build does not revive a superseded
-fact), and a Reddit *share* permalink carrying five tracking parameters, normalised to the
-canonical profile.
-
-`check:company` question 9 asserts all eight on `/about` and **refuses any unapproved social host
-on any route**. `GS-O017` is **CLOSED**.
-
-## 7. Registered office — no conflict was found
-
-`GS-R001-R` §7 warned this might conflict with a legal requirement. It does not. SI 2015/17
-reg. 25(2)(c) requires the registered office **on the company's websites**, and `GS-O004` had
-already confined it to the statutory footer and the `_legal/` instruments. `check:company`
-question 4 asserts **position, not presence**, and measured 18 routes carrying it with none
-outside those two places.
-
-What this phase removed is the **second, promotional copy** — `/about`'s "The checkable facts"
-table. The distinction is between a **disclosure** and a **pitch**: the homepage structure
-statement survives because it names which legal entity a client contracts with; the table did not
-because it argued that being incorporated is a reason to hire Gridsmith.
+1. **A gold stage** (`styles/themes/master-stage.css`) from the logo's own gradient stops —
+   `#E0BD70` accent, `#0B0907` canvas, `#F5EEDD` ink — applied to `/` only via
+   `[data-stage="master"]`, measured by `check:contrast` as a fifth palette (worst text cell
+   6.39:1).
+2. **`MasterScene`** — a fixed WebGL layer ray-tracing the logo's 8 spheres and 6 bars
+   analytically as polished gold with inter-reflection, in one fragment shader. Six chapter poses
+   over four formations (logo, split, chain, ring); lighting rotates with scroll; subtle pointer
+   tilt; renders only on change. **Lazy 5.2KB gz** against Three.js's ~150KB; GSAP not needed.
+   Reduced motion: one still hero frame. No WebGL, **software-only WebGL**, a draw blocking >100ms,
+   failure or low capability: the logo as inline vector shapes (`FallbackMark`). CI found both
+   cases the hard way: TBT 41,960ms (software WebGL), then mobile LCP 3,385ms (an image fallback).
+3. **The page** — hero (left-set type, mark right), a typographic **studio index** instead of
+   three cards, *One relationship* (continuity + structure disclosure merged), the six stage
+   names on one rail, still reviews under a held heading, and a close where the mark resolves
+   front-on. Approved copy carried word for word; three structural additions, no claims.
 
 ## Verification
 
-`verify:static` **46 gates PASS** · `verify:build` PASS on a wiped `.next` (68 routes, all inside
-delta budgets, master **1.9KB of 15KB**) · `verify:served` **15 commands PASS** · `check:axe`
-**76 analyses, zero violations, 0 unresolved** · `check:mark:field` 7 cases PASS · `npm audit
---omit=dev` clean · no dependency added.
+`verify:static` **47 gates PASS** · `verify:build` PASS on a wiped `.next` (68 routes; `/` delta
+**4.4KB of 15KB**, was 1.9KB; lazy scene **5.2KB of 8KB**) · `verify:served` PASS: `check:axe`
+**zero violations, 0 unresolved**; `check:master:scene` **5 widths × 6 chapters +
+reduced motion + no-WebGL + software-WebGL (9 questions)**; `check:reviews:ui`, `check:company` (9 questions), `check:responsive`,
+legal parity, Press type, Path Finder — all PASS; `check:mark:cls` **0.0000** at 375/768/1440 ·
+`npm audit --omit=dev` 0 vulnerabilities · Lighthouse: CI (Windows cannot run it).
 
-**CI runs `35287686645` and `35287688925`, both `success` on `567a33da`**, 43 steps, both
-Lighthouse axes. Desktop **1.00 perf / 1.00 a11y / CLS 0.000 / TBT 0ms** on all four routes;
-mobile 0.99 / 1.00 / CLS 0.000 / TBT 77–85ms with every LCP inside its ceiling. TBT moved
-38–45ms → 77–85ms on a slower runner (`benchmarkIndex` 2410 against 3110) with no client JS
-added — reported as a number to watch rather than attributed.
-
-**Staging:** preview `dpl_9CDHUCMj8sRYHMP4yULmdu1EwkBj`, **`READY`**, 302 to Vercel SSO with
-`x-robots-tag: noindex`. Production-target `ERROR` on the empty production dataset as expected
-(`GS-T005`). `gridsmith.uk` unchanged.
-
-Counts that moved, each deliberately, which is what proves they are counted rather than printed:
-gates 45 → **46**; `check:company` 6 → **9** questions and its self-test 35 → **66** cases; `check:struck` 16 → **18** rules
-and 32 → **36** specimens; `check:schemas` closed lists 6 → **7**; `check:mark:guard`
-`animation-timeline` declarations 1 → **2**.
+**Gates proven by deliberate failure, and what proving them found** (`GS-R001-M-MASTER-REDESIGN.md`
+§8): the scene gate's first run found **44 real readability failures** the visual review had
+passed — fixed in the design, not the thresholds; it then exposed its own defect (hiding content
+by `visibility` let gold text count as the mark); the model self-test's first red was an ordered
+comparison of an unordered bar; the proof harness twice credited or missed reds it had not
+measured (a digit parser, then an occupied port read as a green). Each is fixed and recorded.
+`scripts/prove-master-scene.mjs` is committed and re-runnable.
 
 ## Findings and programme state
 
-- **Closed:** `GS-O016` (ICO position, recorded and published nowhere), `GS-O017` (social
-  channels, on owner evidence), and `GS-O007`'s brand-asset limb.
-- **Narrowed:** `GS-O007` — a favicon decision, an Open Graph card composition, and the one
-  redirect row, which is now cutover hygiene rather than a launch blocker.
-- **Remaining:** `GS-T004`, `GS-T005`, `GS-O003`, `GS-O005`, `GS-O010`, `GS-X001`,
-  `GS-X002`, `GS-R002`, `GS-R003`, `Q-P13`, the three `GS-R001` human tests (screen reader,
-  physical device, non-Chromium), and the production content listed in the remediation record.
-- **`GS-O008`: AWAITING OWNER RE-REVIEW.** Not closed here and not closeable by an agent.
-- **RC status:** `GS-R001`'s **TECHNICALLY PASS** stands. **Production readiness: NOT READY.**
+- **`GS-O008`: OPEN — AWAITING OWNER RE-REVIEW of the redesigned `/`.**
+- **`GS-O020`: CLOSED — PUBLISH** (owner decision at R1). The pinned set is 13 / 11 / 2.
+- **`GS-O018`, `GS-O019` (new, not blocking):** Press and Design capability gaps.
+- Unchanged: `GS-T004`, `GS-T005`, `GS-O003`, `GS-O005`, `GS-O010`, `GS-X001`, `GS-X002`,
+  `GS-R002`, `GS-R003`, the three `GS-R001` human tests.
+- **RC status:** `GS-R001`'s TECHNICALLY PASS stands. **Production readiness: NOT READY.**
 
 ## Recommended next phase
 
 Recommendation only. **Do not begin it from this handoff alone.**
 
-**`GS-O008` — owner re-review of the remediated staging candidate.** It is an **owner task, not
-an agent phase**. The candidate is built, gated and deployed; what it needs is a person to read
-all four sections and say whether the site now describes their business.
+**`GS-O008` — owner re-review of the redesigned Master homepage on staging.** It is an **owner
+task, not an agent phase.**
 
-- **Owner action required first?** Yes — this *is* the owner task.
-- **Exact information/action required:** (1) accept or reject section by section; (2) whether a favicon
-  is wanted; (3) the Open Graph card decision. Items 2 and 3 are independent.
-- **Session:** **NEW.** This one's context is content remediation, brand assets and a scroll
-  animation; the next is whatever the review returns.
-- **Agent/model:** Claude Code (Opus 5).
-- **Effort:** small if the review accepts; scoped by the rejections if it does not.
+- **Owner action required first?** Yes — this *is* the owner task: re-review `/` after R1.
+- **What the owner decides:** accept or reject `/`; whether the gold stage extends to the other
+  Master routes; whether Master and Design read as too close; whether the reviews chapter shows
+  enough of the mark.
+- **Then:** a **NEW** session, **Claude Code (Opus 5)**, effort **small** if accepted (extend the
+  stage to the other Master routes if asked, move `EXPECTED` per `GS-O020`) or **scoped by the
+  rejections** if not.
 
-**`GS-T004` production activation stays in a separately authorised production-release phase**,
-and `gridsmith.uk` cutover stays behind `GS-O009`. Technical-group content stays gated on
-`GS-O005` / `GS-X002`. **Do not treat an accepted RC as authorisation for either.**
+`GS-T004` activation stays in a separately authorised production-release phase, and
+`gridsmith.uk` cutover behind `GS-O009`. **An accepted `/` is not authorisation for either.**

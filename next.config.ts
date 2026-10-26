@@ -1,26 +1,30 @@
 import { readFileSync } from 'node:fs';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { NextConfig } from 'next';
+import { BUILD_TARGET, STATIC_BUILD } from './lib/build/target';
 import { SANITY_DATASET } from './sanity/env';
 
 type LegacyRedirect = { source: string; destination: string; permanent: boolean };
 
 /**
- * Legacy redirect map — master/TECH-SPEC.md §5, tracker G-02.
+ * Legacy redirect map — master/TECH-SPEC.md §5, tracker G-02, `GS-PROD-001`.
  *
- * Currently empty, and the reason changed at `GS-R001`. It used to say *"the programme is
- * greenfield, there is no existing site to crawl"*, which was already false when it was
- * written: `gridsmith.uk` serves a live WordPress site, established on 7 September 2026 in
- * `docs/_shared/LIVE-SITE-EXTRACT.md`.
+ * The live WordPress site publishes eight URLs (`LIVE-SITE-EXTRACT.md` §13). Two have a
+ * successor and are mapped; the rest need nothing, and `docs/_shared/GS-PROD-001.md` §C records each:
+ * `/` is the same address, `/?uicore-tb=…` is a query on `/`, and the four WordPress/theme
+ * defaults (`/hello-world/`, `/category/uncategorized/`, `/uicore-cd/*`) have no successor and
+ * fall to the 404 — redirecting unrelated pages to `/` would be a soft 404.
+ * `/terms-and-conditions/` → `/legal/client-terms` is the owner's decision at `GS-PROD-001`
+ * (`GS-O007`): the disambiguation page, because the old combined instrument has three successors.
  *
- * **The inventory is now collected and it is eight URLs** — read from the live site's own
- * `wp-sitemap.xml`, recorded with a proposed mapping in `LIVE-SITE-EXTRACT.md` §13. It stays
- * empty here for two better reasons than the old one: `GS-R001` prohibits cutover, so nothing
- * would exercise it; and one row of the eight is an owner decision rather than an implementation
- * one (`/terms-and-conditions/` is a single instrument this build splits three ways, and a
- * redirect has to pick a target). A half-map in the tree reads as a finished one.
- *
- * The wiring exists so the mechanism is testable before it is needed — adding entries later is
- * a data change, not a config change.
+ * **Each one is a single hop, and that needs the ordering below.** Next unshifts its own
+ * `/:path+/ → /:path+` redirect *ahead of* every custom one (`lib/load-custom-routes.js`), and
+ * every legacy URL ends in `/`, so `/privacy-policy/` would have gone 308 → `/privacy-policy` →
+ * 308 → `/legal/privacy`. `skipTrailingSlashRedirect` turns the built-in off and `redirects()`
+ * re-adds the identical rule *after* the legacy map. `check:redirects` asserts both halves on the
+ * served build: every legacy URL is one 308 to a 200, and an ordinary `/about/` still loses its
+ * slash.
  */
 const legacyRedirects: LegacyRedirect[] = JSON.parse(
   readFileSync(new URL('./redirects/legacy.json', import.meta.url), 'utf8'),
@@ -67,7 +71,12 @@ if (!Array.isArray(legacyRedirects)) {
  * — is free for a route handler, which has no client chunk to ship. See that file.
  */
 const excludeProbes =
-  process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
+  STATIC_BUILD || process.env.VERCEL_ENV === 'production' || process.env.GRIDSMITH_EXCLUDE_PROBES === '1';
+
+// H4-A/B exports contain Preview-only form integration and disposable review data, never a release.
+if (STATIC_BUILD && process.env.GRIDSMITH_STATIC_PROOF !== '1') {
+  throw new Error('Use npm run build:static: H4-A static output is a technical proof only');
+}
 
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -98,6 +107,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  ...(STATIC_BUILD ? { output: 'export' as const, images: { unoptimized: true },
+    outputFileTracingRoot: dirname(fileURLToPath(import.meta.url)) } : {}),
   poweredByHeader: false,
   /**
    * **Declared here so it is always defined, which is what makes the probe cost nothing when
@@ -108,7 +119,8 @@ const nextConfig: NextConfig = {
    * build — measured, at the first attempt: `shared` read 3.0KB with the flag unset. Defining
    * it as `''` makes the condition a constant the minifier folds away.
    */
-  env: { NEXT_PUBLIC_BUNDLE_SIZE_PROBE: process.env.NEXT_PUBLIC_BUNDLE_SIZE_PROBE ?? '' },
+  env: { GRIDSMITH_BUILD_TARGET: BUILD_TARGET,
+    NEXT_PUBLIC_BUNDLE_SIZE_PROBE: process.env.NEXT_PUBLIC_BUNDLE_SIZE_PROBE ?? '' },
   pageExtensions: excludeProbes ? ['tsx', 'ts'] : ['tsx', 'ts', 'probe.tsx', 'probe.ts'],
   /**
    * `globalNotFound` is what makes the 404 load the token layer at all.
@@ -133,6 +145,9 @@ const nextConfig: NextConfig = {
    */
   experimental: {
     globalNotFound: true,
+    // H4-D: inline the same CSS to remove a render-blocking network round trip.
+    // Theme/font parity and exact-source Lighthouse remain mandatory.
+    inlineCss: true,
     /**
      * **A Windows-only escape hatch, inert unless you set it.** Not a build setting.
      *
@@ -172,17 +187,22 @@ const nextConfig: NextConfig = {
    * variable fails the build at config load, which is `M-P1-2`'s rule reaching one file
    * earlier than before.
    */
-  async headers() {
+  ...(!STATIC_BUILD ? { async headers() {
     return [
       {
         source: '/:path*',
         headers: [{ key: 'x-gridsmith-dataset', value: SANITY_DATASET }, ...securityHeaders],
       },
     ];
-  },
-  async redirects() {
-    return legacyRedirects;
-  },
+  } } : {}),
+  skipTrailingSlashRedirect: true,
+  ...(!STATIC_BUILD ? { async redirects() {
+    return [
+      ...legacyRedirects,
+      // Next's own trailing-slash rule (trailingSlash: false), verbatim, after the legacy map.
+      { source: '/:path+/', destination: '/:path+', permanent: true },
+    ];
+  } } : {}),
 };
 
 export default nextConfig;

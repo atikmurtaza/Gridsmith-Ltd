@@ -1,0 +1,2309 @@
+{
+  "task": "GS-LAUNCH-009",
+  "recordedAt": "2026-10-25T00:08:28.324Z",
+  "baseline": "628f502ad5cf1658418964e4456790926844952c",
+  "branch": "codex/gs-launch-009",
+  "worktree": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+  "phaseCommit": "Resolve with git log -1 --format=%H -- docs/_shared/GS-LAUNCH-009.md; self-referential commit hash is intentionally not embedded",
+  "release": "PUBLICATION_HOLD_LOCAL_REMEDIATION_PASS_RELEASE_VERIFICATION_INCOMPLETE",
+  "legalPreparationNextStageCleared": false,
+  "environment": {
+    "platform": "win32",
+    "node": "v24.15.0",
+    "npm": "11.12.1",
+    "pythonFixtureRuntime": "3.12.14",
+    "baselineClone": "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local",
+    "baselineInstall": {
+      "startedAt": "2026-10-24T23:41:12.0124382Z",
+      "endedAt": "2026-10-24T23:43:45.6046766Z",
+      "exitCode": 0,
+      "lockSha256": "2849A09EFAB03621D8547E1564794B9BD0DEAAB139028796FFDAE0D51A9EAA8C"
+    },
+    "junction": {
+      "path": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-007\\Gridsmith Ltd\\node_modules",
+      "linkType": "Junction",
+      "target": "C:\\Users\\atikm\\Projects\\Gridsmith Ltd\\node_modules"
+    },
+    "browser": "NOT RUN; policy unchanged; only Ubuntu24.04/localDebian12 supported",
+    "observedWsl": {
+      "os": "Ubuntu26.04",
+      "python": "3.14.4",
+      "linuxNode": false,
+      "apache": false,
+      "systemdUserSessionWarning": true
+    },
+    "commonTestEnvironment": {
+      "PUPPETEER_SKIP_DOWNLOAD": "true",
+      "NEXT_TELEMETRY_DISABLED": "1",
+      "NEXT_PUBLIC_SANITY_DATASET": "development",
+      "NEXT_PUBLIC_SITE_URL": "http://localhost:3235",
+      "NEXT_BUILD_CPUS": "1"
+    },
+    "exportEnvironment": {
+      "GRIDSMITH_STATIC_PROFILE": "production",
+      "GRIDSMITH_PRODUCTION_REHEARSAL": "1 for denied rehearsal only",
+      "intakeUrl": "absent",
+      "privilegedEnvironmentFilesCopied": 0
+    }
+  },
+  "sourceBinding": {
+    "algorithm": "SHA256 of JSON.stringify(sorted non-doc git-tracked path/SHA256 pairs); file bytes as verified on Windows",
+    "fileCount": 367,
+    "effectiveSourceSha256": "6183608babaa0b274b6d799c1b554cb032992c97ed79e127744b9964cc422b88",
+    "inventory": "build/gs-launch-009/source-inventory.json",
+    "inventoryFileSha256": "ddb9c9c3a0fcaf10c27001760827bf3befbc68d64e656e40ea69fa8a401bf8d0",
+    "baselineLockSha256": "2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c",
+    "finalLockSha256": "f45a725650c64e81bc8d580569e012ad07ca3d254e8ffaa63fb22c6cc57a6fa3",
+    "finalPackageSha256": "97854c2b19e9ca55d5a793bfb5a768ce28d2856d7c44159ebdccfff2b64dad31",
+    "sourceHashes": {
+      "package-lock.json": "f45a725650c64e81bc8d580569e012ad07ca3d254e8ffaa63fb22c6cc57a6fa3",
+      "package.json": "97854c2b19e9ca55d5a793bfb5a768ce28d2856d7c44159ebdccfff2b64dad31",
+      "config/browser-input.json": "20ac446b365c2e9f08d83355f66e99f78c4065c93c49099c45ebd4754be0cb54",
+      "docs/_shared/GS-PROD-001-CMS-MANIFEST.json": "483f6df5e48bad4eccad4ef3db56f2a0c0af002cbf898504dc7f0cc886f4e95b",
+      "docs/_legal/evidence/GS-O003-R-REGISTER.json": "4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e",
+      "app/(marketing)/contact/page.tsx": "a448678bdd86058d01dd08587576c43a8d97326daa3e01f407713b794ab54936",
+      "app/(press)/press/contact/page.tsx": "12daf33da6de2c8401bae1227fa6108afb8f33067d090af6f4d7e5722b8cc953",
+      "app/(press)/press/contact/thank-you/page.tsx": "bc1de784fbd1833c19b4362d9483c80d310aa098e9113458ea70e32221a2275f",
+      "components/leads/StaticContactShell.tsx": "150b8ae123bd1c55e87504c391b3ae1e09d41a9521afcc621e295a42405eb569",
+      "lib/build/hostinger.ts": "4d929944d316221c274a925f364c1ba2c19ccfc8dae58e68c9f496e5aac78895",
+      "lib/build/production.ts": "7b5e17c486880246261c4319f4a0e334165a3d24c7ce925b56166770eb5b9182",
+      "lib/build/target.ts": "8f276ae6d65ed62cfce12377b90d050c0edb2f733b6d4e0b0063bd026ee092c8",
+      "public/500.html": "9cf99a8dce5fa1948b798a41583efd536c12182fd33b2f903d84e5f7c1f80f88",
+      "scripts/build-static.mjs": "0e4b629b6a49599064788f9d6f69f3f2359fcb532a1755dcf33b6ceec24aa6c5",
+      "scripts/check-static-artifact.mjs": "4cba5bfc293e9a669a3e997cce1af2d66d6c446a9dce737836917e4472cea590",
+      "lighthouse/routes.cjs": "208e72d8462002bdd7c36de83e6aaf32c5be170051532a3a9e31faef1f37f401",
+      "lighthouserc.desktop.cjs": "4a7ac59211f40fc808ce9923f5e3cab1d7691100470054d00a2cc12d4f548d28",
+      "lighthouserc.mobile.cjs": "27ecffc2d85e3907c26dd182c8d9fb8d6b12ba5c5e456bd6f462cfb1edec57d8",
+      "scripts/check-static.selftest.mjs": "d721e4f091034ca6539ffbb3c2619e55d7ec65ffa6cb8e96fe165badae1424c9",
+      "scripts/check-lhci.mjs": "a20d191e092c67b4f406f48c94fa2174292c72fe5fa881fb8f7cf149b6325665",
+      "scripts/h2-proxy.mjs": "2b0ce3c0f0efcfd8c10da3b6cb138718363b9d106461bb59d1bb05c37007f43d",
+      "docs/_shared/gs-launch-007-proof/apache.conf": "67fa073a830de88ef1cc609c45a902aa8e65a2652b34d23b29dd307e8abd1583",
+      "docs/_shared/gs-launch-007-proof/contrast.mjs": "35eff4dd7afec2c55ecfd9e08080d187dcf9cca2db780dd7df5fa2585bb08057",
+      "docs/_shared/gs-launch-007-proof/negative-proofs.mjs": "0deada5598e2cc4663fb60e7f2b195a085600de3bdc841f3aafc9eca117f6960",
+      "docs/_shared/gs-launch-007-proof/README.md": "d30af783d98459acdaa2d251327c52915aab7e88b43affeb8169ed81a9e7acf4",
+      "docs/_shared/gs-launch-007-proof/setup.mjs": "2249490e239c9ea547ed0079478416e5af00cb3fb9e90f167f954b45a59540ed",
+      "scripts/check-master-scene.mjs": "2d3ec86794550d07b13668d40bd090215d5eb2fa026a909461692dee8aac54b9",
+      "scripts/check-design-scene.mjs": "02566166ac1f3a503e56ca299accdd8764dda107318556a495141db0e2a879d0",
+      "scripts/check-digital-scene.mjs": "7ebf536ad54fbe7315070a504a8edd2c0e2c365054fdcd4f951ff3bf530eb493",
+      "scripts/press-contrast.mjs": "003cf176d0add32e91d4cfa9953d14518845d37bfb6718c64218337897327cc6",
+      "scripts/rendered-label-contrast.mjs": "7a5da048862533ec0c7ea61c4b54dfb08c0102157dc140a5d72ece4d7fd1439a",
+      "scripts/browser-input.mjs": "0fc844b30a0561f54485cd402248265cf8af2c2fe282e1a07569ca66400cad2f",
+      "scripts/browser-input.selftest.mjs": "1e01274dcda05632b5118306c2f3a0a5bc746e1f38497174b7594a6b0bbf0ab9",
+      "scripts/check-dependency-overrides.mjs": "7f1c5adfdf44212804722cf834218c999246e3439d7e284318ef0a6bb999c74c"
+    }
+  },
+  "dependencyChanges": [
+    {
+      "path": "node_modules/@actions/github/node_modules/undici",
+      "before": "6.28.1",
+      "after": "6.29.1"
+    },
+    {
+      "path": "node_modules/@actions/http-client/node_modules/undici",
+      "before": "6.28.1",
+      "after": "6.29.1"
+    },
+    {
+      "path": "node_modules/body-parser",
+      "before": "1.20.8",
+      "after": "1.20.9"
+    },
+    {
+      "path": "node_modules/undici",
+      "before": "7.29.1",
+      "after": "7.30.1"
+    },
+    {
+      "path": "node_modules/zod",
+      "before": "4.4.3",
+      "after": "4.6.6"
+    }
+  ],
+  "audits": {
+    "before": {
+      "production": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {
+          "undici": {
+            "name": "undici",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              {
+                "source": 1243078,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Denial of Service via unbounded memory in the EventSource parser",
+                "url": "https://github.com/advisories/GHSA-4qv8-2p9j-2685",
+                "severity": "moderate",
+                "cwe": [
+                  "CWE-770"
+                ],
+                "cvss": {
+                  "score": 5.9,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=7.0.0 <7.30.1"
+              },
+              {
+                "source": 1243081,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Subresource Integrity bypass via non-lowercase algorithm tokens",
+                "url": "https://github.com/advisories/GHSA-f72v-6w45-q472",
+                "severity": "moderate",
+                "cwe": [
+                  "CWE-178"
+                ],
+                "cvss": {
+                  "score": 5.9,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N"
+                },
+                "range": ">=7.15.0 <7.30.1"
+              },
+              {
+                "source": 1243113,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Denial of Service via unhandled error on excessive content-encodings",
+                "url": "https://github.com/advisories/GHSA-xjj6-f33q-929c",
+                "severity": "high",
+                "cwe": [
+                  "CWE-248",
+                  "CWE-459"
+                ],
+                "cvss": {
+                  "score": 7.5,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=7.18.0 <7.30.1"
+              }
+            ],
+            "effects": [],
+            "range": "7.0.0 - 7.30.0",
+            "nodes": [
+              "node_modules/undici"
+            ],
+            "fixAvailable": true
+          },
+          "zod": {
+            "name": "zod",
+            "severity": "high",
+            "isDirect": true,
+            "via": [
+              {
+                "source": 1243066,
+                "name": "zod",
+                "dependency": "zod",
+                "title": "Zod can exhaust memory while validating oversized constrained collections",
+                "url": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+                "severity": "high",
+                "cwe": [
+                  "CWE-770"
+                ],
+                "cvss": {
+                  "score": 7.5,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": "<4.6.6"
+              }
+            ],
+            "effects": [],
+            "range": "<4.6.6",
+            "nodes": [
+              "node_modules/zod"
+            ],
+            "fixAvailable": true
+          }
+        },
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 2,
+            "critical": 0,
+            "total": 2
+          },
+          "dependencies": {
+            "prod": 27,
+            "dev": 1638,
+            "optional": 148,
+            "peer": 11,
+            "peerOptional": 0,
+            "total": 1701
+          }
+        }
+      },
+      "full": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {
+          "@lhci/cli": {
+            "name": "@lhci/cli",
+            "severity": "high",
+            "isDirect": true,
+            "via": [
+              "@lhci/utils",
+              "lighthouse"
+            ],
+            "effects": [],
+            "range": "<=0.1.1-alpha.5 || >=0.14.0",
+            "nodes": [
+              "node_modules/@lhci/cli"
+            ],
+            "fixAvailable": {
+              "name": "@lhci/cli",
+              "version": "0.13.0",
+              "isSemVerMajor": true
+            }
+          },
+          "@lhci/utils": {
+            "name": "@lhci/utils",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              "lighthouse"
+            ],
+            "effects": [
+              "@lhci/cli"
+            ],
+            "range": ">=0.14.0",
+            "nodes": [
+              "node_modules/@lhci/utils"
+            ],
+            "fixAvailable": {
+              "name": "@lhci/cli",
+              "version": "0.13.0",
+              "isSemVerMajor": true
+            }
+          },
+          "@module-federation/dts-plugin": {
+            "name": "@module-federation/dts-plugin",
+            "severity": "moderate",
+            "isDirect": false,
+            "via": [
+              "undici"
+            ],
+            "effects": [
+              "@module-federation/vite"
+            ],
+            "range": "<=0.0.0-release-v2-9-0-20260824030637 || >=2.3.2",
+            "nodes": [
+              "node_modules/@module-federation/dts-plugin",
+              "node_modules/@sanity/cli-build/node_modules/@module-federation/dts-plugin"
+            ],
+            "fixAvailable": {
+              "name": "sanity",
+              "version": "6.1.0",
+              "isSemVerMajor": true
+            }
+          },
+          "@module-federation/vite": {
+            "name": "@module-federation/vite",
+            "severity": "moderate",
+            "isDirect": false,
+            "via": [
+              "@module-federation/dts-plugin"
+            ],
+            "effects": [
+              "@sanity/workbench-cli"
+            ],
+            "range": ">=1.14.3",
+            "nodes": [
+              "node_modules/@module-federation/vite",
+              "node_modules/@sanity/cli-build/node_modules/@sanity/workbench-cli/node_modules/@module-federation/vite"
+            ],
+            "fixAvailable": {
+              "name": "sanity",
+              "version": "6.1.0",
+              "isSemVerMajor": true
+            }
+          },
+          "@puppeteer/browsers": {
+            "name": "@puppeteer/browsers",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              "extract-zip"
+            ],
+            "effects": [
+              "puppeteer",
+              "puppeteer-core"
+            ],
+            "range": "<=2.13.2",
+            "nodes": [
+              "node_modules/@puppeteer/browsers"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          },
+          "@sanity/cli": {
+            "name": "@sanity/cli",
+            "severity": "moderate",
+            "isDirect": false,
+            "via": [
+              "@sanity/cli-build",
+              "@sanity/runtime-cli",
+              "@sanity/workbench-cli"
+            ],
+            "effects": [
+              "sanity"
+            ],
+            "range": ">=7.3.0",
+            "nodes": [
+              "node_modules/@sanity/cli"
+            ],
+            "fixAvailable": {
+              "name": "sanity",
+              "version": "6.1.0",
+              "isSemVerMajor": true
+            }
+          },
+          "@sanity/cli-build": {
+            "name": "@sanity/cli-build",
+            "severity": "moderate",
+            "isDirect": false,
+            "via": [
+              "@sanity/workbench-cli"
+            ],
+            "effects": [
+              "@sanity/runtime-cli"
+            ],
+            "range": ">=1.1.0",
+            "nodes": [
+              "node_modules/@sanity/cli-build"
+            ],
+            "fixAvailable": {
+              "name": "sanity",
+              "version": "6.1.0",
+              "isSemVerMajor": true
+            }
+          },
+          "@sanity/runtime-cli": {
+            "name": "@sanity/runtime-cli",
+            "severity": "moderate",
+            "isDirect": false,
+            "via": [
+              "@sanity/cli-build"
+            ],
+            "effects": [
+              "@sanity/cli"
+            ],
+            "range": "17.2.0-blueprinit.g3a96975 - 17.2.0-next.ga4b9ae7 || >=17.3.0-blueprinit.g6a63623",
+            "nodes": [
+              "node_modules/@sanity/runtime-cli"
+            ],
+            "fixAvailable": {
+              "name": "sanity",
+              "version": "6.1.0",
+              "isSemVerMajor": true
+            }
+          },
+          "@sanity/workbench-cli": {
+            "name": "@sanity/workbench-cli",
+            "severity": "moderate",
+            "isDirect": false,
+            "via": [
+              "@module-federation/vite"
+            ],
+            "effects": [
+              "@sanity/cli",
+              "@sanity/cli-build"
+            ],
+            "range": "*",
+            "nodes": [
+              "node_modules/@sanity/cli-build/node_modules/@sanity/workbench-cli",
+              "node_modules/@sanity/workbench-cli"
+            ],
+            "fixAvailable": {
+              "name": "sanity",
+              "version": "6.1.0",
+              "isSemVerMajor": true
+            }
+          },
+          "body-parser": {
+            "name": "body-parser",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              {
+                "source": 1243073,
+                "name": "body-parser",
+                "dependency": "body-parser",
+                "title": "body-parser vulnerable to Denial of Service via trailing bytes after a compressed request body",
+                "url": "https://github.com/advisories/GHSA-27r3-jxmh-p828",
+                "severity": "high",
+                "cwe": [
+                  "CWE-248"
+                ],
+                "cvss": {
+                  "score": 7.5,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": "<1.20.9"
+              }
+            ],
+            "effects": [],
+            "range": "<1.20.9",
+            "nodes": [
+              "node_modules/body-parser"
+            ],
+            "fixAvailable": true
+          },
+          "chromium-bidi": {
+            "name": "chromium-bidi",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              "zod"
+            ],
+            "effects": [
+              "puppeteer",
+              "puppeteer-core"
+            ],
+            "range": "0.5.13 - 157.0.8081-0",
+            "nodes": [
+              "node_modules/chromium-bidi"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          },
+          "extract-zip": {
+            "name": "extract-zip",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              {
+                "source": 1139346,
+                "name": "extract-zip",
+                "dependency": "extract-zip",
+                "title": "extract-zip unvalidated symlink path traversal",
+                "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+                "severity": "high",
+                "cwe": [
+                  "CWE-22"
+                ],
+                "cvss": {
+                  "score": 8.1,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+                },
+                "range": "<=2.0.1"
+              },
+              {
+                "source": 1193685,
+                "name": "extract-zip",
+                "dependency": "extract-zip",
+                "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+                "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+                "severity": "high",
+                "cwe": [
+                  "CWE-22"
+                ],
+                "cvss": {
+                  "score": 8.1,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:H"
+                },
+                "range": "<=2.0.1"
+              }
+            ],
+            "effects": [
+              "@puppeteer/browsers"
+            ],
+            "range": "*",
+            "nodes": [
+              "node_modules/extract-zip"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          },
+          "lighthouse": {
+            "name": "lighthouse",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              "puppeteer-core"
+            ],
+            "effects": [
+              "@lhci/cli",
+              "@lhci/utils"
+            ],
+            "range": "11.7.0-dev.20240320 - 13.3.0",
+            "nodes": [
+              "node_modules/lighthouse"
+            ],
+            "fixAvailable": {
+              "name": "@lhci/cli",
+              "version": "0.13.0",
+              "isSemVerMajor": true
+            }
+          },
+          "puppeteer": {
+            "name": "puppeteer",
+            "severity": "high",
+            "isDirect": true,
+            "via": [
+              "@puppeteer/browsers",
+              "chromium-bidi",
+              "puppeteer-core"
+            ],
+            "effects": [],
+            "range": "19.8.1 - 25.12.0",
+            "nodes": [
+              "node_modules/puppeteer"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          },
+          "puppeteer-core": {
+            "name": "puppeteer-core",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              "@puppeteer/browsers",
+              "chromium-bidi"
+            ],
+            "effects": [
+              "lighthouse",
+              "puppeteer"
+            ],
+            "range": "19.8.4 - 25.12.0",
+            "nodes": [
+              "node_modules/puppeteer-core"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          },
+          "sanity": {
+            "name": "sanity",
+            "severity": "moderate",
+            "isDirect": true,
+            "via": [
+              "@sanity/cli"
+            ],
+            "effects": [],
+            "range": "3.94.1-next.0.6739e10a32 - 3.94.1 || 5.21.1-next.3 - 5.22.0-workbench.20260422143508 || >=6.1.1-next.1",
+            "nodes": [
+              "node_modules/sanity"
+            ],
+            "fixAvailable": {
+              "name": "sanity",
+              "version": "6.1.0",
+              "isSemVerMajor": true
+            }
+          },
+          "undici": {
+            "name": "undici",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              {
+                "source": 1243078,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Denial of Service via unbounded memory in the EventSource parser",
+                "url": "https://github.com/advisories/GHSA-4qv8-2p9j-2685",
+                "severity": "moderate",
+                "cwe": [
+                  "CWE-770"
+                ],
+                "cvss": {
+                  "score": 5.9,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=7.0.0 <7.30.1"
+              },
+              {
+                "source": 1243079,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Denial of Service via unbounded memory in the EventSource parser",
+                "url": "https://github.com/advisories/GHSA-4qv8-2p9j-2685",
+                "severity": "moderate",
+                "cwe": [
+                  "CWE-770"
+                ],
+                "cvss": {
+                  "score": 5.9,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=6.5.0 <6.29.1"
+              },
+              {
+                "source": 1243081,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Subresource Integrity bypass via non-lowercase algorithm tokens",
+                "url": "https://github.com/advisories/GHSA-f72v-6w45-q472",
+                "severity": "moderate",
+                "cwe": [
+                  "CWE-178"
+                ],
+                "cvss": {
+                  "score": 5.9,
+                  "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N"
+                },
+                "range": ">=7.15.0 <7.30.1"
+              },
+              {
+                "source": 1243113,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Denial of Service via unhandled error on excessive content-encodings",
+                "url": "https://github.com/advisories/GHSA-xjj6-f33q-929c",
+                "severity": "high",
+                "cwe": [
+                  "CWE-248",
+                  "CWE-459"
+                ],
+                "cvss": {
+                  "score": 7.5,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=7.18.0 <7.30.1"
+              },
+              {
+                "source": 1243114,
+                "name": "undici",
+                "dependency": "undici",
+                "title": "undici vulnerable to Denial of Service via unhandled error on excessive content-encodings",
+                "url": "https://github.com/advisories/GHSA-xjj6-f33q-929c",
+                "severity": "high",
+                "cwe": [
+                  "CWE-248",
+                  "CWE-459"
+                ],
+                "cvss": {
+                  "score": 7.5,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": ">=6.23.0 <6.29.1"
+              }
+            ],
+            "effects": [
+              "@module-federation/dts-plugin"
+            ],
+            "range": "6.5.0 - 6.29.0 || 7.0.0 - 7.30.0",
+            "nodes": [
+              "node_modules/@actions/github/node_modules/undici",
+              "node_modules/@actions/http-client/node_modules/undici",
+              "node_modules/undici"
+            ],
+            "fixAvailable": {
+              "name": "sanity",
+              "version": "6.1.0",
+              "isSemVerMajor": true
+            }
+          },
+          "zod": {
+            "name": "zod",
+            "severity": "high",
+            "isDirect": true,
+            "via": [
+              {
+                "source": 1243066,
+                "name": "zod",
+                "dependency": "zod",
+                "title": "Zod can exhaust memory while validating oversized constrained collections",
+                "url": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+                "severity": "high",
+                "cwe": [
+                  "CWE-770"
+                ],
+                "cvss": {
+                  "score": 7.5,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": "<4.6.6"
+              }
+            ],
+            "effects": [
+              "chromium-bidi"
+            ],
+            "range": "<4.6.6",
+            "nodes": [
+              "node_modules/chromium-bidi/node_modules/zod",
+              "node_modules/zod"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          }
+        },
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 7,
+            "high": 11,
+            "critical": 0,
+            "total": 18
+          },
+          "dependencies": {
+            "prod": 27,
+            "dev": 1638,
+            "optional": 148,
+            "peer": 11,
+            "peerOptional": 0,
+            "total": 1701
+          }
+        }
+      },
+      "type": "exact unchanged baseline lockfile audit; raw retained; both exit1"
+    },
+    "after": {
+      "production": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {},
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          },
+          "dependencies": {
+            "prod": 27,
+            "dev": 1638,
+            "optional": 148,
+            "peer": 11,
+            "peerOptional": 0,
+            "total": 1701
+          }
+        }
+      },
+      "full": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {
+          "@lhci/cli": {
+            "name": "@lhci/cli",
+            "severity": "high",
+            "isDirect": true,
+            "via": [
+              "@lhci/utils",
+              "lighthouse"
+            ],
+            "effects": [],
+            "range": "<=0.1.1-alpha.5 || >=0.14.0",
+            "nodes": [
+              "node_modules/@lhci/cli"
+            ],
+            "fixAvailable": {
+              "name": "@lhci/cli",
+              "version": "0.13.0",
+              "isSemVerMajor": true
+            }
+          },
+          "@lhci/utils": {
+            "name": "@lhci/utils",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              "lighthouse"
+            ],
+            "effects": [
+              "@lhci/cli"
+            ],
+            "range": ">=0.14.0",
+            "nodes": [
+              "node_modules/@lhci/utils"
+            ],
+            "fixAvailable": {
+              "name": "@lhci/cli",
+              "version": "0.13.0",
+              "isSemVerMajor": true
+            }
+          },
+          "@puppeteer/browsers": {
+            "name": "@puppeteer/browsers",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              "extract-zip"
+            ],
+            "effects": [
+              "puppeteer",
+              "puppeteer-core"
+            ],
+            "range": "<=2.13.2",
+            "nodes": [
+              "node_modules/@puppeteer/browsers"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          },
+          "chromium-bidi": {
+            "name": "chromium-bidi",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              "zod"
+            ],
+            "effects": [
+              "puppeteer",
+              "puppeteer-core"
+            ],
+            "range": "0.5.13 - 157.0.8081-0",
+            "nodes": [
+              "node_modules/chromium-bidi"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          },
+          "extract-zip": {
+            "name": "extract-zip",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              {
+                "source": 1139346,
+                "name": "extract-zip",
+                "dependency": "extract-zip",
+                "title": "extract-zip unvalidated symlink path traversal",
+                "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+                "severity": "high",
+                "cwe": [
+                  "CWE-22"
+                ],
+                "cvss": {
+                  "score": 8.1,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+                },
+                "range": "<=2.0.1"
+              },
+              {
+                "source": 1193685,
+                "name": "extract-zip",
+                "dependency": "extract-zip",
+                "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+                "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+                "severity": "high",
+                "cwe": [
+                  "CWE-22"
+                ],
+                "cvss": {
+                  "score": 8.1,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:H"
+                },
+                "range": "<=2.0.1"
+              }
+            ],
+            "effects": [
+              "@puppeteer/browsers"
+            ],
+            "range": "*",
+            "nodes": [
+              "node_modules/extract-zip"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          },
+          "lighthouse": {
+            "name": "lighthouse",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              "puppeteer-core"
+            ],
+            "effects": [
+              "@lhci/cli",
+              "@lhci/utils"
+            ],
+            "range": "11.7.0-dev.20240320 - 13.3.0",
+            "nodes": [
+              "node_modules/lighthouse"
+            ],
+            "fixAvailable": {
+              "name": "@lhci/cli",
+              "version": "0.13.0",
+              "isSemVerMajor": true
+            }
+          },
+          "puppeteer": {
+            "name": "puppeteer",
+            "severity": "high",
+            "isDirect": true,
+            "via": [
+              "@puppeteer/browsers",
+              "chromium-bidi",
+              "puppeteer-core"
+            ],
+            "effects": [],
+            "range": "19.8.1 - 25.12.0",
+            "nodes": [
+              "node_modules/puppeteer"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          },
+          "puppeteer-core": {
+            "name": "puppeteer-core",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              "@puppeteer/browsers",
+              "chromium-bidi"
+            ],
+            "effects": [
+              "lighthouse",
+              "puppeteer"
+            ],
+            "range": "19.8.4 - 25.12.0",
+            "nodes": [
+              "node_modules/puppeteer-core"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          },
+          "zod": {
+            "name": "zod",
+            "severity": "high",
+            "isDirect": false,
+            "via": [
+              {
+                "source": 1243066,
+                "name": "zod",
+                "dependency": "zod",
+                "title": "Zod can exhaust memory while validating oversized constrained collections",
+                "url": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+                "severity": "high",
+                "cwe": [
+                  "CWE-770"
+                ],
+                "cvss": {
+                  "score": 7.5,
+                  "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+                },
+                "range": "<4.6.6"
+              }
+            ],
+            "effects": [
+              "chromium-bidi"
+            ],
+            "range": "<4.6.6",
+            "nodes": [
+              "node_modules/chromium-bidi/node_modules/zod"
+            ],
+            "fixAvailable": {
+              "name": "puppeteer",
+              "version": "25.16.0",
+              "isSemVerMajor": true
+            }
+          }
+        },
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 9,
+            "critical": 0,
+            "total": 9
+          },
+          "dependencies": {
+            "prod": 27,
+            "dev": 1638,
+            "optional": 148,
+            "peer": 11,
+            "peerOptional": 0,
+            "total": 1701
+          }
+        }
+      },
+      "type": "fresh final installed-tree audit; production exit0/full exit1"
+    }
+  },
+  "checks": [
+    {
+      "check": "Clean dependency install",
+      "status": "PASS",
+      "detail": "Fresh Windows npm ci; 1,568 packages, exact final lockfile",
+      "receipt": {
+        "name": "install-final",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "ci",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:51:26.223Z",
+        "endedAt": "2026-10-24T23:54:26.057Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\install-final.log",
+        "sha256": "713c12704f91268042fade1d91f6147d1e0c2fa3b9c9a62049f24bb8f285bcb7"
+      }
+    },
+    {
+      "check": "Production audit",
+      "status": "PASS",
+      "detail": "Zero findings",
+      "receipt": {
+        "name": "audit-final-production",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "audit",
+          "--omit=dev",
+          "--json"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:55:41.424Z",
+        "endedAt": "2026-10-24T23:55:52.590Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\audit-final-production.log",
+        "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c"
+      }
+    },
+    {
+      "check": "Full audit",
+      "status": "FAIL",
+      "detail": "Nine high affected entries across three residual advisories",
+      "receipt": {
+        "name": "audit-final-full",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "audit",
+          "--json"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:55:52.644Z",
+        "endedAt": "2026-10-24T23:55:54.541Z",
+        "exitCode": 1,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\audit-final-full.log",
+        "sha256": "962685c0edacb8488ed449ca4ed5d1d2eb0be289d89bc76bdc39e32853999ac4"
+      }
+    },
+    {
+      "check": "Static release suite",
+      "status": "PASS",
+      "detail": "Complete aggregate; no skipped TypeScript fixture",
+      "receipt": {
+        "name": "verify-static-final",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "verify:static"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:56:38.927Z",
+        "endedAt": "2026-10-24T23:58:25.874Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\verify-static-final.log",
+        "sha256": "999776d380cd8a31f36cde13110bbeee3cbf25c55e3758886c7ac2119f747e7b"
+      }
+    },
+    {
+      "check": "Legal adoption/parity",
+      "status": "PASS",
+      "detail": "125 adoption cases, 39 parity assertions; offline, not hosted legal parity",
+      "receipt": {
+        "name": "verify-static-final",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "verify:static"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:56:38.927Z",
+        "endedAt": "2026-10-24T23:58:25.874Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\verify-static-final.log",
+        "sha256": "999776d380cd8a31f36cde13110bbeee3cbf25c55e3758886c7ac2119f747e7b"
+      }
+    },
+    {
+      "check": "Company facts",
+      "status": "PASS",
+      "detail": "82 selftest cases; served company-facts browser gate NOT RUN",
+      "receipt": {
+        "name": "verify-static-final",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "verify:static"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:56:38.927Z",
+        "endedAt": "2026-10-24T23:58:25.874Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\verify-static-final.log",
+        "sha256": "999776d380cd8a31f36cde13110bbeee3cbf25c55e3758886c7ac2119f747e7b"
+      }
+    },
+    {
+      "check": "Validation and dependency consumers",
+      "status": "PASS",
+      "detail": "19 resolutions; adverse Zod/Undici and LHCI compressed-request compatibility; existing application fixtures also pass in aggregate",
+      "receipt": {
+        "name": "dependency-consumers-final",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "scripts/check-dependency-overrides.mjs"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:55:41.416Z",
+        "endedAt": "2026-10-24T23:56:00.572Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\dependency-consumers-final.log",
+        "sha256": "41d5515384f61a3ae82ed56ff59cecb1c02cbe610e4971ae688b6fc865fe90fb"
+      }
+    },
+    {
+      "check": "Browser-control fixtures",
+      "status": "PASS",
+      "detail": "411 installation/consumer cases plus 161 Python extraction cases; zero real installer/browser calls",
+      "receipt": {
+        "name": "browser-controls-installed",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "scripts/browser-input.selftest.mjs",
+          "--installed",
+          "--python",
+          "C:\\Users\\atikm\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:55:41.417Z",
+        "endedAt": "2026-10-24T23:55:42.436Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\browser-controls-installed.log",
+        "sha256": "5b595abc90d2ad7dabfa3ff37387341e870cda5b11ddd02e4c2d26941e33cbd8"
+      }
+    },
+    {
+      "check": "Clean normal Next build",
+      "status": "PASS",
+      "detail": "Fresh absent .next; Next 15.5.28; no SSR fault reclassification",
+      "receipt": {
+        "name": "verify-build-final",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "verify:build"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:58:32.272Z",
+        "endedAt": "2026-10-24T23:59:08.806Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\verify-build-final.log",
+        "sha256": "e7bd5667cffd3e8f82261bf03ab07ac5ce88d6f799c78d9999eacae3d3ca1865"
+      }
+    },
+    {
+      "check": "Bundle budgets",
+      "status": "PASS",
+      "detail": "All 69 normal-route budgets and lazy-scene budgets",
+      "receipt": {
+        "name": "verify-build-final",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "verify:build"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:58:32.272Z",
+        "endedAt": "2026-10-24T23:59:08.806Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\verify-build-final.log",
+        "sha256": "e7bd5667cffd3e8f82261bf03ab07ac5ce88d6f799c78d9999eacae3d3ca1865"
+      }
+    },
+    {
+      "check": "Production publication guard",
+      "status": "PASS_EXPECTED_REFUSAL",
+      "detail": "Seven legal documents refused; no deployable artifact",
+      "receipt": {
+        "name": "production-refusal",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "scripts/build-static.mjs"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:59:37.643Z",
+        "endedAt": "2026-10-24T23:59:37.940Z",
+        "exitCode": 1,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\production-refusal.log",
+        "sha256": "c4bd00a0d290d734fff4044adaf641cb3941af5ea7f977148e9863257ad5169b"
+      }
+    },
+    {
+      "check": "Fresh denied static rehearsal",
+      "status": "PASS",
+      "detail": "54 routes, 199 files; sourceModified:true binds uncommitted candidate via separate source digest",
+      "receipt": {
+        "name": "static-rehearsal-final",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "scripts/build-static.mjs"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:59:38.037Z",
+        "endedAt": "2026-10-25T00:00:51.512Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\static-rehearsal-final.log",
+        "sha256": "17d19e28246a67261f8148c44b2f3cf183b66fbf729f4160522f8c0e95452bd5"
+      }
+    },
+    {
+      "check": "Hostinger artifact/contact/error inspection",
+      "status": "PASS",
+      "detail": "Every file hash, denied flags, native contact links/no forms and semantic 404/500; unserved inspection only",
+      "receipt": {
+        "name": "artifact-inspection",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "build/gs-launch-009/artifact-check.mjs"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-25T00:01:43.514Z",
+        "endedAt": "2026-10-25T00:01:54.598Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\artifact-inspection.log",
+        "sha256": "32d421917e41b84f626dca15433ce6ee79531373e9df382687e970cb1ff1b59c"
+      }
+    },
+    {
+      "check": "Browser/keyboard/no-JS/reduced-motion/axe/scenes",
+      "status": "NOT RUN",
+      "detail": "No permitted authenticated browser runtime; historical GS-LAUNCH-007 results not reused as candidate acceptance"
+    },
+    {
+      "check": "Hostinger Apache HTTP regression",
+      "status": "NOT RUN",
+      "detail": "No Apache; existing simulation requires an authorised disposable Linux container"
+    },
+    {
+      "check": "Lighthouse desktop",
+      "status": "NOT RUN",
+      "detail": "Existing Windows SKIPPED branch exits 0; this is not a measured PASS",
+      "receipt": {
+        "name": "lighthouse-windows-desktop",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "scripts/check-lhci.mjs",
+          "desktop"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:56:50.854Z",
+        "endedAt": "2026-10-24T23:56:50.944Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\lighthouse-windows-desktop.log",
+        "sha256": "05b1e283623bc9b509878fa814e4fb762d01138569ac0d5fc1bf221a9382af82"
+      }
+    },
+    {
+      "check": "Lighthouse mobile",
+      "status": "NOT RUN",
+      "detail": "Existing Windows SKIPPED branch exits 0; this is not a measured PASS",
+      "receipt": {
+        "name": "lighthouse-windows-mobile",
+        "command": [
+          "C:\\nvm4w\\nodejs\\node.exe",
+          "scripts/check-lhci.mjs",
+          "mobile"
+        ],
+        "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+        "startedAt": "2026-10-24T23:56:51.002Z",
+        "endedAt": "2026-10-24T23:56:51.090Z",
+        "exitCode": 0,
+        "signal": null,
+        "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\lighthouse-windows-mobile.log",
+        "sha256": "f57e29afba72114d397fe93f40d6cf67007e65e198c44c1289d01a414f247044"
+      }
+    },
+    {
+      "check": "Exact-SHA remote CI/hosted/manual acceptance",
+      "status": "NOT RUN",
+      "detail": "No push/dispatch/deployment authority; remain UNVERIFIED"
+    }
+  ],
+  "artifact": {
+    "status": "PASS",
+    "kind": "fresh unserved artifact inspection; not HTTP/browser acceptance",
+    "deployment": {
+      "phase": "GS-R13-PRODUCTION-PROFILE-001",
+      "sourceSha": "628f502ad5cf1658418964e4456790926844952c",
+      "sourceModified": true,
+      "siteOrigin": "https://gridsmith.uk",
+      "dataset": "production",
+      "legalPreview": false,
+      "contactMode": "direct",
+      "intakeOrigin": null,
+      "profile": "production",
+      "rehearsal": true,
+      "deployable": false,
+      "artifactIdentity": "ea5e6e16d4c65a6bebfbce274397175e487f93d535481896b071d68b3a390626"
+    },
+    "fileCount": 199,
+    "totalBytes": 28695308,
+    "manifestFiles": 198,
+    "deploymentSha256": "dbc3fd8248713fa027e234991731d83904c303333b99118489e2b2979e93d40c",
+    "inspection": {
+      "problems": [
+        "LEGAL: production requires all seven PUBLISHABLE legal documents",
+        "REHEARSAL: rehearsal artifact is not deployable"
+      ],
+      "fileCount": 199,
+      "totalBytes": 28695308,
+      "htmlRoutes": 54,
+      "htmlSizes": {
+        "/": 266342,
+        "/about": 276694,
+        "/approach": 264633,
+        "/contact": 248282,
+        "/design": 396221,
+        "/design/services/3d-modelling": 258439,
+        "/design/services/animation": 257526,
+        "/design/services/brand-identity-systems": 261026,
+        "/design/services/campaign-and-social-creative": 261268,
+        "/design/services/gaming-and-streamer-creative": 258806,
+        "/design/services/graphic-design-and-collateral": 261100,
+        "/design/services/iconography-and-infographics": 259720,
+        "/design/services/illustration": 258708,
+        "/design/services/motion-graphics": 259757,
+        "/design/services/packaging-design": 259136,
+        "/design/services/presentation-design": 259330,
+        "/design/services/product-visualisation": 259378,
+        "/design/services/technical-illustration": 259364,
+        "/digital": 313428,
+        "/digital/services/ai-integration": 260719,
+        "/digital/services/cms-implementation": 259276,
+        "/digital/services/crm-and-workflow-systems": 258028,
+        "/digital/services/custom-software": 258462,
+        "/digital/services/data-and-reporting": 260569,
+        "/digital/services/ecommerce": 260577,
+        "/digital/services/game-development": 259348,
+        "/digital/services/integrations": 258298,
+        "/digital/services/internal-tools-and-dashboards": 258266,
+        "/digital/services/iterative-product-development": 258053,
+        "/digital/services/maintenance-and-monitoring": 260990,
+        "/digital/services/mobile-applications": 261104,
+        "/digital/services/performance-and-accessibility": 260648,
+        "/digital/services/technical-seo": 260631,
+        "/digital/services/web-applications": 258965,
+        "/digital/services/website-design-build": 262932,
+        "/digital/services/workflow-automation": 257789,
+        "/insights": 245029,
+        "/press": 514689,
+        "/press/contact": 249940,
+        "/press/contact/thank-you": 248690,
+        "/press/services/audiobook-production-support": 264782,
+        "/press/services/book-marketing-support": 265556,
+        "/press/services/book-writing-and-development": 262702,
+        "/press/services/content-programmes": 262293,
+        "/press/services/content-seo": 263980,
+        "/press/services/copy-editing-and-proofreading": 264560,
+        "/press/services/cover-design-coordination": 263359,
+        "/press/services/ghostwriting": 264208,
+        "/press/services/manuscript-assessment": 263433,
+        "/press/services/manuscript-development": 262318,
+        "/press/services/publishing-preparation": 267230,
+        "/press/services/thought-leadership-and-reports": 265468,
+        "/press/services/typesetting-and-formatting": 266058,
+        "/press/services/website-and-business-copywriting": 265069
+      }
+    },
+    "contacts": [
+      {
+        "path": "contact.html",
+        "expectedHrefs": [
+          "mailto:contact@gridsmith.uk",
+          "https://wa.me/447405448534",
+          "sms:+447405448534"
+        ],
+        "forms": 0
+      },
+      {
+        "path": "press/contact.html",
+        "expectedHrefs": [
+          "mailto:contact@gridsmith.uk",
+          "https://wa.me/447405448534",
+          "sms:+447405448534"
+        ],
+        "forms": 0
+      },
+      {
+        "path": "press/contact/thank-you.html",
+        "expectedHrefs": [
+          "mailto:contact@gridsmith.uk",
+          "https://wa.me/447405448534"
+        ],
+        "forms": 0
+      }
+    ],
+    "errorPages": [
+      {
+        "path": "404.html",
+        "title": "Page not found — Gridsmith Ltd",
+        "h1": "Page not found"
+      },
+      {
+        "path": "500.html",
+        "title": "Something went wrong — Gridsmith Ltd",
+        "h1": "Something went wrong"
+      }
+    ],
+    "knownSecretValuesChecked": 0,
+    "canonicalLegalHashesUnchanged": 7
+  },
+  "legal": {
+    "documents": [
+      {
+        "slug": "privacy",
+        "path": "docs/_legal/current/privacy-policy.md",
+        "version": "2.6",
+        "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7",
+        "state": "OWNER_ADOPTED"
+      },
+      {
+        "slug": "cookies",
+        "path": "docs/_legal/current/cookie-policy.md",
+        "version": "2.4",
+        "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+        "state": "OWNER_ADOPTED"
+      },
+      {
+        "slug": "terms",
+        "path": "docs/_legal/current/website-terms.md",
+        "version": "2.3",
+        "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+        "state": "OWNER_ADOPTED"
+      },
+      {
+        "slug": "client-terms",
+        "path": "docs/_legal/current/client-terms-applicability.md",
+        "version": "2.3",
+        "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+        "state": "OWNER_ADOPTED"
+      },
+      {
+        "slug": "business-client-terms",
+        "path": "docs/_legal/current/client-terms-business.md",
+        "version": "3.3",
+        "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+        "state": "OWNER_ADOPTED"
+      },
+      {
+        "slug": "consumer-client-terms",
+        "path": "docs/_legal/current/client-terms-consumers.md",
+        "version": "3.3",
+        "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e",
+        "state": "OWNER_ADOPTED"
+      },
+      {
+        "slug": "accessibility",
+        "path": "docs/_legal/current/accessibility-statement.md",
+        "version": "2.3",
+        "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb",
+        "state": "OWNER_ADOPTED"
+      }
+    ],
+    "ownerAdopted": 7,
+    "publishable": 0,
+    "canonicalAndRegisterChanged": false,
+    "evidence": "fresh check-legal-adoption within verify-static-final plus file hashes and git diff"
+  },
+  "preservation": {
+    "protectedPaths": [
+      "app",
+      "components",
+      "lib",
+      "styles",
+      "sanity",
+      "public",
+      "docs/_legal",
+      ".github/workflows"
+    ],
+    "diff": "empty against baseline",
+    "thresholdsAndSpecimensRemoved": 0,
+    "primaryCheckout": "not modified; final status separately retained",
+    "oldRehearsalPromoted": false
+  },
+  "review": {
+    "scope": "independent fresh read-only source and documentation review after Undici additions",
+    "actionableSourceDefects": 0,
+    "testsExecutedByReviewer": false
+  },
+  "retainedFailures": {
+    "pythonAlias": "FAIL: Windows python3 alias exit9009; explicit supported --python option passes",
+    "earlierStaticSuite": "PASS for intermediate Zod/body-parser dependency set; superseded, not final-source evidence",
+    "bodyParserBaseline": "PASS_COMPATIBILITY_ONLY: old-version coordinated fixtures do not reproduce denial of service on this runtime",
+    "sseInitialProof": "INVALID_PROOF: wrong event property; corrected version reaches expected old-package rejection",
+    "sriOldVersion": "Missing expected rejection assertion followed by Windows native teardown0xC0000409; assertion and native fault distinguished; repeated result retained",
+    "decoderOldVersion": "Unhandled Readable socket error on both old Undici majors; patched regression passes",
+    "automaticApproval": {
+      "action": "compound verification command containing conditional recursive .next cleanup",
+      "result": "REJECTED blocked by policy",
+      "commandExecuted": false,
+      "saferCompletion": "Asserted .next absent and built without deletion; no retry of delete or Docker create"
+    }
+  },
+  "residualDecisions": [
+    "Nested Zod3 GHSA-mrhx-c7xc-m3w5",
+    "extract-zip GHSA-jmr9-qjv8-65gv",
+    "extract-zip GHSA-7pqw-9j4j-h8q3"
+  ],
+  "ownerAcceptance": "NONE_RECORDED",
+  "nextTask": "Authorised supported Linux exact-source verification and explicit residual-toolchain disposition before legal-publication preparation",
+  "boundary": {
+    "websiteHost": "Hostinger only",
+    "contactMode": "direct email/WhatsApp/SMS",
+    "formsOrIntakeActivated": false,
+    "analyticsOrReviewsActivated": false,
+    "technicalExclusions": 3,
+    "legalRegisterOrPublicationPrerequisitesModified": false,
+    "productionCmsOrSupabaseWrites": 0,
+    "gitPushes": 0,
+    "ciDispatches": 0,
+    "deployments": 0,
+    "providerWrites": 0,
+    "dnsOrEmailChanges": 0,
+    "wordpressReplacements": 0,
+    "nextPhaseStarted": false
+  },
+  "receipts": [
+    {
+      "name": "zod-baseline-red",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "zod",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:47:07.866Z",
+      "endedAt": "2026-10-24T23:47:09.263Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\zod-baseline-red.log",
+      "sha256": "2f88bc0fb03d27a305213d88fd7f06c286a1bf9eaab9250f5a7dd6ed26251a35"
+    },
+    {
+      "name": "body-baseline-red",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "body",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:47:09.320Z",
+      "endedAt": "2026-10-24T23:47:12.352Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\body-baseline-red.log",
+      "sha256": "e4acff16e053825df4ff3ae41fb63ac1ace023d71e121f7277f13d7f190ac672"
+    },
+    {
+      "name": "body-baseline-no-consumer-red",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "body",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:47:24.037Z",
+      "endedAt": "2026-10-24T23:47:24.232Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\body-baseline-no-consumer-red.log",
+      "sha256": "eba3900d5bf0fa1c43f4f18a8522cb6c2e848dc27333741aaac53b5ef94e36ac"
+    },
+    {
+      "name": "body-baseline-large-tail",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "body",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:48:00.219Z",
+      "endedAt": "2026-10-24T23:48:00.416Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\body-baseline-large-tail.log",
+      "sha256": "eba3900d5bf0fa1c43f4f18a8522cb6c2e848dc27333741aaac53b5ef94e36ac"
+    },
+    {
+      "name": "body-patched",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "body",
+        "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:48:00.518Z",
+      "endedAt": "2026-10-24T23:48:00.713Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\body-patched.log",
+      "sha256": "f06bf7efa9d0c38c0c8721101b764091bc077180110b038fc348c962a00cafbb"
+    },
+    {
+      "name": "dependency-consumers",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "scripts/check-dependency-overrides.mjs"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:47:33.459Z",
+      "endedAt": "2026-10-24T23:48:03.618Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\dependency-consumers.log",
+      "sha256": "374bb566152ed51085d5281f9d00488f28a578aeb5c6505920a8567b4464f05c"
+    },
+    {
+      "name": "audit-after-production",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "audit",
+        "--omit=dev",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:48:41.639Z",
+      "endedAt": "2026-10-24T23:48:56.400Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\audit-after-production.log",
+      "sha256": "d76b30df9a212204eb70a888142aff200531afbf85df793c8646baf325abf603"
+    },
+    {
+      "name": "audit-after-full",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "audit",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:48:56.462Z",
+      "endedAt": "2026-10-24T23:49:00.585Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\audit-after-full.log",
+      "sha256": "47c7e239775ea32f901799f77a287720cffd8bdb50aa0f6db90d9afbe5bf4381"
+    },
+    {
+      "name": "verify-static",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "verify:static"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:48:10.078Z",
+      "endedAt": "2026-10-24T23:50:39.522Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\verify-static.log",
+      "sha256": "e934c79b14cc62b9dd788eb65c12be125c2bde08064632f31bed680183ecb0f9"
+    },
+    {
+      "name": "browser-controls-final",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "scripts/browser-input.selftest.mjs",
+        "--python",
+        "C:\\Users\\atikm\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:52:13.322Z",
+      "endedAt": "2026-10-24T23:52:20.251Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\browser-controls-final.log",
+      "sha256": "c204965abe653ce9d33c55672eee09f30c5a7e578585a7a0bc7088132d16e281"
+    },
+    {
+      "name": "undici-sse-baseline-red",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "undici-sse",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:52:52.657Z",
+      "endedAt": "2026-10-24T23:52:57.490Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\undici-sse-baseline-red.log",
+      "sha256": "31d2639c77b18bd73dc26b3ebc53edade12bc0813fa9db0bd1b99f26eaa11b0d"
+    },
+    {
+      "name": "undici-sri-baseline-red",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "undici-sri",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:52:57.786Z",
+      "endedAt": "2026-10-24T23:52:59.425Z",
+      "exitCode": 3221226505,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\undici-sri-baseline-red.log",
+      "sha256": "f9f3abd03d9b2c2b514f1d3977397ed3e587d4a53649a522cea9796dea05c268"
+    },
+    {
+      "name": "undici-decoder-baseline-red",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "undici-decoder",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:52:59.570Z",
+      "endedAt": "2026-10-24T23:52:59.949Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\undici-decoder-baseline-red.log",
+      "sha256": "f7c37157bd2f862354311633bbc1b75f015f2a81e24e0b0933ebe4591f998417"
+    },
+    {
+      "name": "undici-sri-baseline-repeat",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "undici-sri",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:53:16.633Z",
+      "endedAt": "2026-10-24T23:53:17.342Z",
+      "exitCode": 3221226505,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\undici-sri-baseline-repeat.log",
+      "sha256": "f9f3abd03d9b2c2b514f1d3977397ed3e587d4a53649a522cea9796dea05c268"
+    },
+    {
+      "name": "undici-sse-baseline-corrected",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "undici-sse",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:53:33.529Z",
+      "endedAt": "2026-10-24T23:53:33.864Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\undici-sse-baseline-corrected.log",
+      "sha256": "55fe8aaa1cb4b315e9fd92d68240d00ebb9a060176b920f5fecc4c6fde273d08"
+    },
+    {
+      "name": "install-final",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:51:26.223Z",
+      "endedAt": "2026-10-24T23:54:26.057Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\install-final.log",
+      "sha256": "713c12704f91268042fade1d91f6147d1e0c2fa3b9c9a62049f24bb8f285bcb7"
+    },
+    {
+      "name": "browser-controls-installed",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "scripts/browser-input.selftest.mjs",
+        "--installed",
+        "--python",
+        "C:\\Users\\atikm\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:55:41.417Z",
+      "endedAt": "2026-10-24T23:55:42.436Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\browser-controls-installed.log",
+      "sha256": "5b595abc90d2ad7dabfa3ff37387341e870cda5b11ddd02e4c2d26941e33cbd8"
+    },
+    {
+      "name": "audit-final-production",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "audit",
+        "--omit=dev",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:55:41.424Z",
+      "endedAt": "2026-10-24T23:55:52.590Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\audit-final-production.log",
+      "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c"
+    },
+    {
+      "name": "audit-final-full",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "audit",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:55:52.644Z",
+      "endedAt": "2026-10-24T23:55:54.541Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\audit-final-full.log",
+      "sha256": "962685c0edacb8488ed449ca4ed5d1d2eb0be289d89bc76bdc39e32853999ac4"
+    },
+    {
+      "name": "dependency-consumers-final",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "scripts/check-dependency-overrides.mjs"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:55:41.416Z",
+      "endedAt": "2026-10-24T23:56:00.572Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\dependency-consumers-final.log",
+      "sha256": "41d5515384f61a3ae82ed56ff59cecb1c02cbe610e4971ae688b6fc865fe90fb"
+    },
+    {
+      "name": "dependency-paths",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "ls",
+        "zod",
+        "body-parser",
+        "undici",
+        "extract-zip",
+        "--all",
+        "--json"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:56:49.068Z",
+      "endedAt": "2026-10-24T23:56:50.791Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\dependency-paths.log",
+      "sha256": "76d616a840c5ba546e66728c73c1697b7e2fd34563b61c04c249362505281f46"
+    },
+    {
+      "name": "lighthouse-windows-desktop",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "scripts/check-lhci.mjs",
+        "desktop"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:56:50.854Z",
+      "endedAt": "2026-10-24T23:56:50.944Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\lighthouse-windows-desktop.log",
+      "sha256": "05b1e283623bc9b509878fa814e4fb762d01138569ac0d5fc1bf221a9382af82"
+    },
+    {
+      "name": "lighthouse-windows-mobile",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "scripts/check-lhci.mjs",
+        "mobile"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:56:51.002Z",
+      "endedAt": "2026-10-24T23:56:51.090Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\lighthouse-windows-mobile.log",
+      "sha256": "f57e29afba72114d397fe93f40d6cf67007e65e198c44c1289d01a414f247044"
+    },
+    {
+      "name": "verify-static-final",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "verify:static"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:56:38.927Z",
+      "endedAt": "2026-10-24T23:58:25.874Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\verify-static-final.log",
+      "sha256": "999776d380cd8a31f36cde13110bbeee3cbf25c55e3758886c7ac2119f747e7b"
+    },
+    {
+      "name": "verify-build-final",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "C:\\nvm4w\\nodejs\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "verify:build"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:58:32.272Z",
+      "endedAt": "2026-10-24T23:59:08.806Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\verify-build-final.log",
+      "sha256": "e7bd5667cffd3e8f82261bf03ab07ac5ce88d6f799c78d9999eacae3d3ca1865"
+    },
+    {
+      "name": "production-refusal",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "scripts/build-static.mjs"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:59:37.643Z",
+      "endedAt": "2026-10-24T23:59:37.940Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\production-refusal.log",
+      "sha256": "c4bd00a0d290d734fff4044adaf641cb3941af5ea7f977148e9863257ad5169b"
+    },
+    {
+      "name": "undici6-sse-baseline-red",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "undici-sse",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local",
+        "@actions/github"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-25T00:00:10.932Z",
+      "endedAt": "2026-10-25T00:00:12.219Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\undici6-sse-baseline-red.log",
+      "sha256": "7582bcc692cbf365604f5536a09cc5bd4edd564ec10f03f8cf0ea51e398c9dd4"
+    },
+    {
+      "name": "undici6-decoder-baseline-red",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/fixture-proof.mjs",
+        "undici-decoder",
+        "C:\\Users\\atikm\\AppData\\Local\\Temp\\gs-launch-009-local",
+        "@actions/github"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-25T00:00:12.276Z",
+      "endedAt": "2026-10-25T00:00:12.422Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\undici6-decoder-baseline-red.log",
+      "sha256": "13be520de1dc56e7bed939c4eece182324a1e4045b270786a523b3abaaf7d15f"
+    },
+    {
+      "name": "static-rehearsal-final",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "scripts/build-static.mjs"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-24T23:59:38.037Z",
+      "endedAt": "2026-10-25T00:00:51.512Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\static-rehearsal-final.log",
+      "sha256": "17d19e28246a67261f8148c44b2f3cf183b66fbf729f4160522f8c0e95452bd5"
+    },
+    {
+      "name": "artifact-inspection",
+      "command": [
+        "C:\\nvm4w\\nodejs\\node.exe",
+        "build/gs-launch-009/artifact-check.mjs"
+      ],
+      "cwd": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd",
+      "startedAt": "2026-10-25T00:01:43.514Z",
+      "endedAt": "2026-10-25T00:01:54.598Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-009\\Gridsmith Ltd\\build\\gs-launch-009\\artifact-inspection.log",
+      "sha256": "32d421917e41b84f626dca15433ce6ee79531373e9df382687e970cb1ff1b59c"
+    }
+  ],
+  "rawEvidenceFiles": [
+    {
+      "path": "build/gs-launch-009/artifact-check.mjs",
+      "sha256": "2dfbda384a612fa55ec49028f9314cb0d2eb64b5b52ecba1cedb868d64b8e48f"
+    },
+    {
+      "path": "build/gs-launch-009/artifact-inspection.json",
+      "sha256": "d7e0acb67502fcc67ef92d7cc43210dca9322fb7e858401cd920e38edd47231a"
+    },
+    {
+      "path": "build/gs-launch-009/artifact-inspection.log",
+      "sha256": "32d421917e41b84f626dca15433ce6ee79531373e9df382687e970cb1ff1b59c"
+    },
+    {
+      "path": "build/gs-launch-009/audit-after-full.log",
+      "sha256": "47c7e239775ea32f901799f77a287720cffd8bdb50aa0f6db90d9afbe5bf4381"
+    },
+    {
+      "path": "build/gs-launch-009/audit-after-production.log",
+      "sha256": "d76b30df9a212204eb70a888142aff200531afbf85df793c8646baf325abf603"
+    },
+    {
+      "path": "build/gs-launch-009/audit-before-full.json",
+      "sha256": "00ed971b04424bb84535628a13334b1cdae3c4589c5030ed1739d770bb8f6a26"
+    },
+    {
+      "path": "build/gs-launch-009/audit-before-production.json",
+      "sha256": "459955d2c156f1354e1be7720c2a124dab3bc3a23c8ceff5de942d3bba230aac"
+    },
+    {
+      "path": "build/gs-launch-009/audit-final-full.log",
+      "sha256": "962685c0edacb8488ed449ca4ed5d1d2eb0be289d89bc76bdc39e32853999ac4"
+    },
+    {
+      "path": "build/gs-launch-009/audit-final-production.log",
+      "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c"
+    },
+    {
+      "path": "build/gs-launch-009/body-baseline-large-tail.log",
+      "sha256": "eba3900d5bf0fa1c43f4f18a8522cb6c2e848dc27333741aaac53b5ef94e36ac"
+    },
+    {
+      "path": "build/gs-launch-009/body-baseline-no-consumer-red.log",
+      "sha256": "eba3900d5bf0fa1c43f4f18a8522cb6c2e848dc27333741aaac53b5ef94e36ac"
+    },
+    {
+      "path": "build/gs-launch-009/body-baseline-red.log",
+      "sha256": "e4acff16e053825df4ff3ae41fb63ac1ace023d71e121f7277f13d7f190ac672"
+    },
+    {
+      "path": "build/gs-launch-009/body-patched.log",
+      "sha256": "f06bf7efa9d0c38c0c8721101b764091bc077180110b038fc348c962a00cafbb"
+    },
+    {
+      "path": "build/gs-launch-009/browser-controls-final.log",
+      "sha256": "c204965abe653ce9d33c55672eee09f30c5a7e578585a7a0bc7088132d16e281"
+    },
+    {
+      "path": "build/gs-launch-009/browser-controls-installed.log",
+      "sha256": "5b595abc90d2ad7dabfa3ff37387341e870cda5b11ddd02e4c2d26941e33cbd8"
+    },
+    {
+      "path": "build/gs-launch-009/browser-controls-python312.log",
+      "sha256": "e5177edc3b3f4ab5719fc847d3a2ad98c7c17166b5fa66c1008b8913bbd92209"
+    },
+    {
+      "path": "build/gs-launch-009/browser-controls-selftest.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "build/gs-launch-009/clean-build.json",
+      "sha256": "4a4646843ad795d65c3735d5baa4072c5adccbf6fe6b68b0a452760886fede30"
+    },
+    {
+      "path": "build/gs-launch-009/dependency-consumers-final.log",
+      "sha256": "41d5515384f61a3ae82ed56ff59cecb1c02cbe610e4971ae688b6fc865fe90fb"
+    },
+    {
+      "path": "build/gs-launch-009/dependency-consumers.log",
+      "sha256": "374bb566152ed51085d5281f9d00488f28a578aeb5c6505920a8567b4464f05c"
+    },
+    {
+      "path": "build/gs-launch-009/dependency-paths.log",
+      "sha256": "76d616a840c5ba546e66728c73c1697b7e2fd34563b61c04c249362505281f46"
+    },
+    {
+      "path": "build/gs-launch-009/evidence.mjs",
+      "sha256": "163223238e1b9a902b2682703a0d2864e94d5137d425ffe300b1a26c0ff064aa"
+    },
+    {
+      "path": "build/gs-launch-009/fixture-proof.mjs",
+      "sha256": "0cd00d0fdd0656e44116671c2ceb2893457419e064bf21858abb2e08f28802ad"
+    },
+    {
+      "path": "build/gs-launch-009/install-after.json",
+      "sha256": "3886c00f31ddd35e78200986494f68d69a1202996f40e4343476036f852abf55"
+    },
+    {
+      "path": "build/gs-launch-009/install-after.log",
+      "sha256": "a55e727c1bff1c40313c8c355e481933678dfc3f7bcc8a44866446b3948cf1f2"
+    },
+    {
+      "path": "build/gs-launch-009/install-before.json",
+      "sha256": "8caeb1bae40fcab1387a824f3c516c5fad10ccecef24110f304ddcf4c3598676"
+    },
+    {
+      "path": "build/gs-launch-009/install-before.log",
+      "sha256": "bc63fc77d45f92d47c9ca72acdaa65bbbdc853b4f1c04014608f3e95d22fa1b5"
+    },
+    {
+      "path": "build/gs-launch-009/install-final.log",
+      "sha256": "713c12704f91268042fade1d91f6147d1e0c2fa3b9c9a62049f24bb8f285bcb7"
+    },
+    {
+      "path": "build/gs-launch-009/junction-preserved.json",
+      "sha256": "7a033327b2a56f2fa9e6b15873347700c072e1e5412dbf00a1a96186a96f8654"
+    },
+    {
+      "path": "build/gs-launch-009/lighthouse-windows-desktop.log",
+      "sha256": "05b1e283623bc9b509878fa814e4fb762d01138569ac0d5fc1bf221a9382af82"
+    },
+    {
+      "path": "build/gs-launch-009/lighthouse-windows-mobile.log",
+      "sha256": "f57e29afba72114d397fe93f40d6cf67007e65e198c44c1289d01a414f247044"
+    },
+    {
+      "path": "build/gs-launch-009/preservation-final.json",
+      "sha256": "4d5675bb27a751953c7f58a0948723a7da754e2b12f7575a4d17d12d72948d97"
+    },
+    {
+      "path": "build/gs-launch-009/production-refusal.log",
+      "sha256": "c4bd00a0d290d734fff4044adaf641cb3941af5ea7f977148e9863257ad5169b"
+    },
+    {
+      "path": "build/gs-launch-009/run.mjs",
+      "sha256": "f0bdfffcb165f5c0f3b1999fc274d91855c325325271f43488235da076701efa"
+    },
+    {
+      "path": "build/gs-launch-009/runs.jsonl",
+      "sha256": "48d50125280a859be7b972d8fce5a3167a2267a6f7a6d8ddedff7546d4044e18"
+    },
+    {
+      "path": "build/gs-launch-009/source-inventory.json",
+      "sha256": "ddb9c9c3a0fcaf10c27001760827bf3befbc68d64e656e40ea69fa8a401bf8d0"
+    },
+    {
+      "path": "build/gs-launch-009/static-before.log",
+      "sha256": "749b628a0109c4860be4de7294e34917c29d20842be53cf321de4f3deb467c7a"
+    },
+    {
+      "path": "build/gs-launch-009/static-rehearsal-final.log",
+      "sha256": "17d19e28246a67261f8148c44b2f3cf183b66fbf729f4160522f8c0e95452bd5"
+    },
+    {
+      "path": "build/gs-launch-009/undici-decoder-baseline-red.log",
+      "sha256": "f7c37157bd2f862354311633bbc1b75f015f2a81e24e0b0933ebe4591f998417"
+    },
+    {
+      "path": "build/gs-launch-009/undici-sri-baseline-red.log",
+      "sha256": "f9f3abd03d9b2c2b514f1d3977397ed3e587d4a53649a522cea9796dea05c268"
+    },
+    {
+      "path": "build/gs-launch-009/undici-sri-baseline-repeat.log",
+      "sha256": "f9f3abd03d9b2c2b514f1d3977397ed3e587d4a53649a522cea9796dea05c268"
+    },
+    {
+      "path": "build/gs-launch-009/undici-sse-baseline-corrected.log",
+      "sha256": "55fe8aaa1cb4b315e9fd92d68240d00ebb9a060176b920f5fecc4c6fde273d08"
+    },
+    {
+      "path": "build/gs-launch-009/undici-sse-baseline-red.log",
+      "sha256": "31d2639c77b18bd73dc26b3ebc53edade12bc0813fa9db0bd1b99f26eaa11b0d"
+    },
+    {
+      "path": "build/gs-launch-009/undici6-decoder-baseline-red.log",
+      "sha256": "13be520de1dc56e7bed939c4eece182324a1e4045b270786a523b3abaaf7d15f"
+    },
+    {
+      "path": "build/gs-launch-009/undici6-sse-baseline-red.log",
+      "sha256": "7582bcc692cbf365604f5536a09cc5bd4edd564ec10f03f8cf0ea51e398c9dd4"
+    },
+    {
+      "path": "build/gs-launch-009/update-body-parser.log",
+      "sha256": "aa914bd24a52c044220260904ea8e7dd30d4665802a5c1bd8c4b3daf107c6d86"
+    },
+    {
+      "path": "build/gs-launch-009/update-undici.log",
+      "sha256": "3d25943dd56ffdb29fce03752a77b71c040c2713d4cd625676654b5e14d3ab4d"
+    },
+    {
+      "path": "build/gs-launch-009/update-zod.log",
+      "sha256": "3dc91496e4171a1abbecce5a3f87bdbccd678e2163a3152028b5de4bb3bf4a7a"
+    },
+    {
+      "path": "build/gs-launch-009/verify-build-final.log",
+      "sha256": "e7bd5667cffd3e8f82261bf03ab07ac5ce88d6f799c78d9999eacae3d3ca1865"
+    },
+    {
+      "path": "build/gs-launch-009/verify-static-final.log",
+      "sha256": "999776d380cd8a31f36cde13110bbeee3cbf25c55e3758886c7ac2119f747e7b"
+    },
+    {
+      "path": "build/gs-launch-009/verify-static.log",
+      "sha256": "e934c79b14cc62b9dd788eb65c12be125c2bde08064632f31bed680183ecb0f9"
+    },
+    {
+      "path": "build/gs-launch-009/zod-baseline-red.log",
+      "sha256": "2f88bc0fb03d27a305213d88fd7f06c286a1bf9eaab9250f5a7dd6ed26251a35"
+    }
+  ]
+}

@@ -1,0 +1,1865 @@
+{
+  "phase": "GS-LAUNCH-017",
+  "classification": "LOCAL VALIDATION CANDIDATE — NOT AN UPLOAD RELEASE",
+  "directory": "C:/Users/atikm/.codex/worktrees/gs-launch-017/Gridsmith Ltd/build/owner-preview-candidate",
+  "sourceSha": "9f2df255602ea9b92d9aa3e9d72909896e05fc78",
+  "sourceModified": false,
+  "siteOrigin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+  "profile": "owner-preview",
+  "deployable": false,
+  "releaseStatus": "ACCEPTANCE_PENDING",
+  "rehearsal": false,
+  "fileCount": 214,
+  "totalBytes": 31921824,
+  "eligibleRoutes": [
+    {
+      "path": "/",
+      "contentType": "page",
+      "sourceId": "companyDetails",
+      "slug": null,
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/about",
+      "contentType": "groupPage",
+      "sourceId": "grouppage-about",
+      "slug": null,
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "OYqJMxSgjqUZpSF35PObJk"
+    },
+    {
+      "path": "/approach",
+      "contentType": "groupPage",
+      "sourceId": "grouppage-approach",
+      "slug": null,
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "OYqJMxSgjqUZpSF35PObJk"
+    },
+    {
+      "path": "/contact",
+      "contentType": "page",
+      "sourceId": "companyDetails",
+      "slug": null,
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design",
+      "contentType": "page",
+      "sourceId": "companyDetails",
+      "slug": null,
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/3d-modelling",
+      "contentType": "service",
+      "sourceId": "service-design-3d-modelling",
+      "slug": "3d-modelling",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/animation",
+      "contentType": "service",
+      "sourceId": "service-design-animation",
+      "slug": "animation",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/brand-identity-systems",
+      "contentType": "service",
+      "sourceId": "service-design-brand-identity-systems",
+      "slug": "brand-identity-systems",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/campaign-and-social-creative",
+      "contentType": "service",
+      "sourceId": "service-design-campaign-and-social-creative",
+      "slug": "campaign-and-social-creative",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/gaming-and-streamer-creative",
+      "contentType": "service",
+      "sourceId": "service-design-gaming-and-streamer-creative",
+      "slug": "gaming-and-streamer-creative",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/graphic-design-and-collateral",
+      "contentType": "service",
+      "sourceId": "service-design-graphic-design-and-collateral",
+      "slug": "graphic-design-and-collateral",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/iconography-and-infographics",
+      "contentType": "service",
+      "sourceId": "service-design-iconography-and-infographics",
+      "slug": "iconography-and-infographics",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/illustration",
+      "contentType": "service",
+      "sourceId": "service-design-illustration",
+      "slug": "illustration",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/motion-graphics",
+      "contentType": "service",
+      "sourceId": "service-design-motion-graphics",
+      "slug": "motion-graphics",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/packaging-design",
+      "contentType": "service",
+      "sourceId": "service-design-packaging-design",
+      "slug": "packaging-design",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/presentation-design",
+      "contentType": "service",
+      "sourceId": "service-design-presentation-design",
+      "slug": "presentation-design",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/product-visualisation",
+      "contentType": "service",
+      "sourceId": "service-design-product-visualisation",
+      "slug": "product-visualisation",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/design/services/technical-illustration",
+      "contentType": "service",
+      "sourceId": "service-design-technical-illustration",
+      "slug": "technical-illustration",
+      "division": "design",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital",
+      "contentType": "page",
+      "sourceId": "companyDetails",
+      "slug": null,
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/ai-integration",
+      "contentType": "service",
+      "sourceId": "service-digital-ai-integration",
+      "slug": "ai-integration",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/cms-implementation",
+      "contentType": "service",
+      "sourceId": "service-digital-cms-implementation",
+      "slug": "cms-implementation",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/crm-and-workflow-systems",
+      "contentType": "service",
+      "sourceId": "service-digital-crm-and-workflow-systems",
+      "slug": "crm-and-workflow-systems",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/custom-software",
+      "contentType": "service",
+      "sourceId": "service-digital-custom-software",
+      "slug": "custom-software",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/data-and-reporting",
+      "contentType": "service",
+      "sourceId": "service-digital-data-and-reporting",
+      "slug": "data-and-reporting",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/ecommerce",
+      "contentType": "service",
+      "sourceId": "service-digital-ecommerce",
+      "slug": "ecommerce",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/game-development",
+      "contentType": "service",
+      "sourceId": "service-digital-game-development",
+      "slug": "game-development",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/integrations",
+      "contentType": "service",
+      "sourceId": "service-digital-integrations",
+      "slug": "integrations",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/internal-tools-and-dashboards",
+      "contentType": "service",
+      "sourceId": "service-digital-internal-tools-and-dashboards",
+      "slug": "internal-tools-and-dashboards",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/iterative-product-development",
+      "contentType": "service",
+      "sourceId": "service-digital-iterative-product-development",
+      "slug": "iterative-product-development",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/maintenance-and-monitoring",
+      "contentType": "service",
+      "sourceId": "service-digital-maintenance-and-monitoring",
+      "slug": "maintenance-and-monitoring",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/mobile-applications",
+      "contentType": "service",
+      "sourceId": "service-digital-mobile-applications",
+      "slug": "mobile-applications",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/performance-and-accessibility",
+      "contentType": "service",
+      "sourceId": "service-digital-performance-and-accessibility",
+      "slug": "performance-and-accessibility",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/technical-seo",
+      "contentType": "service",
+      "sourceId": "service-digital-technical-seo",
+      "slug": "technical-seo",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/web-applications",
+      "contentType": "service",
+      "sourceId": "service-digital-web-applications",
+      "slug": "web-applications",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/website-design-build",
+      "contentType": "service",
+      "sourceId": "service-digital-website-design-build",
+      "slug": "website-design-build",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/digital/services/workflow-automation",
+      "contentType": "service",
+      "sourceId": "service-digital-workflow-automation",
+      "slug": "workflow-automation",
+      "division": "digital",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/insights",
+      "contentType": "page",
+      "sourceId": "companyDetails",
+      "slug": null,
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": false,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/legal/accessibility",
+      "contentType": "legalDocument",
+      "sourceId": null,
+      "slug": "accessibility",
+      "eligible": true,
+      "gate": "GS-O003-R-OWNER-PREVIEW",
+      "reason": "GS-LAUNCH-017 owner-authorised preview; production publication held",
+      "sitemap": false,
+      "revision": null
+    },
+    {
+      "path": "/legal/business-client-terms",
+      "contentType": "legalDocument",
+      "sourceId": null,
+      "slug": "business-client-terms",
+      "eligible": true,
+      "gate": "GS-O003-R-OWNER-PREVIEW",
+      "reason": "GS-LAUNCH-017 owner-authorised preview; production publication held",
+      "sitemap": false,
+      "revision": null
+    },
+    {
+      "path": "/legal/client-terms",
+      "contentType": "legalDocument",
+      "sourceId": null,
+      "slug": "client-terms",
+      "eligible": true,
+      "gate": "GS-O003-R-OWNER-PREVIEW",
+      "reason": "GS-LAUNCH-017 owner-authorised preview; production publication held",
+      "sitemap": false,
+      "revision": null
+    },
+    {
+      "path": "/legal/consumer-client-terms",
+      "contentType": "legalDocument",
+      "sourceId": null,
+      "slug": "consumer-client-terms",
+      "eligible": true,
+      "gate": "GS-O003-R-OWNER-PREVIEW",
+      "reason": "GS-LAUNCH-017 owner-authorised preview; production publication held",
+      "sitemap": false,
+      "revision": null
+    },
+    {
+      "path": "/legal/cookies",
+      "contentType": "legalDocument",
+      "sourceId": null,
+      "slug": "cookies",
+      "eligible": true,
+      "gate": "GS-O003-R-OWNER-PREVIEW",
+      "reason": "GS-LAUNCH-017 owner-authorised preview; production publication held",
+      "sitemap": false,
+      "revision": null
+    },
+    {
+      "path": "/legal/privacy",
+      "contentType": "legalDocument",
+      "sourceId": null,
+      "slug": "privacy",
+      "eligible": true,
+      "gate": "GS-O003-R-OWNER-PREVIEW",
+      "reason": "GS-LAUNCH-017 owner-authorised preview; production publication held",
+      "sitemap": false,
+      "revision": null
+    },
+    {
+      "path": "/legal/terms",
+      "contentType": "legalDocument",
+      "sourceId": null,
+      "slug": "terms",
+      "eligible": true,
+      "gate": "GS-O003-R-OWNER-PREVIEW",
+      "reason": "GS-LAUNCH-017 owner-authorised preview; production publication held",
+      "sitemap": false,
+      "revision": null
+    },
+    {
+      "path": "/press",
+      "contentType": "page",
+      "sourceId": "companyDetails",
+      "slug": null,
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/contact",
+      "contentType": "page",
+      "sourceId": "companyDetails",
+      "slug": null,
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/contact/thank-you",
+      "contentType": "page",
+      "sourceId": "companyDetails",
+      "slug": null,
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": false,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/audiobook-production-support",
+      "contentType": "service",
+      "sourceId": "service-press-audiobook-production-support",
+      "slug": "audiobook-production-support",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/book-marketing-support",
+      "contentType": "service",
+      "sourceId": "service-press-book-marketing-support",
+      "slug": "book-marketing-support",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/book-writing-and-development",
+      "contentType": "service",
+      "sourceId": "service-press-book-writing-and-development",
+      "slug": "book-writing-and-development",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/content-programmes",
+      "contentType": "service",
+      "sourceId": "service-press-content-programmes",
+      "slug": "content-programmes",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/content-seo",
+      "contentType": "service",
+      "sourceId": "service-press-content-seo",
+      "slug": "content-seo",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/copy-editing-and-proofreading",
+      "contentType": "service",
+      "sourceId": "service-press-copy-editing-and-proofreading",
+      "slug": "copy-editing-and-proofreading",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/cover-design-coordination",
+      "contentType": "service",
+      "sourceId": "service-press-cover-design-coordination",
+      "slug": "cover-design-coordination",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/ghostwriting",
+      "contentType": "service",
+      "sourceId": "service-press-ghostwriting",
+      "slug": "ghostwriting",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/manuscript-assessment",
+      "contentType": "service",
+      "sourceId": "service-press-manuscript-assessment",
+      "slug": "manuscript-assessment",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/manuscript-development",
+      "contentType": "service",
+      "sourceId": "service-press-manuscript-development",
+      "slug": "manuscript-development",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/publishing-preparation",
+      "contentType": "service",
+      "sourceId": "service-press-publishing-preparation",
+      "slug": "publishing-preparation",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/thought-leadership-and-reports",
+      "contentType": "service",
+      "sourceId": "service-press-thought-leadership-and-reports",
+      "slug": "thought-leadership-and-reports",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/typesetting-and-formatting",
+      "contentType": "service",
+      "sourceId": "service-press-typesetting-and-formatting",
+      "slug": "typesetting-and-formatting",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    },
+    {
+      "path": "/press/services/website-and-business-copywriting",
+      "contentType": "service",
+      "sourceId": "service-press-website-and-business-copywriting",
+      "slug": "website-and-business-copywriting",
+      "division": "press",
+      "eligible": true,
+      "gate": null,
+      "reason": null,
+      "sitemap": true,
+      "revision": "0BiMQiPM5rorSeZsxnHEvi"
+    }
+  ],
+  "excludedRoutes": [
+    {
+      "path": "/design/services/cad-drafting",
+      "contentType": "service",
+      "sourceId": "service-design-cad-drafting",
+      "slug": "cad-drafting",
+      "division": "design",
+      "eligible": false,
+      "gate": "GS-X002",
+      "reason": "Technical group: limited professional scope not yet confirmed by review",
+      "sitemap": false,
+      "revision": null
+    },
+    {
+      "path": "/design/services/engineering-drawings",
+      "contentType": "service",
+      "sourceId": "service-design-engineering-drawings",
+      "slug": "engineering-drawings",
+      "division": "design",
+      "eligible": false,
+      "gate": "GS-X002",
+      "reason": "Technical group: limited professional scope not yet confirmed by review",
+      "sitemap": false,
+      "revision": null
+    },
+    {
+      "path": "/design/services/technical-documentation",
+      "contentType": "service",
+      "sourceId": "service-design-technical-documentation",
+      "slug": "technical-documentation",
+      "division": "design",
+      "eligible": false,
+      "gate": "GS-X002",
+      "reason": "Technical group: limited professional scope not yet confirmed by review",
+      "sitemap": false,
+      "revision": null
+    }
+  ],
+  "artifactIdentity": "f3cc8ecf061b9bf73bc551610066f08d17c9d5fbd50f86421a135bf9babb3b80",
+  "payloadIdentityFileCount": 213,
+  "completeFileInventorySha256": "7a00f0d04757ffa85b7c0148d86badbd5aec8d7c8fc63506b31f3472d0ef2bb8",
+  "extensionCounts": {
+    "json": 1,
+    "js": 40,
+    "css": 8,
+    "woff2": 19,
+    "htaccess": 1,
+    "html": 63,
+    "txt": 62,
+    "png": 9,
+    "svg": 7,
+    "webp": 1,
+    "ico": 1,
+    "webmanifest": 1,
+    "xml": 1
+  },
+  "archive": {
+    "created": false,
+    "filename": null,
+    "sha256": null,
+    "reason": "Retained preview acceptance is incomplete; no archive authorised by passed checks."
+  },
+  "files": [
+    {
+      "path": "__deployment.json",
+      "bytes": 30374,
+      "sha256": "60fedffcb66cbab31b513438ec710b1a467298e413b14ebdb3ed73c8e5d6349f"
+    },
+    {
+      "path": "_next/static/chunks/18-5c13daad43432ed4.js",
+      "bytes": 174198,
+      "sha256": "0aa4ccf3db7fc489c155d8ffa2e50f97b7cf285b4913a4d1b3bdb633c52bc241"
+    },
+    {
+      "path": "_next/static/chunks/196.d22fc63e5806f1db.js",
+      "bytes": 18786,
+      "sha256": "06deb63e193b7032f5de91216a238ab2828afe4ef19b6faee79431794d531d7a"
+    },
+    {
+      "path": "_next/static/chunks/451.4577c57751d3c1ac.js",
+      "bytes": 17580,
+      "sha256": "6c4d160d59b056d01ebd4e07ebe88f70dfcb89fc94641f716b73013a9ca36308"
+    },
+    {
+      "path": "_next/static/chunks/469-6efc20edd8ab5975.js",
+      "bytes": 4778,
+      "sha256": "9d353f0771d5ab8bf67e22341e72704a0fd494348cde814b448a160f5b9172a1"
+    },
+    {
+      "path": "_next/static/chunks/578-2b80aef3796a7808.js",
+      "bytes": 5259,
+      "sha256": "d1fd2808f055f34587996bee72a0bc351cfcaffbe528fbab130ec801c3b1f845"
+    },
+    {
+      "path": "_next/static/chunks/655.3fc65d6d0da75415.js",
+      "bytes": 740,
+      "sha256": "beae22acd5fceca86b719f8e6d0adbb33a6a7173a91e65f32ab234af99b621bf"
+    },
+    {
+      "path": "_next/static/chunks/826.20e7545f83ce1c50.js",
+      "bytes": 5444,
+      "sha256": "b98426ebbc42e3a6073dc5ee4a6e9e247d8d6a7089b124758db0d90e6e09736d"
+    },
+    {
+      "path": "_next/static/chunks/87c73c54-24122e7b92478d00.js",
+      "bytes": 173019,
+      "sha256": "0d30e73d8f3c24eee6941dd0861b15e22d943c0aec3bfc571eecfecb0e06b7c3"
+    },
+    {
+      "path": "_next/static/chunks/app/_not-found/page-68c3bc869b739e8e.js",
+      "bytes": 135,
+      "sha256": "9154d06d84ba2e97e5c3a6a9d01a600b8975459cdd023dbaa32e5b5530f71dea"
+    },
+    {
+      "path": "_next/static/chunks/app/(design)/design/page-f8811c2659868ac4.js",
+      "bytes": 2787,
+      "sha256": "0923b5e926327605b031dcc5301eef1955f54aed9d72c41f8892567883fb4782"
+    },
+    {
+      "path": "_next/static/chunks/app/(design)/design/services/[slug]/page-54df20f9960d93cd.js",
+      "bytes": 4679,
+      "sha256": "fee01ea4059e244a5c49823bbb00f98827bbf85538daa39d045ef9832c042c48"
+    },
+    {
+      "path": "_next/static/chunks/app/(design)/layout-f7760e76b4e87901.js",
+      "bytes": 131,
+      "sha256": "90949f89cedff7c4938d1ecf5aaff36093438c98d0527848582eeed35bea84ea"
+    },
+    {
+      "path": "_next/static/chunks/app/(digital)/digital/page-a02fc97c727c4e28.js",
+      "bytes": 8173,
+      "sha256": "c1016e6162c1d81f639075914b1b45eda934614ddce1d8395beeaaa460bc8b34"
+    },
+    {
+      "path": "_next/static/chunks/app/(digital)/digital/services/[slug]/page-54df20f9960d93cd.js",
+      "bytes": 4679,
+      "sha256": "fee01ea4059e244a5c49823bbb00f98827bbf85538daa39d045ef9832c042c48"
+    },
+    {
+      "path": "_next/static/chunks/app/(digital)/layout-37d605c6289b9c39.js",
+      "bytes": 131,
+      "sha256": "e2b8622c4d7e747c96f399992b2f09eec9847d3528303a91394da0fbbc3765f4"
+    },
+    {
+      "path": "_next/static/chunks/app/(marketing)/about/page-af971f01b83c2bc9.js",
+      "bytes": 4636,
+      "sha256": "da767f42c593a77ff7ff9209a6c632ae8219e851816d154da594d8c0a703e1a3"
+    },
+    {
+      "path": "_next/static/chunks/app/(marketing)/approach/page-ba59b593d7d21df7.js",
+      "bytes": 3847,
+      "sha256": "ef3320e5785edb90764e9617adda01e2728af30e3b68e78e7040ff1b8b4cfcc5"
+    },
+    {
+      "path": "_next/static/chunks/app/(marketing)/contact/page-e28a035d82bf5215.js",
+      "bytes": 6156,
+      "sha256": "7d235ed9cd90c3ea949038fda56ae8a2510598a47fcc860334cf4bf1b1e174d7"
+    },
+    {
+      "path": "_next/static/chunks/app/(marketing)/insights/page-a9c3d40fa60db4bd.js",
+      "bytes": 3999,
+      "sha256": "b90cf401e654a12f18f6121e438130f038c26abc16604507a62faa0c5b520d95"
+    },
+    {
+      "path": "_next/static/chunks/app/(marketing)/layout-3e6529e44d7c0ca0.js",
+      "bytes": 131,
+      "sha256": "a11c7436956900c54559612b59fcfb6f18703410c5d614bf3fb2f67f13cf44ac"
+    },
+    {
+      "path": "_next/static/chunks/app/(marketing)/legal/[slug]/page-10d97304f275f6fe.js",
+      "bytes": 6152,
+      "sha256": "d9ef83640e7b943863b2932b8fb952dfc8c0ec788466272c433fec5c7343de34"
+    },
+    {
+      "path": "_next/static/chunks/app/(marketing)/page-f32f2b309f13aa50.js",
+      "bytes": 12571,
+      "sha256": "a156fecbf591215b838f1ad306fcff3d397bd30d635aa356d56d02182b91db32"
+    },
+    {
+      "path": "_next/static/chunks/app/(press)/layout-773d6fcaf82367be.js",
+      "bytes": 5050,
+      "sha256": "3d6680dd8c4a140a35658c589609eb099ec3a9f7397b6e375ca9ba6a1171599c"
+    },
+    {
+      "path": "_next/static/chunks/app/(press)/press/contact/page-c7279818249c45e6.js",
+      "bytes": 3083,
+      "sha256": "4cea4c5103eaca5be5b8a6b7d77a5f2b6baa3002aca6f8c6347872db9b71eb93"
+    },
+    {
+      "path": "_next/static/chunks/app/(press)/press/contact/thank-you/page-a972f9a4330ba3f5.js",
+      "bytes": 3082,
+      "sha256": "f2c63d4eddaf3fdaa7f25e9034bb8e4f1f6c68cf6ea49bcdef698a986048d167"
+    },
+    {
+      "path": "_next/static/chunks/app/(press)/press/page-69f7ea2b9d6dc9e5.js",
+      "bytes": 4660,
+      "sha256": "ebd26a3451c737d5aeece0f058980d66996336e77fbc02f51f3d129170be975c"
+    },
+    {
+      "path": "_next/static/chunks/app/(press)/press/services/[slug]/page-54df20f9960d93cd.js",
+      "bytes": 4679,
+      "sha256": "fee01ea4059e244a5c49823bbb00f98827bbf85538daa39d045ef9832c042c48"
+    },
+    {
+      "path": "_next/static/chunks/app/global-error-4e5fb497725f515a.js",
+      "bytes": 1137,
+      "sha256": "e7d6daf3cd920bc02f093e945ee35e8dbd8e58dd007e1b0743cc01d8f6b6e7fe"
+    },
+    {
+      "path": "_next/static/chunks/app/global-not-found-52e2f63b4a8b4cdc.js",
+      "bytes": 135,
+      "sha256": "8d649f1d0d3147c84b74f3b3c0e568297dd62e6348992f39b8891057629f5cf4"
+    },
+    {
+      "path": "_next/static/chunks/app/robots.txt/route-700ad1c059e658e3.js",
+      "bytes": 134,
+      "sha256": "fedbf495adff71ad69edf5c1e6bbb4a574c330bc283df670234bf53c72933809"
+    },
+    {
+      "path": "_next/static/chunks/app/sitemap.xml/route-700ad1c059e658e3.js",
+      "bytes": 134,
+      "sha256": "fedbf495adff71ad69edf5c1e6bbb4a574c330bc283df670234bf53c72933809"
+    },
+    {
+      "path": "_next/static/chunks/framework-efd270072c3ad65d.js",
+      "bytes": 189763,
+      "sha256": "fa43cd8604fd7791b5884b85772b9bf38209eea925e92d01d6469bfb9cae2fd6"
+    },
+    {
+      "path": "_next/static/chunks/main-57a5bb8b72fd66ed.js",
+      "bytes": 122183,
+      "sha256": "e149f8b9b96fefdb0d8dfd7447f93b078028e4d8030f584c26a1cdcc2e41be97"
+    },
+    {
+      "path": "_next/static/chunks/main-app-4287967807f6b124.js",
+      "bytes": 508,
+      "sha256": "a99dcf3bc6e694f92541d2ab1e23cef3465fe0863163dd53e34d0f4cbc5b1986"
+    },
+    {
+      "path": "_next/static/chunks/pages/_app-552893fa4c6cf2f7.js",
+      "bytes": 914,
+      "sha256": "64e92d4a9d262fe7e858c6df2488c47af518c8275d71be883d15f57c4399f9af"
+    },
+    {
+      "path": "_next/static/chunks/pages/_error-21da4c46a6d2fe7a.js",
+      "bytes": 5652,
+      "sha256": "62535d5270332a736fcabeb8f2a5830561697366080423c2f86dab71bd23fec9"
+    },
+    {
+      "path": "_next/static/chunks/polyfills-42372ed130431b0a.js",
+      "bytes": 112594,
+      "sha256": "0973c1d64c88adc8e3c950410cb58b288f72118d5965b78049438deb8f2f9683"
+    },
+    {
+      "path": "_next/static/chunks/webpack-3c0db06493229da3.js",
+      "bytes": 3598,
+      "sha256": "36372ab8afe8ad7d1f3e3c9586874008e9f7abe02534d26dd95f1b604b18301c"
+    },
+    {
+      "path": "_next/static/css/09f9b2de9935c8a4.css",
+      "bytes": 56111,
+      "sha256": "ce2ad5b7e92807c9ddb9be076dde2b1b5a639544add4bab302fd7fd2bc9c3c19"
+    },
+    {
+      "path": "_next/static/css/2e16a9051c193910.css",
+      "bytes": 2102,
+      "sha256": "87be85177705479b5bb6905bad3306923e2c80046ba351701509a9996980d7fe"
+    },
+    {
+      "path": "_next/static/css/685fc60a63759040.css",
+      "bytes": 21155,
+      "sha256": "f7d55644122ae63cef84022642aa8a3eee3251bc9698d755853723c4b2303917"
+    },
+    {
+      "path": "_next/static/css/85aba30a45e3c1b2.css",
+      "bytes": 52496,
+      "sha256": "1c0effd711810573231da3155d93def1de9ecd0d59bc82b8b461b6096659ece8"
+    },
+    {
+      "path": "_next/static/css/94cba9c03ced978f.css",
+      "bytes": 51851,
+      "sha256": "7e7d4907807acf6b785949a860770bbe5e2ff4be2946429a4a63d0fbe13cb726"
+    },
+    {
+      "path": "_next/static/css/d0a85a54ff6d556b.css",
+      "bytes": 1223,
+      "sha256": "87d246a6c4e82094e93defe047fd88377ee6292ed3b9d9e98d93635d01c5b03d"
+    },
+    {
+      "path": "_next/static/css/da4aba98a85af270.css",
+      "bytes": 14267,
+      "sha256": "fc886866dc3234266cc1818c5cc978ec8d678cddfe72c7bbfaf2d116b3f8ed89"
+    },
+    {
+      "path": "_next/static/css/e8df5bc9c5f946cd.css",
+      "bytes": 19045,
+      "sha256": "24b25e2d95eff9e3f36332e08e099d2122cb2facea7478b1e8a82e3cfdf3097f"
+    },
+    {
+      "path": "_next/static/Fb-_75yTK6YpuG-A_AlWR/_buildManifest.js",
+      "bytes": 1087,
+      "sha256": "ad3eee98c96fd123b7fbf4fcf9c5c6ab1e1641413f6a5fd6e1983ab4f6738c90"
+    },
+    {
+      "path": "_next/static/Fb-_75yTK6YpuG-A_AlWR/_ssgManifest.js",
+      "bytes": 228,
+      "sha256": "0fc866369d9b145ce24e3b935c25a1df725737ab92e3574c52600decf99d12dd"
+    },
+    {
+      "path": "_next/static/media/0aa834ed78bf6d07-s.woff2",
+      "bytes": 12064,
+      "sha256": "af7486955880be1c2b972e9c766acffb776768d669b6576ed9a0919ce72e7ca6"
+    },
+    {
+      "path": "_next/static/media/19cfc7226ec3afaa-s.woff2",
+      "bytes": 19044,
+      "sha256": "46dd4cdca58c26ae87cc6927657bf83b2e8abfc39ffd0ab176e301a8d28d22bf"
+    },
+    {
+      "path": "_next/static/media/21350d82a1f187e9-s.woff2",
+      "bytes": 18744,
+      "sha256": "aebf2ab4a4ce6810d73c1ac7be7cafb4e5ec4cee2d6db5fb3e09691747ec4bd6"
+    },
+    {
+      "path": "_next/static/media/597b6a5d799c44de-s.p.woff2",
+      "bytes": 50952,
+      "sha256": "8e38e3fbd74dea20aabe0831ffef04c9f30bf6fc5b99b7a2649be0dd8c6d859c"
+    },
+    {
+      "path": "_next/static/media/67957d42bae0796d-s.woff2",
+      "bytes": 9084,
+      "sha256": "3edf363dbf9d5fa0cdc784ae2b431a8a4152f4055a8a8858028c0bd668808273"
+    },
+    {
+      "path": "_next/static/media/886030b0b59bc5a7-s.woff2",
+      "bytes": 2020,
+      "sha256": "992eea2f70210457ddd1196de4df3240919ffe068ad188c79d985fba4565d3bf"
+    },
+    {
+      "path": "_next/static/media/8e9860b6e62d6359-s.woff2",
+      "bytes": 85272,
+      "sha256": "a28eb6d3ccb534ae0c94ca999371df024aab60b08c3c8a5720ee9e32fa0faaa2"
+    },
+    {
+      "path": "_next/static/media/939c4f875ee75fbb-s.woff2",
+      "bytes": 15204,
+      "sha256": "7db7affbce1fdee69c1ffc2641bbca289b049867f524c9d861fe35ab6670bf29"
+    },
+    {
+      "path": "_next/static/media/b818b0ea116ed117-s.woff2",
+      "bytes": 36628,
+      "sha256": "7683b72ed39c9fc64c626ae0ed611e7dc0121af71cde73fd060bd7a4a83c0d7c"
+    },
+    {
+      "path": "_next/static/media/ba9851c3c22cd980-s.woff2",
+      "bytes": 25844,
+      "sha256": "fccca918fea40089dacadc7045861314d1a6bc91f1f323cc1eeb22ebcdb321b5"
+    },
+    {
+      "path": "_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+      "bytes": 40480,
+      "sha256": "1e06740a02a443fb7f3eeda8fcaa685a0f6c620e3f01e6666e847295469ce3ad"
+    },
+    {
+      "path": "_next/static/media/c5fe6dc8356a8c31-s.woff2",
+      "bytes": 11272,
+      "sha256": "a2e2c783ca6f9c20486e81e72a279203e86730bbf8f01ff6a5ee9dbd09e1c271"
+    },
+    {
+      "path": "_next/static/media/df0a9ae256c0569c-s.woff2",
+      "bytes": 10280,
+      "sha256": "8db00ff46c67b22cda8bed865acf7077651cac8d2841d5b40980556b48961931"
+    },
+    {
+      "path": "_next/static/media/e115bc1b6e48400d-s.woff2",
+      "bytes": 13400,
+      "sha256": "752875b4c33f07a3dda7c8f0be846fef059cb0f4e85211b855aa93dd85d45a22"
+    },
+    {
+      "path": "_next/static/media/e4af272ccee01ff0-s.p.woff2",
+      "bytes": 48432,
+      "sha256": "c940764593d0fe5d596be327ca7558855e018039fb78509aa21921fd3644c3e4"
+    },
+    {
+      "path": "_next/static/media/ed89fb4fc238c6bf-s.woff2",
+      "bytes": 20164,
+      "sha256": "303d60869ffd404c141fa90d87ba574cd26ade348dd4659ea4b9caeadf72c183"
+    },
+    {
+      "path": "_next/static/media/f11ffaf03a80bc19-s.woff2",
+      "bytes": 18036,
+      "sha256": "4d72739b0e43d64e6b2a086a66f62df1ef90f34d6f109b279c557a64eae5d23d"
+    },
+    {
+      "path": "_next/static/media/f911b923c6adde36-s.woff2",
+      "bytes": 7468,
+      "sha256": "1390e86cc2823e759358918c01c4fcc1b6e4f01bca915bdbeb6d68eb5c244405"
+    },
+    {
+      "path": "_next/static/media/fc9d3723ce3bfccb-s.woff2",
+      "bytes": 42040,
+      "sha256": "231f594ad829d45f905a8a6cdce704f659615e00f1a9db2699320e6e315c1d1f"
+    },
+    {
+      "path": ".htaccess",
+      "bytes": 2711,
+      "sha256": "d2a9c8a692fcff5f3cc72eb551cd30f50ad3546e758b1be3a531a28a64654ab3"
+    },
+    {
+      "path": "404.html",
+      "bytes": 240263,
+      "sha256": "603d51f3002ada130d040cdf1dd6ff9b8b9e718988b75be815d2fd64b0a0ef04"
+    },
+    {
+      "path": "500.html",
+      "bytes": 1785,
+      "sha256": "9cf99a8dce5fa1948b798a41583efd536c12182fd33b2f903d84e5f7c1f80f88"
+    },
+    {
+      "path": "about.html",
+      "bytes": 275735,
+      "sha256": "05962a81b4c88b054b6a053deeadd490245a312159d204e782106f2c89b321a2"
+    },
+    {
+      "path": "about.txt",
+      "bytes": 151216,
+      "sha256": "bb57fc50d286db9244c7b277ea1b9bfcff47fd875c06a26064252c8d7a391809"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "bytes": 20791,
+      "sha256": "8f35232ab3e42760db1243192fdd35550e87ffc798be38053cf20ffea17a4c13"
+    },
+    {
+      "path": "approach.html",
+      "bytes": 264775,
+      "sha256": "9b2916ac37b4af23496244cd4d65a8826f6346bf65dfdbc2df4d9d3c28af8021"
+    },
+    {
+      "path": "approach.txt",
+      "bytes": 145654,
+      "sha256": "d0831906af3d901a652b2cc4783cb965bc5ce9df31cccb8767ed8c8c593450b7"
+    },
+    {
+      "path": "brand/design/headshot-animated.svg",
+      "bytes": 22865,
+      "sha256": "2098fb79c6f0f755b9da3f5e093ea6f45aebddd590c6056147b08f692870d341"
+    },
+    {
+      "path": "brand/design/headshot-transparent.svg",
+      "bytes": 20608,
+      "sha256": "a464bbe0f1d665c0daf2fca4097f8778c9d4a6cc9d25b5e6a3ab50a48c670378"
+    },
+    {
+      "path": "brand/gridsmith-logo-3d-1080.webp",
+      "bytes": 41742,
+      "sha256": "98674bdaa388325938334a99b18368923563284e1cb57dfdc5ca16cc669a9192"
+    },
+    {
+      "path": "brand/gridsmith-logo-3d.png",
+      "bytes": 3317305,
+      "sha256": "f613c7a7bdda188fecf874c109c6d0db833ee2759125c9a96859542930f88ac7"
+    },
+    {
+      "path": "brand/gridsmith-logo.png",
+      "bytes": 669476,
+      "sha256": "63df5481ec757c5adaf429134a5c418220624e34bf24eb60013a724ed2bbd97f"
+    },
+    {
+      "path": "brand/gridsmith-logo.svg",
+      "bytes": 4078,
+      "sha256": "9f9b8e34023a594a7fd64f20a8509d867a44faebf7487c986396dc493734c13b"
+    },
+    {
+      "path": "brand/social/facebook.png",
+      "bytes": 3382,
+      "sha256": "a962ccf1bb79482a753695757bb6c44da44ebca21a68f03c86de133521e1ec1f"
+    },
+    {
+      "path": "brand/social/freelancer.svg",
+      "bytes": 320,
+      "sha256": "ac0b0e2d83a0ea96159d452f12a4b51511cf37bfc74b6ed9d4c91ef6d2740382"
+    },
+    {
+      "path": "brand/social/instagram.png",
+      "bytes": 12245,
+      "sha256": "793c1dd11c1c085097b384431bdbaad3c54f8c50bd480d67a5b2281c80f95394"
+    },
+    {
+      "path": "brand/social/linkedin.png",
+      "bytes": 2582,
+      "sha256": "d67c7d982fc8324548b84304ad0e777f729d10bf65647106488ffc3df52039bd"
+    },
+    {
+      "path": "brand/social/reddit.svg",
+      "bytes": 8843,
+      "sha256": "3db4d4701d176ddecd5341032e415df78229c40c68bf219e285fc6895c35df74"
+    },
+    {
+      "path": "brand/social/x.svg",
+      "bytes": 430,
+      "sha256": "dd46f96b6f47fcd33683b79ddfaf3daca1d4f8aeba3c0f2bde1584c69cc699d4"
+    },
+    {
+      "path": "brand/social/youtube.png",
+      "bytes": 2822,
+      "sha256": "bde7d55f7aa832ac84ba8765138fe8ef94dbac2b247f207892d7b10f8b1ae0c6"
+    },
+    {
+      "path": "contact.html",
+      "bytes": 248136,
+      "sha256": "5dd5f2107557cbd89d88a428f184b02944df35eb112b80e2b155a3be6d5ba680"
+    },
+    {
+      "path": "contact.txt",
+      "bytes": 136810,
+      "sha256": "ec593c4188accd9d647450dbdf06dacb6b79dff4394c725b9ef5d858ce81620a"
+    },
+    {
+      "path": "design.html",
+      "bytes": 396363,
+      "sha256": "37c31d289bb9104370b2491b996f4b4e068c3e8a2beb3eaf65e8fe109d6e9c13"
+    },
+    {
+      "path": "design.txt",
+      "bytes": 210833,
+      "sha256": "67e7ee0bf54dfabd1f4517c850ef29acb949b0f06dabb0b18cc9ac4e443d07c2"
+    },
+    {
+      "path": "design/services/3d-modelling.html",
+      "bytes": 258581,
+      "sha256": "e1572583827ebece28b8d6252bae199b801620cee22526e6bec8099067d8f889"
+    },
+    {
+      "path": "design/services/3d-modelling.txt",
+      "bytes": 142901,
+      "sha256": "07e301bbffc74c580abdacbef02de6ecfac070c227c8b0b4217b08d981e34eb8"
+    },
+    {
+      "path": "design/services/animation.html",
+      "bytes": 257668,
+      "sha256": "f665167fa85ec9dee3027a735bbd7d2e580bb318dad152563f1bc78391eccc5a"
+    },
+    {
+      "path": "design/services/animation.txt",
+      "bytes": 142389,
+      "sha256": "a678f438bcda50ed4436760b8930cbce1f8dc53220d25a8e82cf3ae532cc5b70"
+    },
+    {
+      "path": "design/services/brand-identity-systems.html",
+      "bytes": 261168,
+      "sha256": "941322ff041261eb0821998b92fc556e0f565bd8b078b8f876a35367b98e8008"
+    },
+    {
+      "path": "design/services/brand-identity-systems.txt",
+      "bytes": 144330,
+      "sha256": "fce3fabceca787a40b1b138254e71e26a3d466ff16ef8712156b7bd170b3d59c"
+    },
+    {
+      "path": "design/services/campaign-and-social-creative.html",
+      "bytes": 261410,
+      "sha256": "b09c6a3c66f66dc651995fae6df98c5069538c29be1b58f64662b5b17047f971"
+    },
+    {
+      "path": "design/services/campaign-and-social-creative.txt",
+      "bytes": 144424,
+      "sha256": "7777d7a9a5551a1c032d15d9ec84d5c3739202c80d0ea6ee4bc4d269b203bbb0"
+    },
+    {
+      "path": "design/services/gaming-and-streamer-creative.html",
+      "bytes": 258948,
+      "sha256": "7b10fe13a35a74f30e8a576cfe2611fa75679c9b0ade4f7705f740f2a7e69be1"
+    },
+    {
+      "path": "design/services/gaming-and-streamer-creative.txt",
+      "bytes": 143100,
+      "sha256": "f98a18b34058d5f83ccaed60ce6c2ae10fa61d0eb976e0999ba7c32a15352109"
+    },
+    {
+      "path": "design/services/graphic-design-and-collateral.html",
+      "bytes": 261242,
+      "sha256": "58aa16583f27ab281d372ecfa1a21631876504acb0fae9bf1bdd7b42df3f8317"
+    },
+    {
+      "path": "design/services/graphic-design-and-collateral.txt",
+      "bytes": 144361,
+      "sha256": "d3eabf7841531d45fd8160c62376b7ac21e218eb8cc4bb8e4e3006d47cd5fdb7"
+    },
+    {
+      "path": "design/services/iconography-and-infographics.html",
+      "bytes": 259862,
+      "sha256": "18c08c979abdb8e07817f946aa4c0749723706ca1b9edfed4a86da0356ea24f8"
+    },
+    {
+      "path": "design/services/iconography-and-infographics.txt",
+      "bytes": 143631,
+      "sha256": "fbea84331067529bee7e8b0d33ddda2bf5c2d490941649bba92712b4f154a3dd"
+    },
+    {
+      "path": "design/services/illustration.html",
+      "bytes": 258850,
+      "sha256": "158ff2b178286e1ddd2a606702556bec00b8a6be7b1099424333d21be5f03143"
+    },
+    {
+      "path": "design/services/illustration.txt",
+      "bytes": 143068,
+      "sha256": "22fb0ceb473dddfbcb01e1bff522782860527a46176ba25ac3dd45c57f3c4783"
+    },
+    {
+      "path": "design/services/motion-graphics.html",
+      "bytes": 259899,
+      "sha256": "e7438b0f2201201aa70017e4238adf432ae581007a06ce661585faa8f5e37486"
+    },
+    {
+      "path": "design/services/motion-graphics.txt",
+      "bytes": 143648,
+      "sha256": "9ce098e1b7ccf3c0715eab2eca01f3b711ce949364fc39dd7da40f86bd2a46a2"
+    },
+    {
+      "path": "design/services/packaging-design.html",
+      "bytes": 259278,
+      "sha256": "8564c38c87bd0a57c4bf091a3a7d4400d45c24bc331dcda9863f1adbfc89906d"
+    },
+    {
+      "path": "design/services/packaging-design.txt",
+      "bytes": 143291,
+      "sha256": "756f3c00169c0f9dec8f606fcfe8ba240615827725475398ed4b231b85777190"
+    },
+    {
+      "path": "design/services/presentation-design.html",
+      "bytes": 259472,
+      "sha256": "53addc54cb2c299df48c13eaf957a10ab75ebe3bd75c78034a8595d200bc7f51"
+    },
+    {
+      "path": "design/services/presentation-design.txt",
+      "bytes": 143415,
+      "sha256": "e322fe96d322815e3a43b3ae0f9b519a6e523aa2ad8d35307412243b8a04eff3"
+    },
+    {
+      "path": "design/services/product-visualisation.html",
+      "bytes": 259520,
+      "sha256": "2c567e9bb456e092b4e80a9549120ae1706364a83ea33b3dfe531b3d1a2178d4"
+    },
+    {
+      "path": "design/services/product-visualisation.txt",
+      "bytes": 143455,
+      "sha256": "76433ad22f0dbe4b7a4249a032108e198faeabfd2c601fe9b17335d0a34c9071"
+    },
+    {
+      "path": "design/services/technical-illustration.html",
+      "bytes": 259506,
+      "sha256": "e39d4f644a449a95f90b35e933b16173575a34c1899f35caecb445a559a4c361"
+    },
+    {
+      "path": "design/services/technical-illustration.txt",
+      "bytes": 143426,
+      "sha256": "9d6521387d77ff7e580556b6516a7221754305e3a954a93322ef4cf51593c121"
+    },
+    {
+      "path": "digital.html",
+      "bytes": 313570,
+      "sha256": "7df786f1413eb8b45e09bf8f88962885f5faa8cadce0e7f0df1a15298a3a0cd5"
+    },
+    {
+      "path": "digital.txt",
+      "bytes": 172110,
+      "sha256": "7d78a80e6ae8ed47436acbfc020455ccfde70ac07058b3f54701342889058334"
+    },
+    {
+      "path": "digital/services/ai-integration.html",
+      "bytes": 260861,
+      "sha256": "31f426ef9e69f0785e42911a12237b55acab7a6335ddeffe039eab44cfdcf188"
+    },
+    {
+      "path": "digital/services/ai-integration.txt",
+      "bytes": 144113,
+      "sha256": "96163bc32d81b256bc5e24950580aceb2ec9ac892f49844d07b52beea1088acb"
+    },
+    {
+      "path": "digital/services/cms-implementation.html",
+      "bytes": 259418,
+      "sha256": "63177273bdb8cb004f5c6f1561b786fbcb4eaaf48ff8ea85578457832fe08570"
+    },
+    {
+      "path": "digital/services/cms-implementation.txt",
+      "bytes": 143308,
+      "sha256": "a4416f9d35c5dfbee7f3b09b34b18d1d0d2b9bc8b292edd8e0272d180902ed09"
+    },
+    {
+      "path": "digital/services/crm-and-workflow-systems.html",
+      "bytes": 258170,
+      "sha256": "b6dea3a836d0e34318872d9dd638b5a7f23a9518fad01208ababd71491142dd0"
+    },
+    {
+      "path": "digital/services/crm-and-workflow-systems.txt",
+      "bytes": 142647,
+      "sha256": "52e5fbdb3cf9b15f7f261242428cfb2e947cec0568e3502ed74820a6fff51212"
+    },
+    {
+      "path": "digital/services/custom-software.html",
+      "bytes": 258604,
+      "sha256": "cb1bcd9a6fa3c0817a10946f2b86704c56d3e72fccf66f6348758094f9cad929"
+    },
+    {
+      "path": "digital/services/custom-software.txt",
+      "bytes": 142874,
+      "sha256": "8aba8a6aa35cb4c54d7a05cfdcc142f4a8254dccc0cbacc002433edcd9c8e49e"
+    },
+    {
+      "path": "digital/services/data-and-reporting.html",
+      "bytes": 260711,
+      "sha256": "93999666aeb3a944de85645b36026e8318743369a651861c139307f0269b4b40"
+    },
+    {
+      "path": "digital/services/data-and-reporting.txt",
+      "bytes": 144037,
+      "sha256": "538a7dd35aeb03854c84785de8d3f17db5cb5313b1fb041630d804c3f455d926"
+    },
+    {
+      "path": "digital/services/ecommerce.html",
+      "bytes": 260719,
+      "sha256": "a79875f993be8b831ddcc43adc3676acd6c205900211ff394d0bd8f45581dd3e"
+    },
+    {
+      "path": "digital/services/ecommerce.txt",
+      "bytes": 144056,
+      "sha256": "1a4d4e8f089bca3dc60eab1997bed9075893131b39b720e76f7e2acc8527d374"
+    },
+    {
+      "path": "digital/services/game-development.html",
+      "bytes": 259490,
+      "sha256": "b53b319e324764e90c958bd8ac13b92d6b10d205ff63f456c83eb759d0b0f61d"
+    },
+    {
+      "path": "digital/services/game-development.txt",
+      "bytes": 143383,
+      "sha256": "a36bddc5f71ca32fcfcc818b91dc0e525c372cb8984cb4d1c8fb7fb74f33bb35"
+    },
+    {
+      "path": "digital/services/integrations.html",
+      "bytes": 258440,
+      "sha256": "16df5850d913e9fb3617d1be149f60d41ed907e8a4fa3856e523b0ed63ce6a6b"
+    },
+    {
+      "path": "digital/services/integrations.txt",
+      "bytes": 142771,
+      "sha256": "ae6ec4b99ab165082f26d5ee7b439a00eb6d98b0446eddc641c7135ee12770c5"
+    },
+    {
+      "path": "digital/services/internal-tools-and-dashboards.html",
+      "bytes": 258408,
+      "sha256": "aeac25cf7dd8846d7b20b2158c2e4005f235f69fabb14ba6648de19ca14c6d33"
+    },
+    {
+      "path": "digital/services/internal-tools-and-dashboards.txt",
+      "bytes": 142774,
+      "sha256": "f581fa82a0ea57a6bcec5c6103b373d857c4934b1fbf3f7cb75f2e29f541eb79"
+    },
+    {
+      "path": "digital/services/iterative-product-development.html",
+      "bytes": 258195,
+      "sha256": "ec016f550eca2c072c73e0248e2e711cdaccf5ea8f9f8c78e96577fd8a6296b5"
+    },
+    {
+      "path": "digital/services/iterative-product-development.txt",
+      "bytes": 142704,
+      "sha256": "b384fe8295c1a85dd2c094728332916bd397e248f48d5ea50de095113c1e3a69"
+    },
+    {
+      "path": "digital/services/maintenance-and-monitoring.html",
+      "bytes": 261132,
+      "sha256": "0b779c4883fc2895d6548bf650330d072279ec3aa04d5e2eb5f7205d577045e2"
+    },
+    {
+      "path": "digital/services/maintenance-and-monitoring.txt",
+      "bytes": 144278,
+      "sha256": "d984b522cd4b9b65791c49e44c9e3117c738c666c897abc032db8dbfd7742d71"
+    },
+    {
+      "path": "digital/services/mobile-applications.html",
+      "bytes": 261246,
+      "sha256": "fc196b551a78061bbee6a65a71dac4605207b400717836aac0a968c9102fa041"
+    },
+    {
+      "path": "digital/services/mobile-applications.txt",
+      "bytes": 144326,
+      "sha256": "0e5974836b7e4cc4fde1f572abb7e13714b1b5a0a0f0bf73c6e87c946e4f156a"
+    },
+    {
+      "path": "digital/services/performance-and-accessibility.html",
+      "bytes": 260790,
+      "sha256": "de6a63a199e7587d05e23019a453ad8252049fee733ad3e02fbea077fb7c08f3"
+    },
+    {
+      "path": "digital/services/performance-and-accessibility.txt",
+      "bytes": 144104,
+      "sha256": "e8f261bb1d237a53a5412980b6f66731b414ae439937715d1873697d115a3b04"
+    },
+    {
+      "path": "digital/services/technical-seo.html",
+      "bytes": 260773,
+      "sha256": "9bb40d86896d59ac8c336e071d1b14588ff70e1e1d8ebe28e1de362d8a3ba74f"
+    },
+    {
+      "path": "digital/services/technical-seo.txt",
+      "bytes": 144070,
+      "sha256": "3b42ea9835648115aa853230727eb2e51c2896aa298b49fecc760f4cc765c2a3"
+    },
+    {
+      "path": "digital/services/web-applications.html",
+      "bytes": 259107,
+      "sha256": "6ddb50624ea2f70d9657f7c7443f1c39eb09433ab2390f3a63d1aae25be8a1c3"
+    },
+    {
+      "path": "digital/services/web-applications.txt",
+      "bytes": 143174,
+      "sha256": "a404fefb1cafb7f668da805c4b1a4cad6e873f618f377b638330b7f872915665"
+    },
+    {
+      "path": "digital/services/website-design-build.html",
+      "bytes": 263074,
+      "sha256": "632caebabc1bf24a62bb96b3edfa4f61cd18f29d45e4f0344841667fdab0974d"
+    },
+    {
+      "path": "digital/services/website-design-build.txt",
+      "bytes": 145350,
+      "sha256": "db81cfe56dd9f5241478510a40e3ca5e1b26e1c2a4c8a104d8c578b864f865cc"
+    },
+    {
+      "path": "digital/services/workflow-automation.html",
+      "bytes": 257931,
+      "sha256": "c53b05400c1683d86e0bcdf285f52a59bf5e40fc381c054b960709eea5c2563f"
+    },
+    {
+      "path": "digital/services/workflow-automation.txt",
+      "bytes": 142527,
+      "sha256": "19297b5e62f4f3a1ee642791cbabf3ae81fd337f0ff110d47a95c3bf7c43921e"
+    },
+    {
+      "path": "favicon.ico",
+      "bytes": 5143,
+      "sha256": "ff3caffaac6faad9e32794a692920c31330c30fab724f71e7d947d1e97bbec78"
+    },
+    {
+      "path": "icon-192.png",
+      "bytes": 24924,
+      "sha256": "3bd589b168c2be55b3d9f9dd8e45a958d624bef295ce42258f64073001bb370a"
+    },
+    {
+      "path": "icon-512.png",
+      "bytes": 133317,
+      "sha256": "5c72bf2152198f0ddf14e99abccce7ea3a364b7520cd8ddc3d9eaf23781af6dd"
+    },
+    {
+      "path": "icon.svg",
+      "bytes": 4105,
+      "sha256": "46e6aa96c7ffdadd669ce2931961034079eee4a11039baba4a29465afd060ab2"
+    },
+    {
+      "path": "index.html",
+      "bytes": 266484,
+      "sha256": "94b94c8f676d59cb3fa767e31d4f6f32cd336d190f6f8467d97ee12db72de16f"
+    },
+    {
+      "path": "index.txt",
+      "bytes": 146124,
+      "sha256": "bf85fb43fdce912486e513585ebe501a2a2d80c8bb83d7be380a7b183aeaf565"
+    },
+    {
+      "path": "insights.html",
+      "bytes": 245163,
+      "sha256": "6bf818bc92eef5f98bfbb2a450be2d8a60d3e1a1cfd3d797ad0311a061864df5"
+    },
+    {
+      "path": "insights.txt",
+      "bytes": 135185,
+      "sha256": "f17cb200eac15dd4d3727285247d42884a3296289483ed8b4ca958bad402eeb4"
+    },
+    {
+      "path": "legal/accessibility.html",
+      "bytes": 267443,
+      "sha256": "6c32ef948d415ac9a223d88ef2e283859c0d66ef559af86c861bbc58004f792a"
+    },
+    {
+      "path": "legal/accessibility.txt",
+      "bytes": 147082,
+      "sha256": "af51379a72336343351425ca0353ead761ef6e92e28b1760e371bf82f227a056"
+    },
+    {
+      "path": "legal/business-client-terms.html",
+      "bytes": 355946,
+      "sha256": "d12e766b1484614be18d1841077712aee587e631ef8e9eb060b4fbd6976d3568"
+    },
+    {
+      "path": "legal/business-client-terms.txt",
+      "bytes": 193014,
+      "sha256": "7f26baee96513b21b8b25683c0430e9df01f4d5490faf5c0b005ed6231d04d68"
+    },
+    {
+      "path": "legal/client-terms.html",
+      "bytes": 259198,
+      "sha256": "ec4592c9595d12c24103b761b84d86f5a1b362d997d7a125ed6ab70d81a4efbb"
+    },
+    {
+      "path": "legal/client-terms.txt",
+      "bytes": 142725,
+      "sha256": "c0c4611f25d509d1abc1f4cb11030e05442207f9f973751dffa65657a0203c7c"
+    },
+    {
+      "path": "legal/consumer-client-terms.html",
+      "bytes": 350518,
+      "sha256": "37f7226ecedd33661ac0ab9f74fc4386d4105c9b33a24d97f7ac44d309b9c076"
+    },
+    {
+      "path": "legal/consumer-client-terms.txt",
+      "bytes": 190508,
+      "sha256": "f6d6b04ee9461bde1d5aa8af988389a2401f29ca3803016fe9749912a10ebb08"
+    },
+    {
+      "path": "legal/cookies.html",
+      "bytes": 263782,
+      "sha256": "2efad7f2c3c999f1db5ca106d85313badc4620ea2e5f14a866acf0f33d56506d"
+    },
+    {
+      "path": "legal/cookies.txt",
+      "bytes": 144999,
+      "sha256": "0f579af5caf377994380e7e6c1615f9e2d10511e5d0d4ec08accb3c7c48fbf4e"
+    },
+    {
+      "path": "legal/privacy.html",
+      "bytes": 302431,
+      "sha256": "13c0a6fc8c27dc4f57fea24f9543dbab92bb29d1dbf9d752530e4c898b0685af"
+    },
+    {
+      "path": "legal/privacy.txt",
+      "bytes": 164914,
+      "sha256": "f5ecf233595b0100f3636bc986c61b9862addbf2322eee1a97d871d063f3d244"
+    },
+    {
+      "path": "legal/terms.html",
+      "bytes": 278285,
+      "sha256": "91a5ebb5bd6689e6f602e41ffc1579fec173d64566da31162b15e10104cf292a"
+    },
+    {
+      "path": "legal/terms.txt",
+      "bytes": 152381,
+      "sha256": "64f4b47160d39c8c0805d4e9bb83153c7155de64ec54d54159418e8b3fb95386"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 266,
+      "sha256": "c795da3ba7a724b54601decfa9e182c17b58e91c13b621a27ebfa86e2a1b12cd"
+    },
+    {
+      "path": "press.html",
+      "bytes": 514831,
+      "sha256": "f696e27ea967ee6dbcedea9bdd4b95ce2ed0ed7396cdd8bb1759788eb3eb880a"
+    },
+    {
+      "path": "press.txt",
+      "bytes": 276513,
+      "sha256": "7dd61f02b6af883b93f3085293de64ae44cf61d7195ebb7acbd13d987b03039a"
+    },
+    {
+      "path": "press/contact.html",
+      "bytes": 249848,
+      "sha256": "b1ce28fd59e0a371ecfeabaf3e7276a35dfe69418ed6b36f864ff0b05474118c"
+    },
+    {
+      "path": "press/contact.txt",
+      "bytes": 137618,
+      "sha256": "293e9d0c00b94fd58d1e712844c82cea43e0afd3e7d5ee229c75db0183e77701"
+    },
+    {
+      "path": "press/contact/thank-you.html",
+      "bytes": 248796,
+      "sha256": "1b39245542126c5ed2c1b4ae1de037ba23d09c9fcfc88558d376a8a1afec590c"
+    },
+    {
+      "path": "press/contact/thank-you.txt",
+      "bytes": 137134,
+      "sha256": "d64bf4fc4e090a731fd3695b129137240b59ef6eba8ec6641a11e2c5ae24da82"
+    },
+    {
+      "path": "press/services/audiobook-production-support.html",
+      "bytes": 264924,
+      "sha256": "78d2014db0cf3290770c424f31cdd0521ba4e7c8a1f20c02ca48aa64ef192e5c"
+    },
+    {
+      "path": "press/services/audiobook-production-support.txt",
+      "bytes": 146131,
+      "sha256": "6507d89cf35d6db019ff7300118d710be52c002d335b32cb45246dd7d72bc3d0"
+    },
+    {
+      "path": "press/services/book-marketing-support.html",
+      "bytes": 265698,
+      "sha256": "92564052491a65e21148425f242a54f116692125c5f2b0c81f942a0ac29a93bc"
+    },
+    {
+      "path": "press/services/book-marketing-support.txt",
+      "bytes": 146562,
+      "sha256": "e8cf1a2ba5f6b8fb44840849674c75a1458945f0b1e5d17239cc09c58cb7ef48"
+    },
+    {
+      "path": "press/services/book-writing-and-development.html",
+      "bytes": 262844,
+      "sha256": "cec3c4aa7998de373ac79034b6d061791a18b1c0902aa27d16333f1b3a65c464"
+    },
+    {
+      "path": "press/services/book-writing-and-development.txt",
+      "bytes": 144973,
+      "sha256": "3b91064f279c7045bc08d753bd4466b23ab04ed3d3aa1c2043b943b19dc25d39"
+    },
+    {
+      "path": "press/services/content-programmes.html",
+      "bytes": 262435,
+      "sha256": "6d3f869c1e2ba2d105864f422106a6a759e5f7af4b41180886cf63b46d8a8378"
+    },
+    {
+      "path": "press/services/content-programmes.txt",
+      "bytes": 144732,
+      "sha256": "23fabccc461310626ef2274a19a466b905841432dd7e532ed1ca9009176c4965"
+    },
+    {
+      "path": "press/services/content-seo.html",
+      "bytes": 264122,
+      "sha256": "1e69c21fa7bf72b829ed7f9e14d1c1c969af02c6af8557a47958b6317f3a46c1"
+    },
+    {
+      "path": "press/services/content-seo.txt",
+      "bytes": 145688,
+      "sha256": "07dd81b0767c1475424257daa20d773c5650020289769acaaaec917c94d33471"
+    },
+    {
+      "path": "press/services/copy-editing-and-proofreading.html",
+      "bytes": 264702,
+      "sha256": "81d7fdc1273a752dda5ad6cbc0e8dcf1f93fc03275d25a60446d7c291301188f"
+    },
+    {
+      "path": "press/services/copy-editing-and-proofreading.txt",
+      "bytes": 145994,
+      "sha256": "9b481839c42452d06007f61b35b8116622ae933b5a8d6fb63a3a77e4f139a0c5"
+    },
+    {
+      "path": "press/services/cover-design-coordination.html",
+      "bytes": 263501,
+      "sha256": "f4cc7a0a1a8e45cb76808d33db5fc2705901e1885b86f288d88800efbcfb90b6"
+    },
+    {
+      "path": "press/services/cover-design-coordination.txt",
+      "bytes": 145311,
+      "sha256": "b6062455a614acccd80694e3121db4629abe12bd5d35411390fe12348b200bfe"
+    },
+    {
+      "path": "press/services/ghostwriting.html",
+      "bytes": 264350,
+      "sha256": "53eb1bad719de64f0b55fc0218944af132c46f7b0741bfeed0c0e8f694365b9e"
+    },
+    {
+      "path": "press/services/ghostwriting.txt",
+      "bytes": 145797,
+      "sha256": "51f1931ea49feb0e748110a440ed5e3eee1eb2c90f1617dadb15d2f1bf0cc9b5"
+    },
+    {
+      "path": "press/services/manuscript-assessment.html",
+      "bytes": 263575,
+      "sha256": "7a76581a78a6a22f11276c4936bf38716abf0ba6e9cf62cabd392733c0d4cdcc"
+    },
+    {
+      "path": "press/services/manuscript-assessment.txt",
+      "bytes": 145397,
+      "sha256": "b201ba5f955facf9d0572a4693548356b29e9ea16a8489bc91956af2765f0454"
+    },
+    {
+      "path": "press/services/manuscript-development.html",
+      "bytes": 262460,
+      "sha256": "8e2bae5f1fb5e78f48a5c6fc4d6e2e44ac29ec41079e9f2f4205bdb6609f2a03"
+    },
+    {
+      "path": "press/services/manuscript-development.txt",
+      "bytes": 144779,
+      "sha256": "62ba1f5feb571ef273c5ca518c219ff4750703535069a859d1875c2a55be93a4"
+    },
+    {
+      "path": "press/services/publishing-preparation.html",
+      "bytes": 267372,
+      "sha256": "806e5f7fbb727d17e6f5f5054b7e7d7cfc057ede5c99547b3571813fb9527ba1"
+    },
+    {
+      "path": "press/services/publishing-preparation.txt",
+      "bytes": 147463,
+      "sha256": "705073b975b63616854dc9ad4124032ac3c663a6dc9be72574fca9954b3d7acc"
+    },
+    {
+      "path": "press/services/thought-leadership-and-reports.html",
+      "bytes": 265610,
+      "sha256": "c0d904d7e18b0e2e15b4f859d21363b98f17fd289290553bdaa68c18f591744f"
+    },
+    {
+      "path": "press/services/thought-leadership-and-reports.txt",
+      "bytes": 146502,
+      "sha256": "9ec61a94a496bed08a3edb2a32e9c0379265d8845a2e54b87777d7a893858381"
+    },
+    {
+      "path": "press/services/typesetting-and-formatting.html",
+      "bytes": 266200,
+      "sha256": "99e9f3ddfd46a2936517c960fd5490924efb8a0a9d3a7c98c47da40ec9103ae7"
+    },
+    {
+      "path": "press/services/typesetting-and-formatting.txt",
+      "bytes": 146848,
+      "sha256": "6db90cfaff29f05e4a7f1cd405b7c0e5b22562902835b437cfcec06534a281b1"
+    },
+    {
+      "path": "press/services/website-and-business-copywriting.html",
+      "bytes": 265211,
+      "sha256": "598f84c94c8285d7c93af348397dcaea8fb1289723dd2f3a0a28a961c18a2736"
+    },
+    {
+      "path": "press/services/website-and-business-copywriting.txt",
+      "bytes": 146288,
+      "sha256": "ecbc2e61569da1c04d0124fe8e95a12a7c3a77ca67cf0e4dbc1f935c48296fb9"
+    },
+    {
+      "path": "robots.txt",
+      "bytes": 26,
+      "sha256": "0f230582d72fef1d9a0eee00314e25c5b163e2406fd87cdba17eefeb578041b5"
+    },
+    {
+      "path": "sitemap.xml",
+      "bytes": 110,
+      "sha256": "1214c52cace28c40b45da48b46ef96fe9ad1bb0584cde1ba6f66c9a70a5ed5df"
+    }
+  ]
+}

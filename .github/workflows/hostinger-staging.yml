@@ -1,0 +1,145 @@
+name: Hostinger staging artifact
+on:
+  workflow_call:
+    inputs:
+      publish_preview:
+        type: boolean
+        default: false
+      approved_artifact:
+        type: string
+        default: ''
+      approval_sha256:
+        type: string
+        default: ''
+      accepted_run_id:
+        type: string
+        default: ''
+permissions:
+  contents: read
+concurrency:
+  group: gridsmith-hostinger-staging
+  cancel-in-progress: false
+env:
+  NEXT_PUBLIC_SANITY_DATASET: production
+  NEXT_PUBLIC_SITE_URL: https://mediumaquamarine-wallaby-594070.hostingersite.com
+  GRIDSMITH_STATIC_PROFILE: owner-preview
+  GRIDSMITH_STAGING_ORIGIN: https://mediumaquamarine-wallaby-594070.hostingersite.com
+jobs:
+  build:
+    if: inputs.publish_preview != true && github.ref != 'refs/heads/main' && github.ref != 'refs/heads/codex/gs-hostinger-artifact'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: 'true'
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: npm
+      - run: node scripts/browser-input.selftest.mjs
+      - run: node scripts/browser-input.mjs install-controls
+      - run: node scripts/browser-input.mjs provision
+      - run: npm ci
+      - run: node scripts/browser-input.mjs check
+      - run: node scripts/browser-input.selftest.mjs --installed
+      - run: npm run verify:static
+      - run: node scripts/preview-release.selftest.mjs
+      - run: npm run build:static
+      - run: npm run check:static:artifact
+      - run: node scripts/check-legal-parity.mjs --artifact-dir=build/owner-preview-candidate
+      - name: Install distribution Apache for isolated loopback acceptance
+        run: sudo apt-get update && sudo apt-get install -y apache2
+      - name: Exact candidate Apache, browser, accessibility and Lighthouse acceptance
+        env:
+          GRIDSMITH_BUILD_TARGET: static
+        run: node scripts/with-preview-apache.mjs
+      - name: Audit production and development dependencies without hiding findings
+        if: always()
+        run: |
+          mkdir -p build/gs-launch-018
+          npm audit --omit=dev --json > build/gs-launch-018/audit-production.json
+          npm audit --json > build/gs-launch-018/audit-full.json
+      - name: Package only after all acceptance and security gates pass
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/preview-release.mjs prepare
+      - name: Retain acceptance evidence (never a deployment artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: owner-preview-evidence
+          path: |
+            build/gs-launch-018/
+            build/static-receipt.json
+            build/static-route-manifest.json
+            build/static-ui-receipt.json
+            build/static-axe-results.json
+            .lighthouseci/
+            !build/gs-launch-018/*.key
+            !build/gs-launch-018/*.pem
+          include-hidden-files: true
+          if-no-files-found: error
+      - name: Retain accepted archive for owner review
+        uses: actions/upload-artifact@v4
+        with:
+          name: hostinger-release-archive
+          path: build/owner-preview-*.zip
+          if-no-files-found: error
+      - name: Archive only the accepted release
+        uses: actions/upload-artifact@v4
+        with:
+          name: hostinger-static
+          path: build/owner-preview-release/
+          include-hidden-files: true
+          if-no-files-found: error
+  publish:
+    if: always() && inputs.publish_preview == true && github.ref != 'refs/heads/main' && github.ref != 'refs/heads/codex/gs-hostinger-artifact'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: hostinger-static
+          path: build/owner-preview-release
+          run-id: ${{ inputs.accepted_run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/checkout@v5
+        with:
+          ref: codex/gs-hostinger-artifact
+          path: deployment
+      - name: Require exact accepted bytes, destination evidence, rollback and owner approval
+        env:
+          APPROVED_ARTIFACT: ${{ inputs.approved_artifact }}
+          APPROVAL_SHA256: ${{ inputs.approval_sha256 }}
+          OWNER_PREVIEW_APPROVAL: ${{ vars.GS_OWNER_PREVIEW_APPROVAL }}
+          ACCEPTED_RUN_ID: ${{ inputs.accepted_run_id }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/preview-release.mjs authorize
+      - name: Publish using the original isolated artifact branch
+        env:
+          EXPECTED_SOURCE_SHA: ${{ github.sha }}
+        run: |
+          test "$(git -C deployment branch --show-current)" = codex/gs-hostinger-artifact
+          git -C deployment rm -r --ignore-unmatch .
+          cp -a build/owner-preview-release/. deployment/
+          git -C deployment config user.name github-actions
+          git -C deployment config user.email github-actions@users.noreply.github.com
+          git -C deployment add .
+          git -C deployment diff --cached --check
+          git -C deployment commit -m "build(hostinger): stage ${EXPECTED_SOURCE_SHA}"
+          git -C deployment push origin HEAD:refs/heads/codex/gs-hostinger-artifact

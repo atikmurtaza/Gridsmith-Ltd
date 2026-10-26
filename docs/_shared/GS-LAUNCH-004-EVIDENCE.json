@@ -1,0 +1,4831 @@
+{
+  "task": "GS-LAUNCH-004",
+  "recordedAt": "2026-10-23T12:29:56.648Z",
+  "baseline": "00cb2d0e5111a9cccc0d6d74d544b07ce16b9cd7",
+  "branch": "codex/gs-launch-004",
+  "identity": "Unchanged application at baseline; design fixtures hashed below. Local commit identified by Git closeout, no remote acceptance.",
+  "decision": {
+    "normalSsr": "FAIL M-P1-1",
+    "staticMechanism": "NOT APPLICABLE to file serving",
+    "staticBoundary": "HOLD UNVERIFIED hosted error response",
+    "preferred": "Provider-controlled independent error response; local prototype only"
+  },
+  "environment": {
+    "node": "v24.15.0",
+    "next": "15.5.28",
+    "react": "19.2.8",
+    "dependencyInstall": "Existing Windows installation reused; no package/lock change",
+    "apache": "2.4.68 Debian",
+    "container": "gs-launch004-proof",
+    "baseImage": "node@sha256:f22d6a1f082c02f292e86929b5b0442ac2e5eaf438a5dea9b1566601c3e05940",
+    "browser": "Existing Windows Puppeteer browser; not a repeat of authenticated Linux acquisition",
+    "tlsAndCdn": "UNVERIFIED; local HTTP only"
+  },
+  "ssr": {
+    "mode": "ssr",
+    "at": "2026-10-23T12:27:58.687Z",
+    "cases": [
+      {
+        "label": "ssr-initial",
+        "url": "http://127.0.0.1:3349/gridsmith-ssr-throw-probe",
+        "status": 500,
+        "headers": {
+          "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Fri, 23 Oct 2026 12:27:59 GMT",
+          "keep-alive": "timeout=5",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development"
+        },
+        "bytes": 89140,
+        "sha256": "07ec06ae9bd42e62fa0fd028c59def811e6d4dd82e3a927d14688cf12649be09",
+        "facts": {
+          "lang": false,
+          "h1": false,
+          "main": false,
+          "shell": true
+        }
+      },
+      {
+        "label": "ssr-js-false",
+        "dom": {
+          "lang": "",
+          "h1": 0,
+          "main": 0,
+          "title": "Gridsmith Ltd",
+          "text": "",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-ssr-2.json",
+          "violations": [
+            {
+              "id": "html-has-lang",
+              "impact": "serious",
+              "targets": [
+                [
+                  "#__next_error__"
+                ]
+              ]
+            },
+            {
+              "id": "landmark-one-main",
+              "impact": "moderate",
+              "targets": [
+                [
+                  "#__next_error__"
+                ]
+              ]
+            },
+            {
+              "id": "page-has-heading-one",
+              "impact": "moderate",
+              "targets": [
+                [
+                  "#__next_error__"
+                ]
+              ]
+            }
+          ],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "recovery": "/about navigation succeeds; no retry control exists"
+      },
+      {
+        "label": "ssr-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Something went wrong — Gridsmith Ltd",
+          "text": "GRIDSMITH LTD — ERROR\n\nSomething went wrong\n\nAn unexpected error stopped this page loading. Nothing you were doing has been sent anywhere.\n\nTry again",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-ssr-3.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "recovery": "keyboard click observed; persistent boundary visible; /about navigation succeeds"
+      },
+      {
+        "label": "client-only-throw",
+        "status": 200,
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Something went wrong — Gridsmith Ltd",
+          "text": "GRIDSMITH LTD — ERROR\n\nSomething went wrong\n\nAn unexpected error stopped this page loading. Nothing you were doing has been sent anywhere.\n\nTry again",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-ssr-4.json",
+          "violations": [],
+          "incomplete": []
+        }
+      },
+      {
+        "label": "normal-404",
+        "url": "http://127.0.0.1:3349/gs-launch004-missing",
+        "status": 404,
+        "headers": {
+          "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Fri, 23 Oct 2026 12:28:06 GMT",
+          "etag": "\"jdg3362o5r504a\"",
+          "keep-alive": "timeout=5",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development",
+          "x-nextjs-cache": "HIT",
+          "x-nextjs-prerender": "1, 1",
+          "x-nextjs-stale-time": "300"
+        },
+        "bytes": 233444,
+        "sha256": "1f861b4384eae48e670742871e09fa8ea7fc3b6465912e1a6e5ac4cae2fec63f",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      }
+    ],
+    "outcome": "PASS for named characterization/prototype assertions; no hosted or release acceptance"
+  },
+  "boundary": {
+    "mode": "boundary",
+    "at": "2026-10-23T12:26:30.681Z",
+    "cases": [
+      {
+        "label": "static-500",
+        "url": "http://127.0.0.1:3344/induced-500",
+        "status": 500,
+        "headers": {
+          "accept-ranges": "bytes",
+          "cache-control": "no-store, max-age=0",
+          "connection": "close",
+          "content-length": "517",
+          "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:26:31 GMT",
+          "etag": "\"205-65e810f1881cb\"",
+          "last-modified": "Fri, 23 Oct 2026 12:24:17 GMT",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "no-referrer",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-robots-tag": "noindex, nofollow, noarchive"
+        },
+        "bytes": 517,
+        "sha256": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "static-500-375-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-2.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3344/induced-500",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/webpack-1381650ad93b9e0a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3344/icon.svg",
+            "type": "other"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "static-500-375-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-3.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3344/induced-500",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/webpack-1381650ad93b9e0a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/9ee0f3b7-6556387dea38316d.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/294-1328bccead92a6cf.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/main-app-2ebac3f6c9ddd236.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/app/global-error-940a3b58957d279e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/925-ca6d342417c0acc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/app/(digital)/layout-9bdb95c29e86c1d6.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/app/(marketing)/page-b6c634ca3a74e6c9.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/319.2689e4e0a5829ede.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "static-500-768-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-5.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3344/induced-500",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/webpack-1381650ad93b9e0a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "static-500-768-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-6.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3344/induced-500",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/webpack-1381650ad93b9e0a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/9ee0f3b7-6556387dea38316d.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/294-1328bccead92a6cf.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/main-app-2ebac3f6c9ddd236.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/app/global-error-940a3b58957d279e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/925-ca6d342417c0acc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/app/(digital)/layout-9bdb95c29e86c1d6.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/app/(marketing)/page-b6c634ca3a74e6c9.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/319.2689e4e0a5829ede.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "static-500-1440-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-8.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3344/induced-500",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/webpack-1381650ad93b9e0a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "static-500-1440-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-9.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3344/induced-500",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/webpack-1381650ad93b9e0a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/9ee0f3b7-6556387dea38316d.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/294-1328bccead92a6cf.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/main-app-2ebac3f6c9ddd236.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/app/global-error-940a3b58957d279e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/925-ca6d342417c0acc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/app/(digital)/layout-9bdb95c29e86c1d6.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/app/(marketing)/page-b6c634ca3a74e6c9.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3344/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3344/_next/static/chunks/319.2689e4e0a5829ede.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-500",
+        "url": "http://127.0.0.1:3345/gridsmith-ssr-throw-probe",
+        "status": 500,
+        "headers": {
+          "accept-ranges": "bytes",
+          "cache-control": "no-store, max-age=0",
+          "connection": "close",
+          "content-length": "517",
+          "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:26:46 GMT",
+          "etag": "\"205-65e810f1881cb\"",
+          "last-modified": "Fri, 23 Oct 2026 12:24:17 GMT",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "no-referrer",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "vary": "Accept,RSC",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-robots-tag": "noindex, nofollow, noarchive"
+        },
+        "bytes": 517,
+        "sha256": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-500-375-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-11.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/gridsmith-ssr-throw-probe",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/icon.svg",
+            "type": "other"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-500-375-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-12.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/gridsmith-ssr-throw-probe",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-500-768-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-14.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/gridsmith-ssr-throw-probe",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-500-768-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-15.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/gridsmith-ssr-throw-probe",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-500-1440-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-17.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/gridsmith-ssr-throw-probe",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-500-1440-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-18.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/gridsmith-ssr-throw-probe",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-unavailable",
+        "url": "http://127.0.0.1:3345/upstream-unavailable",
+        "status": 503,
+        "headers": {
+          "accept-ranges": "bytes",
+          "cache-control": "no-store, max-age=0",
+          "connection": "close",
+          "content-length": "517",
+          "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:00 GMT",
+          "etag": "\"205-65e810f1881cb\"",
+          "last-modified": "Fri, 23 Oct 2026 12:24:17 GMT",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "no-referrer",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "vary": "Accept,RSC",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-robots-tag": "noindex, nofollow, noarchive"
+        },
+        "bytes": 517,
+        "sha256": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-unavailable-375-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-20.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-unavailable",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-unavailable-375-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-21.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-unavailable",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-unavailable-768-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-23.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-unavailable",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-unavailable-768-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-24.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-unavailable",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-unavailable-1440-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-26.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-unavailable",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-unavailable-1440-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-27.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-unavailable",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-502",
+        "url": "http://127.0.0.1:3345/upstream-502",
+        "status": 502,
+        "headers": {
+          "accept-ranges": "bytes",
+          "cache-control": "no-store, max-age=0",
+          "connection": "Keep-Alive",
+          "content-length": "517",
+          "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:14 GMT",
+          "etag": "\"205-65e810f1881cb\"",
+          "keep-alive": "timeout=5, max=100",
+          "last-modified": "Fri, 23 Oct 2026 12:24:17 GMT",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "no-referrer",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "vary": "Accept,RSC",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-robots-tag": "noindex, nofollow, noarchive"
+        },
+        "bytes": 517,
+        "sha256": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-502-375-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-29.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-502",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-502-375-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-30.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-502",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-502-768-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-32.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-502",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-502-768-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-33.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-502",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-502-1440-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-35.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-502",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-502-1440-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-36.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-502",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-503",
+        "url": "http://127.0.0.1:3345/upstream-503",
+        "status": 503,
+        "headers": {
+          "accept-ranges": "bytes",
+          "cache-control": "no-store, max-age=0",
+          "connection": "close",
+          "content-length": "517",
+          "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:28 GMT",
+          "etag": "\"205-65e810f1881cb\"",
+          "last-modified": "Fri, 23 Oct 2026 12:24:17 GMT",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "no-referrer",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "vary": "Accept,RSC",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-robots-tag": "noindex, nofollow, noarchive"
+        },
+        "bytes": 517,
+        "sha256": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-503-375-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-38.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-503",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-503-375-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-39.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-503",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-503-768-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-41.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-503",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-503-768-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-42.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-503",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-503-1440-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-44.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-503",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-503-1440-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-45.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-503",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-504",
+        "url": "http://127.0.0.1:3345/upstream-504",
+        "status": 504,
+        "headers": {
+          "accept-ranges": "bytes",
+          "cache-control": "no-store, max-age=0",
+          "connection": "Keep-Alive",
+          "content-length": "517",
+          "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:43 GMT",
+          "etag": "\"205-65e810f1881cb\"",
+          "keep-alive": "timeout=5, max=100",
+          "last-modified": "Fri, 23 Oct 2026 12:24:17 GMT",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "no-referrer",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "vary": "Accept,RSC",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-robots-tag": "noindex, nofollow, noarchive"
+        },
+        "bytes": 517,
+        "sha256": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-504-375-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-47.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-504",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-504-375-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-48.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-504",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-504-768-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-50.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-504",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-504-768-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-51.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-504",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-504-1440-js-false",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-53.json",
+          "violations": [],
+          "incomplete": [],
+          "method": "script-free no-JS DOM replay; semantic equality and missing-lang adverse proof"
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-504",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "proxy-504-1440-js-true",
+        "dom": {
+          "lang": "en-GB",
+          "h1": 1,
+          "main": 1,
+          "title": "Page unavailable — Gridsmith Ltd",
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "a11y": {
+          "rawFile": "axe-boundary-54.json",
+          "violations": [],
+          "incomplete": []
+        },
+        "focused": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "requests": [
+          {
+            "url": "http://127.0.0.1:3345/upstream-504",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/",
+            "type": "document"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/webpack-01a7003513f9e189.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/a44d64b5-0e4ee162ea70d69e.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/1952-a6d232a32d6a3e0b.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/main-app-3990019d20113d76.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/global-error-9e4129faed65a63a.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/5247-122829a5de22cfc8.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(digital)/layout-c08aebc2319f8c69.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/app/(marketing)/page-92f3c97257568ea0.js",
+            "type": "script"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/gridsmith-logo.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/e4af272ccee01ff0-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/facebook.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/instagram.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/linkedin.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/x.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/youtube.png",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/reddit.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/brand/social/freelancer.svg",
+            "type": "image"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/media/bb3ef058b751a6ad-s.p.woff2",
+            "type": "font"
+          },
+          {
+            "url": "http://127.0.0.1:3345/manifest.webmanifest",
+            "type": "manifest"
+          },
+          {
+            "url": "http://127.0.0.1:3345/_next/static/chunks/9395.2d50aa2733da13fb.js",
+            "type": "script"
+          }
+        ],
+        "recovery": "keyboard homepage succeeds"
+      },
+      {
+        "label": "static-normal-home",
+        "url": "http://127.0.0.1:3344/",
+        "status": 200,
+        "headers": {
+          "accept-ranges": "bytes",
+          "connection": "Keep-Alive",
+          "content-length": "269782",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"41dd6-65e80bf1652c0\"",
+          "keep-alive": "timeout=5, max=100",
+          "last-modified": "Fri, 23 Oct 2026 12:01:55 GMT",
+          "server": "Apache"
+        },
+        "bytes": 269782,
+        "sha256": "b9947a75408b23926cf7b84e8d03985f0402d668adcc034e3328477427e98205",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "static-normal-about",
+        "url": "http://127.0.0.1:3344/about",
+        "status": 200,
+        "headers": {
+          "accept-ranges": "bytes",
+          "connection": "Keep-Alive",
+          "content-length": "280178",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"44672-65e80bf1652c0\"",
+          "keep-alive": "timeout=5, max=100",
+          "last-modified": "Fri, 23 Oct 2026 12:01:55 GMT",
+          "server": "Apache"
+        },
+        "bytes": 280178,
+        "sha256": "8eec7356b0521cad7715202e2a284b5a931b4f41a37c482a2452286c46f6ce6f",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "static-normal-design",
+        "url": "http://127.0.0.1:3344/design",
+        "status": 200,
+        "headers": {
+          "accept-ranges": "bytes",
+          "connection": "Keep-Alive",
+          "content-length": "399660",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"6192c-65e80bf1652c0\"",
+          "keep-alive": "timeout=5, max=99",
+          "last-modified": "Fri, 23 Oct 2026 12:01:55 GMT",
+          "server": "Apache"
+        },
+        "bytes": 399660,
+        "sha256": "949f3c376d500a556b5d7e220cd431821ba6bb26d0348b1844c35f4e19ef3cd0",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "static-normal-digital",
+        "url": "http://127.0.0.1:3344/digital",
+        "status": 200,
+        "headers": {
+          "accept-ranges": "bytes",
+          "connection": "Keep-Alive",
+          "content-length": "313615",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"4c90f-65e80bf1652c0\"",
+          "keep-alive": "timeout=5, max=99",
+          "last-modified": "Fri, 23 Oct 2026 12:01:55 GMT",
+          "server": "Apache"
+        },
+        "bytes": 313615,
+        "sha256": "1dd93999145cc714db387a63d0e92e5ca286658a3f7e626ddde2eda91d5e63c9",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "static-normal-press",
+        "url": "http://127.0.0.1:3344/press",
+        "status": 200,
+        "headers": {
+          "accept-ranges": "bytes",
+          "connection": "Keep-Alive",
+          "content-length": "518130",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"7e7f2-65e80bf1652c0\"",
+          "keep-alive": "timeout=5, max=98",
+          "last-modified": "Fri, 23 Oct 2026 12:01:55 GMT",
+          "server": "Apache"
+        },
+        "bytes": 518130,
+        "sha256": "facb768741b2e6587e3c8eca2e25c30d642c3bf9aa6fb76eac2cf6ff99ea3316",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "static-normal-404",
+        "url": "http://127.0.0.1:3344/gs-launch004-missing",
+        "status": 404,
+        "headers": {
+          "accept-ranges": "bytes",
+          "connection": "Keep-Alive",
+          "content-length": "243535",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"3b74f-65e80bf1652c0\"",
+          "keep-alive": "timeout=5, max=98",
+          "last-modified": "Fri, 23 Oct 2026 12:01:55 GMT",
+          "server": "Apache"
+        },
+        "bytes": 243535,
+        "sha256": "181503d00b6b9f5df04b10ab1a07188622a522cda882d69e5febe557a2c24838",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-normal-home",
+        "url": "http://127.0.0.1:3345/",
+        "status": 200,
+        "headers": {
+          "cache-control": "s-maxage=31536000",
+          "connection": "Keep-Alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"10sfu738u5p5kd7\"",
+          "keep-alive": "timeout=5, max=100",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc,next-router-state-tree,next-router-prefetch,next-router-segment-prefetch,Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development",
+          "x-nextjs-cache": "HIT",
+          "x-nextjs-prerender": "1, 1",
+          "x-nextjs-stale-time": "300"
+        },
+        "bytes": 259705,
+        "sha256": "f1b7f470a10b142a242c2414fc03445505b562c10a216a701ca0be8600f34125",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-normal-about",
+        "url": "http://127.0.0.1:3345/about",
+        "status": 200,
+        "headers": {
+          "cache-control": "s-maxage=31536000",
+          "connection": "Keep-Alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"xylgzh69gg63gk\"",
+          "keep-alive": "timeout=5, max=99",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc,next-router-state-tree,next-router-prefetch,next-router-segment-prefetch,Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development",
+          "x-nextjs-cache": "HIT",
+          "x-nextjs-prerender": "1, 1",
+          "x-nextjs-stale-time": "300"
+        },
+        "bytes": 284476,
+        "sha256": "eff57f286db6ed5a16f74e6757a3b65d43b04fcc8104aec9e4938b259a1e1907",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-normal-design",
+        "url": "http://127.0.0.1:3345/design",
+        "status": 200,
+        "headers": {
+          "cache-control": "s-maxage=31536000",
+          "connection": "Keep-Alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"mtybiei0iw8de1\"",
+          "keep-alive": "timeout=5, max=98",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc,next-router-state-tree,next-router-prefetch,next-router-segment-prefetch,Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development",
+          "x-nextjs-cache": "HIT",
+          "x-nextjs-prerender": "1, 1",
+          "x-nextjs-stale-time": "300"
+        },
+        "bytes": 390623,
+        "sha256": "1a3aedf3c444873d9e75b6495666e413d41e42b6a767bd74427a6201a82cb027",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-normal-digital",
+        "url": "http://127.0.0.1:3345/digital",
+        "status": 200,
+        "headers": {
+          "cache-control": "s-maxage=31536000",
+          "connection": "Keep-Alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"bx5f408pr36qlo\"",
+          "keep-alive": "timeout=5, max=97",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc,next-router-state-tree,next-router-prefetch,next-router-segment-prefetch,Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development",
+          "x-nextjs-cache": "HIT",
+          "x-nextjs-prerender": "1, 1",
+          "x-nextjs-stale-time": "300"
+        },
+        "bytes": 314514,
+        "sha256": "6a909ad5d208e72e050e512ac5144ace5ab6e27da227e91badfb6024754b6ba2",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-normal-press",
+        "url": "http://127.0.0.1:3345/press",
+        "status": 200,
+        "headers": {
+          "cache-control": "s-maxage=31536000",
+          "connection": "Keep-Alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Fri, 23 Oct 2026 12:27:57 GMT",
+          "etag": "\"lu3p5tx2kwavrr\"",
+          "keep-alive": "timeout=5, max=96",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc,next-router-state-tree,next-router-prefetch,next-router-segment-prefetch,Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development",
+          "x-nextjs-cache": "HIT",
+          "x-nextjs-prerender": "1, 1",
+          "x-nextjs-stale-time": "300"
+        },
+        "bytes": 508053,
+        "sha256": "3029477633a961485e73c254953e8ae5215615c0ad1b0665e410a29bc847658b",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-normal-404",
+        "url": "http://127.0.0.1:3345/gs-launch004-missing",
+        "status": 404,
+        "headers": {
+          "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+          "connection": "Keep-Alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Fri, 23 Oct 2026 12:27:58 GMT",
+          "etag": "\"jdg3362o5r504a\"",
+          "keep-alive": "timeout=5, max=95",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc,next-router-state-tree,next-router-prefetch,next-router-segment-prefetch,Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development",
+          "x-nextjs-cache": "HIT",
+          "x-nextjs-prerender": "1, 1",
+          "x-nextjs-stale-time": "300"
+        },
+        "bytes": 233444,
+        "sha256": "1f861b4384eae48e670742871e09fa8ea7fc3b6465912e1a6e5ac4cae2fec63f",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      },
+      {
+        "label": "proxy-rsc",
+        "url": "http://127.0.0.1:3345/gridsmith-ssr-throw-probe",
+        "status": 200,
+        "headers": {
+          "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+          "connection": "Keep-Alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/x-component",
+          "date": "Fri, 23 Oct 2026 12:27:58 GMT",
+          "keep-alive": "timeout=5, max=94",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc,next-router-state-tree,next-router-prefetch,next-router-segment-prefetch,Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development"
+        },
+        "bytes": 18318,
+        "sha256": "db34adb53b36d8bf671c2df726830a3376586dff094534eabde27545218805bd",
+        "facts": {
+          "lang": false,
+          "h1": false,
+          "main": false,
+          "shell": false
+        }
+      },
+      {
+        "label": "direct-rsc",
+        "url": "http://127.0.0.1:3349/gridsmith-ssr-throw-probe",
+        "status": 200,
+        "headers": {
+          "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/x-component",
+          "date": "Fri, 23 Oct 2026 12:27:58 GMT",
+          "keep-alive": "timeout=5",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development"
+        },
+        "bytes": 18318,
+        "sha256": "96e2c384944e2f5b73998eff454f4677a7a63c7e9e06efa835df5fa8af658838",
+        "facts": {
+          "lang": false,
+          "h1": false,
+          "main": false,
+          "shell": false
+        }
+      },
+      {
+        "label": "rsc-protocol-comparison",
+        "status": 200,
+        "errors": [
+          {
+            "digest": "789078407"
+          }
+        ],
+        "comparison": "status, content type and error records; request-specific metadata keys differ"
+      },
+      {
+        "label": "proxy-api-protocol",
+        "url": "http://127.0.0.1:3345/api/gs-launch004-protocol",
+        "status": 500,
+        "headers": {
+          "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+          "connection": "close",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Fri, 23 Oct 2026 12:27:58 GMT",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc,next-router-state-tree,next-router-prefetch,next-router-segment-prefetch,Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development"
+        },
+        "bytes": 89140,
+        "sha256": "07ec06ae9bd42e62fa0fd028c59def811e6d4dd82e3a927d14688cf12649be09",
+        "facts": {
+          "lang": false,
+          "h1": false,
+          "main": false,
+          "shell": true
+        }
+      },
+      {
+        "label": "direct-api-protocol-subject",
+        "url": "http://127.0.0.1:3349/gridsmith-ssr-throw-probe",
+        "status": 500,
+        "headers": {
+          "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Fri, 23 Oct 2026 12:27:58 GMT",
+          "keep-alive": "timeout=5",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "strict-transport-security": "max-age=31536000",
+          "transfer-encoding": "chunked",
+          "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-gridsmith-dataset": "development"
+        },
+        "bytes": 89140,
+        "sha256": "07ec06ae9bd42e62fa0fd028c59def811e6d4dd82e3a927d14688cf12649be09",
+        "facts": {
+          "lang": false,
+          "h1": false,
+          "main": false,
+          "shell": true
+        }
+      },
+      {
+        "label": "apache-no-override",
+        "url": "http://127.0.0.1:3347/induced-500",
+        "status": 500,
+        "headers": {
+          "connection": "close",
+          "content-length": "571",
+          "content-type": "text/html; charset=iso-8859-1",
+          "date": "Fri, 23 Oct 2026 12:27:58 GMT",
+          "server": "Apache"
+        },
+        "bytes": 571,
+        "sha256": "ef5cc4926e43f52cd707499f3721eb8c134884bb8e254e83488ec91abc5c4944",
+        "facts": {
+          "lang": false,
+          "h1": true,
+          "main": false,
+          "shell": false
+        }
+      },
+      {
+        "label": "apache-missing-fallback",
+        "url": "http://127.0.0.1:3346/induced-500",
+        "status": 500,
+        "headers": {
+          "connection": "close",
+          "content-length": "702",
+          "content-type": "text/html; charset=iso-8859-1",
+          "date": "Fri, 23 Oct 2026 12:27:58 GMT",
+          "server": "Apache"
+        },
+        "bytes": 702,
+        "sha256": "f2f4018aad266779b5bce0b9f0b2ccf52dd483635a00d97471ede15bd804487c",
+        "facts": {
+          "lang": false,
+          "h1": true,
+          "main": false,
+          "shell": false
+        }
+      },
+      {
+        "label": "apache-colocated-good",
+        "url": "http://127.0.0.1:3348/induced-500",
+        "status": 500,
+        "headers": {
+          "accept-ranges": "bytes",
+          "connection": "close",
+          "content-length": "517",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:27:58 GMT",
+          "etag": "\"205-65e80bf9fa700\"",
+          "last-modified": "Fri, 23 Oct 2026 12:02:04 GMT",
+          "server": "Apache"
+        },
+        "bytes": 517,
+        "sha256": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f",
+        "facts": {
+          "lang": true,
+          "h1": true,
+          "main": true,
+          "shell": false
+        }
+      }
+    ],
+    "outcome": "PASS for named characterization/prototype assertions; no hosted or release acceptance"
+  },
+  "adverse": {
+    "results": [
+      {
+        "label": "colocated-broken-htaccess",
+        "status": 500,
+        "accessible": false,
+        "headers": {
+          "connection": "close",
+          "content-length": "571",
+          "content-type": "text/html; charset=iso-8859-1",
+          "date": "Fri, 23 Oct 2026 12:24:15 GMT",
+          "server": "Apache"
+        }
+      },
+      {
+        "label": "independent-broken-htaccess",
+        "status": 500,
+        "accessible": true,
+        "headers": {
+          "accept-ranges": "bytes",
+          "cache-control": "no-store, max-age=0",
+          "connection": "close",
+          "content-length": "517",
+          "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:24:15 GMT",
+          "etag": "\"205-65e80eff45bf7\"",
+          "last-modified": "Fri, 23 Oct 2026 12:15:34 GMT",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "no-referrer",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-robots-tag": "noindex, nofollow, noarchive"
+        }
+      },
+      {
+        "label": "independent-missing-file",
+        "status": 500,
+        "accessible": false,
+        "headers": {
+          "connection": "close",
+          "content-length": "702",
+          "content-type": "text/html; charset=iso-8859-1",
+          "date": "Fri, 23 Oct 2026 12:24:16 GMT",
+          "server": "Apache"
+        }
+      },
+      {
+        "label": "independent-restored",
+        "status": 500,
+        "accessible": true,
+        "headers": {
+          "accept-ranges": "bytes",
+          "cache-control": "no-store, max-age=0",
+          "connection": "close",
+          "content-length": "517",
+          "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+          "content-type": "text/html",
+          "date": "Fri, 23 Oct 2026 12:24:17 GMT",
+          "etag": "W/\"205-65e810f1881cb\"",
+          "last-modified": "Fri, 23 Oct 2026 12:24:17 GMT",
+          "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+          "referrer-policy": "no-referrer",
+          "server": "Apache",
+          "strict-transport-security": "max-age=31536000",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "x-robots-tag": "noindex, nofollow, noarchive"
+        }
+      }
+    ],
+    "restoredBytes": true
+  },
+  "upstream": {
+    "checked": "2026-10-23T11:59:52.704Z",
+    "tags": {
+      "next-11": "11.1.4",
+      "next-12-2-6": "12.2.6",
+      "next-14-1": "14.1.1",
+      "rc": "15.0.0-rc.1",
+      "next-13": "13.5.11",
+      "next-12-3-2": "12.3.7",
+      "beta": "16.0.0-beta.0",
+      "next-14": "14.2.35",
+      "next-15-3": "15.3.9",
+      "next-15-2": "15.2.9",
+      "next-15-0": "15.1.12",
+      "next-15-0-0": "15.0.8",
+      "preview": "16.3.0-preview.10",
+      "backport": "15.5.28",
+      "latest": "16.4.2",
+      "canary": "16.5.0-canary.25"
+    },
+    "latest15": "15.5.28",
+    "versions": [
+      {
+        "version": "15.5.28",
+        "status": 200,
+        "source": "https://raw.githubusercontent.com/vercel/next.js/v15.5.28/packages/next/src/server/app-render/app-render.tsx",
+        "peerDependencies": {
+          "sass": "^1.3.0",
+          "react": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+          "react-dom": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+          "@playwright/test": "^1.51.1",
+          "@opentelemetry/api": "^1.1.0",
+          "babel-plugin-react-compiler": "*"
+        },
+        "engines": {
+          "node": "^18.18.0 || ^19.8.0 || >= 20.0.0"
+        },
+        "errorShell": "ry on top\n  // so we create a not found page with AppRouter\n  const seedData: CacheNodeSeedData = [\n    initialTree[0],\n    <html id=\"__next_error__\">\n      <head></head>\n      <body>\n        {process.env.NODE_ENV !== 'production' && err ? (\n          <template\n            data-next-error-message={err.message}\n            data-next-error-digest={'digest' in err ? err.digest : ''}\n       ",
+        "functionFound": true,
+        "sha256": "3de803737b163c200856bf6a918e5c66d15c1ba9b3e412c6079c0cfbb60cd267"
+      },
+      {
+        "version": "16.4.2",
+        "status": 200,
+        "source": "https://raw.githubusercontent.com/vercel/next.js/v16.4.2/packages/next/src/server/app-render/app-render.tsx",
+        "peerDependencies": {
+          "sass": "^1.3.0",
+          "react": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+          "react-dom": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+          "@playwright/test": "^1.51.1",
+          "@opentelemetry/api": "^1.1.0",
+          "babel-plugin-react-compiler": "*"
+        },
+        "engines": {
+          "node": ">=20.9.0"
+        },
+        "errorShell": "",
+        "functionFound": true,
+        "sha256": "a81cc43c113ec9f59f1caeb3bf20ddef0c10605b646b19226d60209854dceb26"
+      }
+    ]
+  },
+  "exportedErrorFile": {
+    "status": 200,
+    "headers": {
+      "accept-ranges": "bytes",
+      "connection": "Keep-Alive",
+      "content-length": "1804",
+      "content-type": "text/html",
+      "date": "Fri, 23 Oct 2026 12:29:56 GMT",
+      "etag": "\"70c-65e80bf1652c0\"",
+      "keep-alive": "timeout=5, max=100",
+      "last-modified": "Fri, 23 Oct 2026 12:01:55 GMT",
+      "server": "Apache"
+    },
+    "sha256": "e97a49245a82d7ad446ec11e312ba008d61f6916c0b4c25761264ce0093222a4",
+    "fileBytesMatchArtifact": true,
+    "vercelPlaceholdersVisible": true
+  },
+  "rawAxe": {
+    "file": "gs-launch-004-proof/evidence/axe-full.json.gz",
+    "results": 58,
+    "sha256": "bc0da019752d27d6d702e908bbecc6420ac519aa0fb29075cbb5f598019f40ef",
+    "testEnvironment": {
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/148.0.0.0 Safari/537.36",
+      "windowWidth": 375,
+      "windowHeight": 900,
+      "orientationAngle": 0,
+      "orientationType": "portrait-primary"
+    },
+    "includesDeliberateMissingLanguage": true,
+    "coverage": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21a",
+      "wcag21aa",
+      "wcag22aa",
+      "best-practice"
+    ]
+  },
+  "rehearsal": {
+    "sourceSha": "00cb2d0e5111a9cccc0d6d74d544b07ce16b9cd7",
+    "sourceModified": false,
+    "artifactIdentity": "3ca5baec4577dac3612f685771f61399eccedcaefef9a21955d764d5ff2aac96",
+    "eligible": 54,
+    "gated": 10,
+    "filesListedInIdentity": 200,
+    "filesIncludingIdentity": 201,
+    "deployable": false,
+    "intakeOrigin": "https://qfgpwumvvtizeamkynes.supabase.co",
+    "denyAll": true,
+    "hostRule500": false,
+    "probeFiles": [],
+    "sourceRulesChanged": false,
+    "simulationRoutingReplacesCopyOnly": true
+  },
+  "regressions": {
+    "normalBuild": "PASS",
+    "staticRehearsal": "PASS nondeployable",
+    "staticSelftest": "PASS",
+    "legalAdoption": "PASS",
+    "secrets": "PASS",
+    "lint": "PASS",
+    "syntax": "PASS both retained mjs scripts",
+    "existingAxe": {
+      "status": "PASS for its assertions; M-P1-1 remains known FAIL",
+      "analyses": 76,
+      "routes": 19,
+      "provenance": "Independent Next subject in overlap-invalid-boundary-with-regressions.log; sole failed command was the Apache boundary proof. Aggregate remains FAIL."
+    },
+    "securityHeaders": {
+      "status": "PASS",
+      "routes": 3,
+      "provenance": "Same independently owned Next regression subject; no Apache mutation affects it"
+    },
+    "remoteCi": "UNVERIFIED not dispatched",
+    "lighthouse": "UNVERIFIED not run"
+  },
+  "preservation": {
+    "primaryHead": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+    "primaryFiles": 14,
+    "primaryStatusAndBytesUnchanged": true,
+    "protectedApplicationAndLegalDiffEmpty": true,
+    "legal": [
+      {
+        "slug": "privacy",
+        "path": "docs/_legal/current/privacy-policy.md",
+        "state": "OWNER_ADOPTED",
+        "version": "2.6",
+        "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7"
+      },
+      {
+        "slug": "cookies",
+        "path": "docs/_legal/current/cookie-policy.md",
+        "state": "OWNER_ADOPTED",
+        "version": "2.4",
+        "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960"
+      },
+      {
+        "slug": "terms",
+        "path": "docs/_legal/current/website-terms.md",
+        "state": "OWNER_ADOPTED",
+        "version": "2.3",
+        "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a"
+      },
+      {
+        "slug": "client-terms",
+        "path": "docs/_legal/current/client-terms-applicability.md",
+        "state": "OWNER_ADOPTED",
+        "version": "2.3",
+        "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87"
+      },
+      {
+        "slug": "business-client-terms",
+        "path": "docs/_legal/current/client-terms-business.md",
+        "state": "OWNER_ADOPTED",
+        "version": "3.3",
+        "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6"
+      },
+      {
+        "slug": "consumer-client-terms",
+        "path": "docs/_legal/current/client-terms-consumers.md",
+        "state": "OWNER_ADOPTED",
+        "version": "3.3",
+        "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e"
+      },
+      {
+        "slug": "accessibility",
+        "path": "docs/_legal/current/accessibility-statement.md",
+        "state": "OWNER_ADOPTED",
+        "version": "2.3",
+        "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb"
+      }
+    ],
+    "ownerAdopted": 7,
+    "publishable": 0,
+    "unresolvedAdvisories": {
+      "highEntries": 17,
+      "advisories": 3,
+      "source": "GS-LAUNCH-003 exact unchanged lockfile; not reaudited here",
+      "accepted": false
+    }
+  },
+  "fixtures": {
+    "error.html": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f",
+    "apache.conf": "7d9ce330bc8567302b8e9c5ead6dbfe6afec5a6865a5b97552d9fc354fc1a0b5",
+    "static.htaccess": "af202196487c46c847f9c9be1785327ff4f05182afd61eb30cdacc0e43f504ab",
+    "co-located.htaccess": "0ac642df4f7c17c61d1c7437752d9f08d3ecc4ac376a9f6f952d0bf7e3abb45f",
+    "verify.mjs": "d583189652ee190dbe5fa592b352bf68383aa61153f7e9d08cf386cb1378d886",
+    "adverse.mjs": "76159aeead6c51dc6a35ae07763de9dd17c61002e556e6930c98ed13689e44d7"
+  },
+  "rawResponses": {
+    "ssr-initial.html": "07ec06ae9bd42e62fa0fd028c59def811e6d4dd82e3a927d14688cf12649be09",
+    "static-500.html": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f",
+    "proxy-500.html": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f",
+    "exported-500-file.html": "e97a49245a82d7ad446ec11e312ba008d61f6916c0b4c25761264ce0093222a4",
+    "independent-broken-htaccess.html": "7d77e297a9dc539d2b4f3635c0b4ee32d2d95fa4bb8004c5f4b3f45e50052b1f"
+  },
+  "retainedLogs": {
+    "normal-build.log": "f5348b184e78696a31d67270fda678612f2b2b8ddd88425a502e095bc60822aa",
+    "static-rehearsal.log": "149bd1a49d1e547bd4706d57150e204b1d9fc5257740db672c8d9b900a1825e8",
+    "ssr-reproduction.log": "75a1306e3d0c45fc5ce2ef916f4a2452982c756d56377ad6f4a20492f0caabfc",
+    "accepted-proofs.log": "411f454868040474b9e820ae1d593959ebb306b822bed21c6039e84a714fc29d",
+    "adverse.log": "6a38d0076bd5b6c29f467e44ab91254f7d5336118c023b87f2bf819a1af23dda",
+    "static-selftest.log": "a622b6eb62bfc3edf5d85d25fc28e6a6362bb2531a0e9ae7cf5369fcfe6b5818",
+    "legal-adoption.log": "bfd2c4940a3d75c2ee5a355653abf1e199f253379ceedc6ec758e0642c274c4e",
+    "secrets.log": "bb0330c7d4acbb566255c3b4493e3f431bc809bca2979ad1acf214d4307538d1",
+    "lint.log": "2e243880c835fb240ba1b9d5cf1000486c599c0886debd07d543f2ac1f8c283a",
+    "overlap-invalid-boundary-with-regressions.log": "e97c6eb503a69b8042a5e75fb8680429ee9010c8cb560af73968e38d3349f199",
+    "ssr.log": "b45a0b0846a58d56572190ac5be902a4648e1819212662455b0d932e7f5eeb41",
+    "ssr-first-attempt.log": "b250a40903514a31c1e55f339a0206c8799e25bc43549b6a773fdf9a0675d346",
+    "boundary-first-attempt.log": "550439df5b71e6cd08a0109312af094ea5b571d6e95386b4e979e8e5ba56aba4",
+    "boundary-routing-attempt.log": "2da0d05a50fba2658d0d1dcfbe13ab3761961cc31a47b26ec9a98dfe17697ebd",
+    "adverse-first-attempt.log": "87ff0403f070bf84528355497496bcecfe924fcc17207a2fb646e753c599d1dd",
+    "boundary-rsc-status-attempt.log": "99307cd5d9cf59396f09084598bb06af844386065457deda3b527bbaaff4d7d1",
+    "boundary-rsc-request-keys-attempt.log": "49e272de31cd2ea3f4a0efcb717fe4dce1123dde6ef272e3488753b3c80c91c8",
+    "boundary-colocated-phase-attempt.log": "90007e526bbde1492bc4da2e1a4b7b7b63ba5e7db03fee8cbca1ef3dc7e763d7",
+    "apache-install.log": "e24dd962d83b116d4683f4705a372530109a93cf3308504260a6554f8673350d",
+    "apache-error.log": "51fda09471d916bdde5728faa4056666d56fd2df67e8a6317c06ffcb9d073e40",
+    "final-secrets.log": "bb0330c7d4acbb566255c3b4493e3f431bc809bca2979ad1acf214d4307538d1"
+  },
+  "unsuccessfulAttempts": [
+    "Occupied owned Docker mapping: refused, no application measured",
+    "Axe with scripting disabled: Promise was collected; superseded by asserted script-free DOM replay",
+    "Connection refusal incorrectly expected 502; actual Apache status 503",
+    "Simulation directory collision returned 404 until explicit DirectorySlash Off; production rules untouched",
+    "Overlapping Apache mutation invalidated boundary aggregate; retained, superseded by sequential run",
+    "Full rehearsal-rule import hit unavailable simulator option/module, not credited as production refusal",
+    "RSC incorrectly expected 500; actual direct upstream can stream error with 200",
+    "Separate RSC payload byte equality failed on per-request metadata keys; compare actual status/type and nonempty matching error records instead",
+    "Same-root simulation initially induced 500 before per-directory ErrorDocument was loaded; fault moved into the same .htaccess phase, ordinary and broken cases reverified"
+  ],
+  "review": {
+    "roles": [
+      "accessibility",
+      "spec",
+      "rules",
+      "content",
+      "design"
+    ],
+    "findings": "Replay overclaim narrowed; retry click observed without reset-internals claim; API-path exclusion added; RSC actual protocol compared. Final rereview recorded at closeout.",
+    "final": "Five read-only roles completed. Findings addressed; raw/tag/API/replay/RSC/count qualifications verified. Commit/status pending at evidence write time."
+  },
+  "unverified": [
+    "Hostinger placement/configuration isolation",
+    "Actual origin/CDN 500 and security/cache behavior",
+    "TLS/HSTS enforcement",
+    "Manual screen reader/devices",
+    "Streaming HTTP-200 errors and direct-origin bypass in any future SSR topology",
+    "General API paths outside the synthetic api-prefix specimen",
+    "Exact-SHA remote CI",
+    "All independent launch gates in report"
+  ],
+  "externalActions": {
+    "push": 0,
+    "remoteDispatch": 0,
+    "deployment": 0,
+    "hostedConfig": 0,
+    "productionProviderWrites": 0,
+    "dnsWordpressEmail": 0,
+    "legalPublication": 0,
+    "liveEnquiries": 0
+  },
+  "ownedContainerCleanup": {
+    "stopped": true,
+    "removed": true,
+    "otherContainersUntouched": true,
+    "servers": "Existing wrapper exits and terminates its owned Next child"
+  },
+  "archivedRawResponses": [
+    {
+      "rawName": "apache-missing-fallback.html",
+      "file": "gs-launch-004-proof/evidence/apache-missing-fallback.html.gz",
+      "sha256OfDecodedHtml": "f2f4018aad266779b5bce0b9f0b2ccf52dd483635a00d97471ede15bd804487c",
+      "sha256OfArchive": "5d7cb86233e393a17f86ce16697c3256708ad9e8f781f4a822e6a01abcfeb2b2"
+    },
+    {
+      "rawName": "apache-no-override.html",
+      "file": "gs-launch-004-proof/evidence/apache-no-override.html.gz",
+      "sha256OfDecodedHtml": "ef5cc4926e43f52cd707499f3721eb8c134884bb8e254e83488ec91abc5c4944",
+      "sha256OfArchive": "1701d515cc869ef4c4aa6ef19149902ccd5967cc28b38c82c167840518b1a776"
+    },
+    {
+      "rawName": "colocated-broken-htaccess.html",
+      "file": "gs-launch-004-proof/evidence/colocated-broken-htaccess.html.gz",
+      "sha256OfDecodedHtml": "ef5cc4926e43f52cd707499f3721eb8c134884bb8e254e83488ec91abc5c4944",
+      "sha256OfArchive": "1701d515cc869ef4c4aa6ef19149902ccd5967cc28b38c82c167840518b1a776"
+    },
+    {
+      "rawName": "independent-missing-file.html",
+      "file": "gs-launch-004-proof/evidence/independent-missing-file.html.gz",
+      "sha256OfDecodedHtml": "f2f4018aad266779b5bce0b9f0b2ccf52dd483635a00d97471ede15bd804487c",
+      "sha256OfArchive": "5d7cb86233e393a17f86ce16697c3256708ad9e8f781f4a822e6a01abcfeb2b2"
+    }
+  ]
+}

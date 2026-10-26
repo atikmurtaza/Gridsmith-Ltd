@@ -35,7 +35,7 @@ const ROUTES = [
   // `K-05`. A wide data table is the other way a page overflows 375px, and the only one on
   // the site outside the kitchen sink — `Table` wraps in an `overflow-x: auto` region, and
   // whether that region actually contains the overflow is a layout-time fact.
-  { path: '/press/path-finder', status: 200 },
+  { path: '/press/gridsmith-path-probe', status: 200 },
   // Epic N routes, chosen to cover every distinct template rather than every URL. `/work`,
   // `/work/[slug]` and `/digital/estimate` were removed at `GS-P03` with their routes.
   // `U-08`'s subject — one per division since `GS-P04`, because the three service pages are one
@@ -165,6 +165,11 @@ try {
           for (const el of document.body.querySelectorAll('*')) {
             const cs = getComputedStyle(el);
             if (cs.position !== 'fixed' || cs.display === 'none') continue;
+            // Painted beneath the page, so it cannot obscure anything (SC 2.4.11 is about
+            // content that covers a focused control). `GS-R001-M`'s scene layer is fixed,
+            // full-viewport and `z-index: -1`; before this line it read as a 900px "bottom bar".
+            // Only a NEGATIVE z-index is excluded — `auto` and 0 still paint over in-flow content.
+            if (Number.parseInt(cs.zIndex, 10) < 0) continue;
             const r = el.getBoundingClientRect();
             // Anchored to the bottom edge, within a pixel of it.
             if (Math.abs(r.bottom - window.innerHeight) > 1) continue;

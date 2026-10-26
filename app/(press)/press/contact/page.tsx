@@ -5,12 +5,15 @@ import { Numeric } from '@/components/primitives/Numeric';
 import { Prose } from '@/components/primitives/Prose';
 import { Section } from '@/components/primitives/Section';
 import { PressContactFlow } from '@/components/divisions/press/PressContactFlow';
-import { getCompanyDetails, whatsAppHref, smsHref } from '@/lib/company/companyDetails';
+import { StaticContactShell } from '@/components/leads/StaticContactShell';
+import { DIRECT_CONTACT } from '@/lib/build/target';
+import { getCompanyDetails, whatsAppHref } from '@/lib/company/companyDetails';
 
 export const metadata: Metadata = {
-  title: 'Tell us about the book — Gridsmith Press',
+  title: 'Tell us about the work — Gridsmith Press',
   description:
-    'Four questions about the work, then how to reach you. Manuscripts are shared as links, never uploads.',
+    DIRECT_CONTACT ? 'Discuss your publishing project by email or WhatsApp.' :
+      'Four questions about the work, then how to reach you. Manuscripts are shared as links, never uploads.',
 };
 
 /**
@@ -40,15 +43,14 @@ export default async function Page() {
     <main id="main" tabIndex={-1}>
       <Section rhythm="loose">
         <Container width="narrow">
-          <Heading level={1}>Tell us about the book</Heading>
+          <Heading level={1}>Tell us about the work</Heading>
           <Prose>
             <p>
-              Four short steps. The questions change after the first one, so you are only asked
-              what applies to you.
+              {DIRECT_CONTACT ? 'Tell us about your publishing project by email or WhatsApp.' :
+                'Four short steps. The questions change after the first one, so you are only asked what applies to you.'}
             </p>
             <p>
-              We take manuscripts as a link, never as an upload — nothing of yours ends up sitting
-              on our servers.
+              If you have a manuscript or source files, share a link rather than an upload.
             </p>
             <p>{company.responseCommitment}</p>
           </Prose>
@@ -57,10 +59,10 @@ export default async function Page() {
 
       <Section>
         <Container width="narrow">
-          <PressContactFlow
+          {DIRECT_CONTACT ? <StaticContactShell contactEmail={company.contactEmail ?? ''} responseCommitment={company.responseCommitment} /> : <PressContactFlow
             responseCommitment={company.responseCommitment}
             contactEmail={company.contactEmail ?? ''}
-          />
+          />}
         </Container>
       </Section>
 
@@ -71,7 +73,7 @@ export default async function Page() {
           </Heading>
           <Prose>
             <p>
-              If the form is in your way, it is not the only route.
+              {DIRECT_CONTACT ? 'Contact Gridsmith Press directly.' : 'If the form is in your way, it is not the only route.'}
               {company.contactEmail ? (
                 <>
                   {' '}
@@ -83,8 +85,7 @@ export default async function Page() {
                 </>
               ) : null}
             </p>
-            {/* `GS-R001-R`: the number is a message channel, not a call channel. Same wording
-                and same two schemes as `/contact` — the pages are one decision, not two. */}
+            {/* `GS-R001-R`: the number is a message channel, not a call channel. Email remains available beside WhatsApp (GS-LAUNCH-012). */}
             {company.contactPhone ? (
               <p>
                 {'The same number takes '}
@@ -96,11 +97,8 @@ export default async function Page() {
                   WhatsApp
                   <span className="sr-only"> (opens in a new tab)</span>
                 </a>
-                {' and '}
-                <a href={smsHref(company.contactPhone)}>text messages</a>
                 {': '}
-                <Numeric>{company.contactPhone}</Numeric>. Both reach the same place as the
-                form.
+                <Numeric>{company.contactPhone}</Numeric>. WhatsApp reaches Gridsmith directly.
               </p>
             ) : null}
           </Prose>

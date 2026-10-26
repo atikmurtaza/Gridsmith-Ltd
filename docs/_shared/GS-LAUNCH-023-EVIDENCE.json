@@ -1,0 +1,448 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-023",
+  "recordedAt": "2026-10-26T22:30:14.384Z",
+  "status": "CONDITIONAL",
+  "baseline": "13032b1735c320842d7dc25f3de03afa704d3e33",
+  "main": "dbde73d30536543c54c7822b7cec092a25e13525",
+  "merge": "0201301e07f64ae3673a1ec9889f81ad340daa36",
+  "branch": "codex/gs-launch-023",
+  "divergenceBefore": {
+    "mainOnly": 1,
+    "launchOnly": 140
+  },
+  "preservation": {
+    "files": 37,
+    "sha256": "56cd79a89be3a88b2285716b96fc5dc45fa611182d1818326171637351dfd065",
+    "originalBytesRechecked": true,
+    "inventory": [
+      {
+        "checkout": "primary",
+        "path": ".codex/agents/accessibility-audit.toml",
+        "sha256": "47c8cec0db8bd1d130224a5ad8df0a830133372451640cf1895158e76d7ec437",
+        "bytes": 1637
+      },
+      {
+        "checkout": "primary",
+        "path": ".codex/agents/content-integrity.toml",
+        "sha256": "ccee9c6c93dd458718b1b092e27aa5a336fcf9d8003e53957c3b6982f863d5d5",
+        "bytes": 1957
+      },
+      {
+        "checkout": "primary",
+        "path": ".codex/agents/design-conformance.toml",
+        "sha256": "accfd51070d6a84956d1432c6454c0b4a0e7df4c23120ad6970b5d71ac996b60",
+        "bytes": 1744
+      },
+      {
+        "checkout": "primary",
+        "path": ".codex/agents/rules-compliance.toml",
+        "sha256": "df41d34bb36caf2aec76e8dc44955478856ac9a101f351abecdc397c47818143",
+        "bytes": 1674
+      },
+      {
+        "checkout": "primary",
+        "path": ".codex/agents/spec-compliance.toml",
+        "sha256": "c9baa030ad101536d1215f59fd4436f87f8c68596af72d615335f748e2f1832e",
+        "bytes": 1076
+      },
+      {
+        "checkout": "primary",
+        "path": "AGENTS.md",
+        "sha256": "ee998c1d7c00c3529f277e3d20377f144726909e875cc53d663025c98f72c6f6",
+        "bytes": 46125
+      },
+      {
+        "checkout": "primary",
+        "path": "docs/_shared/05-HANDOVER.md",
+        "sha256": "447d5c013a16ea01b6d3699fe64d4b0a1df3e709d9a7f9e8445deebb9512cdc9",
+        "bytes": 137011
+      },
+      {
+        "checkout": "primary",
+        "path": "docs/_shared/AI-HANDOFF.md",
+        "sha256": "9eb7a1b2e0507c846652fd533fd748b7bb935c4314f765d25698a3bbcd3daf88",
+        "bytes": 56018
+      },
+      {
+        "checkout": "primary",
+        "path": "docs/_shared/GS-LEGAL-001-R12-RASTER-CLOSURE.md",
+        "sha256": "db1ab3fb726cb1d408f33b4dadd758601031d31d6328e2e90e7637b0deb5be4c",
+        "bytes": 16329
+      },
+      {
+        "checkout": "primary",
+        "path": "docs/_shared/GS-SEC-001-R1.md",
+        "sha256": "5053339b2bcf2ff854e85467249d731defa4ff558339174921af16581d1d43aa",
+        "bytes": 35124
+      },
+      {
+        "checkout": "primary",
+        "path": "docs/_shared/GS-SEC-001-R2.md",
+        "sha256": "6a945382e58acde9696f637388c4c9dc028dfdd0bded443c15a47d941e6819d8",
+        "bytes": 68191
+      },
+      {
+        "checkout": "primary",
+        "path": "docs/_shared/GS-SEC-001-R3.md",
+        "sha256": "e886e8676e8b9bd9e0d0073957640dbc29b16984a2ec4e6c1f017e40b65dd776",
+        "bytes": 23477
+      },
+      {
+        "checkout": "primary",
+        "path": "docs/_shared/PROJECT-STATUS.md",
+        "sha256": "ffc418d78b4e3fd96179c1b7bd60dd72afac2b2c22f45e423bbdad0567fc3771",
+        "bytes": 83362
+      },
+      {
+        "checkout": "primary",
+        "path": "public/brand/design/preview.html",
+        "sha256": "d16b6de9da38db5216b38f98300de9af55bd66228be1dc8323d191e33b1b2c48",
+        "bytes": 28749
+      },
+      {
+        "checkout": "gs-launch-018",
+        "path": "CLAUDE.md",
+        "sha256": "0e9bf0c569e75325ac1ebcd28c105bee8f6cbe1b52d40bd54510eae14e20082c",
+        "bytes": 97051
+      },
+      {
+        "checkout": "gs-launch-018",
+        "path": "docs/_shared/05-HANDOVER.md",
+        "sha256": "1c13936feff6ace47ebf86ba543312d739c5920229ed47651d237159437136d1",
+        "bytes": 154216
+      },
+      {
+        "checkout": "gs-launch-018",
+        "path": "docs/_shared/AI-HANDOFF.md",
+        "sha256": "2c912e923da35a6dec9bd552295f6d167444ee6ac329faa394a3adc0a7bdd9ee",
+        "bytes": 75667
+      },
+      {
+        "checkout": "gs-launch-018",
+        "path": "docs/_shared/GS-LAUNCH-019-EVIDENCE.json",
+        "sha256": "f4edf4f09173933cba7b15e703ee6d376fc786ce7bc1157d521d21a6c8cfc033",
+        "bytes": 21751
+      },
+      {
+        "checkout": "gs-launch-018",
+        "path": "docs/_shared/GS-LAUNCH-019.md",
+        "sha256": "4a5460e841015fd341704012e1053f777bd1b37b0d3ab1be32ce66bee1271ed4",
+        "bytes": 13279
+      },
+      {
+        "checkout": "gs-launch-018",
+        "path": "docs/_shared/GS-LAUNCH-020.md",
+        "sha256": "4aa78c0ce97665edca4e819a13a6a90c0bf4023e9185c8ce35aaea0eafc48a42",
+        "bytes": 14825
+      },
+      {
+        "checkout": "gs-launch-018",
+        "path": "docs/_shared/OWNER-ACTIONS.md",
+        "sha256": "4b1a12df2208f343283bea3e015cbba36311970ad799d22b9890a8a9d3f91077",
+        "bytes": 89681
+      },
+      {
+        "checkout": "gs-launch-018",
+        "path": "docs/_shared/PROJECT-STATUS.md",
+        "sha256": "7ec5bd35d526a20b76eac623c6506443bbb24f3bb5d53f603774a661d835e2f3",
+        "bytes": 103011
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "CLAUDE.md",
+        "sha256": "c1ba6524263c7be5e2070138785c1fea5e7cfd7a2b763b3c7b15437032a6be8c",
+        "bytes": 99321
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/05-HANDOVER.md",
+        "sha256": "26aca8423b59f615c2c8a50f657a09b85352004967f1af5c4c15e142662d5ef0",
+        "bytes": 156486
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/AI-HANDOFF.md",
+        "sha256": "efc3a72124ab788bd3c73dff131db262dbf6a623f1acd4f29442bf478427268f",
+        "bytes": 77937
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/GS-LAUNCH-019-EVIDENCE.json",
+        "sha256": "f4edf4f09173933cba7b15e703ee6d376fc786ce7bc1157d521d21a6c8cfc033",
+        "bytes": 21751
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/GS-LAUNCH-019.md",
+        "sha256": "4a5460e841015fd341704012e1053f777bd1b37b0d3ab1be32ce66bee1271ed4",
+        "bytes": 13279
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/GS-LAUNCH-020.md",
+        "sha256": "4aa78c0ce97665edca4e819a13a6a90c0bf4023e9185c8ce35aaea0eafc48a42",
+        "bytes": 14825
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/GS-LAUNCH-021-EVIDENCE.json",
+        "sha256": "8690a1573e2b9aba5474f286bd0f38fc155ea4aca520128830609efad89a517a",
+        "bytes": 28253
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/GS-LAUNCH-021-HOSTINGER-SUPPORT.md",
+        "sha256": "eaa01064e66cb546151c7600ce84c4b87f7d90abbebbcf00f58315b3be0ff132",
+        "bytes": 4291
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/GS-LAUNCH-021.md",
+        "sha256": "e6d76fc6eddd7e21bdb25b5688cd99d4d5cb2cf9a10a3409942797132a68c464",
+        "bytes": 17394
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/GS-LAUNCH-022-EVIDENCE.json",
+        "sha256": "a46ce29c2dfa6543cd3a7e1bafbe464141319081c53167906917ecfe81b06731",
+        "bytes": 102068
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/GS-LAUNCH-022-HOSTINGER-SUPPORT.md",
+        "sha256": "86dc0c649181c63ba96372a09de4bf59c9bbbe57a9b9364ba0f8449764744fff",
+        "bytes": 4450
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/GS-LAUNCH-022.md",
+        "sha256": "b76a15475bb533532787917259ad9285b8f9a5cbd504d05a33e9091a2cbb294b",
+        "bytes": 12041
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/OWNER-ACTIONS.md",
+        "sha256": "ba91b270a275e3e3f6336a5f1696a9e56b8daf4dc0e4f03453f4c7d0b9199d08",
+        "bytes": 91951
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "docs/_shared/PROJECT-STATUS.md",
+        "sha256": "4f93992528d8349057d3b09330dfbd28251d97139026f0396f47c2df2a45c8eb",
+        "bytes": 105281
+      },
+      {
+        "checkout": "gs-launch-021",
+        "path": "scripts/check-static-ui.mjs",
+        "sha256": "a1e1b0c1be60ea8d420adbf8401db1ade77e02bb57cadcb6609abd59f35387a9",
+        "bytes": 26225
+      }
+    ]
+  },
+  "protectedApplicationLegalDependenciesAndExistingWorkflows": "GIT_IDENTICAL_TO_BASELINE",
+  "mainOperations": "GIT_IDENTICAL_TO_MAIN",
+  "tests": {
+    "gitIntegrity": "PASS",
+    "staticVerification": "PASS",
+    "workflowYamlAndShellSyntax": "PASS",
+    "productionAudit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "fullAudit": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "releaseSelftest": {
+      "result": "PASS",
+      "proofs": 52
+    },
+    "browserSelftests": {
+      "result": "PASS",
+      "python": "C:/Python314/python.exe",
+      "installedMode": true,
+      "initialDefaultPythonAttempt": "FAIL: Windows python3 alias exit 9009; retained",
+      "sourceCases": 408,
+      "installedCases": 416,
+      "extractorFixtures": 161,
+      "linuxFilesystem": "NOT_RUN_ON_WINDOWS"
+    },
+    "productionRefusal": {
+      "result": "PASS",
+      "exitCode": 1,
+      "unmetInputs": 8
+    },
+    "verifyBuild": {
+      "result": "FAIL",
+      "reason": "shared baseline 2.93 KB exceeds 2.9 KB; compile, secret, token and theme checks passed",
+      "acceptedSourceComparison": {
+        "samePath": "FAIL: same 2.93 KB > 2.9 KB",
+        "separateDirectory": "PASS",
+        "comparedApplicationFiles": 220,
+        "differentApplicationFiles": 0,
+        "manifestListedScriptChunks": 39,
+        "byteIdenticalChunks": 36,
+        "fullArtifactEquality": false,
+        "deeperCompilerCause": "NOT_ISOLATED",
+        "integrationRegression": "NOT_DEMONSTRATED"
+      }
+    },
+    "windowsAxe": {
+      "result": "PASS",
+      "pages": 20,
+      "noJsPages": 20,
+      "legalCombinations": 70,
+      "focusedAnalyses": 41,
+      "errorDocuments": [
+        {
+          "route": "/h4a-unknown-route",
+          "violations": 0,
+          "status": 404
+        },
+        {
+          "route": "/500.html",
+          "violations": 0,
+          "status": 200
+        }
+      ],
+      "rawAnalyses": 43,
+      "violations": 0,
+      "incompleteRuleOccurrences": 23,
+      "fullWcagCertification": false,
+      "measuredArtifactSource": "13032b1735c320842d7dc25f3de03afa704d3e33",
+      "newArtifactAcceptance": false
+    },
+    "newLinuxCi": {
+      "result": "IN_PROGRESS_AT_CLOSEOUT",
+      "initialSourceRun": 40412120947,
+      "initialSourceSha": "0b21ecf1e2253388e8b1ba18c62274d4e8ca86ac",
+      "partialPassed": [
+        "Linux build",
+        "secret scan",
+        "bundle budgets"
+      ],
+      "fullAcceptance": false,
+      "duplicatePullRequestRun": 40412208567,
+      "duplicateDisposition": "CANCELLED",
+      "initialRunDisposition": "SUPERSEDED_BY_DOCUMENTATION_TIP",
+      "finalTipChecks": "https://github.com/atikmurtaza/Gridsmith-Ltd/pull/3/checks"
+    },
+    "productionRecovery": "NOT_RUN_OUT_OF_SCOPE"
+  },
+  "deploymentSafety": {
+    "vercelGitDeploymentEnabled": false,
+    "hostingerPublisher": "EXPLICIT_APPROVED_DISPATCH_ONLY",
+    "productionDrainEnabled": false,
+    "productionDrainVariable": "ABSENT",
+    "keepaliveAlreadyEnabled": true,
+    "webhooks": 0,
+    "productionActionsPerformed": false,
+    "productionReadOnly": {
+      "checkedAt": "2026-10-26T22:27:01.2758823Z",
+      "status": 200,
+      "wordpressMarkers": true,
+      "method": "GET",
+      "writesPerformed": false
+    },
+    "vercelBranchDeployments": 0,
+    "githubIntegrationSourceDeployments": 0
+  },
+  "publicEvidencePolicy": "Raw receipts, private copies and historical unsent support drafts stay local. No support request is required.",
+  "privateLogHashes": [
+    {
+      "name": "accepted-same-path-build.log",
+      "bytes": 13243,
+      "sha256": "bd384dbe0895b16271d1028d8f398218d5f73a4fd58ba9609083a39cd59becfe"
+    },
+    {
+      "name": "audit-full.json",
+      "bytes": 390,
+      "sha256": "c4422cf7f987cbfbdc9abece5d7c2214ee190b777b6799462cd489e96c5dff38"
+    },
+    {
+      "name": "audit-production.json",
+      "bytes": 390,
+      "sha256": "c4422cf7f987cbfbdc9abece5d7c2214ee190b777b6799462cd489e96c5dff38"
+    },
+    {
+      "name": "axe-correction.diff",
+      "bytes": 2086,
+      "sha256": "360a6c0b62b92dd9436cc0fd0fc1551b01c9e6590b6f4fb4f89172b28dbcbcbb"
+    },
+    {
+      "name": "browser-input-selftest-python.log",
+      "bytes": 49475,
+      "sha256": "e93c5ad7c7481f16a5bd7ca4353df4eae6676170836e2616b379e3a13c8fd703"
+    },
+    {
+      "name": "browser-input-selftest.log",
+      "bytes": 429,
+      "sha256": "c82ad3af1bc8f887c4e7304be103f588e96743b2b690d1cbb2cc49d4bf441afc"
+    },
+    {
+      "name": "browser-installed-selftest.log",
+      "bytes": 49762,
+      "sha256": "ba1b08fd85f530e76dbe808fd206c84b6c4e2ef4bded0ab24bbb21e61dd2a189"
+    },
+    {
+      "name": "git-fsck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "production-readonly.json",
+      "bytes": 149,
+      "sha256": "60ba3673de0bfd4aad0d8135dc39db2d43749e1e8c5016c6202cf4da92101974"
+    },
+    {
+      "name": "production-refusal.log",
+      "bytes": 1307,
+      "sha256": "ba55fde21ec177be591bdf1c140b4510ffb0199545bf59a32964def21a0edb75"
+    },
+    {
+      "name": "release-selftest.log",
+      "bytes": 152,
+      "sha256": "87d1310f789dc295cb1681042b41beb05448584a5d3f55b6fa7bfe8354bc7310"
+    },
+    {
+      "name": "same-path-comparison.json",
+      "bytes": 269,
+      "sha256": "1ded1ca2fe74c83ee1448bbac33a731802bd3036d2a8730071b5459018109963"
+    },
+    {
+      "name": "verify-build.log",
+      "bytes": 13244,
+      "sha256": "60876d96aa72b943a5daf7725e4b1687877b40c983e1c580e694e754c8240273"
+    },
+    {
+      "name": "verify-static.log",
+      "bytes": 61739,
+      "sha256": "b8976a5f9c4ad28fbaf454ce2bca8d683a0928eb3ce43285adbd44e00230a216"
+    },
+    {
+      "name": "windows-axe.log",
+      "bytes": 203,
+      "sha256": "9e02bd5b839d23cbc9716abe15d41b4e17881171de937f52d16c23cfe5e2c2bb"
+    }
+  ],
+  "integrationSourceSha": "0b21ecf1e2253388e8b1ba18c62274d4e8ca86ac",
+  "endingBranch": "codex/gs-launch-023",
+  "endingDocumentationSha": "Resolve enclosing commit / current draft PR head; no self-referential hash",
+  "pullRequest": {
+    "number": 3,
+    "url": "https://github.com/atikmurtaza/Gridsmith-Ltd/pull/3",
+    "base": "main",
+    "draft": true,
+    "merged": false,
+    "mergeable": true
+  }
+}

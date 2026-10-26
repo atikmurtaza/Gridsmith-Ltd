@@ -1,3 +1,5 @@
+> **GS-LAUNCH-002 current override:** The current shared company response is “We aim to respond as soon as practicable.” and registration wording is “England and Wales”, from owner-confirmed decisions 17–18. The BLD-01 shared-baseline allowance is 2.9 KB with its preserved accessibility implementation and permanent negative probe; framework floor calibration is independently measured in the task evidence. Historical timed-response wording below is superseded. Analytics/reviews stay disabled; public Path Finder is withheld. See `GS-LAUNCH-002.md`.
+
 # Shared Foundation — Architecture & Design Tokens
 
 > **GS-P00 commercial override — 11 September 2026.** Portfolio volumes and public pricing in
@@ -66,9 +68,18 @@ layout may render `<html>`/`<body>`, and a single one has no way to know which d
 is serving without opting out of static rendering. See `master/TECH-SPEC.md` §3.
 
 Verified rather than asserted, by `scripts/check-theme-flash.mjs`: `data-division` is
-present and correct in each route's prerendered HTML, the stylesheet is render-blocking
-ahead of `<body>`, and **no client chunk references `data-division` at all** — so no code
+present and correct in each route's prerendered HTML, theme CSS is parsed in `<head>`
+ahead of `<body>` (a render-blocking link or byte-verified Next inline stylesheet),
+and **no client chunk references `data-division` at all** — so no code
 path exists that could set it late. A flash is impossible rather than merely unobserved.
+
+H4-D-R1 (5 October 2026): `experimental.inlineCss` delivers the existing compiled CSS in
+the initial document to remove the extra critical stylesheet round trip. This increases HTML
+bytes and reduces separate cold-load requests; fonts and CSS content remain unchanged.
+The theme gate requires byte parity with emitted CSS and preserves per-division font checks.
+Permanent linked/inline positive and adverse specimens run with the gate. Normal exact-source
+Lighthouse, served theme/accessibility/scene checks and Hostinger measurements still decide
+acceptance. Historical measurements below describe the stylesheet-link build that produced them.
 
 ## 2. Stack (fixed for all three)
 

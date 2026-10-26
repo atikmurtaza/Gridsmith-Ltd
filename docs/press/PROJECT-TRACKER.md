@@ -1,3 +1,7 @@
+> **GS-LEGAL-001-R12-PRESS-FIX (8 October 2026):** Narrow rendered-contrast correction preserves approved R3 paper/ink palette, layout, typography, copy, desk geometry and stage timings. Flags/insertion/tag use whole-opacity visibility; manuscript opacity/filter states snap while geometry continues. The full Press scene includes permanent degraded rendered specimens and transition/lifecycle/mobile/desktop/reduced-motion/keyboard/no-JS coverage. Local verification precedes one scoped commit/push; exact-SHA CI closure uses the final session receipt. No new visual direction, deployment or publication. Evidence: `docs/_shared/GS-LEGAL-001-R12-PRESS-FIX.md`.
+
+> **GS-PRESS-001-RC (27 September 2026):** Owner-approved R3 visuals and D architecture remain frozen (6 territories / 14 services / 29 capabilities / 43 catalogue rows). Narrow accessibility, contact-button, motion-lifecycle, process-label, withholding and performance corrections are documented in `docs/_shared/GS-PRESS-001-RC.md`. Local verification and exact-SHA CI/protected Preview are distinct gates; final acceptance is determined by that record's release receipt convention. Production, main, DNS and production CMS/database remain untouched. No launch or next phase is authorised.
+
 # Project Tracker — Gridsmith Press
 
 ## GS-P00 reconciliation — authoritative override
@@ -84,7 +88,7 @@ Assumes the shared foundation (`master/PROJECT-TRACKER.md` Epic A) is `DONE`, in
 | R-04 | Retailer link-check cron | P0 | 1d | R-01 | TODO | Dev | Weekly + Slack alert |
 | R-05 | Broken-link degradation to text | P0 | 0.5d | R-04 | TODO | Dev | Never a dead link |
 | R-06 | `/press/rights` page | P0 | 1d | P-07 | TODO | Dev | |
-| R-07 | **Rights wording legal sign-off** | P0 | — | R-06 | TODO | Atik + solicitor | **HARD GATE** |
+| R-07 | **Rights wording legal sign-off** | P0 | — | R-06 | TODO | Atik | ~~**HARD GATE** (solicitor)~~ superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026): owner adoption of the consumer terms |
 | R-08 | "What we are and are not" module | P0 | 1d | P-03 | TODO | Dev | Three-way honest comparison |
 | R-09 | Commercial expectations statement | P0 | 0.5d | P-03 | TODO | Dev | Undesigned, before pricing |
 | R-10 | `publishingPackage` schema | P0 | 1d | A-06 | **DONE** | Dev | `sanity/schemas/publishingPackage.ts`. ~~Non-negotiable #3 is structural: no POA path.~~ *(Superseded at `GS-P03` by `GS-D002`: `price`, `priceNote`, `priceIsFrom`, `scalingFactors` and `extraRevisionCost` were removed.)* **`price`, `revisionRounds` and `extraRevisionCost` use a custom rule, not `required()`** — Sanity's `required()` accepts `0` on a number, and `0` is a legitimate answer, so `required()` alone cannot tell *"free"* from *"blank"*. **`extraRevisionCost` was required in §2's prose and unmarked in its code block**; the prose won and `SCHEMA.md` is corrected in this commit. **10 proofs.** Needs no price — `Q-P3`/`Q-P4` and `O-05` are the content |

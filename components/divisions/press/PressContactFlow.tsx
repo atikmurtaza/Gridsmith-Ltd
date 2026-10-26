@@ -5,12 +5,13 @@
 // referrer header the next page sends, which is the wrong trade for a form whose whole subject
 // is discretion.
 
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { startTransition, useActionState, useEffect, useRef, useState } from 'react';
 import { Field } from '@/components/primitives/Field';
 import { Heading } from '@/components/primitives/Heading';
 import { Link } from '@/components/primitives/Link';
 import { RadioGroup } from '@/components/primitives/RadioGroup';
 import { Select } from '@/components/primitives/Select';
+import { Honeypot } from '@/components/leads/Honeypot';
 import type { FormState } from '@/lib/leads/action';
 import { submitPressLeadAction } from '@/lib/leads/pressAction';
 import { pressSegmentOptions, pressSegmentTerms, type PressSegment } from '@/lib/leads/pressSegments';
@@ -73,7 +74,7 @@ const btn = (variant: 'primary' | 'secondary') =>
 const BUDGETS = [
   { value: 'not-sure', label: 'Not sure yet' },
   { value: 'small', label: 'A small, well-defined piece of work' },
-  { value: 'project', label: 'A full book project' },
+  { value: 'project', label: 'A defined project' },
   { value: 'programme', label: 'An ongoing programme or retainer' },
 ];
 
@@ -146,6 +147,13 @@ const WHO_WRITES = [
   { value: 'undecided', label: 'Undecided' },
 ];
 
+const PRODUCTION_TYPES = [
+  { value: 'editing', label: 'Editing or proofreading' },
+  { value: 'book-production', label: 'Book layout, files or print coordination' },
+  { value: 'publishing', label: 'Publishing or distribution preparation' },
+  { value: 'audiobook', label: 'Audiobook production support' },
+];
+
 const READERSHIPS = [
   { value: 'family-only', label: 'Family and friends' },
   { value: 'public', label: 'A general readership' },
@@ -173,6 +181,8 @@ const STEP_OF_FIELD: Record<string, number> = {
   volumePerMonth: 2,
   turnaroundNeeded: 2,
   procurementProcess: 2,
+  workType: 2,
+  currentMaterial: 2,
   manuscriptLink: 3,
   budget_band: 3,
   full_name: 4,
@@ -185,7 +195,7 @@ const STEP_OF_FIELD: Record<string, number> = {
 const STEP_TITLES = [
   'Which describes you?',
   'About the work',
-  'Budget and the manuscript',
+  'Budget and source material',
   'How to reach you',
 ];
 
@@ -226,10 +236,15 @@ export function PressContactFlow({
   expectationsStatement?: string | null;
 }) {
   const [state, formAction, pending] = useActionState(submitPressLeadAction, INITIAL);
+  const staticProfile = process.env.GRIDSMITH_BUILD_TARGET === 'static';
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [step, setStep] = useState(1);
   const [segment, setSegment] = useState<PressSegment | ''>('');
   const headingRef = useRef<HTMLDivElement>(null);
+  const errorField = useRef<string | null>(null);
   const moved = useRef(false);
+  const previousFocusState = useRef<FormState>(INITIAL);
 
   const errors = state.status === 'invalid' ? state.errors : {};
   const firstError = (name: string) => errors[name]?.[0];
@@ -237,17 +252,35 @@ export function PressContactFlow({
   // A rejection that leaves you on step 4 looking at a clean page is indistinguishable from a
   // rejection that did nothing. Move to the step that owns the first failing field.
   useEffect(() => {
+    if (state.status === 'error') {
+      headingRef.current?.closest('form')?.querySelector<HTMLElement>('[data-error-summary]')?.focus();
+      return;
+    }
     if (state.status !== 'invalid') return;
     const first = Object.keys(state.errors)[0];
+    errorField.current = first ?? null;
     if (first && STEP_OF_FIELD[first]) setStep(STEP_OF_FIELD[first]);
   }, [state]);
 
   // Focus the step heading on every move, so a keyboard or screen reader user is put at the top
   // of what changed rather than left wherever the button they pressed used to be (WCAG 2.4.3).
   useEffect(() => {
+    const failureArrived = state.status === 'error' && previousFocusState.current !== state;
+    previousFocusState.current = state;
+    if (failureArrived) return; // Preserve summary focus; explicit later step moves still focus their heading.
+    if (errorField.current && state.status === 'invalid') {
+      const name = errorField.current;
+      if (STEP_OF_FIELD[name] !== step) return;
+      const form = headingRef.current?.closest('form');
+      const control = [...(form?.querySelectorAll<HTMLElement>('[name]') ?? [])]
+        .find((field) => field.getAttribute('name') === name);
+      (control ?? headingRef.current)?.focus();
+      errorField.current = null;
+      return;
+    }
     if (!moved.current) return;
     headingRef.current?.focus();
-  }, [step]);
+  }, [step, state]);
 
   const go = (next: number) => {
     moved.current = true;
@@ -255,10 +288,21 @@ export function PressContactFlow({
   };
 
   const segmentOptions = pressSegmentOptions(expectationsStatement !== null);
-  const showManuscriptLink = segment === 'author' || segment === 'memoir';
+  const showManuscriptLink = segment === 'author' || segment === 'memoir' || segment === 'production';
 
   return (
-    <form action={formAction} className={styles.form} noValidate>
+    <form action={staticProfile ? undefined : formAction} className={styles.form} noValidate
+      data-edge-form={staticProfile ? 'press' : undefined}
+      onSubmit={staticProfile ? (event) => {
+        event.preventDefault(); if (pending) return;
+        const data = new FormData(event.currentTarget);
+        startTransition(() => formAction(data));
+      } : undefined}>
+      {staticProfile ? <noscript><p>JavaScript is required for this enquiry journey. Email{' '}
+        <a href={`mailto:${contactEmail}`}>{contactEmail}</a> instead. No enquiry is submitted here without JavaScript.</p></noscript> : null}
+      <p className="sr-only" aria-live="polite" aria-atomic="true" data-submit-status="">
+        {pending ? 'Sending your enquiry. Please wait.' : ''}
+      </p>
       <p className={styles.progress} aria-live="polite">
         Step {step} of 4 — {STEP_TITLES[step - 1]}
       </p>
@@ -272,14 +316,15 @@ export function PressContactFlow({
       </div>
 
       {state.status === 'invalid' ? (
-        <p className={styles.formError} role="alert">
+        <p className={styles.formError} role="alert" data-error-summary="" tabIndex={-1}>
           There is a problem with {Object.keys(errors).length === 1 ? 'one answer' : 'some answers'}.
           The details are next to each one.
         </p>
       ) : null}
       {state.status === 'error' ? (
-        <p className={styles.formError} role="alert">
-          We could not send that, and nothing you typed has been lost. Try again, or email{' '}
+        <p className={styles.formError} role="alert" data-error-summary="" tabIndex={-1}>
+          {staticProfile && state.detail === 'temporarily-unavailable' ? 'The enquiry service is temporarily unavailable. ' : 'We could not confirm receipt. '}
+          Your answers are still here — try again, or email{' '}
           <a href={`mailto:${contactEmail}`}>{contactEmail}</a> directly.
         </p>
       ) : null}
@@ -347,18 +392,25 @@ export function PressContactFlow({
 
         {segment === 'content' ? (
           <>
-            <fieldset className={styles.checks}>
+            <fieldset className={styles.checks} aria-describedby={firstError('formats') ? 'press-formats-error' : undefined} aria-invalid={firstError('formats') ? true : undefined}>
               <legend>What formats do you need?</legend>
               {FORMATS.map((f) => (
                 <Check key={f} name="formats" value={f} label={f} id={`press-format-${f.toLowerCase().replace(/\W+/g, '-')}`} />
               ))}
             </fieldset>
             {firstError('formats') ? (
-              <p className={styles.formError} role="alert">Pick at least one format.</p>
+              <p id="press-formats-error" className={styles.formError} role="alert">Pick at least one format.</p>
             ) : null}
             <Field name="volumePerMonth" label="How much, per month?" required hint="Two long articles, one newsletter a week — an estimate is fine." error={firstError('volumePerMonth')} />
             <Field name="turnaroundNeeded" label="What turnaround do you need?" required error={firstError('turnaroundNeeded')} />
             <RadioGroup name="procurementProcess" legend="Is there a procurement or contracting process to go through?" options={YES_NO} required error={firstError('procurementProcess')} />
+          </>
+        ) : null}
+
+        {segment === 'production' ? (
+          <>
+            <Select name="workType" label="What kind of support do you need?" options={PRODUCTION_TYPES} required error={firstError('workType')} />
+            <Field name="currentMaterial" label="What do you have so far?" multiline required hint="A manuscript, edited text, production files or an existing release — describe what is ready and what still needs doing." error={firstError('currentMaterial')} />
           </>
         ) : null}
 
@@ -422,6 +474,7 @@ export function PressContactFlow({
         ) : null}
         {step < 4 ? (
           <button
+            key="next"
             type="button"
             className={btn('primary')}
             onClick={() => go(step + 1)}
@@ -430,11 +483,12 @@ export function PressContactFlow({
             Next
           </button>
         ) : (
-          <button type="submit" className={btn('primary')} disabled={pending}>
+          <button key="submit" type="submit" className={btn('primary')} disabled={pending || (staticProfile && !ready)}>
             {pending ? 'Sending…' : 'Send this'}
           </button>
         )}
       </div>
+      <Honeypot />
     </form>
   );
 }

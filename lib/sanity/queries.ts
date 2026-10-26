@@ -1,4 +1,11 @@
 import { sanityClient } from '@/lib/sanity/client';
+import { STATIC_BUILD, OWNER_PREVIEW } from '@/lib/build/target';
+import { SANITY_DATASET } from '@/sanity/env';
+import legalRegister from '@/docs/_legal/evidence/GS-O003-R-REGISTER.json';
+import { staticManifest } from '@/lib/build/static-routes';
+import type { PortableMarkDef, PortableSpan } from '@/lib/content/portableLinks';
+import { LEGAL_DOCUMENTS } from '@/scripts/seed-legal.mjs';
+import { allLegalPublishable } from '@/lib/legal/adoption';
 
 /**
  * The read layer. **Every public projection is written so that a field which must not reach
@@ -82,7 +89,9 @@ export type PortableBlock = {
   _type: string;
   _key?: string;
   style?: string;
-  children?: { _type: string; _key?: string; text?: string }[];
+  /** Annotation definitions the spans' `marks` point at — `link` only (`lib/content/portableLinks.ts`). */
+  markDefs?: PortableMarkDef[];
+  children?: PortableSpan[];
 };
 
 export type PostCard = {
@@ -125,25 +134,35 @@ export type LegalDocument = {
   title: string;
   version: string | null;
   effectiveFrom: string | null;
+  effectiveOnPublication?: boolean;
   lastReviewed: string | null;
   reviewedBy: string | null;
-  solicitorApproved: boolean;
+  /** `GS-O003-R` state (`lib/legal/adoption.ts`). Only `PUBLISHABLE` reaches production. */
+  adoptionState: string;
   summary: string | null;
   clauses: LegalClause[] | null;
   isSeed: boolean;
 };
 
-const q = <T,>(query: string, params: Record<string, unknown> = {}) =>
-  sanityClient.fetch<T>(query, params);
+const q = async <T,>(query: string, params: Record<string, unknown> = {}) => {
+  const value = await sanityClient.fetch<T>(query, params);
+  if (STATIC_BUILD && value === null) throw new Error('Required static CMS content unavailable');
+  return value;
+};
+
+// A development review export uses the same gated service set as its route manifest.
+const staticServiceIds = STATIC_BUILD ? staticManifest().routes
+  .filter((route) => route.eligible && route.contentType === 'service').map((route) => route.sourceId) : [];
 
 export const listServices = (division: Division) =>
   q<ServiceCard[]>(
     `*[_type == "service" && division == $division && published == true
+       && (!$static || _id in $serviceIds)
        && !(_id in path("drafts.**"))]
      | order(order asc){
        "title": title, "slug": slug.current, division, capabilityGroup, problem, order
      }`,
-    { division },
+    { division, static: STATIC_BUILD, serviceIds: staticServiceIds },
   );
 
 /**
@@ -166,14 +185,14 @@ export const getService = (division: Division, slug: string) =>
       deliverables[]{label, detail, "included": coalesce(included, true)},
       process[]{number, title, description, divisionDetail, duration, clientTime},
       collaborators,
-      "relatedServices": relatedServices[@->published == true]->{
+      "relatedServices": relatedServices[@->published == true && (!$static || @->_id in $serviceIds)]->{
         "title": title, "slug": slug.current, division
       },
       ctaLabel,
       "metaTitle": seo.metaTitle, "metaDescription": seo.metaDescription,
       "isSeed": coalesce(isSeed, false)
     }`,
-    { division, slug },
+    { division, slug, static: STATIC_BUILD, serviceIds: staticServiceIds },
   );
 
 /** Slugs for `generateStaticParams`, scoped to one division for the same reason. */
@@ -260,32 +279,17 @@ export const getGroupPage = (slug: 'approach' | 'about') =>
     { slug },
   );
 
-/**
- * **`solicitorApproved` is not filtered here, and that is deliberate.**
- *
- * `master/SCHEMA.md` gives the query an `$allowUnapproved` parameter. Filtering an unapproved
- * document out would serve a 404 for `/legal/privacy`, and a website with no privacy notice is
- * a worse outcome than one carrying a draft that says, at the top of the page, that it is a
- * draft. The route renders the approval state prominently instead, and `L-04` is the gate that
- * flips it. What must not happen — a draft published as though it were approved — is prevented
- * by rendering the state, not by hiding the document.
- */
+/** Canonical repository text also supplies the served route; CMS copies cannot override it. */
+const publishableLegalSlugs = allLegalPublishable(Object.values(legalRegister.documents).map((entry) => entry.state))
+  ? Object.keys(legalRegister.documents) : [];
 export const getLegalDocument = (slug: string) =>
-  q<LegalDocument | null>(
-    `*[_type == "legalDocument" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
-      title, version, effectiveFrom, lastReviewed, reviewedBy,
-      "solicitorApproved": coalesce(solicitorApproved, false),
-      summary,
-      clauses[]{number, heading, anchorId, basis, body},
-      "isSeed": coalesce(isSeed, false)
-    }`,
-    { slug },
-  );
+  Promise.resolve(LEGAL_DOCUMENTS.find((doc) => doc.slug.current === slug &&
+    (SANITY_DATASET === 'development' || (OWNER_PREVIEW && staticManifest().legalPreview === 'adopted-owner') ||
+      (doc.adoptionState === 'PUBLISHABLE' && publishableLegalSlugs.includes(slug)))) ?? null);
 
 export const listLegalDocuments = () =>
-  q<{ title: string; slug: string; summary: string | null; solicitorApproved: boolean }[]>(
-    `*[_type == "legalDocument" && !(_id in path("drafts.**"))] | order(title asc){
-      title, "slug": slug.current, summary,
-      "solicitorApproved": coalesce(solicitorApproved, false)
-    }`,
-  );
+  Promise.resolve(LEGAL_DOCUMENTS.filter((doc) => SANITY_DATASET === 'development' ||
+    (OWNER_PREVIEW && staticManifest().legalPreview === 'adopted-owner') ||
+    (doc.adoptionState === 'PUBLISHABLE' && publishableLegalSlugs.includes(doc.slug.current)))
+    .map((doc) => ({ title: doc.title, slug: doc.slug.current, summary: doc.summary, adoptionState: doc.adoptionState }))
+    .sort((a, b) => a.title.localeCompare(b.title)));

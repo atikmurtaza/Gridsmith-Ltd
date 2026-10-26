@@ -85,10 +85,10 @@ from `.claude/agents/` **in a fresh context**, both with zero findings.
 
 | # | Task | Depends on | DoD |
 |---|---|---|---|
-| 3.1 | `legalDocument` schema with clause anchors | 0.5 | `solicitorApproved` gates production |
+| 3.1 | `legalDocument` schema with clause anchors | 0.5 | ~~`solicitorApproved` gates production~~ — superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026) |
 | 3.2 | Legal page template — TOC, anchors, print stylesheet | 3.1 | Every clause has a stable `#anchor` |
 | 3.3 | Load drafts from `_legal/` | 3.2 | Four documents published to staging |
-| 3.4 | **Solicitor review** | 3.3 | **HARD GATE — no legal page ships unapproved** |
+| 3.4 | **Solicitor review** | 3.3 | ~~**HARD GATE — no legal page ships unapproved**~~ — superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026): a legal page ships only at `PUBLISHABLE` |
 | 3.5 | Statutory disclosure verification | 1.4 | Companies Act items present on every page |
 | 3.6 | ICO registration check | — | Registration number recorded in `companyDetails` |
 | 3.7 | `consent_events` audit table | 0.11 | Choice demonstrable, no PII stored |
@@ -144,7 +144,7 @@ from `.claude/agents/` **in a fresh context**, both with zero findings.
 
 ## Critical path
 
-`0.1 → 0.11 (consent) → 1.2 (root layout) → 1.4 (footer/statutory) → 2.2 (routing) → 2.8 (canonical case study) → 3.4 (solicitor gate) → 4.3 (redirects) → 6.5 (routing test) → launch`
+`0.1 → 0.11 (consent) → 1.2 (root layout) → 1.4 (footer/statutory) → 2.2 (routing) → 2.8 (canonical case study) → 3.4 (~~solicitor gate~~ owner adoption gate, superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026)) → 4.3 (redirects) → 6.5 (routing test) → launch`
 
 Divisions cannot start Phase 1 until master Phase 1 is complete — they inherit the header, footer and consent layer.
 

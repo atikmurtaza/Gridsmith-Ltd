@@ -1,0 +1,607 @@
+{
+  "task": "GS-LAUNCH-006",
+  "recordedAt": "2026-10-23T17:03:32.743Z",
+  "baseline": "b787ef79382ccf3fb904284951f88f3dcb12a86f",
+  "branch": "codex/gs-launch-006",
+  "release": "HOLD",
+  "accountAccess": false,
+  "providerWrites": 0,
+  "hostedRequests": 0,
+  "authority": "Repository inspection, public official documentation and local documentation commit only; no support send or hosted tests",
+  "operatorIdentity": {
+    "policy": {
+      "version": 1,
+      "providerAcceptance": "UNVERIFIED",
+      "deployable": false,
+      "owner": "operator",
+      "storage": "outside-release-root",
+      "status": 500,
+      "errorUri": "/__gs_error.html",
+      "cacheControl": "no-store, max-age=0",
+      "contentSecurityPolicy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
+    },
+    "configurationSha256": "e34b8851ddbbee2e04b194f2becf33c89bde4ed472e95140b2ef34a2373ed8a2",
+    "documentSha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+  },
+  "checks": {
+    "inputHashBindings": {
+      "status": "PASS",
+      "entries": 23,
+      "verificationTarget": "b787ef79382ccf3fb904284951f88f3dcb12a86f",
+      "scope": "Pre-edit baseline; five control documents intentionally updated after this check; see finalInputPreservation"
+    },
+    "portableEvidence": {
+      "status": "PASS_RECHECKED_BYTES_NOT_RERUN",
+      "entries": 45
+    },
+    "legal": {
+      "status": "PASS_UNCHANGED",
+      "ownerAdopted": 7,
+      "publishable": 0,
+      "documents": [
+        {
+          "path": "docs/_legal/current/accessibility-statement.md",
+          "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb"
+        },
+        {
+          "path": "docs/_legal/current/client-terms-applicability.md",
+          "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87"
+        },
+        {
+          "path": "docs/_legal/current/client-terms-business.md",
+          "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6"
+        },
+        {
+          "path": "docs/_legal/current/client-terms-consumers.md",
+          "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e"
+        },
+        {
+          "path": "docs/_legal/current/cookie-policy.md",
+          "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960"
+        },
+        {
+          "path": "docs/_legal/current/privacy-policy.md",
+          "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7"
+        },
+        {
+          "path": "docs/_legal/current/website-terms.md",
+          "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a"
+        }
+      ],
+      "registerSha256": "4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e"
+    },
+    "retainedArtifact": {
+      "status": "PASS_RETAINED_LOCAL_ARTIFACT_ONLY",
+      "sourceWorktree": "C:/Users/atikm/.codex/worktrees/gs-launch-005/Gridsmith Ltd",
+      "fileCount": 201,
+      "artifactIdentity": "15f3ac8766adb3c8e5bfd53d2f290bdd144b5161b0fcc696a0cdfe6d5cf9e421",
+      "sourceSha": "6cce73bfd0f1a6fc42a449bbb7306fe2fd5848a5",
+      "sourceModified": true,
+      "deployable": false,
+      "denied": true,
+      "operatorExcluded": true,
+      "rebuild": false,
+      "network": false
+    },
+    "staticSelftest": {
+      "status": "PASS",
+      "command": "node scripts/check-static.selftest.mjs",
+      "exitCode": 0,
+      "operatorFiles": 2,
+      "operatorAdverseProofs": 13,
+      "firstAttempt": {
+        "exitCode": 1,
+        "error": "ERR_MODULE_NOT_FOUND: typescript; incomplete run not acceptance"
+      },
+      "finalEnvironment": "Node v24.15.0; existing dependencies reused through a worktree-local ignored junction; no install"
+    },
+    "inventoryCheck": {
+      "status": "PASS_FINAL_ONLY",
+      "firstAttempt": "Local assertion used a boolean receipt field as a file-count object; stopped before receipt write; corrected to the independent 201-file report expectation"
+    },
+    "report": {
+      "status": "PASS",
+      "capabilityRows": 9,
+      "localLinks": "RESOLVE",
+      "testHost": "UNASSIGNED",
+      "nextPhase": "NOT_STARTED"
+    },
+    "finalInputPreservation": {
+      "status": "PASS",
+      "unchanged": 18,
+      "authorisedDocumentationUpdates": 5,
+      "entries": [
+        {
+          "path": "ops/HOSTINGER-ERROR.md",
+          "sha256": "d82c7cc1e54c3a5ab9760e7d1f2a5c10a037ac654adcc395b8ce103716731c1a",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "ops/hostinger-error/error.html",
+          "sha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "ops/hostinger-error/identity.json",
+          "sha256": "825083389834f47fdb3e5367d441fca5a59ee638434cb17f196ed519b28fd106",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "scripts/build-static.mjs",
+          "sha256": "2a4063fe2c90efc7873abdd26eea0715a51173f494a4fe6cb1acdf20875c17e0",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "scripts/check-static-artifact.mjs",
+          "sha256": "ed5244826376c6e65e8430b3550ce0590e02ec00fe93dbb66d3d4c70b51d38c0",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "scripts/check-static.selftest.mjs",
+          "sha256": "1e163a8aba9fa9917f4636d39b4f7c75c7d3fb7ad4bb3c95510a934962de12c7",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "scripts/source-files.mjs",
+          "sha256": "f4e6dfeed7e5adecec4f56ea9fd5bea3c9b3f6abef7872bdf9655917b8bc4e90",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "docs/_shared/gs-launch-005-proof/apache.conf",
+          "sha256": "5a44b07b436f3dec69dff69806275e008b45632e39c81da8326a6ae484538237",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "docs/_shared/gs-launch-005-proof/setup.mjs",
+          "sha256": "5db432a0e9d7762bae527e1238a30fcc37aa435091a6efefc2b3c23a59ad4fd7",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "docs/_shared/gs-launch-005-proof/verify.mjs",
+          "sha256": "ab6e6c9ef07355fd21be0fc69ac95e531e27eda45585447e91a24db793783302",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "docs/_shared/gs-launch-005-proof/README.md",
+          "sha256": "79289fa5ad74fccc2171e1b2f50175d9d831e0b6a57d32963c87eaa485a51aa0",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "docs/_shared/GS-LAUNCH-005.md",
+          "sha256": "d62404f22a3d52305cee921fb6206b6d396bb088cf44f7a5e8e9127f70d76cb3",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "docs/_shared/05-HANDOVER.md",
+          "sha256": "cedea586fd94106a501244036929ec018cd5cb61d84e5c5abf24c509ee09ce37",
+          "state": "AUTHORISED_DOCUMENTATION_UPDATE"
+        },
+        {
+          "path": "docs/_shared/PROJECT-STATUS.md",
+          "sha256": "a453b366d8090e83adcf9aa7e60e2b9d44b268702529be32679025da66a15979",
+          "state": "AUTHORISED_DOCUMENTATION_UPDATE"
+        },
+        {
+          "path": "docs/_shared/AI-HANDOFF.md",
+          "sha256": "22c048602ad2c83d111406c0c128d4e23ad0dc23833e04680f351e28529ecc76",
+          "state": "AUTHORISED_DOCUMENTATION_UPDATE"
+        },
+        {
+          "path": "docs/_shared/OWNER-ACTIONS.md",
+          "sha256": "b6a77b04ecba464c89a45cd9dc0642efea2086c000bf6ac88996a829e8cf4580",
+          "state": "AUTHORISED_DOCUMENTATION_UPDATE"
+        },
+        {
+          "path": "docs/master/PROJECT-TRACKER.md",
+          "sha256": "0e3856813252a01a3675280f5fb67a2e41262486778bbe3dca5bab08816bbd99",
+          "state": "AUTHORISED_DOCUMENTATION_UPDATE"
+        },
+        {
+          "path": "package.json",
+          "sha256": "c3887b334f93f77ef7a4ee66c1639d2c1395f676b4cff039adb10940c320f9c4",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "lib/build/hostinger.ts",
+          "sha256": "0baa8af8102a74bcd75f8247997cca7c13d117e3b78b2a2e4d11a4b9659b72c9",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "app/global-error.tsx",
+          "sha256": "357090a5de249b3b881fe7f1c9bcefde8b8a1404c963cd521a3097f708fae211",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "public/500.html",
+          "sha256": "e97a49245a82d7ad446ec11e312ba008d61f6916c0b4c25761264ce0093222a4",
+          "state": "UNCHANGED"
+        },
+        {
+          "path": "docs/_legal/evidence/GS-O003-R-REGISTER.json",
+          "sha256": "4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e",
+          "state": "UNCHANGED"
+        }
+      ]
+    },
+    "primaryCheckout": {
+      "status": "PASS",
+      "head": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+      "branch": "codex/gs-launch-001",
+      "statusEntries": 10,
+      "dirtyAndUntrackedFileHashes": [
+        {
+          "path": ".codex/agents/accessibility-audit.toml",
+          "sha256": "47c8cec0db8bd1d130224a5ad8df0a830133372451640cf1895158e76d7ec437"
+        },
+        {
+          "path": ".codex/agents/content-integrity.toml",
+          "sha256": "ccee9c6c93dd458718b1b092e27aa5a336fcf9d8003e53957c3b6982f863d5d5"
+        },
+        {
+          "path": ".codex/agents/design-conformance.toml",
+          "sha256": "accfd51070d6a84956d1432c6454c0b4a0e7df4c23120ad6970b5d71ac996b60"
+        },
+        {
+          "path": ".codex/agents/rules-compliance.toml",
+          "sha256": "df41d34bb36caf2aec76e8dc44955478856ac9a101f351abecdc397c47818143"
+        },
+        {
+          "path": ".codex/agents/spec-compliance.toml",
+          "sha256": "c9baa030ad101536d1215f59fd4436f87f8c68596af72d615335f748e2f1832e"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "ee998c1d7c00c3529f277e3d20377f144726909e875cc53d663025c98f72c6f6"
+        },
+        {
+          "path": "docs/_shared/05-HANDOVER.md",
+          "sha256": "447d5c013a16ea01b6d3699fe64d4b0a1df3e709d9a7f9e8445deebb9512cdc9"
+        },
+        {
+          "path": "docs/_shared/AI-HANDOFF.md",
+          "sha256": "9eb7a1b2e0507c846652fd533fd748b7bb935c4314f765d25698a3bbcd3daf88"
+        },
+        {
+          "path": "docs/_shared/GS-LEGAL-001-R12-RASTER-CLOSURE.md",
+          "sha256": "db1ab3fb726cb1d408f33b4dadd758601031d31d6328e2e90e7637b0deb5be4c"
+        },
+        {
+          "path": "docs/_shared/GS-SEC-001-R1.md",
+          "sha256": "5053339b2bcf2ff854e85467249d731defa4ff558339174921af16581d1d43aa"
+        },
+        {
+          "path": "docs/_shared/GS-SEC-001-R2.md",
+          "sha256": "6a945382e58acde9696f637388c4c9dc028dfdd0bded443c15a47d941e6819d8"
+        },
+        {
+          "path": "docs/_shared/GS-SEC-001-R3.md",
+          "sha256": "e886e8676e8b9bd9e0d0073957640dbc29b16984a2ec4e6c1f017e40b65dd776"
+        },
+        {
+          "path": "docs/_shared/PROJECT-STATUS.md",
+          "sha256": "ffc418d78b4e3fd96179c1b7bd60dd72afac2b2c22f45e423bbdad0567fc3771"
+        },
+        {
+          "path": "public/brand/design/preview.html",
+          "sha256": "d16b6de9da38db5216b38f98300de9af55bd66228be1dc8323d191e33b1b2c48"
+        }
+      ],
+      "comparison": "Before/after HEAD, branch, complete porcelain status and all dirty/untracked file hashes identical"
+    },
+    "previousWorktree": {
+      "status": "PASS",
+      "head": "b787ef79382ccf3fb904284951f88f3dcb12a86f",
+      "porcelain": "",
+      "sourceChanged": false
+    },
+    "protectedTree": {
+      "status": "PASS",
+      "comparisonBase": "b787ef79382ccf3fb904284951f88f3dcb12a86f",
+      "scope": "ops/scripts/app/components/lib/styles/public/package/workflows/all legal sources and both prior proof folders",
+      "changedFiles": 0
+    },
+    "stagedReview": {
+      "status": "PASS",
+      "documentationPaths": 7,
+      "unstagedTrackedChanges": 0,
+      "whitespace": "PASS_git_diff_cached_check",
+      "confidentiality": "PASS_selected_added_line_credential_patterns_and_manual_source_review; not a full built-bundle scan",
+      "localReportLinks": "PASS",
+      "protectedInputHashes": "PASS",
+      "hooks": "No configured core.hooksPath or active default hooks observed"
+    }
+  },
+  "priorEvidenceSha256": "7cdd079779d352dabea97e48de26977c35c3472d258e076969b33d36516c63ed",
+  "notRun": [
+    "account/browser/session/API inspection",
+    "hosted requests/faults",
+    "build/deployment",
+    "remote CI/push",
+    "fresh vulnerability audit",
+    "human accessibility acceptance"
+  ],
+  "nextSingleTask": "Owner-led redacted Hostinger capability evidence and approved enquiry submission; GS-LAUNCH-007 requires separate approval",
+  "capabilities": [
+    {
+      "id": "C1",
+      "classification": "DOCUMENTED"
+    },
+    {
+      "id": "C2",
+      "classification": "UNVERIFIED"
+    },
+    {
+      "id": "C3",
+      "classification": "UNVERIFIED"
+    },
+    {
+      "id": "C4",
+      "classification": "UNVERIFIED"
+    },
+    {
+      "id": "C5",
+      "classification": "UNVERIFIED"
+    },
+    {
+      "id": "C6",
+      "classification": "UNVERIFIED"
+    },
+    {
+      "id": "C7",
+      "classification": "UNVERIFIED"
+    },
+    {
+      "id": "C8",
+      "classification": "UNVERIFIED"
+    },
+    {
+      "id": "C9",
+      "classification": "UNVERIFIED"
+    }
+  ],
+  "classificationCounts": {
+    "CONFIRMED": 0,
+    "DOCUMENTED": 1,
+    "UNVERIFIED": 8,
+    "UNSUPPORTED": 0
+  },
+  "publicSources": [
+    {
+      "id": "P1",
+      "title": "How to customize your website’s error pages in Hostinger",
+      "url": "https://www.hostinger.com/support/1583295-how-to-customize-your-website-s-error-pages-in-hostinger/",
+      "consulted": "2026-10-23",
+      "class": "GENERIC_PROVIDER_DOCUMENTATION_ONLY"
+    },
+    {
+      "id": "P2",
+      "title": "Guide to Using Hostinger, PDF page 14 / printed page 13; historical",
+      "url": "https://assets.hostinger.com/content/tutorials/pdf/Guide-To-Using-Hostinger.pdf",
+      "consulted": "2026-10-23",
+      "class": "GENERIC_PROVIDER_DOCUMENTATION_ONLY"
+    },
+    {
+      "id": "P3",
+      "title": "How Hostinger CDN caching works",
+      "url": "https://www.hostinger.com/support/how-hostinger-cdn-caching-works/",
+      "consulted": "2026-10-23",
+      "class": "GENERIC_PROVIDER_DOCUMENTATION_ONLY"
+    },
+    {
+      "id": "P4",
+      "title": "Hostinger CDN: Troubleshooting website errors",
+      "url": "https://www.hostinger.com/support/hostinger-cdn-troubleshooting-website-errors/",
+      "consulted": "2026-10-23",
+      "class": "GENERIC_PROVIDER_DOCUMENTATION_ONLY"
+    },
+    {
+      "id": "P5",
+      "title": "Advanced CDN header management at Hostinger",
+      "url": "https://www.hostinger.com/support/8052370-advanced-cdn-header-management-at-hostinger/",
+      "consulted": "2026-10-23",
+      "class": "GENERIC_PROVIDER_DOCUMENTATION_ONLY"
+    },
+    {
+      "id": "P6",
+      "title": "Hostinger CDN: How to optimize your website",
+      "url": "https://www.hostinger.com/support/7935917-hostinger-cdn-website-optimization/",
+      "consulted": "2026-10-23",
+      "class": "GENERIC_PROVIDER_DOCUMENTATION_ONLY"
+    },
+    {
+      "id": "P7",
+      "title": "How to deploy a Git repository in Hostinger",
+      "url": "https://www.hostinger.com/support/1583302-how-to-deploy-a-git-repository-in-hostinger/",
+      "consulted": "2026-10-23",
+      "class": "GENERIC_PROVIDER_DOCUMENTATION_ONLY"
+    },
+    {
+      "id": "P8",
+      "title": "Hostinger CDN and your DNS records",
+      "url": "https://www.hostinger.com/support/hostinger-cdn-and-your-dns-records/",
+      "consulted": "2026-10-23",
+      "class": "GENERIC_PROVIDER_DOCUMENTATION_ONLY"
+    }
+  ],
+  "accountEvidenceRequests": [
+    "E1 product/site/permissions",
+    "E2 roots/separation",
+    "E3 current error configuration",
+    "E4 provider implementation confirmation",
+    "E5 delivery/cache/stale policy",
+    "E6 deployment/App/other trigger safety",
+    "E7 backup/restore and isolated host"
+  ],
+  "newAccountEvidenceCollected": 0,
+  "exactPermittedTestHost": null,
+  "supportEnquirySent": false,
+  "baselineVerifiedInputHashes": [
+    {
+      "path": "ops/HOSTINGER-ERROR.md",
+      "sha256": "d82c7cc1e54c3a5ab9760e7d1f2a5c10a037ac654adcc395b8ce103716731c1a"
+    },
+    {
+      "path": "ops/hostinger-error/error.html",
+      "sha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+    },
+    {
+      "path": "ops/hostinger-error/identity.json",
+      "sha256": "825083389834f47fdb3e5367d441fca5a59ee638434cb17f196ed519b28fd106"
+    },
+    {
+      "path": "scripts/build-static.mjs",
+      "sha256": "2a4063fe2c90efc7873abdd26eea0715a51173f494a4fe6cb1acdf20875c17e0"
+    },
+    {
+      "path": "scripts/check-static-artifact.mjs",
+      "sha256": "ed5244826376c6e65e8430b3550ce0590e02ec00fe93dbb66d3d4c70b51d38c0"
+    },
+    {
+      "path": "scripts/check-static.selftest.mjs",
+      "sha256": "1e163a8aba9fa9917f4636d39b4f7c75c7d3fb7ad4bb3c95510a934962de12c7"
+    },
+    {
+      "path": "scripts/source-files.mjs",
+      "sha256": "f4e6dfeed7e5adecec4f56ea9fd5bea3c9b3f6abef7872bdf9655917b8bc4e90"
+    },
+    {
+      "path": "docs/_shared/gs-launch-005-proof/apache.conf",
+      "sha256": "5a44b07b436f3dec69dff69806275e008b45632e39c81da8326a6ae484538237"
+    },
+    {
+      "path": "docs/_shared/gs-launch-005-proof/setup.mjs",
+      "sha256": "5db432a0e9d7762bae527e1238a30fcc37aa435091a6efefc2b3c23a59ad4fd7"
+    },
+    {
+      "path": "docs/_shared/gs-launch-005-proof/verify.mjs",
+      "sha256": "ab6e6c9ef07355fd21be0fc69ac95e531e27eda45585447e91a24db793783302"
+    },
+    {
+      "path": "docs/_shared/gs-launch-005-proof/README.md",
+      "sha256": "79289fa5ad74fccc2171e1b2f50175d9d831e0b6a57d32963c87eaa485a51aa0"
+    },
+    {
+      "path": "docs/_shared/GS-LAUNCH-005.md",
+      "sha256": "d62404f22a3d52305cee921fb6206b6d396bb088cf44f7a5e8e9127f70d76cb3"
+    },
+    {
+      "path": "docs/_shared/05-HANDOVER.md",
+      "sha256": "6c556046a67219437a03575cce34390365d07205d573a0afaa27d6c111e6e863"
+    },
+    {
+      "path": "docs/_shared/PROJECT-STATUS.md",
+      "sha256": "34ab20cbb3040ebc3b99e03086a9f9a901e08cbe3fb471405b33a333e0e5b710"
+    },
+    {
+      "path": "docs/_shared/AI-HANDOFF.md",
+      "sha256": "b8ca4d3d5b000e779e2482dd270d71366e00989db062d85b5295caf9e59b4175"
+    },
+    {
+      "path": "docs/_shared/OWNER-ACTIONS.md",
+      "sha256": "9ab20c97bae3e69c3b2d73bb26cfbcf0ca940fb4d92e80af278c8fb1156ec134"
+    },
+    {
+      "path": "docs/master/PROJECT-TRACKER.md",
+      "sha256": "f8f21401387f89f5979dfe9c86f5bbafb46d5a343d9577a92ff05b2a8a8552d9"
+    },
+    {
+      "path": "package.json",
+      "sha256": "c3887b334f93f77ef7a4ee66c1639d2c1395f676b4cff039adb10940c320f9c4"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c"
+    },
+    {
+      "path": "lib/build/hostinger.ts",
+      "sha256": "0baa8af8102a74bcd75f8247997cca7c13d117e3b78b2a2e4d11a4b9659b72c9"
+    },
+    {
+      "path": "app/global-error.tsx",
+      "sha256": "357090a5de249b3b881fe7f1c9bcefde8b8a1404c963cd521a3097f708fae211"
+    },
+    {
+      "path": "public/500.html",
+      "sha256": "e97a49245a82d7ad446ec11e312ba008d61f6916c0b4c25761264ce0093222a4"
+    },
+    {
+      "path": "docs/_legal/evidence/GS-O003-R-REGISTER.json",
+      "sha256": "4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e"
+    }
+  ],
+  "independentReviews": [
+    {
+      "role": "spec-compliance",
+      "status": "NO_REMAINING_ACTIONABLE_FINDINGS",
+      "scope": "Read-only local documentation/source; no account/hosted/browser/build/harness execution"
+    },
+    {
+      "role": "content-integrity",
+      "status": "NO_REMAINING_ACTIONABLE_FINDINGS",
+      "scope": "Read-only local documentation/source; no account/hosted/browser/build/harness execution"
+    },
+    {
+      "role": "rules-compliance",
+      "status": "NO_REMAINING_ACTIONABLE_FINDINGS",
+      "scope": "Read-only local documentation/source; no account/hosted/browser/build/harness execution"
+    },
+    {
+      "role": "accessibility-audit",
+      "status": "NO_REMAINING_ACTIONABLE_FINDINGS",
+      "scope": "Read-only local documentation/source; no account/hosted/browser/build/harness execution"
+    },
+    {
+      "role": "design-conformance",
+      "status": "NO_REMAINING_ACTIONABLE_FINDINGS",
+      "scope": "Read-only local documentation/source; no account/hosted/browser/build/harness execution"
+    }
+  ],
+  "reviewCorrection": "Clarified 23 pre-edit baseline bindings versus final 18 unchanged inputs and five authorised control-document updates; content reviewer independently verified final hashes.",
+  "documentationHashes": [
+    {
+      "path": "docs/_shared/GS-LAUNCH-006.md",
+      "sha256": "6800f473bae61f9d18bd4f484ca38e29dc68188d9c782c3a18a95261453d7c5c"
+    },
+    {
+      "path": "docs/_shared/05-HANDOVER.md",
+      "sha256": "cedea586fd94106a501244036929ec018cd5cb61d84e5c5abf24c509ee09ce37"
+    },
+    {
+      "path": "docs/_shared/AI-HANDOFF.md",
+      "sha256": "22c048602ad2c83d111406c0c128d4e23ad0dc23833e04680f351e28529ecc76"
+    },
+    {
+      "path": "docs/_shared/OWNER-ACTIONS.md",
+      "sha256": "b6a77b04ecba464c89a45cd9dc0642efea2086c000bf6ac88996a829e8cf4580"
+    },
+    {
+      "path": "docs/_shared/PROJECT-STATUS.md",
+      "sha256": "a453b366d8090e83adcf9aa7e60e2b9d44b268702529be32679025da66a15979"
+    },
+    {
+      "path": "docs/master/PROJECT-TRACKER.md",
+      "sha256": "0e3856813252a01a3675280f5fb67a2e41262486778bbe3dca5bab08816bbd99"
+    }
+  ],
+  "commitIdentity": "Final local commit SHA and clean worktree status are returned in Git closeout; this receipt does not claim remote CI or hosted acceptance.",
+  "restrictions": {
+    "push": false,
+    "remoteCi": false,
+    "deployment": false,
+    "hostingMutation": false,
+    "dnsOrWordPressChange": false,
+    "hostedFaults": false,
+    "legalPublication": false,
+    "productionProviderWrites": false,
+    "liveEnquiriesOrNotifications": false,
+    "analyticsOrReviewsActivation": false,
+    "technicalPublication": false,
+    "vulnerabilityWaiver": false,
+    "nextPhaseStarted": false
+  }
+}

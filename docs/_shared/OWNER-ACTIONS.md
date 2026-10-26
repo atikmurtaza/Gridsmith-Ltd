@@ -1,4 +1,72 @@
+> **GS-LAUNCH-023 (26 October 2026): release-source integration; production HOLD.** Accepted source and main operations are reconciled on `codex/gs-launch-023`; GS-LAUNCH-019–022 findings and the Windows axe correction are consolidated. Current evidence, verification and next-task requirements: `docs/_shared/GS-LAUNCH-023.md`. Earlier support-request recommendations are superseded: no support action is required or authorised. Notification drain remains disabled; no production/legal/WordPress/provider operation is authorised.
+
+> **GS-LAUNCH-022 (26 October 2026): CONDITIONAL; owner flush CONFIRMED; served stale assets RESOLVED; hosted HTTP FAIL.** All 26 obsolete paths now return 404; robots remains the provider 58-byte replacement and all 9 PNGs still lack CSP, including fresh queries. Exact accepted identity, 61 route HTML hashes, 209/210 public files and legal parity retained; focused contact PASS. Prior hosted browser PASS reused after 273 successful GET subjects matched bytes and critical headers; no new full AA claim. Actual deployed .htaccess remains unverified after browser timeout. Windows axe fix and all prior records preserved; fresh syntax/ESLint PASS. No source/dependency/artifact change, commit/push/dispatch, extra purge/provider setting, support send, deployment or production/DNS/legal-publication operation. Close the repeated cache-debugging loop with the unsent GS-LAUNCH-022 provider request; independent source integration and WordPress recovery preparation may proceed under separate authority. Next recommendation: GS-LAUNCH-023 source/main reconciliation with handover preservation. See docs/_shared/GS-LAUNCH-022.md / GS-LAUNCH-022-EVIDENCE.json.
+
+> **GS-LAUNCH-021 (26 October 2026): CONDITIONAL; hosted browser recovered, HTTP FAIL; production NO-GO.** Exact accepted source 13032b1735c320842d7dc25f3de03afa704d3e33 / artifact 8028cb984402db08d7ba016ab656c5602dfdfae5bc3a49fda7f70b6b890a65e4 remains live. All 61 routes match accepted HTML; 209/210 public files match. Deployed robots download is exact, but provider HTTP replaces it; nine PNG CSP omissions and obsolete cached JS remain. Small Windows axe-source resolution fix passes full hosted UI: 20 pages/no-JS pages, 70 legal combinations, 41 focused plus 2 error axe analyses, zero violations; 23 incomplete rule occurrences retained. No rebuild, commit/push/dispatch, purge/provider change, support send or production/DNS/legal-status write. Original worktrees preserved; isolated codex/gs-launch-021 changes are uncommitted. Next: one explicitly approved temporary-site CDN Flush cache, canonical retest and provider delivery disposition; custom-origin verification and production owner/legal/backup/cutover gates remain. Evidence: docs/_shared/GS-LAUNCH-021.md and GS-LAUNCH-021-EVIDENCE.json.
+
+> **GS-LAUNCH-019 (26 October 2026), ACCEPTED RELEASE READY FOR OWNER DEPLOYMENT APPROVAL:** Source `13032b1735c320842d7dc25f3de03afa704d3e33` on `codex/gs-launch-018`; whole CI [40332154565](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40332154565) SUCCESS. Normal verification, all six Preview acceptance commands, both zero audits and accepted packaging PASS. Downloaded ZIP/manifest/source/run and every 212 files independently verified. Publisher SKIPPED; artifact branch remains `25d653f5`. Fresh destination/rollback receipt and exact owner transaction approval are still required; no Hostinger Redeploy, production/DNS or legal-text change. Completion records are local documentation-only updates after the tested commit. See `docs/_shared/GS-LAUNCH-019.md`.
+
+> **GS-LAUNCH-018 (26 October 2026), PREVIEW RELEASE BLOCKED:** Original CI → Hostinger artifact-branch path restored in tested source `35c74d67`. Normal verification and all six exact-preview acceptance commands PASS in run `40254337220`; overall CI FAIL solely from nine high toolchain audit entries (production 0). Packaging/publisher SKIPPED; no accepted ZIP or release identity. Relative `public_html` Git destination corroborated; FTP write isolation untested. Next owner action: authorise bounded toolchain remediation, then exact-source acceptance and artifact-bound deployment approval. No deployment, production/DNS/mail/legal-text change. See `docs/_shared/GS-LAUNCH-018.md`.
+
+> **GS-LAUNCH-017 (25 October 2026), TEMPORARY PREVIEW CANDIDATE; RELEASE HOLD:** Owner explicitly permits all seven unchanged adopted legal texts on mediumaquamarine-wallaby-594070.hostingersite.com for this preview only, superseding the earlier temporary-domain ban; production publication remains held. A separate owner-preview profile uses production CMS content, canonical legal review banners, direct email/WhatsApp and noindex; existing visuals, legal bytes/register, production refusals and exclusions remain. Fresh local export: 61 eligible routes/214 files; source/static/build/legal/asset-link checks pass, including 72 new adverse proofs and five independent source reviews. Candidate is deployable:false / ACCEPTANCE_PENDING outside out/; no archive is released until retained acceptance passes. Windows Lighthouse skips; supported browser/Linux/Apache/accessibility/cookie/exact-source CI and the existing nine-high toolchain disposition remain incomplete. hPanel confirms a separate temporary-site entry, but interaction timeouts leave its absolute root UNVERIFIED. No old WordPress access/migration or production/DNS/email/provider mutation/upload/push/dispatch. Authority, current evidence and scoped next action: GS-LAUNCH-017.md / GS-LAUNCH-017-HOSTINGER-GUIDE.md. Earlier conflicting temporary-legal restrictions are historical for this exact preview only.
+
+> **GS-LAUNCH-016 (25 October 2026), PREPARATION COMPLETE; CUTOVER HOLD:** Isolated codex/gs-launch-016 verifies candidate 373c04b69a2bf9612b0807694f9d0d3262235c3a. Fresh Windows static/type/lint/clean normal build/69 budgets/selected contact-legal HTTP checks and production audit pass; full toolchain audit remains FAIL (nine high affected entries). Production builder refuses eight existing legal/receipt inputs. New 54-route/199-file rehearsal identity 9080c3572986d75b8135c6440b04b247f01f149a2a513728214ccae2bdaf5378 remains deny-all/nondeployable; complete checksummed manifest and local archive retained. Seven OWNER_ADOPTED, zero PUBLISHABLE; no legal/register/runtime/dependency/workflow change. Linux/Apache/browser/axe/Lighthouse/cookie/exact-source CI and private Hostinger recovery mapping remain unperformed/unverified. New/test-only mailbox and France/EU owner facts retained; no repeated historical-data questionnaire without contradiction. Current concise assessment, ownership, eight-item owner sheet and proposed runbook: GS-LAUNCH-016.md. Separate publication and exact-artifact cutover authority required. No push/dispatch/upload/deploy/provider/WordPress/database/DNS/email change, messages or deletion. STOP after preparation; earlier contrary next-phase wording below is historical.
+
+> **GS-LAUNCH-015 (25 October 2026), LOCAL VERIFICATION COMPLETE; PUBLICATION HOLD:** Direct-contact source/Windows static/build/69 budgets/selected HTTP/legal parity/production audit and fresh denied-artifact checks pass on c7f1b9478d4fe3e18ecaabd7a1fabe3011d03ac0. DIRECT-CONTACT-VERIFIED remains UNMET: the structured draft is not a completed receipt. Settled owner facts are retained; only O1-O5 private operational evidence is requested in GS-LAUNCH-015.md section 2. Seven OWNER_ADOPTED; zero PUBLISHABLE; canonical texts/register/history/workflow and release controls unchanged. Linux/browser/Apache/axe/Lighthouse/exact-source CI/Hostinger acceptance and security/hosting/publication/cutover decisions remain separate. No messages, push, dispatch, provider/Production writes, publication, deployment, deletion or risk acceptance. Stop before GS-LAUNCH-016. Earlier conflicting next-task language below is historical.
+
+> **GS-LAUNCH-014 owner adoption completed (25 October 2026):** Three exact hashes explicitly approved and integrated locally; no further adoption approval requested for these bytes. Seven OWNER_ADOPTED; zero PUBLISHABLE. DIRECT-CONTACT-VERIFIED remains unmet: independent source/artifact and operational contact evidence still required. U1–U3 historical holdings/provider retention/transfers/review execution, Hostinger backup/restore, supported Linux acceptance and residual security disposition remain open on their earlier evidence. No publication/cutover authority inferred; GS-LAUNCH-015 requires a new instruction. See GS-LAUNCH-014.md. Earlier adoption-review requests below are superseded for these three exact texts only.
+
+> **GS-LAUNCH-013 owner review required:** Review the complete Privacy 2.7, Accessibility 2.4 and Consumer Terms 3.4 at the exact hashes and diffs in `GS-LAUNCH-013.md` §1–2. Confirm/correct the stated factual conditions and decide exact-text adoption explicitly; no revised document has been adopted. U1–U3 historical holdings/retention/transfers and execution remain unverified. Later publication/cutover, Hostinger backup/restore and Linux/security decisions remain separate. Do not begin GS-LAUNCH-014 without a subsequent instruction.
+
+> **GS-LAUNCH-012 (25 October 2026), CONTACT IMPLEMENTED; FRESH LEGAL PROPOSALS ONLY; PUBLICATION HOLD:** Owner F1–F5 confirms email/WhatsApp-only direct contact, owner/sales access, no current copying, possible historical data/backups, France/EU hosting and owner-managed privacy administration. Public SMS actions/copy and Organization telephone are removed; email/no-JS alternatives and response wording remain. Complete Privacy 2.7 and Accessibility 2.4 proposals and exact comparison are in `docs/_legal/proposed/GS-LAUNCH-012/`. All seven canonical texts, fingerprints, register and adoption evidence remain unchanged: seven OWNER_ADOPTED, zero PUBLISHABLE. Consumer Terms 3.3 still says “WhatsApp or text” twice; correction needs separate authority/fresh adoption before publication. Historical holdings, provider retention/transfers, backup/restore and retention execution remain unverified. DIRECT-CONTACT-VERIFIED accepts email/WhatsApp only; no operational receipt/adoption/publication authority manufactured. H4-B, all-seven refusal, Privacy co-publication, Hostinger processor controls, A-2 and separate cutover authority remain. Local matrix, hashes and owner decision package: `GS-LAUNCH-012.md` / `GS-LAUNCH-012-EVIDENCE.json`. Linux/browser acceptance pending; no denied Docker retry. No push/dispatch/deployment/publication/provider or Production writes/WordPress/DNS/email change or GS-LAUNCH-013. This task supersedes historical SMS channel authority only within its explicit scope.
+
+> **GS-LAUNCH-011 (25 October 2026), LOCAL READINESS PREPARATION; PUBLICATION HOLD:** Isolated `codex/gs-launch-011` starts at `b99647105f581f66962977ecd4122f8231da3ee0`. Existing gates now support an explicit direct-contact Privacy mode and an unmet DIRECT-CONTACT-VERIFIED receipt, preserve H4-B for future forms, and verify exact email/WhatsApp/SMS links plus no forms across the artifact. All seven canonical texts/register/adoptions and dependencies remain unchanged: seven OWNER_ADOPTED, zero PUBLISHABLE. Privacy 2.7 and Accessibility 2.4 wording is proposed only; F1-F5 actual contact/legacy-data/transfer/retention facts remain unsigned. Private hPanel root/database/separation/publisher/backup/upload/rollback evidence remains UNVERIFIED; current hPanel listing confirmed, dashboard unavailable; no settings/database access or support enquiry. Scoped security exception is unsigned; no denied Docker retry or Linux/browser acceptance. Current local tests, exact hashes, owner fact record and nine-step release procedure: GS-LAUNCH-011.md / GS-LAUNCH-011-EVIDENCE.json. Next only: owner completes facts/private receipt and approves settled wording for a separately authorised adoption change. No push/dispatch/deployable artifact/publication/upload/Production/WordPress/DNS/email change or GS-LAUNCH-012. Earlier conflicting next-phase restrictions are superseded only by this task’s explicit preparation authority.
+
+> **GS-LAUNCH-010 owner setup/disposition requirement (25 October 2026):** Obtain permitted policy clearance and provision the single disposable Ubuntu 24.04 x64 container job described in `GS-LAUNCH-010.md` section 4, with exact Node 24.15.0/npm 11.12.1, Python 3.12+, Apache, authenticated-browser library requirements, `/work/repo`, no privileged credentials or host mounts/ports. The prior automatic container-creation rejection remains in force; no retry or old-container reuse is authorised by this record. Supply the environment identity and authorise resuming GS-LAUNCH-010. Separately decide the unsigned, source/lock-bound exception for GHSA-mrhx-c7xc-m3w5, GHSA-jmr9-qjv8-65gv and GHSA-7pqw-9j4j-h8q3; name a technical maintenance owner and confirm scope/expiry/review triggers before adoption. No acceptance is recorded. Linux acceptance remains incomplete and publication HOLD; existing legal, Hostinger backup/restore, exact-artifact and final transaction approvals are unchanged. Do not begin GS-LAUNCH-011.
+
+> **GS-LAUNCH-009 owner decision (25 October 2026):** Production dependency audit is zero after compatible Zod/body-parser/Undici remediation. The full audit has nine high affected entries across GHSA-mrhx-c7xc-m3w5 (nested toolchain Zod 3), GHSA-jmr9-qjv8-65gv and GHSA-7pqw-9j4j-h8q3 (extract-zip). No compatible complete toolchain fix or owner acceptance is recorded. Before the next release gate, approve an available supported Linux verification environment and decide the exact residual advisory/input/invocation scope, controls, maintenance owner and review trigger/date, or commission the coupled tooling migration. GS-LAUNCH-009.md contains evidence and limits. These are security/verification decisions only; all existing legal register/prerequisites and the separate all-seven publication/cutover authority are unchanged. Publication HOLD; no automatic next phase.
+
+> **GS-LAUNCH-008 (24 October 2026), FINAL OWNER GATE; NONDEPLOYABLE:** Isolated codex/gs-launch-008 examines 462da70d without application, lockfile, canonical legal or register changes. Seven OWNER_ADOPTED, zero PUBLISHABLE; direct-contact Privacy/Accessibility corrections are proposed only. All 197 retained rehearsal files and 31 input hashes reverified; contact links match approved values. Fresh lockfile audits now report 1 high production / 10 high full across four advisory IDs (two extract-zip plus Zod and body-parser); no acceptance or remediation inferred. Current hPanel lists Business/gridsmith.uk WordPress/separate temporary site, but dashboard access timed out: roots/backups/switch/publishers remain UNVERIFIED. Linux container creation was automatically rejected; local legal/adoption/company checks pass, full static selftest is incomplete without TypeScript, browser/Linux/remote CI were not rerun. GS-LAUNCH-008.md section 7 is the single owner checklist and unapproved exact-artifact release record. No deployable artifact, push/dispatch/upload/publication/provider/WordPress/DNS/email/intake change or next phase. Earlier conflicting status below is historical.
+
+> **GS-LAUNCH-007 (23 October 2026), HOSTINGER-ONLY STATIC PREPARATION:** Current owner directive removes the support/independent-outer-error dependency and classifies normal Next SSR M-P1-1 FAIL as N/A to static launch, retaining its test/status. Production static contact is direct email/WhatsApp/SMS with no intake transport; ordinary static 500/404 handling and existing gates are preserved. Seven exact legal documents remain OWNER_ADOPTED, zero PUBLISHABLE; privacy/contact accuracy and all-seven publication still require owner authority. The clean-source denied rehearsal is bound to 7d8f820b68fa64eb6a3d6aec13182debf3e15ef7, identity e8ca42a47d95e8c22727712d03aeb923a349ef5bc66b6bc7c5a87722ad3342d4. Exact local checks, verification-source bindings, residual security disposition and controlled-upload/rollback procedure are in docs/_shared/GS-LAUNCH-007.md and GS-LAUNCH-007-EVIDENCE.json. Local success never implies exact-SHA CI, hosted acceptance or release authority. No push/dispatch/deployment, legal/CMS/provider write, WordPress replacement, DNS/mail change or GS-LAUNCH-008. Earlier conflicting launch-HOLD/support recommendations below are historical.
+
+> **GS-LAUNCH-006 (23 October 2026), CAPABILITY EVIDENCE; RELEASE HOLD:** Repository and public official documentation reviewed from b787ef79382ccf3fb904284951f88f3dcb12a86f on isolated codex/gs-launch-006. Business PHP/HTML, public_html and temporary-site/CDN/Git observations are historical; current account settings and independent storage/mapping, malformed-root survival, headers, outer errors and restoration remain UNVERIFIED. No authenticated access or hosted request was authorised or performed. Local package/selftests and retained evidence hashes pass; no hosted acceptance. Report, unsent support draft, E1–E7 evidence checklist and unapproved isolated-test design: `docs/_shared/GS-LAUNCH-006.md`; receipt: `GS-LAUNCH-006-EVIDENCE.json`. Seven unchanged OWNER_ADOPTED texts, zero PUBLISHABLE; normal SSR M-P1-1, unresolved 17-high/three-advisory findings and all release restrictions remain. Next recommendation only: owner-led redacted evidence packet and approved enquiry submission. No message sent, push, CI dispatch, hosting/DNS/WordPress change, fault, publication or Production write. GS-LAUNCH-007 requires separate approval.
+
+> **GS-O026 / GS-LAUNCH-006 owner evidence dependency:** Supply dated redacted E1–E7 site/product/root, Error Pages, independent scope, CDN/cache, Git/App trigger and backup/restore evidence, or explicitly authorise the named read-only account views/exports. Approve the exact support draft/recipient separately before agent submission. Future hosted writes/faults require a separately approved literal isolated host, supported mechanism, backup/restore and bounded authority; none is assigned here. Existing temporary static site and live WordPress are excluded from fault testing. No change to the closed R11 hosting contractual decision. See GS-LAUNCH-006 §§5–7 and §9.
+
+> **GS-LAUNCH-005 (23 October 2026), LOCAL CONDITIONAL PACKAGE; HOSTINGER HOLD:** Starting 6cce73bfd0f1a6fc42a449bbb7306fe2fd5848a5 is preserved in isolated codex/gs-launch-005. The nonpublic operator error HTML/identity and existing static build/artifact/selftest controls are implemented locally. Apache status/isolation/adverse/browser evidence is local only; Hostinger independent storage/mapping, malformed-root survival, headers, origin/CDN and provider 500/502/503/504 templates remain UNVERIFIED. No deployable Hostinger mapping is generated. Seven exact OWNER_ADOPTED legal texts, zero PUBLISHABLE; H4-B, exclusions, disabled analytics/reviews, unresolved 17-high/three-advisory toolchain findings and normal SSR M-P1-1 remain. Evidence/procedure: `docs/_shared/GS-LAUNCH-005.md` and `GS-LAUNCH-005-EVIDENCE.json`. No push, dispatch, deployment, hosted setting access/mutation, live enquiry or Production write. Next recommendation only: separately authorised GS-LAUNCH-006 capability evidence collection; no hosted fault or installation authority. STOP before provider operations.
+
+> **GS-O026 / GS-LAUNCH-005 evidence required:** Exact current product/site/operator permissions; 500 template/mapping bytes; provider-supported storage and configuration independent of replaceable public_html and root .htaccess; GET/HEAD original status and error-header controls; actual origin/CDN layers, cache/stale-success behaviour and separate provider 500/502/503/504 template ownership; missing/unreadable recovery and restore evidence. Full checklist is GS-LAUNCH-005 §1. Collection/installation/faults need their own named authority. No support message has been sent.
+
+> **GS-LAUNCH-004 (23 October 2026), REMEDIATION DESIGN; RELEASE HOLD:** Exact 00cb2d0e candidate retained in isolated codex/gs-launch-004. M-P1-1 is reproduced as initial HTTP 500 with missing lang/H1/main and blank no-JS body; normal SSR remains FAIL. Intended Hostinger delivery is file-only: this Next failure mechanism is inapplicable there, but actual independent host/CDN 500 accessibility remains UNVERIFIED and blocks static acceptance. Supported independent-boundary local proofs and adverse isolation/missing-file results are recorded in GS-LAUNCH-004.md and GS-LAUNCH-004-EVIDENCE.json; no production remedy or hosting change is implemented. Seven exact OWNER_ADOPTED legal documents, zero PUBLISHABLE; exclusions, intake restrictions and 17 high toolchain entries across three unaccepted advisories remain. No push/dispatch/deployment/provider write/publication. Next recommendation only with separate approval: GS-LAUNCH-005, static Hostinger independent error response and isolated hosted acceptance. STOP before GS-LAUNCH-005.
+
+> **GS-LAUNCH-003 owner checkpoint (23 October 2026):** Local Linux preparation and bounded verifier repairs are recorded in `GS-LAUNCH-003.md` and `GS-LAUNCH-003-EVIDENCE.json`; publication remains NO-GO. Owner/security disposition is required for three unaccepted toolchain advisories (17 high affected entries; production audit zero), and a separate supported serving-boundary decision is required for M-P1-1. Current provider trigger safety, exact-SHA remote CI authority, hosted/manual/confidentiality acceptance, recovery, intake and all-seven publication/cutover evidence remain open. Seven unchanged OWNER_ADOPTED texts, zero PUBLISHABLE; no adoption reopening, Technical/review/analytics activation or public Path Finder. No external execution or GS-LAUNCH-004 authority is inferred.
+
+> **GS-LAUNCH-002 local reconciliation (22 October 2026):** Current candidate evidence and owner/prerequisite matrix: `GS-LAUNCH-002.md` and `GS-LAUNCH-002-EVIDENCE.json`. Seven canonical documents remain byte-identical and OWNER_ADOPTED; zero PUBLISHABLE. Source convergence, confirmed facts, review suppression and guarded Production rehearsal are local engineering evidence only. Residual toolchain security findings require explicit disposition; exact-candidate Linux acceptance, current intake/notification authority, restore-proven WordPress/DNS/mail recovery, all-seven publication/channel/cutover and applicable agency/transfer/rights execution remain separate owner or external gates. Existing decisions below are preserved. No push, deployment, provider write, live enquiry or GS-LAUNCH-003 is authorised by this record.
+
+> **GS-LAUNCH-001 current owner checkpoint (22 October 2026):** Legal preparation/adoption is CLOSED: Privacy 2.6, Cookies 2.4, Website/Accessibility/Applicability 2.3 and both Client Terms 3.3 are seven exact OWNER_ADOPTED files, zero PUBLISHABLE. Current register: `../_legal/evidence/GS-O003-R-REGISTER.json`; publication remains limited to separately authorised all-seven gridsmith.uk cutover. No new legal review/adoption is requested. This supersedes conflicting older version, staging-publication or review-display instructions below. Local analytics and Freelancer display are disabled; the older temporary artifact still displays 11 cards, recorded as B04, and was not changed here.
+>
+> Owner evidence still required: B05 restore-proven WordPress files/database backup, document-root/settings and DNS/mail baseline; B06 exact-artifact publication/cutover window, channel, rollback and seven-document authority; current intake configuration/sender, scheduled availability and controlled live-only drain/E2E acceptance; final hosted/manual accessibility and cookie/HTTP acceptance. Separate approval is needed for the recommended release-source reconciliation and any future push/CI/provider/deployment action. Agency/rights execution, applicable Article 28/client authorisations and transfer clearance remain necessary before relevant access, separate from completed drafting. GS-X002's three Technical exclusions remain. Complete statuses, owners and evidence: `GS-LAUNCH-001.md`; no next task is authorised by this record.
+
+> **GS-LEGAL-001-R12 owner checkpoint (8 October 2026):** All seven documents remain OWNER_ADOPTED, none PUBLISHABLE; adoption is complete. Local legal integration and private static review checks pass. Next owner-only action is separate authority for private Hostinger staging deployment and visual acceptance (recommended GS-LEGAL-001-R13). Production cutover/intake/publication prerequisites remain under GS-O003-R and their existing registers. R11 hosting contractual closeout is not reopened; no new agreement, hosting purchase or account migration requested. Readiness: `GS-LEGAL-001-R12-STAGING-READINESS.md`; evidence: `../_legal/research/GS-LEGAL-001/R12-WEBSITE-INTEGRATION.md`.
+
+> **GS-HOST-H4-D-R1 current owner authority (5 October 2026):** Temporary Hostinger staging may display the frozen 11 approved Freelancer quotations with actual ratings, anonymous linked provenance, and only established flags. This supersedes the earlier requirement to complete H4-C before H4-D. Provider permission is still unresolved; review API/cache/refresh automation remains BLOCKED and final gridsmith.uk review publication remains BLOCKED. Hostinger is the active staging target; zero persistent application Node, no Production/DNS/main/Sanity writes. Implementation and hosted evidence are in progress.
+
+> **GS-HOST-H4-C-R1 (5 October 2026): OWNER EVIDENCE REQUIRED — Freelancer off-platform review permission.** Current official User Agreement §11 requires written Freelancer permission for use of feedback ratings/comments outside Freelancer, including marketing/export; API T&Cs §1 incorporates it. Owner explicitly confirmed on 5 October 2026 that no written permission is held. Closure requires an applicable written provider grant with scope/reference covering gridsmith.uk display and refreshed static-cache/archive retention, or separately authorised revised review scope. No feature removal is authorised here. Do not provide credentials. GS-O014 owner acceptance, GS-O015 withholding and James/GS-O020 publication decisions remain unchanged; none establishes a provider grant. H4-C-R1 initial request and response/clarification matrix are prepared in `GS-HOST-H4-C.md` for owner submission only; nothing sent. No agent provider contact is authorised here. H4-C PASS is blocked until evidence resolves this material constraint. Current API source still 13/11/2. Research and conditional architecture: `GS-HOST-H4-C.md`. H4-B Preview, Production and live site untouched; no commit/push.
+
+> **GS-HOST-004 owner evidence update (4 October 2026):** Existing Hostinger Business and zero additional hosting cost are settled owner decisions. No VPS, upgrade, new paid hosting, Vercel Pro or waiting for managed Node updates. **GS-O026 remains OPEN** for actual static-origin security headers/status/redirect/CDN/recovery acceptance; a compliant Hostinger Node patch is no longer required by the proposed architecture. **GS-O025 remains OPEN** for Free-service operator/warning recipient, pause/resume and backup/key/recovery acceptance; it is not closed by Edge Function availability. **GS-O003 remains full-cutover gate; GS-X002 gates the three Technical routes only.** Additional evidence finding `GS-HOST-004-R1`: current Freelancer cache/retention terms and any changed review-carrier/no-JS implications must be resolved before publishing immutable review-bearing releases; no permanent snapshot compliance is claimed. Existing quota headroom/Hostinger account access details remain acceptance evidence, not purchase recommendations. Implementation belongs to H4-A–H4-H in `GS-HOST-004.md`; no new owner decision or Production action is inferred from the local prototype.
+
+> **GS-SHARED-001-RC (28 September 2026):** The owner visually approved the shared experience *The Frame and the Sheet* (B1, B1-R1, B1-R2, B2): shared header/footer, transparent browser identity, About, Approach, Insights, Legal, Contact, 404 and global error. RC corrections are implementation/gate only — chrome palette under `check:contrast`, footer JSON-LD escaping (`jsonLdHtml`), global error selected by `data-frame` (no client `data-division`), generated CTA arrows, the `/` scene axe entry re-pointed, Approach rail line as a border, legal Contents heading and print gold corrected. Legal parity 6/94/339 unchanged. `GS-O010` open (no valid submission); TikTok logo permission is a final production gate (`GS-O021`); Freelancer mark provisional (`GS-O022`); `GS-O003` open. Staging only; main, production, DNS and production CMS/database untouched; no launch or next phase authorised. Evidence and the exact-SHA receipt convention: `docs/_shared/GS-SHARED-001-RC.md`.
+
+> **GS-DIG-001-RC current authority (25 September 2026):** The owner approved the Digital redesign *Systems in Agreement* (one persistent five-point compass: Hero → Route Map → chapter/process background → Final) and its two R3-G corrections — Route Map callouts arrive with the compass (complete ≈290ms into the map state, no numbers-only interval under continuous scroll) and an enlarged environmental background compass (1.7× desktop, 1.9× tablet, 1.12× phone) — then authorised RC, a dedicated `staging/gs-dig-001-digital` branch, CI and protected Preview. RC corrections are gate/theme only: `check:contrast` now measures the delivered Digital palette (single source `styles/themes/digital-stage.css`), the legacy `#1B5FFF` Digital accent is retired in every theme (footer switcher rule only), `.codex/` is classified in the source inventory, Digital motion is on the duration token scale, and `check:digital:scene` measures rendered contrast, state, map timing, reduced motion, Save-Data and no-JS. Development CMS carries the approved B2 wording; production Sanity/Supabase, `main`, DNS, Hostinger and gridsmith.uk are untouched and no next division is authorised. The exact implementation SHA, CI run and Preview are recorded in the receipt section of `docs/_shared/GS-DIG-001-DIGITAL.md`. Authoritative evidence: that file.
+
+> **GS-R002-RC-G2 current authority (24 September 2026):** The owner approved paper behind the closed Technical scope note and resuming staging release. G2 is implemented only in the enhanced stacked layout (width <=760px, height >650px); rendered note contrast passes across 24 viewport combinations (local minimum 6.69:1; Linux CI minimum 6.62:1; corrected 760x800 6.69:1). G1 disclosures/H1 and lifecycle checks remain passing. Implementation c4781b0af64733313a78ea7c557a9d1393f7bb32 passes CI 35940710523 and exact-SHA protected Preview verification. The subsequent documentation checkpoint exposed an axe-helper focus race on the unchanged kitchen-sink skip link. The gate now restores and asserts document focus, with permanent positive/negative proofs and no application change. The final verification checkpoint requires successful exact-SHA CI and Preview; its receipt is recorded in the release handoff. Original mascot, exact Inter G/S, persistent building-to-logo, metallic finish, continuous wave and copy are preserved; only the approved reading surfaces amend R2. Main and production remain untouched; no next division is authorised. Authoritative evidence: `docs/_shared/GS-R002-RC-DESIGN.md`.
+
+> **GS-R002-R1 current owner remediation (20 September 2026):** The verified GS-R002 candidate was **not visually approved**. R1 preserves From Line to Form and the service architecture, with Design-only Oxford Navy `#0A192E` / Imperial British Gold `#D4AF35`, earlier hero progress, left/right/left choreography, corrected G/S hierarchy, an original visor/quiff character, four-storey technical study and returning-wave convergence. Owner visual acceptance remains pending. Master (GS-O008 approved), Digital and Press remain frozen; Master polish is deferred. GS-O019 resolved and GS-O020 CLOSED — PUBLISH remain unchanged. Staging only; main and production untouched. Current evidence: `docs/_shared/GS-R002-R1-DESIGN.md`. Earlier status and palette entries below are historical and superseded where they conflict.
+
 # Owner actions
+
+> **19 September 2026 — GS-R002 owner decisions:** **GS-O008 APPROVED** for the current Master direction; minor Master refinements deferred to final comparison/polish. **GS-O019 RESOLVED** for Design capability detail, on current research and the explicit GS-R002 implementation authority. No public MAD Alpha portfolio is needed or authorised. **GS-O020 CLOSED — PUBLISH** remains. Earlier open descriptions below are historical. Design visual acceptance will be the next owner review after the staging candidate passes.
 
 This register contains only decisions, evidence, credentials or external actions that require the
 owner. Implementation remains agent work. Public prices and public portfolio/case-study content are
@@ -6,9 +74,194 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## ACTIONABLE NOW
 
-### `GS-O003` — Complete legal review and resolve launch actions
+### `GS-O027` — Authorise the Batch A About/Approach sync to Production Sanity
 
-- **Status:** ACTIONABLE NOW
+**CLOSED — 6 October 2026 (`GS-HOST-H4-G`).** Raised at GS-VIS-SEO-RC (5 October 2026): the approved
+SEO Batch A copy for `/about` and `/approach` existed only in `seed-content.mjs`, and the Hostinger
+staging build reads the **production** dataset. Owner authority: the H4-D-R1 and H4-G briefs (narrow
+About/Approach sync; read before write; `intro`/`sections` only). Read before write (10:36Z): both
+documents still at `_rev 0BiMQiPM5rorSeZsxnHEvi` (1 October), only `intro` and `sections` differing —
+the recorded difference, no unexpected drift. Backup of both full documents outside the repository
+(`proof/gs-o027/grouppages-before-2026-10-06T10-37-17-481Z.json`), then one transaction patching only
+`intro` and `sections`, guarded by `ifRevisionID`; new rev `OYqJMxSgjqUZpSF35PObJk`. Canonical
+read-back: 0 differences from the repository payload on both; title/slug/other fields unchanged;
+47 public documents before and after, no other `_rev` changed. No Technical (`GS-X002`) or legal
+(`GS-O003`) content. Evidence: `GS-HOST-H4-G.md` §GS-O027, `GS-VIS-SEO-RC.md` §CMS.
+
+### `GS-O003-R` — Legal evidence + owner adoption (replaces `GS-O003`, 6 October 2026)
+
+- **Status (R11):** all seven OWNER_ADOPTED; production-stage publication authority remains outstanding.
+- **Owner decision recorded (6 October 2026, `GS-LEGAL-001`):** no solicitor is commissioned at this
+  stage. `GS-O003`'s mandatory solicitor approval is replaced by an evidence-based review against
+  current UK legislation and official guidance plus explicit owner adoption, per document, recorded in
+  `docs/_legal/GS-O003-R-REGISTER.json` (states RESEARCHED → VERIFIED → OWNER_REVIEW_REQUIRED →
+  OWNER_ADOPTED → PUBLISHABLE). Nothing claims solicitor review, certification or guaranteed
+  enforceability.
+- **R11 (8 October 2026): Privacy 2.3 adopted; hosting agreement requirement withdrawn.**
+  All seven OWNER_ADOPTED; six earlier entries/fingerprints unchanged. Existing hosting decision CLOSED.
+  HOSTINGER-PROCESSOR-CHAIN evidenced from authorised corporate use and current incorporated DPA
+  (R11 §§2–3), not execution of the superseded draft. No additional agreement with internal
+  administrators is shown legally necessary. No specific residual contract gap established.
+  **Remaining:** separately authorise legal integration/readiness (GS-LEGAL-001-R12), and later the
+  production intake/publication/cutover phases. Do not sign or circulate the R10 draft.
+- **R10 historical action — SUPERSEDED by R11 (do not act on the signature instructions below).**
+  **R10 (8 October 2026): Privacy 2.3 ready for your adoption; one contractual step before publication**
+  (`docs/_legal/research/GS-LEGAL-001/R10-HOSTING-CLOSEOUT-PRIVACY-PACKAGE.md`). **This supersedes R9's
+  remaining action.**
+  1. **Adopt Privacy 2.3** if you agree, using the statement in the R10 record §5.
+  2. **Before publication:**
+     - sign `docs/_legal/operations/HOSTING-PROCESSING-ARRANGEMENT-DRAFT.md` with the Account owner,
+       completing the counterparty's details only in the signed copy, kept outside the repository;
+     - add a UK transfer mechanism if that owner is outside the UK.
+
+     A short legal phase then records `HOSTINGER-PROCESSOR-CHAIN` and reviews Privacy §6/§7.
+  3. Cutover authority and H4-B promotion, when ready (unchanged).
+- **R9 (7 October 2026): one hosting documentation step; retention routine operating** (remaining action superseded by R10)
+  (`docs/_legal/research/GS-LEGAL-001/R9-RETENTION-HOSTINGER-REASSESSMENT.md`). **This supersedes R8 items 1–2.**
+  - **Done:**
+    - dump deletion confirmed;
+    - `RETENTION-ROUTINE-OPERATING` recorded;
+    - the existing Hostinger infrastructure is kept, with no new account, subscription, domain, VPS or
+      migration needed.
+  - **Remaining owner action (choose one; neither moves anything):**
+    - **A (least disruptive):** in the existing Hostinger account, have the **Account information**
+      corrected to list **Gridsmith Ltd** (Hostinger Terms §4, "correctly indicate ownership").
+      - First check what Account information currently lists. If it already shows Gridsmith Ltd, tell
+        Claude, because element 7 may already be met.
+      - Confirm that the account holds only Gridsmith's sites, data and mail. The change needs the current
+        owner's cooperation, and Gridsmith Ltd takes on the Terms' obligations; domains are unaffected.
+      - Then make sure the account's contact email reaches Gridsmith's admin department.
+      - Privacy 2.2 needs no change.
+    - **B:** a short written arrangement, kept outside the repository, between Gridsmith Ltd and the
+      account's owner. The owner gives Hostinger instructions for gridsmith.uk data only as Gridsmith
+      directs (Hostinger DPA §2.2). This needs a Privacy §6/§7 edit and a re-review first.
+  - **Then:** a short legal phase records `HOSTINGER-PROCESSOR-CHAIN`, and you can adopt Privacy 2.2.
+    Next monthly retention run: Mon 2 November 2026 (then delete the R7 baseline JSON).
+- **R8 (7 October 2026): hosting evidence required; first monthly retention review done** (items 1–2 superseded by R9)
+  (`docs/_legal/research/GS-LEGAL-001/R8-HOSTING-RETENTION-CLOSURE.md`). **This supersedes R7 items 1–3.**
+  - **Done:**
+    - your hosting fact (Gridsmith's admin department manages the hosting account);
+    - email 0 and WhatsApp/SMS 0 deletion candidates;
+    - Production leads 0;
+    - review cadence recorded;
+    - the 2 October dump verified and moved to the Recycle Bin.
+  - **Remaining owner actions:**
+    1. **Recycle Bin:** permanently delete only `supabase-production-20261002T125412Z.dump` (right-click →
+       Delete → Yes), then tell Claude so it can verify read-only and record
+       `RETENTION-ROUTINE-OPERATING`.
+    2. ~~**Hostinger (recommended route):** have the gridsmith.uk website and mailbox sit under a Hostinger
+       account whose customer is Gridsmith Ltd, for example by moving them into a Gridsmith Ltd account.~~
+       (Withdrawn at R9: no move; see R9 route A or B.)
+       Changing the existing account as a whole is not required, and no inter-company agreement is
+       needed. Afterwards, confirm that hosting is still in France, that the mailbox is still Hostinger
+       email hosting, and that the account's contact email is a Gridsmith address. The alternative, a
+       recorded risk decision, accepts an Art. 28(3) non-compliance and means narrowing Privacy §6/§7
+       (not recommended).
+    3. *Non-blocking housekeeping:* when Docker is next running, remove any GS-PROD-003-R1 restore-test
+       container (`docker ps -a`).
+    4. Then adopt Privacy 2.2 by explicit instruction; then cutover authority (unchanged).
+- **R7 (7 October 2026): cleanup run, A-1 done** (items 1–3 superseded by R8)
+  (`docs/_legal/research/GS-LEGAL-001/R7-HOSTINGER-RETENTION.md`). **This supersedes R6 items 1–3.**
+  - **Done:**
+    - the 63 Production leads, all gate probes, deleted after a baseline export;
+    - operator named (you; no deputy);
+    - development legal reseed (A-1);
+    - the Privacy marker removed.
+  - **Remaining owner actions:**
+    1. **Confirm, in one message:**
+       - no person other than Atik Murtaza has a login, team-member or delegated access to the
+         Hostinger account or the contact@gridsmith.uk mailbox;
+       - the Hostinger account's contact email is controlled by you or by Gridsmith;
+       - you manage the gridsmith.uk hosting for Gridsmith.
+
+       If any part is untrue, say what is true.
+    2. **Hostinger contract:** make Gridsmith Ltd Hostinger's Customer for gridsmith.uk (superseded by
+       R8 item 2), and record the date. The interim
+       alternative was withdrawn at R8.
+    3. **Retention routine:**
+       - A2: confirm your access route (Supabase dashboard, mailbox, log location);
+       - run and log the first monthly review: the read-only count query in Part B; mailbox (R3/R18),
+         including any old probe notification mail; WhatsApp (R16);
+       - delete `%USERPROFILE%\gridsmith-backups\supabase-production-20261002T125412Z.dump`;
+       - after the first monthly run, delete the R7 baseline JSON beside it;
+       - with Docker running, remove any GS-PROD-003-R1 restore-test container;
+       - record your quarterly and annual review dates.
+    4. Then a legal phase records `RETENTION-ROUTINE-OPERATING` and `HOSTINGER-PROCESSOR-CHAIN`
+       evidence, and you can adopt Privacy 2.2.
+    5. **Sign template 01**, and give **cutover authority** when ready (unchanged).
+- **R6 (7 October 2026): Privacy 2.2 drafted; one owner fact remains** (items 1–3 superseded by R7)
+  (`docs/_legal/research/GS-LEGAL-001/R6-PRIVACY-2.2-DRAFT.md`).
+  - **Done:** your E-1 to E-5 answers and the statutory check are applied.
+  - **Remaining owner actions:**
+    1–2. [R8: hosting-account history redacted on owner instruction; see R8 record §2]; superseded by R8.
+    3. **Make the retention routine operate:**
+       - name an operator and a deputy, and arrange their access (A1–A2);
+       - authorise the cleanup phase (Part C);
+       - have the first monthly run logged;
+       - handle the `pg_dump` (R17).
+
+       Privacy 2.2 cannot be adopted until this evidence is recorded
+       (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md` Part F).
+    4. **Sign template 01** (unchanged).
+    5. **Give cutover authority** when ready.
+  - **No longer needed:** E-1 to E-5 as R5 framed them; the Supabase support ticket is optional.
+  - Earlier items below are superseded where they conflict.
+- **R5 (7 October 2026): Privacy evidence reduced; owner IP position recorded**
+  (`docs/_legal/research/GS-LEGAL-001/R5-PRIVACY-EVIDENCE.md`).
+  - **Owner IP decision:** employee ownership is not relied on for Atik Murtaza's work. Template 01 is
+    required regardless (clause 1.3 option C); template 02 applies only under a verified written
+    contract of service. Nothing is signed.
+  - **Remaining owner actions:**
+    1. **Privacy evidence, four checks** (`docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md`, R5
+       section):
+       - E-1, the Hostinger invoice issuer name;
+       - E-2, the Hostinger server location and mailbox product;
+       - E-3, the Resend plan and the date of the oldest email listed;
+       - E-4, a Supabase support ticket on the log storage period;
+       - E-5, optional: the Hostinger access-log period.
+    2. **Sign template 01** before any project relies on your work.
+    3. **Authorise the retention cleanup phase** when ready.
+    4. **Give cutover authority** when ready.
+  - **No longer asked:** a Sanity token for A-1. A-1 is deferred to a trusted environment with existing
+    development credentials.
+  - The R4 items below are superseded where they conflict.
+- **R4 (7 October 2026): six documents ADOPTED by the owner** (`docs/_legal/research/GS-LEGAL-001/R4-OWNER-ADOPTION.md`).
+  - Adopted: Business 3.1 (OC-1 confirmed), Consumers 3.1, Website Terms 2.1, Cookie 2.1,
+    Accessibility 2.1 and `/legal/client-terms` 2.1. All are `OWNER_ADOPTED`; none is `PUBLISHABLE`.
+  - **Remaining owner actions:**
+    1. Answer the Privacy checks P-01 to P-12 (`docs/_legal/operations/PRIVACY-EVIDENCE-CHECKLIST.md`).
+    2. Say whether the owner is employed by Gridsmith Ltd under a contract of service, and sign
+       rights-chain template 01 before any project relies on the owner's work
+       (`docs/_legal/operations/rights-chain/`).
+    3. Authorise the retention cleanup phase (`docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md`).
+    4. Allow `spzu6y31.api.sanity.io` and provide a development token for A-1.
+    5. Give cutover authority (CUTOVER-AUTHORITY, A-2).
+- **R3 (7 October 2026):** the owner's answers to R2 §4 are applied
+  (`docs/_legal/research/GS-LEGAL-001/R3-OWNER-DECISIONS-APPLIED.md`).
+  - **Now owner action:** adopt the six adoptable documents (R3 record §12), and answer the 12 provider
+    account checks (R3 record §5.2) that unblock the Privacy Policy.
+  - **Operational before first use:** the rights-chain documents (`docs/_legal/operations/RIGHTS-CHAIN.md`
+    §3) and the retention routine (`docs/_legal/operations/RETENTION-SCHEDULE.md`).
+- **Exact action (reduced at `GS-LEGAL-001-R2`, 7 October 2026; answered at R3):** answer §4 of
+  `docs/_legal/research/GS-LEGAL-001/R2-OWNER-DECISION-PACK.md`:
+  - five decisions: O-1 retention, O-2 provider facts, O-3 consumer contracting workflow, O-4 business
+    liability cap, O-5 proposed wording changes;
+  - five one-line confirmations, C-1 to C-5;
+  - the preconditions and authorisations listed there.
+  
+  The pack classifies all of `D-1`–`D-30` in `GS-LEGAL-001-RECORD.md` §7. Most already have an owner
+  answer, are legal requirements or are safe drafted defaults.
+
+  Then adopt each document version by recording `ownerAdoptedOn` and `ownerAdoptedVersion` in the
+  register. Only the owner sets those; `check:legal:adoption` then decides whether a document may move
+  to `PUBLISHABLE`.
+- **What it blocks:** publication of `/legal/*` in production (footer links 404 until then) and real
+  form submissions (the privacy notice must be live first).
+- **Evidence required:** the dated register entries and the decision answers.
+
+### ~~`GS-O003` — Complete legal review and resolve launch actions~~ — superseded by `GS-O003-R` above
+
+- **Status:** ~~ACTIONABLE NOW~~ SUPERSEDED (6 October 2026, `GS-LEGAL-001`). Kept as history.
 - **Why required:** the repository contains solicitor-ready drafts, not confirmed legal advice, and
   some historical clauses/copy assume public portfolio use or public prices.
 - **Exact action:** send the legal set and `GS-D001`/`GS-D002` to a UK solicitor; resolve consumer
@@ -16,19 +269,48 @@ not requested under `GS-D001` and `GS-D002`.
   actions without asking the coding agent to invent clauses.
 - **What it blocks:** final public legal copy and consumer/commercial flows.
 - **Evidence required:** dated written review and a closed decision list.
+- **Technical services — factual note for the solicitor (added at `GS-PROD-003-R1`, 2 October
+  2026; no clause drafted).** Gridsmith intends to offer limited Technical services — CAD drafting,
+  engineering drawing/schematic preparation and technical documentation, to the client's brief —
+  **without professional indemnity insurance covering professional engineering responsibility**
+  (`GS-O005` closed by owner decision; `GS-O024` deferred). The services expressly exclude design
+  responsibility, calculations, certification, approval, stamping, sign-off and responsible-designer
+  duties (published copy: `scripts/service-content.mjs`). Please review the business terms on that
+  basis, in particular: `MSA-BUSINESS.md` §12 (written for "engineering, technical, CAD or
+  construction-related drawings **or design services**", with design/certification/sign-off available
+  "where expressly stated in the Scope" — wider than the published scope); §16 liability; the open
+  PI-limit `[TK]` and its link to the cap under UCTA s. 11(4)(b) (`07-STATE-REPORT.md` §2.2,
+  `02-CITATION-LEDGER.md`). The historical "Client Terms clause 8.1" reference (`BEFORE-LAUNCH.md`
+  §4) has no current counterpart under that number; §12 and §16 are the live provisions. Liability is
+  not assumed to be excludable.
+  **Stated explicitly at `GS-PROD-004A`:** obtaining PI cover is **not** an owner-imposed launch
+  prerequisite; this is **not** a claim that Gridsmith has zero liability; and `MSA-BUSINESS.md` §12 is
+  **broader** than the intended public scope. The `/design` Technical note said services "remain
+  subject to professional-scope and insurance confirmation"; "and insurance" was removed on owner
+  approval at `GS-PROD-004B`, so the public site now says nothing about insurance. Please flag if it
+  should.
 
-### `GS-O005` — Confirm professional-indemnity scope for engineering/CAD work
+### `GS-X002` — Professional review of the Technical claims
 
-- **Status:** ACTIONABLE NOW
-- **Why required:** engineering drawing claims and scope controls require a verified insurance and
-  professional-review position.
-- **Exact action:** obtain written broker/insurer confirmation of whether the policy covers the
-  intended engineering/CAD services, exclusions and limits.
-- **What it blocks:** affected Design claims and any higher-risk engineering launch content. Since
-  `GS-P03` this is enforced: `check:launch` refuses a production dataset containing a published
-  Technical-group service without `professionalScopeConfirmed`. That flag may be set only once this
-  action and `GS-X002` are closed.
-- **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
+- **Status:** ACTIONABLE NOW — **the only remaining gate on the three Technical services**
+  (re-examined and retained at `GS-PROD-003-R1`, 2 October 2026, owner choice).
+- **Origin:** `GS-P00` (11 September 2026): *"professional review appropriate to engineering/CAD
+  claims and the drawing matrix."* It is a review of what the public copy claims — **not** an
+  insurance question and not a licence or competence attestation; `GS-O005` closing does not touch it.
+- **Current subject:** the three Technical records (`cad-drafting`, `engineering-drawings`,
+  `technical-documentation`). The drawing-matrix limb has no subject: no drawing matrix was built
+  and no standards code is published.
+- **Exact action:** a suitably qualified professional reviews those three records in writing against
+  the approved limited scope (drafting/preparation to a client's brief; no design, calculation,
+  certification, approval, stamping, sign-off or responsible-designer role) and confirms they make
+  no misleading engineering claim. Copy changes, if any, come back for owner approval.
+- **What it blocks:** setting `professionalScopeConfirmed` and migrating the three services to
+  Production Sanity (`check:launch`, `migrate-production-cms.mjs` gate `GS-X002`).
+- **Evidence required:** the dated written review (summary in the repository, not personal data).
+- **Review pack ready (`GS-PROD-004A`):** `docs/_shared/GS-X002-REVIEW-PACK.md` — self-contained brief
+  with the exact public copy (76 strings checked verbatim against the publication source), the
+  boundaries, questions A–E and the closure evidence. Send it as is; no legal or insurance review is
+  asked of the reviewer.
 
 ### `GS-O007` — Brand assets supplied; three small decisions remain
 
@@ -70,13 +352,24 @@ not requested under `GS-D001` and `GS-D002`.
   `/legal/business-client-terms` and `/legal/consumer-client-terms`; `LEGAL_DOCUMENT_SLUGS`
   already records that a redirect picking one target is wrong for half the people following it.
   `LIVE-SITE-EXTRACT.md` §13.3 sets out the options. Decide it at cutover.
+
+  **Decided at `GS-PROD-001` (1 October 2026):** `/terms-and-conditions/` → `/legal/client-terms`
+  (option 1). The map is implemented (single-hop 308s, `check:redirects`); the redirect limb is
+  closed. Favicon and Open Graph card remain. `docs/_shared/GS-PROD-001.md` §C.
 - **Answered at `GS-R001` and unchanged:** the eight-URL inventory, read from the live site's own
   `wp-sitemap.xml` and recorded in `LIVE-SITE-EXTRACT.md` §13; and per-route SEO titles,
   descriptions, canonicals, Open Graph and `Organization` structured data (`G-04`).
 
 ### `GS-O010` — Provide an isolated Supabase target for Vercel Preview
 
-- **Status:** ACTIONABLE NOW
+- **Status:** **CLOSED — 2 October 2026 (`GS-O010-R2`).** Preview persistence is the isolated
+  `gridsmith-preview` project `qfgpwumvvtizeamkynes`; Preview holds no Production write credential; one
+  valid synthetic `/contact` and `/press/contact` submission each landed only there, both notifications
+  reached the owner's test inbox, honeypot and invalid requests wrote and sent nothing, Production lead
+  count unchanged (63) with 0 markers; synthetic rows deleted. Evidence `docs/_shared/GS-O010-R2.md`.
+  Before cutover: confirm the Production `SUPABASE_SERVICE_ROLE_KEY` value is the Gridsmith Project key
+  (edited by the owner during R2), and review the Production project's free-plan pause (it was paused).
+- **Previous status:** ACTIONABLE NOW
 - **Why required:** GS-P02 could not prove that Preview is separated from the production Supabase
   project. The organisation has no Supabase branch and no second accessible non-production project,
   so a Preview submission could reach production data.
@@ -87,9 +380,29 @@ not requested under `GS-D001` and `GS-D002`.
 - **What it blocks:** safe hosted Preview end-to-end testing of the server-only lead writer. Until
   closed, do not submit test leads in Preview and do not copy the production service-role secret into
   Preview.
+- **GS-SHARED-001-RC reading (28 September 2026), names/targets only:** Preview has
+  `RESEND_API_KEY` and `LEAD_NOTIFICATION_*` (live mail possible); `SUPABASE_SERVICE_ROLE_KEY` is
+  Production-only; `DIRECT_CONNECTION_STRING` and `SANITY_API_WRITE_TOKEN` are shared
+  Preview+Production records. Still not isolated — no valid Preview submission was made.
+- **GS-O010-R1 (2 October 2026):** `DIRECT_CONNECTION_STRING` and `SANITY_API_WRITE_TOKEN` are now
+  **Production-only** (Preview scope removed; runtime never reads either). Preview holds no
+  Production write credential and no service-role key, so a Preview submission currently errors and
+  writes nothing. **Stopped:** the Supabase connector now sees only the unrelated "Food"
+  organisation, not the Gridsmith project's, and Preview mail has no designated test sink. Owner
+  action: provision the isolated project in the Gridsmith organisation (or reconnect the connector
+  to it) and designate a Preview test inbox/key. `docs/_shared/GS-O010-R1.md`.
 - **Evidence required:** non-production project reference and lifecycle state, secure Vercel
   presence/scope confirmation, and an authorised synthetic Preview submission proved to land only in
   that isolated target. If provisioning would add cost, obtain explicit approval before enabling it.
+
+### `GS-O022` — Official Freelancer brand asset
+
+- **Status:** ACTIONABLE NOW, not blocking staging. Raised at `GS-SHARED-001-RC`.
+- **Why required:** the footer's Freelancer mark is a provisional third-party sourced mark
+  (simple-icons path, filled in Freelancer's brand blue); every other permitted platform uses an
+  official download (`components/chrome/platformMarks.ts`).
+- **Evidence required:** an official Freelancer asset and its usage terms, or an owner decision to
+  keep the provisional mark at cutover.
 
 ## BLOCKED/DEPENDENT
 
@@ -105,10 +418,83 @@ not requested under `GS-D001` and `GS-D002`.
   mean inventing brand geometry.
 
   **What to look at, and what is knowingly absent:** `GS-R001-R-REMEDIATION.md` §1 and §7.
+
+  **Update, 18 September 2026 — `GS-R001-M`.** The owner reviewed the Master homepage again and
+  **rejected its visual direction**: the grid, the three coloured division boxes and the
+  `GS-R001-R` line-art background animation. `GS-R001-M` redesigned the Master homepage only — a
+  gold stage derived from the logo, a WebGL scene of the mark that travels through six chapters,
+  a typographic studio index, still reviews. **`GS-O008` stays OPEN — AWAITING OWNER RE-REVIEW of
+  the redesigned `/`.** Record: `GS-R001-M-MASTER-REDESIGN.md`. Three decisions ride on that
+  review: (1) extend the gold stage to `/about`, `/approach`, `/contact` and `/insights`, or keep
+  it on `/` only; (2) whether the Master stage and Design's dark canvas read as too close; (3)
+  whether the reviews chapter shows enough of the mark.
 - `GS-O009` — authorise production deployment and DNS cutover only in a dedicated production-release
   phase after automated audit and human acceptance.
 
+- `GS-O018` — **Press capability gaps from Book Publishers Den (owner-associated business).**
+  Raised at `GS-R001-M`, **not blocking**, for a future Press content phase. Capability evidence
+  only — `GS-R001-M-MASTER-REDESIGN.md` §10.1. Decide: add *line editing* and *metadata / listing
+  guidance* as named services; whether *translation / bilingual proofreading* is offered, and in
+  which languages; whether Gridsmith coordinates *print-on-demand / printing*; whether
+  *audiobook production* is offered and what Gridsmith itself provides versus coordinates; whether
+  *email marketing* is a confirmed channel; and whether *podcast / guest outreach* is offered
+  **without** a placement promise. No price, guarantee, testimonial or identity from that business
+  may be imported.
+- `GS-O019` — **Design capability gaps from MAD Alpha Designers (owner-associated business).**
+  Raised at `GS-R001-M`, **not blocking**, for a future Design content phase — §10.2. Decide:
+  whether *Gaming/streamer creative* should enumerate its deliverables (screens, alerts, panels,
+  banners, cam frames, chat boxes, emotes, sub badges, intros/outros, animated overlays, logos,
+  banners and emotes); and whether any work from that business is Gridsmith's to show (`GS-D001`
+  requires permission). Its packages, money-back guarantee and volume claims may not be imported
+  (`GS-D002`, non-negotiable #2).
+- **Digital** — deliberately not researched. Owner: *"for digital i will tell later."*
+
+## DEFERRED — NON-BLOCKING
+
+- `GS-O024` — **Professional indemnity insurance for the Technical/CAD services — DEFERRED BY
+  OWNER** (2 October 2026, `GS-PROD-003-R1`). Not required for cutover, no purchase scheduled, no
+  deadline. It becomes a requirement only if the `GS-O003` legal review advises so. When obtained,
+  record insurer and limit in `companyDetails` (`piInsurer`, `piCoverLimit`) only if the owner
+  decides to publish them.
+
 ## COMPLETED
+
+- `GS-O021` — **CLOSED BY OWNER DECISION — TikTok mark retained (owner-accepted brand-use risk),
+  2 October 2026 (`GS-PROD-004B`).** The owner reviewed the recorded concern — TikTok's Brand and Use
+  Guidelines require prior written permission for logo use — and **explicitly decided to keep the
+  TikTok mark** in the footer social row and the `/about` Platforms list, linking to Gridsmith's own
+  account. **No written TikTok permission is recorded; none has been obtained, and nothing here says
+  otherwise.** The text-link fallback prepared at `GS-PROD-004A` was **rejected by the owner** and
+  discarded unapplied. Implementation unchanged from the approved baseline (`platformMarks.ts`
+  byte-identical; no recolour, redraw or derivative). Not a cutover blocker. Permission arriving
+  later is recorded here; a TikTok request to remove the mark is acted on. Superseded entry below.
+
+- `GS-O005` — **CLOSED BY OWNER SCOPE / RISK DECISION, 2 October 2026 (`GS-PROD-003-R1`).**
+  The expected resolution (written broker/insurer confirmation, from `Q-M4` / `L-08`) is
+  **superseded**. Owner decision, recorded as given: Gridsmith Ltd does **not** currently carry
+  professional indemnity insurance covering the Technical/CAD services, and has **chosen not to make
+  obtaining it a launch prerequisite**; it may be reconsidered later (`GS-O024`). The service scope
+  stays deliberately limited — CAD drafting, engineering drawing/schematic preparation and technical
+  documentation to a client's brief, with no engineering design responsibility, calculations,
+  regulatory approval, certification, stamping, professional sign-off or responsible-designer /
+  responsible-engineer role. **This is not a claim of zero legal liability**, it is never published
+  as "no liability" or as "uninsured", and contractual wording stays with `GS-O003`. No insurer,
+  policy, limit or coverage was recorded or invented. Gate consequence: `professionalScopeConfirmed`
+  no longer means PI cover — it means only that `GS-X002` has confirmed the record's limited scope;
+  the obsolete wording is struck and registered (`check:struck`
+  `GS-O005-PI-COVER-PUBLICATION-GATE`). Superseded entry kept below.
+- `GS-O023` — **CLOSED, 2 October 2026 (`GS-PROD-003-R1`).** The owner re-entered the Production
+  `SUPABASE_SERVICE_ROLE_KEY` (Vercel `updatedAt` 1790944740550, ~12:39 UTC) and **stated in chat
+  that the value was copied from Gridsmith Project `dqiutgmxillhsbzgnlsx`**. Owner provenance, not a
+  runtime proof — the first Production lead at the cutover smoke test is that proof. `GS-T004`
+  then applied.
+
+- `GS-O020` — **CLOSED — PUBLISH, 18 September 2026 (owner decision, `GS-R001-M` R1).** The new
+  Freelancer review — **James, 5 / 5, 17 September 2026, Illustration** — is approved for
+  publication. `EXPECTED` in `scripts/check-reviews.mjs` moved 12 / 10 / 2 → **13 / 11 / 2** in the
+  same commit, and `check:reviews --live` is green again. **This approval covers this review
+  only**: the genuine-review and third-party filtering rules are unchanged, and the next new review
+  turns the live check red again until a person decides it (`GS-O015`).
 
 - `GS-O017` — **completed 18 September 2026 at `GS-R001-R`, on owner-supplied evidence.** The
   owner identified their earlier Gridsmith implementation,
@@ -368,6 +754,67 @@ not requested under `GS-D001` and `GS-D002`.
 
 ## SUPERSEDED
 
+> `GS-O021` entry as it stood before `GS-PROD-004B`, kept verbatim.
+
+#### ~~`GS-O021` — TikTok written logo permission (final production gate)~~ superseded
+
+- **Status:** ACTIONABLE NOW — owner in progress. Raised at `GS-SHARED-001-RC`.
+- **Why required:** the owner-approved footer shows the TikTok mark, used solely as a link to
+  Gridsmith's own TikTok business account. TikTok's Brand and Use Guidelines require prior written
+  permission for any use of its logo. The owner has consulted TikTok Business support and is
+  obtaining that permission by email. It has **not** been received.
+- **What it blocks:** production cutover with the TikTok mark shown. Staging may keep it.
+- **Evidence required:** TikTok's written permission covering this use (and, if TikTok supplies
+  one, the official asset to replace the current simple-icons path). Without it, the mark must be
+  removed or replaced by a text link before cutover. Agents must not accept third-party terms.
+- **Resolution prepared at `GS-PROD-004A` (2 October 2026) — awaiting owner visual approval.** No
+  permission is on record, so path B: the TikTok entry is removed from
+  `components/chrome/platformMarks.ts` (one entry deleted, provenance row rewritten). Both consumers
+  already have a no-mark fallback: the footer row prints the plain word **"TikTok"** in footer link
+  ink (16px, 57×44 target, 13.26:1 effective contrast); the `/about` Platforms row keeps its visible
+  "TikTok" label and handle with an empty icon slot. Link, destination and accessible name are
+  unchanged; the other seven marks are untouched; no overflow at 375px (4×2 grid). The change is
+  **local and uncommitted** (visually meaningful in the frozen footer). **Owner action:** approve or
+  reject the text link. Approval → commit with `check:axe`/`check:responsive` on the footer; this
+  action then closes without TikTok's permission. Permission arriving later can restore the mark.
+
+
+
+> Kept verbatim at `GS-PROD-003-R1`; the current entries are under COMPLETED and DEFERRED.
+
+#### ~~`GS-O005` — Confirm professional-indemnity scope for engineering/CAD work~~ superseded
+
+- **Status:** ACTIONABLE NOW
+- **Why required:** engineering drawing claims and scope controls require a verified insurance and
+  professional-review position.
+- **Exact action:** obtain written broker/insurer confirmation of whether the policy covers the
+  intended engineering/CAD services, exclusions and limits.
+- **What it blocks:** affected Design claims and any higher-risk engineering launch content. Since
+  `GS-P03` this is enforced: `check:launch` refuses a production dataset containing a published
+  Technical-group service without `professionalScopeConfirmed`. That flag may be set only once this
+  action and `GS-X002` are closed.
+- **Evidence required:** written broker/insurer confirmation; do not put policy documents in source.
+- **Re-examined at `GS-PROD-003` (2 October 2026): still OPEN — classification C, external/broker
+  confirmation.** No confirmation is recorded. The Technical copy already excludes design,
+  calculation, certification and sign-off, so no copy change is proposed; the open question is
+  coverage. The three Technical services stay out of Production Sanity. `GS-PROD-003.md` §B.
+
+#### ~~`GS-O023` — Production service-role credential provenance~~ superseded
+
+- **Status:** ACTIONABLE NOW (raised at `GS-PROD-003`, 2 October 2026)
+- **Why required:** the Production `SUPABASE_SERVICE_ROLE_KEY` was edited during `GS-O010-R2`. It is
+  a Vercel `sensitive` value (unreadable) and no READY Production deployment runs the lead code, so
+  its project cannot be proved without a Production deployment. `GS-T004` is held on it.
+- **Exact action (one of):** (1) copy the service-role/secret key from Supabase project
+  **Gridsmith Project** (`dqiutgmxillhsbzgnlsx`) → Project Settings → API Keys, paste it into Vercel
+  `gridsmith-ltd` → Settings → Environment Variables → `SUPABASE_SERVICE_ROLE_KEY` (Production) →
+  Edit → Save, and confirm the source in chat; or (2) state explicitly that `GS-T004` may run with
+  the runtime proof deferred to the cutover smoke test.
+- **What it blocks:** applying migration 0004 to Production (`GS-T004`).
+- **Evidence required:** the owner's statement; never the value.
+
+
+
 - Public price collection as a launch dependency: Design prices, Design Desk prices, Digital base
   bands/calibration prices, Press packages, assessments, revisions and marketing-package prices.
 - Public portfolio collection as a launch dependency: eight Design case studies, eight Digital case
@@ -375,3 +822,9 @@ not requested under `GS-D001` and `GS-D002`.
 - Implemented at `GS-P03` (14 September 2026): every price field, price renderer and the
   `/digital/estimate` price-band route removed; `/work` routes and all portfolio blocks removed.
   Nothing about prices or portfolio evidence is requested from the owner.
+
+## GS-LAUNCH-018 preview transaction dependencies
+
+The existing temporary-site relative-root evidence is retained: its Git page maps `codex/gs-hostinger-artifact` to `public_html` with auto-deployment OFF, and the scoped File Manager exposes the expected static files. The original mechanism uses Git, not FTP credentials; no absolute path is required. FTP chroot/write isolation was not tested because no FTP credentials are configured in this path. Before a later publishing dispatch, review the actual accepted identity/ZIP, current destination-isolation evidence and bounded temporary-site rollback receipt, then approve that exact transaction. No accepted release or publication approval exists yet.
+
+Normal verification and all six preview acceptance commands PASS on `35c74d67` in run `40254337220`. The nine high toolchain entries are the current blocker: there is no demonstrated compatible complete patch, and Puppeteer major/Lighthouse engine changes require compatibility and measurement-parity validation. The single next owner action is to authorise that bounded tooling remediation. Current workflow refuses packaging while the full audit is nonzero; no waiver or risk acceptance is inferred. See `GS-LAUNCH-018.md` for advisory scope and the executable approval contract. These are preview decisions; production/DNS/mail/legal publication remain separate.

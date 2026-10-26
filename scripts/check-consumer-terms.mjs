@@ -5,8 +5,8 @@
  * **No consumer-facing route links to the business terms.**
  *
  * `lib/legal/slugs.ts` records the decision this gate protects. Until 26 August 2026 one slug,
- * `/legal/client-terms`, served two instruments: `docs/_legal/MSA-BUSINESS.md` and
- * `docs/_legal/CONSUMER-TERMS.md`. `/press` linked to it from its rights statement, so a Press
+ * `/legal/client-terms`, served two instruments: `docs/_legal/current/client-terms-business.md` and
+ * `docs/_legal/current/client-terms-consumers.md`. `/press` linked to it from its rights statement, so a Press
  * author following that link read a B2B liability cap that **CRA 2015 s. 57 makes not binding
  * on a consumer** — and nothing on the page said so. Four verification passes established the
  * defect is unfixable by drafting; the fix was to split the routes, and what can silently undo
@@ -60,7 +60,7 @@ const CONSUMER_TERMS = '/legal/consumer-client-terms';
 /**
  * Routes a consumer reads.
  *
- * Gridsmith Press sells to consumers (`docs/_legal/01-FACTUAL-INVENTORY.md` §5.1), so every
+ * Gridsmith Press sells to consumers (`git:a7b931c10eb2a543bfa43e89954555fdadb7072d:docs/_archive/legal/pre-GS-LEGAL-FINAL-001/01-FACTUAL-INVENTORY.md` §5.1), so every
  * `(press)` route is one, as is the consumer instrument itself. `/`, `/contact` and
  * `/legal/client-terms` are deliberately NOT here: they serve both audiences, and
  * `/legal/client-terms` is the disambiguation page whose entire job is to link to both

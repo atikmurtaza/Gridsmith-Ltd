@@ -1,5 +1,9 @@
 # Service architecture and commercial model — ADR `GS-P03`
 
+> **GS-PRESS-001-D (26 September 2026) Press override:** After owner visual approval of R3, Press is formalised as six territories, 14 canonical service records and 29 approved capabilities. The 13 old service URLs remain; one audiobook URL is added. The four-group Press table and 81/46/14 programme totals below record the earlier `GS-P03` baseline and are superseded for Press. See `GS-PRESS-001-D.md` for exact service and capability migration, CMS boundaries and pending RC work.
+
+> **GS-R002, 19 September 2026:** canonical ownership and counts remain unchanged. Design visitor chapters combine Illustration / Motion / 3D as Motion / Dimensional. Gaming/streamer and motion deliverables are now enumerated using current MAD Alpha capability evidence. This is child-deliverable detail, not a new service/group. See `GS-R002-DESIGN.md`.
+
 **Status:** Accepted · **Date:** 14 September 2026 · **Phase:** `GS-P03`
 **Authority:** owner decisions `GS-D001` (public portfolio policy) and `GS-D002` (bespoke
 quotation), and the owner-approved division and service model supplied in the `GS-P03` brief.
@@ -245,8 +249,14 @@ will be shared.
   - the Studio shows a **warning**, so development and testing are not blocked;
   - `check:launch` (including its `--build` prebuild mode) counts published, unconfirmed technical
     services and **fails on the production dataset**. Committed specimens prove each limb.
-- **Outstanding:** `GS-O005` (PI scope) and `GS-X002` (professional review). Setting the flag
-  without that written evidence defeats the control; its field description says so.
+- ~~**Outstanding:** `GS-O005` (PI scope) and `GS-X002` (professional review).~~ **Superseded at
+  `GS-PROD-003-R1` (2 October 2026).** `GS-O005` closed by owner scope/risk decision: Gridsmith does
+  not currently carry PI cover for these services and has chosen not to make it a launch
+  prerequisite (deferred, `GS-O024`). That is not a claim of zero liability; contract wording stays
+  with `GS-O003`. The flag now means one thing — a review confirms the record stays inside the
+  claim ceiling above.
+- **Outstanding:** `GS-X002` (professional review of the Technical claims). Setting the flag
+  without that review defeats the control; its field description says so.
 
 ## 9. Pricing reconciliation
 

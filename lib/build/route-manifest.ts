@@ -1,0 +1,143 @@
+import { LEGAL_DOCUMENT_SLUGS } from '../legal/slugs.ts';
+
+/** H4-A: routing policy consumes the existing reviewed CMS publication inventory. */
+export type PublicationEntry = {
+  type: string; id: string; slug: string | null; division?: string;
+  eligible: boolean; gate: string | null; reason?: string;
+};
+export type ContentIdentity = {
+  _id: string; _type: string; _rev: string; slug?: string | null;
+  division?: string; published?: boolean; status?: string; isSeed?: boolean;
+};
+export type StaticRoute = {
+  path: string; contentType: string; sourceId: string | null; slug: string | null;
+  division?: string; eligible: boolean; gate: string | null; reason: string | null;
+  sitemap: boolean; revision: string | null;
+};
+export type StaticManifest = {
+  version: 1; target: 'static'; dataset: 'production' | 'development'; indexable: boolean;
+  legalPreview?: 'adopted-development' | 'adopted-owner';
+  routes: StaticRoute[];
+};
+
+const fixedPaths = [
+  '/', '/about', '/approach', '/contact', '/insights', '/design', '/digital', '/press',
+  '/press/contact', '/press/contact/thank-you',
+];
+/**
+ * GS-R16-001 (owner decision 15): Path Finder's rules are unapproved placeholders (LEG-07), so no
+ * release artifact ships it. Its decision-table specimen lives in an excluded page.probe.tsx.
+ */
+export const LAUNCH_EXCLUDED_PATHS = ['/press/path-finder', '/press/gridsmith-path-probe'];
+const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+/** Fixed routes that declare their own noindex and stay out of the sitemap in every profile. */
+export const NOINDEX_PATHS = ['/press/contact/thank-you'];
+
+export function createStaticManifest(
+  documents: ContentIdentity[], publication: PublicationEntry[], { indexable = false } = {},
+): StaticManifest {
+  const legal = publication.filter((entry) => entry.type === 'legalDocument' && entry.eligible);
+  if (legal.length !== 0 && (legal.length !== 7 || LEGAL_DOCUMENT_SLUGS.some((slug) => !legal.some((entry) => entry.slug === slug)))) {
+    throw new Error('Legal publication requires all seven canonical documents together');
+  }
+  const byId = new Map(documents.map((doc) => [doc._id, doc]));
+  if (byId.size !== documents.length) throw new Error('Duplicate CMS source identity');
+  const known = new Set(publication.map((entry) => entry.id));
+  for (const doc of documents) {
+    if (doc._id.startsWith('drafts.')) throw new Error('Draft in static content inventory');
+    if (doc.isSeed || doc._id.startsWith('seed-')) throw new Error('Seed in static content inventory');
+    if (!doc._rev) throw new Error('Missing CMS revision');
+    if (doc._type === 'service' && doc.published && !known.has(doc._id)) {
+      throw new Error('Published service is outside the reviewed publication inventory');
+    }
+    if (doc._type === 'service' && doc.published &&
+        publication.some((entry) => entry.id === doc._id && !entry.eligible)) {
+      throw new Error('Gated service published in static content inventory');
+    }
+  }
+  for (const entry of publication.filter((item) => item.eligible)) {
+    const doc = byId.get(entry.id);
+    if (!doc || doc._type !== entry.type || (entry.slug && doc.slug !== entry.slug) ||
+        (entry.division && doc.division !== entry.division) ||
+        (entry.type === 'service' && doc.published !== true)) {
+      throw new Error(`Required authorised content missing or changed: ${entry.id}`);
+    }
+  }
+  // GS-R16-001 (owner decision 16): an empty Insights index stays out of the sitemap.
+  const articles = documents.some((doc) => doc._type === 'post' && doc.status === 'published');
+  const routes: StaticRoute[] = fixedPaths.map((path) => {
+    const sourceId = path === '/about' || path === '/approach'
+      ? `grouppage-${path.slice(1)}` : 'companyDetails';
+    return {
+      path, contentType: path === '/about' || path === '/approach' ? 'groupPage' : 'page',
+      sourceId, slug: null, eligible: true, gate: null, reason: null,
+      sitemap: !NOINDEX_PATHS.includes(path) && (path !== '/insights' || articles),
+      revision: byId.get(sourceId)?._rev ?? null,
+    };
+  });
+  for (const entry of publication) {
+    if (!['service', 'legalDocument'].includes(entry.type)) continue;
+    if (!entry.slug || !slugPattern.test(entry.slug)) throw new Error('Invalid reviewed route slug');
+    const path = entry.type === 'service'
+      ? `/${entry.division}/services/${entry.slug}` : `/legal/${entry.slug}`;
+    routes.push({
+      path, contentType: entry.type, sourceId: entry.id, slug: entry.slug,
+      ...(entry.division ? { division: entry.division } : {}),
+      eligible: entry.eligible, gate: entry.gate, reason: entry.reason ?? null,
+      sitemap: entry.eligible, revision: byId.get(entry.id)?._rev ?? null,
+    });
+  }
+  for (const doc of documents.filter((item) => item._type === 'post' && item.status === 'published')) {
+    if (!doc.slug || !slugPattern.test(doc.slug)) throw new Error('Invalid published article slug');
+    routes.push({
+      path: `/insights/${doc.slug}`, contentType: 'post', sourceId: doc._id, slug: doc.slug,
+      eligible: true, gate: null, reason: null, sitemap: true, revision: doc._rev,
+    });
+  }
+  if (new Set(routes.map((route) => route.path)).size !== routes.length) {
+    throw new Error('Duplicate static route');
+  }
+  return { version: 1, target: 'static', dataset: 'production', indexable,
+    routes: routes.sort((a, b) => a.path.localeCompare(b.path)) };
+}
+
+/** The indexable (GS-R13 production) sitemap uses this eligible set; staging emits an empty sitemap. */
+export const sitemapPaths = (manifest: StaticManifest) =>
+  manifest.routes.filter((route) => route.eligible && route.sitemap).map((route) => route.path);
+
+/** Owner-only display uses repository legal texts; no CMS eligibility or revision is invented. */
+export function createOwnerPreviewManifest(documents: ContentIdentity[], publication: PublicationEntry[]): StaticManifest {
+  const manifest = createStaticManifest(documents, publication);
+  const legal = manifest.routes.filter((route) => route.contentType === 'legalDocument');
+  if (legal.length !== 7 || LEGAL_DOCUMENT_SLUGS.some((slug) => !legal.some((route) => route.slug === slug))) {
+    throw new Error('Owner preview requires all seven canonical legal routes');
+  }
+  return { ...manifest, legalPreview: 'adopted-owner', routes: manifest.routes.map((route) =>
+    route.contentType === 'legalDocument' ? { ...route, eligible: true, sourceId: null, revision: null,
+      gate: 'GS-O003-R-OWNER-PREVIEW', reason: 'GS-LAUNCH-017 owner-authorised preview; production publication held', sitemap: false } : route) };
+}
+
+/** R12 private development export. Production inventory and eligibility are never rewritten. */
+export function createLegalPreviewManifest(documents: ContentIdentity[], publication: PublicationEntry[]): StaticManifest {
+  const byId = new Map(documents.map((doc) => [doc._id, doc]));
+  if (byId.size !== documents.length) throw new Error('Duplicate development CMS identity');
+  const preview = publication.map((entry) => ({ ...entry,
+    id: entry.id === 'companyDetails' ? entry.id : `seed-${entry.id}`,
+    ...(entry.type === 'legalDocument' ? { eligible: true, gate: 'GS-O003-R-PREVIEW' } : {}),
+  }));
+  // Reuse the production routing predicates on a separate identity-only projection. Raw seed
+  // records are never relabelled, persisted, or passed to production migration.
+  const authorised = preview.filter((entry) => entry.eligible).map((entry) => {
+    const doc = byId.get(entry.id);
+    if (!doc) throw new Error(`Required development content missing: ${entry.id}`);
+    return { ...doc, _id: entry.id.replace(/^seed-/, ''), isSeed: false };
+  });
+  const manifest = createStaticManifest(authorised, preview.map((entry) => ({
+    ...entry, id: entry.id.replace(/^seed-/, ''),
+  })));
+  return { ...manifest, dataset: 'development', legalPreview: 'adopted-development',
+    routes: manifest.routes.map((route) => ({ ...route,
+      sourceId: route.sourceId && route.sourceId !== 'companyDetails' ? `seed-${route.sourceId}` : route.sourceId,
+      sitemap: route.contentType === 'legalDocument' ? false : route.sitemap,
+    })) };
+}

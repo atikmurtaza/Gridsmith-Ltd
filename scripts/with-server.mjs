@@ -149,7 +149,9 @@ if (!(await ready())) {
 let failed = 0;
 for (const command of commands) {
   console.log(`\n> ${command}`);
-  const result = spawnSync(command, { shell: true, stdio: 'inherit', env: { ...process.env, AXE_BASE_URL: BASE } });
+  // All served gates must measure this owned server, including the reviews and
+  // header gates that use their older environment-variable names.
+  const result = spawnSync(command, { shell: true, stdio: 'inherit', env: { ...process.env, AXE_BASE_URL: BASE, BASE_URL: BASE, HEADER_BASE_URL: BASE } });
   if (result.status !== 0) failed += 1;
 }
 

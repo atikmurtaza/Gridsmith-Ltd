@@ -1,0 +1,80 @@
+/**
+ * The Master stage — `GS-R001-M`. The homepage's palette, derived from the owner's logo.
+ * master/DESIGN.md §2.1.
+ *
+ * **Why this exists.** `GS-O008`: the owner rejected the Master homepage, and one limb of the
+ * rejection was that it did not express Gridsmith's colour. The Master theme's premise — *"no
+ * colour of its own; the divisions supply the colour"* — produced a white page of three
+ * coloured boxes. The mark the owner supplied is **polished gold on dark**, and that is the
+ * company's colour. The stage carries it.
+ *
+ * **Scope: `/` only.** It applies when the page carries `[data-stage="master"]`, which only
+ * `app/(marketing)/page.tsx` renders. `/about`, `/approach`, `/contact`, `/insights` and the
+ * legal pages keep `master.css` unchanged; extending the stage to them is an owner decision
+ * recorded in `GS-R001-M-MASTER-REDESIGN.md`, not an implementation default. Header and footer
+ * adopt it on `/` because the tokens are redefined on `body`, which is what `:has()` is for.
+ *
+ * **Where each value comes from** (`public/brand/gridsmith-logo.svg`):
+ *
+ * | Token | Value | Source |
+ * |---|---|---|
+ * | `--gold-hi` | `#FFF3B9` | `barH` stop .15 — the bar's specular band |
+ * | `--gold` | `#E0BD70` | `orb` stop .22 — the sphere's lit body |
+ * | `--gold-mid` | `#A17C36` | `orb` stop .43 |
+ * | `--gold-deep` | `#5C421C` | `orb` stop .63 — the sphere's turned edge |
+ * | `--canvas` | `#0B0907` | `orb` stop 1 (`#392810`) taken to near-black at its own hue |
+ * | `--ink` | `#F5EEDD` | `softbox` `#FFFEF0` pulled toward the gold, so white text belongs to the mark |
+ *
+ * Every foreground is measured against every surface by `check:contrast`, which lists this
+ * file as a fifth palette. Worst text cell: `--ink-subtle` on `--canvas-raised`, 6.39:1.
+ */
+
+[data-division="master"]:has([data-stage="master"]) {
+  --canvas:         #0B0907;
+  --canvas-raised:  #15110C;
+  --canvas-sunken:  #070604;
+
+  --ink:            #F5EEDD;
+  --ink-muted:      #C9BDA2;
+  --ink-subtle:     #A3957A;
+
+  --accent:         #E0BD70;
+  --accent-hover:   #FFF3B9;
+  --accent-ink:     #0B0907;
+  --accent-2:       #A17C36;
+
+  --line:           #2E2619;
+  --line-strong:    #4E4129;
+
+  /* The material. Read by the WebGL scene; never text. */
+  --gold-hi:        #FFF3B9;
+  --gold:           #E0BD70;
+  --gold-mid:       #A17C36;
+  --gold-deep:      #5C421C;
+  /* --gold-deep at 22% over --canvas: the stage glow before the scene arrives. */
+  --gold-glow:      #1D160C;
+  /* --canvas at 92%: the review cards' surface (R1). It was the full-width band behind copy
+     below 1024px until R1 — the owner could not see the scene through it, and the renderer now
+     dims the scene behind text instead. The figure was set by `check:master:scene` question 5. */
+  --canvas-veil:    #0B0907EB;
+
+  /* Theme-invariant, restated so this file measures as a complete palette. Unused on `/`. */
+  --accent-design:  #E8A33D;
+  --accent-digital: #35718A;
+  --accent-press:   #2E4A3A;
+  --accent-design-ink:  #0C0C0D;
+  --accent-digital-ink: #FFFFFF;
+  --accent-press-ink:   #FBF9F4;
+
+  color-scheme: dark;
+}
+
+/* R1 — the footer on `/` does not interrupt the environment. Its opaque --canvas cut the
+   reassembled mark in half at the bottom of the page. Transparent only while the live scene is
+   running, because the scene dims itself behind the footer's text; the static fallback cannot,
+   so under the fallback the footer keeps its surface. */
+[data-division="master"]:has([data-stage="master"]):has([data-master-scene][data-render="ready"]) > footer,
+[data-division="master"]:has([data-stage="master"]):has([data-master-scene][data-render="ready"]) > header {
+  /* R1 — the header too: at 320px its three-row nav was an opaque band across the hero mark. */
+  background: transparent;
+}

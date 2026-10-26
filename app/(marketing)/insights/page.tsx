@@ -1,15 +1,22 @@
 import type { Metadata } from 'next';
-import { Container } from '@/components/primitives/Container';
-import { Heading } from '@/components/primitives/Heading';
-import { Prose } from '@/components/primitives/Prose';
-import { Section } from '@/components/primitives/Section';
 import { PostList } from '@/components/content/PostList';
+import { Opening } from '@/components/shared/Opening';
+import styles from '@/components/shared/shared.module.css';
 import { listPosts } from '@/lib/sanity/queries';
 
-export const metadata: Metadata = {
+const metadataBase: Metadata = {
   title: 'Insights — Gridsmith Ltd',
   description: 'Writing from Gridsmith Design, Gridsmith Digital and Gridsmith Press.',
 };
+
+/**
+ * GS-R16-001 (owner decision 16): while nothing is published the index stays out of the sitemap
+ * and is noindex, so a crawler is never offered an empty page. The first article reverses both.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const posts = await listPosts();
+  return posts.length ? metadataBase : { ...metadataBase, robots: { index: false, follow: true } };
+}
 
 /**
  * `/insights` — the hub (`N-13`).
@@ -37,24 +44,16 @@ export default async function Page() {
 
   return (
     <main id="main" tabIndex={-1}>
-      <Section rhythm="loose">
-        <Container>
-          <Heading level={1}>
-            Insights
-          </Heading>
-          <Prose>
-            <p>
-              Writing about the work — design, digital and publishing — from the people doing
-              it. Pieces appear here as they are written rather than on a schedule.
-            </p>
-          </Prose>
-        </Container>
-      </Section>
-      <Section>
-        <Container>
+      <Opening
+        place="Insights"
+        title="Insights"
+        lead="Writing about the work — design, digital and publishing — from the people doing it. Pieces appear here as they are written rather than on a schedule."
+      />
+      <div className={styles.sheet}>
+        <div className={`${styles.wrap} ${styles.indexSheet}`}>
           <PostList posts={posts} headingLevel={2} />
-        </Container>
-      </Section>
+        </div>
+      </div>
     </main>
   );
 }

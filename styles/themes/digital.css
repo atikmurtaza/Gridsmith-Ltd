@@ -1,16 +1,22 @@
 /**
- * Digital theme — engineered clarity, a spec sheet.
+ * Digital theme — the division's token contract.
  * docs/digital/DESIGN.md §2.
  *
- * The display face is monospace: on this division the mono-marks-facts convention
- * extends to the headings themselves.
+ * GS-DIG-001-RC: every contract colour resolves to the owner-approved graphite palette,
+ * whose literals live only in styles/themes/digital-stage.css (declared on the same
+ * `<body data-division="digital">`). This file used to carry the retired electric-blue
+ * sheet while the stage layer overrode all of it, so check:contrast measured a palette no
+ * route delivered. The historical values and their measurements are kept in DESIGN.md §2.
+ *
+ * Inter is the display face (owner-approved R1); JetBrains Mono marks indices, system
+ * states and verifiable details.
  */
 
 [data-division="digital"] {
-  --canvas:         #FAFAF9;
-  --canvas-raised:  #FFFFFF;
+  --canvas:         var(--digital-light);
+  --canvas-raised:  var(--digital-light-raised);
   /**
-   * Was #F0F0EE, on which --accent measured 4.46:1 — below the 4.5:1 AA floor for the
+   * [Historical, electric-blue sheet] Was #F0F0EE, on which --accent measured 4.46:1 — below the 4.5:1 AA floor for the
    * body text a link or a hovered secondary button puts there. The A-05 sweep had already
    * produced that number (FOUNDATION §3 publishes the --accent range as 4.46–19.17:1);
    * nothing was checking it, which is the same defect class as Q-M13.
@@ -20,18 +26,19 @@
    * puts it back under. The sunken step against --canvas is reduced, not removed.
    * Enforced for every token on every surface by scripts/check-contrast.mjs.
    */
-  --canvas-sunken:  #F3F3F1;
+  --canvas-sunken:  var(--digital-light-sunken);
 
-  --ink:            #0A0A0A;
-  --ink-muted:      #52525B;
-  --ink-subtle:     #686871;
+  --ink:            var(--digital-ink-light);
+  --ink-muted:      var(--digital-muted-light);
+  --ink-subtle:     var(--digital-muted-light);
 
-  --accent:         #1B5FFF;
-  --accent-hover:   #0E4BE0;
-  --accent-ink:     #FFFFFF;
+  --accent:         var(--digital-signal-hover);
+  --accent-hover:   var(--digital-ink-light);
+  --accent-ink:     var(--digital-ink-dark);
 
   /**
-   * The second colour surface — navy, the spec-sheet header rule.
+   * The second colour surface. [Historical rationale below: navy on the retired blue sheet;
+   * it now resolves to the graphite `--digital-dark`, carrying --accent-ink at 14.40:1.]
    *
    * **The palette gap this closes.** V3 demoted the three division accents to `role: 'decor'`
    * because they fail AA *as text* on a dark canvas, which is correct and is still enforced.
@@ -53,25 +60,27 @@
    * Gated as an `ON_ACCENT` fill by scripts/check-contrast.mjs — it is a background, so it
    * is deliberately NOT in `SURFACES`; the ink ramp never lands on it.
    */
-  --accent-2:       #0033AA;
+  --accent-2:       var(--digital-dark);
 
-  --line:           #E4E4E2;
-  --line-strong:    #C9C9C6;
+  --line:           var(--digital-line-light);
+  --line-strong:    var(--digital-boundary-light);
 
-  --font-display:   var(--font-jetbrains), ui-monospace, monospace;
+  --font-display:   var(--font-inter), system-ui, sans-serif;
   --font-body:      var(--font-inter), system-ui, sans-serif;
   --font-mono:      var(--font-jetbrains), ui-monospace, monospace;
 
   --radius-default: 2px;
 
-  /* **The division accents are declared by every theme, not master alone** (V3).
+  /* `--accent-digital` resolves to the current Digital signal, the same value every other
+     theme declares literally (GS-DIG-001-RC retired #1B5FFF everywhere).
+     **The division accents are declared by every theme, not master alone** (V3).
      Same three colours, same position — the footer division switcher's 3px top rules — on
      all four. That is the cheapest thing that makes four themes read as one system, and it
      removes a real hazard: these names used to resolve to nothing off master, which made
      `border-block-start-color: var(--accent-design)` invalid at computed-value time and
      discarded the shorthand's colour with it. `check:tokens` now holds all four. */
   --accent-design:  #E8A33D;
-  --accent-digital: #1B5FFF;
+  --accent-digital: var(--digital-signal);
   --accent-press:   #2E4A3A;
 
   /**

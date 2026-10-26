@@ -13,11 +13,11 @@
  *
  * ## Why `client-terms` became three slugs — owner's decision, 26 August 2026
  *
- * It was one slug serving two instruments. `docs/_legal/MSA-BUSINESS.md` (business clients)
- * and `docs/_legal/CONSUMER-TERMS.md` (consumers) both mapped to `/legal/client-terms`, and
+ * It was one slug serving two instruments. `docs/_legal/current/client-terms-business.md` (business clients)
+ * and `docs/_legal/current/client-terms-consumers.md` (consumers) both mapped to `/legal/client-terms`, and
  * the seeded document there mixed both regimes — clause 1.1 on the Companies Act, clause 2.1
- * on Consumer Rights Act 2015 s. 50. **A liability cap drafted for a business client is void
- * against a consumer to that extent under CRA 2015 s. 57**, and a Press author reading that
+ * on Consumer Rights Act 2015 s. 50. A business cap may conflict with CRA 2015 s. 57 or be
+ * non-binding under its fairness rules; it is not automatically void in every case. A Press author reading that
  * page had no way to tell that half of it did not apply to them. Four passes of verification
  * confirmed it is unfixable by drafting: one instrument cannot carry both a valid B2B cap and
  * a CRA-compliant consumer position.

@@ -1,14 +1,15 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Breadcrumb } from '@/components/primitives/Breadcrumb';
-import { Container } from '@/components/primitives/Container';
-import { Heading } from '@/components/primitives/Heading';
 import { Numeric } from '@/components/primitives/Numeric';
 import { Prose } from '@/components/primitives/Prose';
-import { Section } from '@/components/primitives/Section';
 import { Blocks } from '@/components/content/Blocks';
+import { Opening } from '@/components/shared/Opening';
 import { getPost, listPostSlugs } from '@/lib/sanity/queries';
-import styles from '@/components/content/content.module.css';
+import { STATIC_BUILD } from '@/lib/build/target';
+import { staticParams } from '@/lib/build/static-routes';
+import styles from '@/components/shared/shared.module.css';
+import opening from '@/components/shared/opening.module.css';
 
 /**
  * `/insights/[slug]` — an article.
@@ -22,6 +23,7 @@ import styles from '@/components/content/content.module.css';
  * a way nobody sees.
  */
 export async function generateStaticParams() {
+  if (STATIC_BUILD) return staticParams('post');
   const slugs = await listPostSlugs();
   return slugs.filter(Boolean).map((slug) => ({ slug }));
 }
@@ -33,6 +35,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
+  if (!post && STATIC_BUILD) throw new Error('Required static article unavailable');
   if (!post) return { title: 'Not found — Gridsmith Ltd' };
   return { title: `${post.title} — Gridsmith Ltd`, description: post.excerpt ?? undefined };
 }
@@ -45,12 +48,18 @@ const formatDate = (iso: string | null) =>
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPost(slug);
+  if (!post && STATIC_BUILD) throw new Error('Required static article unavailable');
   if (!post) notFound();
 
+  // `GS-SHARED-001-B2`: dark opening, then the article on the light sheet at a ~68ch measure.
+  // **`post.author` is not rendered** — a launch presentation decision, not a schema change; the
+  // field and the query are untouched, and showing it again is one line here.
   return (
     <main id="main" tabIndex={-1}>
-      <Section rhythm="loose">
-        <Container width="narrow">
+      <Opening
+        place="Insights"
+        title={post.title}
+        before={
           <Breadcrumb
             items={[
               { href: '/', label: 'Home' },
@@ -58,29 +67,25 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               { href: `/insights/${post.slug}`, label: post.title },
             ]}
           />
-          <Heading level={1}>
-            {post.title}
-          </Heading>
-          <p className={styles.postMeta}>
-            <Numeric>
-              {[
-                formatDate(post.publishedAt),
-                post.author,
-                post.readingTime ? `${post.readingTime} min read` : null,
-              ]
-                .filter(Boolean)
-                .join(' · ')}
-            </Numeric>
-          </p>
-        </Container>
-      </Section>
-      <Section>
-        <Container width="narrow">
-          <Prose>
-            <Blocks value={post.body} />
-          </Prose>
-        </Container>
-      </Section>
+        }
+      >
+        <p className={opening.meta}>
+          <Numeric>
+            {[formatDate(post.publishedAt), post.readingTime ? `${post.readingTime} min read` : null]
+              .filter(Boolean)
+              .join(' · ')}
+          </Numeric>
+        </p>
+      </Opening>
+      <div className={styles.sheet}>
+        <div className={`${styles.wrap} ${styles.indexSheet}`}>
+          <div className={styles.document}>
+            <Prose>
+              <Blocks value={post.body} />
+            </Prose>
+          </div>
+        </div>
+      </div>
     </main>
   );
 }

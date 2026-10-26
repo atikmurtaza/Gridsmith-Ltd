@@ -87,6 +87,12 @@ const base = () => [
   // to reach.
   { file: 'rule-17-subject.md', text: "~~If it's urgent, call [number] during [hours].~~ - struck at GS-R001-R, WhatsApp and SMS only\n" },
   { file: 'rule-18-subject.md', text: '~~45 FAQs, 9 posts, 4 team~~ - superseded at GS-R001-R, the nine posts are editorial briefs\n' },
+  // `GS-R001-M`, 18 Sept 2026. One annotated subject, same obligation.
+  { file: 'rule-19-subject.md', text: '| 2 | **Division routing** — ~~three cards~~ superseded at GS-R001-M |\n' },
+  // `GS-PROD-003-R1`, 2 Oct 2026. One annotated subject, same obligation.
+  { file: 'rule-20-subject.md', text: '~~Blocked on GS-O005 (PI scope)~~ superseded at GS-PROD-003-R1\n' },
+  // `GS-LEGAL-001`, 6 Oct 2026. One annotated subject, same obligation.
+  { file: 'rule-21-subject.md', text: '| 3.4 | ~~**Solicitor review** — HARD GATE~~ superseded by GS-O003-R |\n' },
 ];
 
 const SPECIMENS = [
@@ -113,11 +119,11 @@ const SPECIMENS = [
   {
     name: 'BRANCH 4 — zero subject: corpus below the floor',
     files: base().slice(MIN_FILES),
-    // 13 -> 16 at `GS-O004`, 16 -> 18 at `GS-R001-R`: each move adds one subject file per
+    // 13 -> 16 at `GS-O004`, 16 -> 18 at `GS-R001-R`, 18 -> 19 at `GS-R001-M`, 19 -> 20 at `GS-PROD-003-R1`, 20 -> 21 at `GS-LEGAL-001`: each move adds one subject file per
     // new rule, and the literal below moves with it. The literal
     // is the point: it must be changed deliberately when the corpus changes, which is how this
     // case proves the count is counted rather than printed.
-    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 18 document(s)')),
+    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 21 document(s)')),
   },
   // `GS-P03` — one specimen per new rule, plus the surviving statement none of them may catch.
   {
@@ -243,6 +249,18 @@ const SPECIMENS = [
     files: [...base(), { file: 'x.md', text: 'No imprint is claimed, because none is operated.\n' }],
     expect: (r) => r.ok,
   },
+  // `GS-R001-M` — the rejected card layout restated, and the surviving routing requirement.
+  {
+    name: 'BRANCH 19 — the three division cards restated, unannotated',
+    files: [...base(), { file: 'master/PRD.md', text: '| FR-M02 | Division routing block, three cards, immediately below hero |\n' }],
+    expect: (r) =>
+      !r.ok && r.problems.some((p) => p.includes('GS-R001-M-DIVISION-CARDS STANDS at master/PRD.md:1')),
+  },
+  {
+    name: 'NOT A SUBJECT — the surviving routing requirement, without the cards',
+    files: [...base(), { file: 'x.md', text: 'The three studios sit immediately below the hero, each a plain link.\n' }],
+    expect: (r) => r.ok,
+  },
   // `GS-R001-R` — one deliberate-failure branch per new rule. A rule proven only by its CLEAN
   // and HOLLOW-SUBJECT cases has been shown to have a subject, not to reject anything.
   {
@@ -289,6 +307,30 @@ const SPECIMENS = [
     // which is about display and never names the field.
     name: 'NOT A SUBJECT - the surviving no-VAT-exclusive-price display rule',
     files: [...base(), { file: 'x.md', text: 'No price may be presented as VAT-exclusive, and no VAT number may be published.\n' }],
+    expect: (r) => r.ok,
+  },
+  {
+    name: 'BRANCH 20 — the PI-cover publication gate restated, unannotated',
+    files: [...base(), { file: 'design/PROJECT-TRACKER.md', text: '| Technical | Blocked on GS-O005 (PI scope) and GS-X002 |\n' }],
+    expect: (r) =>
+      !r.ok && r.problems.some((p) => p.includes('GS-O005-PI-COVER-PUBLICATION-GATE STANDS at design/PROJECT-TRACKER.md:1')),
+  },
+  {
+    name: 'BRANCH 21 — the solicitor-approval publication gate restated, unannotated',
+    files: [...base(), { file: 'master/PROJECT-RULES.md', text: '11. **No legal page ships without `solicitorApproved: true`.**\n' }],
+    expect: (r) =>
+      !r.ok && r.problems.some((p) => p.includes('GS-O003-SOLICITOR-APPROVAL-GATE STANDS at master/PROJECT-RULES.md:1')),
+  },
+  {
+    // A mention of a solicitor with no gating language is not the struck rule.
+    name: 'NOT A SUBJECT - a solicitor named as an owner or adviser',
+    files: [...base(), { file: 'x.md', text: '| Q-P2 | Author contract — rights & royalties clauses | Atik + solicitor | R-06 |\n' }],
+    expect: (r) => r.ok,
+  },
+  {
+    // The surviving statement: PI cover is recorded as deferred and blocks nothing.
+    name: 'NOT A SUBJECT - the PI-cover deferral record',
+    files: [...base(), { file: 'x.md', text: 'PI cover for Technical/CAD services: deferred by the owner, non-blocking.\n' }],
     expect: (r) => r.ok,
   },
   {

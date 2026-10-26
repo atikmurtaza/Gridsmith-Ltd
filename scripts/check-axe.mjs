@@ -16,10 +16,12 @@
  * Expects a server already running at BASE_URL (`npm run start`).
  */
 import { readFileSync } from 'node:fs';
+import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { AxePuppeteer } from '@axe-core/puppeteer';
 import { launch } from './browser-launch.mjs';
+import { preparePress, pressContrast, provePressContrast } from './press-contrast.mjs';
 
 /**
  * The axe source is read and passed in explicitly rather than left to the adapter.
@@ -53,7 +55,7 @@ const ROUTES = [
   // `groupPage` layouts, the insights hub, a legal document and the one route with a form.
   // `/work` and `/work/[slug]` were removed at `GS-P03` with the routes (`GS-D001`), and
   // `/digital/estimate` with the price table (`GS-D002`); `Table`'s scroll region is still
-  // audited on a production route at `/about` and `/press/path-finder`.
+  // audited on a production route at `/about` and `/press/gridsmith-path-probe`.
   // `U-08`'s subject, and since `GS-P04` one per division rather than one in total: all three
   // divisions render the SAME template (`components/content/ServiceDetail.tsx`) under three
   // different themes, and what a shared template needs audited is exactly the part that is not
@@ -83,7 +85,7 @@ const ROUTES = [
   // focusable region and row headers, on the route that carries the ETH-04 honest outcomes —
   // the one page on the site where a screen-reader user losing the row/column relationship
   // would lose which outcome a criterion belongs to.
-  { path: '/press/path-finder', status: 200 },
+  { path: '/press/gridsmith-path-probe', status: 200 },
   { path: '/_kitchen-sink', status: 200 },
   // Composed master components. Separate from the kitchen sink so the primitive-layer
   // measurement stays a measurement of primitives — see the page's own docstring.
@@ -185,7 +187,49 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-prac
  * prefix `master_review`, which only the review block emits, so a new incomplete anywhere else
  * on `/` — including anywhere else in `master.module.css` — still reports UNRESOLVED.
  */
+// GS-DIG-001 — see digitalSceneTarget() for how a /digital decline earns this target.
+const DIGITAL_SCENE = 'main.dg-home';
+const DIGITAL_SCENE_TARGET = `${DIGITAL_SCENE} (pixel-measured by check:digital:scene)`;
+// GS-DES-002-RC — the same classifier (digitalSceneTarget) over /design's footer. Only the two
+// reasons the R2 run-on produces; any other reason, or a node outside the footer, stays itself.
+const DESIGN_FOOTER = 'body > footer';
+const DESIGN_FOOTER_TARGET = `${DESIGN_FOOTER} on /design (pixel-measured by check:design:scene)`;
+const DESIGN_FOOTER_REASONS = [
+  "Element's background color could not be determined because it is overlapped by another element",
+  "Element's background color could not be determined due to a background gradient",
+];
+
 const INCOMPLETE_ALLOWED = [
+  ...['g', 's'].map((glyph) => ({
+    rule: 'color-contrast',
+    routes: ['/design'],
+    target: `[data-design-stage] [data-letter-${glyph}]`,
+    why: 'GS-R002-R1: CI 35523226814 returned "Element content is too short to determine if it is actual text content" for these two single-letter construction glyphs. They are decorative identity artwork in an aria-hidden, non-focusable SVG, not service copy. check:design:scene asserts that boundary and their G/S hierarchy; semantic chapter copy remains pixel-contrast checked. This allows only these two incompletes, never violations. Remove if the glyphs become informational/interactive or axe resolves single-letter artwork.',
+  })),
+  {
+    rule: 'color-contrast',
+    routes: ['/design'],
+    targetPattern: /^(#(?:design-title|brand-title|motion-title|technical-title|design-close)(?: > span)?|section\x5bdata-chapter="[0-4]"\x5d > \.ds-copy > \.ds-(?:kicker|intro|note)|a\x5bhref\$="#(?:brand-visual|motion-dimensional|technical-design)"\x5d|span\x5bdata-label="[0-4]"\x5d)$/,
+    why: 'GS-R002 text shares a surface with decorative SVG. check:design:scene measures rendered background pixels under these text boxes at all five chapters and 20 viewports, with the same 2% thin-line tolerance as Master. Its contrast predicate is proven red by matching the headline colour to its background. Remove this entry if that pixel gate is removed or the scene no longer underlies the text. This does not allow any axe violation.',
+  },
+  {
+    rule: 'color-contrast',
+    routes: ['/design'],
+    targetPattern: /^g\x5bdata-art="(?:technical|convergence)".* > text\x5b/,
+    why: 'GS-R002 diagram labels are decorative SVG study details inside the aria-hidden, non-focusable stage, not service information or a usable engineering drawing. Semantic technical content and its scope gate remain HTML and are measured by check:design:scene. Remove this exemption if the diagram becomes informational or interactive.',
+  },
+  {
+    rule: 'color-contrast',
+    routes: ['/design'],
+    target: DESIGN_FOOTER_TARGET,
+    why: 'GS-DES-002-R2 (owner-approved): from 768px the final 3D mark docks into the footer slot, so the Design story stays pinned and its box runs on under the footer (a transparent, positioned, pointer-events:none layer; its surface is a gradient sized to stop at the story end). axe reads that layer as overlapping, or as a gradient, and declines contrast for footer text on /design only — the footer itself is unchanged and hit-tests on top. The mapping allows exactly those two reasons for a node inside body > footer on /design; its positive/negative proofs run every time. check:design:scene footer-contrast measures rendered pixels under every visible footer text box through the handoff at seven sizes, and is proven red by painting the footer in its own text colour. Remove this entry if that gate is removed or the story no longer runs on under the footer. This never allows a violation.',
+  },
+  {
+    rule: 'color-contrast',
+    routes: ['/digital'],
+    target: DIGITAL_SCENE_TARGET,
+    why: 'GS-DIG-001: /digital copy shares the page with the persistent compass rail (a full-page positioned layer axe counts as overlapping despite pointer-events: none) and the chapter copy veil (a pseudo-element), so axe declines contrast for text inside main.dg-home. digitalSceneTarget() maps a decline to this target only for a node inside that region with one of the listed background/short-content reasons; its positive/negative proofs run every time. check:digital:scene measures rendered pixels under every visible, non-decorative text box in the region at every compass state across six viewports, and its contrast branch is proven red. Remove this entry if that gate is removed or the rail/veil no longer underlie the copy. This never allows a violation.',
+  },
   // **Empty, and emptied on purpose at `M-04`.** The one entry here allowlisted
   // `color-contrast` incomplete on the `h1` of the four placeholder routes, and carried its
   // own removal condition: *"REMOVE THIS ENTRY at the first route with real chrome (Epic M):
@@ -220,7 +264,7 @@ const INCOMPLETE_ALLOWED = [
       // shared layout, so this route reproduces the identical incomplete and is not a new
       // question — this is the K-13 direction, and it is decided here rather than discovered
       // by a red run two sessions later.
-      '/press/path-finder',
+      '/press/gridsmith-path-probe',
       // `GS-P04`'s three service routes. `website-design-build` was already here from `U-08`;
       // the Design and Press ones went into `ROUTES` and not into this entry, and the gate went
       // red on seven combinations — **the K-13 pair again, in the same gate, two rows above a
@@ -258,90 +302,90 @@ const INCOMPLETE_ALLOWED = [
       'gate that owns this question. REMOVE THIS ENTRY if axe-core learns to resolve fixed ' +
       'overlays, or if the banner stops being position:fixed.',
   },
-  // `GS-R001-R`. The Master background mark — the hero's two text blocks, and only those two.
+  // `GS-R001-M`. The Master homepage's text over the WebGL scene. Replaces three entries —
+  // the GS-R001-R line-art mark, the review cylinder and the cylinder's review dates — whose
+  // subjects were all removed in this phase; an entry kept after its subject is gone is a
+  // stated reason nothing checks.
   {
     rule: 'color-contrast',
     routes: ['/'],
-    // Exact targets, not a pattern. Two elements decline and they are the two largest text
-    // blocks on the page; anything else declining on `/` is a new question and must land as
-    // UNRESOLVED so somebody reads it.
-    targetPattern: /^(h1|\.master_heroIntro__[A-Za-z0-9_-]+)$/,
+    // Every text-bearing class on `/` comes from `components/master/home.module.css` (hashed
+    // `home_*__*`) or is the hero `h1`, which axe names by id. Anything else declining on `/` —
+    // chrome, a primitive, a future block — is not covered and lands UNRESOLVED.
+    // The first selector must be one of those; what follows it — a space, an attribute selector, `>`, `.`, `:` —
+    // is axe's own path through it (the studio arrows come back as `.home_studioLink__x[href$=…] > …`).
+    // `\x5b` is an opening square bracket, written as an escape on purpose: `check:lists`
+    // reads this file's arrays by counting brackets before it strips comments, so one
+    // unbalanced bracket in a regex OR in a comment here runs the capture on into the next
+    // array. Both happened at GS-R001-M, and each reported four foreign routes as missing.
+    targetPattern: /^(#hero-title|\x5bclass\*="home_heroKicker__"\]|\.home_[A-Za-z]+__[A-Za-z0-9_-]+)(\s|\x5b|>|\.|:|$)/,
     why:
-      'GS-R001-R added a fixed, decorative geometry layer behind the homepage — the Gridsmith ' +
-      'mark as 1px --line hairlines, aria-hidden, pointer-events:none, zero JS. Its SVG shapes ' +
-      'sit under text, so axe returns elmPartiallyObscuring: "background color could not be ' +
-      'determined because it partially overlaps other elements". That is axe DECLINING to ' +
-      'evaluate, not a contrast violation, and it is the same class as the two entries above.\n' +
-      '    Three things were tried before this entry was written, and the order matters because ' +
-      'two of them were wrong for reasons worth not repeating. (1) An opaque --canvas background ' +
-      'on the hero band: it did NOT resolve the incomplete, because axe locates the SVG shapes ' +
-      'geometrically rather than respecting an opaque ancestor. It is kept anyway — it is right ' +
-      'on its own terms, and the site\u2019s largest text now sits on a clean canvas at every ' +
-      'width and every motion setting. (2) Enlarging the layer\u2019s box to 300vh, on the ' +
-      'theory that the h1 straddled its bottom edge (at 1280x800 the h1 runs 454-816px in an ' +
-      '800px viewport). It made things WORSE — three declines instead of two — which is what ' +
-      'established that the container box is not the trigger. (3) Adding --line to ' +
-      'check:contrast\u2019s SURFACES so the pair is measured rather than allowlisted. That ' +
-      'produced the measurement this entry rests on, and was then reverted: it forces ' +
-      'except-restrictions back into USE, and that file records a deliberate position that a ' +
-      'token needing a restriction to be safe is a token whose value is wrong.\n' +
-      '    THE MEASUREMENT, which is what makes this entry earned rather than asserted. Every ' +
-      'foreground token was measured against --line in all four themes. --ink and --ink-muted ' +
-      'both clear the 4.5:1 body floor on --line; --ink-subtle does not (4.14-4.39:1) and ' +
-      'neither does Digital\u2019s --accent (4.00:1). On Master the only text tokens over the ' +
-      'geometry are --ink and --ink-muted. The one --ink-subtle text on this page is ' +
-      '.reviewSource, inside review cards that check:reviews:ui measures as OPAQUE — a solid ' +
-      'card background at opacity 1 — so the geometry never reaches it. Worst case for the ' +
-      'hero text is --ink over a --line hairline, which is ~13.9:1 against a 4.5:1 floor.\n' +
-      '    REMOVE THIS ENTRY if the background mark stops rendering on /, if it is ever drawn ' +
-      'in anything other than --line, or if any --ink-subtle or --accent text is placed over ' +
-      'it. Each of those changes the measurement above, and none of them is covered by it.',
+      'GS-R001-M put the homepage over a fixed WebGL canvas — the Gridsmith mark as lit gold ' +
+      'geometry, aria-hidden, pointer-events:none, z-index:-1 — and every section is ' +
+      'transparent by design, so the scene is the page\u2019s surface. axe cannot compute a ' +
+      'background it cannot see through a <canvas> and DECLINES to evaluate: incomplete, not a ' +
+      'violation, the same class as the consent-banner entries above.\n' +
+      '    What makes this entry earned rather than asserted: check:master:scene question 5 ' +
+      'answers exactly the question axe declines. It screenshots / twice at five widths (2560, ' +
+      '1440, 1024, 768, 375) and six chapter positions \u2014 once as served, once with every ' +
+      'glyph transparent \u2014 and measures each text box\u2019s own colour against the ' +
+      '98th-percentile luminance of the rendered scene behind it, 4.5:1 for body and 3:1 for ' +
+      'large text. At GS-R001-M every box passed; the worst reading was 5.0:1 (1024px, ' +
+      'context chapter). That gate was proven red on this question by moving the h1 over the ' +
+      'mark (1.32:1), in scripts/prove-master-scene.mjs.\n' +
+      '    check:reviews:ui question 9 asserts the premise for the reviews specifically: every ' +
+      'review sits inside [data-chapter="reviews"], which is a chapter check:master:scene ' +
+      'measures.\n' +
+      '    REMOVE THIS ENTRY if the scene stops rendering on /, if any section on / gains an ' +
+      'opaque background (axe would then resolve it itself), or if check:master:scene stops ' +
+      'measuring text over the scene. Each of those removes the measurement this rests on.',
   },
-  // `GS-P06`. The Master review cylinder, and the first entry to use `targetPattern` — see
-  // the docstring above for why an exact target list was the wrong tool here.
+  // `GS-R001-M` R1. The review cylinder's cards where axe names them by attribute rather than by
+  // class: a date by its unique `datetime`, and the front card by `data-front`. Everything else
+  // in a card is named by a `home_*` class and covered above. Same scene, same measurement.
   {
     rule: 'color-contrast',
     routes: ['/'],
-    targetPattern: /\bmaster_review[A-Za-z]*__/,
+    targetPattern: /^(\x5bdata-reviews-carousel\]|time\x5bdatetime="\d{4}-\d{2}-\d{2}"\]|li\x5b(?:data-front=""|data-review-key="review-(?:0[1-9]|1[01])")\] > figure > .+)$/,
     why:
-      'The review cylinder stacks every card in ONE grid cell and turns each one out to its ' +
-      'own angle \u2014 that is what a cylinder is. So every card geometrically overlaps every ' +
-      'other, and axe says so in its own words: 60 of the 73 report "background color could ' +
-      'not be determined because it is overlapped by another element" and 13 report ' +
-      '"partially overlaps other elements". Not one is a contrast VIOLATION; axe declined to ' +
-      'evaluate, which is a different thing and is what this list is for.\n' +
-      '    The overlap is not removable while the block is a cylinder, and the four pairs ' +
-      'inside it are ones another gate already measures directly: --ink on --canvas (19.17:1 ' +
-      'on master), --ink-muted on --canvas and --ink-subtle on --canvas, all in master ' +
-      "DESIGN.md \u00a72's table and all asserted by check:contrast. That is the gate that owns " +
-      'this question, exactly as it owns the consent banner above.\n' +
-      '    What makes those measured ratios APPLY here is that the card background is ' +
-      'opaque. check:reviews-ui asserts that separately and by value, because a card made ' +
-      'translucent by a later edit would put a real contrast defect underneath this entry ' +
-      'and nothing else would look.\n' +
-      '    REMOVE THIS ENTRY if the review block stops being a 3D ring, or if axe-core ' +
-      'learns to resolve a background through a transformed sibling.',
+      'R1 put the reviews back on a CSS 3D cylinder over the WebGL scene: every card is turned to ' +
+      'its own angle in one grid cell, so axe cannot resolve a background behind any of them and ' +
+      'declines. Each card carries its own --canvas-veil surface. check:master:scene question 5 ' +
+      'measures the text of every card that is actually painted — the front card and the visible ' +
+      'side cards — against the rendered pixels behind it, at 11 widths; cards turned away are ' +
+      'backface-hidden and have no pixels to measure. check:reviews:ui questions 9 and 10 assert ' +
+      'the scope this depends on: every review, and every <time> on /, is inside the reviews ' +
+      'chapter that gate reads.\n' +
+      '    REMOVE THIS ENTRY if the reviews stop being a 3D cylinder over the scene, or if either ' +
+      'scope assertion is removed.',
   },
-  // `GS-P06`. The same 3D overlap, on the six review DATES, and a separate entry rather than an
-  // alternation inside the one above — CLAUDE.md wants every branch of a multi-branch assertion
-  // proven separately, and two patterns in one regex is one branch nobody exercises.
+  // `GS-R001-M` R1. The footer and header on `/`, transparent over the scene while it runs: the
+  // footer so the reassembled mark is not cut off at the bottom of the page, the header so its
+  // wrapped nav is not an opaque band across the hero mark at 320px. The `why` below was written
+  // for the footer; the header is the same case — same stylesheet rule, same fallback behaviour,
+  // and `check:master:scene` question 5 reads header text as well as footer text since R1.
+  //
+  // GS-SHARED-001-RC: the same entry, re-pointed at the redesigned chrome and nothing wider.
+  // `nav` (not `navLink`) is the header's new `.chrome_nav__` container path; the footer's
+  // contact links are named by their mailto:/wa.me href. Removed, because nothing matched them
+  // in the RC run: the retired switcher's `data-division-accent` links, the `Company` nav
+  // heading form, and the about/approach/insights/contact href forms (now `.chrome_footerLink__`).
+  // `check:master:scene` question 5 walks every header/footer text node, so all remain measured.
   {
     rule: 'color-contrast',
     routes: ['/'],
-    targetPattern: /^time\[datetime="\d{4}-\d{2}-\d{2}"\]$/,
+    targetPattern:
+      /^(\.chrome_(footer|statutory|nav|wordmark)[A-Za-z]*__|nav\x5baria-label="Legal"\] > \.chrome_footerGroupHeading__|a\x5bhref\$="(terms|privacy|cookies|accessibility)"\]$|a\x5bhref="(mailto:|https:\/\/wa\.me\/)[^"]+"\]$|\.consent_reopen__)/,
     why:
-      'axe names an element by the SHORTEST unique selector it can build, and three of the ' +
-      'review dates have a `datetime` no other element on the page shares \u2014 so those nodes ' +
-      'come back as `time[datetime="2026-05-22"]` with no class in the string at all, and the ' +
-      'cylinder entry above cannot see them. Giving the element a class does not help: it was ' +
-      'tried and measured, and axe still preferred the attribute selector because it is ' +
-      'shorter. Same overlap, same rule, same declined evaluation, same --ink-muted on ' +
-      '--canvas pair that check:contrast measures.\n' +
-      '    The scope risk here is real and is closed by measurement rather than by hope: this ' +
-      'pattern would also accept a contrast incomplete on some OTHER bare <time> on `/`, so ' +
-      'check:reviews-ui asserts that every <time> on that route is inside a review card. If ' +
-      'one ever is not, that gate goes red and this entry is reconsidered.\n' +
-      '    REMOVE THIS ENTRY under the same conditions as the one above.',
+      'R1 made the footer transparent on / while the scene is live (styles/themes/master-stage.css) ' +
+      'because its opaque --canvas cut the reassembled mark in half — the owner\u2019s complaint. ' +
+      'Its text now sits over the <canvas>, and axe declines exactly as it does for main. ' +
+      'check:master:scene question 5 measures the footer\u2019s text too since R1, at every width ' +
+      'and at the bottom of the page, where the footer is in view; the renderer dims the scene ' +
+      'behind every footer text element it lists (scene.ts, TEXT). Under the no-WebGL fallback ' +
+      'the footer keeps its opaque surface, and axe resolves it itself.\n' +
+      '    REMOVE THIS ENTRY if the footer on / becomes opaque again, or if check:master:scene ' +
+      'stops including the footer in question 5.',
   },
 ];
 
@@ -413,6 +457,10 @@ if (TOKEN_NAMES.base.length === 0 || Object.values(TOKEN_NAMES.byDivision).some(
  * moves here rather than waiting for axe to grow one back.
  */
 async function domIntegrity(page, route, themed = true, expect = null) {
+  // Axe finishes in a helper tab. Closing it need not restore this page's focus
+  // before activeElement is read; :focus only paints in the focused document.
+  await page.bringToFront();
+  await page.waitForFunction(() => document.hasFocus(), { timeout: 5000 });
   const found = await page.evaluate(({ tokenNames, themed, expect }) => {
     const frameOf = (el) => el.closest('[data-division]')?.dataset.division ?? '(root)';
     const problems = [];
@@ -658,8 +706,341 @@ async function domIntegrity(page, route, themed = true, expect = null) {
   return found.length;
 }
 
+/** Browser-side identity normalization for axe's two single-character artwork incompletes. */
+function designGlyphTarget({ target, html, reason }) {
+  if (reason !== 'Element content is too short to determine if it is actual text content') return target;
+  const captured = new DOMParser().parseFromString(html, 'text/html').body.firstElementChild;
+  for (const letter of ['g', 's']) {
+    if (!captured?.matches(`text[data-letter-${letter}]`) || captured.textContent.trim() !== letter.toUpperCase()) continue;
+    const selector = `[data-design-stage] .ds-stage-art > svg[aria-hidden="true"][focusable="false"] > g[data-art="identity"] > .ds-letters > text[data-letter-${letter}]`;
+    const matches = document.querySelectorAll(selector);
+    if (matches.length !== 1 || matches[0].textContent.trim() !== letter.toUpperCase()) return target;
+    if (matches[0].closest('svg').querySelector('a,button,input,select,textarea,[tabindex]')) return target;
+    return `[data-design-stage] [data-letter-${letter}]`;
+  }
+  return target;
+}
+
+/**
+ * GS-DIG-001: /digital's text shares its page with the persistent compass rail (a positioned
+ * full-page layer axe counts as overlapping even with pointer-events: none) and the chapter
+ * copy veil (a pseudo-element). axe therefore declines colour contrast on text it cannot see
+ * behind. Those declines are normalised to one allowlist target ONLY when the node is inside
+ * the region check:digital:scene measures by rendered pixels and the reason is one of these
+ * background/short-content declines. Anything else — a node in the chrome, a missing node, a
+ * different reason — keeps its own target and reports UNRESOLVED.
+ */
+const DIGITAL_SCENE_REASONS = [
+  "Element's background color could not be determined because it is overlapped by another element",
+  "Element's background color could not be determined because it partially overlaps other elements",
+  "Element's background color could not be determined due to a pseudo element",
+  "Element's background color could not be determined because element contains an image node",
+  'Element content is too short to determine if it is actual text content',
+  'Element content contains only non-text characters',
+];
+function digitalSceneTarget({ target, reason, scope, reasons, canonical }) {
+  if (!reasons.includes(reason)) return target;
+  let matches;
+  try { matches = document.querySelectorAll(target); } catch { return target; }
+  if (matches.length !== 1) return target;
+  const node = matches[0];
+  return node?.closest(scope) ? canonical : target;
+}
+
+// axe sometimes shortens the unique rating/kicker selector to a generic span.
+// Resolve its actual DOM boundary before delegating to the existing pixel gate.
+const REVIEW_TEXT_SCOPE = '[data-reviews-carousel] li[data-review-key] > figure > p > span[role="img"][aria-label$=" out of 5 stars"]';
+const REVIEW_TEXT_REASONS = [
+  "Element's background color could not be determined due to a background gradient",
+  "Element's background color could not be determined because it partially overlaps other elements",
+  // GS-HOST-H4-G: on the approved GS-VIS-001 drum a turned label's facets overlap the rating, the
+  // same overlap the R1 cylinder entry above covers for that card's text and caption.
+  "Element's background color could not be determined because it's partially obscured by another element",
+];
+const REVIEW_TEXT_TARGET = '[data-reviews-carousel]';
+const MASTER_KICKER_SCOPE = 'p[class*="home_heroKicker__"] > span:last-child';
+const MASTER_KICKER_REASONS = [
+  "Element's background color could not be determined due to a background gradient",
+  "Element's background color could not be determined because element contains an image node",
+];
+const MASTER_KICKER_TARGET = '[class*="home_heroKicker__"]';
+
+async function proveReviewTextTargets(browser) {
+  const page = await browser.newPage();
+  try {
+    await page.setContent('<div data-reviews-carousel><ul><li data-review-key="review-01"><figure><p><span role="img" aria-label="4.6 out of 5 stars">4.6 / 5</span></p></figure></li></ul><span id="unmeasured">Outside rating</span></div><span id="outside">Outside carousel</span><p class="home_heroKicker__proof"><span>Company</span><span aria-hidden="true"></span><span id="kicker">Design · Digital · Press</span></p>');
+    const base = { scope: REVIEW_TEXT_SCOPE, reasons: REVIEW_TEXT_REASONS, canonical: REVIEW_TEXT_TARGET };
+    let cases = 0;
+    const check = async (target, reason, expected) => {
+      assert.equal(await page.evaluate(digitalSceneTarget, { ...base, target, reason }), expected);
+      cases++;
+    };
+    for (const reason of REVIEW_TEXT_REASONS) {
+      await check('span[aria-label="4.6 out of 5 stars"]', reason, REVIEW_TEXT_TARGET);
+      for (const target of ['#outside', '#unmeasured', '#missing', 'span:::bad']) await check(target, reason, target);
+    }
+    await check('span[aria-label="4.6 out of 5 stars"]', 'A different incomplete reason', 'span[aria-label="4.6 out of 5 stars"]');
+    await check('span', REVIEW_TEXT_REASONS[0], 'span');
+    console.log(`check-axe: Review rating classification ${cases} positive/negative proofs PASS`);
+    for (const reason of MASTER_KICKER_REASONS) {
+      const config = { scope: MASTER_KICKER_SCOPE, reasons: MASTER_KICKER_REASONS, canonical: MASTER_KICKER_TARGET, reason };
+      assert.equal(await page.evaluate(digitalSceneTarget, { ...config, target: '#kicker' }), MASTER_KICKER_TARGET);
+      for (const target of ['#outside', '#unmeasured', '#missing', 'span:::bad', 'span']) {
+        assert.equal(await page.evaluate(digitalSceneTarget, { ...config, target }), target);
+      }
+    }
+    assert.equal(await page.evaluate(digitalSceneTarget, { scope: MASTER_KICKER_SCOPE, reasons: MASTER_KICKER_REASONS, canonical: MASTER_KICKER_TARGET, target: '#kicker', reason: 'A different incomplete reason' }), '#kicker');
+    console.log('check-axe: Master kicker classification 13 positive/negative proofs PASS');
+  } finally { await page.close(); }
+}
+
+async function proveDigitalSceneTargets(browser) {
+  const page = await browser.newPage();
+  try {
+    await page.setContent('<main class="dg-home"><h2 id="inside">Copy</h2></main><footer><p id="outside">Footer</p></footer>');
+    const base = { scope: DIGITAL_SCENE, reasons: DIGITAL_SCENE_REASONS, canonical: DIGITAL_SCENE_TARGET };
+    let cases = 0;
+    const check = async (input, expected) => {
+      const actual = await page.evaluate(digitalSceneTarget, { ...base, ...input });
+      if (actual !== expected) throw new Error(`Digital scene classification proof failed: ${actual} != ${expected}`);
+      cases += 1;
+    };
+    for (const reason of DIGITAL_SCENE_REASONS) await check({ target: '#inside', reason }, DIGITAL_SCENE_TARGET);
+    await check({ target: '#outside', reason: DIGITAL_SCENE_REASONS[0] }, '#outside');
+    await check({ target: '#inside', reason: 'A different incomplete reason' }, '#inside');
+    await check({ target: '#missing', reason: DIGITAL_SCENE_REASONS[0] }, '#missing');
+    await check({ target: 'div:::bad', reason: DIGITAL_SCENE_REASONS[0] }, 'div:::bad');
+    console.log(`check-axe: Digital scene classification ${cases} positive/negative proofs PASS`);
+    // GS-DES-002-RC — the Design footer uses the same function with its own scope and reasons.
+    const footer = { scope: DESIGN_FOOTER, reasons: DESIGN_FOOTER_REASONS, canonical: DESIGN_FOOTER_TARGET };
+    await page.setContent('<main><p id="main-copy">Copy</p></main><footer><a id="footer-link" href="#">Link</a></footer>');
+    let footerCases = 0;
+    const checkFooter = async (input, expected) => {
+      const actual = await page.evaluate(digitalSceneTarget, { ...footer, ...input });
+      if (actual !== expected) throw new Error(`Design footer classification proof failed: ${actual} != ${expected}`);
+      footerCases += 1;
+    };
+    for (const reason of DESIGN_FOOTER_REASONS) await checkFooter({ target: '#footer-link', reason }, DESIGN_FOOTER_TARGET);
+    await checkFooter({ target: '#main-copy', reason: DESIGN_FOOTER_REASONS[0] }, '#main-copy');
+    await checkFooter({ target: '#footer-link', reason: "Element's background color could not be determined due to a pseudo element" }, '#footer-link');
+    await checkFooter({ target: '#missing', reason: DESIGN_FOOTER_REASONS[0] }, '#missing');
+    console.log(`check-axe: Design footer classification ${footerCases} positive/negative proofs PASS`);
+  } finally {
+    await page.close();
+  }
+}
+
+/** Prove that selector animation is accepted, while changed semantics remain unresolved. */
+async function proveDesignGlyphTargets(browser) {
+  const page = await browser.newPage();
+  try {
+    await page.setContent('<div data-design-stage><div class="ds-stage-art"><svg aria-hidden="true" focusable="false"><g data-art="identity"><g class="ds-letters"><text data-letter-g transform="translate(0 0)">G</text><text data-letter-s>S</text></g></g></svg></div></div>');
+    const reason = 'Element content is too short to determine if it is actual text content';
+    let cases = 0;
+    const check = async (input, expected) => {
+      const actual = await page.evaluate(designGlyphTarget, { reason, ...input });
+      if (actual !== expected) throw new Error(`Glyph classification proof failed: ${actual} != ${expected}`);
+      cases += 1;
+    };
+    for (const letter of ['g', 's']) {
+      // The captured transform no longer exists in the live DOM.
+      await check({ target: 'text[transform="translate(8 22)"]', html: `<text data-letter-${letter} transform="translate(8 22)">${letter.toUpperCase()}</text>` }, `[data-design-stage] [data-letter-${letter}]`);
+    }
+    for (const html of ['<span data-letter-g>G</span>', '<text>G</text>', '<text data-letter-g>Unrelated copy</text>']) {
+      await check({ target: '#unrelated', html }, '#unrelated');
+    }
+    const glyph = { target: '#unresolved', html: '<text data-letter-g>G</text>' };
+    await check({ ...glyph, reason: 'Different incomplete reason' }, '#unresolved');
+    await page.evaluate(() => document.querySelector('svg').removeAttribute('aria-hidden'));
+    await check(glyph, '#unresolved');
+    await page.evaluate(() => { const svg = document.querySelector('svg'); svg.setAttribute('aria-hidden', 'true'); svg.querySelector('text').setAttribute('tabindex', '0'); });
+    await check(glyph, '#unresolved');
+    console.log(`check-axe: decorative glyph classification ${cases} positive/negative proofs PASS`);
+  } finally {
+    await page.close();
+  }
+}
+
+/**
+ * GS-DIG-002-R1 — a footer deferred by `content-visibility: auto` is measured after it renders.
+ *
+ * `/digital` defers the shared footer until it nears the viewport. While it is skipped Chrome has
+ * not laid it out, so axe's hit-testing finds no box under footer text and reports contrast
+ * against whatever lies behind the footer: at 375px initial that was one violation on the
+ * Cookie-notice button and one unresolved statutory line. Those are readings of an unrendered
+ * subtree, not of the footer a visitor can reach — keyboard, `focus()`, find-in-page and
+ * scrolling all render it first, and with assistive technology active Chrome exposes the full
+ * footer tree while it is skipped (GS-DIG-002-R1 browser evidence).
+ *
+ * So findings INSIDE a skipped footer are set aside, never allowlisted, and the footer is then
+ * scrolled into view, asserted rendered with real layout, and analysed on its own with every tag.
+ * Its violations count and its incompletes go through `record()` like any other. A footer that
+ * will not render is a failure. Nothing outside `body > footer` is ever set aside, and a footer
+ * that was rendered at analysis time is measured in place exactly as before.
+ * `proveDeferredFooter()` makes the post-reveal analysis fail on a real footer defect each run.
+ */
+const FOOTER = 'body > footer';
+/** 'skipped' | 'rendered' | 'absent' — skipped only when content-visibility is what hides it. */
+function footerState(selector) {
+  const probe = document.querySelector(selector)?.querySelector('a[href], button, p');
+  if (!probe) return 'absent';
+  return probe.checkVisibility() && !probe.checkVisibility({ contentVisibilityAuto: true }) ? 'skipped' : 'rendered';
+}
+function inFooter({ targets, selector }) {
+  return targets.map((target) => {
+    try { return !!document.querySelector(target)?.closest(selector); } catch { return false; }
+  });
+}
+/** Remove nodes inside the skipped footer from both buckets; everything else is untouched. */
+async function setAsideFooter(page, where, violations, incomplete) {
+  let setAside = 0;
+  const keep = async (items) => {
+    const out = [];
+    for (const item of items) {
+      const flags = await page.evaluate(inFooter, { targets: item.nodes.map((n) => n.target.join(' ')), selector: FOOTER });
+      const nodes = item.nodes.filter((_, i) => !flags[i]);
+      setAside += item.nodes.length - nodes.length;
+      if (nodes.length) out.push({ ...item, nodes });
+    }
+    return out;
+  };
+  const kept = { violations: await keep(violations), incomplete: await keep(incomplete) };
+  if (setAside) console.log(`  ${where.padEnd(40)} ${setAside} finding(s) inside the deferred footer set aside — re-measured after it renders`);
+  return kept;
+}
+/**
+ * Scroll the footer in, require real layout for every control and text block, analyse it with every
+ * tag, and restore the scroll position. One analysis is enough: axe scrolls a below-fold node into
+ * view itself when it measures contrast (proven — a 2.5:1 Cookie-notice button below the first
+ * screen is caught). What it cannot measure is a node covered by a fixed overlay, which at 375px
+ * is the notice bar over the document's last ~220px on every route, deferred footer or not.
+ */
+async function revealFooter(page) {
+  const y = await page.evaluate(() => scrollY);
+  const settle = () => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(r, 250)))));
+  await page.evaluate((selector) => document.querySelector(selector).scrollIntoView({ block: 'start' }), FOOTER);
+  await settle();
+  const rendered = await page.evaluate((selector) => {
+    const parts = [...document.querySelectorAll(`${selector} a[href], ${selector} button, ${selector} p`)];
+    return parts.length > 0 && (document.querySelector(selector).querySelector('a[href], button, p')
+      .checkVisibility({ contentVisibilityAuto: true })) &&
+      parts.every((e) => !e.checkVisibility() || e.getBoundingClientRect().height > 0);
+  }, FOOTER);
+  const { violations, incomplete } = rendered
+    ? await new AxePuppeteer(page, axeSource).withTags(TAGS).include(FOOTER).analyze()
+    : { violations: [], incomplete: [] };
+  await page.evaluate((top) => window.scrollTo(0, top), y);
+  await settle();
+  return { rendered, violations, incomplete };
+}
+
+/**
+ * The set-aside must touch only footer nodes, and the post-reveal analysis must go red on a real
+ * footer defect in a footer that really was deferred. Values, not absences: each assertion reads a
+ * returned count or target, so an inert probe cannot pass.
+ */
+async function proveDeferredFooter(browser) {
+  // Own context: the red specimen sets gs_consent, which must not reach the audited pages.
+  const context = await browser.createBrowserContext();
+  const page = await context.newPage();
+  try {
+    await page.setViewport({ width: 375, height: 812 });
+    await page.goto(`${BASE_URL}/digital`, { waitUntil: 'networkidle0' });
+    if ((await page.evaluate(footerState, FOOTER)) !== 'skipped') {
+      throw new Error('Deferred-footer proof has no subject: the /digital footer was not skipped at load');
+    }
+    // 1. Classification: a footer node is set aside, a page node and an unknown node are kept.
+    const fake = [{ id: 'x', nodes: [{ target: [`${FOOTER} button`] }, { target: ['main h1'] }, { target: ['#missing'] }] }];
+    const kept = await setAsideFooter(page, 'deferred-footer proof', fake, fake);
+    const keptTargets = kept.violations[0]?.nodes.map((n) => n.target[0]).join('|');
+    if (keptTargets !== 'main h1|#missing' || kept.incomplete[0]?.nodes.length !== 2) {
+      throw new Error(`Deferred-footer set-aside touched the wrong nodes: kept ${keptTargets}`);
+    }
+    // 2. Clean specimen: the real deferred footer renders and has no finding.
+    const clean = await revealFooter(page);
+    if (!clean.rendered || clean.violations.length || clean.incomplete.length) {
+      throw new Error(`Deferred-footer clean specimen: rendered ${clean.rendered}, ` +
+        `${clean.violations.length} violation rule(s), ${clean.incomplete.length} incomplete rule(s)`);
+    }
+    // 3. Red specimen: the Cookie-notice button painted in the footer's hairline colour (2.5:1 on
+    //    its canvas — a real 1.4.3 failure; an exact 1:1 match is reported by axe as incomplete,
+    //    "possibly hidden text", so it would not be a violation subject) while the footer is still
+    //    deferred. The post-reveal analysis must report exactly that node as a violation.
+    //    The consent cookie is set so the fixed notice bar is absent: axe measures nothing a
+    //    fixed overlay covers, and at 375px the bar covers the document's last ~220px on every
+    //    route, deferred footer or not — the subject must be somewhere axe can see.
+    await page.setCookie({ name: 'gs_consent', value: '1', url: BASE_URL });
+    await page.goto(`${BASE_URL}/digital`, { waitUntil: 'networkidle0' });
+    await page.addStyleTag({ content: `${FOOTER} button { color: var(--chrome-line) !important; }` });
+    if ((await page.evaluate(footerState, FOOTER)) !== 'skipped') {
+      throw new Error('Deferred-footer red specimen was rendered before the reveal, so it proves nothing');
+    }
+    const red = await revealFooter(page);
+    const hit = red.violations.find((v) => v.id === 'color-contrast')?.nodes
+      .some((n) => />\s*Cookie notice\s*</.test(n.html));
+    if (!red.rendered || !hit) {
+      throw new Error(`Deferred-footer red specimen was not caught after reveal: ${red.violations.map((v) => v.id).join(', ') || 'no violations'}`);
+    }
+    console.log('check-axe: deferred footer — set-aside touches only footer nodes (3 cases); ' +
+      'clean specimen renders with 0 findings; low-contrast Cookie-notice button caught after reveal PASS');
+  } finally {
+    await context.close();
+  }
+}
+
+/** The focus check must own the foreground, and still reject a hidden focused link. */
+async function proveSkipLinkFocus(browser) {
+  const page = await browser.newPage();
+  let helper;
+  try {
+    await page.setViewport({ width: 1280, height: 900 });
+    await page.goto(`${BASE_URL}/_kitchen-sink`, { waitUntil: 'networkidle0' });
+    helper = await browser.newPage();
+    await helper.bringToFront();
+    const background = await page.evaluate(() => {
+      const link = document.querySelector('a[href="#main"]');
+      link.focus();
+      return !document.hasFocus() && document.activeElement === link &&
+        !link.matches(':focus') && link.getBoundingClientRect().bottom < 0;
+    });
+    if (!background) throw new Error('Skip-link proof did not establish the unfocused-page precondition');
+    if (await domIntegrity(page, 'focus proof: foreground') !== 0) {
+      throw new Error('DOM integrity must restore foreground focus before measuring the skip link');
+    }
+    const hidden = await page.addStyleTag({ content: 'a[href="#main"]:focus { transform: translateY(-200%) !important; }' });
+    if (await domIntegrity(page, 'focus proof: deliberately hidden') !== 1) {
+      throw new Error('DOM integrity must reject the hidden focused skip link');
+    }
+    await hidden.evaluate((element) => element.remove());
+    if (await domIntegrity(page, 'focus proof: restored') !== 0) {
+      throw new Error('Skip-link proof did not restore the clean browser specimen');
+    }
+    console.log('check-axe: foreground restoration and hidden focused skip-link proofs PASS');
+  } finally {
+    await helper?.close();
+    await page.close();
+  }
+}
+
 /** Every launch in this file goes through `browser-launch.mjs`. See its docstring — M-P2-33. */
 const browser = await launch();
+await proveDesignGlyphTargets(browser);
+await proveDigitalSceneTargets(browser);
+await proveReviewTextTargets(browser);
+if (process.argv.includes('--prove-glyphs-only')) {
+  await browser.close();
+  process.exit(0);
+}
+await proveSkipLinkFocus(browser);
+if (process.argv.includes('--prove-focus-only')) {
+  await browser.close();
+  process.exit(0);
+}
+await proveDeferredFooter(browser);
+if (process.argv.includes('--prove-footer-only')) {
+  await browser.close();
+  process.exit(0);
+}
 let total = 0;
 /** Cookies present after every route load, with no interaction. Filled before close. */
 let cookiesSeen = [];
@@ -679,6 +1060,8 @@ const analyticsRequests = [];
 /** path → the routes that link to it. Filled per page load, resolved once at the end. */
 const linkedFrom = new Map();
 let analyses = 0;
+/** Post-reveal analyses of a deferred footer (GS-DIG-002-R1); reported, not part of EXPECTED. */
+let footerReveals = 0;
 let incompleteAllowed = 0;
 const allowedSeen = new Set();
 
@@ -700,6 +1083,111 @@ for (const [i, a] of INCOMPLETE_ALLOWED.entries()) {
         'Exactly one is required — the matcher would otherwise ignore the entry silently.\n',
     );
     process.exit(1);
+  }
+}
+
+// Frozen public keys replace provider-derived selectors; the scope must stay closed.
+const reviewContrastPattern = INCOMPLETE_ALLOWED.find((entry) => entry.why.startsWith('R1 put the reviews')).targetPattern;
+for (const target of ['[data-reviews-carousel]', 'li[data-front=""] > figure > blockquote > p', 'time[datetime="2026-01-01"]',
+  'li[data-review-key="review-01"] > figure > blockquote > p', 'li[data-review-key="review-11"] > figure > figcaption > a']) {
+  if (!reviewContrastPattern.test(target)) throw new Error('Review contrast selector positive specimen failed');
+}
+for (const target of ['li[data-review-key="review-12"] > figure > p', 'li[data-review-key="review-01"] > aside > p',
+  'li[data-review-key="unrelated"] > figure > p']) {
+  if (reviewContrastPattern.test(target)) throw new Error('Review contrast selector escaped its measured scope');
+}
+/**
+ * Record one axe result set: route-specific incomplete mapping, the allowlist, and violations.
+ * The main analysis and the post-reveal footer analysis both go through here, so a deferred
+ * footer is held to exactly the same accounting as everything else — no separate allowlist.
+ */
+async function record(page, route, where, violations, incomplete) {
+  // `incomplete` is axe saying "I could not determine a result here" — not "this
+  // passed". It was destructured away and never printed, so eight unresolved
+  // 1.4.3 evaluations were being reported as `clean` on every run. A result the
+  // tool declined to give is not a pass, and discarding it silently is the same
+  // unearned confidence as a gate that measures nothing.
+  for (const inc of incomplete) {
+    for (const node of inc.nodes) {
+      let target = node.target.join(' ');
+      if (route.path === '/' && inc.id === 'color-contrast') {
+        target = await page.evaluate(digitalSceneTarget, {
+          target, reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+          scope: REVIEW_TEXT_SCOPE, reasons: REVIEW_TEXT_REASONS, canonical: REVIEW_TEXT_TARGET,
+        });
+        target = await page.evaluate(digitalSceneTarget, {
+          target, reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+          scope: MASTER_KICKER_SCOPE, reasons: MASTER_KICKER_REASONS, canonical: MASTER_KICKER_TARGET,
+        });
+      }
+      if (route.path === '/press' && inc.id === 'color-contrast') {
+        const measured = await pressContrast(page, target);
+        if (measured.pass) {
+          console.log(`  ${where} ${target}: ${measured.boxes ? 'pixel contrast' : 'not exposed'} ${measured.why}`);
+          continue;
+        }
+        console.error(`  ${where} ${target}: pixel check ${measured.why}`);
+      }
+      // Attribute-based axe selectors can change before the async audit returns.
+      // Match the captured node plus its current, strictly decorative DOM boundary.
+      if (route.path === '/design' && inc.id === 'color-contrast') {
+        target = await page.evaluate(designGlyphTarget, {
+          target, html: node.html,
+          reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+        });
+      }
+      if (route.path === '/design' && inc.id === 'color-contrast') {
+        target = await page.evaluate(digitalSceneTarget, {
+          target,
+          reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+          scope: DESIGN_FOOTER, reasons: DESIGN_FOOTER_REASONS, canonical: DESIGN_FOOTER_TARGET,
+        });
+      }
+      if (route.path === '/digital' && inc.id === 'color-contrast') {
+        target = await page.evaluate(digitalSceneTarget, {
+          target,
+          reason: node.any?.[0]?.message ?? node.all?.[0]?.message ?? '',
+          scope: DIGITAL_SCENE, reasons: DIGITAL_SCENE_REASONS, canonical: DIGITAL_SCENE_TARGET,
+        });
+      }
+      const allowed = INCOMPLETE_ALLOWED.find(
+        (a) =>
+          a.rule === inc.id &&
+          a.routes.includes(route.path) &&
+          (a.target !== undefined ? a.target === target : a.targetPattern.test(target)),
+      );
+      if (allowed) {
+        incompleteAllowed += 1;
+        // The reason is printed once at the end, not 24 times inline — a wall of
+        // repeated prose is how a reader learns to scroll past this gate's output,
+        // and the loud Lighthouse-skip banner has to stay readable.
+        allowedSeen.add(allowed);
+        console.log(`  ${where.padEnd(40)} incomplete ${inc.id} on ${target} — allowed`);
+      } else {
+        total += 1;
+        console.error(
+          `  ${where.padEnd(40)} UNRESOLVED ${inc.id} on ${target} — axe could not ` +
+            'determine a result and this combination is not in INCOMPLETE_ALLOWED',
+        );
+        const reason = node.any?.[0]?.message ?? node.all?.[0]?.message ?? '(no message)';
+        console.error(`      ${reason}`);
+      }
+    }
+  }
+
+  if (violations.length === 0) {
+    console.log(`  ${where.padEnd(40)} clean`);
+  } else {
+    const count = violations.reduce((n, v) => n + v.nodes.length, 0);
+    total += count;
+    console.error(`  ${where.padEnd(40)} ${count} violation(s) across ${violations.length} rule(s)`);
+    for (const v of violations) {
+      console.error(`      [${v.impact ?? 'n/a'}] ${v.id} — ${v.help}`);
+      for (const node of v.nodes.slice(0, 3)) {
+        console.error(`        ${node.target.join(' ')}`);
+      }
+      if (v.nodes.length > 3) console.error(`        …and ${v.nodes.length - 3} more`);
+    }
   }
 }
 
@@ -730,6 +1218,10 @@ try {
         process.exit(1);
       }
 
+      if (route.path === '/press') {
+        await provePressContrast(browser);
+        await preparePress(page);
+      }
       for (const phase of PHASES) {
         if (phase.scrollToFoot) {
           // StickyCta only un-hides itself past 40% scroll depth and RevealOnScroll only
@@ -742,54 +1234,19 @@ try {
         }
 
         const where = `${route.path} @ ${viewport.label} ${phase.label}`;
-        const { violations, incomplete } = await new AxePuppeteer(page, axeSource).withTags(TAGS).analyze();
+        const deferred = (await page.evaluate(footerState, FOOTER)) === 'skipped';
+        let { violations, incomplete } = await new AxePuppeteer(page, axeSource).withTags(TAGS).analyze();
         analyses += 1;
-
-        // `incomplete` is axe saying "I could not determine a result here" — not "this
-        // passed". It was destructured away and never printed, so eight unresolved
-        // 1.4.3 evaluations were being reported as `clean` on every run. A result the
-        // tool declined to give is not a pass, and discarding it silently is the same
-        // unearned confidence as a gate that measures nothing.
-        for (const inc of incomplete) {
-          for (const node of inc.nodes) {
-            const target = node.target.join(' ');
-            const allowed = INCOMPLETE_ALLOWED.find(
-              (a) =>
-                a.rule === inc.id &&
-                a.routes.includes(route.path) &&
-                (a.target !== undefined ? a.target === target : a.targetPattern.test(target)),
-            );
-            if (allowed) {
-              incompleteAllowed += 1;
-              // The reason is printed once at the end, not 24 times inline — a wall of
-              // repeated prose is how a reader learns to scroll past this gate's output,
-              // and the loud Lighthouse-skip banner has to stay readable.
-              allowedSeen.add(allowed);
-              console.log(`  ${where.padEnd(40)} incomplete ${inc.id} on ${target} — allowed`);
-            } else {
-              total += 1;
-              console.error(
-                `  ${where.padEnd(40)} UNRESOLVED ${inc.id} on ${target} — axe could not ` +
-                  'determine a result and this combination is not in INCOMPLETE_ALLOWED',
-              );
-              const reason = node.any?.[0]?.message ?? node.all?.[0]?.message ?? '(no message)';
-              console.error(`      ${reason}`);
-            }
-          }
-        }
-
-        if (violations.length === 0) {
-          console.log(`  ${where.padEnd(40)} clean`);
-        } else {
-          const count = violations.reduce((n, v) => n + v.nodes.length, 0);
-          total += count;
-          console.error(`  ${where.padEnd(40)} ${count} violation(s) across ${violations.length} rule(s)`);
-          for (const v of violations) {
-            console.error(`      [${v.impact ?? 'n/a'}] ${v.id} — ${v.help}`);
-            for (const node of v.nodes.slice(0, 3)) {
-              console.error(`        ${node.target.join(' ')}`);
-            }
-            if (v.nodes.length > 3) console.error(`        …and ${v.nodes.length - 3} more`);
+        if (deferred) ({ violations, incomplete } = await setAsideFooter(page, where, violations, incomplete));
+        await record(page, route, where, violations, incomplete);
+        if (deferred) {
+          const revealed = await revealFooter(page);
+          footerReveals += 1;
+          if (!revealed.rendered) {
+            total += 1;
+            console.error(`  ${where.padEnd(40)} deferred footer did not render when scrolled into view — not measured`);
+          } else {
+            await record(page, route, `${where} +footer`, revealed.violations, revealed.incomplete);
           }
         }
       }
@@ -1075,7 +1532,7 @@ check-axe: ${leadProblems.length} problem(s) on the lead pipeline (A-08):`);
  * silence. Every premise of that sequence has been removed: `lib/analytics/load.ts` is
  * deleted, `NEXT_PUBLIC_GA4_ID` and `NEXT_PUBLIC_POSTHOG_KEY` are inert, there is no Accept
  * and no Reject, and `window.__gsAnalyticsConfigured` is no longer published. The owner took
- * OQ-7 option 2 (`docs/_legal/03-REVISION-LOG.md` round 10): stop asking, because the two
+ * OQ-7 option 2 (`git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/03-REVISION-LOG.md` round 10): stop asking, because the two
  * libraries loaded on consent and never initialised.
  *
  * **Deleting the block outright was the wrong move and this is why.** The old sequence's real
@@ -1114,6 +1571,38 @@ const noticeProblems = [];
 {
   const browser2 = await launch();
   try {
+    // PRESS-RC-11: the notice must not wait for hydration to become the contact-page LCP.
+    // Block external scripts, leaving only the server HTML and its prepaint cookie check.
+    const earlyContext = await browser2.createBrowserContext();
+    const earlyPage = await earlyContext.newPage();
+    await earlyPage.setRequestInterception(true);
+    earlyPage.on('request', (r) => r.resourceType() === 'script' ? r.abort() : r.continue());
+    const readEarlyNotice = () => earlyPage.evaluate(() => {
+      const nodes = document.querySelectorAll('#gs-consent-heading');
+      return { count: nodes.length, visible: nodes[0]?.closest('[role="region"]')?.checkVisibility() ?? false };
+    });
+    const assertEarlyNotice = (state, visible) => {
+      assert.equal(state.count, 1, 'server-rendered notice missing or duplicated');
+      assert.equal(state.visible, visible, 'notice visibility before hydration');
+    };
+    assert.throws(() => assertEarlyNotice({ count: 0, visible: false }, true), /missing/);
+    assert.throws(() => assertEarlyNotice({ count: 2, visible: true }, true), /duplicated/);
+    assert.throws(() => assertEarlyNotice({ count: 1, visible: false }, true), /visibility/);
+    assert.throws(() => assertEarlyNotice({ count: 1, visible: true }, false), /visibility/);
+    await earlyPage.goto(`${BASE_URL}/press/contact`, { waitUntil: 'networkidle0' });
+    assertEarlyNotice(await readEarlyNotice(), true);
+    for (const value of ['1', '0', '', 'analytics_storage%2Cad_storage%2Cfunctionality_storage']) {
+      await earlyPage.evaluate((v) => { document.cookie = `gs_consent=${v}; Path=/; SameSite=Lax`; }, value);
+      await earlyPage.reload({ waitUntil: 'networkidle0' });
+      assertEarlyNotice(await readEarlyNotice(), false);
+    }
+    await earlyPage.setJavaScriptEnabled(false);
+    await earlyPage.reload({ waitUntil: 'networkidle0' });
+    assertEarlyNotice(await readEarlyNotice(), false);
+    assert(await earlyPage.$eval('main h1', (e) => e.checkVisibility()), 'no-JS contact content hidden');
+    await earlyContext.close();
+    console.log('check-axe: notice is present before hydration; current/legacy/empty cookies hide it before hydration; no-JS content remains unobscured; negative specimens PASS');
+
     // ---- Steps 1-3: a first visit, the press, and the reload.
     const context = await browser2.createBrowserContext();
     const page = await context.newPage();
@@ -1218,6 +1707,11 @@ const noticeProblems = [];
             'view, and the cookie would then have no strictly-necessary purpose to rest on',
         );
       }
+      await page.evaluate(() => [...document.querySelectorAll('button')]
+        .find((button) => button.textContent.trim() === 'Cookie notice')?.click());
+      await page.waitForSelector('#gs-consent-heading');
+      assert(await page.$eval('#gs-consent-heading', (e) => e.closest('[role="region"]').checkVisibility()),
+        'acknowledged notice did not reopen visibly');
     }
     await context.close();
 
@@ -1372,6 +1866,7 @@ if (!process.exitCode) {
       `${VIEWPORTS.map((v) => v.label).join('/')} × ${PHASES.map((p) => p.label).join('/')} — ` +
       `zero violations (${TAGS.join(', ')})`,
   );
+  console.log(`check-axe: ${footerReveals} deferred-footer analysis(es) after reveal — rendered, zero violations, 0 unresolved`);
   console.log('check-axe: no duplicate ids, no radio or exclusive-details group spanning theme frames');
   // The count comes from the same predicate the browser branched on (`route.themed !== false`),
   // not from the pages themselves — a themed route either reports a skip-link problem or

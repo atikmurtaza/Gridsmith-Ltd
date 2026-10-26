@@ -29,12 +29,16 @@ import {
   emailProblems,
   officeProblems,
   phoneProblems,
+  phoneTextOf,
   responseProblems,
   teamProblems,
   callProblems,
   placeholderProblems,
   socialProblems,
+  taxonomyProblems,
 } from './company-facts-rules.mjs';
+import { jsonLdHtml } from '../lib/seo/site.ts';
+import { readFileSync } from 'node:fs';
 
 let passed = 0;
 const failures = [];
@@ -61,7 +65,7 @@ const none = (list) => (list.length === 0 ? true : `expected no problem, got ${J
 const GOOD_FOOTER =
   `${FACTS.legalName} · registered in ${FACTS.placeOfRegistration} · company number ` +
   `${FACTS.companyNumber} · registered office ${FACTS.registeredOffice} ` +
-  `${FACTS.contactEmail} · ${FACTS.contactPhone}`;
+  `${FACTS.contactEmail} · ${FACTS.contactPhone} · ${FACTS.responseCommitment}`;
 
 /* -- 1. the statutory disclosure -------------------------------------------- */
 
@@ -78,6 +82,7 @@ for (const [value, label] of [
   [FACTS.registeredOffice, 'registered office'],
   [FACTS.contactEmail, 'contact email'],
   [FACTS.contactPhone, 'contact phone'],
+  [FACTS.responseCommitment, 'current response wording'],
 ]) {
   check(
     `DISCLOSURE — a footer missing the ${label}`,
@@ -90,13 +95,14 @@ check(
   (() => {
     const list = disclosureProblems(
       '/',
-      GOOD_FOOTER.replace('registered in England', 'registered in England & Wales'),
+      GOOD_FOOTER.replace('registered in England and Wales', 'registered in England & Wales'),
     );
-    // Two problems: the required "registered in England" is absent as a substring only when the
-    // ampersand form is used in isolation — it is not, so exactly the named rule must fire.
-    return list.length === 1 && list[0].includes('England & Wales')
+    // GS-R16-001: the required wording is now "England and Wales", so the ampersand form fires
+    // twice — the required phrase is missing, and the ampersand rule names the form itself.
+    return list.length === 2 && list.some((p) => p.includes('missing "registered in England and Wales"')) &&
+      list.some((p) => p.includes('says "England & Wales"'))
       ? true
-      : `expected the England & Wales rule alone, got ${JSON.stringify(list)}`;
+      : `expected the missing-wording and England & Wales rules, got ${JSON.stringify(list)}`;
   })(),
 );
 
@@ -149,10 +155,10 @@ check(
  * call links.
  */
 const CLEAN_CHANNELS =
-  `<a href="${FACTS.whatsAppHref}">WhatsApp</a> <a href="${FACTS.smsHref}">text</a>`;
+  `<a href="${FACTS.whatsAppHref}">WhatsApp</a>`;
 
 check(
-  'PHONE CLEAN — the number as text, with the two authorised schemes',
+  'PHONE CLEAN — the number as text, with the authorised WhatsApp scheme',
   none(phoneProblems('/contact', FACTS.contactPhone, CLEAN_CHANNELS)),
 );
 
@@ -201,13 +207,31 @@ check(
   'PHONE — an sms: href that is not the global form',
   one(
     phoneProblems('/contact', FACTS.contactPhone, '<a href="sms:07405448534">t</a>'),
-    'RFC 5724',
+    'SMS',
   ),
 );
 
 check(
   'PHONE — a second, unapproved number in the text',
   one(phoneProblems('/contact', 'or try +44 20 7946 0000', CLEAN_CHANNELS), '+44 20 7946 0000'),
+);
+
+// GS-LEGAL-001-R7: the served consumer terms end clause 21 with the number and open clause 22 with
+// "22. Cancellation form". The flattened text read "+44 7405 448534 22". The boundary specimen must stay
+// clean, digits appended inside one block must still fire, and the unseparated flattening must fire on
+// the boundary specimen (which shows that specimen is a subject).
+const BOUNDARY_HTML = `<p>WhatsApp or text: ${FACTS.contactPhone}</p><h2 id="clause-22">22. Cancellation form</h2>`;
+check(
+  'PHONE CLEAN — the number ending a block before a numbered heading',
+  none(phoneProblems('/legal/consumer-client-terms', phoneTextOf(BOUNDARY_HTML), BOUNDARY_HTML)),
+);
+check(
+  'PHONE — digits appended to the number inside one block',
+  one(phoneProblems('/legal/x', phoneTextOf(`<p>${FACTS.contactPhone} 22</p>`), '<p></p>'), `${FACTS.contactPhone} 22`),
+);
+check(
+  'PHONE — premise: without block separation the boundary specimen fires',
+  one(phoneProblems('/legal/x', BOUNDARY_HTML.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' '), BOUNDARY_HTML), `${FACTS.contactPhone} 22`),
 );
 
 /* -- 4. the registered office ------------------------------------------------ */
@@ -238,6 +262,7 @@ check(
 /* -- 5. response wording, every rule alone ----------------------------------- */
 
 const RESPONSE_SPECIMENS = {
+  'SUPERSEDED-TIMED-RESPONSE': 'We typically respond within 48 hours.',
   'GUARANTEE-ALWAYS-BY': "We'll reply as soon as we can, and always by the end of the next business day.",
   'GUARANTEE-WORD': 'We guarantee a reply.',
   'GUARANTEE-SLA': 'Covered by a service-level agreement.',
@@ -247,8 +272,8 @@ const RESPONSE_SPECIMENS = {
 };
 
 check(
-  'RESPONSE CLEAN — the wording GS-O004 authorises',
-  none(responseProblems('/contact', 'We typically respond within 48 hours.')),
+  'RESPONSE CLEAN — the current owner-confirmed wording',
+  none(responseProblems('/contact', 'We aim to respond as soon as practicable.')),
 );
 
 for (const rule of RESPONSE_RULES) {
@@ -301,15 +326,17 @@ check(
 /* -- 7. the call channel, every rule alone ----------------------------------- */
 
 const CALL_SPECIMENS = {
+  'SMS-PUBLIC-COPY': 'WhatsApp or text messages.',
+  'CALL-CTA-DIRECT': 'Call Gridsmith on the number below.',
   'CALL-CTA-IMPERATIVE': 'Call us on the number below.',
   'CALL-CTA-GIVE-US': 'Give us a call any time.',
-  'CALL-CTA-OR-CALL': 'Or call the office.',
+  'CALL-CTA-OR-CALL': 'Or call below.',
   'CALL-SPEAK-TO': 'Speak to us on the number below.',
 };
 
 check(
   'CALL CLEAN — the wording GS-R001-R authorises',
-  none(callProblems('/contact', 'The same number takes WhatsApp and text messages.')),
+  none(callProblems('/contact', 'The same number takes WhatsApp messages.')),
 );
 
 check(
@@ -335,6 +362,57 @@ check(
 );
 
 /* -- 8. placeholders, every rule alone --------------------------------------- */
+
+// All seven canonical public instruments remain subjects after exact-text adoption.
+for (const [slug, file] of [
+  ['privacy', 'current/privacy-policy.md'],
+  ['accessibility', 'current/accessibility-statement.md'],
+  ['consumer-client-terms', 'current/client-terms-consumers.md'],
+  ['cookies', 'current/cookie-policy.md'],
+  ['terms', 'current/website-terms.md'],
+  ['client-terms', 'current/client-terms-applicability.md'],
+  ['business-client-terms', 'current/client-terms-business.md'],
+]) {
+  const route = `/legal/${slug}`;
+  const text = readFileSync(`docs/_legal/${file}`, 'utf8');
+  check(`LEGAL ${slug} candidate contact control`, none(callProblems(route, text)));
+  for (const offer of ['WhatsApp or text', 'WhatsApp or SMS', 'Email or text', 'Text us', 'SMS us', 'Send an SMS', 'Send us a text message', 'Contact us by text message', 'Send us a text.', 'Contact us by text.',
+    'We accept enquiries by SMS.', 'SMS enquiries welcome.',
+    'SMS: +447405448534', 'Text-message links', 'Text messages welcome', 'SMS available', 'SMS accepted',
+    'Call Gridsmith', 'Call me', 'Phone the team', 'Call us', 'Telephone us on the number above.', 'You can telephone us.', 'Call the sales department.', 'Give us a call', 'Or call',
+    'Speak to us on the number', 'Voice calls available', 'Telephone calls welcome', 'Phone calls accepted',
+    'Voice calls: +44 7405 448534', 'Telephone calls: +44 7405 448534', 'Phone calls: +44 7405 448534',
+    'Contact us by phone', 'Call +447405448534', 'Telephone: 07405 448534']) {
+    check(`LEGAL ${slug} rejects ${offer}`, callProblems(route, `${text}\n${offer}`).length > 0);
+  }
+  for (const protocol of ['sms', 'tel']) {
+    const link = `<a href="${protocol}:+447405448534">Contact</a>`;
+    check(`LEGAL ${slug} rejects ${protocol} action`, phoneProblems(route, phoneTextOf(link), link).length > 0);
+  }
+}
+for (const text of ['Historical SMS records may remain in backups.',
+  'Retained text messages remain subject to erasure rights.',
+  'Recordings of earlier telephone calls may be retained.',
+  'You may contact us to request a copy of historical SMS records.',
+  'Contact us about historical SMS records.',
+  'Contact us to request erasure of retained text messages.',
+  'Contact us if your contract was discussed by phone or video call.',
+  'If you agree by email, phone or video call, cancellation rights apply.']) {
+  check(`LEGAL historical/contract example: ${text}`, none(callProblems('/legal/privacy', text)));
+  check(`LEGAL history does not hide a new offer: ${text}`, callProblems('/legal/privacy', `${text} Call us.`).length > 0);
+}
+const adoptedConsumer = readFileSync('docs/_legal/current/client-terms-consumers.md', 'utf8');
+check('LEGAL canonical 3.4 contact correction', none(callProblems('/legal/consumer-client-terms', adoptedConsumer)));
+const previousConsumer = readFileSync('docs/_legal/evidence/GS-LAUNCH-014-superseded/client-terms-consumers.md', 'utf8');
+check('LEGAL superseded 3.3 contradiction remains observable', one(callProblems('/legal/consumer-client-terms', previousConsumer), 'SMS-PUBLIC-COPY'));
+for (const [id, specimens] of [
+  ['SMS-PUBLIC-COPY', ['WhatsApp or SMS', 'Text us', 'Send an SMS', 'Contact us by text', 'We accept enquiries by SMS', 'SMS: +447405448534']],
+  ['CALL-CTA-DIRECT', ['Telephone us', 'Voice calls: +447405448534', 'Contact us by phone', 'Telephone: +447405448534']],
+]) {
+  const patterns = CALL_RULES.find(rule => rule.id === id).legalPatterns;
+  check(`LEGAL ${id} pattern count`, patterns.length === specimens.length);
+  specimens.forEach((specimen, index) => check(`LEGAL ${id} pattern ${index + 1} reaches its own subject`, patterns[index].test(specimen)));
+}
 
 const PLACEHOLDER_SPECIMENS = {
   'SEED-MARKER': '[SEED] An introduction to the group.',
@@ -480,6 +558,70 @@ check(
   emailProblems('/x', 'info@gridsmith.uk and contact.gridsmith@gmail.com', '').length === 2
     ? true
     : 'the problem count did not move with the number of defects, so it is printed, not counted',
+);
+
+/* -- the footer's structured data (GS-SHARED-001-RC) ------------------------ */
+
+// The Organization record carries CMS text inside an inline <script>. Before RC the escape was
+// `replaceAll('<', '<')` with one backslash: the same character, so this returned `</script>`.
+const hostile = { name: 'Gridsmith </script><script>alert(1)</script><!--' };
+const ld = jsonLdHtml(hostile);
+check(
+  'JSON-LD — no raw "<" survives, so CMS text cannot close the script element',
+  !ld.includes('<') ? true : `serialised output still contains "<": ${ld}`,
+);
+check(
+  'JSON-LD — the escape is JSON, so the parsed record is unchanged',
+  JSON.parse(ld).name === hostile.name ? true : `parsed name differs: ${JSON.parse(ld).name}`,
+);
+
+/* -- 10. metadata taxonomy (GS-INT-002) ------------------------------------- */
+
+const head = (pairs) =>
+  pairs
+    .map(([k, v]) => (k === 'title' ? `<title>${v}</title>` : `<meta ${k.startsWith('og:') ? 'property' : 'name'}="${k}" content="${v}"/>`))
+    .join('');
+
+check(
+  'TAXONOMY CLEAN — the corrected Master description and a studio title',
+  none(taxonomyProblems('/', head([['title', 'Gridsmith Ltd'], ['description', 'One UK company. Design, Digital and Press are its three specialist studios.']]), false)),
+);
+check(
+  'TAXONOMY CLEAN — both statutory clause forms are exempt',
+  none(taxonomyProblems('/press', head([
+    ['description', 'We write and edit. A trading division of Gridsmith Ltd.'],
+    ['og:description', 'Writing and editing. Gridsmith Press is a trading division of Gridsmith Ltd.'],
+  ]), false)),
+);
+check(
+  'TAXONOMY — the pre-GS-INT-002 Master description fires (the plural is not the clause)',
+  one(taxonomyProblems('/', head([['description', 'One UK company. Design, Digital and Press are its trading divisions.']]), false), '"divisions"'),
+);
+check(
+  'TAXONOMY — og:description is read, not only description',
+  one(taxonomyProblems('/about', head([['og:description', 'One company, three specialist divisions.']]), false), 'og:description'),
+);
+check(
+  'TAXONOMY — twitter:title is read, and "department" fires',
+  one(taxonomyProblems('/x', head([['twitter:title', 'Our design department']]), false), 'twitter:title'),
+);
+check(
+  'TAXONOMY — the title is read',
+  one(taxonomyProblems('/x', head([['title', 'Gridsmith Design division']]), false), 'title'),
+);
+check(
+  'TAXONOMY — the clause exempts only itself: other division wording beside it still fires',
+  one(taxonomyProblems('/design', head([['description', 'Our three divisions. A trading division of Gridsmith Ltd.']]), false), '"divisions"'),
+);
+check(
+  'TAXONOMY CLEAN — a /legal/ route is exempt (instrument summaries are legal context)',
+  none(taxonomyProblems('/legal/terms', head([['description', 'Across all three divisions.']]), true)),
+);
+check(
+  'TAXONOMY COUNT moves — two offending values are two problems',
+  taxonomyProblems('/', head([['description', 'its trading divisions'], ['og:description', 'its trading divisions']]), false).length === 2
+    ? true
+    : 'the problem count did not move with the number of defects',
 );
 
 if (failures.length > 0) {

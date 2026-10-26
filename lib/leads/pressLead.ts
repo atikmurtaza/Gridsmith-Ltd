@@ -79,11 +79,19 @@ const contentPayload = z.object({
   procurementProcess: z.boolean(),
 });
 
+const productionPayload = z.object({
+  segment: z.literal('production'),
+  workType: z.enum(['editing', 'book-production', 'publishing', 'audiobook']),
+  currentMaterial: z.string().trim().min(1).max(2000),
+  manuscriptLink: z.url().max(500).optional(),
+});
+
 export const pressLeadPayload = z.discriminatedUnion('segment', [
   authorPayload,
   businessPayload,
   memoirPayload,
   contentPayload,
+  productionPayload,
 ]);
 
 export type PressLeadPayload = z.infer<typeof pressLeadPayload>;
@@ -136,6 +144,13 @@ export function pressPayloadFrom(formData: FormData): unknown {
         volumePerMonth: str(formData, 'volumePerMonth'),
         turnaroundNeeded: str(formData, 'turnaroundNeeded'),
         procurementProcess: bool(formData, 'procurementProcess'),
+      };
+    case 'production':
+      return {
+        segment,
+        workType: str(formData, 'workType'),
+        currentMaterial: str(formData, 'currentMaterial'),
+        manuscriptLink: str(formData, 'manuscriptLink'),
       };
     default:
       return { segment };

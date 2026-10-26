@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ServiceDetail } from '@/components/content/ServiceDetail';
 import { getService, listServiceSlugs, type Division } from '@/lib/sanity/queries';
+import { STATIC_BUILD } from '@/lib/build/target';
+import { staticParams } from '@/lib/build/static-routes';
 
 /**
  * The per-service route, as a factory — `GS-P04`.
@@ -36,6 +38,7 @@ type Params = { params: Promise<{ slug: string }> };
 export function serviceRoute(division: Division) {
   return {
     generateStaticParams: async () => {
+      if (STATIC_BUILD) return staticParams('service', division);
       const slugs = await listServiceSlugs(division);
       return slugs.filter(Boolean).map((slug) => ({ slug }));
     },
@@ -43,6 +46,7 @@ export function serviceRoute(division: Division) {
     generateMetadata: async ({ params }: Params): Promise<Metadata> => {
       const { slug } = await params;
       const service = await getService(division, slug);
+      if (!service && STATIC_BUILD) throw new Error('Required static service unavailable');
       if (!service) return { title: 'Not found — Gridsmith Ltd' };
       return {
         title: service.metaTitle ?? `${service.title} — ${DIVISION_NAMES[division]}`,
@@ -53,6 +57,7 @@ export function serviceRoute(division: Division) {
     Page: async ({ params }: Params) => {
       const { slug } = await params;
       const service = await getService(division, slug);
+      if (!service && STATIC_BUILD) throw new Error('Required static service unavailable');
       if (!service) notFound();
       return <ServiceDetail service={service} />;
     },

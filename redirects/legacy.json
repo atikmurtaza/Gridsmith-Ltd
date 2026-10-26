@@ -1,1 +1,4 @@
-[]
+[
+  { "source": "/privacy-policy{/}?", "destination": "/legal/privacy", "permanent": true },
+  { "source": "/terms-and-conditions{/}?", "destination": "/legal/client-terms", "permanent": true }
+]

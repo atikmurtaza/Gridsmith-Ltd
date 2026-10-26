@@ -18,3 +18,11 @@
 *.avif  binary
 *.ico   binary
 *.pdf   binary
+
+# Hash-pinned browser provenance inputs (GS-R12 Option A). browser-input.mjs and
+# extract-verified-browser.py verify these files' exact bytes (MANIFEST_SHA256 etc.), so
+# they are identities, not source: EOL normalisation would change the checked-out bytes on
+# every platform and fail CONFIG_FROZEN_IDENTITY. browser-input.json was pinned with CRLF.
+# The signed Packages index legitimately ends in a blank line, hence -whitespace.
+config/browser-input.json -text -whitespace
+config/browser-provenance/** -text -whitespace

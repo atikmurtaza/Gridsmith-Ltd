@@ -1,0 +1,66 @@
+# GS-LAUNCH-019 — Preview toolchain remediation and CI release
+**ACCEPTED RELEASE READY FOR OWNER DEPLOYMENT APPROVAL.** [CI run 40332154565](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40332154565) succeeded on exact source `13032b1735c320842d7dc25f3de03afa704d3e33`. Both audits are zero; accepted ZIP and every file independently verified. Deployment remains unauthorised. The completed owner approval packet is below; these completion updates are local documentation only after the tested source commit.
+
+26 October 2026 (Europe/London). Continue the existing `codex/gs-launch-018` worktree from `35c74d67efa58f21d8b10021bfde4ba4f584d645`. Preserve the completed GS-LAUNCH-018 reports, evidence and deployment architecture. Owner authority covers dependency/harness remediation, feature-branch commit/push and the existing CI acceptance workflow. Artifact-branch publication, Hostinger Redeploy, DNS and gridsmith.uk remain unauthorised.
+
+## Reviewed dependency change
+
+Before: full audit nine high affected entries, production zero; three underlying advisories. `@lhci/cli@0.15.1` and `@lhci/utils@0.15.1` reach `lighthouse@12.6.1` → `puppeteer-core@24.43.1`. Direct `puppeteer@24.43.1` shares that Core. Both reach `@puppeteer/browsers@2.13.2` → `extract-zip@2.0.1` and `chromium-bidi@14.0.0` → `zod@3.25.76`.
+
+- [extract-zip path traversal](https://github.com/advisories/GHSA-jmr9-qjv8-65gv) and [symlink overwrite](https://github.com/advisories/GHSA-7pqw-9j4j-h8q3): no patched extract-zip release. Upgrade the consumer to remove the package entirely.
+- [Zod constrained-collection exhaustion](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5): Zod 3 has no compatible patch. Upgrade BiDi through Puppeteer; its own generated schemas now use patched Zod 4. No Zod cross-major override is used.
+- Pin direct Puppeteer to **25.14.0** and scope the reviewed **puppeteer-core 25.14.0** override to Lighthouse. These bring browser helper **3.2.5**, BiDi **157.0.8090-0**, Zod **4.6.6**, and remove every extract-zip/Zod 3 copy. Full lockfile audit is zero.
+
+[Puppeteer 25.14.0](https://github.com/puppeteer/puppeteer/releases/tag/puppeteer-v25.14.0) targets the existing authenticated Chrome **155.0.8059.79**. Latest 25.16.0 targets Chrome 156; choosing the matched release reduces browser change during parity verification. Its helper includes the symlink-chain extraction fix. All 20 unique changed package tarballs were fetched independently and checked against both registry version metadata and lockfile integrity before package/lock control hashes were updated. The authenticated Chrome manifest, signatures, raw input and tree hashes are unchanged.
+
+[Puppeteer 25 breaking changes](https://pptr.dev/CHANGELOG#2500-2026-05-12) were reviewed against all local, axe and Lighthouse consumers: Node 22+ and ESM are supported by Node 24 and the existing imports. Removed product/isConnected/clickCount/sameParty and synchronous executablePath/defaultArgs APIs are unused. Lighthouse's connect/newPage/target/createCDPSession/CDP methods remain available. The override is intentionally outside Lighthouse's declared Core range and therefore requires full runtime acceptance; a clean audit alone does not establish compatibility.
+
+Keep **Lighthouse 12.6.1 / LHCI 0.15.1** unchanged. LHCI latest still pins that engine; its audit-suggested downgrade to 0.13 is rejected. Lighthouse 13.5.0 introduces a different measurement engine and is unnecessary once the Core dependency is safely upgraded. No security tool is downgraded, advisory suppressed, audit disabled or acceptance threshold relaxed.
+
+## Harness and regression coverage
+
+Puppeteer configuration now uses async lilconfig. Await its real configuration in installed downloader proofs, resolve package/helper paths through the actual consumer, and reject the additional `.config/puppeteer.config.js` / `.cjs` discovery paths. Updated adverse downloader specimens observe Chrome, headless shell and Firefox requests with global skip false; the real required global skip true observes no request or resolution. No real downloader or browser executes in this proof.
+
+Extend the existing dependency gate, rather than adding a parallel gate: assert both Core consumers and both helper consumers; reject every nested/aliased extract-zip and obsolete Zod/tool copy using permanent adverse specimens; exercise valid and invalid BiDi parsing through its actual upgraded schema; retain the constrained-collection, HTTP, FTP and other existing proofs. Assert the measurement engine remains 12.6.1. An independent read-only review confirmed the upgrade scope and identified the async/config-discovery compatibility work.
+
+The original normal and Preview suites already passed with the old tools in [baseline run 40254337220](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40254337220), whose overall result failed the full audit. Public app/components/lib/styles, seven legal documents, route lists, Lighthouse settings/budgets, HTTP/Apache acceptance are unchanged here. Both workflows add the installed downloader selftest after browser verification; no existing test or publisher step changes. Thus the existing and upgraded suites measure the same website source, Chrome and Lighthouse engine. Compare downloaded raw per-route reports, not just green job summaries. Baseline reports remain in `build/gs-launch-018/` and baseline evidence remains in `GS-LAUNCH-018-EVIDENCE.json`.
+
+## Release evidence and approval boundary
+
+Run existing `ci.yml` on the remediation commit on `codex/gs-launch-018`, with publication false. Require the entire workflow to succeed, including normal verify, all six Preview commands, both zero audits, accepted packaging and artifact uploads. Download `owner-preview-evidence`, `hostinger-release-archive` and `hostinger-static`; independently compare archive hash, every manifest file, accepted identity, source SHA and run ID. The tested release source must be the exact remediation commit. Record the resulting run, measurements and accepted identity in the phase completion receipt; no future success is asserted by this source-time report.
+
+After acceptance, the owner still needs a fresh private destination/rollback receipt: exact temporary website and relative `public_html` Git mapping, evidence the transaction cannot affect gridsmith.uk, auto-deployment OFF, current artifact-branch SHA, rollback payload and restoration procedure. Existing GS-LAUNCH-018 destination observations are retained; no new provider inspection or restore is claimed. The last observed rollback artifact commit is `25d653f5582b78c31329dc5def12898d6a19b531`; recheck before approval.
+
+Owner next action, only once the release passes: review the accepted source/identity/ZIP checksum and destination/rollback receipt, then approve that exact transaction using the existing GS-LAUNCH-018 approval contract. The approval hash, acceptance run, artifact identity, destination and previous artifact SHA must all match. Publication would use the original `ci.yml` → `hostinger-staging.yml` → `codex/gs-hostinger-artifact` path; manual Hostinger Redeploy is a later separately approved action. Neither is performed in this phase.
+
+Retained first remediation run [40331642499](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40331642499) failed before provisioning: the installer guard correctly refused a package-name reference in the dependency gate. Keep that guard unchanged; move helper-version assertions into its existing guarded browser selftest and run installed mode in both CI jobs. The reviewed workflow changes add only this proof, and their independent pinned hashes are refreshed after diff review. Local installed proof: 416 cases; actual source scan with synthetic environment passes. No result from this failed run is accepted as compatibility evidence.
+
+## Completed release — owner approval packet
+
+**ACCEPTED RELEASE READY FOR OWNER DEPLOYMENT APPROVAL.** Whole [CI run 40332154565](https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40332154565) completed successfully at 26 October 2026, 15:05 UTC. Normal verify and Preview build succeed; publisher is skipped. This is a release acceptance, with deployment still unauthorised. These post-run completion records are local documentation-only updates; HEAD remains the exact tested commit.
+
+- Branch: `codex/gs-launch-018`. Tested/released source: `13032b1735c320842d7dc25f3de03afa704d3e33`. Remediation commits: `56c0d781` and `13032b17`.
+- Security: production 0→0; full 9 high / 3 advisories → 0 unresolved findings, independently read from downloaded audit JSON. No waiver, suppression or audit bypass.
+- Accepted identity: `8028cb984402db08d7ba016ab656c5602dfdfae5bc3a49fda7f70b6b890a65e4`; `deployable:true`, `releaseStatus:ACCEPTANCE_PASSED`, `sourceModified:false`; acceptance run 40332154565.
+- ZIP: `owner-preview-13032b1735c320842d7dc25f3de03afa704d3e33.zip`, 10,297,497 bytes; SHA-256 `9a6291a8809efbb98e95e2e4cd8dd3fd73a577f921dc20b5ff514fec01959e96`.
+- Downloaded archive and separately downloaded release directory agree for every 212 files, including lengths and SHA-256; no extra ZIP files, traversal or symlinks. Canonical acceptance receipt hash and all six command/log hashes match. Identity passes the production validator. Full manifest: `build/gs-launch-019/preview-evidence/build/gs-launch-018/release.json`; archive: `build/gs-launch-019/release-archive/owner-preview-13032b1735c320842d7dc25f3de03afa704d3e33.zip`.
+- Rendering/hydration, keyboard, responsive/no-JS, axe, scenes and original regression predicates PASS. Normal axe: 76 analyses plus 2 deferred-footer analyses, zero violations; 0 unresolved incompletes, 836 explicitly mapped incompletes. Preview: 20 browser pages, 20 no-JS pages, 41 focused axe analyses plus 3 error documents; 70 legal combinations and 98 links. No browser errors, failed requests or bad responses. The 64 route dispositions and 61 eligible routes are identical to baseline.
+- Apache: 210 public payload hashes plus identity, all 61 routes, headers/cache/MIME/compression, hidden/foreign-host refusal, redirects, genuine 404 and induced GET/HEAD 500 PASS. This remains loopback Apache acceptance, with hosted behaviour unmeasured.
+- Legal: all 7 unchanged documents, 109 clauses and 406 paragraphs match canonical sources, including an independent check of the downloaded accepted release. No legal wording/adoption/register change.
+
+Lighthouse comparison below uses route medians of 3 runs, 11 routes per axis, 132 reports in each baseline/new run. Lighthouse 12.6.1 and authenticated Chrome 155.0.8059.79 are unchanged. Public website source, route coverage, throttling and budgets are unchanged. LCP ranges are approximate; CLS values are upper bounds.
+
+| Profile/axis | Performance before→after | LCP before→after(ms) | Maximum median TBT before→after(ms) | New maximum median CLS |
+|---|---|---|---|---|
+| Normal desktop |100→100|568–683→578–690|0→0|<0.000054|
+| Normal mobile |100→99–100|883–1041→904–1082|55→107|<0.000144|
+| Preview desktop |100→100|580–698→572–707|0→0|<0.000054|
+| Preview mobile |100→100|891–1062→898–1071|73→85|<0.000144|
+
+Accessibility is 100 on every axis. All original budgets pass. Normal per-route LCP moves −5.5 to +34.1 ms (desktop) and +20.4 to +41.7 ms (mobile); Preview shifts are −7.5 to +18.3 ms and +1.3 to +17.9 ms. Normal mobile TBT increases 32–54 ms. Investigated the traces: same script hashes, with CPU benchmark 2408–2485 versus baseline 2793–3216, and longer execution of the same tasks. Preview's independent runner shows smaller shifts. This is consistent with runner variation; the measurements do not isolate a causal driver effect. No threshold was relaxed. Raw reports, route-level deltas and investigation are retained under `build/gs-launch-019/`.
+
+**Owner next action:** review this exact source/identity/ZIP and a fresh private destination/rollback receipt, then approve that exact deployment transaction using the existing GS-LAUNCH-018 contract. Receipt must confirm the named temporary site's Git mapping to `codex/gs-hostinger-artifact` / relative `public_html`, transaction separation from gridsmith.uk and auto-deployment OFF; identify the current rollback artifact and verified payload, receipt hashes and supported restoration procedure. Last read-only artifact-branch SHA remains `25d653f5582b78c31329dc5def12898d6a19b531`. No fresh hPanel inspection, restore exercise or hosted/manual acceptance is claimed.
+
+Do not rebuild approved bytes. A later approved artifact-branch publication must reuse accepted run 40332154565 and the exact identity above through the existing pipeline; manual Hostinger Redeploy remains a separately approved action. Neither action occurred here. No approval variable was created. Production, DNS, mail and gridsmith.uk remain untouched.
+
+Independent completion review also recomputed the ZIP checksum, all 212 file hashes/sizes/bytes, source/run/accepted identity and all six acceptance log hashes, and read both zero audits. No release blocker was found. The observed normal-mobile measurement increase and CPU evidence are retained without claiming isolated causal proof.

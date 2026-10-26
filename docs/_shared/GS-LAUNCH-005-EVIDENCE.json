@@ -1,0 +1,1087 @@
+{
+  "task": "GS-LAUNCH-005",
+  "recordedAt": "2026-10-23T16:51:40.720Z",
+  "baseline": "6cce73bfd0f1a6fc42a449bbb7306fe2fd5848a5",
+  "branch": "codex/gs-launch-005",
+  "localOnly": true,
+  "commitIdentity": "Final local commit is reported by Git closeout; receipt hashes identify reviewed bytes. No push or hosted acceptance.",
+  "status": {
+    "localPackage": "PASS_CONDITIONAL",
+    "hostinger": "UNVERIFIED_HOLD",
+    "normalNextSsr": "FAIL_M-P1-1",
+    "publication": "NOT_AUTHORISED"
+  },
+  "environment": {
+    "node": "v24.15.0",
+    "next": "15.5.28",
+    "react": "19.2.8",
+    "installation": "Matching existing isolated Windows dependency installation reused; first 15.5.27 build explicitly not acceptance; no install or lockfile changes",
+    "apache": "Server version: Apache/2.4.68 (Debian)\nServer built:   2026-06-12T05:08:45",
+    "image": "node@sha256:f22d6a1f082c02f292e86929b5b0442ac2e5eaf438a5dea9b1566601c3e05940",
+    "container": "gs-launch005-proof",
+    "tlsAndCdn": "UNVERIFIED_HTTP_ONLY"
+  },
+  "provider": {
+    "accountAccess": false,
+    "settingsRead": false,
+    "settingsWrites": 0,
+    "recordedProduct": "Existing Hostinger Business PHP/HTML hosting, public_html; current account entitlement UNVERIFIED",
+    "sources": [
+      {
+        "id": "custom-error-pages",
+        "url": "https://www.hostinger.com/support/1583295-how-to-customize-your-website-s-error-pages-in-hostinger/",
+        "consulted": "2026-10-23",
+        "determination": "Public HTML editing feature only; independent mapping/storage/status/headers not established"
+      },
+      {
+        "id": "control-panel-guide",
+        "url": "https://assets.hostinger.com/content/tutorials/pdf/Guide-To-Using-Hostinger.pdf",
+        "consulted": "2026-10-23",
+        "determination": "Historical guide lists 500; not current account entitlement or 502/503/504 templates"
+      },
+      {
+        "id": "cdn-caching",
+        "url": "https://www.hostinger.com/support/how-hostinger-cdn-caching-works/",
+        "consulted": "2026-10-23",
+        "determination": "5xx not stored; prior cached success may be served; actual site and precedence UNVERIFIED"
+      },
+      {
+        "id": "cdn-errors",
+        "url": "https://www.hostinger.com/support/hostinger-cdn-troubleshooting-website-errors/",
+        "consulted": "2026-10-23",
+        "determination": "Distinct origin/edge failures, request/cache headers; no account acceptance"
+      },
+      {
+        "id": "cdn-headers",
+        "url": "https://www.hostinger.com/support/8052370-advanced-cdn-header-management-at-hostinger/",
+        "consulted": "2026-10-23",
+        "determination": "Cache-Control in .htaccess/PHP; independent error-specific control UNVERIFIED"
+      },
+      {
+        "id": "apache-errors",
+        "url": "https://httpd.apache.org/docs/2.4/custom-error.html",
+        "consulted": "2026-10-23",
+        "determination": "Local simulation mechanism only"
+      },
+      {
+        "id": "apache-alias",
+        "url": "https://httpd.apache.org/docs/2.4/mod/mod_alias.html#alias",
+        "consulted": "2026-10-23",
+        "determination": "Independent local path mapping only, no Hostinger permission inference"
+      },
+      {
+        "id": "apache-headers",
+        "url": "https://httpd.apache.org/docs/2.4/mod/mod_headers.html",
+        "consulted": "2026-10-23",
+        "determination": "Local error headers only"
+      }
+    ],
+    "requiredEvidence": [
+      "Exact product/site/operator permissions",
+      "Independent storage outside replaceable root",
+      "Mapping survives malformed root config/parent traversal",
+      "GET/HEAD retain 500",
+      "Independent error-specific header support",
+      "Actual origin/edge/cache-stale precedence",
+      "Separate provider 500/502/503/504 templates",
+      "Missing/unreadable resource and rollback coverage"
+    ]
+  },
+  "operator": {
+    "policy": {
+      "version": 1,
+      "providerAcceptance": "UNVERIFIED",
+      "deployable": false,
+      "owner": "operator",
+      "storage": "outside-release-root",
+      "status": 500,
+      "errorUri": "/__gs_error.html",
+      "cacheControl": "no-store, max-age=0",
+      "contentSecurityPolicy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
+    },
+    "configurationSha256": "e34b8851ddbbee2e04b194f2becf33c89bde4ed472e95140b2ef34a2373ed8a2",
+    "documentSha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+  },
+  "setup": {
+    "localOnly": true,
+    "syntax": "",
+    "syntaxCheckExit": 0,
+    "simulatorConfigurationSha256": "5a44b07b436f3dec69dff69806275e008b45632e39c81da8326a6ae484538237",
+    "originalRulesSha256": "031b3bb6d42a709462b38d0294b90d3ec814099ecb8e112768c10d3caec1497c",
+    "simulationRulesSha256": "52cf645e028513521438afa0dd0891cb8eeb48c1fba46a891aa29b41fdbfa6ac",
+    "adaptations": [
+      [
+        "Require all denied\n",
+        ""
+      ],
+      [
+        "RewriteCond %{HTTPS} !=on\nRewriteRule ^ https://gridsmith.uk%{REQUEST_URI} [R=308,L,NE]\n",
+        ""
+      ],
+      [
+        "!^gridsmith\\.uk$",
+        "!^127\\.0\\.0\\.1:3354$"
+      ],
+      [
+        "https://gridsmith.uk",
+        "http://127.0.0.1:3354"
+      ]
+    ],
+    "originalArtifactIdentity": "15f3ac8766adb3c8e5bfd53d2f290bdd144b5161b0fcc696a0cdfe6d5cf9e421"
+  },
+  "checks": {
+    "staticSelftest": "PASS; 13 new named adverse proofs, path and content branches separated",
+    "verifyStatic": "PASS",
+    "staticBuild": {
+      "result": "PASS_NONDEPLOYABLE_REHEARSAL",
+      "routes": 54,
+      "files": 201,
+      "bytes": 29015778,
+      "sourceSha": "6cce73bfd0f1a6fc42a449bbb7306fe2fd5848a5",
+      "sourceModified": true,
+      "artifactIdentity": "15f3ac8766adb3c8e5bfd53d2f290bdd144b5161b0fcc696a0cdfe6d5cf9e421",
+      "deployable": false,
+      "operatorInstalled": false,
+      "rawArtifactFindings": [
+        "LEGAL: production requires all seven PUBLISHABLE legal documents",
+        "REHEARSAL: rehearsal artifact is not deployable"
+      ]
+    },
+    "http": {
+      "result": "PASS_LOCAL_SIMULATION_ONLY",
+      "cases": 288,
+      "normalFiles": 200,
+      "routes": 54,
+      "adverse": [
+        {
+          "label": "unmapped-502",
+          "path": "/induced-502",
+          "method": "GET",
+          "status": 502,
+          "headers": {
+            "date": "Fri, 23 Oct 2026 16:44:24 GMT",
+            "server": "Apache",
+            "content-length": "272",
+            "keep-alive": "timeout=5, max=100",
+            "connection": "Keep-Alive",
+            "content-type": "text/html; charset=iso-8859-1"
+          },
+          "bytes": 272,
+          "sha256": "e8d62af144267cd52a34c10b3d58629946494f3f1888e2a65e6c5ba8693838cd"
+        },
+        {
+          "label": "unmapped-503",
+          "path": "/induced-503",
+          "method": "GET",
+          "status": 503,
+          "headers": {
+            "date": "Fri, 23 Oct 2026 16:44:24 GMT",
+            "server": "Apache",
+            "content-length": "339",
+            "connection": "close",
+            "content-type": "text/html; charset=iso-8859-1"
+          },
+          "bytes": 339,
+          "sha256": "f8d456abd6ec87245aee4c1e61deeb1413e34890d0c835867e8626afaf0f48c1"
+        },
+        {
+          "label": "unmapped-504",
+          "path": "/induced-504",
+          "method": "GET",
+          "status": 504,
+          "headers": {
+            "date": "Fri, 23 Oct 2026 16:44:24 GMT",
+            "server": "Apache",
+            "content-length": "287",
+            "keep-alive": "timeout=5, max=100",
+            "connection": "Keep-Alive",
+            "content-type": "text/html; charset=iso-8859-1"
+          },
+          "bytes": 287,
+          "sha256": "984e9d85c69de197d8f72f011c4131f9ce67e19ce34ded03bf17decffa300fbd"
+        },
+        {
+          "label": "rehearsal-still-denied",
+          "path": "/",
+          "method": "GET",
+          "status": 403,
+          "headers": {
+            "date": "Fri, 23 Oct 2026 16:44:24 GMT",
+            "server": "Apache",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "DENY",
+            "referrer-policy": "strict-origin-when-cross-origin",
+            "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+            "strict-transport-security": "max-age=31536000",
+            "content-security-policy": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' https://qfgpwumvvtizeamkynes.supabase.co; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'",
+            "x-gridsmith-sanity-dataset": "production",
+            "cache-control": "no-cache",
+            "content-length": "239",
+            "keep-alive": "timeout=5, max=100",
+            "connection": "Keep-Alive",
+            "content-type": "text/html; charset=iso-8859-1"
+          },
+          "bytes": 239,
+          "sha256": "ab768623070128ccef048c88def86155dbe776c3d8db423cc8fa89432673d8a8"
+        },
+        {
+          "label": "colocated-working",
+          "path": "/induced-500",
+          "method": "GET",
+          "status": 500,
+          "headers": {
+            "date": "Fri, 23 Oct 2026 16:44:25 GMT",
+            "server": "Apache",
+            "last-modified": "Fri, 23 Oct 2026 16:25:27 GMT",
+            "etag": "\"243-65e846d8e4bc0\"",
+            "accept-ranges": "bytes",
+            "content-length": "579",
+            "connection": "close",
+            "content-type": "text/html"
+          },
+          "bytes": 579,
+          "sha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+        },
+        {
+          "label": "independent-broken-root",
+          "path": "/about",
+          "method": "GET",
+          "status": 500,
+          "headers": {
+            "date": "Fri, 23 Oct 2026 16:44:26 GMT",
+            "server": "Apache",
+            "cache-control": "no-store, max-age=0",
+            "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "DENY",
+            "referrer-policy": "no-referrer",
+            "x-robots-tag": "noindex, nofollow, noarchive",
+            "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+            "strict-transport-security": "max-age=31536000",
+            "last-modified": "Fri, 23 Oct 2026 16:41:24 GMT",
+            "etag": "\"243-65e84a6a11e1e\"",
+            "accept-ranges": "bytes",
+            "content-length": "579",
+            "connection": "close",
+            "content-type": "text/html"
+          },
+          "bytes": 579,
+          "sha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+        },
+        {
+          "label": "colocated-broken-root",
+          "path": "/induced-500",
+          "method": "GET",
+          "status": 500,
+          "headers": {
+            "date": "Fri, 23 Oct 2026 16:44:26 GMT",
+            "server": "Apache",
+            "content-length": "571",
+            "connection": "close",
+            "content-type": "text/html; charset=iso-8859-1"
+          },
+          "bytes": 571,
+          "sha256": "ef5cc4926e43f52cd707499f3721eb8c134884bb8e254e83488ec91abc5c4944"
+        },
+        {
+          "label": "missing-independent-fallback",
+          "path": "/induced-500",
+          "method": "GET",
+          "status": 500,
+          "headers": {
+            "date": "Fri, 23 Oct 2026 16:44:26 GMT",
+            "server": "Apache",
+            "content-length": "702",
+            "connection": "close",
+            "content-type": "text/html; charset=iso-8859-1"
+          },
+          "bytes": 702,
+          "sha256": "f2f4018aad266779b5bce0b9f0b2ccf52dd483635a00d97471ede15bd804487c"
+        },
+        {
+          "label": "unreadable-independent-fallback",
+          "path": "/induced-500",
+          "method": "GET",
+          "status": 500,
+          "headers": {
+            "date": "Fri, 23 Oct 2026 16:44:26 GMT",
+            "server": "Apache",
+            "content-length": "702",
+            "connection": "close",
+            "content-type": "text/html; charset=iso-8859-1"
+          },
+          "bytes": 702,
+          "sha256": "f2f4018aad266779b5bce0b9f0b2ccf52dd483635a00d97471ede15bd804487c"
+        },
+        {
+          "label": "restored-500",
+          "path": "/induced-500",
+          "method": "GET",
+          "status": 500,
+          "headers": {
+            "date": "Fri, 23 Oct 2026 16:44:28 GMT",
+            "server": "Apache",
+            "cache-control": "no-store, max-age=0",
+            "content-security-policy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "DENY",
+            "referrer-policy": "no-referrer",
+            "x-robots-tag": "noindex, nofollow, noarchive",
+            "permissions-policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()",
+            "strict-transport-security": "max-age=31536000",
+            "last-modified": "Fri, 23 Oct 2026 16:44:26 GMT",
+            "etag": "\"243-65e84b1811d05\"",
+            "accept-ranges": "bytes",
+            "content-length": "579",
+            "connection": "close",
+            "content-type": "text/html"
+          },
+          "bytes": 579,
+          "sha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+        }
+      ]
+    },
+    "browser": [
+      {
+        "width": 320,
+        "javascript": false,
+        "reducedMotion": true,
+        "dom": {
+          "lang": "en-GB",
+          "title": "Page unavailable — Gridsmith Ltd",
+          "h1": 1,
+          "main": 1,
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "focus": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "axeViolations": 0,
+        "axeIncompletes": 0,
+        "missingLanguageAdverse": true,
+        "keyboardRecovery": true,
+        "errorCookies": 0,
+        "analyticsRequests": 0,
+        "reviewsPresent": false
+      },
+      {
+        "width": 320,
+        "javascript": true,
+        "reducedMotion": true,
+        "dom": {
+          "lang": "en-GB",
+          "title": "Page unavailable — Gridsmith Ltd",
+          "h1": 1,
+          "main": 1,
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "focus": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "axeViolations": 0,
+        "axeIncompletes": 0,
+        "missingLanguageAdverse": true,
+        "keyboardRecovery": true,
+        "errorCookies": 0,
+        "analyticsRequests": 0,
+        "reviewsPresent": false
+      },
+      {
+        "width": 375,
+        "javascript": false,
+        "reducedMotion": true,
+        "dom": {
+          "lang": "en-GB",
+          "title": "Page unavailable — Gridsmith Ltd",
+          "h1": 1,
+          "main": 1,
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "focus": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "axeViolations": 0,
+        "axeIncompletes": 0,
+        "missingLanguageAdverse": true,
+        "keyboardRecovery": true,
+        "errorCookies": 0,
+        "analyticsRequests": 0,
+        "reviewsPresent": false
+      },
+      {
+        "width": 375,
+        "javascript": true,
+        "reducedMotion": true,
+        "dom": {
+          "lang": "en-GB",
+          "title": "Page unavailable — Gridsmith Ltd",
+          "h1": 1,
+          "main": 1,
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "focus": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "axeViolations": 0,
+        "axeIncompletes": 0,
+        "missingLanguageAdverse": true,
+        "keyboardRecovery": true,
+        "errorCookies": 0,
+        "analyticsRequests": 0,
+        "reviewsPresent": false
+      },
+      {
+        "width": 768,
+        "javascript": false,
+        "reducedMotion": true,
+        "dom": {
+          "lang": "en-GB",
+          "title": "Page unavailable — Gridsmith Ltd",
+          "h1": 1,
+          "main": 1,
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "focus": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "axeViolations": 0,
+        "axeIncompletes": 0,
+        "missingLanguageAdverse": true,
+        "keyboardRecovery": true,
+        "errorCookies": 0,
+        "analyticsRequests": 0,
+        "reviewsPresent": false
+      },
+      {
+        "width": 768,
+        "javascript": true,
+        "reducedMotion": true,
+        "dom": {
+          "lang": "en-GB",
+          "title": "Page unavailable — Gridsmith Ltd",
+          "h1": 1,
+          "main": 1,
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "focus": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "axeViolations": 0,
+        "axeIncompletes": 0,
+        "missingLanguageAdverse": true,
+        "keyboardRecovery": true,
+        "errorCookies": 0,
+        "analyticsRequests": 0,
+        "reviewsPresent": false
+      },
+      {
+        "width": 1440,
+        "javascript": false,
+        "reducedMotion": true,
+        "dom": {
+          "lang": "en-GB",
+          "title": "Page unavailable — Gridsmith Ltd",
+          "h1": 1,
+          "main": 1,
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "focus": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "axeViolations": 0,
+        "axeIncompletes": 0,
+        "missingLanguageAdverse": true,
+        "keyboardRecovery": true,
+        "errorCookies": 0,
+        "analyticsRequests": 0,
+        "reviewsPresent": false
+      },
+      {
+        "width": 1440,
+        "javascript": true,
+        "reducedMotion": true,
+        "dom": {
+          "lang": "en-GB",
+          "title": "Page unavailable — Gridsmith Ltd",
+          "h1": 1,
+          "main": 1,
+          "text": "This page is temporarily unavailable\n\nPlease try again later or return to the homepage.\n\nIf you were sending an enquiry, delivery could not be confirmed. Keep a copy of your message.\n\nReturn to the Gridsmith homepage",
+          "overflow": false
+        },
+        "focus": {
+          "href": "/",
+          "visible": true,
+          "outline": "auto",
+          "outlineWidth": "1px"
+        },
+        "axeViolations": 0,
+        "axeIncompletes": 0,
+        "missingLanguageAdverse": true,
+        "keyboardRecovery": true,
+        "errorCookies": 0,
+        "analyticsRequests": 0,
+        "reviewsPresent": false
+      }
+    ],
+    "staticUi": {
+      "result": "PASS",
+      "pages": 13,
+      "noJs": 13,
+      "axeAnalyses": 13,
+      "violations": 0
+    },
+    "reviews": "PASS no artifact review payload; no homepage review markup in 8 browser cases",
+    "analytics": "PASS no analytics requests on 8 error/recovery cases; suppression source unchanged",
+    "originalArtifactPreserved": true,
+    "legal": {
+      "ownerAdopted": 7,
+      "publishable": 0,
+      "documents": [
+        {
+          "path": "docs/_legal/current/accessibility-statement.md",
+          "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb"
+        },
+        {
+          "path": "docs/_legal/current/client-terms-applicability.md",
+          "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87"
+        },
+        {
+          "path": "docs/_legal/current/client-terms-business.md",
+          "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6"
+        },
+        {
+          "path": "docs/_legal/current/client-terms-consumers.md",
+          "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e"
+        },
+        {
+          "path": "docs/_legal/current/cookie-policy.md",
+          "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960"
+        },
+        {
+          "path": "docs/_legal/current/privacy-policy.md",
+          "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7"
+        },
+        {
+          "path": "docs/_legal/current/website-terms.md",
+          "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a"
+        }
+      ],
+      "registerSha256": "4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e"
+    },
+    "primaryCheckout": {
+      "head": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+      "statusUnchanged": true,
+      "preexistingFilesCompared": 14,
+      "allHashesUnchanged": true
+    },
+    "protectedSourceUnchanged": [
+      "app",
+      "components",
+      "lib",
+      "styles",
+      "sanity",
+      "redirects",
+      ".github",
+      "package.json",
+      "package-lock.json",
+      "docs/_legal"
+    ],
+    "notRun": [
+      "Remote CI",
+      "Linux Lighthouse",
+      "Hostinger account/settings",
+      "Hosted origin/CDN/TLS acceptance",
+      "Human screen readers/physical devices",
+      "Fresh dependency audit",
+      "Live intake/worker or CMS/database operations"
+    ]
+  },
+  "independentReviews": [
+    {
+      "role": "spec-compliance",
+      "result": "NO_ACTIONABLE_FINDINGS",
+      "scope": "Read-only source/report/local raw proof. Final content/rules binding review found compressed decoded-metadata error; corrected and all archive/source hashes revalidated."
+    },
+    {
+      "role": "accessibility-audit",
+      "result": "NO_ACTIONABLE_FINDINGS",
+      "scope": "Read-only source/report/local raw proof. Final content/rules binding review found compressed decoded-metadata error; corrected and all archive/source hashes revalidated."
+    },
+    {
+      "role": "content-integrity",
+      "result": "NO_ACTIONABLE_FINDINGS",
+      "scope": "Read-only source/report/local raw proof. Final content/rules binding review found compressed decoded-metadata error; corrected and all archive/source hashes revalidated."
+    },
+    {
+      "role": "rules-compliance",
+      "result": "NO_ACTIONABLE_FINDINGS",
+      "scope": "Read-only source/report/local raw proof. Final content/rules binding review found compressed decoded-metadata error; corrected and all archive/source hashes revalidated."
+    },
+    {
+      "role": "design-conformance",
+      "result": "NO_ACTIONABLE_FINDINGS",
+      "scope": "Read-only source/report/local raw proof. Final content/rules binding review found compressed decoded-metadata error; corrected and all archive/source hashes revalidated."
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "ops/HOSTINGER-ERROR.md",
+      "sha256": "d82c7cc1e54c3a5ab9760e7d1f2a5c10a037ac654adcc395b8ce103716731c1a"
+    },
+    {
+      "path": "ops/hostinger-error/error.html",
+      "sha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+    },
+    {
+      "path": "ops/hostinger-error/identity.json",
+      "sha256": "825083389834f47fdb3e5367d441fca5a59ee638434cb17f196ed519b28fd106"
+    },
+    {
+      "path": "scripts/build-static.mjs",
+      "sha256": "2a4063fe2c90efc7873abdd26eea0715a51173f494a4fe6cb1acdf20875c17e0"
+    },
+    {
+      "path": "scripts/check-static-artifact.mjs",
+      "sha256": "ed5244826376c6e65e8430b3550ce0590e02ec00fe93dbb66d3d4c70b51d38c0"
+    },
+    {
+      "path": "scripts/check-static.selftest.mjs",
+      "sha256": "1e163a8aba9fa9917f4636d39b4f7c75c7d3fb7ad4bb3c95510a934962de12c7"
+    },
+    {
+      "path": "scripts/source-files.mjs",
+      "sha256": "f4e6dfeed7e5adecec4f56ea9fd5bea3c9b3f6abef7872bdf9655917b8bc4e90"
+    },
+    {
+      "path": "docs/_shared/gs-launch-005-proof/apache.conf",
+      "sha256": "5a44b07b436f3dec69dff69806275e008b45632e39c81da8326a6ae484538237"
+    },
+    {
+      "path": "docs/_shared/gs-launch-005-proof/setup.mjs",
+      "sha256": "5db432a0e9d7762bae527e1238a30fcc37aa435091a6efefc2b3c23a59ad4fd7"
+    },
+    {
+      "path": "docs/_shared/gs-launch-005-proof/verify.mjs",
+      "sha256": "ab6e6c9ef07355fd21be0fc69ac95e531e27eda45585447e91a24db793783302"
+    },
+    {
+      "path": "docs/_shared/gs-launch-005-proof/README.md",
+      "sha256": "79289fa5ad74fccc2171e1b2f50175d9d831e0b6a57d32963c87eaa485a51aa0"
+    },
+    {
+      "path": "docs/_shared/GS-LAUNCH-005.md",
+      "sha256": "d62404f22a3d52305cee921fb6206b6d396bb088cf44f7a5e8e9127f70d76cb3"
+    },
+    {
+      "path": "docs/_shared/05-HANDOVER.md",
+      "sha256": "6c556046a67219437a03575cce34390365d07205d573a0afaa27d6c111e6e863"
+    },
+    {
+      "path": "docs/_shared/PROJECT-STATUS.md",
+      "sha256": "34ab20cbb3040ebc3b99e03086a9f9a901e08cbe3fb471405b33a333e0e5b710"
+    },
+    {
+      "path": "docs/_shared/AI-HANDOFF.md",
+      "sha256": "b8ca4d3d5b000e779e2482dd270d71366e00989db062d85b5295caf9e59b4175"
+    },
+    {
+      "path": "docs/_shared/OWNER-ACTIONS.md",
+      "sha256": "9ab20c97bae3e69c3b2d73bb26cfbcf0ca940fb4d92e80af278c8fb1156ec134"
+    },
+    {
+      "path": "docs/master/PROJECT-TRACKER.md",
+      "sha256": "f8f21401387f89f5979dfe9c86f5bbafb46d5a343d9577a92ff05b2a8a8552d9"
+    }
+  ],
+  "protectedInputHashes": [
+    {
+      "path": "package.json",
+      "sha256": "c3887b334f93f77ef7a4ee66c1639d2c1395f676b4cff039adb10940c320f9c4"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "2849a09efab03621d8547e1564794b9bd0deaab139028796ffdae0d51a9eaa8c"
+    },
+    {
+      "path": "lib/build/hostinger.ts",
+      "sha256": "0baa8af8102a74bcd75f8247997cca7c13d117e3b78b2a2e4d11a4b9659b72c9"
+    },
+    {
+      "path": "app/global-error.tsx",
+      "sha256": "357090a5de249b3b881fe7f1c9bcefde8b8a1404c963cd521a3097f708fae211"
+    },
+    {
+      "path": "public/500.html",
+      "sha256": "e97a49245a82d7ad446ec11e312ba008d61f6916c0b4c25761264ce0093222a4"
+    },
+    {
+      "path": "docs/_legal/evidence/GS-O003-R-REGISTER.json",
+      "sha256": "4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e"
+    }
+  ],
+  "portableEvidence": [
+    {
+      "path": "gs-launch-005-proof/evidence/axe-1440-false.json.gz",
+      "bytes": 12195,
+      "sha256": "c45ce6dfdbf7dbf1c5f09ee0079067e6af0764552cd4cb88dff16f6c76ea1719",
+      "decodedBytes": 87430,
+      "decodedSha256": "a74211293fbfd56a76916895ae64693f56a812bd6c2b1ebc8f7bf60b556b417f"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/axe-1440-true.json.gz",
+      "bytes": 12195,
+      "sha256": "4c8d2422aa4bfdda7c7b5351e62f0665228c6afd9cfd742d5c803da986b1a72c",
+      "decodedBytes": 87430,
+      "decodedSha256": "3b67d333db28421e2b638ebd35a80fe5e04fadbb308e18abfc69dbdad1a54bc9"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/axe-320-false.json.gz",
+      "bytes": 12194,
+      "sha256": "cc3c5c092f65edaa7c3ec5aa13373f05f1504ab19a9971016349512f40e021ba",
+      "decodedBytes": 87428,
+      "decodedSha256": "4e85941d4439e0622cd1c0f599c8c45a0113e003c4bc2a0cbf6685f7fa359dba"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/axe-320-true.json.gz",
+      "bytes": 12194,
+      "sha256": "ac865ab9767a90771fad1f0b53fc7193216bfee5e4fe5f58110133f84a589b58",
+      "decodedBytes": 87428,
+      "decodedSha256": "6aeee6e552989b4c5cdf84c86ea925cf5aa39fb048d41dff7848d37729122b91"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/axe-375-false.json.gz",
+      "bytes": 12195,
+      "sha256": "e9fad3b690cd42be801153e44df90c0caa15cf82b13803bcb1d3f56cd3ef7d05",
+      "decodedBytes": 87428,
+      "decodedSha256": "81080b4284035832c37c604b118e67034c9902fecc9ca0d3fc8b0e0a38598978"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/axe-375-true.json.gz",
+      "bytes": 12195,
+      "sha256": "962e84f887da4bfed856fc85bbc8502f94c9c2595c03a00b462fe3bcbabaa243",
+      "decodedBytes": 87428,
+      "decodedSha256": "070478a4716aacf9b7cd88ef27ca9998c346b2a69dedd44a6a87e5af39bd8393"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/axe-768-false.json.gz",
+      "bytes": 12195,
+      "sha256": "561d80e988caadd447a8cefa896ab21d90f7d6ebf6ac61d2a2b92a8f7da3bc53",
+      "decodedBytes": 87428,
+      "decodedSha256": "3b550cf7906b99cf508f0f2db469bc95ef784394049cb0808669b180360cf701"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/axe-768-true.json.gz",
+      "bytes": 12195,
+      "sha256": "28207db233e5f204432aa7b8a0cd31b1deef55d40f81a29683cebf4cdc9d533c",
+      "decodedBytes": 87428,
+      "decodedSha256": "3c6483a6caa2d53bb565f21f65bd86d4134975b9ad42f32a6cd7749b127a99f5"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/colocated-broken-root.html.gz",
+      "bytes": 366,
+      "sha256": "1701d515cc869ef4c4aa6ef19149902ccd5967cc28b38c82c167840518b1a776",
+      "decodedBytes": 571,
+      "decodedSha256": "ef5cc4926e43f52cd707499f3721eb8c134884bb8e254e83488ec91abc5c4944"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/colocated-working.html.gz",
+      "bytes": 363,
+      "sha256": "12363b72e6ee0546894bac8e232647eb8ebcf2078f69d0fbe80006c60a46a393",
+      "decodedBytes": 579,
+      "decodedSha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/head-500.html.gz",
+      "bytes": 20,
+      "sha256": "9e72928e7a01615b4cf090daa617b4ca9d68531748f887f323f695eb4ca3ef63",
+      "decodedBytes": 0,
+      "decodedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/independent-broken-root.html.gz",
+      "bytes": 363,
+      "sha256": "12363b72e6ee0546894bac8e232647eb8ebcf2078f69d0fbe80006c60a46a393",
+      "decodedBytes": 579,
+      "decodedSha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/missing-independent-fallback.html.gz",
+      "bytes": 418,
+      "sha256": "5d7cb86233e393a17f86ce16697c3256708ad9e8f781f4a822e6a01abcfeb2b2",
+      "decodedBytes": 702,
+      "decodedSha256": "f2f4018aad266779b5bce0b9f0b2ccf52dd483635a00d97471ede15bd804487c"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/post-no-replay.html.gz",
+      "bytes": 363,
+      "sha256": "12363b72e6ee0546894bac8e232647eb8ebcf2078f69d0fbe80006c60a46a393",
+      "decodedBytes": 579,
+      "decodedSha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/restored-500.html.gz",
+      "bytes": 363,
+      "sha256": "12363b72e6ee0546894bac8e232647eb8ebcf2078f69d0fbe80006c60a46a393",
+      "decodedBytes": 579,
+      "decodedSha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/static-500.html.gz",
+      "bytes": 363,
+      "sha256": "12363b72e6ee0546894bac8e232647eb8ebcf2078f69d0fbe80006c60a46a393",
+      "decodedBytes": 579,
+      "decodedSha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/unmapped-502.html.gz",
+      "bytes": 227,
+      "sha256": "aa1c9f7b6213889a46f2866bad4bd8a117ab2964f49ba8bd80ba02e8e8fca31b",
+      "decodedBytes": 272,
+      "decodedSha256": "e8d62af144267cd52a34c10b3d58629946494f3f1888e2a65e6c5ba8693838cd"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/unmapped-503.html.gz",
+      "bytes": 261,
+      "sha256": "83984fbe43724d8b97d6a9bb68ce06661d6149144f7dbc7912984d23d39606a4",
+      "decodedBytes": 339,
+      "decodedSha256": "f8d456abd6ec87245aee4c1e61deeb1413e34890d0c835867e8626afaf0f48c1"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/unmapped-504.html.gz",
+      "bytes": 232,
+      "sha256": "81e556ff3894a46a4e4bb59b3e94b794873915ebfe86996cf584e41957276a8c",
+      "decodedBytes": 287,
+      "decodedSha256": "984e9d85c69de197d8f72f011c4131f9ce67e19ce34ded03bf17decffa300fbd"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/unreadable-independent-fallback.html.gz",
+      "bytes": 418,
+      "sha256": "5d7cb86233e393a17f86ce16697c3256708ad9e8f781f4a822e6a01abcfeb2b2",
+      "decodedBytes": 702,
+      "decodedSha256": "f2f4018aad266779b5bce0b9f0b2ccf52dd483635a00d97471ede15bd804487c"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/simulation.json.gz",
+      "bytes": 24536,
+      "sha256": "eef2dc9ff0e6b32a3df3faef6f11fedd2638860aa1d7c4c2b0335b18aeab87ff",
+      "decodedBytes": 420515,
+      "decodedSha256": "7806e897bc154a0062ecab248ae61e7c3d5628300352702c2833ec6d485fd50e"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/setup.json.gz",
+      "bytes": 488,
+      "sha256": "98619a75e5f51d8ad07acd689b95ac1d6db05fe96db0c23d1699752265c4c014",
+      "decodedBytes": 794,
+      "decodedSha256": "751f911f9abd99bb33a4c2483e4b399e505dd646428ea7c01be0385a5dbc9793"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/selftest.log.gz",
+      "bytes": 644,
+      "sha256": "ab3c1066d558639de23376b33188e9359c8ddb2e2ce3e9ba6c3f927207eb9a45",
+      "decodedBytes": 1496,
+      "decodedSha256": "784ad1b7b59e03479a8eb48ff7d5898eb7b8182556d63cf3b8d963eab7307cc3"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/legal.log.gz",
+      "bytes": 172,
+      "sha256": "250033131d2cb36dc5af07f1a8277fbbcbdbb6fd2bfdad740c90feea0d382005",
+      "decodedBytes": 293,
+      "decodedSha256": "4ec713607ae2701416392bdced3218d4a0dfaa9b1351806befeb77df1f8ed0fb"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/build.log.gz",
+      "bytes": 1549,
+      "sha256": "3442051c55fa9933b18f95ee72fdccf91a344d79e2d678d3921b468b30b180d3",
+      "decodedBytes": 4632,
+      "decodedSha256": "e339568fd18d479851111978dbc890b41cea01ed49a75d21db4a111f51c23516"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/verify-static.log.gz",
+      "bytes": 12500,
+      "sha256": "e8d2fa9d813d27440cc6069e5d0a3920b777f2f08e9dee0809fd4986b0ca11d3",
+      "decodedBytes": 42618,
+      "decodedSha256": "be906521cab0012e92bba93b5a500398727b0bf68a020b4da5ba9e94a0cf973a"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/static-ui.log.gz",
+      "bytes": 176,
+      "sha256": "8a4c7d9759500635a2748cca97402c572a4bc682609634c369c1b8573c8297c5",
+      "decodedBytes": 203,
+      "decodedSha256": "6f422e43d5f07ec4fc7cdd87581adc068e597a1ff76aeb05435929b46698b8be"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/simulation.log.gz",
+      "bytes": 109,
+      "sha256": "35ed8094973a32b6a180a0da8c42f12267196c89fb4142a4408f80f00de903a8",
+      "decodedBytes": 93,
+      "decodedSha256": "f0749acc4f326d88e22e1018126ff7f983746c530334d3c4001999d8f183e211"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/apache-install.log.gz",
+      "bytes": 1295,
+      "sha256": "2ec0c4e65d34d75cee3328b4f1d764e07cc472318becafe95b82267b684e45c4",
+      "decodedBytes": 5545,
+      "decodedSha256": "166981820478bbba8bdc84ac0a65ef23e7367adc0355db2b058b50199b1525aa"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/simulation.htaccess.gz",
+      "bytes": 1191,
+      "sha256": "7e631c54328bbbfca9480bf26b45e283b1976ce968b4c97dc89fbf179e06c9c1",
+      "decodedBytes": 2448,
+      "decodedSha256": "52cf645e028513521438afa0dd0891cb8eeb48c1fba46a891aa29b41fdbfa6ac"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/colocated.htaccess.gz",
+      "bytes": 97,
+      "sha256": "b1dca097956d453ff6927a07c539af98c48b8db767a52d8bbfe5395bf80ba9e3",
+      "decodedBytes": 83,
+      "decodedSha256": "0ac642df4f7c17c61d1c7437752d9f08d3ecc4ac376a9f6f952d0bf7e3abb45f"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/build-next-15.5.27-not-acceptance.log.gz",
+      "bytes": 1545,
+      "sha256": "3a6a06556f263b6bbee77d1cd97233e36ee79866ae7b4875c9592b6c7d0e784b",
+      "decodedBytes": 4632,
+      "decodedSha256": "9583a1c0e99caf18269eb706e1203658560ffdfcc429ae9334af4240e830b10f"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/simulation-missing-module.json.gz",
+      "bytes": 1372,
+      "sha256": "2bf5edf275b687dcf5737f06e4921793a2009c677b7d7f3282b165b69e2915ec",
+      "decodedBytes": 5725,
+      "decodedSha256": "70622a49d2d16348e3b6002d7f8440d122aadeb301265d6b804d4b74725b50c6"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/simulation-missing-module.log.gz",
+      "bytes": 394,
+      "sha256": "23bddc8a1536bab4a0f4518c1f32265574b90d06835f29ca09f3c9e336344a79",
+      "decodedBytes": 659,
+      "decodedSha256": "42f37332f723a4515c7eb3d04c7b00f30ddbc821bdcb1746ba1ef73bb548dd88"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/simulation-options-denied.json.gz",
+      "bytes": 1372,
+      "sha256": "8fe8675c591f1a0bdce711938dd7954370cf3bd84962823ada8b6da73afe327f",
+      "decodedBytes": 5725,
+      "decodedSha256": "327ca6ac194daa37aab23a2defcd752ab0671efb081a5383e8cea111d341d00e"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/simulation-options-denied.log.gz",
+      "bytes": 394,
+      "sha256": "23bddc8a1536bab4a0f4518c1f32265574b90d06835f29ca09f3c9e336344a79",
+      "decodedBytes": 659,
+      "decodedSha256": "42f37332f723a4515c7eb3d04c7b00f30ddbc821bdcb1746ba1ef73bb548dd88"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/simulation-fetch-host.json.gz",
+      "bytes": 22574,
+      "sha256": "622bbec59bd331fb9ea262009e4208ea36069e60924f1aae2648a7fac11f8f8c",
+      "decodedBytes": 404294,
+      "decodedSha256": "f86191cd8b5d6588e0ad13bbe7050fc15676edb525ebd693bfd6f15c12e79d10"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/simulation-fetch-host.log.gz",
+      "bytes": 389,
+      "sha256": "de18c7a9b07ab865a4ca68fbe58b36eaf55f75a34f63594cd006959f27f42863",
+      "decodedBytes": 647,
+      "decodedSha256": "da02aba4fa338deb039c8c6e8c07f9a4549c64ae4c72308702a067955407b05e"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/verify-static-unclassified-ops.log.gz",
+      "bytes": 663,
+      "sha256": "b8cab8f8fa96f0e5203f0ff3c847531918b319944ce1ba0e92cc236b8e977cad",
+      "decodedBytes": 1971,
+      "decodedSha256": "3a11267f987d5f1249fe2e09364fd674c885c71ef1ee3dd9f337650b3a46971e"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/production-rehearsal-receipt.json.gz",
+      "bytes": 14150,
+      "sha256": "5430b93d3700e1e6b879a10f332b7b295ee9902075a4bc6f747d5682fe3f254d",
+      "decodedBytes": 64601,
+      "decodedSha256": "8ab931504d562f5685fa32065246eb687abd902c45d47dd15e62baaa0e97e18a"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/static-route-manifest.json.gz",
+      "bytes": 1771,
+      "sha256": "a53986980ccf59506ab5003f77fe365b3f93d71ae4ac66689bc8ddd272ebc557",
+      "decodedBytes": 22531,
+      "decodedSha256": "946398fef102d404b89b10d2675eb71f7276dd4cdc3c1149e819e1483630b8c4"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/static-ui-receipt.json.gz",
+      "bytes": 1513,
+      "sha256": "bc0b9359a74a63fb246fa18e3bc0dd70f1f0e58d7d1cd530dfcaca75aec266b4",
+      "decodedBytes": 12101,
+      "decodedSha256": "7e21cf9e03c13a8749a8196f29d075e207ec65bd856e3eaa11af77d0035a5100"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/static-axe-results.json.gz",
+      "bytes": 311444,
+      "sha256": "6dfcf219fba65c4512a0d731e419ffdcd200fedff3be3f11f84d0fcf6c336a14",
+      "decodedBytes": 6029095,
+      "decodedSha256": "2d61f90674e2b2fbda113eab6e1970a0a6edda5784e85aece5d121e74f285fbc"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/error-no-js.png",
+      "bytes": 17529,
+      "sha256": "bb8d4fc9b28726c796b52c54cd4edf7168b0c8b97c3006230c7cf0b57b8333a6",
+      "decodedBytes": 17529,
+      "decodedSha256": "bb8d4fc9b28726c796b52c54cd4edf7168b0c8b97c3006230c7cf0b57b8333a6"
+    },
+    {
+      "path": "gs-launch-005-proof/evidence/apache-error.log.gz",
+      "bytes": 838,
+      "sha256": "83059df3f03152001eec2367ba788f27023ef7cdea763593c91a2766c98690d3",
+      "decodedBytes": 4196,
+      "decodedSha256": "13eb208857e41dcb8f64d2f7e08298344c1c468887b0b6c3f1a0bd3530f74968"
+    }
+  ],
+  "restrictions": {
+    "pushes": 0,
+    "remoteCiDispatches": 0,
+    "deployments": 0,
+    "hostedWrites": 0,
+    "dnsWordpressEmailChanges": 0,
+    "productionDataWrites": 0,
+    "legalPublications": 0,
+    "analyticsReviewActivations": 0
+  },
+  "cleanup": {
+    "taskContainerRemoved": true,
+    "containerId": "92e5aec39bbead30baf3e91292a9039ba51db4cb199d8b811c19abd7309998ee",
+    "labelVerified": true
+  },
+  "nextSingleTask": "GS-LAUNCH-006: separately authorised Hostinger capability evidence collection; no installation/fault/publication authority",
+  "evidenceCorrections": {
+    "compressedMetadata": "Final binding review found 20 precompressed entries incorrectly labelled decoded byte/hash; decoded metadata recalculated using gunzip for every gzip entry. Archived bytes intact.",
+    "brokenRootPredicate": "Final proof requests initially healthy /about while root .htaccess is invalid, avoiding interception by induced-error server rewrite; final 288/8 run PASS."
+  }
+}

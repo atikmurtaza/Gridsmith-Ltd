@@ -1,0 +1,344 @@
+{
+  "task": "GS-LAUNCH-001",
+  "date": "2026-10-22",
+  "consolidationCommit": "a720b567085872785128ffd65bbabdc4a755f7d2",
+  "scope": "Read-only launch audit after local consolidation commit;provider changes0",
+  "httpDns": {
+    "task": "GS-LAUNCH-001",
+    "scope": "Read-only public HTTP and DNS;no browser JS/form/cookie consent;no DNS mutation",
+    "results": [
+      {
+        "url": "https://gridsmith.uk/",
+        "status": 200,
+        "finalUrl": "https://gridsmith.uk/",
+        "server": "hcdn",
+        "setCookieCount": 0,
+        "xRobots": null,
+        "hsts": false,
+        "csp": true,
+        "wordpress": true,
+        "identity": null
+      },
+      {
+        "url": "https://mediumaquamarine-wallaby-594070.hostingersite.com/",
+        "status": 200,
+        "finalUrl": "https://mediumaquamarine-wallaby-594070.hostingersite.com/",
+        "server": "hcdn",
+        "setCookieCount": 0,
+        "xRobots": "noindex, nofollow, noarchive",
+        "hsts": true,
+        "csp": true,
+        "wordpress": false,
+        "identity": null
+      },
+      {
+        "url": "https://mediumaquamarine-wallaby-594070.hostingersite.com/__deployment.json",
+        "status": 200,
+        "finalUrl": "https://mediumaquamarine-wallaby-594070.hostingersite.com/__deployment.json",
+        "server": "hcdn",
+        "setCookieCount": 0,
+        "xRobots": "noindex, nofollow, noarchive",
+        "hsts": true,
+        "csp": true,
+        "wordpress": false,
+        "identity": {
+          "sourceSha": "e545c1a2b5afd1431bef581044cec2bec4da252a",
+          "sourceModified": false,
+          "siteOrigin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+          "dataset": "production",
+          "legalPreview": false,
+          "artifactIdentity": "59ec5ae74f7074cc16c2eecb6c6008c705179fd2e7f1be50ba960c04aa4cfbe9"
+        }
+      }
+    ],
+    "temporaryLegalHeads": [
+      {
+        "slug": "privacy",
+        "status": 404,
+        "setCookieCount": 0
+      },
+      {
+        "slug": "cookies",
+        "status": 404,
+        "setCookieCount": 0
+      },
+      {
+        "slug": "terms",
+        "status": 404,
+        "setCookieCount": 0
+      },
+      {
+        "slug": "client-terms",
+        "status": 404,
+        "setCookieCount": 0
+      },
+      {
+        "slug": "business-client-terms",
+        "status": 404,
+        "setCookieCount": 0
+      },
+      {
+        "slug": "consumer-client-terms",
+        "status": 404,
+        "setCookieCount": 0
+      },
+      {
+        "slug": "accessibility",
+        "status": 404,
+        "setCookieCount": 0
+      }
+    ],
+    "dns": [
+      {
+        "type": "A",
+        "records": [
+          "89.116.109.153",
+          "91.108.103.176"
+        ]
+      },
+      {
+        "type": "www CNAME",
+        "records": [
+          "www.gridsmith.uk.cdn.hstgr.net"
+        ]
+      },
+      {
+        "type": "MX",
+        "records": [
+          {
+            "exchange": "mx1.hostinger.com",
+            "priority": 5,
+            "type": "MX"
+          },
+          {
+            "exchange": "mx2.hostinger.com",
+            "priority": 10,
+            "type": "MX"
+          }
+        ]
+      }
+    ],
+    "hostedContent": {
+      "status": 200,
+      "reviewCards": 11,
+      "reviewCarousel": true,
+      "analyticsScriptTags": 0,
+      "limitation": "HTTP body only;no JS execution,consent interaction,provider receipts or live configuration proof"
+    }
+  },
+  "supabase": {
+    "projects": [
+      {
+        "id": "dqiutgmxillhsbzgnlsx",
+        "status": "ACTIVE_HEALTHY",
+        "functions": [
+          {
+            "slug": "gs-lead-intake",
+            "version": 3,
+            "status": "ACTIVE",
+            "verify_jwt": false,
+            "bundleSha256": "afe010a25ca471b6f9248f0708cdeab6d3ace9217af0fa3f86e0a280e31f9529"
+          },
+          {
+            "slug": "gs-notification-worker",
+            "version": 3,
+            "status": "ACTIVE",
+            "verify_jwt": true,
+            "bundleSha256": "3054ba4bbfdc1495b540ff379fd515908fe352d2ecfc2ab37127f4c07aecf2c0"
+          }
+        ],
+        "customLedger": [
+          [
+            "0001_core.sql",
+            "39647b54ac55"
+          ],
+          [
+            "0002_view_security_invoker.sql",
+            "97012e3e15c4"
+          ],
+          [
+            "0003_press_path_results.sql",
+            "375b08ff1cab"
+          ],
+          [
+            "20260911203125_gs_p01_security_hardening.sql",
+            "bd761ff9b9e4"
+          ],
+          [
+            "20261004184828_gs_host_h4b_private_intake.sql",
+            "b807e3ed6d4f"
+          ]
+        ],
+        "leadCount": 0,
+        "outboxCount": 0,
+        "publicRoleTableGrants": 0,
+        "policies": 0
+      },
+      {
+        "id": "qfgpwumvvtizeamkynes",
+        "status": "ACTIVE_HEALTHY",
+        "functions": [
+          {
+            "slug": "gs-lead-intake",
+            "version": 8,
+            "status": "ACTIVE",
+            "verify_jwt": false,
+            "bundleSha256": "c332b0a86a702283ba72db8c24e430d38c681549ae3816f22a6c87e772fbeca1"
+          },
+          {
+            "slug": "gs-notification-worker",
+            "version": 6,
+            "status": "ACTIVE",
+            "verify_jwt": true,
+            "bundleSha256": "a68ce16edd25a05dcf9d6c75d84e98a9a553ac81f0e69a7af6c3a47a0ea86c5f"
+          },
+          {
+            "slug": "gs-consent-record",
+            "version": 1,
+            "status": "ACTIVE",
+            "verify_jwt": false,
+            "bundleSha256": "fd6d7a63f06f7c7ef7e522d4a6e8e65a2e038ff4564c2bfca72f724ec1662692"
+          }
+        ],
+        "customLedgerCount": 7,
+        "consentMigrations": [
+          [
+            "20261021180000_gs_r16_consent_evidence.sql",
+            "6e8d50ad1214"
+          ],
+          [
+            "20261021220334_gs_r16_consent_daily_retention.sql",
+            "e8d2d168c9c9"
+          ]
+        ],
+        "retentionJob": {
+          "name": "gs-consent-retention-daily",
+          "schedule": "17 3 * * *",
+          "active": true,
+          "historyRows": 1,
+          "lastSuccess": "2026-10-22T03:17:00.204455Z",
+          "failedRuns": 0
+        }
+      }
+    ],
+    "productionSecurityAdvisors": {
+      "result": {
+        "lints": [
+          {
+            "name": "rls_enabled_no_policy",
+            "title": "RLS Enabled No Policy",
+            "level": "INFO",
+            "facing": "EXTERNAL",
+            "categories": [
+              "SECURITY"
+            ],
+            "description": "Detects cases where row level security (RLS) has been enabled on a table but no RLS policies have been created.",
+            "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+            "count": 7,
+            "findings": [
+              {
+                "detail": "Table \\`gridsmith_private.intake_state\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "intake_state",
+                  "type": "table",
+                  "schema": "gridsmith_private"
+                },
+                "observed_at": "2026-10-22T12:54:24.967Z"
+              },
+              {
+                "detail": "Table \\`gridsmith_private.notification_outbox\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "notification_outbox",
+                  "type": "table",
+                  "schema": "gridsmith_private"
+                },
+                "observed_at": "2026-10-22T12:54:24.967Z"
+              },
+              {
+                "detail": "Table \\`public._gridsmith_migrations\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "_gridsmith_migrations",
+                  "type": "table",
+                  "schema": "public"
+                },
+                "observed_at": "2026-10-22T12:54:24.967Z"
+              },
+              {
+                "detail": "Table \\`public.events\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "events",
+                  "type": "table",
+                  "schema": "public"
+                },
+                "observed_at": "2026-10-22T12:54:24.967Z"
+              },
+              {
+                "detail": "Table \\`public.leads\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "leads",
+                  "type": "table",
+                  "schema": "public"
+                },
+                "observed_at": "2026-10-22T12:54:24.967Z"
+              },
+              {
+                "detail": "Table \\`public.press_path_results\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "press_path_results",
+                  "type": "table",
+                  "schema": "public"
+                },
+                "observed_at": "2026-10-22T12:54:24.967Z"
+              },
+              {
+                "detail": "Table \\`public.sample_grants\\` has RLS enabled, but no policies exist",
+                "metadata": {
+                  "name": "sample_grants",
+                  "type": "table",
+                  "schema": "public"
+                },
+                "observed_at": "2026-10-22T12:54:24.967Z"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "limits": "Metadata/aggregate reads only. No personal records, form submissions, provider/configuration writes, keys or Edge secret values. Edge mode/allowed origins/sender/drain not re-attested."
+  },
+  "dependencyAudit": {
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "full": {
+      "info": 0,
+      "low": 2,
+      "moderate": 7,
+      "high": 23,
+      "critical": 0,
+      "total": 32
+    },
+    "scope": "npm audit reads only;no install/fix/lockfile change"
+  },
+  "unverified": [
+    "Exact-consolidation-SHA Linux CI/Lighthouse",
+    "Production Edge secret mode/origins/sender and drain configuration",
+    "Current scheduled keepalive receipts",
+    "Final release-stack browser cookie/storage/HTTP acceptance",
+    "WordPress restore-proven backup/current DNS zone export",
+    "Production artifact publication channel and owner cutover acceptance",
+    "Agency/rights execution/client authorisations/international-transfer access clearance"
+  ],
+  "productionMutations": 0,
+  "deployments": 0,
+  "pushes": 0,
+  "dnsChanges": 0,
+  "wordPressChanges": 0,
+  "personalRecordsRead": 0,
+  "formPosts": 0
+}

@@ -1,0 +1,8 @@
+[functions.gs-lead-intake]
+# Explicitly public enquiry endpoint; strict validation/admission, no logged-in user required.
+verify_jwt = false
+import_map = "./functions/deno.json"
+
+[functions.gs-notification-worker]
+verify_jwt = true
+import_map = "./functions/deno.json"

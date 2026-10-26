@@ -1,0 +1,103 @@
+{
+  "input": "built HTML rendered offline; HTTP, deployment and assistive technology unverified",
+  "pages": [
+    {
+      "slug": "privacy",
+      "width": 1440,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 16,
+      "violations": 0
+    },
+    {
+      "slug": "cookies",
+      "width": 1440,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 6,
+      "violations": 0
+    },
+    {
+      "slug": "terms",
+      "width": 1440,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 14,
+      "violations": 0
+    },
+    {
+      "slug": "client-terms",
+      "width": 1440,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 3,
+      "violations": 0
+    },
+    {
+      "slug": "business-client-terms",
+      "width": 1440,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 30,
+      "violations": 0
+    },
+    {
+      "slug": "consumer-client-terms",
+      "width": 1440,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 32,
+      "violations": 0
+    },
+    {
+      "slug": "accessibility",
+      "width": 1440,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 8,
+      "violations": 0
+    },
+    {
+      "slug": "privacy",
+      "width": 390,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 16,
+      "violations": 0
+    },
+    {
+      "slug": "cookies",
+      "width": 390,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 6,
+      "violations": 0
+    },
+    {
+      "slug": "terms",
+      "width": 390,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 14,
+      "violations": 0
+    },
+    {
+      "slug": "client-terms",
+      "width": 390,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 3,
+      "violations": 0
+    },
+    {
+      "slug": "business-client-terms",
+      "width": 390,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 30,
+      "violations": 0
+    },
+    {
+      "slug": "consumer-client-terms",
+      "width": 390,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 32,
+      "violations": 0
+    },
+    {
+      "slug": "accessibility",
+      "width": 390,
+      "adoptionState": "OWNER_ADOPTED",
+      "clauses": 8,
+      "violations": 0
+    }
+  ]
+}

@@ -1,6 +1,11 @@
 /**
  * Freelancer review retrieval — `GS-P05`.
  *
+ * H4-C authority, 5 October 2026: the historical cache/outage explanation below is
+ * not current provider clearance or a bounded static LKG policy. Current User Agreement
+ * section 11 requires written off-platform feedback permission; the owner confirmed no
+ * written permission is held. H4-C automated carrier activation is blocked. H4-D-R1 separately authorises frozen anonymous staging presentation only. See docs/_shared/GS-HOST-H4-C.md.
+ *
  * Gridsmith's reviews come from Freelancer's **official documented API**, not from a
  * hand-maintained copy in the CMS and not from the HTML profile page.
  *
@@ -178,23 +183,16 @@ export function categorise(jobNames: readonly string[] | null | undefined) {
  * is the second limb: a review a human has read and decided must not be republished, for a
  * reason no rule reaches.
  *
- * **It is empty, and that is the correct state rather than an oversight.** It held `22108992`
- * and `22100632` — the two reviews `GS-P06` found by reading all twelve bodies. Both name
- * *Varnika Software PVT* / *Varnika Pvt*, and `NAMED_THIRD_PARTY` now withholds both **by
- * rule**. Keeping the ids here as well would leave two mechanisms over one subject, which is
- * how two gates come to disagree in silence and is the `A-GATE-4-3` hazard by another name: the
- * id branch would be unreachable for exactly the two reviews it was written for, and nobody
- * would find out until a third arrived.
- *
- * **An empty denylist is normally an inert assertion, and this one is not** — because
- * `withholdReason` takes the id as an argument and `check:reviews:selftest` drives the branch
- * by value with an id of its own. The branch is proven by a returned reason, not by the array
- * having members. `CLAUDE.md`: *prefer a probe whose validity is structural.*
+ * H4-C makes the owner's two exclusions permanent by stable identity. They remain withheld
+ * even if the provider changes their words or the deterministic text rule changes. The
+ * text rules are still exercised separately using synthetic, non-denied review IDs.
+ * The list is frozen, and an injected manual test list can add exclusions but cannot
+ * bypass these two. No real withheld quotation is needed by the permanent-ID specimens.
  *
  * Adding an id here withholds a review whole. **Editing a quotation is not available** and will
  * not be offered — a genuine review is published verbatim or not at all.
  */
-export const WITHHELD_REVIEW_IDS: readonly number[] = [];
+export const WITHHELD_REVIEW_IDS: readonly number[] = Object.freeze([22108992, 22100632]);
 
 /**
  * **A named business other than Gridsmith, anywhere in a review body — `GS-O015`.**
@@ -292,18 +290,12 @@ export function withholdReason(
   reviewerCompany?: string | null,
   id?: number,
   /**
-   * **The manual list, injectable — and injectable is what makes the branch provable.**
-   *
-   * `WITHHELD_REVIEW_IDS` is empty as of `GS-O015`, because the two ids it held are now caught
-   * by `namedThirdParty`. An empty denylist normally means an inert assertion: there is no
-   * member to drive the branch with, so a green says nothing about whether the branch works.
-   * Passing the list in lets `check:reviews:selftest` supply one by value and read the returned
-   * reason, which is the structural probe `CLAUDE.md` asks for. Production behaviour is
-   * unchanged — the default IS the constant, and no caller passes anything else.
+   * Additional manual exclusions, injectable for structural proofs. Permanent exclusions
+   * are checked independently, so supplying an empty test list cannot re-enable them.
    */
   withheldIds: readonly number[] = WITHHELD_REVIEW_IDS,
 ) {
-  if (typeof id === 'number' && withheldIds.includes(id)) {
+  if (typeof id === 'number' && (WITHHELD_REVIEW_IDS.includes(id) || withheldIds.includes(id))) {
     return 'a person read this review and withheld it (GS-O015, manual)';
   }
   if (typeof body !== 'string' || body.trim().length === 0) return 'the body is empty';

@@ -1,8 +1,9 @@
 node_modules/
 .next/
 .sanity/
-out/
-build/
+/out/
+/build/
+/supabase/.temp/
 
 .env
 .env.*

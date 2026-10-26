@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { RootShell } from '@/components/chrome/RootShell';
+import { studio } from '@/components/chrome/nav';
 import { inter } from '@/styles/fonts/inter';
 import { jetbrainsMono } from '@/styles/fonts/jetbrains-mono';
-import { INDEXABLE, SITE_ORIGIN } from '@/lib/seo/site';
+import { INDEXABLE, SITE_ICONS, SITE_ORIGIN } from '@/lib/seo/site';
 import '@/styles/globals.css';
 
 /**
@@ -36,10 +37,14 @@ import '@/styles/globals.css';
  * honestly has today. The type is `website` and the division is named as a trading division in
  * the description, because a link shared from `/press` must not read as a separate company.
  */
+/** The studio summary from its one source (`nav.ts`); the statutory clause is this layout's own. */
+const DESCRIPTION = `${studio('digital').summary} Gridsmith Digital is a trading division of Gridsmith Ltd.`;
+
 export const metadata: Metadata = {
   metadataBase: SITE_ORIGIN,
+  ...SITE_ICONS,
   title: 'Gridsmith Digital',
-  description: 'Websites, software, apps, automation and intelligence. Gridsmith Digital is a trading division of Gridsmith Ltd.',
+  description: DESCRIPTION,
   alternates: { canonical: './' },
   robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: false },
   openGraph: {
@@ -48,12 +53,13 @@ export const metadata: Metadata = {
     locale: 'en_GB',
     url: './',
     title: 'Gridsmith Digital',
-    description: 'Websites, software, apps, automation and intelligence. Gridsmith Digital is a trading division of Gridsmith Ltd.',
+    description: DESCRIPTION,
   },
 };
 
 /**
- * Root layout for the digital route group. JetBrains Mono is the display face here; Inter carries body copy.
+ * Root layout for the Digital route group. Inter carries human copy and display;
+ * JetBrains Mono marks system states and verifiable details.
  */
 export default function DigitalLayout({ children }: { children: ReactNode }) {
   return (

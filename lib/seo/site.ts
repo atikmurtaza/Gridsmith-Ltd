@@ -1,3 +1,7 @@
+import type { Metadata } from 'next';
+import { STATIC_BUILD } from '../build/target.ts';
+import { PRODUCTION_ORIGIN } from '../build/production.ts';
+
 /**
  * The site's own origin, and whether this deployment is allowed to be indexed — `G-04`,
  * `GS-R001` §17.
@@ -42,7 +46,9 @@
  * - `NEXT_PUBLIC_SITE_URL` alone would index a preview whose variable was set for a test.
  *
  * Requiring the owner to set a variable **and** deploy to production makes indexing an act
- * rather than a side effect. Everything else — preview, local, CI — is `Disallow: /`, which is
+ * rather than a side effect. A static export is indexable only under the explicit gridsmith.uk
+ * profile (`GRIDSMITH_STATIC_PROFILE=production`, `GS-R13`), which refuses to build until its
+ * inputs exist (`lib/build/production.ts`). Everything else — preview, local, CI — is `Disallow: /`, which is
  * `app/robots.ts`.
  *
  * **Vercel Authentication is already on for this project** (`ssoProtection`, all except custom
@@ -71,8 +77,51 @@ export const SITE_ORIGIN = new URL(SITE_URL);
  * Whether search engines may index this deployment. See the header: both conditions are
  * required, and everything that is not a configured production deployment is disallowed.
  */
-export const INDEXABLE =
-  process.env.VERCEL_ENV === 'production' && Boolean(process.env.NEXT_PUBLIC_SITE_URL?.trim());
+export const INDEXABLE = STATIC_BUILD
+  ? process.env.GRIDSMITH_STATIC_PROFILE === 'production' && process.env.NEXT_PUBLIC_SITE_URL === PRODUCTION_ORIGIN
+  : process.env.VERCEL_ENV === 'production' && Boolean(process.env.NEXT_PUBLIC_SITE_URL?.trim());
 
 /** An absolute URL for a site-relative path. */
 export const absolute = (path: string) => new URL(path, SITE_URL).toString();
+
+/**
+ * Browser identity — `GS-SHARED-001-B1`. One declaration, spread into every root layout's
+ * metadata (and the 404's, which has no layout), so the four groups cannot drift. The files are
+ * rendered from the exact `public/brand/gridsmith-logo.svg` geometry: `favicon.ico` (16/32/48)
+ * and `icon.svg` are the flattened small-size treatment, the PNGs the polished mark — all on a
+ * transparent background (owner-approved GS-SHARED-001; no tile). Page titles are untouched.
+ */
+export const SITE_ICONS: Pick<Metadata, 'icons' | 'manifest'> = {
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
+  },
+  manifest: '/manifest.webmanifest',
+};
+
+/**
+ * A Master-group share card — `GS-SEO-001`. Next **replaces** a parent segment's `openGraph`
+ * rather than merging into it, so a page that sets its own share title and description must
+ * restate the group's constant fields too. The Master layout and every Master page with its own
+ * card call this one function, so those fields cannot drift between them.
+ */
+export const masterOpenGraph = (title: string, description: string): Metadata['openGraph'] => ({
+  type: 'website',
+  siteName: 'Gridsmith Ltd',
+  locale: 'en_GB',
+  url: './',
+  title,
+  description,
+});
+
+/**
+ * JSON for an inline `<script type="application/ld+json">` — `GS-SHARED-001-RC`. Every `<` becomes
+ * the JSON escape `<`, so CMS text can never close the script element (`</script>`) or open
+ * an HTML comment; the parsed JSON is unchanged. The footer used `replaceAll('<', '<')`, whose
+ * single backslash made the replacement the same character — a no-op since `G-04`.
+ * `check:company:selftest` asserts the return value.
+ */
+export const jsonLdHtml = (value: unknown) => JSON.stringify(value).replaceAll('<', '\\u003c');

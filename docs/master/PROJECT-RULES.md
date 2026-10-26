@@ -1,4 +1,18 @@
+> **GS-LAUNCH-014 current adoption (25 October 2026):** Owner-approved Privacy 2.7, Accessibility 2.4 and Consumer Terms 3.4 are canonical OWNER_ADOPTED; four other adoptions unchanged; zero PUBLISHABLE. Privacy uses direct mode and unmet DIRECT-CONTACT-VERIFIED instead of H4-B for this version only. H4-B survives for future forms. Consumer workflow uses 3.4 and email/WhatsApp only; contract formation and existing contracts are unchanged. All-seven publication, Privacy co-publication, Hostinger, A-2, retention and independent publication/artifact-bound cutover authority remain. Earlier versions and unmet-adoption language below are historical. See ../_shared/GS-LAUNCH-014.md.
+
+> **GS-LAUNCH-012 (25 October 2026):** Public direct channels are email and WhatsApp only. Earlier SMS/text-channel authority is superseded. The seven canonical legal texts stay unchanged pending fresh proposed 2.7/2.4 adoption and a separately authorised Consumer Terms contact correction. Publication, H4-B, Hostinger, cookie and cutover gates remain; see `../_shared/GS-LAUNCH-012.md`.
+
+> **GS-LAUNCH-002 (22 October 2026):** Targeted local release-source reconciliation on `codex/gs-launch-002`. Non-analytics browser/security, Production-profile and intake controls are adapted from pinned later source; confirmed company wording and public Path Finder withholding are reconciled. The seven canonical legal sources/register remain unchanged: seven OWNER_ADOPTED, zero PUBLISHABLE. Reviews and analytics remain disabled; GS-X002 exclusions and H4-B/publication/cutover approvals remain. Final local results, limitations, blockers and next recommendation: `docs/_shared/GS-LAUNCH-002.md` and its evidence JSON. No push, remote CI, deployment, provider write, live enquiry, DNS or WordPress action; GS-LAUNCH-003 is not started. This supersedes historical country/timed-response/public-Path-Finder descriptions for this candidate.
+
+> **GS-LAUNCH-001 (22 October 2026):** The primary checkout now uses the exact seven OWNER_ADOPTED texts from adoption commit `a7b931c10eb2a543bfa43e89954555fdadb7072d` under `docs/_legal/current/`; zero PUBLISHABLE. Drafting/adoption is closed. Publication remains held for separate authorised gridsmith.uk cutover, all seven together; no temporary-domain publication. Analytics and Freelancer reviews remain disabled. Only legal dependencies and local suppression/atomic-publication guards are consolidated; later release/intake/provider work on the source branch is not merged. Inventory: `docs/_legal/evidence/CONSOLIDATION-INVENTORY.json`. Verification and remaining launch evidence: `docs/_shared/GS-LAUNCH-001.md`. No push, deployment, DNS, WordPress or Production mutation.
+
 # Project Rules — Gridsmith Master Layer
+
+> **GS-LEGAL-001-R12 (8 October 2026):** Private legal review may use the explicit development-only
+> adopted-development static profile after exact adopted-content/fingerprint checks. This does not
+> change rule 11's production PUBLISHABLE requirement. Production queries also consult the committed
+> register. Review documents retain noindex and adopted/not-published notices. Evidence:
+> `../_legal/research/GS-LEGAL-001/R12-WEBSITE-INTEGRATION.md`.
 
 > **GS-P00 override — 11 September 2026.** `GS-D001` removes public client/cross-division project
 > proof from the launch critical path; `GS-D002` removes shared public price assumptions. The master
@@ -10,7 +24,7 @@ Binding rules for anyone (human or AI coding agent) working on the root route gr
 
 ## 1. Non-negotiables
 
-1. **The master layer has no colour of its own.** `--accent` is ink. Do not introduce a fourth brand colour. Division accents appear only on division cards, division badges and the footer switcher.
+1. **⚠ Superseded on `/` by owner decision at `GS-R001-M` (`GS-O008`):** the homepage carries the Gridsmith gold stage derived from the owner's logo (`styles/themes/master-stage.css`, `DESIGN.md` §2.1). The rule below still binds every other Master route, and is kept as written. **The master layer has no colour of its own.** `--accent` is ink. Do not introduce a fourth brand colour. Division accents appear only on division cards, division badges and the footer switcher.
 2. **`--accent-design` (amber) is 2.16:1 on white** — the figure check:contrast measures. It may never be text, never a sole state indicator, never a link colour on master pages. Rules and badge borders only.
 3. **Division routing must sit above the second viewport** on every breakpoint. This is the founder's specialist-discovery requirement and it is testable.
 4. **"More than one" and "Not sure" are never styled as secondary.** They are the highest-value conversion path.
@@ -20,7 +34,7 @@ Binding rules for anyone (human or AI coding agent) working on the root route gr
 8. **The response commitment renders from `companyDetails.responseCommitment`.** Never hardcoded, never paraphrased, never made faster. ~~Current value: *as soon as we can, and always by the end of the next business day.*~~ **The VALUE is STRUCK 16 September 2026 (`GS-O004`); the RULE is not and is unchanged.** Current value: *"We typically respond within 48 hours."* — a statement of typical behaviour, because the owner authorises no guaranteed response time and no SLA. The single-source rule is what made that a one-line change: six surfaces moved with it and none held a copy. `scripts/struck-rules.mjs` `GS-O004-RESPONSE-GUARANTEE`; `check:company` question 5 asserts it on the served pages.
 9. **Statutory disclosure appears on every page.** Legal name, company number, place of registration, registered office. It is a legal requirement, not a footer decoration.
 10. **No seed content in production.** The build check is not to be bypassed, weakened, or excluded from a deploy pipeline.
-11. **No legal page ships without `solicitorApproved: true`.**
+11. ~~**No legal page ships without `solicitorApproved: true`.**~~ superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026): no legal page ships unless the register puts it at `PUBLISHABLE`.
 12. **Never hardcode a colour.** Tokens only.
 
 ## 2. Code conventions
@@ -90,7 +104,7 @@ redirects/legacy.json       generated, version-controlled
 
 - WCAG 2.2 AA is the floor.
 - The consent banner: announced on appearance, keyboard-escapable, must not obscure the skip link, must not shift layout.
-- Division cards are `<a>` elements, not click-handled divs.
+- Division links are `<a>` elements, not click-handled divs. (Were *division cards* until `GS-R001-M`, which replaced the cards with the studio index; the rule is unchanged.)
 - Legal pages need a table of contents, correct heading hierarchy, and an anchor on every clause.
 - Focus managed on route change and on form error.
 

@@ -147,7 +147,7 @@ decision and the reasoning.
 forbids invented clause references, and naming the instrument per clause makes it visible which
 clauses are required by law and which are there because someone liked them.
 
-`solicitorApproved` defaults false and gates publication in production: the build check treats an unapproved legal document the same way it treats seed content. Contracts and the site both cite `anchorId`, so clause numbering must not drift — renumbering requires a version bump and a redirect for the old anchor.
+~~`solicitorApproved` defaults false and gates publication in production: the build check treats an unapproved legal document the same way it treats seed content.~~ superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026): `adoptionState` replaces the flag, and only a document the register puts at `PUBLISHABLE` enters production. Contracts and the site both cite `anchorId`, so clause numbering must not drift — renumbering requires a version bump and a redirect for the old anchor.
 
 ### `companyDetails` — singleton
 
@@ -284,9 +284,9 @@ from division_routing group by 1 order by 1 desc;
   contactEmail, contactPhone, responseCommitment
 }
 
-// Legal page — production requires solicitor approval
+// Legal page — ~~production requires solicitor approval~~ superseded by `GS-O003-R` (owner evidence + adoption gate, `GS-LEGAL-001`, 6 Oct 2026)
 *[_type == "legalDocument" && slug.current == $slug
-  && (solicitorApproved == true || $allowUnapproved)][0] {
+  && (solicitorApproved == true || $allowUnapproved)][0] { // superseded — see the line above
   title, version, effectiveFrom, lastReviewed,
   clauses[]{number, heading, body, anchorId}
 }

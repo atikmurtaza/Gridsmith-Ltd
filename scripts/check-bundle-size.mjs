@@ -29,8 +29,11 @@ const KB = 1024;
  * To re-baseline: scaffold a bare Next app at the new version with the same layout and
  * page, build it, and sum the gzipped module scripts of `/`. Changing this number is a
  * deliberate act and belongs in its own commit with the measurement in the message.
+ * GS-LAUNCH-002: bare Next 15.5.27/15.5.28 + React 19.2.8 measured 102676/102773 B gz at level 9
+ * (100.2695/100.3643 KB). The current floor rounds to 100.4 KB; the site allowance stays
+ * 2.9 KB. Exact independent inputs and script digests: docs/_shared/GS-LAUNCH-002-FRAMEWORK-FLOOR.json.
  */
-const FLOOR_KB = 100.2;
+const FLOOR_KB = 100.4;
 
 /** How far below the floor a route may measure before the floor is treated as stale. */
 const FLOOR_TOLERANCE_KB = 3.0;
@@ -77,11 +80,26 @@ const FLOOR_TOLERANCE_KB = 3.0;
  * same commit. `M-P2-6` is the real fix — it is the same 0.1KB-granularity absorption the
  * spread tolerance below already documents.
  *
- * 2.8 keeps a real window (`2.8 < shared ≤ 3.0`) in which this fires and the floor check does
+ * **2.8 → 2.9 at `GS-R12-PRODUCTION-READINESS-001` (18 October 2026), owner decision, for
+ * accessibility.** `ddf9d9aa` fixed WCAG 2.2 SC 2.4.11 (Focus Not Obscured): the fixed cookie
+ * notice could cover a focused footer control, so the banner's effect now reveals that control
+ * when the notice opens or rewraps (a `ResizeObserver` on the bar and `document.body`, which the
+ * independent review added to stop a reflow scroll jump). That code ships on every route, and a
+ * clean in-tree build measured the shared baseline at **2.9143KB**. `e6390bd6` removed the
+ * syntax SWC down-levels (default parameter, optional chaining) without changing behaviour,
+ * reaching **2.8732KB**, still 75 B gz over 2.8. Accessibility outranks a byte budget
+ * (CLAUDE.md non-negotiable #10), so the owner chose to keep the fix and raise the budget rather
+ * than cut the behaviour. The banner is still capped separately by `CONSENT_BANNER_BUDGET_KB`.
+ * (Earlier local passes measured builds whose `node_modules` was a junction outside the build
+ * directory, which chunks differently; CI's last `size` pass predates `ddf9d9aa`.)
+ *
+ * 2.9 keeps a real window (`2.9 < shared ≤ 3.0`) in which this fires and the floor check does
  * not, which the guard below asserts and the deliberate-failure proof has to land inside. The
+ * window is now 0.1KB wide, so the committed probe (`components/consent/bundle-size-probe.ts`)
+ * is sized to the current baseline and must be re-measured whenever the baseline moves. The
  * ceilings that actually bind are untouched: master 15KB, banner 3.0KB, primitives 6.0KB.
  */
-const SHARED_BASELINE_BUDGET_KB = 2.8;
+const SHARED_BASELINE_BUDGET_KB = 2.9;
 const PRIMITIVES_BUDGET_KB = 6.0;
 
 /**
@@ -176,7 +194,7 @@ if (!(SHARED_BASELINE_BUDGET_KB < FLOOR_TOLERANCE_KB)) {
 const BUDGETS = [
   // `/design/estimate` and `/digital/estimate` were removed at `GS-P03`: under `GS-D002` there is
   // no public price estimator. A future non-price scoping island takes the same 40KB when built.
-  ['/press/path-finder', 40],
+  ['/press/gridsmith-path-probe', 40],
   ['/design', 25],
   ['/press', 20],
   ['/digital', 15],
@@ -504,8 +522,24 @@ if (over.length > 0) {
  * evidence and still the wrong outcome.** The gate did its job by making a person look; what
  * it cannot do is ask whether the feature should exist. Drop a route from this list only
  * after that question has been answered, not as the first move.
+ *
+ * **`/` left again at `GS-R001-M`, and this time the question was answered first.** The
+ * spread fired at 2.4KB: `MasterScene`, the client boundary that loads the WebGL scene, is on
+ * `/` and nowhere else. The owner rejected the zero-JS homepage at `GS-O008` and authorised a
+ * richer implementation (`GS-R001-M` §8), so the feature is wanted and `/` has one. It still
+ * answers to the 15KB master budget in the route table, and the lazy renderer to its own
+ * line below.
  */
-const BASELINE_ROUTES = ['/', '/design', '/digital', '/press', '/_not-found'];
+// GS-R002: DesignScene now intentionally ships a Design-only loader (owner-approved narrative).
+// Keep /design in REQUIRED and under its unchanged 25KB route ceiling; measure lazy work below.
+// GS-DIG-001: /digital likewise ships its own feature — the persistent compass controller
+// (HeroApertureMotion) and the chapter-entry leaf (VisualActivation), owner-approved. It is
+// no longer featureless, so it leaves the baseline set; it stays in REQUIRED and under
+// Digital's unchanged 15KB delta ceiling, which is where its cost is asserted.
+// GS-PRESS-001-R3: /press now mounts the approved Publishing Desk client interactions. Its
+// route budget still measures them. A server-rendered Press service page keeps the Press root
+// layout in this comparison, alongside the independently rendered 404.
+const BASELINE_ROUTES = ['/press/services/publishing-preparation', '/_not-found'];
 
 const baselineRows = rows.filter((r) => BASELINE_ROUTES.includes(r.url));
 const kitchen = rows.find((r) => r.url === '/_kitchen-sink');
@@ -617,7 +651,7 @@ if (baselineRows.length !== BASELINE_ROUTES.length) {
 
   if (shared > SHARED_BASELINE_BUDGET_KB) {
     decomposition.push(
-      `shared baseline is ${shared.toFixed(1)}KB, over its ${SHARED_BASELINE_BUDGET_KB}KB budget. ` +
+      `shared baseline is ${shared.toFixed(2)}KB, over its ${SHARED_BASELINE_BUDGET_KB}KB budget. ` +
         'Something new ships on every route. This is the cost that cannot be attributed to any ' +
         'feature, so it comes straight out of every budget at once.',
     );
@@ -669,4 +703,63 @@ if (budgetsCompared === 0) {
   console.error('\ncheck-bundle-size: compared zero routes against a budget — the check did not run.\n');
   process.exit(1);
 }
+
+/**
+ * **The Master scene renderer — `GS-R001-M`.** `components/master/scene.ts`, fetched by
+ * `MasterScene` with `import()` after first paint. It is in no route's HTML, so the route
+ * table above cannot see it — which is the point of loading it lazily, and also exactly how a
+ * lazy chunk grows without anyone noticing. So it is found by content and measured here.
+ *
+ * Three assertions: exactly one chunk carries the renderer (zero means the marker or the
+ * split moved and nothing was measured); no route's module scripts reference it (it has
+ * become eager and is on the LCP path); and it fits `SCENE_BUDGET_KB`.
+ *
+ * The marker is a comment inside the shader source, which is a string literal the minifier
+ * must preserve. 5.0KB at `GS-R001-M`, 5.9KB at R1 (text attenuation, exploded formations); the ceiling leaves room for tuning, not for a library.
+ */
+const SCENE_MARKER = 'Capped cylinder, after Inigo Quilez';
+const SCENE_BUDGET_KB = 8;
+const CHUNK_DIR = '.next/static/chunks';
+const sceneChunks = readdirSync(CHUNK_DIR, { recursive: true, withFileTypes: true })
+  .filter((e) => e.isFile() && e.name.endsWith('.js'))
+  .map((e) => join(e.parentPath ?? CHUNK_DIR, e.name))
+  .filter((f) => readFileSync(f, 'utf8').includes(SCENE_MARKER));
+if (sceneChunks.length !== 1) {
+  console.error(
+    `\ncheck-bundle-size: found ${sceneChunks.length} chunk(s) carrying the Master scene renderer, expected 1.\n` +
+      'Zero means it was not measured; more than one means it was duplicated into another chunk.\n',
+  );
+  process.exit(1);
+}
+const sceneFile = toPosix(relative('.next', sceneChunks[0]));
+const eager = routes().filter(({ file }) =>
+  moduleScripts(readFileSync(file, 'utf8')).some((src) => decodeURIComponent(src).endsWith(sceneFile)),
+);
+if (eager.length > 0) {
+  console.error(
+    `\ncheck-bundle-size: the Master scene renderer is loaded eagerly by ${eager.map((r) => r.url).join(', ')}.\n` +
+      'It must stay behind MasterScene\'s dynamic import — it is not on the LCP path by design.\n',
+  );
+  process.exit(1);
+}
+const sceneKb = gzipSync(readFileSync(sceneChunks[0]), { level: 9 }).length / KB;
+console.log(
+  `master scene (lazy)  ${sceneKb.toFixed(1)}KB gz  budget ${SCENE_BUDGET_KB}KB  ${sceneKb > SCENE_BUDGET_KB ? 'OVER' : 'ok'}  — ${sceneFile}, in no route's HTML`,
+);
+if (sceneKb > SCENE_BUDGET_KB) {
+  console.error('\ncheck-bundle-size: the Master scene renderer is over its budget.\n');
+  process.exit(1);
+}
+const designChunks = readdirSync(CHUNK_DIR, { recursive: true, withFileTypes: true })
+  .filter((e) => e.isFile() && e.name.endsWith('.js'))
+  .map((e) => join(e.parentPath ?? CHUNK_DIR, e.name))
+  .filter((f) => readFileSync(f, 'utf8').includes('data-workspace-controls'));
+if (designChunks.length !== 1) throw new Error(`Design choreography: expected one lazy chunk, found ${designChunks.length}`);
+const designFile = toPosix(relative('.next', designChunks[0]));
+if (routes().some(({ file }) => moduleScripts(readFileSync(file, 'utf8')).some((src) => decodeURIComponent(src).endsWith(designFile)))) {
+  throw new Error('Design choreography must not be an eager route script');
+}
+const designKb = gzipSync(readFileSync(designChunks[0]), { level: 9 }).length / KB;
+console.log(`design scene (lazy) ${designKb.toFixed(1)}KB gz; budget 8KB; ${designFile}`);
+if (designKb > 8) throw new Error('Design lazy choreography exceeds its 8KB budget');
 console.log(`\ncheck-bundle-size: ${budgetsCompared} route(s) compared, all within their delta budget\n`);

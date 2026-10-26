@@ -1,0 +1,89 @@
+{
+  "task": "GS-LAUNCH-002",
+  "method": "Fresh bare App Router builds, independently installed in-tree dependencies; sum unique modern external script gzipSync(..., {level:9}) bytes, noModule polyfills excluded",
+  "inputs": {
+    "app/layout.js": "export default function Layout({children}) { return <html lang=\"en\"><body>{children}</body></html>; }\n",
+    "app/page.js": "export default function Page() { return <main>baseline</main>; }\n",
+    "next.config.mjs": "export default {outputFileTracingRoot:process.cwd()};\n",
+    "eslint.config.mjs": "export default [{languageOptions:{parserOptions:{ecmaFeatures:{jsx:true}}}}];\n"
+  },
+  "commands": [
+    "npm install --no-audit --no-fund",
+    "node node_modules/next/dist/bin/next build"
+  ],
+  "measurements": [
+    {
+      "next": "15.5.27",
+      "react": "19.2.8",
+      "node": "v24.15.0",
+      "totalGzipBytes": 102676,
+      "files": [
+        {
+          "path": "static/chunks/4bd1b696-c023c6e3521b1417.js",
+          "bytes": 173019,
+          "gzipBytes": 54241,
+          "sha256": "2c752a401191671d5bbbe7514f5828bbb0a7cc50bfbe77ddaf1b1ccba4412ed2"
+        },
+        {
+          "path": "static/chunks/255-ce8c7c75002f810b.js",
+          "bytes": 173933,
+          "gzipBytes": 46488,
+          "sha256": "387b92efe574b4935a7b364662010a4014bac281f9bb46b96ff74d16eae47e2a"
+        },
+        {
+          "path": "static/chunks/main-app-9a8b044887325bfa.js",
+          "bytes": 557,
+          "gzipBytes": 226,
+          "sha256": "782211ea57b75923f911cd750864622a53ea30e022d355b9dd2258f0296807ab"
+        },
+        {
+          "path": "static/chunks/webpack-7a14b3c6fb4e371d.js",
+          "bytes": 3389,
+          "gzipBytes": 1721,
+          "sha256": "513d704327ec550e0b99dd17375a737a2ef803e413b7f25b13316e0ac9aa74e6"
+        }
+      ],
+      "gzipLevel": 9
+    },
+    {
+      "next": "15.5.28",
+      "react": "19.2.8",
+      "node": "v24.15.0",
+      "totalGzipBytes": 102773,
+      "files": [
+        {
+          "path": "static/chunks/4bd1b696-c023c6e3521b1417.js",
+          "bytes": 173019,
+          "gzipBytes": 54241,
+          "sha256": "2c752a401191671d5bbbe7514f5828bbb0a7cc50bfbe77ddaf1b1ccba4412ed2"
+        },
+        {
+          "path": "static/chunks/255-b1e2483a7e02feee.js",
+          "bytes": 174133,
+          "gzipBytes": 46587,
+          "sha256": "6fae740f3b027bbe7ef3763f726c42e8b2232e55889caae96c7354b30646e352"
+        },
+        {
+          "path": "static/chunks/main-app-bc92910df8f168e7.js",
+          "bytes": 553,
+          "gzipBytes": 224,
+          "sha256": "bbd0b87bbc1a3fff20f596786f28dfef3de0340fe9b87ebeac08115a3ba5be14"
+        },
+        {
+          "path": "static/chunks/webpack-7a14b3c6fb4e371d.js",
+          "bytes": 3389,
+          "gzipBytes": 1721,
+          "sha256": "513d704327ec550e0b99dd17375a737a2ef803e413b7f25b13316e0ac9aa74e6"
+        }
+      ],
+      "gzipLevel": 9
+    }
+  ],
+  "originalFloorKB": 100.2,
+  "next15_5_28FloorKB": 100.4,
+  "sharedBudgetKB": 2.9,
+  "floorToleranceKB": 3.0,
+  "limits": "Windows measurements; Linux exact-candidate CI remains unverified. Initial parent-config/JSX fixture failures were not measurements.",
+  "rejectedMeasurement": "The initial default-compression readings were rejected; final values use the gate exact compression level 9 and the same retained chunk hashes.",
+  "gzipExpression": "gzipSync(readFileSync(chunkPath), { level: 9 }).length"
+}

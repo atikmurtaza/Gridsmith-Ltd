@@ -1,0 +1,663 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-011",
+  "recordedAt": "2026-10-25T00:46:52.577Z",
+  "status": "PREPARATION_COMPLETE_PUBLICATION_HOLD",
+  "base": "b99647105f581f66962977ecd4122f8231da3ee0",
+  "branch": "codex/gs-launch-011",
+  "phaseCommitLocator": "git log -1 --format=%H -- docs/_shared/GS-LAUNCH-011.md",
+  "worktree": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-011\\Gridsmith Ltd",
+  "platform": "win32",
+  "node": "v24.15.0",
+  "npm": "11.12.1",
+  "sourceBinding": {
+    "baselineInventoryReference": "GS-LAUNCH-010-EVIDENCE.json sourceBinding.inventory",
+    "definition": "SHA-256 of JSON.stringify over the same sorted path/sha256 objects as the baseline non-doc inventory",
+    "fileCount": 367,
+    "baselineSha256": "6183608babaa0b274b6d799c1b554cb032992c97ed79e127744b9964cc422b88",
+    "effectiveSourceSha256": "5664e1941a0f44d08a5d7f2e10840e3f443b67f285b0c4e5a3b7e2ee868dec07",
+    "changedSourceFiles": [
+      {
+        "path": "lib/build/production.ts",
+        "sha256": "4fb43177c4245291b51313fed0346559b626d23cf33f487ddc3b0dafcfe92975"
+      },
+      {
+        "path": "scripts/check-legal-adoption.mjs",
+        "sha256": "6702bfcf1297b1d636a987aa699972ca1b85f79e50aa9f431c45a5598c2477fd"
+      },
+      {
+        "path": "scripts/check-legal-adoption.selftest.mjs",
+        "sha256": "cfad5c246a8377f2d62662c992e5b232531686674fad233e4371d297d23a3463"
+      },
+      {
+        "path": "scripts/check-static-artifact.mjs",
+        "sha256": "56b9c635fe9484f033f93f442026fea6b2dda728b6da59afb4e4f818ca51910a"
+      },
+      {
+        "path": "scripts/check-static.selftest.mjs",
+        "sha256": "1d610306466ac3ce135bfc394c84042bef744773962eb8737b4e4ad3d19d1c61"
+      },
+      {
+        "path": "scripts/legal-adoption-rules.mjs",
+        "sha256": "6e25d44e536cbc0abf945237ec9649df52f97ed5076485cc253b0fb92129568a"
+      }
+    ],
+    "inputHashes": {
+      "package.json": "97854c2b19e9ca55d5a793bfb5a768ce28d2856d7c44159ebdccfff2b64dad31",
+      "package-lock.json": "f45a725650c64e81bc8d580569e012ad07ca3d254e8ffaa63fb22c6cc57a6fa3",
+      "config/browser-input.json": "20ac446b365c2e9f08d83355f66e99f78c4065c93c49099c45ebd4754be0cb54",
+      "scripts/browser-input.mjs": "0fc844b30a0561f54485cd402248265cf8af2c2fe282e1a07569ca66400cad2f",
+      ".github/workflows/ci.yml": "346a08373d6f8eb8b5dca02981980c0a916db63f0388535f2fcf68eed1bee9cc",
+      ".github/workflows/hostinger-staging.yml": "4e436c2ac8f4eda00bd71cbc845c3fbfd0ea1fc6e78848bf8a5335c75d19453f"
+    }
+  },
+  "legal": {
+    "canonicalSourcesUnchanged": true,
+    "registerUnchanged": true,
+    "registerSha256": "4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e",
+    "ownerAdopted": 7,
+    "publishable": 0,
+    "directContactModeRecorded": false,
+    "directContactReceiptRecorded": false,
+    "documents": [
+      {
+        "slug": "privacy",
+        "version": "2.6",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/privacy-policy.md",
+        "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7"
+      },
+      {
+        "slug": "cookies",
+        "version": "2.4",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/cookie-policy.md",
+        "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960"
+      },
+      {
+        "slug": "terms",
+        "version": "2.3",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/website-terms.md",
+        "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a"
+      },
+      {
+        "slug": "client-terms",
+        "version": "2.3",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/client-terms-applicability.md",
+        "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87"
+      },
+      {
+        "slug": "business-client-terms",
+        "version": "3.3",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/client-terms-business.md",
+        "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6"
+      },
+      {
+        "slug": "consumer-client-terms",
+        "version": "3.3",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/client-terms-consumers.md",
+        "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e"
+      },
+      {
+        "slug": "accessibility",
+        "version": "2.3",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/accessibility-statement.md",
+        "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb"
+      }
+    ]
+  },
+  "protectedPaths": [
+    "docs/_legal/current",
+    "docs/_legal/evidence",
+    "scripts/seed-legal.mjs",
+    "lib/legal/adoption.ts",
+    "package.json",
+    "package-lock.json",
+    "config/browser-input.json",
+    "scripts/browser-input.mjs",
+    ".github/workflows",
+    "docs/_shared/GS-PROD-001-CMS-MANIFEST.json"
+  ],
+  "allProtectedPathsUnchangedAgainstBase": true,
+  "primary": {
+    "head": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+    "statusMatchesInitialListing": true,
+    "status": " M docs/_shared/05-HANDOVER.md\n M docs/_shared/AI-HANDOFF.md\n M docs/_shared/PROJECT-STATUS.md\n?? .codex/\n?? AGENTS.md\n?? docs/_shared/GS-LEGAL-001-R12-RASTER-CLOSURE.md\n?? docs/_shared/GS-SEC-001-R1.md\n?? docs/_shared/GS-SEC-001-R2.md\n?? docs/_shared/GS-SEC-001-R3.md\n?? public/brand/design/preview.html",
+    "limit": "No writes made to primary; status/HEAD rechecked, not a before/after hash assertion about its pre-existing dirty bytes"
+  },
+  "tests": [
+    {
+      "label": "legal-adoption-selftest",
+      "command": [
+        "node",
+        "scripts/check-legal-adoption.selftest.mjs"
+      ],
+      "startedAt": "2026-10-25T00:36:23.781Z",
+      "endedAt": "2026-10-25T00:36:24.641Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/legal-adoption-selftest.log",
+      "sha256": "43bda856e717e32fc2bbdef33543d521c225ff4edc4f08576d6a0db6239ad386"
+    },
+    {
+      "label": "legal-adoption",
+      "command": [
+        "node",
+        "scripts/check-legal-adoption.mjs"
+      ],
+      "startedAt": "2026-10-25T00:36:24.942Z",
+      "endedAt": "2026-10-25T00:36:29.432Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/legal-adoption.log",
+      "sha256": "acb39045c0394d9745d8d7993de37ebba99dd8f07f33f731a3c7a9c1f69ff2fb"
+    },
+    {
+      "label": "legal-parity-selftest",
+      "command": [
+        "node",
+        "scripts/check-legal-parity.selftest.mjs"
+      ],
+      "startedAt": "2026-10-25T00:36:29.665Z",
+      "endedAt": "2026-10-25T00:36:29.955Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/legal-parity-selftest.log",
+      "sha256": "e8ce4672be02bc57f5e235f66d7fc1060724ba2eb0e881aedbd7766a0bb8ba53"
+    },
+    {
+      "label": "company-selftest",
+      "command": [
+        "node",
+        "scripts/check-company-facts.selftest.mjs"
+      ],
+      "startedAt": "2026-10-25T00:36:30.366Z",
+      "endedAt": "2026-10-25T00:36:30.861Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/company-selftest.log",
+      "sha256": "ec85996a5b691a81f3c2c541819e3e61efc40ca8d5a1effdde2a71be11248440"
+    },
+    {
+      "label": "install",
+      "command": [
+        "npm",
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "startedAt": "2026-10-25T00:35:24.924Z",
+      "endedAt": "2026-10-25T00:37:34.447Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/install.log",
+      "sha256": "35bf516b306bb6cd99d50910d7595d44404166f5a8d8ad7cc99efbd1cdf7b7cf"
+    },
+    {
+      "label": "verify-static",
+      "command": [
+        "npm",
+        "run",
+        "verify:static"
+      ],
+      "startedAt": "2026-10-25T00:39:43.783Z",
+      "endedAt": "2026-10-25T00:41:47.373Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/verify-static.log",
+      "sha256": "de3506843b4620fd969248303319a349f4e831fc0e8757bc77e7802a55178f8b"
+    },
+    {
+      "label": "audit-production",
+      "command": [
+        "npm",
+        "audit",
+        "--omit=dev",
+        "--json"
+      ],
+      "startedAt": "2026-10-25T00:41:54.138Z",
+      "endedAt": "2026-10-25T00:42:02.889Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/audit-production.log",
+      "sha256": "e6a3ff10226c4051c4d74ba53da6608e0ab52ccd6d8bdc55f246b45285c7b86c"
+    },
+    {
+      "label": "audit-full",
+      "command": [
+        "npm",
+        "audit",
+        "--json"
+      ],
+      "startedAt": "2026-10-25T00:42:03.199Z",
+      "endedAt": "2026-10-25T00:42:05.541Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "build/gs-launch-011/audit-full.log",
+      "sha256": "962685c0edacb8488ed449ca4ed5d1d2eb0be289d89bc76bdc39e32853999ac4"
+    },
+    {
+      "label": "production-refusal",
+      "command": [
+        "node",
+        "scripts/build-static.mjs"
+      ],
+      "startedAt": "2026-10-25T00:42:05.874Z",
+      "endedAt": "2026-10-25T00:42:06.199Z",
+      "exitCode": 1,
+      "signal": null,
+      "log": "build/gs-launch-011/production-refusal.log",
+      "sha256": "f7b0de61b0e573191d35ed2d1d3f20f7c163a246292a158c6078e27dbcf1717b"
+    },
+    {
+      "label": "control-characters",
+      "command": [
+        "node",
+        "scripts/check-control-chars.mjs"
+      ],
+      "startedAt": "2026-10-25T00:42:32.572Z",
+      "endedAt": "2026-10-25T00:42:32.727Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/control-characters.log",
+      "sha256": "08f139f8b22de08481968ccb608904091cead3d1efaae2b95772a81a22a73cc6"
+    },
+    {
+      "label": "static-selftest-final",
+      "command": [
+        "node",
+        "scripts/check-static.selftest.mjs"
+      ],
+      "startedAt": "2026-10-25T00:43:27.060Z",
+      "endedAt": "2026-10-25T00:43:27.609Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/static-selftest-final.log",
+      "sha256": "70c411ec39b3bfd036ae7de3a0f16871819df6e5c460e6de50bc78956f2ef472"
+    },
+    {
+      "label": "final-control-characters",
+      "command": [
+        "node",
+        "scripts/check-control-chars.mjs"
+      ],
+      "startedAt": "2026-10-25T00:44:33.683Z",
+      "endedAt": "2026-10-25T00:44:33.826Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/final-control-characters.log",
+      "sha256": "0ffe0fd0e911c4ff0fda2fe0444ec3bac503a7afe89405775c3a37236b6993af"
+    },
+    {
+      "label": "final-document-control",
+      "command": [
+        "node",
+        "scripts/check-control-chars.mjs"
+      ],
+      "startedAt": "2026-10-25T00:46:52.139Z",
+      "endedAt": "2026-10-25T00:46:52.289Z",
+      "exitCode": 0,
+      "signal": null,
+      "log": "build/gs-launch-011/final-document-control.log",
+      "sha256": "0ffe0fd0e911c4ff0fda2fe0444ec3bac503a7afe89405775c3a37236b6993af"
+    }
+  ],
+  "environment": {
+    "PUPPETEER_SKIP_DOWNLOAD": "true",
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "productionRefusalOnly": {
+      "GRIDSMITH_STATIC_PROFILE": "production",
+      "GRIDSMITH_PRODUCTION_REHEARSAL": "unset",
+      "NEXT_PUBLIC_LEAD_INTAKE_URL": "unset"
+    }
+  },
+  "audits": {
+    "production": {
+      "auditReportVersion": 2,
+      "vulnerabilities": {},
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1638,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1701
+        }
+      }
+    },
+    "full": {
+      "auditReportVersion": 2,
+      "vulnerabilities": {
+        "@lhci/cli": {
+          "name": "@lhci/cli",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@lhci/utils",
+            "lighthouse"
+          ],
+          "effects": [],
+          "range": "<=0.1.1-alpha.5 || >=0.14.0",
+          "nodes": [
+            "node_modules/@lhci/cli"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.13.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@lhci/utils": {
+          "name": "@lhci/utils",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "lighthouse"
+          ],
+          "effects": [
+            "@lhci/cli"
+          ],
+          "range": ">=0.14.0",
+          "nodes": [
+            "node_modules/@lhci/utils"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.13.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@puppeteer/browsers": {
+          "name": "@puppeteer/browsers",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "extract-zip"
+          ],
+          "effects": [
+            "puppeteer",
+            "puppeteer-core"
+          ],
+          "range": "<=2.13.2",
+          "nodes": [
+            "node_modules/@puppeteer/browsers"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "chromium-bidi": {
+          "name": "chromium-bidi",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "zod"
+          ],
+          "effects": [
+            "puppeteer",
+            "puppeteer-core"
+          ],
+          "range": "0.5.13 - 157.0.8081-0",
+          "nodes": [
+            "node_modules/chromium-bidi"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "extract-zip": {
+          "name": "extract-zip",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1139346,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip unvalidated symlink path traversal",
+              "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+              },
+              "range": "<=2.0.1"
+            },
+            {
+              "source": 1193685,
+              "name": "extract-zip",
+              "dependency": "extract-zip",
+              "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+              "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+              "severity": "high",
+              "cwe": [
+                "CWE-22"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:H"
+              },
+              "range": "<=2.0.1"
+            }
+          ],
+          "effects": [
+            "@puppeteer/browsers"
+          ],
+          "range": "*",
+          "nodes": [
+            "node_modules/extract-zip"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "lighthouse": {
+          "name": "lighthouse",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "puppeteer-core"
+          ],
+          "effects": [
+            "@lhci/cli",
+            "@lhci/utils"
+          ],
+          "range": "11.7.0-dev.20240320 - 13.3.0",
+          "nodes": [
+            "node_modules/lighthouse"
+          ],
+          "fixAvailable": {
+            "name": "@lhci/cli",
+            "version": "0.13.0",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer": {
+          "name": "puppeteer",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@puppeteer/browsers",
+            "chromium-bidi",
+            "puppeteer-core"
+          ],
+          "effects": [],
+          "range": "19.8.1 - 25.12.0",
+          "nodes": [
+            "node_modules/puppeteer"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "puppeteer-core": {
+          "name": "puppeteer-core",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@puppeteer/browsers",
+            "chromium-bidi"
+          ],
+          "effects": [
+            "lighthouse",
+            "puppeteer"
+          ],
+          "range": "19.8.4 - 25.12.0",
+          "nodes": [
+            "node_modules/puppeteer-core"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        },
+        "zod": {
+          "name": "zod",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1243066,
+              "name": "zod",
+              "dependency": "zod",
+              "title": "Zod can exhaust memory while validating oversized constrained collections",
+              "url": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+              "severity": "high",
+              "cwe": [
+                "CWE-770"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": "<4.6.6"
+            }
+          ],
+          "effects": [
+            "chromium-bidi"
+          ],
+          "range": "<4.6.6",
+          "nodes": [
+            "node_modules/chromium-bidi/node_modules/zod"
+          ],
+          "fixAvailable": {
+            "name": "puppeteer",
+            "version": "25.16.0",
+            "isSemVerMajor": true
+          }
+        }
+      },
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 9,
+          "critical": 0,
+          "total": 9
+        },
+        "dependencies": {
+          "prod": 27,
+          "dev": 1638,
+          "optional": 148,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 1701
+        }
+      }
+    },
+    "distinctAdvisories": [
+      "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+      "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+      "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5"
+    ],
+    "riskAccepted": false,
+    "limit": "Fresh installed Windows tree; Linux acceptance is not substituted"
+  },
+  "productionRefusal": {
+    "exitCode": 1,
+    "expected": true,
+    "unmetConditions": 9,
+    "independentLegalPublicationRefusals": 7,
+    "artifactCreated": false
+  },
+  "independentReviews": {
+    "source": "Original no-form coverage finding fixed; follow-up no actionable findings",
+    "content": "Prebuild/final receipt sequencing clarified; follow-up no actionable findings",
+    "readOnly": true
+  },
+  "finalChecks": {
+    "stagedWhitespace": "PASS",
+    "stagedSensitivePatternScan": "PASS",
+    "scanLimit": "Pattern scan of added staged lines; no private secret-value inventory supplied, no built client-bundle scan",
+    "generatedOutputsAbsent": [
+      "out",
+      ".next",
+      "build/production-rehearsal"
+    ]
+  },
+  "hostinger": {
+    "accountAccessPerformed": true,
+    "scope": "Authenticated Websites listing only, separate ephemeral Edge tab",
+    "observed": {
+      "plan": "Business",
+      "site": "gridsmith.uk",
+      "wpAdminPresent": true,
+      "temporarySite": "mediumaquamarine-wallaby-594070.hostingersite.com",
+      "separateListing": true
+    },
+    "dashboardResult": "CDP operation exceeded its deadline before command dispatch",
+    "dashboardRetried": false,
+    "settingsFilesDatabaseBackupsAccessed": false,
+    "status": "Operational evidence UNVERIFIED",
+    "privateReceipt": "OWNER REQUIRED; report section 5",
+    "supportContacted": false
+  },
+  "linuxAcceptance": {
+    "status": "NOT RUN",
+    "priorDenialRetried": false,
+    "source": "GS-LAUNCH-010 blocker retained"
+  },
+  "ownerFactsConfirmedThisPhase": false,
+  "revisedWordingAdopted": false,
+  "publicationAuthorised": false,
+  "cutoverAuthorised": false,
+  "push": false,
+  "ciDispatch": false,
+  "deployment": false,
+  "productionWrites": 0,
+  "publicSourcesChecked": [
+    "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/the-right-to-be-informed/what-privacy-information-should-we-provide/",
+    "https://www.hostinger.com/legal/universal-terms-of-service-agreement",
+    "https://www.hostinger.com/legal/dpa",
+    "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+    "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+    "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5"
+  ]
+}

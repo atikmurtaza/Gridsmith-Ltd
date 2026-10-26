@@ -101,7 +101,14 @@ const SPECIMENS = [
   {
     name: 'TECHNICAL — an unconfirmed published technical service on a live dataset',
     input: ok({ unreviewedTechnical: 2 }),
-    expect: ['2 published technical service(s) in the live dataset without professionalScopeConfirmed'],
+    expect: [
+      '2 published technical service(s) in the live dataset without professionalScopeConfirmed',
+      'a review confirms their limited professional scope (GS-X002)',
+    ],
+    // `GS-PROD-003-R1`: the flag is a scope review, not an insurance confirmation. The owner
+    // deferred PI cover and closed `GS-O005`; a refusal that still demands it would make the gate
+    // a purchase requirement nobody decided.
+    forbid: [/PI cover/i, /indemnity/i, /insur/i, /GS-O005/],
   },
   {
     name: 'TECHNICAL-QUERY-DOWN — an unmeasured technical count is a failure, never a skip',
@@ -141,15 +148,17 @@ const SPECIMENS = [
 ];
 
 let failed = 0;
-for (const { name, input, expect } of SPECIMENS) {
+for (const { name, input, expect, forbid = [] } of SPECIMENS) {
   const problems = evaluate(input);
   const missing = expect.filter((e) => !problems.some((p) => p.includes(e)));
   const unexpected = expect.length === 0 && problems.length > 0;
+  const forbidden = forbid.filter((re) => problems.some((p) => re.test(p)));
 
-  if (missing.length > 0 || unexpected) {
+  if (missing.length > 0 || unexpected || forbidden.length > 0) {
     failed += 1;
     console.error(`\n  ✗ ${name}`);
     for (const m of missing) console.error(`      expected a problem containing: ${m}`);
+    for (const re of forbidden) console.error(`      no problem may match ${re}`);
     if (unexpected) console.error('      expected NO problems, got:');
     for (const p of problems) console.error(`      got: ${p}`);
   } else {

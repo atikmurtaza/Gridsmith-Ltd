@@ -50,7 +50,7 @@ export function RootShell({
         <ConsentBanner />
         <Header division={division} />
         {children}
-        <Footer />
+        <Footer division={division} />
       </body>
     </html>
   );

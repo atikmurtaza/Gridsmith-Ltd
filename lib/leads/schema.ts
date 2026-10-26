@@ -18,8 +18,11 @@ export const DIVISIONS = ['design', 'digital', 'press', 'unsure'] as const;
 export const LEAD_TYPES = ['enquiry', 'sample_request', 'estimate', 'assessment', 'newsletter'] as const;
 export const MAX_LEAD_PAYLOAD_BYTES = 16_384;
 
+// `.optional()`: a blank optional answer reaches here as an `undefined` key (`pressPayloadFrom`),
+// which `JSON.stringify` drops on insert. Without it every Press enquiry with a blank optional
+// field failed on a key no step renders (`GS-O010-R2`; `check:press:contact:selftest`).
 const leadPayloadSchema = z
-  .record(z.string().max(120), z.json())
+  .record(z.string().max(120), z.json().optional())
   .refine(
     (value) => new TextEncoder().encode(JSON.stringify(value)).length <= MAX_LEAD_PAYLOAD_BYTES,
     `Answers are too large (maximum ${MAX_LEAD_PAYLOAD_BYTES} bytes)`,
@@ -37,7 +40,14 @@ export const leadSchema = z.object({
   service_slug: z.string().max(200).optional(),
 
   // `full_name` and `email` are the table's only NOT NULL text columns.
-  full_name: z.string().trim().min(1, 'Tell us your name').max(200),
+  // A link in the name field is a spam signature, not a name (`GS-PROD-001`). Refused visibly,
+  // so a person who trips it can correct it; both forms reach this through `submitLead`.
+  full_name: z
+    .string()
+    .trim()
+    .min(1, 'Tell us your name')
+    .max(200)
+    .refine((name) => !/https?:\/\/|www\./i.test(name), 'Your name cannot contain a web address'),
   email: z.email('That does not look like an email address').max(320),
 
   company: z.string().max(200).optional(),

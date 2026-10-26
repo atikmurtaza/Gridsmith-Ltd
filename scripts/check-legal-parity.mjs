@@ -6,7 +6,7 @@
  *
  * ## The defect this exists for
  *
- * `docs/_legal/07-STATE-REPORT.md` §0: *"The drafts and the published site are two different
+ * `git:a7b931c10eb2a543bfa43e89954555fdadb7072d:docs/_archive/legal/pre-GS-LEGAL-FINAL-001/07-STATE-REPORT.md` §0: *"The drafts and the published site are two different
  * documents, and nobody has been comparing them."* Findings F-1 to F-7 are seven live
  * divergences and **not one of them failed a build**. The worst two:
  *
@@ -77,11 +77,14 @@
  * drop §5A and §6A and pass B by saying less.
  *
  * **D — the subject asserts that it is still the subject.** Each page is 200, carries an `<h1>`,
- * serves at least one clause, and carries the unapproved-draft banner. Without D, deleting a
+ * serves at least one clause, and carries the adoption banner exactly when its `GS-O003-R` register
+ * state is short of `PUBLISHABLE`. Without D, deleting a
  * CMS document turns every other branch green: a 404 publishes no paragraph the draft lacks
- * (B passes vacuously) and declares no version to disagree (A is skipped). The banner is in
- * because all seven documents are `solicitorApproved: false` today, and a page that has quietly
- * stopped announcing itself as a draft is a different failure worth the same red.
+ * (B passes vacuously) and declares no version to disagree (A is skipped). The banner limb is in
+ * because a page that quietly stops announcing an unadopted document — or keeps announcing an
+ * adopted one — is a different failure worth the same red. Until 6 October 2026 it asserted the
+ * "not yet reviewed by a solicitor" banner from the `solicitorApproved` flag; `GS-O003-R` replaced
+ * that gate, and the expectation now comes from the committed register, not from the page.
  *
  * ## Counts
  *
@@ -119,14 +122,10 @@
  * The same boundary in one sentence: this gate closes the gap between the draft and the site;
  * it opens nothing on the gap between the draft and the law.
  *
- * ## The one slug this cannot cover, named in every run
+ * ## All seven canonical sources
  *
- * `/legal/client-terms` has **no `docs/_legal/` draft**, because it is not an instrument: it is
- * the disambiguation page the owner's 26 August 2026 routing decision created, carrying no
- * operative clause. There is nothing to compare it against, so it is excluded — and the
- * exclusion is printed on every successful run rather than left implicit, because a gate that
- * silently covers six of seven reads exactly like a gate that covers seven.
- * `scripts/check-consumer-terms.mjs` is what guards that page.
+ * The applicability page has its own canonical source and receives the same exact parity
+ * and adoption-banner checks as the six instruments. Consumer routing is also checked.
  *
  * ## Proven by deliberate failure
  *
@@ -136,6 +135,8 @@
  */
 import { readFileSync } from 'node:fs';
 import { LEGAL_DRAFT_SOURCES } from './seed-legal.mjs';
+/** `GS-O003-R` register: the expected adoption state of each served document. */
+const LEGAL_REGISTER = JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json', 'utf8'));
 import {
   containsRun,
   currentVersion,
@@ -143,16 +144,22 @@ import {
   draftClauseTokens,
   normaliseWords,
   tokenReached,
+  bannerProblems,
 } from './legal-parity-rules.mjs';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
+// Static artifacts can be checked before a server is authorised; this does not prove delivery.
+const artifactDir = process.argv.find((arg) => arg.startsWith('--artifact-dir='))?.slice('--artifact-dir='.length);
+const readRoute = async (route) => {
+  if (!artifactDir) return fetch(BASE_URL + route).catch((error) => ({ ok: false, status: 0, error }));
+  try { return new Response(readFileSync(`${artifactDir}${route}.html`), { status: 200 }); }
+  catch { return new Response('', { status: 404 }); }
+};
+console.log(`check-legal-parity: input=${artifactDir ? 'built HTML files (delivery unverified)' : 'served HTTP pages'}`);
 const DRAFTS = 'docs/_legal/';
 
 /** Hardcoded. See the docstring — an expectation derived from its subject cannot fail. */
-const EXPECTED_DOCS = 6;
-
-/** The slug with no draft, named in the output rather than silently skipped. */
-const UNCOVERED = 'client-terms';
+const EXPECTED_DOCS = 7;
 
 const problems = [];
 const counted = { docs: 0, clauses: 0, paragraphs: 0, tokens: 0 };
@@ -175,14 +182,13 @@ const decode = (s) =>
     .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)));
 
 for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
-  if (!file) continue;
   counted.docs += 1;
 
   const markdown = readFileSync(DRAFTS + file, 'utf8');
   const draftWords = normaliseWords(markdown);
   const route = `/legal/${slug}`;
 
-  const res = await fetch(BASE_URL + route).catch((e) => ({ ok: false, status: 0, error: e }));
+  const res = await readRoute(route);
   if (!res.ok) {
     // Branch D. A route that does not serve is not a route that passes: nothing was measured
     // on it, and reporting that as clean is how a deleted CMS document goes unnoticed.
@@ -199,14 +205,7 @@ for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
   if (!h1) {
     problems.push(`${route} serves no <h1>. The route resolves but the document did not render.`);
   }
-  if (!/DRAFT — NOT YET REVIEWED BY A SOLICITOR/i.test(html)) {
-    problems.push(
-      `${route} does not carry the unapproved-draft banner. All seven documents are ` +
-        'solicitorApproved: false, so either one was approved without this gate being told, ' +
-        'or the banner stopped rendering — and a draft presented as reviewed is the outcome ' +
-        'that banner exists to prevent.',
-    );
-  }
+  problems.push(...bannerProblems(route, LEGAL_REGISTER.documents?.[slug]?.state, html));
 
   // Branch A — version parity, and A2, the draft agreeing with itself.
   const draftVersion = currentVersion(markdown);
@@ -241,12 +240,13 @@ for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
     const number = decode(stripTags(heading.match(/<span[^>]*>([\s\S]*?)<\/span>/)?.[1] ?? '')).trim();
     if (number) servedNumbers.push(number);
 
-    // Branch B. Only `<p>` inside the clause body — the heading is the clause's own number and
-    // the `Basis:` line is editorial, neither of which is draft prose.
+    // Branch B. Only `<p>` inside the clause body — the heading is the clause's own number, not
+    // draft prose. (`GS-LEGAL-001` stopped rendering the editorial `Basis:` line, so nothing on
+    // the page is exempt any more: a stray `Basis:` paragraph is now held to the draft.)
     const body = inner.replace(/<h2[\s\S]*?<\/h2>/, ' ');
     for (const [, paragraph] of body.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)) {
       const text = decode(stripTags(paragraph)).trim();
-      if (!text || /^Basis:/.test(text)) continue;
+      if (!text) continue;
       counted.paragraphs += 1;
       const words = normaliseWords(text);
       if (words.length === 0) continue;
@@ -318,7 +318,6 @@ if (problems.length > 0) {
       `${counted.tokens} draft clause(s) all reachable`,
   );
   console.log(
-    `check-legal-parity: /legal/${UNCOVERED} is NOT covered — it has no docs/_legal/ draft ` +
-      'because it carries no operative clause. check-consumer-terms.mjs guards it.',
+    'check-legal-parity: all seven legal pages are covered by canonical source and adoption-banner checks.',
   );
 }

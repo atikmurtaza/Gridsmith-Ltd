@@ -139,7 +139,7 @@ export const service = defineType({
       type: 'boolean',
       initialValue: false,
       description:
-        'Technical group only. Set only when professional scope and PI cover are confirmed in writing (GS-O005, GS-X002). Production refuses an unconfirmed published technical service.',
+        'Technical group only. Set only when a review confirms this record stays within the approved limited scope: drafting to a client brief, no design, calculation, certification, approval, stamping or sign-off responsibility (GS-X002). Not an insurance flag. Production refuses an unconfirmed published technical service.',
       validation: (r) => r.custom((value, context) => professionalScopeRule(value, context)).warning(),
     }),
     defineField({ name: 'seo', type: 'seoBlock' }),

@@ -33,19 +33,12 @@
 export const FACTS = {
   legalName: 'Gridsmith Ltd',
   companyNumber: '17050842',
-  placeOfRegistration: 'England',
+  placeOfRegistration: 'England and Wales',
+  responseCommitment: 'We aim to respond as soon as practicable.',
   contactEmail: 'contact@gridsmith.uk',
   contactPhone: '+44 7405 448534',
-  /**
-   * The two schemes the number may be linked with — `GS-R001-R`. `tel:` is not one of them and
-   * `telHref` is gone; question 3 refuses a `tel:` href anywhere.
-   *
-   * `wa.me` takes the international number with **no leading `+`**; `sms:` keeps it, per RFC
-   * 5724. They are different strings for the same number, which is why both are written out
-   * here rather than derived from one another inside the expectation.
-   */
+  // GS-LAUNCH-012: the number is authorised for WhatsApp only.
   whatsAppHref: 'https://wa.me/447405448534',
-  smsHref: 'sms:+447405448534',
   /**
    * The reg. 25(2)(c) particular. It is asserted to appear **only** in the statutory footer
    * and in the `_legal/` instruments — see `officeProblems`.
@@ -83,6 +76,11 @@ export const FORBIDDEN_EMAILS = [
  * from whichever limb happened to be exercised.
  */
 export const RESPONSE_RULES = [
+  {
+    id: 'SUPERSEDED-TIMED-RESPONSE',
+    pattern: /typically respond within\s+\d+\s+hours/i,
+    why: 'the owner replaced the timed response wording at GS-R16 decision 18',
+  },
   {
     id: 'GUARANTEE-ALWAYS-BY',
     pattern: /always\s+(?:by|within)\b/i,
@@ -133,6 +131,31 @@ export const RESPONSE_RULES = [
  * the *invitation* — an imperative to call, or a `tel:` href, which is the invitation in markup.
  */
 export const CALL_RULES = [
+  {
+    id: 'SMS-PUBLIC-COPY',
+    pattern: /\b(?:SMS|text[-\s]+messages?|text\s+us|WhatsApp\s+(?:or|and)\s+text)\b/i,
+    // Legal instruments may discuss retained messages; reject offers rather than those nouns.
+    legalPatterns: [
+      /\b(?:WhatsApp|email)\s+(?:or|and)\s+(?:text|SMS)\b/i,
+      /\b(?:text|SMS)\s+us\b/i,
+      /\bsend\s+(?:us\s+)?(?:an?\s+)?(?:SMS|text(?:[-\s]+messages?)?)\b/i,
+      /\b(?:contact|message|reach)\s+(?:us|Gridsmith|me|the\s+(?:team|owner|sales\s+department))\s+(?:by|via|using|on)\s+(?:SMS|text(?:[-\s]+messages?)?)\b/i,
+      /\b(?:accept|welcome|take)\s+(?:enquiries|messages|contact)\s+(?:by|via|using|on)\s+(?:SMS|text(?:[-\s]+messages?)?)\b/i,
+      /\b(?:SMS|text[-\s]+messages?)\s*(?::\s*(?:\+?44|0\d)|(?:enquiries\s+)?(?:links?|welcome|available|accepted)\b)/i,
+    ],
+    why: 'public copy offers or names the withdrawn text-message channel',
+  },
+  {
+    id: 'CALL-CTA-DIRECT',
+    pattern: /\b(?:call|ring|phone)\s+(?:Gridsmith|me|the\s+(?:office|team))\b|\b(?:voice|telephone|phone)\s+calls?\b|\b(?:call|ring|phone|telephone)\s*:?\s*(?:on\s+)?(?:\+?44|0\d)/i,
+    legalPatterns: [
+      /\b(?:call|ring|phone|telephone)\s+(?:us|Gridsmith|me|the\s+(?:office|team|owner|sales\s+department))\b/i,
+      /\b(?:voice|telephone|phone)\s+calls?\s*(?::\s*(?:\+?44|0\d)|(?:welcome|available|accepted)\b)/i,
+      /\b(?:contact|reach)\s+(?:us|Gridsmith|me|the\s+(?:team|owner|sales\s+department))\s+(?:by|via|using|on)\s+(?:voice\s+call|telephone|phone)\b/i,
+      /\b(?:call|ring|phone|telephone)\s*:?\s*(?:on\s+)?(?:\+?44|0\d)/i,
+    ],
+    why: 'public copy offers a voice-call channel',
+  },
   {
     id: 'CALL-CTA-IMPERATIVE',
     pattern: /\b(?:call|ring|phone)\s+us\b/i,
@@ -365,6 +388,23 @@ export function emailProblems(route, text, html) {
 }
 
 /**
+ * Served markup to the text `phoneProblems` reads (GS-LEGAL-001-R7). Flattening joins blocks with a
+ * space, so a number ending one block ran into a numbered heading starting the next ("+44 7405 448534"
+ * then "22. Cancellation form" on the consumer terms) and read as "+44 7405 448534 22". A non-digit
+ * sentinel at each block end keeps a match inside its block; digits appended inside a block still fire.
+ *
+ * @param {string} markup
+ * @returns {string}
+ */
+export function phoneTextOf(markup) {
+  return asText(markup)
+    .replace(/<\/(?:p|li|h[1-6]|div|td|th|dt|dd|section)>|<br\s*\/?>/gi, '$& ¶ ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
  * Problems with the telephone number a route serves.
  *
  * @param {string} route
@@ -377,33 +417,13 @@ export function phoneProblems(route, text, html) {
   const t = asText(text).replace(/\s+/g, ' ');
   const h = asText(html);
 
-  // **The assertion is inverted at `GS-R001-R` and this is the load-bearing line.** It used to
-  // check that every `tel:` was the RFC 3966 form; a gate shaped that way is green on a site
-  // covered in correctly-formatted call links, which is now the defect rather than the fix.
-  for (const m of h.matchAll(/href="tel:([^"]*)"/gi)) {
-    problems.push(
-      `${route} has a tel: href (${JSON.stringify(m[1])}). GS-R001-R withdraws the voice ` +
-        'channel: the number is published and is authorised for WhatsApp and SMS only. Link ' +
-        'it with whatsAppHref or smsHref, or render it as text.',
-    );
+  // All public telephone/SMS actions are withdrawn, even for the approved number.
+  for (const m of h.matchAll(/\bhref\s*=\s*["']\s*((?:tel|sms):[^"']*)["']/gi)) {
+    problems.push(`${route} has a ${m[1].split(':')[0].toLowerCase()}: href. GS-LAUNCH-012 withdraws the voice channel and SMS; use email or WhatsApp.`);
   }
-
-  // Each authorised scheme must point at the approved number. Same reasoning as the `mailto:`
-  // rule above: a displayed number and a linked number that differ are two numbers.
-  for (const m of h.matchAll(/href="(https:\/\/wa\.me\/[^"]*)"/gi)) {
+  for (const m of h.matchAll(/href=["'](https:\/\/wa\.me\/[^"']*)["']/gi)) {
     if (m[1] !== FACTS.whatsAppHref) {
-      problems.push(
-        `${route} has a WhatsApp link of ${JSON.stringify(m[1])}, not ${FACTS.whatsAppHref}. ` +
-          'wa.me takes the international number with no plus and no separators.',
-      );
-    }
-  }
-  for (const m of h.matchAll(/href="(sms:[^"]*)"/gi)) {
-    if (m[1] !== FACTS.smsHref) {
-      problems.push(
-        `${route} has an sms: href of ${JSON.stringify(m[1])}, not ${FACTS.smsHref}. ` +
-          'RFC 5724 wants the global form.',
-      );
+      problems.push(`${route} has a WhatsApp link of ${JSON.stringify(m[1])}, not ${FACTS.whatsAppHref}. wa.me takes the international number with no plus and no separators.`);
     }
   }
 
@@ -452,11 +472,12 @@ export function responseProblems(route, text) {
 export function callProblems(route, text) {
   const t = asText(text);
   return CALL_RULES.flatMap((rule) => {
-    const m = t.match(rule.pattern);
+    const patterns = route.startsWith('/legal/') ? rule.legalPatterns ?? [rule.pattern] : [rule.pattern];
+    const m = patterns.map((pattern) => t.match(pattern)).find(Boolean);
     return m
       ? [
           `${route} carries ${rule.id}: ${JSON.stringify(m[0])} — ${rule.why}. GS-R001-R: the ` +
-            'number is a WhatsApp and SMS channel, not a call channel.',
+            'public direct channels are email and WhatsApp only (GS-LAUNCH-012).',
         ]
       : [];
   });
@@ -509,7 +530,7 @@ export function teamProblems(route, text) {
  *
  * 1. **SI 2015/17 reg. 25(2)(c)** requires the address of the registered office on the
  *    company's websites. This build satisfies it in the statutory footer, which is on every
- *    page — `_legal/02-CITATION-LEDGER.md` `L-CTD-25`. That is a legal requirement, so it is
+ *    page — `git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/02-CITATION-LEDGER.md` `L-CTD-25`. That is a legal requirement, so it is
  *    inside the owner's own carve-out, and moving it to one page would be a compliance
  *    decision rather than a content one.
  * 2. **The `_legal/` instruments** name it as the address for service (`CONSUMER-TERMS` §18,
@@ -567,6 +588,7 @@ export function disclosureProblems(route, footerText) {
     // Presence only. The footer renders it as text at `GS-R001-R` — see `Footer.tsx` — so
     // this asserts the string is there, and question 3 asserts nothing links it `tel:`.
     [FACTS.contactPhone, 'the published contact number (GS-O004)'],
+    [FACTS.responseCommitment, 'the current response wording (GS-R16 decision 18)'],
   ];
   for (const [value, why] of required) {
     if (!t.includes(value)) {
@@ -577,9 +599,56 @@ export function disclosureProblems(route, footerText) {
   // the factual inventory, so it is the string a later session is most likely to restore.
   if (/registered in England\s*&(?:amp;)?\s*Wales/i.test(t)) {
     problems.push(
-      `${route}'s footer says "England & Wales". GS-O004 gives "England", corroborated by the ` +
-        'Companies House register. The old value was an agent-chosen seed nobody had confirmed.',
+      `${route}'s footer says "England & Wales". The statutory wording is "England and Wales" ` +
+        '(GS-LEGAL-001-R3 C-3, owner decision GS-R16-001); write it out, without the ampersand.',
     );
+  }
+  return problems;
+}
+
+/**
+ * The only "division" wording public metadata may carry — the statutory clause the three division
+ * layouts and landing pages append (`app/(design|digital|press)/layout.tsx`). Exact, so the plural
+ * brand sentence `GS-INT-002` corrected ("…are its trading divisions.") is not an instance of it.
+ */
+const STATUTORY_CLAUSE = /\b(?:Gridsmith (?:Design|Digital|Press) is a|A) trading division of Gridsmith Ltd\./g;
+
+/**
+ * Problems with the brand taxonomy in a route's public metadata — `GS-INT-002`, question 10.
+ *
+ * Search results and link previews are public brand copy: the studios are **studios**. Titles,
+ * `description`, `og:*` and `twitter:*` are read; the statutory clause above is the one exemption.
+ * `/legal/` routes are exempt as a whole, as in `officeProblems`: their descriptions are the
+ * instruments' own summaries, legal context the taxonomy rule does not reach (and `_legal/` is not
+ * an agent's to amend). A metadata value that is absent is not a problem here — the brand copy is
+ * what is asserted, and `check-axe` owns whether a page has a title.
+ *
+ * @param {string} route
+ * @param {string} markup served markup with scripts removed
+ * @param {boolean} isLegalRoute
+ * @returns {string[]}
+ */
+export function taxonomyProblems(route, markup, isLegalRoute) {
+  if (isLegalRoute) return [];
+  const html = asText(markup);
+  const values = [];
+  const title = html.match(/<title>([^<]*)<\/title>/i);
+  if (title) values.push(['title', title[1]]);
+  for (const m of html.matchAll(/<meta\s[^>]*>/gi)) {
+    const key = m[0].match(/\b(?:name|property)="((?:og|twitter):(?:title|description)|description)"/i)?.[1];
+    const content = m[0].match(/\bcontent="([^"]*)"/i)?.[1];
+    if (key && content !== undefined) values.push([key, content]);
+  }
+  const problems = [];
+  for (const [key, raw] of values) {
+    const value = raw.replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"');
+    const word = value.replace(STATUTORY_CLAUSE, '').match(/\b(?:divisions?|departments?)\b/i)?.[0];
+    if (word) {
+      problems.push(
+        `${route}'s ${key} says "${word}": ${JSON.stringify(value)}. Public metadata uses the studio ` +
+          'taxonomy; "trading division" belongs only in the statutory clause (GS-INT-002).',
+      );
+    }
   }
   return problems;
 }

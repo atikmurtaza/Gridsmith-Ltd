@@ -1,4 +1,16 @@
+> **GS-R002-RC-G2 current authority (24 September 2026):** The owner approved paper behind the closed Technical scope note and resuming staging release. G2 is implemented only in the enhanced stacked layout (width <=760px, height >650px); rendered note contrast passes across 24 viewport combinations (local minimum 6.69:1; Linux CI minimum 6.62:1; corrected 760x800 6.69:1). G1 disclosures/H1 and lifecycle checks remain passing. Implementation c4781b0af64733313a78ea7c557a9d1393f7bb32 passes CI 35940710523 and exact-SHA protected Preview verification. The subsequent documentation checkpoint exposed an axe-helper focus race on the unchanged kitchen-sink skip link. The gate now restores and asserts document focus, with permanent positive/negative proofs and no application change. The final verification checkpoint requires successful exact-SHA CI and Preview; its receipt is recorded in the release handoff. Original mascot, exact Inter G/S, persistent building-to-logo, metallic finish, continuous wave and copy are preserved; only the approved reading surfaces amend R2. Main and production remain untouched; no next division is authorised. Authoritative evidence: `docs/_shared/GS-R002-RC-DESIGN.md`.
+
+> **GS-R002-R1 owner remediation (20 September 2026):** The original GS-R002 candidate was not visually approved. Design alone now uses Oxford Navy `#0A192E` and Imperial British Gold `#D4AF35`. This supersedes the equal-to-Master gold rule for Design; Master remains unchanged. R1 retains From Line to Form, with centre / left / right / left / right-centre choreography. Historical specifications below are preserved.
+>
+> Current night contrast: ink/canvas 15.48:1; muted/canvas 10.30:1; subtle/canvas 7.87:1; accent/canvas 8.38:1; accent/raised 7.26:1; accent-ink/accent 8.38:1; accent-ink/accent-2 5.76:1; decorative strong rule/canvas 2.45:1. Text minima are unchanged.
+
 # Design Spec — Gridsmith Design
+
+## GS-R002 measured palette (19 September 2026)
+
+These current ratios supersede the historical amber table below. Night ink / canvas **16.36:1**; muted **10.65:1**; subtle **8.08:1**; gold / canvas **10.27:1**; gold / raised **8.81:1**; CTA ink / gold **10.27:1**; secondary CTA **4.79:1**. Strong rule **2.35:1**, decorative only. Paper ink **11.78:1** and muted **6.46:1** on paper. The contrast gate measures paper and asserts all four gold material values equal Master. Gold is not paper body text.
+
+> **GS-R002 override, 19 September 2026:** the approved Design experience is **From Line to Form** — one continuous workspace → identity → character → technical → convergence narrative. Deep navy/cobalt plus the exact Master gold replaces amber. Three visitor chapters present the five unchanged canonical groups; no mandatory split-track fork, public portfolio or pricing. SVG/scroll choreography and restrained pointer response are expressly authorised with static fallbacks. This supersedes conflicting historical visual/flow rules below; security, technical publication, commercial and accessibility gates remain. See `../_shared/GS-R002-DESIGN.md` for current authority and evidence.
 
 Inherits `_shared/00-FOUNDATION.md` §3. This file defines the Design division theme only.
 

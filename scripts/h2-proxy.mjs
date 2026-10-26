@@ -36,7 +36,8 @@ import os from 'node:os';
 import path from 'node:path';
 
 const LISTEN = Number(process.env.H2_PORT ?? 3202);
-const UPSTREAM = Number(process.env.H2_UPSTREAM_PORT ?? 3203);
+const staticProof = process.env.GRIDSMITH_BUILD_TARGET === 'static';
+const UPSTREAM = staticProof ? 3236 : Number(process.env.H2_UPSTREAM_PORT ?? 3203);
 
 // ---- certificate -----------------------------------------------------------------------
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gridsmith-h2-'));
@@ -62,13 +63,13 @@ if (openssl.status !== 0) {
 // remove it, and would look identical in the reports.
 const agent = new http.Agent({ keepAlive: true, maxSockets: 256 });
 
-const next = spawn(
+const next = staticProof ? null : spawn(
   process.execPath,
   [path.join('node_modules', 'next', 'dist', 'bin', 'next'), 'start', '-p', String(UPSTREAM)],
   { stdio: ['ignore', 'pipe', 'pipe'] },
 );
-next.stdout.on('data', (d) => process.stdout.write(`[next] ${d}`));
-next.stderr.on('data', (d) => process.stderr.write(`[next] ${d}`));
+next?.stdout.on('data', (d) => process.stdout.write(`[next] ${d}`));
+next?.stderr.on('data', (d) => process.stderr.write(`[next] ${d}`));
 
 const HOP_BY_HOP = new Set([
   'connection', 'keep-alive', 'proxy-connection', 'transfer-encoding', 'upgrade',
@@ -117,13 +118,13 @@ const poll = () => {
   const req = http.get({ host: '127.0.0.1', port: UPSTREAM, path: '/' }, (res) => {
     res.resume();
     server.listen(LISTEN, '127.0.0.1', () => {
-      console.log(`h2-proxy: serving https://127.0.0.1:${LISTEN} over HTTP/2 -> next on ${UPSTREAM}`);
+      console.log(`h2-proxy: serving https://127.0.0.1:${LISTEN} over HTTP/2 -> ${staticProof ? 'static files' : 'next'} on ${UPSTREAM}`);
     });
   });
   req.on('error', () => {
     if (Date.now() > deadline) {
       console.error('h2-proxy: next did not become ready within 90s.');
-      next.kill();
+      next?.kill();
       process.exit(1);
     }
     setTimeout(poll, 300);
@@ -131,7 +132,7 @@ const poll = () => {
 };
 poll();
 
-const shutdown = () => { try { next.kill(); } catch {} try { server.close(); } catch {} process.exit(0); };
+const shutdown = () => { try { next?.kill(); } catch {} try { server.close(); } catch {} process.exit(0); };
 process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
-next.on('exit', (code) => { if (code) { console.error(`h2-proxy: next exited ${code}`); process.exit(code); } });
+next?.on('exit', (code) => { if (code) { console.error(`h2-proxy: next exited ${code}`); process.exit(code); } });

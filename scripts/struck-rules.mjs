@@ -125,7 +125,7 @@ export const STRUCK_RULES = [
       'wording offers more than the reviewed contract gives — non-negotiable #6, ' +
       '`01-VALIDATION-REPORT.md` §21, `press/PROJECT-TRACKER.md` K-17.',
     where:
-      '`docs/_legal/CONSUMER-TERMS.md` §6, and nowhere else. The replacement UI copy is ' +
+      '`docs/_legal/current/client-terms-consumers.md` §6, and nowhere else. The replacement UI copy is ' +
       'K-17 and is blocked on the owner — this check asserts only that the struck wording ' +
       'does not stand, never what should stand in its place.',
   },
@@ -198,7 +198,7 @@ export const STRUCK_RULES = [
       'non-registered trader has no number to disclose and no net/gross distinction to draw. ' +
       'The absence is the decision and both `sanity/schemas/companyDetails.ts` and ' +
       '`lib/company/companyDetails.ts` say so in their first lines. ' +
-      '`_shared/05-HANDOVER.md` 2 Sept 2026; `docs/_legal/03-REVISION-LOG.md`.',
+      '`_shared/05-HANDOVER.md` 2 Sept 2026; `git:e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/03-REVISION-LOG.md`.',
     where:
       'The **VAT display rule** survives and is the live one: no price this site serves may be ' +
       'presented as VAT-exclusive and no VAT number may be published. ' +
@@ -411,6 +411,57 @@ export const STRUCK_RULES = [
       'distinction, honest residual-risk language, and no unsupported guarantee of universal ' +
       'compliance. Gridsmith reports the standards tested, the evidence, the findings and the ' +
       'residual issues.',
+  },
+  {
+    id: 'GS-R001-M-DIVISION-CARDS',
+    // One regex: a rule's patterns must ALL match one line, so alternatives share a pattern.
+    patterns: [/three cards|Equal thirds\. 1px `--line` border/i],
+    why:
+      'Struck by `GS-R001-M`, 18 September 2026. The owner rejected the Master homepage at ' +
+      '`GS-O008`, and named this layout specifically: *"three coloured division boxes/cards"* ' +
+      'that read as generic and disconnected from Gridsmith. Recolouring or rounding them was ' +
+      'ruled out in the same instruction — the composition itself had to change.',
+    where:
+      '**The routing requirement survives unchanged** — `FR-M02`, `M-J3`: the three studios ' +
+      'are immediately below the hero and reachable in one tab sequence, each a plain `<a>`. ' +
+      'What replaced the cards is the **studio index** (`components/master/Home.tsx`, ' +
+      '`master/DESIGN.md` §5.1): the name set large, the approved lines beneath it, a ' +
+      'hairline between rows and a gold rule that draws on hover. No box, no fill, no division ' +
+      'colour.',
+  },
+  {
+    id: 'GS-O005-PI-COVER-PUBLICATION-GATE',
+    // Both on one line: the insurance term and the gating verb. "PI" alone would hit the
+    // deferral record, which is the surviving statement.
+    patterns: [/\b(PI (cover|scope)|professional[- ]indemnity)\b/i, /\b(until|blocked on|gated on|requires?)\b/i],
+    why:
+      'Struck by `GS-PROD-003-R1`, 2 October 2026. The owner decided Gridsmith does not carry PI ' +
+      'cover for the Technical/CAD services and will not make obtaining it a launch prerequisite; ' +
+      '`GS-O005` closed on that owner scope/risk decision. That is not a claim of zero liability, ' +
+      'and the contractual position stays with the solicitor (`GS-O003`).',
+    where:
+      'The Technical publication gate survives with one meaning: `professionalScopeConfirmed` is ' +
+      'set only when a review confirms the record stays inside the approved limited scope ' +
+      '(`GS-X002`). PI cover itself is the non-blocking deferred item `GS-O024`.',
+  },
+  {
+    id: 'GS-O003-SOLICITOR-APPROVAL-GATE',
+    // "solicitor" alone would hit every line that merely mentions one (owner columns, history);
+    // the second pattern is the gating language that made it a rule.
+    patterns: [
+      /solicitor/i,
+      /(HARD GATE|gates (production|publication)|ships? unapproved|before deployment|reviewed by a solicitor|requires? solicitor approval|solicitorApproved(: true| == true)|solicitor gate)/i,
+    ],
+    why:
+      'Struck by `GS-LEGAL-001`, 6 October 2026. The owner decided not to commission a solicitor at ' +
+      'this stage; `GS-O003` (mandatory solicitor approval before any legal page is published) is ' +
+      'replaced by `GS-O003-R`: an evidence-based review against current UK legislation and official ' +
+      'guidance (`docs/_legal/research/GS-LEGAL-001/`), then explicit owner adoption recorded in ' +
+      '`docs/_legal/evidence/GS-O003-R-REGISTER.json`. No document claims solicitor review.',
+    where:
+      '`lib/legal/adoption.ts` (states), `docs/_legal/evidence/GS-O003-R-REGISTER.json` (per-document state), ' +
+      '`scripts/check-legal-adoption.mjs` (documentary gate) and `scripts/migrate-production-cms.mjs` ' +
+      '(production admits only `PUBLISHABLE`).',
   },
 ];
 

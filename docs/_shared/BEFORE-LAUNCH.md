@@ -229,7 +229,14 @@ on. The privacy policy says the registration is pending and publishes the number
 
 ### 4. Professional indemnity insurance — check the scope, not just the cover
 
-- **Status:** Blocks production
+> **Superseded 2 October 2026 (`GS-PROD-003-R1`).** The owner decided Gridsmith does not currently
+> carry PI cover for the Technical/CAD services and will not make it a launch prerequisite; `GS-O005`
+> is closed by that owner scope/risk decision and the insurance is deferred, non-blocking (`GS-O024`).
+> No PI cover is not a claim of no liability — the business terms go to the solicitor on that factual
+> basis (`GS-O003`, note in `OWNER-ACTIONS.md`; the "clause 8.1" below is historical numbering, the
+> live provisions are `MSA-BUSINESS.md` §12 and §16). The text below is kept as history.
+
+- **Status:** ~~Blocks production~~ superseded — does not block production
 - **Where:** your broker
 - **Your time:** one conversation
 - **Elapsed:** days to weeks
@@ -458,6 +465,32 @@ record what you see:
 5. `next build` runs to `Compiled successfully`, **EXIT=0** read from the process.
 
 All five in one run closes VALIDATION §19.10 item 1. Fewer than five does not.
+
+**Run at `GS-PROD-002` (2 October 2026)** — the 47 non-legal, non-Technical documents are in
+`production`; the five-point record is in `_shared/GS-PROD-002.md`. 1, 2 and 5 observed literally; 3
+and 4 observed with the qualification recorded there (`check:launch` prints no total count and no
+statutory values — the same run's route table and the independent read-back supply them). Legal
+documents (`GS-O003`) and the three Technical services (`GS-O005`) are not yet in `production`.
+
+
+### 24. Re-verify robots, sitemap, indexing and image headers on the production origin
+
+- **Status:** Blocks production publication
+- **Added:** `GS-HOST-H4-D-R2`, 6 October 2026
+
+The temporary Hostinger staging domain carries two owner-approved **HOSTINGER TEMPORARY-DOMAIN
+PROVIDER EXCEPTIONS** (`_shared/GS-HOST-H4-D.md` §H4-D-R2): hCDN strips every security and
+noindex header from PNG responses, and the edge serves Hostinger's own temporary-domain
+`robots.txt` instead of the repository's. **Neither carries to gridsmith.uk.** Before production
+publication, against the actual production origin:
+
+1. `robots.txt` is the repository-controlled production file, byte for byte;
+2. the sitemap is the intended production sitemap (staging's is deliberately empty);
+3. the robots/index state is the intended production state — remove the staging noindex meta and
+   `X-Robots-Tag` only where production publication requires indexing;
+4. image responses (PNG included) keep exact bytes and the full security-header set;
+5. any remaining provider deviation is a separate, explicit production decision, not an
+   inheritance from the staging exception.
 
 ---
 

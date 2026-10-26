@@ -1,0 +1,782 @@
+{
+  "phase": "GS-LAUNCH-019",
+  "baseSha": "35c74d67efa58f21d8b10021bfde4ba4f584d645",
+  "branch": "codex/gs-launch-018",
+  "checkedAt": "2026-10-26T13:32:54.293Z",
+  "status": "ACCEPTED RELEASE READY FOR OWNER DEPLOYMENT APPROVAL",
+  "auditBefore": {
+    "auditReportVersion": 2,
+    "vulnerabilities": {
+      "@lhci/cli": {
+        "name": "@lhci/cli",
+        "severity": "high",
+        "isDirect": true,
+        "via": [
+          "@lhci/utils",
+          "lighthouse"
+        ],
+        "effects": [],
+        "range": "<=0.1.1-alpha.5 || >=0.14.0",
+        "nodes": [
+          "node_modules/@lhci/cli"
+        ],
+        "fixAvailable": {
+          "name": "@lhci/cli",
+          "version": "0.13.0",
+          "isSemVerMajor": true
+        }
+      },
+      "@lhci/utils": {
+        "name": "@lhci/utils",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "lighthouse"
+        ],
+        "effects": [
+          "@lhci/cli"
+        ],
+        "range": ">=0.14.0",
+        "nodes": [
+          "node_modules/@lhci/utils"
+        ],
+        "fixAvailable": {
+          "name": "@lhci/cli",
+          "version": "0.13.0",
+          "isSemVerMajor": true
+        }
+      },
+      "@puppeteer/browsers": {
+        "name": "@puppeteer/browsers",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "extract-zip"
+        ],
+        "effects": [
+          "puppeteer",
+          "puppeteer-core"
+        ],
+        "range": "<=2.13.2",
+        "nodes": [
+          "node_modules/@puppeteer/browsers"
+        ],
+        "fixAvailable": {
+          "name": "puppeteer",
+          "version": "25.16.0",
+          "isSemVerMajor": true
+        }
+      },
+      "chromium-bidi": {
+        "name": "chromium-bidi",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "zod"
+        ],
+        "effects": [
+          "puppeteer",
+          "puppeteer-core"
+        ],
+        "range": "0.5.13 - 157.0.8081-0",
+        "nodes": [
+          "node_modules/chromium-bidi"
+        ],
+        "fixAvailable": {
+          "name": "puppeteer",
+          "version": "25.16.0",
+          "isSemVerMajor": true
+        }
+      },
+      "extract-zip": {
+        "name": "extract-zip",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          {
+            "source": 1139346,
+            "name": "extract-zip",
+            "dependency": "extract-zip",
+            "title": "extract-zip unvalidated symlink path traversal",
+            "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+            "severity": "high",
+            "cwe": [
+              "CWE-22"
+            ],
+            "cvss": {
+              "score": 8.1,
+              "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+            },
+            "range": "<=2.0.1"
+          },
+          {
+            "source": 1193685,
+            "name": "extract-zip",
+            "dependency": "extract-zip",
+            "title": "extract-zip allows arbitrary file writes through symlink archive entries",
+            "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3",
+            "severity": "high",
+            "cwe": [
+              "CWE-22"
+            ],
+            "cvss": {
+              "score": 8.1,
+              "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:H"
+            },
+            "range": "<=2.0.1"
+          }
+        ],
+        "effects": [
+          "@puppeteer/browsers"
+        ],
+        "range": "*",
+        "nodes": [
+          "node_modules/extract-zip"
+        ],
+        "fixAvailable": {
+          "name": "puppeteer",
+          "version": "25.16.0",
+          "isSemVerMajor": true
+        }
+      },
+      "lighthouse": {
+        "name": "lighthouse",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "puppeteer-core"
+        ],
+        "effects": [
+          "@lhci/cli",
+          "@lhci/utils"
+        ],
+        "range": "11.7.0-dev.20240320 - 13.3.0",
+        "nodes": [
+          "node_modules/lighthouse"
+        ],
+        "fixAvailable": {
+          "name": "@lhci/cli",
+          "version": "0.13.0",
+          "isSemVerMajor": true
+        }
+      },
+      "puppeteer": {
+        "name": "puppeteer",
+        "severity": "high",
+        "isDirect": true,
+        "via": [
+          "@puppeteer/browsers",
+          "chromium-bidi",
+          "puppeteer-core"
+        ],
+        "effects": [],
+        "range": "19.8.1 - 25.12.0",
+        "nodes": [
+          "node_modules/puppeteer"
+        ],
+        "fixAvailable": {
+          "name": "puppeteer",
+          "version": "25.16.0",
+          "isSemVerMajor": true
+        }
+      },
+      "puppeteer-core": {
+        "name": "puppeteer-core",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          "@puppeteer/browsers",
+          "chromium-bidi"
+        ],
+        "effects": [
+          "lighthouse",
+          "puppeteer"
+        ],
+        "range": "19.8.4 - 25.12.0",
+        "nodes": [
+          "node_modules/puppeteer-core"
+        ],
+        "fixAvailable": {
+          "name": "puppeteer",
+          "version": "25.16.0",
+          "isSemVerMajor": true
+        }
+      },
+      "zod": {
+        "name": "zod",
+        "severity": "high",
+        "isDirect": false,
+        "via": [
+          {
+            "source": 1243066,
+            "name": "zod",
+            "dependency": "zod",
+            "title": "Zod can exhaust memory while validating oversized constrained collections",
+            "url": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+            "severity": "high",
+            "cwe": [
+              "CWE-770"
+            ],
+            "cvss": {
+              "score": 7.5,
+              "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+            },
+            "range": "<4.6.6"
+          }
+        ],
+        "effects": [
+          "chromium-bidi"
+        ],
+        "range": "<4.6.6",
+        "nodes": [
+          "node_modules/chromium-bidi/node_modules/zod"
+        ],
+        "fixAvailable": {
+          "name": "puppeteer",
+          "version": "25.16.0",
+          "isSemVerMajor": true
+        }
+      }
+    },
+    "metadata": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 9,
+        "critical": 0,
+        "total": 9
+      },
+      "dependencies": {
+        "prod": 27,
+        "dev": 1638,
+        "optional": 148,
+        "peer": 11,
+        "peerOptional": 0,
+        "total": 1701
+      }
+    }
+  },
+  "auditAfter": {
+    "auditReportVersion": 2,
+    "vulnerabilities": {},
+    "metadata": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "dependencies": {
+        "prod": 27,
+        "dev": 1638,
+        "optional": 147,
+        "peer": 11,
+        "peerOptional": 0,
+        "total": 1701
+      }
+    }
+  },
+  "registryVerification": {
+    "verifiedAt": "2026-10-26T13:29:25.794Z",
+    "packages": [
+      {
+        "name": "chromium-bidi",
+        "version": "157.0.8090-0",
+        "integrity": "sha512-KJw7IQgqXwxpJgJlEIPg5mr2ZoqA+jkTRtc5EABI7sUJ3bu3cpI7NuEBoj4Gn1AsF78CaT9So5WQWspK3/wYag==",
+        "bytes": 998413
+      },
+      {
+        "name": "modern-tar",
+        "version": "0.8.6",
+        "integrity": "sha512-LYSks0tNVqbtez/9OB0YFP6qLRSqkdAxJWOQpVaR67lNTbj2zNLyYpowkRMia5lXLCZKzxwoxkxH2MbbBR2aEg==",
+        "bytes": 26236
+      },
+      {
+        "name": "puppeteer",
+        "version": "25.14.0",
+        "integrity": "sha512-+s1Iqbl9DsGLOaQdgCQyhtgHZsF9hi4Iu8iuBqxzraxUXoRG1QkYQI0CA1/VsNK1gZWJfs50BL/oOb1L+Yz8Yg==",
+        "bytes": 11697
+      },
+      {
+        "name": "puppeteer-core",
+        "version": "25.14.0",
+        "integrity": "sha512-LQitnes3tBeVbdZ7V/4iwJPLZGgkl9uBVK0W7YYMh68j/3Y9eNuvj4yl+Fdo7zN0SuajOMrhd7aPj3DifK8k6A==",
+        "bytes": 1182280
+      },
+      {
+        "name": "@puppeteer/browsers",
+        "version": "3.2.5",
+        "integrity": "sha512-UoCo3Pynbm37aLEEoydSiG+t24ui7sLD40+07CKxzxNy4PpSowJMkvlLIiV67XjP1lMVynhQVnuwlTABqBH8LQ==",
+        "bytes": 96804
+      },
+      {
+        "name": "ansi-regex",
+        "version": "6.4.0",
+        "integrity": "sha512-KzTVk2tCWAHtYrvvvaP8bJKJq2pVinhLcGEQdtLIYPbmNGNyYe8QwNaTUYQp2J7/vIsUKt5QCqAfUkYyG9DkOw==",
+        "bytes": 3025
+      },
+      {
+        "name": "ansi-styles",
+        "version": "6.2.3",
+        "integrity": "sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==",
+        "bytes": 5836
+      },
+      {
+        "name": "cliui",
+        "version": "9.0.1",
+        "integrity": "sha512-k7ndgKhwoQveBL+/1tqGJYNz097I7WOvwbmmU2AR5+magtbjPWQTS1C5vzGkBC8Ym8UWRzfKUzUUqFLypY4Q+w==",
+        "bytes": 19175
+      },
+      {
+        "name": "string-width",
+        "version": "7.2.0",
+        "integrity": "sha512-tsaTIkKW9b4N+AEj+SVA+WhJzV7/zMhcSu78mLKWSk7cXMOSHsBKFWUs0fWwq8QyK3MgJBQRX6Gbi4kYbdvGkQ==",
+        "bytes": 2989
+      },
+      {
+        "name": "devtools-protocol",
+        "version": "0.0.1696802",
+        "integrity": "sha512-FO5/SENfvc2K8wRnWQflKcwuoTH4dBkXCWTQ9ebIWtuX8JM5+ZvCotaEmkfh21pO7TvIKGTM3hG4xFiq9WTwmg==",
+        "bytes": 551372
+      },
+      {
+        "name": "emoji-regex",
+        "version": "10.6.0",
+        "integrity": "sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==",
+        "bytes": 5610
+      },
+      {
+        "name": "string-width",
+        "version": "8.3.0",
+        "integrity": "sha512-ZbmZM0JCihQN91dWnxoipT2KOEyHqEyfRXUyjuRhW8b/xnqPDoq4gWEVApTVa9db2wN8mmoikgFBbjh71+cGeQ==",
+        "bytes": 4510
+      },
+      {
+        "name": "strip-ansi",
+        "version": "7.2.0",
+        "integrity": "sha512-yDPMNjp4WyfYBkHnjIRLfca1i6KMyGCtsVgoKe/z1+6vukgaENdgGBZt+ZmKPc4gavvEZ5OgHfHdrazhgNyG7w==",
+        "bytes": 2156
+      },
+      {
+        "name": "wrap-ansi",
+        "version": "9.0.2",
+        "integrity": "sha512-42AtmgqjV+X1VpdOfyTGOYRi0/zsoLqtXQckTmqTeybT+BDIbM/Guxo7x3pE2vtpr1ok6xRqM9OpBe+Jyoqyww==",
+        "bytes": 4316
+      },
+      {
+        "name": "ws",
+        "version": "8.22.0",
+        "integrity": "sha512-Ydggc987+RO0AnWtZ/7Wq9FtNvcrL1b/RO0ud9mWjUPgDrsAAwQSF51sm2hm1XofbU/4jkpGEsLFsZZxU+1DOg==",
+        "bytes": 35094
+      },
+      {
+        "name": "y18n",
+        "version": "5.0.8",
+        "integrity": "sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==",
+        "bytes": 6157
+      },
+      {
+        "name": "yargs",
+        "version": "18.2.0",
+        "integrity": "sha512-9OpKOLeaoNFecEp7P6iYbzze/5CqWoH7N3SMs/6y1XF4nMvFMspEGZzJ6uFi9MmQwXhyzqYoSEKO3tvA3Z/o2w==",
+        "bytes": 48841
+      },
+      {
+        "name": "yargs-parser",
+        "version": "22.0.0",
+        "integrity": "sha512-rwu/ClNdSMpkSrUb+d6BRsSkLUq1fmfsY6TOpYzTwvwkg1/NRG85KBy3kq++A8LKQwX6lsu+aWad+2khvuXrqw==",
+        "bytes": 21743
+      },
+      {
+        "name": "typed-query-selector",
+        "version": "2.12.3",
+        "integrity": "sha512-/dtuMZyutHLlrxWhhC1uib00ELUr2dZ8C9B8YzZYsJmeE3V56OxRblrSM2UaF142pcMtak7ehZ6+poWGeehNIg==",
+        "bytes": 6554
+      },
+      {
+        "name": "webdriver-bidi-protocol",
+        "version": "1.0.1",
+        "integrity": "sha512-WXWs/aXF2a6Al1Z2/V/7Gp2oPZOAAmHjJOTmv4KCXRJ122IMj3tSSMc6a4q3K4QOmhQbse/Ahr+oTVJOU2dUiw==",
+        "bytes": 38632
+      }
+    ]
+  },
+  "retainedBrowser": "155.0.8059.79",
+  "retainedLighthouse": "12.6.1",
+  "retainedLhci": "0.15.1",
+  "scope": {
+    "publicSource": "UNCHANGED",
+    "legalDocuments": "UNCHANGED",
+    "workflowFiles": "ADD installed browser selftest after existing check; all other steps unchanged",
+    "publication": "NOT_AUTHORISED"
+  },
+  "baselineRun": "https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40254337220",
+  "retainedFailedRuns": [
+    {
+      "runId": "40331642499",
+      "sourceSha": "56c0d781ccf74deb8a1c843e14d20ac57c97510b",
+      "cause": "EXPLICIT_BROWSER_INSTALLER triggered by read-only helper package metadata in dependency gate; moved assertion into existing guarded browser selftest; guard unchanged"
+    }
+  ],
+  "sourceSha": "13032b1735c320842d7dc25f3de03afa704d3e33",
+  "completedAt": "2026-10-26T15:11:09.183Z",
+  "ci": {
+    "conclusion": "success",
+    "headBranch": "codex/gs-launch-018",
+    "headSha": "13032b1735c320842d7dc25f3de03afa704d3e33",
+    "jobs": [
+      {
+        "name": "verify",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "hostinger-staging / build",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "hostinger-staging / publish",
+        "status": "completed",
+        "conclusion": "skipped"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40332154565"
+  },
+  "release": {
+    "result": "PASS",
+    "sourceSha": "13032b1735c320842d7dc25f3de03afa704d3e33",
+    "runId": "40332154565",
+    "artifactIdentity": "8028cb984402db08d7ba016ab656c5602dfdfae5bc3a49fda7f70b6b890a65e4",
+    "releaseStatus": "ACCEPTANCE_PASSED",
+    "archive": "owner-preview-13032b1735c320842d7dc25f3de03afa704d3e33.zip",
+    "archiveBytes": 10297497,
+    "archiveSha256": "9a6291a8809efbb98e95e2e4cd8dd3fd73a577f921dc20b5ff514fec01959e96",
+    "filesVerified": 212,
+    "acceptanceChecksVerified": 6,
+    "receiptSha256": "2de73e07f095a92bbd4beecc7fb2d207e507b758cb4ddb17c19a06dc35e8e9b2",
+    "productionAudit": 0,
+    "fullAudit": 0,
+    "wholeWorkflow": "success",
+    "publisher": "skipped"
+  },
+  "workflowArtifacts": [
+    {
+      "id": 12661825675,
+      "name": "design-scene-evidence",
+      "size_in_bytes": 34891042,
+      "digest": "sha256:59de412005de33c91d0919a873ee5b33436fea5541579431a5d51bce985f2de9",
+      "workflow_run": {
+        "id": 40332154565,
+        "repository_id": 1330474483,
+        "head_repository_id": 1330474483,
+        "head_branch": "codex/gs-launch-018",
+        "head_sha": "13032b1735c320842d7dc25f3de03afa704d3e33"
+      }
+    },
+    {
+      "id": 12661805899,
+      "name": "hostinger-release-archive",
+      "size_in_bytes": 10155780,
+      "digest": "sha256:cb9e98e240ffacb5f34255c15a8effe31ad6314e074e38dc5a89611cb8eb7352",
+      "workflow_run": {
+        "id": 40332154565,
+        "repository_id": 1330474483,
+        "head_repository_id": 1330474483,
+        "head_branch": "codex/gs-launch-018",
+        "head_sha": "13032b1735c320842d7dc25f3de03afa704d3e33"
+      }
+    },
+    {
+      "id": 12661726103,
+      "name": "hostinger-static",
+      "size_in_bytes": 10298275,
+      "digest": "sha256:177e9342d1e1e4413322f054a57f0b6aa5bead090b843819f6382182ac648e46",
+      "workflow_run": {
+        "id": 40332154565,
+        "repository_id": 1330474483,
+        "head_repository_id": 1330474483,
+        "head_branch": "codex/gs-launch-018",
+        "head_sha": "13032b1735c320842d7dc25f3de03afa704d3e33"
+      }
+    },
+    {
+      "id": 12661371001,
+      "name": "owner-preview-evidence",
+      "size_in_bytes": 62703123,
+      "digest": "sha256:1419c1fcc8ab6f46551d996c6acfd70ff9def2d2d32ead4a11266215b38a6b0f",
+      "workflow_run": {
+        "id": 40332154565,
+        "repository_id": 1330474483,
+        "head_repository_id": 1330474483,
+        "head_branch": "codex/gs-launch-018",
+        "head_sha": "13032b1735c320842d7dc25f3de03afa704d3e33"
+      }
+    },
+    {
+      "id": 12657116706,
+      "name": "lighthouseci-reports",
+      "size_in_bytes": 59668245,
+      "digest": "sha256:fd722c7cde6066d7b85cf394c8ddcb6392f9c046ad5096fd4d2e3cead8c29e12",
+      "workflow_run": {
+        "id": 40332154565,
+        "repository_id": 1330474483,
+        "head_repository_id": 1330474483,
+        "head_branch": "codex/gs-launch-018",
+        "head_sha": "13032b1735c320842d7dc25f3de03afa704d3e33"
+      }
+    }
+  ],
+  "compatibility": {
+    "publicWebsiteSource": "UNCHANGED from35c74d67; tooling/metadata commits differ",
+    "normalServed": "PASS; all19commands",
+    "normalAxe": "76 analyses plus2deferred-footer analyses; zero violations;0unresolved incompletes;836explicitlymapped incompletes",
+    "responsive": "51combinations;PASS",
+    "preview": {
+      "coverage": "PASS; same 64 route dispositions, 61 eligible",
+      "browserPages": 20,
+      "noJs": 20,
+      "focusedAxe": 41,
+      "errorDocuments": 3,
+      "legalCombinations": 70,
+      "legalLinks": 98,
+      "contactChecks": 12,
+      "browserErrors": 0,
+      "failedRequests": 0,
+      "badResponses": 0,
+      "rawAxeEntries": 44
+    },
+    "legal": "PASS on candidate,normalserved and independentlydownloaded accepted release;7documents,109clauses,406paragraphs",
+    "httpApache": "PASS;210publicfilehashes,61routes,identity,headers,cache,MIME,compression,redirects,wrongHost,hiddenfiledenial,genuine404,GET/HEAD500"
+  },
+  "lighthouse": {
+    "normal": {
+      "desktop": {
+        "routes": 11,
+        "runs": 33,
+        "performance": [
+          1,
+          1
+        ],
+        "accessibility": [
+          1,
+          1
+        ],
+        "lcp": [
+          578.0643,
+          689.6554
+        ],
+        "maxCls": 0.00005385331448288253,
+        "maxTbt": 0,
+        "lcpDeltaMs": [
+          -5.4724999999998545,
+          34.118799999999965
+        ],
+        "tbtDeltaMs": [
+          0,
+          0
+        ],
+        "cpuBenchmark": [
+          2386,
+          2492.5
+        ]
+      },
+      "mobile": {
+        "routes": 11,
+        "runs": 33,
+        "performance": [
+          0.99,
+          1
+        ],
+        "accessibility": [
+          1,
+          1
+        ],
+        "lcp": [
+          904.037,
+          1081.82
+        ],
+        "maxCls": 0.0001431629925810673,
+        "maxTbt": 107.03699999999981,
+        "lcpDeltaMs": [
+          20.40700000000004,
+          41.72900000000004
+        ],
+        "tbtDeltaMs": [
+          31.87300000023879,
+          54.08699999999999
+        ],
+        "cpuBenchmark": [
+          2408,
+          2485
+        ]
+      }
+    },
+    "preview": {
+      "desktop": {
+        "routes": 11,
+        "runs": 33,
+        "performance": [
+          1,
+          1
+        ],
+        "accessibility": [
+          1,
+          1
+        ],
+        "lcp": [
+          572.6924999999999,
+          706.4194
+        ],
+        "maxCls": 0.00005385331448288253,
+        "maxTbt": 0,
+        "lcpDeltaMs": [
+          -7.486400000000231,
+          18.255250000000387
+        ],
+        "tbtDeltaMs": [
+          0,
+          0
+        ],
+        "cpuBenchmark": [
+          2660,
+          2855.5
+        ]
+      },
+      "mobile": {
+        "routes": 11,
+        "runs": 33,
+        "performance": [
+          1,
+          1
+        ],
+        "accessibility": [
+          1,
+          1
+        ],
+        "lcp": [
+          898.313,
+          1070.204
+        ],
+        "maxCls": 0.0001431629925810673,
+        "maxTbt": 84.50900000000047,
+        "lcpDeltaMs": [
+          1.2939999999999827,
+          17.811000000000035
+        ],
+        "tbtDeltaMs": [
+          7.713000000000193,
+          16.889999999999873
+        ],
+        "cpuBenchmark": [
+          2669,
+          2874
+        ]
+      }
+    }
+  },
+  "measurementInvestigation": {
+    "baselineCpuBenchmark": {
+      "normal": {
+        "desktop": [
+          2887,
+          3140
+        ],
+        "mobile": [
+          2793,
+          3216
+        ]
+      },
+      "preview": {
+        "desktop": [
+          2884,
+          3134.5
+        ],
+        "mobile": [
+          2863,
+          3104.5
+        ]
+      }
+    },
+    "newCpuBenchmark": {
+      "normal": {
+        "desktop": [
+          2386,
+          2492.5
+        ],
+        "mobile": [
+          2408,
+          2485
+        ]
+      },
+      "preview": {
+        "desktop": [
+          2660,
+          2855.5
+        ],
+        "mobile": [
+          2669,
+          2874
+        ]
+      }
+    },
+    "normalDigitalTrace": {
+      "sameScriptNames": [
+        "4bd1b696-f785427dddbba9fb.js",
+        "1255-3e1fb93b801764ec.js"
+      ],
+      "beforeLongTasksMs": [
+        [
+          101.322,
+          52.946,
+          51.554
+        ],
+        [
+          98.187,
+          54.763,
+          53.934
+        ],
+        [
+          102.285,
+          52.817,
+          52.183
+        ]
+      ],
+      "afterLongTasksMs": [
+        [
+          135.32,
+          71.717,
+          70.373
+        ],
+        [
+          129.964,
+          69.444,
+          68.993
+        ],
+        [
+          135.597,
+          73.377,
+          69.783
+        ]
+      ]
+    },
+    "conclusion": "All original budgets pass. Small LCP shifts and increased normal mobile TBT coincide with a materially lower CPU benchmark and the same script hashes. Preview shifts are smaller on its independent runner. Consistent with runner variation; these runs do not isolate a causal driver effect. No threshold relaxed."
+  },
+  "finalBoundary": {
+    "artifactBranchObservedSha": "25d653f5582b78c31329dc5def12898d6a19b531",
+    "publication": "NOT_PERFORMED;publisherSKIPPED",
+    "hostinger": "NOT_TOUCHED",
+    "productionDns": "NOT_TOUCHED",
+    "approval": "NOT_CREATED",
+    "completionRecords": "Local documentation-only updates after tested commit; branch HEAD remains tested source"
+  },
+  "independentCompletionReview": {
+    "result": "PASS; no release blocker found",
+    "checks": "ZIP checksum; every 212 manifest file hash/size/byte; separate release directory; source/run/identity; six log digests and commands; zero audits; whole workflow success",
+    "limitation": "CPU variance inference; hosted checks/deployment not performed"
+  }
+}

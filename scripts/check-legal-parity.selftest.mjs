@@ -29,6 +29,7 @@ import {
   draftClauseTokens,
   normaliseWords,
   tokenReached,
+  bannerProblems,
 } from './legal-parity-rules.mjs';
 
 let failures = 0;
@@ -230,6 +231,21 @@ check(
   false,
 );
 check('tokenReached: nothing served reaches nothing', tokenReached(inline('5.0'), []), false);
+
+// ---------------------------------------------------------------------------
+// bannerProblems — branch D's three-way banner split (GS-LEGAL-001-R4)
+// ---------------------------------------------------------------------------
+
+const UNADOPTED = '<p><span>NOT YET ADOPTED.</span> This version is under review.</p>';
+const ADOPTED = '<p><span>ADOPTED, NOT YET PUBLISHED.</span> Gridsmith Ltd has adopted this version.</p>';
+check('banner: review state with the unadopted banner is clean', bannerProblems('/x', 'OWNER_REVIEW_REQUIRED', UNADOPTED), []);
+check('banner: review state without a banner fails', bannerProblems('/x', 'OWNER_REVIEW_REQUIRED', '<p>terms</p>').length, 1);
+check('banner: review state claiming adoption fails', bannerProblems('/x', 'OWNER_REVIEW_REQUIRED', UNADOPTED + ADOPTED).length, 1);
+check('banner: adopted state with the adopted banner is clean', bannerProblems('/x', 'OWNER_ADOPTED', ADOPTED), []);
+check('banner: adopted state still saying "not yet adopted" fails', bannerProblems('/x', 'OWNER_ADOPTED', UNADOPTED).length, 2);
+check('banner: adopted state with no banner fails', bannerProblems('/x', 'OWNER_ADOPTED', '<p>terms</p>').length, 1);
+check('banner: publishable state with no banner is clean', bannerProblems('/x', 'PUBLISHABLE', '<p>terms</p>'), []);
+check('banner: publishable state with a pre-publication banner fails', bannerProblems('/x', 'PUBLISHABLE', ADOPTED).length, 1);
 
 // ---------------------------------------------------------------------------
 

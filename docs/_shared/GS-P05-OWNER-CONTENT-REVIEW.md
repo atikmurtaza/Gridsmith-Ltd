@@ -10,7 +10,7 @@ reads awkwardly, the site reads awkwardly, and that is what this document exists
 change. `check:service-content` fails while this document's recorded hash and the source
 disagree, so an approval cannot silently attach to wording that has since changed.
 
-**Source SHA-256:** `b025dc162f51865fe937d0ac2e8b57120742ef7301047d84564aadadac26b03d`
+**Source SHA-256:** `e52495a38421940246a8a41381f4c83c933ea36dad1a9f453e9b12a28b98cebc`
 
 ---
 
@@ -191,7 +191,7 @@ would be operational commitments nobody has given.
 >
 > This is creative production. Where a campaign also needs written copy, content or technical work, those sit with Gridsmith Press and Gridsmith Digital and can run as one coordinated engagement — see the campaign engagement note on the Digital and Press pages.
 >
-> This page is the creative production. Running the campaign itself — the advertising accounts, the paid placements, the posting schedule — is a separate cross-division Gridsmith engagement rather than part of this service, and it is scoped and quoted on its own terms.
+> This page is the creative production. Running the campaign itself — the advertising accounts, the paid placements, the posting schedule — is a separate cross-studio Gridsmith engagement rather than part of this service, and it is scoped and quoted on its own terms.
 
 **What this covers, as shown publicly**
 
@@ -200,7 +200,7 @@ would be operational commitments nobody has given.
 | Included | Campaign creative concept | The visual idea and how it holds together across placements. |
 | Included | Asset set at required sizes | Each placement’s specification, produced as one consistent set. |
 | Included | Editable templates | So routine variants can be produced without returning to us. |
-| **EXCLUDED** | Advertising account and paid-placement management | Not part of this creative service. Gridsmith does run campaigns and advertising accounts, as a separate cross-division engagement scoped with you. |
+| **EXCLUDED** | Advertising account and paid-placement management | Not part of this creative service. Gridsmith does run campaigns and advertising accounts, as a separate cross-studio engagement scoped with you. |
 
 **Related services:** `brand-identity-systems`, `motion-graphics`
 
@@ -264,8 +264,9 @@ would be operational commitments nobody has given.
 | | Item | Detail |
 |---|---|---|
 | Included | Channel identity | Logo, colour and type treatment for the channel. |
-| Included | Stream graphics set | Overlays, scene frames, alerts and panels at platform specification. |
-| Included | Emotes, badges and thumbnails | Produced at the sizes each platform requires. |
+| Included | Stream graphics set | Stream screens, overlays, alerts, panels, banners, webcam frames and chat-box treatments, selected to suit the channel. |
+| Included | Emotes, subscriber badges and thumbnails | Produced at the sizes each platform requires. |
+| Included | Animated channel assets | Intros, outros, animated overlays, logos, banners and emotes where included in the agreed scope; developed with the Motion discipline. |
 | Included | Source files | Layered files so routine edits can be made in-house. |
 
 **Related services:** `brand-identity-systems`, `motion-graphics`
@@ -360,7 +361,7 @@ would be operational commitments nobody has given.
 >
 > Drawn from source material you supply — drawings, CAD, photographs or samples — and checked back against it.
 >
-> This is illustration for explanation. Dimensioned drawing preparation is Technical, on the CAD drafting and engineering drawing pages, and carries its own scope note.
+> This is illustration for explanation. Dimensioned drawing preparation is separate technical work with its own scope note.
 
 **What this covers, as shown publicly**
 
@@ -405,6 +406,7 @@ would be operational commitments nobody has given.
 |---|---|---|
 | Included | Storyboard and timing | Approved before any animation is produced. |
 | Included | Animated sequence | To the agreed length and specification. |
+| Included | Animated channel identity | Streamer intros and outros, animated overlays, logos, banners and emotes, where included in the brief. |
 | Included | Delivery masters and platform encodes | Formats, aspect ratios and caption files as scoped. |
 | **EXCLUDED** | Music and stock licensing | Licences for third-party music or footage are bought in your name. <br>⚠ VERIFY — licens |
 
@@ -725,7 +727,7 @@ would be operational commitments nobody has given.
 | Included | Store build or customisation | On the platform you use or one agreed at consultation. |
 | Included | Product and collection templates | Built for the catalogue you actually have. |
 | Included | Checkout, payment and shipping configuration | Configured against your accounts and your rates. |
-| Included | App and integration setup | The third-party pieces the store needs, in your accounts. |
+| Included | App and integration setup | The third-party pieces the store needs, set up in the accounts agreed for the store. |
 | **EXCLUDED** | Tax, payments and consumer-law advice | Configuration is ours; what is legally correct for your business is your adviser’s. |
 
 **Related services:** `website-design-build`, `integrations`
@@ -750,7 +752,7 @@ would be operational commitments nobody has given.
 
 > Applications that run in a browser and do a specific job: scheduling, quoting, tracking, submissions, member areas and the internal processes a spreadsheet has stopped coping with.
 >
-> Built with authentication, roles and a real data model, deployed on infrastructure held in your accounts, with the migrations and the pipeline documented.
+> Built with authentication, roles and a data model, with infrastructure and deployment arrangements agreed in writing and the migrations and deployment process documented.
 >
 > Scope is agreed as what the application does and what it does not do, in writing, before the build starts.
 
@@ -762,7 +764,7 @@ would be operational commitments nobody has given.
 | Included | Authentication and roles | Who can see and do what, defined with you. |
 | Included | Data model and migrations | Versioned, so the schema has a history. |
 | Included | Deployment pipeline | Reproducible deploys rather than manual uploads. |
-| Included | Source code and accounts | In your repository and your hosting accounts. |
+| Included | Source code and accounts | Source-code handover and repository, access and hosting arrangements as set out in the project agreement. |
 
 **Related services:** `custom-software`, `internal-tools-and-dashboards`
 
@@ -970,7 +972,7 @@ would be operational commitments nobody has given.
 |---|---|---|
 | Included | Playable prototype | Where the scope includes proving the mechanic first. |
 | Included | Game build | To the agreed platforms and feature scope. |
-| Included | Source project | In your repository. |
+| Included | Source project | Source project and repository access as agreed in the project scope. |
 | **EXCLUDED** | Publishing and marketing | Store publishing is scoped separately; audience and sales outcomes are not something we undertake. |
 
 **Related services:** `mobile-applications`, `animation`
@@ -1037,7 +1039,7 @@ would be operational commitments nobody has given.
 | | Item | Detail |
 |---|---|---|
 | Included | Process map | The current process, documented and agreed. |
-| Included | Automated pipeline | Built on your systems and accounts. |
+| Included | Automated pipeline | Built across the systems and accounts agreed for the workflow. |
 | Included | Failure alerting | Notification when a run does not complete. |
 | Included | Runbook | What to do when it needs human attention. |
 
@@ -1211,7 +1213,7 @@ would be operational commitments nobody has given.
 
 > The technical half of search: crawlability and indexing, site and URL architecture, structured data, redirects, canonicalisation, sitemaps and the page performance that search engines measure.
 >
-> The other half — what the pages say, and whether anyone wants to read them — is Gridsmith Press. Content SEO and editorial strategy sit there, and the two halves are frequently scoped as one engagement across both divisions.
+> The other half — what the pages say, and whether anyone wants to read them — is Gridsmith Press. Content SEO and editorial strategy sit there, and the two halves are frequently scoped as one engagement across both studios.
 >
 > No ranking outcome is promised. Search results are decided by search engines.
 
@@ -1270,7 +1272,7 @@ would be operational commitments nobody has given.
 
 # PRESS
 
-**13 service records.** Primary call to action on every page in this
+**14 service records.** Primary call to action on every page in this
 division: **Discuss Your Book or Content**, plus the universal **Contact Gridsmith**. Both reach
 the one enquiry form, carrying the division and service as context.
 
@@ -1287,7 +1289,7 @@ would be operational commitments nobody has given.
 - **Delivery** — Final text or production files in the agreed formats. Authorship and copyright arrangements are whatever the written agreement sets out.
 - **Support** — Further rounds, later editions and ongoing programmes can be scoped as further work or as an ongoing engagement, whichever suits how you work.
 
-## Writing
+## Writing & Development
 
 ### Ghostwriting
 
@@ -1431,7 +1433,7 @@ would be operational commitments nobody has given.
 
 ---
 
-## Editorial
+## Editing
 
 ### Manuscript Assessment
 
@@ -1504,7 +1506,7 @@ would be operational commitments nobody has given.
 
 `/press/services/copy-editing-and-proofreading`
 
-**Approved capabilities this page represents (2):** Copy editing · Proofreading
+**Approved capabilities this page represents (4):** Line editing · Copy editing · Mechanical editing · Proofreading
 
 **Summary** *(the one line shown on cards and at the top of the page)*
 
@@ -1512,15 +1514,19 @@ would be operational commitments nobody has given.
 
 **Description**
 
-> Copy editing for sense, consistency, grammar and style against an agreed style guide, and proofreading as the final pass against typeset proofs.
+> Line editing considers clarity, flow and voice sentence by sentence. Copy editing then checks consistency, grammar and style against an agreed style guide; mechanical editing is the narrower application of those house-style decisions.
 >
-> They are separate stages and are normally done at separate times. Copy editing happens to the text; proofreading happens to the laid-out pages, and catches what layout introduced.
+> Proofreading is a separate final pass, normally against laid-out proofs. The scope can cover one stage or several, but each is agreed separately so a proofread is never presented as a structural edit.
+>
+> Translation or bilingual proofreading may be coordinated only where the language, scope and suitable qualified resource are available and agreed. Neither is assumed to be included.
+>
+> ⚠ VERIFY — asserts: qualified
 
 **What this covers, as shown publicly**
 
 | | Item | Detail |
 |---|---|---|
-| Included | Copy edit | Tracked changes against an agreed style guide. |
+| Included | Line or copy edit | Tracked changes at the editorial level agreed in scope. |
 | Included | Style sheet | Decisions recorded so later material stays consistent. |
 | Included | Proofread against proofs | On the typeset pages, not the manuscript. |
 | **EXCLUDED** | Fact checking | Only where it is explicitly scoped and the sources are supplied. |
@@ -1533,53 +1539,13 @@ would be operational commitments nobody has given.
 
 ---
 
-## Publishing
-
-### Publishing Preparation & Distribution Setup
-
-`/press/services/publishing-preparation`
-
-**Approved capabilities this page represents (3):** Publishing preparation · Distribution/platform setup · ISBN guidance/support
-
-**Summary** *(the one line shown on cards and at the top of the page)*
-
-> You have a finished manuscript and no route to a published book.
-
-**Description**
-
-> The production and administrative work between a finished manuscript and a book that exists: publishing plan, metadata, ISBN, and setting up the distribution and platform accounts.
->
-> ⚠ VERIFY — asserts: ISBN
->
-> Account and ISBN arrangements are agreed in writing before anything is registered. An ISBN registered to a service provider records that provider as the publisher of your book, which is a consequence people discover late — so unless you decide otherwise, we set these up in your name.
->
-> ⚠ VERIFY — asserts: ISBN
->
-> Acceptance by any retailer or distributor is their decision. We prepare and submit to their published requirements; we do not control the outcome, and no sales result is promised.
-
-**What this covers, as shown publicly**
-
-| | Item | Detail |
-|---|---|---|
-| Included | Publishing plan | Formats, channels and sequence. |
-| Included | ISBN guidance | How to obtain your own, and what it commits you to. <br>⚠ VERIFY — ISBN |
-| Included | Metadata and listing preparation | Prepared to each platform’s specification. |
-| Included | Distribution account setup | Set up on the arrangement agreed in writing — by default in your name, so the listing and the royalties stay with you. |
-| **EXCLUDED** | Retailer acceptance or sales outcomes | Listing decisions rest with the retailer and sales outcomes cannot be guaranteed. |
-
-**Related services:** `typesetting-and-formatting`, `cover-design-coordination`
-
-**Cross-division work referenced:** DESIGN
-
-**Call to action:** Discuss Your Book or Content
-
----
+## Book Design & Production
 
 ### Typesetting & Formatting
 
 `/press/services/typesetting-and-formatting`
 
-**Approved capabilities this page represents (3):** Typesetting · Ebook/print formatting · Platform-standard formatting
+**Approved capabilities this page represents (4):** Typesetting · Ebook/print formatting · Platform-standard formatting · Print production coordination
 
 **Summary** *(the one line shown on cards and at the top of the page)*
 
@@ -1589,7 +1555,7 @@ would be operational commitments nobody has given.
 
 > Typesetting the interior of a book and producing the files each channel requires: a print interior set for the trim size and binding, and a reflowable ebook that behaves correctly on the devices people read on.
 >
-> Files are built to the current published specifications of the platforms in scope and checked against their validators before submission.
+> Files are built to the current published specifications of the platforms in scope and checked against their validators before submission. Print specifications, print-on-demand setup and supplier handoff can be coordinated where agreed; printing itself is supplied by the chosen third party.
 
 **What this covers, as shown publicly**
 
@@ -1598,6 +1564,8 @@ would be operational commitments nobody has given.
 | Included | Typeset print interior | Set for the agreed trim size, margins and binding allowance. |
 | Included | Reflowable ebook | With a working table of contents and correct structural markup. |
 | Included | Platform-ready files | Validated against each platform’s current requirements. |
+| Included | Print production coordination | Print specification and supplier or print-on-demand handoff where scoped. |
+| **EXCLUDED** | Printing or physical quality guarantees | The printer or platform produces the physical book and controls its availability. |
 | **EXCLUDED** | Proof review | A proofreading pass on the typeset pages is scoped under Editorial. |
 
 **Related services:** `publishing-preparation`, `copy-editing-and-proofreading`
@@ -1620,7 +1588,7 @@ would be operational commitments nobody has given.
 
 **Description**
 
-> Gridsmith Press runs the publishing engagement and briefs the cover; Gridsmith Design does the visual work. That split is deliberate — the cover is a design problem, and the book is a publishing relationship.
+> Gridsmith Press coordinates the cover brief within publishing work; Gridsmith Design creates the visual artwork when included. The scope names each contribution before work begins.
 >
 > Coordination covers the brief, the category and format conventions the cover has to sit inside, the print specification from your printer, and the versions each channel needs.
 
@@ -1641,7 +1609,87 @@ would be operational commitments nobody has given.
 
 ---
 
-## Content & Promotion
+## Publishing & Distribution
+
+### Publishing Preparation & Distribution Setup
+
+`/press/services/publishing-preparation`
+
+**Approved capabilities this page represents (4):** Publishing preparation · Distribution/platform setup · ISBN guidance/support · Metadata preparation
+
+**Summary** *(the one line shown on cards and at the top of the page)*
+
+> You have a finished manuscript and no route to a published book.
+
+**Description**
+
+> The production and administrative work between a finished manuscript and a publication-ready submission: publishing plan, metadata, ISBN guidance, platform readiness and distribution setup where scoped.
+>
+> ⚠ VERIFY — asserts: ISBN
+>
+> ISBN, imprint, publisher identity and account arrangements are agreed in writing before registration or setup. The written scope states who holds or controls each and any exceptions; the details depend on the chosen route and engagement.
+>
+> ⚠ VERIFY — asserts: ISBN
+>
+> Acceptance by any retailer or distributor is their decision. We prepare and submit to their published requirements; we do not control the outcome, and no sales result is promised.
+
+**What this covers, as shown publicly**
+
+| | Item | Detail |
+|---|---|---|
+| Included | Publishing plan | Formats, channels and sequence. |
+| Included | ISBN guidance | The available registration arrangements and their implications for the chosen route. <br>⚠ VERIFY — ISBN |
+| Included | Metadata and listing preparation | Description, categories and keywords prepared for the destinations in scope. |
+| Included | Submission and release support | File checks, upload guidance and release steps where agreed; platform acceptance remains a third-party decision. |
+| Included | Distribution account setup | Set up or coordinated on the account arrangement agreed in writing. |
+| **EXCLUDED** | Retailer acceptance or sales outcomes | Listing decisions rest with the retailer and sales outcomes cannot be guaranteed. |
+
+**Related services:** `typesetting-and-formatting`, `cover-design-coordination`
+
+**Cross-division work referenced:** DESIGN
+
+**Call to action:** Discuss Your Book or Content
+
+---
+
+## Audiobooks
+
+### Audiobook Production Support
+
+`/press/services/audiobook-production-support`
+
+**Approved capabilities this page represents (3):** Audiobook production support · Narration/voice coordination · Audio preparation
+
+**Summary** *(the one line shown on cards and at the top of the page)*
+
+> Your manuscript is ready for audio, but the narration and delivery route still need planning.
+
+**Description**
+
+> We prepare the text for spoken delivery and coordinate the people and production steps needed to make an audiobook within an agreed scope.
+>
+> The engagement may include narration or voice coordination, chapter and track planning, editing and mastering coordination, platform file checks and distribution guidance. The available resources, format and destination are agreed for the project.
+>
+> Voice talent, studio work, platform submission and distribution depend on the selected suppliers and platforms. We do not promise acceptance, placement or sales.
+
+**What this covers, as shown publicly**
+
+| | Item | Detail |
+|---|---|---|
+| Included | Audio script preparation | A manuscript prepared for narration, with pronunciation and structural decisions recorded where needed. |
+| Included | Production plan | Narration, chapters, tracks, review points and technical destination agreed in scope. |
+| Included | Coordinated audio files | Editing, mastering and file preparation through suitable suppliers where included. |
+| **EXCLUDED** | Platform acceptance or distribution | Third-party approval and availability are outside our control. |
+
+**Related services:** `publishing-preparation`, `book-marketing-support`
+
+**Cross-division work referenced:** none
+
+**Call to action:** Discuss Your Book or Content
+
+---
+
+## Marketing & Content
 
 ### Content Programmes
 
@@ -1689,7 +1737,7 @@ would be operational commitments nobody has given.
 
 > The editorial half of search: what to write about, what a page is actually for, how it is structured, and optimisation of existing content that is close to useful and not quite there.
 >
-> The technical half — crawling, indexing, structured data, performance — is Gridsmith Digital. Neither half works alone, and they are commonly scoped together across the two divisions.
+> The technical half — crawling, indexing, structured data, performance — is Gridsmith Digital. Neither half works alone, and they are commonly scoped together across the two studios.
 >
 > No ranking or traffic outcome is promised.
 
@@ -1724,7 +1772,7 @@ would be operational commitments nobody has given.
 
 > Written and editorial support around a book’s release: description and metadata copy, author platform material, announcement and outreach copy, and the supporting content a launch needs.
 >
-> This is the writing and editorial work. It is not publicity representation, and coverage, reviews, chart positions and sales figures cannot be guaranteed.
+> This is writing and editorial support. Gridsmith Design can create visual campaign assets, Gridsmith Digital can build landing pages and tracking, and cross-channel campaign strategy sits with Gridsmith as a whole when separately scoped. We do not promise publicity coverage, reviews, rankings or sales.
 
 **What this covers, as shown publicly**
 
@@ -1738,7 +1786,7 @@ would be operational commitments nobody has given.
 
 **Related services:** `content-programmes`, `publishing-preparation`
 
-**Cross-division work referenced:** DIGITAL
+**Cross-division work referenced:** DIGITAL, DESIGN
 
 **Call to action:** Discuss Your Book or Content
 
@@ -1748,10 +1796,10 @@ would be operational commitments nobody has given.
 
 | | |
 |---|---|
-| Service records presented | 46 |
-| Approved capabilities represented | 81 |
-| Published exclusions to read | 35 |
-| Passages flagged `⚠ VERIFY` | 12 |
+| Service records presented | 47 |
+| Approved capabilities represented | 88 |
+| Published exclusions to read | 37 |
+| Passages flagged `⚠ VERIFY` | 13 |
 | Records behind the Technical publication gate | 3 |
 
 Approving this copy closes `GS-O013`'s first limb only. It does not close `GS-O005`,

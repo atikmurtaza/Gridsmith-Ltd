@@ -25,7 +25,7 @@ import { defineField, defineType } from 'sanity';
  * served pages, because a schema check cannot see what a page renders.
  *
  * **`contactPhone` is populated as of `GS-O004`** and is rendered on the contact routes and
- * in the statutory footer. It is stored in display form (`+44 7405 448534`); the `tel:` href
+ * in the statutory footer. It is stored in display form (`+44 7405 448534`); the WhatsApp href
  * is derived from it at render time by `lib/company/companyDetails.ts`, so the site holds one
  * phone string and not two.
  */

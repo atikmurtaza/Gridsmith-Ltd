@@ -1,0 +1,113 @@
+{
+  "phase": "GS-LEGAL-FINAL-001 Phase 2",
+  "date": "2026-10-22",
+  "approvedReviewCommit": "f1486f5c413b5a5aa7e93cef24b93eb4b0f2340b",
+  "legalDocumentPreparation": "CLOSED",
+  "adopted": 7,
+  "publishable": 0,
+  "publicBytesChanged": 0,
+  "publicSources": [
+    {
+      "classification": "A",
+      "path": "docs/_legal/current/privacy-policy.md",
+      "version": "2.6",
+      "state": "OWNER_ADOPTED",
+      "sha256": "4c13c19eda616d2e646f90740f71fa7904da62914af8f48b0e2daabb53ef50a7",
+      "ownerAdoptedOn": "2026-10-22"
+    },
+    {
+      "classification": "A",
+      "path": "docs/_legal/current/cookie-policy.md",
+      "version": "2.4",
+      "state": "OWNER_ADOPTED",
+      "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+      "ownerAdoptedOn": "2026-10-22"
+    },
+    {
+      "classification": "A",
+      "path": "docs/_legal/current/website-terms.md",
+      "version": "2.3",
+      "state": "OWNER_ADOPTED",
+      "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+      "ownerAdoptedOn": "2026-10-22"
+    },
+    {
+      "classification": "A",
+      "path": "docs/_legal/current/client-terms-consumers.md",
+      "version": "3.3",
+      "state": "OWNER_ADOPTED",
+      "sha256": "9ac629b3578d09e035b547a6fae705fbe2eb70ec55a3fda8036b4b631eaba01e",
+      "ownerAdoptedOn": "2026-10-22"
+    },
+    {
+      "classification": "A",
+      "path": "docs/_legal/current/client-terms-business.md",
+      "version": "3.3",
+      "state": "OWNER_ADOPTED",
+      "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+      "ownerAdoptedOn": "2026-10-22"
+    },
+    {
+      "classification": "A",
+      "path": "docs/_legal/current/accessibility-statement.md",
+      "version": "2.3",
+      "state": "OWNER_ADOPTED",
+      "sha256": "daf5b37115391e915384bf16aec81d944e7997154b5b8a9dfdb9fb3bea9056bb",
+      "ownerAdoptedOn": "2026-10-22"
+    },
+    {
+      "classification": "A",
+      "path": "docs/_legal/current/client-terms-applicability.md",
+      "version": "2.3",
+      "state": "OWNER_ADOPTED",
+      "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+      "ownerAdoptedOn": "2026-10-22"
+    }
+  ],
+  "conditions": {
+    "contacts": "Prior owner-confirmed facts, matching source/seed and 18 built route checks",
+    "technicalOperations": "Confirmed by the owner in this chat; not a professional-scope certification or GS-X002 closure"
+  },
+  "verification": {
+    "fullStaticSuite": "PASS after regenerating the local migration manifest",
+    "adoptionCases": 125,
+    "legalParitySelftests": 39,
+    "analyticsProofs": 64,
+    "nextDevelopmentBuild": "PASS",
+    "builtParity": {
+      "documents": 7,
+      "clauses": 109,
+      "paragraphs": 406
+    },
+    "offlineAccessibility": {
+      "analyses": 14,
+      "violations": 0,
+      "banners": "ADOPTED, NOT YET PUBLISHED",
+      "noindex": true
+    },
+    "companyFacts": {
+      "routes": 18,
+      "questions": 10,
+      "input": "Explicit local HTML adapter, not HTTP"
+    },
+    "reviewSuppression": {
+      "files": 196,
+      "routeSubjects": 11
+    },
+    "bundleBudgets": 69,
+    "archiveHashes": 56,
+    "productionManifest": {
+      "entries": 57,
+      "eligible": 47,
+      "gated": 10,
+      "legalEligible": 0
+    },
+    "sourceHashDrift": "None; current bytes and reviewed Git blobs equal the adopted register and inventory"
+  },
+  "limits": [
+    "No CI dispatch, HTTP server, hosted delivery, live mailbox/phone reachability or provider account verification performed.",
+    "Automatic approval review previously blocked the local server (blocked by policy); no retry/workaround used.",
+    "No agency/transfer instrument, client authorisation or rights-chain execution is inferred; operational clearance remains separate.",
+    "No push, deployment, publication, analytics/review activation, DNS, WordPress or Production modification."
+  ]
+}
