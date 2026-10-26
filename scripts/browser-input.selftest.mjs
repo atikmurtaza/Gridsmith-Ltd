@@ -319,6 +319,11 @@ if (process.argv.includes('--installed')) {
   const installUrl = import.meta.resolve('puppeteer/internal/node/install.js');
   const puppeteerPackage = JSON.parse(readFileSync(new URL(import.meta.resolve('puppeteer/package.json')), 'utf8'));
   assert.equal(puppeteerPackage.version, '25.14.0');
+  for (const consumer of ['puppeteer', 'puppeteer-core']) {
+    const require = createRequire(import.meta.resolve(`${consumer}/package.json`));
+    assert.equal(JSON.parse(readFileSync(require.resolve('@puppeteer/browsers/package.json'), 'utf8')).version, '3.2.5');
+    cases++;
+  }
   assert.equal(process.env.PUPPETEER_SKIP_DOWNLOAD, 'true', 'installed proof requires the real effective skip environment');
   const { getConfiguration } = await import('puppeteer/internal/getConfiguration.js');
   const effectiveConfiguration = await getConfiguration();

@@ -12,8 +12,8 @@ import { sourceFiles } from './source-files.mjs';
 const sha256 = (text) => createHash('sha256').update(text).digest('hex');
 // Expectations are outside the workflow subjects; changing a workflow requires explicit review here.
 const WORKFLOWS = {
-  '.github/workflows/ci.yml': 'cc045be9166eb3b3d3f2ed90ac23fee93efada79bde45a8fd14f3b7d37045dec',
-  '.github/workflows/hostinger-staging.yml': 'dccc3a8b2e859cb6fcf87ad2a1c3561f03d4437f7220aa7139bf323d8d738cb7',
+  '.github/workflows/ci.yml': '9ce1642bc4c9f76940d3961f5adc25100ebf0c3e0e375373ccad3f654fc6b092',
+  '.github/workflows/hostinger-staging.yml': 'f17dce3796bb6aedb8b75ca60a55349e9ec10ae78eba96e398724e2b744d548f',
 };
 const PACKAGE_SHA256 = '52d2bf941250a94c5c66a99641dcbceafd988899c34ee791fb2ece68c04c79a6';
 const LOCK_SHA256 = '23511604b1b228b8959baad335dd91ece95b09707d46719af6610433db8fc45c';

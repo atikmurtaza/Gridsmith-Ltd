@@ -109,6 +109,7 @@ jobs:
       - run: node scripts/browser-input.mjs provision
       - run: npm ci
       - run: node scripts/browser-input.mjs check
+      - run: node scripts/browser-input.selftest.mjs --installed
 
       - name: TypeScript
         run: npm run typecheck

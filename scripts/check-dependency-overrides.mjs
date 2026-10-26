@@ -61,7 +61,6 @@ const EXPECT = [['@lhci/cli', 'tmp', '0.2.6'], ['external-editor', 'tmp', '0.2.6
   ['next', 'next', '15.5.28'], ['eslint-config-next', 'eslint-config-next', '15.5.28'],
   ['zod', 'zod', '4.6.6'], ['sanity', 'zod', '4.6.6'], ['chromium-bidi', 'zod', '4.6.6'],
   ['lighthouse', 'puppeteer-core', '25.14.0'], ['puppeteer', 'puppeteer-core', '25.14.0'],
-  ['puppeteer', '@puppeteer/browsers', '3.2.5'], ['puppeteer-core', '@puppeteer/browsers', '3.2.5'],
   ['express', 'body-parser', '1.20.9'],
   ['get-it', 'undici', '7.30.1'], ['@module-federation/dts-plugin', 'undici', '7.30.1'],
   ['jsdom', 'undici', '7.30.1'], ['@actions/github', 'undici', '6.29.1'], ['@actions/http-client', 'undici', '6.29.1']];
@@ -74,7 +73,7 @@ for (const [consumer, dep, min] of EXPECT) {
 // Every installed copy, wherever it is nested: the lockfile is what `npm ci` installs.
 const MINIMUM = { tmp: '0.2.6', uuid: '11.1.1', 'basic-ftp': '6.2.1', 'markdown-it': '14.3.3', vite: '8.2.4',
   dompurify: '3.4.17', 'ip-address': '10.7.4', next: '15.5.28', 'eslint-config-next': '15.5.28', 'body-parser': '1.20.9', undici: '7.30.1',
-  zod: '4.6.6', puppeteer: '25.14.0', 'puppeteer-core': '25.14.0', '@puppeteer/browsers': '3.2.5' };
+  zod: '4.6.6', puppeteer: '25.14.0', 'puppeteer-core': '25.14.0' };
 // Lockfile v3 records `name` only when the folder differs (an npm alias), which overrides do not reach.
 const packageName = (path, entry) => entry.name ?? path.split('node_modules/').pop();
 const lockProblems = (packages) => Object.entries(packages).flatMap(([path, entry]) => {
@@ -94,7 +93,7 @@ const lock = JSON.parse(readFileSync(join(root, 'package-lock.json'), 'utf8')).p
 for (const [name, version] of [['markdown-it', '14.3.1'], ['vite', '8.2.1'], ['dompurify', '3.4.16'],
   ['ip-address', '10.7.3'], ['next', '15.5.27'], ['eslint-config-next', '15.5.27'], ['body-parser', '1.20.8'],
   ['undici', '6.29.0'], ['undici', '7.30.0'], ['zod', '3.25.76'], ['zod', '4.6.5'],
-  ['puppeteer', '24.43.1'], ['puppeteer-core', '24.43.1'], ['@puppeteer/browsers', '2.13.2']]) {
+  ['puppeteer', '24.43.1'], ['puppeteer-core', '24.43.1']]) {
   assert.equal(lockProblems({ [`node_modules/x/node_modules/${name}`]: { version } }).length, 1);
   assert.equal(lockProblems({ 'node_modules/aliased-tool': { name, version } }).length, 1);
 }

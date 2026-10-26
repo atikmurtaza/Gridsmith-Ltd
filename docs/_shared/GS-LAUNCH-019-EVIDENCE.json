@@ -410,8 +410,15 @@
   "scope": {
     "publicSource": "UNCHANGED",
     "legalDocuments": "UNCHANGED",
-    "workflowFiles": "UNCHANGED",
+    "workflowFiles": "ADD installed browser selftest after existing check; all other steps unchanged",
     "publication": "NOT_AUTHORISED"
   },
-  "baselineRun": "https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40254337220"
+  "baselineRun": "https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40254337220",
+  "retainedFailedRuns": [
+    {
+      "runId": "40331642499",
+      "sourceSha": "56c0d781ccf74deb8a1c843e14d20ac57c97510b",
+      "cause": "EXPLICIT_BROWSER_INSTALLER triggered by read-only helper package metadata in dependency gate; moved assertion into existing guarded browser selftest; guard unchanged"
+    }
+  ]
 }
