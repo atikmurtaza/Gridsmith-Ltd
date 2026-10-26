@@ -3,10 +3,10 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { registerHooks } from 'node:module';
+import { createRequire, registerHooks } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { installationProblems, consumerProblems, discoverConfiguration, approvedManifest, responseProblems, verifiedReceipt, acquisitionIdentity, acquireAuthenticatedInput, assertStableInput } from './browser-input.mjs';
 
 const workflowNames = ['.github/workflows/ci.yml', '.github/workflows/hostinger-staging.yml'];
@@ -17,8 +17,8 @@ const base = {
   gitConfig: [['remote.origin.url', 'https://github.com/example/public.git']],
   npmConfig: { registry: 'https://registry.npmjs.org/', 'engine-strict': 'true', 'ignore-scripts': 'false', omit: '' },
   npmConfigFiles: ['engine-strict=true\n'], configPaths: [],
-  packageSha256: '97854c2b19e9ca55d5a793bfb5a768ce28d2856d7c44159ebdccfff2b64dad31',
-  lockSha256: 'f45a725650c64e81bc8d580569e012ad07ca3d254e8ffaa63fb22c6cc57a6fa3',
+  packageSha256: '52d2bf941250a94c5c66a99641dcbceafd988899c34ee791fb2ece68c04c79a6',
+  lockSha256: '23511604b1b228b8959baad335dd91ece95b09707d46719af6610433db8fc45c',
 };
 assert.deepEqual(installationProblems(base), []);
 let cases = 1;
@@ -288,7 +288,9 @@ try {
   const work = join(fixture, 'work'), global = join(fixture, 'global');
   mkdirSync(work); mkdirSync(global);
   assert.deepEqual(discoverConfiguration(work, fixture, global), []); cases++;
-  for (const path of [join(work, '.puppeteerrc.json'), join(fixture, '.puppeteerrc.js'), join(global, 'config')]) {
+  mkdirSync(join(work, '.config'));
+  for (const path of [join(work, '.puppeteerrc.json'), join(fixture, '.puppeteerrc.js'), join(global, 'config'),
+    join(work, '.config/puppeteer.config.js'), join(work, '.config/puppeteer.config.cjs')]) {
     writeFileSync(path, 'throw new Error("NON_EXECUTABLE_CONFIG_FIXTURE");');
     assert.ok(discoverConfiguration(work, fixture, global).includes(path)); cases++;
     rmSync(path);
@@ -315,11 +317,11 @@ process.stdout.write(extractionSubjects.stdout);
 // This mode runs only after normal installation; default pre-install subjects remain dependency-free.
 if (process.argv.includes('--installed')) {
   const installUrl = import.meta.resolve('puppeteer/internal/node/install.js');
-  const puppeteerPackage = JSON.parse(readFileSync(new URL('../../../../package.json', installUrl), 'utf8'));
-  assert.equal(puppeteerPackage.version, '24.43.1');
+  const puppeteerPackage = JSON.parse(readFileSync(new URL(import.meta.resolve('puppeteer/package.json')), 'utf8'));
+  assert.equal(puppeteerPackage.version, '25.14.0');
   assert.equal(process.env.PUPPETEER_SKIP_DOWNLOAD, 'true', 'installed proof requires the real effective skip environment');
   const { getConfiguration } = await import('puppeteer/internal/getConfiguration.js');
-  const effectiveConfiguration = getConfiguration();
+  const effectiveConfiguration = await getConfiguration();
   assert.equal(effectiveConfiguration.skipDownload, true);
   assert.equal(effectiveConfiguration.chrome.skipDownload, true);
   assert.equal(effectiveConfiguration['chrome-headless-shell'].skipDownload, true);
@@ -328,7 +330,7 @@ if (process.argv.includes('--installed')) {
   globalThis.__gsBrowserInstallerSelftest = state;
   const moduleUrl = (text) => `data:text/javascript,${encodeURIComponent(text)}`;
   const configurationUrl = import.meta.resolve('puppeteer/internal/getConfiguration.js');
-  const browsersUrl = import.meta.resolve('@puppeteer/browsers');
+  const browsersUrl = pathToFileURL(createRequire(installUrl).resolve('@puppeteer/browsers')).href;
   const replacements = {
     '@puppeteer/browsers': moduleUrl(`export {Browser,detectBrowserPlatform} from ${JSON.stringify(browsersUrl)};
       export const resolveBuildId=async(browser)=> {globalThis.__gsBrowserInstallerSelftest.resolutions.push(browser);return 'synthetic';};
@@ -354,17 +356,18 @@ if (process.argv.includes('--installed')) {
     const { downloadBrowsers } = await import(installUrl);
     for (const [environment, expected] of [
       [{ PUPPETEER_SKIP_DOWNLOAD: 'true' }, []],
-      [{ PUPPETEER_SKIP_DOWNLOAD: 'false' }, ['chrome', 'chrome-headless-shell']],
-      [{ PUPPETEER_SKIP_DOWNLOAD: 'false', PUPPETEER_CHROME_SKIP_DOWNLOAD: 'true' }, ['chrome-headless-shell']],
-      [{ PUPPETEER_SKIP_DOWNLOAD: 'false', PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'true' }, ['chrome']],
+      [{ PUPPETEER_SKIP_DOWNLOAD: 'false' }, ['chrome', 'chrome-headless-shell', 'firefox']],
+      [{ PUPPETEER_SKIP_DOWNLOAD: 'false', PUPPETEER_CHROME_SKIP_DOWNLOAD: 'true' }, ['chrome-headless-shell', 'firefox']],
+      [{ PUPPETEER_SKIP_DOWNLOAD: 'false', PUPPETEER_CHROME_HEADLESS_SHELL_SKIP_DOWNLOAD: 'true' }, ['chrome', 'firefox']],
+      [{ PUPPETEER_SKIP_DOWNLOAD: 'false', PUPPETEER_FIREFOX_SKIP_DOWNLOAD: 'true' }, ['chrome', 'chrome-headless-shell']],
     ]) {
       for (const name of Object.keys(process.env).filter((name) => name.startsWith('PUPPETEER_'))) delete process.env[name];
       Object.assign(process.env, environment);
-      const configuration = getConfiguration();
+      const configuration = await getConfiguration();
       assert.equal(configuration.skipDownload, environment.PUPPETEER_SKIP_DOWNLOAD === 'true');
       assert.equal(Boolean(configuration.chrome.skipDownload), !expected.includes('chrome'));
       assert.equal(Boolean(configuration['chrome-headless-shell'].skipDownload), !expected.includes('chrome-headless-shell'));
-      assert.equal(configuration.firefox.skipDownload, true);
+      assert.equal(Boolean(configuration.firefox.skipDownload), !expected.includes('firefox'));
       state.requests = []; state.resolutions = [];
       const before = state.observations;
       await downloadBrowsers();

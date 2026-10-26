@@ -59,7 +59,10 @@ const EXPECT = [['@lhci/cli', 'tmp', '0.2.6'], ['external-editor', 'tmp', '0.2.6
   ['@portabletext/markdown', 'markdown-it', '14.3.3'], ['@sanity/cli-build', 'vite', '8.2.4'],
   ['isomorphic-dompurify', 'dompurify', '3.4.17'], ['socks', 'ip-address', '10.7.4'],
   ['next', 'next', '15.5.28'], ['eslint-config-next', 'eslint-config-next', '15.5.28'],
-  ['zod', 'zod', '4.6.6'], ['sanity', 'zod', '4.6.6'], ['express', 'body-parser', '1.20.9'],
+  ['zod', 'zod', '4.6.6'], ['sanity', 'zod', '4.6.6'], ['chromium-bidi', 'zod', '4.6.6'],
+  ['lighthouse', 'puppeteer-core', '25.14.0'], ['puppeteer', 'puppeteer-core', '25.14.0'],
+  ['puppeteer', '@puppeteer/browsers', '3.2.5'], ['puppeteer-core', '@puppeteer/browsers', '3.2.5'],
+  ['express', 'body-parser', '1.20.9'],
   ['get-it', 'undici', '7.30.1'], ['@module-federation/dts-plugin', 'undici', '7.30.1'],
   ['jsdom', 'undici', '7.30.1'], ['@actions/github', 'undici', '6.29.1'], ['@actions/http-client', 'undici', '6.29.1']];
 for (const [consumer, dep, min] of EXPECT) {
@@ -70,11 +73,13 @@ for (const [consumer, dep, min] of EXPECT) {
 
 // Every installed copy, wherever it is nested: the lockfile is what `npm ci` installs.
 const MINIMUM = { tmp: '0.2.6', uuid: '11.1.1', 'basic-ftp': '6.2.1', 'markdown-it': '14.3.3', vite: '8.2.4',
-  dompurify: '3.4.17', 'ip-address': '10.7.4', next: '15.5.28', 'eslint-config-next': '15.5.28', 'body-parser': '1.20.9', undici: '7.30.1' };
+  dompurify: '3.4.17', 'ip-address': '10.7.4', next: '15.5.28', 'eslint-config-next': '15.5.28', 'body-parser': '1.20.9', undici: '7.30.1',
+  zod: '4.6.6', puppeteer: '25.14.0', 'puppeteer-core': '25.14.0', '@puppeteer/browsers': '3.2.5' };
 // Lockfile v3 records `name` only when the folder differs (an npm alias), which overrides do not reach.
 const packageName = (path, entry) => entry.name ?? path.split('node_modules/').pop();
 const lockProblems = (packages) => Object.entries(packages).flatMap(([path, entry]) => {
   const name = packageName(path, entry);
+  if (name === 'extract-zip') return [`${path} retains unpatched extract-zip`];
   const minimum = name === 'undici' && entry.version?.startsWith('6.') ? '6.29.1' : MINIMUM[name];
   return minimum && entry.version && !atLeast(entry.version, minimum) ? [`${path} is ${name}@${entry.version}, below the fixed ${minimum}`] : [];
 });
@@ -82,10 +87,14 @@ assert.equal(lockProblems({ 'node_modules/x/node_modules/tmp': { version: '0.1.0
   'lock check must report a nested vulnerable copy');
 assert.equal(lockProblems({ 'node_modules/x/node_modules/tmp-legacy': { name: 'tmp', version: '0.0.33' } }).length, 1,
   'lock check must report an npm-aliased vulnerable copy');
+for (const path of ['node_modules/extract-zip', 'node_modules/x/node_modules/extract-zip', 'node_modules/alias']) {
+  assert.equal(lockProblems({ [path]: { name: 'extract-zip', version: '2.0.1' } }).length, 1);
+}
 const lock = JSON.parse(readFileSync(join(root, 'package-lock.json'), 'utf8')).packages;
 for (const [name, version] of [['markdown-it', '14.3.1'], ['vite', '8.2.1'], ['dompurify', '3.4.16'],
   ['ip-address', '10.7.3'], ['next', '15.5.27'], ['eslint-config-next', '15.5.27'], ['body-parser', '1.20.8'],
-  ['undici', '6.29.0'], ['undici', '7.30.0']]) {
+  ['undici', '6.29.0'], ['undici', '7.30.0'], ['zod', '3.25.76'], ['zod', '4.6.5'],
+  ['puppeteer', '24.43.1'], ['puppeteer-core', '24.43.1'], ['@puppeteer/browsers', '2.13.2']]) {
   assert.equal(lockProblems({ [`node_modules/x/node_modules/${name}`]: { version } }).length, 1);
   assert.equal(lockProblems({ 'node_modules/aliased-tool': { name, version } }).length, 1);
 }
@@ -113,8 +122,12 @@ console.log(`  package-lock: ${copies} installed copies of the remediated depend
     assert.deepEqual(result.error.issues.map(issue => issue.code), ['too_big']);
   }
   assert.deepEqual(z.array(z.string()).overwrite(value => value.slice(0, 2)).max(2).parse(['a', 'b', 'c']), ['a', 'b']);
-  // Zod 3 has no compatible patch; its caller must not be silently forced across a major.
-  console.log(`  Zod 4 constrained collections PASS; chromium-bidi retains UNRESOLVED zod@${versionOf('chromium-bidi', 'zod')}`);
+  // BiDi upgraded its own schemas to Zod 4; exercise that consumer rather than overriding Zod 3.
+  const parser = await import(pathToFileURL(join(dirname(from('chromium-bidi').resolve('chromium-bidi')), 'protocol-parser/protocol-parser.js')));
+  assert.deepEqual(parser.Browser.parseRemoveUserContextParameters({ userContext: 'test' }), { userContext: 'test' });
+  assert.throws(() => parser.Browser.parseRemoveUserContextParameters({ userContext: 1 }), /Expected string|expected string/);
+  assert.equal(versionOf('lighthouse', 'lighthouse'), '12.6.1', 'measurement engine must remain unchanged');
+  console.log('  Zod 4 constrained collections and BiDi valid/invalid schema parsing PASS; Lighthouse engine unchanged');
 }
 
 // GHSA-27r3-jxmh-p828: send trailing bytes only after the decompressor has finished.
@@ -292,4 +305,4 @@ if (problems.length) {
   console.error(`check-dependency-overrides: ${problems.length} problem(s)\n${problems.map((p) => `  ${p}`).join('\n')}`);
   process.exit(1);
 }
-console.log(`check-dependency-overrides: ${EXPECT.length} consumer resolutions fixed; temporary files, IDs, FTP, Markdown, Vite, sanitization, IP parsing, Zod 4, compressed HTTP and Undici exercised; nested Zod 3 remains unresolved`);
+console.log(`check-dependency-overrides: ${EXPECT.length} consumer resolutions fixed; temporary files, IDs, FTP, Markdown, Vite, sanitization, IP parsing, Zod 4/BiDi, compressed HTTP and Undici exercised; no extract-zip or Zod 3`);

@@ -124,7 +124,7 @@
     "eslint-config-next": "15.5.28",
     "pg": "^8.23.0",
     "postcss": "^8.5.26",
-    "puppeteer": "^24.43.1",
+    "puppeteer": "25.14.0",
     "sanity": "^6.9.2",
     "styled-components": "^6.5.3",
     "tailwindcss": "^4.3.3",
@@ -150,6 +150,9 @@
     },
     "get-uri": {
       "basic-ftp": "6.2.3"
+    },
+    "lighthouse": {
+      "puppeteer-core": "25.14.0"
     }
   }
 }

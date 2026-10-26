@@ -15,7 +15,49 @@
     "lastDeployment": "2026-10-21 13:39",
     "absoluteRoot": "UNVERIFIED",
     "physicalSeparation": "UNVERIFIED",
-    "detailsRead": "Two browser timeouts; no provider mutation"
+    "detailsRead": "Initial absolute-root detail attempts timed out; subsequent website-scoped Git and File Manager reads succeeded. No provider mutation. Absolute path is not required by the Git mechanism.",
+    "relativePathSufficient": true,
+    "ownerFtpEvidence": {
+      "separateDomainSpecificUsers": true,
+      "sharedServer": true,
+      "uploadDirectory": "public_html",
+      "passwordsProvided": false,
+      "absolutePathNotDisplayed": true
+    },
+    "gitPageRechecked": true,
+    "scopedFileManager": {
+      "entry": "Access files of the temporary website; only this specific website",
+      "rootDirectories": [
+        ".builds",
+        "public_html"
+      ],
+      "rootOtherFiles": [
+        "DO_NOT_UPLOAD_HERE"
+      ],
+      "publicHtmlDirectories": [
+        ".git",
+        "_next",
+        "brand",
+        "design",
+        "digital",
+        "press"
+      ],
+      "requiredFilesObserved": [
+        ".htaccess",
+        "404.html",
+        "500.html",
+        "__deployment.json",
+        "index.html",
+        "robots.txt",
+        "sitemap.xml"
+      ],
+      "wordpressFilesObserved": false,
+      "fileTypes": "Observed directories are directories, not symlinks",
+      "writesPerformed": 0,
+      "ftpChrootWriteIsolation": "UNVERIFIED; no configured FTP credentials or login",
+      "gitRelativeDestination": "CONFIRMED in the temporary-site context"
+    },
+    "productionGitMapping": "Read-only gridsmith.uk GIT page shows Deploy from Git repository and provider-connection options; no existing deployment mapping displayed"
   },
   "http": [
     {
@@ -48,5 +90,39 @@
       "status": 404,
       "title": "Page not found — Gridsmith Ltd"
     }
-  ]
+  ],
+  "finalServedRecheck": {
+    "checkedAt": "2026-10-26T10:41:09.263Z",
+    "siteOrigin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+    "results": [
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/about",
+        "status": 200
+      },
+      {
+        "path": "/design",
+        "status": 200
+      },
+      {
+        "path": "/digital",
+        "status": 200
+      },
+      {
+        "path": "/press",
+        "status": 200
+      },
+      {
+        "path": "/legal/privacy",
+        "status": 404
+      }
+    ],
+    "sourceSha": "e545c1a2b5afd1431bef581044cec2bec4da252a",
+    "artifactIdentity": "59ec5ae74f7074cc16c2eecb6c6008c705179fd2e7f1be50ba960c04aa4cfbe9",
+    "legalPreview": false,
+    "newPreviewHostedAcceptance": "NOT RUN"
+  }
 }

@@ -15,8 +15,8 @@ const WORKFLOWS = {
   '.github/workflows/ci.yml': 'cc045be9166eb3b3d3f2ed90ac23fee93efada79bde45a8fd14f3b7d37045dec',
   '.github/workflows/hostinger-staging.yml': 'dccc3a8b2e859cb6fcf87ad2a1c3561f03d4437f7220aa7139bf323d8d738cb7',
 };
-const PACKAGE_SHA256 = '97854c2b19e9ca55d5a793bfb5a768ce28d2856d7c44159ebdccfff2b64dad31';
-const LOCK_SHA256 = 'f45a725650c64e81bc8d580569e012ad07ca3d254e8ffaa63fb22c6cc57a6fa3';
+const PACKAGE_SHA256 = '52d2bf941250a94c5c66a99641dcbceafd988899c34ee791fb2ece68c04c79a6';
+const LOCK_SHA256 = '23511604b1b228b8959baad335dd91ece95b09707d46719af6610433db8fc45c';
 const GUARD_SUBJECTS = new Set(['scripts/browser-input.mjs', 'scripts/browser-input.selftest.mjs']);
 const SAFE_GIT_ENV = {
   GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_SYSTEM: '/dev/null', GIT_CONFIG_GLOBAL: '/dev/null',
@@ -25,6 +25,7 @@ const CONFIG_NAMES = [
   '.puppeteerrc', ...['json', 'yaml', 'yml', 'js', 'ts', 'cjs', 'mjs'].map((ext) => `.puppeteerrc.${ext}`),
   '.config/puppeteerrc', ...['json', 'yaml', 'yml', 'js', 'ts', 'cjs', 'mjs'].map((ext) => `.config/puppeteerrc.${ext}`),
   ...['js', 'ts', 'cjs', 'mjs'].map((ext) => `puppeteer.config.${ext}`),
+  '.config/puppeteer.config.js', '.config/puppeteer.config.cjs',
   'package.yaml', ...['json', 'yaml', 'yml', 'js', 'ts', 'cjs', 'mjs'].map((ext) => `.config/config.${ext}`),
 ];
 

@@ -1,0 +1,1179 @@
+{
+  "phase": "GS-LAUNCH-018",
+  "classification": "ENGINEERING EVIDENCE; NOT RELEASE AUTHORITY",
+  "sourceSha": "35c74d67efa58f21d8b10021bfde4ba4f584d645",
+  "branch": "codex/gs-launch-018",
+  "checkedAt": "2026-10-26T10:41:59.630Z",
+  "ci": {
+    "runId": "40254337220",
+    "status": "COMPLETED; FAILURE solely at full audit",
+    "normal": "PASS",
+    "previewAcceptance": "PASS; all six commands",
+    "publication": "NOT AUTHORISED; SKIPPED",
+    "url": "https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40254337220",
+    "normalDesktop": "PASS",
+    "normalMobile": "PASS",
+    "normalServed": "PASS; all 19 commands",
+    "previewBuild": "PASS",
+    "previewLegalParity": "PASS; seven documents, 109 clauses, 406 paragraphs",
+    "previewApache": "PASS",
+    "previewBrowser": "PASS",
+    "previewLighthouse": "PASS; both axes",
+    "fullAudit": "FAIL; 9 high",
+    "releasePackaging": "SKIPPED",
+    "publisher": "SKIPPED; not authorised",
+    "normalCompletedAt": "2026-10-26T02:49:13Z",
+    "previewJobConclusion": "FAILURE; audit step"
+  },
+  "preview": {
+    "acceptance": {
+      "sourceSha": "35c74d67efa58f21d8b10021bfde4ba4f584d645",
+      "artifactIdentity": "c4a23f5f8baf73184a8e36196809bb0cd782825c51295595f966488727e562ef",
+      "candidateIdentitySha256": "83d161a9d1467afb49959f4f3898a244ef1d3987cc92ccce415f920bb7d01d78",
+      "runId": "40254337220",
+      "platform": "linux",
+      "checks": [
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/24.21.0/x64/bin/node",
+            "scripts/check-hostinger-http.mjs",
+            "--local-owner-preview"
+          ],
+          "startedAt": "2026-10-26T01:30:15.524Z",
+          "endedAt": "2026-10-26T01:30:17.581Z",
+          "exitCode": 0,
+          "log": "check-0.log",
+          "logSha256": "782a40b7eef781a9e43a48529f7fe97f28046cc7b20ab2c1714e65782b3be0e8"
+        },
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/24.21.0/x64/bin/node",
+            "scripts/check-static-ui.mjs",
+            "--legal-preview"
+          ],
+          "startedAt": "2026-10-26T01:30:17.581Z",
+          "endedAt": "2026-10-26T01:34:03.790Z",
+          "exitCode": 0,
+          "log": "check-1.log",
+          "logSha256": "aa87ce9408ce29b0799b93ee244051c2a7f1cceeb0b20aca8442c82e92f1519a"
+        },
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/24.21.0/x64/bin/node",
+            "scripts/check-lhci.mjs",
+            "desktop"
+          ],
+          "startedAt": "2026-10-26T01:34:03.790Z",
+          "endedAt": "2026-10-26T01:40:19.382Z",
+          "exitCode": 0,
+          "log": "check-2.log",
+          "logSha256": "770db9cba7d60c3fc7402e85835597676fa500430bc8721609891cd528d4b1b5"
+        },
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/24.21.0/x64/bin/node",
+            "scripts/lhci-report.mjs",
+            "desktop"
+          ],
+          "startedAt": "2026-10-26T01:40:19.383Z",
+          "endedAt": "2026-10-26T01:40:19.698Z",
+          "exitCode": 0,
+          "log": "check-3.log",
+          "logSha256": "de9b790d4108f1aa4f720075daaa8a244fd6e8004d8a993003816df4bc6bbc4c"
+        },
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/24.21.0/x64/bin/node",
+            "scripts/check-lhci.mjs",
+            "mobile"
+          ],
+          "startedAt": "2026-10-26T01:40:19.698Z",
+          "endedAt": "2026-10-26T01:53:15.476Z",
+          "exitCode": 0,
+          "log": "check-4.log",
+          "logSha256": "1ad0318b9fc73aacb7724ecb96b8df0faebdd2045656a4a9cbe18990f3ad841c"
+        },
+        {
+          "command": [
+            "/opt/hostedtoolcache/node/24.21.0/x64/bin/node",
+            "scripts/lhci-report.mjs",
+            "mobile"
+          ],
+          "startedAt": "2026-10-26T01:53:15.476Z",
+          "endedAt": "2026-10-26T01:53:15.863Z",
+          "exitCode": 0,
+          "log": "check-5.log",
+          "logSha256": "488f87bf084ab0fbd65bb241e2f45d1e191353bc1c56fef2e6c7496243239405"
+        }
+      ]
+    },
+    "classification": "VALIDATION CANDIDATE; NOT A RELEASE",
+    "candidate": {
+      "sourceSha": "35c74d67efa58f21d8b10021bfde4ba4f584d645",
+      "sourceModified": false,
+      "profile": "owner-preview",
+      "siteOrigin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+      "releaseStatus": "ACCEPTANCE_PENDING",
+      "deployable": false,
+      "fileCount": 212,
+      "bytes": 31971837,
+      "routes": 61,
+      "payloadIdentity": "c4a23f5f8baf73184a8e36196809bb0cd782825c51295595f966488727e562ef"
+    },
+    "http": {
+      "files": 210,
+      "routes": 61,
+      "checks": [
+        {
+          "transport": "Apache TLS",
+          "wrongHostStatus": 403,
+          "transportRedirectStatus": 308,
+          "destination": "https://mediumaquamarine-wallaby-594070.hostingersite.com/about"
+        },
+        {
+          "path": "/h4d-unknown-route",
+          "status": 404
+        },
+        {
+          "path": "/api/rls-drift",
+          "status": 404
+        },
+        {
+          "path": "/design/services/cad-drafting",
+          "status": 404
+        },
+        {
+          "path": "/design/services/engineering-drawings",
+          "status": 404
+        },
+        {
+          "path": "/design/services/technical-documentation",
+          "status": 404
+        },
+        {
+          "path": "/induced-500",
+          "method": "GET",
+          "status": 500,
+          "staticDocument": "500.html"
+        },
+        {
+          "path": "/induced-500",
+          "method": "HEAD",
+          "status": 500,
+          "staticDocument": "500.html"
+        },
+        {
+          "path": "/privacy-policy/",
+          "status": 308,
+          "destination": "/legal/privacy"
+        },
+        {
+          "path": "/terms-and-conditions/",
+          "status": 308,
+          "destination": "/legal/client-terms"
+        },
+        {
+          "path": "/.htaccess",
+          "status": 403
+        },
+        {
+          "path": "/.git/config",
+          "status": 403
+        },
+        {
+          "path": "/about/",
+          "status": 308,
+          "destination": "/about",
+          "singleHop": true
+        }
+      ],
+      "compression": "gzip"
+    },
+    "ui": {
+      "pages": 20,
+      "legalCombinations": 70,
+      "legalLinks": 98,
+      "noJsPages": 20,
+      "accessibilityAnalyses": 41,
+      "errorDocuments": [
+        {
+          "route": "/h4a-unknown-route",
+          "violations": 0,
+          "status": 404
+        },
+        {
+          "route": "/500.html",
+          "violations": 0,
+          "status": 200
+        },
+        {
+          "route": "/induced-500",
+          "violations": 0,
+          "status": 500
+        }
+      ],
+      "browserErrors": [],
+      "failedRequests": [],
+      "badResponses": []
+    },
+    "lighthouse": {
+      "desktop": [
+        {
+          "route": "/",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 614.1804999999999,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/design",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 681.753825,
+          "cls": 0.00005385331448288253,
+          "tbt": 0
+        },
+        {
+          "route": "/digital",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 580.1789000000001,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/press",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 697.5119500000003,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/press/services/publishing-preparation",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 622.3943999999997,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/press/contact",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 635.73435,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/about",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 604.3008749999999,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/approach",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 594.2452000000001,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/insights",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 594.8223,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/contact",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 597.0337,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/legal/privacy",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 602.7687500000002,
+          "cls": 0,
+          "tbt": 0
+        }
+      ],
+      "mobile": [
+        {
+          "route": "/",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 929.332,
+          "cls": 0,
+          "tbt": 53.34900000000016
+        },
+        {
+          "route": "/design",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 964.768,
+          "cls": 0.0001431629925810673,
+          "tbt": 62.22600000000011
+        },
+        {
+          "route": "/digital",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 891.235,
+          "cls": 0,
+          "tbt": 72.86799999999948
+        },
+        {
+          "route": "/press",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 1061.763,
+          "cls": 0,
+          "tbt": 65.4090000000001
+        },
+        {
+          "route": "/press/services/publishing-preparation",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 930.797,
+          "cls": 0,
+          "tbt": 59.1569999999997
+        },
+        {
+          "route": "/press/contact",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 912.972,
+          "cls": 0,
+          "tbt": 56.76200000000017
+        },
+        {
+          "route": "/about",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 924.747,
+          "cls": 0,
+          "tbt": 52.14199999976154
+        },
+        {
+          "route": "/approach",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 926.708,
+          "cls": 0,
+          "tbt": 53.101999999761574
+        },
+        {
+          "route": "/insights",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 910.858,
+          "cls": 0,
+          "tbt": 51.30800000000045
+        },
+        {
+          "route": "/contact",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 909.305,
+          "cls": 0,
+          "tbt": 55.94900000000007
+        },
+        {
+          "route": "/legal/privacy",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 932.99,
+          "cls": 0,
+          "tbt": 58.08399999999983
+        }
+      ]
+    },
+    "audits": {
+      "production": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "full": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 9,
+        "critical": 0,
+        "total": 9
+      }
+    }
+  },
+  "security": {
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "full": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 9,
+      "critical": 0,
+      "total": 9
+    },
+    "decision": "UNRESOLVED; no risk acceptance or compatible dependency change"
+  },
+  "release": {
+    "status": "BLOCKED; full audit 9 high; no waiver, accepted ZIP or publication approval",
+    "archive": null,
+    "releaseIdentity": null,
+    "uploadAuthorised": false
+  },
+  "preservation": {
+    "checkedAt": "2026-10-26T10:41:59.630Z",
+    "main": "dbde73d30536543c54c7822b7cec092a25e13525",
+    "artifactBranch": "25d653f5582b78c31329dc5def12898d6a19b531",
+    "sourceRemote": "35c74d67efa58f21d8b10021bfde4ba4f584d645",
+    "primarySha": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+    "primaryStatus": "Matches original dirty status; unrelated files preserved",
+    "canonicalLegalAndPackageLock": "Unchanged from a0b6ffb7; git diff exit 0",
+    "implementationWorkingTree": "Matches tested 35c74d67; remaining changes are report/evidence/handoff documentation only"
+  },
+  "previousRuns": [
+    {
+      "runId": "40242196380",
+      "sourceSha": "ea2cdc8d562b0cac9eb3339e80023cd344a5563a",
+      "result": "STARTUP_FAILURE; caller missing actions:read; no jobs started; corrected in 53ebfc3"
+    },
+    {
+      "runId": "40242282347",
+      "sourceSha": "53ebfc3d2520be29e23fe5d73682ed11267e9c1d",
+      "result": "FAIL; Master capture stability assertion rejected visibility change; other 18 served gates pass; unchanged assertion passes in final a8 normal job"
+    },
+    {
+      "runId": "40242465419",
+      "sourceSha": "a8f521ca98f3d39a3773df71fe4db57b42beb650",
+      "result": "normal verify PASS; preview build/artifact/legal parity PASS; missing harness origin fails; publisher SKIPPED"
+    },
+    {
+      "runId": "40249591540",
+      "sourceSha": "205a82697d05053a033100ce00424eca69ffeb65",
+      "result": "CANCELLED after preview failure; induced server-level 500 mapping corrected in 6acc32d; normal job incomplete"
+    },
+    {
+      "runId": "40251285482",
+      "sourceSha": "8d161cd9356fb2b523ff8b2a043a7339c13c6424",
+      "result": "CANCELLED as superseded before final 500 correction; not a pass"
+    },
+    {
+      "runId": "40251696428",
+      "sourceSha": "6acc32d8c18e8688ee4ccd6b88250c1db28b8b22",
+      "result": "CANCELLED after preview HTTP canonical port failure; preview UI and both Lighthouse axes PASS; fixed canonical origin in 35c74d6; normal job incomplete"
+    }
+  ],
+  "logs": [
+    {
+      "path": "build/gs-launch-018/verify-static.log",
+      "bytes": 61560,
+      "sha256": "658354d66be1993bf3066f4929970a9e5678542dc311122b5587a6af983ce2c3"
+    },
+    {
+      "path": "build/gs-launch-018/verify-build.log",
+      "bytes": 13101,
+      "sha256": "5a6b585fceaa56c309440879707c4b5f5fdf96d0efc78ff565731a034bc1fc1a"
+    },
+    {
+      "path": "build/gs-launch-018/preview-build-final.log",
+      "bytes": 4716,
+      "sha256": "c9d4eb22c960ded27ae614d2d7985ff0ba4f2ffd14731bb0a0bab756012a5579"
+    },
+    {
+      "path": "build/gs-launch-018/browser-selftest.log",
+      "bytes": 49473,
+      "sha256": "c204965abe653ce9d33c55672eee09f30c5a7e578585a7a0bc7088132d16e281"
+    },
+    {
+      "path": "build/gs-launch-018/lint-final.log",
+      "bytes": 57,
+      "sha256": "2e243880c835fb240ba1b9d5cf1000486c599c0886debd07d543f2ac1f8c283a"
+    },
+    {
+      "path": "build/gs-launch-018/ci-53-failure.log",
+      "bytes": 349788,
+      "sha256": "7d92a3afe6307e500e4d07cb5186bdee48c0b5e26e3fa6702ec2730fb5628c58"
+    },
+    {
+      "path": "build/gs-launch-018/ci-a8-verify.log",
+      "bytes": 474123,
+      "sha256": "80eb4519bdd3d64911199e0c220fdf7a9c2e6ac0918fe325cad14bc95399d789"
+    },
+    {
+      "path": "build/gs-launch-018/ci-a8-preview.log",
+      "bytes": 190723,
+      "sha256": "be1ba31829f8d6a63e1b3dfdc61e6673d331171e82c11378278f09ef53dd98fc"
+    },
+    {
+      "path": "build/gs-launch-018/ci-205-preview.log",
+      "bytes": 206966,
+      "sha256": "732dbac80b903c3acb67c3689b0ddbff63e9176870f1d0816dd45b12ddd1c7d5"
+    },
+    {
+      "path": "build/gs-launch-018/ci-6acc-preview.log",
+      "bytes": 206163,
+      "sha256": "657f07e710c96f35d6c40024ba44ad0e2f51751bbb04a39f9dd84d768a10c71e"
+    },
+    {
+      "path": "build/gs-launch-018/ci-35c-preview.log",
+      "bytes": 203913,
+      "sha256": "4151b38361069c731a7c685260c19f4d1af1846dfcf583f9e63eed506ab14330"
+    },
+    {
+      "path": "build/gs-launch-018/ci-35c-verify.log",
+      "bytes": 557380,
+      "sha256": "fc897f1ceb9a5d83b5808e74fe5e6ecb25456daef410b8eeea5805b19cca10a7"
+    },
+    {
+      "path": "build/gs-launch-018/served-old-final.json",
+      "bytes": 707,
+      "sha256": "2bd513909a3d7054fd8292a71f958aabc7f590f39148f0a3b01efa246d65388b"
+    }
+  ],
+  "historicalEvidence": {
+    "sourceSha": "a8f521ca98f3d39a3773df71fe4db57b42beb650",
+    "ci": {
+      "runId": "40242465419",
+      "url": "https://github.com/atikmurtaza/Gridsmith-Ltd/actions/runs/40242465419",
+      "status": "COMPLETED; FAILURE IN PREVIEW HARNESS ENVIRONMENT",
+      "normalDesktop": "PASS",
+      "normalMobile": "PASS",
+      "normalServed": "PASS; complete normal verify job",
+      "previewApache": "NOT EXECUTED; exact-origin guard refused missing NEXT_PUBLIC_SITE_URL before harness started",
+      "previewBrowser": "NOT RUN",
+      "previewLighthouse": "NOT RUN",
+      "publisher": "NOT AUTHORISED"
+    },
+    "local": {
+      "candidate": {
+        "phase": "GS-LAUNCH-017",
+        "sourceSha": "a8f521ca98f3d39a3773df71fe4db57b42beb650",
+        "sourceModified": false,
+        "siteOrigin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+        "dataset": "production",
+        "legalPreview": true,
+        "contactMode": "direct",
+        "intakeOrigin": null,
+        "profile": "owner-preview",
+        "rehearsal": false,
+        "deployable": false,
+        "releaseStatus": "ACCEPTANCE_PENDING",
+        "artifactIdentity": "c16ec6bd6aadadb08b9ba923060163fb433d4f10f514671f42fefaed51859f38",
+        "files": 213
+      },
+      "fileCount": 214,
+      "bytes": 31921867,
+      "staticVerification": "PASS",
+      "normalBuildAndBudgets": "PASS; 69 route budgets",
+      "previewArtifact": "PASS",
+      "legalParity": "PASS; seven documents, 109 clauses, 406 paragraphs",
+      "allRouteCompanyChecks": "PASS; ten predicates over 61 routes",
+      "releasePredicates": "PASS; 45 proofs",
+      "browserFixtures": "PASS; 406 Node cases, 161 Python cases",
+      "installControls": "Local Windows tool observation failed; supported Linux installation controls passed in CI"
+    },
+    "normalLighthouse": {
+      "classification": "NORMAL DEVELOPMENT BUILD; NOT OWNER-PREVIEW ACCEPTANCE",
+      "sourceSha": "a8f521ca98f3d39a3773df71fe4db57b42beb650",
+      "runId": "40242465419",
+      "axes": {
+        "desktop": [
+          {
+            "route": "/",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 622.8192500000001,
+            "cls": 0,
+            "tbt": 0
+          },
+          {
+            "route": "/design",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 696.1814999999999,
+            "cls": 0.00005385331448288253,
+            "tbt": 0
+          },
+          {
+            "route": "/digital",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 579.7833,
+            "cls": 0,
+            "tbt": 0
+          },
+          {
+            "route": "/press",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 671.0504,
+            "cls": 0,
+            "tbt": 0
+          },
+          {
+            "route": "/press/services/publishing-preparation",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 655.2257500000002,
+            "cls": 0,
+            "tbt": 0
+          },
+          {
+            "route": "/press/contact",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 673.6252,
+            "cls": 0,
+            "tbt": 0
+          },
+          {
+            "route": "/about",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 610.246625,
+            "cls": 0,
+            "tbt": 0
+          },
+          {
+            "route": "/approach",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 608.3494999999998,
+            "cls": 0,
+            "tbt": 0
+          },
+          {
+            "route": "/insights",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 611.144,
+            "cls": 0,
+            "tbt": 0
+          },
+          {
+            "route": "/contact",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 631.21625,
+            "cls": 0,
+            "tbt": 0
+          },
+          {
+            "route": "/legal/privacy",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 608.6261250000001,
+            "cls": 0,
+            "tbt": 0
+          }
+        ],
+        "mobile": [
+          {
+            "route": "/",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 946.655,
+            "cls": 0,
+            "tbt": 82.88400000000001
+          },
+          {
+            "route": "/design",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 976.531,
+            "cls": 0.0001431629925810673,
+            "tbt": 89.99499999999989
+          },
+          {
+            "route": "/digital",
+            "runs": 3,
+            "performance": 0.99,
+            "accessibility": 1,
+            "lcp": 901.826,
+            "cls": 0,
+            "tbt": 99.36000000000013
+          },
+          {
+            "route": "/press",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 1082.781,
+            "cls": 0,
+            "tbt": 86.91300000000001
+          },
+          {
+            "route": "/press/services/publishing-preparation",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 946.115,
+            "cls": 0,
+            "tbt": 82.80099999999993
+          },
+          {
+            "route": "/press/contact",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 961.213,
+            "cls": 0,
+            "tbt": 87.11000000000013
+          },
+          {
+            "route": "/about",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 946.88,
+            "cls": 0,
+            "tbt": 83.34299999976156
+          },
+          {
+            "route": "/approach",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 952.178,
+            "cls": 0,
+            "tbt": 80.38099999976157
+          },
+          {
+            "route": "/insights",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 929.015,
+            "cls": 0,
+            "tbt": 77.97800000000007
+          },
+          {
+            "route": "/contact",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 953.104,
+            "cls": 0,
+            "tbt": 88.01699999999983
+          },
+          {
+            "route": "/legal/privacy",
+            "runs": 3,
+            "performance": 1,
+            "accessibility": 1,
+            "lcp": 959.102,
+            "cls": 0,
+            "tbt": 82.5949999999998
+          }
+        ]
+      }
+    },
+    "linuxCandidate": {
+      "phase": "GS-LAUNCH-017",
+      "legalPreview": true,
+      "contactMode": "direct",
+      "stagingOnly": true,
+      "outputDirectory": "build/owner-preview-candidate",
+      "profile": "owner-preview",
+      "rehearsal": false,
+      "deployable": false,
+      "releaseStatus": "ACCEPTANCE_PENDING",
+      "dataset": "production",
+      "siteOrigin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+      "buildNode": "v24.21.0",
+      "sourceSha": "a8f521ca98f3d39a3773df71fe4db57b42beb650",
+      "sourceModified": false,
+      "exclusions": [
+        "app/api",
+        "app/gridsmith-lead-probe",
+        "app/gridsmith-timeout-probe",
+        "app/(marketing)/%5Fkitchen-sink",
+        "app/(marketing)/%5Fmaster-sink",
+        "app/(marketing)/gridsmith-error-probe",
+        "app/(marketing)/gridsmith-ssr-throw-probe",
+        "app/(press)/press/gridsmith-path-probe",
+        "app/(marketing)/insights/[slug]"
+      ],
+      "problems": [],
+      "fileCount": 212,
+      "totalBytes": 31971837,
+      "htmlRoutes": 61,
+      "knownSecretValuesChecked": 0,
+      "image": {
+        "sourceBytes": 3317305,
+        "sourceSha256": "f613c7a7bdda188fecf874c109c6d0db833ee2759125c9a96859542930f88ac7",
+        "deliveryBytes": 41742,
+        "deliverySha256": "98674bdaa388325938334a99b18368923563284e1cb57dfdc5ca16cc669a9192",
+        "width": 1080,
+        "height": 1080,
+        "format": "webp",
+        "quality": 75,
+        "alpha": true
+      },
+      "operatorError": {
+        "policy": {
+          "version": 1,
+          "providerAcceptance": "UNVERIFIED",
+          "deployable": false,
+          "owner": "operator",
+          "storage": "outside-release-root",
+          "status": 500,
+          "errorUri": "/__gs_error.html",
+          "cacheControl": "no-store, max-age=0",
+          "contentSecurityPolicy": "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
+        },
+        "configurationSha256": "e34b8851ddbbee2e04b194f2becf33c89bde4ed472e95140b2ef34a2373ed8a2",
+        "documentSha256": "3b8c26ad3ecba475f70a82d710e844229ffb00a313b72cefd154f682582c6ffc",
+        "installed": false,
+        "providerAcceptance": "UNVERIFIED"
+      },
+      "manifestSha256": "d76a96b8fb856a5ccddf4f03aa05a921b5f31b5a01a0039d14304e9aa2c513f5"
+    }
+  },
+  "normalLighthouse": {
+    "classification": "NORMAL BUILD REGRESSION; NOT OWNER-PREVIEW ACCEPTANCE",
+    "sourceSha": "35c74d67efa58f21d8b10021bfde4ba4f584d645",
+    "runId": "40254337220",
+    "axes": {
+      "desktop": [
+        {
+          "route": "/",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 618.6673750000001,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/design",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 682.3944499999998,
+          "cls": 0.00005385331448288253,
+          "tbt": 0
+        },
+        {
+          "route": "/digital",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 567.9935,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/press",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 656.70525,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/press/services/publishing-preparation",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 617.0412,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/press/contact",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 656.78125,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/about",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 607.237875,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/approach",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 615.39725,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/insights",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 611.4567999999999,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/contact",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 616.4205,
+          "cls": 0,
+          "tbt": 0
+        },
+        {
+          "route": "/legal/privacy",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 613.8063999999999,
+          "cls": 0,
+          "tbt": 0
+        }
+      ],
+      "mobile": [
+        {
+          "route": "/",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 918.378,
+          "cls": 0,
+          "tbt": 49.29100000000017
+        },
+        {
+          "route": "/design",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 942.843,
+          "cls": 0.0001431629925810673,
+          "tbt": 50.96299999999974
+        },
+        {
+          "route": "/digital",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 883.63,
+          "cls": 0,
+          "tbt": 52.94999999999982
+        },
+        {
+          "route": "/press",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 1040.091,
+          "cls": 0,
+          "tbt": 54.81899999999996
+        },
+        {
+          "route": "/press/services/publishing-preparation",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 921.937,
+          "cls": 0,
+          "tbt": 48.11699999988059
+        },
+        {
+          "route": "/press/contact",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 930.681,
+          "cls": 0,
+          "tbt": 53.340999999999894
+        },
+        {
+          "route": "/about",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 921.403,
+          "cls": 0,
+          "tbt": 46.335000000000036
+        },
+        {
+          "route": "/approach",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 915.938,
+          "cls": 0,
+          "tbt": 48.47199999999975
+        },
+        {
+          "route": "/insights",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 892.955,
+          "cls": 0,
+          "tbt": 48.34400000000005
+        },
+        {
+          "route": "/contact",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 916.334,
+          "cls": 0,
+          "tbt": 53.71999999976151
+        },
+        {
+          "route": "/legal/privacy",
+          "runs": 3,
+          "performance": 1,
+          "accessibility": 1,
+          "lcp": 928.924,
+          "cls": 0,
+          "tbt": 50.91299999976127
+        }
+      ]
+    },
+    "assertionEvidence": "Desktop and mobile CI steps PASS; root assertion-results.json contains final mobile assertions"
+  },
+  "executionEnvironment": {
+    "previewRunner": "Ubuntu 24.04.5; ubuntu-24.04 image",
+    "node": "24.21.0",
+    "browser": "155; authenticated pinned input",
+    "evidence": "ci-35c-preview.log and browser provenance receipt"
+  },
+  "normalVerification": {
+    "sourceSha": "35c74d67efa58f21d8b10021bfde4ba4f584d645",
+    "runId": "40254337220",
+    "jobId": "121352842418",
+    "conclusion": "success",
+    "completedAt": "2026-10-26T02:49:13Z",
+    "servedCommands": 19,
+    "axeAnalyses": 76,
+    "deferredFooterAnalyses": 2,
+    "axeViolations": 0,
+    "allowedIncompletes": 836,
+    "unresolvedIncompletes": 0,
+    "responsiveCombinations": 51,
+    "masterSceneQuestions": 14,
+    "designScene": "PASS",
+    "digitalScene": "PASS",
+    "bundleBudgets": 69,
+    "ownerVisualDeviceAcceptance": "NOT RUN"
+  },
+  "artifacts": [
+    {
+      "name": "design-scene-evidence",
+      "id": 12624109209,
+      "bytes": 34861282,
+      "digest": "sha256:f682203daeddc4a22a435457fea3e44923f82cd344e90a9217c7ad644d1ec9a8"
+    },
+    {
+      "name": "owner-preview-evidence",
+      "id": 12622701768,
+      "bytes": 62606353,
+      "digest": "sha256:76718cbdb5adc80a06252f795bb31063b3fbc7db1a4f82f22a76d2d906fad55d"
+    },
+    {
+      "name": "lighthouseci-reports",
+      "id": 12622283622,
+      "bytes": 59256255,
+      "digest": "sha256:6d2f55d07f06b01393cc98d144161c51b2711af2c1996176d5ef120132a84076"
+    }
+  ],
+  "nextOwnerAction": "Authorise bounded browser/Lighthouse toolchain remediation with compatibility and measurement-parity validation; do not approve deployment before an accepted archive exists",
+  "servedPreservation": {
+    "checkedAt": "2026-10-26T10:41:09.263Z",
+    "siteOrigin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+    "results": [
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/about",
+        "status": 200
+      },
+      {
+        "path": "/design",
+        "status": 200
+      },
+      {
+        "path": "/digital",
+        "status": 200
+      },
+      {
+        "path": "/press",
+        "status": 200
+      },
+      {
+        "path": "/legal/privacy",
+        "status": 404
+      }
+    ],
+    "sourceSha": "e545c1a2b5afd1431bef581044cec2bec4da252a",
+    "artifactIdentity": "59ec5ae74f7074cc16c2eecb6c6008c705179fd2e7f1be50ba960c04aa4cfbe9",
+    "legalPreview": false,
+    "newPreviewHostedAcceptance": "NOT RUN"
+  }
+}
