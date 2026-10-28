@@ -677,6 +677,15 @@ async function domIntegrity(page, route, themed = true, expect = null) {
         problems.push(`${token} resolves to nothing — the token layer is not loaded on this route`);
       }
     }
+    // GS-LAUNCH-026, WCAG 2.2 SC 2.4.7. The header and footer focus outline is
+    // `2px solid var(--chrome-accent)`; when the token resolves to nothing the whole declaration is
+    // invalid and the outline computes to `none`. It did, on every Design service page, because the
+    // value it named was declared only by the landing's stylesheet. chrome.css is not in the derived
+    // list above, so its one load-bearing token is probed by name. Proven red on the pre-fix build
+    // (`/design/services/animation` resolved to the empty string; every other route resolved).
+    if (!bodyStyle.getPropertyValue('--chrome-accent').trim()) {
+      problems.push('--chrome-accent resolves to nothing — the header and footer focus outline computes to none (WCAG 2.4.7)');
+    }
 
     // And this is the check that catches the tokens being present but not reaching the
     // page. `--canvas` is read back through a probe so both sides are serialised by the
