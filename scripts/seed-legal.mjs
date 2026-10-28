@@ -28,6 +28,11 @@
  * - A paragraph, a list item, a hard-broken line (trailing backslash or two spaces) or a table row is one
  *   served paragraph. Table cells are joined with an em dash. Markdown emphasis and backticks
  *   are removed; no word is added or reordered.
+ * - `[visible words](target)` in a paragraph or list item is a cross-reference (`GS-LAUNCH-026`). The
+ *   visible words are served exactly as written and become a link only when the target is in
+ *   `LEGAL_LINK_TARGETS`; any other target, a link in a heading or table, a repeated target in one
+ *   paragraph, or a document linking to itself **throws**. The served text is identical to the
+ *   same draft without the link syntax.
  * - An unnumbered heading after the first clause, a duplicate clause number, or a missing
  *   title or version **throws**, so every importer (seed, migration, parity gate) fails loudly
  *   rather than serving a partial document.
@@ -82,8 +87,41 @@ export function isoDate(text) {
 
 const plain = (s) => s.replace(/\*\*/g, '').replace(/`/g, '').replace(/\s+/g, ' ').trim();
 
+/** The only destinations a legal cross-reference may name: the seven documents, contact, the regulator. */
+export const LEGAL_LINK_TARGETS = Object.freeze([
+  ...Object.keys(LEGAL_DRAFT_SOURCES).map((slug) => `/legal/${slug}`),
+  '/contact',
+  'mailto:contact@gridsmith.uk',
+  'https://ico.org.uk/',
+]);
+const LINK = /\[([^[\]\n]+)\]\(([^()\s]+)\)/g;
+
+/**
+ * One served paragraph: its words, and the character range of each allowlisted link within them.
+ * Link syntax that does not parse, or names another destination, throws rather than serving
+ * brackets or an unreviewed URL.
+ */
+function inline(source, name) {
+  const s = plain(source);
+  const links = [];
+  let text = '';
+  let at = 0;
+  for (const m of s.matchAll(LINK)) {
+    if (!LEGAL_LINK_TARGETS.includes(m[2])) throw new Error(`${name}: link target "${m[2]}" is not an approved legal cross-reference`);
+    if (links.some((l) => l.href === m[2])) throw new Error(`${name}: "${m[2]}" is linked twice in one paragraph`);
+    text += s.slice(at, m.index);
+    links.push({ start: text.length, end: text.length + m[1].length, href: m[2] });
+    text += m[1];
+    at = m.index + m[0].length;
+  }
+  text += s.slice(at);
+  if (/\]\(/.test(text)) throw new Error(`${name}: malformed link syntax in "${text.slice(0, 80)}"`);
+  return { text, links };
+}
+
 /**
  * A draft → `{ title, version, effective, drafted, clauses: [{ number, heading, paragraphs }] }`.
+ * A clause with cross-references also carries `links: [{ paragraph, start, end, href }]`.
  *
  * @param {string} markdown
  * @param {string} [name] for error messages
@@ -108,8 +146,16 @@ export function parseDraft(markdown, name = 'draft') {
   let para = [];
   let inTable = false;
   const flush = () => {
-    if (para.length) current.paragraphs.push(plain(para.join(' ')));
+    if (para.length) {
+      const { text, links } = inline(para.join(' '), name);
+      current.paragraphs.push(text);
+      if (links.length) (current.links ??= []).push(...links.map((l) => ({ paragraph: current.paragraphs.length - 1, ...l })));
+    }
     para = [];
+  };
+  const unlinked = (text, where) => {
+    if (/\]\(/.test(text)) throw new Error(`${name}: links are not supported in ${where}: "${text.slice(0, 80)}"`);
+    return plain(text);
   };
 
   for (const line of lines) {
@@ -118,7 +164,7 @@ export function parseDraft(markdown, name = 'draft') {
       if (current) flush();
       inTable = false;
       if (clauses.some((c) => c.number === heading[1])) throw new Error(`${name}: clause ${heading[1]} appears twice`);
-      current = { number: heading[1], heading: plain(heading[2]), paragraphs: [] };
+      current = { number: heading[1], heading: unlinked(heading[2], 'a heading'), paragraphs: [] };
       clauses.push(current);
       continue;
     }
@@ -131,7 +177,7 @@ export function parseDraft(markdown, name = 'draft') {
     }
     if (/^\s*\|/.test(line)) {
       flush();
-      const cells = line.trim().replace(/^\||\|$/g, '').split('|').map(plain);
+      const cells = line.trim().replace(/^\||\|$/g, '').split('|').map((cell) => unlinked(cell, 'a table'));
       if (inTable && cells.every((c) => /^:?-+:?$/.test(c))) continue; // separator row
       inTable = true;
       current.paragraphs.push(cells.filter(Boolean).join(' — '));
@@ -153,14 +199,25 @@ export function parseDraft(markdown, name = 'draft') {
   return { title, version, effective, drafted, effectiveOnPublication, clauses };
 }
 
-const blocks = (prefix, paragraphs) =>
-  paragraphs.map((text, i) => ({
-    _type: 'block',
-    _key: `${prefix}-b${i}`,
-    style: 'normal',
-    markDefs: [],
-    children: [{ _type: 'span', _key: `${prefix}-s${i}`, text, marks: [] }],
-  }));
+/** One block per paragraph. A paragraph without links keeps the single-span shape it always had. */
+const blocks = (prefix, paragraphs, links = []) =>
+  paragraphs.map((text, i) => {
+    const own = links.filter((l) => l.paragraph === i);
+    const span = (n, part, marks = []) => ({ _type: 'span', _key: `${prefix}-s${i}${n ? `-${n}` : ''}`, text: part, marks });
+    if (!own.length) return { _type: 'block', _key: `${prefix}-b${i}`, style: 'normal', markDefs: [], children: [span(0, text)] };
+    const children = [];
+    const markDefs = [];
+    let at = 0;
+    for (const l of own) {
+      if (l.start > at) children.push(span(children.length, text.slice(at, l.start)));
+      const key = `${prefix}-l${i}-${markDefs.length}`;
+      markDefs.push({ _type: 'link', _key: key, href: l.href });
+      children.push(span(children.length, text.slice(l.start, l.end), [key]));
+      at = l.end;
+    }
+    if (at < text.length) children.push(span(children.length, text.slice(at)));
+    return { _type: 'block', _key: `${prefix}-b${i}`, style: 'normal', markDefs, children };
+  });
 
 /** Register entry → the state the page shows, refusing an adoption the draft no longer matches. */
 function adoption(slug, version) {
@@ -180,28 +237,37 @@ function adoption(slug, version) {
   };
 }
 
-const shape = (slug, { title, version, effective, drafted, effectiveOnPublication = false, clauses }, summary) => ({
-  _id: `seed-legal-${slug}`,
-  _type: 'legalDocument',
-  slug: { _type: 'slug', current: slug },
-  title,
-  version,
-  effectiveFrom: effectiveOnPublication ? null : effective ?? drafted,
-  effectiveOnPublication,
-  lastReviewed: drafted ?? effective,
-  ...adoption(slug, version),
-  summary,
-  clauses: clauses.map(({ number, heading, paragraphs }, i) => ({
-    _type: 'legalClause',
-    _key: `${slug}-c${i}`,
-    number,
-    heading,
-    // Contracts cite these. Renumbering is a version bump plus a redirect, never an edit.
-    anchorId: `clause-${number.replace(/\./g, '-')}`,
-    body: blocks(`${slug}${i}`, paragraphs),
-  })),
-  isSeed: true,
-});
+/** A page never links to itself: the reader is already there. */
+export function assertNoSelfLink(slug, clauses) {
+  if (clauses.some((c) => c.links?.some((l) => l.href === `/legal/${slug}`))) throw new Error(`${slug}: links to itself`);
+}
+
+const shape = (slug, { title, version, effective, drafted, effectiveOnPublication = false, clauses }, summary,
+  state = adoption(slug, version)) => {
+  assertNoSelfLink(slug, clauses);
+  return {
+    _id: `seed-legal-${slug}`,
+    _type: 'legalDocument',
+    slug: { _type: 'slug', current: slug },
+    title,
+    version,
+    effectiveFrom: effectiveOnPublication ? null : effective ?? drafted,
+    effectiveOnPublication,
+    lastReviewed: drafted ?? effective,
+    ...state,
+    summary,
+    clauses: clauses.map(({ number, heading, paragraphs, links }, i) => ({
+      _type: 'legalClause',
+      _key: `${slug}-c${i}`,
+      number,
+      heading,
+      // Contracts cite these. Renumbering is a version bump plus a redirect, never an edit.
+      anchorId: `clause-${number.replace(/\./g, '-')}`,
+      body: blocks(`${slug}${i}`, paragraphs, links),
+    })),
+    isSeed: true,
+  };
+};
 
 export function assertAdoptedSource(slug, entry, markdown) {
   if (['OWNER_ADOPTED', 'PUBLISHABLE'].includes(entry?.state) &&
@@ -270,3 +336,47 @@ export const LEGAL_DOCUMENTS = [
   consumerClientTerms,
   accessibility,
 ];
+
+/**
+ * `GS-LAUNCH-026`: the revision set offered for owner re-adoption, under `docs/_legal/proposed/`.
+ * `null` once it is adopted (its files then replace `current/` under a new register entry) or
+ * withdrawn. Only an owner-preview build may serve it; the production profile refuses it.
+ */
+export const ACTIVE_LEGAL_PROPOSAL = 'GS-LAUNCH-026';
+
+const ORDER = LEGAL_DOCUMENTS.map((doc) => doc.slug.current);
+const newer = (a, b) => {
+  const [x, y] = a.split('.').map(Number), [p, q] = b.split('.').map(Number);
+  return x > p || (x === p && y > q);
+};
+
+/**
+ * The active proposal as served documents, in `LEGAL_DOCUMENTS` order, each at
+ * `OWNER_REVIEW_REQUIRED` so the page says "NOT YET ADOPTED". Every file must match its manifest
+ * hash and version, and every entry must revise the register's current adoption of that slug: a
+ * proposal written against an adoption that has since changed throws instead of being shown.
+ */
+export function legalProposalDocuments(id) {
+  if (!id || id !== ACTIVE_LEGAL_PROPOSAL) throw new Error(`Unknown legal proposal ${JSON.stringify(id)}`);
+  const dir = `docs/_legal/proposed/${id}`;
+  const manifest = JSON.parse(read(`${dir}/PROPOSAL.json`));
+  if (manifest.proposal !== id || JSON.stringify(Object.keys(manifest.documents ?? {}).sort()) !== JSON.stringify([...ORDER].sort())) {
+    throw new Error(`${id}: the proposal must revise exactly the seven legal documents`);
+  }
+  return ORDER.map((slug) => {
+    const entry = manifest.documents[slug];
+    const adopted = REGISTER.documents?.[slug];
+    const markdown = read(`${dir}/${entry.file}`);
+    const parsed = parseDraft(markdown, `${id}/${entry.file}`);
+    if (createHash('sha256').update(markdown).digest('hex') !== entry.sha256 || parsed.version !== entry.version) {
+      throw new Error(`${id}/${slug}: file does not match its recorded version and fingerprint`);
+    }
+    if (!['OWNER_ADOPTED', 'PUBLISHABLE'].includes(adopted?.state) || entry.supersedes?.version !== adopted.ownerAdoptedVersion ||
+        entry.supersedes?.sha256 !== adopted.ownerAdoptedSha256 || !newer(entry.version, adopted.ownerAdoptedVersion)) {
+      throw new Error(`${id}/${slug}: does not revise the register's current adoption`);
+    }
+    if (typeof entry.summary !== 'string' || !entry.summary.trim()) throw new Error(`${id}/${slug}: no summary`);
+    return shape(slug, parsed, entry.summary,
+      { adoptionState: 'OWNER_REVIEW_REQUIRED', ownerAdoptedOn: null, reviewedBy: 'Proposed revision under review by Gridsmith Ltd' });
+  });
+}

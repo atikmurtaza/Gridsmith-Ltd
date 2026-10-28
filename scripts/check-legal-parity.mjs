@@ -134,7 +134,7 @@
  * `check-legal-parity.selftest.mjs`, which runs in `verify:static` where no server exists.
  */
 import { readFileSync } from 'node:fs';
-import { LEGAL_DRAFT_SOURCES } from './seed-legal.mjs';
+import { LEGAL_DRAFT_SOURCES, legalProposalDocuments, parseDraft } from './seed-legal.mjs';
 /** `GS-O003-R` register: the expected adoption state of each served document. */
 const LEGAL_REGISTER = JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json', 'utf8'));
 import {
@@ -145,6 +145,8 @@ import {
   normaliseWords,
   tokenReached,
   bannerProblems,
+  servedLinkProblems,
+  withoutLinkAffordance,
 } from './legal-parity-rules.mjs';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? 'http://127.0.0.1:3000';
@@ -158,11 +160,31 @@ const readRoute = async (route) => {
 console.log(`check-legal-parity: input=${artifactDir ? 'built HTML files (delivery unverified)' : 'served HTTP pages'}`);
 const DRAFTS = 'docs/_legal/';
 
+/**
+ * GS-LAUNCH-026: ask the served system which texts it claims to serve. A static owner-review build
+ * may serve the active revision proposal (`__deployment.json` `legalProposal`); anything without
+ * that identity, including a normal server, is held to the adopted texts. A claimed proposal must
+ * itself be intact and revise the current adoption, or the gate throws before measuring.
+ */
+const identity = await (async () => {
+  try {
+    if (artifactDir) return JSON.parse(readFileSync(`${artifactDir}/__deployment.json`, 'utf8'));
+    const res = await fetch(`${BASE_URL}/__deployment.json`);
+    return res.ok ? await res.json() : null;
+  } catch { return null; }
+})();
+const proposal = identity?.legalProposal ?? null;
+const SOURCES = proposal ? Object.fromEntries(legalProposalDocuments(proposal).map((doc) => [doc.slug.current,
+  `proposed/${proposal}/${JSON.parse(readFileSync(`${DRAFTS}proposed/${proposal}/PROPOSAL.json`, 'utf8')).documents[doc.slug.current].file}`]))
+  : LEGAL_DRAFT_SOURCES;
+const expectedState = (slug) => proposal ? 'OWNER_REVIEW_REQUIRED' : LEGAL_REGISTER.documents?.[slug]?.state;
+console.log(`check-legal-parity: texts=${proposal ? `proposal ${proposal} (not adopted)` : 'adopted'}`);
+
 /** Hardcoded. See the docstring — an expectation derived from its subject cannot fail. */
 const EXPECTED_DOCS = 7;
 
 const problems = [];
-const counted = { docs: 0, clauses: 0, paragraphs: 0, tokens: 0 };
+const counted = { docs: 0, clauses: 0, paragraphs: 0, tokens: 0, links: 0 };
 
 /** `<section id="clause-…">…</section>` — the template renders one per clause. */
 const clauseSections = (html) => [
@@ -181,12 +203,16 @@ const decode = (s) =>
     .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
     .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)));
 
-for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
+for (const slug of Object.keys(LEGAL_DRAFT_SOURCES)) {
+  const file = SOURCES[slug];
   counted.docs += 1;
 
   const markdown = readFileSync(DRAFTS + file, 'utf8');
   const draftWords = normaliseWords(markdown);
   const route = `/legal/${slug}`;
+  // Each clause's cross-references, as the generator reads them from this draft.
+  const draftLinks = new Map(parseDraft(markdown, file).clauses.map((c) => [`clause-${c.number.replace(/\./g, '-')}`,
+    (c.links ?? []).map((l) => ({ href: l.href, text: c.paragraphs[l.paragraph].slice(l.start, l.end) }))]));
 
   const res = await readRoute(route);
   if (!res.ok) {
@@ -205,7 +231,7 @@ for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
   if (!h1) {
     problems.push(`${route} serves no <h1>. The route resolves but the document did not render.`);
   }
-  problems.push(...bannerProblems(route, LEGAL_REGISTER.documents?.[slug]?.state, html));
+  problems.push(...bannerProblems(route, expectedState(slug), html));
 
   // Branch A — version parity, and A2, the draft agreeing with itself.
   const draftVersion = currentVersion(markdown);
@@ -244,8 +270,12 @@ for (const [slug, file] of Object.entries(LEGAL_DRAFT_SOURCES)) {
     // draft prose. (`GS-LEGAL-001` stopped rendering the editorial `Basis:` line, so nothing on
     // the page is exempt any more: a stray `Basis:` paragraph is now held to the draft.)
     const body = inner.replace(/<h2[\s\S]*?<\/h2>/, ' ');
+    // Branch E (GS-LAUNCH-026) — the clause links exactly where, and only where, the draft does.
+    const expectedLinks = draftLinks.get(anchor) ?? [];
+    counted.links += expectedLinks.length;
+    problems.push(...servedLinkProblems(route, anchor, expectedLinks, body));
     for (const [, paragraph] of body.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)) {
-      const text = decode(stripTags(paragraph)).trim();
+      const text = decode(stripTags(withoutLinkAffordance(paragraph))).trim();
       if (!text) continue;
       counted.paragraphs += 1;
       const words = normaliseWords(text);
@@ -315,7 +345,7 @@ if (problems.length > 0) {
   console.log(
     `check-legal-parity: ${counted.docs} document(s), ${counted.clauses} served clause(s), ` +
       `${counted.paragraphs} paragraph(s) matched word-for-word against the drafts, ` +
-      `${counted.tokens} draft clause(s) all reachable`,
+      `${counted.tokens} draft clause(s) all reachable, ${counted.links} cross-reference(s) exact`,
   );
   console.log(
     'check-legal-parity: all seven legal pages are covered by canonical source and adoption-banner checks.',

@@ -53,6 +53,9 @@ export function normaliseWords(text) {
     String(text)
       // Draft-only apparatus. The served page has no HTML comments; a draft is mostly them.
       .replace(/<!--[\s\S]*?-->/g, ' ')
+      // A cross-reference's target is apparatus too (GS-LAUNCH-026): `[Privacy Policy](/legal/privacy)`
+      // is read as "Privacy Policy". `servedLinkProblems` holds the target itself to the draft.
+      .replace(/\]\([^()\s]*\)/g, ' ')
       // `§6A` and "section 6A" are the same reference. See the docstring.
       .replace(/§/g, ' section ')
       // The drafts' revision markers, which sit INSIDE operative sentences rather than beside
@@ -252,4 +255,37 @@ export function bannerProblems(route, state, html) {
     if (adoptedBanner) p.push(`${route} claims "adopted, not yet published", but the GS-O003-R register puts it at ${state ?? 'no state'}.`);
   }
   return p;
+}
+
+/**
+ * `GS-LAUNCH-026`: the one piece of served text that is not the reviewed draft's — the renderer's
+ * screen-reader notice on an external link (`components/content/Blocks.tsx`). It is an interface
+ * affordance, not legal wording, so it is removed before the word comparison; only this exact
+ * markup is, so any other added text still fails.
+ */
+export const EXTERNAL_LINK_AFFORDANCE = '<span class="sr-only"> (opens in a new tab)</span>';
+export const withoutLinkAffordance = (html) => String(html).split(EXTERNAL_LINK_AFFORDANCE).join('');
+
+const entities = (s) => s.replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+  .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
+  .replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+
+/**
+ * A clause body's links, as served, against the draft's (`GS-LAUNCH-026`). `expected` is
+ * `[{ href, text }]` from the parsed draft. The served body must carry exactly those links — same
+ * words, same target, once each — and no other, so a dropped, re-targeted, self-referencing or
+ * unreviewed link all fail. An external link's screen-reader suffix is not part of its words.
+ * Returns problem strings; `[]` is a pass.
+ */
+export function servedLinkProblems(route, anchor, expected, body) {
+  const served = [...String(body).matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].map(([, attrs, inner]) => ({
+    href: entities(attrs.match(/\bhref="([^"]*)"/)?.[1] ?? ''),
+    text: entities(inner.replace(/<span class="sr-only">[\s\S]*?<\/span>/g, '').replace(/<[^>]*>/g, ''))
+      .replace(/\s+/g, ' ').trim(),
+  }));
+  const key = (l) => `${l.href}\u0000${l.text}`;
+  const want = expected.map(key).sort(), got = served.map(key).sort();
+  if (JSON.stringify(want) === JSON.stringify(got)) return [];
+  const show = (list) => list.map((k) => k.replace('\u0000', ' ← ')).join('; ') || 'none';
+  return [`${route} ${anchor} serves links [${show(got)}] where the draft has [${show(want)}].`];
 }
