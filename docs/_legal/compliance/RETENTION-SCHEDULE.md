@@ -1,6 +1,6 @@
 # Data retention and deletion matrix
 
-22 October 2026. Canonical public wording: Privacy 2.6 section 8. Operator: Atik Murtaza / Gridsmith administration; system owner remains Gridsmith. Prior manual routine is owner-attested and recorded at R9 on 7 October; no fresh customer-data inspection occurred in this task. No universal automated deletion is claimed. The lawful basis is for the purpose, not an excuse to retain data after it ends.
+22 October 2026; canonical reference updated at GS-LAUNCH-025. Canonical public wording: Privacy 2.7 section 8. Operator: Atik Murtaza / Gridsmith administration; system owner remains Gridsmith. Prior manual routine is owner-attested and recorded at R9 on 7 October; no fresh customer-data inspection occurred in this task. No universal automated deletion is claimed. The lawful basis is for the purpose, not an excuse to retain data after it ends.
 
 | Category | Purpose / lawful basis | Period or objective criterion | Justification | Storage / responsible system | Deletion / verification |
 |---|---|---|---|---|---|

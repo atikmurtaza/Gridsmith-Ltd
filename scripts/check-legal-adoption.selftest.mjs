@@ -284,7 +284,9 @@ assert.equal(createHash('sha256').update(previous('GS-O003-R-REGISTER.json')).di
 for (const [slug, e] of Object.entries(currentRegister.documents)) {
   const text = readFileSync(e.draft);
   assert.equal(createHash('sha256').update(text).digest('hex'), approvedHashes[slug] ?? previousRegister.documents[slug].ownerAdoptedSha256);
-  assert.equal(e.state, 'OWNER_ADOPTED');
+  assert(['OWNER_ADOPTED', 'PUBLISHABLE'].includes(e.state));
+  expect(`${slug} current publication evidence`, registerProblems(slug, e,
+    parseDraft(text.toString()).version, e.draft, createHash('sha256').update(text).digest('hex')), null);
   if (approvedHashes[slug]) {
     assert.equal(e.ownerAdoptedSha256, approvedHashes[slug]);
     assert.equal(e.ownerAdoptedOn, '2026-10-25');
@@ -293,12 +295,15 @@ for (const [slug, e] of Object.entries(currentRegister.documents)) {
     assert.equal(createHash('sha256').update(oldText).digest('hex'), old.ownerAdoptedSha256);
     assert.throws(() => assertAdoptedSource(slug, old, text), /differs from the exact owner-adopted text/);
     assert.throws(() => assertAdoptedSource(slug, e, oldText), /differs from the exact owner-adopted text/);
-  } else assert.deepEqual(e, previousRegister.documents[slug]);
+  } else {
+    const adoption = { ...e }, oldAdoption = { ...previousRegister.documents[slug] };
+    for (const field of ['state', 'prerequisitesMet']) { delete adoption[field]; delete oldAdoption[field]; }
+    assert.deepEqual(adoption, oldAdoption);
+  }
 }
 assert.equal(currentRegister.previousAdoptionRegister, 'docs/_legal/evidence/GS-LAUNCH-014-superseded/GS-O003-R-REGISTER.json');
 assert.equal(currentRegister.documents.privacy.contactMode, 'direct');
-assert.equal(currentRegister.documents.privacy.prerequisitesMet['DIRECT-CONTACT-VERIFIED'], undefined);
-assert.equal(allLegalPublishable(Object.values(currentRegister.documents).map(e => e.state)), false);
+assert.equal(allLegalPublishable(Array(7).fill('OWNER_ADOPTED')), false);
 expect('adopted workflow coordinated', coordinatedReviewProblems(coordinated, workflow), null);
 expect('stale confirmation version', coordinatedReviewProblems(coordinated, swap(workflow, 'Consumers 3.4 (attached)', 'Consumers 3.3 (attached)')), /current consumer version/);
 assert.equal(createHash('sha256').update(read('evidence/GS-LAUNCH-014-OWNER-AUTHORITY.md')).digest('hex'), '8c0596b49763c11ddd0dbaa5954718b883946a57cef3c61ebb132140ee662497');
@@ -328,7 +333,7 @@ expect('privacy-publishable claimed while privacy unadopted', crossRegisterProbl
 expect('privacy-publishable claimed while privacy only adopted', crossRegisterProblems(docs('OWNER_ADOPTED', { 'PRIVACY-PUBLISHABLE': 'yes' })), /while the privacy entry is OWNER_ADOPTED/);
 expect('privacy-publishable met for real', crossRegisterProblems(docs('PUBLISHABLE', { 'PRIVACY-PUBLISHABLE': 'register, date' })), null);
 expect('privacy-publishable not claimed', crossRegisterProblems(docs('OWNER_REVIEW_REQUIRED', {})), null);
-// The live register: no entry claims Privacy publishable; adoption alone does not permit publication.
+// The live register must stay coherent at either authorised publication stage.
 expect('live register cross-coherent', crossRegisterProblems(JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json', 'utf8')).documents), null);
 
 // parseDraft — the generator the served pages come from refuses malformed drafts.
