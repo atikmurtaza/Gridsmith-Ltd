@@ -55,7 +55,23 @@ it still lists them as blockers while the rows they block are marked DONE. Belie
 
 ### 22. Analytics — decide whether to wire it up, and if so do it in this order
 
-- **Status:** **Not a blocker. Deliberately deferred, and safe to launch without.**
+> **GS-LAUNCH-026 (28 October 2026): the code side of this item is done; the account side is the
+> owner's.** The owner decided to activate GA4 and PostHog before the real-domain launch. Steps 2–6
+> below are implemented and measured: Google's `arguments` shim (`lib/analytics/load.ts`), consent
+> rather than the statistical exception, one unticked choice per provider, Cookie Policy 2.5 /
+> Privacy Policy 2.8 proposals written for the behaviour, and `check:consent` + `prove:consent` in
+> place of the inverted `check:axe` path (which still governs an unconfigured build). Step 1 (`L-07`)
+> is superseded, not skipped: see `master/PROJECT-RULES.md` §6 and `check:struck`
+> `GS-LAUNCH-026-CONSENT-LOG-PREREQUISITE`. Step 7 is now exact: set the public identifiers
+> `NEXT_PUBLIC_GA4_MEASUREMENT_ID` (G-…) and `NEXT_PUBLIC_POSTHOG_KEY` (phc_…, EU project) as GitHub
+> repository **variables** for the production build, after Cookie 2.5 and Privacy 2.8 are adopted
+> and published — `build-static` refuses an identifier while the served policies do not describe it.
+> The account settings to apply first, and step 8's live re-measurement, are in
+> `docs/_shared/GS-LAUNCH-026-OWNER-REVIEW.md`. The `ANALYTICS-READY` register prerequisite records
+> that evidence; nothing has been activated.
+
+- **Status:** ~~**Not a blocker. Deliberately deferred, and safe to launch without.**~~ Superseded at
+  `GS-LAUNCH-026` — the owner intends to launch with analytics; the site still launches safely without it.
 - **Where:** the codebase first, the hosting control panel last
 - **Tracker:** `M-P2-ANALYTICS` (master), superseding `A-09` and `Q-M19`
 - **Legal:** `COOKIE-POLICY.md` §4 and §4A · `PRIVACY-POLICY.md` §6A and §11A ·

@@ -216,7 +216,7 @@ Soft shadows, rounded-everything, gradient meshes, glassmorphism, floating 3D sh
 4. **Never let seed content reach production.** Build check blocks it.
 5. **Never promise a response faster than end of next business day.** One source of truth: `companyDetails.responseCommitment`.
 6. **Never claim more than the contract gives.** Digital's ownership module and Press's rights module cite real clauses in `_legal/`.
-7. **Never fire a non-essential cookie before consent.** (Today there is none to fire — see *Stack*. The rule is what keeps it that way.) A reg. 6 breach attracts PECR's *higher* maximum — £17.5m or 4% of worldwide turnover (PECR Sch. 1 para. 18(b)(ii), applying DPA 2018 s. 157(2)(a) and (5); in force 5 Feb 2026). See `_legal/02-CITATION-LEDGER.md` `L-PECR-PENALTY`.
+7. **Never fire a non-essential cookie before consent.** (Today there is none to fire in an unconfigured build — see *Stack*; a build configured with GA4/PostHog loads them only after a grant, which `check:consent` measures. The rule is what keeps it that way.) A reg. 6 breach attracts PECR's *higher* maximum — £17.5m or 4% of worldwide turnover (PECR Sch. 1 para. 18(b)(ii), applying DPA 2018 s. 157(2)(a) and (5); in force 5 Feb 2026). See `_legal/02-CITATION-LEDGER.md` `L-PECR-PENALTY`.
 8. **Never break a performance budget to add a feature.** The feature changes or is cut.
 9. **Never remove Press's honest outcomes.** The Path Finder must be able to recommend against Gridsmith. Schema-enforced and audited.
 10. **Accessibility wins every conflict.** WCAG 2.2 AA is the floor. Then raise the conflict.
@@ -243,6 +243,16 @@ nothing while every accepting visitor's IP and user-agent still reached Google a
 **no consent categories** and the banner is a notice. Re-introducing analytics is a single deliberate
 task with prerequisites — `docs/_shared/BEFORE-LAUNCH.md` item 22 — and `_legal/03-REVISION-LOG.md`
 round 10 is the decision and the measurement.
+
+**`GS-LAUNCH-026` (28 October 2026): optional GA4 and PostHog return behind configuration and consent.**
+A build given neither `NEXT_PUBLIC_GA4_MEASUREMENT_ID` nor `NEXT_PUBLIC_POSTHOG_KEY` is still the
+notice above: the same text and one "Got it" button, the same prepaint script and cookie value; the
+markup gains only the controller's data attributes and a status region. A build given either shows a consent request (Accept all / Reject optional
+/ Customise, per-provider, unticked), loads a provider only after a grant (`lib/analytics/load.ts`,
+lazy), and adds exactly that provider's CSP hosts. `check:consent` measures both modes by requests and
+storage; `prove:consent` proves each branch red; `build-static` refuses an identifier whose served
+policies do not describe it. Nothing is activated: identifiers are an owner configuration step after
+Cookie 2.5 / Privacy 2.8 are adopted and published.
 
 Rejected and not to be reintroduced: any UI component library (shadcn, MUI, Chakra), any third-party consent platform, any charting or animation library, any page builder. The primitives are hand-built because this site *is* the case study — 67% of B2B buyers judge vendor trustworthiness by site UX.
 

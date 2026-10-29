@@ -273,11 +273,22 @@ export function instrumentProblems(slug, markdown) {
   return p;
 }
 
+/**
+ * Each processor the site uses must be disclosed as a recipient — by name, or (`GS-LAUNCH-026`,
+ * owner instruction) by its accurate category, which is what UK GDPR Art. 13(1)(e) asks for. A
+ * policy that does neither still fails.
+ */
+const RECIPIENT_DISCLOSURE = {
+  Hostinger: /\bHostinger\b|\b[Ww]ebsite and email hosting provider\b/,
+  Supabase: /\bSupabase\b|\b[Dd]atabase (?:infrastructure )?providers?\b/,
+  Resend: /\bResend\b|\b[Ee]mail delivery providers?\b/,
+};
+
 /** Privacy and cookie policies against what the site does. `facts` comes from the source. */
 export function parityProblems(privacy, cookies, facts) {
   const p = [];
   for (const provider of facts.contactMode === 'direct' ? ['Hostinger'] : ['Hostinger', 'Supabase', 'Resend']) {
-    if (!privacy.includes(provider)) p.push(`privacy: does not name ${provider}`);
+    if (!RECIPIENT_DISCLOSURE[provider].test(privacy)) p.push(`privacy: does not name ${provider} or disclose it by category`);
   }
   if (!/Information Commission\b/.test(privacy)) p.push('privacy: does not name the Information Commission');
   if (facts.contactMode === 'direct') {
@@ -294,6 +305,42 @@ export function parityProblems(privacy, cookies, facts) {
     p.push(`cookies: says no local storage, but the source uses ${facts.storageApis.join(', ')}`);
   }
   return p;
+}
+
+/**
+ * `GS-LAUNCH-026`: a build that offers optional analytics must serve policies that describe it. For
+ * every offered provider the Cookie Policy must name the provider and its cookies and the Privacy
+ * Policy must name the provider; neither may still call analytics planned or inactive; and, given
+ * `facts.choiceDays` from the source (`lib/consent/decision.ts`), the Cookie Policy must state that
+ * lifetime of an analytics choice. An unconfigured build asks nothing of either. Returns problem
+ * strings; `[]` is a pass.
+ */
+export function analyticsDisclosureProblems(cookies, privacy, offered, facts = {}) {
+  const p = [];
+  const providers = [offered.ga4 && ['Google Analytics 4', /\b_ga\b/], offered.posthog && ['PostHog', /\bph_/]].filter(Boolean);
+  for (const [name, cookie] of providers) {
+    if (!cookies.includes(name) || !cookie.test(cookies)) p.push(`cookies: the build offers ${name} but the policy does not name it and its cookies`);
+    if (!privacy.includes(name)) p.push(`privacy: the build offers ${name} but the policy does not name it`);
+  }
+  if (providers.length && facts.choiceDays && !new RegExp(`\\b${facts.choiceDays} days\\b`).test(cookies)) {
+    p.push(`cookies: does not state the ${facts.choiceDays}-day lifetime of an analytics choice the site sets`);
+  }
+  if (providers.length && /planned future processing|(?:are|is) not (?:currently )?active/i.test(`${cookies}\n${privacy}`)) {
+    p.push('cookies/privacy: the build offers analytics but a policy still describes it as planned or inactive');
+  }
+  return p;
+}
+
+/**
+ * `GS-LAUNCH-026`: the register's own rule — real analytics identifiers need recorded activation
+ * evidence (`ANALYTICS-READY`: provider terms, settings, retention, transfers), never only adopted
+ * wording. An unconfigured build needs none. Returns problem strings; `[]` is a pass.
+ */
+export function analyticsReadinessProblems(register, offered) {
+  if (!offered.ga4 && !offered.posthog) return [];
+  return register?.documents?.privacy?.prerequisitesMet?.['ANALYTICS-READY']
+    ? []
+    : ['analytics: the register records no ANALYTICS-READY evidence for the privacy policy (docs/_legal/compliance/ANALYTICS-ACTIVATION.md)'];
 }
 
 /** Text checks complement the receipt; they cannot prove mailbox operation or historical erasure. */

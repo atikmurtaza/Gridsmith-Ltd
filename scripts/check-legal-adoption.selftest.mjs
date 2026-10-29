@@ -24,7 +24,7 @@ import {
   requiredPrerequisites,
   directContactAccessibilityProblems,
 } from './legal-adoption-rules.mjs';
-import { parseDraft, assertAdoptedSource } from './seed-legal.mjs';
+import { parseDraft, assertAdoptedSource, assertNoSelfLink } from './seed-legal.mjs';
 import { allLegalPublishable } from '../lib/legal/adoption.ts';
 
 const read = (f) => readFileSync(`docs/_legal/${f}`, 'utf8');
@@ -120,6 +120,10 @@ expect('no DPA schedule', all('business-client-terms', business.replaceAll('Data
 
 // parityProblems — each fact.
 expect('provider missing', parityProblems(privacy.replaceAll('Hostinger', 'our host'), cookies, facts), /does not name Hostinger/);
+// GS-LAUNCH-026: an accurate recipient category is a disclosure; a vaguer word still is not.
+// Every mention is replaced: the adopted text names the host three times, so one replacement is inert.
+expect('provider disclosed by category', parityProblems(privacy.replaceAll('Hostinger', 'our website and email hosting provider'), cookies, facts), null);
+expect('category too vague', parityProblems(privacy.replaceAll('Hostinger', 'a supplier'), cookies, facts), /does not name Hostinger or disclose it by category/);
 expect('regulator missing', parityProblems(privacy.replaceAll('Information Commission', 'regulator'), cookies, facts), /Information Commission/);
 expect('storage region missing', parityProblems(previousPrivacy.replaceAll('Ireland', 'Europe'), cookies, { ...facts, contactMode: 'edge' }), /where enquiries are stored/);
 expect('cookie name', parityProblems(privacy, cookies, { ...facts, cookieName: 'gs_other' }), /gs_other/);
@@ -355,6 +359,26 @@ throws('no date', '# T\n\n**Version 1.0**\n\n## 1. A\n\nx\n', /no effective or d
 throws('duplicate clause', head + '## 1. A\n\nx\n\n## 1. B\n\ny\n', /appears twice/);
 throws('unnumbered heading', head + '## 1. A\n\nx\n\n## Annex\n\ny\n', /unnumbered heading/);
 throws('no clause', head + 'Just text.\n', /no numbered clause/);
+// GS-LAUNCH-026 cross-references: served words unchanged, every refusal by its own branch.
+{
+  cases += 1;
+  const d = parseDraft(head + '## 1. A\n\nSee our [Privacy Policy](/legal/privacy) and **[contact@gridsmith.uk](mailto:contact@gridsmith.uk)**.\n');
+  const got = JSON.stringify([d.clauses[0].paragraphs, d.clauses[0].links]);
+  const want = JSON.stringify([['See our Privacy Policy and contact@gridsmith.uk.'], [
+    { paragraph: 0, start: 8, end: 22, href: '/legal/privacy' }, { paragraph: 0, start: 27, end: 47, href: 'mailto:contact@gridsmith.uk' }]]);
+  if (got !== want) { failures += 1; console.error(`  FAIL link parse shape: ${got}`); }
+}
+throws('unapproved link target', head + '## 1. A\n\nSee [x](https://example.com/).\n', /not an approved legal cross-reference/);
+throws('repeated link target', head + '## 1. A\n\n[a](/contact) and [b](/contact).\n', /linked twice/);
+throws('link in a heading', head + '## 1. [A](/contact)\n\nx\n', /links are not supported in a heading/);
+throws('link in a table', head + '## 1. A\n\n| [a](/contact) | b |\n', /links are not supported in a table/);
+throws('malformed link', head + '## 1. A\n\n[a](/contact space).\n', /malformed link syntax/);
+{
+  const clauses = parseDraft(head + '## 1. A\n\nRead the [Cookie Policy](/legal/cookies).\n').clauses;
+  assert.throws(() => assertNoSelfLink('cookies', clauses), /links to itself/);
+  assert.doesNotThrow(() => assertNoSelfLink('privacy', clauses));
+  cases += 2;
+}
 
 // Owner adoption does not backdate the separately authorised cutover.
 const boundText = 'Exact synthetic adopted text';

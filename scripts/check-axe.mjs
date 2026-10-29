@@ -1685,7 +1685,7 @@ const noticeProblems = [];
       }
 
       const after = await page.evaluate(() => ({
-        gone: !document.getElementById('gs-consent-heading'),
+        gone: !document.getElementById('gs-consent-heading')?.closest('[role="region"]')?.checkVisibility(),
         local: Object.keys(localStorage).length,
         session: Object.keys(sessionStorage).length,
       }));
@@ -1709,7 +1709,7 @@ const noticeProblems = [];
       // Step 3 — the reload. The cookie's only job is to stop the notice returning, and
       // that job is what makes it strictly necessary under Sch. A1 para. 4.
       await page.reload({ waitUntil: 'networkidle0' });
-      const stillGone = await page.evaluate(() => !document.getElementById('gs-consent-heading'));
+      const stillGone = await page.evaluate(() => !document.getElementById('gs-consent-heading')?.closest('[role="region"]')?.checkVisibility());
       if (!stillGone) {
         noticeProblems.push(
           'the notice reappeared on reload with gs_consent set — it would show on every page ' +
@@ -1718,7 +1718,7 @@ const noticeProblems = [];
       }
       await page.evaluate(() => [...document.querySelectorAll('button')]
         .find((button) => button.textContent.trim() === 'Cookie notice')?.click());
-      await page.waitForSelector('#gs-consent-heading');
+      await page.waitForSelector('#gs-consent-heading', { visible: true });
       assert(await page.$eval('#gs-consent-heading', (e) => e.closest('[role="region"]').checkVisibility()),
         'acknowledged notice did not reopen visibly');
     }
@@ -1744,7 +1744,7 @@ const noticeProblems = [];
     await new Promise((r) => setTimeout(r, 1000));
 
     const legacy = await legacyPage.evaluate(() => ({
-      shown: Boolean(document.getElementById('gs-consent-heading')),
+      shown: Boolean(document.getElementById('gs-consent-heading')?.closest('[role="region"]')?.checkVisibility()),
       cookie: document.cookie,
     }));
     if (legacy.shown) {

@@ -1,152 +1,132 @@
-'use client';
-// Client Component because the notice's dismissal lives in a cookie that must be read
-// without making any route dynamic. Reading it on the server via `cookies()` would opt every
-// route out of static rendering — the same trade rejected at M-04 for `cache: 'no-store'`.
-
-import { useEffect, useRef, useState } from 'react';
-import { COOKIE, markNoticeSeen, noticeSeen } from '@/lib/consent/state';
-import { BUNDLE_SIZE_PROBE } from './bundle-size-probe';
+import { ANALYTICS, type AnalyticsConfig } from '@/lib/analytics/config';
+import { CHOICE_MAX_AGE } from '@/lib/consent/decision';
+import { COOKIE } from '@/lib/consent/state';
+import { ConsentController } from './ConsentController';
 import styles from './consent.module.css';
 
-/** Published to CSS so the focus reserve is the bar's real height — see the effect below. */
-const RESERVE_VAR = '--consent-block-size';
+/**
+ * A plain `<a>`, as in the footer: the `Link` primitive's style map would ride in every route's
+ * shared chunk from this shared layout, and route-group links are document loads anyway.
+ */
+const COOKIE_POLICY = '/legal/cookies';
 
 /**
- * The cookie notice (`A-11`, FR-M14). Self-hosted, no CMP.
+ * The cookie notice, or — when the build offers optional analytics — the consent request
+ * (`A-11`, FR-M14, `GS-LAUNCH-026`). Self-hosted, no CMP.
  *
- * **It is a notice, not a consent request, and that is the whole change of round 10.** The
- * owner took OQ-7 option 2: stop asking. Nothing on this site stores or transmits anything
- * non-essential — the analytics injection is deleted and the three consent categories with
- * it (`lib/consent/state.ts`). PECR reg. 6 requires consent for non-essential storage and
- * access; there is none, so there is no consent to collect. `gs_consent` remains, exempt
- * under Sch. A1 para. 4, recording only that this notice has been seen.
+ * **A Server Component since `GS-LAUNCH-026`.** The markup ships as HTML on every route, and only
+ * `ConsentController`'s behaviour is client JavaScript; the shared baseline is budgeted to the
+ * byte (`check-bundle-size.mjs`), and copy is not script.
  *
- * **Why keep a bar at all.** Because the visitor is still owed the information — UK GDPR
- * Art. 13 and PECR reg. 6(2)'s "clear and comprehensive information" — and because the
- * accurate statement ("we set one cookie, and it is the one remembering you saw this") is
- * worth making rather than assuming. What is *not* kept is a choice, because offering a
- * choice that changes nothing is the same defect as the two inert toggles this round removed:
- * it represents control the visitor does not have.
+ * ## Two modes, decided by the build — never a choice offered for something that does not exist
  *
- * **There is deliberately no Accept/Reject pair any more, and `PROJECT-RULES.md` §7 is not
- * weakened by that.** That rule forbids making reject harder than accept. Here there is no
- * accept: one control, one meaning, and nothing is stored until it is pressed. The rule
- * against a "not now" deferral is likewise intact — the button is not a deferral of an
- * unanswered question, there is no question. Both rules become live again the moment
- * analytics is wired up (`docs/_shared/BEFORE-LAUNCH.md` §"Analytics"), and the Accept/Reject
- * shape must come back with it.
+ * **Notice** (no analytics identifier configured): unchanged from round 10 — one cookie, one
+ * control, nothing to opt out of. Offering a choice that changes nothing would represent control
+ * the visitor does not have.
  *
- * **First visits render in the initial HTML.** Waiting for hydration made this notice the
- * late LCP on Press contact. A small prepaint script hides the server-rendered notice for
- * an existing cookie; mount then removes it. Only that wrapper's `hidden` attribute can
- * differ at hydration. Without JavaScript the notice remains absent, as before.
+ * **Consent** (one or both of GA4 and PostHog configured, `lib/analytics/config.ts`): the
+ * `PROJECT-RULES.md` §7 shape returns. "Accept all" and "Reject optional" share one class and
+ * one size and sit together; "Customise" opens a separate, unticked choice per provider, because
+ * the two have different operators and recipients (ICO storage and access guidance, 29 April 2026:
+ * refusal as easy as acceptance, granular choices, toggles off by default, third parties
+ * identified). Nothing non-essential runs until a positive action; closing, ignoring or tabbing
+ * past the request is not consent.
  *
- * **It sits early in the DOM and low on the screen.** A screen reader meets it immediately
- * after the skip link, which is what "announced on appearance" asks for, without stealing
- * focus on load or trapping it. It is not `aria-modal` and there is no focus trap, so it is
- * escapable by tabbing — and it is bottom-anchored, so it cannot obscure the skip link,
- * which is fixed to the top.
+ * **First visits render in the initial HTML.** A small prepaint script hides the request for a
+ * visitor whose stored decision already covers what this build offers; mount does the rest. Without
+ * JavaScript the request stays hidden: no optional analytics can run without it either.
  *
- * `reopen` is the footer's "Cookie notice" link: FOUNDATION requires a persistent way back
- * in. It listens for a plain custom event rather than exporting a setter, so the footer stays
- * a Server Component and costs nothing.
- *
- * **It takes no props.** It used to take `division`, purely to stamp the analytics event
- * context; that context went with the analytics. `RootShell` still knows the division and can
- * pass it again the day it means something.
+ * **It sits early in the DOM and low on the screen.** A screen reader meets it immediately after
+ * the skip link without focus being taken on load; it is not `aria-modal` and does not trap focus;
+ * it is bottom-anchored, so it cannot obscure the skip link. The footer's reopen control brings it
+ * back with the choices showing, and moves focus into it (`ConsentController`).
  */
-export function ConsentBanner() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [show, setShow] = useState(true);
-  // A constant id, not `useId()`. There is exactly one banner per document, so it cannot
-  // collide, and `check-axe`'s INCOMPLETE_ALLOWED entry matches on the exact node target —
-  // a generated id would change on any React or bundler change and silently stop matching,
-  // which is an allowlist that quietly becomes unreachable.
+export function ConsentBanner({ analytics = ANALYTICS }: { analytics?: AnalyticsConfig }) {
+  // A constant id, not `useId()`: `check-axe`'s INCOMPLETE_ALLOWED entry matches this exact target.
   const headingId = 'gs-consent-heading';
-
-  useEffect(() => {
-    // The committed shared-baseline probe. Empty and eliminated unless the build sets
-    // NEXT_PUBLIC_BUNDLE_SIZE_PROBE — see bundle-size-probe.ts. Assigned rather than merely
-    // imported so the minifier cannot drop it when it is non-empty.
-    if (BUNDLE_SIZE_PROBE) (window as unknown as Record<string, string>).__gsBundleProbe = BUNDLE_SIZE_PROBE;
-
-    setShow(!noticeSeen());
-
-    const reopen = () => setShow(true);
-    window.addEventListener('gs:consent-reopen', reopen);
-    return () => window.removeEventListener('gs:consent-reopen', reopen);
-  }, []);
-
-  /**
-   * WCAG 2.2 SC 2.4.11 Focus Not Obscured. The bar is `position: fixed` against the bottom
-   * edge at every width, so a control focused near the foot of the document scrolls under
-   * it. `check-responsive` measured 220px of bar against 0px of reserve at 375px.
-   *
-   * **The measured height, not a modelled one** — the same lesson as `StickyCta`, whose
-   * `calc()` estimate was 27px short once its labels wrapped. This bar's height still varies
-   * with text wrapping at narrow widths. Publishing `offsetHeight` and letting CSS reserve it
-   * is the only version that stays correct. Cleared when the bar goes, so nothing reserves
-   * for an absent element.
-   */
-  useEffect(() => {
-    const el = ref.current;
-    const root = document.documentElement.style;
-    if (!el) {
-      root.removeProperty(RESERVE_VAR);
-      return;
-    }
-    // No default parameter or optional chaining: SWC down-levels both for the browserslist
-    // targets, and that output alone put the shared baseline over its budget (GS-R12-PR-001).
-    const reserve = (resized?: boolean) => {
-      root.setProperty(RESERVE_VAR, el.offsetHeight + 'px');
-      // Reopening or rewrapping must also reveal a control that already has focus.
-      const active = document.activeElement;
-      if (active && active.closest('footer') && (resized || active.getBoundingClientRect().top < innerHeight)) {
-        active.scrollIntoView({ block: resized ? 'center' : 'nearest' });
-      }
-    };
-    const onResize = () => reserve(true);
-    onResize();
-    const observer = new ResizeObserver(() => reserve());
-    observer.observe(el);
-    observer.observe(document.body);
-    window.addEventListener('resize', onResize);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('resize', onResize);
-      root.removeProperty(RESERVE_VAR);
-    };
-  }, [show]);
+  const offered = [analytics.ga4 && 'Google Analytics 4', analytics.posthog && 'PostHog'].filter(Boolean) as string[];
+  const consent = offered.length > 0;
+  // Hide before paint when a current stored decision already answers for every offered provider.
+  const prepaint = consent
+    ? `try{var m=/(?:^|; )${COOKIE}=v2:g([01-]):p([01-]):(\\d{9,11})(?:;|$)/.exec(document.cookie);` +
+      `if(m&&Date.now()/1e3-m[3]<${CHOICE_MAX_AGE}&&${analytics.ga4 ? "m[1]!=='-'" : 'true'}&&${analytics.posthog ? "m[2]!=='-'" : 'true'})` +
+      `document.getElementById('${headingId}').closest('[role="region"]').hidden=true}catch(e){}`
+    : `try{if(document.cookie.split('; ').some(c=>c.startsWith('${COOKIE}=')))` +
+      `document.getElementById('${headingId}').closest('[role="region"]').hidden=true}catch{}`;
 
   return (
     <>
-    {show ? <div ref={ref} className={styles.bar} role="region" aria-labelledby={headingId} suppressHydrationWarning>
-      <div className={styles.inner}>
-        <p id={headingId} className={styles.text}>
-          This site sets one cookie, <code className={styles.cookieName}>{COOKIE}</code>, which
-          records that you have seen this notice. There is no analytics, no advertising and no
-          third-party tracking of any kind, so there is nothing to opt out of.
-        </p>
+      <div className={styles.bar} role="region" aria-labelledby={headingId} tabIndex={-1}
+        data-consent-mode={consent ? 'consent' : 'notice'} suppressHydrationWarning>
+        <div className={styles.inner}>
+          {consent ? (
+            <p id={headingId} className={styles.text}>
+              This site uses one cookie, <code className={styles.cookieName}>{COOKIE}</code>, to remember your choice.
+              With your permission it would also use {offered.join(' and ')} to measure how the website is used.
+              {offered.length > 1 ? ' Both stay' : ' It stays'} off unless you allow {offered.length > 1 ? 'them' : 'it'}, and
+              you can change your choice at any time from Cookie settings at the foot of our pages.{' '}
+              <a href={COOKIE_POLICY}>Cookie Policy</a>
+            </p>
+          ) : (
+            <p id={headingId} className={styles.text}>
+              This site sets one cookie, <code className={styles.cookieName}>{COOKIE}</code>, which
+              records that you have seen this notice. There is no analytics, no advertising and no
+              third-party tracking of any kind, so there is nothing to opt out of.
+            </p>
+          )}
 
-        <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.choice}
-            onClick={() => {
-              markNoticeSeen();
-              setShow(false);
-            }}
-          >
-            Got it
-          </button>
+          <div className={styles.actions}>
+            {consent ? (
+              <>
+                <button type="button" className={styles.choice} data-consent="accept">Accept all</button>
+                <button type="button" className={styles.choice} data-consent="reject">Reject optional</button>
+                <button type="button" className={styles.choice} data-consent="customise"
+                  aria-expanded="false" aria-controls="gs-consent-panel">Customise</button>
+              </>
+            ) : (
+              <button type="button" className={styles.choice} data-consent="ok">Got it</button>
+            )}
+          </div>
+
+          {consent ? (
+            <div id="gs-consent-panel" data-consent-panel="" hidden>
+              <fieldset>
+                <legend>Optional analytics</legend>
+                {analytics.ga4 ? (
+                  <div data-consent-option="">
+                    <input id="gs-consent-ga4" type="checkbox" name="ga4" aria-describedby="gs-consent-ga4-about" />
+                    <label htmlFor="gs-consent-ga4">Google Analytics 4</label>
+                    <p id="gs-consent-ga4-about" data-consent-about="">
+                      Provided by Google. Counts the pages visited and how visitors arrive, as statistics.
+                      Sets cookies named <code className={styles.cookieName}>_ga</code> and <code className={styles.cookieName}>_ga_…</code> that end with your choice, after at most six months.
+                    </p>
+                  </div>
+                ) : null}
+                {analytics.posthog ? (
+                  <div data-consent-option="">
+                    <input id="gs-consent-posthog" type="checkbox" name="posthog" aria-describedby="gs-consent-posthog-about" />
+                    <label htmlFor="gs-consent-posthog">PostHog</label>
+                    <p id="gs-consent-posthog-about" data-consent-about="">
+                      Provided by PostHog, on its EU hosting. Counts the pages visited and how visitors arrive, as statistics.
+                      Sets cookies whose names begin <code className={styles.cookieName}>ph_</code> and <code className={styles.cookieName}>__ph_</code> that end with your choice, after at most six months, and keeps details of your visit in your browser&rsquo;s session storage until you close the tab.
+                    </p>
+                  </div>
+                ) : null}
+              </fieldset>
+              <div className={styles.actions}>
+                <button type="button" className={styles.choice} data-consent="save">Save preferences</button>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
-    </div> : null}
-    {/* Runs during HTML parsing, before the external React chunks. Keep it outside `show`
-        so reopening mounts a fresh visible notice without executing the cookie check again.
-        The cookie name is a trusted constant; no cookie value enters markup or script. */}
-    <script dangerouslySetInnerHTML={{ __html: `try{if(document.cookie.split('; ').some(c=>c.startsWith('${COOKIE}=')))document.getElementById('${headingId}').closest('[role="region"]').hidden=true}catch{}` }} />
-    <noscript><style>{`.${styles.bar}{display:none!important}`}</style></noscript>
+      {/* Outside the bar, so a confirmation is still announced once the bar is hidden. */}
+      <p className="sr-only" role="status" data-consent-status="" />
+      {/* Runs during HTML parsing, before the external React chunks. The cookie name and the
+          offered providers are build-time constants; no cookie value enters markup or script. */}
+      <script dangerouslySetInnerHTML={{ __html: prepaint }} />
+      <noscript><style>{`.${styles.bar}{display:none!important}`}</style></noscript>
+      <ConsentController />
     </>
   );
 }

@@ -10,6 +10,7 @@ import { legalPreviewProfile } from './legal-preview-rules.mjs';
 import { PRODUCTION_ORIGIN } from '../lib/build/production.ts';
 import { sitemapPaths, LAUNCH_EXCLUDED_PATHS } from '../lib/build/route-manifest.ts';
 import { ownerPreviewIdentityAllowed } from '../lib/build/target.ts';
+import { analyticsCsp } from '../lib/analytics/config.ts';
 
 // Requirements only: actual provider configuration is deliberately not generated or installed.
 export const operatorErrorPolicy = {
@@ -60,6 +61,10 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
   const production = manifest.indexable === true;
   const ownerPreview = manifest.legalPreview === 'adopted-owner';
   if (ownerPreview && contactMode !== 'direct') bad('CONTACT', 'owner preview requires direct contact');
+  // GS-LAUNCH-026: a revision proposal is an owner-preview display only, and says it is not adopted.
+  const proposal = manifest.legalProposal ?? null;
+  if (proposal !== null && (!ownerPreview || production || !/^GS-LAUNCH-\d{3}$/.test(proposal))) bad('PROFILE', 'legal proposal outside an owner preview');
+  const legalNotice = proposal ? 'NOT YET ADOPTED.' : 'ADOPTED, NOT YET PUBLISHED.';
   if (manifest.version !== 1 || manifest.target !== 'static' || (!preview && manifest.dataset !== 'production') ||
       (production ? preview || siteOrigin !== PRODUCTION_ORIGIN : manifest.indexable !== false)) bad('PROFILE', 'invalid/indexable manifest');
   if (production && LEGAL_DOCUMENT_SLUGS.some((slug) => !expected.some((route) => route.path === `/legal/${slug}` && route.contentType === 'legalDocument'))) {
@@ -107,8 +112,9 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
       if (!robotsMeta || /noindex|nofollow/i.test(robotsMeta) || !/\bindex\b/i.test(robotsMeta)) bad('INDEX', `${route.path}: production sitemap route not indexable`);
     } else if (!/noindex/i.test(robotsMeta ?? '')) bad(production ? 'INDEX' : 'NOINDEX', `${route.path}: route missing noindex`);
     if (preview && route.contentType === 'legalDocument' &&
-        (!text.includes('ADOPTED, NOT YET PUBLISHED.') || /\[TK|\[SEED|\[OWNER DECISION|Basis:|prerequisitesMet|adoptionAuthority/.test(text))) {
-      bad('LEGAL', 'adopted review notice missing or internal material rendered');
+        (!text.includes(legalNotice) || (proposal && text.includes('ADOPTED, NOT YET PUBLISHED.')) ||
+          /\[TK|\[SEED|\[OWNER DECISION|Basis:|prerequisitesMet|adoptionAuthority/.test(text))) {
+      bad('LEGAL', `${proposal ? 'proposal' : 'adopted'} review notice missing or internal material rendered`);
     }
     if (route.path === '/' && !/application\/ld\+json/.test(text)) bad('STRUCTURED', 'Organization data missing');
     if (['/contact', '/press/contact'].includes(route.path)) {
@@ -157,10 +163,13 @@ export function inspectStaticArtifact(files, manifest, publication, knownSecrets
     if (ownerPreview) {
       const rules = files.get('.htaccess')?.toString('utf8') ?? '';
       const host = new URL(siteOrigin).host.replaceAll('.', '\\.');
+      // GS-LAUNCH-026: exactly the hosts of the providers the build recorded offering, or none.
+      const offered = manifest.analytics ?? { ga4: false, posthog: false };
+      const offeredCsp = analyticsCsp({ ga4: offered.ga4 ? 'offered' : null, posthog: offered.posthog ? 'offered' : null });
       if (!rules.includes(`RewriteCond %{HTTP_HOST} !^${host}$ [NC]\nRewriteRule ^ - [F,L]`) ||
           !rules.includes('RewriteRule \\.(?:php[0-9]?|phtml|phar|pl|cgi)(?:/|$) - [F,L,NC]') ||
           !/^Header always set X-Robots-Tag "noindex, nofollow, noarchive"$/m.test(rules) ||
-          !rules.includes("connect-src 'self' ;") || /supabase\.co|Require all denied|<IfModule mod_headers/.test(rules) ||
+          !rules.includes(`connect-src 'self' ${offeredCsp.connect};`) || /supabase\.co|Require all denied|<IfModule mod_headers/.test(rules) ||
           !/^DirectorySlash Off$/m.test(rules) || !/^ErrorDocument 500 \/500.html$/m.test(rules)) {
         bad('HTACCESS', 'owner preview host, direct contact, noindex or fail-closed header policy missing');
       }

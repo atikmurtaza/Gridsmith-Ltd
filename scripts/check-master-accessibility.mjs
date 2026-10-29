@@ -59,8 +59,9 @@ async function focusState(page) {
   return page.evaluate(() => {
     const el = document.activeElement;
     const r = el.getBoundingClientRect();
+    // GS-LAUNCH-026: a dismissed bar is hidden rather than removed; only a visible one can obscure.
     const bar = document.getElementById('gs-consent-heading')?.closest('[role="region"]');
-    const b = bar?.getBoundingClientRect();
+    const b = bar?.checkVisibility() ? bar.getBoundingClientRect() : undefined;
     const css = getComputedStyle(el);
     const ring = parseFloat(css.outlineWidth) + parseFloat(css.outlineOffset);
     const points = [[r.left + 2, r.top + 2], [r.right - 2, r.top + 2], [r.left + 2, r.bottom - 2], [r.right - 2, r.bottom - 2], [r.left + r.width / 2, r.top + r.height / 2]];
@@ -103,14 +104,14 @@ async function consent(viewport, route) {
     assert(Math.abs(atEnd.scrollY - atEnd.maxScroll) <= 1, 'Actual maximum scroll');
     await tabTo(page, 'Got it');
     await page.keyboard.press('Enter');
-    await page.waitForFunction(() => !document.getElementById('gs-consent-heading'));
+    await page.waitForFunction(() => !document.getElementById('gs-consent-heading')?.closest('[role="region"]')?.checkVisibility());
     await tabTo(page, 'Cookie notice');
     await frames(page);
     const dismissed = await checkFocus(page, `${id}-dismissed`);
     assert.equal(dismissed.reserve.trim(), '', 'Notice reserve removed on dismissal');
     for (let i = 0; i < 2; i++) {
       await page.keyboard.press('Enter');
-      await page.waitForSelector('#gs-consent-heading');
+      await page.waitForSelector('#gs-consent-heading', { visible: true });
       await frames(page);
       const reopened = await checkFocus(page, `${id}-reopened-${i}`);
       // Press's live editorial demo changes page height; measure the shared footer itself.
@@ -118,14 +119,14 @@ async function consent(viewport, route) {
       assert.equal(reopened.footerPadding, atEnd.footerPadding, 'No cumulative footer padding');
       await tabTo(page, 'Got it');
       await page.keyboard.press('Enter');
-      await page.waitForFunction(() => !document.getElementById('gs-consent-heading'));
+      await page.waitForFunction(() => !document.getElementById('gs-consent-heading')?.closest('[role="region"]')?.checkVisibility());
       await tabTo(page, 'Cookie notice');
       await frames(page);
       assert.equal((await focusState(page)).footerHeight, dismissed.footerHeight, 'Dismissed footer restored');
     }
     // A width change changes real wrapping; a font-size change tests ResizeObserver without resize.
     await page.keyboard.press('Enter');
-    await page.waitForSelector('#gs-consent-heading');
+    await page.waitForSelector('#gs-consent-heading', { visible: true });
     await frames(page, 3);
     if (route === '/press' && viewport[0] === 390) {
       // Focus remains in the footer when a reader deliberately scrolls away with the keyboard.
