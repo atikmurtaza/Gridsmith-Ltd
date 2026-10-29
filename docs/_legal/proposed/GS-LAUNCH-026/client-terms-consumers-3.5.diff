@@ -1,0 +1,55 @@
+diff --git a/docs/_legal/current/client-terms-consumers.md b/docs/_legal/proposed/GS-LAUNCH-026/client-terms-consumers-3.5.md
+index 5a3dd028..191ee27d 100644
+--- a/docs/_legal/current/client-terms-consumers.md
++++ b/docs/_legal/proposed/GS-LAUNCH-026/client-terms-consumers-3.5.md
+@@ -1,7 +1,7 @@
+ # Client Terms for Consumers
+ 
+-**Version 3.4**\
+-**Review date: 25 October 2026**\
++**Version 3.5**\
++**Review date: 28 October 2026**\
+ **Effective date: On first publication with the replacement website at gridsmith.uk**
+ 
+ **Gridsmith Ltd**, a private limited company registered in England and Wales\
+@@ -14,7 +14,7 @@ Trading divisions: **Gridsmith Design, Gridsmith Digital and Gridsmith Press**
+ 
+ These terms apply when you buy services from Gridsmith Ltd as an individual, wholly or mainly for purposes outside your trade, business, craft or profession.
+ 
+-If you are buying wholly or mainly for a business or professional purpose, our Client Terms for Business Clients apply instead. If you tell us that you are buying for a business, we will ask you to confirm that in writing.
++If you are buying wholly or mainly for a business or professional purpose, our [Client Terms for Business Clients](/legal/business-client-terms) apply instead. If you tell us that you are buying for a business, we will ask you to confirm that in writing.
+ 
+ Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of Gridsmith Ltd and are not separate companies. Your contract is with Gridsmith Ltd.
+ 
+@@ -99,7 +99,7 @@ These terms cover commissioned services and any digital deliverables identified
+ 
+ ### 6.2 How to cancel
+ 
+-To cancel, tell us clearly, by email to contact@gridsmith.uk or by post to the address in section 21. You can use the cancellation form in section 22, but you do not have to. You have cancelled in time if you send your message before the 14 days end.
++To cancel, tell us clearly, by email to [contact@gridsmith.uk](mailto:contact@gridsmith.uk) or by post to the address in section 21. You can use the cancellation form in section 22, but you do not have to. You have cancelled in time if you send your message before the 14 days end.
+ 
+ ### 6.3 Your refund
+ 
+@@ -266,11 +266,11 @@ Reviewing or approving a draft does not stop you relying on these rights. The ch
+ 
+ ## 16. Complaints
+ 
+-If you are unhappy with our service, please tell us by email to contact@gridsmith.uk or by post to the address in section 21.
++If you are unhappy with our service, please tell us by email to [contact@gridsmith.uk](mailto:contact@gridsmith.uk) or by post to the address in section 21.
+ 
+ We will look into your complaint as soon as reasonably practicable, keep you informed and try to find a satisfactory solution.
+ 
+-At the outcome of a complaint, where law, our contract or another binding arrangement, including a marketplace or membership arrangement, obliges us to participate in alternative dispute resolution, we will give you the information the law requires about that arrangement. Complaints about personal data follow the Privacy Policy.
++At the outcome of a complaint, where law, our contract or another binding arrangement, including a marketplace or membership arrangement, obliges us to participate in alternative dispute resolution, we will give you the information the law requires about that arrangement. Complaints about personal data follow the [Privacy Policy](/legal/privacy).
+ 
+ ## 17. Our responsibility for loss
+ 
+@@ -288,7 +288,7 @@ If the delay lasts, or is likely to last, more than 30 days, you may end the pro
+ 
+ ## 19. Personal data
+ 
+-We handle personal data as described in our Privacy Policy.
++We handle personal data as described in our [Privacy Policy](/legal/privacy).
+ 
+ An enquiry or a contract does not sign you up to marketing.
+ 
