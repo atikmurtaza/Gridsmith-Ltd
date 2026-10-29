@@ -1,0 +1,752 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-025",
+  "recordedAt": "2026-10-27T23:29:35.685315+00:00",
+  "status": "CONDITIONAL",
+  "source": {
+    "branch": "codex/gs-launch-025",
+    "head": "a78166efa1ace69426fad710d1be49d7f5c2f8b9",
+    "uncommitted": true,
+    "worktree": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-025\\Gridsmith Ltd",
+    "acceptedSourceBranch": "codex/gs-launch-023"
+  },
+  "frozenPreview": {
+    "origin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+    "sourceSha": "a78166efa1ace69426fad710d1be49d7f5c2f8b9",
+    "artifactIdentity": "9f7e8e7f79fd11f2ab51486c81a888dc9b36ba5c0175a2b5fdb358943c7e3afe",
+    "artifactCommit": "e81e6265735cf34e8fcaade9df12bc81f2023081",
+    "ciRun": "40412958509",
+    "attempt": 3,
+    "publicationRun": "40498473343",
+    "ownerVisualReview": "APPROVED_PER_GS_LAUNCH_024_10_1",
+    "autoDeployment": "OWNER_ATTESTED_OFF_AFTER_RELOAD",
+    "freshHpanelInspection": false,
+    "liveIdentityUnchanged": true,
+    "remoteRefsRechecked": true
+  },
+  "priorRecord": {
+    "gsLaunch024Path": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-024\\Gridsmith Ltd\\docs\\_shared\\GS-LAUNCH-024.md",
+    "reportSha256": "9d9a99d735ed62bc6cb9473b5e7fab5db2ee862e87c2840b0b9ee173aa9a3301",
+    "evidenceSha256": "52a1222dd7327c6fd4e0f9c3268aeab1dfb1079bfe9e5f3a926c11c6ed9f523c"
+  },
+  "legal": {
+    "documents": [
+      {
+        "slug": "privacy",
+        "version": "2.7",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/privacy-policy.md",
+        "sha256": "822dd473c253e7d031e18cf6c439ace13817f270d9fd9e1898d9b8c5fc4549a3",
+        "met": [
+          "RETENTION-ROUTINE-OPERATING",
+          "HOSTINGER-PROCESSOR-CHAIN"
+        ],
+        "unmet": [
+          "PUBLICATION-AUTHORITY",
+          "DIRECT-CONTACT-VERIFIED"
+        ]
+      },
+      {
+        "slug": "cookies",
+        "version": "2.4",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/cookie-policy.md",
+        "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960",
+        "met": [],
+        "unmet": [
+          "PUBLICATION-AUTHORITY",
+          "PRIVACY-PUBLISHABLE",
+          "A-2-COOKIE-RETEST"
+        ]
+      },
+      {
+        "slug": "terms",
+        "version": "2.3",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/website-terms.md",
+        "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a",
+        "met": [],
+        "unmet": [
+          "PUBLICATION-AUTHORITY",
+          "PRIVACY-PUBLISHABLE"
+        ]
+      },
+      {
+        "slug": "client-terms",
+        "version": "2.3",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/client-terms-applicability.md",
+        "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87",
+        "met": [],
+        "unmet": [
+          "PUBLICATION-AUTHORITY",
+          "PRIVACY-PUBLISHABLE"
+        ]
+      },
+      {
+        "slug": "business-client-terms",
+        "version": "3.3",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/client-terms-business.md",
+        "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6",
+        "met": [],
+        "unmet": [
+          "PUBLICATION-AUTHORITY",
+          "PRIVACY-PUBLISHABLE"
+        ]
+      },
+      {
+        "slug": "consumer-client-terms",
+        "version": "3.4",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/client-terms-consumers.md",
+        "sha256": "a73f6df89b681721ebd97e841803327e8e91caabd1da0a90edbf204d590a0d5e",
+        "met": [],
+        "unmet": [
+          "PUBLICATION-AUTHORITY",
+          "PRIVACY-PUBLISHABLE"
+        ]
+      },
+      {
+        "slug": "accessibility",
+        "version": "2.4",
+        "state": "OWNER_ADOPTED",
+        "path": "docs/_legal/current/accessibility-statement.md",
+        "sha256": "774b1e200e67d146b0375b12c3fd4fadb3aeb0e27b87ea53bd0b419557984708",
+        "met": [],
+        "unmet": [
+          "PUBLICATION-AUTHORITY",
+          "PRIVACY-PUBLISHABLE"
+        ]
+      }
+    ],
+    "canonicalTextsUnchanged": true,
+    "registerUnchanged": true,
+    "publishable": 0,
+    "ownerAdopted": 7,
+    "publicationAuthority": "NOT_SUPPLIED",
+    "effectiveDate": "UNCHANGED_EVENT_BASED_FIRST_PUBLICATION"
+  },
+  "directContact": {
+    "status": "PARTIAL_NOT_A_COMPLETED_RECEIPT",
+    "verifiedOn": null,
+    "privateOperationalEvidenceReference": null,
+    "O1": "OWNER_ATTESTED_CHANNELS_CURRENT_ACCESS_OBSERVATION_MISSING",
+    "O2": "NO_WEBSITE_INTAKE_VERIFIED_FORWARDING_DEVICE_CUSTODY_MISSING",
+    "O3": "AGGREGATE_DB_LOG_LOCAL_BACKUP_EVIDENCE_PARTIAL_OTHER_STORES_UNKNOWN",
+    "O4": "HOSTINGER_CHAIN_RECORDED_SUPABASE_REGION_READ_OTHER_ACTUAL_ARRANGEMENTS_INCOMPLETE",
+    "O5": "HISTORICAL_RETENTION_LOG_CORROBORATED_CURRENT_HOLDINGS_APPLICATION_INCOMPLETE"
+  },
+  "operations": {
+    "databaseObservationUtc": "2026-10-27T23:22Z",
+    "production": {
+      "leads": 0,
+      "events": 0,
+      "pressPathResults": 0,
+      "sampleGrants": 0,
+      "notificationOutbox": 0,
+      "intakeState": 1
+    },
+    "preview": {
+      "leads": 0,
+      "events": 0,
+      "pressPathResults": 0,
+      "sampleGrants": 0,
+      "notificationOutbox": 0,
+      "intakeState": 1,
+      "consentEvents": 0,
+      "consentState": 1
+    },
+    "technicalLogsPresent": true,
+    "logWindow": [
+      "2026-10-26T23:22:00Z",
+      "2026-10-27T23:22:00Z"
+    ],
+    "customerContentsQueried": false,
+    "retentionLogCorroborated": true,
+    "preCleanupExportPresent": true,
+    "exportContentsInspected": false,
+    "nextMonthlyReview": "2026-11-02"
+  },
+  "cookieSequence": {
+    "cycle": false,
+    "authority": "GS-O003-R-REGISTER.json cookies A-2-COOKIE-RETEST; legal-adoption-rules.mjs",
+    "previewResult": "PASS",
+    "previewPages": 61,
+    "previewStates": [
+      "one acknowledgement cookie, Secure/SameSite=Lax/Path=/, 365 days; other storage empty",
+      "dismissal survives reload; footer reopens notice",
+      "legacy value preserved without activation: 0",
+      "legacy value preserved without activation: ",
+      "legacy value preserved without activation: analytics_storage%2Cad_storage%2Cfunctionality_storage"
+    ],
+    "externalRequests": 0,
+    "writeRequests": 0,
+    "localFinalRelease": "NOT_RUN",
+    "productionOrigin": "NOT_RUN",
+    "prerequisiteRecorded": false
+  },
+  "cms": {
+    "mode": "READ_ONLY",
+    "publicDocuments": 47,
+    "legalDocuments": 0,
+    "legalAbsence": "PASS",
+    "migrationDryRun": {
+      "eligible": 47,
+      "gated": 10,
+      "selftestCases": 21
+    },
+    "syntheticFuturePayload": {
+      "eligible": 54,
+      "legal": 7,
+      "technicalGated": 3
+    },
+    "actualWrite": false
+  },
+  "build": {
+    "eligible": false,
+    "negativePathExitCode": 1,
+    "refusals": [
+      "DIRECT-CONTACT-VERIFIED",
+      "NOT_PUBLISHABLE:privacy",
+      "NOT_PUBLISHABLE:cookies",
+      "NOT_PUBLISHABLE:terms",
+      "NOT_PUBLISHABLE:client-terms",
+      "NOT_PUBLISHABLE:business-client-terms",
+      "NOT_PUBLISHABLE:consumer-client-terms",
+      "NOT_PUBLISHABLE:accessibility"
+    ],
+    "outExists": false,
+    "productionArtifactBuilt": false
+  },
+  "fixes": [
+    "GS-L025-F1 publication-state-independent selftest specimens",
+    "GS-L025-F2 canonical legal parity instead of marketing vocabulary restriction",
+    "GS-L025-F3 exact read-only CMS legal parity/withheld absence",
+    "GS-L025-F4 retention receipt summary correction"
+  ],
+  "verification": [
+    {
+      "label": "baseline-adoption",
+      "command": [
+        "node",
+        "scripts/check-legal-adoption.selftest.mjs"
+      ],
+      "startedAt": "2026-10-27T23:14:42.407Z",
+      "endedAt": "2026-10-27T23:14:42.584Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "baseline-adoption-2026-10-27T23-14-42-407Z.log",
+      "logSha256": "2df8ef39075fb2a19df7e0ef26ba125f880620f356024b87eac87a960013d3e6",
+      "result": "PASS"
+    },
+    {
+      "label": "baseline-migration",
+      "command": [
+        "node",
+        "scripts/migrate-production-cms.mjs"
+      ],
+      "startedAt": "2026-10-27T23:14:42.637Z",
+      "endedAt": "2026-10-27T23:14:42.973Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "baseline-migration-2026-10-27T23-14-42-637Z.log",
+      "logSha256": "950fd9fa50b2b5017461fdb7ef1d6501e03903abc7f09959ae78a9b1dc21f52e",
+      "result": "PASS"
+    },
+    {
+      "label": "adoption-selftest",
+      "command": [
+        "node",
+        "scripts/check-legal-adoption.selftest.mjs"
+      ],
+      "startedAt": "2026-10-27T23:16:38.428Z",
+      "endedAt": "2026-10-27T23:16:38.620Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "adoption-selftest-2026-10-27T23-16-38-428Z.log",
+      "logSha256": "58607a861ca4f90d0804b25ad437e9bdf61bf860b76ad9077dc56a2f0f0359dc",
+      "result": "PASS"
+    },
+    {
+      "label": "migration-dry-run",
+      "command": [
+        "node",
+        "scripts/migrate-production-cms.mjs"
+      ],
+      "startedAt": "2026-10-27T23:16:38.673Z",
+      "endedAt": "2026-10-27T23:16:39.152Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "migration-dry-run-2026-10-27T23-16-38-673Z.log",
+      "logSha256": "2e181de861a23e458ccff60d7db5e4edb82516d4971108eb4cace63b20ec2e2c",
+      "result": "PASS"
+    },
+    {
+      "label": "static-selftest",
+      "command": [
+        "node",
+        "scripts/check-static.selftest.mjs"
+      ],
+      "startedAt": "2026-10-27T23:16:39.209Z",
+      "endedAt": "2026-10-27T23:16:40.218Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "static-selftest-2026-10-27T23-16-39-209Z.log",
+      "logSha256": "b504b9595e287164f43275791af1bca284049e9a3fec14768128c383d5844404",
+      "result": "PASS"
+    },
+    {
+      "label": "adoption-gate",
+      "command": [
+        "node",
+        "scripts/check-legal-adoption.mjs"
+      ],
+      "startedAt": "2026-10-27T23:17:45.568Z",
+      "endedAt": "2026-10-27T23:17:46.304Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "adoption-gate-2026-10-27T23-17-45-568Z.log",
+      "logSha256": "acb39045c0394d9745d8d7993de37ebba99dd8f07f33f731a3c7a9c1f69ff2fb",
+      "result": "PASS"
+    },
+    {
+      "label": "legal-parity-selftest",
+      "command": [
+        "node",
+        "scripts/check-legal-parity.selftest.mjs"
+      ],
+      "startedAt": "2026-10-27T23:17:46.368Z",
+      "endedAt": "2026-10-27T23:17:46.432Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "legal-parity-selftest-2026-10-27T23-17-46-368Z.log",
+      "logSha256": "e8ce4672be02bc57f5e235f66d7fc1060724ba2eb0e881aedbd7766a0bb8ba53",
+      "result": "PASS"
+    },
+    {
+      "label": "company-contact-selftest",
+      "command": [
+        "node",
+        "scripts/check-company-facts.selftest.mjs"
+      ],
+      "startedAt": "2026-10-27T23:17:46.486Z",
+      "endedAt": "2026-10-27T23:17:46.620Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "company-contact-selftest-2026-10-27T23-17-46-486Z.log",
+      "logSha256": "43ded5cdea1aee70a4880b0f00dce98e5e2b451bf8e4dafe87e4eab17ca7a0b3",
+      "result": "PASS"
+    },
+    {
+      "label": "migration-read-production",
+      "command": [
+        "node",
+        "scripts/migrate-production-cms.mjs",
+        "--read-production"
+      ],
+      "startedAt": "2026-10-27T23:17:46.678Z",
+      "endedAt": "2026-10-27T23:17:47.324Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "migration-read-production-2026-10-27T23-17-46-678Z.log",
+      "logSha256": "5387510ac20a5a21b18ac13738b72751956e2689252093af3d73c78665ac5b16",
+      "result": "PASS"
+    },
+    {
+      "label": "baseline-promoted-adoption",
+      "command": [
+        "node",
+        "promoted-fixture.mjs",
+        "baseline",
+        "scripts/check-legal-adoption.selftest.mjs"
+      ],
+      "startedAt": "2026-10-27T23:18:53.224Z",
+      "endedAt": "2026-10-27T23:18:53.504Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "log": "baseline-promoted-adoption-2026-10-27T23-18-53-224Z.log",
+      "logSha256": "520585872814e67da8618e7243b327026de63c4d98b7da080bbc4764e1a74974",
+      "result": "EXPECTED_NEGATIVE"
+    },
+    {
+      "label": "baseline-promoted-static",
+      "command": [
+        "node",
+        "promoted-fixture.mjs",
+        "baseline",
+        "scripts/check-static.selftest.mjs"
+      ],
+      "startedAt": "2026-10-27T23:18:53.571Z",
+      "endedAt": "2026-10-27T23:18:53.787Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "log": "baseline-promoted-static-2026-10-27T23-18-53-571Z.log",
+      "logSha256": "20bde4176053de3d5230a6404db01c233a8c97b589f7cc0c235844f6b770551f",
+      "result": "EXPECTED_NEGATIVE"
+    },
+    {
+      "label": "baseline-promoted-migration",
+      "command": [
+        "node",
+        "promoted-fixture.mjs",
+        "baseline",
+        "scripts/migrate-production-cms.mjs"
+      ],
+      "startedAt": "2026-10-27T23:18:53.850Z",
+      "endedAt": "2026-10-27T23:18:54.496Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "log": "baseline-promoted-migration-2026-10-27T23-18-53-850Z.log",
+      "logSha256": "d48c078175a511f5b325472182bd1cd52e75d67fae7d123c25f6f0f05149eccc",
+      "result": "EXPECTED_NEGATIVE"
+    },
+    {
+      "label": "fixed-promoted-adoption",
+      "command": [
+        "node",
+        "promoted-fixture.mjs",
+        "fixed",
+        "scripts/check-legal-adoption.selftest.mjs"
+      ],
+      "startedAt": "2026-10-27T23:18:54.556Z",
+      "endedAt": "2026-10-27T23:18:54.693Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "fixed-promoted-adoption-2026-10-27T23-18-54-556Z.log",
+      "logSha256": "e77824c7ccb6097c0cd92d841cd81dc3e075efe4a7d7c3cbf8a696715e407347",
+      "result": "PASS"
+    },
+    {
+      "label": "fixed-promoted-static",
+      "command": [
+        "node",
+        "promoted-fixture.mjs",
+        "fixed",
+        "scripts/check-static.selftest.mjs"
+      ],
+      "startedAt": "2026-10-27T23:18:54.751Z",
+      "endedAt": "2026-10-27T23:18:55.402Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "fixed-promoted-static-2026-10-27T23-18-54-751Z.log",
+      "logSha256": "4040892c13a509c2757fad780e7697816a27f15e26970121d9eaf570f65ae543",
+      "result": "PASS"
+    },
+    {
+      "label": "fixed-promoted-migration",
+      "command": [
+        "node",
+        "promoted-fixture.mjs",
+        "fixed",
+        "scripts/migrate-production-cms.mjs"
+      ],
+      "startedAt": "2026-10-27T23:18:55.471Z",
+      "endedAt": "2026-10-27T23:18:55.847Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "fixed-promoted-migration-2026-10-27T23-18-55-471Z.log",
+      "logSha256": "95e41c5ca8acd2e74d5c75fcf07586b195ae0420e54ae6f39ff184e8eff1ffd1",
+      "result": "PASS"
+    },
+    {
+      "label": "fixed-promoted-gate",
+      "command": [
+        "node",
+        "promoted-fixture.mjs",
+        "fixed",
+        "scripts/check-legal-adoption.mjs"
+      ],
+      "startedAt": "2026-10-27T23:18:55.906Z",
+      "endedAt": "2026-10-27T23:18:56.045Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "fixed-promoted-gate-2026-10-27T23-18-55-906Z.log",
+      "logSha256": "fb35722f63f269028feb67a738bfcc9b6c11763d8df30bc6855abb5bcf1a36ee",
+      "result": "PASS"
+    },
+    {
+      "label": "production-builder-refusal",
+      "command": [
+        "node",
+        "scripts/build-static.mjs"
+      ],
+      "startedAt": "2026-10-27T23:19:16.529Z",
+      "endedAt": "2026-10-27T23:19:17.120Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "log": "production-builder-refusal-2026-10-27T23-19-16-529Z.log",
+      "logSha256": "a44d85c3eee30734220ff3458e08b08a5ecc746d65c10f7916f1adb59e7ca4d0",
+      "result": "EXPECTED_NEGATIVE"
+    },
+    {
+      "label": "typecheck",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--incremental",
+        "false"
+      ],
+      "startedAt": "2026-10-27T23:19:16.435Z",
+      "endedAt": "2026-10-27T23:19:29.967Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "typecheck-2026-10-27T23-19-16-435Z.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": "PASS"
+    },
+    {
+      "label": "eslint",
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "scripts/check-static.selftest.mjs",
+        "scripts/check-legal-adoption.selftest.mjs",
+        "scripts/migrate-production-cms.mjs",
+        "--max-warnings",
+        "0"
+      ],
+      "startedAt": "2026-10-27T23:19:16.467Z",
+      "endedAt": "2026-10-27T23:19:54.613Z",
+      "exitCode": 1,
+      "expectedExitCode": 0,
+      "log": "eslint-2026-10-27T23-19-16-467Z.log",
+      "logSha256": "36d7484b700aa4a353b0e3d35a371246a9a088e02aae839e9b6f3754ad84d7fb",
+      "result": "FAIL_RETAINED"
+    },
+    {
+      "label": "hosted-contact-cookie",
+      "command": [
+        "node",
+        "hosted-contact-cookie.mjs"
+      ],
+      "startedAt": "2026-10-27T23:20:22.822Z",
+      "endedAt": "2026-10-27T23:20:25.351Z",
+      "exitCode": 1,
+      "expectedExitCode": 0,
+      "log": "hosted-contact-cookie-2026-10-27T23-20-22-822Z.log",
+      "logSha256": "6e30e26e380d449079a1b64a3ef1f1d3a14b7a94dc4cc6539f5647685d0d1ee2",
+      "result": "FAIL_RETAINED"
+    },
+    {
+      "label": "hosted-contact-cookie-installed-chrome",
+      "command": [
+        "node",
+        "hosted-contact-cookie.mjs"
+      ],
+      "startedAt": "2026-10-27T23:20:38.169Z",
+      "endedAt": "2026-10-27T23:21:12.397Z",
+      "exitCode": 1,
+      "expectedExitCode": 0,
+      "log": "hosted-contact-cookie-installed-chrome-2026-10-27T23-20-38-169Z.log",
+      "logSha256": "86c903c3ac177a6acc8e40c18c4a6bbc0abad0bc722d00c648ec5bdb61280a07",
+      "result": "FAIL_RETAINED"
+    },
+    {
+      "label": "eslint-final",
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "scripts/check-static.selftest.mjs",
+        "scripts/check-legal-adoption.selftest.mjs",
+        "scripts/migrate-production-cms.mjs",
+        "--max-warnings",
+        "0"
+      ],
+      "startedAt": "2026-10-27T23:21:22.818Z",
+      "endedAt": "2026-10-27T23:21:25.621Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "eslint-final-2026-10-27T23-21-22-818Z.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result": "PASS"
+    },
+    {
+      "label": "legal-parity-hosted",
+      "command": [
+        "node",
+        "scripts/check-legal-parity.mjs"
+      ],
+      "startedAt": "2026-10-27T23:22:23.028Z",
+      "endedAt": "2026-10-27T23:22:23.142Z",
+      "exitCode": 1,
+      "expectedExitCode": 0,
+      "log": "legal-parity-hosted-2026-10-27T23-22-23-028Z.log",
+      "logSha256": "d6b72008a065c0dc5ad7ce79aa030d7bd8f42082a7fba96ec0fc25732d10d813",
+      "result": "FAIL_RETAINED"
+    },
+    {
+      "label": "legal-parity-exact-preview",
+      "command": [
+        "node",
+        "scripts/check-legal-parity.mjs"
+      ],
+      "startedAt": "2026-10-27T23:22:35.971Z",
+      "endedAt": "2026-10-27T23:22:36.710Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "legal-parity-exact-preview-2026-10-27T23-22-35-971Z.log",
+      "logSha256": "f502c590c3304aadb0bf39d04beadb767cb5929b74d0bf4eef59f8efbb42f27a",
+      "result": "PASS"
+    },
+    {
+      "label": "hosted-contact-cookie-corrected-subject",
+      "command": [
+        "node",
+        "hosted-contact-cookie.mjs"
+      ],
+      "startedAt": "2026-10-27T23:21:50.851Z",
+      "endedAt": "2026-10-27T23:22:53.777Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "hosted-contact-cookie-corrected-subject-2026-10-27T23-21-50-851Z.log",
+      "logSha256": "46491396ed8a9b27ca593096d205bb655dc28f83211911b8c0716d869997ba9e",
+      "result": "PASS"
+    },
+    {
+      "label": "migration-dry-final",
+      "command": [
+        "node",
+        "scripts/migrate-production-cms.mjs"
+      ],
+      "startedAt": "2026-10-27T23:23:55.113Z",
+      "endedAt": "2026-10-27T23:23:55.586Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "migration-dry-final-2026-10-27T23-23-55-113Z.log",
+      "logSha256": "db8d3d4511323373820d75b8aa101ae78238bbc1b1b80d574549f1e8d476113c",
+      "result": "PASS"
+    },
+    {
+      "label": "adoption-selftest-final",
+      "command": [
+        "node",
+        "scripts/check-legal-adoption.selftest.mjs"
+      ],
+      "startedAt": "2026-10-27T23:23:55.644Z",
+      "endedAt": "2026-10-27T23:23:55.782Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "adoption-selftest-final-2026-10-27T23-23-55-644Z.log",
+      "logSha256": "58607a861ca4f90d0804b25ad437e9bdf61bf860b76ad9077dc56a2f0f0359dc",
+      "result": "PASS"
+    },
+    {
+      "label": "control-chars",
+      "command": [
+        "node",
+        "scripts/check-control-chars.mjs"
+      ],
+      "startedAt": "2026-10-27T23:23:55.836Z",
+      "endedAt": "2026-10-27T23:23:58.079Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "control-chars-2026-10-27T23-23-55-836Z.log",
+      "logSha256": "73d77f00014d0d5a640e2f7880802e5b8aca8bf51a28f8f0d385347cd35cdc15",
+      "result": "PASS"
+    },
+    {
+      "label": "list-parity",
+      "command": [
+        "node",
+        "scripts/check-list-parity.mjs"
+      ],
+      "startedAt": "2026-10-27T23:23:58.148Z",
+      "endedAt": "2026-10-27T23:23:58.219Z",
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "list-parity-2026-10-27T23-23-58-148Z.log",
+      "logSha256": "b18465089edae9beb4b25ff454b0d16dc5e9f2b9f9a69c951d42e0fd1967727a",
+      "result": "PASS"
+    },
+    {
+      "label": "secrets-no-build",
+      "command": [
+        "node",
+        "scripts/check-service-role-key.mjs"
+      ],
+      "startedAt": "2026-10-27T23:23:58.273Z",
+      "endedAt": "2026-10-27T23:23:58.379Z",
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "log": "secrets-no-build-2026-10-27T23-23-58-273Z.log",
+      "logSha256": "daec02938ee16b5b4623818df89e70aeb9f09b7e6b10ebd253e07ffca0c90621",
+      "result": "FAIL_BUNDLE_SCAN_NOT_COMPLETED"
+    }
+  ],
+  "secretExposure": {
+    "changedContentCredentialPatternScan": "PASS_NO_NEW_MATCHES",
+    "patternFamilies": 6,
+    "preExistingFixtureMatches": 1,
+    "initialScan": "FAILED_ON_PRE_EXISTING_STATIC_SELFTEST_FIXTURE; baseline comparison resolved attribution",
+    "rawPrivateEvidenceIncluded": false,
+    "builtChunkGate": "FAIL_NOT_COMPLETED_NO_BUILD"
+  },
+  "preservation": [
+    {
+      "root": "C:\\Users\\atikm\\Projects\\Gridsmith Ltd",
+      "head": "f6cdd6daa2ac52788d029d72170b14011d2f899f",
+      "dirtyFileCount": 14,
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "root": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-023\\Gridsmith Ltd",
+      "head": "a78166efa1ace69426fad710d1be49d7f5c2f8b9",
+      "dirtyFileCount": 0,
+      "status": "BYTE_IDENTICAL"
+    },
+    {
+      "root": "C:\\Users\\atikm\\.codex\\worktrees\\gs-launch-024\\Gridsmith Ltd",
+      "head": "f395f2c106085e0ced7c68cae5e52b6c6f0c0f71",
+      "dirtyFileCount": 0,
+      "status": "BYTE_IDENTICAL"
+    }
+  ],
+  "changedFileSha256": {
+    "CLAUDE.md": "e378b5d8288328249580e5c7b385cb0fa1235d6dae9272abd50aa154be740fe5",
+    "docs/_legal/compliance/RETENTION-ACTIVATION-CHECKLIST.md": "c9c343a6f31a942fd7cc50133643ce3f0c9ce860c92d682d1db17511d5e90559",
+    "docs/_legal/compliance/RETENTION-SCHEDULE.md": "be11252d709b93526cf1ee59e6d84048a3686c7908c2ca6b6db62b1839fe54c2",
+    "docs/_shared/05-HANDOVER.md": "836dd9f42880ba6198fb495d3b5fdd4732fe177ac6838a3d76cd2fa774fb3803",
+    "docs/_shared/AI-HANDOFF.md": "7bbdc9f2899cd93ea714d7d84de0b6b9f4e8bd263bae6fc3b3e233ce8fd8ee4b",
+    "docs/_shared/GS-LAUNCH-025-OWNER-ACTIONS.md": "ed7c1770e71ac4bfef04e43b5668a07b15bd84d616c2df812ec8c36fe5beed05",
+    "docs/_shared/GS-LAUNCH-025.md": "e6b7aef4729fd753ac4ff160a292e7b145a9a5dd953662bc67f15d51b2afb25b",
+    "docs/_shared/OWNER-ACTIONS.md": "596d4c222504bb95b49b0870857d9ad2535bb5a9970ac8c1fd1721c0ac06d474",
+    "docs/_shared/PROJECT-STATUS.md": "bf3eff63b6a0cdb8b666be2be9aff9b0442d3e7e98c1e786fc904f1da485c22c",
+    "scripts/check-legal-adoption.selftest.mjs": "8b476c179fff806c0f6848b69502b0bd7dbf7bf400678b28b3eaca83dcb78f59",
+    "scripts/check-static.selftest.mjs": "6d460e1c8fafe919e2d5efc1d3819f0eeebb95b979bfaf4ebc59e7160687c468",
+    "scripts/migrate-production-cms.mjs": "f2377c3b885423f53fa26a24058e9b86b7332d6948496aa83606901521cd8280"
+  },
+  "privateEvidenceDirectory": "C:\\Users\\atikm\\.codex\\task-evidence\\gs-launch-025",
+  "privateEvidenceSha256": {
+    "checks.json": "850ef5cdfc669c85b3f5455fbf3c302d0075688c21c61276853df6e891743447",
+    "hosted-contact-cookie.json": "0d4d2e38353408a4ebbb4b928276426c9b9ea93eb722e265bda20d3519e319f8",
+    "hosted-contact-cookie.mjs": "d09c3147e4745b946d98489ee3374d0fad7238ee78677e25e7971014abefa0e8",
+    "hosted-cookie-incomplete-probe.json": "6a68eb2bbd4a7b7e1ae22a163317fdf19c524b0f173faa7a7946bddd3182d66d",
+    "legal-and-local-fingerprints.json": "51b06a8af4e276a118aa8bfda36c182daf43d5d7d82d743e25d986116da38fee",
+    "make-evidence.py": "4dd8cb7bbb786807ae2b42935a8cd8197d193737872c9b90b26f63ef838b0d98",
+    "preservation-before.json": "913c966ec1451e796e52492698bdee05ec04abe8552b12747ed4d6ddcd75e8e7",
+    "promoted-fixture.mjs": "c8aa892c040d6103e66dd43633e4df3c0bf0053448b6128eebe451346647f290",
+    "run-check.mjs": "af564280095a4c29849eff5e993d0c5f0eb2d047d9e919eb47dbe0b804500a2f",
+    "supabase-log-presence.json": "6d09c448f2afc956dcca637150711957a64e33d5c637e2f72d8b6d3d27bd7408",
+    "supabase-preview-counts.json": "bae473008a1f4b8ae3aee364e78d822ee7df0b96e0874f0ca348445d19e1c12d",
+    "supabase-production-counts.json": "bc791c9f7d0c377eddbab0a4c7a2c1cd51d647958450cc8e69222248ac3cb84a",
+    "supabase-project-metadata.json": "50643a09cc4f3a34b9647e60c2e397b998e0b07b370557d2c44617a8fff12b47"
+  },
+  "notPerformed": [
+    "production build",
+    "production or preview deployment",
+    "production CMS/database writes",
+    "publication-state changes",
+    "canonical text edits",
+    "provider/DNS/email/WordPress changes",
+    "support communications",
+    "test enquiries",
+    "push",
+    "commit",
+    "merge",
+    "CI dispatch",
+    "physical device/screen-reader testing"
+  ],
+  "nextAction": "Owner supplies two private operational references and exact all-seven publication decision in GS-LAUNCH-025-OWNER-ACTIONS.md"
+}

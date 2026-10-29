@@ -1,7 +1,7 @@
 'use client'; // Continuous rotation, pointer drag and the controls' state exist only in the browser.
 
 import { useEffect, useRef, useState } from 'react';
-import type { PublicReview } from '@/lib/reviews/public-model';
+import { REVIEWER_MASK, type PublicReview } from '@/lib/reviews/public-model';
 import { Link } from '@/components/primitives/Link';
 import styles from './home.module.css';
 
@@ -348,6 +348,8 @@ export function ReviewCarousel({ reviews }: { reviews: readonly PublicReview[] }
                   <p>{review.reviewText}</p>
                 </blockquote>
                 <figcaption className={styles.carouselMeta}>
+                  {/* GS-LAUNCH-026: the reviewer is redacted with a fixed mask; the name is never held. */}
+                  <span><span aria-hidden="true">{REVIEWER_MASK}</span><span className="sr-only">Reviewer name withheld</span></span>
                   <Link href={review.sourceUrl} external className={styles.carouselName}>
                     {review.sourceLabel}
                   </Link>

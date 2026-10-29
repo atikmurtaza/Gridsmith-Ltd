@@ -184,6 +184,7 @@ The consent banner specification is a compliance requirement, not an aesthetic c
 **⚠ Amended at `GS-R001-M` by owner decision, `/` only.** The owner authorised camera and pointer
 parallax for the Master environment. What `/` does: the WebGL scene responds to scroll position
 (chapters) and, on a fine pointer, tilts by at most ~0.1 rad; a slow sway on the hero and close.
+**GS-LAUNCH-026 (WCAG 2.2.2):** the sway is bounded, not continuous: full for 3 s after the scene starts or the reader last scrolls, eased onto the key pose by 4.5 s, then still until the next scroll (`components/master/scene.ts`; `check:master:accessibility:selftest`). Owner to confirm the visual change.
 **Still prohibited everywhere, including `/`:** scroll-jacking (scrolling stays native — the scene
 reads `scrollY` and never writes it), cursor followers, and entrance animation on above-the-fold
 *content*. The scene's canvas fades in by opacity when it first renders; it is decoration behind

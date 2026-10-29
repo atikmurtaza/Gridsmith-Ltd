@@ -19,8 +19,9 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
-import { LEGAL_DOCUMENTS, LEGAL_DRAFT_SOURCES } from './seed-legal.mjs';
+import { ACTIVE_LEGAL_PROPOSAL, LEGAL_DOCUMENTS, LEGAL_DRAFT_SOURCES, legalProposalDocuments, parseDraft } from './seed-legal.mjs';
 import {
+  analyticsDisclosureProblems,
   crossRegisterProblems,
   draftProblems,
   instrumentProblems,
@@ -88,6 +89,9 @@ const cookieName = consent.match(/export const COOKIE = '([^']+)'/)?.[1];
 const maxAge = consent.match(/const MAX_AGE = ([0-9 *]+);/)?.[1];
 const cookieDays = maxAge ? maxAge.split('*').map((n) => Number(n.trim())).reduce((a, b) => a * b, 1) / 86400 : null;
 if (!cookieName || !cookieDays) problems.push('lib/consent/state.ts: could not read the cookie name or lifetime — the parity check measured nothing');
+const choiceAge = readFileSync('lib/consent/decision.ts', 'utf8').match(/export const CHOICE_MAX_AGE = ([0-9 *]+);/)?.[1];
+const choiceDays = choiceAge ? choiceAge.split('*').map((n) => Number(n.trim())).reduce((a, b) => a * b, 1) / 86400 : null;
+if (!choiceDays) problems.push('lib/consent/decision.ts: could not read the analytics choice lifetime — the disclosure check measured nothing');
 
 const walk = (dir) => readdirSync(dir).flatMap((name) => {
   const path = join(dir, name);
@@ -101,6 +105,49 @@ const contactMode = register.documents?.privacy?.contactMode ?? 'edge';
 problems.push(...parityProblems(drafts.privacy ?? '', drafts.cookies ?? '', { cookieName, cookieDays, storageApis: [...storageApis], contactMode }));
 if (contactMode === 'direct') problems.push(...directContactAccessibilityProblems(drafts.accessibility ?? ''));
 
+/**
+ * GS-LAUNCH-026: the active revision proposal meets every rule an adopted text meets before the owner
+ * is asked to adopt it, describes the analytics it is written for, and — for each document it calls
+ * presentation-only — serves exactly the words of the adoption it revises, clause by clause.
+ */
+let proposalSummary = '';
+if (ACTIVE_LEGAL_PROPOSAL) {
+  const dir = `docs/_legal/proposed/${ACTIVE_LEGAL_PROPOSAL}`;
+  const tag = (list) => list.map((p) => `proposal ${ACTIVE_LEGAL_PROPOSAL} ${p}`);
+  try {
+    const proposed = legalProposalDocuments(ACTIVE_LEGAL_PROPOSAL);
+    const manifest = JSON.parse(readFileSync(`${dir}/PROPOSAL.json`, 'utf8'));
+    const texts = {};
+    let presentationOnly = 0;
+    for (const doc of proposed) {
+      const slug = doc.slug.current, entry = manifest.documents[slug];
+      const markdown = readFileSync(`${dir}/${entry.file}`, 'utf8');
+      texts[slug] = markdown;
+      problems.push(...tag(draftProblems(slug, markdown)), ...tag(instrumentProblems(slug, markdown)),
+        ...tag(stateProblems(slug, 'OWNER_ADOPTED', markdown, entry.summary, null)));
+      for (const re of FORBIDDEN_CLAIMS) if (re.test(entry.summary)) problems.push(...tag([`${slug}: summary makes a forbidden claim (${re})`]));
+      if (entry.change === 'presentation-only') {
+        presentationOnly += 1;
+        const words = (md) => JSON.stringify(parseDraft(md).clauses.map((c) => [c.number, c.heading, c.paragraphs]));
+        if (words(markdown) !== words(readFileSync(`docs/_legal/${LEGAL_DRAFT_SOURCES[slug]}`, 'utf8'))) {
+          problems.push(...tag([`${slug}: classed presentation-only but its served words differ from the adopted ${entry.supersedes.version}`]));
+        }
+      } else if (entry.change !== 'substantive') problems.push(...tag([`${slug}: change must be presentation-only or substantive`]));
+    }
+    const workflow = readFileSync(`${dir}/${manifest.workflow.file}`);
+    if (createHash('sha256').update(workflow).digest('hex') !== manifest.workflow.sha256) problems.push(...tag(['consumer workflow fingerprint mismatch']));
+    problems.push(...tag(coordinatedReviewProblems(texts, workflow.toString('utf8'))));
+    problems.push(...tag(parityProblems(texts.privacy, texts.cookies, { cookieName, cookieDays, storageApis: [...storageApis], contactMode })));
+    // Written for the owner's intended launch: both providers offered.
+    problems.push(...tag(analyticsDisclosureProblems(texts.cookies, texts.privacy, { ga4: true, posthog: true }, { choiceDays })));
+    if (contactMode === 'direct') problems.push(...tag(directContactAccessibilityProblems(texts.accessibility)));
+    proposalSummary = `; proposal ${ACTIVE_LEGAL_PROPOSAL}: ${proposed.length} documents (${presentationOnly} presentation-only, word-identical), not adopted`;
+    if (proposed.length !== EXPECTED_DOCUMENTS) problems.push(...tag([`revises ${proposed.length} documents, expected ${EXPECTED_DOCUMENTS}`]));
+  } catch (error) {
+    problems.push(...tag([error.message]));
+  }
+}
+
 if (counted.drafts !== EXPECTED_DRAFTS || counted.documents !== EXPECTED_DOCUMENTS) {
   problems.push(`measured ${counted.drafts} draft(s) and ${counted.documents} document(s), expected ${EXPECTED_DRAFTS} and ${EXPECTED_DOCUMENTS}`);
 }
@@ -111,5 +158,5 @@ if (problems.length) {
   process.exitCode = 1;
 } else {
   const states = LEGAL_DOCUMENTS.map((d) => `${d.slug.current}=${register.documents[d.slug.current].state}`).join(', ');
-  console.log(`check-legal-adoption: ${counted.drafts} drafts and ${counted.documents} documents keep the decided positions; register coherent (${states})`);
+  console.log(`check-legal-adoption: ${counted.drafts} drafts and ${counted.documents} documents keep the decided positions; register coherent (${states})${proposalSummary}`);
 }

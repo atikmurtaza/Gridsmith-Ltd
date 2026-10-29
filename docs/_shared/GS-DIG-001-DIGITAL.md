@@ -28,7 +28,7 @@ One persistent, server-rendered SVG compass travels the whole page as a single i
 | **Route Map** | Centred. Five equal 84px callouts, 01–03 right and 04–05 left, reaching the page frame; one-line titles and behaviours; count tags on the top border; 1px gold leaders (rest 55%) from each number straight to its box. Neutral by default; hover/focus previews; real links. **R3-G:** the callouts fade in 100ms after the map state begins and are complete (≥95% opacity) at ≈290ms while the compass is ≈81% of the way across — no numbers-only interval at any tested speed. The reserved field is `size + 14rem + max(65svh, 36rem)` so the complete map holds during continuous scrolling. **GS-DIG-002 (OWNER APPROVED, released in GS-DIG-002-RC):** the hold term is now `max(44svh, 24rem)` so 01 Web enters sooner on desktop; `check:digital:scene` measures the map at 709ms with the complete map held 303ms at 1000px/s (floor 250ms; 38svh measured 249ms); RC re-measured 709ms / 297ms. Stacked layouts are unchanged. |
 | **Map → chapters** | Callouts leave at once; the same compass recedes (opacity 0.22), centres in the viewport and **enlarges to 1.7× on desktop** (1.9× tablet, 1.12× phone) through the same transform, so it reads as an environmental graphic rather than a watermark. |
 | **Chapters 01–05** | Inert, aria-hidden; the current group's number highlighted (gold, 0.6), others neutral (0.3). Local copy veil: soft-masked `blur(3px)` + graphite 45% behind headers, service lists and process copy; text itself is never filtered. |
-| **Process** | The Engagement Route is unnumbered: `activeGroup = null`, all five neutral, still enlarged and turning. No fake 06. |
+| **Process** | The Engagement Route is unnumbered: `activeGroup = null`, all five neutral, still enlarged ~~and turning~~ (GS-LAUNCH-026: the rings stand still outside the Hero/Final demo; see *Motion*). No fake 06. |
 | **Process → Final** | Delayed until the CTA's first paragraph has fully risen past the instrument's axis. Then one continuous transform scales 1.7× → 1× and moves centre → right while opacity rises; the rail rises in front only after the move (step-end z-index), so it never crosses the heading. Fresh 01 autoplay; interaction restored. |
 | **Exit** | Native sticky rail ends with the final section; the footer stays clear. **GS-DIG-002-R1 (OWNER APPROVED, released in GS-DIG-002-RC):** on `/digital` only, the shared footer is deferred with `content-visibility: auto` (placeholder 47.25rem ≥768px, 55rem below — its measured heights), removing ~110ms of style/layout ahead of the H1's paint at 4× CPU. It renders before reaching the fold — RC measured 831px ahead at 320×568, 1,084px at 360×740 and 1,129–2,013px from 390×844 up (sampling step 8% of the viewport height); R1's "≥1,100px" did not hold at the two smallest phones — pixel-identical to the undeferred footer; keyboard, `focus()`, find-in-page and the AT-mode accessibility tree are unchanged. `check:axe` measures the footer after reveal (`proveDeferredFooter`). |
 
@@ -42,6 +42,13 @@ WebGL, any second visible compass.
   groups, so destination alignment (slot, cause, sightline) is never overwritten. Ring one
   ≈38.4s clockwise, ring two 54s counter-clockwise, inner track 90s — all
   `calc(var(--dur-cycle) * n)`.
+- **GS-LAUNCH-026, WCAG 2.2.2 Pause, Stop, Hide (Level A):** the rings turn only while the
+  Hero/Final demo plays (`data-motion="auto"`, not `data-transit`), beside its Pause motion
+  control, so Pause stops every moving part and Play resumes where it stopped; a visitor's Pause
+  is kept when the Hero is re-entered and when Final restarts the demo. In the hand-off, the map,
+  the chapters and Process — where the control is hidden — the rings stand still where they
+  stopped. Before this, the rings turned in every state and ignored Pause. `check:digital:scene`
+  `pauseStop()` measures it; three `--prove` faults turn it red. Owner to confirm the visual change.
 - Paused (`data-ambient="paused"`) when the instrument is off screen or the document hidden.
   Absent under `prefers-reduced-motion: reduce` (the rule only exists inside
   `no-preference`) and under Save-Data (`data-instant`). No React or rAF frame loop.

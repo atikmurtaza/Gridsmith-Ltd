@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import type { NextConfig } from 'next';
 import { BUILD_TARGET, STATIC_BUILD } from './lib/build/target';
 import { SANITY_DATASET } from './sanity/env';
+import { ANALYTICS, analyticsCsp } from './lib/analytics/config';
 
 type LegacyRedirect = { source: string; destination: string; permanent: boolean };
 
@@ -78,17 +79,20 @@ if (STATIC_BUILD && process.env.GRIDSMITH_STATIC_PROOF !== '1') {
   throw new Error('Use npm run build:static: H4-A static output is a technical proof only');
 }
 
+// GS-LAUNCH-026: a configured analytics provider adds exactly its published hosts; none, nothing.
+const analyticsSources = analyticsCsp(ANALYTICS);
+const withAnalytics = (directive: string, extra: string) => (extra ? `${directive} ${extra}` : directive);
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline'",
+  withAnalytics("script-src 'self' 'unsafe-inline'", analyticsSources.script),
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://cdn.sanity.io",
+  withAnalytics("img-src 'self' data: blob: https://cdn.sanity.io", analyticsSources.img),
   "font-src 'self'",
-  "connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co",
+  withAnalytics("connect-src 'self' https://*.sanity.io https://*.supabase.co wss://*.supabase.co", analyticsSources.connect),
   "media-src 'self' https://cdn.sanity.io",
   "worker-src 'self' blob:",
   "manifest-src 'self'",

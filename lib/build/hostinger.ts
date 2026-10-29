@@ -1,6 +1,9 @@
 import { REVIEW_STAGING_ORIGIN } from '../reviews/public-model.ts';
 import { PRODUCTION_ORIGIN, PREVIEW_INTAKE_URL, PRODUCTION_INTAKE_URL } from './production.ts';
 import { readFileSync } from 'node:fs';
+import { analyticsCsp, type AnalyticsConfig } from '../analytics/config.ts';
+
+const NO_ANALYTICS: AnalyticsConfig = { ga4: null, posthog: null };
 
 type LegacyRedirect = { source: string; destination: string; permanent: boolean };
 const legacyRedirects: LegacyRedirect[] = JSON.parse(
@@ -22,14 +25,20 @@ RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^(.+)$ $1.html [L]
 `;
 
-/** One header policy for both profiles, so staging and production cannot drift apart. */
-function headerPolicy(noindex: boolean, connect: string, dataset: string) {
+/**
+ * One header policy for both profiles, so staging and production cannot drift apart. GS-LAUNCH-026:
+ * a configured analytics provider adds exactly its published hosts; an unconfigured build's policy
+ * is byte-identical to the policy before analytics existed.
+ */
+function headerPolicy(noindex: boolean, connect: string, dataset: string, analytics: AnalyticsConfig = NO_ANALYTICS) {
+  const extra = analyticsCsp(analytics);
+  const add = (value: string) => (value ? ` ${value}` : '');
   return `${noindex ? 'Header always set X-Robots-Tag "noindex, nofollow, noarchive"\n' : ''}Header always set X-Content-Type-Options "nosniff"
 Header always set X-Frame-Options "DENY"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "camera=(), geolocation=(), microphone=(), payment=(), usb=(), browsing-topics=()"
 Header always set Strict-Transport-Security "max-age=31536000"
-Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io; font-src 'self'; connect-src 'self' ${connect}; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'"
+Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self' 'unsafe-inline'${add(extra.script)}; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://cdn.sanity.io${add(extra.img)}; font-src 'self'; connect-src 'self' ${[connect, extra.connect].filter(Boolean).join(' ')}; media-src 'self' https://cdn.sanity.io; worker-src 'self' blob:; manifest-src 'self'"
 Header always set X-GridSmith-Sanity-Dataset "${dataset}"
 Header always set Cache-Control "no-cache"
 <FilesMatch "\\.(?:svg|png|jpe?g|webp|avif|glb|gltf|bin|woff2?)$">
@@ -94,7 +103,7 @@ function legacyRules() {
  * headers outside `<IfModule>`, so a missing module fails loudly instead of dropping them.
  */
 export function productionHostingerRules(intakeOrigin: string | null, dataset: 'production' = 'production',
-  { rehearsal = false, ownerPreview = false } = {}) {
+  { rehearsal = false, ownerPreview = false, analytics = NO_ANALYTICS }: { rehearsal?: boolean; ownerPreview?: boolean; analytics?: AnalyticsConfig } = {}) {
   if (ownerPreview && (rehearsal || intakeOrigin !== null)) throw new Error('Owner preview requires direct contact without rehearsal');
   const preview = intakeOrigin === new URL(PREVIEW_INTAKE_URL).origin;
   if (intakeOrigin !== null && (!/^https:\/\/[a-z0-9]{20}\.supabase\.co$/.test(intakeOrigin) || preview !== rehearsal)) {
@@ -119,5 +128,5 @@ RewriteCond %{HTTP_HOST} !^${hostPattern}$ [NC]
 RewriteRule ^ - [F,L]
 RewriteCond %{HTTPS} !=on
 RewriteRule ^ ${origin}%{REQUEST_URI} [R=308,L,NE]
-${legacyRules()}${routing}${headerPolicy(ownerPreview, intakeOrigin ?? '', dataset)}${types}`;
+${legacyRules()}${routing}${headerPolicy(ownerPreview, intakeOrigin ?? '', dataset, analytics)}${types}`;
 }

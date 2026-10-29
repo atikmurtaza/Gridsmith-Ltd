@@ -358,3 +358,31 @@ for (const [path, text, code] of [['raw.json', '{\"from_user_id\":1}', 'PROVIDER
 const inert = new Map(publicFixture); inert.set('drawing.svg', Buffer.from('053760000003181848172219113636_'));
 assert.deepEqual(artifactReviewProblems(inert, frozen), []);
 console.log('H4-D-R1 public artifact predicates PASS: 7 adverse subjects and benign SVG numeric subject.');
+
+// GS-LAUNCH-026: the activation record is the only route to a page, and every limb must hold.
+const { REVIEW_ACTIVATION, reviewActivationProblems, reviewSetSha256 } = await import('../lib/reviews/activation.ts');
+const { listPublicReviews } = await import('../lib/reviews/source.ts');
+const codesOf = (problems) => problems.map((problem) => problem.split(':')[0]);
+assert.deepEqual(codesOf(reviewActivationProblems(REVIEW_ACTIVATION, APPROVED_STAGING_REVIEWS)), ['PERMISSION', 'SOURCE', 'OWNER', 'SET'],
+  'The live record grants nothing');
+assert.deepEqual(listPublicReviews(), [], 'No review reaches a page while the record is empty');
+const granted = {
+  providerPermission: { grantor: 'Freelancer', reference: 'synthetic-specimen', receivedOn: '2026-11-01', scope: 'Review text and star ratings on gridsmith.uk' },
+  sourceVerified: { profileUrl: 'https://www.freelancer.com/u/GridsmithLTD', verifiedOn: '2026-11-01' },
+  ownerActivation: { approvedOn: '2026-11-02', reference: 'synthetic-specimen' },
+  reviewSetSha256: reviewSetSha256(APPROVED_STAGING_REVIEWS),
+};
+assert.deepEqual(reviewActivationProblems(granted, APPROVED_STAGING_REVIEWS), [], 'A complete synthetic record is the only clean control');
+for (const [code, change] of [
+  ['PERMISSION', { providerPermission: null }],
+  ['PERMISSION', { providerPermission: { ...granted.providerPermission, scope: 'Review text on Freelancer only' } }],
+  ['PERMISSION', { providerPermission: { ...granted.providerPermission, receivedOn: 'soon' } }],
+  ['SOURCE', { sourceVerified: { ...granted.sourceVerified, profileUrl: 'https://www.freelancer.com/u/someone-else' } }],
+  ['OWNER', { ownerActivation: null }],
+  ['SET', { reviewSetSha256: '0'.repeat(64) }],
+]) {
+  assert.deepEqual(codesOf(reviewActivationProblems({ ...granted, ...change }, APPROVED_STAGING_REVIEWS)), [code], code);
+}
+const edited = structuredClone(APPROVED_STAGING_REVIEWS); edited[0] = { ...edited[0], reviewText: `${edited[0].reviewText} ` };
+assert.deepEqual(codesOf(reviewActivationProblems(granted, edited)), ['SET'], 'An approval cannot follow a changed text');
+console.log('GS-LAUNCH-026 review activation PASS: live record empty and refusing; 7 single-limb refusals; one synthetic clean control.');

@@ -1,12 +1,12 @@
 # Retention operating procedure
 
-Current authority: Privacy Policy 2.6 section 8 and `RETENTION-SCHEDULE.md`. All seven legal documents are OWNER_ADOPTED; publication remains held. This internal procedure records ongoing controls, not new deletion authority.
+Current authority: Privacy Policy 2.7 section 8 and `RETENTION-SCHEDULE.md`. All seven legal documents are OWNER_ADOPTED; publication remains held. This internal procedure records ongoing controls, not new deletion authority.
 
 Operator: Atik Murtaza through Gridsmith administration. No deputy is currently appointed. Store restricted execution logs outside the repository at `%USERPROFILE%\gridsmith-records`; never commit personal records, database exports or credentials.
 
 ## Prior operation and evidence
 
-The 7 October 2026 R7–R9 records report deletion of 63 synthetic/probe leads, a first monthly review with zero remaining leads/email/WhatsApp items, and owner-attested permanent removal of the obsolete 2 October database dump. These are historical receipts, not fresh inspections. The complete original procedure and logs described in it remain recoverable from Git at `e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md`; R9 and R11 remain at the same commit under `docs/_legal/research/GS-LEGAL-001/`. The current adoption register retains the original attestation and its limits. No separate administrator contract is imposed by that record.
+The 7 October 2026 R7–R9 records report deletion of 63 synthetic/probe leads, a first monthly review with zero remaining leads and owner-reported zero email/WhatsApp/SMS deletion candidates, and owner-attested permanent removal of the obsolete 2 October database dump. Zero deletion candidates does not mean empty mailboxes or messaging accounts. These are historical receipts, not fresh inspections. The complete original procedure and logs described in it remain recoverable from Git at `e854ad8747ad7ced8d543105368f25b501fec8b1:docs/_legal/operations/RETENTION-ACTIVATION-CHECKLIST.md`; R9 and R11 remain at the same commit under `docs/_legal/research/GS-LEGAL-001/`. The current adoption register retains the original attestation and its limits. No separate administrator contract is imposed by that record.
 
 ## Recurring operation
 

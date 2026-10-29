@@ -5,7 +5,9 @@ import { createStaticManifest, createLegalPreviewManifest, sitemapPaths, NOINDEX
 import { resolveBuildTarget } from '../lib/build/target.ts';
 import { inspectStaticArtifact, inspectOperatorError, readArtifact } from './check-static-artifact.mjs';
 
-const publication = JSON.parse(readFileSync('docs/_shared/GS-PROD-001-CMS-MANIFEST.json', 'utf8')).entries;
+// Negative specimens stay gated after the real release becomes publishable.
+const publication = JSON.parse(readFileSync('docs/_shared/GS-PROD-001-CMS-MANIFEST.json', 'utf8')).entries
+  .map(entry => entry.type === 'legalDocument' ? { ...entry, eligible: false, gate: 'GS-O003-R' } : entry);
 const documents = publication.filter((entry) => entry.eligible).map((entry) => ({
   _id: entry.id, _type: entry.type, _rev: 'specimen', slug: entry.slug,
   ...(entry.division ? { division: entry.division } : {}),
@@ -184,8 +186,13 @@ console.log('Hostinger static config subject: exact-origin production rejection,
 
 // R12: private preview has separate identities; all production exclusion proofs above still run.
 const { legalPreviewProfile, legalPreviewProblems, servedLegalPreview } = await import('./legal-preview-rules.mjs');
-const { LEGAL_DOCUMENTS } = await import('./seed-legal.mjs');
+const { LEGAL_DOCUMENTS: canonicalLegalDocuments } = await import('./seed-legal.mjs');
+const LEGAL_DOCUMENTS = canonicalLegalDocuments.map(doc => ({ ...doc, adoptionState: 'OWNER_ADOPTED' }));
 const register = JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json'));
+for (const entry of Object.values(register.documents)) {
+  entry.state = 'OWNER_ADOPTED';
+  for (const prerequisite of entry.publicationPrerequisites) delete entry.prerequisitesMet[prerequisite.id];
+}
 assert.equal(legalPreviewProfile(undefined, 'production', REVIEW_STAGING_ORIGIN), false);
 assert(legalPreviewProfile('adopted-development', 'development', 'http://localhost:3236'));
 let previewProofs = 0;
@@ -243,7 +250,7 @@ for (const change of [
 const noNotice = new Map(privateFiles);
 set(noNotice, 'legal/privacy.html', noNotice.get('legal/privacy.html').toString().replace('ADOPTED, NOT YET PUBLISHED.', ''));
 assert(inspectStaticArtifact(noNotice, privateManifest, publication).problems.some((p) => p.startsWith('LEGAL:'))); previewProofs++;
-console.log(`R12 legal preview PASS: exact seven-document parity; ${previewProofs} adverse proofs; production still emits zero legal routes.`);
+console.log(`R12 legal preview PASS: exact seven-document parity; ${previewProofs} adverse proofs; gated specimen emits zero legal routes.`);
 
 // GS-LAUNCH-001: a partial ordinary publication inventory must not export legal pages.
 const legalPublication = publication.map((entry) => entry.type === 'legalDocument' ? { ...entry, eligible: true, gate: null } : entry);
@@ -463,7 +470,7 @@ for (const [name, file, content, code] of [['rendered card', 'index.html', '<li 
   const files = new Map(prodFixture); set(files, file, (files.get(file) ?? '') + content);
   assert(codes(artifactNoReviewProblems(files)).includes(code), `${name}: ${code} did not fire`); productionProofs++;
 }
-console.log(`GS-R13 production profile PASS: refuses today; staging policy byte-identical; ${productionProofs} adverse proofs.`);
+console.log(`GS-R13 production profile PASS: gated specimen refused; staging policy byte-identical; ${productionProofs} adverse proofs.`);
 
 // GS-LAUNCH-007: direct contact removes intake, never legal publication authority.
 const { staticLighthouseProblems } = await import('../lib/build/production.ts');
@@ -668,7 +675,7 @@ const malformedOwner = new Map(identifiedOwner); set(malformedOwner, '__deployme
 assert(codes(inspectIdentified(malformedOwner)).includes('IDENTITY')); ownerProofs++;
 assert(selectStaticRoutes(lighthouseRoutes, ownerManifest).every(r => r.indexable === false));
 assert.equal(productionInputProblems(undefined, publication, register, null, 'direct').length, 8);
-console.log(`GS-LAUNCH-017 owner preview PASS: 7 unchanged-source legal routes, direct contact and noindex; ${ownerProofs} named adverse proofs; production still refuses.`);
+console.log(`GS-LAUNCH-017 owner preview PASS: 7 unchanged-source legal routes, direct contact and noindex; ${ownerProofs} named adverse proofs; gated production specimen refused.`);
 
 for (const path of ['/press/path-finder', '/press/gridsmith-path-probe']) {
   assert(!manifest.routes.some((route) => route.path === path));

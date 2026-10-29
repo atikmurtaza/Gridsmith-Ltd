@@ -263,6 +263,11 @@ jobs:
       - name: Portable Text links render only for a safe href (committed specimens)
         run: npm run check:portable-links:selftest
 
+      # GS-LAUNCH-026. Stored consent decisions, provider coverage, identifier refusal, per-provider
+      # CSP hosts and policy disclosure, each decided by its own committed specimen.
+      - name: Consent decisions, analytics identifiers, CSP and disclosure (committed specimens)
+        run: npm run check:consent:selftest
+
       # GS-R12-PRODUCTION-READINESS-001. The tmp, uuid and basic-ftp security overrides, read from
       # each real consumer's own resolution and exercised through the consumer's call path
       # (get-uri's ftp: route against a loopback server). No network.
@@ -412,6 +417,14 @@ jobs:
         env:
           DESIGN_SCREENSHOTS: .artifacts/design-scenes
         run: node scripts/with-server.mjs "npm run check:axe" "npm run check:security-headers" "npm run check:redirects" "npm run check:launch" "npm run check:responsive" "npm run check:consumer-terms" "npm run check:legal:parity" "npm run check:vat" "npm run check:press:type" "npm run check:press:scene" "npm run check:path:live" "npm run check:service-content:dataset" "npm run check:reviews:ui" "npm run check:company" "npm run check:master:scene" "npm run check:master:hero" "npm run check:master:accessibility" "npm run check:design:scene" "npm run check:digital:scene"
+
+      # GS-LAUNCH-026. The build above offers no analytics, so every gate before this measured the
+      # notice. This second build offers both providers under TEST identifiers and is never deployed:
+      # check:consent answers every Google and PostHog request inside the browser (stubs and empty
+      # 204s), so nothing reaches either provider. It measures what is requested and stored before a
+      # choice, after accepting, customising, withdrawing and reloading, across the four studios.
+      - name: Consent-mode build with test analytics identifiers (never deployed), then its gates
+        run: node scripts/with-consent-build.mjs "npm run check:consent" "npm run prove:consent"
 
       - name: Retain Design scene evidence
         if: always()

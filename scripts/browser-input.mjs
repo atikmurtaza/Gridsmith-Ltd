@@ -12,10 +12,13 @@ import { sourceFiles } from './source-files.mjs';
 const sha256 = (text) => createHash('sha256').update(text).digest('hex');
 // Expectations are outside the workflow subjects; changing a workflow requires explicit review here.
 const WORKFLOWS = {
-  '.github/workflows/ci.yml': '9ce1642bc4c9f76940d3961f5adc25100ebf0c3e0e375373ccad3f654fc6b092',
-  '.github/workflows/hostinger-staging.yml': 'f17dce3796bb6aedb8b75ca60a55349e9ec10ae78eba96e398724e2b744d548f',
+  // GS-LAUNCH-026 reviewed: ci.yml adds the consent selftest and a throwaway consent-mode build with its
+  // gates (no install, no secret, no permission change); hostinger-staging.yml adds GRIDSMITH_LEGAL_PROPOSAL.
+  '.github/workflows/ci.yml': '68d52af7b4de933ffa338bfb5141a30b1fdd94eece0f7bbfe7ed432ee8576427',
+  '.github/workflows/hostinger-staging.yml': 'df862fb90cd97a1e7ce696ee01522791a0981b2c9bcd9438a1f8a0f7936dac60',
 };
-const PACKAGE_SHA256 = '52d2bf941250a94c5c66a99641dcbceafd988899c34ee791fb2ece68c04c79a6';
+// GS-LAUNCH-026 reviewed: package.json gains the check:consent/prove:consent/verify:consent scripts only.
+const PACKAGE_SHA256 = '945d4ea3375f5fc296cfbf0439f2b34b8fe0bfca6e0b18468653a96c04bcc2aa';
 const LOCK_SHA256 = '23511604b1b228b8959baad335dd91ece95b09707d46719af6610433db8fc45c';
 const GUARD_SUBJECTS = new Set(['scripts/browser-input.mjs', 'scripts/browser-input.selftest.mjs']);
 const SAFE_GIT_ENV = {

@@ -403,12 +403,24 @@ function chromeTokens(division) {
     }
   }
   const out = {};
-  for (const m of block[1].matchAll(/(--chrome-[a-z]+)\s*:\s*(#[0-9a-fA-F]{3,8}|var\(\s*(--[a-z0-9-]+)\s*\))\s*;/g)) {
+  // GS-LAUNCH-026: `var(--stage, var(--theme))`. The stage file loads only on a division's landing,
+  // so a frame token may fall back to the theme file, which every route of the division loads. The
+  // primary resolves in the stage file, the fallback in the theme file, and both must be one colour —
+  // otherwise the figure measured here would hold on one kind of page and not the other.
+  for (const m of block[1].matchAll(/(--chrome-[a-z]+)\s*:\s*(#[0-9a-fA-F]{3,8}|var\(\s*(--[a-z0-9-]+)\s*(?:,\s*var\(\s*(--[a-z0-9-]+)\s*\)\s*)?\))\s*;/g)) {
     if (!m[3]) { out[m[1]] = m[2]; continue; }
     const values = source[m[3]];
     if (!values || values.size !== 1) {
       chromeProblems.push(`chrome ${division}: ${m[1]} → ${m[3]} is ${values ? 'declared with ' + values.size + ' values' : 'not declared'} in ${CHROME_SOURCE[division]}.css`);
       continue;
+    }
+    if (m[4]) {
+      const theme = stripComments(readFileSync(`styles/themes/${division}.css`, 'utf8'));
+      const fallback = new Set([...theme.matchAll(new RegExp(`${m[4]}\\s*:\\s*(#[0-9a-fA-F]{3,8})\\s*;`, 'g'))].map((f) => f[1].toLowerCase()));
+      if (fallback.size !== 1 || [...fallback][0] !== [...values][0]) {
+        chromeProblems.push(`chrome ${division}: ${m[1]} falls back to ${m[4]} = ${[...fallback].join('/') || 'nothing'} in ${division}.css, not ${[...values][0]} — the frame differs between the landing and other pages`);
+        continue;
+      }
     }
     out[m[1]] = [...values][0];
   }

@@ -93,6 +93,8 @@ const base = () => [
   { file: 'rule-20-subject.md', text: '~~Blocked on GS-O005 (PI scope)~~ superseded at GS-PROD-003-R1\n' },
   // `GS-LEGAL-001`, 6 Oct 2026. One annotated subject, same obligation.
   { file: 'rule-21-subject.md', text: '| 3.4 | ~~**Solicitor review** — HARD GATE~~ superseded by GS-O003-R |\n' },
+  // `GS-LAUNCH-026`, 28 Oct 2026. One annotated subject, same obligation.
+  { file: 'rule-22-subject.md', text: '~~`consent_events` is a prerequisite of analytics (`L-07`)~~ superseded at GS-LAUNCH-026\n' },
 ];
 
 const SPECIMENS = [
@@ -119,11 +121,11 @@ const SPECIMENS = [
   {
     name: 'BRANCH 4 — zero subject: corpus below the floor',
     files: base().slice(MIN_FILES),
-    // 13 -> 16 at `GS-O004`, 16 -> 18 at `GS-R001-R`, 18 -> 19 at `GS-R001-M`, 19 -> 20 at `GS-PROD-003-R1`, 20 -> 21 at `GS-LEGAL-001`: each move adds one subject file per
+    // 13 -> 16 at `GS-O004`, 16 -> 18 at `GS-R001-R`, 18 -> 19 at `GS-R001-M`, 19 -> 20 at `GS-PROD-003-R1`, 20 -> 21 at `GS-LEGAL-001`, 21 -> 22 at `GS-LAUNCH-026`: each move adds one subject file per
     // new rule, and the literal below moves with it. The literal
     // is the point: it must be changed deliberately when the corpus changes, which is how this
     // case proves the count is counted rather than printed.
-    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 21 document(s)')),
+    expect: (r) => !r.ok && r.problems.some((p) => p.startsWith('ZERO-SUBJECT: 22 document(s)')),
   },
   // `GS-P03` — one specimen per new rule, plus the surviving statement none of them may catch.
   {
@@ -325,6 +327,18 @@ const SPECIMENS = [
     // A mention of a solicitor with no gating language is not the struck rule.
     name: 'NOT A SUBJECT - a solicitor named as an owner or adviser',
     files: [...base(), { file: 'x.md', text: '| Q-P2 | Author contract — rights & royalties clauses | Atik + solicitor | R-06 |\n' }],
+    expect: (r) => r.ok,
+  },
+  {
+    name: 'GS-LAUNCH-026 - the server consent log restated as an analytics prerequisite, unannotated',
+    files: [...base(), { file: 'master/TECH-SPEC.md', text: 'The `consent_events` table (`L-07`) is a prerequisite of any analytics tag.\n' }],
+    expect: (r) =>
+      !r.ok && r.problems.some((p) => p.includes('GS-LAUNCH-026-CONSENT-LOG-PREREQUISITE STANDS at master/TECH-SPEC.md:1')),
+  },
+  {
+    // The table may still be described; only its standing as a launch condition was struck.
+    name: 'NOT A SUBJECT - the consent_events table described, no gating',
+    files: [...base(), { file: 'master/SCHEMA.md', text: '`consent_events` deliberately stores no personal data.\n' }],
     expect: (r) => r.ok,
   },
   {

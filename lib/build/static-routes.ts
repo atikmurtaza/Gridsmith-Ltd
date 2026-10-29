@@ -13,8 +13,11 @@ export function staticManifest(): StaticManifest {
   const preview = manifest.dataset === 'development' && manifest.legalPreview === 'adopted-development' &&
     process.env.GRIDSMITH_LEGAL_PREVIEW === 'adopted-development' && process.env.NEXT_PUBLIC_SANITY_DATASET === 'development';
   const ownerPreview = OWNER_PREVIEW && manifest.dataset === 'production' && manifest.legalPreview === 'adopted-owner';
+  // GS-LAUNCH-026: a revision proposal is only ever an owner-preview display, named by the build.
+  const proposalValid = manifest.legalProposal === undefined ||
+    (ownerPreview && manifest.legalProposal === process.env.GRIDSMITH_LEGAL_PROPOSAL);
   if (manifest.version !== 1 || manifest.target !== 'static' || (!preview && manifest.dataset !== 'production') ||
-      (manifest.legalPreview && !preview && !ownerPreview) ||
+      (manifest.legalPreview && !preview && !ownerPreview) || !proposalValid ||
       manifest.indexable !== productionProfile(manifest) || !Array.isArray(manifest.routes)) {
     throw new Error('Invalid static publication manifest');
   }

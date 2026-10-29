@@ -7,6 +7,7 @@ import https from 'node:https';
 import { mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { ownerPreviewIdentityAllowed } from '../lib/build/target.ts';
+import { ACCEPTANCE_COMMANDS } from './preview-release.mjs';
 
 assert.equal(process.platform, 'linux', 'Apache acceptance requires Linux');
 const directory = resolve('build/gs-launch-018'); mkdirSync(directory, { recursive: true });
@@ -91,12 +92,8 @@ try {
     await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', resolve); });
     servers.push(server);
   }
-  for (const args of [
-    ['scripts/check-hostinger-http.mjs', '--local-owner-preview'],
-    ['scripts/check-static-ui.mjs', '--legal-preview'],
-    ['scripts/check-lhci.mjs', 'desktop'], ['scripts/lhci-report.mjs', 'desktop'],
-    ['scripts/check-lhci.mjs', 'mobile'], ['scripts/lhci-report.mjs', 'mobile'],
-  ]) {
+  // One list: the packager refuses a receipt whose commands differ from it (GS-LAUNCH-026).
+  for (const args of ACCEPTANCE_COMMANDS) {
     const startedAt = new Date().toISOString();
     const child = spawn(process.execPath, args, { stdio: ['ignore', 'pipe', 'pipe'], env: {
       ...process.env, STATIC_BASE_URL: 'http://127.0.0.1:3236', GRIDSMITH_BUILD_TARGET: 'static' } });

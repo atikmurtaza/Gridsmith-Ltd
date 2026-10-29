@@ -133,6 +133,17 @@ const keysOf = (lists, scalars, name, kind) => {
  */
 const REGISTRY = [
   {
+    gate: 'check-consent.mjs',
+    kind: 'subset',
+    of: 'STUDIOS',
+    in: 'ROUTES',
+    keys: 'routes',
+    why:
+      'GS-LAUNCH-026. STUDIOS is the path walked after a choice; ROUTES is swept on a fresh visit ' +
+      'for anything requested or stored before one. A studio walked but never swept would have its ' +
+      'post-choice behaviour measured and its pre-consent silence assumed.',
+  },
+  {
     gate: 'check-axe.mjs',
     kind: 'subset',
     of: 'INCOMPLETE_ALLOWED',

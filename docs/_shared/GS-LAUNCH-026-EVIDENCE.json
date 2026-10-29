@@ -1,0 +1,542 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-026",
+  "recordedAt": "2026-10-28",
+  "status": "CONDITIONAL",
+  "source": {
+    "start": {
+      "branch": "codex/gs-launch-023",
+      "sha": "a78166efa1ace69426fad710d1be49d7f5c2f8b9"
+    },
+    "branch": "codex/gs-launch-026",
+    "end": "62a71b45982732ff26c64d046c48c2bb10b1bd67"
+  },
+  "frozenPreview": {
+    "origin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+    "artifactIdentity": "9f7e8e7f79fd11f2ab51486c81a888dc9b36ba5c0175a2b5fdb358943c7e3afe",
+    "changed": false
+  },
+  "preservedGsLaunch025": {
+    "commit": "d0e6fab4a94eee2d582f192680eb3bb36f784350",
+    "integration": "byte-identical",
+    "trackedPatchSha256Prefix": "748758f19ed5",
+    "worktreeModified": false
+  },
+  "legal": {
+    "adoptedState": {
+      "ownerAdopted": 7,
+      "publishable": 0,
+      "registerChanged": false,
+      "currentTextsChanged": false
+    },
+    "proposal": "GS-LAUNCH-026",
+    "proposalStatus": "PROPOSED_FOR_OWNER_ADOPTION",
+    "crossReferenceLinks": 29,
+    "documents": {
+      "privacy": {
+        "file": "privacy-policy-2.8.md",
+        "version": "2.8",
+        "sha256": "f054f126665d51539574bf1a27c552f25a6e2dc99f6b92ebd93c738833dc2c8b",
+        "change": "substantive",
+        "fileSha256Verified": true,
+        "supersedes": {
+          "file": "current/privacy-policy.md",
+          "version": "2.7",
+          "sha256": "822dd473c253e7d031e18cf6c439ace13817f270d9fd9e1898d9b8c5fc4549a3"
+        }
+      },
+      "cookies": {
+        "file": "cookie-policy-2.5.md",
+        "version": "2.5",
+        "sha256": "9dbe02e24e4f03942912d3e8c400bb30bf2efe6cc99fba30a55827a2546d1d7c",
+        "change": "substantive",
+        "fileSha256Verified": true,
+        "supersedes": {
+          "file": "current/cookie-policy.md",
+          "version": "2.4",
+          "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960"
+        }
+      },
+      "terms": {
+        "file": "website-terms-2.4.md",
+        "version": "2.4",
+        "sha256": "5a89cec4ea564a64bbcc55f692cccb94f421011f86233b7e62916d2a0d977571",
+        "change": "presentation-only",
+        "fileSha256Verified": true,
+        "supersedes": {
+          "file": "current/website-terms.md",
+          "version": "2.3",
+          "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a"
+        }
+      },
+      "client-terms": {
+        "file": "client-terms-applicability-2.4.md",
+        "version": "2.4",
+        "sha256": "1aae31572444d6c543fddbab71b66138ffb06ba516d4d10d836835a474cdfa6a",
+        "change": "presentation-only",
+        "fileSha256Verified": true,
+        "supersedes": {
+          "file": "current/client-terms-applicability.md",
+          "version": "2.3",
+          "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87"
+        }
+      },
+      "business-client-terms": {
+        "file": "client-terms-business-3.4.md",
+        "version": "3.4",
+        "sha256": "e7f1a7c1a1b64d66349aa4f3c806d4953ed739e5f36ceb6bd26724948168c0de",
+        "change": "presentation-only",
+        "fileSha256Verified": true,
+        "supersedes": {
+          "file": "current/client-terms-business.md",
+          "version": "3.3",
+          "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6"
+        }
+      },
+      "consumer-client-terms": {
+        "file": "client-terms-consumers-3.5.md",
+        "version": "3.5",
+        "sha256": "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c",
+        "change": "presentation-only",
+        "fileSha256Verified": true,
+        "supersedes": {
+          "file": "current/client-terms-consumers.md",
+          "version": "3.4",
+          "sha256": "a73f6df89b681721ebd97e841803327e8e91caabd1da0a90edbf204d590a0d5e"
+        }
+      },
+      "accessibility": {
+        "file": "accessibility-statement-2.5.md",
+        "version": "2.5",
+        "sha256": "e7b7f71e34c44db2202c9f41c1a09073c46ef25e05f34127c1263750d7da211f",
+        "change": "substantive",
+        "fileSha256Verified": true,
+        "supersedes": {
+          "file": "current/accessibility-statement.md",
+          "version": "2.4",
+          "sha256": "774b1e200e67d146b0375b12c3fd4fadb3aeb0e27b87ea53bd0b419557984708"
+        }
+      }
+    },
+    "workflow": {
+      "file": "CONSUMER-CONTRACTING-WORKFLOW.md",
+      "sha256": "278a41851a18ecc68c988ca3a1cc024efd0e7c8a557da63180dd79ba91178796"
+    }
+  },
+  "accessibility": {
+    "standard": "WCAG 2.2 Level A and AA (W3C Recommendation)",
+    "routes": 61,
+    "duplicateTitles": [],
+    "tools": {
+      "axe-core": "4.13.0",
+      "puppeteer": "25.14.0"
+    },
+    "axeViolations": [
+      {
+        "route": "/digital",
+        "width": 320,
+        "id": "color-contrast",
+        "nodes": 1
+      },
+      {
+        "route": "/press",
+        "width": 768,
+        "id": "color-contrast",
+        "nodes": 6
+      }
+    ],
+    "undeterminedContrastRoutes": [
+      "/",
+      "/design",
+      "/digital",
+      "/press"
+    ],
+    "reflowOverflowRoutes": 0,
+    "textSpacingProblems": 0,
+    "smallTargets": 0,
+    "keyboard": {
+      "stops": 4221,
+      "traps": 0,
+      "noRing": 0,
+      "obscured": 0
+    },
+    "runningAnimationsUnderReducedMotion": 0,
+    "stillMovingAfter7s": [
+      "/design",
+      "/digital",
+      "/press"
+    ],
+    "stillMovingAfter7sReduced": [],
+    "noJsProblems": 0,
+    "fixed": [
+      {
+        "criterion": "2.4.7",
+        "routes": "Design service pages (13)",
+        "commit": "186fa2b4",
+        "regression": "check:axe --chrome-accent probe"
+      },
+      {
+        "criterion": "2.2.2",
+        "routes": "/",
+        "change": "idle sway bounded to rest within 4.5 s of start or last scroll",
+        "regression": "check:master:accessibility:selftest (3 proofs)"
+      },
+      {
+        "criterion": "2.2.2",
+        "routes": "/digital",
+        "change": "rings turn only while the demo plays beside Pause motion; Pause persists",
+        "regression": "check:digital:scene pauseStop (3 proofs)"
+      },
+      {
+        "criterion": "2.2.2",
+        "routes": "/design",
+        "change": "hero Pause motion control shows the static narrative",
+        "regression": "check:design:scene pauseControl (2 proofs)"
+      }
+    ],
+    "axeFlagsVerified": [
+      {
+        "route": "/digital",
+        "width": 320,
+        "node": "footer Cookie notice button",
+        "unobscuredRatio": 9.01,
+        "axeWhenUnobscured": "no violation"
+      },
+      {
+        "route": "/press",
+        "width": 768,
+        "node": "links beneath the sticky bar",
+        "unobscuredRatios": [
+          16.84,
+          7.25
+        ],
+        "axeWhenUnobscured": "no violation"
+      }
+    ],
+    "manualOutstanding": [
+      "screen readers (NVDA, JAWS, VoiceOver, TalkBack)",
+      "speech recognition",
+      "switch access",
+      "physical devices",
+      "forced colours / high contrast",
+      "real-browser zoom",
+      "testing with disabled users",
+      "human review of manual criteria"
+    ]
+  },
+  "reviews": {
+    "freelancerWrittenPermission": false,
+    "activationRecordComplete": false,
+    "publicVisibility": "none",
+    "reviewerMask": "******",
+    "sourceUrl": "https://www.freelancer.com/u/GridsmithLTD",
+    "sourceUrlHttpStatus": 200,
+    "reviewContentFetched": false,
+    "publicRepositoryCopies": [
+      "lib/reviews/staging-approved.ts",
+      "scripts/seed-content.mjs",
+      "development dataset testimonials (6)"
+    ]
+  },
+  "analytics": {
+    "configured": false,
+    "ga4": {
+      "consentMode": "basic (no Google script before consent)",
+      "granted": [
+        "analytics_storage"
+      ],
+      "denied": [
+        "ad_storage",
+        "ad_user_data",
+        "ad_personalization"
+      ],
+      "googleSignals": false,
+      "cookieDays": 365
+    },
+    "posthog": {
+      "host": "https://eu.i.posthog.com",
+      "assets": "https://eu-assets.i.posthog.com",
+      "persistence": "cookie",
+      "autocapture": false,
+      "sessionRecording": false,
+      "surveys": false,
+      "featureFlags": false
+    },
+    "buildRefusesUndisclosedIdentifiers": true
+  },
+  "consent": {
+    "noticeStatic": {
+      "mode": "notice",
+      "scenarios": 15
+    },
+    "consentStubbed": {
+      "mode": "consent",
+      "providers": [
+        "ga4",
+        "posthog"
+      ],
+      "scenarios": 26
+    },
+    "proofs": {
+      "probes": 4,
+      "fired": 4,
+      "cleanControl": "pass"
+    },
+    "live": {
+      "mode": "consent",
+      "providers": [
+        "ga4",
+        "posthog"
+      ],
+      "scenarios": 26,
+      "accept": {
+        "cookie": "v2:g1:p1:1793233330",
+        "lifetime": 15551931,
+        "scripts": [
+          "www.googletagmanager.com",
+          "eu-assets.i.posthog.com"
+        ],
+        "collect": 15,
+        "cookies": [
+          "_ga_GS026TEST0",
+          "ph_phc_GS026TestIdentifierNotARealProjectKey00_posthog",
+          "__ph_opt_in_out_phc_GS026TestIdentifierNotARealProjectKey00",
+          "_ga"
+        ],
+        "local": [],
+        "session": [
+          "ph_phc_GS026TestIdentifierNotARealProjectKey00_session_registered_properties",
+          "ph_phc_GS026TestIdentifierNotARealProjectKey00_posthog",
+          "ph_phc_GS026TestIdentifierNotARealProjectKey00_window_id",
+          "ph_phc_GS026TestIdentifierNotARealProjectKey00_primary_window_exists"
+        ],
+        "outlive": []
+      },
+      "withdraw": {
+        "label": "Cookie settings",
+        "collectBefore": 2,
+        "collectAfter": 0,
+        "retries": 2,
+        "cookiesLeft": [],
+        "focusAfter": "BUTTON"
+      },
+      "otherTab": {
+        "collectBefore": 2,
+        "collectAfter": 0,
+        "after": [],
+        "cookiesLeft": []
+      },
+      "change": {
+        "cookie": "v2:g0:p1:1793233509",
+        "gaAfter": 0,
+        "cookies": [
+          "__ph_opt_in_out_phc_GS026TestIdentifierNotARealProjectKey00",
+          "ph_phc_GS026TestIdentifierNotARealProjectKey00_posthog"
+        ]
+      },
+      "posthogVersion": "1.441.2",
+      "harnessFindings": [
+        "the real PostHog drops events from automated headless Chrome as a bot (UA string, userAgentData brands, navigator.webdriver); --live presents an ordinary browser",
+        "aborted collection requests are retried (retry_count); a batch captured before withdrawal is retried after it; retries are recorded apart, first attempts counted as collection"
+      ]
+    },
+    "networkReachedProviders": false
+  },
+  "changedFileSha256": {
+    ".github/workflows/ci.yml": "68d52af7b4de933ffa338bfb5141a30b1fdd94eece0f7bbfe7ed432ee8576427",
+    ".github/workflows/hostinger-staging.yml": "df862fb90cd97a1e7ce696ee01522791a0981b2c9bcd9438a1f8a0f7936dac60",
+    "CLAUDE.md": "661114e9e0b6b671779cf7343378a55e598ea5a75bbcd70ccd8bfe14aa3ac694",
+    "components/chrome/Footer.tsx": "02747d0082de8806ba5cb035065cc546f27d5938d53c212f8835413e5478b172",
+    "components/consent/ConsentBanner.tsx": "92698b66fad7df37f14413e2774658a2b93b21f57e6cd5bd9502cf6d92d23fb0",
+    "components/consent/ConsentController.tsx": "6b907fe6ee17c216dad93d9b8fe3ca29b8fc5dbca844c4f0f68d3db1880a1bd4",
+    "components/consent/ConsentReopen.tsx": "62fab537ee40207ae1fc0ce19c4648a171a6ba3e682c20cfd3e432e37181c034",
+    "components/consent/consent.module.css": "b3d279f7aa5ec065ef9833ef4f559c96c940494b132aa96af3df383d741f0b85",
+    "components/consent/consentActions.ts": "645174b463076c96ed6e4994dfeb76508bace268f901dab12d959924757822ec",
+    "components/divisions/design/DesignHome.tsx": "84b83f9f59e60ae9faeee87979483f43a07d11b7614adc1faf372186ed51cd36",
+    "components/divisions/design/DesignScene.tsx": "36d667a4e078c653676d8c577289319ee028b12e23232fd4a7a4bee7b79d0adf",
+    "components/divisions/design/design.css": "08aca7cc993a5775889e94947869df4578fa0fbf22733a1a691640abd2387b7e",
+    "components/divisions/digital/HeroApertureMotion.tsx": "774d7237e9a97621c91b7e17c8af44c651298653c96beca61e2045c9c3f9c522",
+    "components/divisions/digital/digital.css": "ae80ad882d0433f06f97c2ee5616c86ad10aa8e20acc6729ac9d7da0a343aeab",
+    "components/master/ReviewCarousel.tsx": "2eef9c127a63983cbb00824c5fcc1a9eccac0f6a54b38fbdb87a4831e7a0658e",
+    "components/master/scene.ts": "26f46f92bcc97f26f8d3d37b3d8917ce9c387ca402244c13c180c24aff7e223d",
+    "docs/_legal/compliance/ANALYTICS-ACTIVATION.md": "1f2207fecdda7b1c1f22504f0f9a7508702c20073f3693864228ae48eae994e0",
+    "docs/_legal/compliance/RETENTION-ACTIVATION-CHECKLIST.md": "c9c343a6f31a942fd7cc50133643ce3f0c9ce860c92d682d1db17511d5e90559",
+    "docs/_legal/compliance/RETENTION-SCHEDULE.md": "be11252d709b93526cf1ee59e6d84048a3686c7908c2ca6b6db62b1839fe54c2",
+    "docs/_legal/proposed/GS-LAUNCH-026/CONSUMER-CONTRACTING-WORKFLOW.md": "278a41851a18ecc68c988ca3a1cc024efd0e7c8a557da63180dd79ba91178796",
+    "docs/_legal/proposed/GS-LAUNCH-026/PROPOSAL.json": "51ea67b320d0d5cb327c8fc91c73c57a942ef2ccd06806d2862c5225530fd9ea",
+    "docs/_legal/proposed/GS-LAUNCH-026/accessibility-statement-2.5.diff": "8fb3176f0f08c21f5eb845a9ecdb57fca6f1be44c8fade97842800e48331eb70",
+    "docs/_legal/proposed/GS-LAUNCH-026/accessibility-statement-2.5.md": "e7b7f71e34c44db2202c9f41c1a09073c46ef25e05f34127c1263750d7da211f",
+    "docs/_legal/proposed/GS-LAUNCH-026/client-terms-applicability-2.4.diff": "6af91be0d35504f4953a6e7f1cb29954674a3bccbc54b959a78a0de44b7b9abc",
+    "docs/_legal/proposed/GS-LAUNCH-026/client-terms-applicability-2.4.md": "1aae31572444d6c543fddbab71b66138ffb06ba516d4d10d836835a474cdfa6a",
+    "docs/_legal/proposed/GS-LAUNCH-026/client-terms-business-3.4.diff": "01fa431da075424bc5ff28309964100fa5eafd0780cc5aad2bb545af37867398",
+    "docs/_legal/proposed/GS-LAUNCH-026/client-terms-business-3.4.md": "e7f1a7c1a1b64d66349aa4f3c806d4953ed739e5f36ceb6bd26724948168c0de",
+    "docs/_legal/proposed/GS-LAUNCH-026/client-terms-consumers-3.5.diff": "0c0803f7a5f72d8eb0aabb32004e6e85e6205b934cb0fe5665d9c4828a73e858",
+    "docs/_legal/proposed/GS-LAUNCH-026/client-terms-consumers-3.5.md": "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c",
+    "docs/_legal/proposed/GS-LAUNCH-026/cookie-policy-2.5.diff": "45ee2000c61460ce2a79daf178b55fd7ced9daae43adabb43c03fdc3bc3cec4d",
+    "docs/_legal/proposed/GS-LAUNCH-026/cookie-policy-2.5.md": "9dbe02e24e4f03942912d3e8c400bb30bf2efe6cc99fba30a55827a2546d1d7c",
+    "docs/_legal/proposed/GS-LAUNCH-026/privacy-policy-2.8.diff": "1405b29e1113024b5d9a9c753906d3222e2f595db95ea607d08f43cbf3e2ce13",
+    "docs/_legal/proposed/GS-LAUNCH-026/privacy-policy-2.8.md": "f054f126665d51539574bf1a27c552f25a6e2dc99f6b92ebd93c738833dc2c8b",
+    "docs/_legal/proposed/GS-LAUNCH-026/website-terms-2.4.diff": "01d2e3809d18a17ee635697ce5bf9d44cd8f8953ee4f45435bd4e067aef39fa9",
+    "docs/_legal/proposed/GS-LAUNCH-026/website-terms-2.4.md": "5a89cec4ea564a64bbcc55f692cccb94f421011f86233b7e62916d2a0d977571",
+    "docs/_shared/05-HANDOVER.md": "a57cf02d39140ebf21d88b185be4e13d34ee88d9994e5ecb79e79c7e5c595b8d",
+    "docs/_shared/AI-HANDOFF.md": "0923ea91d929de8facde7d4939d46724a953dea1e11e6d627abee1697855a29d",
+    "docs/_shared/BEFORE-LAUNCH.md": "52088bda8bb9021ce000cc56a7c107d429aea1b453d90ab833c8888b38b7bc1a",
+    "docs/_shared/GS-DIG-001-DIGITAL.md": "5fcc600b3284cb38695729443f6148d2c990a7da5cebced9fe6dffcc2564e8f0",
+    "docs/_shared/GS-LAUNCH-025-EVIDENCE.json": "724a92db5c59af758c71cd35c4f2dc92100d2fe2e743c178c91a8e0eec352d06",
+    "docs/_shared/GS-LAUNCH-025-OWNER-ACTIONS.md": "ed7c1770e71ac4bfef04e43b5668a07b15bd84d616c2df812ec8c36fe5beed05",
+    "docs/_shared/GS-LAUNCH-025.md": "e6b7aef4729fd753ac4ff160a292e7b145a9a5dd953662bc67f15d51b2afb25b",
+    "docs/_shared/GS-R001-M-MASTER-REDESIGN.md": "55dc93677c80e0c217cb674713145db5efc8b3f9625ce5250f8fa33936df1108",
+    "docs/_shared/OWNER-ACTIONS.md": "87e30fa649cf30e7c14609d46f7d4c0437dae078464456c766402f72a91dd853",
+    "docs/_shared/PROJECT-STATUS.md": "75d35147cabcd7bff4ea9c9fcb17f94724eb57124b1415de43456d7eaa1f8e93",
+    "docs/design/DESIGN.md": "2aa6daaa17440ae0d7c8c95f283bfbdbff051857b2a0511636210d81efec22ec",
+    "docs/master/DESIGN.md": "b9292e0446a942dfd69e13e2eb57577849b2fa0a56f13930bd520eb73b7067a0",
+    "docs/master/PROJECT-RULES.md": "0709dc1438361e6e43e62959dfb33b68285514cf2c5acb15fb32300b41475af5",
+    "lib/analytics/config.ts": "a6d11e75c0e7123bc3d20aca17156d55c3f3e3031b843882f88112d782d62b06",
+    "lib/analytics/load.ts": "0ec9749665c231470e73a56f92931f7e870a3ae7ff6916047804bafa017c27ed",
+    "lib/build/hostinger.ts": "e4cb83b899685719ecc3cad3a634fafc72eb11de3c992b2310e8a1cc5e6a3dbf",
+    "lib/build/route-manifest.ts": "4595f875b49e3f2e126302cb5ac6b47a9c885c580f31230afe1368026dcd5817",
+    "lib/build/static-routes.ts": "e18f59534ed6a35eefca73600f2a75d6e896f8074220a0105a9eeef42202363f",
+    "lib/consent/decision.ts": "021263fa5167e2d016a634756b3fc0c400fc1926fb55d4402053150b7ecf6029",
+    "lib/consent/state.ts": "d93a05d74b07e2b2b9de81065c15267a137adde25dc2a0a44d6754b4b0558e65",
+    "lib/reviews/activation.ts": "67e7c6887e6e64c578532fbc695c0f6b7a7a4563608f6b9579db921d5d6d4419",
+    "lib/reviews/public-model.ts": "38190b1766ea2503f6eb018de343694141d0120d71da1e6bfd9ebe0f2d412def",
+    "lib/reviews/source.ts": "f3c54c6524dfe3cf787e8713d6f7aee016d87cb3cdb827f9b1ca9078584f77ab",
+    "lib/sanity/queries.ts": "6feb06009a60b07ed9de3e30aa3f18b1389a8325e588e686b267884054766971",
+    "next.config.ts": "0cb0c267a92e65150ce4479a74319484c7ed5ba8270d7efe7617e1d641e0843c",
+    "package.json": "945d4ea3375f5fc296cfbf0439f2b34b8fe0bfca6e0b18468653a96c04bcc2aa",
+    "scripts/audit-wcag.mjs": "8c3681fb98eb5fd386aac237e5e8cd1bad1dff533cec7585e2f4065c83437f84",
+    "scripts/browser-input.mjs": "d0db057dc47aa0c46dbd7a418411a0b763ca3adbf232f0c31e634961ff6c9fc3",
+    "scripts/browser-input.selftest.mjs": "53978cbe0fcc0606b0fec949d67e5b7d14caa4dfc6b533414ff90715541afe4e",
+    "scripts/build-static.mjs": "e5c930c2c2be8aae359c4d352d152dfc1ba17fb860a1854ed65b3e73b0179a0d",
+    "scripts/check-axe.mjs": "c1ee259c2e9154721f4056f052cbbebe67f8e9f97a509a0d200c0b4f5de7921f",
+    "scripts/check-consent.mjs": "9faac5b00cf73894a9bb25d23be5c09d556bd1add4e8b6c2f028b553ede56ec5",
+    "scripts/check-consent.selftest.mjs": "7c1873ec8139aecb87015ee00ddd507c9692aad77b7e1458b4036486dde0dcb9",
+    "scripts/check-contrast.mjs": "129f684c31f55ee42d9d2520bbcaedd41610b1680f00478d0850e14c452bbb97",
+    "scripts/check-design-scene.mjs": "eaa4acd38942081878315999cfadd430bc80e70308729563b28df9efb44b2bbd",
+    "scripts/check-digital-scene.mjs": "879ba129f3bab4ac86bb287676074d776fd2d109593bd01799ec80b54fe98266",
+    "scripts/check-legal-adoption.mjs": "2ce90c4d0773754211694ff4b0ff374d2039a3fdc332661c9f3533ad526c30e5",
+    "scripts/check-legal-adoption.selftest.mjs": "000a2de808f015f264b3d838383259717330192155cf5f6d367a694313954d68",
+    "scripts/check-legal-parity.mjs": "c06caf4b8e4713250b1e0ca3645bdb1fa0d1bc664fc7363d30beed3bb70f4680",
+    "scripts/check-legal-parity.selftest.mjs": "30cb5bc0084a9159fe2a4e02a96ea6f502bc688514dad1e3e3d1eb155be6d8a5",
+    "scripts/check-list-parity.mjs": "e36ca04860107dbd14fcbd932cdf032b987fd102005c6d816b6ad622d3894c3e",
+    "scripts/check-master-accessibility.mjs": "7334421adb094f533c2396c5b7f36959b291cc807aea38fa653f09d85819b099",
+    "scripts/check-master-accessibility.selftest.mjs": "13722807979fbd8ef5fe6accedda2970eeb6b9c81c5fdf8f1e5a42bca5157d1b",
+    "scripts/check-reviews.selftest.mjs": "762f2ef9334faf181c8896302c04abc829d52a272d0e8c0859c6a3426995ba15",
+    "scripts/check-static-artifact.mjs": "4039e1ba3a62519ebd1f45b858d283a74ca07afc6a69b3512cff06cf158a0ec8",
+    "scripts/check-static.selftest.mjs": "6d460e1c8fafe919e2d5efc1d3819f0eeebb95b979bfaf4ebc59e7160687c468",
+    "scripts/check-struck-rules.mjs": "7295d2a193037b6d8350980e4ec0e5096931af617962a58787057b06593ad905",
+    "scripts/legal-adoption-rules.mjs": "3d395743171874b901c12e7955650b6edf3897e12998d3bbbfbea33144bd0533",
+    "scripts/legal-parity-rules.mjs": "8507ad2deff3da8834289e1265396a711418f80b1add7fc48a40dbc123294d86",
+    "scripts/migrate-production-cms.mjs": "f2377c3b885423f53fa26a24058e9b86b7332d6948496aa83606901521cd8280",
+    "scripts/preview-release.mjs": "fae4dfcb39e314fea6e5637c9f077e39a3d85288a249b0f249947342982ce6a0",
+    "scripts/prove-consent.mjs": "55b0cd761676b86490535e852817098f0852f22ea955fe3bb077e0bc0f34641b",
+    "scripts/seed-legal.d.mts": "3d794a80988898e9e73546d15b7ab700f716fef7ad1f948bdd199e24c9f737ca",
+    "scripts/seed-legal.mjs": "4bc0ff12503d3b68a5099a5a257ca43a1ad8e95494b00680930ae07d64273188",
+    "scripts/struck-rules.mjs": "44e3398fe138e7b770d4087300b9b25891eec1683e5097beaa65cfc70a36d91b",
+    "scripts/with-consent-build.mjs": "f602e6676d42564c76b624ae3242cce771d199aca35989980c89137909ea10ab",
+    "scripts/with-preview-apache.mjs": "d8b42e700c454614df69ec53ffc9d7075c24e2f3eb81f0fce1eb905b7b05c317",
+    "styles/themes/chrome.css": "87e995446e5a59bd0dc40a29c59ab727eb17cfcc4cad726e3bb975c857c4679c"
+  },
+  "verification": [
+    {
+      "check": "verify:static",
+      "result": "PASS"
+    },
+    {
+      "check": "verify:build (clean .next)",
+      "result": "PASS",
+      "detail": "69 routes within delta budgets; shared baseline 2.8 KB; consent banner 1.9 of 3 KB; Master lazy scene 7.4 of 8 KB; Design scene 7.9 of 8 KB"
+    },
+    {
+      "check": "verify:served",
+      "result": "20 of 21 PASS; check:axe re-run PASS after allowlist fix",
+      "detail": "Lighthouse desktop/mobile skipped on Windows (CI runs them)"
+    },
+    {
+      "check": "check:consent notice (static candidate)",
+      "result": "PASS",
+      "scenarios": 15
+    },
+    {
+      "check": "check:consent consent mode (stub)",
+      "result": "PASS",
+      "scenarios": 26
+    },
+    {
+      "check": "prove:consent",
+      "result": "7 of 7 probes red; clean control green"
+    },
+    {
+      "check": "check:consent --live",
+      "result": "PASS",
+      "scenarios": 26
+    },
+    {
+      "check": "check:consent.selftest",
+      "result": "PASS",
+      "cases": 50
+    },
+    {
+      "check": "check:legal:adoption + selftest",
+      "result": "PASS",
+      "cases": 188
+    },
+    {
+      "check": "check:static:artifact (owner-preview candidate)",
+      "result": "PASS",
+      "detail": "61 routes, 213 files"
+    },
+    {
+      "check": "check:legal:parity --artifact-dir",
+      "result": "PASS",
+      "detail": "7 documents, 110 clauses, 430 paragraphs, 29 cross-references"
+    },
+    {
+      "check": "check:master:accessibility:selftest 2.2.2 proofs",
+      "result": "3 of 3 red; bytes restored"
+    },
+    {
+      "check": "prove:digital:scene",
+      "result": "new 2.2.2 proofs 3 of 3 red; pre-existing 'map timing' inert independently of this task"
+    },
+    {
+      "check": "prove:design:scene",
+      "result": "new 2.2.2 proofs 2 of 2 red; pre-existing 'G2 removed-surface' inert independently of this task (run stopped there)"
+    },
+    {
+      "check": "check:contrast fallback proof",
+      "result": "red on a differing fallback; chrome.css restored byte-identical"
+    },
+    {
+      "check": "build-static ANALYTICS-READY refusal",
+      "result": "red with test identifiers"
+    },
+    {
+      "check": "audit-wcag (61 routes, final candidate)",
+      "result": "see accessibility"
+    }
+  ],
+  "github": {
+    "branch": "codex/gs-launch-026",
+    "pr": "https://github.com/atikmurtaza/Gridsmith-Ltd/pull/4",
+    "base": "codex/gs-launch-023",
+    "draft": true,
+    "ciFirstPush": {
+      "run": 40805835277,
+      "sha": "1ee4c101",
+      "conclusion": "failure",
+      "cause": "browser-input INSTALL_WORKFLOW_CHANGED; fixed in 62a71b45"
+    },
+    "ciFinalHead": "running at handover; result not claimed"
+  },
+  "notPerformed": [
+    "deployment or publication dispatch",
+    "Hostinger, DNS, mail, WordPress or gridsmith.uk change",
+    "production Sanity or Supabase write",
+    "adoption or PUBLISHABLE state",
+    "contact with Freelancer, Google, PostHog or any support team",
+    "analytics account creation",
+    "review content fetch"
+  ],
+  "nextAction": "GS-LAUNCH-027: integrate the owner's adoption, review-copy and motion decisions; then publish the exact CI artifact to the temporary preview only with artifact-specific approval"
+}
