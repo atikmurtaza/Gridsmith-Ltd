@@ -17,7 +17,9 @@ import { CHAPTERS, KEYS_NARROW, KEYS_WIDE, ROD_RADIUS, SPHERE_RADIUS, pose, proc
  * ## It renders when something changes
  *
  * Scroll and pointer set targets; a damped loop runs until the pose settles and then stops.
- * The only continuous motion is a slow sway on the hero and closing chapters, capped at 30fps.
+ * The only motion the reader does not drive is a slow sway on the hero and closing chapters,
+ * capped at 30fps and eased to rest within 4.5 s of the scene starting or the last scroll
+ * (WCAG 2.2 SC 2.2.2, `GS-LAUNCH-026`).
  * `requestAnimationFrame` already stops in a background tab. Resolution is capped by pixel
  * count and backs off if frames run long.
  *
@@ -324,6 +326,14 @@ export function startScene(
   let lastDraw = 0;
   let slow = 0;
   let dirty = false;
+  // WCAG 2.2 SC 2.2.2 (Level A): the sway is the one motion here the reader does not drive, so it
+  // never runs five seconds. Full for SWAY_HOLD after the scene starts or the reader last scrolled,
+  // then eased back to the key pose by SWAY_END, and the loop stops. A scroll brings it back,
+  // rising at a bounded rate so it never jumps. Scroll travel and pointer tilt are unchanged.
+  const SWAY_HOLD = 3000;
+  const SWAY_END = 4500;
+  let inputAt = performance.now();
+  let swayAmp = 1;
 
   // The copy the scene dims behind: every text block in the page and the footer that is on
   // screen. Read at draw time, after layout, so it follows the scroll exactly.
@@ -396,7 +406,7 @@ export function startScene(
     const keys = narrow.matches ? keysNarrow : keysWide;
     const sway = reduced
       ? 0
-      : (Math.max(0, 1 - current) + Math.max(0, current - 4)) * 0.09 * Math.sin(now / 2600);
+      : (Math.max(0, 1 - current) + Math.max(0, current - 4)) * 0.09 * swayAmp * Math.sin(now / 2600);
     const extra: Vec3 = [tilt[1] * 0.1, tilt[0] * 0.16 + sway, 0];
     const settled = pose(keys, current, extra, FOV_TAN_HALF, width / height);
     const lift = footerLift(settled, width / height);
@@ -418,13 +428,17 @@ export function startScene(
     raf = 0;
     const dt = Math.min((now - (last || now)) / 1000, 0.1);
     last = now;
+    const fade = Math.min(Math.max((inputAt + SWAY_END - now) / (SWAY_END - SWAY_HOLD), 0), 1);
+    const amp = Math.min(swayAmp + dt / 1.5, fade * fade * (3 - 2 * fade));
+    if (swayAmp > 0 && amp === 0) dirty = true; // the last swaying frame lands exactly on the key pose
+    swayAmp = amp;
     const k = 1 - Math.exp(-dt * 6);
     current += (target - current) * k;
     tilt = [tilt[0] + (pointer[0] - tilt[0]) * k, tilt[1] + (pointer[1] - tilt[1]) * k];
     const moving =
       Math.abs(target - current) > 0.0005 ||
       Math.abs(pointer[0] - tilt[0]) + Math.abs(pointer[1] - tilt[1]) > 0.001;
-    const swaying = !reduced && (current < 1 || current > 4);
+    const swaying = !reduced && fade > 0 && (current < 1 || current > 4);
 
     if (moving || dirty || now - lastDraw > 33) {
       dirty = false;
@@ -458,6 +472,7 @@ export function startScene(
       return;
     }
     target = chapterAt();
+    inputAt = performance.now();
     // The text moved even when the pose did not: redraw so the dimming and the lift keep up.
     dirty = true;
     kick();
@@ -499,6 +514,7 @@ export function startScene(
     dirty = false;
     pointer = tilt = [0, 0];
     target = current = reduced ? 0 : chapterAt();
+    inputAt = performance.now();
     draw(performance.now());
     if (!reduced) kick();
   };

@@ -14,7 +14,8 @@
  *     recording each stop's visibility, focus indicator, whether fixed chrome hides it, and whether
  *     focus escapes back to the document start (no trap);
  *   - 1.3.1 / 2.4.6 heading structure, 2.4.1 landmarks and bypass link, 2.4.2 title, 3.1.1 language;
- *   - 2.2.2 / 2.3.3 motion: running animations with and without `prefers-reduced-motion: reduce`;
+ *   - 2.2.2 / 2.3.3 motion: running animations with and without `prefers-reduced-motion: reduce`,
+ *     and whether the screen still changes 7s after load (`moving()`: canvas and script motion too);
  *   - JavaScript disabled: the main content and heading still render without overflow.
  *
  * `--base=URL` (default `STATIC_BASE_URL`, `AXE_BASE_URL`, then http://127.0.0.1:3000). Routes come
@@ -157,23 +158,29 @@ async function keyboard(page) {
       if (!e || e === document.body) return { body: true };
       // Where the indicator is actually drawn: a visually hidden input shows it on its label, and a
       // link spanning a whole stage (Digital's compass, inset: 0) shows it on its visible children.
-      const label = e.id && getComputedStyle(e).opacity === '0' ? document.querySelector(`label[for="${e.id}"]`) : null;
-      const drawn = [label || e, ...(label ? [] : [...e.children].filter((k) => k.checkVisibility()))];
+      const labelFor = e.id && getComputedStyle(e).opacity === '0' ? document.querySelector(`label[for="${e.id}"]`) : null;
+      const drawn = [labelFor || e, ...(labelFor ? [] : [...e.children].filter((k) => k.checkVisibility()))];
       const ringOf = (x) => { const c = getComputedStyle(x); return (c.outlineStyle !== 'none' && parseFloat(c.outlineWidth) > 0) || c.boxShadow !== 'none'; };
       const ring = drawn.some(ringOf) || e.matches(':focus-visible') === false;
-      const box = label || e;
+      const box = labelFor || e;
       const r = box.getBoundingClientRect();
       const pts = [[r.left + 2, r.top + 2], [r.right - 2, r.top + 2], [r.left + 2, r.bottom - 2], [r.right - 2, r.bottom - 2], [r.left + r.width / 2, r.top + r.height / 2]]
         .filter(([x, y]) => x >= 0 && y >= 0 && x < innerWidth && y < innerHeight);
       const own = (h) => h && (h === box || box.contains(h) || h.contains(box) || h === e || e.contains(h));
       // A full-stage link's own box is mostly empty; judge it by whether its visible children are covered.
       const targets = drawn.length > 1 && getComputedStyle(e).pointerEvents === 'none' ? drawn.slice(1) : [box];
-      const hidden = pts.length > 0 && targets.every((t) => {
+      // 2.4.11 (Minimum) fails only when the focused item is ENTIRELY hidden, so a target counts as
+      // hidden when every one of its on-screen sample points (inset corners and centre) is covered.
+      const covered = (t) => {
         const q = t.getBoundingClientRect();
-        const c = [q.left + q.width / 2, q.top + q.height / 2];
-        const h = document.elementFromPoint(c[0], c[1]);
-        return !(own(h) || (h && (t === h || t.contains(h))));
-      });
+        const at = [[q.left + 2, q.top + 2], [q.right - 2, q.top + 2], [q.left + 2, q.bottom - 2], [q.right - 2, q.bottom - 2], [q.left + q.width / 2, q.top + q.height / 2]]
+          .filter(([x, y]) => x >= 0 && y >= 0 && x < innerWidth && y < innerHeight);
+        return at.length > 0 && at.every(([x, y]) => {
+          const h = document.elementFromPoint(x, y);
+          return !(own(h) || (h && (t === h || t.contains(h))));
+        });
+      };
+      const hidden = pts.length > 0 && targets.every(covered);
       const label = `${e.tagName.toLowerCase()}${e.id ? '#' + e.id : ''} "${(e.getAttribute('aria-label') || e.textContent || e.getAttribute('name') || '').trim().slice(0, 40)}"`;
       return { label, visible: e.checkVisibility() && r.width > 0 && r.height > 0, ring, obscured: hidden, offscreen: pts.length === 0 };
     });
@@ -194,6 +201,22 @@ const motion = (page) => page.evaluate(() => document.getAnimations().filter((a)
   const t = a.effect && a.effect.getTiming ? a.effect.getTiming() : {};
   return { name: a.animationName || a.transitionProperty || a.constructor.name, iterations: t.iterations, duration: t.duration };
 }).filter((a) => a.iterations === Infinity || a.duration > 5000).slice(0, 10));
+
+/**
+ * 2.2.2: is anything still moving on screen more than five seconds after load, with no input? Two
+ * screenshots 1.5s apart, from 7s after the page finished loading (so motion that starts late and stops
+ * within five seconds of starting is not caught mid-fade); byte-identical PNGs from the same
+ * encoder mean identical pixels. Unlike `motion()` this sees canvas, WebGL and script-driven motion,
+ * which `getAnimations()` cannot. A difference is a subject for review, not a verdict: the criterion
+ * is met by a working pause control, which this does not look for.
+ */
+async function moving(page, loadedAt) {
+  const wait = 7000 - (Date.now() - loadedAt);
+  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+  const first = await page.screenshot({ type: 'png' });
+  await new Promise((r) => setTimeout(r, 1500));
+  return !first.equals(await page.screenshot({ type: 'png' }));
+}
 
 const browser = await launch();
 const report = { base: BASE, standard: 'WCAG 2.2 Level A and AA (W3C Recommendation)', tags: TAGS, routes: {}, titles: {} };
@@ -228,8 +251,15 @@ try {
       await page.close();
     }
     {
+      const { page } = await open(browser, route, [1440, 900]);
+      entry.moving = await moving(page, Date.now());
+      await page.close();
+    }
+    {
       const { page } = await open(browser, route, [1440, 900], { reduced: true });
+      const loadedAt = Date.now();
       entry.reducedMotion = await motion(page);
+      entry.movingReduced = await moving(page, loadedAt);
       await page.close();
     }
     {

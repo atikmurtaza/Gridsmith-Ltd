@@ -205,6 +205,9 @@ async function motion(viewport) {
     await page.waitForFunction(() => document.querySelector('[data-master-scene]')?.dataset.render === 'ready');
     for (let i = 0; i < 3; i++) {
       await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+      // GS-LAUNCH-026: the hero sway is bounded (it rests within 4.5 s of start or the last scroll),
+      // so the pair is driven by input rather than by how soon after load it happens to run.
+      await page.evaluate(() => dispatchEvent(new Event('scroll')));
       await frames(page, 3);
       const [normalA, normalB] = await pair(page, `${id}-normal-${i}`);
       assert.notDeepEqual(normalA.pose, normalB.pose, 'Normal scene motion restored');

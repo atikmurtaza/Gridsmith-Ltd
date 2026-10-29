@@ -142,3 +142,44 @@ assert.deepEqual(new Set(deleted), new Set(created), 'Owner fallback cleanup is 
 listeners.delete('gs-scene-lost');
 assert([...listeners.values()].every(set => set.size === 0));
 console.log('PASS invalid geometry: startup/resize fallback, complete resource cleanup and idempotent owner disposal');
+
+// GS-LAUNCH-026, WCAG 2.2 SC 2.2.2: the sway is the one motion the reader does not drive, so with
+// no input it comes to rest on the still key pose within five seconds of the scene starting, and
+// again within five seconds of the last scroll. The doubles above sit at the ring (scrollY 4050),
+// where the sway is zero and never run a queued frame, so this block uses a hero document and a
+// clock it advances itself. Every reading is a value — a pending-frame count, a uniform string.
+{
+  let clock = 0;
+  const heroDocument = { ...globals.document, querySelector: (selector) => {
+    const centre = { hero: 500, studios: 1500, context: 2500, process: 3500, close: 5500 }[selector.match(/^\[data-chapter="([a-z]+)"\]$/)?.[1]];
+    return centre === undefined ? null : { getBoundingClientRect: () => ({ top: centre - 450, height: 900 }), querySelector: () => null };
+  } };
+  const { startScene: startAtHero } = load(resolve('components/master/scene.ts'), { ...globals, scrollY: 0, document: heroDocument, performance: { now: () => clock } });
+  const reference = startAtHero(canvas, { reduced: true });
+  const still = uniforms.get('uS');
+  reference.dispose();
+  const run = (limit) => {
+    const seen = new Set();
+    for (const end = clock + limit; frames.size && clock < end;) {
+      clock += 16;
+      const [[id, frame]] = frames;
+      frames.delete(id);
+      frame(clock);
+      seen.add(uniforms.get('uS'));
+    }
+    return seen;
+  };
+  const hero = startAtHero(canvas, { reduced: false });
+  assert(run(6000).size > 1, 'Probe is a subject: the hero sways after the scene starts');
+  assert.equal(frames.size, 0, 'WCAG 2.2.2: the automatic sway stops within five seconds');
+  assert(clock <= 5000, `WCAG 2.2.2: the sway stopped at ${clock}ms`);
+  assert.equal(uniforms.get('uS'), still, 'The sway rests on the still hero pose');
+  const scrolledAt = clock;
+  fire('scroll');
+  assert(run(6000).size > 1, 'Probe is a subject: a scroll brings the sway back');
+  assert.equal(frames.size, 0, 'WCAG 2.2.2: the sway after a scroll stops');
+  assert(clock - scrolledAt <= 5000, `WCAG 2.2.2: the sway after a scroll stopped ${clock - scrolledAt}ms later`);
+  hero.dispose();
+  assert([...listeners.values()].every(set => set.size === 0), 'Sway renderers removed their listeners');
+}
+console.log('PASS 2.2.2: the hero sway rests on the key pose within 5 s of start and of the last scroll');

@@ -209,7 +209,7 @@ const INCOMPLETE_ALLOWED = [
   {
     rule: 'color-contrast',
     routes: ['/design'],
-    targetPattern: /^(#(?:design-title|brand-title|motion-title|technical-title|design-close)(?: > span)?|section\x5bdata-chapter="[0-4]"\x5d > \.ds-copy > \.ds-(?:kicker|intro|note)|a\x5bhref\$="#(?:brand-visual|motion-dimensional|technical-design)"\x5d|span\x5bdata-label="[0-4]"\x5d)$/,
+    targetPattern: /^(#(?:design-title|brand-title|motion-title|technical-title|design-close)(?: > span)?|section\x5bdata-chapter="[0-4]"\x5d > \.ds-copy > \.ds-(?:kicker|intro|note|motion)|\.ds-motion|a\x5bhref\$="#(?:brand-visual|motion-dimensional|technical-design)"\x5d|span\x5bdata-label="[0-4]"\x5d)$/,
     why: 'GS-R002 text shares a surface with decorative SVG. check:design:scene measures rendered background pixels under these text boxes at all five chapters and 20 viewports, with the same 2% thin-line tolerance as Master. Its contrast predicate is proven red by matching the headline colour to its background. Remove this entry if that pixel gate is removed or the scene no longer underlies the text. This does not allow any axe violation.',
   },
   {

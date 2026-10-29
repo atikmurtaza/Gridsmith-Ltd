@@ -60,8 +60,11 @@ export function HeroApertureMotion() {
     let readingLine = 0;
     let pinLine = 0;
     let introLine = 0;
+    // The visitor's Pause outlives a return to the Hero or the Final restart (WCAG 2.2.2, GS-LAUNCH-026).
+    let held = false;
 
-    // Ambient ring rotation is pure CSS; this only pauses it while it cannot be seen.
+    // Ambient ring rotation is pure CSS and turns only while the demo plays (digital.css, data-motion
+    // and data-transit), so Pause stops it too; this only adds the off-screen and hidden-tab pause.
     const showAmbient = () => { shell.dataset.ambient = onScreen && !document.hidden ? 'run' : 'paused'; };
     const showMotion = () => {
       shell.dataset.motion = motion;
@@ -169,14 +172,15 @@ export function HeroApertureMotion() {
       sequenceIndex = 1;
       setAxis(0);
       shell.dataset.phase = 'settled';
-      motion = instant ? 'inactive' : 'auto';
+      motion = instant ? 'inactive' : held ? 'paused' : 'auto';
       showMotion();
-      if (motion === 'auto') after(2800, nextEvent);
+      // Held: the first step waits, unarmed, until Play (arm() runs only while motion is 'auto').
+      if (motion !== 'inactive') after(2800, nextEvent);
     };
     const onButton = () => {
       if (motion === 'done') start();
-      else if (motion === 'auto') { motion = 'paused'; suspend(); showMotion(); }
-      else if (motion === 'paused') { motion = 'auto'; showMotion(); arm(); }
+      else if (motion === 'auto') { held = true; motion = 'paused'; suspend(); showMotion(); }
+      else if (motion === 'paused') { held = false; motion = 'auto'; showMotion(); arm(); }
     };
     const onPreview = (event: Event) => {
       const link = (event.currentTarget as HTMLElement);
