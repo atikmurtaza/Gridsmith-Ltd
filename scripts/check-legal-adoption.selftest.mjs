@@ -445,8 +445,9 @@ for (const [slug, version, digest] of adopted030) {
   assert.equal(entry.ownerAdoptedSha256, digest);
   assert.equal(entry.ownerAdoptedVersion, version);
   assert.equal(entry.ownerAdoptedOn, '2026-10-30');
-  assert.equal(entry.state, 'OWNER_ADOPTED');
-  assert.deepEqual(entry.prerequisitesMet, superseded030.documents[slug].prerequisitesMet);
+  // Adoption fingerprints are immutable; genuine publication evidence can advance independently.
+  assert(['OWNER_ADOPTED', 'PUBLISHABLE'].includes(entry.state));
+  expect(`${slug} current publication evidence`, registerProblems(slug, entry, version, entry.draft, digest), null);
   assert.deepEqual(entry.publicationPrerequisites, superseded030.documents[slug].publicationPrerequisites);
   const oldBytes = readFileSync(`docs/_legal/evidence/GS-LAUNCH-030-superseded/${entry.draft.split('/').at(-1)}`);
   assert.equal(createHash('sha256').update(oldBytes).digest('hex'), superseded030.documents[slug].ownerAdoptedSha256);
