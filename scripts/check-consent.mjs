@@ -19,8 +19,16 @@
  * problem.
  */
 import { launch } from './browser-launch.mjs';
+import assert from 'node:assert/strict';
 
 const BASE_URL = process.env.AXE_BASE_URL ?? process.env.STATIC_BASE_URL ?? 'http://127.0.0.1:3000';
+const REHEARSAL = process.argv.includes('--production-rehearsal');
+if (REHEARSAL) {
+  assert(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/.test(BASE_URL), 'Consent rehearsal is loopback only');
+  const identity = await (await fetch(BASE_URL + '/__deployment.json')).json();
+  assert(identity.profile === 'production' && identity.siteOrigin === 'https://gridsmith.uk' &&
+    identity.rehearsal === true && identity.deployable === false && identity.contactMode === 'direct', 'Non-deployable direct-contact production rehearsal required');
+}
 const LIVE = process.argv.includes('--live');
 /**
  * `--probe=<name>` plants one defect in every page before the site's own scripts run, and the run
@@ -46,7 +54,7 @@ const PROBES = {
 };
 const PROBE = process.argv.find((a) => a.startsWith('--probe='))?.slice('--probe='.length);
 if (PROBE && !PROBES[PROBE]) throw new Error(`Unknown probe ${PROBE}; known: ${Object.keys(PROBES).join(', ')}`);
-const ROUTES = ['/', '/about', '/design', '/digital', '/press', '/contact', '/legal/cookies'];
+const ROUTES = ['/', '/about', '/design', '/digital', '/press', '/contact', ...(!REHEARSAL ? ['/legal/cookies'] : [])];
 const STUDIOS = ['/design', '/digital', '/press', '/'];
 const YEAR = 365 * 24 * 60 * 60;
 // A consent choice lasts 180 days (`lib/consent/decision.ts`); a notice acknowledgement a year.
@@ -92,7 +100,7 @@ capture:function(e){if(this._out)return;fetch('https://eu.i.posthog.com/e/?ev='+
 opt_out_capturing:function(){this._out=true},opt_in_capturing:function(){this._out=false;this.start()},reset:function(){}};
 w.posthog=p;var last=location.pathname;var ps=history.pushState;history.pushState=function(){ps.apply(this,arguments);if(location.pathname!==last){last=location.pathname;p.capture('$pageview')}}})();`;
 
-async function openPage(browser, { cookie, javascript = true, viewport = [1440, 900], reducedMotion = false, context: shared } = {}) {
+async function openPage(browser, { cookie, javascript = true, viewport = [1440, 900], reducedMotion = false, context: shared, delayPosthog = false } = {}) {
   const context = shared ?? await browser.createBrowserContext();
   const page = await context.newPage();
   // The real PostHog drops every event from a browser that "looks like a bot": it reads the UA
@@ -116,6 +124,7 @@ async function openPage(browser, { cookie, javascript = true, viewport = [1440, 
   await page.setJavaScriptEnabled(javascript);
   if (PROBE) await page.evaluateOnNewDocument(PROBES[PROBE]);
   const log = { scripts: [], collect: [], retries: [], other: [] };
+  let pendingPosthog;
   await page.setRequestInterception(true);
   page.on('request', (request) => {
     const url = request.url();
@@ -132,14 +141,20 @@ async function openPage(browser, { cookie, javascript = true, viewport = [1440, 
     log.scripts.push(url);
     if (LIVE) return void request.continue();
     if (/googletagmanager\.com\/gtag\/js/.test(url)) return void request.respond({ status: 200, contentType: 'application/javascript', body: GTAG_STUB });
-    if (/posthog\.com\/static\/array\.js/.test(url)) return void request.respond({ status: 200, contentType: 'application/javascript', body: POSTHOG_STUB });
+    if (/posthog\.com\/static\/array\.js/.test(url)) {
+      if (delayPosthog) { pendingPosthog = request; return; }
+      return void request.respond({ status: 200, contentType: 'application/javascript', body: POSTHOG_STUB });
+    }
     log.other.push(url);
     return void request.abort();
   });
   if (cookie !== undefined) {
     await page.setCookie({ name: 'gs_consent', value: cookie, url: BASE_URL });
   }
-  return { context, page, log };
+  return { context, page, log, releasePosthog: async () => {
+    if (!pendingPosthog) throw new Error('Delayed-library subject never requested PostHog');
+    await pendingPosthog.respond({ status: 200, contentType: 'application/javascript', body: POSTHOG_STUB });
+  } };
 }
 
 const settle = (page, ms = 900) => page.waitForNetworkIdle({ idleTime: 300, timeout: 15000 }).catch(() => {}).then(() => sleep(ms));
@@ -336,6 +351,24 @@ try {
       await context.close();
     }
 
+    // A slow library must not revive a grant withdrawn before its download finishes.
+    if (!LIVE && offers('posthog')) {
+      const { context, page, log, releasePosthog } = await openPage(browser, { delayPosthog: true });
+      await go(page, '/about'); await press(page, 'accept');
+      await until(() => log.scripts.some(url => /posthog\.com\/static\/array\.js/.test(url)));
+      await page.$eval('footer button', button => button.click());
+      await page.waitForFunction(() => document.querySelector('[data-consent="reject"]')?.checkVisibility());
+      await press(page, 'reject');
+      await page.waitForFunction(() => /(?:^|; )gs_consent=v2:g[0-]:p0:/.test(document.cookie));
+      if (!/^v2:g[0-]:p0:/.test((await consentCookie(page))?.value ?? '')) fail('pending withdrawal', 'withdrawal not recorded before library release');
+      await releasePosthog(); await settle(page);
+      const loaded = await page.evaluate(() => !!window.posthog?.__loaded);
+      const hits = log.collect.filter(url => /posthog/.test(url)).length;
+      receipt.scenarios['pending withdrawal'] = { requested: log.scripts.filter(url => /posthog/.test(url)).length, loaded, hits };
+      if (loaded || hits || (await analyticsCookies(page)).some(name => /^(?:ph_|__ph)/.test(name))) fail('pending withdrawal', 'PostHog started after its pending grant was withdrawn');
+      await context.close();
+    }
+
     // 6. Withdrawal in one tab stops collection in the site's other open tabs, without a reload.
     {
       const a = await openPage(browser, { cookie: accepted });
@@ -388,7 +421,7 @@ try {
 
     // 15. Expired, malformed, partial and legacy decisions: asked again, nothing starts, leftovers removed.
     // `v2:g1:p1:1761600000` is a full grant made more than 180 days ago: lapsed, so no decision.
-    for (const value of ['1', '0', 'analytics_storage%2Cad_storage', 'v2:g1:p1', 'v2:gx:p1:1761600000', 'v2:g-:p-:1761600000', 'v2:g1:p1:1761600000']) {
+    for (const value of ['1', '0', 'analytics_storage%2Cad_storage', 'v2:g1:p1', 'v2:gx:p1:1761600000', 'v2:g-:p-:1761600000', 'v2:g1:p1:1761600000', `v2:g1:p1:${Math.floor(Date.now() / 1000) + 86400}`]) {
       const { context, page, log } = await openPage(browser, { cookie: value });
       await page.setCookie({ name: '_ga', value: 'GA1.1.left', url: BASE_URL });
       await go(page, '/about');

@@ -8,6 +8,8 @@
  */
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { runInNewContext } from 'node:vm';
+import ts from 'typescript';
 import { readChoice, encodeChoice, choiceCovers, remaining, CHOICE_MAX_AGE } from '../lib/consent/decision.ts';
 import { readAnalyticsConfig, analyticsConfigProblems, analyticsCsp, POSTHOG_HOST } from '../lib/analytics/config.ts';
 import { productionHostingerRules } from '../lib/build/hostinger.ts';
@@ -38,6 +40,74 @@ eq('last second still covers', choiceCovers({ ga4: true, posthog: true, at: T },
 eq('lapsed after 180 days', choiceCovers({ ga4: true, posthog: true, at: T }, both, T + CHOICE_MAX_AGE), false);
 eq('remaining counts down', remaining({ ga4: true, posthog: true, at: T }, T + 100), CHOICE_MAX_AGE - 100);
 eq('remaining never negative', remaining({ ga4: true, posthog: true, at: T }, T + CHOICE_MAX_AGE * 2), 0);
+eq('future decision grants nothing', choiceCovers({ ga4: true, posthog: true, at: T + 1 }, both, T), false);
+eq('future timestamp cannot extend lifetime', remaining({ ga4: true, posthog: true, at: T + 86400 }, T), 0);
+
+// Execute the actual loader with a controlled clock and pending network callback: no provider requests.
+function runtime() {
+  let time = T * 1000, serial = 0;
+  const timers = new Map(), listeners = {}, scripts = [], calls = [], cookies = new Map();
+  const document = { referrer: '', title: 'Specimen',
+    createElement: () => ({}), head: { appendChild: (script) => scripts.push(script) },
+    addEventListener: (name, callback) => { listeners[name] = callback; },
+    get cookie() { return [...cookies].map(([key, value]) => `${key}=${value}`).join('; '); },
+    set cookie(value) { const [key, data] = value.split(';')[0].split('='); if (/Max-Age=0(?:;|$)/.test(value)) cookies.delete(key); else cookies.set(key, data); } };
+  const page = { localStorage: {}, sessionStorage: {} };
+  const context = { window: page, document, location: { href: 'https://example.invalid/', hostname: 'example.invalid', protocol: 'https:' },
+    history: { pushState() {}, replaceState() {} }, URL,
+    Date: class extends Date { static now() { return time; } },
+    addEventListener: (name, callback) => { listeners[name] = callback; },
+    setTimeout: (callback, delay) => { const id = ++serial; timers.set(id, { callback, delay }); return id; },
+    clearTimeout: (id) => timers.delete(id), remaining, POSTHOG_HOST, POSTHOG_ASSETS: 'https://eu-assets.i.posthog.com' };
+  const source = readFileSync('lib/analytics/load.ts', 'utf8').replace(/^import .*;$/gm, '').replace('export function applyAnalytics', 'function applyAnalytics');
+  runInNewContext(ts.transpile(source) + '\nglobalThis.apply = applyAnalytics;', context);
+  return { ...context, page, scripts, timers, calls, listeners,
+    advance: (seconds) => { time += seconds * 1000; },
+    finish: () => { page.posthog = { __loaded: false, init(key, options) { this.__loaded = true; calls.push(['init', options.cookie_expiration]); },
+      opt_in_capturing() { calls.push(['in']); }, opt_out_capturing() { calls.push(['out']); } }; scripts.find(script => script.onload).onload(); } };
+}
+{
+  const r = runtime(), grant = { ga4: null, posthog: true, at: T };
+  r.apply({ ga4: null, posthog: PH }, grant);
+  r.apply({ ga4: null, posthog: PH }, grant);
+  eq('pending library loaded only once', r.scripts.length, 1);
+  r.apply({ ga4: null, posthog: PH }, null); r.finish();
+  eq('withdrawal before library arrives prevents init and opt-in', r.calls, []);
+}
+{
+  const r = runtime();
+  r.apply({ ga4: null, posthog: PH }, { ga4: null, posthog: true, at: T });
+  r.advance(60); r.finish();
+  eq('late library expiry uses remaining grant', r.calls[0], ['init', (CHOICE_MAX_AGE - 60) / 86400]);
+  eq('valid late library opts in once', r.calls.filter(c => c[0] === 'in').length, 1);
+}
+{
+  const r = runtime();
+  r.apply({ ga4: null, posthog: PH }, { ga4: null, posthog: true, at: T });
+  r.advance(CHOICE_MAX_AGE); r.finish();
+  eq('expired pending library cannot opt in', r.calls, []);
+}
+{
+  const r = runtime();
+  r.apply(both, { ga4: true, posthog: true, at: T - CHOICE_MAX_AGE + 1 });
+  r.finish(); r.advance(1);
+  const timer = [...r.timers.values()].find(t => t.delay === 1000);
+  eq('active consent expiry has a timer', !!timer, true); timer.callback();
+  eq('active expiry disables GA4', r.page[`ga-disable-${GA}`], true);
+  eq('active expiry opts PostHog out', r.calls.at(-1), ['out']);
+  r.listeners.pageshow(); r.listeners.visibilitychange();
+  eq('resume cannot regrant expired consent', r.page[`ga-disable-${GA}`], true);
+}
+{
+  const r = runtime();
+  r.apply(both, { ga4: true, posthog: true, at: T });
+  eq('long expiry stays inside browser timeout range', [...r.timers.values()][0].delay, 2147483647);
+}
+{
+  const r = runtime(), config = { ga4: null, posthog: PH }, choice = { ga4: null, posthog: true, at: T };
+  r.apply(config, choice); r.scripts[0].onerror(); r.apply(config, choice);
+  eq('failed pending library can be requested again under a live grant', r.scripts.length, 2);
+}
 
 // Identifiers: unset is off, malformed is refused rather than treated as off.
 eq('config both', readAnalyticsConfig(GA, PH), both);

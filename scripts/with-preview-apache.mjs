@@ -6,15 +6,16 @@ import { createServer } from 'node:http';
 import https from 'node:https';
 import { mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { ownerPreviewIdentityAllowed } from '../lib/build/target.ts';
+import { ownerPreviewIdentityAllowed, productionIdentityAllowed } from '../lib/build/target.ts';
 import { ACCEPTANCE_COMMANDS } from './preview-release.mjs';
 
 assert.equal(process.platform, 'linux', 'Apache acceptance requires Linux');
-const directory = resolve('build/gs-launch-018'); mkdirSync(directory, { recursive: true });
-const root = resolve('build/owner-preview-candidate');
+const production = process.argv.includes('--production');
+const directory = resolve(production ? 'build/production-acceptance' : 'build/gs-launch-018'); mkdirSync(directory, { recursive: true });
+const root = resolve(production ? 'out' : 'build/owner-preview-candidate');
 const identityBytes = readFileSync(`${root}/__deployment.json`);
 const identity = JSON.parse(identityBytes);
-assert(ownerPreviewIdentityAllowed(identity) && identity.sourceModified === false);
+assert((production ? productionIdentityAllowed(identity) : ownerPreviewIdentityAllowed(identity)) && identity.sourceModified === false);
 assert.equal(spawnSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).stdout.trim(), identity.sourceSha);
 const command = (bin, args) => {
   const result = spawnSync(bin, args, { encoding: 'utf8' });
@@ -93,7 +94,10 @@ try {
     servers.push(server);
   }
   // One list: the packager refuses a receipt whose commands differ from it (GS-LAUNCH-026).
-  for (const args of ACCEPTANCE_COMMANDS) {
+  const commands = production ? ACCEPTANCE_COMMANDS.map((args, index) => index === 0
+    ? ['scripts/check-hostinger-http.mjs', '--local-production-release'] : index === 1
+      ? ['scripts/check-static-ui.mjs'] : args) : ACCEPTANCE_COMMANDS;
+  for (const args of commands) {
     const startedAt = new Date().toISOString();
     const child = spawn(process.execPath, args, { stdio: ['ignore', 'pipe', 'pipe'], env: {
       ...process.env, STATIC_BASE_URL: 'http://127.0.0.1:3236', GRIDSMITH_BUILD_TARGET: 'static' } });

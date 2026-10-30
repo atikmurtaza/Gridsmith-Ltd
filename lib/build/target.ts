@@ -27,6 +27,14 @@ export function ownerPreviewIdentityAllowed(identity: OwnerPreviewIdentity | nul
         identity.acceptance?.sourceSha === identity.sourceSha && identity.acceptance?.artifactIdentity === identity.artifactIdentity &&
         /^[a-f0-9]{64}$/.test(identity.acceptance?.evidenceSha256 ?? '') && /^\d+$/.test(identity.acceptance?.runId ?? ''))));
 }
+/** A production candidate is distinct from a preview or an explicitly non-deployable rehearsal. */
+export function productionIdentityAllowed(identity: (OwnerPreviewIdentity & { legalProposal?: string }) | null) {
+  return Boolean(identity && identity.profile === 'production' && identity.siteOrigin === 'https://gridsmith.uk' &&
+    identity.dataset === 'production' && identity.legalPreview === false && identity.legalProposal === undefined &&
+    identity.contactMode === 'direct' && identity.intakeOrigin === null && identity.rehearsal === false &&
+    identity.deployable === true && identity.sourceModified === false &&
+    /^[a-f0-9]{40}$/.test(identity.sourceSha ?? '') && /^[a-f0-9]{64}$/.test(identity.artifactIdentity ?? ''));
+}
 export const OWNER_PREVIEW = STATIC_BUILD && ownerPreviewAllowed(process.env.GRIDSMITH_STATIC_PROFILE,
   process.env.NEXT_PUBLIC_SITE_URL, process.env.NEXT_PUBLIC_SANITY_DATASET);
 if (STATIC_BUILD && process.env.GRIDSMITH_STATIC_PROFILE === 'owner-preview' && !OWNER_PREVIEW) {
