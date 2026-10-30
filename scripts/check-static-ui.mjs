@@ -8,7 +8,9 @@ import { launch } from './browser-launch.mjs';
 import { preparePress } from './press-contrast.mjs';
 import { REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
 import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
-import { servedLegalPreview } from './legal-preview-rules.mjs';
+import { servedLegalPreview, readLegalPreviewDisclosure, legalPreviewDisclosureValid } from './legal-preview-rules.mjs';
+import { bannerProblems } from './legal-parity-rules.mjs';
+import { legalProposalDocuments } from './seed-legal.mjs';
 
 // Explicit source avoids the axe adapter's encoded-path resolver on Windows paths with spaces.
 const require = createRequire(fileURLToPath(import.meta.url));
@@ -34,6 +36,15 @@ const legalPreview = normal ? false : servedLegalPreview(deployment, process.arg
 // GS-R13: the gridsmith.uk profile is indexable and ships no reviews; it is proved on loopback only.
 const productionProfile = deployment?.profile === 'production';
 const ownerPreview = deployment?.profile === 'owner-preview';
+// The served identity selects the expectation. Runner environment alone proves nothing
+// about which text a visitor receives; an unknown/mismatched proposal must fail closed.
+const proposal = deployment?.legalProposal;
+if (proposal !== undefined) {
+  assert(ownerPreview && typeof proposal === 'string' && proposal.length > 0, 'Legal proposals require owner-preview identity');
+  legalProposalDocuments(proposal);
+}
+const legalState = proposal ? 'OWNER_REVIEW_REQUIRED' : 'OWNER_ADOPTED';
+const legalStatus = proposal ? 'NOT YET ADOPTED.' : 'ADOPTED, NOT YET PUBLISHED.';
 const directContact = deployment?.contactMode === 'direct';
 assert(!productionProfile || !hosted, 'The production profile is never proved on the staging origin');
 const servedSitemap = productionProfile ? await (await fetch(base + '/sitemap.xml')).text() : '';
@@ -135,11 +146,38 @@ try {
             links: anchors.every((el) => document.getElementById(el.getAttribute('href').slice(1))),
             headings: clauses.every((el) => el.querySelector('h2')),
             overflow: document.documentElement.scrollWidth > innerWidth + 1,
-            banner: document.querySelector('main').textContent.includes('ADOPTED, NOT YET PUBLISHED.'),
             footer: Boolean(document.querySelector('footer')), header: Boolean(document.querySelector('header')) };
         });
+        state.disclosure = await document.evaluate(readLegalPreviewDisclosure);
+        state.banner = legalPreviewDisclosureValid(state.disclosure, legalStatus);
         assert(state.h1 === 1 && state.clauses > 0 && state.anchors > 0 && state.unique && state.links &&
           state.headings && !state.overflow && state.banner && state.footer && state.header, `${route}/${width}/JS:${js} ${JSON.stringify(state)}`);
+        // Permanent negative controls over the actual served banner, at every width
+        // and with/without JS. Restore its captured node, not an inverse source edit.
+        if (route === legalRoutes[0]) {
+          await document.evaluate(label => {
+            const node = [...document.querySelectorAll('main p > span')].find(el => el.textContent.trim() === label).parentElement;
+            window.__legalDisclosureProbe = { node, parent: node.parentNode, next: node.nextSibling, style: node.getAttribute('style') };
+            node.style.display = 'none';
+          }, legalStatus);
+          try {
+            const hidden = await document.evaluate(readLegalPreviewDisclosure);
+            assert.equal(hidden.length, 1, 'Hidden disclosure probe lost its subject');
+            assert(!legalPreviewDisclosureValid(hidden, legalStatus), 'Hidden legal-status disclosure passed');
+            await document.evaluate(() => window.__legalDisclosureProbe.node.remove());
+            const missing = await document.evaluate(readLegalPreviewDisclosure);
+            assert.equal(missing.length, 0, 'Missing disclosure probe did not remove its subject');
+            assert(!legalPreviewDisclosureValid(missing, legalStatus), 'Missing legal-status disclosure passed');
+          } finally {
+            await document.evaluate(() => {
+              const { node, parent, next, style } = window.__legalDisclosureProbe;
+              if (style === null) node.removeAttribute('style'); else node.setAttribute('style', style);
+              parent.insertBefore(node, next); delete window.__legalDisclosureProbe;
+            });
+          }
+          assert(legalPreviewDisclosureValid(await document.evaluate(readLegalPreviewDisclosure), legalStatus), 'Disclosure control was not restored');
+          receipt.legalDisclosureProofs = (receipt.legalDisclosureProofs ?? 0) + 2;
+        }
         if (width < 1024) {
           await document.focus('main details > summary'); await document.keyboard.press('Enter');
           assert(await document.$eval('main details', (el) => el.open));
@@ -165,7 +203,7 @@ try {
       const target = new URL(href, base);
       assert(legalRoutes.includes(target.pathname), `Unknown legal destination ${href}`);
       const html = await (await fetch(target)).text();
-      assert(html.includes('ADOPTED, NOT YET PUBLISHED.'));
+      assert.deepEqual(bannerProblems(href, legalState, html), []);
       if (target.hash) assert(html.includes(`id="${target.hash.slice(1)}"`), `Orphan legal fragment ${href}`);
       receipt.legalLinks++;
     }

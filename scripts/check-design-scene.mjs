@@ -1079,18 +1079,22 @@ try {
     console.log('PROVEN RED visible text contrast inside clipped mobile panel');
     await mobile.close();
     const scope = await open(760,800);
-    // R1 ghosts the roof before the Technical copy settles, and copy in transit is over a receded
-    // scene, so no served position has the note over solid art any more: removing the paper alone is
-    // inert (the first R1 run of this proof). The subject is a settled note over a roof held solid —
-    // the case the paper surface exists for, should the art behind it ever be dark again.
+    // The current roof no longer overlaps the settled note. Its opacity cannot make
+    // this a subject. Place a controlled dark backing under the real note instead;
+    // its paper must keep the text readable, and removing it must expose that backing.
     await seek(scope,3.2);
-    await scope.addStyleTag({ content: "[data-design-stage] [data-roof]{opacity:1!important}" });
+    await scope.$eval('.ds-gate', el => {
+      const backing = document.createElement('div');
+      backing.style.background = getComputedStyle(el).color;
+      el.before(backing); backing.append(el);
+    });
     const cleanScope = await textContrast(scope, {selector:'.ds-gate'});
     if (cleanScope.length) throw new Error(`Dirty G2 scope baseline: ${cleanScope}`);
     await scope.$eval('.ds-gate', el => el.style.background = 'transparent');
-    if (!(await textContrast(scope, {selector:'.ds-gate'})).length)
+    const brokenScope = await textContrast(scope, {selector:'.ds-gate'});
+    if (!brokenScope.length)
       throw new Error('G2 removed-surface proof did not fail');
-    console.log('PROVEN RED closed Technical scope contrast without paper');
+    console.log(`PROVEN RED closed Technical scope contrast without paper over controlled backing: ${brokenScope[0]}`);
     await scope.close();
     // GS-DES-002-M1: the Technical copy arrives over the building while it is still sliding into
     // place; Linux CI read the kicker at 3.40:1 at 2.75 (locally 3.76:1 at 2.8). The kicker carries its

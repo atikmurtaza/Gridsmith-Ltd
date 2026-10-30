@@ -19,7 +19,9 @@ const WORKFLOWS = {
 };
 // GS-LAUNCH-026 reviewed: package.json gains the check:consent/prove:consent/verify:consent scripts only.
 const PACKAGE_SHA256 = '945d4ea3375f5fc296cfbf0439f2b34b8fe0bfca6e0b18468653a96c04bcc2aa';
-const LOCK_SHA256 = '23511604b1b228b8959baad335dd91ece95b09707d46719af6610433db8fc45c';
+// GS-LAUNCH-027 reviewed: only qs 6.16.0 -> 6.16.2, its registry URL and integrity.
+// Development-only Express/body-parser dependency; no lifecycle or workflow change.
+const LOCK_SHA256 = 'dfd2ece58e4fa9ee3db4ebbd6b2d4faae897af59b4fac4627c5ef44072b4bfb8';
 const GUARD_SUBJECTS = new Set(['scripts/browser-input.mjs', 'scripts/browser-input.selftest.mjs']);
 const SAFE_GIT_ENV = {
   GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_SYSTEM: '/dev/null', GIT_CONFIG_GLOBAL: '/dev/null',

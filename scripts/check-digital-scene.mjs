@@ -260,7 +260,9 @@ async function matrix(width, height, { fault } = {}) {
 // ---- 2. R3-G map timing under continuous scroll (desktop) ---------------------------------
 async function mapTiming({ fault } = {}) {
   const page = await open(1440, 900);
-  if (fault === 'late') await page.addStyleTag({ content: ".dg-apertures[data-mode='map'] .dg-compass-label{transition-delay:1500ms!important}" });
+  // The labels are already visible before map mode, so delaying a transition that
+  // never starts is inert. Withhold their opacity in the actual measured map state.
+  if (fault === 'late') await page.addStyleTag({ content: ".dg-apertures[data-mode='map'] .dg-compass-label{opacity:0!important}" });
   const r = await page.evaluate(async () => {
     const s = document.querySelector('.dg-apertures');
     const labels = [...s.querySelectorAll('.dg-compass-label')];
@@ -486,7 +488,14 @@ try {
     const proofs = [
       ['contrast', async () => (await matrix(1440, 900, { fault: 'contrast' })).found.some((f) => f.includes('pixel contrast') && f.includes('Help people'))],
       ['process neutral', async () => (await matrix(1280, 720, { fault: 'process' })).found.some((f) => f.includes('process: active 5'))],
-      ['map timing', async () => (await mapTiming({ fault: 'late' })).found.some((f) => f.includes('complete map'))],
+      ['map timing', async () => {
+        const clean = await mapTiming();
+        if (clean.found.length) throw new Error(`Dirty map-timing control: ${clean.found.join('; ')}`);
+        const broken = await mapTiming({ fault: 'late' });
+        console.log(`map timing proof: clean ${Math.round(clean.r.complete)}ms complete; withheld labels ${Math.round(broken.r.complete)}ms complete, ${Math.round(broken.r.numbersOnly)}ms numbers-only`);
+        return broken.r.map >= 400 && broken.r.complete === 0 && broken.r.numbersOnly > 100 &&
+          broken.found.some(f => f.includes('complete map')) && broken.found.some(f => f.includes('numbers-only map'));
+      }],
       ['opening: Hero owns first screen', async () => (await opening(1440, 900, { fault: 'short-hero' })).found.some((f) => f.includes("inside the Hero's first screen"))],
       ['opening: hand-off before Route Map copy', async () => (await opening(390, 844, { fault: 'no-handoff' })).found.some((f) => f.includes('shares the screen with Route Map copy'))],
       ['lifecycle state', async () => (await lifecycle({ fault: 'stale' })).some((f) => f.includes('anchor jump to 05'))],

@@ -18,7 +18,7 @@ const base = {
   npmConfig: { registry: 'https://registry.npmjs.org/', 'engine-strict': 'true', 'ignore-scripts': 'false', omit: '' },
   npmConfigFiles: ['engine-strict=true\n'], configPaths: [],
   packageSha256: '945d4ea3375f5fc296cfbf0439f2b34b8fe0bfca6e0b18468653a96c04bcc2aa',
-  lockSha256: '23511604b1b228b8959baad335dd91ece95b09707d46719af6610433db8fc45c',
+  lockSha256: 'dfd2ece58e4fa9ee3db4ebbd6b2d4faae897af59b4fac4627c5ef44072b4bfb8',
 };
 assert.deepEqual(installationProblems(base), []);
 let cases = 1;

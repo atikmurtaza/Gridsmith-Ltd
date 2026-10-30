@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-027",
+  "recordedDate": "2026-10-30",
+  "timezone": "Europe/London",
+  "status": "CONDITIONAL",
+  "source": {
+    "startingBranch": "codex/gs-launch-026",
+    "startingSha": "caa3f4c3ba8f8ba688ed3c27359f1bc815a26dbb",
+    "branch": "codex/gs-launch-027",
+    "endingSha": null,
+    "endingShaStatus": "PENDING_COMMIT",
+    "previousPr": "https://github.com/atikmurtaza/Gridsmith-Ltd/pull/4",
+    "successorPr": null
+  },
+  "initialCi": {
+    "runId": "40806160977",
+    "conclusion": "failure",
+    "failures": [
+      "stale adopted-banner expectation on proposal preview",
+      "Master visibility-mask CSS transition sampled before settling",
+      "development qs 6.16.0 moderate advisory"
+    ]
+  },
+  "fixes": {
+    "legal": "Served profile selects one visible correct status label; hide/remove probes at every viewport and JS state",
+    "master": "Wait for font/render/animation readiness before baseline, retain exact screenshot pose invariants",
+    "dependency": "Only qs lock entry 6.16.0 to 6.16.2, guard fingerprints and dependency consumers updated"
+  },
+  "local": {
+    "platform": "win32",
+    "node": "24.15.0",
+    "chrome": "155.0.8059.85",
+    "npmCi": "PASS_FRESH_PATCHED_LOCK",
+    "verifyStatic": "PASS",
+    "syntaxChangedScripts": {
+      "status": "PASS",
+      "count": 10
+    },
+    "normalBuild": {
+      "status": "PASS",
+      "routeBudgets": 69
+    },
+    "served": {
+      "status": "COMPLETED_WITH_EXPLICIT_SKIPS",
+      "master": "PASS_14_QUESTIONS_12_VIEWPORTS",
+      "design": "PASS",
+      "digital": "PASS",
+      "press": "PASS",
+      "accessibilityResponsiveLegalContactHeaders": "PASS",
+      "lighthouseDesktop": "SKIPPED_WINDOWS",
+      "lighthouseMobile": "SKIPPED_WINDOWS"
+    },
+    "proposalPreview": {
+      "status": "PASS",
+      "pages": 20,
+      "legalCombinations": 70,
+      "disclosureNegativeProofs": 20,
+      "focusedAxeAnalyses": 41,
+      "errorAxeAnalyses": 3,
+      "axeViolations": 0,
+      "noJsPages": 20,
+      "parityDocuments": 7,
+      "parityClauses": 110,
+      "parityParagraphs": 430,
+      "parityCrossLinks": 29
+    },
+    "adoptedPreview": "RUNNING",
+    "consentMode": "PENDING",
+    "browserInputSelftest": {
+      "status": "PASS",
+      "cases": 408,
+      "python": "C:/Python314/python.exe",
+      "initialAttempt": "FAILED_WINDOWS_PYTHON_ALIAS_RETAINED"
+    },
+    "audits": {
+      "production": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      },
+      "full": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0,
+        "total": 0
+      }
+    }
+  },
+  "negativeProofs": {
+    "legal": "PASS_BOTH_LABELS_8_PURE_NEGATIVES_AND_20_PROPOSAL_DOM_NEGATIVES",
+    "masterCapture": "PASS_REDUCED_MOTION_VISIBILITY_TRANSITION_AND_REJECT_CONTINUOUS_MOTION_MOVED_DOM_SCROLL_BITMAP_LAYOUT_SCALE",
+    "digitalMapTiming": {
+      "status": "PASS_INITIAL_12_CASE_SUITE",
+      "cleanCompleteMs": 303,
+      "defectiveCompleteMs": 0,
+      "defectiveNumbersOnlyMs": 297,
+      "reviewFollowup": "Both diagnostics asserted; final rerun pending"
+    },
+    "designG2": {
+      "status": "PASS",
+      "defectiveContrast": "1.00:1",
+      "requiredContrast": "4.5:1",
+      "controlledBacking": true
+    },
+    "masterS4r": {
+      "status": "PASS",
+      "defectiveFrameChangePercent": 8.82,
+      "ownQuestionReached": true,
+      "subjectRestoredByteIdentical": true
+    },
+    "separateDesignLegacyProof": {
+      "status": "FAIL_STALE_SUBJECT",
+      "name": "Technical transit unreceded-detail",
+      "ciStep": false,
+      "disposition": "Recorded outside three requested subjects; no indefinite legacy expansion"
+    }
+  },
+  "independentReviews": {
+    "count": 3,
+    "scope": [
+      "gate logic",
+      "scope and release controls",
+      "stale proof validity"
+    ],
+    "findings": "Digital diagnostic coverage tightened; no other actionable findings; source review only"
+  },
+  "finalCi": {
+    "runId": null,
+    "headSha": null,
+    "status": "NOT_STARTED",
+    "conclusion": null,
+    "artifactIdentity": null,
+    "publisher": "NO_DISPATCH_AUTHORISED"
+  },
+  "unchanged": {
+    "applicationAndLegalSourceDiff": "NONE",
+    "workflows": "NONE",
+    "frozenPreview": "NO_WRITE",
+    "production": "NO_WRITE",
+    "legalProposals": 7,
+    "ownerAdopted": 7,
+    "publishable": 0,
+    "analytics": "DORMANT_GATED",
+    "reviews": "DISABLED_RIGHTS_GATED",
+    "contact": "EMAIL_WHATSAPP_ONLY",
+    "providerWrites": false,
+    "supportContact": false,
+    "merge": false,
+    "deploy": false
+  },
+  "ownerReview": {
+    "ready": false,
+    "reason": "Exact-head Linux acceptance and artifact identity pending",
+    "requiredApproval": "New exact artifact-bound temporary-preview replacement authority after acceptance",
+    "manualAccessibility": "NOT_RUN",
+    "visualMotionAcceptance": "OWNER_REQUIRED"
+  },
+  "evidence": {
+    "storage": "Private task evidence; filenames and SHA-256 only are public",
+    "hashes": {
+      "adopted-build.log": "ea56486a85db8a60f1d7443541117b1a21898747161176959700d64db8f86762",
+      "audit-full.json": "c4422cf7f987cbfbdc9abece5d7c2214ee190b777b6799462cd489e96c5dff38",
+      "audit-production.json": "c4422cf7f987cbfbdc9abece5d7c2214ee190b777b6799462cd489e96c5dff38",
+      "browser-selftest-python.log": "e93c5ad7c7481f16a5bd7ca4353df4eae6676170836e2616b379e3a13c8fd703",
+      "browser-selftest.log": "a73d04029b5ab1f5f045050bed02a20ce5a402e1b983781e743004ed4b469ff4",
+      "legal-banner-reproduction.json": "57cac5056b8f02d12243737c71cb2596c4c66d6b35b8e6f27af99303d49e7476",
+      "master-capture-proof.log": "9792f26ed8141cf3c84fa0f9f8b7585491e6adb4278d34961df11a94a49c52fb",
+      "master-s4r.log": "796e7340604c2876d840fc8aa3a43565fd0953ea3857f5a7c846a622d26bb1f6",
+      "normal-build.log": "ad1788d9a5abc9e74d681b430a86bf854370b4aa8863a115d33f16b9318b69ab",
+      "npm-ci-patched.log": "f1cc95d58e5f3be053f999246dc1b174a7cf482e3efd3d514921fcedc87882bd",
+      "npm-ci.log": "4606c47bf1cf7b43bbf511b60eb1aab540232d38ccf8b9d3f80c6a392de54f71",
+      "proposal-axe-results.json": "c8d91a3fdd6e18380a41651dae4b7a4985e2e7fbf28e40b7f5f81b32c7ef8ef7",
+      "proposal-build-before.log": "171549768d5ec80c021f8d31f1ab65ff8f0578c27f0fbc8a22d5f4ed4dc70676",
+      "proposal-parity.log": "9dc9363d61b552302e0fec1bc6e9898c131334e5588a784a7ef364dc240b04fc",
+      "proposal-static-ui.log": "4929d3d5cce4b77246fc868e446113913bdce337c886b58cb53e3dbadfe0df49",
+      "proposal-ui-receipt.json": "20570d744d04c67578aec6ac7318b3113063047e428ba8e130a06615b338b426",
+      "qs-install.log": "39488ff94f86c8856c7741d3adbe1fddd8ed25c19785a83aed767962d58d85a9",
+      "qs-update.log": "39488ff94f86c8856c7741d3adbe1fddd8ed25c19785a83aed767962d58d85a9",
+      "scene-repairs.log": "e127e6cd0e08d00af940eb426b7b1af5b2d7c3c94b23ed4af30646d0aab2c13f",
+      "starting-staging.log": "bb3303727994d5e5e16ca918fd63d65f9db17e5a2eafbc3e9584366beb175ad4",
+      "starting-verify.log": "19024028850fc247f96a549b3270196980b900c46bdece9f5864b97ad16b977f",
+      "verify-served.log": "e74318941b71eaea809d5ba38b433f0ab71d7798f19c0f59d1086596e8c3a285",
+      "verify-static-final.log": "c82d15d3792c6143d412a6f206f148e8653ccc01e203051636badfc79f99f544",
+      "verify-static.log": "b829cd4349c9f09c15f26f020b0da32676b9d753bbec8491f5e0f4c6370b8d9a"
+    }
+  }
+}

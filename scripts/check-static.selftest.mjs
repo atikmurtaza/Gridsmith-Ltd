@@ -185,7 +185,15 @@ console.log('Hostinger hash/cache predicates: 5 hashed and 6 unversioned names; 
 console.log('Hostinger static config subject: exact-origin production rejection, noindex, gated 404 and explicit cache policies. Served behaviour remains a hosted gate.');
 
 // R12: private preview has separate identities; all production exclusion proofs above still run.
-const { legalPreviewProfile, legalPreviewProblems, servedLegalPreview } = await import('./legal-preview-rules.mjs');
+const { legalPreviewProfile, legalPreviewProblems, servedLegalPreview, legalPreviewDisclosureValid } = await import('./legal-preview-rules.mjs');
+for (const label of ['NOT YET ADOPTED.', 'ADOPTED, NOT YET PUBLISHED.']) {
+  const good = { text: label, visible: true };
+  assert(legalPreviewDisclosureValid([good], label));
+  for (const bad of [[], [good, good], [{ ...good, visible: false }], [{ ...good, text: label === 'NOT YET ADOPTED.' ? 'ADOPTED, NOT YET PUBLISHED.' : 'NOT YET ADOPTED.' }]]) {
+    assert(!legalPreviewDisclosureValid(bad, label), 'Missing, duplicate, hidden or wrong-status disclosure passed');
+  }
+}
+console.log('Legal disclosure: both statuses accepted; missing, duplicate, hidden and wrong-status specimens rejected (8 negatives).');
 const { LEGAL_DOCUMENTS: canonicalLegalDocuments } = await import('./seed-legal.mjs');
 const LEGAL_DOCUMENTS = canonicalLegalDocuments.map(doc => ({ ...doc, adoptionState: 'OWNER_ADOPTED' }));
 const register = JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json'));

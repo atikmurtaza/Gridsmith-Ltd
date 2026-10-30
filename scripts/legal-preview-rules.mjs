@@ -26,6 +26,18 @@ export function servedLegalPreview(deployment, required = false) {
   return preview;
 }
 
+/** Browser-side disclosure, scoped to visible labels in the document, not script/Flight text. */
+export function readLegalPreviewDisclosure() {
+  return [...document.querySelectorAll('main p > span')]
+    .filter(el => ['NOT YET ADOPTED.', 'ADOPTED, NOT YET PUBLISHED.'].includes(el.textContent.trim()))
+    .map(el => ({ text: el.textContent.trim(), visible: el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) &&
+      !el.closest('[hidden], [aria-hidden="true"]') && el.getBoundingClientRect().width > 0 && el.getBoundingClientRect().height > 0 }));
+}
+
+export function legalPreviewDisclosureValid(disclosure, expected) {
+  return disclosure.length === 1 && disclosure[0].text === expected && disclosure[0].visible;
+}
+
 /** Full generated content, not a CMS assertion that it is approved. Order of object keys is immaterial. */
 export function legalPreviewProblems(actual, expected, register, readDraft) {
   const problems = [];
