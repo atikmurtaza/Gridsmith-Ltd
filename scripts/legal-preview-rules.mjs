@@ -2,7 +2,13 @@
 import { isDeepStrictEqual } from 'node:util';
 import { createHash } from 'node:crypto';
 import { REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
-import { ownerPreviewIdentityAllowed } from '../lib/build/target.ts';
+import { ownerPreviewIdentityAllowed, productionIdentityAllowed } from '../lib/build/target.ts';
+import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
+
+/** Production must exercise the same seven legal routes as a legal preview. */
+export function servedLegalRoutes(deployment, preview) {
+  return preview || productionIdentityAllowed(deployment) ? LEGAL_DOCUMENT_SLUGS.map(slug => `/legal/${slug}`) : [];
+}
 
 export function legalPreviewProfile(value, dataset, origin) {
   if (value === undefined) return false;

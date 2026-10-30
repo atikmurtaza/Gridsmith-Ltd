@@ -34,7 +34,7 @@ export function encodeChoice(c: Choice): string {
 
 /** Seconds a decision has left at `now` (unix seconds); 0 once it has lapsed. */
 export function remaining(c: Choice, now: number): number {
-  return Math.max(0, c.at + CHOICE_MAX_AGE - now);
+  return Number.isFinite(c.at) && c.at <= now ? Math.max(0, c.at + CHOICE_MAX_AGE - now) : 0;
 }
 
 /** A decision counts only while it is current and answers for every provider the build offers. */

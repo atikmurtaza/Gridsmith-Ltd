@@ -7,10 +7,10 @@ import { AxePuppeteer } from '@axe-core/puppeteer';
 import { launch } from './browser-launch.mjs';
 import { preparePress } from './press-contrast.mjs';
 import { REVIEW_STAGING_ORIGIN } from '../lib/reviews/public-model.ts';
-import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
-import { servedLegalPreview, readLegalPreviewDisclosure, legalPreviewDisclosureValid } from './legal-preview-rules.mjs';
+import { servedLegalPreview, servedLegalRoutes, readLegalPreviewDisclosure, legalPreviewDisclosureValid } from './legal-preview-rules.mjs';
 import { bannerProblems } from './legal-parity-rules.mjs';
 import { legalProposalDocuments } from './seed-legal.mjs';
+import { productionIdentityAllowed } from '../lib/build/target.ts';
 
 // Explicit source avoids the axe adapter's encoded-path resolver on Windows paths with spaces.
 const require = createRequire(fileURLToPath(import.meta.url));
@@ -19,7 +19,8 @@ const normal = process.argv.includes('--normal');
 const base = process.env.STATIC_BASE_URL ?? (normal ? 'http://127.0.0.1:3235' : 'http://127.0.0.1:3236');
 const origin = new URL(base);
 const hosted = base === REVIEW_STAGING_ORIGIN;
-assert(hosted || ['localhost', '127.0.0.1'].includes(origin.hostname), 'Proof must use loopback or the exact authorised Hostinger staging origin');
+const hostedProduction = process.argv.includes('--production') && base === 'https://gridsmith.uk';
+assert(hosted || hostedProduction || ['localhost', '127.0.0.1'].includes(origin.hostname), 'Proof must use loopback or an explicitly selected exact hosted origin');
 const publication = JSON.parse(readFileSync('docs/_shared/GS-PROD-001-CMS-MANIFEST.json', 'utf8')).entries;
 const services = ['design', 'digital', 'press'].map((division) => {
   const entry = publication.find((item) => item.type === 'service' && item.eligible && item.division === division);
@@ -35,6 +36,8 @@ const deployment = deploymentResponse ? await deploymentResponse.json() : null;
 const legalPreview = normal ? false : servedLegalPreview(deployment, process.argv.includes('--legal-preview'));
 // GS-R13: the gridsmith.uk profile is indexable and ships no reviews; it is proved on loopback only.
 const productionProfile = deployment?.profile === 'production';
+if (productionProfile && !deployment.rehearsal) assert(productionIdentityAllowed(deployment), 'Production candidate must identify eligible committed source');
+if (hostedProduction) assert(productionIdentityAllowed(deployment), 'Hosted production must identify an eligible committed production release');
 const ownerPreview = deployment?.profile === 'owner-preview';
 // The served identity selects the expectation. Runner environment alone proves nothing
 // about which text a visitor receives; an unknown/mismatched proposal must fail closed.
@@ -43,13 +46,13 @@ if (proposal !== undefined) {
   assert(ownerPreview && typeof proposal === 'string' && proposal.length > 0, 'Legal proposals require owner-preview identity');
   legalProposalDocuments(proposal);
 }
-const legalState = proposal ? 'OWNER_REVIEW_REQUIRED' : 'OWNER_ADOPTED';
+const legalState = productionProfile ? 'PUBLISHABLE' : proposal ? 'OWNER_REVIEW_REQUIRED' : 'OWNER_ADOPTED';
 const legalStatus = proposal ? 'NOT YET ADOPTED.' : 'ADOPTED, NOT YET PUBLISHED.';
 const directContact = deployment?.contactMode === 'direct';
 assert(!productionProfile || !hosted, 'The production profile is never proved on the staging origin');
 const servedSitemap = productionProfile ? await (await fetch(base + '/sitemap.xml')).text() : '';
 const indexedPaths = new Set([...servedSitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => new URL(match[1]).pathname));
-const legalRoutes = legalPreview ? LEGAL_DOCUMENT_SLUGS.map((slug) => `/legal/${slug}`) : [];
+const legalRoutes = servedLegalRoutes(deployment, legalPreview);
 routes.push(...legalRoutes);
 const pause = (ms) => new Promise((done) => setTimeout(done, ms));
 const browser = await launch();
@@ -149,12 +152,12 @@ try {
             footer: Boolean(document.querySelector('footer')), header: Boolean(document.querySelector('header')) };
         });
         state.disclosure = await document.evaluate(readLegalPreviewDisclosure);
-        state.banner = legalPreviewDisclosureValid(state.disclosure, legalStatus);
+        state.banner = productionProfile ? state.disclosure.length === 0 : legalPreviewDisclosureValid(state.disclosure, legalStatus);
         assert(state.h1 === 1 && state.clauses > 0 && state.anchors > 0 && state.unique && state.links &&
           state.headings && !state.overflow && state.banner && state.footer && state.header, `${route}/${width}/JS:${js} ${JSON.stringify(state)}`);
         // Permanent negative controls over the actual served banner, at every width
         // and with/without JS. Restore its captured node, not an inverse source edit.
-        if (route === legalRoutes[0]) {
+        if (!productionProfile && route === legalRoutes[0]) {
           await document.evaluate(label => {
             const node = [...document.querySelectorAll('main p > span')].find(el => el.textContent.trim() === label).parentElement;
             window.__legalDisclosureProbe = { node, parent: node.parentNode, next: node.nextSibling, style: node.getAttribute('style') };
@@ -199,7 +202,7 @@ try {
   for (const route of routes) {
     await page.goto(base + route, { waitUntil: 'networkidle0' });
     const links = await page.$$eval('a[href^="/legal/"]', (nodes) => nodes.map((el) => el.getAttribute('href')));
-    if (legalPreview) for (const href of new Set(links)) {
+    if (legalRoutes.length) for (const href of new Set(links)) {
       const target = new URL(href, base);
       assert(legalRoutes.includes(target.pathname), `Unknown legal destination ${href}`);
       const html = await (await fetch(target)).text();

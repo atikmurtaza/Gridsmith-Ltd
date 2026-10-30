@@ -10,7 +10,8 @@
  * `arguments` object from the `gtag()` shim below, not an array (`BEFORE-LAUNCH.md` item 22 step 2,
  * the defect that shipped before round 10).
  *
- * **Page views only, as paths** (`docs/_legal/compliance/ANALYTICS-ACTIVATION.md`). Both providers
+ * **Site-sent events are page views, as paths** (`docs/_shared/GS-LAUNCH-029.md`). Google's tag also
+ * collects its standard first-visit, session and engagement information. Both providers
  * receive each page's address without its query string or fragment, so no campaign or click
  * identifier and no in-page anchor is sent. GA4 page views on client-side navigation are sent here,
  * which is why the property's Enhanced measurement is switched off (owner step); PostHog's own
@@ -36,6 +37,10 @@ import { remaining, type Choice } from '../consent/decision';
 const GA_COOKIES = /^_ga(?:_|$)/;
 const POSTHOG_KEYS = /^(?:ph_|__ph)/;
 const DAY = 24 * 60 * 60;
+let activeChoice: Choice | null = null;
+let expiryTimer: ReturnType<typeof setTimeout> | undefined;
+let listening = false;
+let posthogPending = false;
 
 type Gtag = (...args: unknown[]) => void;
 type PostHog = {
@@ -52,6 +57,7 @@ function load(src: string, onload?: () => void) {
   script.src = src;
   if (onload) script.onload = onload;
   document.head.appendChild(script);
+  return script;
 }
 
 /** An address as origin and path only: no query string, no fragment. */
@@ -150,7 +156,7 @@ function paths(event: { properties?: Record<string, unknown> } | null) {
   return event;
 }
 
-function posthog(page: Page, key: string, on: boolean, seconds: number) {
+function posthog(page: Page, key: string, on: boolean) {
   const loaded = page.posthog && page.posthog.__loaded ? page.posthog : null;
   if (!on) {
     if (loaded) loaded.opt_out_capturing();
@@ -162,13 +168,19 @@ function posthog(page: Page, key: string, on: boolean, seconds: number) {
     loaded.opt_in_capturing({ captureEventName: false });
     return;
   }
-  load(`${POSTHOG_ASSETS}/static/array.js`, () => {
+  if (posthogPending) return;
+  posthogPending = true;
+  const script = load(`${POSTHOG_ASSETS}/static/array.js`, () => {
+    posthogPending = false;
+    // A grant can be withdrawn or expire while the library is still downloading.
+    const left = activeChoice?.posthog ? remaining(activeChoice, Math.floor(Date.now() / 1000)) : 0;
+    if (!left) return;
     const instance = page.posthog;
     if (!instance) return;
     instance.init(key, {
       api_host: POSTHOG_HOST,
       persistence: 'cookie',
-      cookie_expiration: seconds / DAY,
+      cookie_expiration: left / DAY,
       opt_out_capturing_by_default: true,
       opt_out_persistence_by_default: true,
       opt_out_capturing_persistence_type: 'cookie',
@@ -196,15 +208,26 @@ function posthog(page: Page, key: string, on: boolean, seconds: number) {
     // The grant: writes PostHog's consent marker and sends the page's first page view, no `$opt_in`.
     instance.opt_in_capturing({ captureEventName: false });
   });
+  script.onerror = () => { posthogPending = false; };
 }
 
 /** Brings the page into line with `choice`: granted providers run, everything else is stopped and cleared. */
 export function applyAnalytics(config: AnalyticsConfig, choice: Choice | null): void {
+  activeChoice = choice;
+  clearTimeout(expiryTimer);
   const page = window as unknown as Page;
   const seconds = choice ? remaining(choice, Math.floor(Date.now() / 1000)) : 0;
+  const refresh = () => applyAnalytics(config, activeChoice);
+  if (!listening) {
+    listening = true;
+    addEventListener('pageshow', refresh);
+    document.addEventListener('visibilitychange', refresh);
+  }
+  // Browser timeouts are signed 32-bit; a 180-day choice needs bounded wakeups.
+  if (seconds > 0) expiryTimer = setTimeout(refresh, Math.min(seconds * 1000, 2147483647));
   if (config.ga4) ga4(page, config.ga4, !!(choice && choice.ga4) && seconds > 0, seconds);
   else expire(GA_COOKIES);
-  if (config.posthog) posthog(page, config.posthog, !!(choice && choice.posthog) && seconds > 0, seconds);
+  if (config.posthog) posthog(page, config.posthog, !!(choice && choice.posthog) && seconds > 0);
   else {
     expire(POSTHOG_KEYS);
     forget(POSTHOG_KEYS);

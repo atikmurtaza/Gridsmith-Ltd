@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-029",
+  "recordedAt": "2026-10-30T17:34:23.890Z",
+  "status": "CONDITIONAL_PRODUCTION_HOLD",
+  "session": "New",
+  "source": {
+    "branch": "codex/gs-launch-029",
+    "implementationCommit": "bd1268b8c1bb01982be88f8053c4b0a342c65de3",
+    "acceptedBranch": "codex/gs-launch-027",
+    "acceptedSha": "629accd00e30b09394e6d3ef419999b2c8af0ec5",
+    "acceptedCiRun": "40985674273",
+    "acceptedCiConclusion": "SUCCESS",
+    "acceptedSourceUnchanged": true,
+    "preparationCi": "FINAL_REPORTING_HEAD_CI_PENDING",
+    "supersededPreparationCi": {
+      "run": "41099074791",
+      "head": "5c2c2086dae472f24d3f9c4bbf06fbd81bd9dddd",
+      "status": "CANCELLATION_REQUESTED_SUPERSEDED_BY_PREPAINT_FIX"
+    }
+  },
+  "preview": {
+    "origin": "https://mediumaquamarine-wallaby-594070.hostingersite.com",
+    "artifactIdentity": "bc7142541f7f6be325f615737025e0d494bbfb97c7a6058a5c92849b5020f517",
+    "artifactBranch": "codex/gs-hostinger-artifact",
+    "artifactCommit": "adbe957c9b3cd9cf3dd90a16af3d5ef56097a823",
+    "publicationRun": "41050245738",
+    "freshIdentity": {
+      "url": "https://mediumaquamarine-wallaby-594070.hostingersite.com/__deployment.json",
+      "status": 200,
+      "location": null,
+      "sha256": "79fabdad5c0a69f5e4737d0a3b7ed48411166cd9495948e7824b4141c871bbe8",
+      "sourceSha": "629accd00e30b09394e6d3ef419999b2c8af0ec5",
+      "artifactIdentity": "bc7142541f7f6be325f615737025e0d494bbfb97c7a6058a5c92849b5020f517",
+      "analytics": {
+        "ga4": false,
+        "posthog": false
+      },
+      "matchesAccepted": true
+    },
+    "autoDeployment": "OWNER_CONFIRMED_OFF_AFTER_RELOAD_GS_LAUNCH_028_REUSED_NOT_REASKED",
+    "modified": false,
+    "strictHttpStatus": "FAIL_RETAINED_NOT_REPEATED",
+    "strictFailures": [
+      "provider-generated robots.txt",
+      "CSP absent on nine PNG responses"
+    ],
+    "documentExecutableCsp": "PRIOR_ACCEPTED_HOSTED_PASS"
+  },
+  "legal": {
+    "originalProposal": "GS-LAUNCH-026",
+    "originalSevenHashesVerified": true,
+    "hostedParity": {
+      "status": "PASS",
+      "documents": 7,
+      "clauses": 110,
+      "paragraphs": 430,
+      "crossReferences": 29,
+      "selfLinks": 0
+    },
+    "correctedAdoptionPacket": "GS-LAUNCH-029-ADOPTION.json",
+    "packetSha256": "5fd1c21707d9564a3663a146bf76df7fb2937ee72ae8d07bb97c916abc647d3d",
+    "proposedDocuments": [
+      {
+        "slug": "privacy",
+        "version": "2.9",
+        "sha256": "449db68c0c452b214e78f68a33f4123d7b6c09bfdba1b9d54055db1392227764",
+        "path": "docs/_legal/proposed/GS-LAUNCH-029/privacy-policy-2.9.md",
+        "change": "substantive"
+      },
+      {
+        "slug": "cookies",
+        "version": "2.6",
+        "sha256": "66023b43f37a3a8c42fedb31b8229cdb0970420d5bed965911ae276a108e7da3",
+        "path": "docs/_legal/proposed/GS-LAUNCH-029/cookie-policy-2.6.md",
+        "change": "substantive"
+      },
+      {
+        "slug": "terms",
+        "version": "2.4",
+        "sha256": "5a89cec4ea564a64bbcc55f692cccb94f421011f86233b7e62916d2a0d977571",
+        "path": "docs/_legal/proposed/GS-LAUNCH-026/website-terms-2.4.md",
+        "change": "presentation-only"
+      },
+      {
+        "slug": "client-terms",
+        "version": "2.4",
+        "sha256": "1aae31572444d6c543fddbab71b66138ffb06ba516d4d10d836835a474cdfa6a",
+        "path": "docs/_legal/proposed/GS-LAUNCH-026/client-terms-applicability-2.4.md",
+        "change": "presentation-only"
+      },
+      {
+        "slug": "business-client-terms",
+        "version": "3.4",
+        "sha256": "e7f1a7c1a1b64d66349aa4f3c806d4953ed739e5f36ceb6bd26724948168c0de",
+        "path": "docs/_legal/proposed/GS-LAUNCH-026/client-terms-business-3.4.md",
+        "change": "presentation-only"
+      },
+      {
+        "slug": "consumer-client-terms",
+        "version": "3.5",
+        "sha256": "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c",
+        "path": "docs/_legal/proposed/GS-LAUNCH-026/client-terms-consumers-3.5.md",
+        "change": "presentation-only"
+      },
+      {
+        "slug": "accessibility",
+        "version": "2.5",
+        "sha256": "e7b7f71e34c44db2202c9f41c1a09073c46ef25e05f34127c1263750d7da211f",
+        "path": "docs/_legal/proposed/GS-LAUNCH-026/accessibility-statement-2.5.md",
+        "change": "substantive"
+      }
+    ],
+    "corrections": [
+      "Privacy consent cookie reaches hosting; no separate individual choice log",
+      "Privacy/Cookie distinguish GA4 standard first-visit/session/engagement information from page views"
+    ],
+    "fourLinkOnly": true,
+    "threeSubstantive": true,
+    "correctedProposalPublished": false,
+    "ownerReadoption": false,
+    "originalRegisterOwnerAdopted": 7,
+    "publishable": 0,
+    "registerModified": false,
+    "effectiveDate": "On first publication with the replacement website at gridsmith.uk"
+  },
+  "directContact": {
+    "status": "PARTIAL_NOT_VERIFIED",
+    "ownerFreelancerHoldingsDeclaration": "ATTESTED_2026_10_30_NOT_DEVICE_INSPECTION",
+    "historicalDatabaseCounts": {
+      "databaseObservationUtc": "2026-10-27T23:22Z",
+      "production": {
+        "leads": 0,
+        "events": 0,
+        "pressPathResults": 0,
+        "sampleGrants": 0,
+        "notificationOutbox": 0,
+        "intakeState": 1
+      },
+      "preview": {
+        "leads": 0,
+        "events": 0,
+        "pressPathResults": 0,
+        "sampleGrants": 0,
+        "notificationOutbox": 0,
+        "intakeState": 1,
+        "consentEvents": 0,
+        "consentState": 1
+      },
+      "technicalLogsPresent": true,
+      "logWindow": [
+        "2026-10-26T23:22:00Z",
+        "2026-10-27T23:22:00Z"
+      ],
+      "customerContentsQueried": false,
+      "retentionLogCorroborated": true,
+      "preCleanupExportPresent": true,
+      "exportContentsInspected": false,
+      "nextMonthlyReview": "2026-11-02"
+    },
+    "preparedPrivateRecord": true,
+    "missingCustodyConfirmation": true,
+    "missing": "Current mailbox access/monitoring, forwarding/delegation and WhatsApp linked-device custody",
+    "providerLogBackupErasure": "UNKNOWN_WHERE_UNINSPECTED_NOT_ASSUMED_ABSENT",
+    "formsActivated": false,
+    "messagesSent": 0
+  },
+  "analytics": {
+    "acceptedPreview": {
+      "ga4": false,
+      "posthog": false
+    },
+    "posthog": {
+      "recordedAt": "2026-10-30T17:09:18.773Z",
+      "projectId": 315488,
+      "name": "Gridsmith Staging Project",
+      "apiHost": "https://eu.i.posthog.com",
+      "publicProjectKeyPresent": true,
+      "anonymizeIps": true,
+      "autocaptureOptOut": true,
+      "sessionRecording": false,
+      "heatmaps": false,
+      "ingestedEvent": false,
+      "existingLocalKeyMatchesProject": false
+    },
+    "ga4": {
+      "inventoryPropertyId": 550714475,
+      "measurementIdKnown": false,
+      "settingsVerified": false,
+      "reason": "LOCAL_BROWSER_DISABLED_AFTER_RETRIES"
+    },
+    "readinessRecorded": false,
+    "activationAuthority": false,
+    "activated": false,
+    "corrections": {
+      "pendingLoadWithdrawal": "FIXED_REGRESSION_TESTED",
+      "activeDocumentExpiry": "FIXED_TIMER_AND_RESUME_TESTED",
+      "futureChoice": "REJECTED_IN_RUNTIME_AND_PREPAINT; BROWSER_PROOF_PASS",
+      "testsUseRealProviderIds": false
+    },
+    "noticeOnlyLaunchPossible": true,
+    "noticeOnlyOwnerChoiceReceived": false,
+    "remaining": [
+      "GA4 stream/settings verification",
+      "Explicit approval of actual analytics destination/configuration",
+      "Provider terms/DPA/transfers and real retention/rights evidence",
+      "ANALYTICS-READY and exact configured-release validation"
+    ]
+  },
+  "reviews": {
+    "enabled": false,
+    "writtenRightsEvidenced": false,
+    "acceptedArtifactExposure": "NONE_PER_GS_LAUNCH_028",
+    "repositoryPublic": true,
+    "snapshotVerbatimReviews": 11,
+    "seedReviews": 6,
+    "seedFirstNames": 6,
+    "seedUsernameFields": 1,
+    "privateCopiesRetained": true,
+    "cleanup": "PREPARED_SCOPE_ONLY_REQUIRES_DELIBERATE_APPROVAL",
+    "publicOrCmsDeletion": false,
+    "historyRewritten": false,
+    "launchBlocker": false
+  },
+  "production": {
+    "origin": "https://gridsmith.uk",
+    "currentWebsite": "WORDPRESS_CONFIRMED",
+    "actualBuilderExpectedRefusals": {
+      "name": "production-refusal",
+      "exitCode": 1,
+      "expected": 1,
+      "logSha256": "4d2d5bc423def46f51bb0b4730fabae9ac12db34c1c996802ea64f1d1902090c"
+    },
+    "refusals": [
+      "DIRECT-CONTACT-VERIFIED missing",
+      "privacy register OWNER_ADOPTED/migration gated",
+      "cookies register OWNER_ADOPTED/migration gated",
+      "terms register OWNER_ADOPTED/migration gated",
+      "client-terms register OWNER_ADOPTED/migration gated",
+      "business-client-terms register OWNER_ADOPTED/migration gated",
+      "consumer-client-terms register OWNER_ADOPTED/migration gated",
+      "accessibility register OWNER_ADOPTED/migration gated"
+    ],
+    "formRequirementObsolete": false,
+    "formRequirementAlreadyAbsent": true,
+    "buildRun": false,
+    "cutoverRun": false,
+    "cookieStageA": "FUTURE_FINAL_CONFIGURATION_HOSTINGER_STACK_PREPUBLICATION_THEN_EXACT_ARTIFACT_REPEAT",
+    "cookieStageB": "NOT_RUN_ACTUAL_REPLACEMENT_ORIGIN_REQUIRED",
+    "acceptanceToolingPrepared": true,
+    "linuxProductionAcceptance": "NOT_RUN_NO_PRODUCTION_BUILD_AUTHORISED"
+  },
+  "cms": {
+    "dryRun": "PASS_47_ELIGIBLE_10_GATED",
+    "freshReadOnly": {
+      "status": "PASS",
+      "publicDocuments": 47,
+      "legalDocuments": 0,
+      "exactLegalAbsence": true
+    },
+    "writeGuard": "EXPECTED_REFUSAL_BEFORE_NETWORK",
+    "rollbackGuard": "EXPECTED_REFUSAL_BEFORE_NETWORK",
+    "actualWrites": 0,
+    "writeOverwritesAllEligible": true,
+    "rollbackDeletesIdsNotRestoresExport": true
+  },
+  "hosting": {
+    "strategy": "KEEP_EXISTING_GRIDSMITH_UK_WEBSITE_ASSOCIATION_REPLACE_ONLY_ROOT",
+    "firstCutoverRoute": "SUPPORTED_SCOPED_FILE_UPLOAD",
+    "optionalFutureGitBranch": "codex/gs-hostinger-production-artifact",
+    "productionGitMappingVerified": false,
+    "productionDocumentRootVerified": false,
+    "accountMenusObserved": true,
+    "atomicSwitchAssumed": false,
+    "autoDeploymentMustBeOff": true,
+    "temporaryGitOperationRepeated": false,
+    "wordpressBackup": "OWNER_DECLARED_DOWNLOADED_NO_NEW_RESTORE_PROGRAMME",
+    "dnsObservationAt": "2026-10-30T17:12:13.647Z",
+    "mxSpfDmarcAnd3DkimCnamesObserved": true,
+    "dnsValuesPrivate": true,
+    "mailDelivery": "NOT_RUN",
+    "providerChanges": 0,
+    "browserRetryAfterOwnerReply": "STILL_DISABLED_TOOL_RESPONSE"
+  },
+  "integration": {
+    "pr3": "OPEN_DRAFT_TO_MAIN",
+    "pr4": "OPEN_DRAFT_CONTAINED_IN_PR5",
+    "pr5": "OPEN_DRAFT_TO_023",
+    "strategy": "Review correction PR against 027; later authorised PR5 into023, retarget correction PR to023; integrate accepted legal/configuration; refresh PR3 and obtain merge authority",
+    "mergePerformed": false,
+    "forcePush": false
+  },
+  "verification": {
+    "npmCi": "PASS",
+    "verifyStatic": "PASS_TWO_COMPLETE_RUNS; FINAL_PREPAINT_BOUND_THEN_TARGETED_TYPE_LINT_CONSENT_AND_BUDGET_PASS",
+    "typescript": "PASS",
+    "targetedEslint": "PASS",
+    "bundleSize": "PASS_FINAL_CLEAN_BUILD_69_ROUTES",
+    "consentSelftest": "PASS_70_CASES",
+    "productionIdentityLegalRoutesCspSelftests": "PASS_WITH_REHEARSAL_AND_RELAXED_CSP_ADVERSE_SPECIMENS",
+    "consentBrowser": "PASS_28_SCENARIOS_FINAL_CLEAN_REPEAT",
+    "consentNegativeProbes": "PASS_SEVEN_EXPECTED_BRANCHES_REJECTED_INITIAL_RUN_PLUS_FINAL_CLEAN_CONTROL_AFTER_PREPAINT_FIX",
+    "hostedLegalParity": "PASS",
+    "proposalHashes": "PASS",
+    "correctedLegalParserDisclosure": "PASS",
+    "productionNegativePath": "PASS_EXPECTED_8_REFUSALS",
+    "migrationGuards": "PASS_EXPECTED_REFUSALS",
+    "previewPublisherSelftest": "PASS",
+    "secretScan": "PASS",
+    "protectedSourceWorkflowDiff": "PASS_UNCHANGED",
+    "fullVisualSuites": "NOT_REPEATED",
+    "fullManualAccessibility": "NOT_RUN",
+    "linuxProductionHarness": "NOT_RUN",
+    "consentInitialAggregate": {
+      "status": "FAIL_RETAINED",
+      "reason": "Future-dated decision left tracking off but hid the banner; prepaint eligibility was the second predicate",
+      "allSevenAdverseProbesFired": true,
+      "initialCleanControl": "FAIL_SAME_FUTURE_BANNER_FINDING"
+    },
+    "consentFinalClean": {
+      "status": "PASS",
+      "scenarios": 28,
+      "mode": "consent",
+      "providers": [
+        "ga4",
+        "posthog"
+      ],
+      "collectionIntercepted": true
+    }
+  },
+  "notPerformed": [
+    "artifact publication",
+    "temporary preview modification",
+    "production profile generation",
+    "production CMS/database mutation",
+    "WordPress replacement/restoration",
+    "DNS/mail/provider changes",
+    "analytics or reviews activation",
+    "main merge",
+    "support communication",
+    "worktree deletion",
+    "history rewrite"
+  ],
+  "nextTask": "GS-LAUNCH-030 apply exact owner review/adoption/custody/analytics decisions and progress through publication/CMS authority to accepted production build",
+  "privateEvidenceSha256": {
+    "npm-ci.log": "654b2e3a1bcd4bacc585cd9f24139b58e45604f99d1c5f5c146313ba32a19f6d",
+    "verify-static.log": "7721f78f82cfeb3f3bd2c472772b0ba70b40a4830ff53a090213bfffb7751ee8",
+    "verify-static-final.log": "b10ac035d3221383c134c66474070e65a2a7970b1fe4272bb8b3af99c51ffec4",
+    "verify-consent.log": "a5dd940f9ee78bb1bd6c728dac7c205ee8c2a98e51f1110f86cd53113302d5c2",
+    "static-selftest.log": "a362035182bd484052e02198e1c7da3acca16394af436ecf328cb2f35afab8fa",
+    "consent-selftest-final.log": "aec74ff739407daf5a2abf13835ca02eee068086209053bdd0cc72ced2b01fb6",
+    "bundle-size.log": "d81585d1cde0ee2e2b3e587b4c8afe1cb186f14976419944d4830395a7405a63",
+    "hosted-legal-parity.log": "5f61c6e008f06eac18cd57b62f9023da9547ec6485a2f75f27824c8be6cc5205",
+    "cms-read-production.log": "7b15199a75d90486c45a096b02544036d43e8f867b633452774e8cf1df83e5f4",
+    "negative-checks.json": "3a50cf8081e6b2608e4cab2403ada91aa5eea6b4369b3c655b5f0d21b47e99c8",
+    "direct-contact-preparation.json": "9c12984acf16af5bf4e9981721d96ff48e37694aa87af8f8e1910b7eeb8ffd21",
+    "review-copy-custody.json": "1e646ac7818922cb02bf0344f9b1118c76de7578281f5fa23efda726e0d590a8",
+    "posthog-settings.json": "c3e023bb69ee41d9667606953d4863e2b5167d20cc468f9225e583378ed04057",
+    "origin-dns-preflight.json": "2fcc7d7fa200fd62562927c5f419244a4e3f35e345af72b607fce7858d5c2143",
+    "browser-access.json": "c700094f64bcf51aeb8b617a2ee9a800d0b3aa9b852a1ab1d5ad815df3328764",
+    "consent-baseline-proof.json": "c5a60a19675de8a489eebc6020be07e79481dffd48a9ab9dee9ab8e380c58e6c",
+    "eslint-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "secrets-before-commit.log": "183da8847f074ac630283c57ddcb5c40062fd41713630bbf749187b431d79a0b",
+    "consent-final-clean.log": "2d00d74179f0bf9b925225e504af30ab26de045b12cfa165d20226ab390c84df",
+    "static-selftest-final.log": "a362035182bd484052e02198e1c7da3acca16394af436ecf328cb2f35afab8fa",
+    "bundle-size-final.log": "d81585d1cde0ee2e2b3e587b4c8afe1cb186f14976419944d4830395a7405a63",
+    "typecheck-final.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "secrets-final.log": "183da8847f074ac630283c57ddcb5c40062fd41713630bbf749187b431d79a0b"
+  }
+}

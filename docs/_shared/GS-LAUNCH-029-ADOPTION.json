@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-029",
+  "status": "PROPOSED_NOT_ADOPTED_NOT_PUBLISHABLE",
+  "note": "One corrected seven-document adoption packet. Frozen preview still shows Privacy2.8 and Cookie2.5. Read separate Privacy2.9 and Cookie2.6 before adoption; the other five documents are unchanged.",
+  "documents": [
+    {
+      "file": "privacy-policy-2.9.md",
+      "version": "2.9",
+      "sha256": "449db68c0c452b214e78f68a33f4123d7b6c09bfdba1b9d54055db1392227764",
+      "change": "substantive",
+      "summary": "How Gridsmith Ltd collects and uses personal data through this website, enquiries, optional analytics and client work: who receives it, where, for how long, and how to exercise your rights.",
+      "changes": "Provider names replaced by recipient categories where categories are accurate; hosting country reduced to the European Economic Area; transfer destinations kept where safeguards depend on them (Pakistan; the United States, with UK adequacy only for certified organisations); Freelancer platform records distinguished from the working copies Gridsmith needs; Freelancer review copies described with their contents and current public locations; freelancing platforms added as recipients; optional Google Analytics 4 and PostHog described as conditional on being offered, with data, settings, retention, withdrawal and transfers; cookie choices not recorded by Gridsmith; cross-reference links. GS-LAUNCH-029 corrects the consent-cookie transport statement: browser returns cookie to hosting; no separate individual choice log is maintained. GS-LAUNCH-029 also distinguishes standard GA4 first-visit/session/engagement information from site-sent page views.",
+      "supersedes": {
+        "file": "current/privacy-policy.md",
+        "version": "2.7",
+        "sha256": "822dd473c253e7d031e18cf6c439ace13817f270d9fd9e1898d9b8c5fc4549a3"
+      },
+      "slug": "privacy",
+      "path": "docs/_legal/proposed/GS-LAUNCH-029/privacy-policy-2.9.md"
+    },
+    {
+      "file": "cookie-policy-2.6.md",
+      "version": "2.6",
+      "sha256": "66023b43f37a3a8c42fedb31b8229cdb0970420d5bed965911ae276a108e7da3",
+      "change": "substantive",
+      "summary": "The cookie that records your choice, and the optional Google Analytics 4 and PostHog analytics that run only if you allow them, with how to change your mind at any time.",
+      "changes": "Optional Google Analytics 4 and PostHog with per-service choices; cookie and browser-storage table as measured with the real libraries; a 180-day choice whose analytics identifiers expire with it; page views only, sent without query or fragment; withdrawal across open pages and re-consent; notice mode described for builds offering no analytics; content management provider named by category; cross-reference links. GS-LAUNCH-029 also distinguishes standard GA4 first-visit/session/engagement information from site-sent page views.",
+      "supersedes": {
+        "file": "current/cookie-policy.md",
+        "version": "2.4",
+        "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960"
+      },
+      "slug": "cookies",
+      "path": "docs/_legal/proposed/GS-LAUNCH-029/cookie-policy-2.6.md"
+    },
+    {
+      "file": "website-terms-2.4.md",
+      "version": "2.4",
+      "sha256": "5a89cec4ea564a64bbcc55f692cccb94f421011f86233b7e62916d2a0d977571",
+      "change": "presentation-only",
+      "summary": "The terms for using gridsmith.uk. Paid work is governed by a written quotation and the client terms, not by these.",
+      "changes": "Cross-reference links only. Served words unchanged.",
+      "supersedes": {
+        "file": "current/website-terms.md",
+        "version": "2.3",
+        "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a"
+      },
+      "slug": "terms",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/website-terms-2.4.md"
+    },
+    {
+      "file": "client-terms-applicability-2.4.md",
+      "version": "2.4",
+      "sha256": "1aae31572444d6c543fddbab71b66138ffb06ba516d4d10d836835a474cdfa6a",
+      "change": "presentation-only",
+      "summary": "Which client terms apply depends on the purpose of your purchase, including whether an individual is buying wholly or mainly outside a trade, business, craft or profession. Your quotation identifies the applicable version.",
+      "changes": "Cross-reference links only. Served words unchanged.",
+      "supersedes": {
+        "file": "current/client-terms-applicability.md",
+        "version": "2.3",
+        "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87"
+      },
+      "slug": "client-terms",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/client-terms-applicability-2.4.md"
+    },
+    {
+      "file": "client-terms-business-3.4.md",
+      "version": "3.4",
+      "sha256": "e7f1a7c1a1b64d66349aa4f3c806d4953ed739e5f36ceb6bd26724948168c0de",
+      "change": "presentation-only",
+      "summary": "The terms for paid work for businesses and anyone buying for a trade, business, craft or profession. Each project is defined by a written Scope that is accepted before any payment is requested.",
+      "changes": "Cross-reference links only. Served words unchanged.",
+      "supersedes": {
+        "file": "current/client-terms-business.md",
+        "version": "3.3",
+        "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6"
+      },
+      "slug": "business-client-terms",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/client-terms-business-3.4.md"
+    },
+    {
+      "file": "client-terms-consumers-3.5.md",
+      "version": "3.5",
+      "sha256": "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c",
+      "change": "presentation-only",
+      "summary": "The terms for paid work for individuals buying outside a trade, business, craft or profession: how a quotation is accepted, your 14-day right to cancel, and what you pay if a project ends early. Consumer law gives you rights these terms cannot take away.",
+      "changes": "Cross-reference links only. Served words unchanged. The cancellation form is byte-identical; the consumer workflow is re-labelled 3.5.",
+      "supersedes": {
+        "file": "current/client-terms-consumers.md",
+        "version": "3.4",
+        "sha256": "a73f6df89b681721ebd97e841803327e8e91caabd1da0a90edbf204d590a0d5e"
+      },
+      "slug": "consumer-client-terms",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/client-terms-consumers-3.5.md"
+    },
+    {
+      "file": "accessibility-statement-2.5.md",
+      "version": "2.5",
+      "sha256": "e7b7f71e34c44db2202c9f41c1a09073c46ef25e05f34127c1263750d7da211f",
+      "change": "substantive",
+      "summary": "How accessible gridsmith.uk is, the WCAG 2.2 AA testing carried out, the known limitations and manual checks outstanding, and how to ask for help or an alternative format.",
+      "changes": "Audit coverage and method as actually run, the two problems found and corrected (Design service focus ring; motion without a pause on the home, Design and Digital pages), the pause mechanisms, outstanding assistive-technology and manual checks; contact links.",
+      "supersedes": {
+        "file": "current/accessibility-statement.md",
+        "version": "2.4",
+        "sha256": "774b1e200e67d146b0375b12c3fd4fadb3aeb0e27b87ea53bd0b419557984708"
+      },
+      "slug": "accessibility",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/accessibility-statement-2.5.md"
+    }
+  ],
+  "originalPreviewProposals": [
+    {
+      "file": "privacy-policy-2.8.md",
+      "version": "2.8",
+      "sha256": "f054f126665d51539574bf1a27c552f25a6e2dc99f6b92ebd93c738833dc2c8b",
+      "change": "substantive",
+      "summary": "How Gridsmith Ltd collects and uses personal data through this website, enquiries, optional analytics and client work: who receives it, where, for how long, and how to exercise your rights.",
+      "changes": "Provider names replaced by recipient categories where categories are accurate; hosting country reduced to the European Economic Area; transfer destinations kept where safeguards depend on them (Pakistan; the United States, with UK adequacy only for certified organisations); Freelancer platform records distinguished from the working copies Gridsmith needs; Freelancer review copies described with their contents and current public locations; freelancing platforms added as recipients; optional Google Analytics 4 and PostHog described as conditional on being offered, with data, settings, retention, withdrawal and transfers; cookie choices not recorded by Gridsmith; cross-reference links.",
+      "supersedes": {
+        "file": "current/privacy-policy.md",
+        "version": "2.7",
+        "sha256": "822dd473c253e7d031e18cf6c439ace13817f270d9fd9e1898d9b8c5fc4549a3"
+      },
+      "slug": "privacy",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/privacy-policy-2.8.md"
+    },
+    {
+      "file": "cookie-policy-2.5.md",
+      "version": "2.5",
+      "sha256": "9dbe02e24e4f03942912d3e8c400bb30bf2efe6cc99fba30a55827a2546d1d7c",
+      "change": "substantive",
+      "summary": "The cookie that records your choice, and the optional Google Analytics 4 and PostHog analytics that run only if you allow them, with how to change your mind at any time.",
+      "changes": "Optional Google Analytics 4 and PostHog with per-service choices; cookie and browser-storage table as measured with the real libraries; a 180-day choice whose analytics identifiers expire with it; page views only, sent without query or fragment; withdrawal across open pages and re-consent; notice mode described for builds offering no analytics; content management provider named by category; cross-reference links.",
+      "supersedes": {
+        "file": "current/cookie-policy.md",
+        "version": "2.4",
+        "sha256": "e853438e4acb65f953ea58575681c94bd0dc0908359b091190891fe3a8a0e960"
+      },
+      "slug": "cookies",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/cookie-policy-2.5.md"
+    },
+    {
+      "file": "website-terms-2.4.md",
+      "version": "2.4",
+      "sha256": "5a89cec4ea564a64bbcc55f692cccb94f421011f86233b7e62916d2a0d977571",
+      "change": "presentation-only",
+      "summary": "The terms for using gridsmith.uk. Paid work is governed by a written quotation and the client terms, not by these.",
+      "changes": "Cross-reference links only. Served words unchanged.",
+      "supersedes": {
+        "file": "current/website-terms.md",
+        "version": "2.3",
+        "sha256": "e63d8cd2d30938481d2219ec632f49d3c9f8df75ec287a28fa9fe079b274482a"
+      },
+      "slug": "terms",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/website-terms-2.4.md"
+    },
+    {
+      "file": "client-terms-applicability-2.4.md",
+      "version": "2.4",
+      "sha256": "1aae31572444d6c543fddbab71b66138ffb06ba516d4d10d836835a474cdfa6a",
+      "change": "presentation-only",
+      "summary": "Which client terms apply depends on the purpose of your purchase, including whether an individual is buying wholly or mainly outside a trade, business, craft or profession. Your quotation identifies the applicable version.",
+      "changes": "Cross-reference links only. Served words unchanged.",
+      "supersedes": {
+        "file": "current/client-terms-applicability.md",
+        "version": "2.3",
+        "sha256": "008c05806aad6045272e4438531b9247f8b4d05b4d9b4295196a0282de0c8a87"
+      },
+      "slug": "client-terms",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/client-terms-applicability-2.4.md"
+    },
+    {
+      "file": "client-terms-business-3.4.md",
+      "version": "3.4",
+      "sha256": "e7f1a7c1a1b64d66349aa4f3c806d4953ed739e5f36ceb6bd26724948168c0de",
+      "change": "presentation-only",
+      "summary": "The terms for paid work for businesses and anyone buying for a trade, business, craft or profession. Each project is defined by a written Scope that is accepted before any payment is requested.",
+      "changes": "Cross-reference links only. Served words unchanged.",
+      "supersedes": {
+        "file": "current/client-terms-business.md",
+        "version": "3.3",
+        "sha256": "89f63c91642267a3ffc31d2f33ba3cbca3d383da434c007739cc1ba9f9c275c6"
+      },
+      "slug": "business-client-terms",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/client-terms-business-3.4.md"
+    },
+    {
+      "file": "client-terms-consumers-3.5.md",
+      "version": "3.5",
+      "sha256": "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c",
+      "change": "presentation-only",
+      "summary": "The terms for paid work for individuals buying outside a trade, business, craft or profession: how a quotation is accepted, your 14-day right to cancel, and what you pay if a project ends early. Consumer law gives you rights these terms cannot take away.",
+      "changes": "Cross-reference links only. Served words unchanged. The cancellation form is byte-identical; the consumer workflow is re-labelled 3.5.",
+      "supersedes": {
+        "file": "current/client-terms-consumers.md",
+        "version": "3.4",
+        "sha256": "a73f6df89b681721ebd97e841803327e8e91caabd1da0a90edbf204d590a0d5e"
+      },
+      "slug": "consumer-client-terms",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/client-terms-consumers-3.5.md"
+    },
+    {
+      "file": "accessibility-statement-2.5.md",
+      "version": "2.5",
+      "sha256": "e7b7f71e34c44db2202c9f41c1a09073c46ef25e05f34127c1263750d7da211f",
+      "change": "substantive",
+      "summary": "How accessible gridsmith.uk is, the WCAG 2.2 AA testing carried out, the known limitations and manual checks outstanding, and how to ask for help or an alternative format.",
+      "changes": "Audit coverage and method as actually run, the two problems found and corrected (Design service focus ring; motion without a pause on the home, Design and Digital pages), the pause mechanisms, outstanding assistive-technology and manual checks; contact links.",
+      "supersedes": {
+        "file": "current/accessibility-statement.md",
+        "version": "2.4",
+        "sha256": "774b1e200e67d146b0375b12c3fd4fadb3aeb0e27b87ea53bd0b419557984708"
+      },
+      "slug": "accessibility",
+      "path": "docs/_legal/proposed/GS-LAUNCH-026/accessibility-statement-2.5.md"
+    }
+  ],
+  "workflow": {
+    "file": "CONSUMER-CONTRACTING-WORKFLOW.md",
+    "sha256": "278a41851a18ecc68c988ca3a1cc024efd0e7c8a557da63180dd79ba91178796"
+  }
+}

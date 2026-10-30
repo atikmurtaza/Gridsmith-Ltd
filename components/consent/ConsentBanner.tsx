@@ -49,7 +49,7 @@ export function ConsentBanner({ analytics = ANALYTICS }: { analytics?: Analytics
   // Hide before paint when a current stored decision already answers for every offered provider.
   const prepaint = consent
     ? `try{var m=/(?:^|; )${COOKIE}=v2:g([01-]):p([01-]):(\\d{9,11})(?:;|$)/.exec(document.cookie);` +
-      `if(m&&Date.now()/1e3-m[3]<${CHOICE_MAX_AGE}&&${analytics.ga4 ? "m[1]!=='-'" : 'true'}&&${analytics.posthog ? "m[2]!=='-'" : 'true'})` +
+      `if(m&&Date.now()/1e3>=m[3]&&Date.now()/1e3-m[3]<${CHOICE_MAX_AGE}&&${analytics.ga4 ? "m[1]!=='-'" : 'true'}&&${analytics.posthog ? "m[2]!=='-'" : 'true'})` +
       `document.getElementById('${headingId}').closest('[role="region"]').hidden=true}catch(e){}`
     : `try{if(document.cookie.split('; ').some(c=>c.startsWith('${COOKIE}=')))` +
       `document.getElementById('${headingId}').closest('[role="region"]').hidden=true}catch{}`;

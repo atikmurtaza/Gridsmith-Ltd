@@ -2,7 +2,9 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createStaticManifest, createLegalPreviewManifest, sitemapPaths, NOINDEX_PATHS } from '../lib/build/route-manifest.ts';
-import { resolveBuildTarget } from '../lib/build/target.ts';
+import { resolveBuildTarget, productionIdentityAllowed } from '../lib/build/target.ts';
+import { servedLegalRoutes } from './legal-preview-rules.mjs';
+import { hostingerCspMatches } from '../lib/build/hostinger.ts';
 import { inspectStaticArtifact, inspectOperatorError, readArtifact } from './check-static-artifact.mjs';
 
 // Negative specimens stay gated after the real release becomes publishable.
@@ -14,6 +16,25 @@ const documents = publication.filter((entry) => entry.eligible).map((entry) => (
   ...(entry.type === 'service' ? { published: true } : {}), isSeed: false,
 }));
 let proofs = 0;
+const productionSubject = { profile: 'production', siteOrigin: 'https://gridsmith.uk', dataset: 'production',
+  legalPreview: false, contactMode: 'direct', intakeOrigin: null, rehearsal: false, deployable: true,
+  sourceModified: false, sourceSha: 'a'.repeat(40), artifactIdentity: 'b'.repeat(64) };
+assert(productionIdentityAllowed(productionSubject));
+for (const change of [{ profile: 'owner-preview' }, { siteOrigin: 'https://www.gridsmith.uk' }, { dataset: 'development' },
+  { legalPreview: true }, { legalProposal: 'GS-LAUNCH-026' }, { contactMode: 'edge' }, { intakeOrigin: 'https://example.invalid' },
+  { rehearsal: true }, { deployable: false }, { sourceModified: true }, { sourceSha: '' }, { artifactIdentity: '' }]) {
+  assert.equal(productionIdentityAllowed({ ...productionSubject, ...change }), false, JSON.stringify(change)); proofs++;
+}
+for (const key of Object.keys(productionSubject)) {
+  const subject = { ...productionSubject }; delete subject[key];
+  assert.equal(productionIdentityAllowed(subject), false, `missing ${key}`); proofs++;
+}
+assert.equal(productionIdentityAllowed(null), false); proofs++;
+assert.deepEqual(servedLegalRoutes(productionSubject, false), ['/legal/privacy', '/legal/cookies', '/legal/terms',
+  '/legal/client-terms', '/legal/business-client-terms', '/legal/consumer-client-terms', '/legal/accessibility']);
+assert.equal(servedLegalRoutes({ profile: 'owner-preview' }, true).length, 7);
+assert.equal(servedLegalRoutes({ ...productionSubject, rehearsal: true, deployable: false }, false).length, 0);
+assert.equal(servedLegalRoutes(null, false).length, 0);
 assert.equal(resolveBuildTarget(undefined), 'normal');
 assert.equal(resolveBuildTarget('normal'), 'normal');
 assert.equal(resolveBuildTarget('static'), 'static');
@@ -304,6 +325,13 @@ const REQUIRED_HEADERS = { 'X-Content-Type-Options': /^nosniff$/, 'X-Frame-Optio
   // Numeric, not digit-shaped: at least one year (31536000 s); a zero-padded zero must not pass.
   'Strict-Transport-Security': { test: (v) => { const m = /^max-age=(\d+)(?:;|$)/.exec(v); return Boolean(m) && Number(m[1]) >= 31536000; } } };
 const REQUIRED_CSP = ["default-src 'self'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'", "object-src 'none'"];
+const acceptedCsp = hosting.match(/^Header always set Content-Security-Policy "([^"]+)"/m)[1];
+assert(hostingerCspMatches(hosting, acceptedCsp));
+for (const bad of [null, '', ...acceptedCsp.split(';').filter(part => part.trim()).map(part => acceptedCsp.replace(part, '')),
+  acceptedCsp.replace("script-src 'self'", "script-src * 'unsafe-eval'"), acceptedCsp.replace("img-src 'self'", 'img-src *'), acceptedCsp + '; script-src *']) {
+  assert.equal(hostingerCspMatches(hosting, bad), false, `Relaxed/missing production CSP accepted: ${bad}`); proofs++;
+}
+assert.equal(hostingerCspMatches('', acceptedCsp), false); proofs++;
 const headerProblems = (rules) => {
   const set = Object.fromEntries([...rules.matchAll(/^Header always set ([\w-]+) "([^"]*)"$/gm)].map(m => [m[1], m[2]]));
   const problems = Object.entries(REQUIRED_HEADERS).filter(([name, value]) => !value.test(set[name] ?? '')).map(([name]) => name);

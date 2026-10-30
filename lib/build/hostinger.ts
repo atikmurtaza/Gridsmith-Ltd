@@ -5,6 +5,13 @@ import { analyticsCsp, type AnalyticsConfig } from '../analytics/config.ts';
 
 const NO_ANALYTICS: AnalyticsConfig = { ga4: null, posthog: null };
 
+/** The delivered policy must preserve every directive of the accepted artifact, including provider hosts. */
+export function hostingerCspMatches(rules: string, served: string | null): boolean {
+  const expected = [...rules.matchAll(/^Header always set Content-Security-Policy "([^"]+)"\r?$/gm)];
+  const directives = (value: string) => JSON.stringify(value.split(';').map(part => part.trim().replace(/\s+/g, ' ')).filter(Boolean).sort());
+  return expected.length === 1 && served !== null && directives(expected[0][1]) === directives(served);
+}
+
 type LegacyRedirect = { source: string; destination: string; permanent: boolean };
 const legacyRedirects: LegacyRedirect[] = JSON.parse(
   readFileSync(new URL('../../redirects/legacy.json', import.meta.url), 'utf8'));
