@@ -24,7 +24,7 @@ import {
   requiredPrerequisites,
   directContactAccessibilityProblems,
 } from './legal-adoption-rules.mjs';
-import { parseDraft, assertAdoptedSource, assertNoSelfLink } from './seed-legal.mjs';
+import { ACTIVE_LEGAL_PROPOSAL, LEGAL_DRAFT_SOURCES, legalProposalDocuments, parseDraft, assertAdoptedSource, assertNoSelfLink } from './seed-legal.mjs';
 import { allLegalPublishable } from '../lib/legal/adoption.ts';
 
 const read = (f) => readFileSync(`docs/_legal/${f}`, 'utf8');
@@ -58,7 +58,7 @@ const expect = (name, problems, pattern) => {
 const all = (slug, md) => [...draftProblems(slug, md), ...instrumentProblems(slug, md)];
 
 expect('coordinated public texts and operational templates', coordinatedReviewProblems(coordinated, workflow), null);
-expect('stale quotation version', coordinatedReviewProblems(coordinated, swap(workflow, 'Client Terms for Consumers version 3.4', 'Client Terms for Consumers version 3.1')), /current consumer version/);
+expect('stale quotation version', coordinatedReviewProblems(coordinated, swap(workflow, `Client Terms for Consumers version ${parseDraft(consumer).version}`, 'Client Terms for Consumers version 3.1')), /current consumer version/);
 expect('missing early-service request in quotation', coordinatedReviewProblems(coordinated, workflow.replace('"I ask Gridsmith Ltd to start work now', '"Please start')), /exact acceptance/);
 expect('cancellation form omits digital content', coordinatedReviewProblems(coordinated, workflow.replace('following service/digital content:', 'following service:')), /form differs/);
 expect('digital supply starts early', coordinatedReviewProblems({ ...coordinated, 'consumer-client-terms': consumer.replace('we wait until its cancellation period has ended before supplying it', 'we supply it immediately') }, workflow), /digital content must wait/);
@@ -119,11 +119,11 @@ expect('self-referential cap', all('business-client-terms', business + '\nThe li
 expect('no DPA schedule', all('business-client-terms', business.replaceAll('Data Processing Schedule', 'data terms')), /Art\. 28/);
 
 // parityProblems — each fact.
-expect('provider missing', parityProblems(privacy.replaceAll('Hostinger', 'our host'), cookies, facts), /does not name Hostinger/);
+expect('provider missing', parityProblems(previousPrivacy.replaceAll('Hostinger', 'our host'), cookies, { ...facts, contactMode: 'edge' }), /does not name Hostinger/);
 // GS-LAUNCH-026: an accurate recipient category is a disclosure; a vaguer word still is not.
-// Every mention is replaced: the adopted text names the host three times, so one replacement is inert.
-expect('provider disclosed by category', parityProblems(privacy.replaceAll('Hostinger', 'our website and email hosting provider'), cookies, facts), null);
-expect('category too vague', parityProblems(privacy.replaceAll('Hostinger', 'a supplier'), cookies, facts), /does not name Hostinger or disclose it by category/);
+// Both the named-provider historical case and the adopted category are exercised.
+expect('provider disclosed by category', parityProblems(privacy, cookies, facts), null);
+expect('category too vague', parityProblems(privacy.replaceAll(/website and email hosting provider/gi, 'a supplier'), cookies, facts), /does not name Hostinger or disclose it by category/);
 expect('regulator missing', parityProblems(privacy.replaceAll('Information Commission', 'regulator'), cookies, facts), /Information Commission/);
 expect('storage region missing', parityProblems(previousPrivacy.replaceAll('Ireland', 'Europe'), cookies, { ...facts, contactMode: 'edge' }), /where enquiries are stored/);
 expect('cookie name', parityProblems(privacy, cookies, { ...facts, cookieName: 'gs_other' }), /gs_other/);
@@ -278,7 +278,7 @@ expect('future workflow version-only correction suffices', coordinatedReviewProb
 expect('contradictory direct accessibility refused', directContactAccessibilityProblems(directAccessibility + ' Our enquiry forms need JavaScript.'), /direct-contact alternative/);
 
 // GS-LAUNCH-014: fixed owner hashes and predecessor evidence are independent expectations.
-const currentRegister = JSON.parse(read('evidence/GS-O003-R-REGISTER.json'));
+const currentRegister = JSON.parse(read('evidence/GS-LAUNCH-030-superseded/GS-O003-R-REGISTER.json'));
 const approvedHashes = {
   privacy: '822dd473c253e7d031e18cf6c439ace13817f270d9fd9e1898d9b8c5fc4549a3',
   accessibility: '774b1e200e67d146b0375b12c3fd4fadb3aeb0e27b87ea53bd0b419557984708',
@@ -286,7 +286,7 @@ const approvedHashes = {
 };
 assert.equal(createHash('sha256').update(previous('GS-O003-R-REGISTER.json')).digest('hex'), '4663ca333058dd5ee47dcf018571386be05737d7e53fa18c22956d114cee282e');
 for (const [slug, e] of Object.entries(currentRegister.documents)) {
-  const text = readFileSync(e.draft);
+  const text = readFileSync(`docs/_legal/evidence/GS-LAUNCH-030-superseded/${e.draft.split('/').at(-1)}`);
   assert.equal(createHash('sha256').update(text).digest('hex'), approvedHashes[slug] ?? previousRegister.documents[slug].ownerAdoptedSha256);
   assert(['OWNER_ADOPTED', 'PUBLISHABLE'].includes(e.state));
   expect(`${slug} current publication evidence`, registerProblems(slug, e,
@@ -309,15 +309,15 @@ assert.equal(currentRegister.previousAdoptionRegister, 'docs/_legal/evidence/GS-
 assert.equal(currentRegister.documents.privacy.contactMode, 'direct');
 assert.equal(allLegalPublishable(Array(7).fill('OWNER_ADOPTED')), false);
 expect('adopted workflow coordinated', coordinatedReviewProblems(coordinated, workflow), null);
-expect('stale confirmation version', coordinatedReviewProblems(coordinated, swap(workflow, 'Consumers 3.4 (attached)', 'Consumers 3.3 (attached)')), /current consumer version/);
+expect('stale confirmation version', coordinatedReviewProblems(coordinated, swap(workflow, `Consumers ${parseDraft(consumer).version} (attached)`, 'Consumers 3.3 (attached)')), /current consumer version/);
 assert.equal(createHash('sha256').update(read('evidence/GS-LAUNCH-014-OWNER-AUTHORITY.md')).digest('hex'), '8c0596b49763c11ddd0dbaa5954718b883946a57cef3c61ebb132140ee662497');
 const workflowBody = text => text.slice(text.indexOf('## 1. Operating rules'));
-assert.equal(workflowBody(workflow), workflowBody(previousWorkflow)
+assert.equal(workflowBody(read('evidence/GS-LAUNCH-030-superseded/CONSUMER-CONTRACTING-WORKFLOW.md')), workflowBody(previousWorkflow)
   .replaceAll('Consumers version 3.3', 'Consumers version 3.4').replaceAll('Consumers 3.3', 'Consumers 3.4')
   .replaceAll('WhatsApp/text only', 'WhatsApp only').replaceAll('WhatsApp or text', 'WhatsApp'));
-assert.equal(consumer, proposedConsumer);
-assert.equal(privacy, proposedPrivacy);
-assert.equal(read('current/accessibility-statement.md'), proposedAccessibility);
+assert.equal(read('evidence/GS-LAUNCH-030-superseded/client-terms-consumers.md'), proposedConsumer);
+assert.equal(read('evidence/GS-LAUNCH-030-superseded/privacy-policy.md'), proposedPrivacy);
+assert.equal(read('evidence/GS-LAUNCH-030-superseded/accessibility-statement.md'), proposedAccessibility);
 
 // danglingReferences — lists and sub-clauses.
 expect('reference list', danglingReferences('## 1. A\n## 2. B\nSee sections 1, 2 and 7.\n'), /^7$/);
@@ -392,10 +392,69 @@ assert.equal(allLegalPublishable([...Array(6).fill('PUBLISHABLE'), 'OWNER_ADOPTE
 cases += 6;
 const publicationHeader = '**Effective date: On first publication with the replacement website at gridsmith.uk**';
 const publicationParsed = parseDraft(consumer);
-expect('publication trigger parsed', publicationParsed.effectiveOnPublication && publicationParsed.effective === null && publicationParsed.drafted === '2026-10-25' ? [] : ['bad commencement'], null);
+expect('publication trigger parsed', publicationParsed.effectiveOnPublication && publicationParsed.effective === null && publicationParsed.drafted === '2026-10-28' ? [] : ['bad commencement'], null);
 expect('adopted before publication event', stateProblems('c', 'OWNER_ADOPTED', consumer, 's', '2026-10-22'), null);
 expect('publishable commencement remains future', stateProblems('c', 'PUBLISHABLE', consumer, 's', '2026-10-22'), null);
 throws('malformed commencement rejected', consumer.replace(publicationHeader, '**Effective date: whenever approved**'), /unreadable effective date/);
+
+
+// GS-LAUNCH-030 owner-approved bytes are fixed expectations independent of the current subjects.
+const adopted030 = [
+  [
+    "privacy",
+    "2.9",
+    "449db68c0c452b214e78f68a33f4123d7b6c09bfdba1b9d54055db1392227764"
+  ],
+  [
+    "cookies",
+    "2.6",
+    "66023b43f37a3a8c42fedb31b8229cdb0970420d5bed965911ae276a108e7da3"
+  ],
+  [
+    "terms",
+    "2.4",
+    "5a89cec4ea564a64bbcc55f692cccb94f421011f86233b7e62916d2a0d977571"
+  ],
+  [
+    "client-terms",
+    "2.4",
+    "1aae31572444d6c543fddbab71b66138ffb06ba516d4d10d836835a474cdfa6a"
+  ],
+  [
+    "business-client-terms",
+    "3.4",
+    "e7f1a7c1a1b64d66349aa4f3c806d4953ed739e5f36ceb6bd26724948168c0de"
+  ],
+  [
+    "consumer-client-terms",
+    "3.5",
+    "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c"
+  ],
+  [
+    "accessibility",
+    "2.5",
+    "e7b7f71e34c44db2202c9f41c1a09073c46ef25e05f34127c1263750d7da211f"
+  ]
+];
+const register030 = JSON.parse(read('evidence/GS-O003-R-REGISTER.json'));
+const superseded030 = JSON.parse(read('evidence/GS-LAUNCH-030-superseded/GS-O003-R-REGISTER.json'));
+for (const [slug, version, digest] of adopted030) {
+  const entry = register030.documents[slug], bytes = readFileSync(`docs/_legal/${LEGAL_DRAFT_SOURCES[slug]}`);
+  assert.equal(parseDraft(bytes.toString()).version, version);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), digest);
+  assert.equal(entry.ownerAdoptedSha256, digest);
+  assert.equal(entry.ownerAdoptedVersion, version);
+  assert.equal(entry.ownerAdoptedOn, '2026-10-30');
+  assert.equal(entry.state, 'OWNER_ADOPTED');
+  assert.deepEqual(entry.prerequisitesMet, superseded030.documents[slug].prerequisitesMet);
+  assert.deepEqual(entry.publicationPrerequisites, superseded030.documents[slug].publicationPrerequisites);
+  const oldBytes = readFileSync(`docs/_legal/evidence/GS-LAUNCH-030-superseded/${entry.draft.split('/').at(-1)}`);
+  assert.equal(createHash('sha256').update(oldBytes).digest('hex'), superseded030.documents[slug].ownerAdoptedSha256);
+  cases++;
+}
+assert.equal(ACTIVE_LEGAL_PROPOSAL, null);
+assert.throws(() => legalProposalDocuments('GS-LAUNCH-026'), /Unknown legal proposal/);
+cases++;
 
 if (failures) {
   console.error(`\ncheck-legal-adoption.selftest: ${failures} of ${cases} case(s) failed`);

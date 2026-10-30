@@ -16,6 +16,51 @@ export const ACCEPTANCE_COMMANDS = [
 ];
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const read = path => JSON.parse(readFileSync(path));
+
+// Jobs API availability must not bypass or prematurely abort the required normal CI result.
+export async function waitForNormalVerification(url, token, { request = fetch, now = Date.now,
+  delay = ms => new Promise(done => setTimeout(done, ms)) } = {}) {
+  const deadline = now() + 120 * 60_000;
+  let failures = 0;
+  for (;;) {
+    assert(now() < deadline, 'Normal verification timed out');
+    let response;
+    try {
+      response = await request(url, { headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' },
+        signal: AbortSignal.timeout(30_000) });
+    } catch {
+      assert(++failures <= 5, 'Cannot verify normal CI prerequisite: network retries exhausted');
+      await delay(30_000);
+      continue;
+    }
+    assert(now() < deadline, 'Normal verification timed out');
+    if (!response.ok) {
+      const retryAfter = response.headers.get('retry-after');
+      const retryAt = retryAfter ? (/^\d+$/.test(retryAfter) ? now() + Number(retryAfter) * 1000 : Date.parse(retryAfter)) : NaN;
+      const rateLimited = response.status === 429 || (response.status === 403 &&
+        (response.headers.get('x-ratelimit-remaining') === '0' || Number.isFinite(retryAt)));
+      const retryable = rateLimited || response.status === 408 || (response.status >= 500 && response.status < 600);
+      const requestId = (response.headers.get('x-github-request-id') || 'unknown').replace(/[^a-zA-Z0-9:-]/g, '');
+      const reason = `Cannot verify normal CI prerequisite: HTTP ${response.status}, request ${requestId}`;
+      assert(retryable && ++failures <= 5, reason);
+      const resetAt = rateLimited ? Number(response.headers.get('x-ratelimit-reset')) * 1000 : NaN;
+      const timedRetry = retryAt > now() || resetAt > now();
+      const wait = Math.max(rateLimited && !timedRetry ? 60_000 : 30_000,
+        Number.isFinite(retryAt) ? retryAt - now() : 0, Number.isFinite(resetAt) ? resetAt - now() : 0);
+      assert(now() + wait < deadline, 'Normal verification timed out waiting for Jobs API');
+      console.warn(`${reason}; retrying in ${Math.ceil(wait / 1000)}s`);
+      await delay(wait);
+      continue;
+    }
+    failures = 0;
+    const jobs = await response.json();
+    assert(now() < deadline, 'Normal verification timed out');
+    if (normalVerificationPassed(jobs.jobs)) return;
+    console.log('Waiting for the required normal verification prerequisite.');
+    await delay(30_000);
+  }
+}
+
 export function normalVerificationPassed(jobs) {
   const normal = jobs.find(job => job.name === 'verify');
   assert(normal, 'Normal verification job missing');
@@ -73,17 +118,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   if (mode === 'prepare') {
     assert.equal(process.env.GITHUB_ACTIONS, 'true', 'Release acceptance requires GitHub Actions');
     // Acceptance can run beside normal CI; neither result substitutes for the other.
-    const deadline = Date.now() + 120 * 60_000;
-    for (;;) {
-      const response = await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/jobs`, {
-        headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}`, Accept: 'application/vnd.github+json' } });
-      assert(response.ok, 'Cannot verify normal CI prerequisite');
-      const jobs = await response.json();
-      if (normalVerificationPassed(jobs.jobs)) break;
-      assert(Date.now() < deadline, 'Normal verification timed out');
-      console.log('Preview checks passed; waiting for the same-run normal verification prerequisite.');
-      await new Promise(done => setTimeout(done, 30_000));
-    }
+    await waitForNormalVerification(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/jobs`, process.env.GITHUB_TOKEN);
     const receipt = read('build/gs-launch-018/acceptance.json');
     assert.deepEqual(acceptanceProblems(identity, receipt, ['production', 'full'].map(name =>
       read(`build/gs-launch-018/audit-${name}.json`)), sourceSha, process.env.GITHUB_RUN_ID), []);

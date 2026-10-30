@@ -152,7 +152,10 @@ eq('configured CSP names both providers', /googletagmanager[\s\S]*eu-assets\.i\.
 const adoptedCookies = readFileSync('docs/_legal/current/cookie-policy.md', 'utf8');
 const adoptedPrivacy = readFileSync('docs/_legal/current/privacy-policy.md', 'utf8');
 eq('unconfigured needs nothing', analyticsDisclosureProblems(adoptedCookies, adoptedPrivacy, { ga4: null, posthog: null }), []);
-eq('adopted policies cannot carry GA4', analyticsDisclosureProblems(adoptedCookies, adoptedPrivacy, { ga4: GA, posthog: null }).length > 0, true);
+eq('superseded policies cannot carry GA4', analyticsDisclosureProblems(
+  readFileSync('docs/_legal/evidence/GS-LAUNCH-030-superseded/cookie-policy.md', 'utf8'),
+  readFileSync('docs/_legal/evidence/GS-LAUNCH-030-superseded/privacy-policy.md', 'utf8'), { ga4: GA, posthog: null }).length > 0, true);
+eq('adopted policies disclose both with the source lifetime', analyticsDisclosureProblems(adoptedCookies, adoptedPrivacy, both, { choiceDays: CHOICE_MAX_AGE / 86400 }), []);
 const DESCRIBED_COOKIES = 'Google Analytics 4 sets _ga and _ga_<id>. PostHog sets ph_<key>_posthog.';
 const DESCRIBED_PRIVACY = 'With consent we use Google Analytics 4 and PostHog.';
 eq('described both', analyticsDisclosureProblems(DESCRIBED_COOKIES, DESCRIBED_PRIVACY, both), []);

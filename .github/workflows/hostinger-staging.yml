@@ -24,10 +24,7 @@ env:
   NEXT_PUBLIC_SITE_URL: https://mediumaquamarine-wallaby-594070.hostingersite.com
   GRIDSMITH_STATIC_PROFILE: owner-preview
   GRIDSMITH_STAGING_ORIGIN: https://mediumaquamarine-wallaby-594070.hostingersite.com
-  # GS-LAUNCH-026: the owner-review candidate displays the proposed legal revisions, each marked
-  # NOT YET ADOPTED. build-static refuses this outside the owner-preview profile, and production
-  # serves only register-PUBLISHABLE adopted texts.
-  GRIDSMITH_LEGAL_PROPOSAL: GS-LAUNCH-026
+  # GS-LAUNCH-030: exact revised texts are locally OWNER_ADOPTED; publication remains separately gated.
 jobs:
   build:
     if: inputs.publish_preview != true && github.ref != 'refs/heads/main' && github.ref != 'refs/heads/codex/gs-hostinger-artifact'

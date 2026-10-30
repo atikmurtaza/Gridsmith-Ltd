@@ -1,0 +1,31 @@
+# Client Terms — which ones apply to you
+
+**Version 2.3**\
+**Review date: 22 October 2026**\
+**Effective date: On first publication with the replacement website at gridsmith.uk**
+
+**Gridsmith Ltd**, a private limited company registered in England and Wales\
+Company number: **17050842**\
+Registered office: 30 Briarfield Road, Farnworth, Bolton, BL4 0HD\
+Email: **contact@gridsmith.uk**\
+Trading divisions: **Gridsmith Design, Gridsmith Digital and Gridsmith Press**
+
+## 1.1 If you are buying for a business
+
+Our Client Terms for Business Clients apply to companies and other customers buying for their trade, business, craft or profession, subject to the consumer distinction in section 1.2. Read them at /legal/business-client-terms.
+
+The division you choose does not determine your legal status. Your contract is always with Gridsmith Ltd.
+
+## 1.2 If you are buying as an individual
+
+If you are an individual buying wholly or mainly for purposes outside your trade, business, craft or profession, our Client Terms for Consumers apply. Read them at /legal/consumer-client-terms.
+
+Someone commissioning a family memoir for private use will usually be a consumer. An author commissioning work wholly or mainly for a publishing business will usually be a business client. Describing yourself as a business does not remove consumer rights if the legal test makes you a consumer.
+
+Consumer law gives you rights that cannot be excluded, including rights concerning reasonable care and skill, cancellation where applicable, remedies and fair terms. The business terms are not a substitute for the consumer terms.
+
+## 1.3 If you are not sure
+
+Contact contact@gridsmith.uk before accepting a quotation. We will explain which terms apply and why, and identify their exact version in your quotation. We provide the terms in a form you can save before acceptance. An enquiry creates no contract and requires no payment.
+
+This page helps you find the correct terms; it is not a set of project terms. A later version of either set of terms does not change an existing contract without the agreement required by that contract.

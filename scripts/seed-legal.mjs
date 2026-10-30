@@ -285,12 +285,12 @@ const fromDraft = (slug, summary) => {
 
 const privacy = fromDraft(
   'privacy',
-  'How Gridsmith Ltd collects and uses personal data through this website, enquiries and client work: who processes it, where, for how long, and how to exercise your rights.',
+  "How Gridsmith Ltd collects and uses personal data through this website, enquiries, optional analytics and client work: who receives it, where, for how long, and how to exercise your rights.",
 );
 
 const cookies = fromDraft(
   'cookies',
-  'The essential acknowledgement cookie and the separate consent, provider and deletion controls required before optional analytics can begin.',
+  "The cookie that records your choice, and the optional Google Analytics 4 and PostHog analytics that run only if you allow them, with how to change your mind at any time.",
 );
 
 const terms = fromDraft(
@@ -310,7 +310,7 @@ const consumerClientTerms = fromDraft(
 
 const accessibility = fromDraft(
   'accessibility',
-  'How accessible gridsmith.uk is, what has and has not been tested, the known limitations, and how to ask for help or an alternative format.',
+  "How accessible gridsmith.uk is, the WCAG 2.2 AA testing carried out, the known limitations and manual checks outstanding, and how to ask for help or an alternative format.",
 );
 
 /**
@@ -342,7 +342,7 @@ export const LEGAL_DOCUMENTS = [
  * `null` once it is adopted (its files then replace `current/` under a new register entry) or
  * withdrawn. Only an owner-preview build may serve it; the production profile refuses it.
  */
-export const ACTIVE_LEGAL_PROPOSAL = 'GS-LAUNCH-026';
+export const ACTIVE_LEGAL_PROPOSAL = null;
 
 const ORDER = LEGAL_DOCUMENTS.map((doc) => doc.slug.current);
 const newer = (a, b) => {

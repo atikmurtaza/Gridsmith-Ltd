@@ -1,0 +1,302 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-030",
+  "recordedAt": "2026-10-30T21:00:54.089Z",
+  "status": "CONDITIONAL_ADOPTION_INTEGRATED_FRESH_CI_REQUIRED",
+  "source": {
+    "startingBranch": "codex/gs-launch-029",
+    "startingSha": "d0c792c89a4ecc991765e731b925135e0156602f",
+    "workBranch": "codex/gs-launch-030",
+    "head": null,
+    "applicationAndWorkflowChanged": true,
+    "reporting": "PRE_CI_SOURCE_RECORD",
+    "acceptedDeployedSha": "629accd00e30b09394e6d3ef419999b2c8af0ec5",
+    "finalSha": null
+  },
+  "ci": {
+    "previousRun": {
+      "runId": 41100071266,
+      "headSha": "d0c792c89a4ecc991765e731b925135e0156602f",
+      "conclusion": "FAILURE",
+      "jobs": {
+        "verify": "SUCCESS",
+        "hostinger-staging / build": "FAILURE",
+        "hostinger-staging / publish": "SKIPPED"
+      },
+      "cause": "Non-2xx Jobs API response while packaging waited for verify; exact unsuccessful HTTP status not retained."
+    },
+    "status": "FRESH_EXACT_SOURCE_CI_REQUIRED",
+    "runId": null,
+    "headSha": null,
+    "conclusion": null,
+    "acceptedAsReleaseBaseline": false,
+    "repairs": [
+      "bounded transient Jobs API retries, timeout, rate-limit guidance, safe status/request-ID diagnostics; prerequisite unchanged"
+    ],
+    "rerunTriggered": false
+  },
+  "legal": {
+    "status": "OWNER_ADOPTED_LOCAL_ONLY",
+    "packet": "GS-LAUNCH-029-ADOPTION.json",
+    "hashesVerified": true,
+    "documents": [
+      {
+        "slug": "privacy",
+        "version": "2.9",
+        "sha256": "449db68c0c452b214e78f68a33f4123d7b6c09bfdba1b9d54055db1392227764"
+      },
+      {
+        "slug": "cookies",
+        "version": "2.6",
+        "sha256": "66023b43f37a3a8c42fedb31b8229cdb0970420d5bed965911ae276a108e7da3"
+      },
+      {
+        "slug": "terms",
+        "version": "2.4",
+        "sha256": "5a89cec4ea564a64bbcc55f692cccb94f421011f86233b7e62916d2a0d977571"
+      },
+      {
+        "slug": "client-terms",
+        "version": "2.4",
+        "sha256": "1aae31572444d6c543fddbab71b66138ffb06ba516d4d10d836835a474cdfa6a"
+      },
+      {
+        "slug": "business-client-terms",
+        "version": "3.4",
+        "sha256": "e7f1a7c1a1b64d66349aa4f3c806d4953ed739e5f36ceb6bd26724948168c0de"
+      },
+      {
+        "slug": "consumer-client-terms",
+        "version": "3.5",
+        "sha256": "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c"
+      },
+      {
+        "slug": "accessibility",
+        "version": "2.5",
+        "sha256": "e7b7f71e34c44db2202c9f41c1a09073c46ef25e05f34127c1263750d7da211f"
+      }
+    ],
+    "canonicalIntegration": true,
+    "registerChanged": true,
+    "publishable": 0,
+    "proposalConfigChanged": true,
+    "approvalRequested": true,
+    "approvalReceived": true,
+    "ownerAdopted": 7,
+    "approvalReceivedOn": "2026-10-30",
+    "adoptionRecord": "docs/_legal/evidence/GS-LAUNCH-030-ADOPTION.md",
+    "superseded": "docs/_legal/evidence/GS-LAUNCH-030-superseded",
+    "publicationPrerequisitesUnchanged": true
+  },
+  "directContact": {
+    "status": "DATED_OWNER_ATTESTATION_RECORDED_O3_O5_PARTIAL",
+    "privateEvidenceReused": "GS-LAUNCH-029/direct-contact-preparation.json",
+    "newCustodyStatement": true,
+    "verifiedReceiptCreated": false,
+    "providerLogBackupUnknownsPreserved": true,
+    "customerRecordsCreated": 0,
+    "enquiriesSent": 0,
+    "ownerStatedDate": "2026-09-01",
+    "noCopyStatementReceived": true,
+    "freshnessCutoffInferred": false,
+    "remaining": [
+      "O3 actual holdings/retention application",
+      "O4 account-specific provider/transfer coverage",
+      "O5 procedure/backup-expiry/deletion handling"
+    ]
+  },
+  "analytics": {
+    "ownerPreference": "GA4_AND_POSTHOG_BEFORE_LAUNCH",
+    "ga4PropertyInventoryId": 550714475,
+    "ga4MeasurementIdVerified": false,
+    "ga4SettingsVerified": false,
+    "posthogProject": 315488,
+    "posthogCurrentIdentifier": "RETAINED_PRIVATELY_AT_GS_LAUNCH_029; STALE_KEY_NOT_REUSED",
+    "posthogProductionDestinationApproved": false,
+    "readinessReceiptCreated": false,
+    "active": false,
+    "noticeOnlyFallbackChosen": false,
+    "browser": "LOCAL_BROWSER_USE_DISABLED_AT_CURRENT_RETRY"
+  },
+  "cookies": {
+    "stageA": "NOT_RUN_PRECONDITIONS_PENDING",
+    "stageB": "NOT_RUN_REPLACEMENT_NOT_DEPLOYED",
+    "testIdEvidenceIsStageA": false,
+    "canonicalPoliciesConfirmed": true,
+    "intendedModeFinalised": false,
+    "directContactReceiptVerified": false
+  },
+  "cms": {
+    "readOnly": true,
+    "productionWrites": 0,
+    "authenticatedExport": {
+      "documents": 59,
+      "publicDocuments": 47,
+      "protectedSystemDocuments": 12,
+      "drafts": 0,
+      "legalDocuments": 0,
+      "assetDocuments": 0,
+      "sha256": "1a53eea10014f6d181fe54e58b0fb7dc6263bba2be7cc334c3c46bd979fb9938",
+      "independentFullQueryParity": true
+    },
+    "migration": {
+      "eligible": 47,
+      "technicalWithheld": 3,
+      "legalWithheld": 7,
+      "unchangedContent": 45,
+      "changedContent": 2,
+      "changedRecords": [
+        {
+          "id": "companyDetails",
+          "type": "companyDetails",
+          "action": "REPLACE_CHANGED_CONTENT",
+          "changedTopLevelFields": [
+            "placeOfRegistration",
+            "responseCommitment"
+          ]
+        },
+        {
+          "id": "service-design-technical-illustration",
+          "type": "service",
+          "action": "REPLACE_CHANGED_CONTENT",
+          "changedTopLevelFields": [
+            "description"
+          ]
+        }
+      ],
+      "futureAllSevenPayload": 54,
+      "allAffectedIdsPrivate": true
+    },
+    "recovery": {
+      "prepared": true,
+      "actualRestore": "NOT_RUN",
+      "offlineIdempotency": "PASS_TWO_APPLICATIONS_SAME_CONTENT",
+      "offlineRecovery": "PASS_BASELINE_CONTENT_RESTORED_AND_ONLY_SEVEN_NEW_IDS_REMOVED",
+      "baselineReplacements": 47,
+      "onlyFutureNewLegalIds": [
+        "legal-privacy",
+        "legal-cookies",
+        "legal-terms",
+        "legal-client-terms",
+        "legal-business-client-terms",
+        "legal-consumer-client-terms",
+        "legal-accessibility"
+      ],
+      "systemDocumentsPreserved": true,
+      "revisionHistoryRestored": false,
+      "liveRollbackDeleteAllRejectedAsRecovery": true,
+      "freshPrewriteExportRequired": true
+    }
+  },
+  "integration": {
+    "mainAnd023And026And027And029Contained": true,
+    "candidateCoherent": true,
+    "missingMergeRequiredNow": false,
+    "pr4AlreadyContained": true,
+    "pr5Base": "codex/gs-launch-023",
+    "pr6Base": "codex/gs-launch-027",
+    "mergePerformed": false,
+    "mainMergeAuthority": false,
+    "forcePush": false,
+    "artifactBranchesWritten": false
+  },
+  "productionBuild": {
+    "eligible": false,
+    "buildOnlyAuthority": false,
+    "actualArtifactGenerated": false,
+    "refusals": [
+      "LEGAL: DIRECT-CONTACT-VERIFIED has no recorded owner/verification receipt",
+      "LEGAL: privacy is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: cookies is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: client-terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: business-client-terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: consumer-client-terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: accessibility is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)"
+    ],
+    "analyticsAdditionalGates": "MATCHING_NOTICES_VALID_IDS_ANALYTICS_READY_WHEN_IDENTIFIERS_SUPPLIED"
+  },
+  "hosting": {
+    "strategy": "EXISTING_GRIDSMITH_UK_ASSOCIATION_SCOPED_FILE_UPLOAD",
+    "rootVerification": "FUTURE_EXECUTION_PRECONDITION",
+    "wordpressBackup": "OWNER_EXISTING_DOWNLOADED_BACKUP_REUSED_NO_RESTORE_PROJECT",
+    "atomicSwitchAssumed": false,
+    "cutoverAuthority": false,
+    "providerChanges": 0,
+    "actualOriginAcceptance": "NOT_RUN"
+  },
+  "reviews": {
+    "disabled": true,
+    "cleanupApprovalReceived": false,
+    "sourceOrCmsDeleted": false,
+    "historyRewritten": false,
+    "serviceLaunchBlocker": false
+  },
+  "verification": {
+    "legalHashes": "PASS7",
+    "legalAdoptionGate": "PASS_ORIGINALS_UNCHANGED",
+    "cmsDryRun": "PASS47_ELIGIBLE_10_GATED_21_SELFTEST_CASES",
+    "cmsPublicRead": "PASS47_PUBLIC_ZERO_LEGAL",
+    "cmsExportQueryParity": "PASS59",
+    "cmsOfflineIdempotencyRecovery": "PASS",
+    "consentSelftest": "PASS71",
+    "staticSelftest": "PASS",
+    "ancestry": "PASS",
+    "productionRefusal": "PASS_EXPECTED8_POST_ADOPTION",
+    "secretBundleSweep": "REFUSED_EXIT1_NO_BUILT_CHUNKS_NOT_A_SECRET_FINDING",
+    "newApplicationBuild": "LOCAL_NOT_RUN_FRESH_LINUX_ACCEPTANCE_REQUIRED",
+    "fullVisualSuites": "NOT_REPEATED",
+    "verifyStatic": "PASS",
+    "legalAdoptionSelftest": "PASS196",
+    "releaseSelftest": "PASS80",
+    "browserInputSelftest": "PASS_WITH_EXPLICIT_PYTHON"
+  },
+  "notPerformed": [
+    "legal publication transition",
+    "production CMS/database write",
+    "production build",
+    "temporary/production deployment",
+    "WordPress replacement/restoration",
+    "DNS/email/provider mutation",
+    "analytics/review activation",
+    "PR merge/retarget",
+    "support communication",
+    "worktree destruction",
+    "force push"
+  ],
+  "nextAction": "ENABLE_EXISTING_ACCOUNT_READ_ACCESS_FOR_ANALYTICS_AND_REMAINING_OPERATIONAL_EVIDENCE",
+  "privateEvidenceSha256": {
+    "production-before.ndjson": "1a53eea10014f6d181fe54e58b0fb7dc6263bba2be7cc334c3c46bd979fb9938",
+    "cms-export-comparison.json": "bd0dd201b9426182c4be798979a172f8887f8f9ef6662fea500b1b5bb2441006",
+    "cms-recovery-proof.json": "de1a726bb27044e348b5151c3768e7a623bcfa517dcbba234faa3b0c328de974",
+    "recovery-content-mutations.json": "9adb8620198b9e878a92ed4b0ac0f9863d9cc9c4b029cd0f7810045db406a658",
+    "legal-adoption.log": "86e55943dbf238ad4ea89c72e797096b7df62e6e107cdcf24472b9915d58035c",
+    "cms-read-production.log": "7b15199a75d90486c45a096b02544036d43e8f867b633452774e8cf1df83e5f4",
+    "consent-selftest.log": "aec74ff739407daf5a2abf13835ca02eee068086209053bdd0cc72ced2b01fb6",
+    "static-selftest.log": "a362035182bd484052e02198e1c7da3acca16394af436ecf328cb2f35afab8fa",
+    "production-refusal.log": "db4dab7a944e34ddf2e7d3f9e9f502d4da959c1950a1f4a6a6dde5947008f69e",
+    "secret-scan.log": "dbcdbddb1d3f3bd7d63787da6ca2e80e5946db2bdfba9e70c2e0934853e30afd",
+    "ci-state-latest.json": "7cc19b5a61a3d9e874022033fbf826a940c95e1baf5a9b32aebe5ce3340dc1d2",
+    "preview-identity-final.json": "0983a2896c50f44e293be98cf1c31c2b307ec07d48c749afe27b8db00992ac09",
+    "adoption-integration.json": "d299e3f26d6eb6a78377e59a61d4ca36c03da496c13d0d35b904ab5145831344",
+    "custody-owner-attestation.json": "d8ebea04296b70ef8cad3f86a2633f2ac4b6169def554dc3333db273ff763bb0",
+    "ci-41100071266-failed.log": "c850f38f8fb5883680e3c5a35114a8bc5bfb695da1b19ec8b77ca1019785d490",
+    "verify-static-adopted.log": "5485f86316d5df8ba329f7ab37f6c2a840ffa0feba380d47cad997d3827a9862",
+    "consent-adoption-selftest.log": "7c4d1b89b9d181ffc7101638982f8635115e2ff85d6f81d9f60792c1d06b52d0",
+    "release-selftest.log": "5a61bd5b6d386c8f6e4a09a2454044c28136db16f6e50d7fcbdbf742d03fcf0b",
+    "browser-input-selftest-python.log": "e93c5ad7c7481f16a5bd7ca4353df4eae6676170836e2616b379e3a13c8fd703",
+    "production-refusals-adopted.json": "c23cab2d4cf3bf5bf79d0ba5cedd224d2375f0930cbc3e3aef4f9f9f14309112",
+    "adoption-selftest-final.log": "4bebf6f1e66c977980da04fa11ddff6939adf1d34582aa907391f7c0ff6751b0"
+  },
+  "preview": {
+    "recordedAt": "2026-10-30T17:56:19.836Z",
+    "sourceSha": "629accd00e30b09394e6d3ef419999b2c8af0ec5",
+    "artifactIdentity": "bc7142541f7f6be325f615737025e0d494bbfb97c7a6058a5c92849b5020f517",
+    "analytics": {
+      "ga4": false,
+      "posthog": false
+    },
+    "identitySha256": "79fabdad5c0a69f5e4737d0a3b7ed48411166cd9495948e7824b4141c871bbe8",
+    "unchanged": true
+  }
+}

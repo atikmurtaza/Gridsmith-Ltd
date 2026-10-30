@@ -509,7 +509,7 @@
       "source": "scripts/seed-legal.mjs",
       "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Owner-adopted 2.7 on 2026-10-25; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, DIRECT-CONTACT-VERIFIED)"
+      "reason": "Owner-adopted 2.9 on 2026-10-30; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, DIRECT-CONTACT-VERIFIED)"
     },
     {
       "type": "legalDocument",
@@ -518,7 +518,7 @@
       "source": "scripts/seed-legal.mjs",
       "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Owner-adopted 2.4 on 2026-10-22; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE, A-2-COOKIE-RETEST)"
+      "reason": "Owner-adopted 2.6 on 2026-10-30; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE, A-2-COOKIE-RETEST)"
     },
     {
       "type": "legalDocument",
@@ -527,7 +527,7 @@
       "source": "scripts/seed-legal.mjs",
       "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Owner-adopted 2.3 on 2026-10-22; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
+      "reason": "Owner-adopted 2.4 on 2026-10-30; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
     },
     {
       "type": "legalDocument",
@@ -536,7 +536,7 @@
       "source": "scripts/seed-legal.mjs",
       "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Owner-adopted 2.3 on 2026-10-22; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
+      "reason": "Owner-adopted 2.4 on 2026-10-30; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
     },
     {
       "type": "legalDocument",
@@ -545,7 +545,7 @@
       "source": "scripts/seed-legal.mjs",
       "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Owner-adopted 3.3 on 2026-10-22; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
+      "reason": "Owner-adopted 3.4 on 2026-10-30; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
     },
     {
       "type": "legalDocument",
@@ -554,7 +554,7 @@
       "source": "scripts/seed-legal.mjs",
       "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Owner-adopted 3.4 on 2026-10-25; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
+      "reason": "Owner-adopted 3.5 on 2026-10-30; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
     },
     {
       "type": "legalDocument",
@@ -563,7 +563,7 @@
       "source": "scripts/seed-legal.mjs",
       "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Owner-adopted 2.4 on 2026-10-25; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
+      "reason": "Owner-adopted 2.5 on 2026-10-30; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
     }
   ]
 }

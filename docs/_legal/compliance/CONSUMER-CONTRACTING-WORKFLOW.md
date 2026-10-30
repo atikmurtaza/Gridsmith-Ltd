@@ -1,6 +1,6 @@
 # Consumer contracting workflow and email templates
 
-**Revision: GS-LAUNCH-014, 25 October 2026.** Prepared for Client Terms for Consumers **3.4**, adopted by exact-text owner approval on 25 October 2026. It does not amend existing contracts or authorise use before the new terms and Privacy Policy are properly published at the authorised gridsmith.uk cutover. Adoption record: ../evidence/GS-LAUNCH-014-ADOPTION.md. The superseded 3.3 workflow and its original adoption evidence are preserved at ../evidence/GS-LAUNCH-014-superseded/CONSUMER-CONTRACTING-WORKFLOW.md. These are the actual maintained operational templates, not website text or evidence of completed client transactions.
+**Revision: GS-LAUNCH-026 proposal, 28 October 2026.** Prepared for proposed Client Terms for Consumers **3.5**, which changes only cross-reference links and is not yet adopted. Until 3.5 is adopted, the current workflow remains the one for 3.4. It does not amend existing contracts or authorise use before the new terms and Privacy Policy are properly published at the authorised gridsmith.uk cutover. Adoption record: ../evidence/GS-LAUNCH-014-ADOPTION.md. The superseded 3.3 workflow and its original adoption evidence are preserved at ../evidence/GS-LAUNCH-014-superseded/CONSUMER-CONTRACTING-WORKFLOW.md. These are the actual maintained operational templates, not website text or evidence of completed client transactions.
 
 ## 1. Operating rules
 
@@ -28,7 +28,7 @@ Division: Gridsmith [Design/Digital/Press]
 For: [client name and postal address]
 Buying as an individual wholly or mainly outside your trade, business, craft or profession.
 Open for acceptance until: [date; normally 30 calendar days from quotation date]
-Terms: Client Terms for Consumers version 3.4, attached in a form you can save and print.
+Terms: Client Terms for Consumers version 3.5, attached in a form you can save and print.
 
 1. SERVICES AND DELIVERABLES
 [Main characteristics, formats and deliverables; revision rounds; exclusions; assumptions]
@@ -100,7 +100,7 @@ Then add EITHER "Standard start." OR all three statements:
 "I understand that if Gridsmith Ltd completes all the work before my 14-day cancellation period ends, I will lose my right to cancel."
 
 An early start is optional and applies only to services; separate digital content waits.
-Attachments: Quotation [reference] · Client Terms for Consumers 3.4 · Cancellation form
+Attachments: Quotation [reference] · Client Terms for Consumers 3.5 · Cancellation form
 ~~~
 
 ## 3. Contract confirmation email
@@ -110,7 +110,7 @@ Subject: Contract confirmation — [reference]
 Dear [name],
 This confirms your contract with Gridsmith Ltd.
 Contract made: [date acceptance received]   Quotation: [reference and date]
-Terms: Client Terms for Consumers 3.4 (attached)
+Terms: Client Terms for Consumers 3.5 (attached)
 Total price and payment schedule: [repeat agreed price, components and schedule]
 Cancellation period ends: end of [date, normally contract date + 14 days]
 
@@ -132,7 +132,7 @@ method unless you agree otherwise.
 
 Gridsmith [division], Gridsmith Ltd, registered in England and Wales, company number 17050842
 30 Briarfield Road, Farnworth, Bolton, BL4 0HD · contact@gridsmith.uk
-Attachments: Quotation [reference] · Client Terms for Consumers 3.4 · Cancellation form
+Attachments: Quotation [reference] · Client Terms for Consumers 3.5 · Cancellation form
 ~~~
 
 ## 4. Cancellation form — attach exactly as in terms section 22
