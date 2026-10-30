@@ -1,7 +1,7 @@
 # Client Terms for Business Clients
 
-**Version 3.3**\
-**Review date: 22 October 2026**\
+**Version 3.4**\
+**Review date: 28 October 2026**\
 **Effective date: On first publication with the replacement website at gridsmith.uk**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
@@ -12,7 +12,7 @@ Trading divisions: **Gridsmith Design, Gridsmith Digital and Gridsmith Press**
 
 ## 1. Application and how a contract is made
 
-These terms (the "business terms") apply only where the client is acting for purposes relating to its trade, business, craft or profession. If the client is an individual acting wholly or mainly outside those purposes, our Client Terms for Consumers apply instead, and nothing in these business terms reduces any right the client has as a consumer.
+These terms (the "business terms") apply only where the client is acting for purposes relating to its trade, business, craft or profession. If the client is an individual acting wholly or mainly outside those purposes, our [Client Terms for Consumers](/legal/consumer-client-terms) apply instead, and nothing in these business terms reduces any right the client has as a consumer.
 
 Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of Gridsmith Ltd and are not separate companies. Every contract is with Gridsmith Ltd ("we" or "us").
 
@@ -257,13 +257,13 @@ If such an event prevents performance for more than 60 days, either party may en
 
 ## 19. Complaints
 
-The client may raise a complaint about our services by email to contact@gridsmith.uk or by post to our registered office. We will respond as quickly as possible and do our best to find a satisfactory solution.
+The client may raise a complaint about our services by email to [contact@gridsmith.uk](mailto:contact@gridsmith.uk) or by post to our registered office. We will respond as quickly as possible and do our best to find a satisfactory solution.
 
 ## 20. Notices
 
 Project notices and approvals may be given by email to the addresses the parties normally use for the project, unless the Scope says otherwise.
 
-Formal notices to us may be sent to Gridsmith Ltd, 30 Briarfield Road, Farnworth, Bolton, BL4 0HD, United Kingdom, or by email to contact@gridsmith.uk.
+Formal notices to us may be sent to Gridsmith Ltd, 30 Briarfield Road, Farnworth, Bolton, BL4 0HD, United Kingdom, or by email to [contact@gridsmith.uk](mailto:contact@gridsmith.uk).
 
 An email is treated as received when sent if it is sent before 5pm on a business day in England, and otherwise at 9am on the next business day. A letter sent by first-class post within the United Kingdom is treated as received on the second business day after posting.
 

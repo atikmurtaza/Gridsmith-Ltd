@@ -13,9 +13,10 @@ const sha256 = (text) => createHash('sha256').update(text).digest('hex');
 // Expectations are outside the workflow subjects; changing a workflow requires explicit review here.
 const WORKFLOWS = {
   // GS-LAUNCH-026 reviewed: ci.yml adds the consent selftest and a throwaway consent-mode build with its
-  // gates (no install, no secret, no permission change); hostinger-staging.yml adds GRIDSMITH_LEGAL_PROPOSAL.
+  // gates (no install, no secret, no permission change). GS-LAUNCH-030 removes only the now-adopted
+  // legal proposal environment setting from hostinger-staging.yml; permissions and install controls stay intact.
   '.github/workflows/ci.yml': '68d52af7b4de933ffa338bfb5141a30b1fdd94eece0f7bbfe7ed432ee8576427',
-  '.github/workflows/hostinger-staging.yml': 'df862fb90cd97a1e7ce696ee01522791a0981b2c9bcd9438a1f8a0f7936dac60',
+  '.github/workflows/hostinger-staging.yml': 'f165b31ad714aeb12822d07d6993fe1062a134286e91d4199e543057ff0f9ad2',
 };
 // GS-LAUNCH-026 reviewed: package.json gains the check:consent/prove:consent/verify:consent scripts only.
 const PACKAGE_SHA256 = '945d4ea3375f5fc296cfbf0439f2b34b8fe0bfca6e0b18468653a96c04bcc2aa';

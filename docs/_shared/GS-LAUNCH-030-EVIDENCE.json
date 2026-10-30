@@ -1,0 +1,366 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-030",
+  "recordedAt": "2026-10-30T23:10:21.426Z",
+  "status": "CONDITIONAL_DIRECT_CONTACT_VERIFIED_FRESH_FINAL_CI_REQUIRED",
+  "source": {
+    "startingBranch": "codex/gs-launch-029",
+    "startingSha": "d0c792c89a4ecc991765e731b925135e0156602f",
+    "workBranch": "codex/gs-launch-030",
+    "head": "cc5c87bce39858892c86ab4552e71d3ff34c0327",
+    "applicationAndWorkflowChanged": true,
+    "reporting": "PRE_FINAL_CI_SOURCE_RECORD_WITH_DIRECT_CONTACT_RECEIPT",
+    "acceptedDeployedSha": "629accd00e30b09394e6d3ef419999b2c8af0ec5",
+    "finalSha": null,
+    "implementationCommit": "0ac38004e8ea5fe2e4c81f98a283e313bcacf42e",
+    "lastTestedPushedSha": "ea28dfbdfe4e6c475916d884abcca5f97155e90c",
+    "finalIdentityLocation": "Private GS-LAUNCH-030 completion packet and exact final GitHub CI run"
+  },
+  "ci": {
+    "previousRun": {
+      "runId": 41100071266,
+      "headSha": "d0c792c89a4ecc991765e731b925135e0156602f",
+      "conclusion": "FAILURE",
+      "jobs": {
+        "verify": "SUCCESS",
+        "hostinger-staging / build": "FAILURE",
+        "hostinger-staging / publish": "SKIPPED"
+      },
+      "cause": "Non-2xx Jobs API response while packaging waited for verify; exact unsuccessful HTTP status not retained."
+    },
+    "status": "FRESH_RECEIPT_SOURCE_CI_REQUIRED",
+    "runId": null,
+    "headSha": null,
+    "conclusion": null,
+    "acceptedAsReleaseBaseline": false,
+    "repairs": [
+      "bounded transient Jobs API retries, timeout, rate-limit guidance, safe status/request-ID diagnostics; prerequisite unchanged",
+      "Owner expressly adopted exact Consumer3.6/workflow replacement; one hyperlink target corrected, gate and renderer unchanged."
+    ],
+    "rerunTriggered": false,
+    "latestCompleted": {
+      "runId": 41127867903,
+      "headSha": "ea28dfbdfe4e6c475916d884abcca5f97155e90c",
+      "conclusion": "FAILURE",
+      "verifyFailure": "check-consumer-terms: direct business-terms hyperlink on consumer page",
+      "legalParity": "PASS7_DOCS_110_CLAUSES_430_PARAGRAPHS_29_CROSSREFERENCES",
+      "candidateChecks": "PASS7_LOG_HASHES_VERIFIED",
+      "audits": "ZERO_PRODUCTION_AND_FULL",
+      "packaging": "CORRECTLY_REFUSED_FAILED_NORMAL_VERIFY",
+      "publisher": "SKIPPED"
+    },
+    "supersededInProgressRun": {
+      "runId": 41140669666,
+      "headSha": "cc5c87bce39858892c86ab4552e71d3ff34c0327",
+      "disposition": "DELIBERATELY_CANCELLED_SUPERSEDED_SOURCE_NOT_ACCEPTED",
+      "conclusion": "CANCELLED"
+    }
+  },
+  "legal": {
+    "status": "OWNER_ADOPTED_LOCAL_ONLY",
+    "packet": "GS-LAUNCH-029-ADOPTION.json",
+    "hashesVerified": true,
+    "documents": [
+      {
+        "slug": "privacy",
+        "version": "2.9",
+        "sha256": "449db68c0c452b214e78f68a33f4123d7b6c09bfdba1b9d54055db1392227764"
+      },
+      {
+        "slug": "cookies",
+        "version": "2.6",
+        "sha256": "66023b43f37a3a8c42fedb31b8229cdb0970420d5bed965911ae276a108e7da3"
+      },
+      {
+        "slug": "terms",
+        "version": "2.4",
+        "sha256": "5a89cec4ea564a64bbcc55f692cccb94f421011f86233b7e62916d2a0d977571"
+      },
+      {
+        "slug": "client-terms",
+        "version": "2.4",
+        "sha256": "1aae31572444d6c543fddbab71b66138ffb06ba516d4d10d836835a474cdfa6a"
+      },
+      {
+        "slug": "business-client-terms",
+        "version": "3.4",
+        "sha256": "e7f1a7c1a1b64d66349aa4f3c806d4953ed739e5f36ceb6bd26724948168c0de"
+      },
+      {
+        "slug": "consumer-client-terms",
+        "version": "3.6",
+        "sha256": "ac380cb266e05ab500988c0dd0cd47446348b1c3a4a63378377d5f8df04cc8f5"
+      },
+      {
+        "slug": "accessibility",
+        "version": "2.5",
+        "sha256": "e7b7f71e34c44db2202c9f41c1a09073c46ef25e05f34127c1263750d7da211f"
+      }
+    ],
+    "canonicalIntegration": true,
+    "registerChanged": true,
+    "publishable": 0,
+    "proposalConfigChanged": true,
+    "approvalRequested": true,
+    "approvalReceived": true,
+    "ownerAdopted": 7,
+    "approvalReceivedOn": "2026-10-30",
+    "adoptionRecord": "docs/_legal/evidence/GS-LAUNCH-030-ADOPTION.md",
+    "superseded": "docs/_legal/evidence/GS-LAUNCH-030-superseded",
+    "consumerReplacement": {
+      "approved": true,
+      "record": "GS-LAUNCH-030-CONSUMER-REPLACEMENT.json",
+      "workflowSha256": "7a5901e0030f940831d24e64f22534745fc1129ec11e571c256a3e8e0650545a",
+      "superseded": "docs/_legal/evidence/GS-LAUNCH-030-consumer-3.5-superseded",
+      "otherSixUnchanged": true
+    },
+    "publicationPrerequisiteDefinitionsUnchanged": true,
+    "publicationEvidenceAdded": [
+      "privacy.DIRECT-CONTACT-VERIFIED"
+    ]
+  },
+  "directContact": {
+    "status": "VERIFIED_PREBUILD_WITH_EXPLICIT_LIMITS",
+    "privateEvidenceReused": "GS-LAUNCH-029/direct-contact-preparation.json",
+    "newCustodyStatement": true,
+    "verifiedReceiptCreated": true,
+    "providerLogBackupUnknownsPreserved": true,
+    "customerRecordsCreated": 0,
+    "enquiriesSent": 0,
+    "freshnessCutoffInferred": false,
+    "remaining": [],
+    "bccDestinationPublished": false,
+    "registerReceiptRecorded": true,
+    "receipt": "docs/_legal/evidence/GS-LAUNCH-030-DIRECT-CONTACT.json",
+    "privateReceiptSha256": "19ebe36c7b4dd1fd501c80a3588c6a44c676cb81358523fb5f39adc7d2067cc9",
+    "gmailOperationalAssessmentComplete": true,
+    "manualRetentionRightsMapped": true,
+    "finalArtifactAndOriginChecksStillRequired": true,
+    "privateOperationalFacts": "RETAINED_OUTSIDE_PUBLIC_GIT"
+  },
+  "analytics": {
+    "ownerPreference": "GA4_AND_POSTHOG_BEFORE_LAUNCH",
+    "ga4PropertyInventoryId": 550714475,
+    "ga4MeasurementIdVerified": true,
+    "ga4SettingsVerified": true,
+    "posthogProject": 315488,
+    "posthogCurrentIdentifier": "RETAINED_PRIVATELY_AT_GS_LAUNCH_029; STALE_KEY_NOT_REUSED",
+    "posthogProductionDestinationApproved": true,
+    "readinessReceiptCreated": false,
+    "active": false,
+    "noticeOnlyFallbackChosen": false,
+    "browser": "WORKING_AFTER_OWNER_ENABLEMENT",
+    "ga4ProductionDestinationApproved": true,
+    "posthogOrganisationThirdPartyAiEnabled": true,
+    "posthogInternalAiTrainingEnabled": false,
+    "posthogBindingDpaVerified": false,
+    "reauthenticated": true
+  },
+  "cookies": {
+    "stageA": "NOT_RUN_PRECONDITIONS_PENDING",
+    "stageB": "NOT_RUN_REPLACEMENT_NOT_DEPLOYED",
+    "testIdEvidenceIsStageA": false,
+    "canonicalPoliciesConfirmed": true,
+    "intendedModeFinalised": "GA4_PLUS_EXISTING_POSTHOG_DESTINATIONS_APPROVED_READINESS_PENDING",
+    "directContactReceiptVerified": true
+  },
+  "cms": {
+    "readOnly": true,
+    "productionWrites": 0,
+    "authenticatedExport": {
+      "documents": 59,
+      "publicDocuments": 47,
+      "protectedSystemDocuments": 12,
+      "drafts": 0,
+      "legalDocuments": 0,
+      "assetDocuments": 0,
+      "sha256": "1a53eea10014f6d181fe54e58b0fb7dc6263bba2be7cc334c3c46bd979fb9938",
+      "independentFullQueryParity": true
+    },
+    "migration": {
+      "eligible": 47,
+      "technicalWithheld": 3,
+      "legalWithheld": 7,
+      "unchangedContent": 45,
+      "changedContent": 2,
+      "changedRecords": [
+        {
+          "id": "companyDetails",
+          "type": "companyDetails",
+          "action": "REPLACE_CHANGED_CONTENT",
+          "changedTopLevelFields": [
+            "placeOfRegistration",
+            "responseCommitment"
+          ]
+        },
+        {
+          "id": "service-design-technical-illustration",
+          "type": "service",
+          "action": "REPLACE_CHANGED_CONTENT",
+          "changedTopLevelFields": [
+            "description"
+          ]
+        }
+      ],
+      "futureAllSevenPayload": 54,
+      "allAffectedIdsPrivate": true
+    },
+    "recovery": {
+      "prepared": true,
+      "actualRestore": "NOT_RUN",
+      "offlineIdempotency": "PASS_TWO_APPLICATIONS_SAME_CONTENT",
+      "offlineRecovery": "PASS_BASELINE_CONTENT_RESTORED_AND_ONLY_SEVEN_NEW_IDS_REMOVED",
+      "baselineReplacements": 47,
+      "onlyFutureNewLegalIds": [
+        "legal-privacy",
+        "legal-cookies",
+        "legal-terms",
+        "legal-client-terms",
+        "legal-business-client-terms",
+        "legal-consumer-client-terms",
+        "legal-accessibility"
+      ],
+      "systemDocumentsPreserved": true,
+      "revisionHistoryRestored": false,
+      "liveRollbackDeleteAllRejectedAsRecovery": true,
+      "freshPrewriteExportRequired": true
+    }
+  },
+  "integration": {
+    "mainAnd023And026And027And029Contained": true,
+    "candidateCoherent": true,
+    "missingMergeRequiredNow": false,
+    "pr4AlreadyContained": true,
+    "pr5Base": "codex/gs-launch-023",
+    "pr6Base": "codex/gs-launch-027",
+    "mergePerformed": false,
+    "mainMergeAuthority": false,
+    "forcePush": false,
+    "artifactBranchesWritten": false,
+    "pr7": {
+      "url": "https://github.com/atikmurtaza/Gridsmith-Ltd/pull/7",
+      "base": "codex/gs-launch-029",
+      "draft": true,
+      "merged": false
+    }
+  },
+  "productionBuild": {
+    "eligible": false,
+    "buildOnlyAuthority": false,
+    "actualArtifactGenerated": false,
+    "refusals": [
+      "LEGAL: privacy is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: cookies is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: client-terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: business-client-terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: consumer-client-terms is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)",
+      "LEGAL: accessibility is not PUBLISHABLE (register OWNER_ADOPTED, migration gated)"
+    ],
+    "analyticsAdditionalGates": "MATCHING_NOTICES_VALID_IDS_ANALYTICS_READY_WHEN_IDENTIFIERS_SUPPLIED"
+  },
+  "hosting": {
+    "strategy": "EXISTING_GRIDSMITH_UK_ASSOCIATION_SCOPED_FILE_UPLOAD",
+    "rootVerification": "FUTURE_EXECUTION_PRECONDITION",
+    "wordpressBackup": "OWNER_EXISTING_DOWNLOADED_BACKUP_REUSED_NO_RESTORE_PROJECT",
+    "atomicSwitchAssumed": false,
+    "cutoverAuthority": false,
+    "providerChanges": 0,
+    "actualOriginAcceptance": "NOT_RUN"
+  },
+  "reviews": {
+    "disabled": true,
+    "cleanupApprovalReceived": false,
+    "sourceOrCmsDeleted": false,
+    "historyRewritten": false,
+    "serviceLaunchBlocker": false
+  },
+  "verification": {
+    "legalHashes": "PASS7",
+    "legalAdoptionGate": "PASS_ORIGINALS_UNCHANGED",
+    "cmsDryRun": "PASS47_ELIGIBLE_10_GATED_21_SELFTEST_CASES",
+    "cmsPublicRead": "PASS47_PUBLIC_ZERO_LEGAL",
+    "cmsExportQueryParity": "PASS59",
+    "cmsOfflineIdempotencyRecovery": "PASS",
+    "consentSelftest": "PASS71",
+    "staticSelftest": "PASS",
+    "ancestry": "PASS",
+    "productionRefusal": "PASS_EXPECTED_7_LEGAL_REFUSALS_DIRECT_RECEIPT_SATISFIED",
+    "secretBundleSweep": "PASS_LOCAL_FRESH_TEST_BUILD",
+    "newApplicationBuild": "PASS_LOCAL_DEVELOPMENT_DATASET_TEST_BUILD_NOT_PRODUCTION_PROFILE",
+    "fullVisualSuites": "NOT_REPEATED",
+    "verifyStatic": "PASS_DIRECT_RECEIPT_FINAL_AFTER_REVIEWED_MANIFEST_REGENERATION",
+    "legalAdoptionSelftest": "PASS_205_CASES_INCLUDING_LIVE_PUBLICATION_EVIDENCE",
+    "releaseSelftest": "PASS80",
+    "browserInputSelftest": "PASS_WITH_EXPLICIT_PYTHON",
+    "servedConsumerRouting": "PASS_UNCHANGED_GATE_AFTER3_6",
+    "servedLegalParity": "PASS_ALL7_AFTER3_6",
+    "initialDirectReceiptVerification": "FAIL_EXPECTED_DEPENDENT_MANIFEST_DRIFT_REPAIRED"
+  },
+  "notPerformed": [
+    "legal publication transition",
+    "production CMS/database write",
+    "production build",
+    "temporary/production deployment",
+    "WordPress replacement/restoration",
+    "DNS/email/provider mutation",
+    "analytics/review activation",
+    "PR merge/retarget",
+    "support communication",
+    "worktree destruction",
+    "force push"
+  ],
+  "nextAction": "POSTHOG_ADMIN_DISABLE_THIRD_PARTY_AI_AND_COMPLETE_OR_REFERENCE_BINDING_DPA",
+  "privateEvidenceSha256": {
+    "production-before.ndjson": "1a53eea10014f6d181fe54e58b0fb7dc6263bba2be7cc334c3c46bd979fb9938",
+    "cms-export-comparison.json": "bd0dd201b9426182c4be798979a172f8887f8f9ef6662fea500b1b5bb2441006",
+    "cms-recovery-proof.json": "de1a726bb27044e348b5151c3768e7a623bcfa517dcbba234faa3b0c328de974",
+    "recovery-content-mutations.json": "9adb8620198b9e878a92ed4b0ac0f9863d9cc9c4b029cd0f7810045db406a658",
+    "legal-adoption.log": "86e55943dbf238ad4ea89c72e797096b7df62e6e107cdcf24472b9915d58035c",
+    "cms-read-production.log": "7b15199a75d90486c45a096b02544036d43e8f867b633452774e8cf1df83e5f4",
+    "consent-selftest.log": "aec74ff739407daf5a2abf13835ca02eee068086209053bdd0cc72ced2b01fb6",
+    "static-selftest.log": "a362035182bd484052e02198e1c7da3acca16394af436ecf328cb2f35afab8fa",
+    "production-refusal.log": "db4dab7a944e34ddf2e7d3f9e9f502d4da959c1950a1f4a6a6dde5947008f69e",
+    "secret-scan.log": "dbcdbddb1d3f3bd7d63787da6ca2e80e5946db2bdfba9e70c2e0934853e30afd",
+    "ci-state-latest.json": "7cc19b5a61a3d9e874022033fbf826a940c95e1baf5a9b32aebe5ce3340dc1d2",
+    "preview-identity-final.json": "0983a2896c50f44e293be98cf1c31c2b307ec07d48c749afe27b8db00992ac09",
+    "adoption-integration.json": "d299e3f26d6eb6a78377e59a61d4ca36c03da496c13d0d35b904ab5145831344",
+    "custody-owner-attestation.json": "d8ebea04296b70ef8cad3f86a2633f2ac4b6169def554dc3333db273ff763bb0",
+    "ci-41100071266-failed.log": "c850f38f8fb5883680e3c5a35114a8bc5bfb695da1b19ec8b77ca1019785d490",
+    "verify-static-adopted.log": "5485f86316d5df8ba329f7ab37f6c2a840ffa0feba380d47cad997d3827a9862",
+    "consent-adoption-selftest.log": "7c4d1b89b9d181ffc7101638982f8635115e2ff85d6f81d9f60792c1d06b52d0",
+    "release-selftest.log": "5a61bd5b6d386c8f6e4a09a2454044c28136db16f6e50d7fcbdbf742d03fcf0b",
+    "browser-input-selftest-python.log": "e93c5ad7c7481f16a5bd7ca4353df4eae6676170836e2616b379e3a13c8fd703",
+    "production-refusals-adopted.json": "c23cab2d4cf3bf5bf79d0ba5cedd224d2375f0930cbc3e3aef4f9f9f14309112",
+    "adoption-selftest-final.log": "b8607abf9b8008ae4d26376864dd1f3af8eade2c13942e071b609909cb25204a",
+    "consumer3.6-owner-authority.json": "cc59cc789ee84fcc8541354f71f15d5f4d9adaa89b79ce51e84bdb67ae2b9cf8",
+    "consumer3.6-served-routing-parity.log": "520ef00005d0baeabfb74239d722aeb1c12c931cb9717af3d66fdf4205bce241",
+    "ci-41127867903-failed.log": "d09bb8cfa00e4725d717e18b97de31248d242c7d759f0ec6b438bbbae5d41c08",
+    "ci-41127867903-final.json": "043aa52c1c8bc0b8f1506ba5098029cbc1f194e2925aad0aa6e6c0813006c0ab",
+    "ci-41127867903-assessment.json": "eff2f2f8e75e10fb9d5fca8bb2d0f318501343d5e543b473f88c03994537dbf9",
+    "analytics-account-observations.json": "5677c907e16c7907ea4377adaddbc11db1ef1ce7137193f0020fae9e00ba4f74",
+    "direct-contact-preparation.json": "eefaa97846ec4ae76a1ead31c505b4f0c981c6595acc232b5f044bf8e80a3901",
+    "verify-static-consumer3.6.log": "e91bd5238fa64c7dc67c4ca5ff0cf7e9b1fd979128eeee85fcaf5e0a2c00cd5b",
+    "consumer3.6-local-test-build.log": "3286dd94f380c88fc9bc484355b81c5586d4933e680ed2c9c530030e7dcff62d",
+    "client-secrets-consumer3.6.log": "a4b7252e940370284dccc3901ee15f6ca703125ca7ac3428f4e0c7b4c86c59c4",
+    "mail-routing-observations.json": "4c4cad24b4cc67d078a55a36c9a7d2fa9f7842c9311282b8b5bce1256df2736c",
+    "company-gmail-operational-assessment.json": "a775db1e54e0bee312c2e663b37cf74c524a2d5deb41dfcacb44b13fa5ac775d",
+    "DIRECT-CONTACT-VERIFIED.json": "19ebe36c7b4dd1fd501c80a3588c6a44c676cb81358523fb5f39adc7d2067cc9",
+    "verify-static-direct-receipt.log": "4ef3321d6c0e63a433952bbae8c70451c742007efabce302e155e4138304ea97",
+    "verify-static-direct-receipt-final.log": "ad2671b926b59d0dbbbbf40e016991b867973697ad9baf4e5f2c4bd2dcc0d6cf",
+    "production-refusal-direct-receipt.log": "70a5d92fc4b0f52e498e519f26584e25c757f8d038a2cd694f6063b3a3304404",
+    "production-refusals-direct-receipt.json": "0c2a1924b8bef752fcf23e630f686160ecd2aec20fddda776a315ef58e5068d1",
+    "ci-41140669666-superseded-final.json": "df70def489a54fc3815a7287c7ba151f59f087485032f8ddd96ad4c2e295e4eb"
+  },
+  "preview": {
+    "recordedAt": "2026-10-30T17:56:19.836Z",
+    "sourceSha": "629accd00e30b09394e6d3ef419999b2c8af0ec5",
+    "artifactIdentity": "bc7142541f7f6be325f615737025e0d494bbfb97c7a6058a5c92849b5020f517",
+    "analytics": {
+      "ga4": false,
+      "posthog": false
+    },
+    "identitySha256": "79fabdad5c0a69f5e4737d0a3b7ed48411166cd9495948e7824b4141c871bbe8",
+    "unchanged": true
+  }
+}

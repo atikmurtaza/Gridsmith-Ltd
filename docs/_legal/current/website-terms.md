@@ -1,7 +1,7 @@
 # Website Terms of Use
 
-**Version 2.3**\
-**Review date: 22 October 2026**\
+**Version 2.4**\
+**Review date: 28 October 2026**\
 **Effective date: On first publication with the replacement website at gridsmith.uk**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
@@ -12,7 +12,7 @@ Trading divisions: **Gridsmith Design, Gridsmith Digital and Gridsmith Press**
 
 ## 1. About these terms
 
-These terms govern the use of **gridsmith.uk**. They do not, by themselves, govern paid client projects. Paid work is governed by the accepted written quotation or scope and either our Client Terms for Business Clients or our Client Terms for Consumers.
+These terms govern the use of **gridsmith.uk**. They do not, by themselves, govern paid client projects. Paid work is governed by the accepted written quotation or scope and either our [Client Terms for Business Clients](/legal/business-client-terms) or our [Client Terms for Consumers](/legal/consumer-client-terms).
 
 By using this website, you agree to use it lawfully and in accordance with these terms.
 
@@ -74,7 +74,7 @@ For business users, Gridsmith is not responsible for indirect or consequential b
 
 ## 11. Privacy, cookies and accessibility
 
-Our handling of personal data is described in our **Privacy Policy**. Our use of cookies is described in our **Cookie Policy**. Our current accessibility position is described in our **Accessibility Statement**.
+Our handling of personal data is described in our **[Privacy Policy](/legal/privacy)**. Our use of cookies is described in our **[Cookie Policy](/legal/cookies)**. Our current accessibility position is described in our **[Accessibility Statement](/legal/accessibility)**.
 
 ## 12. Changes
 
@@ -88,4 +88,4 @@ If you are a consumer resident in another part of the United Kingdom, nothing in
 
 ## 14. Contact
 
-Questions about these terms may be sent to **contact@gridsmith.uk** or by post to Gridsmith Ltd, 30 Briarfield Road, Farnworth, Bolton, BL4 0HD.
+Questions about these terms may be sent to **[contact@gridsmith.uk](mailto:contact@gridsmith.uk)** or by post to Gridsmith Ltd, 30 Briarfield Road, Farnworth, Bolton, BL4 0HD.

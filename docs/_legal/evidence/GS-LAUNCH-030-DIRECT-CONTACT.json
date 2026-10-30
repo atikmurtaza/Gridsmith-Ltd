@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-030",
+  "prerequisite": "DIRECT-CONTACT-VERIFIED",
+  "status": "VERIFIED_PREBUILD_WITH_EXPLICIT_LIMITS",
+  "verifiedAt": "2026-10-30T23:09:55.613Z",
+  "source": {
+    "applicationBaselineSha": "cc5c87bce39858892c86ab4552e71d3ff34c0327",
+    "branch": "codex/gs-launch-030",
+    "inputSha256": {
+      "package.json": "945d4ea3375f5fc296cfbf0439f2b34b8fe0bfca6e0b18468653a96c04bcc2aa",
+      "package-lock.json": "dfd2ece58e4fa9ee3db4ebbd6b2d4faae897af59b4fac4627c5ef44072b4bfb8",
+      "lib/company/confirmed.ts": "5f7b353eff96a9e208c1ef1b6b5fad83018fd21cc4ad241c07efdcb9be2d955f",
+      "lib/company/companyDetails.ts": "5714dca355de411ac940135f4e1b01b66a0a666354870e58c7d89346cff33e03",
+      "components/leads/StaticContactShell.tsx": "c830cbf5b2f2fd471fe8799fae69a5e816a83edd6d37314b728cb76c59b9d2f4",
+      "app/(marketing)/contact/page.tsx": "1cec4a445619b7ae284275d004bb0e22bf8a8363ba5546bc0a47d5d2bf55d78b",
+      "app/(press)/press/contact/page.tsx": "783a289776caf93dbb0e8c29ed5ad454a0d046b34706d37b6877f77da5a64ab3",
+      "components/divisions/press/PressContactFlow.tsx": "59eff02ad8c7cd8d7e0419a7565588df1e8b897f02a8cef155d4a53bd5411d2b",
+      "scripts/build-static.mjs": "e5c930c2c2be8aae359c4d352d152dfc1ba17fb860a1854ed65b3e73b0179a0d",
+      "scripts/check-static-artifact.mjs": "4039e1ba3a62519ebd1f45b858d283a74ca07afc6a69b3512cff06cf158a0ec8",
+      "scripts/check-company-facts.mjs": "46469bfdd05e7d729af0db08b33cd43891c60fc0f72408783bb55757439eefd0"
+    },
+    "legal": {
+      "privacy": {
+        "version": "2.9",
+        "sha256": "449db68c0c452b214e78f68a33f4123d7b6c09bfdba1b9d54055db1392227764"
+      },
+      "cookies": {
+        "version": "2.6",
+        "sha256": "66023b43f37a3a8c42fedb31b8229cdb0970420d5bed965911ae276a108e7da3"
+      },
+      "terms": {
+        "version": "2.4",
+        "sha256": "5a89cec4ea564a64bbcc55f692cccb94f421011f86233b7e62916d2a0d977571"
+      },
+      "client-terms": {
+        "version": "2.4",
+        "sha256": "1aae31572444d6c543fddbab71b66138ffb06ba516d4d10d836835a474cdfa6a"
+      },
+      "business-client-terms": {
+        "version": "3.4",
+        "sha256": "e7f1a7c1a1b64d66349aa4f3c806d4953ed739e5f36ceb6bd26724948168c0de"
+      },
+      "consumer-client-terms": {
+        "version": "3.6",
+        "sha256": "ac380cb266e05ab500988c0dd0cd47446348b1c3a4a63378377d5f8df04cc8f5"
+      },
+      "accessibility": {
+        "version": "2.5",
+        "sha256": "e7b7f71e34c44db2202c9f41c1a09073c46ef25e05f34127c1263750d7da211f"
+      }
+    },
+    "finalIntegratedShaBinding": "Private completion record and the exact final candidate CI; no successful final CI is inferred here."
+  },
+  "scope": "Bounded prebuild source/contact and operating-evidence assessment. Not publication, analytics readiness, production-build, deployment or comprehensive privacy certification.",
+  "privateReceiptSha256": "19ebe36c7b4dd1fd501c80a3588c6a44c676cb81358523fb5f39adc7d2067cc9",
+  "operationalEvidence": "Owner attestations, actual account observations, provider/transfer and existing retention/rights assessment are retained outside public Git.",
+  "limitations": [
+    "Owner attestations and independent observations retain their actual separate scopes; no unperformed device or customer-content inspection is implied.",
+    "Historical/provider backup and restore uncertainties remain explicit; no absence, automated deletion or future review is claimed.",
+    "Final artifact and authorised gridsmith.uk contact, storage, security, accessibility and mail acceptance remain outstanding."
+  ]
+}
