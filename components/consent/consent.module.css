@@ -64,6 +64,64 @@
   outline-offset: 2px;
 }
 
+/* GS-LAUNCH-026 consent request. The bar itself takes focus when reopened from the footer. */
+.bar:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
+/* The request's new parts are styled by element and data attribute under `.bar`, not by new class
+   names: every class in this module ships in the shared layout chunk's style map, and the shared
+   baseline is budgeted to the byte (check-bundle-size). */
+/* An inline link in the request's sentence: ink and underlined, never colour alone (1.4.1). */
+.text a { color: var(--ink); text-decoration: underline; text-underline-offset: 0.2em; }
+.text a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* Customise: one unticked choice per provider, the full width of the bar. */
+.bar [data-consent-panel] { flex: 1 1 100%; display: grid; gap: var(--space-4); }
+/* An author `display` outranks the UA's `[hidden]`; restore it, or the choices never close. */
+.bar [data-consent-panel][hidden] { display: none; }
+.bar fieldset {
+  margin: 0;
+  padding: var(--space-4) 0 0;
+  border: 0;
+  border-block-start: var(--border-hairline) solid var(--line-strong);
+  display: grid;
+  gap: var(--space-4);
+}
+.bar legend {
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink);
+}
+.bar [data-consent-option] {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-3);
+  align-items: center;
+}
+/* 24 by 24 CSS px at minimum — WCAG 2.2 SC 2.5.8 — and the label widens the target further. */
+.bar input[type="checkbox"] {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  margin: 0;
+  accent-color: var(--ink);
+}
+.bar input[type="checkbox"]:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.bar label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink);
+  padding-block: var(--space-2);
+  cursor: pointer;
+}
+.bar [data-consent-about] {
+  grid-column: 2;
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+
 /* Footer entry point. Mono and --ink-muted to match the statutory block it sits in. */
 .reopen {
   display: inline-block;

@@ -24,7 +24,7 @@ import {
   requiredPrerequisites,
   directContactAccessibilityProblems,
 } from './legal-adoption-rules.mjs';
-import { parseDraft, assertAdoptedSource } from './seed-legal.mjs';
+import { parseDraft, assertAdoptedSource, assertNoSelfLink } from './seed-legal.mjs';
 import { allLegalPublishable } from '../lib/legal/adoption.ts';
 
 const read = (f) => readFileSync(`docs/_legal/${f}`, 'utf8');
@@ -120,6 +120,10 @@ expect('no DPA schedule', all('business-client-terms', business.replaceAll('Data
 
 // parityProblems — each fact.
 expect('provider missing', parityProblems(privacy.replaceAll('Hostinger', 'our host'), cookies, facts), /does not name Hostinger/);
+// GS-LAUNCH-026: an accurate recipient category is a disclosure; a vaguer word still is not.
+// Every mention is replaced: the adopted text names the host three times, so one replacement is inert.
+expect('provider disclosed by category', parityProblems(privacy.replaceAll('Hostinger', 'our website and email hosting provider'), cookies, facts), null);
+expect('category too vague', parityProblems(privacy.replaceAll('Hostinger', 'a supplier'), cookies, facts), /does not name Hostinger or disclose it by category/);
 expect('regulator missing', parityProblems(privacy.replaceAll('Information Commission', 'regulator'), cookies, facts), /Information Commission/);
 expect('storage region missing', parityProblems(previousPrivacy.replaceAll('Ireland', 'Europe'), cookies, { ...facts, contactMode: 'edge' }), /where enquiries are stored/);
 expect('cookie name', parityProblems(privacy, cookies, { ...facts, cookieName: 'gs_other' }), /gs_other/);
@@ -284,7 +288,9 @@ assert.equal(createHash('sha256').update(previous('GS-O003-R-REGISTER.json')).di
 for (const [slug, e] of Object.entries(currentRegister.documents)) {
   const text = readFileSync(e.draft);
   assert.equal(createHash('sha256').update(text).digest('hex'), approvedHashes[slug] ?? previousRegister.documents[slug].ownerAdoptedSha256);
-  assert.equal(e.state, 'OWNER_ADOPTED');
+  assert(['OWNER_ADOPTED', 'PUBLISHABLE'].includes(e.state));
+  expect(`${slug} current publication evidence`, registerProblems(slug, e,
+    parseDraft(text.toString()).version, e.draft, createHash('sha256').update(text).digest('hex')), null);
   if (approvedHashes[slug]) {
     assert.equal(e.ownerAdoptedSha256, approvedHashes[slug]);
     assert.equal(e.ownerAdoptedOn, '2026-10-25');
@@ -293,12 +299,15 @@ for (const [slug, e] of Object.entries(currentRegister.documents)) {
     assert.equal(createHash('sha256').update(oldText).digest('hex'), old.ownerAdoptedSha256);
     assert.throws(() => assertAdoptedSource(slug, old, text), /differs from the exact owner-adopted text/);
     assert.throws(() => assertAdoptedSource(slug, e, oldText), /differs from the exact owner-adopted text/);
-  } else assert.deepEqual(e, previousRegister.documents[slug]);
+  } else {
+    const adoption = { ...e }, oldAdoption = { ...previousRegister.documents[slug] };
+    for (const field of ['state', 'prerequisitesMet']) { delete adoption[field]; delete oldAdoption[field]; }
+    assert.deepEqual(adoption, oldAdoption);
+  }
 }
 assert.equal(currentRegister.previousAdoptionRegister, 'docs/_legal/evidence/GS-LAUNCH-014-superseded/GS-O003-R-REGISTER.json');
 assert.equal(currentRegister.documents.privacy.contactMode, 'direct');
-assert.equal(currentRegister.documents.privacy.prerequisitesMet['DIRECT-CONTACT-VERIFIED'], undefined);
-assert.equal(allLegalPublishable(Object.values(currentRegister.documents).map(e => e.state)), false);
+assert.equal(allLegalPublishable(Array(7).fill('OWNER_ADOPTED')), false);
 expect('adopted workflow coordinated', coordinatedReviewProblems(coordinated, workflow), null);
 expect('stale confirmation version', coordinatedReviewProblems(coordinated, swap(workflow, 'Consumers 3.4 (attached)', 'Consumers 3.3 (attached)')), /current consumer version/);
 assert.equal(createHash('sha256').update(read('evidence/GS-LAUNCH-014-OWNER-AUTHORITY.md')).digest('hex'), '8c0596b49763c11ddd0dbaa5954718b883946a57cef3c61ebb132140ee662497');
@@ -328,7 +337,7 @@ expect('privacy-publishable claimed while privacy unadopted', crossRegisterProbl
 expect('privacy-publishable claimed while privacy only adopted', crossRegisterProblems(docs('OWNER_ADOPTED', { 'PRIVACY-PUBLISHABLE': 'yes' })), /while the privacy entry is OWNER_ADOPTED/);
 expect('privacy-publishable met for real', crossRegisterProblems(docs('PUBLISHABLE', { 'PRIVACY-PUBLISHABLE': 'register, date' })), null);
 expect('privacy-publishable not claimed', crossRegisterProblems(docs('OWNER_REVIEW_REQUIRED', {})), null);
-// The live register: no entry claims Privacy publishable; adoption alone does not permit publication.
+// The live register must stay coherent at either authorised publication stage.
 expect('live register cross-coherent', crossRegisterProblems(JSON.parse(readFileSync('docs/_legal/evidence/GS-O003-R-REGISTER.json', 'utf8')).documents), null);
 
 // parseDraft — the generator the served pages come from refuses malformed drafts.
@@ -350,6 +359,26 @@ throws('no date', '# T\n\n**Version 1.0**\n\n## 1. A\n\nx\n', /no effective or d
 throws('duplicate clause', head + '## 1. A\n\nx\n\n## 1. B\n\ny\n', /appears twice/);
 throws('unnumbered heading', head + '## 1. A\n\nx\n\n## Annex\n\ny\n', /unnumbered heading/);
 throws('no clause', head + 'Just text.\n', /no numbered clause/);
+// GS-LAUNCH-026 cross-references: served words unchanged, every refusal by its own branch.
+{
+  cases += 1;
+  const d = parseDraft(head + '## 1. A\n\nSee our [Privacy Policy](/legal/privacy) and **[contact@gridsmith.uk](mailto:contact@gridsmith.uk)**.\n');
+  const got = JSON.stringify([d.clauses[0].paragraphs, d.clauses[0].links]);
+  const want = JSON.stringify([['See our Privacy Policy and contact@gridsmith.uk.'], [
+    { paragraph: 0, start: 8, end: 22, href: '/legal/privacy' }, { paragraph: 0, start: 27, end: 47, href: 'mailto:contact@gridsmith.uk' }]]);
+  if (got !== want) { failures += 1; console.error(`  FAIL link parse shape: ${got}`); }
+}
+throws('unapproved link target', head + '## 1. A\n\nSee [x](https://example.com/).\n', /not an approved legal cross-reference/);
+throws('repeated link target', head + '## 1. A\n\n[a](/contact) and [b](/contact).\n', /linked twice/);
+throws('link in a heading', head + '## 1. [A](/contact)\n\nx\n', /links are not supported in a heading/);
+throws('link in a table', head + '## 1. A\n\n| [a](/contact) | b |\n', /links are not supported in a table/);
+throws('malformed link', head + '## 1. A\n\n[a](/contact space).\n', /malformed link syntax/);
+{
+  const clauses = parseDraft(head + '## 1. A\n\nRead the [Cookie Policy](/legal/cookies).\n').clauses;
+  assert.throws(() => assertNoSelfLink('cookies', clauses), /links to itself/);
+  assert.doesNotThrow(() => assertNoSelfLink('privacy', clauses));
+  cases += 2;
+}
 
 // Owner adoption does not backdate the separately authorised cutover.
 const boundText = 'Exact synthetic adopted text';

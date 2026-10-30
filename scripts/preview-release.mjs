@@ -9,6 +9,8 @@ import { ownerPreviewIdentityAllowed } from '../lib/build/target.ts';
 
 export const ACCEPTANCE_COMMANDS = [
   ['scripts/check-hostinger-http.mjs', '--local-owner-preview'], ['scripts/check-static-ui.mjs', '--legal-preview'],
+  // GS-LAUNCH-026: the candidate's own cookie notice or consent request, measured in the browser.
+  ['scripts/check-consent.mjs'],
   ['scripts/check-lhci.mjs', 'desktop'], ['scripts/lhci-report.mjs', 'desktop'],
   ['scripts/check-lhci.mjs', 'mobile'], ['scripts/lhci-report.mjs', 'mobile'],
 ];

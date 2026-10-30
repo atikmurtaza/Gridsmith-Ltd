@@ -209,7 +209,7 @@ const INCOMPLETE_ALLOWED = [
   {
     rule: 'color-contrast',
     routes: ['/design'],
-    targetPattern: /^(#(?:design-title|brand-title|motion-title|technical-title|design-close)(?: > span)?|section\x5bdata-chapter="[0-4]"\x5d > \.ds-copy > \.ds-(?:kicker|intro|note)|a\x5bhref\$="#(?:brand-visual|motion-dimensional|technical-design)"\x5d|span\x5bdata-label="[0-4]"\x5d)$/,
+    targetPattern: /^(#(?:design-title|brand-title|motion-title|technical-title|design-close)(?: > span)?|section\x5bdata-chapter="[0-4]"\x5d > \.ds-copy > \.ds-(?:kicker|intro|note|motion)|\.ds-motion|a\x5bhref\$="#(?:brand-visual|motion-dimensional|technical-design)"\x5d|span\x5bdata-label="[0-4]"\x5d)$/,
     why: 'GS-R002 text shares a surface with decorative SVG. check:design:scene measures rendered background pixels under these text boxes at all five chapters and 20 viewports, with the same 2% thin-line tolerance as Master. Its contrast predicate is proven red by matching the headline colour to its background. Remove this entry if that pixel gate is removed or the scene no longer underlies the text. This does not allow any axe violation.',
   },
   {
@@ -676,6 +676,15 @@ async function domIntegrity(page, route, themed = true, expect = null) {
       if (!bodyStyle.getPropertyValue(token).trim()) {
         problems.push(`${token} resolves to nothing — the token layer is not loaded on this route`);
       }
+    }
+    // GS-LAUNCH-026, WCAG 2.2 SC 2.4.7. The header and footer focus outline is
+    // `2px solid var(--chrome-accent)`; when the token resolves to nothing the whole declaration is
+    // invalid and the outline computes to `none`. It did, on every Design service page, because the
+    // value it named was declared only by the landing's stylesheet. chrome.css is not in the derived
+    // list above, so its one load-bearing token is probed by name. Proven red on the pre-fix build
+    // (`/design/services/animation` resolved to the empty string; every other route resolved).
+    if (!bodyStyle.getPropertyValue('--chrome-accent').trim()) {
+      problems.push('--chrome-accent resolves to nothing — the header and footer focus outline computes to none (WCAG 2.4.7)');
     }
 
     // And this is the check that catches the tokens being present but not reaching the
@@ -1676,7 +1685,7 @@ const noticeProblems = [];
       }
 
       const after = await page.evaluate(() => ({
-        gone: !document.getElementById('gs-consent-heading'),
+        gone: !document.getElementById('gs-consent-heading')?.closest('[role="region"]')?.checkVisibility(),
         local: Object.keys(localStorage).length,
         session: Object.keys(sessionStorage).length,
       }));
@@ -1700,7 +1709,7 @@ const noticeProblems = [];
       // Step 3 — the reload. The cookie's only job is to stop the notice returning, and
       // that job is what makes it strictly necessary under Sch. A1 para. 4.
       await page.reload({ waitUntil: 'networkidle0' });
-      const stillGone = await page.evaluate(() => !document.getElementById('gs-consent-heading'));
+      const stillGone = await page.evaluate(() => !document.getElementById('gs-consent-heading')?.closest('[role="region"]')?.checkVisibility());
       if (!stillGone) {
         noticeProblems.push(
           'the notice reappeared on reload with gs_consent set — it would show on every page ' +
@@ -1709,7 +1718,7 @@ const noticeProblems = [];
       }
       await page.evaluate(() => [...document.querySelectorAll('button')]
         .find((button) => button.textContent.trim() === 'Cookie notice')?.click());
-      await page.waitForSelector('#gs-consent-heading');
+      await page.waitForSelector('#gs-consent-heading', { visible: true });
       assert(await page.$eval('#gs-consent-heading', (e) => e.closest('[role="region"]').checkVisibility()),
         'acknowledged notice did not reopen visibly');
     }
@@ -1735,7 +1744,7 @@ const noticeProblems = [];
     await new Promise((r) => setTimeout(r, 1000));
 
     const legacy = await legacyPage.evaluate(() => ({
-      shown: Boolean(document.getElementById('gs-consent-heading')),
+      shown: Boolean(document.getElementById('gs-consent-heading')?.closest('[role="region"]')?.checkVisibility()),
       cookie: document.cookie,
     }));
     if (legacy.shown) {

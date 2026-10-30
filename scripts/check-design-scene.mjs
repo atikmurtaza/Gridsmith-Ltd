@@ -565,6 +565,56 @@ async function drawnShare(page, index) {
   }, on, off, box);
 }
 
+/**
+ * GS-LAUNCH-026, WCAG 2.2 SC 2.2.2 Pause, Stop, Hide. Pixels, not the DOM: the mascot moves inside an
+ * SVG image document that no DOM read or getAnimations() reaches. `moving` compares two full-viewport
+ * screenshots 650 ms apart (more than 50 pixels changing by a channel sum over 45). The wave and the
+ * mascot move on their own, so after 5.5 s without input a visible control outside the stage must stop
+ * them, stay in view when used, and start them again. Each reading is a measured count.
+ */
+async function moving(page) {
+  const shot = () => page.screenshot({ encoding: "base64", captureBeyondViewport: false });
+  const a = await shot();
+  await pause();
+  const b = await shot();
+  const changed = await decoder.evaluate(async (a, b) => {
+    const read = async (b64) => {
+      const img = await createImageBitmap(await (await fetch(`data:image/png;base64,${b64}`)).blob());
+      const c = new OffscreenCanvas(img.width, img.height);
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      return ctx.getImageData(0, 0, img.width, img.height).data;
+    };
+    const [pa, pb] = [await read(a), await read(b)];
+    let n = 0;
+    for (let i = 0; i < pa.length; i += 4) if (Math.abs(pa[i] - pb[i]) + Math.abs(pa[i + 1] - pb[i + 1]) + Math.abs(pa[i + 2] - pb[i + 2]) > 45) n++;
+    return n;
+  }, a, b);
+  return changed > 50;
+}
+async function pauseControl(page) {
+  const f = [];
+  await seek(page, 2.25);
+  if (!(await moving(page))) return ["2.2.2 probe inert: nothing moves at the Motion dwell"];
+  await new Promise((r) => setTimeout(r, 5500));
+  if (!(await moving(page))) return f; // it came to rest on its own: no control needed
+  const control = await page.$$eval("[data-design-motion]", (els) => els.some((el) => !el.closest("[data-design-stage]") &&
+    el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })));
+  if (!control) return ["2.2.2: the scene moves for more than five seconds beside the copy with no pause control"];
+  await page.focus("[data-design-motion]");
+  await page.keyboard.press("Enter");
+  await page.waitForSelector('[data-static="user"]', { timeout: 5000 }).catch(() => {});
+  if (await moving(page)) f.push("2.2.2: the pause control did not stop the scene");
+  if (!(await page.$eval("[data-design-motion]", (el) => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; })))
+    f.push("2.2.2: the pause control left the viewport when used");
+  await page.focus("[data-design-motion]");
+  await page.keyboard.press("Enter");
+  await page.waitForSelector("[data-enhanced]", { timeout: 10000 }).catch(() => {});
+  await seek(page, 2.25);
+  if (!(await moving(page))) f.push("2.2.2: Play motion did not restart the scene");
+  return f;
+}
+
 /** The rendered R1 questions at one size; returns failures prefixed by their key. */
 async function continuity(page, { pixels = true } = {}) {
   const f = [];
@@ -984,6 +1034,19 @@ try {
     }
     await page.goto(`${base}/design`, { waitUntil: "networkidle0" });
     await page.waitForSelector("[data-enhanced]");
+    for (const [name, inject, expected] of [
+      ["2.2.2 no control", () => document.querySelector("[data-design-motion]").remove(), "no pause control"],
+      ["2.2.2 dead control", () => document.querySelector("[data-design-motion]").addEventListener("click", (e) => e.stopImmediatePropagation(), true), "did not stop the scene"],
+    ]) {
+      await page.goto(`${base}/design`, { waitUntil: "networkidle0" });
+      await page.waitForSelector("[data-enhanced]");
+      await page.evaluate(inject);
+      const found = await pauseControl(page);
+      if (!found.some((m) => m.includes(expected))) throw new Error(`Proof ${name} failed to produce its own red: ${found.join("; ") || "green"}`);
+      console.log(`PROVEN RED ${name}`);
+    }
+    await page.goto(`${base}/design`, { waitUntil: "networkidle0" });
+    await page.waitForSelector("[data-enhanced]");
     const contrastBaseline = await textContrast(page);
     if (contrastBaseline.length)
       throw new Error(
@@ -1016,18 +1079,22 @@ try {
     console.log('PROVEN RED visible text contrast inside clipped mobile panel');
     await mobile.close();
     const scope = await open(760,800);
-    // R1 ghosts the roof before the Technical copy settles, and copy in transit is over a receded
-    // scene, so no served position has the note over solid art any more: removing the paper alone is
-    // inert (the first R1 run of this proof). The subject is a settled note over a roof held solid —
-    // the case the paper surface exists for, should the art behind it ever be dark again.
+    // The current roof no longer overlaps the settled note. Its opacity cannot make
+    // this a subject. Place a controlled dark backing under the real note instead;
+    // its paper must keep the text readable, and removing it must expose that backing.
     await seek(scope,3.2);
-    await scope.addStyleTag({ content: "[data-design-stage] [data-roof]{opacity:1!important}" });
+    await scope.$eval('.ds-gate', el => {
+      const backing = document.createElement('div');
+      backing.style.background = getComputedStyle(el).color;
+      el.before(backing); backing.append(el);
+    });
     const cleanScope = await textContrast(scope, {selector:'.ds-gate'});
     if (cleanScope.length) throw new Error(`Dirty G2 scope baseline: ${cleanScope}`);
     await scope.$eval('.ds-gate', el => el.style.background = 'transparent');
-    if (!(await textContrast(scope, {selector:'.ds-gate'})).length)
+    const brokenScope = await textContrast(scope, {selector:'.ds-gate'});
+    if (!brokenScope.length)
       throw new Error('G2 removed-surface proof did not fail');
-    console.log('PROVEN RED closed Technical scope contrast without paper');
+    console.log(`PROVEN RED closed Technical scope contrast without paper over controlled backing: ${brokenScope[0]}`);
     await scope.close();
     // GS-DES-002-M1: the Technical copy arrives over the building while it is still sliding into
     // place; Linux CI read the kicker at 3.40:1 at 2.75 (locally 3.76:1 at 2.8). The kicker carries its
@@ -1435,7 +1502,11 @@ try {
     await page.reload({waitUntil:'networkidle0'});
     await page.waitForSelector('[data-enhanced]');
     await pageHeading(page, 'route back/refresh');
+    // After the hidden, offscreen and route-exit checks, so none of them can pass against a page this left static.
+    const pauseProblems = await pauseControl(page);
+    errors.push(...pauseProblems);
     console.log('R2 lifecycle: reduced-motion restart, idle wave, direction reversal, hidden/offscreen pause, route exit/back/refresh');
+    console.log(`2.2.2: ${pauseProblems.length ? 'FAILED' : 'still moving after 5.5 s, so the hero Pause motion control stops it, stays in view, and Play motion restarts it'}`);
     await page.close();
     for (const mode of [
       "reduced",

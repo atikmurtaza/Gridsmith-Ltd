@@ -164,7 +164,18 @@ const problems = [];
 const log = [];
 
 /** Keep the document clip, without Chromium's beyond-viewport 1×1 responsive reflow. */
-async function captureViewport(page) {
+async function captureViewport(page, settleTimeout = 5000) {
+  // The reduced-motion reset gives EVERY property a 0.01ms transition. Adding our
+  // visibility mask therefore starts a real CSS transition: an immediate read can
+  // still see visible text, while the screenshot sees hidden text. Establish the
+  // completed style/render state BEFORE taking the pose that must survive capture.
+  // Never finish/cancel animations, retry a rejected screenshot, or relax pose equality.
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  });
+  await page.waitForFunction(() => document.getAnimations().every(animation =>
+    !animation.pending && animation.playState !== 'running'), { polling: 'raf', timeout: settleTimeout });
   const read = () => page.evaluate(() => ({
     layout: [document.documentElement.scrollWidth, document.documentElement.scrollHeight],
     clip: { x: scrollX, y: scrollY, width: innerWidth, height: innerHeight },
@@ -174,8 +185,6 @@ async function captureViewport(page) {
   const before = await read();
   if (before.dpr !== 1 || before.scale !== 1 || before.offset.some(v => v !== 0)) throw new Error('Master capture requires scale 1 and an unshifted visual viewport');
   const boxes = await page.evaluate(TEXT_BOXES);
-  // Cross a render lifecycle after mask changes; the original pose still must match after capture.
-  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   const png = await page.screenshot({ encoding: 'base64', fullPage: false, captureBeyondViewport: false, clip: before.clip });
   const bytes = Buffer.from(png,'base64');
   const after = await read();
@@ -532,8 +541,35 @@ const ratio = (a, b) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
   page.screenshot = screenshot;
   if(!scrolled) throw new Error('Real scroll movement specimen was not rejected');
   if(JSON.stringify(await anchorState()) !== JSON.stringify(originalAnchor)) throw new Error('Rejected capture changed root styles');
+  // Permanent reproduction of the CI race: the site's reduced-motion reset starts
+  // visibility transitions even though the mask declares no transition itself.
+  await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+  const reset = await page.addStyleTag({ content: '@media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01ms !important; } }' });
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(resolve)));
+  const visibility = await page.evaluate((css) => {
+    const style = document.createElement('style'); style.textContent = css; document.head.append(style);
+    const el = document.querySelector('p');
+    return { early: getComputedStyle(el).visibility,
+      transition: document.getAnimations().some(a => a.transitionProperty === 'visibility' && a.playState === 'running') };
+  }, HIDE_CONTENT);
+  if (visibility.early !== 'visible' || !visibility.transition) throw new Error('Visibility-transition race specimen was not a subject');
+  await captureViewport(page);
+  if ((await page.evaluate(TEXT_BOXES)).length !== 0) throw new Error('Capture did not wait for its visibility mask');
+  await page.evaluate(css => document.querySelectorAll('style').forEach(s => s.textContent === css && s.remove()), HIDE_CONTENT);
+  await reset.evaluate(el => el.remove());
+  await page.emulateMediaFeatures([]);
+  await captureViewport(page);
+  if (!(await page.evaluate(TEXT_BOXES)).length) throw new Error('Visible control was not restored after the mask');
+  // An endlessly changing pose has no settled state. It must fail, not be frozen
+  // into a passing picture. The existing moved-DOM/scroll probes cover changes
+  // AFTER readiness, during the screenshot itself.
+  await page.$eval('p', el => el.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(20px)' }], { duration: 100, iterations: Infinity }));
+  let unsettled = false;
+  try { await captureViewport(page, 200); } catch (error) { if (error.name !== 'TimeoutError') throw error; unsettled = true; }
+  if (!unsettled) throw new Error('Continuously unstable pose was not rejected');
+  await page.evaluate(() => document.getAnimations().forEach(a => a.cancel()));
   await page.close();
-  console.log('check-master-scene: responsive document/bitmap mapping at three scrolls, 1×1 resize rejected, static caption low contrast/fade, shifted bitmap, dimensions, device scale, document layout, moved DOM/scroll and root styles preserved');
+  console.log('check-master-scene: responsive document/bitmap mapping at three scrolls, 1×1 resize rejected, static caption low contrast/fade, shifted bitmap, dimensions, device scale, document layout, moved DOM/scroll, reduced-motion visibility transition, continuously unstable pose and root styles preserved');
 }
 
 // Prove both sides of the perspective-card correction without changing application CSS.

@@ -30,6 +30,8 @@ import {
   normaliseWords,
   tokenReached,
   bannerProblems,
+  servedLinkProblems,
+  withoutLinkAffordance,
 } from './legal-parity-rules.mjs';
 
 let failures = 0;
@@ -246,6 +248,22 @@ check('banner: adopted state still saying "not yet adopted" fails', bannerProble
 check('banner: adopted state with no banner fails', bannerProblems('/x', 'OWNER_ADOPTED', '<p>terms</p>').length, 1);
 check('banner: publishable state with no banner is clean', bannerProblems('/x', 'PUBLISHABLE', '<p>terms</p>'), []);
 check('banner: publishable state with a pre-publication banner fails', bannerProblems('/x', 'PUBLISHABLE', ADOPTED).length, 1);
+
+// Branch E (GS-LAUNCH-026) — cross-references. Each refusal has its own specimen.
+const LINKED = [{ href: '/legal/privacy', text: 'Privacy Policy' }, { href: 'https://ico.org.uk/', text: 'ico.org.uk' }];
+const SERVED = '<p>See our <a href="/legal/privacy">Privacy Policy</a> or <a href="https://ico.org.uk/" target="_blank" rel="noopener noreferrer">ico.org.uk<span class="sr-only"> (opens in a new tab)</span></a>.</p>';
+check('links: the draft target is reduced to its words', normaliseWords('our [Privacy Policy](/legal/privacy). Our'), ['our', 'privacy', 'policy', 'our']);
+check('links: exact links, external suffix ignored, are clean', servedLinkProblems('/x', 'clause-1', LINKED, SERVED), []);
+check('links: a dropped cross-reference fails', servedLinkProblems('/x', 'clause-1', LINKED, SERVED.replace('<a href="/legal/privacy">Privacy Policy</a>', 'Privacy Policy')).length, 1);
+check('links: a re-targeted cross-reference fails', servedLinkProblems('/x', 'clause-1', LINKED, SERVED.replace('href="/legal/privacy"', 'href="/legal/cookies"')).length, 1);
+check('links: a link the draft does not have fails', servedLinkProblems('/x', 'clause-1', [], '<p><a href="/legal/terms">Website Terms</a></p>').length, 1);
+check('links: changed link words fail', servedLinkProblems('/x', 'clause-1', LINKED, SERVED.replace('>Privacy Policy<', '>privacy notice<')).length, 1);
+check('links: an unlinked clause with no links is clean', servedLinkProblems('/x', 'clause-1', [], '<p>No links here.</p>'), []);
+// The external-link notice is the only served text exempt from the word comparison, and only verbatim.
+const ICO_DRAFT = normaliseWords('at [ico.org.uk](https://ico.org.uk/). The regulator usually');
+const served = (html) => normaliseWords(withoutLinkAffordance(html).replace(/<[^>]*>/g, ' '));
+check('links: the external-link notice is not draft wording', containsRun(ICO_DRAFT, served('at <a href="https://ico.org.uk/">ico.org.uk<span class="sr-only"> (opens in a new tab)</span></a>. The regulator usually')), true);
+check('links: other screen-reader-only text still fails', containsRun(ICO_DRAFT, served('at <a href="https://ico.org.uk/">ico.org.uk<span class="sr-only"> (official site)</span></a>. The regulator usually')), false);
 
 // ---------------------------------------------------------------------------
 

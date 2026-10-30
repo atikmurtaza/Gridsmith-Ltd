@@ -49,7 +49,7 @@ const PROBES = [
   { id: 's2', gate: SCENE_GATE, q: '2', file: SCENE, what: 'shader made uncompilable', edit: (s) => s.replace('gl_FragColor', 'gl_FragColour') },
   { id: 's3', gate: SCENE_GATE, q: '3', file: HTML, what: 'canvas hidden', edit: style('[data-master-scene] canvas{visibility:hidden!important}') },
   { id: 's4', gate: SCENE_GATE, q: '4', file: SCENE, what: 'scroll no longer drives the pose', edit: (s) => s.replace('addEventListener("scroll"', 'addEventListener("scrollx"') },
-  { id: 's4r', gate: SCENE_GATE, q: '4 reduced', file: PAGE, what: 'reduced-motion query ignored by the scene', edit: (s) => s.replace('matchMedia("(prefers-reduced-motion: reduce)").matches,allowSoftware', 'matchMedia("(prefers-reduced-motion: no-such)").matches,allowSoftware') },
+  { id: 's4r', gate: SCENE_GATE, q: '4 reduced', file: PAGE, what: 'scene initialisation ignores the reduced-motion preference', edit: re(/reduced:[$\w]+\.matches,allowSoftware:/, 'reduced:!1,allowSoftware:') },
   // Question 5's first probe moved the headline over the mark. Since R1 the renderer dims the scene
   // behind text wherever the text is, so that probe stopped being a subject — the class it tested
   // for was fixed. The valid probe now switches the dimming off: copy over the exploded pieces.

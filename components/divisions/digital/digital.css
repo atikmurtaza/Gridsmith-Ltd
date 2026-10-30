@@ -675,19 +675,22 @@
 }
 
 /* R3-F ambient mechanism: inner groups turn slowly inside the alignment groups the
-   script rotates. CSS only; paused off screen, absent under reduced motion/Save-Data. */
+   script rotates. CSS only; paused off screen, absent under reduced motion/Save-Data.
+   GS-LAUNCH-026, WCAG 2.2.2 Pause, Stop, Hide: they turn only while the Hero/Final demo
+   plays (data-motion 'auto', not handing off), beside its Pause motion control, so Pause
+   stops every moving part; in every other state they stand still where they stopped. */
 .dg-spin { transform-box: view-box; transform-origin: 50% 50%; }
 .dg-spin-plane .dg-aperture-plane-inset { stroke-dasharray: 2 9; }
 @media (prefers-reduced-motion: no-preference) {
   .dg-apertures[data-enhanced='true']:not([data-instant='true']) .dg-spin { animation: dg-spin calc(var(--dur-cycle) * .4) linear infinite; }
   .dg-apertures[data-enhanced='true']:not([data-instant='true']) .dg-spin-two { animation-duration: calc(var(--dur-cycle) * .5625); animation-direction: reverse; }
   .dg-apertures[data-enhanced='true']:not([data-instant='true']) .dg-spin-plane { animation-duration: calc(var(--dur-cycle) * .9375); }
-  .dg-apertures[data-enhanced='true'][data-ambient='paused'] .dg-spin { animation-play-state: paused; }
+  .dg-apertures[data-enhanced='true']:is([data-ambient='paused'], [data-transit='true'], :not([data-motion='auto'])) .dg-spin { animation-play-state: paused; }
 }
 @keyframes dg-spin { to { transform: rotate(360deg); } }
 
 /* R3-F copy veil: a soft-edged, low-blur graphite field behind chapter and process
-   copy. The text stays sharp; the instrument stays visible and moving beneath. */
+   copy. The text stays sharp; the instrument stays visible beneath. */
 .dg-home :is(.dg-chapter-header, .dg-service-index, .dg-engagement .dg-section-intro, .dg-engagement ol) { position: relative; isolation: isolate; }
 .dg-home :is(.dg-chapter-header, .dg-service-index, .dg-engagement .dg-section-intro, .dg-engagement ol)::after {
   content: ''; position: absolute; inset: -1.75rem -2.25rem; z-index: -1; pointer-events: none;

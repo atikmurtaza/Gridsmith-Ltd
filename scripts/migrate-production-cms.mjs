@@ -25,7 +25,7 @@
  * |---|---|
  * | *(none)* | Builds the payload, runs the preflight and the selftest, and asserts the committed manifest `docs/_shared/GS-PROD-001-CMS-MANIFEST.json` is what this source produces. Offline; writes nothing. In `verify:static`. |
  * | `--write-manifest` | Regenerates that manifest file (a deliberate act: it is the reviewed migration list). |
- * | `--read-production` | One unauthenticated read of the production dataset's document count. Read-only. |
+ * | `--read-production` | Unauthenticated document count and exact legal-payload parity (or required absence while withheld). Read-only. |
  * | `--write` / `--rollback` | **The only modes that touch production.** Refused unless *all* of: `--dataset=production`, `GS_PRODUCTION_CMS_CONFIRM=write-production`, `SANITY_API_WRITE_TOKEN`, and `--backup=<file>` naming an existing export. Not run at `GS-PROD-001`. |
  *
  * `--write` is safe to re-run: it refuses a production dataset holding any document outside the
@@ -40,6 +40,7 @@ import { LEGAL_DOCUMENT_SLUGS } from '../lib/legal/slugs.ts';
 import { PROFESSIONAL_REVIEW_GROUPS } from '../lib/services/architecture.ts';
 import { doc as companyDetails } from './seed-company-details.mjs';
 import { LEGAL_DOCUMENTS } from './seed-legal.mjs';
+import { legalPreviewProblems } from './legal-preview-rules.mjs';
 import { groupPageDocs, serviceDocs } from './seed-content.mjs';
 
 const MANIFEST = 'docs/_shared/GS-PROD-001-CMS-MANIFEST.json';
@@ -130,6 +131,12 @@ const strings = (value, out = []) => {
  */
 const STATUTORY_RELATION = /\btrading divisions? of Gridsmith Ltd\b/gi;
 
+/** Read-back must compare content; a document count alone cannot establish legal parity. */
+export function cmsLegalProblems(actual, expected) {
+  return expected.length ? legalPreviewProblems(actual, expected, LEGAL_REGISTER, readFileSync)
+    : actual.length ? ['Production CMS contains legal documents while publication is withheld'] : [];
+}
+
 /** Every reason this payload must not reach production. An empty array is the only pass. */
 export function preflightProblems(docs) {
   const problems = [];
@@ -151,8 +158,15 @@ export function preflightProblems(docs) {
     for (const text of strings(d)) {
       if (/\[SEED/i.test(text)) problems.push(`${d._id}: carries a [SEED] marker`);
       const word = text.replace(STATUTORY_RELATION, '').match(/\b(?:divisions?|departments?)\b/i)?.[0];
-      if (word) problems.push(`${d._id}: brand copy says "${word}" — ${JSON.stringify(text.slice(0, 90))}`);
+      if (word && d._type !== 'legalDocument') problems.push(`${d._id}: brand copy says "${word}" — ${JSON.stringify(text.slice(0, 90))}`);
     }
+  }
+  // Adopted legal wording is immutable; validate its exact payload instead of marketing vocabulary.
+  const legal = docs.filter(d => d._type === 'legalDocument');
+  if (legal.length) {
+    const expected = LEGAL_DOCUMENTS.map(d => ({ ...d, _id: `legal-${d.slug.current}`, isSeed: false,
+      adoptionState: 'PUBLISHABLE', ownerAdoptedOn: LEGAL_REGISTER.documents[d.slug.current].ownerAdoptedOn }));
+    problems.push(...legalPreviewProblems(legal, expected, LEGAL_REGISTER, readFileSync));
   }
   const count = (type, division) => docs.filter((d) => d._type === type && (!division || d.division === division)).length;
   if (count('companyDetails') !== EXPECTED.companyDetails) problems.push(`companyDetails: ${count('companyDetails')}, expected ${EXPECTED.companyDetails}`);
@@ -183,6 +197,8 @@ function selftest(docs) {
     ['lost record', docs.filter((d) => d !== service), /expected/],
   ];
   const failures = [];
+  if (cmsLegalProblems([], []).length) failures.push('empty withheld CMS was refused');
+  if (!cmsLegalProblems([{ _id: 'unexpected' }], []).length) failures.push('unexpected withheld CMS legal content was accepted');
   if (preflightProblems(docs).length !== 0) failures.push('the clean payload is not clean');
   if (preflightProblems(swap(page, { intro: 'All three are trading divisions of Gridsmith Ltd.' })).length !== 0) {
     failures.push('the statutory relationship sentence was refused');
@@ -190,7 +206,29 @@ function selftest(docs) {
   for (const [label, mutated, expected] of cases) {
     if (!preflightProblems(mutated).some((p) => expected.test(p))) failures.push(`${label}: not refused`);
   }
-  return { failures, cases: cases.length + 2 };
+  const saved = structuredClone(LEGAL_REGISTER.documents);
+  try {
+    // In-memory test evidence never advances the real register or authorises a CMS write.
+    for (const entry of Object.values(LEGAL_REGISTER.documents)) entry.state = 'PUBLISHABLE';
+    const ready = buildPayload().docs;
+    const legal = ready.filter(d => d._type === 'legalDocument');
+    if (ready.filter(d => d._type === 'legalDocument').length !== 7 || preflightProblems(ready).length) {
+      failures.push('all seven canonical legal documents were refused');
+    }
+    if (cmsLegalProblems(legal, legal).length) failures.push('exact CMS legal read-back was refused');
+    if (!cmsLegalProblems([], legal).some(p => /exactly seven|missing/.test(p))) failures.push('missing CMS legal content was accepted');
+    const cmsChanged = structuredClone(legal); cmsChanged[0].summary += ' changed';
+    if (!cmsLegalProblems(cmsChanged, legal).some(p => /content mismatch/.test(p))) failures.push('changed CMS legal content was accepted');
+    const changed = structuredClone(ready);
+    changed.find(d => d._type === 'legalDocument').summary += ' invented department';
+    if (!preflightProblems(changed).some(p => /content mismatch/.test(p))) failures.push('changed legal text was accepted');
+    if (!preflightProblems(ready.filter(d => d._id !== 'legal-privacy')).some(p => /exactly seven|missing/.test(p))) {
+      failures.push('partial legal publication was accepted');
+    }
+    LEGAL_REGISTER.documents.privacy.state = 'OWNER_ADOPTED';
+    if (buildPayload().docs.some(d => d._type === 'legalDocument')) failures.push('partial register publication was accepted');
+  } finally { LEGAL_REGISTER.documents = saved; }
+  return { failures, cases: cases.length + 11 };
 }
 
 /* -- Run --------------------------------------------------------------------------------- */
@@ -280,7 +318,11 @@ async function guardedWriteOrRollback() {
 
 if (flag('--read-production')) {
   const n = await query('count(*[!(_id in path("_.**")) && !(_id in path("system.**"))])');
-  console.log(`migrate-production-cms: read-only — "${PRODUCTION_DATASET}" holds ${n} public document(s). Nothing written.`);
+  const legal = await query('*[_type == "legalDocument" && !(_id in path("drafts.**"))]');
+  const expected = docs.filter(d => d._type === 'legalDocument');
+  const parity = cmsLegalProblems(legal, expected);
+  if (parity.length) report(parity);
+  else console.log(`migrate-production-cms: read-only — "${PRODUCTION_DATASET}" holds ${n} public document(s); ${legal.length} legal document(s), exact payload/withheld-absence check PASS. Nothing written.`);
 } else if (flag('--write') || flag('--rollback')) {
   await guardedWriteOrRollback();
 } else {

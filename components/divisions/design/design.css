@@ -87,9 +87,31 @@
 }
 .ds-cta:focus-visible,
 .ds-story a:focus-visible,
-.ds-story summary:focus-visible {
+.ds-story summary:focus-visible,
+.ds-story button:focus-visible {
   outline: 3px solid currentColor;
   outline-offset: 5px;
+}
+/* GS-LAUNCH-026, WCAG 2.2.2: the wave and mascot move on their own, so the hero carries a control
+   that shows the static narrative. Hidden (space kept, no shift) wherever nothing can move: before
+   enhancement, without JavaScript, and under reduced motion, Save-Data or low memory. */
+.ds-motion {
+  display: block;
+  margin-top: 0.75rem;
+  min-height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--ink-muted);
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+  cursor: pointer;
+  visibility: hidden;
+}
+.ds-story:is([data-enhanced], [data-static="user"]) .ds-motion {
+  visibility: visible;
 }
 .ds-chapter-links {
   display: flex;

@@ -104,6 +104,10 @@ export async function DesignHome() {
               <a href="#motion-dimensional">Motion / Dimensional</a>
               <a href="#technical-design">Technical Design</a>
             </nav>
+            {/* WCAG 2.2.2 (GS-LAUNCH-026): visible only while the scene can move; DesignScene wires it. */}
+            <button type="button" className="ds-motion" data-design-motion="">
+              Pause motion
+            </button>
           </div>
           <div className="ds-poster">
             <DesignArtwork id="ds-workspace" chapter={0} />

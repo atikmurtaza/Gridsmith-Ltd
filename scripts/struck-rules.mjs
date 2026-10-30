@@ -463,6 +463,22 @@ export const STRUCK_RULES = [
       '`scripts/check-legal-adoption.mjs` (documentary gate) and `scripts/migrate-production-cms.mjs` ' +
       '(production admits only `PUBLISHABLE`).',
   },
+  {
+    id: 'GS-LAUNCH-026-CONSENT-LOG-PREREQUISITE',
+    // The table itself may still be described (SCHEMA, IMPLEMENTATION-PLAN); what was struck is
+    // its standing as a condition of introducing analytics, so both must be on the line.
+    patterns: [/\b(L-07|consent_events)\b/, /\bprerequisites?\b/i],
+    why:
+      'Struck by `GS-LAUNCH-026`, 28 October 2026. The ICO storage and access guidance (29 April ' +
+      '2026) leaves the method of demonstrating consent to the controller. Consent is demonstrated by ' +
+      'the versioned consent mechanism in Git and the decision record in each visitor\'s `gs_consent` ' +
+      'cookie; the owner instructed that no unnecessary data system be created, and a server-side ' +
+      'consent log would itself be new personal data.',
+    where:
+      '`master/PROJECT-RULES.md` §6 (the GS-LAUNCH-026 amendment), `_legal/compliance/ANALYTICS-ACTIVATION.md` (the same limb, struck in place), `lib/consent/decision.ts` (the ' +
+      'record), `scripts/check-consent.mjs` (what is requested and stored in each state). `L-07` ' +
+      'remains an optional enhancement, not a launch condition.',
+  },
 ];
 
 /** The standing-spec corpus. Globbed by the runner; listed here so the scope is reviewable. */

@@ -4,7 +4,7 @@ import { SANITY_DATASET } from '@/sanity/env';
 import legalRegister from '@/docs/_legal/evidence/GS-O003-R-REGISTER.json';
 import { staticManifest } from '@/lib/build/static-routes';
 import type { PortableMarkDef, PortableSpan } from '@/lib/content/portableLinks';
-import { LEGAL_DOCUMENTS } from '@/scripts/seed-legal.mjs';
+import { LEGAL_DOCUMENTS, legalProposalDocuments } from '@/scripts/seed-legal.mjs';
 import { allLegalPublishable } from '@/lib/legal/adoption';
 
 /**
@@ -282,13 +282,21 @@ export const getGroupPage = (slug: 'approach' | 'about') =>
 /** Canonical repository text also supplies the served route; CMS copies cannot override it. */
 const publishableLegalSlugs = allLegalPublishable(Object.values(legalRegister.documents).map((entry) => entry.state))
   ? Object.keys(legalRegister.documents) : [];
+/**
+ * GS-LAUNCH-026: an owner-preview build may serve the active revision proposal, which its manifest
+ * names; every other build serves the adopted texts. Each proposed document is OWNER_REVIEW_REQUIRED.
+ */
+const servedLegal = () => {
+  const proposal = OWNER_PREVIEW ? staticManifest().legalProposal : undefined;
+  return proposal ? legalProposalDocuments(proposal) : LEGAL_DOCUMENTS;
+};
 export const getLegalDocument = (slug: string) =>
-  Promise.resolve(LEGAL_DOCUMENTS.find((doc) => doc.slug.current === slug &&
+  Promise.resolve(servedLegal().find((doc) => doc.slug.current === slug &&
     (SANITY_DATASET === 'development' || (OWNER_PREVIEW && staticManifest().legalPreview === 'adopted-owner') ||
       (doc.adoptionState === 'PUBLISHABLE' && publishableLegalSlugs.includes(slug)))) ?? null);
 
 export const listLegalDocuments = () =>
-  Promise.resolve(LEGAL_DOCUMENTS.filter((doc) => SANITY_DATASET === 'development' ||
+  Promise.resolve(servedLegal().filter((doc) => SANITY_DATASET === 'development' ||
     (OWNER_PREVIEW && staticManifest().legalPreview === 'adopted-owner') ||
     (doc.adoptionState === 'PUBLISHABLE' && publishableLegalSlugs.includes(doc.slug.current)))
     .map((doc) => ({ title: doc.title, slug: doc.slug.current, summary: doc.summary, adoptionState: doc.adoptionState }))

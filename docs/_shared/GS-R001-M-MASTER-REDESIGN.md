@@ -177,8 +177,8 @@ scroll hijacking, no smooth-scroll library, no cursor follower.
 
 Lazy by `import()` on `requestIdleCallback`, so the renderer is never on the LCP path (the `h1`
 is the LCP element and has no entrance animation). Master-only. DPR capped at 2 and pixel count
-capped (1.9M wide, 0.7M narrow). Rendering stops when the pose settles; the only continuous
-motion is the hero/close sway, capped at 30fps; `requestAnimationFrame` stops in a background
+capped (1.9M wide, 0.7M narrow). Rendering stops when the pose settles; the only ~~continuous~~
+motion the reader does not drive is the hero/close sway, capped at 30fps and (GS-LAUNCH-026, WCAG 2.2.2) eased to rest within 4.5 s of the scene starting or the last scroll; `requestAnimationFrame` stops in a background
 tab. On unmount the program, shaders and buffer are deleted and the context released.
 
 ## 6. Reviews

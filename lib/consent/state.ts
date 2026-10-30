@@ -24,6 +24,15 @@
  * BEFORE-LAUNCH as a thing to fix *before* any tag is initialised, and it must be settled by
  * measurement rather than by reading. Leaving a broken bridge in place to signal categories
  * that no longer exist would be worse than having none.
+ *
+ * **`GS-LAUNCH-026`: one purpose per provider, and only for a configured provider.** When the build
+ * is given a GA4 or PostHog identifier (`lib/analytics/config.ts`) the notice becomes a consent
+ * request with a separate, unticked choice for each, and the cookie records the decision as
+ * `v2:g{1|0|-}:p{1|0|-}:{unix seconds}` (`-` = not offered when chosen) — `decision.ts`, kept
+ * apart so first-load JS carries only the notice functions below. Without an identifier
+ * nothing here changes: the notice-only `1` above is still what is written and read. A notice-only
+ * or legacy value never grants anything, and a decision that does not cover every configured
+ * provider is no decision — the request is shown again, because the purposes changed.
  */
 
 /**
@@ -36,7 +45,7 @@
  * every request is https and the flag is set.
  */
 export const COOKIE = 'gs_consent';
-const MAX_AGE = 60 * 60 * 24 * 365;
+export const MAX_AGE = 60 * 60 * 24 * 365;
 
 /**
  * Has the notice been acknowledged?

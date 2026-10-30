@@ -1,4 +1,5 @@
 import { ConsentReopen } from '@/components/consent/ConsentReopen';
+import { ANALYTICS } from '@/lib/analytics/config';
 import { getCompanyDetails, whatsAppHref } from '@/lib/company/companyDetails';
 import { SOCIAL_CHANNELS } from '@/lib/company/social';
 import { LEGAL_FOOTER_SLUGS } from '@/lib/legal/slugs';
@@ -265,7 +266,7 @@ export async function Footer({ division }: { division: Division }) {
           </p>
           {/* FOUNDATION requires a persistent way back into the choice. It is its own
               tiny Client Component so the footer stays a Server Component. */}
-          <p><ConsentReopen /></p>
+          <p><ConsentReopen label={ANALYTICS.ga4 || ANALYTICS.posthog ? 'Cookie settings' : 'Cookie notice'} /></p>
         </div>
       </div>
     </footer>

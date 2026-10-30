@@ -260,7 +260,9 @@ async function matrix(width, height, { fault } = {}) {
 // ---- 2. R3-G map timing under continuous scroll (desktop) ---------------------------------
 async function mapTiming({ fault } = {}) {
   const page = await open(1440, 900);
-  if (fault === 'late') await page.addStyleTag({ content: ".dg-apertures[data-mode='map'] .dg-compass-label{transition-delay:1500ms!important}" });
+  // The labels are already visible before map mode, so delaying a transition that
+  // never starts is inert. Withhold their opacity in the actual measured map state.
+  if (fault === 'late') await page.addStyleTag({ content: ".dg-apertures[data-mode='map'] .dg-compass-label{opacity:0!important}" });
   const r = await page.evaluate(async () => {
     const s = document.querySelector('.dg-apertures');
     const labels = [...s.querySelectorAll('.dg-compass-label')];
@@ -398,6 +400,68 @@ async function preference(kind, { fault } = {}) {
   return found;
 }
 
+// ---- 3b. WCAG 2.2.2 Pause, Stop, Hide (GS-LAUNCH-026) -------------------------------------
+// The rings may turn only while a visible, operable pause control is available, and Pause must
+// hold everything still for longer than five seconds. Every reading is a value (play state,
+// current time, a count), so a probe that reaches the subject turns its branch red.
+async function pauseStop({ fault } = {}) {
+  const page = await open(1440, 900);
+  if (fault === 'always-run') await page.addStyleTag({ content: '.dg-spin{animation-play-state:running!important}' });
+  if (fault === 'hidden-control') await page.addStyleTag({ content: '.dg-motion-control{visibility:hidden!important}' });
+  if (fault === 'no-rings') await page.addStyleTag({ content: '.dg-spin{animation:none!important}' });
+  const found = [];
+  const read = () => page.evaluate(() => {
+    const s = document.querySelector('.dg-apertures');
+    const button = document.querySelector('.dg-motion-control');
+    const rings = [...s.querySelectorAll('.dg-spin')].flatMap((g) => g.getAnimations());
+    return {
+      count: rings.length,
+      running: rings.some((a) => a.playState === 'running'),
+      time: rings.map((a) => Math.round(Number(a.currentTime))).join(),
+      control: !!button && button.checkVisibility({ checkVisibilityCSS: true, checkOpacity: true }) && !button.inert,
+      motion: s.dataset.motion, active: s.dataset.active ?? null,
+    };
+  });
+  const check = (where, r) => {
+    if (r.count !== 3) found.push(`pause ${where}: ${r.count} ring animation(s) — no subject`);
+    else if (r.running && !r.control) found.push(`pause ${where}: rings turn with no available pause control`);
+  };
+  check('hero', await read());
+  // The hand-off: walk down until data-transit flips, as opening() does.
+  const handoff = await page.evaluate(async () => {
+    const s = document.querySelector('.dg-apertures');
+    const frame = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    for (let y = 0; y < document.documentElement.scrollHeight; y += 16) {
+      scrollTo(0, y); await frame();
+      if (s.dataset.transit === 'true') return y;
+    }
+    return null;
+  });
+  if (handoff === null) found.push('pause hand-off: data-transit never became true');
+  else { await settle(600); check('hand-off', await read()); }
+  for (const anchor of anchors().filter((a) => ['map', 'web header', 'process', 'final'].includes(a.name))) {
+    await visit(page, anchor);
+    check(anchor.name, await read());
+  }
+  // In the Hero: Pause holds every moving part still for more than five seconds; Play resumes.
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await settle(1800);
+  if ((await read()).motion !== 'auto') found.push('pause hero: the demo was not running before Pause');
+  await page.$eval('.dg-motion-control', (b) => b.click());
+  await settle(300);
+  const paused = await read();
+  if (paused.motion !== 'paused') found.push(`pause hero: Pause set motion ${paused.motion}`);
+  await settle(5500);
+  const held = await read();
+  if (held.running || held.time !== paused.time || held.active !== paused.active) found.push('pause hero: kept moving after Pause');
+  await page.$eval('.dg-motion-control', (b) => b.click());
+  await settle(600);
+  const resumed = await read();
+  if (resumed.motion !== 'auto' || !resumed.running) found.push(`pause hero: Play did not resume (motion ${resumed.motion}, running ${resumed.running})`);
+  await page.close();
+  return found;
+}
+
 // ---- 4. No-JS: the server HTML carries every essential route --------------------------------
 function noJsProblems(html) {
   const count = (re) => (html.match(re) ?? []).length;
@@ -424,12 +488,25 @@ try {
     const proofs = [
       ['contrast', async () => (await matrix(1440, 900, { fault: 'contrast' })).found.some((f) => f.includes('pixel contrast') && f.includes('Help people'))],
       ['process neutral', async () => (await matrix(1280, 720, { fault: 'process' })).found.some((f) => f.includes('process: active 5'))],
-      ['map timing', async () => (await mapTiming({ fault: 'late' })).found.some((f) => f.includes('complete map'))],
+      ['map timing', async () => {
+        const clean = await mapTiming();
+        if (clean.found.length) throw new Error(`Dirty map-timing control: ${clean.found.join('; ')}`);
+        const broken = await mapTiming({ fault: 'late' });
+        console.log(`map timing proof: clean ${Math.round(clean.r.complete)}ms complete; withheld labels ${Math.round(broken.r.complete)}ms complete, ${Math.round(broken.r.numbersOnly)}ms numbers-only`);
+        return broken.r.map >= 400 && broken.r.complete === 0 && broken.r.numbersOnly > 100 &&
+          broken.found.some(f => f.includes('complete map')) && broken.found.some(f => f.includes('numbers-only map'));
+      }],
       ['opening: Hero owns first screen', async () => (await opening(1440, 900, { fault: 'short-hero' })).found.some((f) => f.includes("inside the Hero's first screen"))],
       ['opening: hand-off before Route Map copy', async () => (await opening(390, 844, { fault: 'no-handoff' })).found.some((f) => f.includes('shares the screen with Route Map copy'))],
       ['lifecycle state', async () => (await lifecycle({ fault: 'stale' })).some((f) => f.includes('anchor jump to 05'))],
       ['reduced-motion rotation', async () => (await preference('reduced', { fault: 'spin' })).some((f) => f.includes('ambient rotation'))],
       ['save-data rotation', async () => (await preference('save-data', { fault: 'spin' })).some((f) => f.includes('ambient rotation'))],
+      ['2.2.2 rings turn without a control, and through Pause', async () => {
+        const found = await pauseStop({ fault: 'always-run' });
+        return found.some((f) => f.includes('no available pause control')) && found.some((f) => f.includes('kept moving after Pause'));
+      }],
+      ['2.2.2 hidden control', async () => (await pauseStop({ fault: 'hidden-control' })).some((f) => f.includes('pause hero: rings turn with no available pause control'))],
+      ['2.2.2 no subject', async () => (await pauseStop({ fault: 'no-rings' })).some((f) => f.includes('no subject'))],
       ['no-JS links', async () => noJsProblems(html.replace(/href="\/digital\/services\/ecommerce"/g, 'href="/x"')).some((f) => f.includes('16 service links'))],
     ];
     for (const [name, proof] of proofs) {
@@ -464,6 +541,9 @@ try {
       errors.push(...found);
       console.log(`${kind}: ${found.length ? 'FAILED' : 'static instrument, no autoplay, no rotation, navigation works'}`);
     }
+    const pause = await pauseStop();
+    errors.push(...pause);
+    console.log(`2.2.2: ${pause.length ? 'FAILED' : 'rings turn only beside a working Pause control (hero, hand-off, map, 01, process, final); Pause holds 5.5s; Play resumes'}`);
     const nojs = noJsProblems(html);
     errors.push(...nojs);
     console.log(`no-JS: ${nojs.length ? 'FAILED' : `hero, CTAs, 5 route links, 5 chapters, ${SERVICE_LINKS} service links, engagement, final`}`);

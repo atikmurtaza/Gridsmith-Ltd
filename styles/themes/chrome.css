@@ -49,7 +49,12 @@ body[data-division="design"] {
   --chrome-ink:    var(--ds-paper);
   --chrome-muted:  var(--ds-blue-hi);
   --chrome-line:   var(--ds-navy);
-  --chrome-accent: var(--ds-gold);
+  /* GS-LAUNCH-026, WCAG 2.2 SC 2.4.7: `--ds-gold` is defined by design-stage.css, which only the
+     /design landing loads. On every Design service page this resolved to nothing, so the chrome's
+     `outline: 2px solid var(--chrome-accent)` was invalid and computed to `none` — keyboard focus on
+     the header and footer had no indicator at all. The theme's own `--accent` is the same gold and
+     exists on every Design route, so it is the fallback; nothing else about the chrome changes. */
+  --chrome-accent: var(--ds-gold, var(--accent));
 }
 
 /* Digital dark environment, its light ink, the commit/focus signal. */

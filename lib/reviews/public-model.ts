@@ -2,6 +2,8 @@
 export const REVIEW_STAGING_ORIGIN = 'https://mediumaquamarine-wallaby-594070.hostingersite.com';
 export const REVIEW_SOURCE_LABEL = 'Verified Freelancer review';
 export const REVIEW_SOURCE_URL = 'https://www.freelancer.com/u/GridsmithLTD';
+/** GS-LAUNCH-026: shown in place of every reviewer's name — fixed length, so it reveals nothing. */
+export const REVIEWER_MASK = '******';
 
 export type PublicReview = Readonly<{
   key: string;

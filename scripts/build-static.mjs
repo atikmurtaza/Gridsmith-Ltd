@@ -20,6 +20,10 @@ import { PRODUCTION_ORIGIN, PREVIEW_INTAKE_URL, PRODUCTION_INTAKE_URL, productio
 import { SANITY_PROJECT_ID, SANITY_API_VERSION } from '../sanity/project.ts';
 import { inspectStaticArtifact, inspectOperatorError, readArtifact } from './check-static-artifact.mjs';
 import { artifactNoReviewProblems } from './review-public-rules.mjs';
+import { LEGAL_DRAFT_SOURCES, legalProposalDocuments } from './seed-legal.mjs';
+import { analyticsDisclosureProblems, analyticsReadinessProblems } from './legal-adoption-rules.mjs';
+import { analyticsConfigProblems, readAnalyticsConfig } from '../lib/analytics/config.ts';
+import { CHOICE_MAX_AGE } from '../lib/consent/decision.ts';
 
 // GS-R13: `staging` (default), `owner-preview`, or the explicit gridsmith.uk `production` profile. A
 // production rehearsal waives only the unmet inputs, writes outside `out/`, and is not deployable.
@@ -27,6 +31,27 @@ const profile = process.env.GRIDSMITH_STATIC_PROFILE ?? 'staging';
 if (!['staging', 'production', 'owner-preview'].includes(profile)) throw new Error('GRIDSMITH_STATIC_PROFILE must be staging, production or owner-preview');
 const production = profile === 'production';
 const ownerPreview = profile === 'owner-preview';
+// GS-LAUNCH-026: an owner-review candidate may display the active legal revision proposal, never a release.
+const legalProposal = process.env.GRIDSMITH_LEGAL_PROPOSAL || undefined;
+if (legalProposal && !ownerPreview) throw new Error('A legal revision proposal may only be displayed by the owner-preview profile');
+if (legalProposal) legalProposalDocuments(legalProposal); // Intact, and revising the current adoption, or this throws.
+// GS-LAUNCH-026: optional analytics. Set-but-malformed is refused; a configured provider requires
+// served policies that describe it — the adopted texts, or the proposal an owner preview displays.
+const analyticsProblems = analyticsConfigProblems(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID,
+  process.env.NEXT_PUBLIC_POSTHOG_KEY, process.env.NEXT_PUBLIC_POSTHOG_HOST);
+if (analyticsProblems.length) throw new Error(`Analytics configuration refused:\n${analyticsProblems.join('\n')}`);
+const analytics = readAnalyticsConfig(process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID, process.env.NEXT_PUBLIC_POSTHOG_KEY);
+{
+  const legal = (path) => readFileSync(new URL(`../docs/_legal/${path}`, import.meta.url), 'utf8');
+  const legalText = (slug) => legalProposal
+    ? legal(`proposed/${legalProposal}/${JSON.parse(legal(`proposed/${legalProposal}/PROPOSAL.json`)).documents[slug].file}`)
+    : legal(LEGAL_DRAFT_SOURCES[slug]);
+  const disclosure = analyticsDisclosureProblems(legalText('cookies'), legalText('privacy'), analytics, { choiceDays: CHOICE_MAX_AGE / 86400 });
+  if (disclosure.length) throw new Error(`Analytics offered without matching policies:\n${disclosure.join('\n')}`);
+  const readiness = analyticsReadinessProblems(JSON.parse(legal('evidence/GS-O003-R-REGISTER.json')), analytics);
+  if (readiness.length) throw new Error(`Analytics identifiers refused:\n${readiness.join('\n')}`);
+}
+const analyticsOffered = { ga4: Boolean(analytics.ga4), posthog: Boolean(analytics.posthog) };
 const direct = production || ownerPreview;
 const contactMode = direct ? 'direct' : 'edge';
 const rehearsal = process.env.GRIDSMITH_PRODUCTION_REHEARSAL === '1';
@@ -85,6 +110,7 @@ const environment = { ...process.env, GRIDSMITH_BUILD_TARGET: 'static', GRIDSMIT
   GRIDSMITH_STATIC_MANIFEST_PATH: manifestFile, GRIDSMITH_REVIEW_PRESENTATION: '', NEXT_PUBLIC_SANITY_DATASET: dataset,
   NEXT_PUBLIC_SITE_URL: siteOrigin, NEXT_PUBLIC_BUNDLE_SIZE_PROBE: '', GRIDSMITH_EXCLUDE_PROBES: '1' };
 if (ownerPreview) environment.GRIDSMITH_LEGAL_PREVIEW = 'adopted-owner';
+if (!legalProposal) delete environment.GRIDSMITH_LEGAL_PROPOSAL;
 // Reviews fail closed off staging: no written Freelancer permission is held (LEG-08).
 if (production) delete environment.GRIDSMITH_REVIEW_PRESENTATION;
 const privateNames = ['SUPABASE_SERVICE_ROLE_KEY', 'GRIDSMITH_WORKER_TOKEN', 'DIRECT_CONNECTION_STRING', 'RESEND_API_KEY',
@@ -120,7 +146,7 @@ run(['scripts/check-node-version.mjs']);
 run(['scripts/check-legal-adoption.mjs']);
 run(['scripts/check-launch-content.mjs', '--build']);
 await checkLegal();
-const manifest = makeManifest(await inventory(), publication, { indexable: production });
+const manifest = { ...makeManifest(await inventory(), publication, { indexable: production, legalProposal }), analytics: analyticsOffered };
 if (!production && !legalPreview && manifest.routes.some((route) => route.contentType === 'legalDocument' && route.eligible)) {
   throw new Error('Legal publication requires the separately authorised gridsmith.uk cutover');
 }
@@ -143,6 +169,7 @@ symlinkSync(join(root, 'node_modules'), join(staging, 'node_modules'), process.p
 mkdirSync(join(staging, 'docs/_legal/evidence'), { recursive: true });
 cpSync(join(root, 'docs/_legal/current'), join(staging, 'docs/_legal/current'), { recursive: true });
 cpSync(join(root, 'docs/_legal/evidence/GS-O003-R-REGISTER.json'), join(staging, 'docs/_legal/evidence/GS-O003-R-REGISTER.json'));
+if (legalProposal) cpSync(join(root, 'docs/_legal/proposed', legalProposal), join(staging, 'docs/_legal/proposed', legalProposal), { recursive: true });
 // The disposable tree is nested under an ignored build directory. Explicit content
 // roots avoid auto-discovery traversing sibling builds or dropping this tree.
 replaceOnce('styles/globals.css', '@import "tailwindcss";',
@@ -193,9 +220,9 @@ const logoMetadata = await sharp(preparedLogo).metadata();
 try {
   run([require.resolve('next/dist/bin/next'), 'build'], staging);
   await checkLegal();
-  const after = makeManifest(await inventory(), publication, { indexable: production });
+  const after = { ...makeManifest(await inventory(), publication, { indexable: production, legalProposal }), analytics: analyticsOffered };
   if (JSON.stringify(after) !== JSON.stringify(manifest)) throw new Error('CMS revisions changed during static generation');
-  if (direct) writeFileSync(join(staging, 'out/.htaccess'), productionHostingerRules(null, dataset, { rehearsal, ownerPreview }));
+  if (direct) writeFileSync(join(staging, 'out/.htaccess'), productionHostingerRules(null, dataset, { rehearsal, ownerPreview, analytics }));
   else if (siteOrigin === REVIEW_STAGING_ORIGIN) writeFileSync(join(staging, 'out/.htaccess'), hostingerRules(siteOrigin, dataset, new URL(intakeUrl).origin));
   for (const [path, bytes] of readArtifact(join(staging, 'out'))) {
     if (path.endsWith('.html') || path === 'robots.txt') {
@@ -216,7 +243,7 @@ try {
     untracked.some((path) => /^(?:app|components|lib|styles|sanity|redirects|scripts|lighthouse)\//.test(path));
   const phase = ownerPreview ? 'GS-LAUNCH-017' : production ? 'GS-R13-PRODUCTION-PROFILE-001' : legalPreview ? 'GS-LEGAL-001-R12' : 'GS-HOST-H4-D-R1';
   const deployment = { phase, sourceSha, sourceModified, siteOrigin,
-    dataset, legalPreview, contactMode, intakeOrigin: direct ? null : new URL(intakeUrl).origin,
+    dataset, legalPreview, ...(legalProposal ? { legalProposal } : {}), analytics: analyticsOffered, contactMode, intakeOrigin: direct ? null : new URL(intakeUrl).origin,
     ...(production ? { profile, rehearsal, deployable: !rehearsal } : ownerPreview ? { profile, rehearsal: false, deployable: false, releaseStatus: 'ACCEPTANCE_PENDING' } : {}),
     artifactIdentity: digest(JSON.stringify(fileManifest)), files: fileManifest };
   writeFileSync(join(output, '__deployment.json'), JSON.stringify(deployment) + '\n');
@@ -224,7 +251,7 @@ try {
   finalResult.problems = unwaived(finalResult.problems);
   if (finalResult.problems.length) throw new Error(finalResult.problems.join('\n'));
   writeFileSync(join(root, rehearsal ? 'build/production-rehearsal-receipt.json' : 'build/static-receipt.json'), JSON.stringify({ phase,
-    legalPreview, contactMode, stagingOnly: !production, outputDirectory: relative(root, output).replaceAll('\\', '/'),
+    legalPreview, ...(legalProposal ? { legalProposal } : {}), contactMode, stagingOnly: !production, outputDirectory: relative(root, output).replaceAll('\\', '/'),
     ...(ownerPreview ? { profile, rehearsal: false, deployable: false, releaseStatus: 'ACCEPTANCE_PENDING' } : {}),
     ...(production ? { profile, rehearsal, deployable: !rehearsal, waived: [...new Set(waived)] } : {}), dataset, siteOrigin,
     buildNode: process.version,

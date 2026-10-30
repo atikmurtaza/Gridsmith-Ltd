@@ -49,7 +49,8 @@ for (const [v, min, want] of [['0.1.0', '0.2.6', false], ['0.0.33', '0.2.6', fal
   ['0.2.7', '0.2.6', true], ['11.1.1', '11.1.1', true], ['6.2.3', '6.2.1', true], ['14.0.1', '11.1.1', true],
   ['14.3.1', '14.3.3', false], ['14.3.3', '14.3.3', true], ['8.2.1', '8.2.4', false], ['8.2.4', '8.2.4', true],
   ['15.5.27', '15.5.28', false], ['15.5.28', '15.5.28', true], ['3.4.16', '3.4.17', false],
-  ['3.4.17', '3.4.17', true], ['10.7.3', '10.7.4', false], ['10.7.4', '10.7.4', true]]) {
+  ['3.4.17', '3.4.17', true], ['10.7.3', '10.7.4', false], ['10.7.4', '10.7.4', true],
+  ['6.16.0', '6.16.1', false], ['6.16.1', '6.16.1', true]]) {
   assert.equal(atLeast(v, min), want, `comparator ${v} >= ${min}`);
 }
 
@@ -61,7 +62,7 @@ const EXPECT = [['@lhci/cli', 'tmp', '0.2.6'], ['external-editor', 'tmp', '0.2.6
   ['next', 'next', '15.5.28'], ['eslint-config-next', 'eslint-config-next', '15.5.28'],
   ['zod', 'zod', '4.6.6'], ['sanity', 'zod', '4.6.6'], ['chromium-bidi', 'zod', '4.6.6'],
   ['lighthouse', 'puppeteer-core', '25.14.0'], ['puppeteer', 'puppeteer-core', '25.14.0'],
-  ['express', 'body-parser', '1.20.9'],
+  ['express', 'body-parser', '1.20.9'], ['express', 'qs', '6.16.1'], ['body-parser', 'qs', '6.16.1'],
   ['get-it', 'undici', '7.30.1'], ['@module-federation/dts-plugin', 'undici', '7.30.1'],
   ['jsdom', 'undici', '7.30.1'], ['@actions/github', 'undici', '6.29.1'], ['@actions/http-client', 'undici', '6.29.1']];
 for (const [consumer, dep, min] of EXPECT) {
@@ -73,7 +74,7 @@ for (const [consumer, dep, min] of EXPECT) {
 // Every installed copy, wherever it is nested: the lockfile is what `npm ci` installs.
 const MINIMUM = { tmp: '0.2.6', uuid: '11.1.1', 'basic-ftp': '6.2.1', 'markdown-it': '14.3.3', vite: '8.2.4',
   dompurify: '3.4.17', 'ip-address': '10.7.4', next: '15.5.28', 'eslint-config-next': '15.5.28', 'body-parser': '1.20.9', undici: '7.30.1',
-  zod: '4.6.6', puppeteer: '25.14.0', 'puppeteer-core': '25.14.0' };
+  zod: '4.6.6', puppeteer: '25.14.0', 'puppeteer-core': '25.14.0', qs: '6.16.1' };
 // Lockfile v3 records `name` only when the folder differs (an npm alias), which overrides do not reach.
 const packageName = (path, entry) => entry.name ?? path.split('node_modules/').pop();
 const lockProblems = (packages) => Object.entries(packages).flatMap(([path, entry]) => {
@@ -93,7 +94,7 @@ const lock = JSON.parse(readFileSync(join(root, 'package-lock.json'), 'utf8')).p
 for (const [name, version] of [['markdown-it', '14.3.1'], ['vite', '8.2.1'], ['dompurify', '3.4.16'],
   ['ip-address', '10.7.3'], ['next', '15.5.27'], ['eslint-config-next', '15.5.27'], ['body-parser', '1.20.8'],
   ['undici', '6.29.0'], ['undici', '7.30.0'], ['zod', '3.25.76'], ['zod', '4.6.5'],
-  ['puppeteer', '24.43.1'], ['puppeteer-core', '24.43.1']]) {
+  ['puppeteer', '24.43.1'], ['puppeteer-core', '24.43.1'], ['qs', '6.16.0']]) {
   assert.equal(lockProblems({ [`node_modules/x/node_modules/${name}`]: { version } }).length, 1);
   assert.equal(lockProblems({ 'node_modules/aliased-tool': { name, version } }).length, 1);
 }
@@ -101,6 +102,18 @@ for (const version of ['6.29.1', '7.30.1']) assert.deepEqual(lockProblems({ 'nod
 const copies = Object.entries(lock).filter(([path, entry]) => MINIMUM[packageName(path, entry)]).length;
 problems.push(...lockProblems(lock));
 console.log(`  package-lock: ${copies} installed copies of the remediated dependencies checked`);
+
+// GHSA-6pq8-jhm2-2vcw: both comma branches previously threw when an input
+// element shadowed toString with a non-callable value. Exercise each consumer.
+for (const consumer of ['express', 'body-parser']) {
+  const qs = from(consumer)('qs');
+  for (const encodeValuesOnly of [false, true]) {
+    assert.doesNotThrow(() => qs.stringify({ a: [{ toString: 'x' }] }, { arrayFormat: 'comma', encodeValuesOnly }));
+    assert.equal(qs.stringify({ a: ['one', 'two'] }, { arrayFormat: 'comma', encodeValuesOnly }),
+      encodeValuesOnly ? 'a=one,two' : 'a=one%2Ctwo');
+  }
+}
+console.log('  Express/body-parser qs PASS: hostile toString and ordinary comma arrays, both encodeValuesOnly branches');
 
 // GHSA-mrhx-c7xc-m3w5: bounded collections must reject before visiting their elements.
 {
