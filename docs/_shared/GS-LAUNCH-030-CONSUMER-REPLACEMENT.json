@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "task": "GS-LAUNCH-030",
+  "status": "OWNER_ADOPTED_LOCAL_ONLY",
+  "reason": "Exact adopted Consumer3.5 links directly to business terms; current served consumer-routing gate requires zero such links. Neither gate weakening nor altered approved rendering is authorised.",
+  "documents": [
+    {
+      "slug": "consumer-client-terms",
+      "version": "3.6",
+      "path": "docs/_legal/proposed/GS-LAUNCH-030/client-terms-consumers-3.6.md",
+      "sha256": "ac380cb266e05ab500988c0dd0cd47446348b1c3a4a63378377d5f8df04cc8f5",
+      "supersedes": {
+        "version": "3.5",
+        "sha256": "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c"
+      },
+      "changes": [
+        "Version3.5 to3.6",
+        "Review date28October to30October2026",
+        "Only the business-terms hyperlink destination changes from /legal/business-client-terms to /legal/client-terms; visible clause wording is unchanged."
+      ]
+    }
+  ],
+  "workflow": {
+    "path": "docs/_legal/proposed/GS-LAUNCH-030/CONSUMER-CONTRACTING-WORKFLOW.md",
+    "sha256": "7a5901e0030f940831d24e64f22534745fc1129ec11e571c256a3e8e0650545a",
+    "changes": "All Consumer3.6 quotation/confirmation and attachment identifiers, plus conditional workflow-use/status metadata; other operational wording unchanged.",
+    "supersedesPreparedHash": "00bb472e668a283be7ec27c978965482a32e36249ff55c9db1722c336dbb676f"
+  },
+  "otherSixAdoptionsRemainValid": true,
+  "gateChanged": false,
+  "canonicalConsumerChanged": true,
+  "publishable": 0,
+  "proof": {
+    "clauseWordsUnchanged": true,
+    "coordinatedReviewProblems": [],
+    "canonicalConsumerMatchesApprovedHash": true,
+    "canonicalWorkflowMatchesApprovedHash": true,
+    "supersededConsumer3_5Preserved": true,
+    "otherSixCanonicalDocumentsUnchanged": true,
+    "consumerGateUnchanged": true,
+    "servedRoutingAndAllSevenParity": "PASS_LOCAL_FRESH_DEVELOPMENT_DATASET_TEST_BUILD"
+  },
+  "authorityReceivedOn": "2026-10-30",
+  "ownerReply": "Adopt the corrected exact Consumer 3.6 set",
+  "correctedWorkflowAuthoritySupersedesEarlierQuestion": true
+}

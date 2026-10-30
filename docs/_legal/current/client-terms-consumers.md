@@ -1,7 +1,7 @@
 # Client Terms for Consumers
 
-**Version 3.5**\
-**Review date: 28 October 2026**\
+**Version 3.6**\
+**Review date: 30 October 2026**\
 **Effective date: On first publication with the replacement website at gridsmith.uk**
 
 **Gridsmith Ltd**, a private limited company registered in England and Wales\
@@ -14,7 +14,7 @@ Trading divisions: **Gridsmith Design, Gridsmith Digital and Gridsmith Press**
 
 These terms apply when you buy services from Gridsmith Ltd as an individual, wholly or mainly for purposes outside your trade, business, craft or profession.
 
-If you are buying wholly or mainly for a business or professional purpose, our [Client Terms for Business Clients](/legal/business-client-terms) apply instead. If you tell us that you are buying for a business, we will ask you to confirm that in writing.
+If you are buying wholly or mainly for a business or professional purpose, our [Client Terms for Business Clients](/legal/client-terms) apply instead. If you tell us that you are buying for a business, we will ask you to confirm that in writing.
 
 Gridsmith Design, Gridsmith Digital and Gridsmith Press are trading divisions of Gridsmith Ltd and are not separate companies. Your contract is with Gridsmith Ltd.
 

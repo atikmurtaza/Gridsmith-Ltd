@@ -392,7 +392,7 @@ assert.equal(allLegalPublishable([...Array(6).fill('PUBLISHABLE'), 'OWNER_ADOPTE
 cases += 6;
 const publicationHeader = '**Effective date: On first publication with the replacement website at gridsmith.uk**';
 const publicationParsed = parseDraft(consumer);
-expect('publication trigger parsed', publicationParsed.effectiveOnPublication && publicationParsed.effective === null && publicationParsed.drafted === '2026-10-28' ? [] : ['bad commencement'], null);
+expect('publication trigger parsed', publicationParsed.effectiveOnPublication && publicationParsed.effective === null && publicationParsed.drafted === '2026-10-30' ? [] : ['bad commencement'], null);
 expect('adopted before publication event', stateProblems('c', 'OWNER_ADOPTED', consumer, 's', '2026-10-22'), null);
 expect('publishable commencement remains future', stateProblems('c', 'PUBLISHABLE', consumer, 's', '2026-10-22'), null);
 throws('malformed commencement rejected', consumer.replace(publicationHeader, '**Effective date: whenever approved**'), /unreadable effective date/);
@@ -427,8 +427,8 @@ const adopted030 = [
   ],
   [
     "consumer-client-terms",
-    "3.5",
-    "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c"
+    "3.6",
+    "ac380cb266e05ab500988c0dd0cd47446348b1c3a4a63378377d5f8df04cc8f5"
   ],
   [
     "accessibility",
@@ -452,6 +452,9 @@ for (const [slug, version, digest] of adopted030) {
   assert.equal(createHash('sha256').update(oldBytes).digest('hex'), superseded030.documents[slug].ownerAdoptedSha256);
   cases++;
 }
+assert.equal(createHash('sha256').update(read('compliance/CONSUMER-CONTRACTING-WORKFLOW.md')).digest('hex'), '7a5901e0030f940831d24e64f22534745fc1129ec11e571c256a3e8e0650545a');
+assert.equal(createHash('sha256').update(read('evidence/GS-LAUNCH-030-consumer-3.5-superseded/client-terms-consumers.md')).digest('hex'), 'aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c');
+cases += 2;
 assert.equal(ACTIVE_LEGAL_PROPOSAL, null);
 assert.throws(() => legalProposalDocuments('GS-LAUNCH-026'), /Unknown legal proposal/);
 cases++;

@@ -554,7 +554,7 @@
       "source": "scripts/seed-legal.mjs",
       "gate": "GS-O003-R",
       "eligible": false,
-      "reason": "Owner-adopted 3.5 on 2026-10-30; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
+      "reason": "Owner-adopted 3.6 on 2026-10-30; not PUBLISHABLE (publication prerequisites outstanding: PUBLICATION-AUTHORITY, PRIVACY-PUBLISHABLE)"
     },
     {
       "type": "legalDocument",
