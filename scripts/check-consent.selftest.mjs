@@ -108,6 +108,19 @@ function runtime() {
   r.apply(config, choice); r.scripts[0].onerror(); r.apply(config, choice);
   eq('failed pending library can be requested again under a live grant', r.scripts.length, 2);
 }
+// Exercise the CLI's exact early rehearsal boundary without launching a browser or making requests.
+const rehearsalPrefix = readFileSync('scripts/check-consent.mjs', 'utf8').split('const LIVE =')[0].replace(/^#!.*\n/, '').replace(/^import .*;$/gm, '');
+const rehearsalCheck = new (Object.getPrototypeOf(async function () {}).constructor)('process', 'assert', 'fetch', rehearsalPrefix);
+const rehearsalIdentity = { profile: 'production', siteOrigin: 'https://gridsmith.uk', rehearsal: true, deployable: false, contactMode: 'direct' };
+const rehearsalProcess = { argv: ['node', 'gate', '--production-rehearsal'], env: { AXE_BASE_URL: 'http://127.0.0.1:3236' } };
+await rehearsalCheck(rehearsalProcess, assert, async () => ({ json: async () => rehearsalIdentity })); cases++;
+for (const change of [{ profile: 'owner-preview' }, { siteOrigin: 'https://example.invalid' }, { rehearsal: false }, { deployable: true }, { contactMode: 'edge' }]) {
+  await assert.rejects(rehearsalCheck(rehearsalProcess, assert, async () => ({ json: async () => ({ ...rehearsalIdentity, ...change }) })), /Non-deployable/); cases++;
+}
+let rehearsalRequests = 0;
+await assert.rejects(rehearsalCheck({ ...rehearsalProcess, env: { AXE_BASE_URL: 'https://gridsmith.uk' } }, assert,
+  async () => { rehearsalRequests++; }), /loopback only/);
+eq('rehearsal cannot contact production', rehearsalRequests, 0);
 
 // Identifiers: unset is off, malformed is refused rather than treated as off.
 eq('config both', readAnalyticsConfig(GA, PH), both);
