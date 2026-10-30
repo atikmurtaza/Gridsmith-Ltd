@@ -14,9 +14,9 @@
         "sha256": "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c"
       },
       "changes": [
-        "Version3.5 to3.6",
-        "Review date28October to30October2026",
-        "Only the business-terms hyperlink destination changes from /legal/business-client-terms to /legal/client-terms; visible clause wording is unchanged."
+        "Version 3.5 to 3.6",
+        "Review date 28 October to 30 October 2026",
+        "Only the hyperlink destination changes from /legal/business-client-terms to /legal/client-terms; visible clause wording is unchanged."
       ]
     }
   ],

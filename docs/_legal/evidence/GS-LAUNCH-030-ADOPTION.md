@@ -8,7 +8,7 @@ The question identified the exact seven versions and SHA-256 hashes in the GS-LA
 
 > Adopt that exact set for local integration
 
-The initial adopted set was copied byte-for-byte. This table is historical: Consumer3.5 was subsequently replaced by the expressly approved3.6 below; the other six remain current.
+The initial adopted set was copied byte-for-byte. This table is historical: Consumer 3.5 was subsequently replaced by the expressly approved3.6 below; the other six remain current.
 
 | Document | Initial version | SHA-256 |
 |---|---|---|
@@ -20,11 +20,11 @@ The initial adopted set was copied byte-for-byte. This table is historical: Cons
 | Consumer Client Terms | 3.5 | `aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c` |
 | Accessibility Statement | 2.5 | `e7b7f71e34c44db2202c9f41c1a09073c46ef25e05f34127c1263750d7da211f` |
 
-Prior canonical texts, register and Consumer3.4 workflow are preserved in docs/_legal/evidence/GS-LAUNCH-030-superseded. The original GS026 proposal workflow SHA-256278a41851a18ecc68c988ca3a1cc024efd0e7c8a557da63180dd79ba91178796 remains unchanged at its proposal path. Its copied proposal-status header was corrected as integration metadata; all operative template wording was unchanged. That maintained Consumer3.5 workflow (SHA-2569c7e6b4398c4277b44ef903ab430bafdbf2a29be97d5eb1949bad322b1a47cc4) is now preserved in the replacement archive below.
+Prior canonical texts, register and Consumer 3.4 workflow are preserved in docs/_legal/evidence/GS-LAUNCH-030-superseded. The original GS026 proposal workflow SHA-256 278a41851a18ecc68c988ca3a1cc024efd0e7c8a557da63180dd79ba91178796 remains unchanged at its proposal path. Its copied proposal-status header was corrected as integration metadata; all operative template wording was unchanged. That maintained Consumer 3.5 workflow (SHA-256 9c7e6b4398c4277b44ef903ab430bafdbf2a29be97d5eb1949bad322b1a47cc4) is now preserved in the replacement archive below.
 
-## Corrected Consumer3.6 replacement
+## Corrected Consumer 3.6 replacement
 
-Exact source ea28dfbdfe4e6c475916d884abcca5f97155e90c failed CI41127867903 because Consumer3.5's single direct business-terms hyperlink conflicts with the existing assertion that consumer-facing routes have zero such links. Legal parity passed7documents/110clauses/430paragraphs/29cross-references. Neither the gate nor renderer was changed to conceal the conflict.
+Exact source ea28dfbdfe4e6c475916d884abcca5f97155e90c failed CI 41127867903 because Consumer 3.5's single direct business-terms hyperlink conflicts with the existing assertion that consumer-facing routes have zero such links. Legal parity passed7 documents/110 clauses/430 paragraphs/29 cross-references. Neither the gate nor renderer was changed to conceal the conflict.
 
 A replacement was prepared with the same visible clause wording. Only version/review metadata and the applicability paragraph's hyperlink destination change to /legal/client-terms. The initial prepared workflow had two stale attachment identifiers; these were corrected, fully coordinated checks passed, and a superseding exact approval question was presented. The owner answered the latest question:
 
@@ -32,11 +32,11 @@ A replacement was prepared with the same visible clause wording. Only version/re
 
 That superseding question expressly binds:
 
-- Consumer3.6: SHA-256 ac380cb266e05ab500988c0dd0cd47446348b1c3a4a63378377d5f8df04cc8f5.
-- Coordinated workflow: SHA-2567a5901e0030f940831d24e64f22534745fc1129ec11e571c256a3e8e0650545a.
+- Consumer 3.6: SHA-256 ac380cb266e05ab500988c0dd0cd47446348b1c3a4a63378377d5f8df04cc8f5.
+- Coordinated workflow: SHA-256 7a5901e0030f940831d24e64f22534745fc1129ec11e571c256a3e8e0650545a.
 
-The earlier question was also answered, but its workflow hash00bb472e was expressly superseded before integration. The corrected latest reply governs. Canonical Consumer3.6 and workflow bytes equal the corrected approved proposal hashes. No later status edit changed those bytes; the workflow's conditional use requirements remain truthful before and after adoption.
+The earlier question was also answered, but its workflow hash 00bb472e was expressly superseded before integration. The corrected latest reply governs. Canonical Consumer 3.6 and workflow bytes equal the corrected approved proposal hashes. No later status edit changed those bytes; the workflow's conditional use requirements remain truthful before and after adoption.
 
-The previous Consumer3.5, full register and maintained workflow are preserved byte-for-byte in docs/_legal/evidence/GS-LAUNCH-030-consumer-3.5-superseded. The current register points through that predecessor to the original030 adoption and earlier chain. Other six adoptions and all publication prerequisite lists/evidence are unchanged.
+The previous Consumer 3.5, full register and maintained workflow are preserved byte-for-byte in docs/_legal/evidence/GS-LAUNCH-030-consumer-3.5-superseded. The current register points through that predecessor to the original030 adoption and earlier chain. Other six adoptions and all publication prerequisite lists/evidence are unchanged.
 
-**Current state: seven OWNER_ADOPTED, zero PUBLISHABLE.** Exact current versions are Privacy2.9, Cookie2.6, Website2.4, Applicability2.4, Business3.4, Consumer3.6, Accessibility2.5. Obsolete GS026 proposal-mode selection is retired; historical proposals remain evidence. No publication commencement date was substituted for first-publication conditions.
+**Current state: seven OWNER_ADOPTED, zero PUBLISHABLE.** Exact current versions are Privacy 2.9, Cookie 2.6, Website 2.4, Applicability 2.4, Business 3.4, Consumer 3.6, Accessibility 2.5. Obsolete GS026 proposal-mode selection is retired; historical proposals remain evidence. No publication commencement date was substituted for first-publication conditions.

@@ -1,17 +1,20 @@
 {
   "schemaVersion": 1,
   "task": "GS-LAUNCH-030",
-  "recordedAt": "2026-10-30T21:00:54.089Z",
-  "status": "CONDITIONAL_ADOPTION_INTEGRATED_FRESH_CI_REQUIRED",
+  "recordedAt": "2026-10-30T22:47:21.333Z",
+  "status": "CONDITIONAL_CONSUMER3_6_ADOPTED_FRESH_CI_REQUIRED",
   "source": {
     "startingBranch": "codex/gs-launch-029",
     "startingSha": "d0c792c89a4ecc991765e731b925135e0156602f",
     "workBranch": "codex/gs-launch-030",
-    "head": null,
+    "head": "0ac38004e8ea5fe2e4c81f98a283e313bcacf42e",
     "applicationAndWorkflowChanged": true,
-    "reporting": "PRE_CI_SOURCE_RECORD",
+    "reporting": "PRE_FINAL_CI_SOURCE_RECORD",
     "acceptedDeployedSha": "629accd00e30b09394e6d3ef419999b2c8af0ec5",
-    "finalSha": null
+    "finalSha": null,
+    "implementationCommit": "0ac38004e8ea5fe2e4c81f98a283e313bcacf42e",
+    "lastTestedPushedSha": "ea28dfbdfe4e6c475916d884abcca5f97155e90c",
+    "finalIdentityLocation": "Private GS-LAUNCH-030 completion packet and exact final GitHub CI run"
   },
   "ci": {
     "previousRun": {
@@ -25,15 +28,27 @@
       },
       "cause": "Non-2xx Jobs API response while packaging waited for verify; exact unsuccessful HTTP status not retained."
     },
-    "status": "FRESH_EXACT_SOURCE_CI_REQUIRED",
+    "status": "FRESH_CORRECTED_SOURCE_CI_REQUIRED",
     "runId": null,
     "headSha": null,
     "conclusion": null,
     "acceptedAsReleaseBaseline": false,
     "repairs": [
-      "bounded transient Jobs API retries, timeout, rate-limit guidance, safe status/request-ID diagnostics; prerequisite unchanged"
+      "bounded transient Jobs API retries, timeout, rate-limit guidance, safe status/request-ID diagnostics; prerequisite unchanged",
+      "Owner expressly adopted exact Consumer3.6/workflow replacement; one hyperlink target corrected, gate and renderer unchanged."
     ],
-    "rerunTriggered": false
+    "rerunTriggered": false,
+    "latestCompleted": {
+      "runId": 41127867903,
+      "headSha": "ea28dfbdfe4e6c475916d884abcca5f97155e90c",
+      "conclusion": "FAILURE",
+      "verifyFailure": "check-consumer-terms: direct business-terms hyperlink on consumer page",
+      "legalParity": "PASS7_DOCS_110_CLAUSES_430_PARAGRAPHS_29_CROSSREFERENCES",
+      "candidateChecks": "PASS7_LOG_HASHES_VERIFIED",
+      "audits": "ZERO_PRODUCTION_AND_FULL",
+      "packaging": "CORRECTLY_REFUSED_FAILED_NORMAL_VERIFY",
+      "publisher": "SKIPPED"
+    }
   },
   "legal": {
     "status": "OWNER_ADOPTED_LOCAL_ONLY",
@@ -67,8 +82,8 @@
       },
       {
         "slug": "consumer-client-terms",
-        "version": "3.5",
-        "sha256": "aeed75437292bd352ba86951061e4519fab44503881985249d56093d6b88488c"
+        "version": "3.6",
+        "sha256": "ac380cb266e05ab500988c0dd0cd47446348b1c3a4a63378377d5f8df04cc8f5"
       },
       {
         "slug": "accessibility",
@@ -86,10 +101,17 @@
     "approvalReceivedOn": "2026-10-30",
     "adoptionRecord": "docs/_legal/evidence/GS-LAUNCH-030-ADOPTION.md",
     "superseded": "docs/_legal/evidence/GS-LAUNCH-030-superseded",
-    "publicationPrerequisitesUnchanged": true
+    "publicationPrerequisitesUnchanged": true,
+    "consumerReplacement": {
+      "approved": true,
+      "record": "GS-LAUNCH-030-CONSUMER-REPLACEMENT.json",
+      "workflowSha256": "7a5901e0030f940831d24e64f22534745fc1129ec11e571c256a3e8e0650545a",
+      "superseded": "docs/_legal/evidence/GS-LAUNCH-030-consumer-3.5-superseded",
+      "otherSixUnchanged": true
+    }
   },
   "directContact": {
-    "status": "DATED_OWNER_ATTESTATION_RECORDED_O3_O5_PARTIAL",
+    "status": "DATED_CUSTODY_AND_COMPANY_BCC_CONFIRMED_O3_O5_PARTIAL",
     "privateEvidenceReused": "GS-LAUNCH-029/direct-contact-preparation.json",
     "newCustodyStatement": true,
     "verifiedReceiptCreated": false,
@@ -103,27 +125,34 @@
       "O3 actual holdings/retention application",
       "O4 account-specific provider/transfer coverage",
       "O5 procedure/backup-expiry/deletion handling"
-    ]
+    ],
+    "companyBccCustodyConfirmed": true,
+    "bccDestinationPublished": false
   },
   "analytics": {
     "ownerPreference": "GA4_AND_POSTHOG_BEFORE_LAUNCH",
     "ga4PropertyInventoryId": 550714475,
-    "ga4MeasurementIdVerified": false,
-    "ga4SettingsVerified": false,
+    "ga4MeasurementIdVerified": true,
+    "ga4SettingsVerified": true,
     "posthogProject": 315488,
     "posthogCurrentIdentifier": "RETAINED_PRIVATELY_AT_GS_LAUNCH_029; STALE_KEY_NOT_REUSED",
-    "posthogProductionDestinationApproved": false,
+    "posthogProductionDestinationApproved": true,
     "readinessReceiptCreated": false,
     "active": false,
     "noticeOnlyFallbackChosen": false,
-    "browser": "LOCAL_BROWSER_USE_DISABLED_AT_CURRENT_RETRY"
+    "browser": "WORKING_AFTER_OWNER_ENABLEMENT",
+    "ga4ProductionDestinationApproved": true,
+    "posthogOrganisationThirdPartyAiEnabled": true,
+    "posthogInternalAiTrainingEnabled": false,
+    "posthogBindingDpaVerified": false,
+    "reauthenticated": true
   },
   "cookies": {
     "stageA": "NOT_RUN_PRECONDITIONS_PENDING",
     "stageB": "NOT_RUN_REPLACEMENT_NOT_DEPLOYED",
     "testIdEvidenceIsStageA": false,
     "canonicalPoliciesConfirmed": true,
-    "intendedModeFinalised": false,
+    "intendedModeFinalised": "GA4_PLUS_EXISTING_POSTHOG_DESTINATIONS_APPROVED_READINESS_PENDING",
     "directContactReceiptVerified": false
   },
   "cms": {
@@ -198,7 +227,13 @@
     "mergePerformed": false,
     "mainMergeAuthority": false,
     "forcePush": false,
-    "artifactBranchesWritten": false
+    "artifactBranchesWritten": false,
+    "pr7": {
+      "url": "https://github.com/atikmurtaza/Gridsmith-Ltd/pull/7",
+      "base": "codex/gs-launch-029",
+      "draft": true,
+      "merged": false
+    }
   },
   "productionBuild": {
     "eligible": false,
@@ -243,13 +278,15 @@
     "staticSelftest": "PASS",
     "ancestry": "PASS",
     "productionRefusal": "PASS_EXPECTED8_POST_ADOPTION",
-    "secretBundleSweep": "REFUSED_EXIT1_NO_BUILT_CHUNKS_NOT_A_SECRET_FINDING",
-    "newApplicationBuild": "LOCAL_NOT_RUN_FRESH_LINUX_ACCEPTANCE_REQUIRED",
+    "secretBundleSweep": "PASS_LOCAL_FRESH_TEST_BUILD",
+    "newApplicationBuild": "PASS_LOCAL_DEVELOPMENT_DATASET_TEST_BUILD_NOT_PRODUCTION_PROFILE",
     "fullVisualSuites": "NOT_REPEATED",
-    "verifyStatic": "PASS",
-    "legalAdoptionSelftest": "PASS196",
+    "verifyStatic": "PASS_CURRENT_CONSUMER3_6",
+    "legalAdoptionSelftest": "PASS198",
     "releaseSelftest": "PASS80",
-    "browserInputSelftest": "PASS_WITH_EXPLICIT_PYTHON"
+    "browserInputSelftest": "PASS_WITH_EXPLICIT_PYTHON",
+    "servedConsumerRouting": "PASS_UNCHANGED_GATE_AFTER3_6",
+    "servedLegalParity": "PASS_ALL7_AFTER3_6"
   },
   "notPerformed": [
     "legal publication transition",
@@ -264,7 +301,7 @@
     "worktree destruction",
     "force push"
   ],
-  "nextAction": "ENABLE_EXISTING_ACCOUNT_READ_ACCESS_FOR_ANALYTICS_AND_REMAINING_OPERATIONAL_EVIDENCE",
+  "nextAction": "POSTHOG_ADMIN_DISABLE_THIRD_PARTY_AI_AND_COMPLETE_OR_REFERENCE_BINDING_DPA",
   "privateEvidenceSha256": {
     "production-before.ndjson": "1a53eea10014f6d181fe54e58b0fb7dc6263bba2be7cc334c3c46bd979fb9938",
     "cms-export-comparison.json": "bd0dd201b9426182c4be798979a172f8887f8f9ef6662fea500b1b5bb2441006",
@@ -286,7 +323,17 @@
     "release-selftest.log": "5a61bd5b6d386c8f6e4a09a2454044c28136db16f6e50d7fcbdbf742d03fcf0b",
     "browser-input-selftest-python.log": "e93c5ad7c7481f16a5bd7ca4353df4eae6676170836e2616b379e3a13c8fd703",
     "production-refusals-adopted.json": "c23cab2d4cf3bf5bf79d0ba5cedd224d2375f0930cbc3e3aef4f9f9f14309112",
-    "adoption-selftest-final.log": "4bebf6f1e66c977980da04fa11ddff6939adf1d34582aa907391f7c0ff6751b0"
+    "adoption-selftest-final.log": "4bebf6f1e66c977980da04fa11ddff6939adf1d34582aa907391f7c0ff6751b0",
+    "consumer3.6-owner-authority.json": "cc59cc789ee84fcc8541354f71f15d5f4d9adaa89b79ce51e84bdb67ae2b9cf8",
+    "consumer3.6-served-routing-parity.log": "520ef00005d0baeabfb74239d722aeb1c12c931cb9717af3d66fdf4205bce241",
+    "ci-41127867903-failed.log": "d09bb8cfa00e4725d717e18b97de31248d242c7d759f0ec6b438bbbae5d41c08",
+    "ci-41127867903-final.json": "043aa52c1c8bc0b8f1506ba5098029cbc1f194e2925aad0aa6e6c0813006c0ab",
+    "ci-41127867903-assessment.json": "eff2f2f8e75e10fb9d5fca8bb2d0f318501343d5e543b473f88c03994537dbf9",
+    "analytics-account-observations.json": "5677c907e16c7907ea4377adaddbc11db1ef1ce7137193f0020fae9e00ba4f74",
+    "direct-contact-preparation.json": "56c62b0556e97f4254969c99929a52a8cf9cb1d83e0c3949fdb690d3aa55e155",
+    "verify-static-consumer3.6.log": "e91bd5238fa64c7dc67c4ca5ff0cf7e9b1fd979128eeee85fcaf5e0a2c00cd5b",
+    "consumer3.6-local-test-build.log": "3286dd94f380c88fc9bc484355b81c5586d4933e680ed2c9c530030e7dcff62d",
+    "client-secrets-consumer3.6.log": "a4b7252e940370284dccc3901ee15f6ca703125ca7ac3428f4e0c7b4c86c59c4"
   },
   "preview": {
     "recordedAt": "2026-10-30T17:56:19.836Z",
